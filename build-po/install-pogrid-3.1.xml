@@ -7,7 +7,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   xmlns:ivy="antlib:org.apache.ivy.ant"
   >
   <description>
-  	This build file is part of the COPPA-PO project. This is the po grid install file for the COPPA-PO project. This script is copied into the distribution and executed from the extracted distribution.  It is called from the master install.xml. This script has two flows install and upgrade.
+      This build file is part of the COPPA-PO project. This is the po grid install file for the COPPA-PO project. This script is copied into the distribution and executed from the extracted distribution.  It is called from the master install.xml. This script has two flows install and upgrade.
     Install will do the following
     * Install binaries
     * Configure binaries
@@ -65,102 +65,102 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   </target>
 
   <target name="install:po-grid-3.1-jboss:init" depends="common:init:pre" unless="exclude.po-grid-3.1">
-	  <!-- determine if port configurations or port lists are being called -->
-	  <if>
-		  <isset property="po-grid-3.1-jboss.ncicb-standard.port-config"/>
-		  <then>
-			  <!-- Read some port properties from standard bindings file -->
-			  <echo message="Using JBoss NCICB Standard port configurations"/>
-			  <if>
-				  <equals arg1="${jboss.major.version}" arg2="4"/>
-				  <then>
-					  <property name="po-grid-3.1-jboss.server.binding.template.location" value="${basedir}/${jboss-bindings.file}"/>
-					  <echo message="po-grid-3.1 port name -${po-grid-3.1-jboss.server.ports.name}"/>
-				      <jboss-read-ports
-					      jboss.server.ports.name="${po-grid-3.1-jboss.server.ports.name}"
-    				        jboss.server.bindingfile.location="${po-grid-3.1-jboss.server.binding.template.location}"
-				      	    jboss.server.jndi.port.property.name="po-grid-3.1-jboss.server.jndi.port"
-				      	    jboss.server.port.property.name="po-grid-3.1-jboss.server.port"
-    				        jboss.ejbinvoker.port.property.name="po-grid-3.1-jboss.ejbinvoker.port"
-    				        jboss.server.rmi.port.property.name="po-grid-3.1-jboss.server.rmi.port"
-    				        jboss.web.service.port.property.name="po-grid-3.1-jboss.web.service.port"
-    				        jboss.service.rmiobject.port.property.name="po-grid-3.1-jboss.service.rmiobject.port"
-    				        jboss.server.bind.port.property.name="po-grid-3.1-jboss.server.bind.port"
-    				        jboss.hajndi.port.property.name="po-grid-3.1-jboss.hajndi.port"
-    				        jboss.hajrmi.port.property.name="po-grid-3.1-jboss.hajrmi.port"
-    				        jboss.cobraorb.port.property.name="po-grid-3.1-jboss.cobraorb.port"
-    				        jboss.jmx-rmi.port.property.name="po-grid-3.1-jboss.jmx-rmi.port"
-    				        jboss.snmp-trapd.port.property.name="po-grid-3.1-jboss.snmp-trapd.port"
-    				        jboss.snmp.port.property.name="po-grid-3.1-jboss.snmp.port"
-    				        jboss.jms.port.property.name="po-grid-3.1-jboss.jms.port"
-    				        jboss.remoting.port.property.name="po-grid-3.1-jboss.remoting.port"
-    				        jboss.messaging.port.property.name="po-grid-3.1-jboss.messaging.port"
-				      />
-					  <jboss-bindings-validate
-					      jboss.server.ports.name="${po-grid-3.1-jboss.server.ports.name}"
-						  jboss.server.bindingfile.location="${po-grid-3.1-jboss.server.binding.template.location}"
-						  />
-				  </then>
-				  <elseif>
-					  <equals arg1="${jboss.major.version}" arg2="5"/>
-					  <then>
-						  <property name="po-grid-3.1-jboss.server.bindingfile.location" value="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/conf/bindingservice.beans/META-INF/bindings-jboss-beans.xml"/>
-						  <property name="temp.bindings.file" value="${temp.dir}/unmodified-bindings-jboss-beans.xml"/>
-						  <copy tofile="${temp.bindings.file}" file="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/unmodified-bindings-jboss-beans.xml"/>
-						  <jboss51-bindings-nci
-							  jboss.server.bindingfile.location="${temp.bindings.file}"
-							  />
-						  <jboss51-read-ports-nci
-							  jboss.server.bindingfile.location="${temp.bindings.file}"
-							  />
-					  </then>
-				  </elseif>
-			  </if>
-			  <echo message="http -${po-grid-3.1-jboss.server.port} "/>
-			  <echo message="http -${po-grid-3.1-jboss.server.jndi.port} "/>
-			  <properties-exist
-				  properties.list="po-grid-3.1-jboss.server.jndi.port,po-grid-3.1-jboss.server.port,po-grid-3.1-jboss.server.ports.name"
-				  />
-		  </then>
-		  <else>
-			  <!-- else ensure that all ports are set, since these will be removed from install-properties.template we will verify here.  They have to be removed so the validator works with or without the properties or we have to change the format of the file. -->
-			  <echo message="Using custom JBoss port configurations"/>
-			  <property name="po-grid-3.1-jboss.server.binding.template.location" value="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings.xml"/>
-			  <properties-exist
-				  properties.list="po-grid-3.1-jboss.server.jndi.port,po-grid-3.1-jboss.server.port,po-grid-3.1-jboss.cobraorb.port,po-grid-3.1-jboss.hajndi.port,po-grid-3.1-jboss.hajrmi.port,po-grid-3.1-jboss.jmx-rmi.port,po-grid-3.1-jboss.messaging.port,po-grid-3.1-jboss.pooledha.port,po-grid-3.1-jboss.server.bind.port,po-grid-3.1-jboss.server.rmi.port,po-grid-3.1-jboss.service.rmiobject.port,po-grid-3.1-jboss.snmp.port,po-grid-3.1-jboss.snmp-trapd.port,po-grid-3.1-jboss.web.service.port,po-grid-3.1-jboss.unifiedinvoker.port,po-grid-3.1-jboss.hajndi.auto.port,po-grid-3.1-jboss.ssl.port,po-grid-3.1-jboss.jms2.netty.port,po-grid-3.1-jboss.jms2.netty-ssl.port,po-grid-3.1-jboss.transaction.recovery.port,po-grid-3.1-jboss.transaction.status.port,po-grid-3.1-jboss.transaction.processid.port"
-				  />
-		  </else>
-	  </if>
+      <!-- determine if port configurations or port lists are being called -->
+      <if>
+          <isset property="po-grid-3.1-jboss.ncicb-standard.port-config"/>
+          <then>
+              <!-- Read some port properties from standard bindings file -->
+              <echo message="Using JBoss NCICB Standard port configurations"/>
+              <if>
+                  <equals arg1="${jboss.major.version}" arg2="4"/>
+                  <then>
+                      <property name="po-grid-3.1-jboss.server.binding.template.location" value="${basedir}/${jboss-bindings.file}"/>
+                      <echo message="po-grid-3.1 port name -${po-grid-3.1-jboss.server.ports.name}"/>
+                      <jboss-read-ports
+                          jboss.server.ports.name="${po-grid-3.1-jboss.server.ports.name}"
+                            jboss.server.bindingfile.location="${po-grid-3.1-jboss.server.binding.template.location}"
+                              jboss.server.jndi.port.property.name="po-grid-3.1-jboss.server.jndi.port"
+                              jboss.server.port.property.name="po-grid-3.1-jboss.server.port"
+                            jboss.ejbinvoker.port.property.name="po-grid-3.1-jboss.ejbinvoker.port"
+                            jboss.server.rmi.port.property.name="po-grid-3.1-jboss.server.rmi.port"
+                            jboss.web.service.port.property.name="po-grid-3.1-jboss.web.service.port"
+                            jboss.service.rmiobject.port.property.name="po-grid-3.1-jboss.service.rmiobject.port"
+                            jboss.server.bind.port.property.name="po-grid-3.1-jboss.server.bind.port"
+                            jboss.hajndi.port.property.name="po-grid-3.1-jboss.hajndi.port"
+                            jboss.hajrmi.port.property.name="po-grid-3.1-jboss.hajrmi.port"
+                            jboss.cobraorb.port.property.name="po-grid-3.1-jboss.cobraorb.port"
+                            jboss.jmx-rmi.port.property.name="po-grid-3.1-jboss.jmx-rmi.port"
+                            jboss.snmp-trapd.port.property.name="po-grid-3.1-jboss.snmp-trapd.port"
+                            jboss.snmp.port.property.name="po-grid-3.1-jboss.snmp.port"
+                            jboss.jms.port.property.name="po-grid-3.1-jboss.jms.port"
+                            jboss.remoting.port.property.name="po-grid-3.1-jboss.remoting.port"
+                            jboss.messaging.port.property.name="po-grid-3.1-jboss.messaging.port"
+                      />
+                      <jboss-bindings-validate
+                          jboss.server.ports.name="${po-grid-3.1-jboss.server.ports.name}"
+                          jboss.server.bindingfile.location="${po-grid-3.1-jboss.server.binding.template.location}"
+                          />
+                  </then>
+                  <elseif>
+                      <equals arg1="${jboss.major.version}" arg2="5"/>
+                      <then>
+                          <property name="po-grid-3.1-jboss.server.bindingfile.location" value="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/conf/bindingservice.beans/META-INF/bindings-jboss-beans.xml"/>
+                          <property name="temp.bindings.file" value="${temp.dir}/unmodified-bindings-jboss-beans.xml"/>
+                          <copy tofile="${temp.bindings.file}" file="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/unmodified-bindings-jboss-beans.xml"/>
+                          <jboss51-bindings-nci
+                              jboss.server.bindingfile.location="${temp.bindings.file}"
+                              />
+                          <jboss51-read-ports-nci
+                              jboss.server.bindingfile.location="${temp.bindings.file}"
+                              />
+                      </then>
+                  </elseif>
+              </if>
+              <echo message="http -${po-grid-3.1-jboss.server.port} "/>
+              <echo message="http -${po-grid-3.1-jboss.server.jndi.port} "/>
+              <properties-exist
+                  properties.list="po-grid-3.1-jboss.server.jndi.port,po-grid-3.1-jboss.server.port,po-grid-3.1-jboss.server.ports.name"
+                  />
+          </then>
+          <else>
+              <!-- else ensure that all ports are set, since these will be removed from install-properties.template we will verify here.  They have to be removed so the validator works with or without the properties or we have to change the format of the file. -->
+              <echo message="Using custom JBoss port configurations"/>
+              <property name="po-grid-3.1-jboss.server.binding.template.location" value="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings.xml"/>
+              <properties-exist
+                  properties.list="po-grid-3.1-jboss.server.jndi.port,po-grid-3.1-jboss.server.port,po-grid-3.1-jboss.cobraorb.port,po-grid-3.1-jboss.hajndi.port,po-grid-3.1-jboss.hajrmi.port,po-grid-3.1-jboss.jmx-rmi.port,po-grid-3.1-jboss.messaging.port,po-grid-3.1-jboss.pooledha.port,po-grid-3.1-jboss.server.bind.port,po-grid-3.1-jboss.server.rmi.port,po-grid-3.1-jboss.service.rmiobject.port,po-grid-3.1-jboss.snmp.port,po-grid-3.1-jboss.snmp-trapd.port,po-grid-3.1-jboss.web.service.port,po-grid-3.1-jboss.unifiedinvoker.port,po-grid-3.1-jboss.hajndi.auto.port,po-grid-3.1-jboss.ssl.port,po-grid-3.1-jboss.jms2.netty.port,po-grid-3.1-jboss.jms2.netty-ssl.port,po-grid-3.1-jboss.transaction.recovery.port,po-grid-3.1-jboss.transaction.status.port,po-grid-3.1-jboss.transaction.processid.port"
+                  />
+          </else>
+      </if>
   </target>
   <target name="common:po-grid-3.1-jboss:init" depends="common:init:pre" unless="exclude.po-grid-3.1">
-	  <property name="po-grid-3.1-jboss.ssl.enable" value="false"/>
-	  <property name="po-grid-3.1-jboss.home" value="${application.base.path}/${po-grid-3.1-jboss.relative.path}"/>
-	  <jboss-version
-		  />
-	  <if>
-		  <equals arg1="${po-grid-3.1-jboss.http-connector.remove}" arg2="true"/>
-		  <then>
-			  <property name="po-grid-3.1-jboss.application.url" value="https://${po-grid-3.1-jboss.server.hostname}:${po-grid-3.1-jboss.grid.secure.port}/wsrf/services/cagrid/CoreServices"/>
-		  </then>
-		  <else>
-			  <property name="po-grid-3.1-jboss.application.url" value="http://${po-grid-3.1-jboss.server.hostname}:${po-grid-3.1-jboss.server.port}/wsrf/services/cagrid/CoreServices"/>
-		  </else>
-	  </if>
-	  <available file="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/conf/jboss-service.xml" property="po-grid-3.1-jboss.exists"/>
-	  <basename file="${po-grid-3.1-jboss.ssl.keystore.location}" property="po-grid-3.1-jboss.ssl.keystore.file"/>
-	  <dirname file="${po-grid-3.1-jboss.ssl.keystore.location}" property="po-grid-3.1-jboss.ssl.keystore.dir"/>
-	  <basename file="${po-grid-3.1-jboss.grid.secure.cert.location}" property="po-grid-3.1-jboss.grid.secure.cert.file"/>
-	  <dirname file="${po-grid-3.1-jboss.grid.secure.cert.location}" property="po-grid-3.1-jboss.grid.secure.dir"/>
-	  <basename file="${po-grid-3.1-jboss.grid.secure.key.location}" property="po-grid-3.1-jboss.grid.secure.key.file"/>
-	  <property name="po-grid-3.1-jboss.socket.ports" value="${po-grid-3.1-jboss.server.port},${po-grid-3.1-jboss.server.rmi.port},${po-grid-3.1-jboss.server.jndi.port},${po-grid-3.1-jboss.service.rmiobject.port},${po-grid-3.1-jboss.jms.port},${po-grid-3.1-jboss.web.service.port}"/>
+      <property name="po-grid-3.1-jboss.ssl.enable" value="false"/>
+      <property name="po-grid-3.1-jboss.home" value="${application.base.path}/${po-grid-3.1-jboss.relative.path}"/>
+      <jboss-version
+          />
+      <if>
+          <equals arg1="${po-grid-3.1-jboss.http-connector.remove}" arg2="true"/>
+          <then>
+              <property name="po-grid-3.1-jboss.application.url" value="https://${po-grid-3.1-jboss.server.hostname}:${po-grid-3.1-jboss.grid.secure.port}/wsrf/services/cagrid/CoreServices"/>
+          </then>
+          <else>
+              <property name="po-grid-3.1-jboss.application.url" value="http://${po-grid-3.1-jboss.server.hostname}:${po-grid-3.1-jboss.server.port}/wsrf/services/cagrid/CoreServices"/>
+          </else>
+      </if>
+      <available file="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/conf/jboss-service.xml" property="po-grid-3.1-jboss.exists"/>
+      <basename file="${po-grid-3.1-jboss.ssl.keystore.location}" property="po-grid-3.1-jboss.ssl.keystore.file"/>
+      <dirname file="${po-grid-3.1-jboss.ssl.keystore.location}" property="po-grid-3.1-jboss.ssl.keystore.dir"/>
+      <basename file="${po-grid-3.1-jboss.grid.secure.cert.location}" property="po-grid-3.1-jboss.grid.secure.cert.file"/>
+      <dirname file="${po-grid-3.1-jboss.grid.secure.cert.location}" property="po-grid-3.1-jboss.grid.secure.dir"/>
+      <basename file="${po-grid-3.1-jboss.grid.secure.key.location}" property="po-grid-3.1-jboss.grid.secure.key.file"/>
+      <property name="po-grid-3.1-jboss.socket.ports" value="${po-grid-3.1-jboss.server.port},${po-grid-3.1-jboss.server.rmi.port},${po-grid-3.1-jboss.server.jndi.port},${po-grid-3.1-jboss.service.rmiobject.port},${po-grid-3.1-jboss.jms.port},${po-grid-3.1-jboss.web.service.port}"/>
   </target>
 
   <target name="install:po-grid-3.1-jboss:binaries" unless="exclude.po-grid-3.1">
       <jboss-install-binaries
           application.base.path="${application.base.path}/pogrid-3.1"
-          jems.install.option="default" 
-          jboss.home="${po-grid-3.1-jboss.home}" 
-          jboss.server.name="${po-grid-3.1-jboss.server.name}" 
+          jems.install.option="default"
+          jboss.home="${po-grid-3.1-jboss.home}"
+          jboss.server.name="${po-grid-3.1-jboss.server.name}"
           />
       <jboss-nci-customizations
           application.base.path="${application.base.path}/pogrid-3.1"
@@ -182,98 +182,98 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
         <unzip dest="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/deploy/${po-grid-3.1.dir.target}" src="${po-grid-3.1.dir.src}/${po-grid-3.1.artifact.file}" />
     </target>
-    
+
 
     <!-- Configures installed po-grid-3.1 application -->
     <target name="install:po-grid-3.1-jboss:grid:configure" description="Configure po-grid-3.1 service based on properties" unless="exclude.po-grid-3.1">
         <!--
-        NOTE: during an upgrade the <jboss-configure/> macrodef (which calls <grid-secure-configure-connector/> macrodef) 
+        NOTE: during an upgrade the <jboss-configure/> macrodef (which calls <grid-secure-configure-connector/> macrodef)
         which copies over the -cert.pem and -key.pem host cert file over to the ${jboss.home}/server/${po-grid-3.1-jboss.server.name}/conf directory
         therefore we're changing the appserver.conf.dir property to point to pogrid-3.1.grid.secure.dir instead.
-        
-        This macro required whenever the host certs are not installed within the ${jboss.home}/server/${jboss.server.name.grid}/conf directory   
+
+        This macro required whenever the host certs are not installed within the ${jboss.home}/server/${jboss.server.name.grid}/conf directory
         grid-appserver-configure
         -->
-	<echoproperties prefix="po-grid-3.1-jboss"/>
-	<jboss-configure-grid
-		jboss.home="${po-grid-3.1-jboss.home}"
-		jboss.server.name="${po-grid-3.1-jboss.server.name}"
-		jboss.port.http="${po-grid-3.1-jboss.server.port}"
-		jboss.port.ssl="${po-grid-3.1-jboss.ssl.port}"
-		jboss.hostname="${po-grid-3.1-jboss.server.hostname}"
-		jboss.external.http.host="${po-grid-3.1-jboss.external.http.host}"
-		jboss.external.http.port="${po-grid-3.1-jboss.external.http.port}"
-		jboss.external.grid.secure.host="${po-grid-3.1-jboss.external.grid.secure.host}"
-		jboss.external.grid.secure.port="${po-grid-3.1-jboss.external.grid.secure.port}"
-		jboss.grid.secure.enable="${po-grid-3.1-jboss.grid.secure.enable}"
-		jboss.grid.secure.dir="${po-grid-3.1-jboss.grid.secure.dir}"
-		jboss.grid.secure.port="${po-grid-3.1-jboss.grid.secure.port}"
-		jboss.grid.secure.key.file="${po-grid-3.1-jboss.grid.secure.key.file}"
-		jboss.grid.secure.cert.file="${po-grid-3.1-jboss.grid.secure.cert.file}"
-		grid.application.name="${po-grid-3.1.introduce.skeleton.service.name}"
-		/>
+    <echoproperties prefix="po-grid-3.1-jboss"/>
+    <jboss-configure-grid
+        jboss.home="${po-grid-3.1-jboss.home}"
+        jboss.server.name="${po-grid-3.1-jboss.server.name}"
+        jboss.port.http="${po-grid-3.1-jboss.server.port}"
+        jboss.port.ssl="${po-grid-3.1-jboss.ssl.port}"
+        jboss.hostname="${po-grid-3.1-jboss.server.hostname}"
+        jboss.external.http.host="${po-grid-3.1-jboss.external.http.host}"
+        jboss.external.http.port="${po-grid-3.1-jboss.external.http.port}"
+        jboss.external.grid.secure.host="${po-grid-3.1-jboss.external.grid.secure.host}"
+        jboss.external.grid.secure.port="${po-grid-3.1-jboss.external.grid.secure.port}"
+        jboss.grid.secure.enable="${po-grid-3.1-jboss.grid.secure.enable}"
+        jboss.grid.secure.dir="${po-grid-3.1-jboss.grid.secure.dir}"
+        jboss.grid.secure.port="${po-grid-3.1-jboss.grid.secure.port}"
+        jboss.grid.secure.key.file="${po-grid-3.1-jboss.grid.secure.key.file}"
+        jboss.grid.secure.cert.file="${po-grid-3.1-jboss.grid.secure.cert.file}"
+        grid.application.name="${po-grid-3.1.introduce.skeleton.service.name}"
+        />
         <copy file="${grid.dist.relative.dir}/log4j.xml" todir="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/conf" overwrite="true" />
     </target>
 
   <target name="install:po-grid-3.1-jboss:configure" unless="exclude.po-grid-3.1">
         <!-- create a new template bindings file from template (using ports for po-grid-3.1 -->
-	
-	  <jboss-configure
-		  jboss.home="${po-grid-3.1-jboss.home}"
-		  jboss.server.name="${po-grid-3.1-jboss.server.name}"
-		  jboss.server.ports.name="${po-grid-3.1-jboss.server.ports.name}"
-		  jboss.server.bindingfile.location="${po-grid-3.1-jboss.home}/bindings/bindings.xml"
-		  jboss.server.binding.template.location="${po-grid-3.1-jboss.server.binding.template.location}"
-		  jboss.server.jndi.port="${po-grid-3.1-jboss.server.jndi.port}"
-		  jboss.server.port="${po-grid-3.1-jboss.server.port}"
-		  jboss.cobraorb.port="${po-grid-3.1-jboss.cobraorb.port}"
-		  jboss.ejbinvoker.port="${po-grid-3.1-jboss.ejbinvoker.port}"
-		  jboss.hajndi.port="${po-grid-3.1-jboss.hajndi.port}"
-		  jboss.hajrmi.port="${po-grid-3.1-jboss.hajrmi.port}"
-		  jboss.jms.port="${po-grid-3.1-jboss.jms.port}"
-		  jboss.jmx-rmi.port="${po-grid-3.1-jboss.jmx-rmi.port}"
-		  jboss.messaging.port="${po-grid-3.1-jboss.messaging.port}"
-		  jboss.pooledha.port="${po-grid-3.1-jboss.pooledha.port}"
-		  jboss.remoting.port="${po-grid-3.1-jboss.remoting.port}"
-		  jboss.server.bind.port="${po-grid-3.1-jboss.server.bind.port}"
-		  jboss.server.rmi.port="${po-grid-3.1-jboss.server.rmi.port}"
-		  jboss.service.rmiobject.port="${po-grid-3.1-jboss.service.rmiobject.port}"
-		  jboss.snmp.port="${po-grid-3.1-jboss.snmp.port}"
-		  jboss.snmp-trapd.port="${po-grid-3.1-jboss.snmp-trapd.port}"
-		  jboss.web.service.port="${po-grid-3.1-jboss.web.service.port}"
-		  jboss.unifiedinvoker.port="${po-grid-3.1-jboss.unifiedinvoker.port}"
-		  jboss.hajndi.auto.port="${po-grid-3.1-jboss.hajndi.auto.port}"
-		  jboss.ssl.port="${po-grid-3.1-jboss.ssl.port}"
-		  jboss.jms2.netty.port="${po-grid-3.1-jboss.jms2.netty.port}"
-		  jboss.jms2.netty-ssl.port="${po-grid-3.1-jboss.jms2.netty-ssl.port}"
-		  jboss.transaction.recovery.port="${po-grid-3.1-jboss.transaction.recovery.port}"
-		  jboss.transaction.status.port="${po-grid-3.1-jboss.transaction.status.port}"
-		  jboss.transaction.processid.port="${po-grid-3.1-jboss.transaction.processid.port}"
-		  jboss.conf.dir="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/conf"
-		  jboss.server-xml.file="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
-		  jboss.ssl.enable="${po-grid-3.1-jboss.ssl.enable}"
-		  jboss.ssl.keystore.file="${po-grid-3.1-jboss.ssl.keystore.file}"
-		  jboss.ssl.keystore.dir="${po-grid-3.1-jboss.ssl.keystore.dir}"
-		  jboss.ssl.keystore.pass="${po-grid-3.1-jboss.ssl.keystore.pass}"
-		  jboss.ssl.keystore.alias="${po-grid-3.1-jboss.ssl.keystore.alias}"
-		  jboss.ssl.fullyqualified.hostname="${po-grid-3.1-jboss.ssl.fullyqualified.hostname}"
-		  jboss.external.ssl.host="${po-grid-3.1-jboss.external.ssl.host}"
-		  jboss.external.ssl.port="${po-grid-3.1-jboss.external.ssl.port}"
-		  jboss.external.http.host="${po-grid-3.1-jboss.external.http.host}"
-		  jboss.external.http.port="${po-grid-3.1-jboss.external.http.port}"
-		  jboss.external.grid.secure.host="${po-grid-3.1-jboss.external.grid.secure.host}"
-		  jboss.external.grid.secure.port="${po-grid-3.1-jboss.external.grid.secure.port}"
-		  jboss.server.hostname="${po-grid-3.1-jboss.server.hostname}"
-		  jboss.grid.configure="true"
-		  jboss.grid.secure.dir="${po-grid-3.1-jboss.grid.secure.dir}"
-		  jboss.grid.secure.enable="${po-grid-3.1-jboss.grid.secure.enable}"
-		  jboss.grid.secure.port="${po-grid-3.1-jboss.grid.secure.port}"
-		  jboss.grid.secure.key.file="${po-grid-3.1-jboss.grid.secure.key.file}" 
-		  jboss.grid.secure.cert.file="${po-grid-3.1-jboss.grid.secure.cert.file}" 
-		  jboss.java.opts="${po-grid-3.1-jboss.java.opts}"
-		  jboss.logs.dir="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/log"
-		  jboss.http-connector.remove="${po-grid-3.1-jboss.http-connector.remove}"
-		  />
+
+      <jboss-configure
+          jboss.home="${po-grid-3.1-jboss.home}"
+          jboss.server.name="${po-grid-3.1-jboss.server.name}"
+          jboss.server.ports.name="${po-grid-3.1-jboss.server.ports.name}"
+          jboss.server.bindingfile.location="${po-grid-3.1-jboss.home}/bindings/bindings.xml"
+          jboss.server.binding.template.location="${po-grid-3.1-jboss.server.binding.template.location}"
+          jboss.server.jndi.port="${po-grid-3.1-jboss.server.jndi.port}"
+          jboss.server.port="${po-grid-3.1-jboss.server.port}"
+          jboss.cobraorb.port="${po-grid-3.1-jboss.cobraorb.port}"
+          jboss.ejbinvoker.port="${po-grid-3.1-jboss.ejbinvoker.port}"
+          jboss.hajndi.port="${po-grid-3.1-jboss.hajndi.port}"
+          jboss.hajrmi.port="${po-grid-3.1-jboss.hajrmi.port}"
+          jboss.jms.port="${po-grid-3.1-jboss.jms.port}"
+          jboss.jmx-rmi.port="${po-grid-3.1-jboss.jmx-rmi.port}"
+          jboss.messaging.port="${po-grid-3.1-jboss.messaging.port}"
+          jboss.pooledha.port="${po-grid-3.1-jboss.pooledha.port}"
+          jboss.remoting.port="${po-grid-3.1-jboss.remoting.port}"
+          jboss.server.bind.port="${po-grid-3.1-jboss.server.bind.port}"
+          jboss.server.rmi.port="${po-grid-3.1-jboss.server.rmi.port}"
+          jboss.service.rmiobject.port="${po-grid-3.1-jboss.service.rmiobject.port}"
+          jboss.snmp.port="${po-grid-3.1-jboss.snmp.port}"
+          jboss.snmp-trapd.port="${po-grid-3.1-jboss.snmp-trapd.port}"
+          jboss.web.service.port="${po-grid-3.1-jboss.web.service.port}"
+          jboss.unifiedinvoker.port="${po-grid-3.1-jboss.unifiedinvoker.port}"
+          jboss.hajndi.auto.port="${po-grid-3.1-jboss.hajndi.auto.port}"
+          jboss.ssl.port="${po-grid-3.1-jboss.ssl.port}"
+          jboss.jms2.netty.port="${po-grid-3.1-jboss.jms2.netty.port}"
+          jboss.jms2.netty-ssl.port="${po-grid-3.1-jboss.jms2.netty-ssl.port}"
+          jboss.transaction.recovery.port="${po-grid-3.1-jboss.transaction.recovery.port}"
+          jboss.transaction.status.port="${po-grid-3.1-jboss.transaction.status.port}"
+          jboss.transaction.processid.port="${po-grid-3.1-jboss.transaction.processid.port}"
+          jboss.conf.dir="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/conf"
+          jboss.server-xml.file="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+          jboss.ssl.enable="${po-grid-3.1-jboss.ssl.enable}"
+          jboss.ssl.keystore.file="${po-grid-3.1-jboss.ssl.keystore.file}"
+          jboss.ssl.keystore.dir="${po-grid-3.1-jboss.ssl.keystore.dir}"
+          jboss.ssl.keystore.pass="${po-grid-3.1-jboss.ssl.keystore.pass}"
+          jboss.ssl.keystore.alias="${po-grid-3.1-jboss.ssl.keystore.alias}"
+          jboss.ssl.fullyqualified.hostname="${po-grid-3.1-jboss.ssl.fullyqualified.hostname}"
+          jboss.external.ssl.host="${po-grid-3.1-jboss.external.ssl.host}"
+          jboss.external.ssl.port="${po-grid-3.1-jboss.external.ssl.port}"
+          jboss.external.http.host="${po-grid-3.1-jboss.external.http.host}"
+          jboss.external.http.port="${po-grid-3.1-jboss.external.http.port}"
+          jboss.external.grid.secure.host="${po-grid-3.1-jboss.external.grid.secure.host}"
+          jboss.external.grid.secure.port="${po-grid-3.1-jboss.external.grid.secure.port}"
+          jboss.server.hostname="${po-grid-3.1-jboss.server.hostname}"
+          jboss.grid.configure="true"
+          jboss.grid.secure.dir="${po-grid-3.1-jboss.grid.secure.dir}"
+          jboss.grid.secure.enable="${po-grid-3.1-jboss.grid.secure.enable}"
+          jboss.grid.secure.port="${po-grid-3.1-jboss.grid.secure.port}"
+          jboss.grid.secure.key.file="${po-grid-3.1-jboss.grid.secure.key.file}"
+          jboss.grid.secure.cert.file="${po-grid-3.1-jboss.grid.secure.cert.file}"
+          jboss.java.opts="${po-grid-3.1-jboss.java.opts}"
+          jboss.logs.dir="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/log"
+          jboss.http-connector.remove="${po-grid-3.1-jboss.http-connector.remove}"
+          />
   </target>
 
   <target name="install:po-grid-3.1-jboss:stop" unless="exclude.po-grid-3.1">
@@ -286,78 +286,78 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         <isset property="exclude.start.servers"/>
       </not>
       <then>
-	      <jboss-start-jboss
-		      jboss.home="${po-grid-3.1-jboss.home}"
-		      jboss.server.name="${po-grid-3.1-jboss.server.name}"
-		      />
+          <jboss-start-jboss
+              jboss.home="${po-grid-3.1-jboss.home}"
+              jboss.server.name="${po-grid-3.1-jboss.server.name}"
+              />
       </then>
     </if>
     </target>
 
     <target name="install:po-grid-3.1-jboss:validation:pre-install" description="Runs pre-install validation checks bda-utils"
-	    depends="
-	    common:po-grid-3.1-jboss:init,common:init,
-	    install:common:validation:pre-install
-	    " unless="exclude.po-grid-3.1">
-	    <validate-pre-install-jboss
-		    jboss.ssl.enable="${po-grid-3.1-jboss.ssl.enable}"
-		    jboss.ssl.keystore.file="${po-grid-3.1-jboss.ssl.keystore.file}"
-		    jboss.ssl.keystore.dir="${po-grid-3.1-jboss.ssl.keystore.dir}"
-		    jboss.ssl.keystore.pass="${po-grid-3.1-jboss.ssl.keystore.pass}"
-		    jboss.ssl.keystore.alias="${po-grid-3.1-jboss.ssl.keystore.alias}"
-		    jboss.ssl.fullyqualified.hostname="${po-grid-3.1-jboss.ssl.fullyqualified.hostname}"
-		    />
+        depends="
+        common:po-grid-3.1-jboss:init,common:init,
+        install:common:validation:pre-install
+        " unless="exclude.po-grid-3.1">
+        <validate-pre-install-jboss
+            jboss.ssl.enable="${po-grid-3.1-jboss.ssl.enable}"
+            jboss.ssl.keystore.file="${po-grid-3.1-jboss.ssl.keystore.file}"
+            jboss.ssl.keystore.dir="${po-grid-3.1-jboss.ssl.keystore.dir}"
+            jboss.ssl.keystore.pass="${po-grid-3.1-jboss.ssl.keystore.pass}"
+            jboss.ssl.keystore.alias="${po-grid-3.1-jboss.ssl.keystore.alias}"
+            jboss.ssl.fullyqualified.hostname="${po-grid-3.1-jboss.ssl.fullyqualified.hostname}"
+            />
     </target>
     <target name="install:po-grid-3.1-jboss:validation:pre-install:ports" description="Checks to see if configured ports are listenting and fails buld, meant to be run after jboss:stop"
-	    depends="
-	    common:init,
-	    install:po-grid-3.1-jboss:stop
-	    " unless="exclude.po-grid-3.1">
-	    <validate-pre-jboss-ports
-		    jboss.socket.ports="${po-grid-3.1-jboss.socket.ports}" 
-		    hostname="${po-grid-3.1-jboss.server.hostname}"
-		    />
+        depends="
+        common:init,
+        install:po-grid-3.1-jboss:stop
+        " unless="exclude.po-grid-3.1">
+        <validate-pre-jboss-ports
+            jboss.socket.ports="${po-grid-3.1-jboss.socket.ports}"
+            hostname="${po-grid-3.1-jboss.server.hostname}"
+            />
     </target>
     <target name="install:po-grid-3.1-jboss:validation:post-install" description="Run post-install checks from bda-utils"
-	    depends="
-	    common:po-grid-3.1-jboss:init,
-	    common:init,
-	    install:po-grid-3.1-jboss:start
-	    " unless="exclude.po-grid-3.1">
-	    <if>
-		    <not>
-			    <isset property="exclude.start.servers"/>
-		    </not>
-		    <then>
-			    <validate-post-jboss
-				    jboss.socket.list="${po-grid-3.1-jboss.socket.list}" 
-				    jboss.home="${po-grid-3.1-jboss.home}" 
-				    jboss.hostname="${po-grid-3.1-jboss.server.hostname}" 
-				    jboss.application.url="${po-grid-3.1-jboss.application.url}" 
-				    />
-		    </then>
-	    </if>
+        depends="
+        common:po-grid-3.1-jboss:init,
+        common:init,
+        install:po-grid-3.1-jboss:start
+        " unless="exclude.po-grid-3.1">
+        <if>
+            <not>
+                <isset property="exclude.start.servers"/>
+            </not>
+            <then>
+                <validate-post-jboss
+                    jboss.socket.list="${po-grid-3.1-jboss.socket.list}"
+                    jboss.home="${po-grid-3.1-jboss.home}"
+                    jboss.hostname="${po-grid-3.1-jboss.server.hostname}"
+                    jboss.application.url="${po-grid-3.1-jboss.application.url}"
+                    />
+            </then>
+        </if>
     </target>
 
   <target name="install:po-grid-3.1-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.po-grid-3.1"
-	  depends="
-	  common:po-grid-3.1-jboss:init,
-	  common:init,
-	  install:po-grid-3.1-jboss:init,
-	  install:po-grid-3.1-jboss:validation:pre-install,
-	  install:common:validation:pre-install,
-	  install:po-grid-3.1-jboss:stop,
-	  install:po-grid-3.1-jboss:validation:pre-install:ports,
-	  install:po-grid-3.1-jboss:clean,
-	  install:po-grid-3.1-jboss:binaries,
-	  install:po-grid-3.1-jboss:configure,
-	  install:po-grid-3.1-jboss:re-configure,
-	  install:po-grid-3.1-jboss:grid,
-	  install:po-grid-3.1-jboss:grid:configure,
-	  install:po-grid-3.1-jboss:post,
-	  install:po-grid-3.1-jboss:start,
-	  install:po-grid-3.1-jboss:validation:post-install
-	  " >
+      depends="
+      common:po-grid-3.1-jboss:init,
+      common:init,
+      install:po-grid-3.1-jboss:init,
+      install:po-grid-3.1-jboss:validation:pre-install,
+      install:common:validation:pre-install,
+      install:po-grid-3.1-jboss:stop,
+      install:po-grid-3.1-jboss:validation:pre-install:ports,
+      install:po-grid-3.1-jboss:clean,
+      install:po-grid-3.1-jboss:binaries,
+      install:po-grid-3.1-jboss:configure,
+      install:po-grid-3.1-jboss:re-configure,
+      install:po-grid-3.1-jboss:grid,
+      install:po-grid-3.1-jboss:grid:configure,
+      install:po-grid-3.1-jboss:post,
+      install:po-grid-3.1-jboss:start,
+      install:po-grid-3.1-jboss:validation:post-install
+      " >
   </target>
 
   <target name="install:po-grid-3.1-jboss:re-configure" depends="install:po-ear-jboss:init" unless="exclude.po-grid-3.1">
@@ -403,67 +403,67 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   </target>
 
   <target name="upgrade-dac:po-grid-3.1-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.po-grid-3.1"
-	  depends="
-	  upgrade:po-grid-3.1-jboss:init,
-	  common:po-grid-3.1-jboss:init,
-	  common:init,
-	  install:po-grid-3.1-jboss:init,
-	  install:po-grid-3.1-jboss:validation:pre-install,
-	  install:common:validation:pre-install,
-	  install:po-grid-3.1-jboss:stop,
-	  install:po-grid-3.1-jboss:validation:pre-install:ports,
-	  install:po-grid-3.1-jboss:clean,
-	  install:po-grid-3.1-jboss:binaries,
-	  install:po-grid-3.1-jboss:configure,
-	  install:po-grid-3.1-jboss:re-configure,
-	  install:po-grid-3.1-jboss:grid,
-	  install:po-grid-3.1-jboss:grid:configure,
-	  upgrade:po-grid-3.1-jboss:post,
-	  install:po-grid-3.1-jboss:post,
-	  install:po-grid-3.1-jboss:start,
-	  install:po-grid-3.1-jboss:validation:post-install
-	  " >
+      depends="
+      upgrade:po-grid-3.1-jboss:init,
+      common:po-grid-3.1-jboss:init,
+      common:init,
+      install:po-grid-3.1-jboss:init,
+      install:po-grid-3.1-jboss:validation:pre-install,
+      install:common:validation:pre-install,
+      install:po-grid-3.1-jboss:stop,
+      install:po-grid-3.1-jboss:validation:pre-install:ports,
+      install:po-grid-3.1-jboss:clean,
+      install:po-grid-3.1-jboss:binaries,
+      install:po-grid-3.1-jboss:configure,
+      install:po-grid-3.1-jboss:re-configure,
+      install:po-grid-3.1-jboss:grid,
+      install:po-grid-3.1-jboss:grid:configure,
+      upgrade:po-grid-3.1-jboss:post,
+      install:po-grid-3.1-jboss:post,
+      install:po-grid-3.1-jboss:start,
+      install:po-grid-3.1-jboss:validation:post-install
+      " >
   </target>
 
   <target name="upgrade-cm:po-grid-3.1-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.po-grid-3.1"
-	  depends="
-	  upgrade:po-grid-3.1-jboss:init,
-	  common:po-grid-3.1-jboss:init,
-	  common:init,
-	  install:po-grid-3.1-jboss:init,
-	  install:po-grid-3.1-jboss:validation:pre-install,
-	  install:common:validation:pre-install,
-	  install:po-grid-3.1-jboss:stop,
-	  install:po-grid-3.1-jboss:validation:pre-install:ports,
-	  install:po-grid-3.1-jboss:configure,
-	  install:po-grid-3.1-jboss:re-configure,
-	  install:po-grid-3.1-jboss:grid,
-	  install:po-grid-3.1-jboss:grid:configure,
-	  upgrade:po-grid-3.1-jboss:post,
-	  install:po-grid-3.1-jboss:post,
-	  install:po-grid-3.1-jboss:start,
-	  install:po-grid-3.1-jboss:validation:post-install
-	  " >
+      depends="
+      upgrade:po-grid-3.1-jboss:init,
+      common:po-grid-3.1-jboss:init,
+      common:init,
+      install:po-grid-3.1-jboss:init,
+      install:po-grid-3.1-jboss:validation:pre-install,
+      install:common:validation:pre-install,
+      install:po-grid-3.1-jboss:stop,
+      install:po-grid-3.1-jboss:validation:pre-install:ports,
+      install:po-grid-3.1-jboss:configure,
+      install:po-grid-3.1-jboss:re-configure,
+      install:po-grid-3.1-jboss:grid,
+      install:po-grid-3.1-jboss:grid:configure,
+      upgrade:po-grid-3.1-jboss:post,
+      install:po-grid-3.1-jboss:post,
+      install:po-grid-3.1-jboss:start,
+      install:po-grid-3.1-jboss:validation:post-install
+      " >
   </target>
 
   <target name="upgrade-ncm:po-grid-3.1-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.po-grid-3.1"
-	  depends="
-	  upgrade:po-grid-3.1-jboss:init,
-	  common:po-grid-3.1-jboss:init,
-	  common:init,
-	  install:po-grid-3.1-jboss:init,
-	  install:po-grid-3.1-jboss:validation:pre-install,
-	  install:common:validation:pre-install,
-	  install:po-grid-3.1-jboss:stop,
-	  install:po-grid-3.1-jboss:validation:pre-install:ports,
-	  install:po-grid-3.1-jboss:re-configure,
-	  install:po-grid-3.1-jboss:grid,
-	  install:po-grid-3.1-jboss:grid:configure,
-	  upgrade:po-grid-3.1-jboss:post,
-	  install:po-grid-3.1-jboss:post,
-	  install:po-grid-3.1-jboss:start,
-	  install:po-grid-3.1-jboss:validation:post-install
-	  " >
+      depends="
+      upgrade:po-grid-3.1-jboss:init,
+      common:po-grid-3.1-jboss:init,
+      common:init,
+      install:po-grid-3.1-jboss:init,
+      install:po-grid-3.1-jboss:validation:pre-install,
+      install:common:validation:pre-install,
+      install:po-grid-3.1-jboss:stop,
+      install:po-grid-3.1-jboss:validation:pre-install:ports,
+      install:po-grid-3.1-jboss:re-configure,
+      install:po-grid-3.1-jboss:grid,
+      install:po-grid-3.1-jboss:grid:configure,
+      upgrade:po-grid-3.1-jboss:post,
+      install:po-grid-3.1-jboss:post,
+      install:po-grid-3.1-jboss:start,
+      install:po-grid-3.1-jboss:validation:post-install
+      " >
   </target>
 
   <target name="install:po-grid-3.1-jboss:post" unless="exclude.po-grid-3.1">
@@ -499,87 +499,84 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   </target>
 
   <target name="upgrade:po-grid-3.1-jboss:init"
-	  depends="
-	  upgrade:po-grid-3.1-jboss:init:prep,
-	  upgrade:po-grid-3.1-jboss:readers:bda,
-	  upgrade:po-grid-3.1-jboss:readers:custom
-	  " unless="exclude.po-grid-3.1">
-	  <properties-print
-		  properties.list="${read.properties.list}"
-		  />
-	  <properties-exist
-		  properties.list="${read.properties.list}"
-		  />
-	  <properties-write
-		  properties.list="${read.properties.list}"
-		  />
+      depends="
+      upgrade:po-grid-3.1-jboss:init:prep,
+      upgrade:po-grid-3.1-jboss:readers:bda,
+      upgrade:po-grid-3.1-jboss:readers:custom
+      " unless="exclude.po-grid-3.1">
+      <properties-print
+          properties.list="${read.properties.list}"
+          />
+      <properties-exist
+          properties.list="${read.properties.list}"
+          />
+      <properties-write
+          properties.list="${read.properties.list}"
+          />
   </target>
 
   <target name="upgrade:po-grid-3.1-jboss:init:prep" depends="upgrade:common:init:prep" unless="exclude.po-grid-3.1">
-	  <property name="po-grid-3.1-jboss.home" value="${application.base.path}/${po-grid-3.1-jboss.relative.path}"/>
-	  <jboss-version
-		  />
-	  <if>
-		  <equals arg1="${po-grid-3.1-jboss.ncicb-standard.port-config}" arg2="true"/>
-		  <then>
-			  <property name="po-grid-3.1-jboss.server.binding.template.location" value="${basedir}/${jboss-bindings.file}"/>
-		  </then>
-		  <else>
-			  <property name="po-grid-3.1-jboss.server.binding.template.location" value="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings.xml"/>
-		  </else>
-	  </if>
+      <property name="po-grid-3.1-jboss.home" value="${application.base.path}/${po-grid-3.1-jboss.relative.path}"/>
+      <jboss-version
+          />
+      <if>
+          <equals arg1="${po-grid-3.1-jboss.ncicb-standard.port-config}" arg2="true"/>
+          <then>
+              <property name="po-grid-3.1-jboss.server.binding.template.location" value="${basedir}/${jboss-bindings.file}"/>
+          </then>
+          <else>
+              <property name="po-grid-3.1-jboss.server.binding.template.location" value="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings.xml"/>
+          </else>
+      </if>
 
-	  <!-- Upgrades always use port configs
-	  <property name="po-grid-3.1-jboss.ncicb-standard.port-config" value="true"/>
-	  -->
-	  <available file="${po-grid-3.1-jboss.home}" property="po-grid-3.1-jboss.exists"/>
-	  <property name="read.po-grid-3.1-jboss.home" value="${po-grid-3.1-jboss.home}"/>
-	  <echo message="po-grid-3.1-jboss.exists - ${po-grid-3.1-jboss.exists}"/>
+      <!-- Upgrades always use port configs
+      <property name="po-grid-3.1-jboss.ncicb-standard.port-config" value="true"/>
+      -->
+      <available file="${po-grid-3.1-jboss.home}" property="po-grid-3.1-jboss.exists"/>
+      <property name="read.po-grid-3.1-jboss.home" value="${po-grid-3.1-jboss.home}"/>
+      <echo message="po-grid-3.1-jboss.exists - ${po-grid-3.1-jboss.exists}"/>
   </target>
 
   <target name="upgrade:po-grid-3.1-jboss:readers:custom" unless="exclude.po-grid-3.1">
-	  <!-- call your custom readers here, two properties included in these scripts that don't have readers are "fs-data.base.dir, mail.smtp.server" -->
+      <!-- call your custom readers here, two properties included in these scripts that don't have readers are "fs-data.base.dir, mail.smtp.server" -->
   </target>
 
-  <target name="upgrade:po-grid-3.1-jboss:readers:bda" if="jboss.exists">
-
-	  
-	  <if>
-		  <equals arg1="${jboss.major.version}" arg2="4"/>
-		  <then>
-			  <jboss-read-bindings-file-location
-				  jboss.home="${read.po-grid-3.1-jboss.home}"
-				  jboss.server.name="${po-grid-3.1-jboss.server.name}"
-				  jboss.server.ports.name.property.name="po-grid-3.1-jboss-server.ports.name"
-				  jboss.bindings.file.location.property.name="po-grid-3.1-jboss.server.bindingfile.location"
-				  />
-			  <jboss-read-ports
-				  jboss.server.ports.name="${po-grid-3.1-jboss.server.ports.name}"
-				  jboss.server.bindingfile.location="${po-grid-3.1-jboss.server.bindingfile.location}"
-				  jboss.server.jndi.port.property.name="po-grid-3.1-jboss.server.jndi.port"
-				  jboss.server.port.property.name="po-grid-3.1-jboss.server.port"
-				  jboss.ejbinvoker.port.property.name="po-grid-3.1-jboss.ejbinvoker.port"
-				  jboss.server.rmi.port.property.name="po-grid-3.1-jboss.server.rmi.port"
-				  jboss.web.service.port.property.name="po-grid-3.1-jboss.web.service.port"
-				  jboss.service.rmiobject.port.property.name="po-grid-3.1-jboss.service.rmiobject.port"
-				  jboss.server.bind.port.property.name="po-grid-3.1-jboss.server.bind.port"
-				  jboss.hajndi.port.property.name="po-grid-3.1-jboss.hajndi.port"
-				  jboss.hajrmi.port.property.name="po-grid-3.1-jboss.hajrmi.port"
-				  jboss.pooledha.port.property.name="po-grid-3.1-jboss.pooledha.port"
-				  jboss.cobraorb.port.property.name="po-grid-3.1-jboss.cobraorb.port"
-				  jboss.jmx-rmi.port.property.name="po-grid-3.1-jboss.jmx-rmi.port"
-				  jboss.snmp-trapd.port.property.name="po-grid-3.1-jboss.snmp-trapd.port"
-				  jboss.snmp.port.property.name="po-grid-3.1-jboss.snmp.port"
-				  jboss.jms.port.property.name="po-grid-3.1-jboss.jms.port"
-				  jboss.remoting.port.property.name="po-grid-3.1-jboss.remoting.port"
-				  jboss.messaging.port.property.name="po-grid-3.1-jboss.messaging.port"
-				  />
-		  </then>
-	  </if>
-	  
+  <target name="upgrade:po-grid-3.1-jboss:readers:bda" if="jboss.exists" unless="exclude.po-grid-3.1">
+      <if>
+          <equals arg1="${jboss.major.version}" arg2="4"/>
+          <then>
+              <jboss-read-bindings-file-location
+                  jboss.home="${read.po-grid-3.1-jboss.home}"
+                  jboss.server.name="${po-grid-3.1-jboss.server.name}"
+                  jboss.server.ports.name.property.name="po-grid-3.1-jboss-server.ports.name"
+                  jboss.bindings.file.location.property.name="po-grid-3.1-jboss.server.bindingfile.location"
+                  />
+              <jboss-read-ports
+                  jboss.server.ports.name="${po-grid-3.1-jboss.server.ports.name}"
+                  jboss.server.bindingfile.location="${po-grid-3.1-jboss.server.bindingfile.location}"
+                  jboss.server.jndi.port.property.name="po-grid-3.1-jboss.server.jndi.port"
+                  jboss.server.port.property.name="po-grid-3.1-jboss.server.port"
+                  jboss.ejbinvoker.port.property.name="po-grid-3.1-jboss.ejbinvoker.port"
+                  jboss.server.rmi.port.property.name="po-grid-3.1-jboss.server.rmi.port"
+                  jboss.web.service.port.property.name="po-grid-3.1-jboss.web.service.port"
+                  jboss.service.rmiobject.port.property.name="po-grid-3.1-jboss.service.rmiobject.port"
+                  jboss.server.bind.port.property.name="po-grid-3.1-jboss.server.bind.port"
+                  jboss.hajndi.port.property.name="po-grid-3.1-jboss.hajndi.port"
+                  jboss.hajrmi.port.property.name="po-grid-3.1-jboss.hajrmi.port"
+                  jboss.pooledha.port.property.name="po-grid-3.1-jboss.pooledha.port"
+                  jboss.cobraorb.port.property.name="po-grid-3.1-jboss.cobraorb.port"
+                  jboss.jmx-rmi.port.property.name="po-grid-3.1-jboss.jmx-rmi.port"
+                  jboss.snmp-trapd.port.property.name="po-grid-3.1-jboss.snmp-trapd.port"
+                  jboss.snmp.port.property.name="po-grid-3.1-jboss.snmp.port"
+                  jboss.jms.port.property.name="po-grid-3.1-jboss.jms.port"
+                  jboss.remoting.port.property.name="po-grid-3.1-jboss.remoting.port"
+                  jboss.messaging.port.property.name="po-grid-3.1-jboss.messaging.port"
+                  />
+          </then>
+      </if>
   </target>
 
   <target name="upgrade:po-grid-3.1-jboss:post" unless="exclude.po-grid-3.1">
-	 
+
   </target>
 </project>

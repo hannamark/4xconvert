@@ -528,8 +528,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       <!-- call your custom readers here, two properties included in these scripts that don't have readers are "fs-data.base.dir, mail.smtp.server" -->
   </target>
 
-  <target name="upgrade:po-grid-3.0-jboss:readers:bda" if="jboss.exists">
-
+  <target name="upgrade:po-grid-3.0-jboss:readers:bda" if="jboss.exists" unless="exclude.po-grid-3.0">
       <if>
           <equals arg1="${jboss.major.version}" arg2="4"/>
           <then>
@@ -562,7 +561,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                   />
           </then>
       </if>
-
   </target>
 
   <target name="upgrade:po-grid-3.0-jboss:post" unless="exclude.po-grid-3.0">

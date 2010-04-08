@@ -158,9 +158,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <target name="install:po-grid-3.2-jboss:binaries" unless="exclude.po-grid-3.2">
       <jboss-install-binaries
           application.base.path="${application.base.path}/pogrid-3.2"
-          jems.install.option="default" 
-          jboss.home="${po-grid-3.2-jboss.home}" 
-          jboss.server.name="${po-grid-3.2-jboss.server.name}" 
+          jems.install.option="default"
+          jboss.home="${po-grid-3.2-jboss.home}"
+          jboss.server.name="${po-grid-3.2-jboss.server.name}"
           />
       <jboss-nci-customizations
           application.base.path="${application.base.path}/pogrid-3.2"
@@ -182,16 +182,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
         <unzip dest="${po-grid-3.2-jboss.home}/server/${po-grid-3.2-jboss.server.name}/deploy/${po-grid-3.2.dir.target}" src="${po-grid-3.2.dir.src}/${po-grid-3.2.artifact.file}" />
     </target>
-    
+
 
     <!-- Configures installed po-grid-3.2 application -->
     <target name="install:po-grid-3.2-jboss:grid:configure" description="Configure po-grid-3.2 service based on properties" unless="exclude.po-grid-3.2">
         <!--
-        NOTE: during an upgrade the <jboss-configure/> macrodef (which calls <grid-secure-configure-connector/> macrodef) 
+        NOTE: during an upgrade the <jboss-configure/> macrodef (which calls <grid-secure-configure-connector/> macrodef)
         which copies over the -cert.pem and -key.pem host cert file over to the ${jboss.home}/server/${po-grid-3.2-jboss.server.name}/conf directory
         therefore we're changing the appserver.conf.dir property to point to pogrid-3.2.grid.secure.dir instead.
-        
-        This macro required whenever the host certs are not installed within the ${jboss.home}/server/${jboss.server.name.grid}/conf directory   
+
+        This macro required whenever the host certs are not installed within the ${jboss.home}/server/${jboss.server.name.grid}/conf directory
         grid-appserver-configure
         -->
     <echoproperties prefix="po-grid-3.2-jboss"/>
@@ -217,7 +217,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
   <target name="install:po-grid-3.2-jboss:configure" unless="exclude.po-grid-3.2">
         <!-- create a new template bindings file from template (using ports for po-grid-3.2 -->
-    
+
       <jboss-configure
           jboss.home="${po-grid-3.2-jboss.home}"
           jboss.server.name="${po-grid-3.2-jboss.server.name}"
@@ -268,8 +268,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
           jboss.grid.secure.dir="${po-grid-3.2-jboss.grid.secure.dir}"
           jboss.grid.secure.enable="${po-grid-3.2-jboss.grid.secure.enable}"
           jboss.grid.secure.port="${po-grid-3.2-jboss.grid.secure.port}"
-          jboss.grid.secure.key.file="${po-grid-3.2-jboss.grid.secure.key.file}" 
-          jboss.grid.secure.cert.file="${po-grid-3.2-jboss.grid.secure.cert.file}" 
+          jboss.grid.secure.key.file="${po-grid-3.2-jboss.grid.secure.key.file}"
+          jboss.grid.secure.cert.file="${po-grid-3.2-jboss.grid.secure.cert.file}"
           jboss.java.opts="${po-grid-3.2-jboss.java.opts}"
           jboss.logs.dir="${po-grid-3.2-jboss.home}/server/${po-grid-3.2-jboss.server.name}/log"
           jboss.http-connector.remove="${po-grid-3.2-jboss.http-connector.remove}"
@@ -314,7 +314,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         install:po-grid-3.2-jboss:stop
         " unless="exclude.po-grid-3.2">
         <validate-pre-jboss-ports
-            jboss.socket.ports="${po-grid-3.2-jboss.socket.ports}" 
+            jboss.socket.ports="${po-grid-3.2-jboss.socket.ports}"
             hostname="${po-grid-3.2-jboss.server.hostname}"
             />
     </target>
@@ -330,10 +330,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             </not>
             <then>
                 <validate-post-jboss
-                    jboss.socket.list="${po-grid-3.2-jboss.socket.list}" 
-                    jboss.home="${po-grid-3.2-jboss.home}" 
-                    jboss.hostname="${po-grid-3.2-jboss.server.hostname}" 
-                    jboss.application.url="${po-grid-3.2-jboss.application.url}" 
+                    jboss.socket.list="${po-grid-3.2-jboss.socket.list}"
+                    jboss.home="${po-grid-3.2-jboss.home}"
+                    jboss.hostname="${po-grid-3.2-jboss.server.hostname}"
+                    jboss.application.url="${po-grid-3.2-jboss.application.url}"
                     />
             </then>
         </if>
@@ -541,9 +541,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       <!-- call your custom readers here, two properties included in these scripts that don't have readers are "fs-data.base.dir, mail.smtp.server" -->
   </target>
 
-  <target name="upgrade:po-grid-3.2-jboss:readers:bda" if="jboss.exists">
-
-      
+  <target name="upgrade:po-grid-3.2-jboss:readers:bda" if="jboss.exists" unless="exclude.po-grid-3.2">
       <if>
           <equals arg1="${jboss.major.version}" arg2="4"/>
           <then>
@@ -576,10 +574,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                   />
           </then>
       </if>
-      
   </target>
 
   <target name="upgrade:po-grid-3.2-jboss:post" unless="exclude.po-grid-3.2">
-     
+
   </target>
 </project>

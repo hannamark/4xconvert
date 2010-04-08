@@ -3,9 +3,7 @@
 $Id: install.xml 4757 2008-05-15 20:43:31Z zengje $
 $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 -->
-<project name="po-ear-installer" default="upgrade" basedir="."
-  xmlns:ivy="antlib:org.apache.ivy.ant"
-  >
+<project name="po-ear-installer" default="upgrade" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
   <description>
     This build file is part of the COPPA-PO project. This is the po ear install file for the COPPA-PO project. This script is copied into the distribution and executed from the extracted distribution.  It is called from the master install.xml. This script has two flows install and upgrade.
     Install will do the following
@@ -201,7 +199,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
   <!-- Calls to bda macros for basic functionality -->
   <target name="install:po-ear-jboss:stop" unless="exclude.po-ear">
-    <jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}" jboss.server.name="${jboss.server.name}"/>
+    <jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}" jboss.server.name="${jboss.server.name}" sleep.time="10"/>
   </target>
 
     <target name="install:po-ear-jboss:start" unless="exclude.po-ear">
