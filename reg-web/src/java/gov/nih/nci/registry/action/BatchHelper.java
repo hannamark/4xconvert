@@ -40,19 +40,22 @@ public class BatchHelper implements Runnable {
     private String trialDataFileName = null;
     private String unzipLoc = null;
     private String userName = null;
+    private String orgName = null;
    /**
     * 
     * @param uploadLoc loc
     * @param trialDataFileName name
     * @param unzipLoc loc
     * @param userName name
+    * @param orgName orgName
     */
-    public BatchHelper(String uploadLoc, String trialDataFileName, String unzipLoc, String userName) {
+    public BatchHelper(String uploadLoc, String trialDataFileName, String unzipLoc, String userName, String orgName) {
         super();
         this.uploadLoc = uploadLoc;
         this.trialDataFileName = trialDataFileName;
         this.unzipLoc = unzipLoc;
         this.userName = userName;
+        this.orgName = orgName;
     }
 
 
@@ -73,7 +76,7 @@ public class BatchHelper implements Runnable {
             is = new FileInputStream(fileName);
             HSSFWorkbook wb = new ExcelReader().parseExcel(is);
             ExcelReader reader = new ExcelReader();
-            list = reader.convertToDTOFromExcelWrokbook(wb);
+            list = reader.convertToDTOFromExcelWorkbook(wb, getOrgName());
         } catch (FileNotFoundException e) {
             LOG.error("BatchHelper:processExcel-" + e);
         }
@@ -234,6 +237,22 @@ public class BatchHelper implements Runnable {
      */
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+
+    /**
+     * @param orgName the orgName to set
+     */
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+
+    /**
+     * @return the orgName
+     */
+    public String getOrgName() {
+        return orgName;
     }
 
 }

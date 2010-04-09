@@ -206,7 +206,7 @@ public class BatchUploadAction extends ActionSupport implements
             //helper to unzip the zip files
             Thread batchProcessor = new Thread(
                     new BatchHelper(uploadedLoc, trialDataFileName, unzipLoc,
-                            ServletActionContext.getRequest().getRemoteUser()));
+                            ServletActionContext.getRequest().getRemoteUser(), orgName));
             batchProcessor.start();
             //new BatchHelper(uploadedLoc, trialDataFileName, unzipLoc,
              //       ServletActionContext.getRequest().getRemoteUser()).run();

@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -35,12 +36,13 @@ public class ExcelReader {
      * 
      * @param wb
      *            wb
+     *@param orgName orgName
      * @throws PAException
      *             PAException
      * @return List
      */
-    public List<StudyProtocolBatchDTO> convertToDTOFromExcelWrokbook(
-            HSSFWorkbook wb) throws PAException {
+    public List<StudyProtocolBatchDTO> convertToDTOFromExcelWorkbook(
+            HSSFWorkbook wb, String orgName) throws PAException {
         List<StudyProtocolBatchDTO> batchDtoList = new ArrayList<StudyProtocolBatchDTO>();
         StudyProtocolBatchDTO batchDto = null;
         if (wb == null) {
@@ -60,8 +62,7 @@ public class ExcelReader {
                 LOG.error("There are no work sheets to process");
                 throw new PAException(" There are no work sheets to process");
             }
-            // loop every row in the work sheet
-            boolean flag = true;
+            boolean flag = true; // loop every row in the work sheet
             for (Iterator rows = sheet.rowIterator(); rows.hasNext();) {
                 HSSFRow row = (HSSFRow) rows.next();
                 if (flag) {
@@ -72,18 +73,22 @@ public class ExcelReader {
                 short c2 = row.getLastCellNum();
                 batchDto = new StudyProtocolBatchDTO();
                 for (int c = c1; c < c2; c++) { 
-                    // loop for every cell in each row
-                    HSSFCell cell = row.getCell(c);
+                    HSSFCell cell = row.getCell(c); // loop for every cell in each row
                     String cellValue = null;
                     if (cell != null) {
                         cellValue = getCellValue(cell);
                         setDto(batchDto, cellValue, c); // set corresponding values
+                        if (!StringUtils.isEmpty(orgName) && orgName.equalsIgnoreCase("ctep")) {
+                           batchDto.setCtepIdentifier(batchDto.getUniqueTrialId());
+                        }
+                        if (!StringUtils.isEmpty(orgName) && orgName.equalsIgnoreCase("dcp")) {
+                            batchDto.setDcpIdentifier(batchDto.getUniqueTrialId());
+                        }
                     } // if
                 } // column for loop
                 batchDtoList.add(batchDto); // add the dto to the list
             } // rows for loop
         } // work sheet for loop
-        LOG.info("Leaving convertToProtocolFromExcelWrokbook");
         return batchDtoList;
     }
     /**
@@ -277,8 +282,6 @@ public class ExcelReader {
         case BatchConstants.DELAYED_POSTING_INDICATOR:batchDto.setDelayedPostingIndicator(cellValue); break;
         case BatchConstants.DATA_MONITORING_COMMITTEE_APPOINTED_INDICATOR:
                 batchDto.setDataMonitoringCommitteeAppointedIndicator(cellValue); break;
-        case BatchConstants.DCP_IDENTIFIER:batchDto.setDcpIdentifier(cellValue); break;
-        case BatchConstants.CTEP_IDENTIFIER : batchDto.setCtepIdentifier(cellValue); break;
         default: throw new PAException(" Unknown coloumn #" + col + "to map ");
         }
         return batchDto;
