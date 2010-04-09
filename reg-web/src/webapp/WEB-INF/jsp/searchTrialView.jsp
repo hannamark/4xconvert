@@ -13,6 +13,10 @@
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
 	}
+	function handleBackAction(){
+	 document.forms[0].action="searchTrialqueryOnBack.action";
+     document.forms[0].submit();  
+}
 	</SCRIPT>
 </head>
 
@@ -400,8 +404,8 @@
 		<div class="actionsrow">
 		<del class="btnwrapper">
         	<ul class="btnrow">
-            	<li><a href="searchTrialquery.action"                
-                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+            	<li><a href="#"                
+                    class="btn" onclick="handleBackAction();this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
             </ul>   
         </del>
         </div>
