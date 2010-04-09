@@ -1076,11 +1076,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <copy todir="${working.dir}/" filtering="true" overwrite="true">
             <fileset dir="${db.src.dir}">
                 <include name="**/db-upgrade/**/*" />
+                <include name="**/db-install/**/*" />
             </fileset>
             <filterset begintoken="$${" endtoken="}">
                 <filtersfile file="${properties.file}" />
                 <filtersfile file="project.properties" />
                 <filter token="db-upgrade.run.dir" value="${working.dir}/db-upgrade/${database.type}" />
+                <filter token="db-install.run.dir" value="${working.dir}/db-install/${database.type}" />
             </filterset>
         </copy>
     </target>
