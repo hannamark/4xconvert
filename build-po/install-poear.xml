@@ -199,7 +199,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
   <!-- Calls to bda macros for basic functionality -->
   <target name="install:po-ear-jboss:stop" unless="exclude.po-ear">
-    <jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}" jboss.server.name="${jboss.server.name}" sleep.time="10"/>
+    <jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}" jboss.server.name="${jboss.server.name}" sleep.time="15"/>
   </target>
 
     <target name="install:po-ear-jboss:start" unless="exclude.po-ear">
