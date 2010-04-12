@@ -210,6 +210,7 @@ public enum StudyStatusCode implements CodedEnum<String> {
          Set<StudyStatusCode> tmpSet = new HashSet<StudyStatusCode>();
          tmpSet.add(APPROVED);
          tmpSet.add(DISAPPROVED);
+         tmpSet.add(ACTIVE);
          tmp.put(IN_REVIEW, Collections.unmodifiableSet(tmpSet));
          
          tmpSet = new HashSet<StudyStatusCode>();
