@@ -318,7 +318,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             </not>
             <then>
                 <validate-post-jboss
-                    jboss.socket.list="${po-grid-3.0-jboss.socket.list}"
+                    jboss.socket.list="${po-grid-3.0-jboss.socket.ports}"
                     jboss.home="${po-grid-3.0-jboss.home}"
                     jboss.hostname="${po-grid-3.0-jboss.server.hostname}"
                     jboss.application.url="${po-grid-3.0-jboss.application.url}"

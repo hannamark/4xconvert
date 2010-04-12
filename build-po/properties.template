@@ -190,6 +190,7 @@ grid.target=This is which grid you point to, it is only used when configuring gr
 ###  MAIL  SETTINGS  ###
 ########################
 #mail.smtp.server=The SMTP relay host name. Example: mailfwd.nih.gov
+
 ###################################
 #  PRE-POST VALIDATION PROPERTIES #
 ###################################
