@@ -17,6 +17,17 @@
 			return(document.forms[0].group4[i].value);
 	}
 	}
+	function setExpandedStatus(selection){
+	 if (selection.checked==true)
+	 {
+	  document.getElementById('expanded_status').disabled=false;
+	 } 
+	 else 
+	  {
+	   document.getElementById('expanded_status').value='';
+	   document.getElementById('expanded_status').disabled=true;
+	  } 
+	}
 	function setProgramCodes(ref){	
 		if (ref.value == 'NCI') {
 			document.getElementById('programcodenciid').style.display = '';
@@ -33,12 +44,12 @@
 		}
 	}
 	function callAddIndIde(){
-	    var indide = getIndIdeRadioValue(document.forms[0].group3.length);
+	    var indide = document.getElementById('group3').value;
 	    var number = document.getElementById('indidenumber').value;
 	    var grantor = document.getElementById('SubCat').value;
 	    var holder = document.getElementById('holderType').value;	
 		number = trim(number);
-	    if (indide == null || indide.length == 0) {
+	    if (indide == "") {
             alert("Please choose an IND/IDE Type")
             return false;    
 	    }
@@ -78,22 +89,23 @@
 			programcode = document.getElementById('programcodenciselectedvalue').value;		
 		}
 		
-		var expandedaccess = getExpandedAccessRadioValue(document.forms[0].group4.length);
-		if ((expandedaccess == 'true') && (document.getElementById('expanded_status').value == '') ) {
-			alert("Please select a Expanded Access Type ");
-			return false;
-		}
-		if (expandedaccess =='true') {
+		var expandedaccess = document.forms[0].group4;
+		if (expandedaccess.checked == true) {
 			expandedaccess ='Yes';
 		} else {
 			expandedaccess ='No';
 		}
 		var expandedaccesstype = document.getElementById('expanded_status').value;
+		if ((expandedaccess == 'Yes') && expandedaccesstype == '')
+		{
+		  alert("Please select an Expanded Access Type");
+          return false;
+		}
 		addIndIde(indide,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype);
 	}
 	function resetValues(){
 		document.getElementById('indidenumber').value='';
-		clearRadios('group3');
+		document.getElementById('group3').value=''; 
     	removeAllOptions(document.getElementById('SubCat'));
     	addOption(document.getElementById('SubCat'), "", "--Select--", "");	
     	document.getElementById('holderType').value='';    	
@@ -102,8 +114,7 @@
 		document.getElementById('programcodenihid').style.display = 'none';
 		document.getElementById('programcodenciid').style.display = 'none';
 		document.getElementById('programcodeid').style.display = '';
-		document.forms[0].group4[0].checked = false;
-		document.forms[0].group4[1].checked = true;
+		document.getElementById('group4').checked = false;
 		document.getElementById('expanded_status').value='';
 		document.getElementById('expanded_status').disabled=true;
 	}
@@ -192,8 +203,9 @@
 		
 			<tr>
 				<td style="white-space:nowrap;">							
-					<input type="radio" name="group3" value="IND" onclick="SelectSubCat(this);" />IND<br/>
-					<input type="radio" name="group3" value="IDE" onclick="SelectSubCat(this);" />IDE
+					<s:select id="group3" name="indldeType" headerKey="" headerValue="-Select-" onblur="SelectSubCat(this);" cssStyle="width:75px" onclick="SelectSubCat(this);"
+                    list="#{'IND':'IND','IDE':'IDE'}"/>
+                    
 				</td>
 				<td>
 					<input id="indidenumber" name="indidenumber"  type="text" size="10" /> 
@@ -217,8 +229,7 @@
 				<div id="programcodenciid" style="display:none"><s:select id="programcodenciselectedvalue" headerKey="" headerValue="-Select-" name="programcodenciselectedvalue" list="#phaseCodeValuesNCI" onmouseover="enableTooltip('nci');"  cssStyle="width:300px"/></div>
 				</td>
 				<td>
-					<input type="radio" name="group4" id="group4" value="true" onclick="document.getElementById('expanded_status').disabled=false;"  /> Yes<br />
-					<input type="radio" name="group4" id="group4" value="false" checked="checked" onclick="document.getElementById('expanded_status').value='';document.getElementById('expanded_status').disabled=true;"/> No
+					<input type="checkbox" name="group4" id="group4" onclick="setExpandedStatus(this);"/> Yes
 				</td>
 				<td>
 					<s:select id="expanded_status" headerKey="" headerValue="-Select-" name="expanded_status" disabled="true" 
