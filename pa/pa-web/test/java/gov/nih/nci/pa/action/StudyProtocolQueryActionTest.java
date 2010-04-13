@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.action;
 
@@ -21,16 +21,16 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
 	StudyProtocolQueryAction spqAction;
 	 StudyProtocolQueryCriteria criteria;
-	
-	@Before 
+
+	@Before
 	public void setUp() throws PAException {
-	  spqAction =  new StudyProtocolQueryAction();	
+	  spqAction =  new StudyProtocolQueryAction();
 	  criteria = new StudyProtocolQueryCriteria();
 	  criteria.setNciIdentifier("NCI-2009-00001");
 	  getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
 	  getRequest().setUserPrincipal(new MockPrincipal("suAbstractor"));
 	  getSession().setAttribute(Constants.USER_ROLE, Constants.SUABSTRACTOR);
-	 
+
 	}
 	/**
 	 * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#execute()}.
@@ -63,7 +63,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 	public void testView() throws PAException {
 		spqAction.setStudyProtocolId(1L);
 		assertEquals("view", spqAction.view());
-		
+
 	}
 
 	/**
@@ -73,16 +73,6 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 	public void testViewTSR() throws PAException {
 		getRequest().setupAddParameter("studyProtocolId", "1");
 		assertEquals("none", spqAction.viewTSR());
-		
-	}
-
-	/**
-	 * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#viewTSRWord()}.
-	 */
-	@Test
-	public void testViewTSRWord() throws PAException {
-		getRequest().setupAddParameter("studyProtocolId", "1");
-		assertEquals("success", spqAction.viewTSRWord());
 	}
 
 	/**
@@ -98,6 +88,6 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 		spqAction.setCtepIdentifier("");
 		assertEquals("view", spqAction.checkout());
 	}
-   
+
 
 }

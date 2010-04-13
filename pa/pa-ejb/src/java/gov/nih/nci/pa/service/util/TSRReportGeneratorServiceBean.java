@@ -89,6 +89,7 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -149,6 +150,28 @@ import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.report.AbstractTsrReportGenerator;
+import gov.nih.nci.pa.service.util.report.PdfTsrReportGenerator;
+import gov.nih.nci.pa.service.util.report.TSRErrorReport;
+import gov.nih.nci.pa.service.util.report.TSRReport;
+import gov.nih.nci.pa.service.util.report.TSRReportArmGroup;
+import gov.nih.nci.pa.service.util.report.TSRReportCollaborator;
+import gov.nih.nci.pa.service.util.report.TSRReportDiseaseCondition;
+import gov.nih.nci.pa.service.util.report.TSRReportEligibilityCriteria;
+import gov.nih.nci.pa.service.util.report.TSRReportGeneralTrialDetails;
+import gov.nih.nci.pa.service.util.report.TSRReportHumanSubjectSafety;
+import gov.nih.nci.pa.service.util.report.TSRReportIndIde;
+import gov.nih.nci.pa.service.util.report.TSRReportIntervention;
+import gov.nih.nci.pa.service.util.report.TSRReportInvestigator;
+import gov.nih.nci.pa.service.util.report.TSRReportNihGrant;
+import gov.nih.nci.pa.service.util.report.TSRReportOutcomeMeasure;
+import gov.nih.nci.pa.service.util.report.TSRReportParticipatingSite;
+import gov.nih.nci.pa.service.util.report.TSRReportRegulatoryInformation;
+import gov.nih.nci.pa.service.util.report.TSRReportStatusDate;
+import gov.nih.nci.pa.service.util.report.TSRReportSubGroupStratificationCriteria;
+import gov.nih.nci.pa.service.util.report.TSRReportSummary4Information;
+import gov.nih.nci.pa.service.util.report.TSRReportTrialDesign;
+import gov.nih.nci.pa.service.util.report.TSRReportTrialIdentification;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
@@ -158,11 +181,13 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.io.ByteArrayOutputStream;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -170,26 +195,29 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
 /**
  * service bean for generating TSR.
- * 
+ *
  * @author Naveen Amiruddin , Kalpana Guthikonda
+ * @author Krishna Kanchinadam
  * @since 01/21/2009
  */
 @Stateless
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods",
-  "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength", "PMD.TooManyFields", "PMD.NPathComplexity" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.TooManyMethods",
+        "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength", "PMD.TooManyFields", "PMD.NPathComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceRemote {
-    
+
     @EJB
     StudyProtocolServiceLocal studyProtocolService = null;
     @EJB
     StudyOverallStatusServiceLocal studyOverallStatusService = null;
     @EJB
-    StudyIndldeServiceLocal studyIndldeService  = null;
+    StudyIndldeServiceLocal studyIndldeService = null;
     @EJB
     StudyDiseaseServiceLocal studyDiseaseService = null;
     @EJB
@@ -221,1526 +249,886 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     @EJB
     InterventionAlternateNameServiceRemote interventionAlternateNameService = null;
     @EJB
-    StudyResourcingServiceLocal  studyResourcingService = null;
+    StudyResourcingServiceLocal studyResourcingService = null;
     @EJB
-    PAOrganizationServiceRemote  paOrganizationService = null;
+    PAOrganizationServiceRemote paOrganizationService = null;
     @EJB
     StudyObjectiveServiceLocal studyObjectiveService = null;
     @EJB
     StratumGroupServiceLocal stratumGroupService = null;
-    
-  /** The Constant BR. */
-  private static final String BR = "<BR>";
-  
-  /** The Constant TBL_B. */
-  private static final String TBL_B = "<TABLE border='0' cellpadding='5%' cellspacing='0%'>";
-  
-  /** The Constant TBL_E. */
-  private static final String TBL_E = "</TABLE>";
-  
-  /** The Constant TR_B. */
-  private static final String TR_B = "<TR>";
-  
-  /** The Constant TR_E. */
-  private static final String TR_E = "</TR>";
-  
-  /** The Constant TD_B. */
-  private static final String TD_B = "<TD>";
-  
-  /** The Constant TD_E. */
-  private static final String TD_E = "</TD>";
-  
-  /** The Constant UL_B. */
-  private static final String UL_B = "<UL>";
-  
-  /** The Constant UL_E. */
-  private static final String UL_E = "</UL>";
-  
-  /** The Constant LI_B. */
-  private static final String LI_B = "<LI>";
-  
-  /** The Constant LI_E. */
-  private static final String LI_E = "</LI>";
-  
-  /** The Constant BLD_B. */
-  private static final String BLD_B = "<B>";
-  
-  /** The Constant BLD_E. */
-  private static final String BLD_E = "</B>";
-  
-  /** The Constant NO_DATA. */
-  private static final String NO_DATA = " ";
-  
-  /** The Constant NO_INFO. */
-  private static final String NO_INFO = " <I> Information Not Provided </I>";
-  
-  /** The Constant EMPTY. */
-  private static final String EMPTY = "";
-  
-  /** The Constant YES. */
-  private static final String YES = "Yes";
-  
-  /** The Constant DL_B. */
-  private static final String DL_B = "<DL>";
-  
-  /** The Constant DL_E. */
-  private static final String DL_E = "</DL>";
-  
-  /** The Constant DT_B. */
-  private static final String DT_B = "<DT>";
-  
-  /** The Constant DT_E. */
-  private static final String DT_E = "</DT>";
-  
-  /** The Constant DD_B. */
-  private static final String DD_B = "<DD>";
-  
-  /** The Constant DD_E. */
-  private static final String DD_E = "</DD>";
-  
-  /** The Constant NO. */
-  private static final String NO = "No";
-  
-  /** The Constant ERROR_COUNT. */
-  private static final int ERROR_COUNT = 5;
-  
-  /** The Constant MAX_AGE. */
-  private static final int MAX_AGE = 999;
-  
-  /** The Constant MAX_AGE. */
-  private static final int MIN_LEN = 3;
-   
-  /** The Constant FONT_TITLE. */
-  private static final String FONT_TITLE = "<FONT SIZE='5' FACE='calibiri'>";
-  
-  /** The Constant FONT_SECTION. */
-  private static final String FONT_SECTION = "<FONT SIZE='4' color='brown' FACE='calibiri'>";
-  
-  /** The Constant FONT_LABEL. */
-  private static final String FONT_LABEL = "<FONT SIZE='3' FACE='calibiri'>";
-  
-  /** The Constant FONT_TEXT. */
-  private static final String FONT_TEXT = "<FONT SIZE='3' FACE='calibiri'>";
-  
-  
-  /** The Constant FONT_END. */
-  private static final String FONT_END = "</FONT>";
-  
-  /** The Constant CENTER_B. */
-  private static final String CENTER_B = "<CENTER>";
-  
-  /** The Constant CENTER_E. */
-  private static final String CENTER_E = "</CENTER>";
- 
-  /** The Constant NBSP. */
-  private static final String NBSP = "&nbsp;&nbsp;&nbsp;";
-  
-   
-  /** The Constant LOG. */
-  private static final Logger LOG  = Logger.getLogger(TSRReportGeneratorServiceBean.class);
-  
-  /** The correlation utils. */
-  private final CorrelationUtils correlationUtils = new CorrelationUtils();
-  
-  private final PAServiceUtils paServiceUtils = new PAServiceUtils();
-  
-  /**
-   * Generate tsr html. 
-   * @param studyProtocolIi ii of studyprotocol 
-   * @return String xml output 
-   * @throws PAException on error
-   */
-  @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-  public String generateTSRHtml(Ii studyProtocolIi) throws PAException {
-      LOG.debug("Entering generateTSRXml");
 
-      if (studyProtocolIi == null) {
-          throw new PAException("Study Protocol Identifier is null");
-      }
-     
-      StringBuffer htmldata = new StringBuffer();
-      htmldata.append(FONT_TITLE).append(CENTER_B).append(appendBoldData("Trial Summary Report"))
-              .append(CENTER_E).append(FONT_END);
-      htmldata.append(BR);
-      htmldata.append(CENTER_B);
-      htmldata.append(appendData("Date", PAUtil.today(), false, true)).append(CENTER_E);
-      StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi); 
-      try {
-          appendSecondaryIdentifiers(htmldata , spDTO);
-          appendTitles(htmldata , spDTO);
-          if (isProprietaryTrial(spDTO)) {
-              generateTSRForProprietary(htmldata, spDTO);
-              return htmldata.toString();
-          }
-          appendOrgsAndPersons(htmldata , spDTO.getIdentifier());
-          apppendTrialStatus(htmldata , spDTO);
-          appendRegulatoryInformation(htmldata , spDTO);
-          appendHumanSubjectSafety(htmldata , spDTO);
-          appendIdeIde(htmldata , spDTO);
-          appendNihGrants(htmldata , spDTO);
-          appendSummary4(spDTO, htmldata);
-          appendCollaborators(studyProtocolIi, htmldata);
-          appendDisease(studyProtocolIi, htmldata);
-          appendTrialDesign(htmldata, spDTO);
-          appendEligibilityCriteria(htmldata, spDTO);
-          appendArm(htmldata, spDTO);
-          List<StudyOutcomeMeasureDTO> somDtos =
-            studyOutcomeMeasureService.getByStudyProtocol(spDTO.getIdentifier()); 
-         createPrimaryOutcome(htmldata, somDtos);
-         createSecondaryOutcome(htmldata, somDtos);
-         appendParticipatingSites(htmldata, spDTO);
-         appendSubGroups(htmldata, spDTO);
-         
-      } catch (Exception e) {
-          htmldata = new StringBuffer();
-          htmldata.append(FONT_TITLE).append(CENTER_B).append(appendBoldData("Trial Summary Report"))
-                  .append(CENTER_E).append(FONT_END);
-          htmldata.append(BR);
-          htmldata.append(appendBoldData("Unable to generate  Trial Summary Report")).append(BR);
-          htmldata.append(" for ").append(appendBoldData(spDTO.getAssignedIdentifier().getExtension())).append(BR);
-          htmldata.append("Study Title ").append(spDTO.getOfficialTitle().getValue()).append(BR);
-          htmldata.append("Please contact CTRP staff").append(BR);
-          htmldata.append("error_type ").append(appendBoldData(e.toString())).append(BR);
-          StackTraceElement[] st =  e.getStackTrace();
-          int x = 1;
-          for (StackTraceElement se : st) {
-              htmldata.append("Error Reason : ").append(appendBoldData(se.toString())).append(BR);
-              x++;
-              if (x > ERROR_COUNT) {
-                  break;
-              }
-          }
+    /** The Constant LOG. */
+    private static final Logger LOG = Logger.getLogger(TSRReportGeneratorServiceBean.class);
 
+    /** The correlation utils. */
+    private final CorrelationUtils correlationUtils = new CorrelationUtils();
 
-      }
-      return htmldata.toString();
-  }
+    private final PAServiceUtils paServiceUtils = new PAServiceUtils();
+    private AbstractTsrReportGenerator tsrReportGenerator;
+    private Ii studyProtocolIi;
+    private StudyProtocolDTO studyProtocolDto;
+    private Ii studyProtocolDtoIdentifier;
+    private boolean isProprietaryTrial;
 
-  /**
-   * Append sub groups.
-   * 
-   * @param html the html
-   * @param spDto the sp dto
-   * 
-   * @throws PAException the PA exception
-   */
-  private void appendSubGroups(StringBuffer html , StudyProtocolDTO spDto) throws  PAException {
-    List<StratumGroupDTO> sraDTO = 
-          stratumGroupService.getByStudyProtocol(spDto.getIdentifier());
-  
-    if (PAUtil.isListNotEmpty(sraDTO)) {
-       appendTitle(html, appendBoldData("Sub Group Information"));
-       html.append(BR).append(BR).append(TBL_B);
-       html.append(TR_B);
-       appendTDAndData(html, appendTRBold("Code"));
-       appendTDAndData(html, appendTRBold("Description"));
-       html.append(TR_E);
-         for (StratumGroupDTO dto : sraDTO) {
-             html.append(TR_B);
-             appendTDAndData(html, StConverter.convertToString(dto.getGroupNumberText()));
-             appendTDAndData(html, StConverter.convertToString(dto.getDescription()));
-             html.append(TR_E);
-         }
-    }
-  }  
+    private static final String REPORT_TITLE = "Trial Summary Report";
+    private static final String YES = "Yes";
+    private static final String NO = "No";
+    private static final String INFORMATION_NOT_PROVIDED = "Information Not Provided";
+    private static final String BLANK = "";
+    private static final String PROPRIETARY = "Proprietary";
+    private static final String NON_PROPRIETARY = "Non-Proprietary";
+    private static final String TYPE_INTERVENTIONAL = "Interventional";
+    private static final String TYPE_OBSERVATIONAL = "Observational";
+    private static final String CRITERION_GENDER = "GENDER";
+    private static final String CRITERION_AGE = "AGE";
+    private static final String ROLE_PI = "Principal Investigator";
+    private static final String SPACE = " ";
+    private static final int MIN_AGE = 0;
+    private static final int MAX_AGE = 999;
+    private static final String AFFILIATED_WITH = " affiliated with ";
+    private static final String IN_THE_ROLE_OF = " in the role of ";
+    private static final String AS_OF = " as of ";
 
-/**
-   * Append participating sites. 
-   * @param html the html
-   * @param spDTO the sp dto
-   * @throws PAException the PA exception
- * @throws NullifiedRoleException 
-   */
-  private void appendParticipatingSites(StringBuffer html, StudyProtocolDTO spDTO)
-      throws PAException, NullifiedRoleException {
-    appendTitle(html, appendBoldData("Participating Sites"));
-    html.append(BR);
-     StudySiteDTO srDTO = new StudySiteDTO();
-     srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
-     List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(spDTO.getIdentifier(), srDTO);
-     for (StudySiteDTO sp : spList) {
-         StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
-         .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
+    /**
+     * Generate tsr html.
+     *
+     * @param studyProtIi ii of studyprotocol.
+     * @return ByteArrayOutputStream the byte stream.
+     * @throws PAException the exception.
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public ByteArrayOutputStream generateTsrReport(Ii studyProtIi) throws PAException {
+        LOG.debug("Entering generateTsrReport - PDF Generation.");
 
-         Organization orgBo = correlationUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
-
-         html.append(appendData("Facility Name" , orgBo.getName() , true , true));
-         html.append(appendData("Location" , getLocation(orgBo), true , true));
-         if (isProprietaryTrial(spDTO)) {
-             List<StudySiteContactDTO> spcDTOs = studySiteContactService.getByStudySite(sp.getIdentifier());
-             for (StudySiteContactDTO spcDto : spcDTOs) {
-                 if (StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode().equalsIgnoreCase(
-                         spcDto.getRoleCode().getCode()) 
-                         || StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode().equalsIgnoreCase(
-                                 spcDto.getRoleCode().getCode())) {
-                     Person p = correlationUtils.getPAPersonByIi(spcDto.getClinicalResearchStaffIi());
-                     html.append(appendData("Principal Investigator" , p.getFirstName() + ", " + p.getLastName()  ,
-                             true , true));
-                 }
-             }
-             html.append(appendData("Local Trial Identifier" , sp.getLocalStudyProtocolIdentifier().getValue() ,
-                     true , true));
-             html.append(appendData("Program Code" , sp.getProgramCodeText().getValue() ,
-                     true , true));
-             if (ssas != null) {
-                 html.append(appendData("Current Site Recruitment Status" , getData(ssas.getStatusCode() , true)
-                     + " as of " + PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
-                         ssas.getStatusDate()).toString()) , true , true));
-               }
-             html.append(appendData("Open for Accrual Date" , IvlConverter.convertTs().convertLowToString(
-                     sp.getAccrualDateRange()), true , true));
-             html.append(appendData("Closed for Accrual Date" , IvlConverter.convertTs().convertHighToString(
-                     sp.getAccrualDateRange()) ,
-                     true , true));
-         }
-         if (PAUtil.isBlNull(spDTO.getProprietaryTrialIndicator())
-                 || !BlConverter.covertToBoolean(spDTO.getProprietaryTrialIndicator())) {
-             if (ssas != null) {
-                 html.append(appendData("Site Recruitment Status" , getData(ssas.getStatusCode() , true)
-                     + " as of " + PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
-                         ssas.getStatusDate()).toString()) , true , true));
-               }
-
-             html.append(appendData("Target Accrual" , getData(sp.getTargetAccrualNumber(), true) , true , true));
-             List<StudySiteContactDTO> spcDTOs =  studySiteContactService.getByStudySite(sp.getIdentifier());
-             createInvestigators(html, spcDTOs);
-             createContact(html, spcDTOs);
-         }
-         html.append(BR);
-     }
-     if (spDTO.getRecordVerificationDate() != null && spDTO.getRecordVerificationDate().getValue() != null) {
-       html.append(appendData("Record Verification Date", PAUtil.normalizeDateString(
-       TsConverter.convertToTimestamp(spDTO.getRecordVerificationDate()).toString()) , true , true));
-     }
-  }
-
-  /**
-   * Gets the location.
-   * 
-   * @param orgBo the org bo
-   * 
-   * @return the location
-   */
-  private String getLocation(Organization orgBo) {
-      String location = "";
-      
-       String city = orgBo.getCity() != null ? orgBo.getCity() : " ";
-       String state =  orgBo.getState() != null ? orgBo.getState() : " ";
-       String pc = orgBo.getPostalCode() != null ? orgBo.getPostalCode() : " ";
-       String country = orgBo.getCountryName() != null ? orgBo.getCountryName() : " ";
-      
-       location = city + ", " + state + " " + pc + " " + country;
-       
-      return location;
-      
-  }
-  /**
-   * Creates the investigators. 
-   * @param html the html
-   * @param spcDTOs the spc dt os
-   * @throws PAException the PA exception
-   */
-  private void createInvestigators(StringBuffer html, List<StudySiteContactDTO> spcDTOs)
-  throws PAException {
-    boolean first = true;
-    for (StudySiteContactDTO spcDTO : spcDTOs) {
-      if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().
-          equals(spcDTO.getRoleCode().getCode())) {
-        continue;
-      }
-      if (first) {
-        first = false;
-        html.append(appendLabel("Investigator(s)", "", true , true));
-        html.append(TBL_B);
-        html.append(TR_B);
-        appendTDAndData(html, appendTRBold("First Name"));
-        appendTDAndData(html, appendTRBold("Last Name"));
-        appendTDAndData(html, appendTRBold("Role"));
-        html.append(TR_E);
-      }
-      Person p = correlationUtils.getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
-      html.append(TR_B);
-      appendTDAndData(html, p.getFirstName());
-      appendTDAndData(html, p.getLastName());
-      appendTDAndData(html, getTableData(spcDTO.getRoleCode(), true));
-      html.append(TR_E);
-    }
-    html.append(first ? "" : TBL_E);
-  }
-
-  /**
-   * Creates the contact.
-   * @param html the html
-   * @param spcDTOs the spc dt os
-   * @throws PAException the PA exception
- * @throws NullifiedRoleException 
- * @throws  
-   */
-  private void createContact(StringBuffer html,  List<StudySiteContactDTO> spcDTOs)
-  throws PAException, NullifiedRoleException {
-    for (StudySiteContactDTO spcDTO : spcDTOs) {
-        if (!StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().
-                equals(spcDTO.getRoleCode().getCode())) {
-            continue;
+        ByteArrayOutputStream outputByteStream = null;
+        studyProtocolIi = studyProtIi;
+        if (studyProtocolIi == null) {
+            throw new PAException("Study Protocol Identifier is null");
         }
-        List<String> phones = DSetConverter.convertDSetToList(spcDTO.getTelecomAddresses(), "PHONE");
-        List<String> emails = DSetConverter.convertDSetToList(spcDTO.getTelecomAddresses(), "EMAIL");
-        if (spcDTO.getClinicalResearchStaffIi() != null) {
-            Person p = correlationUtils.getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
-            html.append(appendData("Contact" , p.getFirstName() + " " + p.getLastName() , true , true));
-        } else if (spcDTO.getOrganizationalContactIi() != null) {
-            PAContactDTO paCDto =  correlationUtils.getContactByPAOrganizationalContactId((
-                    Long.valueOf(spcDTO.getOrganizationalContactIi().getExtension())));
-            html.append(appendData("Contact" , paCDto.getTitle(), true , true));
-        }
-        if (phones != null && !phones.isEmpty()) {
-          html.append(appendData("Phone" , phones.get(0) , true , true));
-        }
-        if (emails != null && !emails.isEmpty()) {
-          html.append(appendData("Email" , emails.get(0) , true , true));
-        }
-    }
-  }
 
-  /**
-   * Creates the secondary outcome.
-   * @param html the html
-   * @param somDtos the som dtos
-   */
-  private void createSecondaryOutcome(StringBuffer html,
-      List<StudyOutcomeMeasureDTO> somDtos) {
-    if (!somDtos.isEmpty()) {
-        appendTitle(html, appendBoldData("Secondary Outcome Measures"));
-        html.append(TBL_B);
-        html.append(TR_B);
-        appendTDAndData(html, appendTRBold("Description"));
-        appendTDAndData(html, appendTRBold("TimeFrame"));
-        appendTDAndData(html, appendTRBold("Safety Issue?"));
-        html.append(TR_E);
-        for (StudyOutcomeMeasureDTO smDTO : somDtos) {
-         if (!smDTO.getPrimaryIndicator().getValue().booleanValue()) {
-            html.append(TR_B);
-            appendTDAndData(html, StConverter.convertToString(smDTO.getName()));
-            appendTDAndData(html, StConverter.convertToString(smDTO.getTimeFrame()));
-            appendTDAndData(html, convertBLToString((smDTO.getSafetyIndicator()), false));
-            html.append(TR_E);
-        }
-      }
-      html.append(TBL_E);  
-    }   
-  }
+        try {
+            studyProtocolDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
+            studyProtocolDtoIdentifier = studyProtocolDto.getIdentifier();
+            isProprietaryTrial = !PAUtil.isBlNull(studyProtocolDto.getProprietaryTrialIndicator())
+                    && BlConverter.covertToBoolean(studyProtocolDto.getProprietaryTrialIndicator());
 
-  /**
-   * Creates the primary outcome.
-   * @param html the html
-   * @param somDtos the som dtos
-   */
-  private void createPrimaryOutcome(StringBuffer html,
-      List<StudyOutcomeMeasureDTO> somDtos) {
-    if (!somDtos.isEmpty()) {
-      appendTitle(html, appendBoldData("Primary Outcome Measures"));
-      html.append(TBL_B);
-      html.append(TR_B);
-      appendTDAndData(html, appendTRBold("Description"));
-      appendTDAndData(html, appendTRBold("TimeFrame"));
-      appendTDAndData(html, appendTRBold("Safety Issue?"));
-      html.append(TR_E);
-      for (StudyOutcomeMeasureDTO smDTO : somDtos) {
-        if (smDTO.getPrimaryIndicator().getValue().booleanValue()) {
-           html.append(TR_B);
-           appendTDAndData(html, StConverter.convertToString(smDTO.getName()));
-           appendTDAndData(html, StConverter.convertToString(smDTO.getTimeFrame()));
-           appendTDAndData(html, convertBLToString((smDTO.getSafetyIndicator()), false));
-           html.append(TR_E);
-           }        
-        }
-      html.append(TBL_E);
-      }
-  }
-
-  /**
-   * Append arm.
-   * @param html the html
-   * @param spDTO the sp dto
-   * 
-   * @throws PAException the PA exception
-   */
-  private void appendArm(StringBuffer html, StudyProtocolDTO spDTO) throws PAException {
-    List<ArmDTO> arms = armService.getByStudyProtocol(spDTO.getIdentifier());
-    for (ArmDTO armDTO : arms) {
-      appendTitle(html, appendBoldData("Arm/Group(s)"));
-      html.append(BR);
-      html.append(appendData("Label", getInfo(armDTO.getName(), true), true , true));
-      html.append(appendData("Type", getData(armDTO.getTypeCode(), true), true , true));
-      html.append(appendData("Description", getInfo(armDTO.getDescriptionText(), true), true , true));
-      List<PlannedActivityDTO> paList = plannedActivityService.getByArm(armDTO.getIdentifier());
-      appendInterventions(html, paList);
-    }   
-  }
-  
-  private void appendInterventions(StringBuffer html, List<PlannedActivityDTO> paList) throws PAException {
-      html.append(appendLabel("Intervention(s)", "" , true, true));
-      if (!paList.isEmpty()) {
-          html.append(TBL_B);
-          html.append(TR_B);
-          appendTDAndData(html, appendTRBold("Type"));
-          appendTDAndData(html, appendTRBold("Lead"));
-          appendTDAndData(html, appendTRBold("Name"));
-          appendTDAndData(html, appendTRBold("Alternate Name"));
-          appendTDAndData(html, appendTRBold("Description"));
-          html.append(TR_E);
-          for (PlannedActivityDTO pa : paList) {
-    
-              InterventionDTO inter = interventionService.get(pa.getInterventionIdentifier());
-              String interventionAltName = getInterventionAltNames(inter);
-              html.append(TR_B);
-              appendTDAndData(html, getTableData(pa.getSubcategoryCode(), true));
-              appendTDAndData(html, BlConverter.covertToBool(pa.getLeadProductIndicator()) ? "Yes" : "No");
-              appendTDAndData(html, getData(inter.getName(), true));
-              appendTDAndData(html, interventionAltName);
-              appendTDAndData(html, getData(pa.getTextDescription(), true));
-              html.append(TR_E);
-          }
-          html.append(TBL_E);
-       }
-  }
-
-private String getInterventionAltNames(InterventionDTO i) throws PAException {
-      List<InterventionAlternateNameDTO> ianList = 
-          interventionAlternateNameService.getByIntervention(i.getIdentifier()); 
-      int cnt = 1; 
-      StringBuffer interventionAltName = new StringBuffer();
-      List<InterventionAlternateNameDTO> interventionNames = new ArrayList<InterventionAlternateNameDTO>();
-
-      for (InterventionAlternateNameDTO ian : ianList) {
-          if (ian.getNameTypeCode().getValue() != null 
-                  && (ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.SYNONYM) 
-                  || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.ABBREVIATION)
-                  || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.US_BRAND_NAME)
-                  || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.FOREIGN_BRAND_NAME)
-                  || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.CODE_NAME))) {
-              
-               interventionNames.add(ian);
-                 
-           if (cnt++ > PAAttributeMaxLen.LEN_5) {
-               break;
-           }
-         } 
-       }
-       Collections.sort(interventionNames, new Comparator<InterventionAlternateNameDTO>() {
-           public int compare(InterventionAlternateNameDTO o1, InterventionAlternateNameDTO o2) {
-                   return o1.getName().getValue().compareToIgnoreCase(o2.getName().getValue());
-            }
-        });
-       
-       for (InterventionAlternateNameDTO altname : interventionNames) {
-           interventionAltName.append(altname.getName().getValue()).append(", ");
-       }
-       if ("".equals(interventionAltName) && interventionAltName.length() > MIN_LEN) {
-         return interventionAltName.substring(0, interventionAltName.length() - 2);
-       } else {
-           return interventionAltName.toString();
-       }
-  }
-
-  /**
-   * Append eligibility criteria.
-   * @param html the html
-   * @param spDTO the sp dto
-   * @throws PAException the PA exception
-   */
-  private void appendEligibilityCriteria(StringBuffer html, StudyProtocolDTO spDTO)
-      throws PAException {
-    appendTitle(html, appendBoldData("Eligibility Criteria"));
-    html.append(BR);
-    List<PlannedEligibilityCriterionDTO> paECs =
-            plannedActivityService.getPlannedEligibilityCriterionByStudyProtocol(spDTO.getIdentifier());
-      if (paECs == null || paECs.isEmpty()) {
-          return;
-      }
-      String criterionName = null;
-      String descriptionText = null;
-      Ivl<Pq> pq = null;
-      StringBuffer incCrit = new StringBuffer();
-      StringBuffer exCrit = new StringBuffer();
-      StringBuffer nullCrit = new StringBuffer();
-
-      Boolean incIndicator = null;
-      html.append(appendData("Accepts Healthy Volunteers?",
-          convertBLToString(spDTO.getAcceptHealthyVolunteersIndicator(), false), true , true));
-    //sorts the list on display order
-      Collections.sort(paECs, new Comparator<PlannedEligibilityCriterionDTO>() {
-          public int compare(PlannedEligibilityCriterionDTO o1, PlannedEligibilityCriterionDTO o2) {
-            return (!PAUtil.isIntNull(o1.getDisplayOrder()) && !PAUtil.isIntNull(o2.getDisplayOrder())) 
-                   ? o1.getDisplayOrder().getValue().compareTo(o2.getDisplayOrder().getValue()) : 0;
-           }
-       });
-      for (PlannedEligibilityCriterionDTO paEC : paECs) {
-          criterionName = StConverter.convertToString(paEC.getCriterionName());
-          descriptionText  = StConverter.convertToString(paEC.getTextDescription());
-          incIndicator = paEC.getInclusionIndicator() != null ? paEC.getInclusionIndicator().getValue() : null;
-          pq = paEC.getValue();
-          if (criterionName != null && criterionName.equalsIgnoreCase("GENDER")
-                  && paEC.getEligibleGenderCode() != null) {
-              html.append(appendData("Gender", getData(paEC.getEligibleGenderCode(), true), true , true));
-          } else if (criterionName != null && criterionName.equalsIgnoreCase("AGE")) {
-             if (pq.getLow() != null && pq.getLow().getValue() != null) { 
-               if (pq.getLow().getValue().intValue() == 0) {
-                  html.append(appendData("Minimum Age", "N/A" , true , true));
-               } else {
-                  html.append(appendData("Minimum Age", PAUtil.getAge(pq.getLow().getValue())
-                  + " " + pq.getLow().getUnit(), true , true));
-               }
-             } 
-             if (pq.getHigh() != null && pq.getHigh().getValue() != null) { 
-               if (pq.getHigh().getValue().intValue() == MAX_AGE) {
-                  html.append(appendData("Maximum Age", "N/A" , true , true));
-               } else {
-                  html.append(appendData("Maximum Age", PAUtil.getAge(pq.getHigh().getValue())  
-                  + " " + pq.getHigh().getUnit(), true , true));
-               }
-             }  
-          } else if (descriptionText != null && (!(descriptionText.equals("")))) {
-            incCrit.append(UL_B);
-            exCrit.append(UL_B);
-            nullCrit.append(UL_B);
-            if (incIndicator == null) {
-                nullCrit.append(LI_B);
-                nullCrit.append(descriptionText);
-                nullCrit.append(LI_E);
-            } else if (incIndicator) {
-                incCrit.append(LI_B);
-                incCrit.append(descriptionText);
-                incCrit.append(LI_E);
-              } else {
-                exCrit.append(LI_B);
-                exCrit.append(descriptionText);
-                exCrit.append(LI_E);
-              }
-              incCrit.append(UL_E);
-              exCrit.append(UL_E);
-              nullCrit.append(UL_E);
+            TSRReport tsrReport = new TSRReport(REPORT_TITLE, PAUtil.today(), getNormalizedDateString(studyProtocolDto
+                    .getRecordVerificationDate()));
+            tsrReportGenerator = new PdfTsrReportGenerator(tsrReport, isProprietaryTrial);
+            if (isProprietaryTrial) {
+                setProprietaryTrialReportDetails();
             } else {
-            incCrit.append(UL_B);
-            exCrit.append(UL_B);
-            nullCrit.append(UL_B);
-            if (incIndicator == null) {
-                nullCrit.append(LI_B);
-                nullCrit.append(getData(paEC.getCriterionName(), true) + "   "
-                    + getData(paEC.getOperator(), true) + "  "
-                    + pq.getLow().getValue() + "  " + pq.getLow().getUnit());
-                nullCrit.append(LI_E);
-            } else if (incIndicator) {
-                incCrit.append(LI_B);
-                incCrit.append(getData(paEC.getCriterionName(), true) + "   "
-                    + getData(paEC.getOperator(), true) + "  "
-                    + pq.getLow().getValue() + "  " + pq.getLow().getUnit());
-                incCrit.append(LI_E);
-              } else {
-                exCrit.append(LI_B);
-                exCrit.append(getData(paEC.getCriterionName(), true) + "   "
-                    + getData(paEC.getOperator(), true) + "  "
-                    + pq.getLow().getValue() + "  " + pq.getLow().getUnit());
-                exCrit.append(LI_E);
-              }
-              nullCrit.append(UL_E);
-              incCrit.append(UL_E);
-              exCrit.append(UL_E);
-          }
-      } // for loop
-      html.append(BR);
-      html.append(BR);
-      if (nullCrit.length() > 0) {
-          html.append(NBSP).append(appendBoldData("Other Criteria")).append(nullCrit);
-      }
-      if (incCrit.length() > 0) {
-            html.append(NBSP).append(appendBoldData("Inclusion Criteria")).append(incCrit);
-      }
-      if (exCrit.length() > 0) {
-            html.append(NBSP).append(appendBoldData("Exclusion Criteria")).append(exCrit);
-      }
-  }
-
-  /**
-   * Append trial design.
-   * @param html the html
-   * @param spDTO the sp dto
-   * @throws PAException the PA exception
-   */
-  private void appendTrialDesign(StringBuffer html, StudyProtocolDTO spDTO)
-  throws PAException {
-    appendTitle(html, appendBoldData("Trial Design"));
-    html.append(BR);
-    InterventionalStudyProtocolDTO ispDTO =
-                    studyProtocolService.getInterventionalStudyProtocol(spDTO.getIdentifier());
-    html.append(appendData("Primary Purpose", getData(ispDTO.getPrimaryPurposeCode(), true), true , true));
-    html.append(appendData("Phase", getData(ispDTO.getPhaseCode(), true), true , true));
-    html.append(appendData("Intervention Model", getData(ispDTO.getDesignConfigurationCode(), true), true , true));
-    html.append(appendData("Number of Arms", getData(ispDTO.getNumberOfInterventionGroups(), true), true , true));
-    html.append(appendData("Masking", getData(ispDTO.getBlindingSchemaCode(), true), true , true));
-    String maskedRoles = "";
-    String subject = NO;
-    String investigator = NO;
-    String caregiver = NO;
-    String outcomesAssessor = NO;
-    if (ispDTO.getBlindedRoleCode() != null) {
-      List<Cd> cds =  DSetConverter.convertDsetToCdList(ispDTO.getBlindedRoleCode());
-      if (cds != null) {
-        for (Cd cd : cds) {
-          if (BlindingRoleCode.CAREGIVER.getCode().equals(cd.getCode())) {
-            caregiver = YES;
-          } else if (BlindingRoleCode.INVESTIGATOR.getCode().equals(cd.getCode())) {
-            investigator = YES;
-          } else if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(cd.getCode())) {
-            outcomesAssessor = YES;
-          } else if (BlindingRoleCode.SUBJECT.getCode().equals(cd.getCode())) {
-            subject = YES;
-          }
-        } // for
-      } // if
-      maskedRoles = "Subject: " + subject + "; Investigator: " + investigator + "; Caregiver: "
-      + caregiver + "; Outcomes Assessor: " + outcomesAssessor;
-      html.append(appendData("Masked Roles", maskedRoles, true , true));
-    } // if
-    html.append(appendData("Allocation", getData(ispDTO.getAllocationCode(), true), true , true));
-    html.append(appendData("Study Classification", getData(ispDTO.getStudyClassificationCode(), true), true , true));
-    html.append(appendData("Target Enrollment", getData(ispDTO.getTargetAccrualNumber().getLow(), true), true , true));
-  }
-
-  /**
-   * Append disease.
-   * @param studyProtocolIi the study protocol ii
-   * @param html the html
-   * @throws PAException the PA exception
-   */
-  private void appendDisease(Ii studyProtocolIi, StringBuffer html)
-  throws PAException {
-    appendTitle(html, appendBoldData("Disease/Condition"));
-    html.append(BR).append(BR).append(TBL_B);
-    List<StudyDiseaseDTO> sdDtos =
-                    studyDiseaseService.getByStudyProtocol(studyProtocolIi);
-    boolean first = true;
-    if (sdDtos != null) {
-        if (first) {
-            first = false;
-            html.append(TR_B);
-            appendTDAndData(html, appendTRBold("Name"));
-            //appendTDAndData(html, appendTRBold("Lead"));
-            html.append(TR_E);
-          }
-       /* for (StudyDiseaseDTO sdDto : sdDtos) {
-            if (sdDto.getLeadDiseaseIndicator() != null 
-                    && sdDto.getLeadDiseaseIndicator().getValue()) {
-                DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
-                html.append(TR_B);
-                appendTDAndData(html, getData(d.getPreferredName(), true));
-                appendTDAndData(html, convertBLToString(sdDto.getLeadDiseaseIndicator() , false));
-                html.append(TR_E);
-                break; 
-           }
-        } */
-        List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
-        for (StudyDiseaseDTO sdDto : sdDtos) {
-         /*if (sdDto.getLeadDiseaseIndicator() != null 
-                    && !sdDto.getLeadDiseaseIndicator().getValue()) {
-         */       DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
-                diseases.add(d);
-         //   }
-        }
-        Collections.sort(diseases, new Comparator<DiseaseDTO>() {
-           public int compare(DiseaseDTO o1, DiseaseDTO o2) {
-                return o1.getPreferredName().getValue().compareToIgnoreCase(o2.getPreferredName().getValue());
+                setNonProprietaryTrialReportDetails();
             }
- 
+            outputByteStream = tsrReportGenerator.generateTsrReport();
+        } catch (Exception e) {
+            TSRErrorReport tsrErrorReport = new TSRErrorReport(REPORT_TITLE, studyProtocolDto
+                    .getAssignedIdentifier().getExtension(), getValue(studyProtocolDto.getOfficialTitle()));
+            tsrErrorReport.setErrorType(e.toString());
+            for (StackTraceElement ste : e.getStackTrace()) {
+                tsrErrorReport.getErrorReasons().add(ste.toString());
+            }
+            tsrReportGenerator = new PdfTsrReportGenerator(tsrErrorReport);
+            outputByteStream = tsrReportGenerator.generateErrorReport();
+        }
+        return outputByteStream;
+    }
+
+    private void setProprietaryTrialReportDetails() throws PAException, NullifiedRoleException {
+        setTrialIdentificationDetails();
+        setGeneralTrialDetails();
+        setSummary4Information();
+        setDiseases();
+        setInterventions();
+        setParticipatingSites();
+    }
+
+    private void setNonProprietaryTrialReportDetails() throws PAException, NullifiedRoleException {
+        setTrialIdentificationDetails();
+        setGeneralTrialDetails();
+        setStatusDatesDetails();
+        setRegulatoryInformation();
+        setHumanSubjectSafety();
+        setIndIdes();
+        setNihGrants();
+        setSummary4Information();
+        setCollaborators();
+        setDiseases();
+        setTrialDesign();
+        setEligibilityCriteria();
+        setArmGroups();
+        setPrimaryAndSecondaryOutcomeMeasures();
+        setSubGroupStratificationCriteria();
+        setParticipatingSites();
+    }
+
+    private void setInterventions() throws PAException {
+        List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(studyProtocolDtoIdentifier);
+        if (paList != null && !paList.isEmpty()) {
+            for (PlannedActivityDTO paDto : paList) {
+                if (PAUtil.isTypeIntervention(paDto.getCategoryCode())) {
+                    tsrReportGenerator.getInterventions().add(getIntervention(paDto));
+                }
+            }
+        }
+    }
+
+    private TSRReportIntervention getIntervention(PlannedActivityDTO paDto) throws PAException {
+        InterventionDTO interventionDto = interventionService.get(paDto.getInterventionIdentifier());
+        TSRReportIntervention intervention = new TSRReportIntervention();
+        intervention.setType(getValue(paDto.getSubcategoryCode()));
+        intervention.setName(getValue(interventionDto.getName()));
+        intervention.setAlternateName(getInterventionAltNames(interventionDto));
+        intervention.setDescription(getValue(paDto.getTextDescription()));
+        return intervention;
+    }
+
+    private void setTrialIdentificationDetails() throws PAException {
+        TSRReportTrialIdentification trialIdentification = new TSRReportTrialIdentification();
+        trialIdentification.setTrialCategory(isProprietaryTrial ? PROPRIETARY : NON_PROPRIETARY);
+        trialIdentification.setNciIdentifier(studyProtocolDto.getAssignedIdentifier().getExtension());
+        trialIdentification.setLeadOrgIdentifier(getTiLeadOrgIdentifier());
+        trialIdentification.setNctNumber(getIdentifier(PAConstants.NCT_IDENTIFIER_TYPE));
+        trialIdentification.setDcpIdentifier(getIdentifier(PAConstants.DCP_IDENTIFIER_TYPE));
+        trialIdentification.setCtepIdentifier(getIdentifier(PAConstants.CTEP_IDENTIFIER_TYPE));
+        trialIdentification.setAmendmentNumber(getValue(studyProtocolDto.getAmendmentNumber()));
+        trialIdentification.setAmendmentDate(getNormalizedDateString(studyProtocolDto.getAmendmentDate()));
+        Organization lead = ocsr.getOrganizationByFunctionRole(studyProtocolDtoIdentifier, CdConverter
+                .convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        trialIdentification.setLeadOrganization(lead.getName());
+
+        tsrReportGenerator.setTrialIdentification(trialIdentification);
+    }
+
+    private String getTiLeadOrgIdentifier() throws PAException {
+        String leadOrgIdentifier = null;
+        StudySiteDTO spartDTO = new StudySiteDTO();
+        spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        List<StudySiteDTO> sParts = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);
+        if (sParts != null && !sParts.isEmpty() && sParts.get(0).getLocalStudyProtocolIdentifier() != null) {
+            leadOrgIdentifier = sParts.get(0).getLocalStudyProtocolIdentifier().getValue();
+        }
+        return leadOrgIdentifier;
+    }
+
+    private String getIdentifier(String identifierType) throws PAException {
+        String identifier = paServiceUtils.getStudyIdentifier(studyProtocolDtoIdentifier, identifierType);
+        return (StringUtils.isNotBlank(identifier) ? identifier : INFORMATION_NOT_PROVIDED);
+    }
+
+    private void setGeneralTrialDetails() throws PAException, NullifiedRoleException {
+        TSRReportGeneralTrialDetails gtd = new TSRReportGeneralTrialDetails();
+
+        gtd.setOfficialTitle(getValue(studyProtocolDto.getOfficialTitle(), INFORMATION_NOT_PROVIDED));
+
+        if (isProprietaryTrial) {
+            gtd.setPrimaryPurpose(getValue(studyProtocolDto.getPrimaryPurposeCode(), INFORMATION_NOT_PROVIDED));
+            gtd.setPrimaryPurposeComment(getValue(studyProtocolDto.getPrimaryPurposeOtherText(), null));
+            gtd.setPhase(getValue(studyProtocolDto.getPhaseCode(), INFORMATION_NOT_PROVIDED));
+            gtd.setPhaseComment(getValue(studyProtocolDto.getPhaseOtherText(), null));
+            InterventionalStudyProtocolDTO ispDTO = studyProtocolService
+                    .getInterventionalStudyProtocol(studyProtocolDtoIdentifier);
+            boolean interventionalType = ispDTO != null ? true : false;
+            gtd.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_OBSERVATIONAL);
+        } else {
+            gtd.setBriefTitle(getValue(studyProtocolDto.getPublicTitle(), INFORMATION_NOT_PROVIDED));
+            gtd.setAcronym(getValue(studyProtocolDto.getAcronym(), INFORMATION_NOT_PROVIDED));
+            gtd.setBriefSummary(getValue(studyProtocolDto.getPublicDescription(), INFORMATION_NOT_PROVIDED));
+            gtd.setDetailedDescription(getValue(studyProtocolDto.getScientificDescription(), INFORMATION_NOT_PROVIDED));
+            gtd.setKeywords(getValue(studyProtocolDto.getKeywordText(), INFORMATION_NOT_PROVIDED));
+            if (studyProtocolDto.getAccrualReportingMethodCode() != null) {
+                gtd.setReportingDatasetMethod(getValue(studyProtocolDto.getAccrualReportingMethodCode()
+                        .getDisplayName(), INFORMATION_NOT_PROVIDED));
+            }
+            gtd.setSponsor(getGtdSponsorOrLeadOrganization(StudySiteFunctionalCode.SPONSOR, INFORMATION_NOT_PROVIDED));
+            String leadOrganization = getGtdSponsorOrLeadOrganization(StudySiteFunctionalCode.LEAD_ORGANIZATION,
+                    INFORMATION_NOT_PROVIDED);
+            gtd.setLeadOrganization(leadOrganization);
+            // PI
+            StudyContactDTO scDto = new StudyContactDTO();
+            scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
+            List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolDtoIdentifier, scDto);
+            if (!scDtos.isEmpty()) {
+                Person leadPi = correlationUtils.getPAPersonByIi(scDtos.get(0).getClinicalResearchStaffIi());
+                gtd.setPi(leadPi.getFullName() + AFFILIATED_WITH + leadOrganization);
+                // Overall Official
+                StringBuilder overallOffBuilder = new StringBuilder();
+                overallOffBuilder.append(leadPi.getFullName()).append(AFFILIATED_WITH).append(leadOrganization).append(
+                        IN_THE_ROLE_OF).append(ROLE_PI);
+                gtd.setOverallOfficial(overallOffBuilder.toString());
+                // Central Contact
+                gtd.setCentralContact(getCentralContactDetails());
+                // Responsible Party
+                gtd.setResponsibleParty(getResponsiblePartyDetails());
+            }
+        }
+
+        tsrReportGenerator.setGeneralTrialDetails(gtd);
+    }
+
+    private String getCentralContactDetails() throws PAException, NullifiedRoleException {
+        String retVal = null;
+        StudyContactDTO scDto = new StudyContactDTO();
+        scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
+        List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolDtoIdentifier, scDto);
+        if (!scDtos.isEmpty()) {
+            String centralContactName = "";
+
+            StudyContactDTO cc = scDtos.get(0);
+            if (cc.getClinicalResearchStaffIi() != null) {
+                centralContactName = correlationUtils.getPAPersonByIi(cc.getClinicalResearchStaffIi()).getFullName();
+            } else if (cc.getOrganizationalContactIi() != null) {
+                PAContactDTO paCDto = correlationUtils.getContactByPAOrganizationalContactId((Long.valueOf(cc
+                        .getOrganizationalContactIi().getExtension())));
+                centralContactName = paCDto.getTitle();
+            }
+            String email = PAUtil.getEmail(cc.getTelecomAddresses());
+            String phone = PAUtil.getPhone(cc.getTelecomAddresses());
+            String extn = PAUtil.getPhoneExtension(cc.getTelecomAddresses());
+
+            StringBuilder builder = new StringBuilder();
+            builder.append(centralContactName).append(", email: ").append(email).append(", phone: ").append(phone)
+                    .append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
+            retVal = builder.toString();
+        }
+        return retVal;
+    }
+
+    private String getResponsiblePartyDetails() throws PAException, NullifiedRoleException {
+        String retVal = null;
+        StudyContactDTO scDto = new StudyContactDTO();
+        scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
+        List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolDtoIdentifier, scDto);
+        Person rp = null;
+        String resPartyContactName = null;
+        DSet<Tel> dset = null;
+        Organization sponsorResponsible = null;
+        if (scDtos != null && !scDtos.isEmpty()) {
+            scDto = scDtos.get(0);
+            rp = correlationUtils.getPAPersonByIi(scDto.getClinicalResearchStaffIi());
+            dset = scDto.getTelecomAddresses();
+            resPartyContactName = rp.getFullName();
+            StudySiteDTO spartDTO = new StudySiteDTO();
+            spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+            List<StudySiteDTO> sParts = studySiteService.getByStudyProtocol(studyProtocolDtoIdentifier, spartDTO);
+            for (StudySiteDTO spart : sParts) {
+                sponsorResponsible = correlationUtils.getPAOrganizationByIi(spart.getResearchOrganizationIi());
+            }
+        } else {
+            StudySiteContactDTO spart = new StudySiteContactDTO();
+            spart.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
+            List<StudySiteContactDTO> spDtos = studySiteContactService.getByStudyProtocol(studyProtocolDtoIdentifier,
+                    spart);
+            if (spDtos != null && !spDtos.isEmpty()) {
+                PAContactDTO paCDto = correlationUtils.getContactByPAOrganizationalContactId((Long.valueOf(spDtos
+                        .get(0).getOrganizationalContactIi().getExtension())));
+                resPartyContactName = paCDto.getResponsiblePartyContactName();
+                dset = spDtos.get(0).getTelecomAddresses();
+
+                StudySiteDTO spDto = new StudySiteDTO();
+                spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+                List<StudySiteDTO> spartDtos = studySiteService.getByStudyProtocol(studyProtocolDtoIdentifier, spDto);
+                if (spartDtos != null && !spartDtos.isEmpty()) {
+                    spDto = spartDtos.get(0);
+                    sponsorResponsible = new CorrelationUtils()
+                            .getPAOrganizationByIi(spDto.getResearchOrganizationIi());
+                }
+            }
+        }
+        String email = PAUtil.getEmail(dset);
+        String phone = PAUtil.getPhone(dset);
+        String extn = PAUtil.getPhoneExtension(dset);
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("Name/Official Title: ").append(resPartyContactName).append(", Organization: ").append(
+                sponsorResponsible.getName()).append(", email: ").append(email).append(", phone: ").append(phone)
+                .append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
+        retVal = builder.toString();
+
+        return retVal;
+    }
+
+    private void setStatusDatesDetails() throws PAException {
+        TSRReportStatusDate statusDate = new TSRReportStatusDate();
+        StudyOverallStatusDTO statusDateDto = studyOverallStatusService
+                .getCurrentByStudyProtocol(studyProtocolDtoIdentifier);
+        statusDate.setCurrentTrialStatus(getValue(statusDateDto.getStatusCode()) + AS_OF
+                + getNormalizedDateString(statusDateDto.getStatusDate()));
+        statusDate.setReasonText(getValue(statusDateDto.getReasonText(), null));
+        statusDate.setTrialStartDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
+                studyProtocolDto.getStartDate()).toString())
+                + "-" + getValue(studyProtocolDto.getStartDateTypeCode()));
+        statusDate.setPrimaryCompletionDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
+                studyProtocolDto.getPrimaryCompletionDate()).toString())
+                + "-" + getValue(studyProtocolDto.getPrimaryCompletionDateTypeCode()));
+        tsrReportGenerator.setStatusDate(statusDate);
+    }
+
+    private void setRegulatoryInformation() throws PAException {
+        TSRReportRegulatoryInformation regInfo = new TSRReportRegulatoryInformation();
+        StudyRegulatoryAuthorityDTO sraDTO = studyRegulatoryAuthorityService
+                .getCurrentByStudyProtocol(studyProtocolDtoIdentifier);
+        if (sraDTO != null) {
+            String data = INFORMATION_NOT_PROVIDED;
+            RegulatoryAuthority ra = regulatoryInformationService.get(Long.valueOf(sraDTO
+                    .getRegulatoryAuthorityIdentifier().getExtension()));
+
+            Country country = regulatoryInformationService.getRegulatoryAuthorityCountry(Long.valueOf(sraDTO
+                    .getRegulatoryAuthorityIdentifier().getExtension()));
+            if (country != null && ra != null) {
+                data = country.getName() + ": " + ra.getAuthorityName();
+            } else if (country != null) {
+                data = country.getName();
+            } else if (ra != null) {
+                data = ra.getAuthorityName();
+            }
+            regInfo.setTrialOversightAuthority(data);
+        }
+        regInfo.setDmcAppointed(getValue(studyProtocolDto.getDataMonitoringCommitteeAppointedIndicator(),
+                INFORMATION_NOT_PROVIDED));
+        regInfo.setFdaRegulatedIntervention(getValue(studyProtocolDto.getFdaRegulatedIndicator(),
+                INFORMATION_NOT_PROVIDED));
+        regInfo.setSection801(getValue(studyProtocolDto.getSection801Indicator(), INFORMATION_NOT_PROVIDED));
+        List<StudyIndldeDTO> indIde = studyIndldeService.getByStudyProtocol(studyProtocolDto.getIdentifier());
+        if (indIde != null && (!indIde.isEmpty())) {
+            regInfo.setIndIdeStudy(YES);
+        } else {
+            regInfo.setIndIdeStudy(NO);
+        }
+        regInfo.setDelayedPosting(getValue(studyProtocolDto.getDelayedpostingIndicator(), INFORMATION_NOT_PROVIDED));
+        tsrReportGenerator.setRegulatoryInformation(regInfo);
+    }
+
+    private void setHumanSubjectSafety() throws PAException {
+        TSRReportHumanSubjectSafety hss = new TSRReportHumanSubjectSafety();
+
+        Boolean b = BlConverter.covertToBoolean(studyProtocolDto.getReviewBoardApprovalRequiredIndicator());
+        if (b != null && b) {
+            List<StudySiteDTO> partList = studySiteService.getByStudyProtocol(studyProtocolDtoIdentifier);
+            for (StudySiteDTO part : partList) {
+                if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
+                        part.getReviewBoardApprovalStatusCode().getCode())
+                        || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().equals(
+                                part.getReviewBoardApprovalStatusCode().getCode())
+                        || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode().equals(
+                                part.getReviewBoardApprovalStatusCode().getCode())
+                        || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode().equals(
+                                part.getReviewBoardApprovalStatusCode().getCode())) {
+                    hss.setBoardApprovalStatus(getValue(part.getReviewBoardApprovalStatusCode(),
+                            INFORMATION_NOT_PROVIDED));
+                    hss.setBoardApprovalNumber(getValue(part.getReviewBoardApprovalNumber(), INFORMATION_NOT_PROVIDED));
+                    Organization paOrg = correlationUtils.getPAOrganizationByIi(part.getOversightCommitteeIi());
+                    if (paOrg != null) {
+                        OrganizationDTO poOrg = null;
+                        try {
+                            poOrg = PoRegistry.getOrganizationEntityService().getOrganization(
+                                    IiConverter.convertToPoOrganizationIi(paOrg.getIdentifier()));
+                        } catch (NullifiedEntityException e) {
+                            throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier(), e);
+                        }
+                        String email = null;
+                        String phone = null;
+                        String extn = null;
+                        Object[] telList = poOrg.getTelecomAddress().getItem().toArray();
+                        for (Object tel : telList) {
+                            if (tel instanceof TelPhone) {
+                                phone = ((TelPhone) tel).getValue().getSchemeSpecificPart();
+                                extn = PAUtil.getPhoneExtn(phone);
+                            } else if (tel instanceof TelEmail) {
+                                email = ((TelEmail) tel).getValue().getSchemeSpecificPart();
+                            }
+                        }
+                        hss.setBoard(getHSSBoardNameAndAddress(paOrg.getName(), AddressConverterUtil
+                                .convertToAddress(poOrg.getPostalAddress()), email, phone, extn));
+                        hss.setAffiliation(getValue(part.getReviewBoardOrganizationalAffiliation(), null));
+                    }
+                }
+            }
+        }
+        tsrReportGenerator.setHumanSubjectSafety(hss);
+    }
+
+    private String getHSSBoardNameAndAddress(String orgName, String fullAddress,
+            String email, String phone, String extn) {
+        StringBuilder retVal = new StringBuilder();
+        retVal.append(StringUtils.isNotEmpty(orgName) ? orgName : "").append(
+                StringUtils.isNotEmpty(orgName) && StringUtils.isNotEmpty(fullAddress) ? ", " : "").append(
+                StringUtils.isNotEmpty(fullAddress) ? fullAddress : "");
+        if (StringUtils.isNotEmpty(phone)) {
+            retVal.append(", phone: ").append(phone).append(StringUtils.isNotEmpty(extn) ? ", extn: " + extn : BLANK);
+        }
+        if (StringUtils.isNotEmpty(email)) {
+            retVal.append(", email: ").append(email);
+        }
+        if (StringUtils.isEmpty(retVal.toString())) {
+            return null;
+        }
+
+        return retVal.toString();
+    }
+
+    private void setIndIdes() throws PAException {
+        List<TSRReportIndIde> indIdes = new ArrayList<TSRReportIndIde>();
+
+        List<StudyIndldeDTO> indides = studyIndldeService.getByStudyProtocol(studyProtocolDtoIdentifier);
+        for (StudyIndldeDTO indDto : indides) {
+            TSRReportIndIde indIde = new TSRReportIndIde();
+            indIde.setType(getValue(indDto.getIndldeTypeCode()));
+            indIde.setGrantor(getValue(indDto.getGrantorCode()));
+            indIde.setNumber(getValue(indDto.getIndldeNumber()));
+            indIde.setHolderType(getValue(indDto.getHolderTypeCode()));
+            if (indDto.getHolderTypeCode() != null
+                    && indDto.getHolderTypeCode().getCode().equals(HolderTypeCode.NIH.getCode())) {
+                indIde.setHolder(getValue(indDto.getNihInstHolderCode()));
+            } else if (indDto.getHolderTypeCode() != null
+                    && indDto.getHolderTypeCode().getCode().equals(HolderTypeCode.NCI.getCode())) {
+                indIde.setHolder(getValue(indDto.getNciDivProgHolderCode()));
+            }
+            indIde.setExpandedAccess(getValue(indDto.getExpandedAccessIndicator()));
+            indIde.setExpandedAccessStatus(getValue(indDto.getExpandedAccessStatusCode()));
+            indIdes.add(indIde);
+        }
+        tsrReportGenerator.setIndIdes(indIdes);
+    }
+
+    private void setNihGrants() throws PAException {
+        List<TSRReportNihGrant> nihGrants = new ArrayList<TSRReportNihGrant>();
+        List<StudyResourcingDTO> funds = studyResourcingService
+                .getstudyResourceByStudyProtocol(studyProtocolDtoIdentifier);
+        for (StudyResourcingDTO fund : funds) {
+            TSRReportNihGrant nihGrant = new TSRReportNihGrant();
+            nihGrant.setFundingMechanism(getValue(fund.getFundingMechanismCode()));
+            nihGrant.setNihInstitutionCode(getValue(fund.getNihInstitutionCode()));
+            nihGrant.setSerialNumber(getValue(fund.getSerialNumber()));
+            nihGrant.setProgramCode(getValue(fund.getNciDivisionProgramCode()));
+            nihGrants.add(nihGrant);
+        }
+        tsrReportGenerator.setNihGrants(nihGrants);
+    }
+
+    private void setSummary4Information() throws PAException {
+        TSRReportSummary4Information sum4Info = new TSRReportSummary4Information();
+        StudyResourcingDTO studyResourcingDTO = studyResourcingService
+                .getsummary4ReportedResource(studyProtocolDtoIdentifier);
+        if (studyResourcingDTO != null) {
+            sum4Info.setFundingCategory(getValue(studyResourcingDTO.getTypeCode(), INFORMATION_NOT_PROVIDED));
+            Organization org = null;
+            if (studyResourcingDTO.getOrganizationIdentifier() != null
+                    && studyResourcingDTO.getOrganizationIdentifier().getExtension() != null) {
+                Organization o = new Organization();
+                o.setId(Long.valueOf(studyResourcingDTO.getOrganizationIdentifier().getExtension()));
+                org = paOrganizationService.getOrganizationByIndetifers(o);
+            }
+            if (org != null) {
+                sum4Info.setFundingSponsor(StringUtils.isNotEmpty(org.getName()) ? org.getName()
+                        : INFORMATION_NOT_PROVIDED);
+            }
+            if (studyProtocolDto.getProgramCodeText().getValue() != null) {
+                sum4Info.setProgramCode(getValue(studyProtocolDto.getProgramCodeText(), INFORMATION_NOT_PROVIDED));
+            }
+        }
+        tsrReportGenerator.setSummary4Information(sum4Info);
+    }
+
+    private void setCollaborators() throws PAException {
+        List<TSRReportCollaborator> lstCollabs = new ArrayList<TSRReportCollaborator>();
+
+        ArrayList<StudySiteDTO> criteriaList = new ArrayList<StudySiteDTO>();
+        for (StudySiteFunctionalCode cd : StudySiteFunctionalCode.values()) {
+            if (cd.isCollaboratorCode()) {
+                StudySiteDTO searchCode = new StudySiteDTO();
+                searchCode.setFunctionalCode(CdConverter.convertToCd(cd));
+                criteriaList.add(searchCode);
+            }
+        }
+        List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, criteriaList);
+        for (StudySiteDTO sp : spList) {
+            Organization orgBo = correlationUtils.getPAOrganizationByIi(sp.getResearchOrganizationIi());
+            TSRReportCollaborator collab = new TSRReportCollaborator();
+            collab.setName(orgBo.getName());
+            collab.setRole(getValue(sp.getFunctionalCode()));
+            lstCollabs.add(collab);
+        }
+        tsrReportGenerator.setCollaborators(lstCollabs);
+    }
+
+    private void setDiseases() throws PAException {
+        List<TSRReportDiseaseCondition> diseaseConditions = new ArrayList<TSRReportDiseaseCondition>();
+        List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
+        if (sdDtos != null) {
+            List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
+            for (StudyDiseaseDTO sdDto : sdDtos) {
+                diseases.add(diseaseService.get(sdDto.getDiseaseIdentifier()));
+            }
+            Collections.sort(diseases, new Comparator<DiseaseDTO>() {
+                public int compare(DiseaseDTO o1, DiseaseDTO o2) {
+                    return o1.getPreferredName().getValue().compareToIgnoreCase(o2.getPreferredName().getValue());
+                }
+            });
+            for (DiseaseDTO d : diseases) {
+                TSRReportDiseaseCondition diseaseCondition = new TSRReportDiseaseCondition();
+                diseaseCondition.setName(getValue(d.getPreferredName()));
+                diseaseConditions.add(diseaseCondition);
+            }
+        }
+        tsrReportGenerator.setDiseaseConditions(diseaseConditions);
+    }
+
+    private void setTrialDesign() throws PAException {
+        TSRReportTrialDesign trialDesign = new TSRReportTrialDesign();
+        InterventionalStudyProtocolDTO ispDTO = studyProtocolService
+                .getInterventionalStudyProtocol(studyProtocolDtoIdentifier);
+        boolean interventionalType = ispDTO != null ? true : false;
+        trialDesign.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_OBSERVATIONAL);
+        if (ispDTO != null) {
+            trialDesign.setPrimaryPurpose(getValue(ispDTO.getPrimaryPurposeCode(), INFORMATION_NOT_PROVIDED));
+            trialDesign
+                    .setPrimaryPurposeComment(getValue(ispDTO.getPrimaryPurposeOtherText(), INFORMATION_NOT_PROVIDED));
+            trialDesign.setPhase(getValue(ispDTO.getPhaseCode(), INFORMATION_NOT_PROVIDED));
+            trialDesign.setPhaseComment(getValue(ispDTO.getPhaseCode(), INFORMATION_NOT_PROVIDED));
+            trialDesign.setInterventionModel(getValue(ispDTO.getDesignConfigurationCode(), INFORMATION_NOT_PROVIDED));
+            trialDesign.setNumberOfArms(getValue(ispDTO.getNumberOfInterventionGroups(), INFORMATION_NOT_PROVIDED));
+            trialDesign.setMasking(getValue(ispDTO.getBlindingSchemaCode()));
+            if (ispDTO.getBlindingSchemaCode() != null) {
+                trialDesign.setMaskedRoles(getTrialDesignMaskedRoles(ispDTO));
+            }
+            trialDesign.setAllocation(getValue(ispDTO.getAllocationCode()));
+            trialDesign.setStudyClassification(getValue(ispDTO.getStudyClassificationCode()));
+            trialDesign.setTargetEnrollment(getValue(ispDTO.getTargetAccrualNumber().getLow()));
+        }
+        tsrReportGenerator.setTrialDesign(trialDesign);
+    }
+
+    private String getTrialDesignMaskedRoles(InterventionalStudyProtocolDTO dto) {
+        String maskedRoles = null;
+        String subject = NO;
+        String investigator = NO;
+        String caregiver = NO;
+        String outcomesAssessor = NO;
+        if (dto.getBlindedRoleCode() != null) {
+            List<Cd> cds = DSetConverter.convertDsetToCdList(dto.getBlindedRoleCode());
+            if (cds != null) {
+                for (Cd cd : cds) {
+                    if (BlindingRoleCode.CAREGIVER.getCode().equals(cd.getCode())) {
+                        caregiver = YES;
+                    } else if (BlindingRoleCode.INVESTIGATOR.getCode().equals(cd.getCode())) {
+                        investigator = YES;
+                    } else if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(cd.getCode())) {
+                        outcomesAssessor = YES;
+                    } else if (BlindingRoleCode.SUBJECT.getCode().equals(cd.getCode())) {
+                        subject = YES;
+                    }
+                }
+            }
+            maskedRoles = "Subject: " + subject + "; Investigator: " + investigator + "; Caregiver: " + caregiver
+                    + "; Outcomes Assessor: " + outcomesAssessor;
+        }
+        return maskedRoles;
+    }
+
+    private void setEligibilityCriteria() throws PAException {
+        List<PlannedEligibilityCriterionDTO> paECs = plannedActivityService
+                .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolDtoIdentifier);
+
+        if (paECs != null && !paECs.isEmpty()) {
+            TSRReportEligibilityCriteria eligibilityCriteria = new TSRReportEligibilityCriteria();
+
+            eligibilityCriteria.setAcceptsHealthyVolunteers(getValue(studyProtocolDto
+                    .getAcceptHealthyVolunteersIndicator(), INFORMATION_NOT_PROVIDED));
+            Collections.sort(paECs, new Comparator<PlannedEligibilityCriterionDTO>() {
+                public int compare(PlannedEligibilityCriterionDTO o1, PlannedEligibilityCriterionDTO o2) {
+                    return (!PAUtil.isIntNull(o1.getDisplayOrder()) && !PAUtil.isIntNull(o2.getDisplayOrder())) ? o1
+                            .getDisplayOrder().getValue().compareTo(o2.getDisplayOrder().getValue()) : 0;
+                }
+            });
+
+            for (PlannedEligibilityCriterionDTO paEC : paECs) {
+                String criterionName = StConverter.convertToString(paEC.getCriterionName());
+                String descriptionText = StConverter.convertToString(paEC.getTextDescription());
+                Boolean inclusionCriteriaIndicator = paEC.getInclusionIndicator() != null
+                        && paEC.getInclusionIndicator().getValue() != null ? paEC.getInclusionIndicator().getValue()
+                        : null;
+                Ivl<Pq> pq = paEC.getValue();
+
+                if (criterionName != null && criterionName.equalsIgnoreCase(CRITERION_GENDER)
+                        && paEC.getEligibleGenderCode() != null) {
+                    eligibilityCriteria.setGender(getValue(paEC.getEligibleGenderCode(), INFORMATION_NOT_PROVIDED));
+                } else if (criterionName != null && criterionName.equalsIgnoreCase(CRITERION_AGE)) {
+                    if (pq.getLow() != null && pq.getLow().getValue() != null) {
+                        eligibilityCriteria
+                                .setMinimumAge(pq.getLow().getValue().intValue() == MIN_AGE ? INFORMATION_NOT_PROVIDED
+                                        : PAUtil.getAge(pq.getLow().getValue()) + SPACE + pq.getLow().getUnit());
+                    }
+                    if (pq.getHigh() != null && pq.getHigh().getValue() != null) {
+                        eligibilityCriteria
+                                .setMaximumAge(pq.getHigh().getValue().intValue() == MAX_AGE ? INFORMATION_NOT_PROVIDED
+                                        : PAUtil.getAge(pq.getHigh().getValue()) + SPACE + pq.getHigh().getUnit());
+                    }
+                } else {
+                    String criteriaText = null;
+                    if (StringUtils.isNotEmpty(descriptionText)) {
+                        criteriaText = descriptionText;
+                    } else {
+                        criteriaText = paEC.getCriterionName() + SPACE + getValue(paEC.getOperator()) + SPACE
+                                + pq.getLow().getValue() + SPACE + pq.getLow().getUnit();
+                    }
+
+                    if (inclusionCriteriaIndicator != null) { // Inclusion OR Exclusion Criteria
+                        if (inclusionCriteriaIndicator.booleanValue()) { // Inclusion criteria
+                            eligibilityCriteria.getInclusionCriteria().add(criteriaText);
+                        } else { // Exclusion Criteria
+                            eligibilityCriteria.getExclusionCriteria().add(criteriaText);
+                        }
+                    } else { // Other Criteria
+                        eligibilityCriteria.getOtherCriteria().add(criteriaText);
+                    }
+                }
+            }
+            tsrReportGenerator.setEligibilityCriteria(eligibilityCriteria);
+        }
+    }
+
+    private void setArmGroups() throws PAException {
+        List<TSRReportArmGroup> armGroups = new ArrayList<TSRReportArmGroup>();
+        List<ArmDTO> arms = armService.getByStudyProtocol(studyProtocolDtoIdentifier);
+        for (ArmDTO armDto : arms) {
+            TSRReportArmGroup armGroup = new TSRReportArmGroup();
+            armGroup.setType(getValue(armDto.getName()));
+            armGroup.setLabel(getValue(armDto.getTypeCode()));
+            armGroup.setDescription(getValue(armDto.getDescriptionText()));
+            List<PlannedActivityDTO> paList = plannedActivityService.getByArm(armDto.getIdentifier());
+            for (PlannedActivityDTO paDto : paList) {
+                armGroup.getInterventions().add(getIntervention(paDto));
+            }
+            armGroups.add(armGroup);
+        }
+        tsrReportGenerator.setArmGroups(armGroups);
+    }
+
+    private void setPrimaryAndSecondaryOutcomeMeasures() throws PAException {
+        List<StudyOutcomeMeasureDTO> somDtos = studyOutcomeMeasureService
+                .getByStudyProtocol(studyProtocolDtoIdentifier);
+        if (!somDtos.isEmpty()) {
+            List<TSRReportOutcomeMeasure> primaryOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
+            List<TSRReportOutcomeMeasure> secondaryOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
+            for (StudyOutcomeMeasureDTO somDto : somDtos) {
+                TSRReportOutcomeMeasure outcomeMeasure = new TSRReportOutcomeMeasure();
+                outcomeMeasure.setTitle(StConverter.convertToString(somDto.getName()));
+                outcomeMeasure.setTimeFrame(StConverter.convertToString(somDto.getTimeFrame()));
+                outcomeMeasure.setSafetyIssue(getValue(somDto.getSafetyIndicator(), INFORMATION_NOT_PROVIDED));
+
+                if (somDto.getPrimaryIndicator().getValue().booleanValue()) {
+                    primaryOutcomeMeasures.add(outcomeMeasure);
+                } else {
+                    secondaryOutcomeMeasures.add(outcomeMeasure);
+                }
+            }
+            tsrReportGenerator.setPrimaryOutcomeMeasures(primaryOutcomeMeasures);
+            tsrReportGenerator.setSecondaryOutcomeMeasures(secondaryOutcomeMeasures);
+        }
+    }
+
+    private void setSubGroupStratificationCriteria() throws PAException {
+        List<StratumGroupDTO> stratumGrpDtos = stratumGroupService.getByStudyProtocol(studyProtocolDtoIdentifier);
+        if (!stratumGrpDtos.isEmpty()) {
+            List<TSRReportSubGroupStratificationCriteria> sgsCriterias =
+                new ArrayList<TSRReportSubGroupStratificationCriteria>();
+            for (StratumGroupDTO sgDto : stratumGrpDtos) {
+                TSRReportSubGroupStratificationCriteria sgsCrit = new TSRReportSubGroupStratificationCriteria();
+                sgsCrit.setLabel(getValue(sgDto.getGroupNumberText(), INFORMATION_NOT_PROVIDED));
+                sgsCrit.setDescription(getValue(sgDto.getDescription(), INFORMATION_NOT_PROVIDED));
+                sgsCriterias.add(sgsCrit);
+            }
+            tsrReportGenerator.setSgsCriterias(sgsCriterias);
+        }
+    }
+
+    private void setParticipatingSites() throws PAException, NullifiedRoleException {
+        StudySiteDTO srDTO = new StudySiteDTO();
+        srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+        List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolDtoIdentifier, srDTO);
+        if (!spList.isEmpty()) {
+            List<TSRReportParticipatingSite> participatingSites = new ArrayList<TSRReportParticipatingSite>();
+            for (StudySiteDTO sp : spList) {
+                TSRReportParticipatingSite participatingSite = new TSRReportParticipatingSite();
+                StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
+                        .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
+                Organization orgBo = correlationUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
+                participatingSite.setFacility(getFacility(orgBo.getName(), getLocation(orgBo)));
+                String recruitmentStatus = getValue(ssas.getStatusCode()) + " as of "
+                        + getNormalizedDateString(ssas.getStatusDate());
+                participatingSite.setRecruitmentStatus(recruitmentStatus);
+                if (isProprietaryTrial) {
+                    List<StudySiteContactDTO> spcDTOs = studySiteContactService.getByStudySite(sp.getIdentifier());
+                    for (StudySiteContactDTO spcDto : spcDTOs) {
+                        if (StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode().equalsIgnoreCase(
+                                spcDto.getRoleCode().getCode())
+                                || StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode().equalsIgnoreCase(
+                                        spcDto.getRoleCode().getCode())) {
+                            Person p = correlationUtils.getPAPersonByIi(spcDto.getClinicalResearchStaffIi());
+                            participatingSite.getInvestigators().add(
+                                    new TSRReportInvestigator(p.getFirstName(), p.getMiddleName(), p.getLastName(),
+                                            ROLE_PI));
+                        }
+                    }
+                    participatingSite.setLocalTrialIdentifier(getValue(sp.getLocalStudyProtocolIdentifier(),
+                            INFORMATION_NOT_PROVIDED));
+                    participatingSite.setOpenForAccrualDate(getValue(IvlConverter.convertTs().convertLowToString(
+                            sp.getAccrualDateRange()), INFORMATION_NOT_PROVIDED));
+                    participatingSite.setClosedForAccrualDate(getValue(IvlConverter.convertTs().convertHighToString(
+                            sp.getAccrualDateRange()), INFORMATION_NOT_PROVIDED));
+                } else {
+                    participatingSite.setTargetAccrual(getValue(sp.getTargetAccrualNumber()));
+                    List<StudySiteContactDTO> spcDTOs = studySiteContactService.getByStudySite(sp.getIdentifier());
+                    for (StudySiteContactDTO spcDto : spcDTOs) {
+                        if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(spcDto.getRoleCode().getCode())) {
+                            // Set contact info.
+                            String email = PAUtil.getEmail(spcDto.getTelecomAddresses());
+                            String phone = PAUtil.getPhone(spcDto.getTelecomAddresses());
+                            String extn = PAUtil.getPhoneExtension(spcDto.getTelecomAddresses());
+                            String contact = null;
+
+                            if (spcDto.getClinicalResearchStaffIi() != null) {
+                                Person p = correlationUtils.getPAPersonByIi(spcDto.getClinicalResearchStaffIi());
+                                contact = p.getFirstName() + SPACE + p.getLastName();
+                            } else if (spcDto.getOrganizationalContactIi() != null) {
+                                PAContactDTO paCDto = correlationUtils.getContactByPAOrganizationalContactId((Long
+                                        .valueOf(spcDto.getOrganizationalContactIi().getExtension())));
+                                contact = paCDto.getTitle();
+                            }
+                            StringBuilder builder = new StringBuilder();
+                            builder.append(contact).append(", email: ").append(email).append(", phone: ").append(phone)
+                                    .append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
+                            participatingSite.setContact(builder.toString());
+
+                        } else {
+                            // Principal Investigator
+                            Person p = correlationUtils.getPAPersonByIi(spcDto.getClinicalResearchStaffIi());
+                            TSRReportInvestigator pi = new TSRReportInvestigator(p.getFirstName(), p.getMiddleName(), p
+                                    .getLastName(), getValue(spcDto.getRoleCode()));
+                            participatingSite.getInvestigators().add(pi);
+                        }
+                    }
+                }
+                participatingSites.add(participatingSite);
+            }
+            tsrReportGenerator.setParticipatingSites(participatingSites);
+        }
+    }
+
+    private String getFacility(String orgName, String location) {
+        String retVal = INFORMATION_NOT_PROVIDED;
+        if (orgName != null && location != null) {
+            retVal = orgName + ", " + location;
+        } else if (orgName != null) {
+            retVal = orgName;
+        } else if (location != null) {
+            retVal = location;
+        }
+        return retVal;
+    }
+
+    private String getLocation(Organization orgBo) {
+        String city = orgBo.getCity() != null ? orgBo.getCity() : " ";
+        String state = orgBo.getState() != null ? orgBo.getState() : " ";
+        String pc = orgBo.getPostalCode() != null ? orgBo.getPostalCode() : " ";
+        String country = orgBo.getCountryName() != null ? orgBo.getCountryName() : " ";
+        return city + ", " + state + " " + pc + " " + country;
+    }
+
+    private String getInterventionAltNames(InterventionDTO i) throws PAException {
+        List<InterventionAlternateNameDTO> ianList = interventionAlternateNameService.getByIntervention(i
+                .getIdentifier());
+        int cnt = 1;
+        StringBuffer interventionAltName = new StringBuffer();
+        List<InterventionAlternateNameDTO> interventionNames = new ArrayList<InterventionAlternateNameDTO>();
+
+        for (InterventionAlternateNameDTO ian : ianList) {
+            if (ian.getNameTypeCode().getValue() != null
+                    && (ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.SYNONYM)
+                            || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.ABBREVIATION)
+                            || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.US_BRAND_NAME)
+                            || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.FOREIGN_BRAND_NAME) || ian
+                            .getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.CODE_NAME))) {
+
+                interventionNames.add(ian);
+
+                if (cnt++ > PAAttributeMaxLen.LEN_5) {
+                    break;
+                }
+            }
+        }
+        Collections.sort(interventionNames, new Comparator<InterventionAlternateNameDTO>() {
+            public int compare(InterventionAlternateNameDTO o1, InterventionAlternateNameDTO o2) {
+                return o1.getName().getValue().compareToIgnoreCase(o2.getName().getValue());
+            }
         });
-       for (DiseaseDTO d : diseases) { 
-           html.append(TR_B);
-           appendTDAndData(html, getData(d.getPreferredName(), true));
-           //appendTDAndData(html, "No");
-           html.append(TR_E);
-          }
-       }
-       html.append(TBL_E);
-  }
 
-  /**
-   * Append collaborators.
-   * @param studyProtocolIi the study protocol ii
-   * @param html the html
-   * @throws PAException the PA exception
-   */
-  private void appendCollaborators(Ii studyProtocolIi, StringBuffer html)
-      throws PAException {
-    boolean first = true;
-
-    ArrayList<StudySiteDTO> criteriaList = new ArrayList<StudySiteDTO>();
-    for (StudySiteFunctionalCode cd : StudySiteFunctionalCode.values()) {
-        if (cd.isCollaboratorCode()) {
-            StudySiteDTO searchCode = new StudySiteDTO();
-            searchCode.setFunctionalCode(CdConverter.convertToCd(cd));
-            criteriaList.add(searchCode);
-        }
-    }
-
-    List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, criteriaList);
-    for (StudySiteDTO sp : spList) {
-        Organization orgBo = correlationUtils.getPAOrganizationByIi(sp.getResearchOrganizationIi());
-        if (first) {
-          first = false;
-          appendTitle(html, appendBoldData("Collaborators"));
-          html.append(BR).append(BR).append(TBL_B);
-          html.append(TR_B);
-          appendTDAndData(html, appendTRBold("Name"));
-          appendTDAndData(html, appendTRBold("Role"));
-          html.append(TR_E);
-      }
-      html.append(TR_B);
-      appendTDAndData(html, orgBo.getName());
-      appendTDAndData(html, getTableData(sp.getFunctionalCode(), true));
-      html.append(TR_E);
-    }
-    html.append(TBL_E);
-  }
-
-  /**
-   * Append summary4.
-   * 
-   * @param spDTO the study protocol ii
-   * @param html the html
-   * 
-   * @throws PAException the PA exception
-   */
-  private void appendSummary4(StudyProtocolDTO spDTO, StringBuffer html)
-      throws PAException {
-    appendTitle(html, appendBoldData("Summary 4 Information"));
-    html.append(BR);
-    StudyResourcingDTO studyResourcingDTO = studyResourcingService.getsummary4ReportedResource(spDTO.getIdentifier());
-    if (studyResourcingDTO != null) {
-    html.append(appendData("Funding Category", getData(studyResourcingDTO.getTypeCode(), true), true , true));
-    }
-    Organization org = null;
-    if (studyResourcingDTO != null && studyResourcingDTO.getOrganizationIdentifier() != null
-            && studyResourcingDTO.getOrganizationIdentifier().getExtension() != null) {
-      Organization o = new Organization();
-      o.setId(Long.valueOf(studyResourcingDTO.getOrganizationIdentifier().getExtension()));
-      org = paOrganizationService.getOrganizationByIndetifers(o);
-     }
-     if (org != null) {
-         html.append(appendData("Funding Sponsor/Source", org.getName(), true , true));
-     } else {
-         html.append(appendData("Funding Sponsor/Source", "", true , true)); 
-     }
-     if (spDTO.getProgramCodeText().getValue() != null) {
-         html.append(appendData("Program Code Text", spDTO.getProgramCodeText().getValue(), true , true));
-     }
-  }
-
-  /**
-   * Append nih grants.
-   * 
-   * @param html the html
-   * @param spDto the sp dto
-   * 
-   * @throws PAException the PA exception
-   */
-  private void appendNihGrants(StringBuffer html , StudyProtocolDTO spDto) throws  PAException {
-
-      List<StudyResourcingDTO> funds = studyResourcingService.getstudyResourceByStudyProtocol(spDto.getIdentifier());
-      boolean first = true;
-      for (StudyResourcingDTO fund : funds) {
-          if (first) {
-            appendTitle(html, appendBoldData("NIH Grants"));
-            html.append(BR).append(BR).append(TBL_B);
-            first = false;
-              html.append(TR_B);
-              appendTDAndData(html, appendTRBold("Funding Mechanism"));
-              appendTDAndData(html, appendTRBold("NIH Institution Code"));
-              appendTDAndData(html, appendTRBold("Serial Number"));
-              appendTDAndData(html, appendTRBold("NCI Division/Program Code"));
-              html.append(TR_E);
-          }
-          html.append(TR_B);
-          appendTDAndData(html, getTableData(fund.getFundingMechanismCode(), true));
-          appendTDAndData(html, getTableData(fund.getNihInstitutionCode(), true));
-          appendTDAndData(html, getData(fund.getSerialNumber(), true));
-          appendTDAndData(html, getTableData(fund.getNciDivisionProgramCode(), true));
-          html.append(TR_E);
-      }
-      html.append(first ? "" : TBL_E);
-  }
-  
-  /**
-   * Append ide ide.
-   * 
-   * @param html the html
-   * @param spDto the sp dto
-   * 
-   * @throws PAException the PA exception
-   */
-  private void appendIdeIde(StringBuffer html , StudyProtocolDTO spDto) throws  PAException {
-
-      List<StudyIndldeDTO> indides =  studyIndldeService.getByStudyProtocol(spDto.getIdentifier());
-      boolean first = true;
-      for (StudyIndldeDTO indDto : indides) {
-          if (first) {
-              appendTitle(html, appendBoldData("IND/IDE"));
-              html.append(BR).append(BR).append(TBL_B);
-              first = false;
-              html.append(TR_B);
-              appendTDAndData(html, appendTRBold("Type"));
-              appendTDAndData(html, appendTRBold("Grantor"));
-              appendTDAndData(html, appendTRBold("Number"));
-              appendTDAndData(html, appendTRBold("Holder Type"));
-              appendTDAndData(html, appendTRBold("Holder"));             
-              appendTDAndData(html, appendTRBold("Expanded Access"));
-              appendTDAndData(html, appendTRBold("Expanded Access Status"));
-              html.append(TR_E);
-          }
-          html.append(TR_B);
-          appendTDAndData(html, getTableData(indDto.getIndldeTypeCode(), true));
-          appendTDAndData(html, getTableData(indDto.getGrantorCode(), true));
-          appendTDAndData(html, getData(indDto.getIndldeNumber() , true));
-          appendTDAndData(html, getTableData(indDto.getHolderTypeCode() , true));
-          if (HolderTypeCode.ORGANIZATION.getCode().equals(indDto.getHolderTypeCode().getCode())) {
-              appendTDAndData(html, NBSP);
-          } else if (HolderTypeCode.INVESTIGATOR.getCode().equals(indDto.getHolderTypeCode().getCode())) {
-              appendTDAndData(html, NBSP);
-          } else if (HolderTypeCode.NIH.getCode().equals(indDto.getHolderTypeCode().getCode())) {
-              appendTDAndData(html , getTableData(indDto.getNihInstHolderCode(), true));
-          } else if (HolderTypeCode.NCI.getCode().equals(indDto.getHolderTypeCode().getCode())) {
-              appendTDAndData(html , getTableData(indDto.getNciDivProgHolderCode(), true));
-          }
-          appendTDAndData(html, convertBLToString(indDto.getExpandedAccessIndicator() , false));
-          appendTDAndData(html , getTableData(indDto.getExpandedAccessStatusCode(), true));
-          html.append(TR_E);
-      }
-      html.append(first ? "" : TBL_E);
-  }
-  
-  /**
-   * Append human subject safety.
-   * 
-   * @param html the html
-   * @param spDto the sp dto
-   * 
-   * @throws PAException the PA exception
-   */
-  private void appendHumanSubjectSafety(StringBuffer html , StudyProtocolDTO spDto) throws  PAException {
-      Boolean b = BlConverter.covertToBoolean(spDto.getReviewBoardApprovalRequiredIndicator());
-      if (b != null && b) {
-      appendTitle(html, appendBoldData("Human Subject Safety"));
-      html.append(BR);
-          List<StudySiteDTO> partList = studySiteService.getByStudyProtocol(spDto.getIdentifier());
-          for (StudySiteDTO part : partList) {
-              if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
-                      part.getReviewBoardApprovalStatusCode().getCode())
-                  || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().equals(
-                          part.getReviewBoardApprovalStatusCode().getCode())
-                  || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode().equals(
-                                  part.getReviewBoardApprovalStatusCode().getCode())
-                  || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode().equals(
-                                                  part.getReviewBoardApprovalStatusCode().getCode())) {
-
-                  html.append(appendData("Board Approval Status" , getData(part.getReviewBoardApprovalStatusCode(),
-                      true),  true , true));
-                  html.append(appendData("Board Approval Number" ,
-                          getInfo(part.getReviewBoardApprovalNumber() , true) ,    true , true));
-                  Organization paOrg = correlationUtils.getPAOrganizationByIi(part.getOversightCommitteeIi());
-                  if (paOrg != null) {
-                      OrganizationDTO poOrg = null;
-                      try {
-                          poOrg = PoRegistry.getOrganizationEntityService().
-                              getOrganization(IiConverter.convertToPoOrganizationIi(paOrg.getIdentifier()));
-                      } catch (NullifiedEntityException e) {
-                          throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);
-                      }
-                      html.append(appendData("Board" , paOrg.getName(), true , true));
-                      html.append(BR).append(appendData("Affiliated with" , 
-                             part.getReviewBoardOrganizationalAffiliation().getValue(), false , true));
-                     html.append(appendData("Full Address" , AddressConverterUtil.convertToAddress(
-                              poOrg.getPostalAddress()), true , true));
-                      Object[] telList = poOrg.getTelecomAddress().getItem().toArray();
-                      for (Object tel : telList) {
-                          if (tel instanceof TelPhone) {
-                              html.append(appendData("Phone" ,
-                                      ((TelPhone) tel).getValue().getSchemeSpecificPart() , true , true));
-                              break;
-                          }
-                      }
-
-                      for (Object tel : telList) {
-                          if (tel instanceof TelEmail) {
-                              html.append(appendData("Email" ,
-                                      ((TelEmail) tel).getValue().getSchemeSpecificPart() , true , true));
-                              break;
-                          }
-                      } // for
-                  } // po org
-              }
-          }
-      }
-  }
-  
-  /**
-   * Append regulatory information.
-   * 
-   * @param html the html
-   * @param spDto the sp dto
-   * 
-   * @throws PAException the PA exception
-   */
-  private void appendRegulatoryInformation(StringBuffer html , StudyProtocolDTO spDto) throws  PAException {
-
-      appendTitle(html, appendBoldData("Regulatory Information"));
-      html.append(BR);
-      StudyRegulatoryAuthorityDTO sraDTO = 
-              studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spDto.getIdentifier());
-     
-      if (sraDTO != null) {
-           String data = null;
-           RegulatoryAuthority ra = regulatoryInformationService.
-                      get(Long.valueOf(sraDTO.getRegulatoryAuthorityIdentifier().getExtension()));
-
-           Country country =  regulatoryInformationService.getRegulatoryAuthorityCountry(
-                  Long.valueOf(sraDTO.getRegulatoryAuthorityIdentifier().getExtension()));
-          if (country != null && ra != null) {
-              data = country.getName() + ": " + ra.getAuthorityName();
-          } else if (country != null) {
-              data = country.getName();
-          } else if (ra != null) {
-              data = ra.getAuthorityName();
-          }
-          html.append(appendData("Trial Oversight Authority", data, true , true));
-      }
-      html.append(appendData("DMC Appointed?", convertBLToString(
-              spDto.getDataMonitoringCommitteeAppointedIndicator(), true), true , true));
-      html.append(appendData("FDA Regulated Intervention?", convertBLToString(
-              spDto.getFdaRegulatedIndicator(), true), true , true));
-      html.append(appendData("Section 801?", convertBLToString(
-              spDto.getSection801Indicator(), true), true , true));
-      List<StudyIndldeDTO> indIde = studyIndldeService.getByStudyProtocol(spDto.getIdentifier());
-      if (indIde != null && (!indIde.isEmpty())) {
-          html.append(appendData("IND/IDE Study?", YES, true , true));
-      } else {
-          html.append(appendData("IND/IDE Study?", NO, true , true));
-      }
-      html.append(appendData("Delayed Posting?", convertBLToString(
-              spDto.getDelayedpostingIndicator(), true), true , true));
-
-  }
-
-  /**
-   * Append secondary identifiers.
-   * 
-   * @param html the html
-   * @param studyProtocolDto the study protocol dto
-   * 
-   * @throws PAException the PA exception
-   */
-  private void appendSecondaryIdentifiers(StringBuffer html , StudyProtocolDTO studyProtocolDto) throws  PAException {
-      StudySiteDTO spartDTO = new StudySiteDTO();
-      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-      List<StudySiteDTO> sParts = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);
-     
-      appendTitle(html, appendBoldData("Trial Identification"));
-      html.append(BR);
-      html.append(appendData("NCI Identifier" , studyProtocolDto.getAssignedIdentifier().getExtension() , true , true));
-      if (!sParts.isEmpty()) {
-          for (StudySiteDTO spart : sParts) {
-              html.append(appendData("Lead Organization Identifier" , 
-                      getInfo(spart.getLocalStudyProtocolIdentifier() , true) , true, true));
-              break;
-          }
-      }
-      html.append(appendData("NCT Number" , getInfo(paServiceUtils.getStudyIdentifier(
-              studyProtocolDto.getIdentifier(), PAConstants.NCT_IDENTIFIER_TYPE), true) , true, true));
-      if (!isProprietaryTrial(studyProtocolDto)) {
-          html.append(appendData("DCP Identifier", getInfo(paServiceUtils.getStudyIdentifier(
-              studyProtocolDto.getIdentifier(), PAConstants.DCP_IDENTIFIER_TYPE), true) , true, true));
-          html.append(appendData("CTEP Identifier", getInfo(paServiceUtils.getStudyIdentifier(
-              studyProtocolDto.getIdentifier(), PAConstants.CTEP_IDENTIFIER_TYPE), true) , true, true));
-      }
-      if (isProprietaryTrial(studyProtocolDto)) {
-          Organization lead = ocsr.getOrganizationByFunctionRole(
-                  studyProtocolDto.getIdentifier(), CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-          html.append(appendData("Lead Organization" , lead.getName(), true , true));
-
-      } else {
-          if (studyProtocolDto.getAmendmentNumber() != null) {
-                html.append(appendData("Amendment Number" , studyProtocolDto.getAmendmentNumber().getValue() 
-                        , true, true));
+        for (Iterator<InterventionAlternateNameDTO> iter = interventionNames.iterator(); iter.hasNext();) {
+            InterventionAlternateNameDTO altname = iter.next();
+            interventionAltName.append(altname.getName().getValue());
+            if (iter.hasNext()) {
+                interventionAltName.append(", ");
             }
-            if (studyProtocolDto.getAmendmentDate() != null && studyProtocolDto.getAmendmentDate().getValue() != null) {
-                html.append(appendData("Amendment Date" , PAUtil.normalizeDateString(
-                         TsConverter.convertToTimestamp(studyProtocolDto.getAmendmentDate()).toString()) , true, true));
+        }
+        return interventionAltName.toString();
+    }
+
+    private String getGtdSponsorOrLeadOrganization(StudySiteFunctionalCode enumValue, String defaultValue)
+            throws PAException {
+        String retVal = defaultValue;
+        Organization org = ocsr.getOrganizationByFunctionRole(studyProtocolDtoIdentifier, CdConverter
+                .convertToCd(enumValue));
+        if (org != null) {
+            retVal = org.getName();
+        }
+        return retVal;
+    }
+
+    private String getValue(St st) {
+        return getValue(st, null);
+    }
+
+    private String getValue(St st, String defaultValue) {
+        return (st != null && st.getValue() != null ? st.getValue() : defaultValue);
+    }
+
+    private String getValue(Cd cd) {
+        return getValue(cd, null);
+    }
+
+    private String getValue(Cd cd, String defaultValue) {
+        return (cd != null ? CdConverter.convertCdToString(cd) : defaultValue);
+    }
+
+    private String getValue(String str, String defaultValue) {
+        return (str != null ? str : defaultValue);
+    }
+
+    private String getValue(Bl bl) {
+        return getValue(bl, null);
+    }
+
+    private String getValue(Bl bl, String defaultValue) {
+        return (bl != null && bl.getValue() != null ? (bl.getValue().booleanValue() ? YES : NO) : defaultValue);
+    }
+
+    private String getValue(Int i) {
+        return getValue(i, null);
+    }
+
+    private String getValue(Int i, String defaultValue) {
+        return (i != null && i.getValue() != null ? i.getValue().toString() : defaultValue);
+    }
+
+    private String getNormalizedDateString(Ts ts) {
+        String retVal = null;
+        if (ts != null) {
+            Timestamp tmStamp = TsConverter.convertToTimestamp(ts);
+            if (tmStamp != null) {
+                retVal = tmStamp.toString();
             }
-      }
-      html.append(TBL_E);
-    }
-
-/**
- * @param studyProtocolDto
- * @return
- */
-private boolean isProprietaryTrial(StudyProtocolDTO studyProtocolDto) {
-    return !PAUtil.isBlNull(studyProtocolDto.getProprietaryTrialIndicator())
-              && BlConverter.covertToBoolean(studyProtocolDto.getProprietaryTrialIndicator());
-}
-
-  /**
-   * Append titles.
-   * @param html the html
-   * @param studyProtocolDto the study protocol dto
- * @throws PAException 
-   */
-  private void appendTitles(StringBuffer html , StudyProtocolDTO studyProtocolDto) throws PAException {
-    appendTitle(html, appendBoldData("General Trial Details"));
-    html.append(BR)
-    .append(appendData("Official Title", getInfo(studyProtocolDto.getOfficialTitle(), true), true, true));
-    if (isProprietaryTrial(studyProtocolDto)) {
-        html.append(appendData("Primary Purpose", getData(studyProtocolDto.getPrimaryPurposeCode(), 
-                true), true , true));
-        html.append(appendData("Phase", getData(studyProtocolDto.getPhaseCode(), true), true , true));
-    } else {
-        html.append(BR).append(appendData("Brief Title", getInfo(studyProtocolDto.getPublicTitle(), true), true, true));
-        html.append(BR).append(appendData("Acronym", getInfo(studyProtocolDto.getAcronym(), true), true, true));
-        html.append(BR).append(appendBoldData("Brief Summary: ")).append(BR);
-        html.append(getDescription(studyProtocolDto.getPublicDescription(), true));
-        html.append(BR).append(appendBoldData("Detailed Description: ")).append(BR); 
-        html.append(getDescription(studyProtocolDto.getScientificDescription(), false)); 
-        html.append(BR).append(appendData("Keywords", getInfo(studyProtocolDto.getKeywordText(), true), true, true));
-        if (studyProtocolDto.getAccrualReportingMethodCode() != null 
-                && studyProtocolDto.getAccrualReportingMethodCode().getDisplayName() != null) {
-            html.append(BR).append(appendData("Reporting Dataset Method", 
-                    getInfo(studyProtocolDto.getAccrualReportingMethodCode().getDisplayName(), true), true, true));
         }
+        return retVal;
     }
-    html.append(BR);
-
-  }
-
-  /**
-   * Append orgs and persons.
-   * 
-   * @param html the html
-   * @param studyProtocolIi the study protocol ii
-   * 
-   * @throws PAException the PA exception
- * @throws NullifiedRoleException  
-   */
-  @SuppressWarnings({"PMD" })
-  private void appendOrgsAndPersons(StringBuffer html , Ii studyProtocolIi) throws PAException,
-      NullifiedRoleException  {
-      Organization sponsor = ocsr.getOrganizationByFunctionRole(
-              studyProtocolIi, CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-      Organization lead = ocsr.getOrganizationByFunctionRole(
-              studyProtocolIi, CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-      Person leadPi = null;
-      
-      StudyContactDTO scDto = new StudyContactDTO();
-      scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
-      List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolIi, scDto);
-      html.append(appendData("Sponsor" , sponsor.getName(), true , true));
-      html.append(appendData("Lead Organization" , lead.getName(), true , true));
-      html.append(BR).append(BR);
-      for (StudyContactDTO pi : scDtos) {
-          leadPi = correlationUtils.getPAPersonByIi(pi.getClinicalResearchStaffIi());
-          html.append(appendData("Principal Investigator" , leadPi.getFullName(), false , true));
-          html.append(BR);
-          html.append(appendData("Affliated with" , lead.getName(), false, true));
-          break;
-
-      }
-      scDto = new StudyContactDTO();
-      scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
-      scDtos = studyContactService.getByStudyProtocol(studyProtocolIi, scDto);
-      DSet<Tel> dset = null;
-      List<String> emails = null;
-      List<String> phones = null;
-      for (StudyContactDTO cc : scDtos) {
-          String centralContactName = "";
-          if (cc.getClinicalResearchStaffIi() != null) {
-              centralContactName = correlationUtils.getPAPersonByIi(cc.getClinicalResearchStaffIi()).getFullName();
-          } else if (cc.getOrganizationalContactIi() != null) {
-              PAContactDTO paCDto =  correlationUtils.getContactByPAOrganizationalContactId((
-                      Long.valueOf(cc.getOrganizationalContactIi().getExtension())));
-              centralContactName = paCDto.getTitle();
-          }
-          html.append(DL_B  + DT_B);
-          html.append(appendData("Central Contact" , centralContactName , false , true));
-          html.append(DT_E);
-          dset = cc.getTelecomAddresses();
-          emails = DSetConverter.convertDSetToList(dset, "EMAIL");
-          if (emails != null && !emails.isEmpty()) {
-              html.append(DD_B);
-              html.append(appendData("Email" , emails.get(0) , false , true));
-              html.append(DD_E);
-          }
-          phones = DSetConverter.convertDSetToList(dset, "PHONE");
-          if (phones != null && !phones.isEmpty()) {
-              html.append(DD_B);
-              html.append(appendData("Phone" , phones.get(0) , false , true));
-              html.append(DD_E + DL_E);
-          }
-          break;
-
-      }
-      // responsible party section
-      scDto = new StudyContactDTO();
-      scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
-      scDtos = studyContactService.getByStudyProtocol(studyProtocolIi, scDto);
-      Person rp = null;
-      String resPartyContactName = null;
-      Organization sponsorResponsible = null;
-      if (scDtos != null && !scDtos.isEmpty()) {
-          scDto = scDtos.get(0);
-          rp = correlationUtils.getPAPersonByIi(scDto.getClinicalResearchStaffIi());
-          dset = scDto.getTelecomAddresses();
-          resPartyContactName = rp.getFullName();
-          StudySiteDTO spartDTO = new StudySiteDTO();
-          spartDTO.setFunctionalCode(
-                  CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-          List<StudySiteDTO> sParts = studySiteService.getByStudyProtocol(studyProtocolIi, spartDTO);
-          for (StudySiteDTO spart : sParts) {
-              sponsorResponsible = correlationUtils.getPAOrganizationByIi(spart.getResearchOrganizationIi());
-          }
-          
-      } else {
-          StudySiteContactDTO spart = new StudySiteContactDTO();
-          spart.setRoleCode(CdConverter.convertToCd(
-                  StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-          List<StudySiteContactDTO> spDtos = studySiteContactService
-              .getByStudyProtocol(studyProtocolIi, spart);
-          
-          if (spDtos != null && !spDtos.isEmpty()) {
-              PAContactDTO paCDto =   correlationUtils.getContactByPAOrganizationalContactId((
-                      Long.valueOf(spDtos.get(0).getOrganizationalContactIi().getExtension())));
-              
-              resPartyContactName = paCDto.getResponsiblePartyContactName();
-              
-              dset = spDtos.get(0).getTelecomAddresses();
-              
-              StudySiteDTO spDto = new StudySiteDTO();
-              spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-              List<StudySiteDTO> spartDtos =
-                  studySiteService.getByStudyProtocol(studyProtocolIi, spDto);
-              if (spartDtos != null && !spartDtos.isEmpty()) {
-                  spDto = spartDtos.get(0);
-                  sponsorResponsible = new CorrelationUtils().getPAOrganizationByIi(spDto.getResearchOrganizationIi());
-              }
-
-          }
-      }
-      html.append(DL_B  + DT_B);
-      html.append(appendData("Responsible Party" , resPartyContactName , false , true));
-      html.append(DT_E + DT_B);
-      
-      // get the organization
-      html.append(appendData("Organization" , sponsorResponsible.getName(), false , true));
-      html.append(DT_E);
-      emails = DSetConverter.convertDSetToList(dset, "EMAIL");
-      if (emails != null && !emails.isEmpty()) {
-          html.append(DD_B);
-          html.append(appendData("Email" , emails.get(0) , false , true));
-          html.append(DD_E);
-      }
-      phones = DSetConverter.convertDSetToList(dset, "PHONE");
-      if (phones != null && !phones.isEmpty()) {
-          html.append(DD_B);
-          html.append(appendData("Phone" , phones.get(0) , false , true));
-          html.append(DD_E);
-      }
-      html.append(DT_B);
-      html.append(appendData("Overall Official" , leadPi.getFullName(), false , true));
-      html.append(BR);
-      html.append(appendData("Affliated with" ,  lead.getName(), false, true));
-      html.append(DT_E + DD_B);
-      html.append(appendData("Role" , "Principal Investigator", false , true));
-      html.append(DD_E + DL_E);
-  }
-
-  /**
-   * Apppend trial status.
-   * 
-   * @param html the html
-   * @param spDto the sp dto
-   * 
-   * @throws PAException the PA exception
-   */
-  private void apppendTrialStatus(StringBuffer html , StudyProtocolDTO spDto) throws PAException {
-      List<StudyOverallStatusDTO> sostatuses = studyOverallStatusService.
-              getByStudyProtocol(spDto.getIdentifier());
-      appendTitle(html, appendBoldData("Status/Dates"));
-      html.append(BR).append(BR).append(TBL_B);
-      html.append(TR_B);
-      appendTDAndData(html, appendTRBold("Status"));
-      appendTDAndData(html, appendTRBold("As of Date"));
-      appendTDAndData(html, appendTRBold("Reason Text"));
-      html.append(TR_E);
-      for (StudyOverallStatusDTO sostatus : sostatuses) {
-          html.append(TR_B);
-          appendTDAndData(html, getTableData(sostatus.getStatusCode(), true));
-          appendTDAndData(html, PAUtil.normalizeDateString(
-                  TsConverter.convertToTimestamp(sostatus.getStatusDate()).toString()));
-          appendTDAndData(html, sostatus.getReasonText().getValue() == null ? ""
-              : sostatus.getReasonText().getValue());
-          html.append(TR_E);
-      }
-      html.append(TBL_E);
-      html.append(appendData("Trial Start Date" , PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
-              spDto.getStartDate()).toString()) , true , true)).append(" - ").
-              append(getData(spDto.getStartDateTypeCode(), true));
-
-      html.append(appendData("Primary Completion Date" , PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
-              spDto.getPrimaryCompletionDate()).toString()) , true , true)).append(" - ").
-              append(getData(spDto.getPrimaryCompletionDateTypeCode(), true));
-
-  }
-  
-  /**
-   * Append td column and data.
-   * 
-   * @param html the html
-   * @param column the column
-   * @param data the data
-   * @param appendTR the append tr
-   */
-  /*private void appendTDColumnAndData(StringBuffer html , String column , String data , boolean appendTR) {
-      if (appendTR) {
-          html.append(TR_B);
-      }
-      html.append(TD_B).append(FONT_LABEL).append(BLD_B).append(column).append(BLD_E)
-          .append(FONT_LABEL).append(TD_E)
-          .append(TD_B).append(data).append(TD_E);
-      if (appendTR) {
-          html.append(TR_E);
-      }
-
-  }*/
-  
-  /**
-   * Append td and data.
-   * 
-   * @param html the html
-   * @param data the data
-   */
-  private void appendTDAndData(StringBuffer html , String data) {
-      html.append(TD_B).append(data).append(TD_E);
-  }
-
-  /**
-   * Gets the info.
-   * 
-   * @param st the st
-   * @param appendNoData the append no data
-   * 
-   * @return the info
-   */
-  private String getInfo(String st , boolean appendNoData) {
-      if (st == null || st.equalsIgnoreCase("")  && appendNoData) {
-          return NO_INFO;
-      }
-      return st;
-  }
-
-  
-  /**
-   * Gets the info.
-   * 
-   * @param st the st
-   * @param appendNoData the append no data
-   * 
-   * @return the info
-   */
-  private String getInfo(St st , boolean appendNoData) {
-      if (st.getValue() == null || st.getValue().equalsIgnoreCase("")  && appendNoData) {
-          return NO_INFO;
-      }
-      return st.getValue();
-  }
-
-  /**
-   * Gets the data.
-   * 
-   * @param st the st
-   * @param appendNoData the append no data
-   * 
-   * @return the data
-   */
-  private String getData(St st , boolean appendNoData) {
-      if (st.getValue() == null || st.getValue().equalsIgnoreCase("")  && appendNoData) {
-          return NO_DATA;
-      }
-      return st.getValue();
-  }
-  
-  /**
-   * Gets the data.
-   * 
-   * @param i the i
-   * @param appendNoData the append no data
-   * 
-   * @return the data
-   */
-  private String getData(Int i , boolean appendNoData) {
-    if (i.getValue() == null && appendNoData) {
-        return NO_DATA;
-    }
-    return i.getValue().toString();
-}
-  
-  /**
-   * Gets the data.
-   * 
-   * @param cd the cd
-   * @param appendNoData the append no data
-   * 
-   * @return the data
-   */
-  private String getTableData(Cd cd , boolean appendNoData) {
-      String data = CdConverter.convertCdToString(cd);
-      if (data != null) {
-          return data;
-      } else if (appendNoData) {
-          return NO_DATA;
-      } else {
-          return null;
-      }
-  }
-  
-  /**
-   * Gets the data.
-   * 
-   * @param cd the cd
-   * @param appendNoData the append no data
-   * 
-   * @return the data
-   */
-  private String getData(Cd cd , boolean appendNoData) {
-      String data = CdConverter.convertCdToString(cd);
-      if (data != null) {
-          return data;
-      } else if (appendNoData) {
-          return NO_INFO;
-      } else {
-          return null;
-      }
-  }
-  /**
-   * Append bold data.
-   * 
-   * @param data the data
-   * 
-   * @return the string
-   */
-  private String appendBoldData(String data) {
-      return BLD_B + data + BLD_E;
-  }
-  
-  /**
-   * Append tr bold.
-   * 
-   * @param data the data
-   * 
-   * @return the string
-   */
-  private String appendTRBold(String data) {
-    return BLD_B  + "<U>" + data + "</U>" + BLD_E;
-}
-  
-  /**
-   * Append data.
-   * 
-   * @param column the column
-   * @param data the data
-   * @param newLine the new line
-   * @param bold the bold
-   * 
-   * @return the string
-   */
-  private String appendData(String column , String data, boolean newLine , boolean bold) {
-      return (newLine ? BR : EMPTY) + (bold ? BLD_B : EMPTY) + FONT_LABEL
-          + column + ": " + FONT_END + (bold ? BLD_E : EMPTY) 
-          + FONT_TEXT + getInfo(data, true) + FONT_END;
-  }
-  
-  /**
-   * Append Label.
-   * 
-   * @param column the column
-   * @param data the data
-   * @param newLine the new line
-   * @param bold the bold
-   * 
-   * @return the string
-   */
-  private String appendLabel(String column , String data, boolean newLine , boolean bold) {
-      return (newLine ? BR : EMPTY) + (bold ? BLD_B : EMPTY) + FONT_LABEL
-          + column + ": " + FONT_END + (bold ? BLD_E : EMPTY) 
-          + FONT_TEXT + data + FONT_END;
-  }
-  /**
-   * Append title.
-   * 
-   * @param html the html
-   * @param title the title
-   */
-  private void appendTitle(StringBuffer html , String title) {
-      html.append(BR).append(BR).append(FONT_SECTION).append(title).append(FONT_END);
-  }
-  
-  /**
-   * Convert bl to string.
-   * 
-   * @param bl the bl
-   * @param appendNoData the append no data
-   * 
-   * @return the string
-   */
-  private static String convertBLToString(Bl bl , boolean appendNoData) {
-      if (bl == null && appendNoData) {
-          return NO_DATA;
-      } else if (bl == null) {
-          return null;
-      }
-      Boolean b = bl.getValue();
-      if (b != null && b.booleanValue()) {
-          return YES;
-      } else {
-          return NO;
-      }
-  }
-  
-  private StringBuffer getDescription(St description, boolean appendNoData) {
-    StringBuffer sbuff = new StringBuffer();  
-      if (description.getValue() == null || description.getValue().equalsIgnoreCase("")  && appendNoData) {
-          return sbuff.append(NO_INFO);
-      }   
-      if (!PAUtil.isStNull(description)) {
-        String data = description.getValue();
-        StringTokenizer stokens = new StringTokenizer(data , "\n");
-        while (stokens.hasMoreTokens()) {
-         sbuff.append(stokens.nextToken()).append(BR);
-        }
-    }
-    return sbuff;
- }
-  private void generateTSRForProprietary(StringBuffer htmldata,
-          StudyProtocolDTO spDTO) throws PAException, NullifiedRoleException {
-      Ii studyProtocolIi = spDTO.getIdentifier();
-      htmldata.append(BR).append(BR);
-      //appendIdeIde(htmldata , spDTO);
-      //appendNihGrants(htmldata , spDTO);
-      appendSummary4(spDTO, htmldata);
-      appendDisease(studyProtocolIi, htmldata);
-      List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(spDTO.getIdentifier());
-      List<PlannedActivityDTO> interventionList = new ArrayList<PlannedActivityDTO>();
-      for (PlannedActivityDTO dto : paList) {
-          if (PAUtil.isTypeIntervention(dto.getCategoryCode())) {
-              interventionList.add(dto);
-          }
-      }
-      appendInterventions(htmldata, interventionList);
-      appendParticipatingSites(htmldata, spDTO);
-  }
 }

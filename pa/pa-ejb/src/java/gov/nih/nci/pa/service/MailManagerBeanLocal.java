@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -19,6 +19,7 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,12 +74,11 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 @SuppressWarnings({"PMD.FinalFieldCouldBeStatic", "PMD.TooManyMethods",
     "PMD.CyclomaticComplexity", "PMD.NPathComplexity"  })
 public class MailManagerBeanLocal implements MailManagerServiceLocal {
- 
+
   private static final Logger LOG = Logger.getLogger(MailManagerBeanLocal.class);
   private static final int VAL = 65;
   private static final String TSR = "TSR_";
-  //private static final String WORD = ".doc";
-  private static final String HTML = ".html";
+  private static final String EXTENSION_PDF = ".pdf";
   private final String currentDate = "${CurrentDate}";
   private final String nciTrialIdentifier = "${nciTrialIdentifier}";
   private final String  submitterName = "${SubmitterName}";
@@ -95,7 +95,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
   LookUpTableServiceRemote lookUpTableService;
   @EJB
   DocumentWorkflowStatusServiceLocal docWrkflStatusSrv;
- 
+
   /**
    * @param studyProtocolIi studyProtocolIi
    * @throws PAException PAException
@@ -110,7 +110,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       String body = "";
       if (spDTO.getAmendmentDate() != null && !spDTO.getAmendmentDate().equals("")) {
           body = lookUpTableService.getPropertyValue("tsr.amend.body");
-      } else if (PAUtil.isNotEmpty(spDTO.getIsProprietaryTrial()) 
+      } else if (PAUtil.isNotEmpty(spDTO.getIsProprietaryTrial())
               && spDTO.getIsProprietaryTrial().equalsIgnoreCase("true")) {
           body = lookUpTableService.getPropertyValue("tsr.proprietary.body");
       } else {
@@ -122,37 +122,35 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       body = body.replace("${receiptDate}", getFormatedDate(spDTO.getDateLastCreated()));
       body = body.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
       body = body.replace("${fileName}", TSR
-                                         + spDTO.getNciIdentifier().toString() + HTML);
-      if (PAUtil.isEmpty(spDTO.getIsProprietaryTrial()) 
+                                         + spDTO.getNciIdentifier().toString() + EXTENSION_PDF);
+      if (PAUtil.isEmpty(spDTO.getIsProprietaryTrial())
               || spDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
           body = body.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
       }
       body = body.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
-      
+
       protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
       String folderPath = PaEarPropertyReader.getDocUploadPath();
       StringBuffer sb  = new StringBuffer(folderPath);
       String xmlFile = new String(sb.append(File.separator).append(
               spDTO.getNciIdentifier().toString() + ".xml"));
 
-      if (PAUtil.isEmpty(spDTO.getIsProprietaryTrial()) 
+      if (PAUtil.isEmpty(spDTO.getIsProprietaryTrial())
               || spDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
           //Format the xml only for non proprietary
           String xmlData = format(ctGovXmlGeneratorService.generateCTGovXml(studyProtocolIi));
           OutputStreamWriter oos = new OutputStreamWriter(new FileOutputStream(xmlFile));
           oos.write(xmlData);
           oos.close();
-      }          
+      }
       StringBuffer sb2  = new StringBuffer(folderPath);
       String tsrFile = new String(sb2.append(File.separator).append(TSR).append(
-          spDTO.getNciIdentifier().toString() + HTML));
+          spDTO.getNciIdentifier().toString() + EXTENSION_PDF));
 
-      //File htmlFile = this.createAttachment(new File(inputFile), new File(outputFile));
-      String htmlData = tsrReportGeneratorService.generateTSRHtml(studyProtocolIi);
-      OutputStreamWriter oosHtml = new OutputStreamWriter(new FileOutputStream(tsrFile));
-      oosHtml.write(htmlData);
-      oosHtml.close();
-      if (PAUtil.isNotEmpty(spDTO.getIsProprietaryTrial()) 
+      ByteArrayOutputStream pdfStream = tsrReportGeneratorService.generateTsrReport(studyProtocolIi);
+      pdfStream.writeTo(new FileOutputStream(tsrFile));
+
+      if (PAUtil.isNotEmpty(spDTO.getIsProprietaryTrial())
               && spDTO.getIsProprietaryTrial().equalsIgnoreCase("true")) {
           File[] attachments = {new File(tsrFile)};
           // Send Message
@@ -306,7 +304,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     mailBody = mailBody.replace("${amendmentNumber}", amendNumber);
     mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
     mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
-    
+
     sendMail(spDTO.getUserLastCreated(),
               lookUpTableService.getPropertyValue("trial.amend.accept.subject"),
               mailBody);
@@ -381,8 +379,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     body = body.replace("${reasoncode}", commentText);
     body = body.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
     // Send Message
-    sendMail(spDTO.getUserLastCreated(), 
-            lookUpTableService.getPropertyValue("rejection.subject"), 
+    sendMail(spDTO.getUserLastCreated(),
+            lookUpTableService.getPropertyValue("rejection.subject"),
             body);
  }
  @SuppressWarnings({"PMD.SimpleDateFormatNeedsLocale" })
@@ -423,9 +421,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
  /**
   * Format.
-  * 
+  *
   * @param unformattedXml the unformatted xml
-  * 
+  *
   * @return the string
   */
   private String format(String unformattedXml) {
@@ -442,7 +440,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         XMLSerializer serializer = new XMLSerializer(out, format);
         serializer.serialize(document);
 
-      
+
     } catch (IOException e) {
         LOG.error(e.getLocalizedMessage());
     }
@@ -490,7 +488,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
   /**
    * Send cde request mail.
-   * 
+   *
    * @param mailFrom the mail from
    * @param mailBody the mail body
    */
@@ -510,7 +508,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
            // body
            Multipart multipart = new MimeMultipart();
            message.setFrom(new InternetAddress(mailFrom));
-           message.addRecipient(Message.RecipientType.TO, 
+           message.addRecipient(Message.RecipientType.TO,
                     new InternetAddress(lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL")));
            message.setSentDate(new java.util.Date());
            message.setSubject(lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT"));
@@ -526,7 +524,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
            } // catch
   }
   /**
-   * 
+   *
    * @param prevOwnerMailId email Id
    * @param studyProtocolIi Ii
    */
@@ -534,7 +532,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       try {
           StudyProtocolQueryDTO spDTO = protocolQueryService
           .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
-          
+
           String mailBody = lookUpTableService.getPropertyValue("trial.ownership.body");
           mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
           mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
@@ -546,7 +544,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
           sendMail(spDTO.getUserLastCreated(),
                   lookUpTableService.getPropertyValue("trial.ownership.subject"),
                   newOwnerMailBody);
-          
+
           String prevOwnerMailBody = mailBody;
           prevOwnerMailBody = prevOwnerMailBody.replace(submitterName, getSumitterFullName(prevOwnerMailId));
           sendMail(prevOwnerMailId,
@@ -554,6 +552,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                   prevOwnerMailBody);
     } catch (PAException e) {
         LOG.error("Send Mail error ChangeOwnership Mail", e);
-    }   
+    }
   }
  }

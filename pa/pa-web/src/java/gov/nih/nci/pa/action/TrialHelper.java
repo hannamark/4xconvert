@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
+ *
  * @author Vrushali
  *
  */
@@ -63,16 +63,15 @@ public class TrialHelper {
     private static final String FALSE = "FALSE";
     private static final String ABSTRACTION = "Abstraction";
     private static final String VALIDATION = "Validation";
-    private final PAUtil  paUtil = new PAUtil();
     /**
-     * 
+     *
      * @param studyProtocolIi Ii
-     * @param operation s 
+     * @param operation s
      * @return dto
-     * @throws PAException e 
-     * @throws NullifiedRoleException e 
+     * @throws PAException e
+     * @throws NullifiedRoleException e
      */
-    public GeneralTrialDesignWebDTO getTrialDTO(Ii studyProtocolIi, String operation) 
+    public GeneralTrialDesignWebDTO getTrialDTO(Ii studyProtocolIi, String operation)
         throws PAException, NullifiedRoleException {
         GeneralTrialDesignWebDTO  gtdDTO = new GeneralTrialDesignWebDTO();
         StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
@@ -83,7 +82,7 @@ public class TrialHelper {
         copy(spqDto, gtdDTO);
         copyLO(cUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(
                 spqDto.getLeadOrganizationId())), gtdDTO);
-        if (gtdDTO.getProprietarytrialindicator() == null 
+        if (gtdDTO.getProprietarytrialindicator() == null
                 || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
             copyPI(cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(spqDto.getPiId()))
                     , gtdDTO);
@@ -101,12 +100,12 @@ public class TrialHelper {
         return gtdDTO;
     }
     /**
-     * 
+     *
      * @param studyProtocolIi Ii
      * @param gtdDTO dto to save
      * @param operation who called
-     * @throws PAException e 
-     * @throws NullifiedRoleException nre 
+     * @throws PAException e
+     * @throws NullifiedRoleException nre
      * @throws NullifiedEntityException ne
      */
     public void saveTrial(Ii studyProtocolIi, GeneralTrialDesignWebDTO  gtdDTO, String operation) throws PAException,
@@ -122,7 +121,7 @@ public class TrialHelper {
                 gtdDTO.getLocalProtocolIdentifier()));
         leadOrgSiteIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
         paServUtil.manageStudyIdentifiers(leadOrgSiteIdentifierDTO);
-        if (gtdDTO.getProprietarytrialindicator() == null 
+        if (gtdDTO.getProprietarytrialindicator() == null
                || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
             OrganizationDTO sponsorOrgDto = new OrganizationDTO();
             sponsorOrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi(gtdDTO.getSponsorIdentifier()));
@@ -145,7 +144,7 @@ public class TrialHelper {
         if (PAUtil.isNotEmpty(gtdDTO.getSummaryFourOrgIdentifier())) {
             OrganizationDTO sum4OrgDto = new OrganizationDTO();
             sum4OrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi(gtdDTO.getSummaryFourOrgIdentifier()));
-            StudyResourcingDTO summary4ResoureDTO = new StudyResourcingDTO(); 
+            StudyResourcingDTO summary4ResoureDTO = new StudyResourcingDTO();
             if (PAUtil.isNotEmpty(gtdDTO.getSummaryFourFundingCategoryCode())) {
               summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                         .getByCode(gtdDTO.getSummaryFourFundingCategoryCode())));
@@ -169,7 +168,7 @@ public class TrialHelper {
 
     }
     /**
-     * 
+     *
      * @param spDTO spDto
      * @param gtdDTO dto
      */
@@ -193,7 +192,7 @@ public class TrialHelper {
     }
 
     /**
-     * 
+     *
      * @param spqDTO spDto
      * @param gtdDTO gtdDto
      */
@@ -201,7 +200,7 @@ public class TrialHelper {
         gtdDTO.setLocalProtocolIdentifier(spqDTO.getLocalStudyProtocolIdentifier());
     }
     /**
-     * 
+     *
      * @param o org
      * @param gtdDTO gtddto
      */
@@ -210,7 +209,7 @@ public class TrialHelper {
         gtdDTO.setLeadOrganizationName(o.getName());
     }
     /**
-     * 
+     *
      * @param p person
      * @param gtdDTO dto
      */
@@ -219,13 +218,13 @@ public class TrialHelper {
         gtdDTO.setPiName(p.getFullName());
     }
     /**
-     * 
+     *
      * @param studyProtocolIi li
      * @param gtdDTO dto
      * @throws PAException pa
      * @throws NullifiedRoleException e
      */
-    private void copyResponsibleParty(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) 
+    private void copyResponsibleParty(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO)
     throws PAException, NullifiedRoleException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
@@ -247,7 +246,7 @@ public class TrialHelper {
                 spart = spDtos.get(0);
                 dset = spart.getTelecomAddresses();
                 CorrelationUtils cUtils = new CorrelationUtils();
-                
+
                 PAContactDTO contactDto = cUtils.getContactByPAOrganizationalContactId((
                         Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
 
@@ -265,7 +264,7 @@ public class TrialHelper {
         copy(dset, gtdDTO);
     }
     /**
-     * 
+     *
      * @param dset dset
      * @param gtdDTO gtdDTO
      */
@@ -276,15 +275,15 @@ public class TrialHelper {
         List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
         List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
         if (phones != null && !phones.isEmpty()) {
-           gtdDTO.setContactPhone(paUtil.getPhone(phones.get(0)));
-           gtdDTO.setContactPhoneExtn(paUtil.getPhoneExtn(phones.get(0))); 
+           gtdDTO.setContactPhone(PAUtil.getPhone(phones.get(0)));
+           gtdDTO.setContactPhoneExtn(PAUtil.getPhoneExtn(phones.get(0)));
         }
         if (emails != null && !emails.isEmpty()) {
             gtdDTO.setContactEmail(emails.get(0));
         }
     }
     /**
-     * 
+     *
      * @param studyProtocolIi ii
      * @param gtdDTO gtdDto
      * @throws PAException e
@@ -303,7 +302,7 @@ public class TrialHelper {
 
     }
     /**
-     * 
+     *
      * @param studyProtocolIi li
      * @param gtdDTO gtdto
      * @throws PAException e
@@ -315,13 +314,13 @@ public class TrialHelper {
         }
     }
     /**
-     * 
+     *
      * @param studyProtocolIi li
      * @param gtdDTO dto
      * @throws PAException e
      * @throws NullifiedRoleException e
      */
-    private void copyCentralContact(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) 
+    private void copyCentralContact(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO)
     throws PAException, NullifiedRoleException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
@@ -330,7 +329,7 @@ public class TrialHelper {
             CorrelationUtils cUtils = new CorrelationUtils();
             scDto = srDtos.get(0);
             if (!PAUtil.isIiNull(scDto.getClinicalResearchStaffIi())) {
-                Person p = cUtils.getPAPersonByIi(scDto.getClinicalResearchStaffIi());            
+                Person p = cUtils.getPAPersonByIi(scDto.getClinicalResearchStaffIi());
                 gtdDTO.setCentralContactIdentifier(p.getIdentifier());
                 gtdDTO.setCentralContactName(p.getFullName());
             }
@@ -344,8 +343,8 @@ public class TrialHelper {
             List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
             List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
             if (phones != null && !phones.isEmpty()) {
-                gtdDTO.setCentralContactPhone(paUtil.getPhone(phones.get(0)));
-                gtdDTO.setCentralContactPhoneExtn(paUtil.getPhoneExtn(phones.get(0)));
+                gtdDTO.setCentralContactPhone(PAUtil.getPhone(phones.get(0)));
+                gtdDTO.setCentralContactPhoneExtn(PAUtil.getPhoneExtn(phones.get(0)));
             }
             if (emails != null && !emails.isEmpty()) {
                 gtdDTO.setCentralContactEmail(emails.get(0));
@@ -355,7 +354,7 @@ public class TrialHelper {
    }
 
     /**
-     * 
+     *
      * @param studyProtocolIi li
      * @param gtdDTO dto
      * @param operation o
@@ -369,7 +368,7 @@ public class TrialHelper {
         spDTO.setOfficialTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getOfficialTitle(), OFFICIAL_TITLE)));
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
         spDTO.setKeywordText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getKeywordText(), KEYWORD)));
-        if (gtdDTO != null && gtdDTO.getProprietarytrialindicator() != null 
+        if (gtdDTO != null && gtdDTO.getProprietarytrialindicator() != null
                 && gtdDTO.getProprietarytrialindicator().equalsIgnoreCase("true")) {
             spDTO.setPhaseCode(CdConverter.convertStringToCd(gtdDTO.getPhaseCode()));
             spDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(gtdDTO.getPrimaryPurposeCode()));
@@ -377,7 +376,7 @@ public class TrialHelper {
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
     /**
-     * 
+     *
      * @param studyProtocolIi li
      * @param gtdDTO dto
      * @throws PAException e
@@ -392,10 +391,10 @@ public class TrialHelper {
         List<StudyContactDTO> srDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
         if (srDtos != null && !srDtos.isEmpty()) {
             scDto = srDtos.get(0);
-            if (PAUtil.isNotEmpty(gtdDTO.getCentralContactIdentifier())) { 
+            if (PAUtil.isNotEmpty(gtdDTO.getCentralContactIdentifier())) {
                 PaRegistry.getStudyContactService().update(createStudyContactObj(studyProtocolIi, scDto, gtdDTO));
             } else {
-                //this mean lead org is changed and not selected the central contact so delete 
+                //this mean lead org is changed and not selected the central contact so delete
                 PaRegistry.getStudyContactService().delete(scDto.getIdentifier());
             }
         } else if (PAUtil.isNotEmpty(gtdDTO.getCentralContactIdentifier())) {
@@ -403,7 +402,7 @@ public class TrialHelper {
         }
     }
     /**
-     * 
+     *
      * @param studyProtocolIi li
      * @param scDTO scdto
      * @param gtdDTO dto
@@ -412,8 +411,8 @@ public class TrialHelper {
      * @throws NullifiedEntityException ne
      * @throws NullifiedRoleException nr
      */
-    public StudyContactDTO createStudyContactObj(Ii studyProtocolIi, StudyContactDTO scDTO, 
-            GeneralTrialDesignWebDTO gtdDTO) 
+    public StudyContactDTO createStudyContactObj(Ii studyProtocolIi, StudyContactDTO scDTO,
+            GeneralTrialDesignWebDTO gtdDTO)
     throws PAException, NullifiedEntityException, NullifiedRoleException {
 
         ClinicalResearchStaffCorrelationServiceBean crbb = new ClinicalResearchStaffCorrelationServiceBean();
@@ -431,25 +430,25 @@ public class TrialHelper {
                     DSet<Ii> iiDset = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(
                   IiConverter.convertToPoOrganizationalContactIi(
                           gtdDTO.getCentralContactIdentifier())).getIdentifier();
-                    selectedCenteralContactIi = DSetConverter.convertToIi(iiDset);  
+                    selectedCenteralContactIi = DSetConverter.convertToIi(iiDset);
             } else {
                 selectedCenteralContactIi = isoPerDTO.getIdentifier();
             }
         }
         if (IiConverter.PERSON_ROOT.equalsIgnoreCase(selectedCenteralContactIi.getRoot())) {
-            //create crs only if contact is person 
+            //create crs only if contact is person
             Long crs = crbb.createClinicalResearchStaffCorrelations(
                 gtdDTO.getLeadOrganizationIdentifier(), selectedCenteralContactIi.getExtension());
             scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(crs));
             scDTO.setOrganizationalContactIi(IiConverter.convertToIi(""));
         }
         if (IiConverter.ORGANIZATIONAL_CONTACT_ROOT.equalsIgnoreCase(selectedCenteralContactIi.getRoot())) {
-            //create crs only if contact is person 
+            //create crs only if contact is person
             PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
-            OrganizationalContactConverter> oc = new PABaseCorrelation<PAOrganizationalContactDTO , 
+            OrganizationalContactConverter> oc = new PABaseCorrelation<PAOrganizationalContactDTO ,
             OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
                PAOrganizationalContactDTO.class, OrganizationalContact.class, OrganizationalContactConverter.class);
-        
+
             PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
             orgContacPaDto.setOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(
                     gtdDTO.getLeadOrganizationIdentifier()));
@@ -468,11 +467,11 @@ public class TrialHelper {
         dsetList =  DSetConverter.convertListToDSet(emails, "EMAIL", dsetList);
         scDTO.setTelecomAddresses(dsetList);
         scDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
-       
+
         return scDTO;
     }
     /**
-     * 
+     *
      * @param srDTO srDTO
      * @param gtdDTO gtdDTO
      * @throws PAException e
@@ -493,13 +492,13 @@ public class TrialHelper {
             gtdDTO.setSummaryFourOrgName(o.getName());
         }
 
-        
+
     }
     /**
-     * 
+     *
      * @param studyProtocolIi ii
      * @param gtdDTO gtdDto
-     * @throws PAException e 
+     * @throws PAException e
      */
     public void createSponorContact(Ii studyProtocolIi,
             GeneralTrialDesignWebDTO gtdDTO) throws PAException {
@@ -532,7 +531,7 @@ public class TrialHelper {
         }
     }
     /**
-     * 
+     *
      * @param dwsCode cd
      * @return string
      */

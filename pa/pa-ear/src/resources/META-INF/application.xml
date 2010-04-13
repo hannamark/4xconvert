@@ -38,6 +38,9 @@
 	<module>
 	  <java>commons-lang-2.4.jar</java>
 	</module>
+    <module>
+      <java>itext-2.0.6.jar</java>
+    </module>
     <security-role><role-name>Abstractor</role-name></security-role>
     <security-role><role-name>Submitter</role-name></security-role>
     <security-role><role-name>ReportViewer</role-name></security-role>

@@ -103,6 +103,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
@@ -152,7 +153,7 @@ import org.hibernate.Session;
 public class PAUtil {
 
     private static final int MAXF = 1024;
-    private static final Logger LOG = Logger.getLogger(PAUtil.class);    
+    private static final Logger LOG = Logger.getLogger(PAUtil.class);
     private static final int EMAIL_IDX = 7;
     private static final String EXTN = "extn";
     private static final int EXTN_COUNT = 4;
@@ -280,7 +281,7 @@ public class PAUtil {
         }
         return null;
     }
-    
+
     /**
      * checks if Ii is null.
      * @param ii ii
@@ -299,16 +300,16 @@ public class PAUtil {
     }
 
     /**
-     * 
+     *
      * @param ii ii to validate
      * @return boolean
      */
     public static boolean isIiNotNull(Ii ii) {
         return !isIiNull(ii);
-        
+
     }
     /**
-     * 
+     *
      * @param toValidate ii to validate
      * @param source source of the ii to validate
      * @return boolean
@@ -321,7 +322,7 @@ public class PAUtil {
             sb.append("Ii is null");
         }
         if (!source.getIdentifierName().equals(toValidate.getIdentifierName())) {
-            sb.append(" Identifier Name does not match for " + source.getIdentifierName() 
+            sb.append(" Identifier Name does not match for " + source.getIdentifierName()
                     +  ", Exptected is " + toValidate.getIdentifierName());
         }
         if (!source.getRoot().equals(toValidate.getRoot())) {
@@ -391,7 +392,7 @@ public class PAUtil {
         }
         return isNull;
     }
-    
+
     /**
      * checks if Int is null.
      * @param in Int
@@ -674,7 +675,7 @@ public class PAUtil {
         }
         return ret;
     }
-    
+
     /**
      * Method designed for string setters to concatenate rather then cause exceptions.
      * @param value a string
@@ -748,7 +749,7 @@ public class PAUtil {
         }
         return ret;
     }
-    
+
     /**
      * util method to find if the length is between min and max.
      * @param st String data
@@ -771,7 +772,7 @@ public class PAUtil {
         return ret;
     }
     /**
-     * 
+     *
      * @param identifier Ii
      * @return str
      */
@@ -825,7 +826,7 @@ public class PAUtil {
         return value;
     }
     /**
-     * 
+     *
      * @param <TYPE> any base object extending BaseDTO
      * @param list list of objects
      * @return <TYPE> any base object extending BaseDTO
@@ -836,9 +837,9 @@ public class PAUtil {
              type =  (TYPE) list.get(0);
         }
         return type;
-        
+
     }
-    
+
 
 
     /**
@@ -884,21 +885,21 @@ public class PAUtil {
     }
 
     /**
-     * 
+     *
      * @param documentIdentifier document identifier
      * @param fileName name of the file
      * @param nciIdentifier nci identifier
      * @return the file path
      * @throws PAException on error
      */
-    public static String getDocumentFilePath(Long documentIdentifier , String fileName , String nciIdentifier) 
+    public static String getDocumentFilePath(Long documentIdentifier , String fileName , String nciIdentifier)
     throws PAException {
         String folderPath = PaEarPropertyReader.getDocUploadPath();
         StringBuffer sb  = new StringBuffer(folderPath);
         sb.append(File.separator).append(nciIdentifier).
                 append(File.separator).append(documentIdentifier).append('-').append(fileName);
         return sb.toString();
-        
+
     }
     /**
      * @param date date
@@ -916,7 +917,7 @@ public class PAUtil {
         boolean retValue = false;
         Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
         if (currentTimeStamp.before(date)) {
-            retValue = true;                
+            retValue = true;
         }
         return retValue;
     }
@@ -930,26 +931,26 @@ public class PAUtil {
         if (PAUtil.isEmpty(dateString)) {
             return false;
         }
-        //set the format to use as a constructor argument   
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");        
-        if (dateString.trim().length() != dateFormat.toPattern().length())  {    
+        //set the format to use as a constructor argument
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        if (dateString.trim().length() != dateFormat.toPattern().length())  {
             return false;
         }
-        dateFormat.setLenient(false);       
-        try {      
-            //parse the date    
-            dateFormat.parse(dateString.trim());   
-        } catch (ParseException pe) {    
-            return false;    
-        }    
-        return true;  
+        dateFormat.setLenient(false);
+        try {
+            //parse the date
+            dateFormat.parse(dateString.trim());
+        } catch (ParseException pe) {
+            return false;
+        }
+        return true;
    }
-    
+
     /**
      * Checks if the documentWorkflowStatus code is abstracted and above.
-     * 
+     *
      * @param documentWorkFlowStatusCode the document work flow status code
-     * 
+     *
      * @return true, if is abstracted and above
      */
     public static boolean isAbstractedAndAbove(Cd documentWorkFlowStatusCode) {
@@ -963,17 +964,17 @@ public class PAUtil {
       return retValue;
     }
     /**
-     * 
+     *
      * @param <E> e
      * @param list listt
      * @return f
      */
     public static <E> boolean isListNotEmpty(List<? extends E> list) {
         return !isListEmpty(list);
-        
+
     }
     /**
-     * 
+     *
      * @param <E> e
      * @param list listt
      * @return f
@@ -983,18 +984,18 @@ public class PAUtil {
             return true;
         }
         return false;
-        
+
     }
-    
+
     /**
      * Check if value exists.
-     * 
+     *
      * @param value the value
      * @param tableName the table name
      * @param column the column
-     * 
+     *
      * @return true, if successful
-     * 
+     *
      * @throws PAException the PA exception
      */
     public static boolean checkIfValueExists(String value, String tableName, String column) throws PAException {
@@ -1002,7 +1003,7 @@ public class PAUtil {
         Session session = null;
         boolean exists = true;
         int count = 0;
-        try { 
+        try {
           session = HibernateUtil.getCurrentSession();
           Statement st = session.connection().createStatement();
           ResultSet rs = st.executeQuery(sql);
@@ -1012,13 +1013,13 @@ public class PAUtil {
            if (count == 0) {
              exists = false;
            }
-       
+
         }  catch (SQLException sqle) {
             LOG.error(" Hibernate exception while checking for value " + value + " from table " + tableName , sqle);
-        } 
+        }
         return exists;
       }
-    
+
     /**
      * @param value value
      * @return bd
@@ -1030,12 +1031,12 @@ public class PAUtil {
         }
         return bd;
     }
-    
+
     /**
      * Checks if is number.
-     * 
+     *
      * @param value the value
-     * 
+     *
      * @return true, if is number
      */
     public static boolean isNumber(String value) {
@@ -1058,7 +1059,7 @@ public class PAUtil {
         }
         return unit;
     }
-    
+
     /**
      * @param javapq javapq
      * @return bd
@@ -1070,7 +1071,7 @@ public class PAUtil {
         }
         return bd;
     }
-    
+
     /**
      * @param javapq javapq
      * @return bd
@@ -1082,12 +1083,12 @@ public class PAUtil {
         }
         return precision;
     }
-    
+
     /**
      * Checks if is type intervention.
-     * 
+     *
      * @param cd the cd
-     * 
+     *
      * @return true, if is type intervention
      */
     public static boolean isTypeIntervention(Cd cd) {
@@ -1103,7 +1104,7 @@ public class PAUtil {
        return isTypeIntervention;
     }
     /**
-     * 
+     *
      * @param strNumber str
      * @return valid
      */
@@ -1113,10 +1114,10 @@ public class PAUtil {
           } catch (NumberFormatException e) {
             return false;
           }
-       return true; 
+       return true;
     }
     /**
-     * 
+     *
      * @param strNumber str
      * @return valid
      */
@@ -1126,10 +1127,10 @@ public class PAUtil {
           } catch (NumberFormatException e) {
             return false;
           }
-       return true; 
+       return true;
     }
     /**
-     * 
+     *
      * @param phoneNumber no
      * @return s
      */
@@ -1145,7 +1146,7 @@ public class PAUtil {
         return isValidPhoneNumber;
     }
     /**
-     * 
+     *
      * @param telecomAddresses tel
      * @return boolean
      */
@@ -1179,16 +1180,51 @@ public class PAUtil {
                     isNull = false;
                 }
             }
-        
+
         }
         return isNull;
     }
+
     /**
-     * 
+     * @param dset telecom address
+     * @return email the email
+     */
+    public static String getEmail(DSet<Tel> dset) {
+        return getEmailOrPhone(DSetConverter.convertDSetToList(dset, "EMAIL"));
+    }
+
+    /**
+     * @param dset telecom address
+     * @return phone the phone without extension
+     */
+    public static String getPhone(DSet<Tel> dset) {
+        String phone = getEmailOrPhone(DSetConverter.convertDSetToList(dset, "PHONE"));
+        return (phone != null ? getPhone(phone) : null);
+    }
+
+    /**
+     * @param dset telecom address
+     * @return extn the phone extension
+     */
+    public static String getPhoneExtension(DSet<Tel> dset) {
+        String phoneWithExtn = getEmailOrPhone(DSetConverter.convertDSetToList(dset, "PHONE"));
+        return (phoneWithExtn != null ? getPhoneExtn(phoneWithExtn) : null);
+    }
+
+    private static String getEmailOrPhone(List<String> emailsOrPhones) {
+        String retVal = null;
+        if (emailsOrPhones != null && !emailsOrPhones.isEmpty()) {
+            retVal = emailsOrPhones.get(0);
+        }
+        return retVal;
+    }
+
+    /**
+     *
      * @param phone phone with ex
      * @return extn
      */
-    public String getPhoneExtn(String phone) {
+    public static String getPhoneExtn(String phone) {
         String strExtn = "";
         if (phone.contains(EXTN)) {
             strExtn = phone.substring(phone.indexOf(EXTN) + EXTN_COUNT);
@@ -1196,11 +1232,11 @@ public class PAUtil {
         return strExtn;
     }
     /**
-     * 
+     *
      * @param phone phone
      * @return phone
      */
-    public String getPhone(String phone) {
+    public static String getPhone(String phone) {
         String strPhone = "";
         if (phone.contains(EXTN)) {
             strPhone = phone.substring(0, phone.indexOf(EXTN));
@@ -1210,7 +1246,7 @@ public class PAUtil {
         return strPhone;
     }
     /**
-     * 
+     *
      * @param minUnit min
      * @param maxUnit max
      * @return true
@@ -1222,28 +1258,28 @@ public class PAUtil {
         }
         if (maxUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
             isSameorLess = true;
-        } else if (maxUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode()) 
+        } else if (maxUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
                 && !minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
             isSameorLess = true;
-        } else if (maxUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode()) 
+        } else if (maxUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
                 && !(minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
                 || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
             isSameorLess = true;
-        } else if (maxUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode()) 
+        } else if (maxUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode())
                 && !(minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
-                || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode()) 
-                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
-            isSameorLess = true;
-        } else if (maxUnit.equalsIgnoreCase(UnitsCode.HOURS.getCode()) 
-                && !(minUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode()) 
-                || minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode()) 
                 || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
                 || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
             isSameorLess = true;
-        } else if (maxUnit.equalsIgnoreCase(UnitsCode.MINUTES.getCode()) 
+        } else if (maxUnit.equalsIgnoreCase(UnitsCode.HOURS.getCode())
+                && !(minUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
+            isSameorLess = true;
+        } else if (maxUnit.equalsIgnoreCase(UnitsCode.MINUTES.getCode())
                 && !(minUnit.equalsIgnoreCase(UnitsCode.HOURS.getCode())
-                || minUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode()) 
-                || minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode()) 
+                || minUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
                 || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
                 || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
             isSameorLess = true;
@@ -1257,7 +1293,7 @@ public class PAUtil {
     public static String getAge(BigDecimal age) {
         String retAge = age.toString();
         if (retAge.endsWith(".0")) {
-            retAge = retAge.replace(".0", "");   
+            retAge = retAge.replace(".0", "");
         }
         return retAge;
     }

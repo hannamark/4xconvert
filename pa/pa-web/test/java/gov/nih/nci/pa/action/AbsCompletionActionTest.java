@@ -49,26 +49,16 @@ public class AbsCompletionActionTest extends AbstractPaActionTest {
     }
 
     /**
-     * Test method for {@link gov.nih.nci.pa.action.AbstractionCompletionAction#viewTSR()}.
+     * Test method for {@link gov.nih.nci.pa.action.AbstractionCompletionAction#viewTsrReportAsPdf()}.
      */
     @Test
     public void testViewTSR() {
 
    	 abstractionCompletionAction.setServletResponse(getResponse());
         String result = abstractionCompletionAction.viewTSR();
-        assertEquals("none", result);
+        assertEquals("success", result);
 
     }
-
-    /**
-     * Testview tsr word.
-     */
-    @Test
-    public void testviewTSRWord() {
-    	 abstractionCompletionAction.setServletResponse(getResponse());
-    	assertEquals("none", abstractionCompletionAction.viewTSRWord());
-    }
-
 
     /**
      * Testdisplay reporting xml.

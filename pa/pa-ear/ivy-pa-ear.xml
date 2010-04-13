@@ -62,6 +62,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jakarta"                name="commons-fileupload"      rev="1.2.1"           conf="runtime->master"/>
     <dependency org="jakarta"                name="commons-io"              rev="1.4"             conf="runtime->master"/>
     <dependency org="jakarta"                name="commons-lang"            rev="2.4"             conf="runtime->master"/>
+    <dependency org="itext"                  name="itext"                   rev="2.0.6"           conf="runtime->master"/>
 
     <!-- container -->
     <dependency org="ehcache"                name="ehcache"                 rev="1.2.4"           conf="container->master"/>
