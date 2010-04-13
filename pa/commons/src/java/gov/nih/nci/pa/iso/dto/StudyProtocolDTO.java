@@ -132,8 +132,9 @@ public class StudyProtocolDTO extends BaseDTO {
     private Cd amendmentReasonCode;
     private Int submissionNumber;
     private St programCodeText;
-   private Ivl<Int> targetAccrualNumber;
-   private Bl proprietaryTrialIndicator;
+    private Ivl<Int> targetAccrualNumber;
+    private Bl proprietaryTrialIndicator;
+    private Bl ctgovXmlRequiredIndicator;
     
     /**
      * 
@@ -666,6 +667,20 @@ public Bl getProprietaryTrialIndicator() {
  */
 public void setProprietaryTrialIndicator(Bl proprietaryTrialIndicator) {
     this.proprietaryTrialIndicator = proprietaryTrialIndicator;
+}
+
+/**
+ * @param ctgovXmlRequiredIndicator the ctgovXmlRequiredIndicator to set
+ */
+public void setCtgovXmlRequiredIndicator(Bl ctgovXmlRequiredIndicator) {
+    this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+}
+
+/**
+ * @return the ctgovXmlRequiredIndicator
+ */
+public Bl getCtgovXmlRequiredIndicator() {
+    return ctgovXmlRequiredIndicator;
 }
     
     

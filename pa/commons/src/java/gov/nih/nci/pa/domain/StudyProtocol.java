@@ -174,6 +174,7 @@ public class StudyProtocol extends AbstractEntity {
     private List<Submission> submissions = new ArrayList<Submission>();
     private List<StudyInbox> studyInbox = new ArrayList<StudyInbox>();
     private List<StudyCheckout> studyCheckout = new ArrayList<StudyCheckout>();
+    private Boolean ctgovXmlRequiredIndicator;
 
     /**
      * @return accrualReportingMethodCode
@@ -1029,6 +1030,21 @@ public class StudyProtocol extends AbstractEntity {
      */
     public void setStudyCheckout(List<StudyCheckout> studyCheckout) {
         this.studyCheckout = studyCheckout;
+    }
+    
+    /**
+     * @param ctgovXmlRequiredIndicator the ctgovXmlRequiredIndicator to set
+     */
+    public void setCtgovXmlRequiredIndicator(Boolean ctgovXmlRequiredIndicator) {
+        this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+    }
+
+    /**
+     * @return the ctgovXmlRequiredIndicator
+     */
+    @Column(name = "CTGOV_XML_REQUIRED_INDICATOR")
+    public Boolean getCtgovXmlRequiredIndicator() {
+        return ctgovXmlRequiredIndicator;
     }
 
 

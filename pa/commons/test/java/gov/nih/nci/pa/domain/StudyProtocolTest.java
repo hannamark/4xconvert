@@ -269,6 +269,7 @@ public class StudyProtocolTest  {
         sp.setAmendmentNumber("amendmentNumber");
         sp.setSubmissionNumber(2);
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
+        sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
         return sp;
     }
     
@@ -349,7 +350,7 @@ public class StudyProtocolTest  {
         assertEquals(create.getDateLastCreated(), saved.getDateLastCreated());
         assertEquals(create.getAmendmentReasonCode(),saved.getAmendmentReasonCode());
         assertEquals(create.getStatusCode(),saved.getStatusCode());
-       
+        assertEquals(create.getCtgovXmlRequiredIndicator(), saved.getCtgovXmlRequiredIndicator());
         
     }
 
