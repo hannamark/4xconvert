@@ -56,6 +56,12 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
     From the services/ directory, run:
         mvn -Plocal,init-db sql:execute
 
+    NOTE: If you plan on running against a dev po instance against the same db that was created with build po, you'll need to run the following sql commands to prevent liquibase from balking:
+	$ psql -U poadmin podb
+	(password: poadmin123 [default])
+	podb=# update databasechangelog set filename='db-install.xml' where id = '1.0';
+	podb=# update databasechangelog set filename='db-upgrade.xml' where filename like '%db-upgrade.xml';
+
 1.3 CI build (Maven 2.0.9)
     mvn -Plocal,init-db sql:execute
     mvn -Plocal clean install
