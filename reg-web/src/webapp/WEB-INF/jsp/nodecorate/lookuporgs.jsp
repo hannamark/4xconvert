@@ -10,22 +10,28 @@
 		window.top.hidePopWin(true); 
 	}	
 	function createOrg(){
-		var orgName = document.getElementById("orgName").value;
-		var stAddress = document.getElementById("orgAddress").value;
-		var city = document.getElementById("orgCity").value;
-		var state = document.getElementById("orgState").value;
-		var zip = document.getElementById("orgZip").value;
-		var country = document.getElementById("orgCountry").value;
-		var phone = document.getElementById("orgPhone").value;
-		var email = document.getElementById("orgEmail").value;
-		var orgUrl = document.getElementById("orgUrl").value;
-		var tty = document.getElementById("orgTty").value;
-		var fax = document.getElementById("orgFax").value;
-		var url = '/registry/protected/popupcreateOrganization.action?orgName='+orgName+'&orgStAddress='+stAddress+'&countryName='+country+'&cityName='+city+'&zipCode='+zip+'&stateName='+state+'&phoneNumber='+phone+'&email='+email+'&tty='+tty+'&url='+orgUrl+'&fax='+fax;
-		var div = document.getElementById('getOrgs'); 
-		div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Creating...</div>';
-		ajaxCall(div, url);
-	}
+        var orgName = document.getElementById("orgName").value;
+        var stAddress = document.getElementById("orgAddress").value;
+        var city = document.getElementById("orgCity").value;
+        var stateSelect = document.getElementById("orgStateSelect").value;
+        var stateText = document.getElementById("orgStateText").value;
+        var zip = document.getElementById("orgZip").value;
+        var country = document.getElementById("orgCountry").value;
+        var state = "";
+        if (country == 'USA')
+         state = stateSelect;
+        else 
+         state = stateText;
+        var phone = document.getElementById("orgPhone").value;
+        var email = document.getElementById("orgEmail").value;
+        var orgUrl = document.getElementById("orgUrl").value;
+        var tty = document.getElementById("orgTty").value;
+        var fax = document.getElementById("orgFax").value;
+        var url = '/registry/protected/popupcreateOrganization.action?orgName='+orgName+'&orgStAddress='+stAddress+'&countryName='+country+'&cityName='+city+'&zipCode='+zip+'&stateName='+state+'&phoneNumber='+phone+'&email='+email+'&tty='+tty+'&url='+orgUrl+'&fax='+fax;
+        var div = document.getElementById('getOrgs'); 
+        div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Creating...</div>';
+        ajaxCall(div, url);
+    }
 	function loadDiv() {
 		var orgName = document.getElementById("orgNameSearch").value;		
 		var orgCountry = document.getElementById("orgCountrySearch").value;

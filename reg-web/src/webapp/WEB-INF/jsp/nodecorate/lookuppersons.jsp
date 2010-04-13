@@ -54,9 +54,15 @@
 		var mname = document.getElementById("poOrganizations_middleName").value;		
 		var stadd = document.getElementById("poOrganizations_streetAddress").value;		
 		var city = document.getElementById("poOrganizations_city").value;		
-		var st = document.getElementById("poOrganizations_state").value;		
+		var stateSelect = document.getElementById("poOrganizations_orgStateSelect").value;	
+		var stateText = document.getElementById("poOrganizations_orgStateText").value;	
 		var zip = document.getElementById("poOrganizations_zip").value;		
 		var ct = document.getElementById("poOrganizations_country").value;		
+		var st = "";
+        if (ct == 'USA')
+         st = stateSelect;
+        else 
+         st = stateText;
 		var email = document.getElementById("poOrganizations_email").value;		
 		var phone = document.getElementById("poOrganizations_phone").value;		
 		var url = document.getElementById("poOrganizations_url").value;		
