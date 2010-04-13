@@ -257,4 +257,15 @@ public enum USStateCode implements CodedEnum<String> {
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }
+    /**
+     * @return String[] abbreviations names of enums
+     */
+     public static String[] getAbbreviatedNames() {
+        USStateCode[] usStateArray = USStateCode.values();
+        String[] abbrArray = new String[usStateArray.length];
+        for (int i = 0; i < usStateArray.length; i++) {
+             abbrArray[i] = usStateArray[i].toString();
+        }
+        return abbrArray;
+    }   
 }
