@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+$Id: install.xml 4757 2008-05-15 20:43:31Z zengje $
+$HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
+-->
+<project name="pa-grid-legacy-installer" default="upgrade" basedir="."
+  xmlns:ivy="antlib:org.apache.ivy.ant"
+  >
+    <property name="grid.resource.dir" value="${working.dir}/${grid.dist.relative.dir}" />
+    <property name="grid.application.dir" value="${working.dir}/grid-application" />
+    <property name="grid.resource.dir.src" value="${basedir}/${grid.dist.relative.dir}" />
+
+    <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
+    <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
+    <property name="pa-grid-legacy.dir.dist" value="${basedir}/${pa-grid-legacy.dist.relative.dir}" />
+    <property name="pa-grid-legacy.dir.src" value="${basedir}/${pa-grid-legacy.dist.relative.dir}" />
+    <property name="pa-grid-legacy.dir.target" value="wsrf.war" />
+    <property name="pa-grid-legacy.introduce.skeleton.service.name" value="CoreServices"/>
+
+  <target name="install:pa-grid-legacy-jboss:clean" unless="exclude.pa-grid-legacy">
+    <sleep seconds="5" />
+    <property name="backup.count" value="5"/>
+
+    <if>
+      <not>
+        <equals arg1="${exclude.pa-grid-legacy-jboss.backup}" arg2="true"/>
+      </not>
+      <then>
+        <!-- Jboss backup, do not compress until install is finished -->
+        <property name="backup.pa-grid-legacy-jboss.base.dir" location="${application.base.path}/backup/pa-grid-legacy"/>
+        <!-- So these directories won't be included in the backup, they are not needed to use jboss -->
+        <delete dir="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/work"/>
+        <delete dir="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/tmp"/>
+
+        <backup-dir
+          src.dir="${pa-grid-legacy-jboss.home}"
+          backup.base.dir="${backup.pa-grid-legacy-jboss.base.dir}"
+          backup.count="${backup.count}"
+          />
+      </then>
+    </if>
+    <delete dir="${pa-grid-legacy-jboss.home}"/>
+  </target>
+
+  <target name="install:pa-grid-legacy-jboss:init" depends="common:init:pre, install:pa-ear-jboss:init" unless="exclude.pa-grid-legacy">
+	  <!-- determine if port configurations or port lists are being called -->
+	  <if>
+		  <isset property="pa-grid-legacy-jboss.ncicb-standard.port-config"/>
+		  <then>
+			  <!-- Read some port properties from standard bindings file -->
+			  <echo message="Using JBoss NCICB Standard port configurations"/>
+			  <if>
+				  <equals arg1="${jboss.major.version}" arg2="4"/>
+				  <then>
+					  <property name="pa-grid-legacy-jboss.server.binding.template.location" value="${basedir}/${jboss-bindings.file}"/>
+					  <jboss-read-ports
+						  jboss.server.ports.name="${pa-grid-legacy-jboss.server.ports.name}"
+						  jboss.server.bindingfile.location="${pa-grid-legacy-jboss.server.binding.template.location}"
+						  jboss.server.jndi.port.property.name="pa-grid-legacy-jboss.server.jndi.port"
+						  jboss.server.port.property.name="pa-grid-legacy-jboss.server.port"
+						  jboss.ejbinvoker.port.property.name="pa-grid-legacy-jboss.ejbinvoker.port"
+						  jboss.server.rmi.port.property.name="pa-grid-legacy-jboss.server.rmi.port"
+						  jboss.web.service.port.property.name="pa-grid-legacy-jboss.web.service.port"
+						  jboss.service.rmiobject.port.property.name="pa-grid-legacy-jboss.service.rmiobject.port"
+						  jboss.server.bind.port.property.name="pa-grid-legacy-jboss.server.bind.port"
+						  jboss.hajndi.port.property.name="pa-grid-legacy-jboss.hajndi.port"
+						  jboss.hajrmi.port.property.name="pa-grid-legacy-jboss.hajrmi.port"
+						  jboss.cobraorb.port.property.name="pa-grid-legacy-jboss.cobraorb.port"
+						  jboss.jmx-rmi.port.property.name="pa-grid-legacy-jboss.jmx-rmi.port"
+						  jboss.snmp-trapd.port.property.name="pa-grid-legacy-jboss.snmp-trapd.port"
+						  jboss.snmp.port.property.name="pa-grid-legacy-jboss.snmp.port"
+						  jboss.jms.port.property.name="pa-grid-legacy-jboss.jms.port"
+						  jboss.remoting.port.property.name="pa-grid-legacy-jboss.remoting.port"
+						  jboss.messaging.port.property.name="pa-grid-legacy-jboss.messaging.port"
+
+						  />
+					  <jboss-bindings-validate
+						  jboss.server.ports.name="${pa-grid-legacy-jboss.server.ports.name}"
+						  jboss.server.bindingfile.location="${pa-grid-legacy-jboss.server.binding.template.location}"
+						  />
+				  </then>
+				  <elseif>
+					  <equals arg1="${jboss.major.version}" arg2="5"/>
+					  <then>
+						  <property name="pa-grid-legacy-jboss.server.bindingfile.location" value="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/conf/bindingservice.beans/META-INF/bindings-jboss-beans.xml"/>
+						  <property name="temp.bindings.file" value="${temp.dir}/unmodified-bindings-jboss-beans.xml"/>
+						  <copy tofile="${temp.bindings.file}" file="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/unmodified-bindings-jboss-beans.xml"/>
+					  	  <property name="temp.ejb.file" value="${temp.dir}/ejb3-connectors-jboss-beans.xml"/>
+					  	  <copy tofile="${temp.ejb.file}" file="${bda-utils.dir}/resource/jboss-5.1.0.GA/ejb3-connectors-jboss-beans.xml"/>
+					  	  <jboss51-bindings-nci
+					  	         jboss.server.bindingfile.location="${temp.bindings.file}"
+					  	  />
+                          <jboss51-read-ports-nci
+					  	         jboss.server.bindingfile.location="${temp.bindings.file}"
+					  	         jboss.server.ejbfile.location="${temp.ejb.file}"
+					  	  />
+					  </then>
+				  </elseif>
+			  </if>
+			  <echo message="http -${pa-grid-legacy-jboss.server.port} "/>
+			  <echo message="http -${pa-grid-legacy-jboss.server.jndi.port} "/>
+			  <properties-exist
+				  properties.list="pa-grid-legacy-jboss.server.jndi.port,pa-grid-legacy-jboss.server.port,pa-grid-legacy-jboss.server.ports.name"
+				  />
+		  </then>
+		  <else>
+			  <!-- else ensure that all ports are set, since these will be removed from install-properties.template we will verify here.  They have to be removed so the validator works with or without the properties or we have to change the format of the file. -->
+			  <echo message="Using custom JBoss port configurations"/>
+			  <property name="pa-grid-legacy-jboss.server.binding.template.location" value="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings.xml"/>
+			  <properties-exist
+				  properties.list="pa-grid-legacy-jboss.server.jndi.port,pa-grid-legacy-jboss.server.port,pa-grid-legacy-jboss.cobraorb.port,pa-grid-legacy-jboss.hajndi.port,pa-grid-legacy-jboss.hajrmi.port,pa-grid-legacy-jboss.jmx-rmi.port,pa-grid-legacy-jboss.messaging.port,pa-grid-legacy-jboss.pooledha.port,pa-grid-legacy-jboss.server.bind.port,pa-grid-legacy-jboss.server.rmi.port,pa-grid-legacy-jboss.service.rmiobject.port,pa-grid-legacy-jboss.snmp.port,pa-grid-legacy-jboss.snmp-trapd.port,pa-grid-legacy-jboss.web.service.port,pa-grid-legacy-jboss.unifiedinvoker.port,pa-grid-legacy-jboss.hajndi.auto.port,pa-grid-legacy-jboss.ssl.port,pa-grid-legacy-jboss.jms2.netty.port,pa-grid-legacy-jboss.jms2.netty-ssl.port,pa-grid-legacy-jboss.transaction.recovery.port,pa-grid-legacy-jboss.transaction.status.port,pa-grid-legacy-jboss.transaction.processid.port"
+				  />
+		  </else>
+	  </if>
+  </target>
+  <target name="common:pa-grid-legacy-jboss:init" depends="common:init:pre" unless="exclude.pa-grid-legacy">
+	  <property name="pa-grid-legacy-jboss.ssl.enable" value="false"/>
+	  <property name="pa-grid-legacy-jboss.home" value="${application.base.path}/${pa-grid-legacy-jboss.relative.path}"/>
+	  <jboss-version
+		  />
+	  <if>
+		  <equals arg1="${pa-grid-legacy-jboss.http-connector.remove}" arg2="true"/>
+		  <then>
+			  <property name="pa-grid-legacy-jboss.application.url" value="https://${pa-grid-legacy-jboss.server.hostname}:${pa-grid-legacy-jboss.grid.secure.port}/wsrf/services/cagrid/PAServices"/>
+		  </then>
+		  <else>
+			  <property name="pa-grid-legacy-jboss.application.url" value="http://${pa-grid-legacy-jboss.server.hostname}:${pa-grid-legacy-jboss.server.port}/wsrf/services/cagrid/PAServices"/>
+		  </else>
+	  </if>
+	  <available file="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/conf/jboss-service.xml" property="pa-grid-legacy-jboss.exists"/>
+	  <basename file="${pa-grid-legacy-jboss.ssl.keystore.location}" property="pa-grid-legacy-jboss.ssl.keystore.file"/>
+	  <dirname file="${pa-grid-legacy-jboss.ssl.keystore.location}" property="pa-grid-legacy-jboss.ssl.keystore.dir"/>
+	  <basename file="${pa-grid-legacy-jboss.grid.secure.cert.location}" property="pa-grid-legacy-jboss.grid.secure.cert.file"/>
+	  <dirname file="${pa-grid-legacy-jbosscert.location}" property="pa-grid-legacy-jboss.grid.secure.dir"/>
+	  <basename file="${pa-grid-legacy-jboss.grid.secure.key.location}" property="pa-grid-legacy-jboss.grid.secure.key.file"/>
+	  <property name="pa-grid-legacy-jboss.socket.ports" value="${pa-grid-legacy-jboss.server.port},${pa-grid-legacy-jboss.server.rmi.port},${pa-grid-legacy-jboss.server.jndi.port},${pa-grid-legacy-jboss.service.rmiobject.port},${pa-grid-legacy-jboss.jms.port},${pa-grid-legacy-jboss.web.service.port}"/>
+  </target>
+
+  <target name="install:pa-grid-legacy-jboss:binaries" unless="exclude.pa-grid-legacy">
+      <jboss-install-binaries
+          application.base.path="${application.base.path}/pagridlegacy"
+          jems.install.option="default" 
+          jboss.home="${pa-grid-legacy-jboss.home}" 
+          jboss.server.name="${pa-grid-legacy-jboss.server.name}" 
+          />
+      <jboss-nci-customizations
+          application.base.path="${application.base.path}/pagridlegacy"
+          jboss.home="${pa-grid-legacy-jboss.home}"
+          jboss.server.name="${pa-grid-legacy-jboss.server.name}"
+          jboss.server.jndi.port="${pa-grid-legacy-jboss.server.jndi.port}"
+          jboss.java.opts="${pa-grid-legacy-jboss.java.opts}"
+          />
+  </target>
+
+    <!-- Installs the -legacy application to JBOSS -->
+    <target name="install:pa-grid-legacy-jboss:grid" description="Deploy Coppa PO Grid Legacy application to JBOSS" unless="exclude.pa-grid-legacy">
+	    <echo message="Entirely removing existing wsrf.war deployment"/>
+	    <delete dir="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/deploy/${pa-grid-legacy.dir.target}"/>
+	    <mkdir dir="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/deploy/${pa-grid-legacy.dir.target}"/>
+
+	    <unzip dest="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/lib" src="${grid.resource.dir.src}/${resource.file.jboss-globus-lib}" />
+	    <unzip dest="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/deploy/${pa-grid-legacy.dir.target}" src="${grid.resource.dir.src}/${resource.file.jboss-globus-war}" />
+
+	    <unzip dest="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/deploy/${pa-grid-legacy.dir.target}" src="${pa-grid-legacy.dir.src}/${pa-grid-legacy.artifact.file}" />
+    </target>
+
+    <!-- Configures installed  application -->
+    <target name="install:pa-grid-legacy-jboss:grid:configure" description="Configure pa-grid-legacy service based on properties" unless="exclude.pa-grid-legacy">
+	
+	<jboss-configure-grid
+		jboss.home="${pa-grid-legacy-jboss.home}"
+		jboss.server.name="${pa-grid-legacy-jboss.server.name}"
+		jboss.port.http="${pa-grid-legacy-jboss.server.port}"
+		jboss.port.ssl="${pa-grid-legacy-jboss.ssl.port}"
+		jboss.hostname="${pa-grid-legacy-jboss.server.hostname}"
+		jboss.external.http.host="${pa-grid-legacy-jboss.external.http.host}"
+		jboss.external.http.port="${pa-grid-legacy-jboss.external.http.port}"
+		jboss.external.grid.secure.host="${pa-grid-legacy-jboss.external.grid.secure.host}"
+		jboss.external.grid.secure.port="${pa-grid-legacy-jboss.external.grid.secure.port}"
+		jboss.grid.secure.enable="${pa-grid-legacy-jboss.grid.secure.enable}"
+		jboss.grid.secure.dir="${pa-grid-legacy-jboss.grid.secure.dir}"
+		jboss.grid.secure.port="${pa-grid-legacy-jboss.grid.secure.port}"
+		jboss.grid.secure.key.file="${pa-grid-legacy-jboss.grid.secure.key.file}"
+		jboss.grid.secure.cert.file="${pa-grid-legacy-jboss.grid.secure.cert.file}"
+		grid.application.name="${pa-grid-legacy.introduce.skeleton.service.name}"
+		/>
+    </target>
+
+  <target name="install:pa-grid-legacy-jboss:configure" unless="exclude.pa-grid-legacy">
+       
+  	    <if>
+  	        <equals arg1="${jboss.major.version}" arg2="4"/>
+  	        <then>
+  	        	<jboss-configure
+  	        	          jboss.home="${pa-grid-legacy-jboss.home}"
+  	        	          jboss.server.name="${pa-grid-legacy-jboss.server.name}"
+  	        	          jboss.server.ports.name="${pa-grid-legacy-jboss.server.ports.name}"
+  	        	          jboss.server.bindingfile.location="${pa-grid-legacy-jboss.home}/bindings/bindings.xml"
+  	        	          jboss.server.binding.template.location="${pa-grid-legacy-jboss.server.binding.template.location}"
+
+  	        	          jboss.server.jndi.port="${pa-grid-legacy-jboss.server.jndi.port}"
+  	        	          jboss.server.port="${pa-grid-legacy-jboss.server.port}"
+  	        	          jboss.cobraorb.port="${pa-grid-legacy-jboss.cobraorb.port}"
+  	        	          jboss.ejbinvoker.port="${pa-grid-legacy-jboss.ejbinvoker.port}"
+  	        	          jboss.hajndi.port="${pa-grid-legacy-jboss.hajndi.port}"
+  	        	          jboss.hajrmi.port="${pa-grid-legacy-jboss.hajrmi.port}"
+  	        	          jboss.jms.port="${pa-grid-legacy-jboss.jms.port}"
+  	        	          jboss.jmx-rmi.port="${pa-grid-legacy-jboss.jmx-rmi.port}"
+  	        	          jboss.messaging.port="${pa-grid-legacy-jboss.messaging.port}"
+  	        	          jboss.pooledha.port="${pa-grid-legacy-jboss.pooledha.port}"
+  	        	          jboss.remoting.port="${pa-grid-legacy-jboss.remoting.port}"
+  	        	          jboss.server.bind.port="${pa-grid-legacy-jboss.server.bind.port}"
+  	        	          jboss.server.rmi.port="${pa-grid-legacy-jboss.server.rmi.port}"
+  	        	          jboss.service.rmiobject.port="${pa-grid-legacy-jboss.service.rmiobject.port}"
+  	        	          jboss.snmp.port="${pa-grid-legacy-jboss.snmp.port}"
+  	        	          jboss.snmp-trapd.port="${pa-grid-legacy-jboss.snmp-trapd.port}"
+  	        	          jboss.web.service.port="${pa-grid-legacy-jboss.web.service.port}"
+  	        	          jboss.unifiedinvoker.port="${pa-grid-legacy-jboss.unifiedinvoker.port}"
+  	        	          jboss.hajndi.auto.port="${pa-grid-legacy-jboss.hajndi.auto.port}"
+  	        	          jboss.ssl.port="${pa-grid-legacy-jboss.ssl.port}"
+  	        	          jboss.jms2.netty.port="${pa-grid-legacy-jboss.jms2.netty.port}"
+  	        	          jboss.jms2.netty-ssl.port="${pa-grid-legacy-jboss.jms2.netty-ssl.port}"
+  	        	          jboss.transaction.recovery.port="${pa-grid-legacy-jboss.transaction.recovery.port}"
+  	        	          jboss.transaction.status.port="${pa-grid-legacy-jboss.transaction.status.port}"
+  	        	          jboss.transaction.processid.port="${pa-grid-legacy-jboss.transaction.processid.port}"
+  	        	          jboss.conf.dir="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/conf"
+  	        	          jboss.server-xml.file="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+  	        	          jboss.ssl.enable="${pa-grid-legacy-jboss.ssl.enable}"
+  	        	          jboss.ssl.keystore.file="${pa-grid-legacy-jboss.ssl.keystore.file}"
+  	        	          jboss.ssl.keystore.dir="${pa-grid-legacy-jboss.ssl.keystore.dir}"
+  	        	          jboss.ssl.keystore.pass="${pa-grid-legacy-jboss.ssl.keystore.pass}"
+  	        	          jboss.ssl.keystore.alias="${pa-grid-legacy-jboss.ssl.keystore.alias}"
+  	        	          jboss.ssl.fullyqualified.hostname="${pa-grid-legacy-jboss.ssl.fullyqualified.hostname}"
+  	        	          jboss.external.ssl.host="${pa-grid-legacy-jboss.external.ssl.host}"
+  	        	          jboss.external.ssl.port="${pa-grid-legacy-jboss.external.ssl.port}"
+  	        	          jboss.external.http.host="${pa-grid-legacy-jboss.external.http.host}"
+  	        	          jboss.external.http.port="${pa-grid-legacy-jboss.external.http.port}"
+  	        	          jboss.external.grid.secure.host="${pa-grid-legacy-jboss.external.grid.secure.host}"
+  	        	          jboss.external.grid.secure.port="${pa-grid-legacy-jboss.external.grid.secure.port}"
+  	        	          jboss.server.hostname="${pa-grid-legacy-jboss.server.hostname}"
+  	        	          jboss.grid.configure="true"
+  	        	          jboss.grid.secure.dir="${pa-grid-legacy-jboss.grid.secure.dir}"
+  	        	          jboss.grid.secure.enable="${pa-grid-legacy-jboss.grid.secure.enable}"
+  	        	          jboss.grid.secure.port="${pa-grid-legacy-jboss.grid.secure.port}"
+  	        	          jboss.grid.secure.key.file="${pa-grid-legacy-jboss.grid.secure.key.file}" 
+  	        	          jboss.grid.secure.cert.file="${pa-grid-legacy-jboss.grid.secure.cert.file}" 
+  	        	          jboss.java.opts="${pa-grid-legacy-jboss.java.opts}"
+  	        	          jboss.logs.dir="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/log"
+  	        	          jboss.http-connector.remove="${pa-grid-legacy-jboss.http-connector.remove}"
+  	        	          />  
+  	        </then>
+  	    </if>
+  	    <if>
+  	        <equals arg1="${jboss.major.version}" arg2="5"/>
+  	        <then>
+  	        	<jboss-configure
+  	        	          jboss.home="${pa-grid-legacy-jboss.home}"
+  	        	          jboss.server.name="${pa-grid-legacy-jboss.server.name}"
+  	        	          jboss.server.ports.name="${pa-grid-legacy-jboss.server.ports.name}"
+  	        	          jboss.server.bindingfile.location="${pa-grid-legacy-jboss.home}/bindings/bindings.xml"
+  	        	          jboss.server.binding.template.location="${pa-grid-legacy-jboss.server.binding.template.location}"
+
+  	        	          jboss.server.jndi.port="${pa-grid-legacy-jboss.server.jndi.port}"
+  	        	          jboss.server.port="${pa-grid-legacy-jboss.server.port}"
+  	        	          jboss.cobraorb.port="${pa-grid-legacy-jboss.cobraorb.port}"
+  	        	          jboss.ejbinvoker.port="${pa-grid-legacy-jboss.ejbinvoker.port}"
+  	        	          jboss.hajndi.port="${pa-grid-legacy-jboss.hajndi.port}"
+  	        	          jboss.hajrmi.port="${pa-grid-legacy-jboss.hajrmi.port}"
+  	        	          jboss.jms.port="${pa-grid-legacy-jboss.jms.port}"
+  	        	          jboss.jmx-rmi.port="${pa-grid-legacy-jboss.jmx-rmi.port}"
+  	        	          jboss.messaging.port="${pa-grid-legacy-jboss.messaging.port}"
+  	        	          jboss.pooledha.port="${pa-grid-legacy-jboss.pooledha.port}"
+  	        	          jboss.remoting.port="${pa-grid-legacy-jboss.remoting.port}"
+  	        	          jboss.server.bind.port="${pa-grid-legacy-jboss.server.bind.port}"
+  	        	          jboss.server.rmi.port="${pa-grid-legacy-jboss.server.rmi.port}"
+  	        	          jboss.service.rmiobject.port="${pa-grid-legacy-jboss.service.rmiobject.port}"
+  	        	          jboss.snmp.port="${pa-grid-legacy-jboss.snmp.port}"
+  	        	          jboss.snmp-trapd.port="${pa-grid-legacy-jboss.snmp-trapd.port}"
+  	        	          jboss.web.service.port="${pa-grid-legacy-jboss.web.service.port}"
+  	        	          jboss.unifiedinvoker.port="${pa-grid-legacy-jboss.unifiedinvoker.port}"
+  	        	          jboss.hajndi.auto.port="${pa-grid-legacy-jboss.hajndi.auto.port}"
+  	        	          jboss.ssl.port="${pa-grid-legacy-jboss.ssl.port}"
+  	        	          jboss.jms2.netty.port="${pa-grid-legacy-jboss.jms2.netty.port}"
+  	        	          jboss.jms2.netty-ssl.port="${pa-grid-legacy-jboss.jms2.netty-ssl.port}"
+  	        	          jboss.transaction.recovery.port="${pa-grid-legacy-jboss.transaction.recovery.port}"
+  	        	          jboss.transaction.status.port="${pa-grid-legacy-jboss.transaction.status.port}"
+  	        	          jboss.transaction.processid.port="${pa-grid-legacy-jboss.transaction.processid.port}"
+  	        	          jboss.conf.dir="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/conf"
+  	        	          jboss.server-xml.file="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+  	        	          jboss.ssl.enable="${pa-grid-legacy-jboss.ssl.enable}"
+  	        	          jboss.ssl.keystore.file="${pa-grid-legacy-jboss.ssl.keystore.file}"
+  	        	          jboss.ssl.keystore.dir="${pa-grid-legacy-jboss.ssl.keystore.dir}"
+  	        	          jboss.ssl.keystore.pass="${pa-grid-legacy-jboss.ssl.keystore.pass}"
+  	        	          jboss.ssl.keystore.alias="${pa-grid-legacy-jboss.ssl.keystore.alias}"
+  	        	          jboss.ssl.fullyqualified.hostname="${pa-grid-legacy-jboss.ssl.fullyqualified.hostname}"
+  	        	          jboss.external.ssl.host="${pa-grid-legacy-jboss.external.ssl.host}"
+  	        	          jboss.external.ssl.port="${pa-grid-legacy-jboss.external.ssl.port}"
+  	        	          jboss.external.http.host="${pa-grid-legacy-jboss.external.http.host}"
+  	        	          jboss.external.http.port="${pa-grid-legacy-jboss.external.http.port}"
+  	        	          jboss.external.grid.secure.host="${pa-grid-legacy-jboss.external.grid.secure.host}"
+  	        	          jboss.external.grid.secure.port="${pa-grid-legacy-jboss.external.grid.secure.port}"
+  	        	          jboss.server.hostname="${pa-grid-legacy-jboss.server.hostname}"
+  	        	          jboss.grid.configure="true"
+  	        	          jboss.grid.secure.dir="${pa-grid-legacy-jboss.grid.secure.dir}"
+  	        	          jboss.grid.secure.enable="${pa-grid-legacy-jboss.grid.secure.enable}"
+  	        	          jboss.grid.secure.port="${pa-grid-legacy-jboss.grid.secure.port}"
+  	        	          jboss.grid.secure.key.file="${pa-grid-legacy-jboss.grid.secure.key.file}" 
+  	        	          jboss.grid.secure.cert.file="${pa-grid-legacy-jboss.grid.secure.cert.file}" 
+  	        	          jboss.java.opts="${pa-grid-legacy-jboss.java.opts}"
+  	        	          jboss.logs.dir="${pa-grid-legacy-jboss.home}/server/${pa-grid-legacy-jboss.server.name}/log"
+  	        	          jboss.http-connector.remove="${pa-grid-legacy-jboss.http-connector.remove}"
+  	        	          />
+  	            <jboss51-encrypt-messaging-passwd
+  	                />
+  	        </then>
+  	    </if>
+	  
+  </target>
+
+  <!-- Calls to bda macros for basic functionality -->
+  <target name="install:pa-grid-legacy-jboss:stop" unless="exclude.pa-grid-legacy">
+    <jboss-stop-jboss jboss.server.jndi.port="${pa-grid-legacy-jboss.server.jndi.port}" jboss.server.name="${pa-grid-legacy-jboss.server.name}" sleep.time="15"/>
+  </target>
+
+    <target name="install:pa-grid-legacy-jboss:start" unless="exclude.pa-grid-legacy">
+    <if>
+      <not>
+        <isset property="exclude.start.servers"/>
+      </not>
+      <then>
+	      <jboss-start-jboss
+		      jboss.home="${pa-grid-legacy-jboss.home}"
+		      jboss.server.name="${pa-grid-legacy-jboss.server.name}"
+		      />
+      </then>
+    </if>
+    </target>
+
+    <target name="install:pa-grid-legacy-jboss:validation:pre-install" description="Runs pre-install validation checks bda-utils"
+	    depends="
+	    common:pa-grid-legacy-jboss:init,common:init,
+	    install:common:validation:pre-install
+	    " unless="exclude.pa-grid-legacy">
+	    <validate-pre-install-jboss
+		    jboss.ssl.enable="${pa-grid-legacy-jboss.ssl.enable}"
+		    jboss.ssl.keystore.file="${pa-grid-legacy-jboss.ssl.keystore.file}"
+		    jboss.ssl.keystore.dir="${pa-grid-legacy-jboss.ssl.keystore.dir}"
+		    jboss.ssl.keystore.pass="${pa-grid-legacy-jboss.ssl.keystore.pass}"
+		    jboss.ssl.keystore.alias="${pa-grid-legacy-jboss.ssl.keystore.alias}"
+		    jboss.ssl.fullyqualified.hostname="${pa-grid-legacy-jboss.ssl.fullyqualified.hostname}"
+		    />
+    </target>
+    <target name="install:pa-grid-legacy-jboss:validation:pre-install:ports" description="Checks to see if configured ports are listenting and fails buld, meant to be run after jboss:stop"
+	    depends="
+	    common:init,
+	    install:pa-grid-legacy-jboss:stop
+	    " unless="exclude.pa-grid-legacy">
+	    <validate-pre-jboss-ports
+		    jboss.socket.ports="${pa-grid-legacy-jboss.socket.ports}" 
+		    hostname="${pa-grid-legacy-jboss.server.hostname}"
+		    />
+    </target>
+    <target name="install:pa-grid-legacy-jboss:validation:post-install" description="Run post-install checks from bda-utils" unless="exclude.pa-grid-legacy"
+	    depends="
+	    common:pa-grid-legacy-jboss:init,
+	    common:init,
+	    install:pa-grid-legacy-jboss:start
+	    ">
+	    <if>
+		    <not>
+			    <isset property="exclude.start.servers"/>
+		    </not>
+		    <then>
+			    <validate-post-jboss
+				    jboss.socket.list="${pa-grid-legacy-jboss.socket.list}" 
+				    jboss.home="${pa-grid-legacy-jboss.home}" 
+				    jboss.hostname="${pa-grid-legacy-jboss.server.hostname}" 
+				    jboss.application.url="${pa-grid-legacy-jboss.application.url}" 
+				    />
+		    </then>
+	    </if>
+    </target>
+
+  <target name="install:pa-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.pa-grid-legacy"
+	  depends="
+	  common:pa-grid-legacy-jboss:init,
+	  common:init,
+	  install:pa-grid-legacy-jboss:init,
+	  install:pa-grid-legacy-jboss:validation:pre-install,
+	  install:common:validation:pre-install,
+	  install:pa-grid-legacy-jboss:stop,
+	  install:pa-grid-legacy-jboss:validation:pre-install:ports,
+	  install:pa-grid-legacy-jboss:clean,
+	  install:pa-grid-legacy-jboss:binaries,
+	  install:pa-grid-legacy-jboss:configure,
+	  install:pa-grid-legacy-jboss:re-configure,
+	  install:pa-grid-legacy-jboss:grid,
+	  install:pa-grid-legacy-jboss:grid:configure,
+	  install:pa-grid-legacy-jboss:post,
+	  install:pa-grid-legacy-jboss:start,
+	  install:pa-grid-legacy-jboss:validation:post-install
+	  " >
+  </target>
+
+  <target name="install:pa-grid-legacy-jboss:re-configure" unless="exclude.pa-grid-legacy">
+      <mkdir dir="${temp.dir}/${pa-grid-legacy.dist.relative.dir}"/>
+      <delete dir="${temp.dir}/${pa-grid-legacy.dist.relative.dir}"/>
+      <mkdir dir="${temp.dir}/${pa-grid-legacy.dist.relative.dir}"/>
+      <unzip src="${pa-grid-legacy.dir.dist}/${pa-grid-legacy.artifact.file}" dest="${temp.dir}/${pa-grid-legacy.dist.relative.dir}"/>
+      <unzip src="${temp.dir}/${pa-grid-legacy.dist.relative.dir}/WEB-INF/lib/${pa-grid-legacy.introduce.skeleton.service.name}-common.jar" dest="${temp.dir}/${pa-grid-legacy.introduce.skeleton.service.name}-common"/>
+      <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
+      <var name="file.list" value="${pa-grid-legacy.introduce.skeleton.service.name}-common/jndi.properties"/>
+
+      <for list="${file.list}" param="file.relative.name">
+          <sequential>
+              <propertyregex property="file.name"
+                  input="@{file.relative.name}"
+                  regexp="^.*\/(.*)"
+                  select="\1"
+                  override="true"
+                  />
+              <propertyregex property="relative.dir"
+                  input="@{file.relative.name}"
+                  regexp="^(.*)\/.*"
+                  select="\1"
+                  override="true"
+                  />
+              <echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
+              <replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
+              <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
+                  <filterset>
+                      <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
+                      <filter token="pa-grid-legacy.jndi.principal" value="${pa-grid-legacy.jndi.principal}"/>
+                      <filter token="pa-grid-legacy.jndi.credentials" value="${pa-grid-legacy.jndi.credentials}"/>
+                  </filterset>
+              </copy>
+              <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
+          </sequential>
+      </for>
+      <move file="${pa-grid-legacy.dir.dist}/${pa-grid-legacy.artifact.file}" tofile="${pa-grid-legacy.dir.dist}/${pa-grid-legacy.artifact.file}.orig"/>
+      <jar destfile="${temp.dir}/${pa-grid-legacy.dist.relative.dir}/WEB-INF/lib/${pa-grid-legacy.introduce.skeleton.service.name}-common.jar"
+                  basedir="${temp.dir}/${pa-grid-legacy.introduce.skeleton.service.name}-common" compress="false"/>
+
+      <zip basedir="${temp.dir}/${pa-grid-legacy.dist.relative.dir}" compress="true" file="${pa-grid-legacy.dir.dist}/${pa-grid-legacy.artifact.file}" update="false"/>
+  </target>
+
+  <target name="upgrade-dac:pa-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.pa-grid-legacy"
+	  depends="
+	  upgrade:pa-grid-legacy-jboss:init,
+	  common:pa-grid-legacy-jboss:init,
+	  common:init,
+	  install:pa-grid-legacy-jboss:init,
+	  install:pa-grid-legacy-jboss:validation:pre-install,
+	  install:common:validation:pre-install,
+	  install:pa-grid-legacy-jboss:stop,
+	  install:pa-grid-legacy-jboss:validation:pre-install:ports,
+	  install:pa-grid-legacy-jboss:clean,
+	  install:pa-grid-legacy-jboss:binaries,
+	  install:pa-grid-legacy-jboss:configure,
+	  install:pa-grid-legacy-jboss:re-configure,
+	  install:pa-grid-legacy-jboss:grid,
+	  install:pa-grid-legacy-jboss:grid:configure,
+	  upgrade:pa-grid-legacy-jboss:post,
+	  install:pa-grid-legacy-jboss:post,
+	  install:pa-grid-legacy-jboss:start,
+	  install:pa-grid-legacy-jboss:validation:post-install
+	  " >
+  </target>
+  <target name="upgrade-cm:pa-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.pa-grid-legacy"
+	  depends="
+	  upgrade:pa-grid-legacy-jboss:init,
+	  common:pa-grid-legacy-jboss:init,
+	  common:init,
+	  install:pa-grid-legacy-jboss:init,
+	  install:pa-grid-legacy-jboss:validation:pre-install,
+	  install:common:validation:pre-install,
+	  install:pa-grid-legacy-jboss:stop,
+	  install:pa-grid-legacy-jboss:validation:pre-install:ports,
+	  install:pa-grid-legacy-jboss:configure,
+	  install:pa-grid-legacy-jboss:re-configure,
+	  install:pa-grid-legacy-jboss:grid,
+	  install:pa-grid-legacy-jboss:grid:configure,
+	  upgrade:pa-grid-legacy-jboss:post,
+	  install:pa-grid-legacy-jboss:post,
+	  install:pa-grid-legacy-jboss:start,
+	  install:pa-grid-legacy-jboss:validation:post-install
+	  " >
+  </target>
+
+  <target name="upgrade-ncm:pa-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.pa-grid-legacy"
+	  depends="
+	  upgrade:pa-grid-legacy-jboss:init,
+	  common:pa-grid-legacy-jboss:init,
+	  common:init,
+	  install:pa-grid-legacy-jboss:init,
+	  install:pa-grid-legacy-jboss:validation:pre-install,
+	  install:common:validation:pre-install,
+	  install:pa-grid-legacy-jboss:stop,
+	  install:pa-grid-legacy-jboss:validation:pre-install:ports,
+	  install:pa-grid-legacy-jboss:re-configure,
+	  install:pa-grid-legacy-jboss:grid,
+	  install:pa-grid-legacy-jboss:grid:configure,
+	  upgrade:pa-grid-legacy-jboss:post,
+	  install:pa-grid-legacy-jboss:post,
+	  install:pa-grid-legacy-jboss:start,
+	  install:pa-grid-legacy-jboss:validation:post-install
+	  " >
+  </target>
+
+  <target name="install:pa-grid-legacy-jboss:post" unless="exclude.pa-grid-legacy">
+    <if>
+      <not>
+        <equals arg1="${exclude.jboss.backup}" arg2="true"/>
+      </not>
+      <then>
+        <property name="changelogFile" location="${log.dir}/changeLog-${install.time}.txt"/>
+        <property name="compare1.dir" location="${backup.pa-grid-legacy-jboss.base.dir}/backup/${jboss.binaries.relative.path}"/>
+        <property name="compare2.dir" location="${pa-grid-legacy-jboss}"/>
+        <report-dir-diff
+          dir1="${compare1.dir}"
+          dir2="${compare2.dir}"
+          reportFile="${changelogFile}"
+          />
+        <!-- Copy app server logs -->
+        <mkdir dir="${pa-grid-legacy-jboss.home}/server/${jboss.server.name}/log"/>
+        <mkdir dir="${backup.pa-grid-legacy-jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log"/>
+        <!-- so the logs wont be included in the zip -->
+        <move todir="${pa-grid-legacy-jboss.home}/server/${jboss.server.name}/log">
+          <fileset dir="${backup.pa-grid-legacy-jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log">
+            <include name="*"/>
+          </fileset>
+        </move>
+
+        <!-- Compress backup and cleanup -->
+        <mkdir dir="${backup.pa-grid-legacy-jboss.base.dir}/backup1"/>
+        <zip destfile="${backup.pa-grid-legacy-jboss.base.dir}/backup1/${jboss.binaries.relative.path}.zip" basedir="${backup.pa-grid-legacy-jboss.base.dir}/backup" />
+        <delete dir="${backup.pa-grid-legacy-jboss.base.dir}/backup"/>
+      </then>
+    </if>
+  </target>
+
+  <target name="upgrade:pa-grid-legacy-jboss:init"
+	  depends="
+	  upgrade:pa-grid-legacy-jboss:init:prep,
+	  upgrade:pa-grid-legacy-jboss:readers:bda,
+	  upgrade:pa-grid-legacy-jboss:readers:custom
+	  " unless="exclude.pa-grid-legacy">
+	  <properties-print
+		  properties.list="${read.properties.list}"
+		  />
+	  <properties-exist
+		  properties.list="${read.properties.list}"
+		  />
+	  <properties-write
+		  properties.list="${read.properties.list}"
+		  />
+  </target>
+
+  <target name="upgrade:pa-grid-legacy-jboss:init:prep" depends="upgrade:common:init:prep" unless="exclude.pa-grid-legacy">
+	  <property name="pa-grid-legacy-jboss.home" value="${application.base.path}/${pa-grid-legacy-jboss.relative.path}"/>
+	  <jboss-version
+		  />
+	  <if>
+		  <equals arg1="${pa-grid-legacy-jboss.ncicb-standard.port-config}" arg2="true"/>
+		  <then>
+			  <property name="pa-grid-legacy-jboss.server.binding.template.location" value="${basedir}/${jboss-bindings.file}"/>
+		  </then>
+		  <else>
+			  <property name="pa-grid-legacy-jboss.server.binding.template.location" value="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings.xml"/>
+		  </else>
+	  </if>
+
+	  <!-- Upgrades always use port configs
+	  <property name="pa-grid-legacy-jboss.ncicb-standard.port-config" value="true"/>
+	  -->
+	  <available file="${pa-grid-legacy-jboss.home}" property="pa-grid-legacy-jboss.exists"/>
+	  <property name="read.pa-grid-legacy-jboss.home" value="${pa-grid-legacy-jboss.home}"/>
+	  <echo message="pa-grid-legacy-jboss.exists - ${pa-grid-legacy-jboss.exists}"/>
+  </target>
+
+  <target name="upgrade:pa-grid-legacy-jboss:readers:custom">
+	  <!-- call your custom readers here, two properties included in these scripts that don't have readers are "fs-data.base.dir, mail.smtp.server" -->
+  </target>
+
+  <target name="upgrade:pa-grid-legacy-jboss:readers:bda" if="jboss.exists" unless="exclude.pa-grid-legacy">
+	
+	  <if>
+		  <equals arg1="${jboss.major.version}" arg2="4"/>
+		  <then>
+			  <jboss-read-bindings-file-location
+				  jboss.home="${read.pa-grid-legacy-jboss.home}"
+				  jboss.server.name="${pa-grid-legacy-jboss.server.name}"
+				  jboss.server.ports.name.property.name="pa-grid-legacy-jboss-server.ports.name"
+				  jboss.bindings.file.location.property.name="pa-grid-legacy-jboss.server.bindingfile.location"
+				  />
+			  <jboss-read-ports
+				  jboss.server.ports.name="${pa-grid-legacy-jboss.server.ports.name}"
+				  jboss.server.bindingfile.location="${pa-grid-legacy-jboss.server.bindingfile.location}"
+				  jboss.server.jndi.port.property.name="pa-grid-legacy-jboss.server.jndi.port"
+				  jboss.server.port.property.name="pa-grid-legacy-jboss.server.port"
+				  jboss.ejbinvoker.port.property.name="pa-grid-legacy-jboss.ejbinvoker.port"
+				  jboss.server.rmi.port.property.name="pa-grid-legacy-jboss.server.rmi.port"
+				  jboss.web.service.port.property.name="pa-grid-legacy-jboss.web.service.port"
+				  jboss.service.rmiobject.port.property.name="pa-grid-legacy-jboss.service.rmiobject.port"
+				  jboss.server.bind.port.property.name="pa-grid-legacy-jboss.server.bind.port"
+				  jboss.hajndi.port.property.name="pa-grid-legacy-jboss.hajndi.port"
+				  jboss.hajrmi.port.property.name="pa-grid-legacy-jboss.hajrmi.port"
+				  jboss.pooledha.port.property.name="pa-grid-legacy-jboss.pooledha.port"
+				  jboss.cobraorb.port.property.name="pa-grid-legacy-jboss.cobraorb.port"
+				  jboss.jmx-rmi.port.property.name="pa-grid-legacy-jboss.jmx-rmi.port"
+				  jboss.snmp-trapd.port.property.name="pa-grid-legacy-jboss.snmp-trapd.port"
+				  jboss.snmp.port.property.name="pa-grid-legacy-jboss.snmp.port"
+				  jboss.jms.port.property.name="pa-grid-legacy-jboss.jms.port"
+				  jboss.remoting.port.property.name="pa-grid-legacy-jboss.remoting.port"
+				  jboss.messaging.port.property.name="pa-grid-legacy-jboss.messaging.port"
+				  />
+		  </then>
+	  </if>
+	 
+  </target>
+
+  <target name="upgrade:pa-grid-legacy-jboss:post" unless="exclude.pa-grid-legacy">
+  </target>
+</project>
