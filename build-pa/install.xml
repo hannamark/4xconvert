@@ -31,6 +31,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <property name="log.dir" value="${basedir}/logs" />
     <property name="working.dir" value="${basedir}/working" />
     <property name="temp.dir" value="${working.dir}/temp" />
+	
+	<!--OS Temp dir -->
+	<condition property="os.temp.dir" value="/tmp">
+		   <or>
+	            <os family="unix" />
+	            <os family="mac" />
+	       </or>
+	</condition>
+
+	<condition property="os.temp.dir" value="c:/temp">
+		   <os family="windows" />
+	</condition>
 
     <!-- Install Time properties -->
     <!-- Source and target directories -->
@@ -152,8 +164,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 			    <property name="database.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
 			    <property name="database.driver.file" value="${bda-utils.dir}/postgresql-8.4-701.jdbc3.jar"/>
 			    <property name="database.driver" value="org.postgresql.Driver"/>
-			    <property name="database.schema" value="${database.user}"/>
+			    <property name="database.schema" value="public"/>
 			    <property name="database.xa.driver" value="org.postgresql.xa.PGXADataSource"/>
+		    	<property name="db-upgrade.list.file" value="${db-upgrade.postgresql.list.file}"/>
+		    	<property name="db-upgrade.conf.file" value="${db-upgrade.postgresql.conf.file}"/>
 		    </case>
 		    <default>
 			    <fail message="Invalid database type ${database.type}"/>
@@ -186,8 +200,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 		    <!-- added internal properties that may be used in a filtered copy -->
 		    <filter token="database.driver" value="${database.driver}"/>
 		    <!-- added for liquibase -->
-		    <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}/${database.type}"/>
-	    	<filter token="db-install.run.dir" value="${db-install.dir.dest}/${database.type}"/>
+		    <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}/${database.type}"/>	    	
 		    <filter token="jboss.home" value="${jboss.home}"/>
 		    <filter token="tomcat.home" value="${tomcat.home}"/>
 		    <filter token="database.dialect" value="${database.dialect}"/>
