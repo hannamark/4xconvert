@@ -1,9 +1,11 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.ISDesignDetailsWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -40,6 +42,9 @@ public class EligibilityCriteriaActionTest extends AbstractPaActionTest {
 
     @Test
     public void testSaveWithErrors() {
+        UnitsCode unit = UnitsCode.getByCode("Years");
+        double retMaxVal = unit.getMinuteMultiplicationFactor() * Double.valueOf(1);
+        assertNotNull(retMaxVal);
         eligibilityCriteriaAction.save();
         assertTrue(eligibilityCriteriaAction.hasFieldErrors());
     }

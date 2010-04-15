@@ -183,14 +183,6 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static final int TOTAL_COUNT = 3;    
     private String minValueUnit;
     private String maxValueUnit;
-    private static final int DAYS = 365;
-    private static final int MONTHS_DAYS = 30;
-    private static final int HOURS = 24;
-    private static final int MINUTES = 60;
-    private static final int WEEKS_IN_YEAR  = 52;
-    private static final int WEEKS_IN_MONTH  = 4;
-    private static final int WEEKS_DAYS = 7;
-    private static final int MONTHS = 12;
 
     /**
      * 
@@ -864,75 +856,21 @@ private void populateList() throws PAException {
             addFieldError("minValueUnit", "Minimum UOM should not be greater than maximum UOM.");
         }
         if (PAUtil.isUnitLessOrSame(minValueUnit, maxValueUnit)) {
-            double maxValUOM = getMaxValueInMinUOM(minValueUnit, maxValueUnit, maximumValue);
-            if (minVal > maxValUOM) {
+            double minValUOM = convertToMinutes(minVal, minValueUnit);
+            double maxValUOM = convertToMinutes(maxVal, maxValueUnit);
+            if (minValUOM > maxValUOM) {
                 addFieldError(strMinVal, "Minimum age should not be greater than maximum age.");
-            }
+            }            
         }
     }
   }
-  @SuppressWarnings ({"PMD" })
-  private double getMaxValueInMinUOM(String minValueUnit2, String maxValueUnit2,
-        String maximumValue2) {
+  
+  private double convertToMinutes(double value, String unit) {
       double retMaxVal = 0;
-      if (minValueUnit2.equalsIgnoreCase(UnitsCode.MINUTES.getCode())) {
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * MINUTES * HOURS * DAYS;
-          }
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.MONTHS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * MINUTES * HOURS * MONTHS_DAYS;
-          }
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.WEEKS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * MINUTES * HOURS * WEEKS_DAYS;
-          }
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.DAYS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * MINUTES * HOURS;
-          }
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.HOURS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * MINUTES;
-          }
-      }
-      if (minValueUnit2.equalsIgnoreCase(UnitsCode.HOURS.getCode())) {
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * HOURS * DAYS;
-          }
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.MONTHS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * HOURS * MONTHS_DAYS;
-          }
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.WEEKS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * HOURS * WEEKS_DAYS;
-          }
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.DAYS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * HOURS;
-          }
-      }
-      if (minValueUnit2.equalsIgnoreCase(UnitsCode.DAYS.getCode())) {
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * DAYS;
-          }
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.MONTHS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * MONTHS_DAYS;
-          }
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.WEEKS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * WEEKS_DAYS;
-          }
-      }
-      if (minValueUnit2.equalsIgnoreCase(UnitsCode.WEEKS.getCode())) {
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * WEEKS_IN_YEAR;
-          }
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.MONTHS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * WEEKS_IN_MONTH;
-          }
-      }
-      if (minValueUnit2.equalsIgnoreCase(UnitsCode.MONTHS.getCode())) {
-          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
-              retMaxVal = Double.valueOf(maximumValue2) * MONTHS;
-          }
-      }
-    return retMaxVal;
-}
-
+      UnitsCode unitCode = UnitsCode.getByCode(unit);
+      retMaxVal = unitCode.getMinuteMultiplicationFactor() * Double.valueOf(value);
+      return retMaxVal;
+  }
 private void enforceEligibilityBusinessRules() throws PAException {
    
    if (PAUtil.isEmpty(webDTO.getStructuredType())) {

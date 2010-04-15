@@ -94,25 +94,27 @@ public enum UnitsCode implements CodedEnum<String> {
 
 
     /** Years. */
-    YEARS("Years"),
+    YEARS("Years", 525600),
     /** Months. */
-    MONTHS("Months"),
+    MONTHS("Months", 43200),
     /** Weeks. */
-    WEEKS("Weeks"),
+    WEEKS("Weeks", 10080),
     /** Days. */
-    DAYS("Days"),
+    DAYS("Days", 1440),
     /** Hours. */
-    HOURS("Hours"),
+    HOURS("Hours", 60),
     /** Minutes. */
-    MINUTES("Minutes");    
+    MINUTES("Minutes", 1);    
 
     private String code;
+    private int minuteMultiplicationFactor;
     /**
      * 
      * @param code
      */
-    private UnitsCode(String code) {
+    private UnitsCode(String code, int minuteMultiplicationFactor) {
         this.code = code;
+        this.minuteMultiplicationFactor = minuteMultiplicationFactor;
         register(this);
     }
     /**
@@ -163,5 +165,14 @@ public enum UnitsCode implements CodedEnum<String> {
      */
     public String getNameByCode(String str) {
         return getByCode(str).name();
+    }
+    
+     /**
+      * Gets the minute multiplication factor.
+      * 
+      * @return the minute multiplication factor
+      */
+     public int getMinuteMultiplicationFactor() {
+        return minuteMultiplicationFactor;
     }
 }
