@@ -13,7 +13,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   <property environment="env" />
     <condition property="env.HOSTNAME" value="${env.COMPUTERNAME}">
         <os family="windows" />
-    </condition>  
+    </condition>
   <!-- The project.properties stores properties that are shared between both build.xml and install.xml. Typically properties that are related to the distribution directories, or files. -->
   <property file="local.properties" />
   <property file="project.properties" />
@@ -88,8 +88,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Properties that relate to how to call build targets from sub-projects-->
     <!-- Working directory passed to Ant tasks -->
     <property name="pa-ear.base.dir" location="${software.dir}/pa/pa-ear"/>
-	<property name="pa-commons.base.dir" location="${software.dir}/pa/commons"/>
-	<property name="pa-reseources.base.dir" location="${software.dir}/pa/resources"/>
+    <property name="pa-commons.base.dir" location="${software.dir}/pa/commons"/>
+    <property name="pa-reseources.base.dir" location="${software.dir}/pa/resources"/>
     <property name="pa-ejb.base.dir" location="${software.dir}/pa/pa-ejb"/>
     <property name="pa-web.base.dir" location="${software.dir}/pa/pa-web"/>
     <property name="reg-web.base.dir" location="${software.dir}/reg-web"/>
@@ -99,7 +99,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <!-- Build file names relative working dir above, if the basedir of the sub-project ant script is ".." you should set the *.basdir to and the build file should include the dir and build file name from the *.base.dir -->
     <property name="pa-ear.build.file" value="build.xml"/>
-	<property name="pa-commons.build.file" value="build.xml"/>
+    <property name="pa-commons.build.file" value="build.xml"/>
     <property name="pa-ejb.build.file" value="build.xml"/>
     <property name="pa-web.build.file" value="build.xml"/>
     <property name="reg-web.build.file" value="build.xml"/>
@@ -113,7 +113,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="accrual-clean.build.target" value="clean"/>
     <property name="pa-ivy-clean.build.target" value="ivy-clean"/>
     <property name="pa-ear.build.target" value="package"/>
-	<property name="pa-commons.build.target" value="package-notest"/>
+    <property name="pa-commons.build.target" value="package-notest"/>
     <property name="pa-ejb.build.target" value="package-notest"/>
     <property name="pa-web.build.target" value="package-notest"/>
     <property name="reg-web.build.target" value="package-notest"/>
@@ -129,7 +129,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             Use project.properties relative dir names becasue they are used by install also-->
     <property name="dist.exploded.dir" location="${dist.dir}/exploded" />
     <property name="pa-ear.dist.dir" location="${dist.exploded.dir}/${pa-ear.dist.relative.dir}" />
-	<property name="pa-commons.dist.dir" location="${dist.exploded.dir}/${pa-commons.dist.relative.dir}" />
+    <property name="pa-commons.dist.dir" location="${dist.exploded.dir}/${pa-commons.dist.relative.dir}" />
     <property name="pa-ejb.dist.dir" location="${dist.exploded.dir}/${pa-ejb.dist.relative.dir}" />
     <property name="pa-web.dist.dir" location="${dist.exploded.dir}/${pa-web.dist.relative.dir}" />
     <property name="reg-web.dist.dir" location="${dist.exploded.dir}/${reg-web.dist.relative.dir}" />
@@ -183,10 +183,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Where to write files retrieved by get, into the distribution area.  The file names come from project.properties  -->
     <property name="jboss.dest.file" location="${download.dir}/${jboss.binaries.file}"/>
     <property name="jbosscp.dest.file" value="${download.dir}/${jbosscp.binaries.file}"/>
-	<property name="cagrid-console.dest.file" value="${download.dir}/${cagrid-console.binaries.file}" />
-	<property name="cagrid.target.co.dir" location="${target.dir}/cagrid-target" />
-    
-	<!-- Default install time targets passed by deploy targets to the installer, can be overridden by being set on the command line if different target is desitred.  -->
+    <property name="cagrid-console.dest.file" value="${download.dir}/${cagrid-console.binaries.file}" />
+    <property name="cagrid.target.co.dir" location="${target.dir}/cagrid-target" />
+
+    <!-- Default install time targets passed by deploy targets to the installer, can be overridden by being set on the command line if different target is desitred.  -->
     <property name="install.target" value="install"/>
     <property name="upgrade.target" value="upgrade"/>
 
@@ -202,25 +202,25 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- retrive ivy.jar.files then retrieve bda files and librarires -->
     <!-- retrive ivy.jar.files then retrieve bda files and librarires -->
     <condition property="commonlibrary.dir" value="">
-	    <or>
-		    <os family="unix" />
-		    <os family="mac" />
-	    </or>
+        <or>
+            <os family="unix" />
+            <os family="mac" />
+        </or>
     </condition>
 
     <condition property="commonlibrary.dir" value="c:/">
-	    <os family="windows" />
+        <os family="windows" />
     </condition>
 
     <condition property="local.cbiit-ivy-repo.dir" value="">
-	    <or>
-		    <os family="unix" />
-		    <os family="mac" />
-	    </or>
+        <or>
+            <os family="unix" />
+            <os family="mac" />
+        </or>
     </condition>
 
     <condition property="local.cbiit-ivy-repo.dir" value="c:/">
-	    <os family="windows" />
+        <os family="windows" />
     </condition>
     <property name="bda-download.file" value="bda-ivy-2.0.0-build.xml" />
     <!--
@@ -229,17 +229,17 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <get src="${bda-download.src.url}" dest="${bda-download.dir}/${bda-download.file}" />
     -->
     <ant inheritAll="false" inheritRefs="false" antfile="${bda-download.file}" target="retrieve-bda" dir="${bda-download.dir}">
-	    <property name="bda.version" value="${bda.version}" />
-	    <property name="bda-utils.dir" location="${bda-utils.dir}" />
-	    <property name="lib.dir" location="${lib.dir}" />
-	    <property name="software.dir" location="${software.dir}" />
-	    <property name="commonlibrary.dir" location="${commonlibrary.dir}" />
-	    <!-- Use below for old ivy repo -->
-	    <!--<property name="ivy.settings.file" value="ivy-bda-settings.xml"/>-->
-	    <!-- Use below for new ivy repo -->
-	    <property name="ivy.settings.file" value="cbiit-ivy-bda-settings.xml"/>
-	    <property name="target.dir" location="${target.dir}"/>
-	    <property name="local.cbiit-ivy-repo.dir" value="${local.cbiit-ivy-repo.dir}"/>
+        <property name="bda.version" value="${bda.version}" />
+        <property name="bda-utils.dir" location="${bda-utils.dir}" />
+        <property name="lib.dir" location="${lib.dir}" />
+        <property name="software.dir" location="${software.dir}" />
+        <property name="commonlibrary.dir" location="${commonlibrary.dir}" />
+        <!-- Use below for old ivy repo -->
+        <!--<property name="ivy.settings.file" value="ivy-bda-settings.xml"/>-->
+        <!-- Use below for new ivy repo -->
+        <property name="ivy.settings.file" value="cbiit-ivy-bda-settings.xml"/>
+        <property name="target.dir" location="${target.dir}"/>
+        <property name="local.cbiit-ivy-repo.dir" value="${local.cbiit-ivy-repo.dir}"/>
     </ant>
 
     <!-- Paths -->
@@ -276,7 +276,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <fail message="To build this project you need to specify a increased java memory settings.${line.separator}export ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m' # for Linux or MAC${line.separator}SET ANT_OPTS=-Xms256m -Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=512m # for windows."/>
         </then>
     </if>
- 	
+
     <!-- Targets -->
     <target name="diagnostics" description="diagnostics">
         <echoproperties/>
@@ -309,8 +309,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <mkdir dir="${outcomes-grid.artifact.dir}"/>
         <mkdir dir="${outcomes-grid.dist.dir}"/>
         <available file="${jboss.dest.file}" property="jboss.tools.exists"/>
-	    <available file="${jbosscp.dest.file}" property="jbosscp.tools.exists" />
-    	<available file="${cagrid-console.dest.file}" property="cagrid-console.tools.exists" />
+        <available file="${jbosscp.dest.file}" property="jbosscp.tools.exists" />
+        <available file="${cagrid-console.dest.file}" property="cagrid-console.tools.exists" />
 
                 <property name="local.jboss.home" location="${pt.dir}/${jboss.binaries.relative.dir}"/>
                 <available file="${local.jboss.home}/lib/commons-httpclient.jar" property="local.jboss.exists"/>
@@ -368,10 +368,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             dir="${reg-web.base.dir}" >
             <target name="ivy-get"/>
         </ant>
-    	<ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
-    	            dir="${pa-commons.base.dir}" >
-    	            <target name="ivy-get"/>
-    	        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
+                    dir="${pa-commons.base.dir}" >
+                    <target name="ivy-get"/>
+                </ant>
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
             dir="${pa-ejb.base.dir}" >
             <target name="ivy-get"/>
@@ -401,7 +401,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <!-- Build generic-query-grid sub-project produces project level artifact -->
     <target name="build:pa-ear" depends="init,build:pa-commons,build:pa-ejb, build:pa-web, build:reg-web, build:viewer-services, build:viewer-web">
-    	<ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
             dir="${pa-ear.base.dir}" >
             <property name="exclude.viewer" value="${exclude.viewer}"/>
             <property name="exclude.accrual" value="${exclude.accrual}"/>
@@ -424,24 +424,24 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
-            <property name="gridServicePrincipal" value="${pagrid.jndi.principal}"/>
-            <property name="gridServiceCredential" value="${pagrid.jndi.credentials.encrypted}"/>
+            <property name="gridServicePrincipal" value="${pa-grid.jndi.principal}"/>
+            <property name="gridServiceCredential" value="${pa-grid.jndi.credentials.encrypted}"/>
             <target name="${pa-clean.build.target}"/>
-	        <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-ear.build.target}"/>
         </ant>
-    	<!-- copy paear prop file into the exploded pa ear dist folder -->
-    	<copy todir="${pa-ear.dist.dir}">
-    	     <fileset dir="${pa-reseources.base.dir}">
-    	                <include name="paear.properties"/>
-    	     </fileset>
-    	</copy>
-    	<!-- copy quartz jobs xml file into the exploded pa ear dist folder -->
-    	<copy todir="${pa-ear.dist.dir}">
-    		   <fileset dir="${pa-reseources.base.dir}">
-    		    <include name="quartz_jobs.xml"/>
-    	       </fileset>
-    	</copy>
+        <!-- copy paear prop file into the exploded pa ear dist folder -->
+        <copy todir="${pa-ear.dist.dir}">
+             <fileset dir="${pa-reseources.base.dir}">
+                        <include name="paear.properties"/>
+             </fileset>
+        </copy>
+        <!-- copy quartz jobs xml file into the exploded pa ear dist folder -->
+        <copy todir="${pa-ear.dist.dir}">
+               <fileset dir="${pa-reseources.base.dir}">
+                <include name="quartz_jobs.xml"/>
+               </fileset>
+        </copy>
     </target>
 
     <!-- Build accrual.ear -->
@@ -466,9 +466,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrypted}"/>
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
-        	<property name="po.server.name" value="${po.server.name}"/>
+            <property name="po.server.name" value="${po.server.name}"/>
             <target name="${accrual-clean.build.target}"/>
-	        <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
             <target name="${accrual-ear.build.target}"/>
         </ant>
     </target>
@@ -497,7 +497,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
 
             <target name="${pa-clean.build.target}"/>
-	        <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-web.build.target}"/>
         </ant>
     </target>
@@ -526,39 +526,39 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
 
             <target name="${pa-clean.build.target}"/>
-	        <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
             <target name="${reg-web.build.target}"/>
         </ant>
     </target>
 
-	<target name="build:pa-commons" depends="init">
-	        <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
-	            dir="${pa-commons.base.dir}" >
-	            <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
-	            <property name="jboss.port" value="${jboss.server.port}"/>
-	            <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-	            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-	            <property name="db.username" value="${database.user}"/>
-	            <property name="db.password" value="${database.password}"/>
-	            <property name="jdbc.driver" value="${database.driver}"/>
-	            <property name="jdbc.url" value="${database.url}"/>
-	            <property name="po.server.name" value="${po.server.name}"/>
-	            <property name="po.port.number" value="${po.port.number}"/>
-	            <property name="po.username" value="${po.username}"/>
-	            <property name="po.pass" value="${po.pass}"/>
-	            <property name="hibernate.dialect" value="${database.dialect}"/>
-	            <property name="po.topic.serverName" value="${po.topic.serverName}"/>
-	            <property name="po.topic.port" value="${po.topic.port}"/>
-	            <property name="po.topic.userName" value="${po.topic.userName}"/>
-	            <property name="po.topic.password" value="${po.topic.password}"/>
-	            <property name="po.topic.clientId" value="${po.topic.clientId}"/>
-	            <property name="csm.submitter.group" value="${csm.submitter.group}"/>
+    <target name="build:pa-commons" depends="init">
+            <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
+                dir="${pa-commons.base.dir}" >
+                <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
+                <property name="jboss.port" value="${jboss.server.port}"/>
+                <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+                <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+                <property name="db.username" value="${database.user}"/>
+                <property name="db.password" value="${database.password}"/>
+                <property name="jdbc.driver" value="${database.driver}"/>
+                <property name="jdbc.url" value="${database.url}"/>
+                <property name="po.server.name" value="${po.server.name}"/>
+                <property name="po.port.number" value="${po.port.number}"/>
+                <property name="po.username" value="${po.username}"/>
+                <property name="po.pass" value="${po.pass}"/>
+                <property name="hibernate.dialect" value="${database.dialect}"/>
+                <property name="po.topic.serverName" value="${po.topic.serverName}"/>
+                <property name="po.topic.port" value="${po.topic.port}"/>
+                <property name="po.topic.userName" value="${po.topic.userName}"/>
+                <property name="po.topic.password" value="${po.topic.password}"/>
+                <property name="po.topic.clientId" value="${po.topic.clientId}"/>
+                <property name="csm.submitter.group" value="${csm.submitter.group}"/>
 
-	            <target name="${pa-clean.build.target}"/>
-	        	<target name="${pa-ivy-clean.build.target}"/>
-	            <target name="${pa-commons.build.target}"/>
-	        </ant>
-	    </target>
+                <target name="${pa-clean.build.target}"/>
+                <target name="${pa-ivy-clean.build.target}"/>
+                <target name="${pa-commons.build.target}"/>
+            </ant>
+        </target>
 
     <target name="build:pa-ejb" depends="init">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
@@ -584,7 +584,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
 
             <target name="${pa-clean.build.target}"/>
-	        <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>
         </ant>
     </target>
@@ -595,7 +595,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
 
             <target name="${viewer-clean.build.target}"/>
-	        <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
             <target name="${viewer-services.build.target}"/>
         </ant>
     </target>
@@ -606,7 +606,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
 
             <target name="${viewer-clean.build.target}"/>
-	        <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
             <target name="${viewer-web.build.target}"/>
         </ant>
     </target>
@@ -620,7 +620,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             dir="${pa-grid.base.dir}" >
             <property name="project.name" value="${project.name}"/>
             <property name="jboss.dir" value="target"/>
-            <property name="jboss.serverinstance.name" value="${pagrid.jboss.server.name}"/>
+            <property name="jboss.serverinstance.name" value="${pa-grid-jboss.server.name}"/>
             <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
             <property name="java.naming.provider.url.host" value="localhost"/>
             <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
@@ -630,7 +630,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
 
         <zip update="false" destfile="${pa-grid.dist.dir}/${pa-grid.artifact.file}">
-            <zipfileset dir="${pa-grid.artifact.dir}/server/${pagrid.jboss.server.name}/deploy/${pa-grid.dir.target}/" />
+            <zipfileset dir="${pa-grid.artifact.dir}/server/${pa-grid-jboss.server.name}/deploy/${pa-grid.dir.target}/" />
         </zip>
         <delete dir="${pa-grid.artifact.dir}/server" />
     </target>
@@ -709,105 +709,105 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         depends="
         init,
         dist:tools:retrieve:jboss,
-	    dist:tools:retrieve:jbosscp,
-	    dist:tools:retrieve:jboss-bindings,
-	    dist:tools:retrieve:cagrid-console,
-    	dist:tools:retrieve:cagrid-target,
-    	dist:tools:retrieve:cgmm,
-    	dist:tools:retrieve:sync-gts
+        dist:tools:retrieve:jbosscp,
+        dist:tools:retrieve:jboss-bindings,
+        dist:tools:retrieve:cagrid-console,
+        dist:tools:retrieve:cagrid-target,
+        dist:tools:retrieve:cgmm,
+        dist:tools:retrieve:sync-gts
         " />
     <!--
        See https://wiki.nci.nih.gov/display/BuildandDeploymentAutomation/How+to+configure+a+Secure+Grid+Listener for more details
     -->
-	<target name="dist:tools:retrieve:sync-gts"  description="Downloads JBOSS bindings filefrom binary repository and verifies checksum" depends="dist:tools:retrieve:cagrid-target">
-	        <if>
-	            <not>
-	                <available file="${download.dir}/${sync-gts.binaries.file}"/>
-	            </not>
-	            <then>
-	                <get src="${sync-gts.src.url}" dest="${download.dir}/${sync-gts.binaries.file}" />
-	            </then>
-	        </if>
-	        <property name="sync-gts.dist.dir" location="${dist.exploded.dir}/${sync-gts.dist.relative.dir}"/>
-	        <unzip src="${download.dir}/${sync-gts.binaries.file}" dest="${sync-gts.dist.dir}"/>
-	        <!--
-	        <ant inheritAll="false" inheritRefs="false"
-	            antfile="build.xml"
-	            target="all"
-	            dir="${sync-gts.dist.dir}/syncgts"
-	            />
-	        -->
-	</target>
-	<target name="dist:tools:retrieve:cagrid-target">
-	        <mkdir dir="${cagrid.target.co.dir}"/>
-	        <if>
-	            <not>
-	                <available file="${cagrid-target.src.url}"/>
-	            </not>
-	            <then>
-	                <mkdir dir="${cagrid.target.co.dir}"/>
-	                <svn-co
-	                    svn.checkout.url="${cagrid-target.src.url}"
-	                    svn.checkout.dir="${cagrid.target.co.dir}"
-	                    delete="false"
-	                    />
-	            </then>
-	        </if>
-	        <copy todir="${dist.exploded.dir}/cagrid-target">
-	            <fileset dir="${cagrid.target.co.dir}"/>
-	        </copy>
-	</target>
-	<target name="dist:tools:retrieve:cagrid-console" description="Downloads JBOSS from binary repository and verifies checksum">
-	        <if>
-	            <not>
-	                <available file="${cagrid-console.dest.file}"/>
-	            </not>
-	            <then>
-	                <get src="${cagrid-console.src.url}" dest="${cagrid-console.dest.file}" />
-	            </then>
-	        </if>
-	        <property name="cagrid-console.dist.dir" location="${dist.exploded.dir}/${cagrid-console.dist.relative.dir}"/>
-	        <unzip src="${cagrid-console.dest.file}" dest="${dist.exploded.dir}"/>
-	        <replaceregexp file="${cagrid-console.dist.dir}/ivy-build.xml" byline="true"
-	            match="override=.true."
-	            replace=""
-	            />
-	        <replaceregexp file="${cagrid-console.dist.dir}/ivy-build.xml" byline="true"
-	            match="id=.ivy.instance."
-	            replace=""
-	            />
-	        <!--
-	        <ant inheritAll="false" inheritRefs="false"
-	            antfile="build.xml"
-	            target="deployJBoss"
-	            dir="${cagrid-console.dist.dir}"
-	            >
-	            <property name="jboss.dir" value="${tmp.jboss.dir}"/>
-	        </ant>
-	        -->
-	</target>  
-	<target name="dist:tools:retrieve:cgmm" if="jboss.cgmm.enable">
-	        <ivy-retrieve-cgmm ivy.dir="${bda-utils.dir}/resource/ivy"
-	            />
-	        <copy todir="${dist.exploded.dir}/cgmm-libs">
-	            <fileset dir="${lib.dir}">
-	                <include name="cgmm/*"/>
-	                <include name="jboss-default-lib/*"/>
-	                <include name="jbossweb-tomcat55-sar-jars/*"/>
-	            </fileset>
-	        </copy>
-	</target>      
-	
-	<target name="deploy:remote:install:ahp"
-	      depends="remote:install:pa-ear, remote:install:pa-grid, remote:install:pa-grid-legacy, remote:install:outcomes-grid">
-	</target>
-	
-	<target name="deploy:remote:upgrade:ahp" description="Installs and configures the application and required binaries and re-creates the datbase  on a remote machine. Used for NCI tiers (dev, qa, stg, prod)" 
-		depends="remote:upgrade:pa-ear,remote:upgrade:pa-grid,remote:upgrade:pa-grid-legacy, remote:upgrade:outcomes-grid">
-	</target>
-	
+    <target name="dist:tools:retrieve:sync-gts"  description="Downloads JBOSS bindings filefrom binary repository and verifies checksum" depends="dist:tools:retrieve:cagrid-target">
+            <if>
+                <not>
+                    <available file="${download.dir}/${sync-gts.binaries.file}"/>
+                </not>
+                <then>
+                    <get src="${sync-gts.src.url}" dest="${download.dir}/${sync-gts.binaries.file}" />
+                </then>
+            </if>
+            <property name="sync-gts.dist.dir" location="${dist.exploded.dir}/${sync-gts.dist.relative.dir}"/>
+            <unzip src="${download.dir}/${sync-gts.binaries.file}" dest="${sync-gts.dist.dir}"/>
+            <!--
+            <ant inheritAll="false" inheritRefs="false"
+                antfile="build.xml"
+                target="all"
+                dir="${sync-gts.dist.dir}/syncgts"
+                />
+            -->
+    </target>
+    <target name="dist:tools:retrieve:cagrid-target">
+            <mkdir dir="${cagrid.target.co.dir}"/>
+            <if>
+                <not>
+                    <available file="${cagrid-target.src.url}"/>
+                </not>
+                <then>
+                    <mkdir dir="${cagrid.target.co.dir}"/>
+                    <svn-co
+                        svn.checkout.url="${cagrid-target.src.url}"
+                        svn.checkout.dir="${cagrid.target.co.dir}"
+                        delete="false"
+                        />
+                </then>
+            </if>
+            <copy todir="${dist.exploded.dir}/cagrid-target">
+                <fileset dir="${cagrid.target.co.dir}"/>
+            </copy>
+    </target>
+    <target name="dist:tools:retrieve:cagrid-console" description="Downloads JBOSS from binary repository and verifies checksum">
+            <if>
+                <not>
+                    <available file="${cagrid-console.dest.file}"/>
+                </not>
+                <then>
+                    <get src="${cagrid-console.src.url}" dest="${cagrid-console.dest.file}" />
+                </then>
+            </if>
+            <property name="cagrid-console.dist.dir" location="${dist.exploded.dir}/${cagrid-console.dist.relative.dir}"/>
+            <unzip src="${cagrid-console.dest.file}" dest="${dist.exploded.dir}"/>
+            <replaceregexp file="${cagrid-console.dist.dir}/ivy-build.xml" byline="true"
+                match="override=.true."
+                replace=""
+                />
+            <replaceregexp file="${cagrid-console.dist.dir}/ivy-build.xml" byline="true"
+                match="id=.ivy.instance."
+                replace=""
+                />
+            <!--
+            <ant inheritAll="false" inheritRefs="false"
+                antfile="build.xml"
+                target="deployJBoss"
+                dir="${cagrid-console.dist.dir}"
+                >
+                <property name="jboss.dir" value="${tmp.jboss.dir}"/>
+            </ant>
+            -->
+    </target>
+    <target name="dist:tools:retrieve:cgmm" if="jboss.cgmm.enable">
+            <ivy-retrieve-cgmm ivy.dir="${bda-utils.dir}/resource/ivy"
+                />
+            <copy todir="${dist.exploded.dir}/cgmm-libs">
+                <fileset dir="${lib.dir}">
+                    <include name="cgmm/*"/>
+                    <include name="jboss-default-lib/*"/>
+                    <include name="jbossweb-tomcat55-sar-jars/*"/>
+                </fileset>
+            </copy>
+    </target>
+
+    <target name="deploy:remote:install:ahp"
+          depends="remote:install:pa-ear, remote:install:pa-grid, remote:install:pa-grid-legacy, remote:install:outcomes-grid">
+    </target>
+
+    <target name="deploy:remote:upgrade:ahp" description="Installs and configures the application and required binaries and re-creates the datbase  on a remote machine. Used for NCI tiers (dev, qa, stg, prod)"
+        depends="remote:upgrade:pa-ear,remote:upgrade:pa-grid,remote:upgrade:pa-grid-legacy, remote:upgrade:outcomes-grid">
+    </target>
+
     <target name="dist:tools:retrieve:jboss-bindings"  description="Downloads JBOSS bindings filefrom binary repository and verifies checksum">
-	    <get src="${jboss-bindings.src.url}" dest="${dist.exploded.dir}/${jboss-bindings.file}" />
+        <get src="${jboss-bindings.src.url}" dest="${dist.exploded.dir}/${jboss-bindings.file}" />
     </target>
 
     <!-- Downloads jboss from tools repository and compares checksum, based on properties set in project.properties -->
@@ -828,16 +828,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </if>
     </target>
     <target name="dist:tools:retrieve:jbosscp" unless="jbosscp.tools.exists" description="Downloads JBOSS Cumulative Patch from binary repository and verifies checksum">
-	    <echoproperties prefix="jbosscp"/>
-	    <if>
-		    <isset property="jbosscp.src.url"/>
-		    <then>
-			    <get src="${jbosscp.src.url}" dest="${jbosscp.dest.file}" />
-		    </then>
-		    <else>
-			    <echo message="jbosscp.src.url not set skipping download of jboss cumulative patch"/>
-		    </else>
-	    </if>
+        <echoproperties prefix="jbosscp"/>
+        <if>
+            <isset property="jbosscp.src.url"/>
+            <then>
+                <get src="${jbosscp.src.url}" dest="${jbosscp.dest.file}" />
+            </then>
+            <else>
+                <echo message="jbosscp.src.url not set skipping download of jboss cumulative patch"/>
+            </else>
+        </if>
     </target>
     <target name="dist:gui-installer" description="Makes Gui-Installer distribution">
         <delete>
@@ -885,13 +885,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <copy todir="${pa-container-jar.dist.dir}" overwrite="true">
             <fileset dir="${lib.dir}/pa-ear/container" />
         </copy>
-	<copy todir="${dist.exploded.dir}">
-	<fileset dir="${build.dir}">
-		<include name="install-paear.xml"/>
-		<include name="install-pagrid.xml"/>
-		<include name="install-outcomesgrid.xml"/>
-		<include name="install-pagridlegacy.xml"/>
-	</fileset>  
+    <copy todir="${dist.exploded.dir}">
+    <fileset dir="${build.dir}">
+        <include name="install-paear.xml"/>
+        <include name="install-pagrid.xml"/>
+        <include name="install-outcomesgrid.xml"/>
+        <include name="install-pagridlegacy.xml"/>
+    </fileset>
 </copy>
 
     </target>
@@ -944,13 +944,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <copy todir="${pa-container-jar.dist.dir}" overwrite="true">
             <fileset dir="${lib.dir}/pa-ear/container" />
         </copy>
-	<copy todir="${dist.exploded.dir}">
-	<fileset dir="${build.dir}">
-		<include name="install-paear.xml"/>
-		<include name="install-pagrid.xml"/>
-		<include name="install-outcomesgrid.xml"/>
-		<include name="install-pagridlegacy.xml"/>
-	</fileset>  
+    <copy todir="${dist.exploded.dir}">
+    <fileset dir="${build.dir}">
+        <include name="install-paear.xml"/>
+        <include name="install-pagrid.xml"/>
+        <include name="install-outcomesgrid.xml"/>
+        <include name="install-pagridlegacy.xml"/>
+    </fileset>
 </copy>
 
     </target>
@@ -1099,9 +1099,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <deploy-files
              dist.file="${pa-ear.upgrade.zip.file}"
              />
-    	<override-properties-prep
-    		   override.properties="${override.properties}"
-    	       override.properties.string.property.name="override.properties.string"/>
+        <override-properties-prep
+               override.properties="${override.properties}"
+               override.properties.string.property.name="override.properties.string"/>
         <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true upgrade-dac:pa-ear-jboss upgrade:database" />
     </target>
 
@@ -1115,9 +1115,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              remote.directory.property.name="ssh.dir.temp"
              dist.file="${pa-grid.upgrade.zip.file}"
              />
-    	<override-properties-prep
-    	               override.properties="${override.properties}"
-    	               override.properties.string.property.name="override.properties.string"/>
+        <override-properties-prep
+                       override.properties="${override.properties}"
+                       override.properties.string.property.name="override.properties.string"/>
         <remote-ssh
             remoteSshUser="${ssh.server.username}"
             remoteSshHost="${ssh.server.hostname}"
@@ -1135,9 +1135,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                remote.directory.property.name="ssh.dir.temp"
                dist.file="${pa-grid-legacy.upgrade.zip.file}"
                />
-    	<override-properties-prep
-    	               override.properties="${override.properties}"
-    	               override.properties.string.property.name="override.properties.string"/>
+        <override-properties-prep
+                       override.properties="${override.properties}"
+                       override.properties.string.property.name="override.properties.string"/>
       <remote-ssh
              remoteSshUser="${ssh.server.username}"
              remoteSshHost="${ssh.server.hostname}"
@@ -1155,9 +1155,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                remote.directory.property.name="ssh.dir.temp"
                dist.file="${outcomes-grid.upgrade.zip.file}"
                />
-    	<override-properties-prep
-    	               override.properties="${override.properties}"
-    	               override.properties.string.property.name="override.properties.string"/>
+        <override-properties-prep
+                       override.properties="${override.properties}"
+                       override.properties.string.property.name="override.properties.string"/>
       <remote-ssh
              remoteSshUser="${ssh.server.username}"
              remoteSshHost="${ssh.server.hostname}"
@@ -1213,7 +1213,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         depends="
         clean,
         init,
-    	test:pa-commons,
+        test:pa-commons,
         test:pa-ejb,
         test:pa-web,
         test:reg-web,
@@ -1247,21 +1247,21 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jdbc.url" value="${database.url}"/>
         </ant>
     </target>
-	<target name="test:pa-commons" depends="init">
-	        <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
-	            target="test-dynamic-analysis"
-	            dir="${pa-commons.base.dir}" >
-	            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-	            <property name="jboss.port" value="${jboss.server.port}"/>
-	            <property name="hibernate.dialect" value="${database.dialect}"/>
-	            <property name="db.username" value="${database.user}"/>
-	            <property name="db.password" value="${database.password}"/>
-	            <property name="jdbc.driver" value="${database.dirver}"/>
-	            <property name="jdbc.url" value="${database.url}"/>
-	            <property name="test.schema.showsql" value="false"/>
-	            <property name="test.java.naming.provider" value="localhost"/>
-	        </ant>
-	</target>
+    <target name="test:pa-commons" depends="init">
+            <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
+                target="test-dynamic-analysis"
+                dir="${pa-commons.base.dir}" >
+                <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+                <property name="jboss.port" value="${jboss.server.port}"/>
+                <property name="hibernate.dialect" value="${database.dialect}"/>
+                <property name="db.username" value="${database.user}"/>
+                <property name="db.password" value="${database.password}"/>
+                <property name="jdbc.driver" value="${database.dirver}"/>
+                <property name="jdbc.url" value="${database.url}"/>
+                <property name="test.schema.showsql" value="false"/>
+                <property name="test.java.naming.provider" value="localhost"/>
+            </ant>
+    </target>
     <target name="test:pa-ejb" depends="init">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
             target="test-dynamic-analysis"
@@ -1281,24 +1281,24 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
             target="test-dynamic-analysis"
             dir="${accrual-ear.base.dir}" >
-		<property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
-		<property name="hibernate.dialect" value="${database.dialect}"/>
-		<property name="jdbc.driver" value="${database.driver}"/>
-		<property name="accrual-ear.build.dir" location="${pa-ear.dist.dir}" />
-		<property name="application.url" location="${application.url}" />
-		<property name="database.url" value="${database.url}" />
-		<property name="database.user" value="${database.user}" />
-		<property name="database.password" value="${database.password}" />
-		<property name="po.jnp.url" value="${accrual.po.jnp.url}" />
-		<property name="pa.jnp.url" value="${accrual.pa.jnp.url}" />
-		<property name="accrual.jnp.url" value="${accrual.jnp.url}" />
-		<property name="po.port.number" value="${po.port.number}" />
-		<property name="jboss.server.hostname" value="${jboss.server.hostname}" />
-		<property name="outcomes.url" value="${outcomes.url}" />
-		<property name="gridServicePrincipal" value="${outcomes-grid.jndi.principal}"/>
-		<property name="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrypted}"/>
-		<property name="po.username" value="${po.username}"/>
-		<property name="po.pass" value="${po.pass}"/>
+        <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
+        <property name="hibernate.dialect" value="${database.dialect}"/>
+        <property name="jdbc.driver" value="${database.driver}"/>
+        <property name="accrual-ear.build.dir" location="${pa-ear.dist.dir}" />
+        <property name="application.url" location="${application.url}" />
+        <property name="database.url" value="${database.url}" />
+        <property name="database.user" value="${database.user}" />
+        <property name="database.password" value="${database.password}" />
+        <property name="po.jnp.url" value="${accrual.po.jnp.url}" />
+        <property name="pa.jnp.url" value="${accrual.pa.jnp.url}" />
+        <property name="accrual.jnp.url" value="${accrual.jnp.url}" />
+        <property name="po.port.number" value="${po.port.number}" />
+        <property name="jboss.server.hostname" value="${jboss.server.hostname}" />
+        <property name="outcomes.url" value="${outcomes.url}" />
+        <property name="gridServicePrincipal" value="${outcomes-grid.jndi.principal}"/>
+        <property name="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrypted}"/>
+        <property name="po.username" value="${po.username}"/>
+        <property name="po.pass" value="${po.pass}"/>
         <property name="po.server.name" value="${po.server.name}"/>
         </ant>
     </target>
@@ -1308,7 +1308,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         depends="
         clean,
         init,
-    	static-analysis:pa-commons,
+        static-analysis:pa-commons,
         static-analysis:pa-ejb,
         static-analysis:pa-web,
         static-analysis:reg-web
@@ -1330,13 +1330,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
     </target>
 
-	<target name="static-analysis:pa-commons" depends="init">
-	        <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
-	            target="test-static-analysis"
-	            dir="${pa-commons.base.dir}" >
-	            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-	        </ant>
-	</target>
+    <target name="static-analysis:pa-commons" depends="init">
+            <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
+                target="test-static-analysis"
+                dir="${pa-commons.base.dir}" >
+                <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+            </ant>
+    </target>
 
     <target name="static-analysis:pa-ejb" depends="init">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
