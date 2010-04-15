@@ -413,6 +413,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
         } catch (PAException e) {
             LOG.error(e.getLocalizedMessage());
             addActionError(e.getMessage());
+            return ERROR;
         }
         return "review";
     }
