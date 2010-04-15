@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import java.io.File;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
 
@@ -88,6 +90,7 @@ import gov.nih.nci.pa.service.PAException;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings({"PMD.TooManyMethods" })
 public interface MailManagerService {
     
     /**
@@ -157,4 +160,13 @@ public interface MailManagerService {
      * @param studyProtocolIi ii
      */
     void sendChangeOwnershipMail(String prevOwnerMailId, Ii studyProtocolIi);
+    /**
+     * 
+     * @param mailTo to 
+     * @param subject subject
+     * @param mailBody body
+     * @param attachments attach
+     */
+    void sendMailWithAttachment(String mailTo, String subject,
+            String mailBody, File [] attachments);
 }

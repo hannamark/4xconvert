@@ -7,6 +7,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyFundingStage;
 import gov.nih.nci.pa.domain.StudyIndIdeStage;
 import gov.nih.nci.pa.domain.StudyProtocolStage;
@@ -20,6 +21,10 @@ import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -30,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -49,9 +55,16 @@ import org.hibernate.criterion.Example;
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", 
-    "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+    "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.TooManyMethods" })
 public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLocal {
     private static final Logger LOG  = Logger.getLogger(StudyProtocolStageBeanLocal.class);
+    @EJB
+    MailManagerServiceLocal mailManagerSerivceLocal = null;
+    @EJB
+    LookUpTableServiceRemote lookUpTableService = null;
+    @EJB
+    RegistryUserServiceRemote registryUserService = null;
+    
     /**
      * @param dto dto
      * @param pagingParams pagingParams
@@ -202,9 +215,11 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         Ii studyProtocolStageIi = createOrUpdateStudyProtocol(ispDTO, "Create");
         createGrants(fundDTOs, studyProtocolStageIi);
         createIndIde(indDTOs, studyProtocolStageIi);
+        sendPartialSubmissionMail(studyProtocolStageIi);
         return studyProtocolStageIi;
     }
-    /**
+
+     /**
      ** @param isoDTO  for spStage
      *  @param fundDTOs for funding
      *  @param indDTOs for ind
@@ -331,4 +346,35 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         session.createSQLQuery(sql.toString()).executeUpdate();
         
     }
+    
+    private void sendPartialSubmissionMail(Ii studyProtocolStageIi) {
+       try {
+            PAServiceUtils paServiceUtil = new PAServiceUtils();
+            StudyProtocolStageDTO spDTO = get(studyProtocolStageIi);
+            String submissionMailBody = lookUpTableService.getPropertyValue("trial.partial.register.body");
+            submissionMailBody = submissionMailBody.replace("${CurrentDate}", PAUtil.today());
+            submissionMailBody = submissionMailBody.replace("${leadOrgTrialIdentifier}",
+                StConverter.convertToString(spDTO.getLocalProtocolIdentifier()));
+            submissionMailBody = submissionMailBody.replace("${leadOrgName}",
+                    paServiceUtil.getOrgName(IiConverter.convertToPoOrganizationIi(
+                        spDTO.getLeadOrganizationIdentifier().getExtension())));
+            submissionMailBody = submissionMailBody.replace("${temporaryidentifier}", IiConverter.convertToString(
+                spDTO.getIdentifier()));
+            String title = "";
+            if (!PAUtil.isStNull(spDTO.getOfficialTitle())) {
+                title = StConverter.convertToString(spDTO.getOfficialTitle());
+            }
+            submissionMailBody = submissionMailBody.replace("${trialTitle}", title);
+            RegistryUser registryUser = registryUserService.getUser(
+                    StConverter.convertToString(spDTO.getUserLastCreated()));
+            submissionMailBody = submissionMailBody.replace("${SubmitterName}",
+                 registryUser.getFirstName() + " " + registryUser.getLastName());
+            mailManagerSerivceLocal.sendMailWithAttachment(StConverter.convertToString(spDTO.getUserLastCreated()),
+                    lookUpTableService.getPropertyValue("trial.partial.register.subject"),
+                    submissionMailBody, null);
+          } catch (Exception e) {
+               LOG.error("Send Mail error Partial Submission Mail", e);
+          }
+    }
+
 }

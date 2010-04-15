@@ -123,6 +123,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -1419,6 +1420,16 @@ public class PAServiceUtils {
                   poPerson = null;
               }
           return poPerson;
+      }
+      /**
+       * 
+       * @param entityIi ii
+       * @return name
+       */
+      public String getOrgName(Ii entityIi) {
+          OrganizationDTO orgDto = getPOOrganizationEntity(entityIi);
+          return EnOnConverter.convertEnOnToString(
+                  orgDto.getName());
       }
       
 }

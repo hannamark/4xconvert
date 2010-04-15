@@ -184,7 +184,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
   * @param mailBody mailBody
   * @param attachments File attachments
   */
-  private  void sendMailWithAttachment(String mailTo, String subject,
+  public  void sendMailWithAttachment(String mailTo, String subject,
                           String mailBody, File [] attachments) {
     try {
         // get system properties
@@ -226,38 +226,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     } // catch
  }
 
-  private  void sendMail(String mailTo, String subject, String mailBody) {
-    try {
-        // get system properties
-        Properties props = System.getProperties();
-
-        // Set up mail server
-        props.put("mail.smtp.host",
-          lookUpTableService.getPropertyValue("smtp"));
-        // Get session
-        Session session = Session.getDefaultInstance(props, null);
-
-        // Define Message
-        MimeMessage message = new MimeMessage(session);
-        // body
-        Multipart multipart = new MimeMultipart();
-
-        message.setFrom(new InternetAddress(lookUpTableService.getPropertyValue("fromaddress")));
-        message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
-        message.setSentDate(new java.util.Date());
-        message.setSubject(subject);
-
-        BodyPart msgPart = new MimeBodyPart();
-        msgPart.setText(mailBody);
-        multipart.addBodyPart(msgPart);
-        message.setContent(multipart);
-        // Send Message
-        Transport.send(message);
-    } catch (Exception e) {
-        LOG.error("Send Mail error", e);
-    } // catch
- }
- /**
+  /**
   * Sends an email notifying the submitter that the protocol is amended in the system.
   * @param studyProtocolIi ii
   * @throws PAException ex
@@ -278,9 +247,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
     mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
 
-    sendMail(spDTO.getUserLastCreated(),
+    sendMailWithAttachment(spDTO.getUserLastCreated(),
             lookUpTableService.getPropertyValue("trial.amend.subject"),
-            mailBody);
+            mailBody, null);
 
     }
 
@@ -305,9 +274,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
     mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
 
-    sendMail(spDTO.getUserLastCreated(),
+    sendMailWithAttachment(spDTO.getUserLastCreated(),
               lookUpTableService.getPropertyValue("trial.amend.accept.subject"),
-              mailBody);
+              mailBody, null);
     LOG.info("Leaving sendAmendAcceptEmail");
   }
  /**
@@ -325,9 +294,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             spDTO.getLocalStudyProtocolIdentifier());
     submissionMailBody = submissionMailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
     submissionMailBody = submissionMailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
-    sendMail(spDTO.getUserLastCreated(),
+    sendMailWithAttachment(spDTO.getUserLastCreated(),
                 lookUpTableService.getPropertyValue("trial.register.subject"),
-                submissionMailBody);
+                submissionMailBody, null);
   }
  /**
   * Sends an email to submitter when Amendment to trial is rejected by CTRO staff.
@@ -351,9 +320,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     mailBody = mailBody.replace("${amendmentDate}", getFormatedDate(spDTO.getAmendmentDate()));
     mailBody = mailBody.replace("${reasonForRejection}", rejectReason);
     mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
-    sendMail(spDTO.getUserLastCreated(),
+    sendMailWithAttachment(spDTO.getUserLastCreated(),
               lookUpTableService.getPropertyValue("trial.amend.reject.subject"),
-              mailBody);
+              mailBody, null);
     LOG.info("Leaving sendAmendAcceptEmail");
   }
 
@@ -379,9 +348,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     body = body.replace("${reasoncode}", commentText);
     body = body.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
     // Send Message
-    sendMail(spDTO.getUserLastCreated(),
+    sendMailWithAttachment(spDTO.getUserLastCreated(),
             lookUpTableService.getPropertyValue("rejection.subject"),
-            body);
+            body, null);
  }
  @SuppressWarnings({"PMD.SimpleDateFormatNeedsLocale" })
  private String getFormatedCurrentDate() {
@@ -413,9 +382,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
     mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
     mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
-    sendMail(spDTO.getUserLastCreated(),
+    sendMailWithAttachment(spDTO.getUserLastCreated(),
               lookUpTableService.getPropertyValue("trial.accept.subject"),
-              mailBody);
+              mailBody, null);
     LOG.info("Leaving send AcceptEmail");
   }
 
@@ -480,9 +449,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
     mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
     mailBody = mailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
-    sendMail(spDTO.getUserLastCreated(),
+    sendMailWithAttachment(spDTO.getUserLastCreated(),
             lookUpTableService.getPropertyValue("trial.update.subject"),
-            mailBody);
+            mailBody, null);
 
     }
 
@@ -541,15 +510,15 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
           String newOwnerMailBody = mailBody;
           newOwnerMailBody = newOwnerMailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
 
-          sendMail(spDTO.getUserLastCreated(),
+          sendMailWithAttachment(spDTO.getUserLastCreated(),
                   lookUpTableService.getPropertyValue("trial.ownership.subject"),
-                  newOwnerMailBody);
+                  newOwnerMailBody, null);
 
           String prevOwnerMailBody = mailBody;
           prevOwnerMailBody = prevOwnerMailBody.replace(submitterName, getSumitterFullName(prevOwnerMailId));
-          sendMail(prevOwnerMailId,
+          sendMailWithAttachment(prevOwnerMailId,
                   lookUpTableService.getPropertyValue("trial.ownership.subject"),
-                  prevOwnerMailBody);
+                  prevOwnerMailBody, null);
     } catch (PAException e) {
         LOG.error("Send Mail error ChangeOwnership Mail", e);
     }

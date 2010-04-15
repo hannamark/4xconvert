@@ -3,6 +3,8 @@
  */
 package gov.nih.nci.registry.service;
 
+import java.io.File;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -91,6 +93,13 @@ public class MockMailManagerService implements MailManagerServiceLocal {
         // TODO Auto-generated method stub
         
     }
+
+	public void sendMailWithAttachment(String mailTo, String subject,
+			String mailBody, File[] attachments) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 
 }

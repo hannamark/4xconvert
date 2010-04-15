@@ -380,4 +380,9 @@
     	<comment>execute PO-1688.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1688.sql"/>
     </changeSet>
+	<changeSet id="94" author="Vrushali">
+        <comment>execute PO-1694.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1694.sql"/>
+    </changeSet>
+
 </databaseChangeLog>
