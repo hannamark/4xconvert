@@ -5,6 +5,7 @@ package gov.nih.nci.registry.service;
 
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -30,6 +31,10 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
         spQueryDTO.setLeadOrganizationId(1L);
         spQueryDTO.setPiId(2L);
+        spQueryDTO.setIsProprietaryTrial("false");
+        spQueryDTO.setCtgovXmlRequiredIndicator(true);
+        spQueryDTO.setUserLastCreated("TestUser@test.com");
+        spQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
         list.add(spQueryDTO);
         spQueryDTO = new StudyProtocolQueryDTO();
         spQueryDTO.setStudyProtocolId(2L);
@@ -38,6 +43,7 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         spQueryDTO.setOfficialTitle("officialTitle");
         spQueryDTO.setStudyStatusCode(StudyStatusCode.ACTIVE);
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
+        spQueryDTO.setCtgovXmlRequiredIndicator(true);
         list.add(spQueryDTO);
         spQueryDTO = new StudyProtocolQueryDTO();
         spQueryDTO.setStudyProtocolId(3L);
@@ -46,6 +52,7 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         spQueryDTO.setOfficialTitle("officialTitle");
         spQueryDTO.setStudyStatusCode(StudyStatusCode.ACTIVE);
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
+        spQueryDTO.setCtgovXmlRequiredIndicator(true);
         list.add(spQueryDTO);
     }
     /* (non-Javadoc)

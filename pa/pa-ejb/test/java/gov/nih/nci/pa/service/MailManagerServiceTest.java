@@ -155,6 +155,16 @@ public class MailManagerServiceTest {
         prop.setValue("trial.amend.subject.");
         TestSchema.addUpdObject(prop);
         
+        prop = new PAProperties();
+        prop.setName("xml.subject");
+        prop.setValue("xml.subject.");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("xml.body");
+        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialID}, ${trialTitle}, (${leadOrgTrialId}), ${receiptDate}.");
+        TestSchema.addUpdObject(prop);
+        
         RegistryUser registryUser = new RegistryUser();
         registryUser.setFirstName("firstName");
         registryUser.setLastName("lastName");
@@ -192,5 +202,9 @@ public class MailManagerServiceTest {
     @Test (expected=PAException.class)
     public void testSendRejectionEmail() throws PAException{
         bean.sendRejectionEmail(IiConverter.convertToIi(1L));
+    }
+    @Test (expected=PAException.class)
+    public void testSendXmlTSREmail() throws PAException{
+        bean.sendXMLAndTSREmail(IiConverter.convertToIi(1L));
     }
 }

@@ -105,6 +105,9 @@ public class MockMailManagerService implements MailManagerServiceLocal {
         
     }
 
-
+    public void sendXMLAndTSREmail(Ii studyProtocolIi) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

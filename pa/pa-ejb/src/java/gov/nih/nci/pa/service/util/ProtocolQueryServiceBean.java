@@ -347,6 +347,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     studyProtocolDto.setStudyCheckoutBy(studyCheckout.getUserIdentifier());
                     studyProtocolDto.setStudyCheckoutId(studyCheckout.getId());
                 }
+                if (studyProtocol.getCtgovXmlRequiredIndicator() != null) {
+                    studyProtocolDto.setCtgovXmlRequiredIndicator(studyProtocol.getCtgovXmlRequiredIndicator());
+                }
                 // add to the list
                 studyProtocolDtos.add(studyProtocolDto);
             } // for loop

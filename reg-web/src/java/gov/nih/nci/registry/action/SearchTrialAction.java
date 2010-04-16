@@ -192,13 +192,29 @@ public class SearchTrialAction extends ActionSupport {
             records = new ArrayList<StudyProtocolQueryDTO>();
             records = PaRegistry.getProtocolQueryService().
                               getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
-
+            checkToShowSendXml();
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             ServletActionContext.getRequest().setAttribute(
                     "failureMessage" , e.getMessage());
             return ERROR;
+        }
+    }
+
+    private void checkToShowSendXml() {
+        String loginName = null;
+        loginName =  ServletActionContext.getRequest().getRemoteUser();
+        if (!records.isEmpty()) {
+            for (StudyProtocolQueryDTO queryDto : records) {
+                if (queryDto.getIsProprietaryTrial().equalsIgnoreCase("false") 
+                        && queryDto.getUserLastCreated().equals(loginName)    
+                        && PAUtil.isAbstractedAndAbove(
+                                CdConverter.convertStringToCd(queryDto.getDocumentWorkflowStatusCode().getCode()))
+                         && queryDto.isCtgovXmlRequiredIndicator()) {               
+                    queryDto.setShowSendXml(true);
+                }
+            }
         }
     }
 
@@ -219,7 +235,7 @@ public class SearchTrialAction extends ActionSupport {
             records = new ArrayList<StudyProtocolQueryDTO>();
             records = PaRegistry.getProtocolQueryService().
                               getStudyProtocolByCriteria(queryCriteria);
-
+            checkToShowSendXml();
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -702,5 +718,20 @@ public class SearchTrialAction extends ActionSupport {
             returnList.add(spQueryDTO);
         }
         return returnList;   
+    }
+    
+    /**
+     * Send xml.
+     * 
+     * @return the string
+     */
+    public String sendXml() {
+        Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+        try {
+            PaRegistry.getMailManagerService().sendXMLAndTSREmail(studyProtocolIi);
+        } catch (PAException e) {
+            addActionError("Exception while sending XML email:" + e.getMessage());
+        }        
+        return queryOnBack();
     }
 }

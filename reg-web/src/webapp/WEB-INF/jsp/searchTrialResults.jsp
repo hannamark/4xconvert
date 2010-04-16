@@ -44,7 +44,13 @@
      <display:column titleKey="search.trial.amend" 
         href="amendTrialview.action" property="amend"
         paramId="studyProtocolId" paramProperty="studyProtocolId"
-        sortable="true" headerClass="sortable"/>     
+        sortable="true" headerClass="sortable"/>
+        <display:column class="title" title="Action" sortable="true" headerScope="col" scope="row">
+        	<s:if test="%{#attr.row.showSendXml.booleanValue() == true}">
+                <s:url id="url" action="searchTrialsendXml"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+        		<s:a href="%{url}">Send Xml</s:a>
+            </s:if>
+        </display:column>     
 </display:table>
 </c:otherwise>
  </c:choose>

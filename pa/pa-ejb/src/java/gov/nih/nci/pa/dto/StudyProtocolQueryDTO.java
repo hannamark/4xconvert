@@ -136,6 +136,8 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Long studyCheckoutId;
     private String trialCategory;
     private Date recordVerificationDate;
+    private Boolean ctgovXmlRequiredIndicator;
+    private Boolean showSendXml = false;
     
    /**
     * @return the trialCategory
@@ -623,5 +625,33 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setRecordVerificationDate(Date recordVerificationDate) {
         this.recordVerificationDate = recordVerificationDate;
     }
+
+    /**
+     * @return the ctgovXmlRequiredIndicator
+     */
+    public Boolean isCtgovXmlRequiredIndicator() {
+        return ctgovXmlRequiredIndicator;
+    }
+
+    /**
+     * @param ctgovXmlRequiredIndicator ctgovXmlRequiredIndicator to set
+     */
+    public void setCtgovXmlRequiredIndicator(Boolean ctgovXmlRequiredIndicator) {
+        this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+    }
+
+    /**
+     * @return showSendXml
+     */
+    public Boolean getShowSendXml() {
+        return showSendXml;
+    }
+
+    /**
+     * @param showSendXml showSendXml to set
+     */
+    public void setShowSendXml(Boolean showSendXml) {
+        this.showSendXml = showSendXml;
+    }    
     
 }

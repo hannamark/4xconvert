@@ -168,5 +168,14 @@ public interface MailManagerService {
      * @param attachments attach
      */
     void sendMailWithAttachment(String mailTo, String subject,
-            String mailBody, File [] attachments);
+            String mailBody, File [] attachments);        
+       
+    /**
+     * Send xml and tsr email.
+     * 
+     * @param studyProtocolIi the study protocol ii
+     * 
+     * @throws PAException the PA exception
+     */
+    void sendXMLAndTSREmail(Ii studyProtocolIi) throws PAException;
 }

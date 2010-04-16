@@ -6,6 +6,7 @@ package gov.nih.nci.registry.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.test.util.MockPAServiceUtil;
@@ -298,5 +299,20 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("error",action.partiallySubmittedView());
+    }
+    @Test
+    public void testSendXmlEmail(){
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        action = new SearchTrialAction();
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
+        queryCriteria.setNciIdentifier("NCI-2009-00001");
+        session.setAttribute("studySearchCriteria", queryCriteria);
+        request.setSession(session);
+        request.setRemoteUser("TestUser@test.com");
+        ServletActionContext.setRequest(request);
+        assertEquals("success",action.sendXml());
     }
 }

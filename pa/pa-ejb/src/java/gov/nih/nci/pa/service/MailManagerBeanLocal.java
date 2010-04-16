@@ -55,6 +55,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -72,7 +73,7 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(HibernateSessionInterceptor.class)
 @SuppressWarnings({"PMD.FinalFieldCouldBeStatic", "PMD.TooManyMethods",
-    "PMD.CyclomaticComplexity", "PMD.NPathComplexity"  })
+    "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength"  })
 public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
   private static final Logger LOG = Logger.getLogger(MailManagerBeanLocal.class);
@@ -132,24 +133,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
       String folderPath = PaEarPropertyReader.getDocUploadPath();
       StringBuffer sb  = new StringBuffer(folderPath);
-      String xmlFile = new String(sb.append(File.separator).append(
-              spDTO.getNciIdentifier().toString() + ".xml"));
-
-      if (PAUtil.isEmpty(spDTO.getIsProprietaryTrial())
-              || spDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
-          //Format the xml only for non proprietary
-          String xmlData = format(ctGovXmlGeneratorService.generateCTGovXml(studyProtocolIi));
-          OutputStreamWriter oos = new OutputStreamWriter(new FileOutputStream(xmlFile));
-          oos.write(xmlData);
-          oos.close();
-      }
+      String xmlFile = getXmlFile(studyProtocolIi, spDTO, sb);
       StringBuffer sb2  = new StringBuffer(folderPath);
-      String tsrFile = new String(sb2.append(File.separator).append(TSR).append(
-          spDTO.getNciIdentifier().toString() + EXTENSION_PDF));
-
-      ByteArrayOutputStream pdfStream = tsrReportGeneratorService.generateTsrReport(studyProtocolIi);
-      pdfStream.writeTo(new FileOutputStream(tsrFile));
-
+      String tsrFile = getTSRFile(studyProtocolIi, spDTO, sb2);
       if (PAUtil.isNotEmpty(spDTO.getIsProprietaryTrial())
               && spDTO.getIsProprietaryTrial().equalsIgnoreCase("true")) {
           File[] attachments = {new File(tsrFile)};
@@ -176,6 +162,41 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     LOG.info("Leaving sendTSREmail");
 
 }
+  
+  private String getTSRFile(Ii studyProtocolIi, StudyProtocolQueryDTO spDTO,
+          StringBuffer sb2) throws PAException {
+
+      String tsrFile = new String(sb2.append(File.separator).append(TSR).append(
+              spDTO.getNciIdentifier().toString() + EXTENSION_PDF));
+      try {
+          ByteArrayOutputStream pdfStream = tsrReportGeneratorService.generateTsrReport(studyProtocolIi);
+          pdfStream.writeTo(new FileOutputStream(tsrFile));
+      } catch (Exception e) {
+          LOG.error("Exception occured while getting TSR Report " + e.getLocalizedMessage());
+          throw new PAException("Exception occured while getting TSR Report to submitter", e);
+      }
+      return tsrFile;
+  }
+          
+  private String getXmlFile(Ii studyProtocolIi, StudyProtocolQueryDTO spDTO,
+          StringBuffer sb) throws PAException {
+      String xmlFile = new String(sb.append(File.separator).append(
+              spDTO.getNciIdentifier().toString() + ".xml"));
+      try {
+          if (StringUtils.isEmpty(spDTO.getIsProprietaryTrial())
+                  || spDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
+              //Format the xml only for non proprietary
+              String xmlData = format(ctGovXmlGeneratorService.generateCTGovXml(studyProtocolIi));
+              OutputStreamWriter oos = new OutputStreamWriter(new FileOutputStream(xmlFile));
+              oos.write(xmlData);
+              oos.close();
+          }
+      } catch (Exception e) {
+          LOG.error("Exception occured while getting XmlFile " + e.getLocalizedMessage());
+          throw new PAException("Exception occured while getting XmlFile to submitter", e);
+      }
+      return xmlFile;
+  }
 
  /**
   *
@@ -522,5 +543,45 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     } catch (PAException e) {
         LOG.error("Send Mail error ChangeOwnership Mail", e);
     }
+  }
+    
+    /**
+     * {@inheritDoc}
+     */
+  public void sendXMLAndTSREmail(Ii studyProtocolIi) throws PAException {
+      LOG.info("Entering sendXMLAndTSREmail");
+      try {
+          StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
+                  IiConverter.convertToLong(studyProtocolIi));
+
+          String body = lookUpTableService.getPropertyValue("xml.body");
+          body = body.replace(currentDate, getFormatedCurrentDate());
+          body = body.replace("${leadOrgTrialId}", spDTO.getLocalStudyProtocolIdentifier().toString());
+          body = body.replace("${trialTitle}", spDTO.getOfficialTitle().toString());
+          body = body.replace("${receiptDate}", getFormatedDate(spDTO.getDateLastCreated()));
+          body = body.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
+          body = body.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
+
+          String folderPath = PaEarPropertyReader.getDocUploadPath();
+          StringBuffer sb  = new StringBuffer(folderPath);
+          String xmlFile = getXmlFile(studyProtocolIi, spDTO, sb);
+          StringBuffer sb2  = new StringBuffer(folderPath);
+          String tsrFile = getTSRFile(studyProtocolIi, spDTO, sb2);
+
+
+          File[] attachments = {new File(xmlFile), new File(tsrFile)};
+          // Send Message
+          sendMailWithAttachment(spDTO.getUserLastCreated(), //Mail Recipient
+                  lookUpTableService.getPropertyValue("xml.subject"), // Mail Subject
+                  body, // Mail Body
+                  attachments); // Mail Attachments if any
+          new File(tsrFile).delete();
+          new File(xmlFile).delete();
+      } catch (Exception e) {
+          LOG.error("Exception occured while emailing XML and TSR Report " + e.getLocalizedMessage());
+          throw new PAException("Exception occured while sending XML and TSR Report to submitter", e);
+      }
+      LOG.info("Leaving sendXMLAndTSREmail");
+
   }
  }
