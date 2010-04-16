@@ -686,8 +686,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="validate:pre:build">
-        <validate-pre-build
-            />
+        <mkdir dir="${download.dir}" />
+        <validate-pre-build />
     </target>
 
     <!-- Produces all distributions: installer, upgrader and source -->

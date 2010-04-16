@@ -234,8 +234,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <format property="install.time" pattern="yyyy-MM-dd-HH-mm" />
     </tstamp>
     <record name="${log.dir}/install-${install.time}.log" action="start" />
-    <mkdir dir="${download.dir}" />
-
 
     <if>
         <not>
@@ -1129,9 +1127,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </if>
     </target>
 
-    <target name="validate:pre:build" depends="
-    build:retrieve:cacore-sdk,
-    build:extract:cacore-sdk">
+    <target name="validate:pre:build" depends="build:retrieve:cacore-sdk, build:extract:cacore-sdk">
+        <mkdir dir="${download.dir}" />
         <validate-pre-build />
     </target>
 
