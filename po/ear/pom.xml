@@ -46,7 +46,13 @@
             <version>${pom.parent.version}</version>
             <type>ejb</type>
         </dependency>
-
+        <dependency>
+            <!--  -->
+            <groupId>gov.nih.nci</groupId>
+            <artifactId>security</artifactId>
+            <version>4.2</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <finalName>po</finalName>

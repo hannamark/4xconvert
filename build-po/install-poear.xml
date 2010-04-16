@@ -324,9 +324,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
 
             <!-- PO-GRID: reuses the jboss.server.jndi.port -->
-            <filter token="pogrid.jndi.principal" value="${pogrid.jndi.principal}"/>
-            <filter token="pogrid.jndi.credentials" value="${pogrid.jndi.credentials}"/>
-            <filter token="pogrid.jndi.credentials.encrypted" value="${pogrid.jndi.credentials.encrypted}"/>
+            <filter token="pogrid.jndi.principal" value="${pogrid-3.2.jndi.principal}"/>
+            <filter token="pogrid.jndi.credentials" value="${pogrid-3.2.jndi.credentials}"/>
+            <filter token="pogrid.jndi.credentials.encrypted" value="${pogrid-3.2.jndi.credentials.encrypted}"/>
           </filterset>
         </copy>
         <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
