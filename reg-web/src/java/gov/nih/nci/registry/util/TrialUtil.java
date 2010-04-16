@@ -1502,6 +1502,8 @@ public class TrialUtil {
         if (PAUtil.isIiNotNull(spStageDTO.getSiteSummaryFourOrgIdentifier())) {
             trialDto.setSummaryFourOrgName(getOrgName(spStageDTO.getSiteSummaryFourOrgIdentifier()));
         }
+        trialDto.setSummaryFourFundingCategoryCode(CdConverter.convertCdToString(
+                   spStageDTO.getSiteSummaryFourFundingTypeCode()));
         if (!PAUtil.isCdNull(spStageDTO.getSiteRecruitmentStatus())) {
             trialDto.setSiteStatusCode(CdConverter.convertCdToString(spStageDTO.getSiteRecruitmentStatus()));
         }
