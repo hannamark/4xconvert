@@ -5,9 +5,13 @@ import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.services.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
+import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.structuralroles.organizationalcontact.common.OrganizationalContactI;
+import gov.nih.nci.iso21090.Constants;
 
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
 import org.apache.axis.client.Stub;
@@ -29,6 +33,9 @@ import org.iso._21090.CD;
  */
 public class OrganizationalContactClient extends OrganizationalContactClientBase implements OrganizationalContactI {
 
+    private static ClientParameterHelper<OrganizationalContactClient> helper =
+        new ClientParameterHelper<OrganizationalContactClient>(OrganizationalContactClient.class);
+
     /**
      * The identifier name for.
      */
@@ -37,70 +44,73 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     /**
      * The ii root value.
      */
-    public static final String ORGANIZATIONAL_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.4.8";
+    public static final String ORGANIZATIONAL_CONTACT_ROOT = Constants.NCI_OID + ".4.8";
 
     public OrganizationalContactClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
     }
 
     public OrganizationalContactClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-           super(url,proxy);
+        super(url,proxy);
     }
 
     public OrganizationalContactClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
-           this(epr,null);
+        this(epr,null);
     }
 
     public OrganizationalContactClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-           super(epr,proxy);
-    }
-
-    public static void usage(){
-        System.out.println(OrganizationalContactClient.class.getName() + " -url <service url>");
+        super(epr,proxy);
     }
 
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
         try{
-        if(!(args.length < 2)){
-            if(args[0].equals("-url")){
-              OrganizationalContactClient client = new OrganizationalContactClient(args[1]);
-              // place client calls here if you want to use this main as a
-              // test....
-              getOrgContact(client);
-              searchOrgContact(client);
-              queryOrgContact(client);
-              getOrganizationalContactsByPlayerIds(client);
-              searchOrgContactsByTypeCode(client);
-            } else {
-                usage();
-                System.exit(1);
+
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};
+            helper.setLocalArgs(localArgs);
+            helper.setupParams(args);
+
+            OrganizationalContactClient client = new OrganizationalContactClient(helper.getArgument("-url"));
+
+            for (Method method : helper.getRunMethods()) {
+                System.out.println("Running " + method.getName());
+                method.invoke(null, client);
             }
-        } else {
-            usage();
-            System.exit(1);
-        }
+
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
     }
 
+    @GridTestMethod
     private static void getOrgContact(OrganizationalContactClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
         id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
-        id.setExtension("631");
+        id.setExtension(helper.getArgument("-getId", "1"));
         OrganizationalContact result = client.getById(id);
         ClientUtils.print(result);
     }
 
+    @GridTestMethod
     private static void searchOrgContact(OrganizationalContactClient client) throws RemoteException {
         OrganizationalContact criteria = createCriteria();
         OrganizationalContact[] results = client.search(criteria);
         ClientUtils.print(results);
     }
 
+    @GridTestMethod
+    private static void queryOrgContact(OrganizationalContactClient client) throws RemoteException {
+        LimitOffset limitOffset = new LimitOffset();
+        limitOffset.setLimit(1);
+        limitOffset.setOffset(0);
+        OrganizationalContact criteria = createCriteria();
+        OrganizationalContact[] results = client.query(criteria, limitOffset);
+        ClientUtils.print(results);
+    }
+
+    @GridTestMethod
     private static void searchOrgContactsByTypeCode(OrganizationalContactClient client) throws RemoteException {
         System.out.println("Querying for typeCode = Responsible Party");
         OrganizationalContact criteria = createTypeCodeCriteria("Responsible Party");
@@ -126,22 +136,46 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         criteria = createTypeCodeCriteria("pending", "IRB");
         results = client.search(criteria);
         ClientUtils.print(results);
+
     }
 
-    private static void queryOrgContact(OrganizationalContactClient client) throws RemoteException {
-        LimitOffset limitOffset = new LimitOffset();
-        limitOffset.setLimit(1);
-        limitOffset.setOffset(0);
-        OrganizationalContact criteria = createCriteria();
-        OrganizationalContact[] results = client.query(criteria, limitOffset);
+    @GridTestMethod
+    private static void queryOrgContactsByTypeCode(OrganizationalContactClient client) throws RemoteException {
+        System.out.println("Querying for typeCode = Responsible Party");
+        LimitOffset limit = new LimitOffset();
+        limit.setLimit(1);
+        limit.setOffset(0);
+
+        OrganizationalContact criteria = createTypeCodeCriteria("Responsible Party");
+        OrganizationalContact[] results = client.query(criteria, limit);
+        ClientUtils.print(results);
+
+        System.out.println("Querying for typeCode = IRB");
+        criteria = createTypeCodeCriteria("IRB");
+        results = client.query(criteria, limit);
+        ClientUtils.print(results);
+
+        System.out.println("Querying for typeCode = Site");
+        criteria = createTypeCodeCriteria("Site");
+        results = client.query(criteria, limit);
+        ClientUtils.print(results);
+
+        System.out.println("Querying for status=Pending, typeCode = Site");
+        criteria = createTypeCodeCriteria("pending", "Site");
+        results = client.query(criteria, limit);
+        ClientUtils.print(results);
+
+        System.out.println("Querying for status=Pending, typeCode = IRB");
+        criteria = createTypeCodeCriteria("pending", "IRB");
+        results = client.query(criteria, limit);
         ClientUtils.print(results);
     }
-
-    private static OrganizationalContact createCriteria() {
+    
+    private static OrganizationalContact createTypeCodeCriteria(String typeCodeValue) {
         OrganizationalContact criteria = new OrganizationalContact();
-        CD statusCode = new CD();
-        statusCode.setCode("pending");
-        criteria.setStatus(statusCode);
+        CD typeCode = new CD();
+        typeCode.setCode(typeCodeValue);
+        criteria.setTypeCode(typeCode);
         return criteria;
     }
 
@@ -157,24 +191,25 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         return criteria;
     }
 
-    private static OrganizationalContact createTypeCodeCriteria(String typeCodeValue) {
+    private static OrganizationalContact createCriteria() {
         OrganizationalContact criteria = new OrganizationalContact();
-        CD typeCode = new CD();
-        typeCode.setCode(typeCodeValue);
-        criteria.setTypeCode(typeCode);
+        CD statusCode = new CD();
+        statusCode.setCode("pending");
+        criteria.setStatus(statusCode);
         return criteria;
     }
 
+    @GridTestMethod
     private static void getOrganizationalContactsByPlayerIds(OrganizationalContactClient client) {
         Id id1 = new Id();
         id1.setRoot(PersonClient.PERSON_ROOT);
         id1.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
-        id1.setExtension("501");
+        id1.setExtension(helper.getArgument("-playerId", "1"));
 
         Id id2 = new Id();
         id2.setRoot(PersonClient.PERSON_ROOT);
         id2.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
-        id2.setExtension("2153");
+        id2.setExtension(helper.getArgument("-playerId2", "2"));
 
         try {
             OrganizationalContact[] results = client.getByPlayerIds(new Id[] {id1, id2});

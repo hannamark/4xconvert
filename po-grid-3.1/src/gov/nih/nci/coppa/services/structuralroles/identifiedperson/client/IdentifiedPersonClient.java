@@ -5,9 +5,13 @@ import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.IdentifiedPerson;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.services.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
+import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.structuralroles.identifiedperson.common.IdentifiedPersonI;
+import gov.nih.nci.iso21090.Constants;
 
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
 import org.apache.axis.client.Stub;
@@ -29,6 +33,9 @@ import org.iso._21090.CD;
  */
 public class IdentifiedPersonClient extends IdentifiedPersonClientBase implements IdentifiedPersonI {
 
+    private static ClientParameterHelper<IdentifiedPersonClient> helper = 
+        new ClientParameterHelper<IdentifiedPersonClient>(IdentifiedPersonClient.class);
+
     /**
      * The identifier name for for Identified person.
      */
@@ -37,81 +44,72 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     /**
      * The ii root value for Identified person.
      */
-    public static final String IDENTIFIED_PERSON_ROOT = "2.16.840.1.113883.3.26.4.4.6";
+    public static final String IDENTIFIED_PERSON_ROOT = Constants.NCI_OID + ".4.7";
 
     public IdentifiedPersonClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
     }
 
     public IdentifiedPersonClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-           super(url,proxy);
+        super(url,proxy);
     }
 
     public IdentifiedPersonClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
-           this(epr,null);
+        this(epr,null);
     }
 
     public IdentifiedPersonClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-           super(epr,proxy);
-    }
-
-    public static void usage(){
-        System.out.println(IdentifiedPersonClient.class.getName() + " -url <service url>");
+        super(epr,proxy);
     }
 
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
         try{
-        if(!(args.length < 2)){
-            if(args[0].equals("-url")){
-              IdentifiedPersonClient client = new IdentifiedPersonClient(args[1]);
-              // place client calls here if you want to use this main as a
-              // test....
-              getIdentifiedPerson(client);
-              searchIdentifiedPerson(client);
-              queryIdentifiedPerson(client);
-              getIdentifiedPersonsByPlayerIds(client);
-            } else {
-                usage();
-                System.exit(1);
+
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};          
+            helper.setLocalArgs(localArgs);
+            helper.setupParams(args);
+            
+            IdentifiedPersonClient client = new IdentifiedPersonClient(helper.getArgument("-url"));
+
+            for (Method method : helper.getRunMethods()) {
+                System.out.println("Running " + method.getName());
+                method.invoke(null, client);
             }
-        } else {
-            usage();
-            System.exit(1);
-        }
+
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
     }
 
+    @GridTestMethod
     private static void getIdentifiedPerson(IdentifiedPersonClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(IDENTIFIED_PERSON_ROOT);
         id.setIdentifierName(IDENTIFIED_PERSON_IDENTIFIER_NAME);
-        id.setExtension("622");
+        id.setExtension(helper.getArgument("-getId", "1"));
         IdentifiedPerson result = client.getById(id);
         ClientUtils.print(result);
     }
 
+    @GridTestMethod
     private static void searchIdentifiedPerson(IdentifiedPersonClient client) throws RemoteException {
         IdentifiedPerson criteria = createCriteria();
         IdentifiedPerson[] results = client.search(criteria);
         ClientUtils.print(results);
     }
-    
+
+    @GridTestMethod
     private static void queryIdentifiedPerson(IdentifiedPersonClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
         limitOffset.setLimit(1);
-        limitOffset.setOffset(0);        
+        limitOffset.setOffset(0);
         IdentifiedPerson criteria = createCriteria();
         IdentifiedPerson[] results = client.query(criteria, limitOffset);
         ClientUtils.print(results);
     }
 
-    /**
-     * @return
-     */
     private static IdentifiedPerson createCriteria() {
         IdentifiedPerson criteria = new IdentifiedPerson();
         CD statusCode = new CD();
@@ -119,18 +117,19 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         criteria.setStatus(statusCode);
         return criteria;
     }
-    
+
+    @GridTestMethod
     private static void getIdentifiedPersonsByPlayerIds(IdentifiedPersonClient client) {
         Id id1 = new Id();
         id1.setRoot(PersonClient.PERSON_ROOT);
         id1.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
-        id1.setExtension("501");
-        
+        id1.setExtension(helper.getArgument("-playerId", "1"));
+
         Id id2 = new Id();
         id2.setRoot(PersonClient.PERSON_ROOT);
         id2.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
-        id2.setExtension("2153");
-        
+        id2.setExtension(helper.getArgument("-playerId2", "2"));
+
         try {
             IdentifiedPerson[] results = client.getByPlayerIds(new Id[] {id1, id2});
             ClientUtils.print(results);

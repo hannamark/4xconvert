@@ -5,8 +5,12 @@ import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Person;
 import gov.nih.nci.coppa.po.faults.NullifiedEntityFault;
 import gov.nih.nci.coppa.services.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.person.common.PersonI;
+import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
+import gov.nih.nci.iso21090.Constants;
 
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
 import org.apache.axis.client.Stub;
@@ -30,6 +34,10 @@ import org.iso._21090.EntityNamePartType;
  * @created by Introduce Toolkit version 1.2
  */
 public class PersonClient extends PersonClientBase implements PersonI {
+
+    private static ClientParameterHelper<PersonClient> helper = 
+        new ClientParameterHelper<PersonClient>(PersonClient.class);
+
     /**
      * The identifier name for person ii's.
      */
@@ -38,64 +46,52 @@ public class PersonClient extends PersonClientBase implements PersonI {
     /**
      * The ii root value for people.
      */
-    public static final String PERSON_ROOT = "2.16.840.1.113883.3.26.4.1";
+    public static final String PERSON_ROOT = Constants.NCI_OID + ".1";
 
     public PersonClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
     }
 
     public PersonClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-           super(url,proxy);
+        super(url,proxy);
     }
 
     public PersonClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
-           this(epr,null);
+        this(epr,null);
     }
 
     public PersonClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-           super(epr,proxy);
-    }
-
-    public static void usage(){
-        System.out.println(PersonClient.class.getName() + " -url <service url>");
+        super(epr,proxy);
     }
 
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
         try{
-        if(!(args.length < 2)){
-            if(args[0].equals("-url")){
-              PersonClient client = new PersonClient(args[1]);
-              // place client calls here if you want to use this main as a
-              // test....
+            String[] localArgs = new String[] {"-getId"};          
+            helper.setLocalArgs(localArgs);
+            helper.setupParams(args);
+            
+            PersonClient client = new PersonClient(helper.getArgument("-url"));
 
-              System.out.println("Getting Person");
-              getPerson(client);
-              System.out.println("Getting Nullified Person");
-              getNullifiedPerson(client);
-              System.out.println("Searching for Persons");
-              searchPersons(client);
-              System.out.println("NEW!! Searching for Persons");
-              queryPersons(client);
-            } else {
-                usage();
-                System.exit(1);
+            for (Method method : helper.getRunMethods()) {
+                System.out.println("Running " + method.getName());
+                method.invoke(null, client);
             }
-        } else {
-            usage();
-            System.exit(1);
-        }
+
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
     }
 
+    @GridTestMethod
     private static void searchPersons(PersonClient client) throws RemoteException {
         Person criteria = createCriteria();
         gov.nih.nci.coppa.po.Person[] results = client.search(criteria);
         ClientUtils.print(results);
     }
+
+    @GridTestMethod
     private static void queryPersons(PersonClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
         limitOffset.setLimit(2);
@@ -119,12 +115,14 @@ public class PersonClient extends PersonClientBase implements PersonI {
         return criteria;
     }
 
+    @GridTestMethod
     private static void getPerson(PersonClient client) throws RemoteException {
         Id id = createII();
         Person result = client.getById(id);
         ClientUtils.print(result);
     }
 
+    @GridTestMethod
     private static void getNullifiedPerson(PersonClient client) throws RemoteException {
         try {
             Id id = createII();
@@ -133,8 +131,6 @@ public class PersonClient extends PersonClientBase implements PersonI {
         } catch (NullifiedEntityFault e) {
             System.out.println("NullifiedEntityFault");
             e.printStackTrace(System.out);
-        } catch (RemoteException e) {
-            throw e;
         }
     }
 
@@ -142,7 +138,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
         Id id = new Id();
         id.setRoot(PERSON_ROOT);
         id.setIdentifierName(PERSON_IDENTIFIER_NAME);
-        id.setExtension("501");
+        id.setExtension(helper.getArgument("-getId", "1"));
         return id;
     }
 

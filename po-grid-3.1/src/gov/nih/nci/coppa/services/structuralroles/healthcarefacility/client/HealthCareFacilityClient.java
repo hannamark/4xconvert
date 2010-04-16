@@ -5,9 +5,13 @@ import gov.nih.nci.coppa.po.HealthCareFacility;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.services.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient;
+import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.structuralroles.healthcarefacility.common.HealthCareFacilityI;
+import gov.nih.nci.iso21090.Constants;
 
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
 import org.apache.axis.client.Stub;
@@ -28,6 +32,10 @@ import org.iso._21090.CD;
  * @created by Introduce Toolkit version 1.2
  */
 public class HealthCareFacilityClient extends HealthCareFacilityClientBase implements HealthCareFacilityI {	
+
+    private static ClientParameterHelper<HealthCareFacilityClient> helper = 
+        new ClientParameterHelper<HealthCareFacilityClient>(HealthCareFacilityClient.class);
+
     /**
      * The identifier name for healthCare Facility.
      */
@@ -36,66 +44,56 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     /**
      * The ii root value for healthCare Facility.
      */
-    public static final String HEALTH_CARE_FACILITY_ROOT = "2.16.840.1.113883.3.26.4.4.3";
-    
-	public HealthCareFacilityClient(String url) throws MalformedURIException, RemoteException {
-		this(url,null);	
-	}
+    public static final String HEALTH_CARE_FACILITY_ROOT = Constants.NCI_OID + ".4.3";
 
-	public HealthCareFacilityClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-	   	super(url,proxy);
-	}
-	
-	public HealthCareFacilityClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
-	   	this(epr,null);
-	}
-	
-	public HealthCareFacilityClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-	   	super(epr,proxy);
-	}
+    public HealthCareFacilityClient(String url) throws MalformedURIException, RemoteException {
+        this(url,null);	
+    }
 
-	public static void usage(){
-		System.out.println(HealthCareFacilityClient.class.getName() + " -url <service url>");
-	}
-	
-	public static void main(String [] args){
-	    System.out.println("Running the Grid Service Client");
-		try{
-		if(!(args.length < 2)){
-			if(args[0].equals("-url")){
-			  HealthCareFacilityClient client = new HealthCareFacilityClient(args[1]);
-			  // place client calls here if you want to use this main as a
-			  // test....
-              getHealthCareFacility(client);
-              searchHealthCareFacility(client);
-              queryHealthCareFacility(client);
-              System.out.println("-----getbyplayerids---");
-              getHealthCareFacilitysByPlayerIds(client);
-			} else {
-				usage();
-				System.exit(1);
-			}
-		} else {
-			usage();
-			System.exit(1);
-		}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-	
-	private static void getHealthCareFacilitysByPlayerIds(HealthCareFacilityClient client) {
+    public HealthCareFacilityClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
+        super(url,proxy);
+    }
+
+    public HealthCareFacilityClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
+        this(epr,null);
+    }
+
+    public HealthCareFacilityClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
+        super(epr,proxy);
+    }
+
+    public static void main(String [] args){
+        System.out.println("Running the Grid Service Client");
+        try{
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};          
+            helper.setLocalArgs(localArgs);
+            helper.setupParams(args);
+
+            HealthCareFacilityClient client = new HealthCareFacilityClient(helper.getArgument("-url"));
+
+            for (Method method : helper.getRunMethods()) {
+                System.out.println("Running " + method.getName());
+                method.invoke(null, client);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    @GridTestMethod
+    private static void getHealthCareFacilitysByPlayerIds(HealthCareFacilityClient client) {
         Id id1 = new Id();
         id1.setRoot(OrganizationClient.ORG_ROOT);
         id1.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
-        id1.setExtension("1847");
-        
+        id1.setExtension(helper.getArgument("-playerId", "1"));
+
         Id id2 = new Id();
         id2.setRoot(OrganizationClient.ORG_ROOT);
         id2.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
-        id2.setExtension("2119");
-        
+        id2.setExtension(helper.getArgument("-playerId2", "2"));
+
         try {
             HealthCareFacility[] results = client.getByPlayerIds(new Id[] {id1, id2});
             ClientUtils.print(results);
@@ -105,21 +103,26 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
             e.printStackTrace();
         }
     }
-	
-    private static void getHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
+
+    @GridTestMethod
+    private static void getHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {	    
         Id id = new Id();
         id.setRoot(HEALTH_CARE_FACILITY_ROOT);
         id.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
-        id.setExtension("592");
+        id.setExtension(helper.getArgument("-getId", "1"));
+
         HealthCareFacility result = client.getById(id);
         ClientUtils.print(result);
     }
 
+    @GridTestMethod
     private static void searchHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
         HealthCareFacility criteria = createCriteria();
         HealthCareFacility[] results = client.search(criteria);
         ClientUtils.print(results);
     }
+
+    @GridTestMethod
     private static void queryHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
         limitOffset.setLimit(1);

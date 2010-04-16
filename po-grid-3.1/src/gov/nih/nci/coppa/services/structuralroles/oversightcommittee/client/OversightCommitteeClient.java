@@ -5,9 +5,13 @@ import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.OversightCommittee;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.services.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient;
+import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.structuralroles.oversightcommittee.common.OversightCommitteeI;
+import gov.nih.nci.iso21090.Constants;
 
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
 import org.apache.axis.client.Stub;
@@ -28,8 +32,11 @@ import org.iso._21090.CD;
  * @created by Introduce Toolkit version 1.2
  */
 public class OversightCommitteeClient extends OversightCommitteeClientBase implements OversightCommitteeI {	
-	
-	/**
+
+    private static ClientParameterHelper<OversightCommitteeClient> helper = 
+        new ClientParameterHelper<OversightCommitteeClient>(OversightCommitteeClient.class);
+
+    /**
      * The identifier name for for OversightCommittee.
      */
     public static final String OVERSIGHT_COMMITTEE_IDENTIFIER_NAME  = "NCI oversight committee identifier";
@@ -37,94 +44,84 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     /**
      * The ii root value for OversightCommittee.
      */
-    public static final String OVERSIGHT_COMMITTEE_ROOT = "2.16.840.1.113883.3.26.4.4.4";
+    public static final String OVERSIGHT_COMMITTEE_ROOT = Constants.NCI_OID + ".4.4";
 
-	public OversightCommitteeClient(String url) throws MalformedURIException, RemoteException {
-		this(url,null);	
-	}
+    public OversightCommitteeClient(String url) throws MalformedURIException, RemoteException {
+        this(url,null);	
+    }
 
-	public OversightCommitteeClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-	   	super(url,proxy);
-	}
-	
-	public OversightCommitteeClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
-	   	this(epr,null);
-	}
-	
-	public OversightCommitteeClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
-	   	super(epr,proxy);
-	}
+    public OversightCommitteeClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
+        super(url,proxy);
+    }
 
-	public static void usage(){
-		System.out.println(OversightCommitteeClient.class.getName() + " -url <service url>");
-	}
-	
-	public static void main(String [] args){
-	    System.out.println("Running the Grid Service Client");
-		try{
-		if(!(args.length < 2)){
-			if(args[0].equals("-url")){
-			  OversightCommitteeClient client = new OversightCommitteeClient(args[1]);
-			  // place client calls here if you want to use this main as a
-			  // test....
-			  getOversightCommittee(client);
-			  searchOversightCommittee(client);
-			  queryOversightCommittee(client);
-			  System.out.println("-----getbyplayerids---");
-			  getOversightCommitteesByPlayerIds(client);
-			} else {
-				usage();
-				System.exit(1);
-			}
-		} else {
-			usage();
-			System.exit(1);
-		}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
+    public OversightCommitteeClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
+        this(epr,null);
+    }
 
-	private static void getOversightCommittee(OversightCommitteeClient client) throws RemoteException {
+    public OversightCommitteeClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
+        super(epr,proxy);
+    }
+
+    public static void main(String [] args){
+        System.out.println("Running the Grid Service Client");
+        try{
+
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};          
+            helper.setLocalArgs(localArgs);
+            helper.setupParams(args);
+            
+            OversightCommitteeClient client = new OversightCommitteeClient(helper.getArgument("-url"));
+
+            for (Method method : helper.getRunMethods()) {
+                System.out.println("Running " + method.getName());
+                method.invoke(null, client);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    @GridTestMethod
+    private static void getOversightCommittee(OversightCommitteeClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(OVERSIGHT_COMMITTEE_ROOT);
         id.setIdentifierName(OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
-        id.setExtension("604");
+        id.setExtension(helper.getArgument("-getId", "1"));
         OversightCommittee result = client.getById(id);
         ClientUtils.print(result);
     }
-	
-	private static void getOversightCommitteesByPlayerIds(OversightCommitteeClient client) {
-	      Id id1 = new Id();
-	      id1.setRoot(OrganizationClient.ORG_ROOT);
-	      id1.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
-	      id1.setExtension("1847");
-	      
-	      Id id2 = new Id();
-	      id2.setRoot(OrganizationClient.ORG_ROOT);
-	      id2.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
-	      id2.setExtension("2119");
-	      
-	      try {
-	          OversightCommittee[] results = client.getByPlayerIds(new Id[] {id1, id2});
-	          ClientUtils.print(results);
-	      } catch (NullifiedRoleFault e) {
-	          e.printStackTrace();
-	      } catch (RemoteException e) {
-	          e.printStackTrace();
-	      }
-	  }
 
+    @GridTestMethod
+    private static void getOversightCommitteesByPlayerIds(OversightCommitteeClient client) {
+        Id id1 = new Id();
+        id1.setRoot(OrganizationClient.ORG_ROOT);
+        id1.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
+        id1.setExtension(helper.getArgument("-playerId", "1"));
+
+        Id id2 = new Id();
+        id2.setRoot(OrganizationClient.ORG_ROOT);
+        id2.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
+        id2.setExtension(helper.getArgument("-playerId2", "2"));
+
+        try {
+            OversightCommittee[] results = client.getByPlayerIds(new Id[] {id1, id2});
+            ClientUtils.print(results);
+        } catch (NullifiedRoleFault e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @GridTestMethod
     private static void searchOversightCommittee(OversightCommitteeClient client) throws RemoteException {
         OversightCommittee criteria = createCriteria();
         OversightCommittee[] results = client.search(criteria);
         ClientUtils.print(results);
     }
 
-    /**
-     * @return
-     */
     private static OversightCommittee createCriteria() {
         OversightCommittee criteria = new OversightCommittee();
         CD statusCode = new CD();
@@ -132,7 +129,8 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
         criteria.setStatus(statusCode);
         return criteria;
     }
-    
+
+    @GridTestMethod
     private static void queryOversightCommittee(OversightCommitteeClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
         limitOffset.setLimit(1);

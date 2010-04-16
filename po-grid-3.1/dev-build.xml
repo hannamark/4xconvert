@@ -453,6 +453,8 @@
 
     <target name="all-full" depends="compileTests, jars-quick, -test" description="BUILD ALL QUICKLY" />
 
+    <property name="args" value=""/>
+    
     <macrodef name="run-client">
         <attribute name="class" default="gov.nih.nci.coppa.services.client.CoreServicesClient" />
         <attribute name="serviceEndpointName" default="CoreServices" />
@@ -471,51 +473,52 @@
                 <jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
                 <arg value="-url" />
                 <arg value="${run-client.service.url}" />
+                <arg line="${args}"/>
             </java>
         </sequential>
     </macrodef>
 
-    <target name="runPersonClient" depends="checkGlobus, defineClasspaths" description="Run the sample Person Client">
+    <target name="runPersonClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample Person Client">
         <run-client serviceEndpointName="Person" class="gov.nih.nci.coppa.services.entities.person.client.PersonClient" debug-suspend="n" />
     </target>
 
-    <target name="runOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample Organization Client">
+    <target name="runOrganizationClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample Organization Client">
         <run-client serviceEndpointName="Organization" class="gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient" />
     </target>
 
-    <target name="runHealthCareFacilityClient" depends="checkGlobus, defineClasspaths" description="Run the sample HealthCareFacility Client">
+    <target name="runHealthCareFacilityClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample HealthCareFacility Client">
         <run-client serviceEndpointName="HealthCareFacility" class="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.client.HealthCareFacilityClient" />
     </target>
 
-    <target name="runHealthCareProviderClient" depends="checkGlobus, defineClasspaths" description="Run the sample HealthCareProvider Client">
+    <target name="runHealthCareProviderClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample HealthCareProvider Client">
         <run-client serviceEndpointName="HealthCareProvider" class="gov.nih.nci.coppa.services.structuralroles.healthcareprovider.client.HealthCareProviderClient" />
     </target>
 
-    <target name="runClinicalResearchStaffClient" depends="checkGlobus, defineClasspaths" description="Run the sample ClinicalResearchStaff Client">
+    <target name="runClinicalResearchStaffClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample ClinicalResearchStaff Client">
         <run-client serviceEndpointName="ClinicalResearchStaff" class="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.client.ClinicalResearchStaffClient" />
     </target>
 
-    <target name="runIdentifiedPersonClient" depends="checkGlobus, defineClasspaths" description="Run the sample IdentifiedPerson Client">
+    <target name="runIdentifiedPersonClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample IdentifiedPerson Client">
         <run-client serviceEndpointName="IdentifiedPerson" class="gov.nih.nci.coppa.services.structuralroles.identifiedperson.client.IdentifiedPersonClient" />
     </target>
 
-    <target name="runIdentifiedOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample IdentifiedOrganization Client">
+    <target name="runIdentifiedOrganizationClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample IdentifiedOrganization Client">
         <run-client serviceEndpointName="IdentifiedOrganization" class="gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client.IdentifiedOrganizationClient" />
     </target>
 
-    <target name="runResearchOrganizationClient" depends="checkGlobus, defineClasspaths" description="Run the sample ResearchOrganization Client">
+    <target name="runResearchOrganizationClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample ResearchOrganization Client">
         <run-client serviceEndpointName="ResearchOrganization" class="gov.nih.nci.coppa.services.structuralroles.researchorganization.client.ResearchOrganizationClient" />
     </target>
-    <target name="runOversightCommitteeClient" depends="checkGlobus, defineClasspaths" description="Run the sample OversightCommitteeClient Client">
+    <target name="runOversightCommitteeClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample OversightCommitteeClient Client">
         <run-client serviceEndpointName="OversightCommittee" class="gov.nih.nci.coppa.services.structuralroles.oversightcommittee.client.OversightCommitteeClient" />
     </target>
-    <target name="runOrganizationalContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample OrganizationalContact Client">
+    <target name="runOrganizationalContactClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample OrganizationalContact Client">
         <run-client serviceEndpointName="OrganizationalContact" class="gov.nih.nci.coppa.services.structuralroles.organizationalcontact.client.OrganizationalContactClient" />
     </target>
-    <target name="runPatientClient" depends="checkGlobus, defineClasspaths" description="Run the sample Patient Client">
+    <target name="runPatientClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample Patient Client">
             <run-client serviceEndpointName="Patient" class="gov.nih.nci.coppa.services.structuralroles.patient.client.PatientClient" />
      </target>
-    <target name="runBusinessClient" depends="checkGlobus, defineClasspaths" description="Run the sample Business Client">
+    <target name="runBusinessClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample Business Client">
                 <run-client serviceEndpointName="Business" class="gov.nih.nci.coppa.services.business.business.client.BusinessClient" />
      </target>
 </project>
