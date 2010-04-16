@@ -94,7 +94,6 @@
 	<classpathentry kind="lib" path="lib/castor-1.0.2.jar"/>
 	<classpathentry kind="lib" path="build/lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="build/lib/jdom-1.0.jar"/>
-	<classpathentry kind="lib" path="build/lib/iso-datatypes-1.2.6.jar"/>
 	<classpathentry kind="lib" path="build/lib/iso-datatypes-2.0.jar"/>
 	<classpathentry kind="lib" path="build/lib/iso-datatypes-extensions-2.0.jar"/>
 	<classpathentry kind="lib" path="build/lib/CoreServices-stubs.jar"/>

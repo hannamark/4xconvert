@@ -99,8 +99,6 @@ import java.rmi.RemoteException;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 import org.iso._21090.CD;
 import org.iso._21090.II;
@@ -168,15 +166,17 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     }
     
     @GridTestMethod
-    private static void testUpdate(ResearchOrganizationClient client) throws RemoteException {        
+    private static void testUpdate(ResearchOrganizationClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(RESEARCH_ORG_ROOT);
         id.setIdentifierName(RESEARCH_ORG_IDENTIFIER_NAME);
         id.setExtension(helper.getArgument("-getId", "1"));
         ResearchOrganization result = client.getById(id);
-        
-        result.getFundingMechanism().setCode("U01");
+        ClientUtils.print(result);
+        result.getTypeCode().setCode("COP");
+        result.getFundingMechanism().setCode("U10");
         client.update(result);
+        ClientUtils.print(result);
     }
     
     @GridTestMethod
@@ -189,13 +189,13 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
         ClientUtils.print(result);
         if (result != null && result.getIdentifier() != null && result.getIdentifier().getItem() != null) {
             for (II ii : result.getIdentifier().getItem()) {
-                System.out.println(ToStringBuilder.reflectionToString(ii, ToStringStyle.MULTI_LINE_STYLE));
+                ClientUtils.print(ii);
             }
         }
     }
 
     @GridTestMethod
-    private static void getResearchOrgsByPlayerIds(ResearchOrganizationClient client) {           
+    private static void getResearchOrgsByPlayerIds(ResearchOrganizationClient client) {
         Id id1 = new Id();
         id1.setRoot(OrganizationClient.ORG_ROOT);
         id1.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
