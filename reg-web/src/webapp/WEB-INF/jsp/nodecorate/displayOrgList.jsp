@@ -5,6 +5,13 @@
 <s:set name="orgs" value="orgs" scope="request"/>
 <display:table class="data" summary="This table contains Organization search results. Please use column headers to sort results"  sort="list" pagesize="10" uid="row" 
 	name="orgs" export="false" requestURI="popupdisplayOrgListDisplayTag.action">
+	<display:setProperty name="basic.empty.showtable" value="true" />
+	<display:setProperty name="paging.banner.no_items_found">
+            <div class="pagingtop"><span class="pagebanner">No Organizations found. Please verify search criteria and/or broaden your search by removing one/more search criteria.</span>
+    </display:setProperty>
+    <display:setProperty name="paging.banner.onepage">
+        <span class="pagelinks"></span></div>
+    </display:setProperty>
 	<display:column title="PO-ID" property="id"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Organization Name" property="name"  sortable="true"  headerClass="sortable"  headerScope="col"/>	
 	<display:column title="City" property="city"  sortable="true"  headerClass="sortable"  headerScope="col"/> 
