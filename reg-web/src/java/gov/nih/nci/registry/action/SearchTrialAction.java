@@ -104,7 +104,6 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
-import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -121,8 +120,6 @@ import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
-import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -694,16 +691,12 @@ public class SearchTrialAction extends ActionSupport {
             spQueryDTO.setLeadOrganizationId(IiConverter.convertToLong(
                 studyProtocolStageDTO.getLeadOrganizationIdentifier()));
             if (PAUtil.isIiNotNull(studyProtocolStageDTO.getLeadOrganizationIdentifier())) {
-                OrganizationDTO orgDto = paServiceUtil.getPOOrganizationEntity(
-                        studyProtocolStageDTO.getLeadOrganizationIdentifier());
-                spQueryDTO.setLeadOrganizationName(EnOnConverter.convertEnOnToString(
-                        orgDto.getName()));
+                spQueryDTO.setLeadOrganizationName(trialUtil.getOrgName(
+                      studyProtocolStageDTO.getLeadOrganizationIdentifier()));
             }
             spQueryDTO.setPiId(IiConverter.convertToLong(studyProtocolStageDTO.getPiIdentifier()));
             if (PAUtil.isIiNotNull(studyProtocolStageDTO.getPiIdentifier())) {
-                PersonDTO perDto = paServiceUtil.getPoPersonEntity(
-                        studyProtocolStageDTO.getPiIdentifier());
-                spQueryDTO.setPiFullName(PAUtil.convertToPaPersonDTO(perDto).getFullName());
+                spQueryDTO.setPiFullName(trialUtil.getPersonName(studyProtocolStageDTO.getPiIdentifier()));
             }
             spQueryDTO.setStudyStatusCode(StudyStatusCode.getByCode(CdConverter.convertCdToString(
                 studyProtocolStageDTO.getTrialStatusCode())));

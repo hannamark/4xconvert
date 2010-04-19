@@ -70,6 +70,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -81,6 +82,8 @@ import org.apache.struts2.ServletActionContext;
     "PMD.ExcessiveClassLength", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class TrialUtil {
     
+    private static final String NULLIFIED_PERSON = "Nullified Person";
+    private static final String NULLIFIED_ORGANIZATION = "Nullified Organization";
     /** The Constant SPONSOR. */
     private static final String SPONSOR = "sponsor";
     /** The Constant MAXF. */
@@ -1480,6 +1483,9 @@ public class TrialUtil {
         trialDto.setLeadOrganizationIdentifier(IiConverter.convertToString(spStageDTO.getLeadOrganizationIdentifier()));
         if (PAUtil.isIiNotNull(spStageDTO.getLeadOrganizationIdentifier())) {
             trialDto.setLeadOrganizationName(getOrgName(spStageDTO.getLeadOrganizationIdentifier()));
+            if (trialDto.getLeadOrganizationName().equalsIgnoreCase(NULLIFIED_ORGANIZATION)) {
+                trialDto.setLeadOrganizationIdentifier(null);
+            }
         }
         return trialDto;
     }
@@ -1489,18 +1495,27 @@ public class TrialUtil {
         trialDto.setSiteOrganizationIdentifier(IiConverter.convertToString(
                 spStageDTO.getSubmitterOrganizationIdentifier()));
         if (PAUtil.isIiNotNull(spStageDTO.getSubmitterOrganizationIdentifier())) {
-           trialDto.setSiteOrganizationName(getOrgName(spStageDTO.getSubmitterOrganizationIdentifier())); 
+           trialDto.setSiteOrganizationName(getOrgName(spStageDTO.getSubmitterOrganizationIdentifier()));
+           if (trialDto.getSiteOrganizationName().equalsIgnoreCase(NULLIFIED_ORGANIZATION)) {
+               trialDto.setSiteOrganizationIdentifier(null);
+           }
         }
         trialDto.setLocalSiteIdentifier(IiConverter.convertToString(spStageDTO.getSiteProtocolIdentifier()));
         trialDto.setSitePiIdentifier(IiConverter.convertToString(spStageDTO.getSitePiIdentifier()));
         if (PAUtil.isIiNotNull(spStageDTO.getSitePiIdentifier())) {
             trialDto.setSitePiName(getPersonName(spStageDTO.getSitePiIdentifier()));
+            if (trialDto.getSitePiName().equalsIgnoreCase(NULLIFIED_PERSON)) {
+                trialDto.setSitePiIdentifier(null);
+            }
         }
         trialDto.setSiteProgramCodeText(StConverter.convertToString(spStageDTO.getSiteProgramCodeText()));
         trialDto.setSummaryFourOrgIdentifier(IiConverter.convertToString(
                 spStageDTO.getSiteSummaryFourOrgIdentifier()));
         if (PAUtil.isIiNotNull(spStageDTO.getSiteSummaryFourOrgIdentifier())) {
             trialDto.setSummaryFourOrgName(getOrgName(spStageDTO.getSiteSummaryFourOrgIdentifier()));
+            if (trialDto.getSummaryFourOrgName().equalsIgnoreCase(NULLIFIED_ORGANIZATION)) {
+                trialDto.setSummaryFourOrgIdentifier(null);
+            }
         }
         trialDto.setSummaryFourFundingCategoryCode(CdConverter.convertCdToString(
                    spStageDTO.getSiteSummaryFourFundingTypeCode()));
@@ -1581,12 +1596,21 @@ public class TrialUtil {
         }
         if (PAUtil.isIiNotNull(spStageDTO.getSummaryFourOrgIdentifier())) {
             trialDto.setSummaryFourOrgName(getOrgName(spStageDTO.getSummaryFourOrgIdentifier()));
+            if (trialDto.getSummaryFourOrgName().equalsIgnoreCase(NULLIFIED_ORGANIZATION)) {
+                trialDto.setSummaryFourOrgIdentifier(null);
+            }
         }
         if (PAUtil.isIiNotNull(spStageDTO.getPiIdentifier())) {
             trialDto.setPiName(getPersonName(spStageDTO.getPiIdentifier()));
+            if (trialDto.getPiName().equalsIgnoreCase(NULLIFIED_PERSON)) {
+                trialDto.setPiIdentifier(null);
+            }
         }
         if (PAUtil.isIiNotNull(spStageDTO.getSponsorIdentifier())) {
             trialDto.setSponsorName(getOrgName(spStageDTO.getSponsorIdentifier()));
+            if (trialDto.getSponsorName().equalsIgnoreCase(NULLIFIED_ORGANIZATION)) {
+               trialDto.setSponsorIdentifier(null);
+            }
         }
         if (PAUtil.isIiNotNull(spStageDTO.getResponsibleIdentifier())) {
             PersonDTO perDto = paServiceUtil.getPoPersonEntity(IiConverter.convertToPoPersonIi(
@@ -1596,7 +1620,13 @@ public class TrialUtil {
             } else {
                OrganizationalContactDTO orgContactDTO = (OrganizationalContactDTO) paServiceUtil.getCorrelationByIi(
                  IiConverter.convertToPoOrganizationalContactIi(spStageDTO.getResponsibleIdentifier().getExtension()));
-                  trialDto.setResponsibleGenericContactName(StConverter.convertToString(orgContactDTO.getTitle()));
+                 if (orgContactDTO != null) {
+                     trialDto.setResponsibleGenericContactName(StConverter.convertToString(orgContactDTO.getTitle()));
+                 }
+            }
+            if (StringUtils.isEmpty(trialDto.getResponsibleGenericContactName()) 
+                 && StringUtils.isEmpty(trialDto.getResponsiblePersonName())) {
+                   trialDto.setResponsiblePersonIdentifier(null);
             }
         }
         trialDto.setSummaryFourOrgIdentifier(IiConverter.convertToString(spStageDTO.getSummaryFourOrgIdentifier()));
@@ -1776,15 +1806,31 @@ public class TrialUtil {
        trialDTO.setStudyProtocolId(tempStudyProtocolIi.getExtension());
         return trialDTO;
     }
-    private String getOrgName(Ii entityIi) {
+    /**
+     * 
+     * @param entityIi ii
+     * @return name
+     */
+    public String getOrgName(Ii entityIi) {
         OrganizationDTO orgDto = paServiceUtil.getPOOrganizationEntity(
                 entityIi);
+        if (orgDto == null) {
+            return NULLIFIED_ORGANIZATION;
+        }
         return EnOnConverter.convertEnOnToString(
                 orgDto.getName());
     }
-    private String getPersonName(Ii entityIi) {
+    /**
+     * 
+     * @param entityIi ii
+     * @return name
+     */
+    public String getPersonName(Ii entityIi) {
         PersonDTO perDto = paServiceUtil.getPoPersonEntity(
                 entityIi);
+        if (perDto == null) {
+            return NULLIFIED_PERSON;
+        }
         return PAUtil.convertToPaPersonDTO(perDto).getFullName();
     }
     
