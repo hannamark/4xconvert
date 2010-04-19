@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
- 
+
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd">
-    <preConditions>           
+    <preConditions>
         <or>
-            <dbms type="oracle" />                    
-            <dbms type="mysql" />                    
-            <dbms type="postgresql" />                    
+            <dbms type="oracle" />
+            <dbms type="mysql" />
+            <dbms type="postgresql" />
         </or>
-    </preConditions>                                      
-    <changeSet id="1" author="ssaksa">       
+    </preConditions>
+    <changeSet id="1" author="ssaksa">
         <comment>Need to have at least one changeset to allow tagging to work.</comment>
         <sql>select now()</sql>
     </changeSet>
@@ -59,15 +59,15 @@
     <changeSet id="12" author="Naveen">
         <comment>execute studyRelationship.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/studyRelationship.sql"/>
-    </changeSet>    
+    </changeSet>
     <changeSet id="13" author="Naveen">
         <comment>execute documentType.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/documentType.sql"/>
-    </changeSet>    
+    </changeSet>
     <changeSet id="14" author="Naveen">
         <comment>execute documentTypeCode.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/documentTypeCode.sql"/>
-    </changeSet>   
+    </changeSet>
      <changeSet id="15" author="Anupama">
             <comment>execute studyMilestoneUpdate.sql</comment>
             <sqlFile path="@db-upgrade.run.dir@/studyMilestoneUpdate.sql"/>
@@ -323,11 +323,11 @@
     <changeSet id="79" author="Naveen">
         <comment>execute accrual_dev_23941_7.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/pa_defect_24500_1.sql"/>
-    </changeSet>  
+    </changeSet>
     <changeSet id="80" author="Anu">
         <comment>execute accrual_dev_24170.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_24170.sql"/>
-    </changeSet>   
+    </changeSet>
     <changeSet id="81" author="Kalpana">
         <comment>execute accrual_dev_23941_8.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_8.sql"/>
@@ -387,5 +387,11 @@
     <changeSet id="95" author="Kalpana">
     	<comment>execute PO-1695.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1695.sql"/>
+    </changeSet>
+    <changeSet id="PO-1687" author="kkanchinadam">
+       <comment>PO-1687-Upgrade PA to CSM 4.2</comment>
+       <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1687_create_table_csmFilterClause.sql"/>
+       <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1687_migration_to_4.1.sql"/>
+       <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1687_migration_to_4.2.sql"/>
     </changeSet>
 </databaseChangeLog>

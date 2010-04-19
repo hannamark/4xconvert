@@ -41,7 +41,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jericho"                name="html"                    rev="2.4"             conf="compile->master"/>
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="compile->master"/>
     <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.2.3"           conf="compile->default"/>
-    <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="compile->master"/>
+    <dependency org="ncicb"                  name="security"                rev="4.2"           conf="compile->master"/>
     <dependency org="objectweb"              name="asm"                     rev="3.1"             conf="compile->master"/>
     <dependency org="objectweb"              name="asm-attrs"               rev="1.5.3"           conf="compile->master"/>
     <dependency org="ognl"                   name="ognl"                    rev="2.6.11"           conf="compile->default"/>
@@ -71,7 +71,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="ncicb"                  name="iso-datatypes"           rev="2.0.0-alpha1"    conf="container->master"/>
     <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.4-SNAPSHOT"  conf="container->master"/>
     <dependency org="ncicb"                  name="po-services-client"      rev="3.2.0-SNAPSHOT"    conf="container->master"/>
-    <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="container->master"/>
+    <dependency org="ncicb"                  name="security"                rev="4.2"           conf="container->master"/>
     <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="container->master"/>
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="container->master"/>
 
@@ -82,7 +82,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="dom4j"                  name="dom4j"                   rev="1.6.1"           conf="test->master"/>
     <dependency org="hsqldb"                 name="hsqldb"                  rev="1.8.0.7"         conf="test->master"/>
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="test->master"/>
-    <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="test->master"/>
+    <dependency org="ncicb"                  name="security"                rev="4.2"           conf="test->master"/>
     <dependency org="ognl"                   name="ognl"                    rev="2.6.11"           conf="test->default"/>
     <dependency org="opensymphony"           name="xwork"                   rev="2.0.7"           conf="test->default"/>
     <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="test->master"/>
