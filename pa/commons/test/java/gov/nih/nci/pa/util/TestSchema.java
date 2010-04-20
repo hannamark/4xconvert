@@ -324,6 +324,7 @@ public class TestSchema {
             sp.setIdentifier("NCI-2009-00001");
             sp.setSubmissionNumber(Integer.valueOf(1));
             sp.setProprietaryTrialIndicator(Boolean.FALSE);
+            sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
             addUpdObject(sp);
             sp.setId(sp.getId());
             studyProtocolIds.add(sp.getId());

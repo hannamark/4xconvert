@@ -5,8 +5,10 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -401,15 +403,16 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         studySiteDto = PAUtil.getFirstObj(paServiceUtils.getStudySite(studySiteDto, true));
         leadOrgDTO.setIdentifier(IiConverter.convertToIi(cUtils.getPAOrganizationByIi(
                 studySiteDto.getResearchOrganizationIi()).getIdentifier()));
-
+        //updated only if the ctGovXmlRequired is true 
         OrganizationDTO sponsorOrgDTO = new OrganizationDTO();
-        studySiteDto = new StudySiteDTO();
-        studySiteDto.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
-        studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-        studySiteDto = PAUtil.getFirstObj(paServiceUtils.getStudySite(studySiteDto, true));
-        sponsorOrgDTO.setIdentifier(IiConverter.convertToIi(cUtils.getPAOrganizationByIi(
+        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+          studySiteDto = new StudySiteDTO();
+          studySiteDto.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+          studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+          studySiteDto = PAUtil.getFirstObj(paServiceUtils.getStudySite(studySiteDto, true));
+          sponsorOrgDTO.setIdentifier(IiConverter.convertToIi(cUtils.getPAOrganizationByIi(
                 studySiteDto.getResearchOrganizationIi()).getIdentifier()));
-
+        }
         PersonDTO principalInvestigatorDTO = new PersonDTO();
         StudyContactDTO studyContactDto = PAUtil.getFirstObj(paServiceUtils.getStudyContact(
                 studyProtocolDTO.getIdentifier(), StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true));
@@ -836,25 +839,28 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         updateParticipatingSites(participatingSites);
         paServiceUtils.createOrUpdate(pgCdUpdatedList, IiConverter.convertToStudySiteIi(null) , studyProtocolIi);
     }
-    if (studyRegAuthDTO != null) {
-        List<StudyRegulatoryAuthorityDTO> sraDto = new ArrayList<StudyRegulatoryAuthorityDTO>();
-        sraDto.add(studyRegAuthDTO);
-        paServiceUtils.createOrUpdate(sraDto,
+    //updated only if the ctGovXmlRequired is true 
+    if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+      //regulatory auth update
+      if (studyRegAuthDTO != null) {
+          List<StudyRegulatoryAuthorityDTO> sraDto = new ArrayList<StudyRegulatoryAuthorityDTO>();
+          sraDto.add(studyRegAuthDTO);
+          paServiceUtils.createOrUpdate(sraDto,
                 IiConverter.convertToStudyRegulatoryAuthorityIi(null) , studyProtocolIi);
 
-    }
-
-
-    paServiceUtils.removeResponsibleParty(studyProtocolDTO.getIdentifier());
-    if (AMENDMENT.equalsIgnoreCase(operation)) {
+      }
+      //responsible party and sponsor update
+      paServiceUtils.removeResponsibleParty(studyProtocolDTO.getIdentifier());
+      if (AMENDMENT.equalsIgnoreCase(operation)) {
         paServiceUtils.manageSponsor(studyProtocolIi , sponsorOrganizationDTO);
-    }
-    paServiceUtils.createResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO,
+      }
+      paServiceUtils.createResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO,
             sponsorOrganizationDTO, responsiblePartyContactIi, studyContactDTO, studySiteContactDTO);
-
+    }
+    
    // update summary4
    paServiceUtils.manageSummaryFour(studyProtocolIi , summary4organizationDTO , summary4studyResourcingDTO);
-  if (AMENDMENT.equalsIgnoreCase(operation)) {
+   if (AMENDMENT.equalsIgnoreCase(operation)) {
 
       if (leadOrganizationSiteIdentifierDTO != null) {
           leadOrganizationSiteIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
@@ -937,17 +943,21 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             null, new ArrayList<PlannedActivityDTO>(), regulatoryInfoBean, CREATE);
     List <PoDto> listOfDTOToCreateInPO = new ArrayList<PoDto>();
     listOfDTOToCreateInPO.add(leadOrganizationDTO);
-    listOfDTOToCreateInPO.add(sponsorOrganizationDTO);
+    //created only if the ctGovXmlRequired is true 
+    if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+        listOfDTOToCreateInPO.add(sponsorOrganizationDTO);
+    }    
     listOfDTOToCreateInPO.add(principalInvestigatorDTO);
     listOfDTOToCreateInPO.add(summary4organizationDTO);
     paServiceUtils.createPoObject(listOfDTOToCreateInPO);
 
     Ii studyProtocolIi = null;
     StudyTypeCode studyTypeCode = null;
-    if (!BlConverter.covertToBool(studyProtocolDTO.getFdaRegulatedIndicator())
+    if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()
+        && !BlConverter.covertToBool(studyProtocolDTO.getFdaRegulatedIndicator())
             && (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty())) {
-        studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));
+           studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
+           studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));
 
         // size of ind/ide > 0
     }
@@ -982,9 +992,11 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
 
     paServiceUtils.managePrincipalInvestigator(studyProtocolIi , leadOrganizationDTO ,
             principalInvestigatorDTO , studyTypeCode);
-    createSponsor(studyProtocolIi , sponsorOrganizationDTO);
-    paServiceUtils.createResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO,
+    if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+        createSponsor(studyProtocolIi , sponsorOrganizationDTO);
+        paServiceUtils.createResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO,
             sponsorOrganizationDTO, responsiblePartyContactIi, studyContactDTO, studySiteContactDTO);
+    }    
     //list of study identifiers like NCT,DCP, CTEP
     for (StudySiteDTO studyIdentifierDTO : studyIdentifierDTOs) {
         if (studyIdentifierDTO != null
@@ -995,7 +1007,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             paServiceUtils.manageStudyIdentifiers(studyIdentifierDTO);
         }
     }
-    if (studyRegAuthDTO != null) {
+    if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue() && studyRegAuthDTO != null) {
         List<StudyRegulatoryAuthorityDTO> sraDto = new ArrayList<StudyRegulatoryAuthorityDTO>();
         studyRegAuthDTO.setStudyProtocolIdentifier(studyProtocolIi);
         sraDto.add(studyRegAuthDTO);
@@ -1051,6 +1063,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
 
     createStudyProtocolDTO.setProprietaryTrialIndicator(studyProtocolDTO.getProprietaryTrialIndicator());
     createStudyProtocolDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
+    createStudyProtocolDTO.setCtgovXmlRequiredIndicator(studyProtocolDTO.getCtgovXmlRequiredIndicator());
     return createStudyProtocolDTO;
  }
 
@@ -1105,13 +1118,9 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     sb.append(documentDTOs == null ? "Document DTO's cannot be null , " : "");
     sb.append(leadOrganizationDTO == null ? "Lead Organization DTO cannot be null , " : "");
     sb.append(principalInvestigatorDTO == null ? "Principal Investigator DTO cannot be null , " : "");
-    sb.append(sponsorOrganizationDTO == null ? "Sponsor Organization DTO cannot be null , " : "");
-    if (studyContactDTO != null && studySiteContactDTO != null) {
-        sb.append("Either StudyContactDTO or studySiteContactDTO should be null ,");
-    }
-    if (studyContactDTO == null && studySiteContactDTO == null) {
-        sb.append("Either StudyContactDTO or studySiteContactDTO should not be null ,");
-    }
+    if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+         sb.append(sponsorOrganizationDTO == null ? "Sponsor Organization DTO cannot be null , " : "");         
+    }     
     // validates for attributes
     sb.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null , " : "");
     sb.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
@@ -1131,21 +1140,10 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             ? "Lead Organization Identifier cannot be null , " : "");
     sb.append(PAUtil.isIiNull(principalInvestigatorDTO.getIdentifier())
             ? "Principal Investigator  Identifier cannot be null , " : "");
-    sb.append(PAUtil.isIiNull(sponsorOrganizationDTO.getIdentifier())
-            ? "Sponsor Organization  Identifier cannot be null , " : "");
-    if (studyContactDTO != null) {
-        sb.append(DSetConverter.getFirstElement(studyContactDTO.getTelecomAddresses(), PAConstants.EMAIL) == null
-                ? EMAIL_NOT_NULL : "");
-        sb.append(DSetConverter.getFirstElement(studyContactDTO.getTelecomAddresses(), PAConstants.PHONE) == null
-                ? PHONE_NOT_NULL : "");
-    }
-    if (studySiteContactDTO != null) {
-        sb.append(DSetConverter.getFirstElement(studySiteContactDTO.getTelecomAddresses(),
-                PAConstants.EMAIL) == null ? EMAIL_NOT_NULL : "");
-        sb.append(DSetConverter.getFirstElement(studySiteContactDTO.getTelecomAddresses(),
-                PAConstants.PHONE) == null  ? PHONE_NOT_NULL : "");
-
-    }
+    if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+        sb.append(PAUtil.isIiNull(sponsorOrganizationDTO.getIdentifier())
+              ? "Sponsor Organization  Identifier cannot be null , " : "");
+    }     
     if (overallStatusDTO != null) {
         sb.append(PAUtil.isCdNull(overallStatusDTO.getStatusCode())
                 ? "Current Trial Status Code cannot be null , " : "");
@@ -1155,6 +1153,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     if (sb.length() > 0) {
         throw new PAException(VALIDATION_EXCEPTION + sb.toString());
     }
+    enforceBusinessRulesForStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO);
 
  }
  /**
@@ -1260,7 +1259,10 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             errorMsg.append("IRB Approval Document is required.\n");
         }
         errorMsg.append(validatePoObjects(leadOrganizationDTO, "Lead Organization "));
-        errorMsg.append(validatePoObjects(sponsorOrganizationDTO, "Sponsor Organization "));
+        //if ctGovXMLreq is true
+        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+            errorMsg.append(validatePoObjects(sponsorOrganizationDTO, "Sponsor Organization "));
+        } 
         errorMsg.append(validatePoObjects(summary4organizationDTO, "Summary 4 Organization "));
         errorMsg.append(validatePoObjects(piPersonDTO, "Prinicipal Investigator "));
     }
@@ -1279,8 +1281,10 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             && !paServiceUtils.isDocumentInList(documentDTOs, DocumentTypeCode.CHANGE_MEMO_DOCUMENT)) {
             errorMsg.append("Change Memo Document is required.\n");
     }
-    if (PAUtil.isIiNotNull(responsiblePartyContactIi)
-            && !paServiceUtils.isIiExistInPO(responsiblePartyContactIi)) {
+    //if ctGovXMLreq is true - then perform the validation.
+    if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()
+         && PAUtil.isIiNotNull(responsiblePartyContactIi)
+         && !paServiceUtils.isIiExistInPO(responsiblePartyContactIi)) {
         errorMsg.append("Error getting Responsible Party Contact from PO for id = "
                 + responsiblePartyContactIi.getExtension() + ".  ");
     }
@@ -1356,12 +1360,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     // validate of null objects
     sb.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null , " : "");
     sb.append(overallStatusDTO == null ? "Study OverallStatus DTO cannot be null , " : "");
-    if (studyContactDTO != null && studySiteContactDTO != null) {
-        sb.append("Either StudyContactDTO or studySiteContactDTO should be null ,");
-    }
-    if (studyContactDTO == null && studySiteContactDTO == null) {
-        sb.append("Either StudyContactDTO or studySiteContactDTO should not be null ,");
-    }
+   
     // validates for attributes
     sb.append(PAUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())
             ? "Trial Start Date Type cannot be null , " : "");
@@ -1371,19 +1370,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     sb.append(PAUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())
             ? "Primary Completion Datecannot be null , " : "");
     sb.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
-    if (studyContactDTO != null) {
-        sb.append(DSetConverter.getFirstElement(studyContactDTO.getTelecomAddresses(), PAConstants.EMAIL) == null
-                ? EMAIL_NOT_NULL : "");
-        sb.append(DSetConverter.getFirstElement(studyContactDTO.getTelecomAddresses(), PAConstants.PHONE) == null
-                ? PHONE_NOT_NULL : "");
-    }
-    if (studySiteContactDTO != null) {
-        sb.append(DSetConverter.getFirstElement(studySiteContactDTO.getTelecomAddresses(),
-                PAConstants.EMAIL) == null ? EMAIL_NOT_NULL : "");
-        sb.append(DSetConverter.getFirstElement(studySiteContactDTO.getTelecomAddresses(),
-                PAConstants.PHONE) == null  ? PHONE_NOT_NULL : "");
-
-    }
+    
     if (overallStatusDTO != null) {
         sb.append(PAUtil.isCdNull(overallStatusDTO.getStatusCode())
                 ? "Current Trial Status cannot be null , " : "");
@@ -1404,12 +1391,46 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     if (sb.length() > 0) {
         throw new PAException(VALIDATION_EXCEPTION + sb.toString());
     }
+    enforceBusinessRulesForStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO);
     paServiceUtils.enforceNoDuplicateIndIde(studyIndldeDTOs, studyProtocolDTO);
     paServiceUtils.enforceNoDuplicateGrants(studyResourcingDTOs);
     enforceRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO , studyIndldeDTOs, operation);
     if (UPDAT.equalsIgnoreCase(operation)) {
         enforceRecruitmentStatus(studyProtocolDTO, participatingSites);
     }
+ }
+ @SuppressWarnings({ "PMD" }) 
+ private void enforceBusinessRulesForStudyContact(StudyProtocolDTO studyProtocolDTO, StudyContactDTO studyContactDTO,
+                                                  StudySiteContactDTO studySiteContactDTO) throws PAException {
+     StringBuffer sb = new StringBuffer();
+     if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+         if (studyContactDTO != null && studySiteContactDTO != null) {
+           sb.append("Either StudyContactDTO or studySiteContactDTO should be null ,");
+         }
+         if (studyContactDTO == null && studySiteContactDTO == null) {
+          sb.append("Either StudyContactDTO or studySiteContactDTO should not be null ,");
+         }
+         if (studyContactDTO != null) {
+           checkTelecomAddress(studyContactDTO.getTelecomAddresses());
+         }
+         if (studySiteContactDTO != null) {
+           checkTelecomAddress(studySiteContactDTO.getTelecomAddresses());
+         }
+         if (sb.length() > 0) {
+             throw new PAException(VALIDATION_EXCEPTION + sb.toString());
+         }
+     }   
+ }
+ 
+ private void checkTelecomAddress(DSet<Tel> telecomAddress) throws PAException {
+     StringBuffer sb = new StringBuffer();
+     sb.append(DSetConverter.getFirstElement(telecomAddress, PAConstants.EMAIL) == null
+             ? EMAIL_NOT_NULL : "");
+     sb.append(DSetConverter.getFirstElement(telecomAddress, PAConstants.PHONE) == null
+             ? PHONE_NOT_NULL : "");
+     if (sb.length() > 0) {
+         throw new PAException(VALIDATION_EXCEPTION + sb.toString());
+     }
  }
 
  private void enforceRegulatoryInfo(StudyProtocolDTO studyProtocolDTO, StudyRegulatoryAuthorityDTO studyRegAuthDTO ,

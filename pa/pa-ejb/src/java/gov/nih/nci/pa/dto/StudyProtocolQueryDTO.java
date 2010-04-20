@@ -95,7 +95,7 @@ import java.util.Date;
  * @since 07/22/2007
  */
 
-@SuppressWarnings({ "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({ "PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.BooleanGetMethodName" })
 public class StudyProtocolQueryDTO implements Serializable {
     static final long serialVersionUID = 283476876L;
 
@@ -629,7 +629,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     /**
      * @return the ctgovXmlRequiredIndicator
      */
-    public Boolean isCtgovXmlRequiredIndicator() {
+    public Boolean getCtgovXmlRequiredIndicator() {
         return ctgovXmlRequiredIndicator;
     }
 
@@ -653,5 +653,4 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setShowSendXml(Boolean showSendXml) {
         this.showSendXml = showSendXml;
     }    
-    
 }

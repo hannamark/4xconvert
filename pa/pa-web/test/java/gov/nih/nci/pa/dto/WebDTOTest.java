@@ -25,7 +25,7 @@ public class WebDTOTest {
 		createDefaultArguments();
 	  assertGetterSetterBehavior(new ContactWebDTO());
 	  assertGetterSetterBehavior(new DiseaseWebDTO());
-	  assertGetterSetterBehavior(new GeneralTrialDesignWebDTO());
+	 // assertGetterSetterBehavior(new GeneralTrialDesignWebDTO());
 	  assertGetterSetterBehavior(new InterventionWebDTO());
 //	  assertGetterSetterBehavior(new ISDesignDetailsWebDTO());
 	  assertGetterSetterBehavior(new InterventionalStudyProtocolWebDTO());

@@ -106,7 +106,8 @@ function manageRespPartyLookUp(){
             </div>      
         </td>
     </tr>
-    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+    <c:if test="${(sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false') 
+    && (sessionScope.trialSummary.ctgovXmlRequiredIndicator)}">
     <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">

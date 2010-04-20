@@ -78,8 +78,8 @@
 */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
@@ -105,6 +105,7 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -338,23 +339,25 @@ public class TrialValidationAction extends ActionSupport {
                     && gtdDTO.getPrimaryPurposeOtherText().length() > MAXIMUM_CHAR) {
                 addFieldError("gtdDTO.primaryPurposeOtherText", getText("error.spType.other.maximumChar"));
             }
-            if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
+            if (gtdDTO.getCtGovXmlRequired()) {
+              if (StringUtils.isEmpty(gtdDTO.getSponsorIdentifier())) {
                 addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
-            }
-            if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
-                    && PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
+              }
+              if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
+                    && StringUtils.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
                 addFieldError("gtdDTO.responsibleGenericContactName",
                                 getText("Please choose Either Personal Contact or Generic Contact "));
-            }
-            if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
+              }
+              if (StringUtils.isEmpty(gtdDTO.getContactEmail())) {
                 addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
-            }
-            if (PAUtil.isNotEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
+              }
+              if (!StringUtils.isEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
                 addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
-            }
-            if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
+              }
+              if (StringUtils.isEmpty(gtdDTO.getContactPhone())) {
                 addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
-            }
+              }
+            }  
         }
     }
     /**

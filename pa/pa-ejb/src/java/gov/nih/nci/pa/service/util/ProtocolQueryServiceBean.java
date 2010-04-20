@@ -311,6 +311,12 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                        studyProtocolDto.setIsProprietaryTrial("false");
                    }
                    studyProtocolDto.setRecordVerificationDate(studyProtocol.getRecordVerificationDate());
+                   if (!(studyProtocol.getCtgovXmlRequiredIndicator() != null 
+                       && !studyProtocol.getCtgovXmlRequiredIndicator().booleanValue())) {
+                       studyProtocolDto.setCtgovXmlRequiredIndicator(Boolean.TRUE);  
+                   } else {
+                       studyProtocolDto.setCtgovXmlRequiredIndicator(Boolean.FALSE);
+                   }
                 }
                 if (studyMilestone != null) {
                     studyProtocolDto.setStudyMilsetone(studyMilestone.getMilestoneCode());
@@ -346,10 +352,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 if (studyCheckout != null) {
                     studyProtocolDto.setStudyCheckoutBy(studyCheckout.getUserIdentifier());
                     studyProtocolDto.setStudyCheckoutId(studyCheckout.getId());
-                }
-                if (studyProtocol.getCtgovXmlRequiredIndicator() != null) {
-                    studyProtocolDto.setCtgovXmlRequiredIndicator(studyProtocol.getCtgovXmlRequiredIndicator());
-                }
+                }                
                 // add to the list
                 studyProtocolDtos.add(studyProtocolDto);
             } // for loop

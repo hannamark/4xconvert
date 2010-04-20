@@ -121,8 +121,9 @@ public class TrialHelper {
                 gtdDTO.getLocalProtocolIdentifier()));
         leadOrgSiteIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
         paServUtil.manageStudyIdentifiers(leadOrgSiteIdentifierDTO);
-        if (gtdDTO.getProprietarytrialindicator() == null
-               || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
+        if ((gtdDTO.getProprietarytrialindicator() == null
+               || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE))
+               && gtdDTO.getCtGovXmlRequired()) {
             OrganizationDTO sponsorOrgDto = new OrganizationDTO();
             sponsorOrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi(gtdDTO.getSponsorIdentifier()));
             paServUtil.manageSponsor(studyProtocolIi, sponsorOrgDto);
@@ -189,6 +190,9 @@ public class TrialHelper {
         gtdDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
         gtdDTO.setStudyProtocolId(IiConverter.convertToString(spDTO.getIdentifier()));
         gtdDTO.setAssignedIdentifier(IiConverter.convertToString(spDTO.getAssignedIdentifier()));
+        if (!PAUtil.isBlNull(spDTO.getCtgovXmlRequiredIndicator())) {
+            gtdDTO.setCtGovXmlRequired(spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue());
+        }
     }
 
     /**

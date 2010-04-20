@@ -700,6 +700,23 @@ public class PAUtil {
        Matcher m = p.matcher(match);
        return  m.matches();
     }
+    
+    /**
+     * Checks if is valid phone.
+     * 
+     * @param phone the phone
+     * 
+     * @return true, if is valid phone
+     */
+    public static boolean isValidPhone(String phone) {
+        String match = phone;
+        if (match != null) {
+            match = match.trim();
+       }
+       Pattern p = Pattern.compile("^([\\w\\s\\-\\.\\+\\(\\)])*$");
+       Matcher m = p.matcher(match);
+       return  m.matches();
+    }
 
     /**
      * util method to trim a length.
@@ -1296,5 +1313,6 @@ public class PAUtil {
             retAge = retAge.replace(".0", "");
         }
         return retAge;
-    }
+    }  
+   
 }

@@ -31,7 +31,6 @@ public class DTOTest {
 	  assertGetterSetterBehavior(new TrialIndIdeDTO());
 	  assertGetterSetterBehavior(new CountryRegAuthorityDTO());
 	  assertGetterSetterBehavior(new RegulatoryAuthOrgDTO());
-	  assertGetterSetterBehavior(new StudyProtocolQueryDTO());
 	  assertGetterSetterBehavior(new TrialDTO());
 	  assertGetterSetterBehavior(new StudyObjectiveDTO());
 	}

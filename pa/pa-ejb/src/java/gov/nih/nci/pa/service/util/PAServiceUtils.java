@@ -810,52 +810,54 @@ public class PAServiceUtils {
                                       RegulatoryInformationServiceRemote regulatoryInfoBean,
                                       String operation) throws PAException {
         StringBuffer errMsg = new StringBuffer();
-        if (studyRegAuthDTO == null) {
-            errMsg.append("Regulatory Information fields must be Entered.\n");
-        }
-        if (PAUtil.isBlNull(studyProtocolDTO.getFdaRegulatedIndicator())) {
-            errMsg.append("FDA Regulated Intervention Indicator is required field.\n");
-        }
-        if (PAConstants.YES.equalsIgnoreCase(
+        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+            if (studyRegAuthDTO == null) {
+                 errMsg.append("Regulatory Information fields must be Entered.\n");
+            }
+            if (PAUtil.isBlNull(studyProtocolDTO.getFdaRegulatedIndicator())) {
+                 errMsg.append("FDA Regulated Intervention Indicator is required field.\n");
+            }
+            if (PAConstants.YES.equalsIgnoreCase(
                 BlConverter.convertBLToString(studyProtocolDTO.getFdaRegulatedIndicator()))
                 && PAUtil.isBlNull(studyProtocolDTO.getSection801Indicator())) {
-              errMsg.append("Section 801 is required if FDA Regulated indicator is true.");
-          }
-        if (PAConstants.YES.equalsIgnoreCase(
-                BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
-                && PAUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator())) {
-              errMsg.append("Delayed posting Indicator is required if Section 801 is true.");
-          }
-         //Display error in abstraction validation if section 801 indicator = ‘yes’,  
-          if (PAConstants.YES.equalsIgnoreCase(
+                 errMsg.append("Section 801 is required if FDA Regulated indicator is true.");
+            }
+            if (PAConstants.YES.equalsIgnoreCase(
+                 BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
+                 && PAUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator())) {
+                   errMsg.append("Delayed posting Indicator is required if Section 801 is true.");
+            }
+            //Display error in abstraction validation if section 801 indicator = ‘yes’,  
+            if (PAConstants.YES.equalsIgnoreCase(
                   BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
                   && PAConstants.YES.equalsIgnoreCase(
                           BlConverter.convertBLToString(studyProtocolDTO.getDelayedpostingIndicator()))
                   && !isDeviceFound(studyProtocolDTO.getIdentifier() , paList)) {
               errMsg.append("Delay posting indicator can only be set to \'yes\' " 
                   + " if study includes at least one intervention with type \'device\'.");
-          }
+            }
 
-        if ("Update".equalsIgnoreCase(operation) && PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode()) 
-             && PAUtil.isListNotEmpty(studyIndldeDTOs)) { 
-                /*if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
+            if ("Update".equalsIgnoreCase(operation) && PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode()) 
+                 && PAUtil.isListNotEmpty(studyIndldeDTOs)) { 
+                  /*if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
                         studyProtocolDTO.getFdaRegulatedIndicator()))) {
                     errMsg.append("FDA Regulated Intervention Indicator must be Yes " 
                       +                       " since it has Trial IND/IDE records.\n");         
-                }*/
-                Long sraId = Long.valueOf(studyRegAuthDTO.getRegulatoryAuthorityIdentifier().getExtension());
-                //doing this just to load the country since its lazy loaded. 
-                Country country = regulatoryInfoBean.getRegulatoryAuthorityCountry(sraId);
-                String regAuthName = regulatoryInfoBean.getCountryOrOrgName(sraId, "RegulatoryAuthority");
-                if (!(country.getAlpha3().equals("USA")  
-                    && regAuthName.equalsIgnoreCase("Food and Drug Administration"))) {
-                    errMsg.append("For IND protocols, Oversight Authorities "
+                  } */
+                  Long sraId = Long.valueOf(studyRegAuthDTO.getRegulatoryAuthorityIdentifier().getExtension());
+                  //doing this just to load the country since its lazy loaded. 
+                  Country country = regulatoryInfoBean.getRegulatoryAuthorityCountry(sraId);
+                  String regAuthName = regulatoryInfoBean.getCountryOrOrgName(sraId, "RegulatoryAuthority");
+                  if (!(country.getAlpha3().equals("USA")  
+                      && regAuthName.equalsIgnoreCase("Food and Drug Administration"))) {
+                       errMsg.append("For IND protocols, Oversight Authorities "
                           + " must include United States: Food and Drug Administration.\n");
-                }
-      }
-      if (errMsg.length() > 1) {
-          throw new PAException(errMsg.toString());
-      }  
+                 }
+          }
+        }     
+        if (errMsg.length() > 1) {
+            throw new PAException(errMsg.toString());
+        }  
   }    
     /**
      * 

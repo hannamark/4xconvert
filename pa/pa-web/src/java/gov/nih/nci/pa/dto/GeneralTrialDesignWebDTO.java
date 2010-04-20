@@ -88,7 +88,7 @@ package gov.nih.nci.pa.dto;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({ "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({ "PMD", "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class GeneralTrialDesignWebDTO {
 
     private String acronym;
@@ -136,6 +136,9 @@ public class GeneralTrialDesignWebDTO {
     private String proprietarytrialindicator;
     private String contactPhoneExtn;
     private String centralContactPhoneExtn;
+    private boolean ctGovXmlRequired; 
+    
+    
     /**
      * 
      * @return acronym acronym
@@ -739,5 +742,19 @@ public class GeneralTrialDesignWebDTO {
     public void setCentralContactPhoneExtn(String centralContactPhoneExtn) {
         this.centralContactPhoneExtn = centralContactPhoneExtn;
     }
+    /**
+     * @return the ctGovXmlRequired
+     */
+     public boolean getCtGovXmlRequired() {
+       return ctGovXmlRequired;
+     }
+     /**
+      * @param ctGovXmlRequired the ctGovXmlRequired to set
+      */
+     public void setCtGovXmlRequired(boolean ctGovXmlRequired) {
+      this.ctGovXmlRequired = ctGovXmlRequired;
+     }
+    
+   
     
 }
