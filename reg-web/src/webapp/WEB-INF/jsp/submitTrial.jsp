@@ -51,25 +51,25 @@ function setpersid(persIdentifier, sname,email,phone){
 
 //
 function lookup4loadleadorg(){
-	showPopup('${lookupOrgUrl}',loadLeadOrgDiv, 'Select Lead Organization');
+    showPopup('${lookupOrgUrl}',loadLeadOrgDiv, 'Select Lead Organization');
 }
 function lookup4loadleadpers(){
-	showPopup('${lookupPersUrl}', loadLeadPersDiv, 'Select Principal Investigator');
+    showPopup('${lookupPersUrl}', loadLeadPersDiv, 'Select Principal Investigator');
 }
 function lookup4sponsor(){
-	//clear info for resp party
+    //clear info for resp party
     showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
 } 
 function lookup4loadresponsibleparty(){ 
-	var orgid = document.getElementById('trialDTO.sponsorIdentifier').value;
-	showPopup('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, createOrgContactDiv, 'Select Responsible Party Contact');
+    var orgid = document.getElementById('trialDTO.sponsorIdentifier').value;
+    showPopup('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, createOrgContactDiv, 'Select Responsible Party Contact');
 }
 function lookup4loadresponsiblepartygenericcontact(){ 
-	var orgid = document.getElementById('trialDTO.sponsorIdentifier').value;
-	showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
+    var orgid = document.getElementById('trialDTO.sponsorIdentifier').value;
+    showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
 }
 function lookup4loadSummary4Sponsor(){
-	showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+    showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
 }
 //
 function loadLeadOrgDiv() { 
@@ -98,7 +98,7 @@ function createOrgContactDiv() {
     document.getElementById('trialDTO.responsibleGenericContactName').value = ''; // unset the responsible generic contact
 }
 function createOrgGenericContactDiv() {
-	document.getElementById('trialDTO.responsiblePersonIdentifier').value = persid;
+    document.getElementById('trialDTO.responsiblePersonIdentifier').value = persid;
     document.getElementById('trialDTO.responsibleGenericContactName').value = chosenname;
     document.getElementById("trialDTO.contactEmail").value = contactMail;
     document.getElementById("trialDTO.contactPhone").value = contactPhone;    
@@ -118,7 +118,7 @@ function reviewProtocol (){
     showPopWin('${reviewProtocol}', 600, 200, '', 'Review Register Trial');
 }
 function partialSave() {
-	var action = "submitTrialpartialSave.action"; 
+    var action = "submitTrialpartialSave.action"; 
     document.forms[0].action=action;
     document.forms[0].submit();
     showPopWin('${partialSave}', 600, 200, '', 'Partial Saving Trial');
@@ -241,46 +241,47 @@ function loadRegAuthoritiesDiv() {
     });
     return false;
 }
-	function checkFDADropDown(){
-	    if (document.getElementById('trialDTO.fdaRegulatoryInformationIndicator').value == '' 
-	        | document.getElementById('trialDTO.fdaRegulatoryInformationIndicator').value == 'No'){            
-	        input_box=confirm("Section 801 and Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
-	        if (input_box==true){
-	            document.getElementById('trialDTO.section801Indicator').value ='';
-	            document.getElementById('trialDTO.delayedPostingIndicator').value ='';
-	            hideRow(document.getElementById('sec801row'));
-	            hideRow(document.getElementById('delpostindrow'));
-	        } else {
-	            document.getElementById('trialDTO.fdaRegulatoryInformationIndicator').value = 'Yes';
-	        }
-	    } else {
-	        showRow(document.getElementById('sec801row'));
-	        showRow(document.getElementById('delpostindrow'));
-	    }
-	}
-	
-	function checkSection108DropDown(){
-	    if (document.getElementById('trialDTO.section801Indicator').value == '' 
-	        | document.getElementById('trialDTO.section801Indicator').value == 'No') {   
-	        input_box=confirm("Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
-	        if (input_box==true){
-	            hideRow(document.getElementById('delpostindrow'));
-	            document.getElementById('trialDTO.delayedPostingIndicator').value ='';
-	        } else {
-	            document.getElementById('trialDTO.section801Indicator').value = 'Yes';
-	        }
-	    } else {
-	        showRow(document.getElementById('delpostindrow'));
-	    }    
-	}
-	function hideRow(row){          
-	    row.style.display = 'none'; 
-	}
-	function showRow(row){
-	    row.style.display = '';
-	}
+    function checkFDADropDown(){
+        if (document.getElementById('trialDTO.fdaRegulatoryInformationIndicator').value == '' 
+            | document.getElementById('trialDTO.fdaRegulatoryInformationIndicator').value == 'No'){            
+            input_box=confirm("Section 801 and Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
+            if (input_box==true){
+                document.getElementById('trialDTO.section801Indicator').value ='';
+                document.getElementById('trialDTO.delayedPostingIndicator').value ='';
+                hideRow(document.getElementById('sec801row'));
+                hideRow(document.getElementById('delpostindrow'));
+            } else {
+                document.getElementById('trialDTO.fdaRegulatoryInformationIndicator').value = 'Yes';
+            }
+        } else {
+            showRow(document.getElementById('sec801row'));
+            showRow(document.getElementById('delpostindrow'));
+        }
+    }
+    
+    function checkSection108DropDown(){
+        if (document.getElementById('trialDTO.section801Indicator').value == '' 
+            | document.getElementById('trialDTO.section801Indicator').value == 'No') {   
+            input_box=confirm("Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
+            if (input_box==true){
+                hideRow(document.getElementById('delpostindrow'));
+                document.getElementById('trialDTO.delayedPostingIndicator').value ='';
+            } else {
+                document.getElementById('trialDTO.section801Indicator').value = 'Yes';
+            }
+        } else {
+            showRow(document.getElementById('delpostindrow'));
+        }    
+    }
+    function hideRow(row){          
+        row.style.display = 'none'; 
+    }
+    function showRow(row){
+        row.style.display = '';
+    }
 </SCRIPT>
 <script language="javascript">
+
 function toggledisplay (it, box) {
   var vis = (box.checked) ? "block" : "none";
   document.getElementById(it).style.display = vis;
@@ -290,7 +291,17 @@ function toggledisplay2 (it) {
   if (vis == "block") { document.getElementById(it).style.display = "none"; }
                  else { document.getElementById(it).style.display = "block"; }
 }
-</script>	
+function toggledisplayDivs(val) {
+  var vis = val.value;
+  if (vis == 'false') { 
+     document.getElementById('regDiv').style.display = "none"; 
+     document.getElementById('sponsorDiv').style.display = "none"; 
+  } else { 
+     document.getElementById('regDiv').style.display = "block"; 
+     document.getElementById('sponsorDiv').style.display = "block"; 
+     }
+}
+</script>   
 
 <body>
 <!-- main content begins-->
@@ -304,10 +315,20 @@ function toggledisplay2 (it) {
         <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>
         <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
         <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
-        <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>    
+        <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>  
         <s:hidden name="page" />
         <p>Register trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
         <table class="form"> 
+        <tr>
+        <td scope="row" class="label">
+          <a href="http://ClinicalTrials.gov">ClinicalTrials.gov</a> XML required?  
+        </td>
+        <td>
+          <s:radio name="trialDTO.xmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="toggledisplayDivs(this);"/>
+       </td>
+       </tr>
+       <tr><td></td></tr>
+       <tr><td></td></tr>
             <%@ include file="/WEB-INF/jsp/nodecorate/trialIdentifiers.jsp" %>      
           <tr>
                 <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>
@@ -432,112 +453,14 @@ function toggledisplay2 (it) {
                 </tr>
         
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
-        <tr>
-             <th colspan="2"><fmt:message key="submit.trial.sponsorResParty"/></th>
-        </tr>          
-        <tr><td colspan="2" class="space">&nbsp;</td></tr>
-        <tr>
-                    <td scope="row" class="label">
-                        <label for="submitTrial_selectedSponsor_name_part_0__value"> Sponsor:<span class="required">*</span></label> 
-                    </td>
-                    <td class="value">
-                        <div id="loadSponsorField">
-                        <%@ include file="/WEB-INF/jsp/nodecorate/trialSponsor.jsp" %>
-                        </div>      
-                    </td>
-        </tr>   
-        <tr>
-                <td scope="row" class="label">
-                    <label for="submitTrial_resppartysponsor"> <fmt:message key="submit.trial.responsibleParty"/><span class="required">*</span></label>
-                </td>
-                <td>
-                <s:radio name="trialDTO.responsiblePartyType" id="trialDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
-                </td>
-        </tr>
-        <c:choose>
-         <c:when test="${trialDTO.responsiblePartyType == 'sponsor'}">
-             <tr id="rpcid" >
-              <td scope="row" class="label">
-                          <label for="submitTrial_resPartyContactFullName"> <fmt:message key="submit.trial.responsiblePartyContact"/></label> 
-              </td>                                        
-              <td class="value">
-              <div id="loadResponsibleContactField">
-                   <%@ include file="/WEB-INF/jsp/nodecorate/trialresponsibleContact.jsp" %>
-              </div>                                                                                             
-              </td>
-             </tr>
-              <tr id="rpgcid">
-                    <td scope="row" class="label">
-                        <label for="submitTrial_resPartyGenericContact"><fmt:message key="submit.trial.responsiblePartyGenericContact"/></label> 
-                    </td>
-                    <td class="value">
-                        <div id="loadResponsiblePartyGenericContactField">
-                        <%@ include file="/WEB-INF/jsp/nodecorate/trialResPartyGenericContact.jsp" %>
-                        </div>      
-                    </td>
-          </tr>   
-         </c:when>
-         <c:otherwise>
-            <tr id="rpcid" style="display:none">
-                     <td scope="row" class="label">
-                                 <label for="submitTrial_resPartyContactFullName"> <fmt:message key="submit.trial.responsiblePartyContact"/></label> 
-                     </td>                                        
-                     <td class="value">
-                               <div id="loadResponsibleContactField">
-                                    <%@ include file="/WEB-INF/jsp/nodecorate/trialresponsibleContact.jsp" %>
-                               </div>                                                                                             
-                     </td>
-            </tr>
-            <tr id="rpgcid"  style="display:none">
-                    <td scope="row" class="label">
-                        <label for="submitTrial_resPartyGenericContact"><fmt:message key="submit.trial.responsiblePartyGenericContact"/></label> 
-                    </td>
-                    <td class="value">
-                        <div id="loadResponsiblePartyGenericContactField">
-                        <%@ include file="/WEB-INF/jsp/nodecorate/trialResPartyGenericContact.jsp" %>
-                        </div>      
-                    </td>
-          </tr>   
-         </c:otherwise>
-        </c:choose>                                          
-                
-         <tr>
-         <td colspan="2">
-          <p><b><I>Please provide professional contact information only.</I></b></p>
-         </td>
-         </tr>
-          <tr>
-                <td scope="row" class="label">
-                   <label for="submitTrial_contactEmail"> <fmt:message key="submit.trial.responsiblePartyEmail"/><span class="required">*</span></label> 
-                </td>
-                <td class="value">
-                    <s:textfield id="trialDTO.contactEmail" name="trialDTO.contactEmail"  maxlength="200" size="100"  cssStyle="width:200px"/>
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                        <s:param>trialDTO.contactEmail</s:param>
-                       </s:fielderror>                            
-                     </span>
-                </td>
-                </tr>
-                <tr>
-                <td scope="row" class="label">
-                 <label for="submitTrial_contactPhone"> <fmt:message key="submit.trial.responsiblePartyPhone"/><span class="required">*</span></label>
-                </td>
-                <td class="value">
-                    <s:textfield name="trialDTO.contactPhone"  id="trialDTO.contactPhone" maxlength="200" size="100"  cssStyle="width:100px" />
-                    Extn:<s:textfield name="trialDTO.contactPhoneExtn"  id="trialDTO.contactPhoneExtn" maxlength="15" size="10"  cssStyle="width:60px" />
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                        <s:param>trialDTO.contactPhone</s:param>
-                       </s:fielderror>                            
-                     </span>
-                </td>           
-          </tr>  
-          <tr>
-         <td colspan="2">
-          <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>
-         </td>
-         </tr>
+          <tr> <td colspan="2" class="space">  
+          <s:if test="%{trialDTO.xmlRequired == true}">
+           <div id="sponsorDiv" style="display:''">
+             <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
+            </div>
+            </s:if>
+           </td> 
+         </tr>  
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
@@ -816,10 +739,12 @@ function toggledisplay2 (it) {
             </td>
         </tr>
         </table>
+        <s:if test="%{trialDTO.xmlRequired == true}">
+        <div id="regDiv" style="display:''">
         <!-- Regulatory page -->
         <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInforamtion.jsp" %>
-        
-        
+        </div>
+        </s:if>
         <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
@@ -839,7 +764,7 @@ function toggledisplay2 (it) {
         <tr>
               <td colspan="2" class="space">&nbsp;</td>
         </tr>
-      	
+        
         <tr>
               <td scope="row" class="label">
               <label for="submitTrial_protocolDoc">
@@ -935,3 +860,4 @@ function toggledisplay2 (it) {
  </div> 
 </body>
 </html>
+

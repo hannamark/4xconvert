@@ -591,12 +591,14 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                trialDTO.setFundingAddDtos(grantAddList);
                setFundingAddDtos(grantAddList);
            }
-           String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
+           if (trialDTO.getXmlRequired()) {
+              String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
                    trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
-           String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
-           Long.valueOf(trialDTO.getLst()), "Country");
-           trialDTO.setTrialOversgtAuthCountryName(countryName);
-           trialDTO.setTrialOversgtAuthOrgName(orgName);
+              String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+              Long.valueOf(trialDTO.getLst()), "Country");
+              trialDTO.setTrialOversgtAuthCountryName(countryName);
+              trialDTO.setTrialOversgtAuthOrgName(orgName);
+           }   
            synchDTOWithAction();
 
         } catch (IOException e) {
@@ -685,23 +687,27 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studyParticipationContactDTO = null;
             Ii responsiblePartyContactIi = null;
-            if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
-                studyContactDTO = new StudyContactDTO();
-                util.convertToStudyContactDTO(trialDTO, studyContactDTO);
+            // updated only if the ctGovXmlRequired is true 
+            if (spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+                if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
+                    studyContactDTO = new StudyContactDTO();
+                    util.convertToStudyContactDTO(trialDTO, studyContactDTO);
                 
-            } else {
-                studyParticipationContactDTO = new StudySiteContactDTO();
-                util.convertToStudySiteContactDTO(trialDTO, studyParticipationContactDTO);
+                } else {
+                    studyParticipationContactDTO = new StudySiteContactDTO();
+                    util.convertToStudySiteContactDTO(trialDTO, studyParticipationContactDTO);
                 
-                if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
-                 responsiblePartyContactIi = IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
-                }
-                if (trialDTO.getResponsibleGenericContactName() != null 
+                   if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
+                        responsiblePartyContactIi = 
+                          IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
+                   }
+                   if (trialDTO.getResponsibleGenericContactName() != null 
                           && !trialDTO.getResponsibleGenericContactName().equals("")) {
-                    responsiblePartyContactIi = IiConverter.
-                        convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
-                }
-            }
+                       responsiblePartyContactIi = IiConverter.
+                          convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
+                   }
+               }
+            }     
             //indide updates and adds
             
             List<StudyIndldeDTO> studyIndldeDTOList = new ArrayList<StudyIndldeDTO>();
@@ -731,25 +737,29 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
              studyResourcingDTOs.addAll(studyResourcingAddDTOs);
             }
             
-            //update StudyRegulatory 
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(studyProtocolIi, trialDTO);
-            
+            // updated only if the ctGovXmlRequired is true 
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO = null;
+            if (spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+              //update StudyRegulatory 
+              studyRegAuthDTO = util.getStudyRegAuth(studyProtocolIi, trialDTO);
+            }
             //collaborators update - send the collaborators list
             List<StudySiteDTO> collaboratorsDTOList = getCollaboratorsForUpdate(trialDTO.getCollaborators());
             
-           //ps update- send the participating sites list
-          List<StudySiteAccrualStatusDTO> pssDTOList = getParticipatingSitesForUpdate(trialDTO.getParticipatingSites());
+            //ps update- send the participating sites list
+            List<StudySiteAccrualStatusDTO> pssDTOList = 
+               getParticipatingSitesForUpdate(trialDTO.getParticipatingSites());
           
-          //list of studysite dtos with updated program code
-          List<StudySiteDTO> prgCdUpdatedList = getStudySiteToUpdateProgramCode(trialDTO.getParticipatingSites());
+            //list of studysite dtos with updated program code
+            List<StudySiteDTO> prgCdUpdatedList = getStudySiteToUpdateProgramCode(trialDTO.getParticipatingSites());
           
-          updateId = studyProtocolIi; 
-          List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
-          studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, studyProtocolIi));
-          //studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
-          //studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, studyProtocolIi));
-          //call the service to invoke the update method
-          PaRegistry.getTrialRegistrationService().
+            updateId = studyProtocolIi; 
+            List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
+            studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, studyProtocolIi));
+            //studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
+            //studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, studyProtocolIi));
+            //call the service to invoke the update method
+            PaRegistry.getTrialRegistrationService().
                         update(spDTO, sosDto, studyIdentifierDTOs, studyIndldeDTOList, studyResourcingDTOs, 
                                 documentDTOs, studyContactDTO, studyParticipationContactDTO,
                                summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,

@@ -124,6 +124,7 @@ public abstract class AbstractRegWebTest {
         trialDTO.setSponsorName("sponsorName");
         trialDTO.setLst("1");
         trialDTO.setSelectedRegAuth("1");
+        trialDTO.setXmlRequired(true);
         return trialDTO;
     }
     protected List<TrialFundingWebDTO> getfundingDtos(){

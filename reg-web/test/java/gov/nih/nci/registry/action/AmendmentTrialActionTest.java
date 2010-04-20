@@ -618,4 +618,5 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setChangeMemoDocFileName(FILE_NAME);
         assertEquals("error", trialAction.review());
     }
+    
 }

@@ -283,7 +283,8 @@ var winprint=window.open("","",sOption);
                 </td>
        </tr>
           </c:if> 
-          <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'No'}">
+          <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'No' 
+                        && trialDTO.xmlRequired == true}">
            <tr>     
             <td scope="row" class="label">
                 <label for="Principal Investigator">
@@ -546,7 +547,7 @@ var winprint=window.open("","",sOption);
      <c:if test="${trialDTO.fundingDtos != null}">  
         <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
      </c:if>
-     <c:if test="${fn:trim(trialDTO.propritaryTrialIndicator) == 'No'}">
+     <c:if test="${fn:trim(trialDTO.propritaryTrialIndicator) == 'No' && trialDTO.xmlRequired == true}">
         <table class="form">
         <tr>
               <th colspan="2">Regulatory Information</th>

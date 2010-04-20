@@ -119,6 +119,12 @@ public class TrialUtil {
         trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
         trialDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
         trialDTO.setSubmissionNumber(IntConverter.convertToString(spDTO.getSubmissionNumber()));
+        if (!PAUtil.isBlNull(spDTO.getCtgovXmlRequiredIndicator()) 
+            && spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+            trialDTO.setXmlRequired(true);
+        } else {
+           trialDTO.setXmlRequired(false);
+        }
     }
 
     /**
@@ -465,6 +471,11 @@ public class TrialUtil {
         } else {
             isoDto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.FALSE));
         }
+        if  (trialDTO.getXmlRequired()) {
+            isoDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
+       } else {
+            isoDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.FALSE));
+       }       
     }
     
     /**
@@ -695,15 +706,19 @@ public class TrialUtil {
     */
    private DSet<Tel> getTelecomAddress(TrialDTO trialDTO) {
        List<String> phones = new ArrayList<String>();
-       String phone = trialDTO.getContactPhone().trim();
-       if (PAUtil.isNotEmpty(trialDTO.getContactPhoneExtn())) {
-           StringBuffer phoneWithExtn = new StringBuffer();
-           phoneWithExtn.append(phone).append("extn").append(trialDTO.getContactPhoneExtn());
-           phone = phoneWithExtn.toString();
+       if (PAUtil.isNotEmpty(trialDTO.getContactPhone())) {
+            String phone = trialDTO.getContactPhone().trim();
+            if (PAUtil.isNotEmpty(trialDTO.getContactPhoneExtn())) {
+                 StringBuffer phoneWithExtn = new StringBuffer();
+                 phoneWithExtn.append(phone).append("extn").append(trialDTO.getContactPhoneExtn());
+                 phone = phoneWithExtn.toString();
+            }
+            phones.add(phone);
        }
-       phones.add(phone);
        List<String> emails = new ArrayList<String>();
-       emails.add(trialDTO.getContactEmail());
+       if (PAUtil.isNotEmpty(trialDTO.getContactEmail())) {
+            emails.add(trialDTO.getContactEmail());
+       }     
        DSet<Tel> dsetList = null;
        dsetList =  DSetConverter.convertListToDSet(phones, "PHONE", dsetList);
        dsetList =  DSetConverter.convertListToDSet(emails, "EMAIL", dsetList);
@@ -1214,6 +1229,9 @@ public class TrialUtil {
                     studyProtocolIi);
             sraDTO.setStudyProtocolIdentifier(studyProtocolIi);
         }
+        if (PAUtil.isEmpty(trialDTO.getSelectedRegAuth())) {
+            return sraFromDatabaseDTO;
+        }
         if (sraFromDatabaseDTO == null) {
             sraDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(trialDTO.getSelectedRegAuth()));
             return sraDTO;
@@ -1449,6 +1467,9 @@ public class TrialUtil {
         spStageDTO.setOversightAuthorityOrgId(IiConverter.convertToIi(trialDto.getSelectedRegAuth()));
         spStageDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
         trialDto.setPropritaryTrialIndicator(CommonsConstant.NO);
+        spStageDTO.setCtgovXmlRequiredIndicator(trialDto.getXmlRequired()
+                ? BlConverter.convertToBl(Boolean.TRUE) : BlConverter.convertToBl(Boolean.FALSE));
+        
     }
     /**
      * 
@@ -1633,6 +1654,12 @@ public class TrialUtil {
         trialDto.setSummaryFourFundingCategoryCode(CdConverter.convertCdToString(
                 spStageDTO.getSummaryFourFundingCategoryCode()));
         trialDto.setPropritaryTrialIndicator(CommonsConstant.NO);
+        if (PAUtil.isBlNull(spStageDTO.getCtgovXmlRequiredIndicator()) 
+                || spStageDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+                 trialDto.setXmlRequired(true);
+        } else {
+               trialDto.setXmlRequired(false);
+        }
         return trialDto;
     }
     /**

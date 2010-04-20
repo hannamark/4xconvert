@@ -208,7 +208,7 @@ public class SearchTrialAction extends ActionSupport {
                         && queryDto.getUserLastCreated().equals(loginName)    
                         && PAUtil.isAbstractedAndAbove(
                                 CdConverter.convertStringToCd(queryDto.getDocumentWorkflowStatusCode().getCode()))
-                         && queryDto.isCtgovXmlRequiredIndicator()) {               
+                         && queryDto.getCtgovXmlRequiredIndicator()) {               
                     queryDto.setShowSendXml(true);
                 }
             }

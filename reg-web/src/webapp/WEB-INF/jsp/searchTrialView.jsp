@@ -204,8 +204,10 @@
            		<c:out value="${requestScope.studyProtocolIi.leadOrganizationName }"/>
              </td>
        </tr> 
-      <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
-        || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
+      <c:if test="${(requestScope.trialSummary.proprietaryTrialIndicator == null 
+        || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false')
+        && (requestScope.trialSummary.ctgovXmlRequiredIndicator == null 
+        || requestScope.trialSummary.ctgovXmlRequiredIndicator.value == 'true')}">
        <tr>     
       		<td scope="row" class="label">
       			<label for="Principal Investigator">

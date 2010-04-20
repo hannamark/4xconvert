@@ -16,7 +16,7 @@ import org.hibernate.validator.NotEmpty;
  * @author Vrushali
  *
  */
-@SuppressWarnings({"PMD.ExcessiveClassLength", "PMD.TooManyFields" })
+@SuppressWarnings({"PMD.ExcessiveClassLength", "PMD.TooManyFields", "PMD.BooleanGetMethodName" })
 public class TrialDTO extends BaseTrialDTO {
     private String accrualReportingMethodCode;
     private String piIdentifier;
@@ -65,6 +65,8 @@ public class TrialDTO extends BaseTrialDTO {
 
     private String trialOversgtAuthCountryName;
     private String trialOversgtAuthOrgName;
+    private boolean xmlRequired = true;
+    
     /**
      * 
      */
@@ -131,7 +133,7 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the sponsorIdentifier
      */
-    @NotEmpty (message = "error.submit.sponsor")
+    //@NotEmpty (message = "error.submit.sponsor") -- removed - do validation in the action
     public String getSponsorIdentifier() {
         return sponsorIdentifier;
     }
@@ -144,7 +146,7 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the responsiblePartyType
      */
-    @NotEmpty (message = "error.submit.ResponsibelParty")
+   // @NotEmpty (message = "error.submit.ResponsibelParty")-- removed - do validation in the action
     public String getResponsiblePartyType() {
         return responsiblePartyType;
     }
@@ -181,9 +183,9 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the contactPhone
      */
-    @NotEmpty (message = "error.submit.contactPhone")
-    @org.hibernate.validator.Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$", 
-          message = "error.register.invalidPhoneNumber")
+   // @NotEmpty (message = "error.submit.contactPhone")-- removed - do validation in the action
+    //@org.hibernate.validator.Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$", 
+      //    message = "error.register.invalidPhoneNumber")
     public String getContactPhone() {
         return contactPhone;
     }
@@ -196,8 +198,8 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the contactEmail
      */
-    @NotEmpty (message = "error.submit.contactEmail")
-    @org.hibernate.validator.Email (message = "error.submit.invalidContactEmailAddress")
+    //@NotEmpty (message = "error.submit.contactEmail")-- removed - do validation in the action
+    //@org.hibernate.validator.Email (message = "error.submit.invalidContactEmailAddress")
     public String getContactEmail() {
         return contactEmail;
     }
@@ -575,6 +577,18 @@ public class TrialDTO extends BaseTrialDTO {
      */
     public String getTrialOversgtAuthOrgName() {
         return trialOversgtAuthOrgName;
+    }    
+    /**
+     * @return the xml required
+     */
+    public boolean getXmlRequired() {
+        return xmlRequired;
     }
-   
+    
+    /**
+     * @param xmlRequired the new xml required
+     */
+    public void setXmlRequired(boolean xmlRequired) {
+        this.xmlRequired = xmlRequired;
+    }
 }

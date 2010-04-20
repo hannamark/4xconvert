@@ -37,6 +37,7 @@ public class BaseTrialDTO {
     private List<TrialDocumentWebDTO> docDtos;
     private List <TrialIndIdeDTO> indIdeDtos;
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
+   
     /**
      * default Cons.
      */
@@ -305,4 +306,5 @@ public class BaseTrialDTO {
     public String getStudyProtocolId() {
         return studyProtocolId;
     }
+    
 }

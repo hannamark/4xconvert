@@ -169,12 +169,14 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
            if (grantList != null) {
                trialDTO.setFundingDtos(grantList);
            }
-           String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
+           if (trialDTO.getXmlRequired()) {
+              String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
                    trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
-           String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
-           Long.valueOf(trialDTO.getLst()), "Country");
-           trialDTO.setTrialOversgtAuthCountryName(countryName);
-           trialDTO.setTrialOversgtAuthOrgName(orgName);
+              String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+              Long.valueOf(trialDTO.getLst()), "Country");
+              trialDTO.setTrialOversgtAuthCountryName(countryName);
+              trialDTO.setTrialOversgtAuthOrgName(orgName);
+           }
         } catch (IOException e) {
             LOG.error(e.getMessage());
             addActionError(e.getMessage());
@@ -253,7 +255,11 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
             OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
             PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
-            OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
+            // updated only if the ctGovXmlRequired is true
+            OrganizationDTO sponsorOrgDTO = null;
+            if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+                sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
+            }
             StudySiteDTO leadOrgSiteIdDTO = util.convertToleadOrgSiteIdDTO(trialDTO);
 
             StudyContactDTO studyContactDTO = null;
@@ -261,20 +267,23 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO, null);
             Ii responsiblePartyContactIi = null;
-            if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
-                studyContactDTO = util.convertToStudyContactDTO(trialDTO);
-            } else {
-                studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
-                if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
-                  responsiblePartyContactIi = IiConverter.convertToPoPersonIi(
+            // updated only if the ctGovXmlRequired is true 
+            if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+                if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
+                    studyContactDTO = util.convertToStudyContactDTO(trialDTO);
+                } else {
+                   studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
+                   if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
+                       responsiblePartyContactIi = IiConverter.convertToPoPersonIi(
                               trialDTO.getResponsiblePersonIdentifier());
-                }
-                if (trialDTO.getResponsibleGenericContactName() != null 
+                   }
+                   if (trialDTO.getResponsibleGenericContactName() != null 
                           && !trialDTO.getResponsibleGenericContactName().equals("")) {
-                    responsiblePartyContactIi = IiConverter.
-                        convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
+                        responsiblePartyContactIi = IiConverter.
+                          convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
+                   }
                 }
-            }
+            }    
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
             
@@ -282,9 +291,11 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));
             //studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, null));
             //studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, null));
-            
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
-            
+            // updated only if the ctGovXmlRequired is true 
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO = null;
+            if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+                studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
+            }
             amendId = PaRegistry.getTrialRegistrationService().
             amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, 
                     leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO, 

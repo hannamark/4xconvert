@@ -154,6 +154,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     private String otherDocumentFileName = null;
     private TrialDTO trialDTO;
     private final TrialUtil  trialUtil = new TrialUtil();
+    
     /**
      * 
      * @return res
@@ -214,19 +215,21 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO, null);
             Ii responsiblePartyContactIi = null;
-            if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
-                studyContactDTO = util.convertToStudyContactDTO(trialDTO);
-            } else {
-                studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
-                if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
-                  responsiblePartyContactIi = 
-                      IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
-                }
-                if (trialDTO.getResponsibleGenericContactName() != null 
+            if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+                if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
+                    studyContactDTO = util.convertToStudyContactDTO(trialDTO);
+                } else {
+                   studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
+                   if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
+                       responsiblePartyContactIi = 
+                          IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
+                   }
+                   if (trialDTO.getResponsibleGenericContactName() != null 
                         && !trialDTO.getResponsibleGenericContactName().equals("")) {
-                  responsiblePartyContactIi = IiConverter.
-                      convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
-                }
+                       responsiblePartyContactIi = IiConverter.
+                         convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
+                  }
+               }
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
@@ -590,12 +593,17 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
            if (grantList != null) {
                trialDTO.setFundingDtos(grantList);
            }
-           String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
-                   trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
-           String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
-           Long.valueOf(trialDTO.getLst()), "Country");
-           trialDTO.setTrialOversgtAuthCountryName(countryName);
-           trialDTO.setTrialOversgtAuthOrgName(orgName);
+           if (trialDTO.getSelectedRegAuth() != null) {
+                String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
+                    trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
+                trialDTO.setTrialOversgtAuthOrgName(orgName);
+           }
+           if (trialDTO.getLst() != null) {
+                String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+                   Long.valueOf(trialDTO.getLst()), "Country");
+                trialDTO.setTrialOversgtAuthCountryName(countryName);
+           } 
+           
         } catch (IOException e) {
             LOG.error(e.getMessage());
             return ERROR;
@@ -721,4 +729,5 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         setTrialAction("deletePartialSubmission");
         return "redirect_to_search";
     }
+
 }

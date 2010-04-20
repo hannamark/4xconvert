@@ -113,6 +113,7 @@ var winprint=window.open("","",sOption);
        <tr>
             <td colspan="2" class="space">&nbsp;</td>
        </tr> 
+       <c:if test="${trialDTO.xmlRequired == true}">
        <c:if test="${trialDTO.sponsorIdentifier != null}">
             <tr>
                 <th colspan="2"><fmt:message key="view.trial.sponsorResParty"/></th>
@@ -174,6 +175,7 @@ var winprint=window.open("","",sOption);
            <tr>
                 <td colspan="2" class="space">&nbsp;</td>
            </tr>
+       </c:if>
        </c:if>
        <c:if test="${fn:trim(trialDTO.summaryFourOrgName) != ''}">             
            <tr>
@@ -274,6 +276,7 @@ var winprint=window.open("","",sOption);
         </td>
       </tr> 
      </table>
+     <c:if test="${trialDTO.xmlRequired == true}">
      <h3>Regulatory Information</h3> 
      <table>
      <tr>
@@ -323,6 +326,7 @@ var winprint=window.open("","",sOption);
          </td>       
      </tr>
      </table>
+     </c:if>
      <c:if test="${trialDTO.indIdeUpdateDtos != null && fn:length(trialDTO.indIdeUpdateDtos) > 0}">
        <div class="box">
        <h3>Updated FDA IND/IDE </h3> 
