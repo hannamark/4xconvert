@@ -1830,6 +1830,9 @@ public class TrialUtil {
        if (grantList != null) {
            trialDTO.setFundingDtos(grantList);
        }
+       if (trialDTO instanceof TrialDTO) {
+            setOversgtInfo((TrialDTO) trialDTO);
+       }
        trialDTO.setStudyProtocolId(tempStudyProtocolIi.getExtension());
         return trialDTO;
     }
@@ -1860,5 +1863,22 @@ public class TrialUtil {
         }
         return PAUtil.convertToPaPersonDTO(perDto).getFullName();
     }
-    
+    /**
+     * 
+     * @param trialDTO dto
+     * @throws PAException on err
+     */
+    public void setOversgtInfo(TrialDTO trialDTO) throws PAException {
+       if (trialDTO.getSelectedRegAuth() != null) {
+            String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
+                trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
+            trialDTO.setTrialOversgtAuthOrgName(orgName);
+       }
+       if (trialDTO.getLst() != null) {
+            String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+               Long.valueOf(trialDTO.getLst()), "Country");
+            trialDTO.setTrialOversgtAuthCountryName(countryName);
+       }
+    }
+
 }

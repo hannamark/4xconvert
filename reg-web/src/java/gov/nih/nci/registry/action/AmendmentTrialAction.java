@@ -170,12 +170,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                trialDTO.setFundingDtos(grantList);
            }
            if (trialDTO.getXmlRequired()) {
-              String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
-                   trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
-              String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
-              Long.valueOf(trialDTO.getLst()), "Country");
-              trialDTO.setTrialOversgtAuthCountryName(countryName);
-              trialDTO.setTrialOversgtAuthOrgName(orgName);
+              trialUtil.setOversgtInfo(trialDTO);
            }
         } catch (IOException e) {
             LOG.error(e.getMessage());

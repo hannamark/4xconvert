@@ -593,16 +593,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
            if (grantList != null) {
                trialDTO.setFundingDtos(grantList);
            }
-           if (trialDTO.getSelectedRegAuth() != null) {
-                String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
-                    trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
-                trialDTO.setTrialOversgtAuthOrgName(orgName);
-           }
-           if (trialDTO.getLst() != null) {
-                String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
-                   Long.valueOf(trialDTO.getLst()), "Country");
-                trialDTO.setTrialOversgtAuthCountryName(countryName);
-           } 
+           trialUtil.setOversgtInfo(trialDTO); 
            
         } catch (IOException e) {
             LOG.error(e.getMessage());
