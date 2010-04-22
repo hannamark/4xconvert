@@ -231,7 +231,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         enforceIdentifierLength(studyProtocolDTO, abstractionList);
         enforceGeneralTrailDetails(studyProtocolDTO, abstractionList);
         enforceNCISpecificInfo(studyProtocolDTO, abstractionList);
-        enforceRegulatoryInfo(studyProtocolIi, abstractionList);
+        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+         enforceRegulatoryInfo(studyProtocolIi, abstractionList);
+        } 
         enforceIRBInfo(studyProtocolDTO, abstractionList, abstractionWarnList);
         enforceTrialINDIDE(studyProtocolDTO, abstractionList);
         enforceTrialStatus(studyProtocolDTO, abstractionList);
