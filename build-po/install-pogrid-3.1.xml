@@ -212,7 +212,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         jboss.grid.secure.cert.file="${po-grid-3.1-jboss.grid.secure.cert.file}"
         grid.application.name="${po-grid-3.1.introduce.skeleton.service.name}"
         />
-        <copy file="${grid.dist.relative.dir}/log4j.xml" todir="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/conf" overwrite="true" />
+        <configure-grid-log4j log.level="${app.log.level.default}" config.dir="${po-grid-3.1-jboss.home}/server/${po-grid-3.1-jboss.server.name}/conf"/>
     </target>
 
   <target name="install:po-grid-3.1-jboss:configure" unless="exclude.po-grid-3.1">

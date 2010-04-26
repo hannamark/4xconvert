@@ -182,7 +182,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
     <!-- Configures installed po-grid-3.0 application -->
     <target name="install:po-grid-3.0-jboss:grid:configure" description="Configure po-grid-3.0 service based on properties" unless="exclude.po-grid-3.0">
-
+    <echoproperties prefix="po-grid-3.0-jboss"/>
     <jboss-configure-grid
         jboss.home="${po-grid-3.0-jboss.home}"
         jboss.server.name="${po-grid-3.0-jboss.server.name}"
@@ -200,6 +200,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         jboss.grid.secure.cert.file="${po-grid-3.0-jboss.grid.secure.cert.file}"
         grid.application.name="${po-grid-3.0.introduce.skeleton.service.name}"
         />
+        <configure-grid-log4j log.level="${app.log.level.default}" config.dir="${po-grid-3.0-jboss.home}/server/${po-grid-3.0-jboss.server.name}/conf"/>
     </target>
 
   <target name="install:po-grid-3.0-jboss:configure" unless="exclude.po-grid-3.0">

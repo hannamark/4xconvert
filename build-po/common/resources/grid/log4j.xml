@@ -265,6 +265,7 @@
    <!-- ======================= -->
 
    <root>
+      <priority value="@LOG_LEVEL@"/>
       <appender-ref ref="CONSOLE"/>
       <appender-ref ref="FILE"/>
    </root>
