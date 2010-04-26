@@ -1102,7 +1102,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <override-properties-prep
                override.properties="${override.properties}"
                override.properties.string.property.name="override.properties.string"/>
-        <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true upgrade-dac:pa-ear-jboss upgrade:database" />
+        <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${override.properties.string} upgrade-dac:pa-ear-jboss upgrade:database" />
     </target>
 
     <target name="remote:upgrade:pa-grid" unless="exclude.pa-grid">
@@ -1123,7 +1123,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             remoteSshHost="${ssh.server.hostname}"
             remoteSshPort="${ssh.port}"
             remoteSshKeyfile="${ssh.key.file}"
-            remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true upgrade-dac:pa-grid-jboss" />
+            remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${override.properties.string} upgrade-dac:pa-grid-jboss" />
     </target>
     <target name="remote:upgrade:pa-grid-legacy" unless="exclude.pa-grid-legacy">
       <!-- upgrade pa-grid-legacy only-->
@@ -1143,7 +1143,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              remoteSshHost="${ssh.server.hostname}"
               remoteSshPort="${ssh.port}"
              remoteSshKeyfile="${ssh.key.file}"
-             remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true upgrade-dac:pa-grid-legacy-jboss" />
+             remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${override.properties.string} upgrade-dac:pa-grid-legacy-jboss" />
     </target>
     <target name="remote:upgrade:outcomes-grid" unless="exclude.outcomes-grid">
       <!-- upgrade outcomes-grid only-->
@@ -1163,7 +1163,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              remoteSshHost="${ssh.server.hostname}"
               remoteSshPort="${ssh.port}"
              remoteSshKeyfile="${ssh.key.file}"
-             remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true upgrade-dac:outcomes-grid-jboss" />
+             remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${override.properties.string} upgrade-dac:outcomes-grid-jboss" />
     </target>
     <target name="usage" description="Explains how to use this build script">
         <echo message="To run a remote upgrade type: ant deploy:remote:upgrade -Dproperties.file=[path to environment proeprty file]" />
