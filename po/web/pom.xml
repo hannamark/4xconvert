@@ -24,7 +24,7 @@
         <gts.identity>/O=caBIG/OU=caGrid/OU=Training Trust Fabric/CN=host/slavegts.training.cagrid.org</gts.identity>
         <gts.ca.subject>O=caBIG,OU=caGrid,OU=Training Trust Fabric,CN=caGrid Training Trust Fabric CA</gts.ca.subject>
         <struts.devMode>false</struts.devMode>
-        <web.auth.method>FORM</web.auth.method>
+        <web.auth.method>CAGRIDFORM</web.auth.method>
         <test.jdbc.url>jdbc:hsqldb:mem:po-test</test.jdbc.url>
         <test.jdbc.username>sa</test.jdbc.username>
         <test.jdbc.password></test.jdbc.password>

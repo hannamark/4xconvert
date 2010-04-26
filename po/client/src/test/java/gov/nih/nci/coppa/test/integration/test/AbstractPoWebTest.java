@@ -149,7 +149,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
 
     public void loginAsCurator() {
-        login("curator", "pass");
+        login("curator", "Coppa#12345");
     }
 
     protected boolean isLoggedIn() {
