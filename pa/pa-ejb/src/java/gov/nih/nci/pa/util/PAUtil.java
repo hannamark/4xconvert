@@ -809,7 +809,7 @@ public class PAUtil {
         StringBuffer errMsg = new StringBuffer();
         for (Iterator<String> iterator = orderedKeys.iterator(); iterator.hasNext();) {
             String key = iterator.next();
-            errMsg.append(Arrays.deepToString(errMap.get(key)));
+            errMsg.append(key + " - " + Arrays.deepToString(errMap.get(key)));
             if (iterator.hasNext()) {
                 errMsg.append('\n');
             }
