@@ -111,6 +111,7 @@ import java.util.List;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.validator.annotations.DoubleRangeFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
 
 /**
 * @author Hugh Reinhart
@@ -383,6 +384,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @return the interventionDescription
      */
+    @StringLengthFieldValidator(message = "Length must be less than 5000 characters" , maxLength = "5000")
     public String getInterventionDescription() {
         return interventionDescription;
     }
@@ -550,8 +552,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @return the doseRegimen
      */
-    @DoubleRangeFieldValidator(message = MESSAGE,  
-     minInclusive = MIN, maxInclusive = MAX)  
+    @StringLengthFieldValidator(message = "Length must be less than 1000 characters" , maxLength = "1000")
      public String getDoseRegimen() {
        return doseRegimen;
      }

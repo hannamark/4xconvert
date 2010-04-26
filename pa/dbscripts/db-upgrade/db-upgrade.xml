@@ -394,4 +394,8 @@
        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1687_migration_to_4.1.sql"/>
        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1687_migration_to_4.2.sql"/>
     </changeSet>
+    <changeSet id="PO-1730" author="Naveen">
+    	<comment>PO-1730 increase the size of the dose_regimen field in planned_activity table to 1000 chars</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1730.sql"/>
+    </changeSet>    
 </databaseChangeLog>

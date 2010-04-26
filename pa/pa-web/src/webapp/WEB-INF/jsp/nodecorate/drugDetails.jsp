@@ -72,17 +72,23 @@
         </div> 
        </td>
     </tr>
+        <tr>
+        <td/>
+        <td class="value">
+            <s:label name="doseLimit" >(Max 1000 Chars )</s:label>
+         </td>
+    </tr>
+    
       <tr>
         <td scope="row" class="label"><s:label>Dose Regimen:</s:label></td>
         <td class="value" >
-            <s:textfield name="doseRegimen" maxlength="9"/> 
+            <s:textarea name="doseRegimen" cssStyle="width:275px" rows="3"/> 
             <span class="formErrorMsg"> 
-                             <s:fielderror>
-                                 <s:param>doseRegimen</s:param>
-                               </s:fielderror>  
-        </span>
+               <s:fielderror>
+                   <s:param>doseRegimen</s:param>
+                 </s:fielderror>  
+            </span>
         </td>
-       
     </tr>
    <tr>
         <td scope="row" class="label"><s:label>Total Dose Range:</s:label></td>

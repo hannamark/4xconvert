@@ -67,9 +67,20 @@ function generate(){
         </td>
     </tr>
     <tr>
+        <td/>
+        <td class="value">
+            <s:label name="descriptionLimit" >(Max 5000 Chars , Max CtGov 1000 Chars)</s:label>
+         </td>
+    </tr>    
+    <tr>
         <td class="label"><s:label>Intervention Description:</s:label></td>
         <td class="value" colspan="2">
             <s:textarea name="interventionDescription" rows="3" cssStyle="width:280px;float:left"/>
+            <span class="formErrorMsg"> 
+             <s:fielderror>
+                 <s:param>interventionDescription</s:param>
+               </s:fielderror>  
+            </span>            
         </td>
     </tr>
     <tr>
