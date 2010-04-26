@@ -72,7 +72,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
         try{
-            String[] localArgs = new String[] {"-getId"};
+            String[] localArgs = new String[] {"-getId", "-findLastName"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
 
@@ -106,7 +106,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
         criteria.setStatusCode(statusCode);
         ENPN enpn = new ENPN();
         ENXP enxp = new ENXP();
-        enxp.setValue("Jones");
+        enxp.setValue(helper.getArgument("-findLastName", "Jones"));
         enxp.setType(EntityNamePartType.FAM);
         enpn.getPart().add(enxp);
         criteria.setName(enpn);
@@ -132,7 +132,8 @@ public class PersonClient extends PersonClientBase implements PersonI {
         }
     }
 
-    @GridTestMethod
+//    Uncomment the GridTestMethod annotation to be able to run this test
+//    @GridTestMethod
     private static void createPerson(PersonClient client) throws RemoteException {
         Person person = new Person();
         ENPN enpn = new ENPN();

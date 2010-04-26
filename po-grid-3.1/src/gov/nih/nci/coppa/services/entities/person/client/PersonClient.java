@@ -35,7 +35,7 @@ import org.iso._21090.EntityNamePartType;
  */
 public class PersonClient extends PersonClientBase implements PersonI {
 
-    private static ClientParameterHelper<PersonClient> helper = 
+    private static ClientParameterHelper<PersonClient> helper =
         new ClientParameterHelper<PersonClient>(PersonClient.class);
 
     /**
@@ -67,10 +67,10 @@ public class PersonClient extends PersonClientBase implements PersonI {
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
         try{
-            String[] localArgs = new String[] {"-getId"};          
+            String[] localArgs = new String[] {"-getId", "-findLastName"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
-            
+
             PersonClient client = new PersonClient(helper.getArgument("-url"));
 
             for (Method method : helper.getRunMethods()) {
@@ -108,7 +108,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
         criteria.setStatusCode(statusCode);
         ENPN enpn = new ENPN();
         ENXP enxp = new ENXP();
-        enxp.setValue("Jones");
+        enxp.setValue(helper.getArgument("-findLastName", "Jones"));
         enxp.setType(EntityNamePartType.FAM);
         enpn.getPart().add(enxp);
         criteria.setName(enpn);
