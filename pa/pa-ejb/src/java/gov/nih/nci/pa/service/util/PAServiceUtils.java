@@ -1205,7 +1205,7 @@ public class PAServiceUtils {
           dupSR.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(poDto.getStatus()));
           return (T) cUtils.createPADomain(dupSR);
       }
-       return null;
+       return (T) dupSR;
       }
       /**
        * @param nullifiedIi ii
