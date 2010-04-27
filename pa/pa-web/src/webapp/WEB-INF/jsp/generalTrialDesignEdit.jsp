@@ -122,7 +122,6 @@
         <s:hidden name="gtdDTO.phaseOtherText" id= "gtdDTO.phaseOtherText"></s:hidden>
         <s:hidden name="gtdDTO.primaryPurposeCode" id= "gtdDTO.primaryPurposeCode"></s:hidden>
         <s:hidden name="gtdDTO.primaryPurposeOtherText" id= "gtdDTO.primaryPurposeOtherText"></s:hidden>
-        <s:hidden name="gtdDTO.localProtocolIdentifier" id="gtdDTO.localProtocolIdentifier"></s:hidden>
     </c:if>
     <c:if test="${sessionScope.trialSummary.isProprietaryTrial == 'true'}">
         <s:hidden name="gtdDTO.centralContactName" id="gtdDTO.centralContactName"></s:hidden>
@@ -130,12 +129,53 @@
         <s:hidden name="gtdDTO.centralContactIdentifier" id="gtdDTO.centralContactIdentifier"></s:hidden>
         <s:hidden name="gtdDTO.centralContactEmail" id="gtdDTO.centralContactEmail"></s:hidden>
         <s:hidden name="gtdDTO.centralContactPhone" id="gtdDTO.centralContactPhone"></s:hidden>
-        <s:hidden name="gtdDTO.localProtocolIdentifier" id="gtdDTO.localProtocolIdentifier"></s:hidden>
     </c:if>
+    <tr>
+        <td scope="row" class="label"><label for="LocalProtocolIdentifier">
+             <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/><span class="required">*</span></label> </td>
+        <td><s:textfield name="gtdDTO.localProtocolIdentifier" id="gtdDTO.localProtocolIdentifier"/> 
+        <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>gtdDTO.localProtocolIdentifier</s:param>
+             </s:fielderror>                            
+          </span> </td>
+    </tr>
+    <tr>
+        <td scope="row" class="label"><label for="Nct Identifier">
+             <fmt:message key="studyProtocol.nctNumber"/></label> </td>
+        <td><s:textfield name="gtdDTO.nctIdentifier" id="gtdDTO.nctIdentifier"/> 
+        <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>gtdDTO.nctIdentifier</s:param>
+             </s:fielderror>                            
+          </span> </td>
+    </tr>
+    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+    <tr>
+        <td scope="row" class="label"><label for="CtepIdentifier">
+             <fmt:message key="studyProtocol.ctepId"/></label> </td>
+        <td><s:textfield name="gtdDTO.ctepIdentifier" id="gtdDTO.ctepIdentifier"/> 
+        <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>gtdDTO.ctepIdentifier</s:param>
+             </s:fielderror>                            
+          </span> </td>
+    </tr>
+    <tr>
+        <td scope="row" class="label"><label for="dcpIdentifier">
+             <fmt:message key="studyProtocol.dcpId"/></label> </td>
+        <td><s:textfield name="gtdDTO.dcpIdentifier" id="gtdDTO.dcpIdentifier"/> 
+        <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>gtdDTO.dcpIdentifier</s:param>
+             </s:fielderror>                            
+          </span> </td>
+    </tr>
+    </c:if>
+    
     <c:if test="${sessionScope.trialSummary.isProprietaryTrial != null && sessionScope.trialSummary.isProprietaryTrial == 'true'}">
       <tr>
         <td scope="row" class="label"><label for="studyPhase">
-            <label for="officialTitle">
              <fmt:message key="studyProtocol.studyPhase"/><span class="required">*</span></label> </td>
         <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
         <td>

@@ -78,19 +78,13 @@
 */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -126,10 +120,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     private HttpServletResponse servletResponse;
     private boolean checkoutStatus = false;
     private static final String TSR = "TSR_";
-    private String nctIdentifier = null;
-    private String localTrialIdentifier = null;
-    private String ctepIdentifier = null;
-    private String dcpIdentifier = null;
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     private static final String SHOW_VIEW = "view";
     /**
@@ -264,14 +254,16 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
                     && studyProtocolQueryDTO.getStudyCheckoutBy().equalsIgnoreCase(loginName)) || superUser) {
                 setCheckoutStatus(true);
             }
-            setLocalTrialIdentifier(studyProtocolQueryDTO.getLocalStudyProtocolIdentifier());
-            setNctIdentifier(paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
-                    studyProtocolId), PAConstants.NCT_IDENTIFIER_TYPE));
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    "nctIdentifier", paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
+                            studyProtocolId), PAConstants.NCT_IDENTIFIER_TYPE));
             if (studyProtocolQueryDTO.getIsProprietaryTrial() == null
                     || studyProtocolQueryDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
-            setDcpIdentifier(paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
+                ServletActionContext.getRequest().getSession().setAttribute(
+                        "dcpIdentifier", paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
                     studyProtocolId), PAConstants.DCP_IDENTIFIER_TYPE));
-            setCtepIdentifier(paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
+                ServletActionContext.getRequest().getSession().setAttribute(
+                        "ctepIdentifier", paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
                     studyProtocolId), PAConstants.CTEP_IDENTIFIER_TYPE));
             }
             return SHOW_VIEW;
@@ -332,10 +324,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry
                                         .getProtocolQueryService()
                                         .getTrialSummaryByStudyProtocolId(studyProtocolId);
-
             Principal userPrincipal = ServletActionContext.getRequest().getUserPrincipal();
             String loginName = userPrincipal.getName();
-
             StudyCheckoutDTO scoDTO = new StudyCheckoutDTO();
             scoDTO.setStudyProtocolIdentifier(
                     IiConverter.convertToStudyProtocolIi(studyProtocolQueryDTO.getStudyProtocolId()));
@@ -345,86 +335,15 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                         getText("studyProtocol.trial.checkOut"));
             } else if (studyProtocolQueryDTO.getStudyCheckoutId() != null) {
-                setLocalTrialIdentifier(studyProtocolQueryDTO.getLocalStudyProtocolIdentifier());
-                setNctIdentifier(paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
-                          studyProtocolId), PAConstants.NCT_IDENTIFIER_TYPE));
                 PaRegistry.getStudyCheckoutService().delete(
                         IiConverter.convertToIi(studyProtocolQueryDTO.getStudyCheckoutId()));
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                         getText("studyProtocol.trial.checkIn"));
             }
-            PAServiceUtils serviceUtil = new PAServiceUtils();
-            StudySiteDTO identifierDTO;
-            //save the if Lead Identifier if changed
-            if (PAUtil.isEmpty(localTrialIdentifier)) {
-                addFieldError("localTrialIdentifier", getText("Organization Trial ID must be Entered"));
-                return SHOW_VIEW;
-            }
-            if (!studyProtocolQueryDTO.getLocalStudyProtocolIdentifier().equals(localTrialIdentifier)) {
-                identifierDTO = new StudySiteDTO();
-                identifierDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
-                identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(localTrialIdentifier));
-                identifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-                Organization paOrg = new CorrelationUtils().getPAOrganizationByIi(
-                        IiConverter.convertToPaOrganizationIi(studyProtocolQueryDTO.getLeadOrganizationId()));
-                identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
-                        getPoResearchOrganizationByEntityIdentifier(
-                    IiConverter.convertToPoOrganizationIi(paOrg.getIdentifier())));
-                serviceUtil.manageStudyIdentifiers(identifierDTO);
-            }
-            Ii studyProtocolIi  = IiConverter.convertToStudyProtocolIi(studyProtocolId);
-            String dbNctNumber = serviceUtil.getStudyIdentifier(studyProtocolIi ,
-                    PAConstants.NCT_IDENTIFIER_TYPE);
-            if (!dbNctNumber.equals(nctIdentifier)) {
-                identifierDTO = new StudySiteDTO();
-                identifierDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
-                identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(nctIdentifier));
-                identifierDTO.setFunctionalCode(CdConverter.convertToCd(
-                        StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-                String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
-                        PAConstants.NCT_IDENTIFIER_TYPE);
-                identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
-                        getPoResearchOrganizationByEntityIdentifier(
-                        IiConverter.convertToPoOrganizationIi(poOrgId)));
-                serviceUtil.manageStudyIdentifiers(identifierDTO);
-            }
-            if (studyProtocolQueryDTO.getIsProprietaryTrial() == null
-                    || studyProtocolQueryDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
-                String dbCtepId =  serviceUtil.getStudyIdentifier(studyProtocolIi, PAConstants.DCP_IDENTIFIER_TYPE);
-                if (!dbCtepId.equals(ctepIdentifier)) {
-                    identifierDTO = new StudySiteDTO();
-                    identifierDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
-                    identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(ctepIdentifier));
-                    identifierDTO.setFunctionalCode(CdConverter.convertToCd(
-                            StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-                    String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
-                            PAConstants.CTEP_IDENTIFIER_TYPE);
-                    identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
-                            getPoResearchOrganizationByEntityIdentifier(
-                            IiConverter.convertToPoOrganizationIi(poOrgId)));
-                    serviceUtil.manageStudyIdentifiers(identifierDTO);
-                }
-                String dbDcpId = serviceUtil.getStudyIdentifier(studyProtocolIi, PAConstants.CTEP_IDENTIFIER_TYPE);
-                if (!dbDcpId.equals(dcpIdentifier)) {
-                    identifierDTO = new StudySiteDTO();
-                    identifierDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
-                    identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(dcpIdentifier));
-                    identifierDTO.setFunctionalCode(CdConverter.convertToCd(
-                            StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-                    String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
-                            PAConstants.DCP_IDENTIFIER_TYPE);
-                    identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
-                            getPoResearchOrganizationByEntityIdentifier(
-                            IiConverter.convertToPoOrganizationIi(poOrgId)));
-                    serviceUtil.manageStudyIdentifiers(identifierDTO);
-                }
-            }
-            view();
-            return SHOW_VIEW;
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
-            return SHOW_VIEW;
         }
+        return SHOW_VIEW;
     }
 
     /**
@@ -460,62 +379,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      */
     public void setCheckoutStatus(boolean checkoutStatus) {
         this.checkoutStatus = checkoutStatus;
-    }
-
-    /**
-     * @return the nctIdentifier
-     */
-    public String getNctIdentifier() {
-        return nctIdentifier;
-    }
-
-    /**
-     * @param nctIdentifier the nctIdentifier to set
-     */
-    public void setNctIdentifier(String nctIdentifier) {
-        this.nctIdentifier = nctIdentifier;
-    }
-
-    /**
-     * @return the localTrialIdentifier
-     */
-    public String getLocalTrialIdentifier() {
-        return localTrialIdentifier;
-    }
-
-    /**
-     * @param localTrialIdentifier the localTrialIdentifier to set
-     */
-    public void setLocalTrialIdentifier(String localTrialIdentifier) {
-        this.localTrialIdentifier = localTrialIdentifier;
-    }
-
-    /**
-     * @param ctepIdentifier the ctepIdentifier to set
-     */
-    public void setCtepIdentifier(String ctepIdentifier) {
-        this.ctepIdentifier = ctepIdentifier;
-    }
-
-    /**
-     * @return the ctepIdentifier
-     */
-    public String getCtepIdentifier() {
-        return ctepIdentifier;
-    }
-
-    /**
-     * @param dcpIdentifier the dcpIdentifier to set
-     */
-    public void setDcpIdentifier(String dcpIdentifier) {
-        this.dcpIdentifier = dcpIdentifier;
-    }
-
-    /**
-     * @return the dcpIdentifier
-     */
-    public String getDcpIdentifier() {
-        return dcpIdentifier;
     }
 
 }

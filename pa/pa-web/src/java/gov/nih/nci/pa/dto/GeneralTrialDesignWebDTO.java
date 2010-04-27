@@ -88,7 +88,7 @@ package gov.nih.nci.pa.dto;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({ "PMD", "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.BooleanGetMethodName" })
 public class GeneralTrialDesignWebDTO {
 
     private String acronym;
@@ -136,7 +136,10 @@ public class GeneralTrialDesignWebDTO {
     private String proprietarytrialindicator;
     private String contactPhoneExtn;
     private String centralContactPhoneExtn;
-    private boolean ctGovXmlRequired; 
+    private boolean ctGovXmlRequired;
+    private String ctepIdentifier;
+    private String dcpIdentifier;
+
     
     
     /**
@@ -754,7 +757,29 @@ public class GeneralTrialDesignWebDTO {
      public void setCtGovXmlRequired(boolean ctGovXmlRequired) {
       this.ctGovXmlRequired = ctGovXmlRequired;
      }
-    
-   
-    
+     /**
+      * @return the ctepIdentifier
+      */
+     public String getCtepIdentifier() {
+         return ctepIdentifier;
+     }
+     /**
+      * @param ctepIdentifier the ctepIdentifier to set
+      */
+     public void setCtepIdentifier(String ctepIdentifier) {
+         this.ctepIdentifier = ctepIdentifier;
+     }
+     /**
+      * @return the dcpIdentifier
+      */
+     public String getDcpIdentifier() {
+         return dcpIdentifier;
+     }
+     /**
+      * @param dcpIdentifier the dcpIdentifier to set
+      */
+     public void setDcpIdentifier(String dcpIdentifier) {
+         this.dcpIdentifier = dcpIdentifier;
+     }
+     
 }

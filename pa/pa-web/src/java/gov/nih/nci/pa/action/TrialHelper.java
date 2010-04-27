@@ -49,6 +49,8 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  *
  * @author Vrushali
@@ -97,6 +99,7 @@ public class TrialHelper {
             copySummaryFour(PaRegistry.getStudyResourcingService()
                 .getsummary4ReportedResource(studyProtocolIi), gtdDTO);
         }
+        copyIdentifier(studyProtocolIi, gtdDTO);
         return gtdDTO;
     }
     /**
@@ -112,15 +115,19 @@ public class TrialHelper {
         NullifiedEntityException, NullifiedRoleException   {
         updateStudyProtocol(studyProtocolIi, gtdDTO);
         PAServiceUtils paServUtil = new PAServiceUtils();
-        Ii poROId = PaRegistry.getOrganizationCorrelationService().getPoResearchOrganizationByEntityIdentifier(
-                IiConverter.convertToPoOrganizationIi(gtdDTO.getLeadOrganizationIdentifier()));
-        StudySiteDTO leadOrgSiteIdentifierDTO = new StudySiteDTO();
-        leadOrgSiteIdentifierDTO.setResearchOrganizationIi(poROId);
-        leadOrgSiteIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
-        leadOrgSiteIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(
-                gtdDTO.getLocalProtocolIdentifier()));
-        leadOrgSiteIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-        paServUtil.manageStudyIdentifiers(leadOrgSiteIdentifierDTO);
+        StudySiteDTO identifierDTO;
+        identifierDTO = new StudySiteDTO();
+        identifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getLocalProtocolIdentifier()));
+        identifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        
+        PaRegistry.getOrganizationCorrelationService().createResearchOrganizationCorrelations(
+               gtdDTO.getLeadOrganizationIdentifier());
+        
+        identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+                    getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(
+                        gtdDTO.getLeadOrganizationIdentifier())));
+        paServUtil.manageStudyIdentifiers(identifierDTO);
         if ((gtdDTO.getProprietarytrialindicator() == null
                || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE))
                && gtdDTO.getCtGovXmlRequired()) {
@@ -157,16 +164,51 @@ public class TrialHelper {
             paServUtil.manageSummaryFour(studyProtocolIi, sum4OrgDto, summary4ResoureDTO);
         }
         //nct
-        StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
-        nctIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getNctIdentifier()));
-        nctIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
-        nctIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-        String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+        String dbNctNumber = paServUtil.getStudyIdentifier(studyProtocolIi ,
                 PAConstants.NCT_IDENTIFIER_TYPE);
-        nctIdentifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+        if (!dbNctNumber.equals(gtdDTO.getNctIdentifier())) {
+            StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
+            nctIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getNctIdentifier()));
+            nctIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            nctIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+            String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                PAConstants.NCT_IDENTIFIER_TYPE);
+            nctIdentifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
                 getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId)));
-        paServUtil.manageStudyIdentifiers(nctIdentifierDTO);
-
+            paServUtil.manageStudyIdentifiers(nctIdentifierDTO);
+        }
+        //copied from trial identification screen
+        if (gtdDTO.getProprietarytrialindicator() == null
+                || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
+            String dbCtepId =  paServUtil.getStudyIdentifier(studyProtocolIi, PAConstants.CTEP_IDENTIFIER_TYPE);
+            if (!dbCtepId.equals(gtdDTO.getCtepIdentifier())) {
+                identifierDTO = new StudySiteDTO();
+                identifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
+                identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getCtepIdentifier()));
+                identifierDTO.setFunctionalCode(CdConverter.convertToCd(
+                        StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+                String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                        PAConstants.CTEP_IDENTIFIER_TYPE);
+                identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+                        getPoResearchOrganizationByEntityIdentifier(
+                        IiConverter.convertToPoOrganizationIi(poOrgId)));
+                paServUtil.manageStudyIdentifiers(identifierDTO);
+            }
+            String dbDcpId = paServUtil.getStudyIdentifier(studyProtocolIi, PAConstants.DCP_IDENTIFIER_TYPE);
+            if (!dbDcpId.equals(gtdDTO.getDcpIdentifier())) {
+                identifierDTO = new StudySiteDTO();
+                identifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
+                identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getDcpIdentifier()));
+                identifierDTO.setFunctionalCode(CdConverter.convertToCd(
+                        StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+                String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                        PAConstants.DCP_IDENTIFIER_TYPE);
+                identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+                        getPoResearchOrganizationByEntityIdentifier(
+                        IiConverter.convertToPoOrganizationIi(poOrgId)));
+                paServUtil.manageStudyIdentifiers(identifierDTO);
+            }
+        }
     }
     /**
      *
@@ -315,6 +357,16 @@ public class TrialHelper {
         String nctNumber = new PAServiceUtils().getStudyIdentifier(studyProtocolIi, PAConstants.NCT_IDENTIFIER_TYPE);
         if (PAUtil.isNotEmpty(nctNumber)) {
             gtdDTO.setNctIdentifier(nctNumber);
+        }
+    }
+    private void copyIdentifier(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException {
+        String ctepId = new PAServiceUtils().getStudyIdentifier(studyProtocolIi, PAConstants.CTEP_IDENTIFIER_TYPE);
+        if (StringUtils.isNotEmpty(ctepId)) {
+            gtdDTO.setCtepIdentifier(ctepId);
+        }
+        String dcpId = new PAServiceUtils().getStudyIdentifier(studyProtocolIi, PAConstants.DCP_IDENTIFIER_TYPE);
+        if (StringUtils.isNotEmpty(dcpId)) {
+            gtdDTO.setDcpIdentifier(dcpId);
         }
     }
     /**

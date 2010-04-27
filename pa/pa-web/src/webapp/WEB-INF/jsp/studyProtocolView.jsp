@@ -62,27 +62,27 @@
                 </label>
             </td>
             <td class="value">
-             <s:textfield name="localTrialIdentifier" maxlength="30" cssStyle="width:190px"/>
+             <c:out value="${sessionScope.trialSummary.localStudyProtocolIdentifier }"/>
              <span class="formErrorMsg"> <s:fielderror><s:param>localTrialIdentifier</s:param></s:fielderror></span>  
             </td>
             </tr>  
             <tr>
                 <td scope="row" class="label"> <label for="nciIdentifier"> NCT Number </label></td>
                 <td class="value">
-                <s:textfield name="nctIdentifier" maxlength="30" cssStyle="width:190px"/> 
+                <c:out value="${sessionScope.nctIdentifier }"/> 
             </td>
             </tr>
             <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
             <tr>
                 <td scope="row" class="label"> <label for="ctepIdentifier"> CTEP Identifier</label></td>
                 <td class="value">
-                <s:textfield name="ctepIdentifier" maxlength="30" cssStyle="width:190px"/> 
+                <c:out value="${sessionScope.ctepIdentifier }"/> 
             </td>
             </tr>
             <tr>
                 <td scope="row" class="label"> <label for="dcpIdentifier"> DCP Identifier</label></td>
                 <td class="value">
-                <s:textfield name="dcpIdentifier" maxlength="30" cssStyle="width:190px"/> 
+                <c:out value="${sessionScope.dcpIdentifier }"/> 
             </td>
             </tr>
             </c:if>
