@@ -326,6 +326,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 />
         </then>
     </if>
+    <!-- this one needs to be removed but CSM team wants to keep in their dependency tree -->
+    <delete file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/xmlsec-1.2.1.jar" />
   </target>
 
   <!-- Calls to bda macros for basic functionality -->
