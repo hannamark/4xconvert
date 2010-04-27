@@ -8,7 +8,7 @@
 <SCRIPT TYPE="text/javascript">
 // this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
-    setFocusToFirstControl();         
+    setFocusToFirstControl();
 }
 <!--
 function submitenter(myfield,e)
@@ -33,10 +33,10 @@ else
 <body>
 
 <h1><fmt:message key="login.title" /></h1>
-<div class="box"> 
-<form action="j_security_check" method="post" id="loginForm">   
+<div class="box">
+<form action="j_security_check" method="post" id="loginForm">
 <c:set var="topic" scope="request" value="login"/>
- <table class="form">                 
+ <table class="form">
             <c:if test="${not empty param.failedLogin}">
               <p class="directions"><fmt:message key="errors.password.mismatch"/></p>
             </c:if>
@@ -49,19 +49,43 @@ else
                 <label for="j_password">Password:</label>
                 <div class="fieldbox_m required"><input name="j_password" maxlength="100" size="15" type="password" onKeyPress="return submitenter(this,event)"></div>
             </div>
+            <div>
+            <c:set var="authMap" scope="page"
+                value="${requestScope['AUTHENTICATION_SOURCE_MAP']}"/>
+            <c:if test="${!empty requestScope['AUTHENTICATION_SOURCE_MAP']}">
+                  <%
+                    java.util.Map myMap = (java.util.Map)request.getAttribute("AUTHENTICATION_SOURCE_MAP");
+                    if (myMap.size() == 1) {
+                  %>
+                  <c:forEach var="item" items="${requestScope.AUTHENTICATION_SOURCE_MAP}">
+                    <input type="hidden" name="authenticationServiceURL"
+                         value="<c:out value="${item.value}"/>" />
+                  </c:forEach>
+                  <% } else { %>
+                    Authentication Source:
+                     <select name="authenticationServiceURL" size="1">
+                        <c:forEach var="item" items="${requestScope.AUTHENTICATION_SOURCE_MAP}">
+                        <option value="<c:out value="${item.value}" />">
+                            <c:out value="${item.key}" />
+                        </option>
+                        </c:forEach>
+                    </select>
+                 <% } %>
+               </c:if>
+            </div>
             <div class="clearfloat"></div>
            <div class="actionsrow">
             <del class="btnwrapper">
-                <ul class="btnrow">         
-                    <li>       
-                           <s:a href="#" cssClass="btn" onclick="document.forms.loginForm.submit();"><span class="btn_img"><span class="login">Login</span></span></s:a>  
+                <ul class="btnrow">
+                    <li>
+                           <s:a href="#" cssClass="btn" onclick="document.forms.loginForm.submit();"><span class="btn_img"><span class="login">Login</span></span></s:a>
                         </li>
-                </ul>   
+                </ul>
             </del>
 
         </div>
-        
-   
+
+
 </table></form>
 </div>
 </body>
