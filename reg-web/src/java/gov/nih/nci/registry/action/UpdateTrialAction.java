@@ -488,6 +488,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 synchActionWithDTO();
                 TrialValidator.addSessionAttributesForUpdate(trialDTO);
                 setIndIdeUpdateDtosLen(trialDTO.getIndIdeUpdateDtos().size());
+                ServletActionContext.getRequest().getSession().setAttribute(sessionTrialDTO, trialDTO);
             LOG.info("Trial retrieved: " + trialDTO.getOfficialTitle());
         } catch (Exception e) {
             LOG.error("Exception occured while querying trial " + e);
@@ -751,8 +752,8 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             updateId = studyProtocolIi; 
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
             studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, studyProtocolIi));
-            //studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
-            //studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, studyProtocolIi));
+            studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
+            studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, studyProtocolIi));
             //call the service to invoke the update method
             PaRegistry.getTrialRegistrationService().
                         update(spDTO, sosDto, studyIdentifierDTOs, studyIndldeDTOList, studyResourcingDTOs, 

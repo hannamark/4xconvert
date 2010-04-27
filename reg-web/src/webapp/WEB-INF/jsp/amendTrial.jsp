@@ -362,6 +362,27 @@ function toggledisplay2 (it) {
             <s:property value="trialDTO.assignedIdentifier"/>
           </td>
           </tr>
+          <c:if test="${trialDTO.ctepIdentifier != null }">
+          <tr>
+                <td scope="row" class="label">
+                    <label for="updateTrial_CTEPNumber"> <fmt:message key="submit.trial.ctepIdentifier"/></label>
+                </td>
+                <td>
+                    <s:textfield name="trialDTO.ctepIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+                </td>                
+          </tr>
+          </c:if>
+          <c:if test="${trialDTO.dcpIdentifier!= null}">
+          <tr>
+                <td scope="row" class="label">
+                    <label for="updateTrial_CTEPNumber"> <fmt:message key="submit.trial.dcpIdentifier"/></label>
+                </td>
+                <td>
+                    <s:textfield name="trialDTO.dcpIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+                </td>                
+          </tr>
+          </c:if>
+          
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
           <tr>
                 <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>

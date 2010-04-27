@@ -105,7 +105,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                 trialDTO = new TrialDTO();
                 util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
                 TrialValidator.addSessionAttributes(trialDTO);
-
+                ServletActionContext.getRequest().getSession().setAttribute(sessionTrialDTO, trialDTO);
             LOG.info("Trial retrieved: " + trialDTO.getOfficialTitle());
         } catch (Exception e) {
             LOG.error("Exception occured while querying trial " + e);
@@ -284,8 +284,8 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
             studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));
-            //studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, null));
-            //studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, null));
+            studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, null));
+            studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, null));
             // updated only if the ctGovXmlRequired is true 
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = null;
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {

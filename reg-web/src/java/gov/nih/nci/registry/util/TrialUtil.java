@@ -1269,12 +1269,11 @@ public class TrialUtil {
     public StudySiteDTO convertToCTEPStudySiteDTO(TrialDTO trialDTO, Ii studyProtocolIi) throws PAException {
         StudySiteDTO isoDto = new StudySiteDTO();
         Ii ctepROIi = null;
-        String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
-                PAConstants.CTEP_IDENTIFIER_TYPE);
-        ctepROIi = PaRegistry.getOrganizationCorrelationService().getPoResearchOrganizationByEntityIdentifier(
-                IiConverter.convertToPoOrganizationIi(String.valueOf(poOrgId)));
-        
         if (PAUtil.isNotEmpty(trialDTO.getCtepIdentifier())) {
+            String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                    PAConstants.CTEP_IDENTIFIER_TYPE);
+            ctepROIi = PaRegistry.getOrganizationCorrelationService().getPoResearchOrganizationByEntityIdentifier(
+                    IiConverter.convertToPoOrganizationIi(String.valueOf(poOrgId)));
             if (PAUtil.isIiNotNull(studyProtocolIi)) {
                 //find if the CTEP Identifier is there 
                 StudySiteDTO criteriaCTEPStudySite = new StudySiteDTO();
