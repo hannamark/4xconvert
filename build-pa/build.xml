@@ -142,22 +142,32 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="db-install.dist.dir" location="${dist.exploded.dir}/${db-install.dist.relative.dir}" />
     <property name="db-upgrade.dist.dir" location="${dist.exploded.dir}/${db-upgrade.dist.relative.dir}" />
 
-    <property name="pa-grid.base.dir" location="${software.dir}/pa-grid"/>
-    <property name="pa-grid.build.file" location="${pa-grid.base.dir}/build.xml"/>
-    <property name="pa-grid.dir.target" value="wsrf.war" />
     <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
     <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
-    <property name="pa-grid.build.target" value="clean:deployJBoss"/>
-    <property name="pa-grid.artifact.dir" value="${pa-grid.base.dir}/target" />
-    <property name="pa-grid.dist.dir" value="${dist.exploded.dir}/${pa-grid.dist.relative.dir}"/>
+    
+    <!-- Properties to control the pa-grid-3.2 build -->
+    <property name="pa-grid-3.2.base.dir" location="${software.dir}/pa-grid-3.2"/>
+    <property name="pa-grid-3.2.build.file" location="${pa-grid-3.2.base.dir}/build.xml"/>
+    <property name="pa-grid-3.2.dir.target" value="wsrf.war" />
+    <property name="pa-grid-3.2.build.target" value="clean:deployJBoss"/>
+    <property name="pa-grid-3.2.artifact.dir" value="${pa-grid-3.2.base.dir}/target" />
+    <property name="pa-grid-3.2.dist.dir" value="${dist.exploded.dir}/${pa-grid-3.2.dist.relative.dir}"/>
 
-    <!-- Properties to control the pa-grid-legacy build -->
-    <property name="pa-grid-legacy.base.dir" location="${software.dir}/pa-grid-legacy"/>
-    <property name="pa-grid-legacy.build.file" location="${pa-grid-legacy.base.dir}/build.xml"/>
-    <property name="pa-grid-legacy.dir.target" value="wsrf.war" />
-    <property name="pa-grid-legacy.build.target" value="clean:deployJBoss"/>
-    <property name="pa-grid-legacy.artifact.dir" value="${pa-grid-legacy.base.dir}/target" />
-    <property name="pa-grid-legacy.dist.dir" value="${dist.exploded.dir}/${pa-grid-legacy.dist.relative.dir}"/>
+    <!-- Properties to control the pa-grid-3.1 build -->
+    <property name="pa-grid-3.1.base.dir" location="${software.dir}/pa-grid-3.1"/>
+    <property name="pa-grid-3.1.build.file" location="${pa-grid-3.1.base.dir}/build.xml"/>
+    <property name="pa-grid-3.1.dir.target" value="wsrf.war" />
+    <property name="pa-grid-3.1.build.target" value="clean:deployJBoss"/>
+    <property name="pa-grid-3.1.artifact.dir" value="${pa-grid-3.1.base.dir}/target" />
+    <property name="pa-grid-3.1.dist.dir" value="${dist.exploded.dir}/${pa-grid-3.1.dist.relative.dir}"/>
+
+    <!-- Properties to control the pa-grid-3.0 build -->
+    <property name="pa-grid-3.0.base.dir" location="${software.dir}/pa-grid-3.0"/>
+    <property name="pa-grid-3.0.build.file" location="${pa-grid-3.0.base.dir}/build.xml"/>
+    <property name="pa-grid-3.0.dir.target" value="wsrf.war" />
+    <property name="pa-grid-3.0.build.target" value="clean:deployJBoss"/>
+    <property name="pa-grid-3.0.artifact.dir" value="${pa-grid-3.0.base.dir}/target" />
+    <property name="pa-grid-3.0.dist.dir" value="${dist.exploded.dir}/${pa-grid-3.0.dist.relative.dir}"/>
 
     <!-- Properties to control the outcomes-grid build -->
     <property name="outcomes-grid.base.dir" location="${software.dir}/outcomes-grid"/>
@@ -286,8 +296,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="clean">
         <delete dir="${dist.dir}"/>
         <delete dir="${temp.dir}"/>
-        <delete dir="${pa-grid.artifact.dir}"/>
-        <delete dir="${pa-grid-legacy.artifact.dir}"/>
+        <delete dir="${pa-grid-3.2.artifact.dir}"/>
+        <delete dir="${pa-grid-3.1.artifact.dir}"/>
+        <delete dir="${pa-grid-3.0.artifact.dir}"/>
         <delete dir="${outcomes-grid.artifact.dir}"/>
     </target>
 
@@ -302,10 +313,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <mkdir dir="${temp.dir}"/>
         <mkdir dir="${download.dir}"/>
         <mkdir dir="${pt.dir}"/>
-        <mkdir dir="${pa-grid.artifact.dir}"/>
-        <mkdir dir="${pa-grid.dist.dir}"/>
-        <mkdir dir="${pa-grid-legacy.artifact.dir}"/>
-        <mkdir dir="${pa-grid-legacy.dist.dir}"/>
+        <mkdir dir="${pa-grid-3.2.artifact.dir}"/>
+        <mkdir dir="${pa-grid-3.2.dist.dir}"/>
+        <mkdir dir="${pa-grid-3.1.artifact.dir}"/>
+        <mkdir dir="${pa-grid-3.1.dist.dir}"/>
+        <mkdir dir="${pa-grid-3.0.artifact.dir}"/>
+        <mkdir dir="${pa-grid-3.0.dist.dir}"/>
         <mkdir dir="${outcomes-grid.artifact.dir}"/>
         <mkdir dir="${outcomes-grid.dist.dir}"/>
         <available file="${jboss.dest.file}" property="jboss.tools.exists"/>
@@ -393,14 +406,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         clean,
         init,
         build:pa-ear,
-        build:pa-grid,
-        build:pa-grid-legacy,
+        build:pa-grid-3.2,
+        build:pa-grid-3.1,
+        build:pa-grid-3.0,
         build:accrual-ear,
         build:outcomes-grid
-        "/>
+        " />
 
     <!-- Build generic-query-grid sub-project produces project level artifact -->
-    <target name="build:pa-ear" depends="init,build:pa-commons,build:pa-ejb, build:pa-web, build:reg-web, build:viewer-services, build:viewer-web">
+    <target name="build:pa-ear" depends="init,build:pa-commons,build:pa-ejb, build:pa-web, build:reg-web, build:viewer-services, build:viewer-web" unless="exclude.pa-ear">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
             dir="${pa-ear.base.dir}" >
             <property name="exclude.viewer" value="${exclude.viewer}"/>
@@ -424,8 +438,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
-            <property name="gridServicePrincipal" value="${pa-grid.jndi.principal}"/>
-            <property name="gridServiceCredential" value="${pa-grid.jndi.credentials.encrypted}"/>
+            <property name="gridServicePrincipal" value="${grid.security.jndi.principal}"/>
+            <property name="gridServiceCredential" value="${grid.security.jndi.credentials.encrypted}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-ear.build.target}"/>
@@ -473,7 +487,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
     </target>
 
-    <target name="build:pa-web" depends="init">
+    <target name="build:pa-web" depends="init" unless="exclude.pa-ear">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
             dir="${pa-web.base.dir}" >
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
@@ -502,7 +516,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
     </target>
 
-    <target name="build:reg-web" depends="init">
+    <target name="build:reg-web" depends="init" unless="exclude.pa-ear">
         <ant inheritAll="false" inheritRefs="false" antfile="${reg-web.build.file}"
             dir="${reg-web.base.dir}" >
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
@@ -531,7 +545,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
     </target>
 
-    <target name="build:pa-commons" depends="init">
+    <target name="build:pa-commons" depends="init" unless="exclude.pa-ear">
             <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
                 dir="${pa-commons.base.dir}" >
                 <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
@@ -560,7 +574,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             </ant>
         </target>
 
-    <target name="build:pa-ejb" depends="init">
+    <target name="build:pa-ejb" depends="init" unless="exclude.pa-ear">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
             dir="${pa-ejb.base.dir}" >
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
@@ -612,50 +626,75 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
 
     <!-- Build pa-grid sub-project produces project level artifact -->
-    <target name="build:pa-grid" depends="init" unless="exclude.pa-grid">
+    <target name="build:pa-grid-3.2" depends="init" unless="exclude.pa-grid-3.2">
         <fail unless="jboss.server.hostname"/>
 
-        <ant inheritAll="false" inheritRefs="false" antfile="${pa-grid.build.file}"
-            target="${pa-grid.build.target}"
-            dir="${pa-grid.base.dir}" >
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-grid-3.2.build.file}"
+            target="${pa-grid-3.2.build.target}"
+            dir="${pa-grid-3.2.base.dir}" >
             <property name="project.name" value="${project.name}"/>
             <property name="jboss.dir" value="target"/>
-            <property name="jboss.serverinstance.name" value="${pa-grid-jboss.server.name}"/>
+            <property name="jboss.serverinstance.name" value="${pa-grid-3.2-jboss.server.name}"/>
             <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
             <property name="java.naming.provider.url.host" value="localhost"/>
             <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
-            <property name="java.naming.security.principal" value="%%pagrid.jndi.principal%%"/>
-            <property name="java.naming.security.credentials" value="%%pagrid.jndi.credentials%%"/>
+            <!-- RENAMED PROPS -->
+            <property name="java.naming.security.principal" value="%%grid.security.jndi.principal%%"/>
+            <property name="java.naming.security.credentials" value="%%grid.security.jndi.credentials%%"/>
             <property name="no.deployment.validation" value="true"/>
         </ant>
 
-        <zip update="false" destfile="${pa-grid.dist.dir}/${pa-grid.artifact.file}">
-            <zipfileset dir="${pa-grid.artifact.dir}/server/${pa-grid-jboss.server.name}/deploy/${pa-grid.dir.target}/" />
+        <zip update="false" destfile="${pa-grid-3.2.dist.dir}/${pa-grid-3.2.artifact.file}">
+            <zipfileset dir="${pa-grid-3.2.artifact.dir}/server/${pa-grid-3.2-jboss.server.name}/deploy/${pa-grid-3.2.dir.target}/" />
         </zip>
-        <delete dir="${pa-grid.artifact.dir}/server" />
+        <delete dir="${pa-grid-3.2.artifact.dir}/server" />
     </target>
-    <!-- Build pa-grid-legacy sub-project produces project level artifact -->
-    <target name="build:pa-grid-legacy" depends="init" unless="exclude.pa-grid-legacy">
+    <!-- Build pa-grid sub-project produces project level artifact -->
+    <target name="build:pa-grid-3.1" depends="init" unless="exclude.pa-grid-3.1">
+        <fail unless="jboss.server.hostname"/>
+
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-grid-3.1.build.file}"
+            target="${pa-grid-3.1.build.target}"
+            dir="${pa-grid-3.1.base.dir}" >
+            <property name="project.name" value="${project.name}"/>
+            <property name="jboss.dir" value="target"/>
+            <property name="jboss.serverinstance.name" value="${pa-grid-3.1-jboss.server.name}"/>
+            <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
+            <property name="java.naming.provider.url.host" value="localhost"/>
+            <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
+            <!-- RENAMED PROPS -->
+            <property name="java.naming.security.principal" value="%%grid.security.jndi.principal%%"/>
+            <property name="java.naming.security.credentials" value="%%grid.security.jndi.credentials%%"/>
+            <property name="no.deployment.validation" value="true"/>
+        </ant>
+
+        <zip update="false" destfile="${pa-grid-3.1.dist.dir}/${pa-grid-3.1.artifact.file}">
+            <zipfileset dir="${pa-grid-3.1.artifact.dir}/server/${pa-grid-3.1-jboss.server.name}/deploy/${pa-grid-3.1.dir.target}/" />
+        </zip>
+        <delete dir="${pa-grid-3.1.artifact.dir}/server" />
+    </target>
+    <!-- Build pa-grid-3.0 sub-project produces project level artifact -->
+    <target name="build:pa-grid-3.0" depends="init" unless="exclude.pa-grid-3.0">
       <fail unless="jboss.server.hostname"/>
 
-      <ant inheritAll="false" inheritRefs="false" antfile="${pa-grid-legacy.build.file}"
-              target="${pa-grid-legacy.build.target}"
-              dir="${pa-grid-legacy.base.dir}" >
+      <ant inheritAll="false" inheritRefs="false" antfile="${pa-grid-3.0.build.file}"
+              target="${pa-grid-3.0.build.target}"
+              dir="${pa-grid-3.0.base.dir}" >
         <property name="project.name" value="${project.name}"/>
         <property name="jboss.dir" value="target"/>
-        <property name="jboss.serverinstance.name" value="${pa-grid-legacy.jboss.server.name}"/>
+        <property name="jboss.serverinstance.name" value="${pa-grid-3.0.jboss.server.name}"/>
         <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
         <property name="java.naming.provider.url.host" value="localhost"/>
         <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
-        <property name="java.naming.security.principal" value="%%pa-grid-legacy.jndi.principal%%"/>
-        <property name="java.naming.security.credentials" value="%%pa-grid-legacy.jndi.credentials%%"/>
+        <property name="java.naming.security.principal" value="%%pa-grid-3.0.jndi.principal%%"/>
+        <property name="java.naming.security.credentials" value="%%pa-grid-3.0.jndi.credentials%%"/>
         <property name="no.deployment.validation" value="true"/>
       </ant>
 
-      <zip update="false" destfile="${pa-grid-legacy.dist.dir}/${pa-grid-legacy.artifact.file}">
-        <zipfileset dir="${pa-grid-legacy.artifact.dir}/server/${pa-grid-legacy.jboss.server.name}/deploy/${pa-grid-legacy.dir.target}/" />
+      <zip update="false" destfile="${pa-grid-3.0.dist.dir}/${pa-grid-3.0.artifact.file}">
+        <zipfileset dir="${pa-grid-3.0.artifact.dir}/server/${pa-grid-3.0.jboss.server.name}/deploy/${pa-grid-3.0.dir.target}/" />
       </zip>
-      <!--<delete dir="${pa-grid-legacy.artifact.dir}/server" />-->
+      <!--<delete dir="${pa-grid-3.0.artifact.dir}/server" />-->
     </target>
 
     <!-- Build outcomes-grid sub-project produces project level artifact -->
@@ -799,11 +838,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
 
     <target name="deploy:remote:install:ahp"
-          depends="remote:install:pa-ear, remote:install:pa-grid, remote:install:pa-grid-legacy, remote:install:outcomes-grid">
+          depends="remote:install:pa-ear, remote:install:pa-grid-3.2, remote:install:pa-grid-3.1, remote:install:pa-grid-3.0, remote:install:outcomes-grid">
     </target>
 
     <target name="deploy:remote:upgrade:ahp" description="Installs and configures the application and required binaries and re-creates the datbase  on a remote machine. Used for NCI tiers (dev, qa, stg, prod)"
-        depends="remote:upgrade:pa-ear,remote:upgrade:pa-grid,remote:upgrade:pa-grid-legacy, remote:upgrade:outcomes-grid">
+        depends="remote:upgrade:pa-ear,remote:upgrade:pa-grid-3.2,remote:upgrade:pa-grid-3.1,remote:upgrade:pa-grid-3.0, remote:upgrade:outcomes-grid">
     </target>
 
     <target name="dist:tools:retrieve:jboss-bindings"  description="Downloads JBOSS bindings filefrom binary repository and verifies checksum">
@@ -888,9 +927,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <copy todir="${dist.exploded.dir}">
     <fileset dir="${build.dir}">
         <include name="install-paear.xml"/>
-        <include name="install-pagrid.xml"/>
+        <include name="install-pagrid-3.2.xml"/>
+        <include name="install-pagrid-3.1.xml"/>
+        <include name="install-pagrid-3.0.xml"/>
         <include name="install-outcomesgrid.xml"/>
-        <include name="install-pagridlegacy.xml"/>
     </fileset>
 </copy>
 
@@ -899,8 +939,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Creates the installer distribution used by automated or manual remote installations -->
     <target name="dist:installer" depends="build:all, dist:installer:prep">
         <delete file="${dist.dir}/${pa-ear.install.zip.file}"/>
-        <delete file="${dist.dir}/${pa-grid.install.zip.file}"/>
-        <delete file="${dist.dir}/${pa-grid-legacy.install.zip.file}"/>
+        <delete file="${dist.dir}/${pa-grid-3.2.install.zip.file}"/>
+        <delete file="${dist.dir}/${pa-grid-3.1.install.zip.file}"/>
+        <delete file="${dist.dir}/${pa-grid-3.0.install.zip.file}"/>
         <delete file="${dist.dir}/${outcomes-grid.install.zip.file}"/>
         <!-- Set environment name to external -->
         <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
@@ -910,10 +951,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             optional.property.list="ldap.url,ldap.basedn"
             delete.property.list="exclude.jboss.backup"
             />
-        <zip destfile="${dist.dir}/${pa-ear.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-grid.dist.relative.dir}/**, ${pa-grid-legacy.dist.relative.dir}/**, ${outcomes-grid.dist.relative.dir}/**"/>
-        <zip destfile="${dist.dir}/${pa-grid.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**, ${db.dist.relative.dir}/**, ${pa-grid-legacy.dist.relative.dir}/**, ${outcomes-grid.dist.relative.dir}/**"/>
-        <zip destfile="${dist.dir}/${pa-grid-legacy.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${pa-grid.dist.relative.dir}/**, ${outcomes-grid.dist.relative.dir}/**"/>
-        <zip destfile="${dist.dir}/${outcomes-grid.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${pa-grid.dist.relative.dir}/**, ${pa-grid-legacy.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${pa-ear.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-grid-3.2.dist.relative.dir}/**, ${pa-grid-3.1.dist.relative.dir}/**, ${pa-grid-3.0.dist.relative.dir}/**, ${outcomes-grid.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${pa-grid-3.2.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**, ${db.dist.relative.dir}/**, ${pa-grid-3.0.dist.relative.dir}/**, ${pa-grid-3.1.dist.relative.dir}/**, ${outcomes-grid.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${pa-grid-3.1.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**, ${db.dist.relative.dir}/**, ${pa-grid-3.0.dist.relative.dir}/**, ${pa-grid-3.2.dist.relative.dir}/**, ${outcomes-grid.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${pa-grid-3.0.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${pa-grid-3.2.dist.relative.dir}/**, ${pa-grid-3.1.dist.relative.dir}/**, ${outcomes-grid.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${outcomes-grid.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${pa-grid-3.2.dist.relative.dir}/**,${pa-grid-3.1.dist.relative.dir}/**, ${pa-grid-3.0.dist.relative.dir}/**"/>
     </target>
 
     <!-- Copies install time resources into distribution tree -->
@@ -947,9 +989,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <copy todir="${dist.exploded.dir}">
     <fileset dir="${build.dir}">
         <include name="install-paear.xml"/>
-        <include name="install-pagrid.xml"/>
+        <include name="install-pagrid-3.2.xml"/>
+        <include name="install-pagrid-3.1.xml"/>
         <include name="install-outcomesgrid.xml"/>
-        <include name="install-pagridlegacy.xml"/>
+        <include name="install-pagrid-3.0.xml"/>
     </fileset>
 </copy>
 
@@ -958,8 +1001,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Creates upgrader distribution -->
     <target name="dist:upgrader" depends="build:all, dist:upgrader:prep">
         <delete file="${dist.dir}/${pa-ear.upgrade.zip.file}"/>
-        <delete file="${dist.dir}/${pa-grid.upgrade.zip.file}"/>
-        <delete file="${dist.dir}/${pa-grid-legacy.upgrade.zip.file}"/>
+        <delete file="${dist.dir}/${pa-grid-3.2.upgrade.zip.file}"/>
+        <delete file="${dist.dir}/${pa-grid-3.1.upgrade.zip.file}"/>
+        <delete file="${dist.dir}/${pa-grid-3.0.upgrade.zip.file}"/>
         <delete file="${dist.dir}/${outcomes-grid.upgrade.zip.file}"/>
 
         <!-- Set environment name to external -->
@@ -978,10 +1022,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </copy>
         <replaceregexp file="${dist.exploded.dir}/build.xml" byline="true" match="(&lt;property name=&quot;properties.file&quot;\s+value=&quot;).*(&quot;\s*\/&gt;)" replace="\1upgrade.properties\2" />
 
-        <zip destfile="${dist.dir}/${pa-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-grid.dist.relative.dir}/**,${pa-grid-legacy.dist.relative.dir}/**,${outcomes-grid.dist.relative.dir}/**"/>
-        <zip destfile="${dist.dir}/${pa-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${pa-grid-legacy.dist.relative.dir}/**,${outcomes-grid.dist.relative.dir}/**"/>
-        <zip destfile="${dist.dir}/${pa-grid-legacy.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${pa-grid.dist.relative.dir}/**,${outcomes-grid.dist.relative.dir}/**"/>
-        <zip destfile="${dist.dir}/${outcomes-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${pa-grid.dist.relative.dir}/**,${pa-grid-legacy.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${pa-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-grid-3.2.dist.relative.dir}/**,${pa-grid-3.1.dist.relative.dir}/**,${pa-grid-3.0.dist.relative.dir}/**,${outcomes-grid.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${pa-grid-3.2.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${pa-grid-3.0.dist.relative.dir}/**,${pa-grid-3.1.dist.relative.dir}/**,${outcomes-grid.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${pa-grid-3.1.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${pa-grid-3.0.dist.relative.dir}/**,${pa-grid-3.2.dist.relative.dir}/**,${outcomes-grid.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${pa-grid-3.0.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${pa-grid-3.2.dist.relative.dir}/**,${pa-grid-3.1.dist.relative.dir}/**,${outcomes-grid.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${outcomes-grid.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${pa-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${pa-grid-3.2.dist.relative.dir}/**,${pa-grid-3.1.dist.relative.dir}/**,${pa-grid-3.0.dist.relative.dir}/**"/>
     </target>
 
 
@@ -1024,14 +1069,19 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         ">
     </target>
 
-    <target name="remote:install" depends="dist:installer,remote:install:pa-ear, remote:install:pa-grid, remote:install:pa-grid-legacy, remote:install:outcomes-grid"/>
+    <target name="remote:install" depends="remote:install:pa-ear, remote:install:pa-grid-3.2,remote:install:pa-grid-3.1, remote:install:pa-grid-3.0, remote:install:outcomes-grid"/>
     <target name="remote:install:pa-ear">
         <deploy-files
-                dist.file="${pa-ear.install.zip.file}"
-                />
-        <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true install:pa-ear-jboss install:database" />
+            ssh.user="${ssh.server.username}"
+            ssh.host="${ssh.server.hostname}"
+            ssh.port="${ssh.port}"
+            ssh.key.file="${ssh.key.file}"
+            remote.directory.property.name="ssh.dir.temp"
+            dist.file="${pa-ear.install.zip.file}"
+            />
+        <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true install:database install:pa-ear-jboss" />
     </target>
-    <target name="remote:install:pa-grid" unless="exclude.pa-grid">
+    <target name="remote:install:pa-grid-3.2" unless="exclude.pa-grid-3.2">
         <!-- install pa-grid only-->
         <deploy-files
          ssh.user="${ssh.server.username}"
@@ -1039,31 +1089,48 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
          ssh.port="${ssh.port}"
          ssh.key.file="${ssh.key.file}"
          remote.directory.property.name="ssh.dir.temp"
-         dist.file="${pa-grid.install.zip.file}"
+         dist.file="${pa-grid-3.2.install.zip.file}"
          />
         <remote-ssh
             remoteSshUser="${ssh.server.username}"
             remoteSshHost="${ssh.server.hostname}"
             remoteSshPort="${ssh.port}"
             remoteSshKeyfile="${ssh.key.file}"
-            remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true install:pa-grid-jboss" />
+            remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true install:pa-grid-3.2-jboss" />
     </target>
-    <target name="remote:install:pa-grid-legacy" unless="exclude.pa-grid-legacy">
-      <!-- install pa-grid-legacy only-->
+    <target name="remote:install:pa-grid-3.1" unless="exclude.pa-grid-3.1">
+        <!-- install pa-grid only-->
+        <deploy-files
+         ssh.user="${ssh.server.username}"
+         ssh.host="${ssh.server.hostname}"
+         ssh.port="${ssh.port}"
+         ssh.key.file="${ssh.key.file}"
+         remote.directory.property.name="ssh.dir.temp"
+         dist.file="${pa-grid-3.1.install.zip.file}"
+         />
+        <remote-ssh
+            remoteSshUser="${ssh.server.username}"
+            remoteSshHost="${ssh.server.hostname}"
+            remoteSshPort="${ssh.port}"
+            remoteSshKeyfile="${ssh.key.file}"
+            remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true install:pa-grid-3.1-jboss" />
+    </target>
+    <target name="remote:install:pa-grid-3.0" unless="exclude.pa-grid-3.0">
+      <!-- install pa-grid-3.0 only-->
       <deploy-files
            ssh.user="${ssh.server.username}"
            ssh.host="${ssh.server.hostname}"
            ssh.port="${ssh.port}"
            ssh.key.file="${ssh.key.file}"
            remote.directory.property.name="ssh.dir.temp"
-           dist.file="${pa-grid-legacy.install.zip.file}"
+           dist.file="${pa-grid-3.0.install.zip.file}"
            />
       <remote-ssh
         remoteSshUser="${ssh.server.username}"
         remoteSshHost="${ssh.server.hostname}"
         remoteSshPort="${ssh.port}"
         remoteSshKeyfile="${ssh.key.file}"
-        remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true install:pa-grid-legacy-jboss" />
+        remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true install:pa-grid-3.0-jboss" />
     </target>
     <target name="remote:install:outcomes-grid" unless="exclude.outcomes-grid">
       <!-- install outcomes-grid only-->
@@ -1091,7 +1158,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         ">
     </target>
 
-    <target name="remote:upgrade" depends="dist:upgrader,remote:upgrade:pa-ear,remote:upgrade:pa-grid,remote:upgrade:pa-grid-legacy,remote:upgrade:outcomes-grid">
+    <target name="remote:upgrade" depends="remote:upgrade:pa-ear,remote:upgrade:pa-grid-3.2,remote:upgrade:pa-grid-3.1,remote:upgrade:pa-grid-3.0,remote:upgrade:outcomes-grid">
     </target>
 
     <target name="remote:upgrade:pa-ear">
@@ -1105,7 +1172,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${override.properties.string} upgrade-dac:pa-ear-jboss upgrade:database" />
     </target>
 
-    <target name="remote:upgrade:pa-grid" unless="exclude.pa-grid">
+    <target name="remote:upgrade:pa-grid-3.2" unless="exclude.pa-grid-3.2">
         <!-- upgrade pa-grid only-->
         <deploy-files
              ssh.user="${ssh.server.username}"
@@ -1113,7 +1180,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              ssh.port="${ssh.port}"
              ssh.key.file="${ssh.key.file}"
              remote.directory.property.name="ssh.dir.temp"
-             dist.file="${pa-grid.upgrade.zip.file}"
+             dist.file="${pa-grid-3.2.upgrade.zip.file}"
              />
         <override-properties-prep
                        override.properties="${override.properties}"
@@ -1123,17 +1190,37 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             remoteSshHost="${ssh.server.hostname}"
             remoteSshPort="${ssh.port}"
             remoteSshKeyfile="${ssh.key.file}"
-            remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${override.properties.string} upgrade-dac:pa-grid-jboss" />
+            remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${override.properties.string} upgrade-dac:pa-grid-3.2-jboss" />
     </target>
-    <target name="remote:upgrade:pa-grid-legacy" unless="exclude.pa-grid-legacy">
-      <!-- upgrade pa-grid-legacy only-->
+    <target name="remote:upgrade:pa-grid-3.1" unless="exclude.pa-grid-3.1">
+        <!-- upgrade pa-grid only-->
+        <deploy-files
+             ssh.user="${ssh.server.username}"
+             ssh.host="${ssh.server.hostname}"
+             ssh.port="${ssh.port}"
+             ssh.key.file="${ssh.key.file}"
+             remote.directory.property.name="ssh.dir.temp"
+             dist.file="${pa-grid-3.1.upgrade.zip.file}"
+             />
+        <override-properties-prep
+                       override.properties="${override.properties}"
+                       override.properties.string.property.name="override.properties.string"/>
+        <remote-ssh
+            remoteSshUser="${ssh.server.username}"
+            remoteSshHost="${ssh.server.hostname}"
+            remoteSshPort="${ssh.port}"
+            remoteSshKeyfile="${ssh.key.file}"
+            remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true upgrade-dac:pa-grid-3.1-jboss" />
+    </target>
+    <target name="remote:upgrade:pa-grid-3.0" unless="exclude.pa-grid-3.0">
+      <!-- upgrade pa-grid-3.0 only-->
       <deploy-files
                ssh.user="${ssh.server.username}"
                ssh.host="${ssh.server.hostname}"
                ssh.port="${ssh.port}"
                ssh.key.file="${ssh.key.file}"
                remote.directory.property.name="ssh.dir.temp"
-               dist.file="${pa-grid-legacy.upgrade.zip.file}"
+               dist.file="${pa-grid-3.0.upgrade.zip.file}"
                />
         <override-properties-prep
                        override.properties="${override.properties}"
@@ -1143,7 +1230,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              remoteSshHost="${ssh.server.hostname}"
               remoteSshPort="${ssh.port}"
              remoteSshKeyfile="${ssh.key.file}"
-             remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${override.properties.string} upgrade-dac:pa-grid-legacy-jboss" />
+             remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${override.properties.string} upgrade-dac:pa-grid-3.0-jboss" />
     </target>
     <target name="remote:upgrade:outcomes-grid" unless="exclude.outcomes-grid">
       <!-- upgrade outcomes-grid only-->

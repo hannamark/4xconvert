@@ -17,13 +17,13 @@
     <!-- ============================================================== -->
     <property file="local.properties" />
     <property name="service.hostname" value="localhost" />
-    <property name="service.port" value="8080" />
+    <property name="service.port" value="39780" />
     <property name="build.dir" location="build" />
     <property name="test.build.lib.dir" value="${build.dir}/test/lib" />
 
     <property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory" />
     <property name="java.naming.provider.url.host" value="localhost" />
-    <property name="java.naming.provider.url.port" value="1099" />
+    <property name="java.naming.provider.url.port" value="31499" />
     <property name="java.naming.provider.url" value="jnp://${java.naming.provider.url.host}:${java.naming.provider.url.port}" />
     <property name="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces" />
     <property name="java.naming.security.principal" value="ejbclient" />
@@ -156,6 +156,8 @@
             </classpath>
             <arg value="-xmlschema" />
             <arg file="${basedir}/schema/PAServices/CoppaPA.xsd" />
+            <!-- To ensure legacy interopability, as some types were removed from CoreServices-stubs -->
+            <arg file="${basedir}/schema/PAServices/CoppaPO.xsd" />
             <arg file="${basedir}/schema/PAServices/ISO_datatypes_Narrative.xsd" />
             <arg value="-d" />
             <arg file="${stubs.src}" />

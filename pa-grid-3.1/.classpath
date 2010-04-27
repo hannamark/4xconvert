@@ -73,8 +73,6 @@
 	<classpathentry kind="lib" path="build/lib/jaxen-1.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/jdom-1.0.jar"/>
 	<classpathentry kind="lib" path="build/lib/relaxngDatatype-20020414.jar"/>
-	<classpathentry kind="lib" path="build/lib/CoreServices-common-3.2m5.jar"/>
-	<classpathentry kind="lib" path="build/lib/CoreServices-stubs-3.2m5.jar"/>
 	<classpathentry kind="lib" path="build/lib/iso-datatypes-2.0.jar"/>
 	<classpathentry kind="lib" path="build/lib/iso-datatypes-extensions-2.0.jar"/>
 	<classpathentry kind="lib" path="build/lib/pa-commons-3.2-20100317.153510-1.jar"/>
@@ -105,5 +103,7 @@
 	<classpathentry kind="lib" path="lib/jboss-ejb3x.jar"/>
 	<classpathentry kind="lib" path="lib/jbossall-client-4.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/xsom14.jar"/>
+	<classpathentry kind="lib" path="build/lib/CoreServices-common-3.2m5.jar"/>
+	<classpathentry kind="lib" path="build/lib/CoreServices-stubs-3.2m5.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

@@ -277,7 +277,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
   </target>
 
 
-  <target name="install:pa-ear-jboss:accrual-ear" unless="exclude.accrual-ear">
+  <target name="install:pa-ear-jboss:accrual-ear" unless="exclude.accrual">
       <!-- added to ensure working.dirs are fresh for our install -->
       <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
       <delete dir="${jboss.home}/server/${jboss.server.name}/work" failonerror="false"/>
