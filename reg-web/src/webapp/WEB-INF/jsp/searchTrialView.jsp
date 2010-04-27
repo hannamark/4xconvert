@@ -69,10 +69,17 @@
                         </label>
                 </td>
                 <td class="value">
-                    <c:out value="${requestScope.studyParticipation}"/> 
+                  <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
+                    || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
+                         <c:out value="${requestScope.trialDTO.leadOrgTrialIdentifier}"/>
+                  </c:if>
+                  <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
+                    || requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'}">
+                         <c:out value="${requestScope.leadOrgTrialIdentifier}"/>
+                  </c:if> 
                 </td>
           </tr>
-          <c:if test="${requestScope.studyNCTNumber != null}">
+          <c:if test="${requestScope.trialDTO.nctIdentifier != null}">
               <tr>     
                     <td scope="row" class="label">
                         <label for="NCT Number">
@@ -80,7 +87,38 @@
                             </label>
                     </td>
                     <td class="value">
-                        <c:out value="${requestScope.studyNCTNumber }"/> 
+                        <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
+                    || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
+                         <c:out value="${requestScope.trialDTO.nctIdentifier }"/>
+                  </c:if>
+                  <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
+                    || requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'}">
+                         <c:out value="${requestScope.nctIdentifier }"/>
+                  </c:if>
+                    </td>
+              </tr>
+          </c:if>
+          <c:if test="${requestScope.trialDTO.dcpIdentifier != null}">
+              <tr>     
+                    <td scope="row" class="label">
+                        <label for="DCP Number">
+                            <fmt:message key="submit.trial.dcpIdentifier"/>                
+                            </label>
+                    </td>
+                    <td class="value">
+                        <c:out value="${requestScope.trialDTO.dcpIdentifier }"/> 
+                    </td>
+              </tr>
+          </c:if>
+          <c:if test="${requestScope.trialDTO.ctepIdentifier != null}">
+              <tr>     
+                    <td scope="row" class="label">
+                        <label for="CTEP Number">
+                            <fmt:message key="submit.trial.ctepIdentifier"/>                
+                            </label>
+                    </td>
+                    <td class="value">
+                        <c:out value="${requestScope.trialDTO.ctepIdentifier }"/> 
                     </td>
               </tr>
           </c:if>
@@ -147,6 +185,7 @@
 	                </td>
 	          </tr>
           </c:if> 
+          <c:if test= "${requestScope.trialDTO.trialType != null} ">
           <tr>     
                 <td scope="row" class="label">
                     <label for="Trial Type">
@@ -154,9 +193,10 @@
                     </label>
                 </td>
                 <td class="value">
-                    <c:out value="${requestScope.trialType }"/>
+                    <c:out value="${requestScope.trialDTO.trialType}"/>
                 </td>
           </tr>
+          </c:if>
           <tr>     
           		<td scope="row" class="label">
           			<label for="Primary Purpose">
@@ -200,8 +240,15 @@
                 <fmt:message key="view.trial.leadOrganization"/>                
             </label>
             </td>
-           	 <td class="value">
-           		<c:out value="${requestScope.studyProtocolIi.leadOrganizationName }"/>
+             <td class="value">
+             <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null 
+                && requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'}">
+                <c:out value="${requestScope.leadOrganizationName}"/>
+            </c:if>
+            <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null 
+                && requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
+                <c:out value="${requestScope.trialDTO.leadOrganizationName}"/>
+            </c:if>
              </td>
        </tr> 
       <c:if test="${(requestScope.trialSummary.proprietaryTrialIndicator == null 
@@ -213,7 +260,7 @@
               	</label>
               </td>
          	 <td class="value">
-         		<c:out value="${requestScope.studyProtocolIi.piFullName }"/>
+         		<c:out value="${requestScope.trialDTO.piName }"/>
          		</td>
        </tr>
        </c:if>
@@ -280,7 +327,7 @@
 	     		<td colspan="2" class="space">&nbsp;</td>
 	       </tr>
        </c:if>
-       <c:if test="${requestScope.summaryFourSponsorName != null}">             
+       <c:if test="${requestScope.trialDTO.summaryFourOrgName != null}">             
 	       <tr>
 	     		<th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
 	       </tr>
@@ -291,7 +338,7 @@
 					</label>
 				</td>
 				<td class="value">
-					<c:out value="${requestScope.nihInstitute.typeCode.code }"/>
+					<c:out value="${requestScope.trialDTO.summaryFourFundingCategoryCode }"/>
 				</td>
 		   </tr>
 	  	   <tr>     
@@ -301,12 +348,12 @@
 					</label>
 				</td>
 				<td class="value">
-					<c:out value="${requestScope.summaryFourSponsorName }"/>
+					<c:out value="${requestScope.trialDTO.summaryFourOrgName }"/>
 				</td>
 		   </tr> 
       </c:if>  
       <c:if test="${requestScope.trialSummary.programCodeText.value != null}">  
-       <c:if test="${requestScope.summaryFourSponsorName == null}">             
+       <c:if test="${requestScope.trialDTO.summaryFourOrgName == null}">             
            <tr>
                 <th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
            </tr>
@@ -333,10 +380,10 @@
         </label>
        </td>
        	 <td class="value">
-       		<c:out value="${requestScope.trialOverallStatus.statusCode.code }"/>
+       		<c:out value="${requestScope.trialDTO.statusCode}"/>
          </td>
       </tr> 
-      <c:if test="${requestScope.trialOverallStatus.reasonText.value != null}">
+      <c:if test="${requestScope.trialDTO.reason != null}">
 	      <tr>     
 	        <td scope="row" class="label">
 	        <label for="Trial Status Reason">
@@ -344,7 +391,7 @@
 	        </label>
 	       </td>
 	         <td class="value">
-	            <c:out value="${requestScope.trialOverallStatus.reasonText.value }"/>
+	            <c:out value="${requestScope.trialDTO.reason}"/>
 	         </td>
 	      </tr>
       </c:if> 
@@ -355,8 +402,8 @@
           </label>
          </td>
          <td class="value">
-      	   <fmt:formatDate value="${requestScope.trialOverallStatus.statusDate.value }"/>
-           </td>
+         <c:out value="${requestScope.trialDTO.statusDate}"/>
+         </td>
       </tr> 
       <tr>     
           <td scope="row" class="label">
@@ -365,8 +412,8 @@
               </label>
           </td>
           <td class="value">
-          	   <fmt:formatDate value="${requestScope.trialSummary.startDate.value }"/>
-               <c:out value="${requestScope.trialSummary.startDateTypeCode.code }"/> 
+          	   <c:out value="${requestScope.trialDTO.startDate }"/>
+               <c:out value="${requestScope.trialDTO.startDateType }"/> 
           </td>
        </tr> 
        <tr>     
@@ -376,8 +423,8 @@
             </label>
         </td>
         <td class="value">
-        	 <fmt:formatDate value="${requestScope.trialSummary.primaryCompletionDate.value }"/> 
-             <c:out value="${requestScope.trialSummary.primaryCompletionDateTypeCode.code }"/>
+        	 <c:out value="${requestScope.trialDTO.completionDate }"/> 
+             <c:out value="${requestScope.trialDTO.completionDateType }"/>
         </td>
       </tr> 
       </c:if>
