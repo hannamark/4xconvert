@@ -701,35 +701,36 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         ssSourceDTO.setStudyProtocolIdentifier(targetSpIi);
         studySiteService.delete(sourceIi);
         studySiteService.update(ssSourceDTO);
-        //sponsor
-        studySiteDto = new StudySiteDTO();
-        studySiteDto.setStudyProtocolIdentifier(sourceSpIi);
-        studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+        if (target.getCtgovXmlRequiredIndicator().booleanValue()) {
+           //sponsor
+           studySiteDto = new StudySiteDTO();
+           studySiteDto.setStudyProtocolIdentifier(sourceSpIi);
+           studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
 
-        List<StudySiteDTO> studySiteSponsorDtos =
-            paServiceUtils.getStudySite(studySiteDto, true);
-        StudySiteDTO ssSponsorSourceDTO = null;
-        if (PAUtil.getFirstObj(studySiteSponsorDtos) != null) {
-            ssSponsorSourceDTO = PAUtil.getFirstObj(studySiteSponsorDtos);
-        } else {
-            throw new PAException("Source Lead Organization is not available");
+           List<StudySiteDTO> studySiteSponsorDtos =
+              paServiceUtils.getStudySite(studySiteDto, true);
+           StudySiteDTO ssSponsorSourceDTO = null;
+           if (PAUtil.getFirstObj(studySiteSponsorDtos) != null) {
+              ssSponsorSourceDTO = PAUtil.getFirstObj(studySiteSponsorDtos);
+           } else {
+              throw new PAException("Source Lead Organization is not available");
+          }
+          sourceIi = ssSponsorSourceDTO.getIdentifier();
+          studySiteDto = new StudySiteDTO();
+          studySiteDto.setStudyProtocolIdentifier(targetSpIi);
+          studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+          studySiteSponsorDtos = paServiceUtils.getStudySite(studySiteDto, true);
+          StudySiteDTO ssSponsorTargetDTO = null;
+          if (PAUtil.getFirstObj(studySiteSponsorDtos) != null) {
+             ssSponsorTargetDTO = PAUtil.getFirstObj(studySiteSponsorDtos);
+          } else {
+             throw new PAException("Target Sponsor is not available");
+          }
+          ssSponsorSourceDTO.setIdentifier(ssSponsorTargetDTO.getIdentifier());
+          ssSponsorSourceDTO.setStudyProtocolIdentifier(targetSpIi);
+          studySiteService.delete(sourceIi);
+          studySiteService.update(ssSponsorSourceDTO);
         }
-        sourceIi = ssSponsorSourceDTO.getIdentifier();
-        studySiteDto = new StudySiteDTO();
-        studySiteDto.setStudyProtocolIdentifier(targetSpIi);
-        studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-        studySiteSponsorDtos = paServiceUtils.getStudySite(studySiteDto, true);
-        StudySiteDTO ssSponsorTargetDTO = null;
-        if (PAUtil.getFirstObj(studySiteSponsorDtos) != null) {
-            ssSponsorTargetDTO = PAUtil.getFirstObj(studySiteSponsorDtos);
-        } else {
-            throw new PAException("Target Sponsor is not available");
-        }
-        ssSponsorSourceDTO.setIdentifier(ssSponsorTargetDTO.getIdentifier());
-        ssSponsorSourceDTO.setStudyProtocolIdentifier(targetSpIi);
-        studySiteService.delete(sourceIi);
-        studySiteService.update(ssSponsorSourceDTO);
-
         paServiceUtils.executeSql(deleteAndReplace(sourceSpIi , targetSpIi));
       }
     } catch (Exception e) {

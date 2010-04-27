@@ -106,9 +106,9 @@ function manageRespPartyLookUp(){
             </div>      
         </td>
     </tr>
-    <c:if test="${(sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false') 
-    && (sessionScope.trialSummary.ctgovXmlRequiredIndicator)}">
-    <tr>
+    
+    <c:if test="${(sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false')}">
+     <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">
                     Principal Investigator
@@ -121,7 +121,7 @@ function manageRespPartyLookUp(){
             </div>      
         </td>
     </tr>
-    
+    <c:if test="${sessionScope.trialSummary.ctgovXmlRequiredIndicator}">    
     <tr>
          <th colspan="2">Sponsor/Responsible Party</th>
     </tr>          
@@ -212,4 +212,5 @@ function manageRespPartyLookUp(){
                  </span>
             </td>           
         </tr>             
+</c:if>        
 </c:if>

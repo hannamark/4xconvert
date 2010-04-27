@@ -303,19 +303,21 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             Element root = createElement("clinical_study" , doc);
             doc.appendChild(root);
             createIdInfo(spDTO, doc, root);
-            createElement("is_fda_regulated" ,
+            if (spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+                createElement("is_fda_regulated" ,
                     convertBLToString(spDTO.getFdaRegulatedIndicator()) , doc , root);
-            createElement("is_section_801" ,
+                createElement("is_section_801" ,
                     convertBLToString(spDTO.getSection801Indicator()) , doc , root);
-            if (YES.equalsIgnoreCase(convertBLToString(spDTO.getSection801Indicator()))) { //device doesn't matter
-                createElement("delayed_posting" ,
+                if (YES.equalsIgnoreCase(convertBLToString(spDTO.getSection801Indicator()))) { //device doesn't matter
+                    createElement("delayed_posting" ,
                         convertBLToString(spDTO.getDelayedpostingIndicator()) , doc , root);
-            }
+                }
+            }    
             createIndInfo(spDTO , doc , root);
             createElement("brief_title" , spDTO.getPublicTitle().getValue() , doc , root);
             createElement("acronym" , spDTO.getAcronym().getValue() , doc , root);
             createElement("official_title" , spDTO.getOfficialTitle().getValue() , doc , root);
-            createSponsors(spDTO.getIdentifier() , doc , root);
+            createSponsors(spDTO.getIdentifier() , doc , root, spDTO);
             createOversightInfo(spDTO , doc , root);
             createTextBlock("brief_summary", spDTO.getPublicDescription(), PAAttributeMaxLen.LEN_MIN_1 , doc, root);
             //createObjective(spDTO, doc , root);
@@ -543,10 +545,12 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
     private void createOversightInfo(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         Element overSightInfo  = doc.createElement("oversight_info");
-        appendElement(overSightInfo , createRegulatoryAuthority(spDTO , doc));
+        if (spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+            appendElement(overSightInfo , createRegulatoryAuthority(spDTO , doc));
+            appendElement(overSightInfo, createElement(
+                    "has_dmc", convertBLToString(spDTO.getDataMonitoringCommitteeAppointedIndicator()), doc));
+        }    
         appendElement(overSightInfo , createIrbInfo(spDTO ,  doc));
-        appendElement(overSightInfo, createElement(
-                "has_dmc", convertBLToString(spDTO.getDataMonitoringCommitteeAppointedIndicator()), doc));
         appendElement(root , overSightInfo);
     }
 
@@ -989,20 +993,23 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         }
     }
 
-    private void createSponsors(Ii studyProtocolIi  , Document doc , Element root) throws PAException,
+    private void createSponsors(Ii studyProtocolIi  , Document doc , Element root, StudyProtocolDTO spDTO) 
+    throws PAException,
         NullifiedRoleException {
         Element sponsors = doc.createElement("sponsors");
-        Element lead = createLeadSponsor(studyProtocolIi , doc);
-        if (lead != null && lead.hasChildNodes()) {
-            appendElement(sponsors , lead);
-        }
+        if (spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+           Element lead = createLeadSponsor(studyProtocolIi , doc);
+           if (lead != null && lead.hasChildNodes()) {
+              appendElement(sponsors , lead);
+           }
+           Element rp = createResponsibleParty(studyProtocolIi , doc);
+           if (rp != null && rp.hasChildNodes()) {
+             appendElement(sponsors , rp);
+           }
+        } 
         Element collaborator = createCollaborator(studyProtocolIi , doc);
         if (collaborator != null && collaborator.hasChildNodes()) {
             appendElement(sponsors , collaborator);
-        }
-        Element rp = createResponsibleParty(studyProtocolIi , doc);
-        if (rp != null && rp.hasChildNodes()) {
-            appendElement(sponsors , rp);
         }
         if (sponsors.hasChildNodes()) {
             appendElement(root , sponsors);

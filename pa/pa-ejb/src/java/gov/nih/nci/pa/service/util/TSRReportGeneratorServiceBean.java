@@ -440,7 +440,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 gtd.setReportingDatasetMethod(getValue(studyProtocolDto.getAccrualReportingMethodCode()
                         .getDisplayName(), INFORMATION_NOT_PROVIDED));
             }
-            gtd.setSponsor(getGtdSponsorOrLeadOrganization(StudySiteFunctionalCode.SPONSOR, INFORMATION_NOT_PROVIDED));
+            if (studyProtocolDto.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+             gtd.setSponsor(getGtdSponsorOrLeadOrganization(StudySiteFunctionalCode.SPONSOR, INFORMATION_NOT_PROVIDED));
+            }
             String leadOrganization = getGtdSponsorOrLeadOrganization(StudySiteFunctionalCode.LEAD_ORGANIZATION,
                     INFORMATION_NOT_PROVIDED);
             gtd.setLeadOrganization(leadOrganization);
@@ -458,8 +460,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 gtd.setOverallOfficial(overallOffBuilder.toString());
                 // Central Contact
                 gtd.setCentralContact(getCentralContactDetails());
-                // Responsible Party
-                gtd.setResponsibleParty(getResponsiblePartyDetails());
+                if (studyProtocolDto.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+                   // Responsible Party
+                   gtd.setResponsibleParty(getResponsiblePartyDetails());
+                }   
             }
         }
 
@@ -566,36 +570,38 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
     private void setRegulatoryInformation() throws PAException {
         TSRReportRegulatoryInformation regInfo = new TSRReportRegulatoryInformation();
-        StudyRegulatoryAuthorityDTO sraDTO = studyRegulatoryAuthorityService
+        if (studyProtocolDto.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+           StudyRegulatoryAuthorityDTO sraDTO = studyRegulatoryAuthorityService
                 .getCurrentByStudyProtocol(studyProtocolDtoIdentifier);
-        if (sraDTO != null) {
-            String data = INFORMATION_NOT_PROVIDED;
-            RegulatoryAuthority ra = regulatoryInformationService.get(Long.valueOf(sraDTO
+            if (sraDTO != null) {
+               String data = INFORMATION_NOT_PROVIDED;
+               RegulatoryAuthority ra = regulatoryInformationService.get(Long.valueOf(sraDTO
                     .getRegulatoryAuthorityIdentifier().getExtension()));
 
-            Country country = regulatoryInformationService.getRegulatoryAuthorityCountry(Long.valueOf(sraDTO
+                Country country = regulatoryInformationService.getRegulatoryAuthorityCountry(Long.valueOf(sraDTO
                     .getRegulatoryAuthorityIdentifier().getExtension()));
-            if (country != null && ra != null) {
-                data = country.getName() + ": " + ra.getAuthorityName();
-            } else if (country != null) {
-                data = country.getName();
-            } else if (ra != null) {
-                data = ra.getAuthorityName();
-            }
-            regInfo.setTrialOversightAuthority(data);
-        }
-        regInfo.setDmcAppointed(getValue(studyProtocolDto.getDataMonitoringCommitteeAppointedIndicator(),
+                if (country != null && ra != null) {
+                   data = country.getName() + ": " + ra.getAuthorityName();
+                } else if (country != null) {
+                   data = country.getName();
+                } else if (ra != null) {
+                  data = ra.getAuthorityName();
+                }
+               regInfo.setTrialOversightAuthority(data);
+           }
+           regInfo.setDmcAppointed(getValue(studyProtocolDto.getDataMonitoringCommitteeAppointedIndicator(),
                 INFORMATION_NOT_PROVIDED));
-        regInfo.setFdaRegulatedIntervention(getValue(studyProtocolDto.getFdaRegulatedIndicator(),
+           regInfo.setFdaRegulatedIntervention(getValue(studyProtocolDto.getFdaRegulatedIndicator(),
                 INFORMATION_NOT_PROVIDED));
-        regInfo.setSection801(getValue(studyProtocolDto.getSection801Indicator(), INFORMATION_NOT_PROVIDED));
-        List<StudyIndldeDTO> indIde = studyIndldeService.getByStudyProtocol(studyProtocolDto.getIdentifier());
-        if (indIde != null && (!indIde.isEmpty())) {
-            regInfo.setIndIdeStudy(YES);
-        } else {
-            regInfo.setIndIdeStudy(NO);
-        }
-        regInfo.setDelayedPosting(getValue(studyProtocolDto.getDelayedpostingIndicator(), INFORMATION_NOT_PROVIDED));
+           regInfo.setSection801(getValue(studyProtocolDto.getSection801Indicator(), INFORMATION_NOT_PROVIDED));
+           List<StudyIndldeDTO> indIde = studyIndldeService.getByStudyProtocol(studyProtocolDto.getIdentifier());
+           if (indIde != null && (!indIde.isEmpty())) {
+              regInfo.setIndIdeStudy(YES);
+           } else {
+              regInfo.setIndIdeStudy(NO);
+           }
+          regInfo.setDelayedPosting(getValue(studyProtocolDto.getDelayedpostingIndicator(), INFORMATION_NOT_PROVIDED));
+        }  
         tsrReportGenerator.setRegulatoryInformation(regInfo);
     }
 
