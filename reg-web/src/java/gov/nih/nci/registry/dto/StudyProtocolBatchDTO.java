@@ -145,6 +145,23 @@ public class StudyProtocolBatchDTO {
     private static final int PCTL = 200;
     private String ctepIdentifier;
     private String dcpIdentifier;
+    private boolean ctGovXmlIndicator = true;
+    private String otherTrialIdentifier;
+    
+    /**
+     * @return the otherTrialIdentifier
+     */
+     public String getOtherTrialIdentifier() {
+        return otherTrialIdentifier;
+     }
+
+     /**
+      * @param otherTrialIdentifier the otherTrialIdentifier to set
+      */
+     public void setOtherTrialIdentifier(String otherTrialIdentifier) {
+       this.otherTrialIdentifier = otherTrialIdentifier;
+     }
+
     /**
      * . Default Constructor
      */
@@ -1828,6 +1845,20 @@ public class StudyProtocolBatchDTO {
     public String getDcpIdentifier() {
         return dcpIdentifier;
     }
+
+    /**
+     * @return true, if is ct gov xml indicator
+     */
+    public boolean isCtGovXmlIndicator() {
+      return ctGovXmlIndicator;
+    }
+
+    /**
+     * @param ctGovXmlIndicator the new ct gov xml indicator
+     */
+     public void setCtGovXmlIndicator(boolean ctGovXmlIndicator) {
+       this.ctGovXmlIndicator = ctGovXmlIndicator;
+     }
     
 
 }

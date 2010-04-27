@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnPn;
 import gov.nih.nci.iso21090.EntityNamePartType;
@@ -86,8 +88,6 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelUrl;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -143,6 +143,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 /**
  * @author Vrushali
@@ -248,11 +249,6 @@ public class BatchCreateProtocols {
             NullifiedEntityException, URISyntaxException, EntityValidationException, CurationException, IOException {
             Ii studyProtocolIi = null;
             
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
-            
-            Long regAuthId = PaRegistry.getRegulatoryInformationService().
-                getRegulatoryAuthorityId(dto.getOversightOrgName(), dto.getOversightAuthorityCountry());
-            studyRegAuthDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(regAuthId));
             
             TrialUtil util = new TrialUtil();
             TrialDTO trialDTO = new TrialDTO();
@@ -270,8 +266,15 @@ public class BatchCreateProtocols {
                 throw new PAException("Proprietary trials Update not supported. ");
             }
             studyProtocolIi = IiConverter.convertToIi(listofDto.get(0).getStudyProtocolId());
-            studyRegAuthDTO.setStudyProtocolIdentifier(studyProtocolIi);
             
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
+            if (dto.isCtGovXmlIndicator()) {
+               Long regAuthId = PaRegistry.getRegulatoryInformationService().
+                 getRegulatoryAuthorityId(dto.getOversightOrgName(), dto.getOversightAuthorityCountry());
+               studyRegAuthDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(regAuthId));
+            
+               studyRegAuthDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            }
             trialDTO = getTrialDTOForUpdate(dto, folderPath, studyProtocolIi);
 
             StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.
@@ -297,19 +300,23 @@ public class BatchCreateProtocols {
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO,
                     studyProtocolIi); 
             Ii responsiblePartyContactIi = null;
-            if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
-                studyContactDTO = util.convertToStudyContactDTO(trialDTO);
-            } else {
-                studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
-                if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
-                 responsiblePartyContactIi = IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
+            //check if ctgov xml indicator is true
+            if (dto.isCtGovXmlIndicator()) {
+               if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
+                  studyContactDTO = util.convertToStudyContactDTO(trialDTO);
+               } else {
+                  studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
+                  if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
+                   responsiblePartyContactIi = 
+                     IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
                   }
                   if (trialDTO.getResponsibleGenericContactName() != null 
                             && !trialDTO.getResponsibleGenericContactName().equals("")) {
                       responsiblePartyContactIi = IiConverter.
                           convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
                   }
-            }
+               }
+            }   
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             if (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty()) {
                 for (Iterator it = studyIndldeDTOs.iterator(); it.hasNext();) {
@@ -385,22 +392,7 @@ public class BatchCreateProtocols {
                         trialDTO.setPhaseOtherText(batchDto.getPhaseOtherValueSp());
                     }
                 } 
-                String strPersonal = "Personal";
-                if (PAUtil.isNotEmpty(batchDto.getResponsibleParty())) { 
-                    trialDTO.setResponsiblePartyType(batchDto.getResponsibleParty());
-                    if (batchDto.getResponsibleParty().equalsIgnoreCase("sponsor")) {
-                        trialDTO.setContactEmail(batchDto.getSponsorContactEmail());
-                        trialDTO.setContactPhone(batchDto.getSponsorContactPhone());
-                        if (batchDto.getSponsorContactType().equalsIgnoreCase(strPersonal)) {
-                            trialDTO.setResponsiblePersonName(batchDto.getSponsorContactLName() 
-                                    + batchDto.getSponsorContactFName());
-                            trialDTO.setResponsibleGenericContactName("");
-                        } else {
-                            trialDTO.setResponsibleGenericContactName(batchDto.getResponsibleGenericContactName());
-                            trialDTO.setResponsiblePersonName("");
-                        }
-                    }
-                }   
+                   
                 trialDTO.setReason(batchDto.getReasonForStudyStopped());
                 trialDTO.setStartDate(batchDto.getStudyStartDate());
                 trialDTO.setStartDateType(batchDto.getStudyStartDateType());
@@ -414,23 +406,6 @@ public class BatchCreateProtocols {
                     summary4Sponsor = lookUpOrgs(summ4Sponsor); //look up for org only when dto is not empty
                 }
                 trialDTO.setSummaryFourFundingCategoryCode(batchDto.getSumm4FundingCat());
-                //check if Sponsor Contact is needed if needed the the lookup ahead to catch other Validation error
-                //look up new Person or create if needed.
-                Ii responsiblePersonId = null;
-                if (PAUtil.isNotEmpty(batchDto.getResponsibleParty())
-                        && batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")) {
-                    if (batchDto.getSponsorContactType().equalsIgnoreCase(strPersonal)) {
-                        PersonBatchDTO sponsorPersonDto = dataValidator.buildSponsorContact(batchDto);
-                        responsiblePersonId = lookUpPersons(sponsorPersonDto);
-                    } else {
-                        responsiblePersonId = getTitleIi(batchDto.getResponsibleGenericContactName(),
-                                batchDto.getSponsorContactEmail(), batchDto.getSponsorContactPhone(),
-                                IiConverter.convertToPoOrganizationIi(trialDTO.getSponsorIdentifier()));
-                    }
-                }
-                if (responsiblePersonId != null) {
-                    trialDTO.setResponsiblePersonIdentifier(responsiblePersonId.getExtension());
-                }
                 if (summary4Sponsor != null) {
                     trialDTO.setSummaryFourOrgIdentifier(summary4Sponsor.getExtension());
                 }
@@ -439,12 +414,49 @@ public class BatchCreateProtocols {
                 trialDTO.setIndIdeDtos(getIndsListForUpdate(batchDto, studyProtocolIi.getExtension())); //add ind
                 trialDTO.setFundingDtos(getFundingListForUpdate(batchDto, studyProtocolIi.getExtension())); //add grants
                 
-              //oversight info
-                trialDTO.setFdaRegulatoryInformationIndicator(batchDto.getFdaRegulatoryInformationIndicator());
-                trialDTO.setSection801Indicator(batchDto.getSection801Indicator());
-                trialDTO.setDelayedPostingIndicator(batchDto.getDelayedPostingIndicator());
-                trialDTO.setDataMonitoringCommitteeAppointedIndicator(
+                //check if Sponsor Contact is needed if needed the the lookup ahead to catch other Validation error
+                //look up new Person or create if needed.
+                Ii responsiblePersonId = null;
+                String strPersonal = "Personal";
+                //only if the ctGovXml indicator id true
+                if (batchDto.isCtGovXmlIndicator()) {
+                  if (StringUtils.isNotEmpty(batchDto.getResponsibleParty())) { 
+                    trialDTO.setResponsiblePartyType(batchDto.getResponsibleParty());
+                    if (batchDto.getResponsibleParty().equalsIgnoreCase("sponsor")) {
+                        trialDTO.setContactEmail(batchDto.getSponsorContactEmail());
+                        trialDTO.setContactPhone(batchDto.getSponsorContactPhone());
+                        if (batchDto.getSponsorContactType().equalsIgnoreCase(strPersonal)) {
+                            trialDTO.setResponsiblePersonName(batchDto.getSponsorContactLName() 
+                                    + batchDto.getSponsorContactFName());
+                            trialDTO.setResponsibleGenericContactName("");
+                        } else {
+                            trialDTO.setResponsibleGenericContactName(batchDto.getResponsibleGenericContactName());
+                            trialDTO.setResponsiblePersonName("");
+                        }
+                    }
+                  }                
+                  if (StringUtils.isNotEmpty(batchDto.getResponsibleParty())
+                        && batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")) {
+                      if (batchDto.getSponsorContactType().equalsIgnoreCase(strPersonal)) {
+                        PersonBatchDTO sponsorPersonDto = dataValidator.buildSponsorContact(batchDto);
+                        responsiblePersonId = lookUpPersons(sponsorPersonDto);
+                      } else {
+                        responsiblePersonId = getTitleIi(batchDto.getResponsibleGenericContactName(),
+                                batchDto.getSponsorContactEmail(), batchDto.getSponsorContactPhone(),
+                                IiConverter.convertToPoOrganizationIi(trialDTO.getSponsorIdentifier()));
+                      }
+                  }
+                  if (responsiblePersonId != null) {
+                    trialDTO.setResponsiblePersonIdentifier(responsiblePersonId.getExtension());
+                  }
+                
+                  //oversight info
+                  trialDTO.setFdaRegulatoryInformationIndicator(batchDto.getFdaRegulatoryInformationIndicator());
+                  trialDTO.setSection801Indicator(batchDto.getSection801Indicator());
+                  trialDTO.setDelayedPostingIndicator(batchDto.getDelayedPostingIndicator());
+                  trialDTO.setDataMonitoringCommitteeAppointedIndicator(
                         batchDto.getDataMonitoringCommitteeAppointedIndicator());
+                }
                 trialDTO.setNctIdentifier(batchDto.getNctNumber());
                 trialDTO.setDcpIdentifier(batchDto.getDcpIdentifier());
                 trialDTO.setCtepIdentifier(batchDto.getCtepIdentifier());
@@ -535,38 +547,42 @@ public class BatchCreateProtocols {
         List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
         OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
         PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
-        OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
         StudySiteDTO leadOrgSiteIdDTO = util.convertToleadOrgSiteIdDTO(trialDTO);
-        StudyContactDTO studyContactDTO = null;
-        StudySiteContactDTO studySiteContactDTO = null;
         OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
         StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO, 
                 studyProtocolIi);
+
+        StudyContactDTO studyContactDTO = null;
+        StudySiteContactDTO studySiteContactDTO = null;
         Ii responsiblePartyContactIi = null;
-        if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
-            studyContactDTO = util.convertToStudyContactDTO(trialDTO);
-        } else {
-            studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
-            if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
-             responsiblePartyContactIi = IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
+        OrganizationDTO sponsorOrgDTO = null;
+        StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
+        if (trialDTO.getXmlRequired()) {
+          sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);        
+          if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
+             studyContactDTO = util.convertToStudyContactDTO(trialDTO);
+          } else {
+             studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
+             if (StringUtils.isNotEmpty(trialDTO.getResponsiblePersonName())) {
+               responsiblePartyContactIi = IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
               }
-              if (trialDTO.getResponsibleGenericContactName() != null 
-                        && !trialDTO.getResponsibleGenericContactName().equals("")) {
+              if (StringUtils.isNotEmpty(trialDTO.getResponsibleGenericContactName())) {
                   responsiblePartyContactIi = IiConverter.
                       convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
               }
+          }
+          //Regulatory authority
+          Long regAuthId = PaRegistry.getRegulatoryInformationService().
+              getRegulatoryAuthorityId(dto.getOversightOrgName(), dto.getOversightAuthorityCountry());
+          studyRegAuthDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(regAuthId));
         }
+        
         List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
         List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
         List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
         studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, studyProtocolIi));
         studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, studyProtocolIi));
-        studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
-        
-        StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
-        Long regAuthId = PaRegistry.getRegulatoryInformationService().
-            getRegulatoryAuthorityId(dto.getOversightOrgName(), dto.getOversightAuthorityCountry());
-        studyRegAuthDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(regAuthId));
+        studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));        
         
         if (dto.getSubmissionType().equalsIgnoreCase("O") && !PAUtil.isNotEmpty(trialDTO.getAssignedIdentifier())) {
             studyProtocolIi =  PaRegistry.getTrialRegistrationService().
@@ -662,7 +678,6 @@ public class BatchCreateProtocols {
         trialDTO.setPrimaryPurposeCode(batchDTO.getPrimaryPurpose());
         trialDTO.setPrimaryPurposeOtherText(batchDTO.getPrimaryPurposeOtherValueSp());
         trialDTO.setReason(batchDTO.getReasonForStudyStopped());
-        trialDTO.setResponsiblePartyType(batchDTO.getResponsibleParty());
         trialDTO.setStartDate(batchDTO.getStudyStartDate());
         trialDTO.setStartDateType(batchDTO.getStudyStartDateType());
         trialDTO.setStatusCode(batchDTO.getCurrentTrialStatus());
@@ -670,19 +685,8 @@ public class BatchCreateProtocols {
         trialDTO.setSummaryFourFundingCategoryCode(batchDTO.getSumm4FundingCat());
         
         trialDTO.setTrialType(batchDTO.getTrialType());
-        if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
-            trialDTO.setContactEmail(batchDTO.getPiEmail());
-            trialDTO.setContactPhone(batchDTO.getPiPhone());
-        } else {
-            trialDTO.setContactEmail(batchDTO.getSponsorContactEmail());
-            trialDTO.setContactPhone(batchDTO.getSponsorContactPhone());
-            if (batchDTO.getSponsorContactType().equalsIgnoreCase("Personal")) {
-                trialDTO.setResponsiblePersonName(batchDTO.getSponsorContactLName() 
-                    + batchDTO.getSponsorContactFName());
-            } else {
-                trialDTO.setResponsibleGenericContactName(batchDTO.getResponsibleGenericContactName());
-            }
-        }
+        trialDTO.setXmlRequired(batchDTO.isCtGovXmlIndicator());
+        
         //if the Phase's value is not in allowed LOV then save phase as Other
         // and comments as the value of current phase
         if (null == PhaseCode.getByCode(batchDTO.getPhase()))  {
@@ -700,50 +704,77 @@ public class BatchCreateProtocols {
             trialDTO.setAmendmentDate(batchDTO.getAmendmentDate());
             trialDTO.setLocalAmendmentNumber(batchDTO.getAmendmentNumber());
         }
-        //oversight info
-        trialDTO.setFdaRegulatoryInformationIndicator(batchDTO.getFdaRegulatoryInformationIndicator());
-        trialDTO.setSection801Indicator(batchDTO.getSection801Indicator());
-        trialDTO.setDelayedPostingIndicator(batchDTO.getDelayedPostingIndicator());
-        trialDTO.setDataMonitoringCommitteeAppointedIndicator(
+        //check ctgovxml indicator is true
+        if (batchDTO.isCtGovXmlIndicator()) {
+           trialDTO.setResponsiblePartyType(batchDTO.getResponsibleParty());
+           if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
+               trialDTO.setContactEmail(batchDTO.getPiEmail());
+               trialDTO.setContactPhone(batchDTO.getPiPhone());
+           } else {
+              trialDTO.setContactEmail(batchDTO.getSponsorContactEmail());
+              trialDTO.setContactPhone(batchDTO.getSponsorContactPhone());
+              if (batchDTO.getSponsorContactType().equalsIgnoreCase("Personal")) {
+                 trialDTO.setResponsiblePersonName(batchDTO.getSponsorContactLName() 
+                    + batchDTO.getSponsorContactFName());
+              } else {
+                 trialDTO.setResponsibleGenericContactName(batchDTO.getResponsibleGenericContactName());
+              }
+          }
+           //oversight info
+           trialDTO.setFdaRegulatoryInformationIndicator(batchDTO.getFdaRegulatoryInformationIndicator());
+           trialDTO.setSection801Indicator(batchDTO.getSection801Indicator());
+           trialDTO.setDelayedPostingIndicator(batchDTO.getDelayedPostingIndicator());
+           trialDTO.setDataMonitoringCommitteeAppointedIndicator(
                 batchDTO.getDataMonitoringCommitteeAppointedIndicator());
-        
-
+        }
         TrialBatchDataValidator dataValidator = new TrialBatchDataValidator();
         // before creating the protocol check for duplicate
         // using the Lead Org Trial Identifier and Lead Org Identifier
+        
+        //Lead Org
         OrganizationBatchDTO leadOrgDto = dataValidator.buildLeadOrgDto(batchDTO);
-        Ii orgIdIi = lookUpOrgs(leadOrgDto);            
-        OrganizationBatchDTO sponsorOrgDto = dataValidator.buildSponsorOrgDto(batchDTO); //look up sponser
-        Ii sponsorIdIi = lookUpOrgs(sponsorOrgDto);
+        Ii orgIdIi = lookUpOrgs(leadOrgDto);       
+        trialDTO.setLeadOrganizationIdentifier(orgIdIi.getExtension()); //All the Ii
+            
+        //lead PI
         PersonBatchDTO piDto = dataValidator.buildLeadPIDto(batchDTO); //look up Person
         Ii leadPrincipalInvestigator = lookUpPersons(piDto);
+        trialDTO.setPiIdentifier(leadPrincipalInvestigator.getExtension());
+       
+        //Summary for sponsor
         OrganizationBatchDTO summ4Sponsor = dataValidator.buildSummary4Sponsor(batchDTO); //Summary 4 Info
         Ii summary4Sponsor = null;
         if (!dataValidator.orgDTOIsEmpty(summ4Sponsor)) {
             summary4Sponsor = lookUpOrgs(summ4Sponsor); //look up for org only when dto is not empty
         }
-        //check if Sponsor Contact is needed if needed the the lookup ahead to catch other Validation error
-        //look up new Person or create if needed.
-        Ii responsiblePersonId = null;
-        if (batchDTO.getResponsibleParty().equalsIgnoreCase("Sponsor")) {
-            if (batchDTO.getSponsorContactType().equalsIgnoreCase("Personal")) {
-                PersonBatchDTO sponsorPersonDto = dataValidator.buildSponsorContact(batchDTO);
-                responsiblePersonId = lookUpPersons(sponsorPersonDto);
-            } else {
-                responsiblePersonId = getTitleIi(batchDTO.getResponsibleGenericContactName(),
-                        batchDTO.getSponsorContactEmail(), batchDTO.getSponsorContactPhone(),
-                        sponsorIdIi);
-            }
-        }
-        trialDTO.setLeadOrganizationIdentifier(orgIdIi.getExtension()); //All the Ii
-        trialDTO.setPiIdentifier(leadPrincipalInvestigator.getExtension());
-        trialDTO.setSponsorIdentifier(sponsorIdIi.getExtension());
-        if (responsiblePersonId != null) {
-            trialDTO.setResponsiblePersonIdentifier(responsiblePersonId.getExtension());
-        }
         if (summary4Sponsor != null) {
             trialDTO.setSummaryFourOrgIdentifier(summary4Sponsor.getExtension());
         }
+        //check ctgovxml indicator is true
+        Ii responsiblePersonId = null;
+        if (batchDTO.isCtGovXmlIndicator()) {
+          //Sponsor org
+          OrganizationBatchDTO sponsorOrgDto = dataValidator.buildSponsorOrgDto(batchDTO); //look up sponser
+          Ii sponsorIdIi = lookUpOrgs(sponsorOrgDto);
+          trialDTO.setSponsorIdentifier(sponsorIdIi.getExtension());
+        
+          //check if Sponsor Contact is needed if needed the the lookup ahead to catch other Validation error
+          //look up new Person or create if needed.
+        
+          if (batchDTO.getResponsibleParty().equalsIgnoreCase("Sponsor")) {
+              if (batchDTO.getSponsorContactType().equalsIgnoreCase("Personal")) {
+                PersonBatchDTO sponsorPersonDto = dataValidator.buildSponsorContact(batchDTO);
+                responsiblePersonId = lookUpPersons(sponsorPersonDto);
+              } else {
+                responsiblePersonId = getTitleIi(batchDTO.getResponsibleGenericContactName(),
+                        batchDTO.getSponsorContactEmail(), batchDTO.getSponsorContactPhone(),
+                        sponsorIdIi);
+              }
+          }
+          if (responsiblePersonId != null) {
+             trialDTO.setResponsiblePersonIdentifier(responsiblePersonId.getExtension());
+          }
+        }    
         trialDTO.setDocDtos(addDocDTOToList(batchDTO, folderPath)); //add doc to the dto
         trialDTO.setIndIdeDtos(dataValidator.convertIndsToList(batchDTO)); //add ind
         trialDTO.setFundingDtos(dataValidator.convertToGrantList(batchDTO)); //add grants

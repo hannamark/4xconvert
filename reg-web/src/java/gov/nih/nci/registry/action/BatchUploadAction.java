@@ -344,10 +344,9 @@ public class BatchUploadAction extends ActionSupport implements
                                   zipFile.getInputStream(zipEntry));
 
                           int size;
+                          File fdoc = new File(unzipFolderName + File.separator + zipEntry.getName());
                           byte[] buffer = new byte[BatchConstants.READ_SIZE];
-                          FileOutputStream fos = new FileOutputStream(
-                                  unzipFolderName + File.separator
-                                          + zipEntry.getName());
+                          FileOutputStream fos = new FileOutputStream(fdoc);
                           BufferedOutputStream bos = new BufferedOutputStream(
                                   fos, buffer.length);
 

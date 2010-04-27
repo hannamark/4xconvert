@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
@@ -61,7 +62,7 @@ public class TrialBatchDataValidator {
      * @param batchDto dto
      * @return str
      */
-    public String validateBatchDTO(StudyProtocolBatchDTO batchDto) {
+     public String validateBatchDTO(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         
         if (batchDto.getTrialType() == null || batchDto.getTrialType().equalsIgnoreCase("Observational")) {
@@ -79,15 +80,12 @@ public class TrialBatchDataValidator {
         if (PAUtil.isNotEmpty(batchDto.getSubmissionType()) && !batchDto.getSubmissionType().equals("U")) {
             //Lead org Country and state validation
             fieldErr.append(validateLeadOrg(batchDto));
-            //Sponsor validation
-            fieldErr.append(validateSponsorInfo(batchDto));
+            if (batchDto.isCtGovXmlIndicator()) {
+               fieldErr.append(validateSponsorResponsibleParty(batchDto));
+            }
             //Check PI Country and state 
             fieldErr.append(validatePI(batchDto));
-            if (PAUtil.isNotEmpty(batchDto.getResponsibleParty()) 
-                    && !batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")
-                    && !batchDto.getResponsibleParty().equalsIgnoreCase("PI")) {
-                    fieldErr.append("Please enter valid value for Responsible Party.");
-            }
+          
             if (PAUtil.isEmpty(batchDto.getLocalProtocolIdentifier())) {
                 fieldErr.append("Lead Organization Trial Identifier is required.\n");
             }
@@ -96,10 +94,7 @@ public class TrialBatchDataValidator {
             }
             if (PAUtil.isEmpty(batchDto.getIrbApprovalDocumentFileName())) {
                 fieldErr.append("IRB Approval Document is required. \n");
-            }
-            if (PAUtil.isEmpty(batchDto.getResponsibleParty())) {
-                fieldErr.append("Responsible Party Not Provided.\n");
-            }
+            }            
             if (PAUtil.isEmpty(batchDto.getTitle())) {
                 fieldErr.append("Trial Title is required.\n");
             } else if (batchDto.getTitle().length() > TRIAL_TITLE_MAX_LENGTH) {
@@ -108,7 +103,6 @@ public class TrialBatchDataValidator {
             if (null == TrialStatusCode.getByCode(batchDto.getCurrentTrialStatus())) {
                 fieldErr.append("Please enter valid value for Current Trial Status");
             }
-
         }
         //Summary 4 Info validation
         fieldErr.append(validateSummary4SponsorInfo(batchDto));
@@ -130,11 +124,27 @@ public class TrialBatchDataValidator {
         fieldErr.append(validateListOfValues(batchDto));
         //validate the Amendment info
         fieldErr.append(validateAmendmentInfo(batchDto));
-        //validate the oversight Info
-        fieldErr.append(validateOversightInfo(batchDto));
+        if (batchDto.isCtGovXmlIndicator()) {
+           //validate the oversight Info
+           fieldErr.append(validateOversightInfo(batchDto));
+        }
         //validate the update info
         fieldErr.append(validateUpdate(batchDto));
         return fieldErr.toString();
+    }
+    private Object validateSponsorResponsibleParty(StudyProtocolBatchDTO batchDto) {
+        StringBuffer fieldErr = new StringBuffer();
+        //Sponsor validation
+        fieldErr.append(validateSponsorInfo(batchDto));
+        if (StringUtils.isNotEmpty(batchDto.getResponsibleParty()) 
+             && !batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")
+             && !batchDto.getResponsibleParty().equalsIgnoreCase("PI")) {
+             fieldErr.append("Please enter valid value for Responsible Party.");
+        }
+        if (StringUtils.isEmpty(batchDto.getResponsibleParty())) {
+            fieldErr.append("Responsible Party Not Provided.\n");
+        }
+        return fieldErr;
     }
     private Object validatePI(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
@@ -159,7 +169,9 @@ public class TrialBatchDataValidator {
             if (PAUtil.isEmpty(batchDto.getNciTrialIdentifier())) {
                 fieldErr.append("NCI Trial Identifier is required. \n");
             }
-            fieldErr.append(validateSponsorContactInfo(batchDto));
+            if (batchDto.isCtGovXmlIndicator()) {
+               fieldErr.append(validateSponsorContactInfo(batchDto));
+            }
             if (null == TrialStatusCode.getByCode(batchDto.getCurrentTrialStatus())
                     && !StudyStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(batchDto.getCurrentTrialStatus())) {
                 fieldErr.append("Please enter valid value for Current Trial Status");

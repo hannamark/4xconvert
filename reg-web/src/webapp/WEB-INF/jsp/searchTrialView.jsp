@@ -205,9 +205,7 @@
              </td>
        </tr> 
       <c:if test="${(requestScope.trialSummary.proprietaryTrialIndicator == null 
-        || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false')
-        && (requestScope.trialSummary.ctgovXmlRequiredIndicator == null 
-        || requestScope.trialSummary.ctgovXmlRequiredIndicator.value == 'true')}">
+        || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false')}">
        <tr>     
       		<td scope="row" class="label">
       			<label for="Principal Investigator">

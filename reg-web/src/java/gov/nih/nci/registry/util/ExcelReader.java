@@ -5,15 +5,19 @@ package gov.nih.nci.registry.util;
 
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
+import gov.nih.nci.registry.enums.BatchStringConstants;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -62,6 +66,10 @@ public class ExcelReader {
                 LOG.error("There are no work sheets to process");
                 throw new PAException(" There are no work sheets to process");
             }
+            //create a dynamic hashmap of the headers items
+            Map<Integer, String> headerMap = new HashMap<Integer, String>();
+            getHeaders(sheet, headerMap);
+            
             boolean flag = true; // loop every row in the work sheet
             for (Iterator rows = sheet.rowIterator(); rows.hasNext();) {
                 HSSFRow row = (HSSFRow) rows.next();
@@ -69,27 +77,52 @@ public class ExcelReader {
                     flag = false; // skip the first row, since its a header row
                     continue;
                 }
-                short c1 = row.getFirstCellNum();
-                short c2 = row.getLastCellNum();
-                batchDto = new StudyProtocolBatchDTO();
-                for (int c = c1; c < c2; c++) { 
-                    HSSFCell cell = row.getCell(c); // loop for every cell in each row
-                    String cellValue = null;
-                    if (cell != null) {
-                        cellValue = getCellValue(cell);
-                        setDto(batchDto, cellValue, c); // set corresponding values
-                        if (!StringUtils.isEmpty(orgName) && orgName.equalsIgnoreCase("ctep")) {
-                           batchDto.setCtepIdentifier(batchDto.getUniqueTrialId());
-                        }
-                        if (!StringUtils.isEmpty(orgName) && orgName.equalsIgnoreCase("dcp")) {
-                            batchDto.setDcpIdentifier(batchDto.getUniqueTrialId());
-                        }
-                    } // if
-                } // column for loop
-                batchDtoList.add(batchDto); // add the dto to the list
+                 batchDto = new StudyProtocolBatchDTO();
+                //create the dto
+                createDto(row, batchDto, orgName, headerMap);
+                //add the dto to the list
+                batchDtoList.add(batchDto); 
             } // rows for loop
         } // work sheet for loop
         return batchDtoList;
+    }
+    
+    private void getHeaders(HSSFSheet sheet, Map<Integer, String> headerMap) {
+       if (sheet.getLastRowNum() > 0) {
+            HSSFRow headerRow = sheet.getRow(0);
+            short c1 = headerRow.getFirstCellNum();
+            short c2 = headerRow.getLastCellNum();
+            
+            //populate hashmap of the headers items dynamically
+             for (int c = c1; c < c2; c++) {
+                HSSFCell cell = headerRow.getCell(c); // loop for every cell in each row
+                String cellValue = null;
+                if (cell != null) {
+                    cellValue = getCellValue(cell);
+                    headerMap.put(c, cellValue);
+                }   
+             }
+        }
+    }
+    
+    private void createDto(HSSFRow row, StudyProtocolBatchDTO batchDto, String orgName, Map<Integer, String> headerMap)
+    throws PAException {
+        short c1 = row.getFirstCellNum();
+        short c2 = row.getLastCellNum();
+        for (int c = c1; c < c2; c++) { 
+            HSSFCell cell = row.getCell(c); // loop for every cell in each row
+            String cellValue = null;
+            if (cell != null) {
+                cellValue = getCellValue(cell);
+                setDto(batchDto, cellValue, c, headerMap); // set corresponding values
+                if (!StringUtils.isEmpty(orgName) && orgName.equalsIgnoreCase("ctep")) {
+                   batchDto.setCtepIdentifier(batchDto.getUniqueTrialId());
+                }
+                if (!StringUtils.isEmpty(orgName) && orgName.equalsIgnoreCase("dcp")) {
+                    batchDto.setDcpIdentifier(batchDto.getUniqueTrialId());
+                }
+            } // if
+        } // column for loop
     }
     /**
      * 
@@ -154,139 +187,53 @@ public class ExcelReader {
      * @throws PAException
      * @return dto dto
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NcssMethodCount" })
      private StudyProtocolBatchDTO setDto(StudyProtocolBatchDTO batchDto,
-            String cellValue, int col) throws PAException {
-        switch (col) {
-        case BatchConstants.UNIQUE_TRIAL_IDENTIFIER: batchDto.setUniqueTrialId(cellValue); break;
-        case BatchConstants.LEAD_ORGANIZATION_TRIAL_IDENTIFIER: batchDto.setLocalProtocolIdentifier(cellValue); break;
-        case BatchConstants.NCT_NUMBER: batchDto.setNctNumber(cellValue); break;
-        case BatchConstants.TITLE: batchDto.setTitle(cellValue); break;
-        case BatchConstants.TRIAL_TYPE: batchDto.setTrialType(cellValue); break;
-        case BatchConstants.PRIMARY_PURPOSE: batchDto.setPrimaryPurpose(cellValue); break;
-        case BatchConstants.PRIMARY_PURPOSE_OTHER_VALUE_SP:batchDto.setPrimaryPurposeOtherValueSp(cellValue); break;
-        case BatchConstants.PHASE: batchDto.setPhase(cellValue); break;
-        case BatchConstants.PHASE_OTHER_VALUE_SP:batchDto.setPhaseOtherValueSp(cellValue); break;
-        case BatchConstants.SPONSOR_ORG_NAME: batchDto.setSponsorOrgName(cellValue); break;
-        case BatchConstants.SPONSOR_CETP_ORG_NO: batchDto.setSponsorCTEPOrgNumber(cellValue); break;
-        case BatchConstants.SPONSOR_STREET_ADDRESS: batchDto.setSponsorStreetAddress(cellValue); break;
-        case BatchConstants.SPONSOR_CITY: batchDto.setSponsorCity(cellValue); break;
-        case BatchConstants.SPONSOR_STATE : batchDto.setSponsorState(cellValue); break;
-        case BatchConstants.SPONSOR_ZIP : batchDto.setSponsorZip(cellValue); break;
-        case BatchConstants.SPONSOR_COUNTRY: batchDto.setSponsorCountry(cellValue); break;
-        case BatchConstants.SPONSOR_EMAIL: batchDto.setSponsorEmail(cellValue); break;
-        case BatchConstants.SPONSOR_PHONE: batchDto.setSponsorPhone(cellValue); break;
-        case BatchConstants.SPONSOR_TTY: batchDto.setSponsorTTY(cellValue); break;
-        case BatchConstants.SPONSOR_FAX: batchDto.setSponsorFax(cellValue); break;
-        case BatchConstants.SPONSOR_URL: batchDto.setSponsorURL(cellValue); break;    
-        case BatchConstants.RESPONSIBLE_PARTY: batchDto.setResponsibleParty(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_FIRST_NAME : batchDto.setSponsorContactFName(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_MIDDLE_NAME: batchDto.setSponsorContactMName(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_LAST_NAME: batchDto.setSponsorContactLName(cellValue); break;    
-        case BatchConstants.SPONSOR_CONTACT_CTEP_PERSON_NO: batchDto.setSponsorContactCTEPPerNo(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_STREET_ADDRESS: batchDto.setSponsorContactStreetAddress(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_CITY: batchDto.setSponsorContactCity(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_STATE: batchDto.setSponsorContactState(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_ZIP: batchDto.setSponsorContactZip(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_COUNTRY: batchDto.setSponsorContactCountry(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_EMAIL_ID: batchDto.setSponsorContactEmail(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_PHONE: batchDto.setSponsorContactPhone(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_TTY: batchDto.setSponsorContactTTY(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_FAX: batchDto.setSponsorContactFax(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_URL: batchDto.setSponsorContactUrl(cellValue); break;    
-        case BatchConstants.LEAD_ORG_NAME: batchDto.setLeadOrgName(cellValue); break;
-        case BatchConstants.LEAD_ORG_CTEP_IDENTIFIER: batchDto.setLeadOrgCTEPOrgNo(cellValue); break;
-        case BatchConstants.LEAD_ORG_STREET_ADDRESS: batchDto.setLeadOrgStreetAddress(cellValue); break;
-        case BatchConstants.LEAD_ORG_CITY: batchDto.setLeadOrgCity(cellValue); break;
-        case BatchConstants.LEAD_ORG_STATE: batchDto.setLeadOrgState(cellValue); break;
-        case BatchConstants.LEAD_ORG_ZIP: batchDto.setLeadOrgZip(cellValue); break;
-        case BatchConstants.LEAD_ORG_COUNTRY: batchDto.setLeadOrgCountry(cellValue); break;
-        case BatchConstants.LEAD_ORG_EMAIL: batchDto.setLeadOrgEmail(cellValue); break;
-        case BatchConstants.LEAD_ORG_PHONE: batchDto.setLeadOrgPhone(cellValue); break;
-        case BatchConstants.LEAD_ORG_TTY: batchDto.setLeadOrgTTY(cellValue); break;
-        case BatchConstants.LEAD_ORG_FAX: batchDto.setLeadOrgFax(cellValue); break;
-        case BatchConstants.LEAD_ORG_URL: batchDto.setLeadOrgUrl(cellValue); break;    
-        case BatchConstants.LEAD_ORG_TYPE: batchDto.setLeadOrgType(cellValue); break;
-        case BatchConstants.PI_FIRST_NAME: batchDto.setPiFirstName(cellValue); break;
-        case BatchConstants.PI_MIDDLE_NAME: batchDto.setPiMiddleName(cellValue); break;
-        case BatchConstants.PI_LAST_NAME: batchDto.setPiLastName(cellValue); break;
-        case BatchConstants.PI_PERSON_CTEP_PERSON_NUMBER: batchDto.setPiPersonCTEPPersonNo(cellValue); break;
-        case BatchConstants.PI_STREET_ADDRESS: batchDto.setPiStreetAddress(cellValue); break;
-        case BatchConstants.PI_CITY: batchDto.setPiCity(cellValue); break;
-        case BatchConstants.PI_STATE: batchDto.setPiState(cellValue); break;
-        case BatchConstants.PI_ZIP: batchDto.setPiZip(cellValue); break;
-        case BatchConstants.PI_COUNTRY: batchDto.setPiCountry(cellValue); break;
-        case BatchConstants.PI_EMAIL:batchDto.setPiEmail(cellValue); break;
-        case BatchConstants.PI_PHONE: batchDto.setPiPhone(cellValue); break;
-        case BatchConstants.PI_TTY: batchDto.setPiTTY(cellValue); break;
-        case BatchConstants.PI_FAX: batchDto.setPiFax(cellValue); break;
-        case BatchConstants.PI_URL: batchDto.setPiUrl(cellValue); break;
-        case BatchConstants.S4_FUND_CAT: batchDto.setSumm4FundingCat(cellValue); break;
-        case BatchConstants.S4_FUND_ORG_NAME: batchDto.setSumm4OrgName(cellValue); break;
-        case BatchConstants.S4_FUND_ORG_CTEP_ORG_NO: batchDto.setSumm4OrgCTEPOrgNo(cellValue); break;
-        case BatchConstants.S4_FUND_ORG_STREET_ADDRESS: batchDto.setSumm4OrgStreetAddress(cellValue); break;
-        case BatchConstants.S4_FUND_CITY: batchDto.setSumm4City(cellValue); break;
-        case BatchConstants.S4_FUND_STATE: batchDto.setSumm4State(cellValue); break;
-        case BatchConstants.S4_FUND_ZIP: batchDto.setSumm4Zip(cellValue);  break;
-        case BatchConstants.S4_FUND_COUNTRY: batchDto.setSumm4Country(cellValue); break;
-        case BatchConstants.S4_FUND_EMAIL: batchDto.setSumm4Email(cellValue); break;
-        case BatchConstants.S4_FUND_PHONE: batchDto.setSumm4Phone(cellValue); break;
-        case BatchConstants.S4_FUND_TTY: batchDto.setSumm4TTY(cellValue); break;
-        case BatchConstants.S4_FUND_FAX: batchDto.setSumm4Fax(cellValue); break;
-        case BatchConstants.S4_FUND_URL: batchDto.setSumm4Url(cellValue); break;
-        case BatchConstants.S4_PRG_CODE_TEXT: batchDto.setProgramCodeText(cellValue); break;
-        case BatchConstants.NIH_GRANT_FUND_MC: batchDto.setNihGrantFundingMechanism(cellValue); break;
-        case BatchConstants.NIH_GRANT_INSTITUTE_CODE: batchDto.setNihGrantInstituteCode(cellValue); break;
-        case BatchConstants.NIH_GRANT_SR_NO: batchDto.setNihGrantSrNumber(cellValue); break;
-        case BatchConstants.NIH_GRANT_NCI_DIV_CODE: batchDto.setNihGrantNCIDivisionCode(cellValue); break;
-        case BatchConstants.CURRENT_TRIAL_STATUS: batchDto.setCurrentTrialStatus(cellValue); break;
-        case BatchConstants.REASON_FOR_STUDY_STOPPED:batchDto.setReasonForStudyStopped(cellValue); break;
-        case BatchConstants.CURRENT_TRIAL_STATUS_DATE: batchDto.setCurrentTrialStatusDate(cellValue); break;
-        case BatchConstants.STUDY_START_DATE: batchDto.setStudyStartDate(cellValue); break;
-        case BatchConstants.STUDY_START_DATE_TYPE: batchDto.setStudyStartDateType(cellValue); break;
-        case BatchConstants.PRIMARY_COMP_DATE: batchDto.setPrimaryCompletionDate(cellValue); break;
-        case BatchConstants.PRIMARY_COMP_DATE_TYPE: batchDto.setPrimaryCompletionDateType(cellValue); break;
-        case BatchConstants.IND_TYPE: batchDto.setIndType(cellValue); break;
-        case BatchConstants.IND_NUMBER: batchDto.setIndNumber(cellValue); break;
-        case BatchConstants.IND_GRANTOR: batchDto.setIndGrantor(cellValue); break;
-        case BatchConstants.IND_HOLDER_TYPE: batchDto.setIndHolderType(cellValue); break;
-        case BatchConstants.IND_NIH_INSTITUTION: batchDto.setIndNIHInstitution(cellValue); break;
-        case BatchConstants.IND_NCI_DIV_CODE: batchDto.setIndNCIDivision(cellValue); break;
-        case BatchConstants.IND_HAS_EXPANDED_ACCESS: if (cellValue != null && cellValue.equalsIgnoreCase("Yes")) {
-                batchDto.setIndHasExpandedAccess("True"); break;
+        String cellValue, int col, Map<Integer, String> headerMap) throws PAException {
+        String colHeader = headerMap.get(col);
+        if (colHeader == null || BatchStringConstants.getByCode(colHeader) == null) {
+            throw new PAException(" Unknown coloumn " + colHeader + "to map ");
+        }
+        switch (BatchStringConstants.getByCode(colHeader)) {
+        case IND_HAS_EXPANDED_ACCESS: if (cellValue != null && cellValue.equalsIgnoreCase("Yes")) {
+                batchDto.setIndHasExpandedAccess("True"); 
              } else {
-                 batchDto.setIndHasExpandedAccess(cellValue); break;
-             }            
-        case BatchConstants.IND_EXPANED_ACCESS_STATUS: batchDto.setIndExpandedAccessStatus(cellValue); break;
-        case BatchConstants.PROTOCOL_DOC_FILE_NAME: batchDto.setProtcolDocumentFileName(cellValue);
-        case BatchConstants.IRB_APPROVAL_DOC_FILE_NAME: batchDto.setIrbApprovalDocumentFileName(cellValue); break;
-        case BatchConstants.PARTICIPATIING_SITE_DOC_FILE_NAME: 
-            batchDto.setParticipatinSiteDocumentFileName(cellValue); break;
-        case BatchConstants.INFORMED_CONSENT_DOC_FILE_NAME: 
-            batchDto.setInformedConsentDocumentFileName(cellValue); break;
-        case BatchConstants.OTHER_TRIAL_DOC_FILE_NAME: batchDto.setOtherTrialRelDocumentFileName(cellValue); break;
-        case BatchConstants.SUBMISSION_TYPE: batchDto.setSubmissionType(cellValue); break;
-        case BatchConstants.NCI_TRIAL_IDENTIFIER: batchDto.setNciTrialIdentifier(cellValue); break;
-        case BatchConstants.AMENDMENT_NUMBER: batchDto.setAmendmentNumber(cellValue); break;
-        case BatchConstants.AMENDMENT_DATE:batchDto.setAmendmentDate(cellValue); break;
-        case BatchConstants.PROTOCOL_HIGHLIGHTED_DOC_FILE_NAME: batchDto.setProtocolHighlightDocFileName(cellValue); 
-            break;
-        case BatchConstants.CHANGE_MEMO_DOC_FILE_NAME:batchDto.setChangeRequestDocFileName(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_TYPE:batchDto.setSponsorContactType(cellValue); break;
-        case BatchConstants.SPONSOR_CONTACT_TITLE:batchDto.setResponsibleGenericContactName(cellValue); break;
-        case BatchConstants.OVERSIGHT_AUTHORITY_COUNTRY:batchDto.setOversightAuthorityCountry(cellValue); break;
-        case BatchConstants.OVERSIGHT_AUTHORITY_ORG_NAME:batchDto.setOversightOrgName(cellValue); break;
-        case BatchConstants.FDA_REGULATORY_INFORMATION_INDICATOR:batchDto.setFdaRegulatoryInformationIndicator(
-                cellValue); break;
-        case BatchConstants.SECTION_801_INDICATOR:batchDto.setSection801Indicator(cellValue); break;
-        case BatchConstants.DELAYED_POSTING_INDICATOR:batchDto.setDelayedPostingIndicator(cellValue); break;
-        case BatchConstants.DATA_MONITORING_COMMITTEE_APPOINTED_INDICATOR:
-                batchDto.setDataMonitoringCommitteeAppointedIndicator(cellValue); break;
-        default: throw new PAException(" Unknown coloumn #" + col + "to map ");
+                 batchDto.setIndHasExpandedAccess(cellValue); 
+             } 
+             break;           
+        case CTGOV_XML_INDICATOR: if (cellValue != null && cellValue.equalsIgnoreCase("No")) {
+              batchDto.setCtGovXmlIndicator(false);
+              } else {
+               batchDto.setCtGovXmlIndicator(true); 
+              } 
+              break;
+        case OTHER_TRIAL_IDENTIFIER: break; //to do
+        default: setDtoAttributes(colHeader, cellValue, batchDto);
         }
         return batchDto;
     }
 
+    
+    /**
+     * Sets the dto attributes.
+     * 
+     * @param colHeader the col header
+     * @param cellValue the cell value
+     * 
+     * @throws PAException the PA exception
+     */
+    private void setDtoAttributes(String colHeader, String cellValue, StudyProtocolBatchDTO batchDto) 
+    throws PAException {
+      try {
+            Class clazz = Class.forName("gov.nih.nci.registry.dto.StudyProtocolBatchDTO");
+            Class[] paramTypes = new Class[] {String.class };
+            Method meth = clazz
+                           .getDeclaredMethod(BatchStringConstants.getByCode(colHeader).getMethodName(), paramTypes);
+            meth.invoke(batchDto, cellValue);
+          } catch (Exception e) {
+              throw new PAException(" Error setting the cell value to Dto" + e);
+          } 
+
+    }
     /**
      * 
      * @param date
