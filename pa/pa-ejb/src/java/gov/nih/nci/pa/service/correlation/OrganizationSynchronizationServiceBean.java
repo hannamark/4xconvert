@@ -266,7 +266,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                Ii dupSRIi = paServiceUtil.getDuplicateIiOfNullifiedSR(roIdentifier); 
                if (PAUtil.isIiNotNull(dupSRIi)) {
                 // this is nullified scenario with nullified structural role with duplicate
-                   ResearchOrganization dupRo = paServiceUtil.getOrganizationalStructuralRoleInPA(dupSRIi);
+                   ResearchOrganization dupRo = paServiceUtil.getOrCreateOrganizationalStructuralRoleInPA(dupSRIi);
                    duplicateRoId = dupRo.getId();
                    newRoleCode = dupRo.getStatusCode();
                    roCurrentIi = IiConverter.convertToPoResearchOrganizationIi(duplicateRoId.toString());
@@ -306,7 +306,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                // this is a nullified scenario .....
                Ii dupSRIi = paServiceUtil.getDuplicateIiOfNullifiedSR(oscIdentifier);
                if (PAUtil.isIiNotNull(dupSRIi)) {
-                     OversightCommittee dupOsc = paServiceUtil.getOrganizationalStructuralRoleInPA(dupSRIi);
+                     OversightCommittee dupOsc = paServiceUtil.getOrCreateOrganizationalStructuralRoleInPA(dupSRIi);
                          Long duplicateOscId = dupOsc .getId();
                          newRoleCode = dupOsc.getStatusCode();
                          hcfCurrentIi = IiConverter.convertToPoOversightCommitteeIi(duplicateOscId.toString());
@@ -346,7 +346,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                //check sr has duplicate
                Ii dupSRIi = paServiceUtil.getDuplicateIiOfNullifiedSR(hcfIdentifier);
                if (PAUtil.isIiNotNull(dupSRIi)) {
-                         HealthCareFacility dupHcf = paServiceUtil.getOrganizationalStructuralRoleInPA(dupSRIi);
+                         HealthCareFacility dupHcf = paServiceUtil.getOrCreateOrganizationalStructuralRoleInPA(dupSRIi);
                          Long duplicateHcfId = dupHcf.getId();
                          newRoleCode = dupHcf.getStatusCode();
                          hcfCurrentIi = IiConverter.convertToPoHealthCareFacilityIi(duplicateHcfId.toString());

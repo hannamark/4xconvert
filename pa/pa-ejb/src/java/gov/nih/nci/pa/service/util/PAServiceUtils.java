@@ -79,6 +79,8 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.AddressPartType;
 import gov.nih.nci.iso21090.Cd;
@@ -86,11 +88,12 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalStructuralRole;
+import gov.nih.nci.pa.domain.OversightCommittee;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -1189,7 +1192,7 @@ public class PAServiceUtils {
        * @return sr
        * @throws PAException e
        */
-      public <T extends OrganizationalStructuralRole> T getOrganizationalStructuralRoleInPA(Ii isoIi)
+      public <T extends OrganizationalStructuralRole> T getOrCreateOrganizationalStructuralRoleInPA(Ii isoIi)
           throws PAException {
           CorrelationUtils cUtils =  new CorrelationUtils();
           CorrelationDto poDto = (CorrelationDto) getCorrelationByIi(isoIi);
@@ -1198,7 +1201,13 @@ public class PAServiceUtils {
                   poDto.getIdentifier()));
       if (dupSR == null) {
           // create a new structural role 
-          dupSR = new OrganizationalStructuralRole();
+          if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+              dupSR =  new HealthCareFacility();
+          } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+              dupSR =  new ResearchOrganization();
+          } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+              dupSR =  new OversightCommittee();
+          }
           dupSR.setOrganization(getPAOrganizationByIi(((AbstractEnhancedOrganizationRoleDTO) poDto)
                   .getPlayerIdentifier()));
           dupSR.setIdentifier(DSetConverter.convertToIi(poDto.getIdentifier()).getExtension());
