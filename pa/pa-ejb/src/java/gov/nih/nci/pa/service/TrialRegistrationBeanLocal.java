@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -14,12 +15,14 @@ import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -46,6 +49,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
@@ -65,6 +69,7 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -926,7 +931,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         StudyResourcingDTO summary4studyResourcingDTO ,
         Ii responsiblePartyContactIi , StudyRegulatoryAuthorityDTO studyRegAuthDTO,
         String operation, Bl isBatchMode)
- throws PAException {
+ throws PAException, TooManyResultsException {
     validate(studyProtocolDTO, overallStatusDTO, operation, studyResourcingDTOs, documentDTOs,
             leadOrganizationDTO, sponsorOrganizationDTO, summary4organizationDTO, principalInvestigatorDTO
             , responsiblePartyContactIi, studyIndldeDTOs);
@@ -998,7 +1003,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         paServiceUtils.createResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO,
             sponsorOrganizationDTO, responsiblePartyContactIi, studyContactDTO, studySiteContactDTO);
     }    
-    //list of study identifiers like NCT,DCP, CTEP
+    //list of study identifiers like NCT,DCP, CTEP   
     for (StudySiteDTO studyIdentifierDTO : studyIdentifierDTOs) {
         if (studyIdentifierDTO != null
                 && !PAUtil.isStNull(studyIdentifierDTO.getLocalStudyProtocolIdentifier())
@@ -1008,6 +1013,9 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             paServiceUtils.manageStudyIdentifiers(studyIdentifierDTO);
         }
     }
+    
+    addNciOrgAsCollaborator(studyProtocolDTO, studyProtocolIi);
+    
     if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue() && studyRegAuthDTO != null) {
         List<StudyRegulatoryAuthorityDTO> sraDto = new ArrayList<StudyRegulatoryAuthorityDTO>();
         studyRegAuthDTO.setStudyProtocolIdentifier(studyProtocolIi);
@@ -1021,6 +1029,39 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     return studyProtocolIi;
  }
 
+ private void addNciOrgAsCollaborator(StudyProtocolDTO studyProtocolDTO, Ii studyProtocolIi) 
+ throws TooManyResultsException, PAException {
+     if (!studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+         StudySiteDTO nCiCollaborator = new StudySiteDTO();
+         nCiCollaborator.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+         nCiCollaborator.setStatusCode(CdConverter.convertToCd(StudySiteStatusCode.ACTIVE));
+         // The assumption is that there will be only 1 active org with name 
+         // 'National Cancer Institute' in PO and that while there may be others that contain
+         // that name, there will not be a large number to pull in this very broad search.
+         OrganizationDTO criteria = new OrganizationDTO();
+         String exactString = "National Cancer Institute";
+         criteria.setName(EnOnConverter.convertToEnOn(exactString));
+         criteria.setStatusCode(CdConverter.convertToCd(EntityStatusCode.ACTIVE));
+         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+         List<OrganizationDTO> listOrgs = new ArrayList<OrganizationDTO>();            
+         listOrgs = PoRegistry.getOrganizationEntityService().search(criteria, limit);
+         for (OrganizationDTO poOrg : listOrgs) {
+           
+             if (EnOnConverter.convertEnOnToString(poOrg.getName()).matches(exactString)) {           
+                 Long paOrgId = ocsr.createResearchOrganizationCorrelations(poOrg.getIdentifier().getExtension());
+                 nCiCollaborator.setResearchOrganizationIi(IiConverter.convertToIi(paOrgId));
+                 nCiCollaborator.setStudyProtocolIdentifier(studyProtocolIi);
+                 nCiCollaborator.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.FUNDING_SOURCE));
+                 nCiCollaborator.setHealthcareFacilityIi(null);
+                 nCiCollaborator.setIdentifier(null);
+                 studySiteService.create(nCiCollaborator);
+                 break;
+             }
+         
+         }
+     
+     }    
+ }
 
  /**
   * @param studyProtocolDTO
