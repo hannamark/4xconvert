@@ -62,7 +62,8 @@ var winprint=window.open("","",sOption);
  
 <div class="box">
     <s:form > <s:actionerror/>
-    <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>     
+    <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>  
+	<s:hidden name="pageFrom" id="pageFrom"/>            
     <c:if test="${requestScope.protocolId != null && requestScope.partialSubmission != null && requestScope.partialSubmission == 'submit'}">
         <div class="confirm_msg">
           <strong>The trial draft has been successfully saved and assigned the Identifier ${requestScope.protocolId}</strong>

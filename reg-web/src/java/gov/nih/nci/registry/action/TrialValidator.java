@@ -79,6 +79,7 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -130,7 +131,7 @@ public class TrialValidator {
      * @param errorMsg errmsg
      * @return map
      */
-    public Map<String, String> validateDcoument(String fileName, File file,
+    public Map<String, String> validateDocument(String fileName, File file,
             String errorField, String errorMsg) {
             Map<String, String> addFieldError = new HashMap<String, String>();
         if (PAUtil.isNotEmpty(errorMsg) && PAUtil.isEmpty(fileName)) {
@@ -370,7 +371,19 @@ public class TrialValidator {
         ServletActionContext.getRequest().getSession().removeAttribute("indIdeUpdateList");
         ServletActionContext.getRequest().getSession().removeAttribute("collaboratorsList");
         ServletActionContext.getRequest().getSession().removeAttribute("participatingSitesList");
-        
+        ServletActionContext.getRequest().getSession().removeAttribute(
+                DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName());
+        ServletActionContext.getRequest().getSession().removeAttribute(
+                DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getShortName());
+        ServletActionContext.getRequest().getSession().removeAttribute(
+                DocumentTypeCode.PARTICIPATING_SITES.getShortName());
+        ServletActionContext.getRequest().getSession().removeAttribute(
+                DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getShortName());
+        ServletActionContext.getRequest().getSession().removeAttribute(DocumentTypeCode.OTHER.getShortName());
+        ServletActionContext.getRequest().getSession().removeAttribute(
+                DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getShortName());
+        ServletActionContext.getRequest().getSession().removeAttribute(
+                DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getShortName());
     }
     /**
      * 

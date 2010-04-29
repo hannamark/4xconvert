@@ -80,7 +80,6 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
-import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -107,7 +106,6 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,8 +118,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 /**
  * 
  * @author Bala Nair
@@ -129,15 +125,11 @@ import com.opensymphony.xwork2.ActionSupport;
  * 
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength",
-    "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.ExcessiveMethodLength"  })
-public class SubmitTrialAction extends ActionSupport implements ServletResponseAware {
+    "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.ExcessiveMethodLength", "unchecked"  })
+public class SubmitTrialAction extends ManageFileAction implements ServletResponseAware {
     private static final Logger LOG = Logger.getLogger(SubmitTrialAction.class);
     private Long cbValue;
     private String page;
-    private File protocolDoc;
-    private String protocolDocFileName;
-    private File irbApproval;
-    private String irbApprovalFileName;
     private Long id = null;
     private HttpServletResponse servletResponse;
     private String trialAction = "submit";
@@ -146,12 +138,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      * Adding new members for PO integration and additional Use cases.
      */
     // Collection for holding the ideInd information
-    private File participatingSites = null;
-    private String participatingSitesFileName = null;
-    private File informedConsentDocument = null;
-    private String informedConsentDocumentFileName = null;
-    private File otherDocument = null;
-    private String otherDocumentFileName = null;
     private TrialDTO trialDTO;
     private final TrialUtil  trialUtil = new TrialUtil();
     
@@ -171,7 +157,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
         TrialValidator.removeSessionAttributes();
         trialUtil.populateRegulatoryList(trialDTO);
-        
+        setPageFrom("submitTrial");
         return SUCCESS;
     }
 
@@ -259,6 +245,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 addActionError("Error occured, please try again");
             }
             trialUtil.populateRegulatoryList(trialDTO);
+            setDocumentsInSession(trialDTO);
             LOG.error("Exception occured while submitting trial: " + e);
             return ERROR;
         }
@@ -273,27 +260,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         Map<String, String> err = new HashMap<String, String>();
         err = validator.validateTrialDTO(trialDTO);
         addErrors(err);
-        
-        err = new HashMap<String, String>();
-        err = validator.validateDcoument(protocolDocFileName, protocolDoc, "trialDTO.protocolDocFileName",
-                "error.submit.protocolDocument");
-        addErrors(err);
-        err = new HashMap<String, String>();
-        err = validator.validateDcoument(irbApprovalFileName, irbApproval, "trialDTO.irbApprovalFileName",
-                "error.submit.irbApproval");
-        addErrors(err);
-        err = new HashMap<String, String>();
-        err = validator.validateDcoument(participatingSitesFileName, participatingSites,
-                "trialDTO.participatingSitesFileName", "");
-        addErrors(err);
-        err = new HashMap<String, String>();
-        err = validator.validateDcoument(informedConsentDocumentFileName, informedConsentDocument, 
-                "trialDTO.informedConsentDocumentFileName", "");
-        //protocol Highlighted doc
-        addErrors(err);
-        err = new HashMap<String, String>();
-        err = validator.validateDcoument(otherDocumentFileName, otherDocument, "trialDTO.otherDocumentFileName", "");
-        addErrors(err);
+        validateDocuments();
     }
  
     /**
@@ -351,149 +318,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     public void setPage(String page) {
         this.page = page;
     }
-
-    /**
-     * @return protocolDoc
-     */
-    public File getProtocolDoc() {
-        return protocolDoc;
-    }
-
-    /**
-     * @param protocolDoc protocolDoc
-     */
-    public void setProtocolDoc(File protocolDoc) {
-        this.protocolDoc = protocolDoc;
-    }
-
-    /**
-     * @return protocolDocFileName
-     */
-    public String getProtocolDocFileName() {
-        return protocolDocFileName;
-    }
-
-    /**
-     * @param protocolDocFileName protocolDocFileName
-     */
-    public void setProtocolDocFileName(String protocolDocFileName) {
-        this.protocolDocFileName = protocolDocFileName;
-    }
-
-    /**
-     * @return irbApproval
-     */
-    public File getIrbApproval() {
-        return irbApproval;
-    }
-
-    /**
-     * @param irbApproval irbApproval
-     */
-    public void setIrbApproval(File irbApproval) {
-        this.irbApproval = irbApproval;
-    }
-
-    /**
-     * @return irbApprovalFileName
-     */
-    public String getIrbApprovalFileName() {
-        return irbApprovalFileName;
-    }
-
-    /**
-     * @param irbApprovalFileName irbApprovalFileName
-     */
-    public void setIrbApprovalFileName(String irbApprovalFileName) {
-        this.irbApprovalFileName = irbApprovalFileName;
-    }
-
-
-    /**
-     * @return the informedConsentDocument
-     */
-    public File getInformedConsentDocument() {
-        return informedConsentDocument;
-    }
-
-    /**
-     * @param informedConsentDocument the informedConsentDocument to set
-     */
-    public void setInformedConsentDocument(File informedConsentDocument) {
-        this.informedConsentDocument = informedConsentDocument;
-    }
-
-    /**
-     * @return the otherDocument
-     */
-    public File getOtherDocument() {
-        return otherDocument;
-    }
-
-    /**
-     * @param otherDocument the otherDocument to set
-     */
-    public void setOtherDocument(File otherDocument) {
-        this.otherDocument = otherDocument;
-    }
-
-    /**
-     * @return the informedConsentDocumentFileName
-     */
-    public String getInformedConsentDocumentFileName() {
-        return informedConsentDocumentFileName;
-    }
-
-    /**
-     * @param informedConsentDocumentFileName the
-     *            informedConsentDocumentFileName to set
-     */
-    public void setInformedConsentDocumentFileName(String informedConsentDocumentFileName) {
-        this.informedConsentDocumentFileName = informedConsentDocumentFileName;
-    }
-
-    /**
-     * @return the otherDocumentFileName
-     */
-    public String getOtherDocumentFileName() {
-        return otherDocumentFileName;
-    }
-
-    /**
-     * @param otherDocumentFileName the otherDocumentFileName to set
-     */
-    public void setOtherDocumentFileName(String otherDocumentFileName) {
-        this.otherDocumentFileName = otherDocumentFileName;
-    }
-
-
-    /**
-     * @return the participatingSites
-     */
-    public File getParticipatingSites() {
-        return participatingSites;
-    }
-
-    /**
-     * @param participatingSites the participatingSites to set
-     */
-    public void setParticipatingSites(File participatingSites) {
-        this.participatingSites = participatingSites;
-    }
-
-    /**
-     * @return the participatingSitesFileName
-     */
-    public String getParticipatingSitesFileName() {
-        return participatingSitesFileName;
-    }
-
-    /**
-     * @param participatingSitesFileName the participatingSitesFileName to set
-     */
-    public void setParticipatingSitesFileName(String participatingSitesFileName) {
-        this.participatingSitesFileName = participatingSitesFileName;
-    }
+    
     /**
      * @param trialAction the trialAction to set
      */
@@ -521,46 +346,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     public void setTrialDTO(TrialDTO trialDTO) {
         this.trialDTO = trialDTO;
     }
-
-     /**
-     * @param err
-     */
-    private void addErrors(Map<String, String> err) {
-        if (!err.isEmpty()) {
-            for (String msg : err.keySet()) {
-                addFieldError(msg, err.get(msg));
-            }
-        }
-    }
-    /**
-     * @return
-     * @throws IOException
-     */
-    private List<TrialDocumentWebDTO> addDocDTOToList() throws IOException {
-        TrialUtil util = new TrialUtil();
-        List<TrialDocumentWebDTO> docDTOList = new ArrayList<TrialDocumentWebDTO>();
-        if (PAUtil.isNotEmpty(protocolDocFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(), 
-                    protocolDocFileName, protocolDoc));
-        }
-        if (PAUtil.isNotEmpty(irbApprovalFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode(), 
-                        irbApprovalFileName, irbApproval));
-        }
-        if (PAUtil.isNotEmpty(informedConsentDocumentFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getCode(),
-                        informedConsentDocumentFileName, informedConsentDocument));
-        }
-        if (PAUtil.isNotEmpty(participatingSitesFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PARTICIPATING_SITES.getCode(),
-                        participatingSitesFileName, participatingSites));
-         }
-         if (PAUtil.isNotEmpty(otherDocumentFileName)) {
-             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(), 
-                        otherDocumentFileName, otherDocument));  
-         }
-        return docDTOList;
-    }
+    
     /**
      * 
      * @return s
@@ -569,6 +355,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         try {
             clearErrorsAndMessages();
             validateForm();
+            List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
             if (hasFieldErrors()) {
                 ServletActionContext.getRequest().setAttribute(
                         "failureMessage" , "The form has errors and could not be submitted, "
@@ -577,10 +364,11 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
             }
-            List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
+            
+            populateList(docDTOList);
+            
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
             trialDTO.setDocDtos(docDTOList);
-           //get the document and put in list
            //add the IndIde,FundingList
            List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
            .getSession().getAttribute(Constants.INDIDE_LIST);
@@ -612,6 +400,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         LOG.info("Calling the review page...");
         return "review";    
     }
+
     /**
      * 
      * @return s
@@ -629,6 +418,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
         TrialValidator.addSessionAttributes(trialDTO);
         trialUtil.populateRegulatoryList(trialDTO);
+        setDocumentsInSession(trialDTO);
         return "edit";
     }
     /**
@@ -662,7 +452,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      * 
      * @return success or fail
      */
-    @SuppressWarnings("unchecked")
     public String partialSave() {
         try {
             trialDTO = (TrialDTO) trialUtil.saveDraft(trialDTO);
@@ -694,6 +483,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                     trialDTO.getIndIdeDtos());
             ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,
                     trialDTO.getFundingDtos());
+            setPageFrom("submitTrial");
         } catch (PAException e) {
             addActionError(e.getMessage());
         } catch (NullifiedRoleException e) {

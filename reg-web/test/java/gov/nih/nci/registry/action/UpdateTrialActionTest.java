@@ -86,9 +86,9 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
     }
     @Test
     public void testParticipatingSitesListProperty() {
-        assertNotNull(action.getParticipatingSites());
-        action.setParticipatingSites(null);
-        assertNull(action.getParticipatingSites());
+        assertNotNull(action.getParticipatingSitesList());
+        action.setParticipatingSitesList(null);
+        assertNull(action.getParticipatingSitesList());
     }
     @Test
     public void testIndIdeUpdateDtosProperty() {
@@ -307,7 +307,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         paOrgDto.setRecruitmentStatus(null);
         paOrgDto.setRecruitmentStatusDate("recruitmentStatusDate");
         paOrgList.add(paOrgDto);
-        action.setParticipatingSites(paOrgList);
+        action.setParticipatingSitesList(paOrgList);
         assertEquals("error", action.reviewUpdate());
         
         paOrgList = new ArrayList<PaOrganizationDTO>();
@@ -316,7 +316,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         paOrgDto.setRecruitmentStatus("recruitmentStatus");
         paOrgDto.setRecruitmentStatusDate(null);
         paOrgList.add(paOrgDto);
-        action.setParticipatingSites(paOrgList);
+        action.setParticipatingSitesList(paOrgList);
         assertEquals("error", action.reviewUpdate());
     }
     @Test 

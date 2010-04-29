@@ -480,51 +480,9 @@ function toggledisplay2 (it) {
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
         </table>
-        <table class="form">  
-        <tr>
-              <th colspan="2"><fmt:message key="submit.trial.documents"/></th>
-        </tr>
-        <tr>
-              <td colspan="2" class="space">&nbsp;</td>
-        </tr>
-        <tr>
-            <td colspan="2">
-               <fmt:message key="submit.proprietary.trial.docInstructionalText"/>
-            </td>
-        </tr>
-        <tr>
-              <td colspan="2" class="space">&nbsp;</td>
-        </tr>
-        
-        <tr>
-              <td scope="row" class="label">
-              <label for="submitTrial_protocolDoc">
-                     <fmt:message key="submit.proprietary.trial.protocolDocument"/>
-              </label>
-             </td>
-             <td class="value">
-                 <s:file name="protocolDoc" value="true" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDTO.protocolDocFileName</s:param>
-                   </s:fielderror>                            
-                 </span>
-               </td>         
-         </tr>
-         <tr>
-              <td scope="row" class="label">
-              <label for="submitTrial_otherDocument"><fmt:message key="submit.trial.otherDocument"/></label>
-             </td>
-             <td class="value">
-                 <s:file name="otherDocument" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDTO.otherDocumentFileName</s:param>
-                   </s:fielderror>                            
-                 </span>                 
-               </td>         
-         </tr> 
-         </table>
+        <div id="uploadDocDiv">
+        <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
+        </div>        
         <p align="center" class="info">
            Please verify ALL the trial information you provided on this screen before clicking the &#34;Review Trial&#34; button below.  
            <br>Once you submit the trial you will not be able to modify the information.

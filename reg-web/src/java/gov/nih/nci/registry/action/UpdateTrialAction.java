@@ -4,7 +4,6 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -38,7 +37,6 @@ import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +50,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.util.CreateIfNull;
 import com.opensymphony.xwork2.util.Element;
 
@@ -61,10 +58,10 @@ import com.opensymphony.xwork2.util.Element;
  * 
  * @author Vrushali
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" , "PMD.ExcessiveParameterList" ,
+@SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" , "PMD.ExcessiveParameterList" , "unchecked",
     "PMD.ExcessiveClassLength" , "PMD.TooManyMethods" , "PMD.ExcessiveMethodLength" , "PMD.TooManyFields" })
 
-public class UpdateTrialAction extends ActionSupport implements ServletResponseAware {
+public class UpdateTrialAction extends ManageFileAction implements ServletResponseAware {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -77,12 +74,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     
     /** The trial dto. */
     private TrialDTO trialDTO = new TrialDTO();
-    
-    /** The irb approval. */
-    private File irbApproval;
-    
-    /** The irb approval file name. */
-    private String irbApprovalFileName;
     
     /** The trial action. */
     private String trialAction = null;
@@ -104,7 +95,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     /** The participating sites. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.pa.dto.PaOrganizationDTO.class)
-    private List<PaOrganizationDTO> participatingSites = new ArrayList<PaOrganizationDTO>();
+    private List<PaOrganizationDTO> participatingSitesList = new ArrayList<PaOrganizationDTO>();
 
     /** The ind ide update dtos. */
     @CreateIfNull(value = true)
@@ -146,6 +137,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     private TrialIndIdeDTO trialIndIdeDTO;
     
     private int indIdeUpdateDtosLen = 0; 
+    
     /**
      * Gets the study indlde web dto.
      * 
@@ -253,42 +245,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     public void setTrialDTO(TrialDTO trialDTO) {
         this.trialDTO = trialDTO;
     }
-    
-    /**
-     * Gets the irb approval.
-     * 
-     * @return the irbApproval
-     */
-    public File getIrbApproval() {
-        return irbApproval;
-    }
-    
-    /**
-     * Sets the irb approval.
-     * 
-     * @param irbApproval the irbApproval to set
-     */
-    public void setIrbApproval(File irbApproval) {
-        this.irbApproval = irbApproval;
-    }
-    
-    /**
-     * Gets the irb approval file name.
-     * 
-     * @return the irbApprovalFileName
-     */
-    public String getIrbApprovalFileName() {
-        return irbApprovalFileName;
-    }
-    
-    /**
-     * Sets the irb approval file name.
-     * 
-     * @param irbApprovalFileName the irbApprovalFileName to set
-     */
-    public void setIrbApprovalFileName(String irbApprovalFileName) {
-        this.irbApprovalFileName = irbApprovalFileName;
-    }
      
    /**
     * Gets the trial action.
@@ -349,8 +305,8 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     * 
     * @return the participatingSites
     */
-   public List<PaOrganizationDTO> getParticipatingSites() {
-       return participatingSites;
+   public List<PaOrganizationDTO> getParticipatingSitesList() {
+       return participatingSitesList;
    }
 
    /**
@@ -358,8 +314,8 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     * 
     * @param participatingSites the participatingSites to set
     */
-   public void setParticipatingSites(List<PaOrganizationDTO> participatingSites) {
-       this.participatingSites = participatingSites;
+   public void setParticipatingSitesList(List<PaOrganizationDTO> participatingSites) {
+       this.participatingSitesList = participatingSites;
    }
 
    /**
@@ -489,6 +445,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 TrialValidator.addSessionAttributesForUpdate(trialDTO);
                 setIndIdeUpdateDtosLen(trialDTO.getIndIdeUpdateDtos().size());
                 ServletActionContext.getRequest().getSession().setAttribute(sessionTrialDTO, trialDTO);
+                setPageFrom("updateTrial");
             LOG.info("Trial retrieved: " + trialDTO.getOfficialTitle());
         } catch (Exception e) {
             LOG.error("Exception occured while querying trial " + e);
@@ -507,7 +464,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
         setCollaborators(trialDTO.getCollaborators());
       } 
       if (trialDTO.getParticipatingSites() != null && !trialDTO.getParticipatingSites().isEmpty()) { 
-       setParticipatingSites(trialDTO.getParticipatingSites());
+       setParticipatingSitesList(trialDTO.getParticipatingSites());
       }
       if (trialDTO.getIndIdeUpdateDtos() != null && !trialDTO.getIndIdeUpdateDtos().isEmpty()) {
           setIndIdeUpdateDtos(trialDTO.getIndIdeUpdateDtos());
@@ -530,7 +487,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
  private void synchDTOWithAction() {
       
       trialDTO.setCollaborators(getCollaborators());
-      trialDTO.setParticipatingSites(getParticipatingSites());
+      trialDTO.setParticipatingSites(getParticipatingSitesList());
       trialDTO.setIndIdeUpdateDtos(getIndIdeUpdateDtos());
       trialDTO.setFundingDtos(getFundingDtos());
        
@@ -559,7 +516,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
         try {
             clearErrorsAndMessages();
             enforceBusinessRules();
-            
+            List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
             if (hasFieldErrors()) {
                 ServletActionContext.getRequest().setAttribute(
                         "failureMessage" , "The form has errors and could not be submitted, "
@@ -576,8 +533,10 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
             }
-           List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
-           trialDTO.setDocDtos(docDTOList);
+           
+            populateList(docDTOList);
+            trialDTO.setDocDtos(docDTOList);
+            
             //add the IndIde,FundingList
             List<TrialIndIdeDTO> indAddList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
            .getSession().getAttribute(Constants.INDIDE_ADD_LIST);
@@ -613,24 +572,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
         LOG.info("Calling the review page...");
         return "review";    
     }
-
-    /**
-     * Adds the doc dto to list.
-     * 
-     * @return the list< trial document web dt o>
-     * 
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @throws PAException the PA exception
-     */
-    private List<TrialDocumentWebDTO> addDocDTOToList() throws IOException, PAException {
-        TrialUtil util = new TrialUtil();
-        List<TrialDocumentWebDTO> docDTOList = new ArrayList<TrialDocumentWebDTO>();
-        if (PAUtil.isNotEmpty(irbApprovalFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode(), 
-                        irbApprovalFileName, irbApproval));
-        }
-        return docDTOList;
-    }
     
     /**
      * Edits the.
@@ -639,6 +580,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
      */
     public String edit() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
+        setDocumentsInSession(trialDTO);
         synchActionWithDTO();
         trialUtil.populateRegulatoryList(trialDTO);
         TrialValidator.addSessionAttributes(trialDTO);
@@ -770,6 +712,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             TrialValidator.addSessionAttributes(trialDTO);
             trialUtil.populateRegulatoryList(trialDTO);
             synchActionWithDTO();
+            setDocumentsInSession(trialDTO);
             return ERROR;
         }
         setTrialAction("update");
@@ -812,8 +755,8 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 }
             }
         }
-        if (getParticipatingSites() != null && !getParticipatingSites().isEmpty()) {
-            for (PaOrganizationDTO ps : getParticipatingSites()) {
+        if (getParticipatingSitesList() != null && !getParticipatingSitesList().isEmpty()) {
+            for (PaOrganizationDTO ps : getParticipatingSitesList()) {
                 if (ps.getRecruitmentStatus() == null) {
                     addFieldError("participatingsite.recStatus", "Recruitment Status should not be null");
                     break;
@@ -880,21 +823,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 
             }
         }
-    }   
-    
-    
-    /**
-     * Adds the errors.
-     * 
-     * @param err the err
-     */
-    private void addErrors(Map<String, String> err) {
-        if (!err.isEmpty()) {
-            for (String msg : err.keySet()) {
-                addFieldError(msg, err.get(msg));
-            }
-        }
-    }
+    } 
    
     
   /**

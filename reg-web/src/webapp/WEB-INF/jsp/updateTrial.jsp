@@ -707,7 +707,7 @@ function toggledisplay2 (it) {
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>          
         <tr><td>
-       <s:if test="participatingSites.size > 0" >
+       <s:if test="participatingSitesList.size > 0" >
        <table class="data2">
          <tr>
               <th colspan="2">Participating Sites</th>
@@ -723,26 +723,26 @@ function toggledisplay2 (it) {
                         
                     </tr>
                                                                                                          
-                    <s:iterator id="participatingSites" value="participatingSites" status="psstats">
+                    <s:iterator id="participatingSitesList" value="participatingSitesList" status="psstats">
                     <tr>
                         <td>
-                            <s:textarea  name="participatingSites[%{#psstats.index}].name" value="%{name}" readonly="true" cssStyle="width:400px;border: 1px solid #FFFFFF" rows="2"/>
+                            <s:textarea  name="participatingSitesList[%{#psstats.index}].name" value="%{name}" readonly="true" cssStyle="width:400px;border: 1px solid #FFFFFF" rows="2"/>
                         </td>
                             
                          <s:set name="recruitmentStatusValues" 
                            value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()"  />
                         <td class="value"><s:select headerKey="" headerValue="--Select--"
-                            name="participatingSites[%{#psstats.index}].recruitmentStatus" value="%{recruitmentStatus}"
+                            name="participatingSitesList[%{#psstats.index}].recruitmentStatus" value="%{recruitmentStatus}"
                             list="#recruitmentStatusValues" cssStyle="text-align:left;"/>
                        
                       </td> 
                        <td>
-                            <s:textfield  name="participatingSites[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}"/>
+                            <s:textfield  name="participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}"/>
                            
                         </td>
                        <td>
-                           <s:textfield  name="participatingSites[%{#psstats.index}].programCode" value="%{programCode}"/>
-                           <s:hidden  name="participatingSites[%{#psstats.index}].id" value="%{id}"/> 
+                           <s:textfield  name="participatingSitesList[%{#psstats.index}].programCode" value="%{programCode}"/>
+                           <s:hidden  name="participatingSitesList[%{#psstats.index}].id" value="%{id}"/> 
                         </td>
                     </tr>
                     </s:iterator >
@@ -807,24 +807,9 @@ function toggledisplay2 (it) {
                         </span>
         </td></tr></table>
        </s:if>
-        <table class="data2">
-         <tr>
-             <th colspan="2" >IRB Approval</th>
-          </tr>
-           <tr>
-              <td colspan="2" class="space">&nbsp;</td>
-           </tr>
-            <tr>
-              <td scope="row" class="label">
-              <label for="updateTrial_irbApproval">
-                     <fmt:message key="update.trial.irbApproval"/>
-              </label>
-             </td>
-             <td class="value">
-                 <s:file name="irbApproval" id="irbApproval" cssStyle="width:270px"/>
-             </td>         
-         </tr>         
-      </table>
+        <div id="uploadDocDiv">
+        <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
+        </div>
       <p>
         Please verify ALL the trial information you provided on this screen before clicking the &#34;Review Trial&#34; button below.  
            

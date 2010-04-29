@@ -2,7 +2,6 @@ package gov.nih.nci.registry.action;
 
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -29,7 +28,6 @@ import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -45,36 +43,22 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 /**
  * 
  * @author Vrushali
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength",
-    "PMD.TooManyFields" })
-public class AmendmentTrialAction extends ActionSupport implements ServletResponseAware {
+    "PMD.TooManyFields", "unchecked" })
+public class AmendmentTrialAction extends ManageFileAction implements ServletResponseAware {
     private static final long serialVersionUID = 1L;
     private HttpServletResponse servletResponse;
     private static final Logger LOG = Logger.getLogger(AmendmentTrialAction.class);
     private TrialDTO trialDTO;
-    private File protocolDoc;
-    private String protocolDocFileName;
-    private File irbApproval;
-    private String irbApprovalFileName;
-    private File participatingSites = null;
-    private String participatingSitesFileName = null;
-    private File informedConsentDocument = null;
-    private String informedConsentDocumentFileName = null;
-    private File protocolHighlightDocument = null;
-    private String protocolHighlightDocumentFileName = null;
-    private File changeMemoDoc;
-    private String changeMemoDocFileName = null;
     private String trialAction = null;
     private String studyProtocolId = null;
     private static String sessionTrialDTO = "trialDTO";
     private final TrialUtil trialUtil = new TrialUtil();
-
+    
     /**
      * @param response servletResponse
      */
@@ -106,6 +90,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                 util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
                 TrialValidator.addSessionAttributes(trialDTO);
                 ServletActionContext.getRequest().getSession().setAttribute(sessionTrialDTO, trialDTO);
+                setPageFrom("amendTrial");
             LOG.info("Trial retrieved: " + trialDTO.getOfficialTitle());
         } catch (Exception e) {
             LOG.error("Exception occured while querying trial " + e);
@@ -142,6 +127,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         try {
             clearErrorsAndMessages();
             enforceBusinessRules();
+            List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
             if (hasFieldErrors()) {
                 ServletActionContext.getRequest().setAttribute(
                         "failureMessage" , "The form has errors and could not be submitted, "
@@ -154,11 +140,11 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                 TrialValidator.addSessionAttributes(trialDTO);
                 trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
-            }
-            List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
-            trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
+            }            
+            populateList(docDTOList);            
+           trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
            trialDTO.setDocDtos(docDTOList);
-           //get the document and put in list add the IndIde,FundingList
+           // get the document and put in list add the IndIde,FundingList 
            List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
            .getSession().getAttribute(Constants.INDIDE_LIST);
            if (indList != null) {
@@ -186,40 +172,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         LOG.info("Calling the review page...");
         return "review";    
     }
-
-    /**
-     * @return
-     * @throws IOException
-     */
-    private List<TrialDocumentWebDTO> addDocDTOToList() throws IOException {
-        TrialUtil util = new TrialUtil();
-        List<TrialDocumentWebDTO> docDTOList = new ArrayList<TrialDocumentWebDTO>();
-        if (PAUtil.isNotEmpty(protocolDocFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(), 
-                    protocolDocFileName, protocolDoc));
-        }
-        if (PAUtil.isNotEmpty(irbApprovalFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode(), 
-                        irbApprovalFileName, irbApproval));
-        }
-        if (PAUtil.isNotEmpty(changeMemoDocFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode(), 
-                       changeMemoDocFileName, changeMemoDoc));  
-        }
-        if (PAUtil.isNotEmpty(informedConsentDocumentFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getCode(),
-                        informedConsentDocumentFileName, informedConsentDocument));
-        }
-        if (PAUtil.isNotEmpty(participatingSitesFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PARTICIPATING_SITES.getCode(),
-                        participatingSitesFileName, participatingSites));
-         }
-         if (PAUtil.isNotEmpty(protocolHighlightDocumentFileName)) {
-             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getCode(), 
-                     protocolHighlightDocumentFileName, protocolHighlightDocument));  
-         }
-        return docDTOList;
-    }
+    
     /**
      * 
      * @return s
@@ -228,6 +181,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
         trialUtil.populateRegulatoryList(trialDTO);
         TrialValidator.addSessionAttributes(trialDTO);
+        setDocumentsInSession(trialDTO);
         return "edit";
     }
     /**
@@ -305,6 +259,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             addActionError(e.getMessage());
             TrialValidator.addSessionAttributes(trialDTO);
             trialUtil.populateRegulatoryList(trialDTO);
+            setDocumentsInSession(trialDTO);
             return ERROR;
         }
         setTrialAction("amend");
@@ -347,7 +302,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             }
         }
         //validate the docs
-        validateAmendmentDocuments();
+        validateDocuments();
         //Only allow completing amendment submission of the pre-IRB approved study is the 
         //current trial status 'In-Review' is replaced with 'Approved'.
         if (PAUtil.isNotEmpty(trialDTO.getStatusCode()) && trialDTO.getStatusCode().equalsIgnoreCase("In Review")) {
@@ -355,196 +310,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
               + " current trial status 'In-Review' with 'Approved'");
         }
     }
-    /**
-     * @param err
-     */
-    private void addErrors(Map<String, String> err) {
-        if (!err.isEmpty()) {
-            for (String msg : err.keySet()) {
-                addFieldError(msg, err.get(msg));
-            }
-        }
-    }
-    /**
-     * @return the protocolDoc
-     */
-    public File getProtocolDoc() {
-        return protocolDoc;
-    }
-    /**
-     * @param protocolDoc the protocolDoc to set
-     */
-    public void setProtocolDoc(File protocolDoc) {
-        this.protocolDoc = protocolDoc;
-    }
-    /**
-     * @return the protocolDocFileName
-     */
-    public String getProtocolDocFileName() {
-        return protocolDocFileName;
-    }
-    /**
-     * @param protocolDocFileName the protocolDocFileName to set
-     */
-    public void setProtocolDocFileName(String protocolDocFileName) {
-        this.protocolDocFileName = protocolDocFileName;
-    }
-    /**
-     * @return the irbApproval
-     */
-    public File getIrbApproval() {
-        return irbApproval;
-    }
-    /**
-     * @param irbApproval the irbApproval to set
-     */
-    public void setIrbApproval(File irbApproval) {
-        this.irbApproval = irbApproval;
-    }
-    /**
-     * @return the irbApprovalFileName
-     */
-    public String getIrbApprovalFileName() {
-        return irbApprovalFileName;
-    }
-    /**
-     * @param irbApprovalFileName the irbApprovalFileName to set
-     */
-    public void setIrbApprovalFileName(String irbApprovalFileName) {
-        this.irbApprovalFileName = irbApprovalFileName;
-    }
-    /**
-     * @return the participatingSites
-     */
-    public File getParticipatingSites() {
-        return participatingSites;
-    }
-    /**
-     * @param participatingSites the participatingSites to set
-     */
-    public void setParticipatingSites(File participatingSites) {
-        this.participatingSites = participatingSites;
-    }
-    /**
-     * @return the participatingSitesFileName
-     */
-    public String getParticipatingSitesFileName() {
-        return participatingSitesFileName;
-    }
-    /**
-     * @param participatingSitesFileName the participatingSitesFileName to set
-     */
-    public void setParticipatingSitesFileName(String participatingSitesFileName) {
-        this.participatingSitesFileName = participatingSitesFileName;
-    }
-    /**
-     * @return the informedConsentDocument
-     */
-    public File getInformedConsentDocument() {
-        return informedConsentDocument;
-    }
-    /**
-     * @param informedConsentDocument the informedConsentDocument to set
-     */
-    public void setInformedConsentDocument(File informedConsentDocument) {
-        this.informedConsentDocument = informedConsentDocument;
-    }
-    /**
-     * @return the informedConsentDocumentFileName
-     */
-    public String getInformedConsentDocumentFileName() {
-        return informedConsentDocumentFileName;
-    }
-    /**
-     * @param informedConsentDocumentFileName the informedConsentDocumentFileName to set
-     */
-    public void setInformedConsentDocumentFileName(
-            String informedConsentDocumentFileName) {
-        this.informedConsentDocumentFileName = informedConsentDocumentFileName;
-    }
-
-    /**
-     * @return the protocolHighlightDocument
-     */
-    public File getProtocolHighlightDocument() {
-        return protocolHighlightDocument;
-    }
-
-    /**
-     * @param protocolHighlightDocument the protocolHighlightDocument to set
-     */
-    public void setProtocolHighlightDocument(File protocolHighlightDocument) {
-        this.protocolHighlightDocument = protocolHighlightDocument;
-    }
-
-    /**
-     * @return the protocolHighlightDocumentFileName
-     */
-    public String getProtocolHighlightDocumentFileName() {
-        return protocolHighlightDocumentFileName;
-    }
-
-    /**
-     * @param protocolHighlightDocumentFileName the protocolHighlightDocumentFileName to set
-     */
-    public void setProtocolHighlightDocumentFileName(
-            String protocolHighlightDocumentFileName) {
-        this.protocolHighlightDocumentFileName = protocolHighlightDocumentFileName;
-    }
-
-    /**
-     * @return the changeMemoDoc
-     */
-    public File getChangeMemoDoc() {
-        return changeMemoDoc;
-    }
-
-    /**
-     * @param changeMemoDoc the changeMemoDoc to set
-     */
-    public void setChangeMemoDoc(File changeMemoDoc) {
-        this.changeMemoDoc = changeMemoDoc;
-    }
-    /**
-     * @return the changeMemoDocFileName
-     */
-    public String getChangeMemoDocFileName() {
-        return changeMemoDocFileName;
-    }
-    /**
-     * @param changeMemoDocFileName the changeMemoDocFileName to set
-     */
-    public void setChangeMemoDocFileName(String changeMemoDocFileName) {
-        this.changeMemoDocFileName = changeMemoDocFileName;
-    }
-    private void validateAmendmentDocuments() {
-        TrialValidator  validator = new TrialValidator();
-        Map<String, String> err = new HashMap<String, String>();
-        err = validator.validateDcoument(protocolDocFileName, protocolDoc, "trialDTO.protocolDocFileName",
-                "error.submit.protocolDocument");
-        addErrors(err);
-        err = new HashMap<String, String>();
-        err = validator.validateDcoument(irbApprovalFileName, irbApproval, "trialDTO.irbApprovalFileName",
-                "error.submit.irbApproval");
-        addErrors(err);
-        err = new HashMap<String, String>();
-        err = validator.validateDcoument(participatingSitesFileName, participatingSites,
-                "trialDTO.participatingSitesFileName", "");
-        addErrors(err);
-        err = new HashMap<String, String>();
-        err = validator.validateDcoument(informedConsentDocumentFileName, informedConsentDocument, 
-                "trialDTO.informedConsentDocumentFileName", "");
-        //protocol Highlighted doc
-        addErrors(err);
-        err = new HashMap<String, String>();
-        err = validator.validateDcoument(protocolHighlightDocumentFileName, protocolHighlightDocument,
-                "trialDTO.protocolHighlightDocumentFileName", "");
-        addErrors(err);
-        err = new HashMap<String, String>();
-        err = validator.validateDcoument(changeMemoDocFileName, changeMemoDoc, "trialDTO.changeMemoDocFileName",
-                "error.submit.changeMemo");
-        addErrors(err);
-    }
+    
     /**
      * @return the trialAction
      */

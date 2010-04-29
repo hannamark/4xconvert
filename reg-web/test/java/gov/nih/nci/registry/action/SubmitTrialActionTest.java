@@ -81,6 +81,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         submitAction.setIrbApproval(f);
         submitAction.setProtocolDocFileName(FILE_NAME);
         submitAction.setIrbApprovalFileName(FILE_NAME);
+        submitAction.setPageFrom("submitTrial");
         assertEquals("review", submitAction.review());
     }
     @Test
@@ -99,6 +100,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         submitAction.setInformedConsentDocumentFileName(FILE_NAME);
         submitAction.setParticipatingSitesFileName(FILE_NAME);
         submitAction.setOtherDocumentFileName(FILE_NAME);
+        submitAction.setPageFrom("submitTrial");
         assertEquals("review", submitAction.review());
     }
     @Test
@@ -135,6 +137,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         submitAction.setIrbApproval(f);
         submitAction.setProtocolDocFileName(FILE_NAME);
         submitAction.setIrbApprovalFileName(FILE_NAME);
+        submitAction.setPageFrom("submitTrial");
 
         //set grant in session
         HttpSession sess = new MockHttpSession();
@@ -155,6 +158,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
 
         submitAction.setProtocolDocFileName(FILE_NAME);
         submitAction.setIrbApprovalFileName(FILE_NAME);
+        submitAction.setPageFrom("submitTrial");
         //set Ind in session
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -402,6 +406,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         TrialDTO dto = getMockTrialDTO();
         dto.setStatusDate("02/22/2009");
         submitAction.setTrialDTO(dto);
+        submitAction.setPageFrom("submitTrial");
         assertEquals("error", submitAction.review());
     }
     @Test

@@ -10,6 +10,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
@@ -142,7 +143,7 @@ public abstract class AbstractRegWebTest {
     protected List<TrialDocumentWebDTO> getDocumentDtos(){
         TrialDocumentWebDTO dto = new TrialDocumentWebDTO();
         dto.setFileName("fileName");
-        dto.setTypeCode("typeCode");
+        dto.setTypeCode(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode());
         byte[] content = new byte[10];;
         dto.setText(content);
         List<TrialDocumentWebDTO> returnList =  new ArrayList<TrialDocumentWebDTO>();

@@ -88,6 +88,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
+        trialAction.setPageFrom("amendTrial");
         assertEquals("review", trialAction.review());
        
         
@@ -111,6 +112,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setInformedConsentDocumentFileName(FILE_NAME);
         trialAction.setParticipatingSitesFileName(FILE_NAME);
         trialAction.setProtocolHighlightDocumentFileName(FILE_NAME);
+        trialAction.setPageFrom("amendTrial");
         assertEquals("review", trialAction.review());
     }
     @Test
@@ -216,6 +218,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
+        trialAction.setPageFrom("amendTrial");
         //set grant in session
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -238,6 +241,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
+        trialAction.setPageFrom("amendTrial");
         //set grant in session
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -516,6 +520,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction = new AmendmentTrialAction();
         TrialDTO dto = getMockTrialDTO();
         trialAction.setTrialDTO(dto);
+        trialAction.setPageFrom("amendTrial");
         assertEquals("error", trialAction.review());
     }
     @Test

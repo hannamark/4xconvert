@@ -30,14 +30,13 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -45,15 +44,13 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 /**
  * @author Vrushali
  *
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength",
-    "PMD.TooManyMethods"  })
-public class SubmitProprietaryTrialAction extends ActionSupport implements
+    "PMD.TooManyMethods", "unchecked"  })
+public class SubmitProprietaryTrialAction extends ManageFileAction implements
         ServletResponseAware {
     private static final String SESSION_TRIAL_DTO = "trialDTO";
     /**
@@ -63,13 +60,10 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
     private HttpServletResponse servletResponse;
     private static final Logger LOG = Logger.getLogger(SubmitProprietaryTrialAction.class);
     private ProprietaryTrialDTO trialDTO;
-    private File protocolDoc;
-    private String protocolDocFileName;
-    private File otherDocument;
-    private String otherDocumentFileName;
     private String trialAction = "submit";
     private String selectedTrialType = "no";
     private final TrialUtil  util = new TrialUtil();
+    
     /**
      * @param response servletResponse
      */
@@ -102,6 +96,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
         trialDTO = new ProprietaryTrialDTO();
         trialDTO.setPropritaryTrialIndicator(CommonsConstant.YES);
         trialDTO.setTrialType("Interventional");
+        setPageFrom("proprietaryTrial");
      return SUCCESS;   
     }
     /**
@@ -111,28 +106,36 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
     public String review() {
         clearErrorsAndMessages();
         enforceBusinessRules();
-        if (hasFieldErrors()) {
-            ServletActionContext.getRequest().setAttribute(
-                    "failureMessage" , "The form has errors and could not be submitted, "
-                    + "please check the fields highlighted below");
-        return ERROR;
-        }
-        if (hasActionErrors()) {
+        try {
+            List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
+            if (hasFieldErrors()) {
+                ServletActionContext.getRequest().setAttribute(
+                        "failureMessage" , "The form has errors and could not be submitted, "
+                        + "please check the fields highlighted below");
+                return ERROR;
+            }
+            if (hasActionErrors()) {
+                return ERROR;
+            }
+            populateList(docDTOList);
+            
+            trialDTO.setDocDtos(docDTOList);
+        } catch (IOException e) {
+            addActionError(e.getMessage());
             return ERROR;
         }
-        try {
-            trialDTO.setDocDtos(addDocDTOToList());
-        } catch (IOException e) {
-                addActionError(e.getMessage());
-                return ERROR;
-        }
+
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.INDIDE_LIST);
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.GRANT_LIST);
+        ServletActionContext.getRequest().getSession().removeAttribute(
+                DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName());
+        ServletActionContext.getRequest().getSession().removeAttribute(DocumentTypeCode.OTHER.getShortName());
         ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_DTO, trialDTO);
         return "review";
     }
 
     private void enforceBusinessRules() {
+        HttpSession session = ServletActionContext.getRequest().getSession();
         InvalidValue[] invalidValues = null;
         ClassValidator<ProprietaryTrialDTO> classValidator = new ClassValidator(trialDTO.getClass());
         invalidValues = classValidator.getInvalidValues(trialDTO);
@@ -150,20 +153,24 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
             }
         }
             
-        if (PAUtil.isEmpty(trialDTO.getNctIdentifier()) && PAUtil.isEmpty(protocolDocFileName)) {
+        if (PAUtil.isEmpty(trialDTO.getNctIdentifier()) 
+                && PAUtil.isEmpty(protocolDocFileName) 
+                && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
             addFieldError("trialDTO.nctIdentifier", "Provide either NCT Number or Protocol Trial Template.\n");
             addFieldError("trialDTO.protocolDocFileName", "Provide either NCT Number or Protocol Trial Template.\n");
         }
         TrialValidator validator = new TrialValidator();
         Map<String, String> errMap = new HashMap<String, String>();
-        if (PAUtil.isNotEmpty(protocolDocFileName)) {
-            errMap = validator.validateDcoument(protocolDocFileName, protocolDoc, "trialDTO.protocolDocFileName"
+        if (PAUtil.isNotEmpty(protocolDocFileName) 
+                && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
+            errMap = validator.validateDocument(protocolDocFileName, protocolDoc, "trialDTO.protocolDocFileName"
                     , "");
             addErrors(errMap);
         }
-        if (PAUtil.isNotEmpty(otherDocumentFileName)) {
+        if (PAUtil.isNotEmpty(otherDocumentFileName) 
+                && session.getAttribute(DocumentTypeCode.OTHER.getShortName()) == null) {
             errMap = new HashMap<String, String>();
-            errMap = validator.validateDcoument(otherDocumentFileName, otherDocument, "trialDTO.otherDocumentFileName"
+            errMap = validator.validateDocument(otherDocumentFileName, otherDocument, "trialDTO.otherDocumentFileName"
                     , "");
             addErrors(errMap);
         }
@@ -190,62 +197,6 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
     public void setTrialDTO(ProprietaryTrialDTO trialDTO) {
         this.trialDTO = trialDTO;
     }
-
-    /**
-     * @return the protocolDoc
-     */
-    public File getProtocolDoc() {
-        return protocolDoc;
-    }
-
-    /**
-     * @param protocolDoc the protocolDoc to set
-     */
-    public void setProtocolDoc(File protocolDoc) {
-        this.protocolDoc = protocolDoc;
-    }
-
-    /**
-     * @return the protocolDocFileName
-     */
-    public String getProtocolDocFileName() {
-        return protocolDocFileName;
-    }
-
-    /**
-     * @param protocolDocFileName the protocolDocFileName to set
-     */
-    public void setProtocolDocFileName(String protocolDocFileName) {
-        this.protocolDocFileName = protocolDocFileName;
-    }
-
-    /**
-     * @return the otherDocument
-     */
-    public File getOtherDocument() {
-        return otherDocument;
-    }
-
-    /**
-     * @param otherDocument the otherDocument to set
-     */
-    public void setOtherDocument(File otherDocument) {
-        this.otherDocument = otherDocument;
-    }
-
-    /**
-     * @return the otherDocumentFileName
-     */
-    public String getOtherDocumentFileName() {
-        return otherDocumentFileName;
-    }
-
-    /**
-     * @param otherDocumentFileName the otherDocumentFileName to set
-     */
-    public void setOtherDocumentFileName(String otherDocumentFileName) {
-        this.otherDocumentFileName = otherDocumentFileName;
-    }
     
     /**
      * @return the trialAction
@@ -260,17 +211,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
     public void setTrialAction(String trialAction) {
         this.trialAction = trialAction;
     }
-
-    /**
-     * @param err
-     */
-    private void addErrors(Map<String, String> err) {
-        if (!err.isEmpty()) {
-            for (String msg : err.keySet()) {
-                addFieldError(msg, err.get(msg));
-            }
-        }
-    }
+    
     /**
      * 
      * @return st
@@ -278,6 +219,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
     public String edit() {
         trialDTO  = (ProprietaryTrialDTO) ServletActionContext.getRequest().
             getSession().getAttribute(SESSION_TRIAL_DTO);
+        setDocumentsInSession();
         return "edit";
     }
     /**
@@ -332,6 +274,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
 
         } catch (PAException e) {
             LOG.error(e);
+            setDocumentsInSession();
             addActionError(e.getMessage());
             return ERROR;
         }
@@ -365,17 +308,14 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
         TrialValidator.removeSessionAttributes();
         return "redirect_to_search";
     }
-    private List<TrialDocumentWebDTO> addDocDTOToList() throws IOException {
-        List<TrialDocumentWebDTO> docDTOList = new ArrayList<TrialDocumentWebDTO>();
-        if (PAUtil.isNotEmpty(protocolDocFileName)) {
-            docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(), 
-                    protocolDocFileName, protocolDoc));
+    
+    private void setDocumentsInSession() {
+        if (trialDTO != null && trialDTO.getDocDtos() != null && !trialDTO.getDocDtos().isEmpty()) {
+            for (TrialDocumentWebDTO webDto : trialDTO.getDocDtos()) {
+                ServletActionContext.getRequest().getSession().setAttribute(
+                        DocumentTypeCode.getByCode(webDto.getTypeCode()).getShortName(), webDto);
+            }
         }
-        if (PAUtil.isNotEmpty(otherDocumentFileName)) {
-             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(), 
-                        otherDocumentFileName, otherDocument));  
-         }
-        return docDTOList;
     }
     
     private StudySiteAccrualStatusDTO convertToStudySiteAccrualStatusDTO(ProprietaryTrialDTO trialDto) {
@@ -435,6 +375,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
                     trialDTO.getIndIdeDtos());
             ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,
                     trialDTO.getFundingDtos());
+            setPageFrom("proprietaryTrial");
         } catch (PAException e) {
             addActionError(e.getMessage());
         } catch (NullifiedRoleException e) {

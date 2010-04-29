@@ -749,96 +749,9 @@ function toggledisplayDivs(val) {
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
         </table>
-        <table class="form">  
-        <tr>
-              <th colspan="2"><fmt:message key="submit.trial.documents"/></th>
-        </tr>
-        <tr>
-              <td colspan="2" class="space">&nbsp;</td>
-        </tr>
-        <tr>
-            <td colspan="2">
-               <fmt:message key="submit.trial.docInstructionalText"/>
-            </td>
-        </tr>
-        <tr>
-              <td colspan="2" class="space">&nbsp;</td>
-        </tr>
-        
-        <tr>
-              <td scope="row" class="label">
-              <label for="submitTrial_protocolDoc">
-                     <fmt:message key="submit.trial.protocolDocument"/>
-                     <span class="required">*</span>
-              </label>
-             </td>
-             <td class="value">
-                 <s:file name="protocolDoc" value="true" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDTO.protocolDocFileName</s:param>
-                   </s:fielderror>                            
-                 </span>
-               </td>         
-         </tr>
-         
-         <tr>
-              <td scope="row" class="label">
-              <label for="submitTrial_irbApproval">
-                     <fmt:message key="submit.trial.irbApproval"/>
-                     <span class="required">*</span>
-              </label>
-             </td>
-             <td class="value">
-                 <s:file name="irbApproval" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDTO.irbApprovalFileName</s:param>
-                   </s:fielderror>                            
-                 </span>
-               </td>         
-         </tr>         
-         <tr>
-              <td scope="row" class="label">
-              <label for="submitTrial_participatingSites"><fmt:message key="submit.trial.participatingSites"/></label>
-             </td>
-             <td class="value">
-                 <s:file name="participatingSites" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDTO.participatingSitesFileName</s:param>
-                   </s:fielderror>                            
-                 </span>                 
-               </td>         
-         </tr>         
-         
-         <tr>
-              <td scope="row" class="label">
-              <label for="submitTrial_informedConsentDocument"><fmt:message key="submit.trial.informedConsent"/></label>
-             </td>
-             <td class="value">
-                 <s:file name="informedConsentDocument" cssStyle="width:270px"/>
-                <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDTO.informedConsentDocumentFileName</s:param>
-                   </s:fielderror>                            
-                 </span>             
-               </td>         
-         </tr>         
-         <tr>
-              <td scope="row" class="label">
-              <label for="submitTrial_otherDocument"><fmt:message key="submit.trial.otherDocument"/></label>
-             </td>
-             <td class="value">
-                 <s:file name="otherDocument" cssStyle="width:270px"/>
-                 <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>trialDTO.otherDocumentFileName</s:param>
-                   </s:fielderror>                            
-                 </span>                 
-               </td>         
-         </tr> 
-         </table>
+        <div id="uploadDocDiv">
+        <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
+        </div>
         <p align="center" class="info">
            Please verify ALL the trial information you provided on this screen before clicking the &#34;Review Trial&#34; button below.  
            <br>Once you submit the trial you will not be able to modify the information.

@@ -197,6 +197,9 @@
     </action> 
     <action name="ajaxgetOAuthOrgs*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/oversightAuthInfo.jsp</result>
-    </action>     
+    </action> 
+    <action name="ajaxUpload*" class="gov.nih.nci.registry.action.ManageFileAction"  method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/uploadDocuments.jsp</result>
+    </action>      
     </package>
 </struts>

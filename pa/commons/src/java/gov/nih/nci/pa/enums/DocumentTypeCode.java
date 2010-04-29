@@ -96,31 +96,33 @@ import java.util.List;
 public enum DocumentTypeCode implements CodedEnum<String> {
     
     /** Trial_Document.*/
-    PROTOCOL_DOCUMENT("Protocol Document"), 
+    PROTOCOL_DOCUMENT("Protocol Document", "protocolDoc"), 
     /**IRB_Approval_Document.*/
-    IRB_APPROVAL_DOCUMENT("IRB Approval Document"), 
+    IRB_APPROVAL_DOCUMENT("IRB Approval Document", "irbApprovalDoc"), 
     /**Participating_sites.*/
-    PARTICIPATING_SITES("Participating sites"),    
+    PARTICIPATING_SITES("Participating sites", "participatingSitesDoc"),    
     /**Informed_Consent_Document.*/
-    INFORMED_CONSENT_DOCUMENT("Informed Consent Document"),
+    INFORMED_CONSENT_DOCUMENT("Informed Consent Document", "informedConsentDoc"),
     /**Other.*/
-    OTHER("Other"),
+    OTHER("Other", "otherDoc"),
     /** Change Memo Document.*/
-    CHANGE_MEMO_DOCUMENT("Change Memo Document"),
+    CHANGE_MEMO_DOCUMENT("Change Memo Document", "changeMemoDoc"),
     /**Protocol Highlighted Document.     */
-    PROTOCOL_HIGHLIGHTED_DOCUMENT("Protocol Highlighted Document"),
+    PROTOCOL_HIGHLIGHTED_DOCUMENT("Protocol Highlighted Document", "protocolHighlightDoc"),
     /** */
-    TSR("TSR");
+    TSR("TSR", "tsr");
  
     private String code;
+    private String shortName;
 
     /**
      * Constructor for DocumentTypeCode.
      * @param code
      */
 
-    private DocumentTypeCode(String code) {
+    private DocumentTypeCode(String code, String shortName) {
         this.code = code;
+        this.shortName = shortName;
         register(this);
     }
 
@@ -186,5 +188,14 @@ public enum DocumentTypeCode implements CodedEnum<String> {
      */
     public String getNameByCode(String str) {
         return getByCode(str).name();
+    }
+
+    /**
+     * Gets the session attribute.
+     * 
+     * @return the session attribute
+     */
+    public String getShortName() {
+        return shortName;
     }
 }

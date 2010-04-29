@@ -55,7 +55,8 @@ var winprint=window.open("","",sOption);
  
 <div class="box">
     <s:form > <s:actionerror/>
-    <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>          
+    <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/> 
+	<s:hidden name="pageFrom" id="pageFrom"/>         
     <div id="contentprint">        
     <table class="form">
          <tr>

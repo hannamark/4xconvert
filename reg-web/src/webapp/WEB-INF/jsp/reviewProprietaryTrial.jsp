@@ -48,6 +48,7 @@ var winprint=window.open("","",sOption);
 <div class="box">
     <s:form > <s:actionerror/>
     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
+	<s:hidden name="pageFrom" id="pageFrom"/>         
     <c:if test="${requestScope.protocolId != null}">
         <div class="confirm_msg">
           <strong>The trial has been successfully submitted and assigned the NCI Identifier ${requestScope.protocolId}</strong>
