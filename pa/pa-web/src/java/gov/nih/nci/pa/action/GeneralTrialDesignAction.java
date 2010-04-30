@@ -211,22 +211,24 @@ public class GeneralTrialDesignAction extends ActionSupport {
       }
       if (gtdDTO.getProprietarytrialindicator() == null 
               || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
-          if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
-              addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
-          }
-          if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
+           if (gtdDTO.getCtGovXmlRequired()) {
+              if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
+                addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
+              }
+              if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
                   && PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
-              addFieldError("gtdDTO.responsibleGenericContactName",
+                  addFieldError("gtdDTO.responsibleGenericContactName",
                           getText("Please choose Either Personal Contact or Generic Contact "));
-          }
-          if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
-              addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
-          }
-          if (PAUtil.isNotEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
-                addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
-          }
-          if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
-                addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
+              }
+              if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
+                  addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
+              }
+              if (PAUtil.isNotEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
+                  addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
+              }
+              if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
+                  addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
+              }
            }
           if (PAUtil.isNotEmpty(gtdDTO.getCentralContactIdentifier()) 
                   || PAUtil.isNotEmpty(gtdDTO.getCentralContactPhone())

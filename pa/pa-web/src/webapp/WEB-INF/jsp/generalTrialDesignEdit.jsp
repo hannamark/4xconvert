@@ -122,6 +122,14 @@
         <s:hidden name="gtdDTO.phaseOtherText" id= "gtdDTO.phaseOtherText"></s:hidden>
         <s:hidden name="gtdDTO.primaryPurposeCode" id= "gtdDTO.primaryPurposeCode"></s:hidden>
         <s:hidden name="gtdDTO.primaryPurposeOtherText" id= "gtdDTO.primaryPurposeOtherText"></s:hidden>
+        <tr>
+        <td scope="row" class="label">
+          <a href="http://ClinicalTrials.gov">ClinicalTrials.gov</a> XML required?  
+        </td>
+        <td>
+          <s:radio name="gtdDTO.ctGovXmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="toggledisplayDivs(this);"/>
+       </td>
+       </tr>
     </c:if>
     <c:if test="${sessionScope.trialSummary.isProprietaryTrial == 'true'}">
         <s:hidden name="gtdDTO.centralContactName" id="gtdDTO.centralContactName"></s:hidden>

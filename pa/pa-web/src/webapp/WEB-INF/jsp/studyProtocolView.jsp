@@ -85,6 +85,12 @@
                 <c:out value="${sessionScope.dcpIdentifier }"/> 
             </td>
             </tr>
+            <tr>
+                <td scope="row" class="label"> <label for="ctGovXml"> ClinicalTrials.gov XML required?</label></td>
+                <td class="value">
+                <c:out value="${sessionScope.trialSummary.ctgovXmlRequiredIndicator }"/> 
+            </td>
+            </tr>
             </c:if>
             <tr>
             <td scope="row" class="label">

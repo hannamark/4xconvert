@@ -424,10 +424,13 @@ public class TrialHelper {
         spDTO.setOfficialTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getOfficialTitle(), OFFICIAL_TITLE)));
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
         spDTO.setKeywordText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getKeywordText(), KEYWORD)));
-        if (gtdDTO != null && gtdDTO.getProprietarytrialindicator() != null
-                && gtdDTO.getProprietarytrialindicator().equalsIgnoreCase("true")) {
-            spDTO.setPhaseCode(CdConverter.convertStringToCd(gtdDTO.getPhaseCode()));
-            spDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(gtdDTO.getPrimaryPurposeCode()));
+        if (gtdDTO != null && gtdDTO.getProprietarytrialindicator() != null) {
+                if (gtdDTO.getProprietarytrialindicator().equalsIgnoreCase("true")) {
+                   spDTO.setPhaseCode(CdConverter.convertStringToCd(gtdDTO.getPhaseCode()));
+                   spDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(gtdDTO.getPrimaryPurposeCode()));
+                } else {
+                   spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(gtdDTO.getCtGovXmlRequired()));
+                }
         }
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
