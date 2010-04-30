@@ -75,7 +75,6 @@
 	<classpathentry kind="lib" path="build/lib/relaxngDatatype-20020414.jar"/>
 	<classpathentry kind="lib" path="build/lib/iso-datatypes-2.0.jar"/>
 	<classpathentry kind="lib" path="build/lib/iso-datatypes-extensions-2.0.jar"/>
-	<classpathentry kind="lib" path="build/lib/pa-commons-3.2-20100317.153510-1.jar"/>
 	<classpathentry kind="lib" path="build/lib/pa-ejb-client-3.2-20100317.154214-1.jar"/>
 	<classpathentry kind="lib" path="build/lib/po-services-3.2-SNAPSHOT-client.jar"/>
 	<classpathentry kind="lib" path="build/test/lib/iso-datatypes-extensions-2.0-tests.jar"/>
@@ -105,5 +104,6 @@
 	<classpathentry kind="lib" path="lib/xsom14.jar"/>
 	<classpathentry kind="lib" path="build/lib/CoreServices-common-3.2m5.jar"/>
 	<classpathentry kind="lib" path="build/lib/CoreServices-stubs-3.2m5.jar"/>
+	<classpathentry kind="lib" path="build/lib/pa-commons-3.2-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
