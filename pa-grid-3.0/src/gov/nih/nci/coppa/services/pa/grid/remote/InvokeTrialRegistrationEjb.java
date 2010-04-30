@@ -126,6 +126,9 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
         try {
+            StudyProtocolDTO currentSp = locator.getStudyProtocolService()
+                .getStudyProtocol(studyProtocolDTO.getIdentifier());
+            studyProtocolDTO.setCtgovXmlRequiredIndicator(currentSp.getCtgovXmlRequiredIndicator());
             return locator.getTrialRegistrationService().amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                     studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                     sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
@@ -151,6 +154,9 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             StudyResourcingDTO summary4StudyResourcingDTO , Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
         try {
+            Bl trueCt = new Bl();
+            trueCt.setValue(true);
+            studyProtocolDTO.setCtgovXmlRequiredIndicator(trueCt);
             return locator.getTrialRegistrationService().createProprietaryInterventionalStudyProtocol(studyProtocolDTO,
                     studySiteAccrualStatusDTO, documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO,
                     leadOrganizationStudySiteDTO, studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO,
@@ -177,6 +183,9 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
         try {
+            Bl trueCt = new Bl();
+            trueCt.setValue(true);
+            studyProtocolDTO.setCtgovXmlRequiredIndicator(trueCt);
             return locator.getTrialRegistrationService().createInterventionalStudyProtocol(studyProtocolDTO,
                     overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
                     principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
@@ -210,6 +219,9 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             List<StudySiteDTO> studySiteDTOs, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
         try {
+            StudyProtocolDTO currentSp = locator.getStudyProtocolService()
+            .getStudyProtocol(studyProtocolDTO.getIdentifier());
+            studyProtocolDTO.setCtgovXmlRequiredIndicator(currentSp.getCtgovXmlRequiredIndicator());
             locator.getTrialRegistrationService().update(studyProtocolDTO, overallStatusDTO, studyIdentifierDTOs,
                     studyIndldeDTOs, studyResourcingDTOs, documentDTOs, studyContactDTO, studyParticipationContactDTO,
                     summary4organizationDTO, summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO,
