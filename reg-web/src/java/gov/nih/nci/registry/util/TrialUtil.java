@@ -475,7 +475,10 @@ public class TrialUtil {
             isoDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
        } else {
             isoDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.FALSE));
-       }       
+       }
+        isoDto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.getByCode(
+                trialDTO.getPrimaryPurposeCode())));
+        isoDto.setPrimaryPurposeOtherText(StConverter.convertToSt(trialDTO.getPrimaryPurposeOtherText()));
     }
     
     /**
