@@ -169,6 +169,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
    private static final String NO_PROTOCOL_FOUND = "No Study Protocol found for = ";
    private static final String EMAIL_NOT_NULL = "Email cannot be null, ";
    private static final String PHONE_NOT_NULL = "Phone cannot be null, ";
+   private static final String SQL_APPEND = " AND FUNCTIONAL_CODE IN ";
    private SessionContext ejbContext;
    private static final String VALIDATION_EXCEPTION = "Validation Exception ";
 
@@ -706,7 +707,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         ssSourceDTO.setStudyProtocolIdentifier(targetSpIi);
         studySiteService.delete(sourceIi);
         studySiteService.update(ssSourceDTO);
-        if (target.getCtgovXmlRequiredIndicator().booleanValue()) {
+        if (sourceSpDto.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
            //sponsor
            studySiteDto = new StudySiteDTO();
            studySiteDto.setStudyProtocolIdentifier(sourceSpIi);
@@ -728,13 +729,17 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
           StudySiteDTO ssSponsorTargetDTO = null;
           if (PAUtil.getFirstObj(studySiteSponsorDtos) != null) {
              ssSponsorTargetDTO = PAUtil.getFirstObj(studySiteSponsorDtos);
+             ssSponsorSourceDTO.setIdentifier(ssSponsorTargetDTO.getIdentifier());
+             ssSponsorSourceDTO.setStudyProtocolIdentifier(targetSpIi);
+             studySiteService.delete(sourceIi);
+             studySiteService.update(ssSponsorSourceDTO);
           } else {
-             throw new PAException("Target Sponsor is not available");
-          }
-          ssSponsorSourceDTO.setIdentifier(ssSponsorTargetDTO.getIdentifier());
-          ssSponsorSourceDTO.setStudyProtocolIdentifier(targetSpIi);
-          studySiteService.delete(sourceIi);
-          studySiteService.update(ssSponsorSourceDTO);
+             updateSponsor(sourceSpIi , targetSpIi);
+          }          
+        } else {
+           if (studyProtocolDto.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+              deleteSponsor(targetSpIi);
+           }
         }
         paServiceUtils.executeSql(deleteAndReplace(sourceSpIi , targetSpIi));
       }
@@ -745,6 +750,19 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
 
  }
 
+ private void updateSponsor(Ii sourceSpIi, Ii targetSpIi) {
+     String sqlUpd = targetSpIi.getExtension() 
+           + " WHERE STUDY_PROTOCOL_IDENTIFIER = " + sourceSpIi.getExtension();
+      String sql = "UPDATE STUDY_SITE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + SQL_APPEND
+           + "('SPONSOR')";
+      paServiceUtils.executeSql(sql);
+ }
+
+ private void deleteSponsor(Ii targetSpIi) {
+     String sql = "DELETE FROM STUDY_SITE WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetSpIi.getExtension()
+           + SQL_APPEND + "('SPONSOR')";
+     paServiceUtils.executeSql(sql);
+ }
 
  @SuppressWarnings({"PMD.ExcessiveMethodLength" })
  private void updateStudyProtocolObjs(
@@ -862,6 +880,16 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
       }
       paServiceUtils.createResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO,
             sponsorOrganizationDTO, responsiblePartyContactIi, studyContactDTO, studySiteContactDTO);
+    } else {
+        if (AMENDMENT.equalsIgnoreCase(operation)) {
+         // remove study regulatory authority
+         paServiceUtils.removeRegulatoryAuthority(studyProtocolDTO.getIdentifier());
+         //remove the associated responsible party/sponsor
+         paServiceUtils.removeResponsibleParty(studyProtocolDTO.getIdentifier());
+         //remove sponsor
+         paServiceUtils.removeSponsor(studyProtocolDTO.getIdentifier());
+         
+        }
     }
     
    // update summary4
@@ -1100,12 +1128,16 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     createStudyProtocolDTO.setDelayedpostingIndicator(studyProtocolDTO.getDelayedpostingIndicator());
     createStudyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(
             studyProtocolDTO.getDataMonitoringCommitteeAppointedIndicator());
-
-
-
     createStudyProtocolDTO.setProprietaryTrialIndicator(studyProtocolDTO.getProprietaryTrialIndicator());
     createStudyProtocolDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
-    createStudyProtocolDTO.setCtgovXmlRequiredIndicator(studyProtocolDTO.getCtgovXmlRequiredIndicator());
+    if (studyProtocolDTO.getProprietaryTrialIndicator() == null 
+        || !studyProtocolDTO.getProprietaryTrialIndicator().getValue().booleanValue()) {
+        if (studyProtocolDTO.getCtgovXmlRequiredIndicator() == null) {
+            createStudyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else {
+           createStudyProtocolDTO.setCtgovXmlRequiredIndicator(studyProtocolDTO.getCtgovXmlRequiredIndicator());
+        }
+    }
     return createStudyProtocolDTO;
  }
 
@@ -1544,18 +1576,18 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             + " AND ROLE_CODE IN ('RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR','CENTRAL_CONTACT')");
     sqls.add("UPDATE STUDY_CONTACT SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd
             + " AND ROLE_CODE IN ('RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR','CENTRAL_CONTACT')");
-    sqls.add("DELETE FROM STUDY_SITE WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId + " AND FUNCTIONAL_CODE IN "
+    sqls.add("DELETE FROM STUDY_SITE WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId + SQL_APPEND
         + "('RESPONSIBLE_PARTY_SPONSOR')");
-    sqls.add("UPDATE STUDY_SITE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + " AND FUNCTIONAL_CODE IN "
+    sqls.add("UPDATE STUDY_SITE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + SQL_APPEND
             + "('RESPONSIBLE_PARTY_SPONSOR')");
     sqls.add("DELETE FROM STUDY_SITE_CONTACT WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId + " AND ROLE_CODE IN "
         + "('RESPONSIBLE_PARTY_SPONSOR_CONTACT')");
     sqls.add("UPDATE STUDY_SITE_CONTACT SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + " AND ROLE_CODE IN "
            +  "('RESPONSIBLE_PARTY_SPONSOR_CONTACT')");
     //nct reject
-    sqls.add("DELETE FROM STUDY_SITE WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId + " AND FUNCTIONAL_CODE IN "
+    sqls.add("DELETE FROM STUDY_SITE WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId + SQL_APPEND
             + "('IDENTIFIER_ASSIGNER')");
-    sqls.add("UPDATE STUDY_SITE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + " AND FUNCTIONAL_CODE IN "
+    sqls.add("UPDATE STUDY_SITE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + SQL_APPEND
                 + "('IDENTIFIER_ASSIGNER')");
     //regulatory
     sqls.add("Delete from  STUDY_REGULATORY_AUTHORITY WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);

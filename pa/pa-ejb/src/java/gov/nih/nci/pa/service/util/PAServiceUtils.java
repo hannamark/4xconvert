@@ -338,6 +338,33 @@ public class PAServiceUtils {
 
         }
     }
+    /**
+     * removes the sponsor contact.
+     * @param studyProtocolIi studyPorotocol Ii
+     * @throws PAException on error
+     */
+    public void removeSponsor(Ii studyProtocolIi) throws PAException {
+        StudySiteDTO ssCriteriaDTO = new StudySiteDTO();
+        ssCriteriaDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+        ssCriteriaDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService().getByStudyProtocol(studyProtocolIi, ssCriteriaDTO);
+        if (PAUtil.isListNotEmpty(spDtos)) {
+            PaRegistry.getStudySiteService().delete(spDtos.get(0).getIdentifier());
+        }
+    }     
+    /**
+     * removes the regulatory authority.
+     * @param studyProtocolIi studyPorotocol Ii
+     * @throws PAException on error
+     */
+    public void removeRegulatoryAuthority(Ii studyProtocolIi) throws PAException {
+      List<StudyRegulatoryAuthorityDTO> sraDtos = PaRegistry.getStudyRegulatoryAuthorityService()
+                  .getByStudyProtocol(studyProtocolIi);
+            if (PAUtil.isListNotEmpty(sraDtos)) {
+                PaRegistry.getStudyRegulatoryAuthorityService().delete(sraDtos.get(0).getIdentifier());
+            }
+
+   }
     
     /**
      * 
