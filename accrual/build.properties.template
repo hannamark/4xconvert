@@ -2,7 +2,6 @@
 # notask=-notest
 jboss.server.hostname=localhost
 jboss.server.jndi.port=11299
-po.port.number=21499
 jboss.server.port=19280
 accrual.jnp.url=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}
 pa.jnp.url=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}
@@ -20,3 +19,5 @@ gridServicePrincipal=Gr1DU5er
 gridServiceCredential=ltHZmZ1rqYq8j2uyHEABIQ==
 po.username=ejbclient
 po.pass=pass
+po.port.number=21499
+po.server.name=localhost
