@@ -309,7 +309,12 @@ function toggledisplayDivs(val) {
     <c:set var="topic" scope="request" value="submit_trial"/> 
     <div class="box" id="filters">
     <reg-web:failureMessage/>
-    <s:form name="submitTrial" method="POST" enctype="multipart/form-data"><s:actionerror/>
+	    <s:form name="submitTrial" method="POST" enctype="multipart/form-data">
+	    <s:if test="hasActionErrors()">
+	    <div class="error_msg">
+	    <s:actionerror/>
+	    </div>
+	    </s:if>
         <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
         <s:hidden name="trialDTO.piIdentifier" id="trialDTO.piIdentifier"/> 
         <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>
