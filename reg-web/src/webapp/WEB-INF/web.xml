@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app id="PA" version="2.4" 
-         xmlns="http://java.sun.com/xml/ns/j2ee" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<web-app id="PA" version="2.4"
+         xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-		
+
 	<display-name>PA</display-name>
 
     <!-- Define the basename for a resource bundle for I18N -->
@@ -12,13 +12,13 @@
         <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
         <param-value>ApplicationResources</param-value>
     </context-param>
-	
-	
+
+
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath*:applicationContext*.xml</param-value>
 	</context-param>
-	
+
 	<!-- Filters -->
 	<filter>
         <filter-name>action2-cleanup</filter-name>
@@ -31,8 +31,8 @@
     <filter>
         <filter-name>action2</filter-name>
         <filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
-    </filter> 
-    
+    </filter>
+
     <filter>
         <filter-name>hibernatebind</filter-name>
         <filter-class>gov.nih.nci.registry.session.BindHibernateSession</filter-class>
@@ -41,57 +41,67 @@
         <filter-name>sessionFixation</filter-name>
         <filter-class>com.fiveamsolutions.nci.commons.web.filter.SessionFixationProtectionFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>csmUserFilter</filter-name>
+        <filter-class>gov.nih.nci.pa.filter.CsmUserFilter</filter-class>
+    </filter>
 
     <filter-mapping>
         <filter-name>sessionFixation</filter-name>
         <url-pattern>*.action</url-pattern>
     </filter-mapping>
-   
+
     <filter-mapping>
         <filter-name>hibernatebind</filter-name>
         <url-pattern>*.action</url-pattern>
          <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>       
-	
+    </filter-mapping>
+
 	<filter-mapping>
         <filter-name>action2-cleanup</filter-name>
         <url-pattern>/*</url-pattern>
                 <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
-        
+
     </filter-mapping>
     <filter-mapping>
         <filter-name>sitemesh</filter-name>
         <url-pattern>/*</url-pattern>
- 
+
     </filter-mapping>
     <filter-mapping>
         <filter-name>action2</filter-name>
         <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher> 
+        <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
-    
+    <filter-mapping>
+        <filter-name>csmUserFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
     <!-- Registry session-timeout-->
     <session-config>
         <session-timeout>
             120
         </session-timeout>
-    </session-config>   
-	
-	<!-- Listeners 
+    </session-config>
+
+	<!-- Listeners
 	<listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>-->
-    
+
     <!-- Servlets -->
     <servlet>
     	<servlet-name>jspSupportServlet</servlet-name>
     	<servlet-class>org.apache.struts2.views.JspSupportServlet</servlet-class>
     	<load-on-startup>5</load-on-startup>
-    </servlet>    
-    
+    </servlet>
+
     <!-- Welcome file lists -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

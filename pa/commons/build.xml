@@ -47,8 +47,8 @@
 	         <fileset dir="${pa.dir}/commons/target">
 	            <include name="*.jar"/>
 	         </fileset>
-	  </path>  
-	
+	  </path>
+
     <property name="compile.jar.dir" location="${lib.dir}/commons/compile" />
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}"/>
@@ -58,22 +58,22 @@
     <path id="test.classpath">
         <fileset dir="${test.jar.dir}"/>
     </path>
-    
+
     <property name="test-simian.jar.dir" location="${lib.dir}/commons/test-simian" />
     <path id="test-simian.classpath">
         <fileset dir="${test-simian.jar.dir}"/>
     </path>
-    
+
     <property name="test-junit.jar.dir" location="${lib.dir}/commons/test-junit" />
     <path id="test-junit.classpath">
         <fileset dir="${test-junit.jar.dir}"/>
     </path>
-    
+
     <property name="test-cobertura.jar.dir" location="${lib.dir}/commons/test-cobertura" />
     <path id="test-cobertura.classpath">
         <fileset dir="${test-cobertura.jar.dir}"/>
     </path>
-    
+
     <property name="test-checkstyle.jar.dir" location="${lib.dir}/commons/test-checkstyle" />
     <path id="test-checkstyle.classpath">
         <fileset dir="${test-checkstyle.jar.dir}"/>
@@ -83,7 +83,7 @@
     <path id="test-pmd.classpath">
         <fileset dir="${test-pmd.jar.dir}"/>
     </path>
-    
+
     <property name="test-selenium.jar.dir" location="${lib.dir}/commons/test-selenium" />
     <path id="test-selenium.classpath">
         <fileset dir="${test-selenium.jar.dir}"/>
@@ -111,21 +111,21 @@
         <delete dir="${commons.build.dir}"/>
         <delete dir="${pa.report.dir}/commons"/>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Compilation target                                                     -->
     <!-- ====================================================================== -->
 
     <target name="compile" description="Compile the code">
         <mkdir dir="${commons.build.outputDir}"/>
-        <javac destdir="${commons.build.outputDir}" 
-               nowarn="false" 
-               debug="true" 
-               optimize="false" 
-               deprecation="true" 
-               target="1.5" 
-               verbose="false" 
-               fork="false" 
+        <javac destdir="${commons.build.outputDir}"
+               nowarn="false"
+               debug="true"
+               optimize="false"
+               deprecation="true"
+               target="1.5"
+               verbose="false"
+               fork="false"
                source="1.5"
                encoding="Cp1252">
             <src>
@@ -135,7 +135,7 @@
                 <path refid="compile.classpath"/>
             </classpath>
         </javac>
-        
+
         <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
         <filter token="db.username" value="${db.username}"/>
         <filter token="db.password" value="${db.password}"/>
@@ -151,7 +151,7 @@
     <!-- ====================================================================== -->
 
    <!-- <target name="configure-tests">
-        <copy file="${pa.resourceDir}/test.properties.commons" 
+        <copy file="${pa.resourceDir}/test.properties.commons"
               tofile="${commons.build.testResourceDir.0}/test.properties"
               overwrite="true">
             <filterset>
@@ -159,23 +159,23 @@
             </filterset>
         </copy>
     </target> -->
-    
+
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests" 
-      depends="compile" 
-      description="Compile the test code"> 
+    <target name="compile-tests"
+      depends="compile"
+      description="Compile the test code">
         <mkdir dir="${commons.build.testOutputDir}"/>
-        <javac destdir="${commons.build.testOutputDir}" 
-               nowarn="false" 
-               debug="true" 
-               optimize="false" 
-               deprecation="true" 
-               target="1.5" 
-               verbose="false" 
-               fork="false" 
+        <javac destdir="${commons.build.testOutputDir}"
+               nowarn="false"
+               debug="true"
+               optimize="false"
+               deprecation="true"
+               target="1.5"
+               verbose="false"
+               fork="false"
                source="1.5">
             <src>
                 <pathelement location="${commons.build.testDir.0}"/>
@@ -196,19 +196,42 @@
     <!-- Run Cobertura and JUnit                                                -->
     <!-- ====================================================================== -->
 
+    <target name="runTest" description="Runs the test you specify on the command line with -Dtest=" depends="compile-tests">
+        <mkdir dir="${commons.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no">
+            <sysproperty key="basedir" value="."/>
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath location="${commons.build.coberturaOutputDir}"/>
+            <classpath location="${commons.build.outputDir}"/>
+            <classpath location="${commons.build.testOutputDir}"/>
+            <classpath refid="test.classpath"/>
+            <classpath refid="test-junit.classpath"/>
+            <classpath refid="test-cobertura.classpath"/>
+            <classpath refid="common.package.classpath" />
+            <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
+            <batchtest todir="${commons.test.reports}" fork="yes" unless="test">
+                <fileset dir="${commons.build.testDir.0}">
+                <include name="**/*Test.java"/>
+                <exclude name="**/*Abstract*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
     <target name="test-cobertura" depends="compile-tests">
-        
+
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
 
         <delete file="${commons.build.dir}/cobertura.ser" />
-        
+
         <cobertura-instrument datafile="${commons.build.dir}/cobertura.ser"
                               toDir="${commons.build.coberturaOutputDir}">
             <fileset dir="${commons.build.outputDir}">
                 <include name="**/*.class" />
             </fileset>
-        </cobertura-instrument>   
-        
+        </cobertura-instrument>
+
         <mkdir dir="${commons.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no">
             <sysproperty key="basedir" value="."/>
@@ -230,18 +253,18 @@
                 </fileset>
             </batchtest>
         </junit>
-        
+
         <cobertura-report datafile="${commons.build.dir}/cobertura.ser"
-                          destdir="${commons.coverage.reports}" 
+                          destdir="${commons.coverage.reports}"
                           srcdir="${commons.build.srcDir.0}" />
 
         <cobertura-report datafile="${commons.build.dir}/cobertura.ser"
                           format="xml"
-                          destdir="${commons.coverage.reports}" 
+                          destdir="${commons.coverage.reports}"
                           srcdir="${commons.build.srcDir.0}" />
-        
+
         <cobertura-check datafile="${commons.build.dir}/cobertura.ser"
-                         totalbranchrate="70" 
+                         totalbranchrate="70"
                          totallinerate="70"
                          haltonfailure="false"/>
      </target>
@@ -251,7 +274,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle">
-        <taskdef resource="checkstyletask.properties" 
+        <taskdef resource="checkstyletask.properties"
              classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
         <checkstyle config="${pa.checkstyle}" failOnViolation="true">
             <classpath>
@@ -270,11 +293,11 @@
     <!-- ====================================================================== -->
 
     <target name="test-pmd">
-        <taskdef name="pmd" 
+        <taskdef name="pmd"
              classpath="${test-pmd.jar.dir}/pmd-4.2.2.jar"
              classname="net.sourceforge.pmd.ant.PMDTask"/>
-             
-        <pmd shortFilenames="true" failOnRuleViolation="true" 
+
+        <pmd shortFilenames="true" failOnRuleViolation="true"
                                    rulesetfiles="${pa.pmd}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/commons/pmd.txt"/>
@@ -290,7 +313,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-simian">
-        <taskdef resource="simiantask.properties" 
+        <taskdef resource="simiantask.properties"
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
 
         <simian>
@@ -305,33 +328,33 @@
     <!-- Run all tests                                                          -->
     <!-- ====================================================================== -->
 
-    <target name="test-dynamic-analysis" 
-            depends="ivy-get,compile,jar,compile-tests,test-cobertura" 
+    <target name="test-dynamic-analysis"
+            depends="ivy-get,compile,jar,compile-tests,test-cobertura"
             description="Run dynamic analysis."/>
-    
-    <target name="test-static-analysis" 
-            depends="ivy-get,compile,jar,test-checkstyle,test-pmd,test-simian" 
+
+    <target name="test-static-analysis"
+            depends="ivy-get,compile,jar,test-checkstyle,test-pmd,test-simian"
             description="Run static analysis."/>
 
-    <target name="test-all" 
-            depends="test-static-analysis,test-dynamic-analysis" 
+    <target name="test-all"
+            depends="test-static-analysis,test-dynamic-analysis"
             description="Run all tests"/>
 
     <!-- ====================================================================== -->
     <!-- Package target                                                         -->
     <!-- ====================================================================== -->
- 
+
     <target name="jar" depends="jar-test">
-        <jar jarfile="${commons.build.dir}/${commons.jar}" 
-             compress="true" 
-             index="false" 
+        <jar jarfile="${commons.build.dir}/${commons.jar}"
+             compress="true"
+             index="false"
              basedir="${commons.build.outputDir}"/>
     </target>
 
     <target name="jar-test" depends="compile-tests">
         <jar jarfile="${commons.build.dir}/${commons-test.jar}"
-             compress="true" 
-             index="false" 
+             compress="true"
+             index="false"
              basedir="${commons.build.testOutputDir}"
              includes="**/*.class"
              excludes="**/enums/*
@@ -341,18 +364,18 @@
 			            **/iso/util/*
         "/>
     </target>
-    
+
     <target name="package-notest-noivy" depends="compile,jar"/>
 
     <target name="package-notest" depends="ivy-get,compile,jar"
-            description="Package the application.  Do not run tests."/> 
+            description="Package the application.  Do not run tests."/>
 
-    <target name="package" depends="ivy-get,compile,jar,test-all" 
+    <target name="package" depends="ivy-get,compile,jar,test-all"
             description="Package the application"/>
 
-    <target name="package-client" depends="package-notest-noivy" 
+    <target name="package-client" depends="package-notest-noivy"
             description="Package the client jar."/>
-    
+
     <!-- ====================================================================== -->
     <!-- Help target                                                            -->
     <!-- ====================================================================== -->
@@ -398,17 +421,17 @@
         <ivy:resolve refresh="true" conf="compile" />
         <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="compile" />
     </target>
-    <target name="ivy-test" 
+    <target name="ivy-test"
             depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-selenium">
             <ivy:resolve refresh="true" conf="test" />
             <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test" />
     </target>
-    <target name="ivy-get" 
-            depends="init:ivy,ivy-compile,ivy-test" 
+    <target name="ivy-get"
+            depends="init:ivy,ivy-compile,ivy-test"
             description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/commons"/>
     </target>
-    
+
 </project>

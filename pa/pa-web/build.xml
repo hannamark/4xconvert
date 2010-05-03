@@ -39,17 +39,17 @@
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
 	<property name="jboss.server.jndi.port" value="1099" />
-    
+
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
-    
+
 	<path id="common.package.classpath">
 		    <fileset dir="${pa.dir}/commons/target">
 		            <include name="pa-commons.jar"/>
 		      </fileset>
-	</path>  
-	
+	</path>
+
     <property name="compile.jar.dir" location="${lib.dir}/pa-web/compile" />
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}"/>
@@ -61,22 +61,22 @@
     <path id="test.classpath">
         <fileset dir="${test.jar.dir}"/>
     </path>
-    
+
     <property name="test-simian.jar.dir" location="${lib.dir}/pa-web/test-simian" />
     <path id="test-simian.classpath">
         <fileset dir="${test-simian.jar.dir}"/>
     </path>
-    
+
     <property name="test-junit.jar.dir" location="${lib.dir}/pa-web/test-junit" />
     <path id="test-junit.classpath">
         <fileset dir="${test-junit.jar.dir}"/>
     </path>
-    
+
     <property name="test-cobertura.jar.dir" location="${lib.dir}/pa-web/test-cobertura" />
     <path id="test-cobertura.classpath">
         <fileset dir="${test-cobertura.jar.dir}"/>
     </path>
-    
+
     <property name="test-checkstyle.jar.dir" location="${lib.dir}/pa-web/test-checkstyle" />
     <path id="test-checkstyle.classpath">
         <fileset dir="${test-checkstyle.jar.dir}"/>
@@ -86,17 +86,17 @@
     <path id="test-pmd.classpath">
         <fileset dir="${test-pmd.jar.dir}"/>
     </path>
-    
+
     <property name="test-selenium.jar.dir" location="${lib.dir}/pa-web/test-selenium" />
     <path id="test-selenium.classpath">
         <fileset dir="${test-selenium.jar.dir}"/>
     </path>
 
-    <path id="ejb.package.classpath">       
+    <path id="ejb.package.classpath">
         <fileset dir="${pa.dir}/pa-ejb/target">
             <include name="*.jar"/>
         </fileset>
-    </path> 
+    </path>
 
     <path id="ivy.classpath">
         <fileset dir="${lib.dir}">
@@ -108,12 +108,12 @@
     <!-- ====================================================================== -->
     <!-- Task definitions                                                       -->
     <!-- ====================================================================== -->
-    
+
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${pa.report.dir}/pa-web"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
 
-    
+
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
@@ -129,25 +129,25 @@
 
     <target name="compile" description="Compile the code">
         <mkdir dir="${pa-web.build.outputDir}"/>
-        <javac destdir="${pa-web.build.outputDir}" 
-               nowarn="false" 
-               debug="true" 
-               optimize="false" 
-               deprecation="true" 
-               target="1.5" 
-               verbose="false" 
-               fork="false" 
+        <javac destdir="${pa-web.build.outputDir}"
+               nowarn="false"
+               debug="true"
+               optimize="false"
+               deprecation="true"
+               target="1.5"
+               verbose="false"
+               fork="false"
                source="1.5">
             <src>
                 <pathelement location="${pa-web.build.srcDir.0}"/>
             </src>
             <classpath>
                 <path refid="ejb.package.classpath"/>
-                <path refid="compile.classpath"/> 
+                <path refid="compile.classpath"/>
             	<path refid="common.package.classpath"/>
             </classpath>
         </javac>
-    	<copy file="${pa.resourceDir}/quartz_jobs.xml" 
+    	<copy file="${pa.resourceDir}/quartz_jobs.xml"
     	      todir="${pa-web.build.outputDir}"
     	      overwrite="true">
     	   <filterset>
@@ -168,11 +168,11 @@
     <!-- ====================================================================== -->
 
     <target name="configure-tests">
-        <copy file="${pa.resourceDir}/test.properties.pa-web" 
+        <copy file="${pa.resourceDir}/test.properties.pa-web"
               tofile="${pa-web.build.testResourceDir.0}/test.properties"
               overwrite="true">
             <filterset>
-                <filter token="test.java.security.login.config" 
+                <filter token="test.java.security.login.config"
                         value="${pa-web.build.testOutputDir}/login.config"/>
             </filterset>
         </copy>
@@ -181,49 +181,49 @@
                        replace="/"
                        flags="g"/>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Configure login config                                                 -->
     <!-- ====================================================================== -->
-    
-    <target name="create-artifacts">    
+
+    <target name="create-artifacts">
         <echo message="creating login.config"/>
         <filter token="jdbc.driver" value="${jdbc.driver}"/>
-        <filter token="jdbc.url" value="${jdbc.url}"/> 
+        <filter token="jdbc.url" value="${jdbc.url}"/>
         <filter token="db.username" value="${db.username}"/>
-        <filter token="db.password" value="${db.password}"/>                                            
-        <copy file="${pa.resourceDir}/login.config" todir="${pa-web.build.testResourceDir.0}" filtering="true" />                             
+        <filter token="db.password" value="${db.password}"/>
+        <copy file="${pa.resourceDir}/login.config" todir="${pa-web.build.testResourceDir.0}" filtering="true" />
     </target>
-    
 
-    
+
+
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests" 
-      depends="compile,configure-tests,create-artifacts" 
-      description="Compile the test code"> 
+    <target name="compile-tests"
+      depends="compile,configure-tests,create-artifacts"
+      description="Compile the test code">
         <mkdir dir="${pa-web.build.testOutputDir}"/>
-        <javac destdir="${pa-web.build.testOutputDir}" 
-               nowarn="false" 
-               debug="true" 
-               optimize="false" 
-               deprecation="true" 
-               target="1.5" 
-               verbose="false" 
-               fork="false" 
+        <javac destdir="${pa-web.build.testOutputDir}"
+               nowarn="false"
+               debug="true"
+               optimize="false"
+               deprecation="true"
+               target="1.5"
+               verbose="false"
+               fork="false"
                source="1.5">
             <src>
                 <pathelement location="${pa-web.build.testDir.0}"/>
             </src>
             <classpath>
-                <pathelement location="${pa-web.build.outputDir}"/> 
+                <pathelement location="${pa-web.build.outputDir}"/>
                 <path refid="test.classpath"/>
                 <path refid="test-junit.classpath"/>
                 <path refid="test-selenium.classpath"/>
-                <path refid="compile.classpath"/>  
-                <path refid="ejb.package.classpath"/> 
+                <path refid="compile.classpath"/>
+                <path refid="ejb.package.classpath"/>
             	<path refid="common.package.classpath"/>
             </classpath>
         </javac>
@@ -236,8 +236,9 @@
     <!-- Run Cobertura and JUnit                                                -->
     <!-- ====================================================================== -->
 
+
     <target name="test-selenium-class" depends="compile-tests">
-        
+
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
 
         <delete file="${pa-web.build.dir}/cobertura.ser" />
@@ -247,8 +248,8 @@
             <fileset dir="${pa-web.build.outputDir}">
                 <include name="**/*.class" />
             </fileset>
-        </cobertura-instrument>   
-        
+        </cobertura-instrument>
+
         <mkdir dir="${pa-web.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <sysproperty key="basedir" value="."/>
@@ -264,17 +265,17 @@
             <batchtest todir="${pa-web.test.reports}">
                 <fileset dir="${pa-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
-                    <exclude name="**/*Abstract*Test.java"/>                    
+                    <exclude name="**/*Abstract*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>
-        
+
         <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser"
-                          destdir="${pa-web.coverage.reports}" 
+                          destdir="${pa-web.coverage.reports}"
                           srcdir="${pa-web.build.srcDir.0}" />
-        
+
         <cobertura-check datafile="${pa-web.build.dir}/cobertura.ser"
-                         totalbranchrate="70" 
+                         totalbranchrate="70"
                          totallinerate="70"
                          haltonfailure="false"/>
      </target>
@@ -284,11 +285,11 @@
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle">
-        <taskdef resource="checkstyletask.properties" 
+        <taskdef resource="checkstyletask.properties"
              classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
         <checkstyle config="${pa.checkstyle}" failOnViolation="true">
             <classpath>
-                <path refid="ejb.package.classpath"/> 
+                <path refid="ejb.package.classpath"/>
                 <path refid="compile.classpath"/>
             	<path refid="common.package.classpath"/>
             </classpath>
@@ -304,11 +305,11 @@
     <!-- ====================================================================== -->
 
     <target name="test-pmd">
-        <taskdef name="pmd" 
+        <taskdef name="pmd"
              classpath="${test-pmd.jar.dir}/pmd-4.2.2.jar"
              classname="net.sourceforge.pmd.ant.PMDTask"/>
-             
-        <pmd shortFilenames="true" failOnRuleViolation="true" 
+
+        <pmd shortFilenames="true" failOnRuleViolation="true"
                                    rulesetfiles="${pa.pmd}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/pa-web/pmd.txt"/>
@@ -324,7 +325,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-simian">
-       <taskdef resource="simiantask.properties" 
+       <taskdef resource="simiantask.properties"
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
        <simian>
             <fileset dir="src" includes="**/*.java"/>
@@ -338,16 +339,16 @@
     <!-- Run all tests                                                          -->
     <!-- ====================================================================== -->
 
-    <target name="test-dynamic-analysis" 
-            depends="ivy-get,compile,compile-tests,test-cobertura" 
+    <target name="test-dynamic-analysis"
+            depends="ivy-get,compile,compile-tests,test-cobertura"
             description="Run dynamic analysis."/>
-    
-    <target name="test-static-analysis" 
-            depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian" 
+
+    <target name="test-static-analysis"
+            depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian"
             description="Run static analysis."/>
 
-    <target name="test-all" 
-            depends="test-static-analysis,test-dynamic-analysis" 
+    <target name="test-all"
+            depends="test-static-analysis,test-dynamic-analysis"
             description="Run all tests"/>
 
 
@@ -360,10 +361,10 @@
         <copy todir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib">
             <fileset dir="${runtime.jar.dir}"/>
         </copy>
-        
-        <war destfile="${pa-web.build.dir}/${pa-web.war}" 
-             compress="false" 
-             webxml="${pa.dir}/pa-web/src/webapp/WEB-INF/web.xml">            
+
+        <war destfile="${pa-web.build.dir}/${pa-web.war}"
+             compress="false"
+             webxml="${pa.dir}/pa-web/src/webapp/WEB-INF/web.xml">
             <lib dir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib"/>
             <classes dir="${pa-web.build.outputDir}"/>
             <webinf dir="${pa.dir}/pa-web/src/webapp/WEB-INF" excludes="web.xml"/>
@@ -376,9 +377,9 @@
     <target name="package-notest" depends="ivy-get,compile,war"
             description="Package the application.  Do not run tests."/>
 
-    <target name="package" depends="ivy-get,compile,test-all,war" 
+    <target name="package" depends="ivy-get,compile,test-all,war"
             description="Package the application"/>
-    
+
     <!-- ====================================================================== -->
     <!-- Help target                                                            -->
     <!-- ====================================================================== -->
@@ -386,14 +387,40 @@
     <target name="help">
         <echo message="Please run: $ant -projecthelp"/>
     </target>
-    
+
 
     <!-- ====================================================================== -->
     <!-- Run Cobertura and JUnit                                                -->
     <!-- ====================================================================== -->
 
+    <target name="runTest" description="Runs the test you specify on the command line with -Dtest=" depends="compile-tests">
+        <mkdir dir="${pa-web.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no">
+            <sysproperty key="basedir" value="."/>
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath location="${pa-web.build.coberturaOutputDir}"/>
+            <classpath location="${pa-web.build.outputDir}"/>
+            <classpath location="${pa-web.build.testOutputDir}"/>
+            <classpath refid="test.classpath"/>
+            <classpath refid="test-junit.classpath"/>
+            <classpath refid="test-cobertura.classpath"/>
+            <classpath refid="compile.classpath"/>
+            <classpath refid="ejb.package.classpath"/>
+            <classpath refid="common.package.classpath"/>
+            <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
+            <batchtest todir="${pa-web.test.reports}" fork="yes" unless="test">
+                <fileset dir="${pa-web.build.testDir.0}">
+                <include name="**/*Test.java"/>
+                <exclude name="**/*Abstract*Test.java"/>
+                <exclude name="**/*SeleniumTest.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
     <target name="test-cobertura" depends="compile-tests">
-        
+
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
 
         <delete file="${pa-web.build.dir}/cobertura.ser" />
@@ -403,8 +430,8 @@
             <fileset dir="${pa-web.build.outputDir}">
                 <include name="**/*.class" />
             </fileset>
-        </cobertura-instrument>   
-        
+        </cobertura-instrument>
+
         <mkdir dir="${pa-web.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <sysproperty key="basedir" value="."/>
@@ -424,28 +451,28 @@
             <batchtest todir="${pa-web.test.reports}">
                 <fileset dir="${pa-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
-                    <exclude name="**/*Abstract*Test.java"/>                    
+                    <exclude name="**/*Abstract*Test.java"/>
                     <exclude name="**/*SeleniumTest.java"/>
                 </fileset>
             </batchtest>
         </junit>
-        
+
         <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser"
-                          destdir="${pa-web.coverage.reports}" 
+                          destdir="${pa-web.coverage.reports}"
                           srcdir="${pa-web.build.srcDir.0}" />
-        
+
         <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser"
-                          format="xml"        
-                          destdir="${pa-web.coverage.reports}" 
+                          format="xml"
+                          destdir="${pa-web.coverage.reports}"
                           srcdir="${pa-web.build.srcDir.0}" />
-        
+
         <cobertura-check datafile="${pa-web.build.dir}/cobertura.ser"
-                         totalbranchrate="10" 
+                         totalbranchrate="10"
                          totallinerate="10"
                          haltonfailure="false"/>
      </target>
-     
-     
+
+
     <!-- ====================================================================== -->
     <!-- Ivy Targets                                                            -->
     <!-- ====================================================================== -->
@@ -483,7 +510,7 @@
         <ivy:resolve refresh="true" conf="compile" />
         <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="compile" />
     </target>
-    <target name="ivy-test" 
+    <target name="ivy-test"
             depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-selenium">
             <ivy:resolve refresh="true" conf="test" />
             <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test" />
@@ -492,12 +519,12 @@
         <ivy:resolve refresh="true" conf="runtime" />
         <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
     </target>
-    <target name="ivy-get" 
-            depends="init:ivy,ivy-compile,ivy-test,ivy-runtime" 
+    <target name="ivy-get"
+            depends="init:ivy,ivy-compile,ivy-test,ivy-runtime"
             description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/pa-web"/>
     </target>
-    
+
 </project>
