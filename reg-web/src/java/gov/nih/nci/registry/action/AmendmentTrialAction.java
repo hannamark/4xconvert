@@ -197,6 +197,12 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         TrialUtil util = new TrialUtil();
         Ii amendId = null;
         try {
+            if (!trialDTO.getXmlRequired()) {
+                trialDTO.setFdaRegulatoryInformationIndicator(null);
+                trialDTO.setDataMonitoringCommitteeAppointedIndicator(null);
+                trialDTO.setDelayedPostingIndicator(null);
+                trialDTO.setSection801Indicator(null);
+            }
             StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(
                     ServletActionContext.getRequest().getRemoteUser()));

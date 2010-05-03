@@ -1,5 +1,5 @@
     <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<table>s
+<table>
  <tr>
              <th colspan="2"><fmt:message key="submit.trial.sponsorResParty"/></th>
         </tr>          
