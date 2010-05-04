@@ -1588,7 +1588,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the programCodeText
      */
-    @org.hibernate.validator.Length(message = "Program Code Text must be 2000 characters max", max = PCTL)
+    @org.hibernate.validator.Length(message = "Program Code must be 2000 characters max", max = PCTL)
     public String getProgramCodeText() {
         return programCodeText;
     }
