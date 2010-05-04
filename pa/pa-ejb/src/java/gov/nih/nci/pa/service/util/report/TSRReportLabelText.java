@@ -397,9 +397,9 @@ public class TSRReportLabelText {
      */
     public static final String S4I_FUNDING_SPONSOR = "Funding Sponsor/Source";
     /**
-     * Program code text.
+     * Program code.
      */
-    public static final String S4I_PROGRAM_CODE_TEXT = "Program Code Text";
+    public static final String S4I_PROGRAM_CODE_TEXT = "Program Code";
 
     // Collaborators
     /**
