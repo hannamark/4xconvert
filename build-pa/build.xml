@@ -89,7 +89,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Working directory passed to Ant tasks -->
     <property name="pa-ear.base.dir" location="${software.dir}/pa/pa-ear"/>
     <property name="pa-commons.base.dir" location="${software.dir}/pa/commons"/>
-    <property name="pa-reseources.base.dir" location="${software.dir}/pa/resources"/>
+    <property name="pa-resources.base.dir" location="${software.dir}/pa/resources"/>
     <property name="pa-ejb.base.dir" location="${software.dir}/pa/pa-ejb"/>
     <property name="pa-web.base.dir" location="${software.dir}/pa/pa-web"/>
     <property name="reg-web.base.dir" location="${software.dir}/reg-web"/>
@@ -144,7 +144,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
     <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
-    
+
     <!-- Properties to control the pa-grid-3.2 build -->
     <property name="pa-grid-3.2.base.dir" location="${software.dir}/pa-grid-3.2"/>
     <property name="pa-grid-3.2.build.file" location="${pa-grid-3.2.base.dir}/build.xml"/>
@@ -446,15 +446,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
         <!-- copy paear prop file into the exploded pa ear dist folder -->
         <copy todir="${pa-ear.dist.dir}">
-             <fileset dir="${pa-reseources.base.dir}">
-                        <include name="paear.properties"/>
-             </fileset>
+            <fileset dir="${pa-resources.base.dir}">
+                <include name="paear.properties"/>
+            </fileset>
         </copy>
         <!-- copy quartz jobs xml file into the exploded pa ear dist folder -->
         <copy todir="${pa-ear.dist.dir}">
-               <fileset dir="${pa-reseources.base.dir}">
+            <fileset dir="${pa-resources.base.dir}">
                 <include name="quartz_jobs.xml"/>
-               </fileset>
+            </fileset>
         </copy>
     </target>
 

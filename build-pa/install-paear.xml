@@ -126,10 +126,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
               <property name="jboss.application.url" value="http://${jboss.server.hostname}:${jboss.server.port}/registry"/>
           </else>
       </if>
-        <property name="application.url" value="${jboss.application.url}"/>
-        <property name="register.mail.body.url" value="${application.url}/${register.mail.body.url.action}"/>
-        <property name="doc.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}"/>
-        <available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
+      <property name="application.url" value="${jboss.application.url}"/>
+      <property name="register.mail.body.url" value="${application.url}/${register.mail.body.url.action}"/>
+      <property name="doc.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}"/>
+      <available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
       <basename file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.file"/>
       <dirname file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.dir"/>
       <basename file="${jboss.grid.secure.cert.location}" property="jboss.grid.secure.cert.file"/>
@@ -156,59 +156,60 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
   </target>
 
   <target name="install:pa-ear-jboss:app"
-            description="Deploy pa-ear pa-ear.ear, pa-ear-api.war and common libraries"
-            unless="exclude.pa-ear"
-        depends="install:pa-ear-jboss:accrual-ear">
-        <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
-        <delete dir="${jboss.home}/server/${jboss.server.name}/work" failonerror="false"/>
-        <move file="${jboss.home}/server/${jboss.server.name}/log/server.log" tofile="${jboss.home}/server/${jboss.server.name}/log/server.log.${install.time}" failonerror="false"/>
+          description="Deploy pa-ear pa-ear.ear, pa-ear-api.war and common libraries"
+          unless="exclude.pa-ear"
+          depends="install:pa-ear-jboss:accrual-ear">
+      <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
+      <delete dir="${jboss.home}/server/${jboss.server.name}/work" failonerror="false"/>
+      <move file="${jboss.home}/server/${jboss.server.name}/log/server.log" tofile="${jboss.home}/server/${jboss.server.name}/log/server.log.${install.time}" failonerror="false"/>
 
-        <copy file="${pa-ear.dir.dist}/${pa-ear.ear.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
+      <copy file="${pa-ear.dir.dist}/${pa-ear.ear.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
 
-        <!-- deploy jars to server lib but remove old ones first -->
-        <delete verbose="true">
-            <fileset dir="${jboss.home}/server/${jboss.server.name}/lib" includesfile="jboss-server-lib-deletes.txt" />
-        </delete>
-        <copy todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true">
-            <fileset dir="${pa-container-jar.dist.dir}"/>
-        </copy>
+      <!-- deploy jars to server lib but remove old ones first -->
+      <delete verbose="true">
+          <fileset dir="${jboss.home}/server/${jboss.server.name}/lib" includesfile="jboss-server-lib-deletes.txt" />
+      </delete>
+      <copy todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true">
+          <fileset dir="${pa-container-jar.dist.dir}"/>
+      </copy>
   </target>
 
   <target name="install:pa-ear-jboss:app:configure" description="Configure pa-ear application" unless="exclude.pa-ear">
       <copy file="${jboss-conf.dir.dest}/${pa-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
   </target>
+
   <target name="install:pa-ear-jboss:app:re-configure" unless="exclude.pa-ear">
       <mkdir dir="${temp.dir}/pa-ear"/>
       <delete dir="${temp.dir}/pa-ear"/>
       <mkdir dir="${temp.dir}/pa-ear"/>
 
-        <mkdir dir="${temp.dir}/accrual-ear"/>
-        <delete dir="${temp.dir}/accrual-ear"/>
-        <mkdir dir="${temp.dir}/accrual-ear"/>
+      <mkdir dir="${temp.dir}/accrual-ear"/>
+      <delete dir="${temp.dir}/accrual-ear"/>
+      <mkdir dir="${temp.dir}/accrual-ear"/>
 
       <unzip src="${pa-ear.dir.dist}/${pa-ear.ear.file}" dest="${temp.dir}/pa-ear"/>
-        <unzip src="${pa-ear.dir.dist}/${accrual-ear.ear.file}" dest="${temp.dir}/accrual-ear"/>
+      <unzip src="${pa-ear.dir.dist}/${accrual-ear.ear.file}" dest="${temp.dir}/accrual-ear"/>
       <unzip src="${temp.dir}/pa-ear/pa-ejb.jar" dest="${temp.dir}/pa-ejb-jar"/>
-        <unzip src="${temp.dir}/pa-ear/pa-web.war" dest="${temp.dir}/pa-web-war"/>
-        <unzip src="${temp.dir}/accrual-ear/accrual-services.jar" dest="${temp.dir}/accrual-services-jar"/>
+      <unzip src="${temp.dir}/pa-ear/pa-web.war" dest="${temp.dir}/pa-web-war"/>
+      <unzip src="${temp.dir}/accrual-ear/accrual-services.jar" dest="${temp.dir}/accrual-services-jar"/>
 
       <delete file="${temp.dir}/pa-ejb-jar/paear.properties"/>
-        <echo message="Looking for paear.properties in ${pa-ear.dir.dist}"/>
-        <copy todir="${temp.dir}/pa-ejb-jar" filtering="true">
-                <fileset dir="${pa-ear.dir.dist}">
-                    <include name="paear.properties"/>
-                </fileset>
-                <filterset refid="embedded.filterset"/>
-        </copy>
+      <echo message="Looking for paear.properties in ${pa-ear.dir.dist}"/>
+      <copy todir="${temp.dir}/pa-ejb-jar" filtering="true">
+          <fileset dir="${pa-ear.dir.dist}">
+              <include name="paear.properties"/>
+          </fileset>
+          <filterset refid="embedded.filterset"/>
+      </copy>
 
-        <delete file="${temp.dir}/pa-web-war/quartz_jobs.xml"/>
-        <echo message="Looking for quartz_jobs.xml in ${pa-ear.dir.dist}"/>
-        <copy todir="${temp.dir}/pa-web-war/WEB-INF/classes" filtering="true">
-                <fileset dir="${pa-ear.dir.dist}">
-                     <include name="quartz_jobs.xml"/>
-                </fileset>
-                <filterset refid="embedded.filterset"/>
-        </copy>
+      <delete file="${temp.dir}/pa-web-war/quartz_jobs.xml"/>
+      <echo message="Looking for quartz_jobs.xml in ${pa-ear.dir.dist}"/>
+      <copy todir="${temp.dir}/pa-web-war/WEB-INF/classes" filtering="true">
+          <fileset dir="${pa-ear.dir.dist}">
+              <include name="quartz_jobs.xml"/>
+          </fileset>
+          <filterset refid="embedded.filterset"/>
+      </copy>
 
       <delete file="${temp.dir}/pa-ear/META-INF/security-config.xml"/>
       <copy todir="${temp.dir}/pa-ear/META-INF" filtering="true">
@@ -220,60 +221,57 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
       <echo message="Fixing jndi.properties"/>
       <replaceregexp file="${temp.dir}/pa-ejb-jar/jndi.properties" byline="true"
-          match="^(java.naming.provider.url)=.*"
-          replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
+                     match="^(java.naming.provider.url)=.*"
+                     replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
 
-        <replaceregexp file="${temp.dir}/pa-ejb-jar/jndi.pa.properties" byline="true"
-                match="^(java.naming.provider.url)=.*"
-                replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
+      <replaceregexp file="${temp.dir}/pa-ejb-jar/jndi.pa.properties" byline="true"
+                     match="^(java.naming.provider.url)=.*"
+                     replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
 
-         <replaceregexp file="${temp.dir}/accrual-services-jar/jndi.properties" byline="true"
-             match="^(java.naming.provider.url)=.*"
-            replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
+      <replaceregexp file="${temp.dir}/accrual-services-jar/jndi.properties" byline="true"
+                     match="^(java.naming.provider.url)=.*"
+                     replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
 
       <replaceregexp file="${temp.dir}/accrual-services-jar/pa.jndi.properties" byline="true"
-            match="^(java.naming.provider.url)=.*"
-            replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
+                     match="^(java.naming.provider.url)=.*"
+                     replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
 
-        <replaceregexp file="${temp.dir}/accrual-services-jar/po.jndi.properties" byline="true"
-              match="^(outcomes.url)=.*"
-            replace="# modified by installer ${line.separator}\1=http://${jboss.server.hostname}:${jboss.server.port}/outcomes"/>
+      <replaceregexp file="${temp.dir}/accrual-services-jar/po.jndi.properties" byline="true"
+                     match="^(outcomes.url)=.*"
+                     replace="# modified by installer ${line.separator}\1=http://${jboss.server.hostname}:${jboss.server.port}/outcomes"/>
 
 
       <move file="${pa-ear.dir.dist}/${pa-ear.ear.file}" tofile="${pa-ear.dir.dist}/${pa-ear.ear.file}.orig"/>
       <move file="${temp.dir}/pa-ear/pa-ejb.jar" tofile="${temp.dir}/pa-ejb.jar..orig"/>
-        <move file="${temp.dir}/pa-ear/pa-web.war" tofile="${temp.dir}/pa-web.war..orig"/>
+      <move file="${temp.dir}/pa-ear/pa-web.war" tofile="${temp.dir}/pa-web.war..orig"/>
 
-        <move file="${pa-ear.dir.dist}/${accrual-ear.ear.file}" tofile="${pa-ear.dir.dist}/${accrual-ear.ear.file}.orig"/>
-        <move file="${temp.dir}/accrual-ear/accrual-services.jar" tofile="${temp.dir}/accrual-services.jar..orig"/>
+      <move file="${pa-ear.dir.dist}/${accrual-ear.ear.file}" tofile="${pa-ear.dir.dist}/${accrual-ear.ear.file}.orig"/>
+      <move file="${temp.dir}/accrual-ear/accrual-services.jar" tofile="${temp.dir}/accrual-services.jar..orig"/>
 
       <jar jarfile="${temp.dir}/pa-ear/pa-ejb.jar"
-          compress="true"
-          index="false"
-          basedir="${temp.dir}/pa-ejb-jar"/>
+           compress="true"
+           index="false"
+           basedir="${temp.dir}/pa-ejb-jar"/>
 
-        <jar jarfile="${temp.dir}/accrual-ear/accrual-services.jar"
-                compress="true"
-                index="false"
-                basedir="${temp.dir}/accrual-services-jar"/>
+      <jar jarfile="${temp.dir}/accrual-ear/accrual-services.jar"
+           compress="true"
+           index="false"
+           basedir="${temp.dir}/accrual-services-jar"/>
 
-        <war destfile="${temp.dir}/pa-ear/pa-web.war"
-                compress="true"
-                index="false"
-                basedir="${temp.dir}/pa-web-war"/>
+      <war destfile="${temp.dir}/pa-ear/pa-web.war"
+           compress="true"
+           index="false"
+           basedir="${temp.dir}/pa-web-war"/>
 
       <ear destfile="${pa-ear.dir.dist}/${pa-ear.ear.file}"
-          basedir="${temp.dir}/pa-ear"
-          compress="false"
-          appxml="${temp.dir}/pa-ear/META-INF/application.xml"
-          />
+           basedir="${temp.dir}/pa-ear"
+           compress="false"
+           appxml="${temp.dir}/pa-ear/META-INF/application.xml" />
 
-        <ear destfile="${pa-ear.dir.dist}/${accrual-ear.ear.file}"
-                basedir="${temp.dir}/accrual-ear"
-                compress="false"
-                appxml="${temp.dir}/accrual-ear/META-INF/application.xml"
-                />
-
+      <ear destfile="${pa-ear.dir.dist}/${accrual-ear.ear.file}"
+           basedir="${temp.dir}/accrual-ear"
+           compress="false"
+           appxml="${temp.dir}/accrual-ear/META-INF/application.xml" />
   </target>
 
 
