@@ -220,6 +220,11 @@ public class Constants {
     /** Organization Type- Participating Site. */
     public static final String PARTICIPATING_SITE = "Participating Site";
     
+    /** PROCESSED. */
+    public static final String PROCESSED = "Processed";
+    
+    /** ERROR_PROCESSING. */
+    public static final String ERROR_PROCESSING = "Error Processing";
     
     
 }

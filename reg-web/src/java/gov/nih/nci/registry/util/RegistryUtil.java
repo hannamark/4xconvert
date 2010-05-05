@@ -3,16 +3,23 @@
  */
 package gov.nih.nci.registry.util;
 
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.registry.mail.MailManager;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -128,5 +135,97 @@ public class RegistryUtil {
        return isValidFileType;
 
    }
+   
+   /**
+    * Generate batch upload report email.
+    * 
+    * @param action the action
+    * @param userName the user name
+    * @param successCount the success count
+    * @param failedCount the failed count
+    * @param totalCount the total count
+    * @param attachFileName the attach file name
+    * @param errorMessage the error message
+    */
+   public static void generateMail(String action,
+                                   String userName,  
+                                   String successCount,
+                                   String failedCount, 
+                                   String totalCount, 
+                                   String attachFileName,
+                                   String errorMessage) {
+      final MailManager mailManager = new MailManager();
+      try {
+          StringBuffer submissionMailBody = new StringBuffer();
+          Calendar calendar = new GregorianCalendar();
+          Date date = calendar.getTime();
+          DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+          
+         //get the values of email's subject and email body from the database
+         String emailSubject = PaRegistry.getLookUpTableService().getPropertyValue("trial.batchUpload.subject");
+         LOG.debug("emailSubject is: " + emailSubject);         
+         
+         //add the mail header
+         String submissionMailBodyHeader = PaRegistry.getLookUpTableService().
+                  getPropertyValue("trial.batchUpload.bodyHeader");
+         submissionMailBodyHeader = submissionMailBodyHeader.replace("${SubmitterName}", getSumitterFullName(userName));
+         submissionMailBodyHeader = submissionMailBodyHeader.replace("${CurrentDate}", format.format(date));
+         submissionMailBody.append(submissionMailBodyHeader);
+         //append the body text for processed or error
+         String submissionMailBodyText = "";
+         if (Constants.PROCESSED.equals(action)) {
+            submissionMailBodyText = PaRegistry.getLookUpTableService().getPropertyValue("trial.batchUpload.body");
+            submissionMailBodyText = submissionMailBodyText.replace("${totalCount}", totalCount);
+            submissionMailBodyText = submissionMailBodyText.replace("${successCount}", successCount);
+            submissionMailBodyText = submissionMailBodyText.replace("${failedCount}", failedCount);
+
+            submissionMailBody.append(submissionMailBodyText);
+
+            String submissionMailReportBody = PaRegistry.getLookUpTableService().
+            getPropertyValue("trial.batchUpload.reportMsg");
+            submissionMailBody.append("\n").append(submissionMailReportBody);
+         } else {
+            submissionMailBody.append("Error: ").append(errorMessage).append("\n");  
+            String submissionMailErrorBody = PaRegistry.getLookUpTableService().
+               getPropertyValue("trial.batchUpload.errorMsg");
+            String currentReleaseNumber = PaRegistry.getLookUpTableService().
+               getPropertyValue("current.release.no");
+            submissionMailErrorBody = submissionMailErrorBody.replace("${ReleaseNumber}", currentReleaseNumber);
+            submissionMailBody.append(submissionMailErrorBody);
+         }
+        //append the footer
+        String submissionMailBodyFooter = PaRegistry.getLookUpTableService().
+                getPropertyValue("trial.batchUpload.bodyFooter");
+        submissionMailBody.append(submissionMailBodyFooter);
+
+        String emailBody =  submissionMailBody.toString();
+
+        if (!StringUtils.isEmpty(attachFileName)) {
+          // Send the batch upload report to the submitter
+          mailManager.sendMailWithAattchement(userName, null, emailBody, emailSubject, attachFileName);
+        } else {
+         // Send the batch upload Error to the submitter
+         mailManager.sendMail(userName, null, emailBody, emailSubject);
+        }
+
+      } catch (PAException e) {
+         LOG.error("Error occured while generating the batch upload email " + e.getMessage());
+      }
+  }
+
+  /**
+   * Gets the sumitter full name.
+   * 
+   * @param userLastCreated the user last created
+   * 
+   * @return the sumitter full name
+   * 
+   * @throws PAException the PA exception
+   */
+  public static String getSumitterFullName(String userLastCreated) throws PAException {
+    RegistryUser registryUser = PaRegistry.getRegisterUserService().getUser(userLastCreated);
+    return  registryUser.getFirstName() + " " + registryUser.getLastName();
+  }
+   
 
 }

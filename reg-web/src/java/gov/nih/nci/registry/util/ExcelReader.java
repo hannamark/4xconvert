@@ -191,7 +191,7 @@ public class ExcelReader {
         String cellValue, int col, Map<Integer, String> headerMap) throws PAException {
         String colHeader = headerMap.get(col);
         if (colHeader == null || BatchStringConstants.getByCode(colHeader) == null) {
-            throw new PAException(" Unknown coloumn " + colHeader + "to map ");
+            throw new PAException(" Unknown coloumn name " + colHeader + ". Please check the specification");
         }
         switch (BatchStringConstants.getByCode(colHeader)) {
         case IND_HAS_EXPANDED_ACCESS: if (cellValue != null && cellValue.equalsIgnoreCase("Yes")) {

@@ -4,6 +4,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.registry.util.BatchConstants;
+import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
 
 import java.io.BufferedInputStream;
@@ -212,10 +213,13 @@ public class BatchUploadAction extends ActionSupport implements
              //       ServletActionContext.getRequest().getRemoteUser()).run();
             
         } catch (PAException e) {
-            // TODO Auto-generated catch block
             LOG.error("error in Batch" + e.getMessage());
             ServletActionContext.getRequest().setAttribute(
                     "failureMessage", e.getMessage());
+            //generate the email 
+            RegistryUtil
+              .generateMail(Constants.ERROR_PROCESSING,
+                     ServletActionContext.getRequest().getRemoteUser(), "", "", "", "", e.getMessage());
             return ERROR;
         }
         ServletActionContext.getRequest().setAttribute(

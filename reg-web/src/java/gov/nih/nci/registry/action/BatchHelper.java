@@ -2,10 +2,10 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
-import gov.nih.nci.registry.mail.MailManager;
+import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.ExcelReader;
+import gov.nih.nci.registry.util.RegistryUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +13,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -86,54 +85,39 @@ public class BatchHelper implements Runnable {
      * starts the batch processing.
      */
     public void run() {
-        //String subject = "Clinical Trials Reporting Program (CTRP) - Batch Trial Upload Status";
-        final MailManager mailManager = new MailManager();
-        try {
-            // open a new Hibernate session and bind to the context
-            HibernateUtil.getHibernateHelper().openAndBindSession();
+     try {
            
-            // start reading the xls file and create the required DTO
-            List<StudyProtocolBatchDTO> dtoList = processExcel(uploadLoc
-                    + File.separator + trialDataFileName);
-            HashMap<String, String> map = new BatchCreateProtocols().createProtocols(dtoList, unzipLoc
-                    + File.separator, userName);
-            //get the Failed and Sucess count and remove it from map so that reporting of each trial 
-
-            String sucessCount = (String) map.get("Sucess Trial Count");
-            map.remove("Sucess Trial Count");
-            String failedCount = (String) map.get("Failed Trial Count");
-            map.remove("Failed Trial Count");
-            String totalCount = Integer.valueOf(map.size()).toString();
-            String attachFileName = generateExcelFileForAttachement(map);
-            //get the values of email's subject and email body from the database
-            String[] params = {userName , };
-            MessageFormat formatterSubject = new MessageFormat(
-                    PaRegistry.getLookUpTableService().getPropertyValue("trial.batchUpload.subject"));
-            String emailSubject = formatterSubject.format(params);
-            LOG.info("emailSubject is: " + emailSubject);
-            String submissionMailBody = PaRegistry.getLookUpTableService().
-                                    getPropertyValue("trial.batchUpload.body");
-            submissionMailBody = submissionMailBody.replace("${totalCount}", totalCount);
-            submissionMailBody = submissionMailBody.replace("${successCount}", sucessCount);
-            submissionMailBody = submissionMailBody.replace("${failedCount}", failedCount);
-            MessageFormat formatterBody = new MessageFormat(submissionMailBody);
-            String emailBody =  formatterBody.format(params);
-            
-            
-            // Send the batch upload report to the submitter
-            mailManager.sendMailWithAattchement(userName, null, emailBody, emailSubject, attachFileName);
-
-
-        } catch (Exception e) {
-            LOG.error("Exception while processing batch" + e.getMessage());
-            mailManager.sendMail(userName, null, "Exception while processing batch",
-                    "Exception while processing batch");
-        } finally {
-            // unbind the  Hibernate session
-            HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
-        }
+         // open a new Hibernate session and bind to the context
+         HibernateUtil.getHibernateHelper().openAndBindSession();
+         
+         // start reading the xls file and create the required DTO
+         List<StudyProtocolBatchDTO> dtoList = processExcel(uploadLoc
+                  + File.separator + trialDataFileName);
+         HashMap<String, String> map = new BatchCreateProtocols().createProtocols(dtoList, unzipLoc
+                   + File.separator, userName);
+        
+         //get the Failed and Sucess count and remove it from map so that reporting of each trial 
+         String sucessCount = (String) map.get("Sucess Trial Count");
+         map.remove("Sucess Trial Count");
+         String failedCount = (String) map.get("Failed Trial Count");
+         map.remove("Failed Trial Count");
+         String totalCount = Integer.valueOf(map.size()).toString();
+         String attachFileName = generateExcelFileForAttachement(map);
+         //generate the email 
+         RegistryUtil.generateMail(Constants.PROCESSED,
+                 userName, sucessCount, failedCount, totalCount, attachFileName, "");
+       } catch (Exception e) {
+         LOG.error("Exception while processing batch" + e.getMessage());
+         //generate the email 
+         RegistryUtil.generateMail(Constants.ERROR_PROCESSING, userName, "", "", "", "", e.getMessage());
+      } finally {
+         // unbind the  Hibernate session
+         HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+     }
         
     }
+    
+  
     /**
      * 
      * @param map ma
