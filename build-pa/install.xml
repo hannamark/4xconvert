@@ -57,14 +57,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <property name="db-install.dir.dest" value="${working.dir}/${db-install.dist.relative.dir}" />
     <property name="db-upgrade.dir.dest" value="${working.dir}/${db-upgrade.dist.relative.dir}" />
     <property name="jboss-conf.dir.src" value="${basedir}/${jboss-conf.dist.relative.dir}" />
-     <property name="jboss-conf.dir.dest" location="${working.dir}/${jboss-conf.dist.relative.dir}" />
+    <property name="jboss-conf.dir.dest" location="${working.dir}/${jboss-conf.dist.relative.dir}" />
 
     <!-- added for updated secure grid ssaksa 090826 -->
-     <property name="sync-gts.dir" location="${basedir}/${sync-gts.dist.relative.dir}"/>
-     <property name="sync-gts.build.dir" location="${sync-gts.dir}/syncgts"/>
-     <property name="cagrid-target.dir" location="${basedir}/cagrid-target"/>
-     <property name="grid.dir.dest.jboss" value="wsrf.war" />
-     <property name="grid.dir.dest" value="wsrf.war" />
+    <property name="sync-gts.dir" location="${basedir}/${sync-gts.dist.relative.dir}"/>
+    <property name="sync-gts.build.dir" location="${sync-gts.dir}/syncgts"/>
+    <property name="cagrid-target.dir" location="${basedir}/cagrid-target"/>
+    <property name="grid.dir.dest.jboss" value="wsrf.war" />
+    <property name="grid.dir.dest" value="wsrf.war" />
 
     <!-- *-ds.xml and WAR -->
     <property name="pa-ear.dir.dist" value="${basedir}/${pa-ear.dist.relative.dir}" />
@@ -88,7 +88,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <property name="pa-grid-3.2.dir.src" value="${basedir}/${pa-grid-3.2.dist.relative.dir}" />
     <property name="pa-grid-3.2.dir.target" value="wsrf.war" />
     <property name="pa-grid-3.2.introduce.skeleton.service.name" value="PAServices"/>
-    
+
     <property name="pa-grid-3.1.dir.dist" value="${basedir}/${pa-grid-3.1.dist.relative.dir}" />
     <property name="pa-grid-3.1.dir.src" value="${basedir}/${pa-grid-3.1.dist.relative.dir}" />
     <property name="pa-grid-3.1.dir.target" value="wsrf.war" />

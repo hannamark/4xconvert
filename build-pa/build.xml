@@ -52,7 +52,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </condition>
     <property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
     <property name="tomcat.home" value="${application.base.path}/${tomcat.relative.path}"/>
-    <!-- property name="doc.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}"/-->
 
     <!-- added for remote deployments since file is copied to root of install dir -->
     <basename property="properties.file.name" file="${properties.file}"/>
@@ -210,7 +209,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="reg-web.src.dir" value="${reg-web.base.dir}/src/webapp"/>
 
     <!-- retrive ivy.jar.files then retrieve bda files and librarires -->
-    <!-- retrive ivy.jar.files then retrieve bda files and librarires -->
     <condition property="commonlibrary.dir" value="">
         <or>
             <os family="unix" />
@@ -233,11 +231,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <os family="windows" />
     </condition>
     <property name="bda-download.file" value="bda-ivy-2.0.0-build.xml" />
-    <!--
-    <mkdir dir="${bda-download.dir}" />
-    <property name="bda-download.src.url" value="http://gforge.nci.nih.gov/svnroot/automation/trunk/software/bda-download/${bda-download.file}" />
-    <get src="${bda-download.src.url}" dest="${bda-download.dir}/${bda-download.file}" />
-    -->
     <ant inheritAll="false" inheritRefs="false" antfile="${bda-download.file}" target="retrieve-bda" dir="${bda-download.dir}">
         <property name="bda.version" value="${bda.version}" />
         <property name="bda-utils.dir" location="${bda-utils.dir}" />

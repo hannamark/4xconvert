@@ -242,11 +242,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
 
       <move file="${pa-ear.dir.dist}/${pa-ear.ear.file}" tofile="${pa-ear.dir.dist}/${pa-ear.ear.file}.orig"/>
-      <move file="${temp.dir}/pa-ear/pa-ejb.jar" tofile="${temp.dir}/pa-ejb.jar..orig"/>
-      <move file="${temp.dir}/pa-ear/pa-web.war" tofile="${temp.dir}/pa-web.war..orig"/>
+      <move file="${temp.dir}/pa-ear/pa-ejb.jar" tofile="${temp.dir}/pa-ejb.jar.orig"/>
+      <move file="${temp.dir}/pa-ear/pa-web.war" tofile="${temp.dir}/pa-web.war.orig"/>
 
       <move file="${pa-ear.dir.dist}/${accrual-ear.ear.file}" tofile="${pa-ear.dir.dist}/${accrual-ear.ear.file}.orig"/>
-      <move file="${temp.dir}/accrual-ear/accrual-services.jar" tofile="${temp.dir}/accrual-services.jar..orig"/>
+      <move file="${temp.dir}/accrual-ear/accrual-services.jar" tofile="${temp.dir}/accrual-services.jar.orig"/>
 
       <jar jarfile="${temp.dir}/pa-ear/pa-ejb.jar"
            compress="true"
