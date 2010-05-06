@@ -184,6 +184,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		jboss.grid.secure.cert.file="${pa-grid-3.0-jboss.grid.secure.cert.file}"
 		grid.application.name="${pa-grid-3.0.introduce.skeleton.service.name}"
 		/>
+        <configure-grid-log4j log.level="${app.log.level.default}" config.dir="${pa-grid-3.0-jboss.home}/server/${pa-grid-3.0-jboss.server.name}/conf"/>
     </target>
 
   <target name="install:pa-grid-3.0-jboss:configure" unless="exclude.pa-grid-3.0">

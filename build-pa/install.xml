@@ -124,7 +124,19 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <import file="install-pagrid-3.1.xml"/>
     <import file="install-outcomesgrid.xml"/>
     <import file="install-pagrid-3.0.xml"/>
-
+    
+    <macrodef name="configure-grid-log4j">
+        <attribute name="log.level" default="INFO"/>
+        <attribute name="config.dir" default=""/>
+        <sequential>
+            <copy file="${grid.dist.relative.dir}/log4j.xml" todir="@{config.dir}" overwrite="true" filtering="true">
+                <filterset>
+                    <filter token="LOG_LEVEL" value="@{log.level}"/>
+                </filterset>
+            </copy>
+       </sequential>
+   </macrodef>
+    
     <!-- Start logging -->
     <mkdir dir="${log.dir}" />
     <tstamp>
