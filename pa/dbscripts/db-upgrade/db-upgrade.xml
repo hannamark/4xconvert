@@ -401,5 +401,9 @@
     <changeSet id="PO-1758" author="Anu">
        <comment>PO-1758 Make batch load progress report message more informative</comment>
        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1758.sql"/>
+    </changeSet>
+    <changeSet id="PO-1758_1" author="Anu">
+       <comment>PO-1758 Make batch load progress report message more informative</comment>
+       <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1758_1.sql"/>
     </changeSet> 
 </databaseChangeLog>
