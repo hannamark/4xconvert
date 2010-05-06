@@ -108,6 +108,7 @@ import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyCurrentPaService;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
@@ -431,5 +432,11 @@ public final class JNDIServiceLocator implements ServiceLocator {
      */
     public TrialRegistrationServiceRemote getTrialRegistrationService() throws NamingException {
         return (TrialRegistrationServiceRemote) lookup("/pa/TrialRegistrationServiceBean/remote");
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public RegulatoryAuthorityServiceRemote getRegulatoryAuthorityService() throws NamingException {
+        return (RegulatoryAuthorityServiceRemote) lookup("/pa/RegulatoryAuthorityServiceBean/remote");
     }
 }

@@ -105,6 +105,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
+import gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote;
 
 import javax.naming.NamingException;
 
@@ -269,4 +270,11 @@ public interface ServiceLocator {
     * @throws NamingException if unable to lookup.
     */
    TrialRegistrationServiceRemote getTrialRegistrationService() throws NamingException;
+   /**
+    *Gets RegulatoryInformationService.
+    *@return remote of  RegulatoryAuthority InformationService
+    * @throws NamingException if unable to lookup.
+   **/
+   RegulatoryAuthorityServiceRemote getRegulatoryAuthorityService() throws NamingException;
+
 }

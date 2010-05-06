@@ -78,6 +78,12 @@
 */
 package gov.nih.nci.pa.service;
 
+import java.util.List;
+
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
 
 import javax.ejb.Remote;
@@ -91,5 +97,22 @@ import javax.ejb.Remote;
 */
 @Remote
 public interface RegulatoryAuthorityServiceRemote extends BasePaService<RegulatoryAuthorityDTO> {
-    
+     /**
+      * 
+      * @param dto dto
+      * @param pagingParams params
+      * @return list
+      * @throws PAException on error
+      * @throws TooManyResultsException on error
+      */
+    List<RegulatoryAuthorityDTO> search(RegulatoryAuthorityDTO dto, LimitOffset pagingParams) 
+    throws PAException, TooManyResultsException;
+    /**
+     * 
+     * @param authorityName authorityName
+     * @param countryName countryName
+     * @return ii
+     * @throws PAException on error
+     */
+    Ii getRegulatoryAuthorityId(St authorityName, St countryName) throws PAException;
 }

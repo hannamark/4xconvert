@@ -186,6 +186,19 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             Bl trueCt = new Bl();
             trueCt.setValue(true);
             studyProtocolDTO.setCtgovXmlRequiredIndicator(trueCt);
+            if (studyRegAuthDTO == null) {
+                studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
+                St authName = new St();
+                authName.setValue("Food and Drug Administration");
+                St countryName = new St();
+                countryName.setValue("United States");
+                Ii regAuthIi = locator.getRegulatoryAuthorityService().getRegulatoryAuthorityId(
+                      authName, countryName);
+                studyRegAuthDTO.setRegulatoryAuthorityIdentifier(regAuthIi);
+                Bl noFda = new Bl();
+                noFda.setValue(Boolean.FALSE);
+                studyProtocolDTO.setFdaRegulatedIndicator(noFda);
+            }
             return locator.getTrialRegistrationService().createInterventionalStudyProtocol(studyProtocolDTO,
                     overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
                     principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,

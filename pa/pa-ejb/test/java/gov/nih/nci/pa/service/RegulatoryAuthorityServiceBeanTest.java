@@ -78,8 +78,13 @@
 */
 package gov.nih.nci.pa.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.CountryTest;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
@@ -88,6 +93,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.List;
 
 import org.hibernate.Session;
 import org.junit.Before;
@@ -135,5 +142,28 @@ public class RegulatoryAuthorityServiceBeanTest {
   @Test (expected=PAException.class)
   public void delete() throws Exception {
       remoteEjb.delete(dto.getIdentifier());
+  }
+  @Test
+  public void search() throws Exception {
+      RegulatoryAuthorityDTO dtoNew = new RegulatoryAuthorityDTO();
+      dtoNew.setAuthorityName(StConverter.convertToSt("Food and Drug Administration"));
+      dtoNew.setCountryIdentifier(IiConverter.convertToCountryIi(c.getId()));
+      LimitOffset limit = new LimitOffset(5,0);
+      List<RegulatoryAuthorityDTO> dtoList = remoteEjb.search(dtoNew,limit);
+      assertEquals(dtoList.size(), 0);
+      dtoNew = new RegulatoryAuthorityDTO();
+      dtoNew.setCountryIdentifier(IiConverter.convertToCountryIi(c.getId()));
+      dtoList = remoteEjb.search(dtoNew,limit);
+      assertEquals(dtoList.size(), 2);
+  }
+  @Test
+  public void getRegulatoryAuthorityId() throws Exception {
+      St authName = StConverter.convertToSt("AuthorityName");
+      St countryName = StConverter.convertToSt("Zanzibar");
+      Ii regIi = remoteEjb.getRegulatoryAuthorityId(authName, countryName);
+      assertNotNull(regIi);
+      authName = StConverter.convertToSt("Food and Drug Administration");
+      countryName = StConverter.convertToSt("United States");
+      regIi = remoteEjb.getRegulatoryAuthorityId(authName, countryName);
   }
 }

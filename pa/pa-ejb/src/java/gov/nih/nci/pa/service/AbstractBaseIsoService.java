@@ -89,7 +89,10 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -99,7 +102,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
-import java.lang.reflect.Type;
 
 /**
  * @author Hugh Reinhart
@@ -318,5 +320,21 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
       }
      }
       return userUpdated;
+    }
+    /**
+     * 
+     * @param boList boList
+     * @return dtoList
+     * @throws PAException on error
+     */
+    protected List<DTO> convertFromDomainToDTOs(List<BO> boList)
+       throws PAException {
+        List<DTO> dtoList = new ArrayList<DTO>();
+        if (boList != null && !boList.isEmpty()) {
+            for (BO bo : boList) {
+               dtoList.add(convertFromDomainToDto(bo));
+            }
+        }
+        return dtoList;
     }
 }
