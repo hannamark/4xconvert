@@ -31,7 +31,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-
+    
     <xs:complexType name="OrganizationFunctionalRoleType" abstract="true">
         <xs:complexContent>
             <xs:extension base="COPPA-PA:FunctionalRoleType">
@@ -259,6 +259,19 @@
                 <xs:extension base="COPPA-PA:PlannedActivityType"/>
             </xs:complexContent>
         </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="RegulatoryAuthority">
+	    <xs:complexType>
+	       <xs:complexContent>
+	           <xs:extension base="COPPA-PA:BaseType">
+	               <xs:sequence>
+	                   <xs:element name="authorityName" type="ISO:ST" />
+	                   <xs:element name="countryIdentifier" type="ISO:II" />
+	               </xs:sequence>
+	           </xs:extension>
+	       </xs:complexContent>
+	    </xs:complexType>
     </xs:element>
 
     <xs:element name="PlannedEligibilityCriterion">
