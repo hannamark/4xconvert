@@ -56,6 +56,5 @@
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/hibernate3-4.0.5.GA.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pa"/>
 	<classpathentry kind="var" path="PA_LIB"/>
-	<classpathentry kind="var" path="PA_LIB/reg-web/compile/commons-beanutils-1.8.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
