@@ -24,20 +24,21 @@ public class RegistryUserWebDTO {
     private String phone;
     private String affiliateOrg;
     private String csmUserId;
-    private String loginName;
+    private String username;
     private String password;
     private String retypePassword;
     private String prsOrgName;
     private String treatmentSiteId;
     private String physicianId;
+    private String emailAddress;
     
     /**
      * 
      * @param registryUser registryUser
-     * @param loginName loginName
+     * @param username username
      * @param password password
      */
-    public RegistryUserWebDTO(RegistryUser registryUser, String loginName, String password) {
+    public RegistryUserWebDTO(RegistryUser registryUser, String username, String password) {
         super();
         if (registryUser.getId() != null) {
             this.id = String.valueOf(registryUser.getId());
@@ -45,6 +46,7 @@ public class RegistryUserWebDTO {
         if (registryUser.getCsmUserId() != null) {
             this.csmUserId = String.valueOf(registryUser.getCsmUserId());
         } 
+        this.username = username;
         this.firstName = registryUser.getFirstName();
         this.lastName =  registryUser.getLastName();
         this.middleName =  registryUser.getMiddleName();
@@ -55,10 +57,11 @@ public class RegistryUserWebDTO {
         this.country = registryUser.getCountry();
         this.phone = registryUser.getPhone();
         this.affiliateOrg = registryUser.getAffiliateOrg();
-        this.loginName = loginName;
         this.password = password;
         this.retypePassword = password;
         this.prsOrgName = registryUser.getPrsOrgName();
+        this.emailAddress = registryUser.getEmailAddress();
+        
         if (registryUser.getPoOrganizationId() != null) {
             this.treatmentSiteId = String.valueOf(registryUser.getPoOrganizationId());
         }
@@ -90,18 +93,18 @@ public class RegistryUserWebDTO {
 
     
     /**
-     * @return the loginName
+     * @return the username
      */
-    public String getLoginName() {
-        return loginName;
+    public String getUsername() {
+        return username;
     }
+    
     /**
-     * @param loginName the loginName to set
+     * @param username the username to set
      */
-
-    public void setLoginName(String loginName) {
-        if (loginName != null) {
-            this.loginName = loginName.trim();
+    public void setUsername(String username) {
+        if (username != null) {
+            this.username = username.trim();
         }
     }
     /**
@@ -305,5 +308,19 @@ public class RegistryUserWebDTO {
      */
     public void setPhysicianId(String physicianId) {
         this.physicianId = physicianId;
+    }
+    
+    /**
+     * @return the email address
+     */
+    public String getEmailAddress() {
+        return this.emailAddress;
+    }
+    
+    /**
+     * @param emailAddress the emailAddress to set
+     */
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 }

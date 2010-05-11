@@ -122,6 +122,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
@@ -140,6 +141,7 @@ import gov.nih.nci.service.MockDiseaseAlternateService;
 import gov.nih.nci.service.MockDiseaseParentService;
 import gov.nih.nci.service.MockDiseaseService;
 import gov.nih.nci.service.MockDocumentService;
+import gov.nih.nci.service.MockGridAccountService;
 import gov.nih.nci.service.MockInterventionAlternateNameService;
 import gov.nih.nci.service.MockInterventionService;
 import gov.nih.nci.service.MockMailManagerService;
@@ -217,7 +219,9 @@ public class MockServiceLocator implements ServiceLocator {
     private final TSRReportGeneratorServiceRemote tsrReportGeneratorService = new MockTSRReportGeneratorService();
     private final StudyContactServiceLocal studyContactService = new MockStudyContactService();
     private final DocumentServiceLocal documentService = new MockDocumentService();
-    private final MailManagerServiceLocal mailManagerService = new MockMailManagerService();    
+    private final MailManagerServiceLocal mailManagerService = new MockMailManagerService();
+    private final GridAccountServiceRemote gridAccountService = new MockGridAccountService();
+    
     /**
      * @return mock service
      */
@@ -553,6 +557,13 @@ public class MockServiceLocator implements ServiceLocator {
     public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public GridAccountServiceRemote getGridAccountService() {
+        return gridAccountService;
     }
    
 }

@@ -45,7 +45,8 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         public void testSendMail(){
             action = new RegisterUserAction();
             RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setLoginName("test@test.com");
+            registryUserWebDTO.setUsername("testuser");
+            registryUserWebDTO.setEmailAddress("test@test.com");
             registryUserWebDTO.setPassword("password");
             registryUserWebDTO.setRetypePassword("password");
             action.setRegistryUserWebDTO(registryUserWebDTO);
@@ -55,7 +56,8 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         public void testSendMailErrPasswordEmail(){
             action = new RegisterUserAction();
             RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setLoginName("test.test.com");
+            registryUserWebDTO.setUsername("testuser");
+            registryUserWebDTO.setEmailAddress("test.test.com");
             registryUserWebDTO.setPassword("pass");
             registryUserWebDTO.setRetypePassword("1234");
             action.setRegistryUserWebDTO(registryUserWebDTO);
@@ -71,7 +73,7 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             action = new RegisterUserAction();
             HttpSession sess = new MockHttpSession();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setupAddParameter("loginName", "Zmlyc3ROYW1l");
+            request.setupAddParameter("emailAddress", "Zmlyc3ROYW1l");
             request.setupAddParameter("password", "cGFzc3dvcmQ=");
             request.setSession(sess);
             ServletActionContext.setRequest(request);
@@ -82,7 +84,7 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             action = new RegisterUserAction();
             HttpSession sess = new MockHttpSession();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setupAddParameter("loginName", "dGhyb3dFeGNlcHRpb24=");
+            request.setupAddParameter("emailAddress", "dGhyb3dFeGNlcHRpb24=");
             request.setupAddParameter("password", "cGFzc3dvcmQ=");
             request.setSession(sess);
             ServletActionContext.setRequest(request);
@@ -103,11 +105,16 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         public void testUpdateAccount(){
             action = new RegisterUserAction();
             RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setLoginName("test@test.com");
-            registryUserWebDTO.setPassword("password");
-            registryUserWebDTO.setRetypePassword("password");
+            registryUserWebDTO.setId("1");
+            registryUserWebDTO.setUsername("testuser");
+            registryUserWebDTO.setEmailAddress("test@test.com");
+            registryUserWebDTO.setPassword("Mvedjbtp123!!!");
+            registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
             registryUserWebDTO.setFirstName("firstName");
             registryUserWebDTO.setLastName("lastName");
+            registryUserWebDTO.setAddressLine("123 Fake St.");
+            registryUserWebDTO.setCity("Here");
+            registryUserWebDTO.setPostalCode("11111");
             registryUserWebDTO.setState("None");
             registryUserWebDTO.setCountry("country");
             registryUserWebDTO.setPhone("phone");
@@ -119,11 +126,16 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         public void testUpdateAccountExitsingAcc(){
             action = new RegisterUserAction();
             RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setLoginName("test@test.com");
-            registryUserWebDTO.setPassword("password");
-            registryUserWebDTO.setRetypePassword("password");
+            registryUserWebDTO.setId("1");
+            registryUserWebDTO.setUsername("testuser");
+            registryUserWebDTO.setEmailAddress("test@test.com");
+            registryUserWebDTO.setPassword("Mvedjbtp123!!!");
+            registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
             registryUserWebDTO.setFirstName("firstName");
             registryUserWebDTO.setLastName("lastName");
+            registryUserWebDTO.setAddressLine("123 Fake St.");
+            registryUserWebDTO.setCity("Here");
+            registryUserWebDTO.setPostalCode("11111");
             registryUserWebDTO.setState("None");
             registryUserWebDTO.setCountry("country");
             registryUserWebDTO.setPhone("phone");
@@ -137,7 +149,8 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         public void testUpdateAccountErr(){
             action = new RegisterUserAction();
             RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setLoginName("test@test.com");
+            registryUserWebDTO.setUsername("testuser");
+            registryUserWebDTO.setEmailAddress("test@test.com");
             registryUserWebDTO.setPassword("password");
             registryUserWebDTO.setRetypePassword("password");
             registryUserWebDTO.setState("None");
@@ -149,7 +162,8 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         public void testUpdateAccountErrStateCountry(){
             action = new RegisterUserAction();
             RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setLoginName("test@test.com");
+            registryUserWebDTO.setUsername("testuser");
+            registryUserWebDTO.setEmailAddress("test@test.com");
             registryUserWebDTO.setPassword("password");
             registryUserWebDTO.setRetypePassword("password");
             action.setRegistryUserWebDTO(registryUserWebDTO);

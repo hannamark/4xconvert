@@ -21,7 +21,6 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
         RegistryUser dto = new RegistryUser();
         dto.setFirstName("firstName");
         dto.setLastName("lastName");
-        dto.setCsmUserId(1L);
         dto.setId(1L);
         userList.add(dto);
     }

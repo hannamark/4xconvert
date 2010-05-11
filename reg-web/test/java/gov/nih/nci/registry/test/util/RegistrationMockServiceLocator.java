@@ -39,6 +39,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
@@ -52,6 +53,7 @@ import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.registry.service.MockDocumentService;
+import gov.nih.nci.registry.service.MockGridAccountService;
 import gov.nih.nci.registry.service.MockIdentifiedOrganizationCorrelationService;
 import gov.nih.nci.registry.service.MockIdentifiedPersonCorrelationService;
 import gov.nih.nci.registry.service.MockLookUpTableService;
@@ -107,6 +109,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final StudyRegulatoryAuthorityServiceLocal studyRegulatorAuthService = new MockStudyRegulatoryAuthorityService();
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
     private final StudyProtocolStageServiceLocal studyProtocolStageService = new MockStudyProtocolStageService(); 
+    private final GridAccountServiceRemote gridAccountService = new MockGridAccountService();
+    
     public DocumentServiceLocal getDocumentService() {
         return documentService;
     }
@@ -392,6 +396,13 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
 
     public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
         return studyProtocolStageService;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public GridAccountServiceRemote getGridAccountService() {
+        return gridAccountService;
     }
     
 }

@@ -28,8 +28,9 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
         map.put("user.account.subject", "Junit user account subject");
         map.put("user.account.body", "Junit user account body url");
     }
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.LookUpTableServiceRemote#getCountries()
+
+    /**
+     * {@inheritDoc}
      */
     public List<Country> getCountries() throws PAException {
         List<Country> countryList = new ArrayList<Country>();
@@ -52,24 +53,33 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
         return countryList;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.LookUpTableServiceRemote#getFundingMechanisms()
+    /**
+     * {@inheritDoc}
+     */
+    public Country getCountryByName(String name) throws PAException {
+        Country country = new Country();
+        country.setName(name);
+        return country;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public List<FundingMechanism> getFundingMechanisms() throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.LookUpTableServiceRemote#getNihInstitutes()
+    /**
+     * {@inheritDoc}
      */
     public List<NIHinstitute> getNihInstitutes() throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.LookUpTableServiceRemote#getPropertyValue(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public String getPropertyValue(String name) throws PAException {
         return map.get(name);

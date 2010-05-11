@@ -123,7 +123,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<FundingMechanism> getFundingMechanisms() throws PAException {
-        LOG.info("Entering getFundingMechanisms");
+        LOG.debug("Entering getFundingMechanisms");
         Session session = null;
         List<FundingMechanism> fmList = new ArrayList<FundingMechanism>();
         session = HibernateUtil.getCurrentSession();
@@ -142,7 +142,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<NIHinstitute> getNihInstitutes() throws PAException {
-        LOG.info("Entering getFundingMechanisms");
+        LOG.debug("Entering getFundingMechanisms");
         Session session = null;
         List<NIHinstitute> nihList = new ArrayList<NIHinstitute>();
         session = HibernateUtil.getCurrentSession();
@@ -161,16 +161,30 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<Country> getCountries() throws PAException {
-        LOG.info("Entering getCountries");
+        LOG.debug("Entering getCountries");
         Session session = null;
         List<Country> countries = new ArrayList<Country>();
         session = HibernateUtil.getCurrentSession();
         Query query = session.createQuery("select c from Country c order by name");
         countries = query.list();
-        LOG.info("Leaving getCountries");
+        LOG.debug("Leaving getCountries");
         return countries;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Country getCountryByName(String name) throws PAException {
+        LOG.debug("Entering getCountryByName");
+        Session session = HibernateUtil.getCurrentSession();
+        Query query = session.createQuery("select c from Country c where c.name = :name");
+        query.setParameter("name", name);
+        Country country =  (Country) query.uniqueResult();
+        LOG.debug("Leaving getCountries");
+        return country;
+    }
+    
     /**
      * @param name name
      * @return value  val
@@ -179,7 +193,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String getPropertyValue(String name) throws PAException {
-        LOG.info("Entering getPropertyValue");
+        LOG.debug("Entering getPropertyValue");
         Session session = null;
         String value = "";
         List<PAProperties> paProperties = new ArrayList<PAProperties>();
@@ -190,7 +204,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
             throw new PAException(" PA_PROPERTIES does not have entry for  " + name);
         }
         value = paProperties.get(0).getValue();
-        LOG.info("Leaving getPropertyValue");
+        LOG.debug("Leaving getPropertyValue");
         return value;
     }
 

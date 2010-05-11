@@ -119,6 +119,15 @@ public interface LookUpTableServiceRemote {
      * @throws PAException PAException
      */
     List<Country> getCountries() throws PAException;  
+    
+    /**
+     * Gets the country by name.
+     * @param name The name of the country
+     * @return the country with the given name
+     * @throws PAException on error
+     */
+    Country getCountryByName(String name) throws PAException;
+    
     /**
      * @param name name
      * @return value 

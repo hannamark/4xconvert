@@ -431,6 +431,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
+            <property name="grid.dorian.url" value="${grid.dorian.url}"/>
             <property name="gridServicePrincipal" value="${grid.security.jndi.principal}"/>
             <property name="gridServiceCredential" value="${grid.security.jndi.credentials.encrypted}"/>
             <target name="${pa-clean.build.target}"/>
@@ -474,6 +475,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
             <property name="po.server.name" value="${po.server.name}"/>
+            <property name="grid.dorian.url" value="${grid.dorian.url}"/>
             <target name="${accrual-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${accrual-ear.build.target}"/>
@@ -502,6 +504,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
+            <property name="grid.dorian.url" value="${grid.dorian.url}"/>
 
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
@@ -531,6 +534,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
+            <property name="grid.dorian.url" value="${grid.dorian.url}"/>
 
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
@@ -560,6 +564,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <property name="po.topic.password" value="${po.topic.password}"/>
                 <property name="po.topic.clientId" value="${po.topic.clientId}"/>
                 <property name="csm.submitter.group" value="${csm.submitter.group}"/>
+                <property name="grid.dorian.url" value="${grid.dorian.url}"/>
 
                 <target name="${pa-clean.build.target}"/>
                 <target name="${pa-ivy-clean.build.target}"/>
@@ -589,6 +594,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
+            <property name="grid.dorian.url" value="${grid.dorian.url}"/>
 
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>

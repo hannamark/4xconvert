@@ -114,6 +114,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
@@ -405,6 +406,13 @@ public final class PaRegistry {
      */
     public static RegistryUserServiceRemote getRegisterUserService() {
         return getInstance().getServiceLocator().getRegisterUserService();
+    }    
+    
+    /**
+     * @return GridAccountService
+     */
+    public static GridAccountServiceRemote getGridAccountService() {
+        return getInstance().getServiceLocator().getGridAccountService();
     }    
      
     /**

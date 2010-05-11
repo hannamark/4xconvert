@@ -114,6 +114,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
@@ -303,6 +304,12 @@ public interface ServiceLocator {
      * @return RegistryUserServiceRemote
      */    
     RegistryUserServiceRemote getRegisterUserService();
+    
+    /**
+     * @return GridAccountServiceRemote
+     */
+    GridAccountServiceRemote getGridAccountService();
+    
     /**
      * 
      * @return TSRReportGeneratorServiceRemote

@@ -30,7 +30,7 @@ function handleAction(){
         <s:hidden name="registryUserWebDTO.physicianId" />
         <s:hidden name="page" />
         <c:choose>
-            <c:when test="${requestScope.isNewUser  == true}">
+            <c:when test="${empty registryUserWebDTO.id}">
                 <p>To register for NCI Clinical Trials Reporting Program, 
                 please begin by creating your login information. <br>
                 Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
@@ -52,19 +52,22 @@ function handleAction(){
                   <tr>
                         <td colspan="2" class="space">&nbsp;</td>
                   </tr>
-          
                   <tr>
                         <td scope="row" class="label">
-                            <label for="registerUsershowMyAccount_registryUserWebDTO_loginName"> <fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_emailAddress"><fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
                         </td>
                         <td>
-                            <s:textfield name="registryUserWebDTO.loginName"  maxlength="100" size="35" readonly="true"  cssStyle="width:200px" />
+                            <s:textfield name="registryUserWebDTO.emailAddress"  maxlength="100" size="35" readonly="true" cssStyle="width:200px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
-                                <s:param>registryUserWebDTO.loginName</s:param>
+                                <s:param>registryUserWebDTO.emailAddress</s:param>
                                </s:fielderror>                            
                              </span>
                         </td>                
+                  </tr>
+                  <tr>
+                    <td scope="row" class="label">&nbsp;</td>
+                    <td><fmt:message key="register.user.password.rules" /></td>
                   </tr>
                   <tr>
                         <td scope="row" class="label">
@@ -109,6 +112,27 @@ function handleAction(){
                   </tr>
                   <tr>
                         <td scope="row" class="label">
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_username"><fmt:message key="register.user.username"/><span class="required">*</span></label>
+                        </td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${empty registryUserWebDTO.id}">
+                                    <s:textfield name="registryUserWebDTO.username"  maxlength="15" size="20" cssStyle="width:200px" />
+                                </c:when>
+                                <c:otherwise>
+                                    <s:textfield name="registryUserWebDTO.username"  maxlength="15" size="20" cssStyle="width:200px" disabled="true" />
+                                    <s:hidden name="registryUserWebDTO.username" />
+                                </c:otherwise>
+                            </c:choose>
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>registryUserWebDTO.username</s:param>
+                               </s:fielderror>                            
+                             </span>
+                        </td>                
+                  </tr>
+                  <tr>
+                        <td scope="row" class="label">
                             <label for="registerUsershowMyAccount_registryUserWebDTO_firstName"> <fmt:message key="register.user.firstName"/><span class="required">*</span></label>
                         </td>
                         <td>
@@ -149,7 +173,7 @@ function handleAction(){
                  
                   <tr>
                         <td scope="row" class="label">
-                            <label for="registerUsershowMyAccount_registryUserWebDTO_addressLine"> <fmt:message key="register.user.streetAddress"/></label>
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_addressLine"><fmt:message key="register.user.streetAddress"/><span class="required">*</span></label>
                         </td>
                         <td>
                             <s:textfield name="registryUserWebDTO.addressLine"  maxlength="200" size="50"  cssStyle="width:200px" />
@@ -162,7 +186,7 @@ function handleAction(){
                   </tr>                  
                   <tr>
                         <td scope="row" class="label">
-                            <label for="registerUsershowMyAccount_registryUserWebDTO_city"> <fmt:message key="register.user.city"/></label>
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_city"> <fmt:message key="register.user.city"/><span class="required">*</span></label>
                         </td>
                         <td>
                             <s:textfield name="registryUserWebDTO.city"  maxlength="200" size="35"  cssStyle="width:200px" />
@@ -175,7 +199,7 @@ function handleAction(){
                   </tr>
                   <tr>
                         <td scope="row" class="label">
-                            <label for="registerUsershowMyAccount_registryUserWebDTO_state"> <fmt:message key="register.user.state"/><span class="required">*</span></label>
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_state"><fmt:message key="register.user.state"/><span class="required">*</span></label>
                         </td>
                         <td>
                             <s:set name="stateCodeValues" 
@@ -194,7 +218,7 @@ function handleAction(){
                   </tr>
                   <tr>
                         <td scope="row" class="label">
-                            <label for="registerUsershowMyAccount_registryUserWebDTO_postalCode"> <fmt:message key="register.user.zipCode"/></label>
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_postalCode"><fmt:message key="register.user.zipCode"/><span class="required">*</span></label>
                         </td>
                         <td>
                             <s:textfield name="registryUserWebDTO.postalCode"  maxlength="15" size="8"  cssStyle="width:80px" />

@@ -105,6 +105,7 @@ public class RegistryUser extends  AbstractEntity {
     private String prsOrgName;
     private Long poOrganizationId;
     private Long poPersonId;
+    private String emailAddress;
 
     /**
      * @return the csmUserId
@@ -288,5 +289,20 @@ public class RegistryUser extends  AbstractEntity {
      */
     public void setPoPersonId(Long poPersonId) {
         this.poPersonId = poPersonId;
+    }
+    
+    /**
+     * @return the emailAddress
+     */
+    @Column(name = "EMAIL_ADDRESS")
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+    
+    /**
+     * @param emailAddress the emailAddress to set
+     */
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 }

@@ -147,6 +147,7 @@
                 <filter token="po.server.name" value="${po.server.name}" />
                 <filter token="po.port.number" value="${po.port.number}" />
                 <filter token="csm.submitter.group" value="${csm.submitter.group}" />
+                <filter token="grid.dorian.url" value="${grid.dorian.url}" />
             </filterset>
         </copy>
         <copy file="${pa.resourceDir}/ejb-jar.xml"

@@ -60,7 +60,7 @@ public class MailManager {
             // added new line characters to fix URL link issues when users type
             // in special characters in their passwords
             String emailBody = formatterBody.format(params) + "\n \n"
-                    + formatterBodyUrl.format(params) + "/registerUseractivate.action?loginName="
+                    + formatterBodyUrl.format(params) + "/registerUseractivate.action?emailAddress="
                     + encodeDecoder.encodeString(mailTo) + "&password="
                     + encodeDecoder.encodeString(password) + "&action=myaccount"
                     + "\n \n";

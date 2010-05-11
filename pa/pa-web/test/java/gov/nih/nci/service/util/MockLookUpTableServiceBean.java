@@ -19,7 +19,9 @@ import java.util.List;
  */
 public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
 
-
+    /**
+     * {@inheritDoc}
+     */
 	public List<Country> getCountries() throws PAException {
 		 List<Country> countries = new ArrayList<Country>();
 
@@ -37,7 +39,19 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
          countries.add(c1);
 		return countries;
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public Country getCountryByName(String name) throws PAException {
+	    Country country = new Country();
+	    country.setName(name);
+	    return country;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<FundingMechanism> getFundingMechanisms() throws PAException {
 		List<FundingMechanism> fmList = new ArrayList<FundingMechanism>();
 		FundingMechanism fm = new FundingMechanism();
@@ -46,7 +60,9 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
 		return fmList;
 	}
 
-
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<NIHinstitute> getNihInstitutes() throws PAException {
 		List<NIHinstitute> nihList = new ArrayList<NIHinstitute>();
 		NIHinstitute nih = new NIHinstitute();
@@ -55,7 +71,9 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
 		return nihList;
 	}
 
-
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getPropertyValue(String name) throws PAException {
 	   String value = "";
 	   if (name.equals("tsr.subject"))

@@ -406,4 +406,8 @@
        <comment>PO-1758 Make batch load progress report message more informative</comment>
        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1758_1.sql"/>
     </changeSet> 
+    <changeSet id="PO-1666" author="aevansel">
+        <comment>PO-1666: Enable creation of grid accounts upon registry registration.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1666.sql"/>
+    </changeSet>    
 </databaseChangeLog>

@@ -114,6 +114,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
@@ -359,6 +360,13 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public RegistryUserServiceRemote getRegisterUserService() {
         return (RegistryUserServiceRemote) JNDIUtil.lookup("/pa/RegistryUserServiceBean/remote");
+    }
+    
+    /**
+     * @return GridAccountServiceRemote
+     */
+    public GridAccountServiceRemote getGridAccountService() {
+        return (GridAccountServiceRemote) JNDIUtil.lookup("/pa/GridAccountServiceBean/remote");
     }
     
     /**  

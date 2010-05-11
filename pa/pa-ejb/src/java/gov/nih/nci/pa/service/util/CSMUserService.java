@@ -224,6 +224,25 @@ public class CSMUserService {
         return csmUser;
 
     }
+    
+    /**
+     * Retrieves an existing CSM user by id.
+     * @param id the id of the CSM user to retrieve
+     * @return The CSM user with the give id
+     * @throws PAException on error
+     */
+    public User getCSMUserById(Long id) throws PAException {
+        User csmUser = null;
+        try {
+            UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
+            csmUser = upManager.getUserById(id.toString());
+        } catch (CSConfigurationException csce) {
+            throw new PAException(" CSM exception while retrieving CSM user :" + id, csce);
+        } catch (CSException cse) {
+            throw new PAException(" CSM exception while retrieving CSM user :" + id, cse);
+        }
+        return csmUser;
+    }
 
     /**
      * @return list of submitters

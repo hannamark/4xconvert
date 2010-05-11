@@ -50,21 +50,24 @@ function handleAction(){
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
-  
           <tr>
                 <td scope="row" class="label">
-                    <label for="registerUser_registryUserWebDTO_loginName"> <fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
+                    <label for="registerUser_registryUserWebDTO_emailAddress"><fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
                 </td>
                 <td>
-                    <s:textfield name="registryUserWebDTO.loginName"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textfield name="registryUserWebDTO.emailAddress"  maxlength="200" size="100"  cssStyle="width:200px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
-                        <s:param>registryUserWebDTO.loginName</s:param>
+                        <s:param>registryUserWebDTO.emailAddress</s:param>
                        </s:fielderror>                            
                      </span>
                 </td>                
           </tr>
-          <tr>
+        <tr>
+            <td scope="row" class="label">&nbsp;</td>
+            <td><fmt:message key="register.user.password.rules" /></td>
+        </tr>
+        <tr>
                 <td scope="row" class="label">
                     <label for="registerUser_registryUserWebDTO_password"> <fmt:message key="register.user.password"/><span class="required">*</span></label>
                 </td>
