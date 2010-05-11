@@ -20,6 +20,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 
 /**
@@ -28,47 +29,43 @@ import org.apache.log4j.Logger;
  * Manages e-mail notifications.
  * 
  */
-@SuppressWarnings({ "PMD" })
 public class MailManager {
-
-    private static Logger logger = Logger.getLogger(MailManager.class);
-    private static Properties regProperties = PaEarPropertyReader.getProperties();
+    private static final Logger LOG = Logger.getLogger(MailManager.class);
+    private static final Properties REG_PROPERTIES = PaEarPropertyReader.getProperties();
 
     /**
      * Sends an email notifying user to activate their user account.
      * @param mailTo mailTo
-     * @param password password
      */
-    public void sendConfirmationMail(String mailTo, String password) {
+    public void sendConfirmationMail(String mailTo) {
 
         try {
             String[] params = {mailTo , };
 
-            MessageFormat formatterSubject = new MessageFormat(
-                    PaRegistry.getLookUpTableService().getPropertyValue("user.account.subject"));
+            MessageFormat formatterSubject = 
+                new MessageFormat(PaRegistry.getLookUpTableService().getPropertyValue("user.account.subject"));
             String emailSubject = formatterSubject.format(params);
-            logger.info("emailSubject is: " + emailSubject);
-
-            MessageFormat formatterBody = new MessageFormat(
-                    PaRegistry.getLookUpTableService().getPropertyValue("user.account.body"));
-            MessageFormat formatterBodyUrl = new MessageFormat(
-                            regProperties.getProperty("register.mail.body.url"));
-
+            LOG.info("emailSubject is: " + emailSubject);
+            
+            MessageFormat formatterBody = 
+                new MessageFormat(PaRegistry.getLookUpTableService().getPropertyValue("user.account.body"));
+            LOG.debug("URL: " + REG_PROPERTIES.getProperty("register.mail.body.url"));
+            LOG.debug("Properties: " + ToStringBuilder.reflectionToString(REG_PROPERTIES));
+            MessageFormat formatterBodyUrl = new MessageFormat(REG_PROPERTIES.getProperty("register.mail.body.url"));
+            
             // encode the loginName and password and append to the URL before
             // sending the e-mail
             EncoderDecoder encodeDecoder = new EncoderDecoder();
             // added new line characters to fix URL link issues when users type
             // in special characters in their passwords
-            String emailBody = formatterBody.format(params) + "\n \n"
+            String emailBody = formatterBody.format(params) + "\n\n"
                     + formatterBodyUrl.format(params) + "/registerUseractivate.action?emailAddress="
-                    + encodeDecoder.encodeString(mailTo) + "&password="
-                    + encodeDecoder.encodeString(password) + "&action=myaccount"
-                    + "\n \n";
+                    + encodeDecoder.encodeString(mailTo) + "&action=myaccount\n\n";
 
-            logger.info("emailBody is: " + emailBody);
+            LOG.info("emailBody is: " + emailBody);
             sendMail(mailTo, null, emailBody, emailSubject);
         } catch (Exception e) {
-            logger.error("Send confirmation mail error", e);
+            LOG.error("Send confirmation mail error", e);
         }
     }
    /**
@@ -83,7 +80,7 @@ public class MailManager {
             fromEmailAddress = new MessageFormat(fromAddress).
                                         format(new String[] {fromAddress });
         } catch (PAException e) {
-            logger.error("Error retrieving, from mail address from database for Subission e-mail", e);
+            LOG.error("Error retrieving, from mail address from database for Subission e-mail", e);
         }
         
         return fromEmailAddress;
@@ -124,7 +121,7 @@ public class MailManager {
 
             Transport.send(message);
         } catch (Exception e) {
-            logger.error("Send Mail error", e);
+            LOG.error("Send Mail error", e);
         } // catch
     }
     /**
@@ -137,7 +134,7 @@ public class MailManager {
      */
     public void sendMailWithAattchement(String mailTo, String mailCC,
             String mailBody, String subject, String attachFileName) {
-        logger.info("Entering sendEmail");
+        LOG.info("Entering sendEmail");
         try {
 
             // get system properties
@@ -179,8 +176,8 @@ public class MailManager {
             // send the message
             Transport.send(message);
         } catch (Exception e) {
-            logger.error(e.getLocalizedMessage());
+            LOG.error(e.getLocalizedMessage());
         }
-        logger.info("Leaving sendEmail");
+        LOG.info("Leaving sendEmail");
       }
 }

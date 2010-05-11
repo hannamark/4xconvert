@@ -3,18 +3,17 @@
  */
 package gov.nih.nci.registry.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
-import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.PAException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vrushali

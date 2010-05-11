@@ -3,7 +3,6 @@ package gov.nih.nci.registry.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
-
 import gov.nih.nci.pa.enums.CodedEnum;
 /**
  *

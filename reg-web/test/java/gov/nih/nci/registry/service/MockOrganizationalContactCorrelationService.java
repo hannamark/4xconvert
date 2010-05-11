@@ -3,12 +3,11 @@
  */
 package gov.nih.nci.registry.service;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.IdentifierReliability;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.IdentifierReliability;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -20,10 +19,8 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Vrushali

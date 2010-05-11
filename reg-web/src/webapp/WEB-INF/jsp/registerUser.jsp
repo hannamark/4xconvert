@@ -63,36 +63,6 @@ function handleAction(){
                      </span>
                 </td>                
           </tr>
-        <tr>
-            <td scope="row" class="label">&nbsp;</td>
-            <td><fmt:message key="register.user.password.rules" /></td>
-        </tr>
-        <tr>
-                <td scope="row" class="label">
-                    <label for="registerUser_registryUserWebDTO_password"> <fmt:message key="register.user.password"/><span class="required">*</span></label>
-                </td>
-                <td>
-                    <s:password  name="registryUserWebDTO.password"  showPassword="true" maxlength="200" size="100"  cssStyle="width:200px"  />
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                        <s:param>registryUserWebDTO.password</s:param>
-                       </s:fielderror>                            
-                     </span>
-                </td>                
-          </tr>
-          <tr>
-                <td scope="row" class="label">
-                    <label for="registerUser_registryUserWebDTO_retypePassword"> <fmt:message key="register.user.retypePassword"/><span class="required">*</span></label>
-                </td>
-                <td>
-                    <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" maxlength="200" size="100"  cssStyle="width:200px"  />
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                        <s:param>registryUserWebDTO.retypePassword</s:param>
-                       </s:fielderror>                            
-                     </span>
-                </td>                
-          </tr>
          </table>
         <div class="actionsrow">
             <del class="btnwrapper">

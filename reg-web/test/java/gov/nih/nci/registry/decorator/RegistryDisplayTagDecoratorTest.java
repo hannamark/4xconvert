@@ -6,17 +6,10 @@ package gov.nih.nci.registry.decorator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
-import java.util.Calendar;
-
-import javax.servlet.ServletContext;
-import javax.servlet.jsp.PageContext;
-
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
-import gov.nih.nci.pa.enums.NihInstHolderCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -24,7 +17,10 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 
-import org.apache.struts2.ServletActionContext;
+import java.util.Calendar;
+
+import javax.servlet.jsp.PageContext;
+
 import org.junit.Before;
 import org.junit.Test;
 

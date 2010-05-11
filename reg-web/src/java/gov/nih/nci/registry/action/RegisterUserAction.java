@@ -11,11 +11,10 @@ import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.EncoderDecoder;
-
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -43,7 +42,7 @@ public class RegisterUserAction extends ActionSupport {
         if (hasFieldErrors()) {
             return Constants.REGISTER_USER_ERROR;
         }
-        mailManager.sendConfirmationMail(registryUserWebDTO.getEmailAddress(), registryUserWebDTO.getPassword());
+        mailManager.sendConfirmationMail(registryUserWebDTO.getEmailAddress());
         LOG.info("Sending email to " + registryUserWebDTO.getEmailAddress());
         ServletActionContext.getRequest().setAttribute("emailAddress" , registryUserWebDTO.getEmailAddress());
         return Constants.CONFIRMATION;
@@ -55,21 +54,14 @@ public class RegisterUserAction extends ActionSupport {
      */
     public String activate() {
         String decodedEmailAddress = null;
-        String decodedPassword  = null;
 
         String emailAddress = ServletActionContext.getRequest().getParameter("emailAddress");
-        String password = ServletActionContext.getRequest().getParameter("password");
 
         // decode only if the value is not null, since user can select my account link
         EncoderDecoder encoderDecoder = new gov.nih.nci.registry.util.EncoderDecoder();
         if (emailAddress != null) {
             decodedEmailAddress =  encoderDecoder.decodeString(emailAddress);
             ServletActionContext.getRequest().setAttribute("emailAddress" , decodedEmailAddress);
-        }
-
-        if (password != null) {
-            decodedPassword =  encoderDecoder.decodeString(password);
-            ServletActionContext.getRequest().setAttribute("password" , decodedPassword);
         }
         
         RegistryUser registryUser = null;
@@ -89,11 +81,9 @@ public class RegisterUserAction extends ActionSupport {
         
         if (registryUser != null) {
             registryUserWebDTO = new RegistryUserWebDTO(registryUser, csmUser == null ? "" : csmUser.getLoginName(), 
-                    decodedPassword);
+                    csmUser == null ? "" : csmUser.getPassword());
         } else {
             registryUserWebDTO.setEmailAddress(decodedEmailAddress);
-            registryUserWebDTO.setPassword(decodedPassword);
-            registryUserWebDTO.setRetypePassword(decodedPassword);
         }
 
         // show the My Account page
@@ -141,7 +131,7 @@ public class RegisterUserAction extends ActionSupport {
         String redirectPage =  null;
 
         // first validate the form fields before creating user
-        validateForm(true, StringUtils.isNotEmpty(registryUserWebDTO.getId()));
+        validateForm(true, registryUserWebDTO.getId() != null);
         
         if (hasFieldErrors()) {
             return Constants.MY_ACCOUNT_ERROR;
@@ -149,35 +139,13 @@ public class RegisterUserAction extends ActionSupport {
 
         // convert RegistryUserWebDTO to RegistryUser
         RegistryUser registryUser = new RegistryUser();
-        if (StringUtils.isNotEmpty(registryUserWebDTO.getId())) {
-            registryUser.setId(Long.valueOf(registryUserWebDTO.getId()));
+        try {
+            BeanUtils.copyProperties(registryUser, registryUserWebDTO);
+        } catch (Exception e) {
+           LOG.error("ERROR COPYING PROPERTIES.", e);
+           return Constants.APPLICATION_ERROR;
         }
         
-        if (StringUtils.isNotEmpty(registryUserWebDTO.getCsmUserId())) {
-            registryUser.setCsmUserId(Long.valueOf(registryUserWebDTO.getCsmUserId()));
-        }
-        
-        registryUser.setFirstName(registryUserWebDTO.getFirstName());
-        registryUser.setLastName(registryUserWebDTO.getLastName());
-        registryUser.setMiddleName(registryUserWebDTO.getMiddleName());
-        registryUser.setAddressLine(registryUserWebDTO.getAddressLine());
-        registryUser.setCity(registryUserWebDTO.getCity());
-        registryUser.setState(registryUserWebDTO.getState());
-        registryUser.setPostalCode(registryUserWebDTO.getPostalCode());
-        registryUser.setCountry(registryUserWebDTO.getCountry());
-        registryUser.setPhone(registryUserWebDTO.getPhone());
-        registryUser.setAffiliateOrg(registryUserWebDTO.getAffiliateOrg());
-        registryUser.setPrsOrgName(registryUserWebDTO.getPrsOrgName());
-        registryUser.setEmailAddress(registryUserWebDTO.getEmailAddress());
-        
-        if (StringUtils.isNotEmpty(registryUserWebDTO.getTreatmentSiteId())) {
-            registryUser.setPoOrganizationId(Long.valueOf(registryUserWebDTO.getTreatmentSiteId()));
-        }
-
-        if (StringUtils.isNotEmpty(registryUserWebDTO.getPhysicianId())) {
-            registryUser.setPoPersonId(Long.valueOf(registryUserWebDTO.getPhysicianId()));
-        }
-
         // check if it's  update action
         if (registryUser.getId() != null) {
             String loginName =  ServletActionContext.getRequest().getRemoteUser();
@@ -254,26 +222,7 @@ public class RegisterUserAction extends ActionSupport {
     /**
      * validate the  form elements.
      */
-    private void validateForm(boolean isMyAccountPage, boolean isAccountEdit)  {
-        if (PAUtil.isEmpty(registryUserWebDTO.getPassword())) {
-            addFieldError("registryUserWebDTO.password", getText("error.register.password"));
-        }
-        
-        if (PAUtil.isEmpty(registryUserWebDTO.getRetypePassword())) {
-            addFieldError("registryUserWebDTO.retypePassword", getText("error.register.retypePassword"));
-        }
-        
-        if (PAUtil.isNotEmpty(registryUserWebDTO.getPassword()) 
-                && PAUtil.isNotEmpty(registryUserWebDTO.getRetypePassword())
-                && !registryUserWebDTO.getPassword().equals(registryUserWebDTO.getRetypePassword())) {            
-            addFieldError("registryUserWebDTO.retypePassword", getText("error.register.matchPassword"));
-        }
-        
-        if (PAUtil.isNotEmpty(registryUserWebDTO.getPassword()) 
-                && !PaRegistry.getGridAccountService().isValidGridPassword(registryUserWebDTO.getPassword())) {
-            addFieldError("registryUserWebDTO.password", getText("error.register.invalidPassword"));
-        }
-        
+    private void validateForm(boolean isMyAccountPage, boolean isAccountEdit)  {        
         if (PAUtil.isEmpty(registryUserWebDTO.getEmailAddress())) {
             addFieldError("registryUserWebDTO.emailAddress", getText("error.register.emailAddress"));
         }
@@ -286,6 +235,24 @@ public class RegisterUserAction extends ActionSupport {
         
         // if it's My Account page validate required fields
         if (isMyAccountPage) {
+            if (PAUtil.isEmpty(registryUserWebDTO.getPassword())) {
+                addFieldError("registryUserWebDTO.password", getText("error.register.password"));
+            }
+            
+            if (PAUtil.isEmpty(registryUserWebDTO.getRetypePassword())) {
+                addFieldError("registryUserWebDTO.retypePassword", getText("error.register.retypePassword"));
+            }
+            
+            if (PAUtil.isNotEmpty(registryUserWebDTO.getPassword()) 
+                    && PAUtil.isNotEmpty(registryUserWebDTO.getRetypePassword())
+                    && !registryUserWebDTO.getPassword().equals(registryUserWebDTO.getRetypePassword())) {            
+                addFieldError("registryUserWebDTO.retypePassword", getText("error.register.matchPassword"));
+            }
+            
+            if (PAUtil.isNotEmpty(registryUserWebDTO.getPassword()) 
+                    && !PaRegistry.getGridAccountService().isValidGridPassword(registryUserWebDTO.getPassword())) {
+                addFieldError("registryUserWebDTO.password", getText("error.register.invalidPassword"));
+            }
             
             if (PAUtil.isEmpty(registryUserWebDTO.getUsername())) {
                 addFieldError("registryUserWebDTO.username", getText("error.register.username"));

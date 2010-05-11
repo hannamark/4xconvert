@@ -10,9 +10,8 @@ import gov.nih.nci.pa.domain.RegistryUser;
  *
  */
 @SuppressWarnings({"PMD.TooManyFields" })
-public class RegistryUserWebDTO {    
-
-    private String id;
+public class RegistryUserWebDTO {
+    private Long id;
     private String firstName;
     private String lastName;
     private String middleName;
@@ -23,13 +22,13 @@ public class RegistryUserWebDTO {
     private String country;
     private String phone;
     private String affiliateOrg;
-    private String csmUserId;
+    private Long csmUserId;
     private String username;
     private String password;
     private String retypePassword;
     private String prsOrgName;
-    private String treatmentSiteId;
-    private String physicianId;
+    private Long treatmentSiteId;
+    private Long physicianId;
     private String emailAddress;
     
     /**
@@ -39,13 +38,8 @@ public class RegistryUserWebDTO {
      * @param password password
      */
     public RegistryUserWebDTO(RegistryUser registryUser, String username, String password) {
-        super();
-        if (registryUser.getId() != null) {
-            this.id = String.valueOf(registryUser.getId());
-        }
-        if (registryUser.getCsmUserId() != null) {
-            this.csmUserId = String.valueOf(registryUser.getCsmUserId());
-        } 
+        this.id = registryUser.getId();
+        this.csmUserId = registryUser.getCsmUserId();
         this.username = username;
         this.firstName = registryUser.getFirstName();
         this.lastName =  registryUser.getLastName();
@@ -61,13 +55,8 @@ public class RegistryUserWebDTO {
         this.retypePassword = password;
         this.prsOrgName = registryUser.getPrsOrgName();
         this.emailAddress = registryUser.getEmailAddress();
-        
-        if (registryUser.getPoOrganizationId() != null) {
-            this.treatmentSiteId = String.valueOf(registryUser.getPoOrganizationId());
-        }
-        if (registryUser.getPoPersonId() != null) {
-            this.physicianId = String.valueOf(registryUser.getPoPersonId());
-        }        
+        this.treatmentSiteId = registryUser.getPoOrganizationId();
+        this.physicianId = registryUser.getPoPersonId();
     }
 
     /** .
@@ -80,14 +69,14 @@ public class RegistryUserWebDTO {
     /**
      * @return the id
      */
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -244,13 +233,13 @@ public class RegistryUserWebDTO {
     /**
      * @return the csmUserId
      */
-    public String getCsmUserId() {
+    public Long getCsmUserId() {
         return csmUserId;
     }
     /**
      * @param csmUserId the csmUserId to set
      */
-    public void setCsmUserId(String csmUserId) {
+    public void setCsmUserId(Long csmUserId) {
         this.csmUserId = csmUserId;
     }
     
@@ -285,28 +274,28 @@ public class RegistryUserWebDTO {
     /**
      * @return the treatmentSiteId
      */
-    public String getTreatmentSiteId() {
+    public Long getTreatmentSiteId() {
         return treatmentSiteId;
     }
 
     /**
      * @param treatmentSiteId the treatmentSiteId to set
      */
-    public void setTreatmentSiteId(String treatmentSiteId) {
+    public void setTreatmentSiteId(Long treatmentSiteId) {
         this.treatmentSiteId = treatmentSiteId;
     }
     
     /**
      * @return the physicianId
      */
-    public String getPhysicianId() {
+    public Long getPhysicianId() {
         return physicianId;
     }
 
     /**
      * @param physicianId the physicianId to set
      */
-    public void setPhysicianId(String physicianId) {
+    public void setPhysicianId(Long physicianId) {
         this.physicianId = physicianId;
     }
     

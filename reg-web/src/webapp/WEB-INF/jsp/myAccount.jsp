@@ -23,26 +23,26 @@ function handleAction(){
     <c:set var="topic" scope="request" value="my_account"/> 
     <div class="box" id="filters">
     <reg-web:sucessMessage/>
-    <s:form name="myAccount" method="POST" ><s:actionerror/>
+    
+    <s:form name="myAccount" method="POST" >
+        
+        <s:actionerror/>
         <s:hidden name="registryUserWebDTO.id" />
         <s:hidden name="registryUserWebDTO.csmUserId" />
         <s:hidden name="registryUserWebDTO.treatmentSiteId" />
         <s:hidden name="registryUserWebDTO.physicianId" />
         <s:hidden name="page" />
-        <c:choose>
-            <c:when test="${empty registryUserWebDTO.id}">
-                <p>To register for NCI Clinical Trials Reporting Program, 
-                please begin by creating your login information. <br>
-                Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
-               <b><i> Please provide professional contact information only.</i></b> </p>             
-            </c:when>
-            <c:otherwise >
-                <p>You may update your account information. 
-                Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
-                 <b><i> Please provide professional contact information only. </i></b> </p>
-            </c:otherwise>
-        </c:choose>
-        <table class="form">
+        <s:if test="%{registryUserWebDTO.id == null}">
+            <p>To register for NCI Clinical Trials Reporting Program, please begin by creating your login information. <br>
+            Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
+            <b><i> Please provide professional contact information only.</i></b></p>
+        </s:if>
+        <s:else>
+            <p>You may update your account information. Please note: asterisks (<span class="required">*</span>)
+            indicate required fields.<br>
+            <b><i> Please provide professional contact information only. </i></b></p>
+        </s:else>
+    <table class="form">
             <tbody>
                   <tr>
                       <th colspan="3">
@@ -57,7 +57,7 @@ function handleAction(){
                             <label for="registerUsershowMyAccount_registryUserWebDTO_emailAddress"><fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
                         </td>
                         <td>
-                            <s:textfield name="registryUserWebDTO.emailAddress"  maxlength="100" size="35" readonly="true" cssStyle="width:200px" />
+                            <s:textfield name="registryUserWebDTO.emailAddress"  maxlength="100" size="35" cssStyle="width:200px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>registryUserWebDTO.emailAddress</s:param>
@@ -115,20 +115,18 @@ function handleAction(){
                             <label for="registerUsershowMyAccount_registryUserWebDTO_username"><fmt:message key="register.user.username"/><span class="required">*</span></label>
                         </td>
                         <td>
-                            <c:choose>
-                                <c:when test="${empty registryUserWebDTO.id}">
-                                    <s:textfield name="registryUserWebDTO.username"  maxlength="15" size="20" cssStyle="width:200px" />
-                                </c:when>
-                                <c:otherwise>
-                                    <s:textfield name="registryUserWebDTO.username"  maxlength="15" size="20" cssStyle="width:200px" disabled="true" />
-                                    <s:hidden name="registryUserWebDTO.username" />
-                                </c:otherwise>
-                            </c:choose>
+                            <s:if test="%{registryUserWebDTO.id == null}">
+                                <s:textfield name="registryUserWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" />
+                            </s:if>
+                            <s:else>
+                                <s:textfield name="registryUserWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" readonly="true" />
+                                <s:hidden name="registryUserWebDTO.username" />
+                            </s:else>
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>registryUserWebDTO.username</s:param>
                                </s:fielderror>                            
-                             </span>
+                            </span>
                         </td>                
                   </tr>
                   <tr>

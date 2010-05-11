@@ -42,6 +42,7 @@ This is the definition of a virtual module called bda-download that has a depend
 	<!-- compile -->
     <dependency org="jakarta"                name="commons-lang"            rev="2.4"             conf="compile->master"/>
     <dependency org="jakarta"                name="commons-collections"     rev="3.2.1"           conf="compile->master"/>
+    <dependency org="jakarta"                name="commons-beanutils"       rev="1.8.0"             conf="compile->master"/>
     <dependency org="javax.ejb"              name="api"                     rev="3.0"             conf="compile->master"/>
     <dependency org="javax.persistence"      name="persistence-api"         rev="1.0"             conf="compile->master"/>
     <dependency org="jboss"                  name="activation"              rev="4.0.5.GA"        conf="compile->master"/>

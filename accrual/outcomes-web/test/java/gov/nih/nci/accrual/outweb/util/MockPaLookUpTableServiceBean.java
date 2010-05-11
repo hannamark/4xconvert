@@ -44,6 +44,15 @@ public class MockPaLookUpTableServiceBean implements LookUpTableServiceRemote {
         countryList.add(country);
         return countryList;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Country getCountryByName(String name) throws PAException {
+        Country country = new Country();
+        country.setName(name);
+        return country;
+    }
 
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.LookUpTableServiceRemote#getFundingMechanisms()
@@ -67,5 +76,4 @@ public class MockPaLookUpTableServiceBean implements LookUpTableServiceRemote {
     public String getPropertyValue(String name) throws PAException {
         return map.get(name);
     }
-
 }

@@ -27,6 +27,15 @@ public class MockPaLookupTableServiceBean implements LookUpTableServiceRemote {
         countries.add(c);
         return countries;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Country getCountryByName(String name) throws PAException {
+        Country country = new Country();
+        country.setName(name);
+        return country;
+    }
 
     public List<FundingMechanism> getFundingMechanisms() throws PAException {
         // TODO Auto-generated method stub

@@ -3,18 +3,13 @@
  */
 package gov.nih.nci.registry.service;
 
-import java.util.List;
-import java.util.Map;
-
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.RegulatoryAuthority;
-import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
-import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vrushali

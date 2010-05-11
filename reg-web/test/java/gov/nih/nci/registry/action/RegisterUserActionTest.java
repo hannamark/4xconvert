@@ -105,7 +105,7 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         public void testUpdateAccount(){
             action = new RegisterUserAction();
             RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setId("1");
+            registryUserWebDTO.setId(1L);
             registryUserWebDTO.setUsername("testuser");
             registryUserWebDTO.setEmailAddress("test@test.com");
             registryUserWebDTO.setPassword("Mvedjbtp123!!!");
@@ -126,7 +126,7 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         public void testUpdateAccountExitsingAcc(){
             action = new RegisterUserAction();
             RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setId("1");
+            registryUserWebDTO.setId(1L);
             registryUserWebDTO.setUsername("testuser");
             registryUserWebDTO.setEmailAddress("test@test.com");
             registryUserWebDTO.setPassword("Mvedjbtp123!!!");
@@ -140,8 +140,8 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             registryUserWebDTO.setCountry("country");
             registryUserWebDTO.setPhone("phone");
             registryUserWebDTO.setAffiliateOrg("affiliateOrg");
-            registryUserWebDTO.setId("1");
-            registryUserWebDTO.setCsmUserId("1");
+            registryUserWebDTO.setId(1L);
+            registryUserWebDTO.setCsmUserId(1L);
             action.setRegistryUserWebDTO(registryUserWebDTO);
             assertEquals("applicationError", action.updateAccount());
         }

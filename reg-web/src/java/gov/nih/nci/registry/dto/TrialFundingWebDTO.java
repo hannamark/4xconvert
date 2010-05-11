@@ -1,11 +1,11 @@
 package gov.nih.nci.registry.dto;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.Pattern;
-
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+
+import org.hibernate.validator.Length;
+import org.hibernate.validator.Pattern;
 
 /**
  * Class for holding attributes for StudyResourcing DTO.

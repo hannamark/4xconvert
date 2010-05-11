@@ -3,12 +3,12 @@
  */
 package gov.nih.nci.registry.dto;
 
-import java.util.UUID;
-
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+
+import java.util.UUID;
 
 /**
  * @author Vrushali
