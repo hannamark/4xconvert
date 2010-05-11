@@ -369,9 +369,12 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
                     StConverter.convertToString(spDTO.getUserLastCreated()));
             submissionMailBody = submissionMailBody.replace("${SubmitterName}",
                  registryUser.getFirstName() + " " + registryUser.getLastName());
+            
+            String mailSubject = lookUpTableService.getPropertyValue("trial.partial.register.subject");
+            mailSubject = mailSubject.replace("${leadOrgTrialIdentifier}",
+                StConverter.convertToString(spDTO.getLocalProtocolIdentifier()));
             mailManagerSerivceLocal.sendMailWithAttachment(StConverter.convertToString(spDTO.getUserLastCreated()),
-                    lookUpTableService.getPropertyValue("trial.partial.register.subject"),
-                    submissionMailBody, null);
+                    mailSubject, submissionMailBody, null);
           } catch (Exception e) {
                LOG.error("Send Mail error Partial Submission Mail", e);
           }

@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.Country;
@@ -28,6 +29,8 @@ import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatusTest;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteTest;
+import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceBean;
@@ -40,6 +43,7 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceBean;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.junit.Before;
@@ -58,6 +62,7 @@ public class MailManagerServiceTest {
     TSRReportGeneratorServiceRemote tsrReptSrv = new TSRReportGeneratorServiceBean();
     LookUpTableServiceRemote lookUpTableSrv = new LookUpTableServiceBean();
     DocumentWorkflowStatusServiceLocal docWrkStatSrv = new DocumentWorkflowStatusServiceBean();
+    Ii protocolIi;
     
     @Before
     public void setUp() throws Exception {  
@@ -105,32 +110,42 @@ public class MailManagerServiceTest {
         
         PAProperties prop = new PAProperties();
         prop.setName("tsr.amend.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialId}, ${trialTitle}, (${fileName}), ${fileName2}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("smtp");
+        prop.setValue("mail.smtp.host");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("fromaddress");
+        prop.setValue("fromaddress");
         TestSchema.addUpdObject(prop);
         
         prop = new PAProperties();
         prop.setName("rejection.body");
-        prop.setValue("${leadOrgTrialId} ${reasoncode}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, ${receiptDate}, ${reasoncode}.");
         TestSchema.addUpdObject(prop);
         
         prop = new PAProperties();
         prop.setName("trial.amend.reject.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${title}, (${amendmentNumber}), ${amendmentDate},${reasonForRejection}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier} ${leadOrgTrialIdentifier}, ${trialTitle}, (${amendmentNumber}), ${amendmentDate},${reasonForRejection}.");
         TestSchema.addUpdObject(prop);
         
         prop = new PAProperties();
         prop.setName("trial.register.body");
-        prop.setValue("${SubmitterName} ${nciTrialIdentifier}, ${leadOrgTrialIdentifier}.");
+        prop.setValue("${CurrentDate} ${SubmitterName} ${nciTrialIdentifier}, ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}.");
         TestSchema.addUpdObject(prop);
         
         prop = new PAProperties();
         prop.setName("trial.register.subject");
-        prop.setValue("trial.register.subject.");
+        prop.setValue("trial.register.subject - ${leadOrgTrialIdentifier}, ${nciTrialIdentifier}.");
         TestSchema.addUpdObject(prop);
 
         prop = new PAProperties();
         prop.setName("trial.accept.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${title}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${title} ${leadOrgTrialIdentifier}.");
         TestSchema.addUpdObject(prop);
         
         prop = new PAProperties();
@@ -142,8 +157,7 @@ public class MailManagerServiceTest {
         prop = new PAProperties();
         prop.setName("trial.amend.accept.subject");
         prop.setValue("trial.amend.accept.subject.");
-        TestSchema.addUpdObject(prop);
-        
+        TestSchema.addUpdObject(prop);        
         
         prop = new PAProperties();
         prop.setName("trial.amend.body");
@@ -152,18 +166,52 @@ public class MailManagerServiceTest {
         
         prop = new PAProperties();
         prop.setName("trial.amend.subject");
-        prop.setValue("trial.amend.subject.");
+        prop.setValue("trial.amend.subject -${leadOrgTrialIdentifier}, ${nciTrialIdentifier}.");
         TestSchema.addUpdObject(prop);
         
         prop = new PAProperties();
         prop.setName("xml.subject");
-        prop.setValue("xml.subject.");
+        prop.setValue("xml.subject, ${leadOrgTrialIdentifier}, ${nciTrialIdentifier}.");
         TestSchema.addUpdObject(prop);
         
         prop = new PAProperties();
         prop.setName("xml.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialID}, ${trialTitle}, (${leadOrgTrialId}), ${receiptDate}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${trialTitle}, (${leadOrgTrialIdentifier}), ${receiptDate} ${fileName}.");
         TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("trial.update.subject");
+        prop.setValue("trial.update.subject ${leadOrgTrialIdentifier}, ${nciTrialIdentifier}.");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("trial.update.body");
+        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${trialTitle}, (${leadOrgTrialIdentifier}).");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("proprietarytrial.register.body");
+        prop.setValue("${CurrentDate} ${SubmitterName} ${nciTrialIdentifier}, ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}, ${subOrgTrialIdentifier}, ${subOrg}.");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("noxml.tsr.amend.body");
+        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+        TestSchema.addUpdObject(prop);
+        
+        StudyProtocol sp1 = new StudyProtocol();
+        sp1.setOfficialTitle("cancer");
+        sp1.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
+        sp1.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        sp1.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
+        sp1.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp1.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+        sp1.setIdentifier("NCI-2009-00002");
+        sp1.setSubmissionNumber(Integer.valueOf(1));
+        sp1.setProprietaryTrialIndicator(Boolean.TRUE);
+        sp1.setCtgovXmlRequiredIndicator(Boolean.FALSE);
+        TestSchema.addUpdObject(sp1);
+        protocolIi = IiConverter.convertToIi(sp1.getId());
         
         RegistryUser registryUser = new RegistryUser();
         registryUser.setFirstName("firstName");
@@ -173,7 +221,6 @@ public class MailManagerServiceTest {
         
         DocumentWorkflowStatus docWrk = DocumentWorkFlowStatusTest.createDocumentWorkflowStatus(sp);
         TestSchema.addUpdObject(docWrk);
-
     }
     @Test (expected=PAException.class)
     public void testSendTSREmail() throws PAException{
@@ -206,5 +253,21 @@ public class MailManagerServiceTest {
     @Test (expected=PAException.class)
     public void testSendXmlTSREmail() throws PAException{
         bean.sendXMLAndTSREmail(IiConverter.convertToIi(1L));
+    }
+    @Test (expected=PAException.class)    
+    public void testSendUpdateNotificationMail() throws PAException{
+        bean.sendUpdateNotificationMail(IiConverter.convertToIi(1L));
+    }
+    @Test (expected=PAException.class)
+    public void testSendNotificationMailProprietary() throws PAException{
+        bean.sendNotificationMail(protocolIi);
+    }
+    @Test
+    public void testSendMailWithAttachment() throws PAException{
+        bean.sendMailWithAttachment("testEmail", "testSubject", "testBody", null);
+    }
+    @Test (expected=PAException.class)
+    public void testSendTSREmailProprietary() throws PAException{
+        bean.sendTSREmail(protocolIi);
     }
 }
