@@ -541,4 +541,8 @@
     <target name="runTrialRegistrationClient" depends="checkGlobus, defineClasspaths" description="Run the sample TrialRegistrationService Client">
         <run-client serviceendpointname="TrialRegistrationService" class="gov.nih.nci.coppa.services.pa.trialregistrationservice.client.TrialRegistrationServiceClient" debug-suspend="n" />
     </target>
+	
+	<target name="runRegulatoryAuthorityClient" depends="checkGlobus, defineClasspaths" description="Run the sample regulatoryauthorityService Client">
+	        <run-client serviceendpointname="RegulatoryAuthorityService" class="gov.nih.nci.coppa.services.pa.regulatoryauthorityservice.client.RegulatoryAuthorityServiceClient" debug-suspend="n" />
+	 </target>
 </project>

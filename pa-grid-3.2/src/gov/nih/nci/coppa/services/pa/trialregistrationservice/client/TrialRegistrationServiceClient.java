@@ -1,9 +1,11 @@
 package gov.nih.nci.coppa.services.pa.trialregistrationservice.client;
 
+import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.Person;
 import gov.nih.nci.coppa.services.pa.Document;
 import gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol;
+import gov.nih.nci.coppa.services.pa.RegulatoryAuthority;
 import gov.nih.nci.coppa.services.pa.StudyContact;
 import gov.nih.nci.coppa.services.pa.StudyIndlde;
 import gov.nih.nci.coppa.services.pa.StudyOverallStatus;
@@ -13,12 +15,15 @@ import gov.nih.nci.coppa.services.pa.StudySite;
 import gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus;
 import gov.nih.nci.coppa.services.pa.StudySiteContact;
 import gov.nih.nci.coppa.services.pa.grid.ISOUtils;
+import gov.nih.nci.coppa.services.pa.regulatoryauthorityservice.client.RegulatoryAuthorityServiceClient;
 import gov.nih.nci.coppa.services.pa.trialregistrationservice.common.TrialRegistrationServiceI;
 import gov.nih.nci.iso21090.extensions.Id;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -76,26 +81,27 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         System.out.println("Running the Grid Service Client");
         // change this as per your db
         organizationIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        organizationIi.setExtension("674");
+        organizationIi.setExtension("502");
         organizationIi.setIdentifierName("NCI organization entity identifier");
         personIi.setRoot("2.16.840.1.113883.3.26.4.1");
-        personIi.setExtension("585");
+        personIi.setExtension("164556");
         personIi.setIdentifierName("NCI person entity identifier");
         
         try{
         if(!(args.length < 2)){
             if(args[0].equals("-url")){
               TrialRegistrationServiceClient client = new TrialRegistrationServiceClient(args[1]);
+              
               // place client calls here if you want to use this main as a
               // test....
               System.out.println("creating a protocol");
               Id ispId = createInterventionalStudyProtocol(client);
-              System.out.println("updating a protocol");
-              updateInterventionalStudyProtocol(client, ispId);
-              System.out.println("amending a protocol");
-              amendInterventionalStudyProtocol(client);
-              System.out.println("creating a proprietary protocol");
-              createProprietaryInterventionalStudyProtocol(client);
+          //    System.out.println("updating a protocol");
+         //     updateInterventionalStudyProtocol(client, ispId);
+         //     System.out.println("amending a protocol");
+         //     amendInterventionalStudyProtocol(client);
+         //     System.out.println("creating a proprietary protocol");
+         //     createProprietaryInterventionalStudyProtocol(client);
             } else {
                 usage();
                 System.exit(1);
@@ -110,7 +116,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         }
     }
 
-    private static Id createInterventionalStudyProtocol(TrialRegistrationServiceClient client)  throws RemoteException {
+    private static Id createInterventionalStudyProtocol(TrialRegistrationServiceClient client)  throws RemoteException, MalformedURIException {
         TS pastDate = new TS();
         pastDate.setValue("20090922090000.0000-0500");
         TS futureDate = new TS();
@@ -128,7 +134,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
-        studyProtocol.setUserLastCreated(ISOUtils.buildST("niktevv@mail.nih.gov"));
+        studyProtocol.setUserLastCreated(ISOUtils.buildST("mshestopalov@5amsolutions.com"));
         BL fdaRegInd = new BL();
         fdaRegInd.setValue(Boolean.FALSE);
         studyProtocol.setFdaRegulatedIndicator(fdaRegInd);
@@ -191,8 +197,17 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         Id responsiblePartyContact = new Id();
         
         StudyRegulatoryAuthority studyRegulatoryAuthority = new StudyRegulatoryAuthority();
+        RegulatoryAuthorityServiceClient regAuthClient = 
+            new RegulatoryAuthorityServiceClient("https://localhost:39543/wsrf/services/cagrid/RegulatoryAuthorityService");
+        LimitOffset limit = new LimitOffset();
+        limit.setLimit(10);
+        limit.setOffset(0);
+        RegulatoryAuthority regAuth = new RegulatoryAuthority();
+        regAuth.setAuthorityName(
+                STTransformer.INSTANCE.toXml(StConverter.convertToSt("Ministry of Public Health")));
+        RegulatoryAuthority[] results = regAuthClient.search(regAuth, limit);
         II regAuthId = new II();
-        regAuthId.setExtension("1385");
+        regAuthId.setExtension(results[0].getIdentifier().getExtension());
         studyRegulatoryAuthority.setRegulatoryAuthorityIdentifier(regAuthId);
 
         Id ispId = client.createInterventionalStudyProtocol(studyProtocol, studyOverallStatus, studyIndlde, studyResourcing,

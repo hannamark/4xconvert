@@ -92,6 +92,7 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
+import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
@@ -114,6 +115,7 @@ import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyCurrentPaService;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
@@ -197,6 +199,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
             values.put(PlannedActivityDTO.class, this.getClass().getMethod("getPlannedActivityService"));
             values.put(DiseaseDTO.class, this.getClass().getMethod("getDiseaseService"));
             values.put(InterventionDTO.class, this.getClass().getMethod("getInterventionService"));
+            values.put(RegulatoryAuthorityDTO.class, this.getClass().getMethod("getRegulatoryAuthorityService"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -465,5 +468,12 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      */
     public InterventionServiceRemote getInterventionService() throws NamingException {
         return (InterventionServiceRemote) lookup("/pa/InterventionServiceBean/remote");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public RegulatoryAuthorityServiceRemote getRegulatoryAuthorityService() throws NamingException {
+        return (RegulatoryAuthorityServiceRemote) lookup("/pa/RegulatoryAuthorityServiceBean/remote");
     }
 }

@@ -165,6 +165,11 @@ public abstract class StudyParticipationServiceImplBase {
 		return (gov.nih.nci.coppa.services.pa.interventionservice.service.globus.resource.InterventionServiceResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.pa.regulatoryauthorityservice.service.globus.resource.RegulatoryAuthorityServiceResourceHome getRegulatoryAuthorityServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("regulatoryAuthorityServiceHome");
+		return (gov.nih.nci.coppa.services.pa.regulatoryauthorityservice.service.globus.resource.RegulatoryAuthorityServiceResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();
