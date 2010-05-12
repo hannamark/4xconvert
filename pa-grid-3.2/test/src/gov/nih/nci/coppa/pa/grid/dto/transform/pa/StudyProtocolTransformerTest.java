@@ -121,6 +121,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setReviewBoardApprovalRequiredIndicator(new BLTransformerTest().makeDtoSimple());
         result.setSection801Indicator(new BLTransformerTest().makeDtoSimple());
         result.setProprietaryTrialIndicator(new BLTransformerTest().makeDtoSimple());
+        result.setCtgovXmlRequiredIndicator(new BLTransformerTest().makeDtoSimple());
         //CD
         result.setAccrualReportingMethodCode(new CDTransformerTest().makeDtoSimple());
         result.setAmendmentReasonCode(new CDTransformerTest().makeDtoSimple());
@@ -171,6 +172,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setReviewBoardApprovalRequiredIndicator(new BLTransformerTest().makeXmlSimple());
         result.setSection801Indicator(new BLTransformerTest().makeXmlSimple());
         result.setProprietaryTrialIndicator(new BLTransformerTest().makeXmlSimple());
+        result.setCtgovXmlRequiredIndicator(new BLTransformerTest().makeXmlSimple());
         //CD
         result.setAccrualReportingMethodCode(new CDTransformerTest().makeXmlSimple());
         result.setAmendmentReasonCode(new CDTransformerTest().makeXmlSimple());
@@ -220,6 +222,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new BLTransformerTest().verifyDtoSimple(x.getReviewBoardApprovalRequiredIndicator());
         new BLTransformerTest().verifyDtoSimple(x.getSection801Indicator());
         new BLTransformerTest().verifyDtoSimple(x.getProprietaryTrialIndicator());
+        new BLTransformerTest().verifyDtoSimple(x.getCtgovXmlRequiredIndicator());
         //CD
         new CDTransformerTest().verifyDtoSimple(x.getAccrualReportingMethodCode());
         new CDTransformerTest().verifyDtoSimple(x.getAmendmentReasonCode());
@@ -267,6 +270,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new BLTransformerTest().verifyXmlSimple(x.getReviewBoardApprovalRequiredIndicator());
         new BLTransformerTest().verifyXmlSimple(x.getSection801Indicator());
         new BLTransformerTest().verifyXmlSimple(x.getProprietaryTrialIndicator());
+        new BLTransformerTest().verifyXmlSimple(x.getCtgovXmlRequiredIndicator());
         //CD
         new CDTransformerTest().verifyXmlSimple(x.getAccrualReportingMethodCode());
         new CDTransformerTest().verifyXmlSimple(x.getAmendmentReasonCode());

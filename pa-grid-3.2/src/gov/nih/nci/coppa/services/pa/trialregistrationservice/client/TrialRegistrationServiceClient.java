@@ -76,10 +76,10 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         System.out.println("Running the Grid Service Client");
         // change this as per your db
         organizationIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        organizationIi.setExtension("501");
+        organizationIi.setExtension("674");
         organizationIi.setIdentifierName("NCI organization entity identifier");
         personIi.setRoot("2.16.840.1.113883.3.26.4.1");
-        personIi.setExtension("574");
+        personIi.setExtension("585");
         personIi.setIdentifierName("NCI person entity identifier");
         
         try{
@@ -116,7 +116,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         TS futureDate = new TS();
         futureDate.setValue("20100922090000.0000-0500");
         ST dummyString = new ST();
-        dummyString.setValue("dummyString");
+        dummyString.setValue("ctgov is set to false 2nd via grid 3.2");
 
         InterventionalStudyProtocol studyProtocol = new InterventionalStudyProtocol();
         studyProtocol.setStartDate(pastDate);
@@ -128,11 +128,13 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
-        studyProtocol.setUserLastCreated(ISOUtils.buildST("smatyas@5amsolutions.com"));
+        studyProtocol.setUserLastCreated(ISOUtils.buildST("niktevv@mail.nih.gov"));
         BL fdaRegInd = new BL();
         fdaRegInd.setValue(Boolean.FALSE);
         studyProtocol.setFdaRegulatedIndicator(fdaRegInd);
-        
+        BL ctGovInd = new BL();
+        ctGovInd.setValue(Boolean.FALSE);
+        studyProtocol.setCtgovXmlRequiredIndicator(ctGovInd);
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStatusDate(pastDate);
         CD studyOverallStatusCode = new CD();
@@ -167,7 +169,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
 
         StudySite leadOrganizationSiteIdentifier = new StudySite();
         ST localStudyProtocolIdentifier = new ST();
-        localStudyProtocolIdentifier.setValue("createInterventionalStudyProtocolLocalStudyProtocolIdentifier"
+        localStudyProtocolIdentifier.setValue("this ctgov is setting to false"
                 + new Date().getTime());
         leadOrganizationSiteIdentifier.setLocalStudyProtocolIdentifier(localStudyProtocolIdentifier);
 
