@@ -78,8 +78,16 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.UserOrgType;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 /**
@@ -88,8 +96,8 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name =  "REGISTRY_USER")
+@SuppressWarnings({"PMD.TooManyFields" })
 public class RegistryUser extends  AbstractEntity {
-
     private static final long serialVersionUID = -6519568778371398209L;
     private String firstName;
     private String lastName;
@@ -106,6 +114,9 @@ public class RegistryUser extends  AbstractEntity {
     private Long poOrganizationId;
     private Long poPersonId;
     private String emailAddress;
+    private Set<StudyProtocol> studyProtocols = new HashSet<StudyProtocol>();
+    private Long affiliatedOrganizationId;
+    private UserOrgType affiliatedOrgUserType;
 
     /**
      * @return the csmUserId
@@ -290,7 +301,7 @@ public class RegistryUser extends  AbstractEntity {
     public void setPoPersonId(Long poPersonId) {
         this.poPersonId = poPersonId;
     }
-    
+
     /**
      * @return the emailAddress
      */
@@ -298,11 +309,58 @@ public class RegistryUser extends  AbstractEntity {
     public String getEmailAddress() {
         return emailAddress;
     }
-    
+
     /**
      * @param emailAddress the emailAddress to set
      */
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
+
+    /**
+     * @return the studyProtocols
+     */
+    @ManyToMany(mappedBy = "studyOwners")
+    public Set<StudyProtocol> getStudyProtocols() {
+        return studyProtocols;
+    }
+
+    /**
+     * @param studyProtocols the studyProtocols to set
+     */
+    public void setStudyProtocols(Set<StudyProtocol> studyProtocols) {
+        this.studyProtocols = studyProtocols;
+    }
+
+    /**
+     * @return the affiliatedOrganizationId
+     */
+    @Column(name = "AFFILIATED_ORG_ID")
+    public Long getAffiliatedOrganizationId() {
+        return affiliatedOrganizationId;
+    }
+
+    /**
+     * @param affiliatedOrganizationId the affiliatedOrganizationId to set
+     */
+    public void setAffiliatedOrganizationId(Long affiliatedOrganizationId) {
+        this.affiliatedOrganizationId = affiliatedOrganizationId;
+    }
+
+    /**
+     * @return the affiliatedOrgUserType
+     */
+    @Column(name = "AFFILIATED_ORG_USER_TYPE")
+    @Enumerated(EnumType.STRING)
+    public UserOrgType getAffiliatedOrgUserType() {
+        return affiliatedOrgUserType;
+    }
+
+    /**
+     * @param affiliatedOrgUserType the affiliatedOrgUserType to set
+     */
+    public void setAffiliatedOrgUserType(UserOrgType affiliatedOrgUserType) {
+        this.affiliatedOrgUserType = affiliatedOrgUserType;
+    }
+
 }

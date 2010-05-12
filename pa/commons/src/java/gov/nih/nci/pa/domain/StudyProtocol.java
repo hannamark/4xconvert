@@ -6,7 +6,7 @@
  * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
  *
  * This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
- * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  
+ * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control
  * with the entity.  Control for purposes of this definition means
  *
  * (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
@@ -16,7 +16,7 @@
  *
  * (iii) beneficial ownership of such entity.
  * License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
- * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in 
+ * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in
  * its rights in the caBIG Software, including any copyright or patent rights therein, to (i) use,install,
  * disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
  * publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
@@ -26,9 +26,9 @@
  * (or portions thereof);
  *
  * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
- * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third 
- * parties, including the right to license such rights to further third parties. For sake of clarity,and not by 
- * way of limitation, caBIG Participant shall have no right of accounting or right of payment from You or Your 
+ * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third
+ * parties, including the right to license such rights to further third parties. For sake of clarity,and not by
+ * way of limitation, caBIG Participant shall have no right of accounting or right of payment from You or Your
  * sub licensees for the rights granted under this License.   This  License  is  granted  at no  charge  to You.
  * Your downloading, copying, modifying, displaying, distributing or use of caBIG Software constitutes acceptance
  * of  all of the terms and conditions of this Agreement.  If You do not agree to such terms and conditions,
@@ -51,27 +51,27 @@
  *
  * 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
  * programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
- * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such 
- * third parties required to incorporate the caBIG Software  into such third party proprietary programs and for 
- * informing Your sub licensees, including without limitation Your end-users, of their obligation  to  secure  any  
- * required permissions from such third parties before incorporating the caBIG Software into such third party 
+ * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such
+ * third parties required to incorporate the caBIG Software  into such third party proprietary programs and for
+ * informing Your sub licensees, including without limitation Your end-users, of their obligation  to  secure  any
+ * required permissions from such third parties before incorporating the caBIG Software into such third party
  * proprietary software programs.
  * In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
  * against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
  * to obtain such permissions.
  *
  * 5. For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
- * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  
- * Your sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a 
- * whole, provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions  
+ * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in
+ * Your sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a
+ * whole, provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions
  * stated in this License.
  *
  * 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
- * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; 
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF  
+ * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS caBIG SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
@@ -88,7 +88,9 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -98,9 +100,15 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.NotNull;
@@ -111,7 +119,7 @@ import org.hibernate.validator.NotNull;
  * regarding the effectiveness of a particular treatment, drug, device,
  * procedure, or care plan. This includes prevention, observational,
  * therapeutic, and other types of studies that involve subjects.
- * 
+ *
  * @author Naveen Amiruddin
  * @since 07/07/2007
  */
@@ -176,6 +184,8 @@ public class StudyProtocol extends AbstractEntity {
     private List<StudyCheckout> studyCheckout = new ArrayList<StudyCheckout>();
     private Boolean ctgovXmlRequiredIndicator;
 
+    private Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
+
     /**
      * @return accrualReportingMethodCode
      */
@@ -210,7 +220,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return dataMonitoringCommitteeAppointedIndicator
      */
     @Column(name = "DATA_MONTY_COMTY_APPTN_INDICATOR")
@@ -219,7 +229,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param dataMonitoringCommitteeAppointedIndicator
      *            ind
      */
@@ -229,7 +239,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return delayedpostingIndicator
      */
     @Column(name = "DELAYED_POSTING_INDICATOR")
@@ -238,7 +248,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param delayedpostingIndicator
      *            delayedposting Indicator
      */
@@ -247,7 +257,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return expandedAccessIndicator expandedAccessIndicator
      */
     @Column(name = "EXPD_ACCESS_INDIDICATOR")
@@ -256,7 +266,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param expandedAccessIndicator
      *            expandedAccessIndicator
      */
@@ -265,7 +275,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return fdaRegulatedIndicator
      */
     @Column(name = "FDA_REGULATED_INDICATOR")
@@ -274,7 +284,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param fdaRegulatedIndicator
      *            fdaRegulatedIndicator
      */
@@ -300,7 +310,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return identifier
      */
     @Column(name = "ASSIGNED_IDENTIFIER", updatable = false)
@@ -309,7 +319,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param identifier
      *            identifier
      */
@@ -318,7 +328,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return keywordText
      */
     @Column(name = "KEYWORD_TEXT")
@@ -327,7 +337,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param keywordText
      *            keywordText
      */
@@ -336,7 +346,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return maximumTargetAccrualNumber
      */
     @Column(name = "MAX_TARGET_ACCRUAL_NUM")
@@ -345,7 +355,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param maximumTargetAccrualNumber
      *            maximumTargetAccrualNumber
      */
@@ -370,7 +380,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return officialTitle
      */
     @Column(name = "OFFICIAL_TITLE")
@@ -379,7 +389,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param officialTitle
      *            officialTitle
      */
@@ -388,7 +398,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return phaseCode
      */
     @Column(name = "PHASE_CODE")
@@ -398,7 +408,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param phaseCode
      *            phaseCode
      */
@@ -407,7 +417,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return phaseOtherText
      */
     @Column(name = "PHASE_OTHER_TEXT")
@@ -424,7 +434,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return primaryCompletionDate
      */
     @Column(name = "PRI_COMPL_DATE")
@@ -433,7 +443,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param primaryCompletionDate
      *            primaryCompletionDate
      */
@@ -442,7 +452,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return primaryCompletionDateTypeCode
      */
     @Column(name = "PRI_COMPL_DATE_TYPE_CODE")
@@ -452,7 +462,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param primaryCompletionDateTypeCode
      *            primaryCompletionDateTypeCode
      */
@@ -462,7 +472,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return startDate
      */
     @Column(name = "START_DATE")
@@ -471,7 +481,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param startDate
      *            start Date
      */
@@ -480,7 +490,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return startDateTypeCode
      */
     @Column(name = "START_DATE_TYPE_CODE")
@@ -490,7 +500,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param startDateTypeCode
      *            startDateTypeCode
      */
@@ -499,7 +509,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return primaryPurposeCode
      */
     @Column(name = "PRIMARY_PURPOSE_CODE")
@@ -509,7 +519,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param primaryPurposeCode
      *            primaryPurposeCode
      */
@@ -518,7 +528,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return primaryPurposeOtherText
      */
     @Column(name = "PRIMARY_PURPOSE_OTHER_TEXT")
@@ -535,7 +545,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return publicDescription
      */
     @Column(name = "PUBLIC_DESCRIPTION")
@@ -544,7 +554,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param publicDescription
      *            publicDescription
      */
@@ -553,7 +563,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return publicTitle
      */
     @Column(name = "PUBLIC_TITTLE")
@@ -562,7 +572,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param publicTitle
      *            publicTitle
      */
@@ -571,7 +581,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return section801Indicator
      */
     @Column(name = "SECTION801_INDICATOR")
@@ -580,7 +590,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param section801Indicator
      *            section801Indicator
      */
@@ -589,7 +599,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return recordVerificationDate
      */
     @Column(name = "RECORD_VERIFICATION_DATE")
@@ -598,7 +608,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param recordVerificationDate
      *            recordVerificationDate
      */
@@ -607,7 +617,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return scientificDescription
      */
     @Column(name = "SCIENTIFIC_DESCRIPTION")
@@ -616,7 +626,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param scientificDescription
      *            scientificDescription
      */
@@ -625,7 +635,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return studyOverallStatuses
      */
     @OneToMany(mappedBy = "studyProtocol")
@@ -634,7 +644,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param studyOverallStatuses
      *            studyOverallStatuses
      */
@@ -644,7 +654,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return documentWorkflowStatuses
      */
     @OneToMany(mappedBy = "studyProtocol")
@@ -653,7 +663,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param documentWorkflowStatuses
      *            documentWorkflowStatuses
      */
@@ -663,7 +673,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return studySites
      */
     @OneToMany(mappedBy = "studyProtocol")
@@ -672,7 +682,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param studySites
      *            studySites
      */
@@ -681,7 +691,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return studyContacts
      */
     @OneToMany(mappedBy = "studyProtocol")
@@ -690,7 +700,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param studyContacts
      *            studyContacts
      */
@@ -699,7 +709,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return studyResourcings
      */
     @OneToMany(mappedBy = "studyProtocol")
@@ -708,7 +718,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param studyResourcings
      *            studyResourcings
      */
@@ -1000,7 +1010,7 @@ public class StudyProtocol extends AbstractEntity {
     public void setProprietaryTrialIndicator(Boolean proprietaryTrialIndicator) {
         this.proprietaryTrialIndicator = proprietaryTrialIndicator;
     }
-    
+
     /**
      * @return the studyInbox
      */
@@ -1031,7 +1041,7 @@ public class StudyProtocol extends AbstractEntity {
     public void setStudyCheckout(List<StudyCheckout> studyCheckout) {
         this.studyCheckout = studyCheckout;
     }
-    
+
     /**
      * @param ctgovXmlRequiredIndicator the ctgovXmlRequiredIndicator to set
      */
@@ -1047,5 +1057,25 @@ public class StudyProtocol extends AbstractEntity {
         return ctgovXmlRequiredIndicator;
     }
 
+    /**
+     * @return the studyOwners
+     */
+    @ManyToMany
+    @JoinTable(name = "study_owner",
+               joinColumns = @JoinColumn(name = "user_id"),
+               inverseJoinColumns = @JoinColumn(name = "study_id"))
+    @ForeignKey(name = "FK_STUDY_OWNER_STUDY",
+                inverseName = "FK_STUDY_OWNER_USER")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    public Set<RegistryUser> getStudyOwners() {
+        return studyOwners;
+    }
+
+    /**
+     * @param studyOwners the studyOwners to set
+     */
+    public void setStudyOwners(Set<RegistryUser> studyOwners) {
+        this.studyOwners = studyOwners;
+    }
 
 }

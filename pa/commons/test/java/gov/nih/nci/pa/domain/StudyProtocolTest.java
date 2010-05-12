@@ -1,31 +1,31 @@
 /*
 * caBIG Open Source Software License
-* 
+*
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-* 
+*
 * This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
 * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
 * entity.  Control for purposes of this definition means
-* 
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract 
+*
+* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
 * or otherwise,or
-*  
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or 
-* 
+*
+* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
+*
 * (iii) beneficial ownership of such entity.
 * License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
 * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to 
-* 
+* rights in the caBIG Software, including any copyright or patent rights therein, to
+*
 * (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
 * publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so; 
-* 
+* or permit others to do so;
+*
 * (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof); 
-* 
+* (or portions thereof);
+*
 * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
 * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
 * including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
@@ -34,22 +34,22 @@
 * displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
 * Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
 * distribute or use the caBIG Software.
-* 
+*
 * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
 * of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
 * form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
 * documentation and/or other materials provided with the distribution, if any.
-* 
+*
 * 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
 * This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally 
+* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
 * appear.
-* 
+*
 * 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
 * caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
 * any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
 * as required to comply with the terms of this License.
-* 
+*
 * 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
 * programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
 * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
@@ -59,22 +59,22 @@
 * In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
 * against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
 * to obtain such permissions.
-* 
+*
 * 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
 * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
 * sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
 * provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
 * License.
-* 
+*
 * 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN 
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
 * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
 * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* 
+*
+*
 */
 package gov.nih.nci.pa.domain;
 
@@ -94,6 +94,8 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.SamplingMethodCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
+import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -108,32 +110,32 @@ import org.junit.Test;
 
 
 /**
- * 
+ *
  * @author NAmiruddin
  *
  */
 public class StudyProtocolTest  {
 
     /**
-     * 
+     *
      * @throws Exception e
      */
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
-               
-    }    
+
+    }
     /**
-     * 
+     * @throws PAException
+     *
      */
     @Test
     public void createStudyProtocolTest() {
         Session session  = HibernateUtil.getCurrentSession();
-        
-        StudyProtocol sp = new StudyProtocol();   
+
+        StudyProtocol sp = new StudyProtocol();
         StudyProtocol create = createStudyProtocolObj(sp);
         try {
-            
             TestSchema.addUpdObject(sp);
             Serializable cid = create.getId();
             assertNotNull(cid);
@@ -144,9 +146,10 @@ public class StudyProtocolTest  {
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * 
+     * @throws PAException
+     *
      */
     @Test
     public void createStudyProtocolWithWFStatusTest() {
@@ -166,22 +169,22 @@ public class StudyProtocolTest  {
 
         StudyProtocol saved = (StudyProtocol) session.load(StudyProtocol.class, sp.getId());
         List dwfs = saved.getDocumentWorkflowStatuses();
-//        assertEquals("Document Workflow status size does not match " , 
+//        assertEquals("Document Workflow status size does not match " ,
 //                saved.getDocumentWorkflowStatuses().size() , 2);
         //@todo: this is not working to fix it
-        
+
     }
 
     @Test
     public void createInterventionalStudyProtocolTest() {
         Session session  = HibernateUtil.getCurrentSession();
 
-        InterventionalStudyProtocol create = new InterventionalStudyProtocol();  
-         create = (InterventionalStudyProtocol) createStudyProtocolObj(create);    
+        InterventionalStudyProtocol create = new InterventionalStudyProtocol();
+         create = (InterventionalStudyProtocol) createStudyProtocolObj(create);
          create = createInterventionalStudyProtocolObj(create);
          Serializable isp = session.save(create);
          assertNotNull(isp);
-         InterventionalStudyProtocol saved = 
+         InterventionalStudyProtocol saved =
                  (InterventionalStudyProtocol) session.load(InterventionalStudyProtocol.class, isp);
          assertStudyProtocol(create , saved);
          assertEquals(create.getAllocationCode(), saved.getAllocationCode());
@@ -193,18 +196,18 @@ public class StudyProtocolTest  {
          assertEquals(create.getNumberOfInterventionGroups(), saved.getNumberOfInterventionGroups());
 
      }
-    
+
 
     @Test
-    public void createObservationalStudyProtocolTest() {
+    public void createObservationalStudyProtocolTest() throws PAException {
         Session session  = HibernateUtil.getCurrentSession();
 
-        ObservationalStudyProtocol create = new ObservationalStudyProtocol();  
-         create = (ObservationalStudyProtocol) createStudyProtocolObj(create);    
+        ObservationalStudyProtocol create = new ObservationalStudyProtocol();
+         create = (ObservationalStudyProtocol) createStudyProtocolObj(create);
          create = createObservationalStudyProtocolObj(create);
          Serializable isp = session.save(create);
          assertNotNull(isp);
-         ObservationalStudyProtocol saved = 
+         ObservationalStudyProtocol saved =
                  (ObservationalStudyProtocol) session.load(ObservationalStudyProtocol.class, isp);
          assertStudyProtocol(create , saved);
          assertEquals(create.getBiospecimenDescription(), saved.getBiospecimenDescription());
@@ -218,24 +221,26 @@ public class StudyProtocolTest  {
 
 
      }
-    
+
     /**
-     * 
+     *
      * @return StudyProtocol
-     */    
+     * @throws PAException
+     */
     public static StudyProtocol createStudyProtocolObj() {
         StudyProtocol sp = new StudyProtocol();
         createStudyProtocolObj(sp);
         return sp;
     }
-    
+
     /**
-     * 
+     *
      * @return StudyProtocol
-     */    
+     * @throws PAException
+     */
     public static StudyProtocol createStudyProtocolObj(StudyProtocol sp) {
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
-        
+
         sp.setAcronym("Acronym .....");
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         sp.setDataMonitoringCommitteeAppointedIndicator(Boolean.TRUE);
@@ -270,16 +275,48 @@ public class StudyProtocolTest  {
         sp.setSubmissionNumber(2);
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        addOwners(sp);
         return sp;
     }
-    
+
+    private static void addOwners(StudyProtocol sp) {
+        RegistryUser newUser = getRegistryUserObj();
+        TestSchema.addUpdObject(newUser);
+        sp.getStudyOwners().add(newUser);
+
+        newUser = getRegistryUserObj();
+        TestSchema.addUpdObject(newUser);
+        sp.getStudyOwners().add(newUser);
+    }
+
+    private static RegistryUser getRegistryUserObj() {
+        RegistryUser create = new RegistryUser();
+        create.setAddressLine("xxxxx");
+
+        create.setAffiliateOrg("aff");
+        create.setCity("city");
+        create.setCountry("country");
+        create.setCsmUserId(Long.valueOf(1));
+        create.setFirstName("firstname");
+        create.setLastName("lastname");
+        create.setMiddleName("middlename");
+        create.setPhone("1111");
+        create.setPostalCode("00000");
+        create.setState("va");
+        create.setPrsOrgName("prsOrgName");
+        create.setAffiliatedOrganizationId(501L);
+        create.setAffiliatedOrgUserType(UserOrgType.ADMIN);
+
+        return create;
+    }
+
     /**
-     * 
+     *
      * @param isp isp
      * @return isp
      */
     public static InterventionalStudyProtocol createInterventionalStudyProtocolObj(InterventionalStudyProtocol isp) {
-        
+
         Timestamp now = new Timestamp((new Date()).getTime());
         isp.setStartDate(now);
         isp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
@@ -297,9 +334,9 @@ public class StudyProtocolTest  {
         isp.setSubmissionNumber(Integer.valueOf(1));
         return isp;
     }
-    
+
     /**
-     * 
+     *
      * @param osp osp
      * @return osp
      */
@@ -317,11 +354,11 @@ public class StudyProtocolTest  {
 
     public static void assertStudyProtocol(StudyProtocol create , StudyProtocol saved) {
         assertEquals("Acronym does not match " , create.getAcronym(), saved.getAcronym());
-        assertEquals("Accrual Reporting Method code does not match " , 
+        assertEquals("Accrual Reporting Method code does not match " ,
                 create.getAccrualReportingMethodCode().getCode(), saved.getAccrualReportingMethodCode().getCode());
-        assertEquals(create.getDataMonitoringCommitteeAppointedIndicator(), 
+        assertEquals(create.getDataMonitoringCommitteeAppointedIndicator(),
                 saved.getDataMonitoringCommitteeAppointedIndicator());
-        assertEquals("Expanded Access Indicator does not  match " , 
+        assertEquals("Expanded Access Indicator does not  match " ,
                 create.getExpandedAccessIndicator(), saved.getExpandedAccessIndicator());
         assertEquals(create.getFdaRegulatedIndicator(), saved.getFdaRegulatedIndicator());
         assertEquals(create.getId(), saved.getId());
@@ -330,28 +367,30 @@ public class StudyProtocolTest  {
         assertEquals(create.getOfficialTitle(), saved.getOfficialTitle());
         assertEquals("Phase code does not match " , create.getPhaseCode(), saved.getPhaseCode());
         assertEquals(create.getPhaseOtherText() , saved.getPhaseOtherText());
-        assertEquals("PrimaryCompletionDate  does not match " , 
+        assertEquals("PrimaryCompletionDate  does not match " ,
                 create.getPrimaryCompletionDate(), saved.getPrimaryCompletionDate());
-        assertEquals("PrimaryCompletionDateTypeCode  does not match " , 
-                create.getPrimaryCompletionDateTypeCode().getCode(), 
+        assertEquals("PrimaryCompletionDateTypeCode  does not match " ,
+                create.getPrimaryCompletionDateTypeCode().getCode(),
                 saved.getPrimaryCompletionDateTypeCode().getCode());
         assertEquals(create.getPrimaryPurposeCode() , saved.getPrimaryPurposeCode());
         assertEquals(create.getPrimaryPurposeOtherText() , saved.getPrimaryPurposeOtherText());
-        assertEquals("StartDate Does not match ", create.getStartDate() , saved.getStartDate());  
-        assertEquals("StartDate Type code Does not match ", create.getStartDateTypeCode() , 
-                saved.getStartDateTypeCode());  
-        assertEquals("Status Date Does not match ", create.getUserLastUpdated() , 
-                saved.getUserLastUpdated());  
-        assertEquals("User Last updated does not match " , 
+        assertEquals("StartDate Does not match ", create.getStartDate() , saved.getStartDate());
+        assertEquals("StartDate Type code Does not match ", create.getStartDateTypeCode() ,
+                saved.getStartDateTypeCode());
+        assertEquals("Status Date Does not match ", create.getUserLastUpdated() ,
+                saved.getUserLastUpdated());
+        assertEquals("User Last updated does not match " ,
                 create.getUserLastUpdated() , saved.getUserLastUpdated());
-        assertEquals("Date Last updated does not match " , 
+        assertEquals("Date Last updated does not match " ,
                 create.getDateLastUpdated() , saved.getDateLastUpdated());
         assertEquals(create.getUserLastCreated(), saved.getUserLastCreated());
         assertEquals(create.getDateLastCreated(), saved.getDateLastCreated());
         assertEquals(create.getAmendmentReasonCode(),saved.getAmendmentReasonCode());
         assertEquals(create.getStatusCode(),saved.getStatusCode());
         assertEquals(create.getCtgovXmlRequiredIndicator(), saved.getCtgovXmlRequiredIndicator());
-        
+        assertEquals(2, saved.getStudyOwners().size());
+        for (RegistryUser regUser : saved.getStudyOwners()) {
+            assertEquals("firstname", regUser.getFirstName());
+        }
     }
-
 }

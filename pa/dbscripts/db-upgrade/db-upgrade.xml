@@ -397,7 +397,7 @@
     <changeSet id="PO-1730" author="Naveen">
     	<comment>PO-1730 increase the size of the dose_regimen field in planned_activity table to 1000 chars</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1730.sql"/>
-    </changeSet>  
+    </changeSet>
     <changeSet id="PO-1758" author="Anu">
        <comment>PO-1758 Make batch load progress report message more informative</comment>
        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1758.sql"/>
@@ -405,13 +405,17 @@
     <changeSet id="PO-1758_1" author="Anu">
        <comment>PO-1758 Make batch load progress report message more informative</comment>
        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1758_1.sql"/>
-    </changeSet>  
+    </changeSet>
     <changeSet id="PO-1726" author="Kalpana">
     	<comment>PO-1726 updating the text of pa_properties values</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1726.sql"/>
-    </changeSet> 
+    </changeSet>
     <changeSet id="PO-1666" author="aevansel">
         <comment>PO-1666: Enable creation of grid accounts upon registry registration.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1666.sql"/>
-    </changeSet>        
+    </changeSet>
+    <changeSet id="PO-1782" author="kkanchinadam">
+       <comment>PO-1782-Data Model changes for Org Access</comment>
+       <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1782.sql"/>
+    </changeSet>
 </databaseChangeLog>
