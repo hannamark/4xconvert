@@ -167,7 +167,7 @@ public class SearchTrialAction extends ActionSupport {
      * @return res
      */
     public String query() {
-        try {            
+        try {
             // validate the form elements
             validateForm();
             if (hasFieldErrors()) {
@@ -202,33 +202,6 @@ public class SearchTrialAction extends ActionSupport {
         }
     }
 
-    /**
-     * @return res
-     */
-    public String queryOnBack() {
-        try {            
-           StudyProtocolQueryCriteria queryCriteria = 
-             (StudyProtocolQueryCriteria) ServletActionContext.getRequest()
-             .getSession().getAttribute("studySearchCriteria");
-           // set UI search criteria 
-           setCriteria((SearchProtocolCriteria) ServletActionContext.getRequest()
-                    .getSession().getAttribute("searchCriteria"));
-            if (queryCriteria == null) {
-                return ERROR;
-            }
-            records = new ArrayList<StudyProtocolQueryDTO>();
-            records = PaRegistry.getProtocolQueryService().
-                              getStudyProtocolByCriteria(queryCriteria);
-            checkToShowSendXml();
-            return SUCCESS;
-        } catch (Exception e) {
-            addActionError(e.getLocalizedMessage());
-            ServletActionContext.getRequest().setAttribute(
-                    "failureMessage" , e.getMessage());
-            return ERROR;
-        }
-    }
-    
     /**
      * @return StudyProtocolQueryCriteria
      */
@@ -270,8 +243,6 @@ public class SearchTrialAction extends ActionSupport {
         if (PAUtil.isNotEmpty(criteria.getPrincipalInvestigatorId())) {
             queryCriteria.setPrincipalInvestigatorId(criteria.getPrincipalInvestigatorId());
         }
-        ServletActionContext.getRequest().getSession().setAttribute("studySearchCriteria", queryCriteria);
-        ServletActionContext.getRequest().getSession().setAttribute("searchCriteria", criteria);
         return queryCriteria;
     }
 
@@ -599,6 +570,6 @@ public class SearchTrialAction extends ActionSupport {
         } catch (PAException e) {
             addActionError("Exception while sending XML email:" + e.getMessage());
         }        
-        return queryOnBack();
+        return query();
     }
 }

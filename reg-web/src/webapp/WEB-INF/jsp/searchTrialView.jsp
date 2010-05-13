@@ -14,7 +14,7 @@
 		BubbleTips.activateTipOn("dfn"); 
 	}
 	function handleBackAction(){
-	 document.forms[0].action="searchTrialqueryOnBack.action";
+	 document.forms[0].action="searchTrialquery.action";
      document.forms[0].submit();  
 }
 	</SCRIPT>
@@ -45,7 +45,17 @@
         </div>
      </c:if>
     <s:form > <s:actionerror/>          
-    	
+    	 <s:hidden name="criteria.identifierType" />
+        <s:hidden name="criteria.identifier" />
+        <s:hidden name="criteria.officialTitle" />
+        <s:hidden name="criteria.organizationId" />
+         <s:hidden name="criteria.participatingSiteId" />
+        <s:hidden name="criteria.phaseCode" />
+        <s:hidden name="criteria.primaryPurposeCode" />
+        <s:hidden name="criteria.organizationType" />
+        <s:hidden name="criteria.myTrialsOnly" />
+        <s:hidden name="criteria.principalInvestigatorId" />
+        
     <table class="form">
          <tr>
             <th colspan="2"><fmt:message key="view.trial.trialIDs"/></th>

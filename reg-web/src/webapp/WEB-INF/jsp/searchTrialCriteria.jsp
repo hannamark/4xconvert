@@ -23,17 +23,25 @@ function resetValues(){
     document.getElementById("participatingSiteId").value="";
 }
 function handleAction(){
+     var input = "criteria.myTrialsOnly";
+     document.forms[0].elements[input].value="false";
      document.forms[0].action="searchTrialquery.action";
+     document.forms[0].submit();  
+}
+function sendXml(){
+     document.forms[0].action="searchTrialsendXml.action";
      document.forms[0].submit();  
 }
 
 function handleMyAction(){
-	document.forms[0].myTrialsOnly.value="true";
+	var input = "criteria.myTrialsOnly";
+    document.forms[0].elements[input].value="true";
     document.forms[0].action="searchTrialquery.action";
     document.forms[0].submit(); 
 }
 function getMyPartialTrial() {
-	document.forms[0].myTrialsOnly.value="true";
+	var input = "criteria.myTrialsOnly";
+    document.forms[0].elements[input].value="true";
     document.forms[0].action="searchTrialgetMyPartiallySavedTrial.action";
     document.forms[0].submit(); 
 }
@@ -85,7 +93,7 @@ function getMyPartialTrial() {
     <div class="box" id="filters">
     <reg-web:failureMessage/>
     <s:form name="searchTrial">
-    <s:hidden name="criteria.myTrialsOnly" id="myTrialsOnly" value="false"/>
+    <s:hidden name="criteria.myTrialsOnly" id="criteria.myTrialsOnly"/>
         <table class="form">
         
         	<tr>

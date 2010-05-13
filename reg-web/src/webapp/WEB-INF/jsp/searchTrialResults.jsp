@@ -47,8 +47,7 @@
         sortable="true" headerClass="sortable"/>
         <display:column class="title" title="Action" sortable="true" headerScope="col" scope="row">
         	<s:if test="%{#attr.row.showSendXml.booleanValue() == true}">
-                <s:url id="url" action="searchTrialsendXml"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-        		<s:a href="%{url}">Send Xml</s:a>
+                <a href="#" onclick="sendXml();">Send Xml</a>
             </s:if>
         </display:column>     
 </display:table>
