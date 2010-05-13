@@ -174,7 +174,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <exclude name="commons-httpclient-3.0.jar"/>
           </fileset>
       </copy>
-      
+
       <runtarget target="install:pa-ear-jboss:accrual-ear"/>
   </target>
 
@@ -188,15 +188,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <delete dir="${temp.dir}/pa-ear"/>
       <mkdir dir="${temp.dir}/pa-ear"/>
 
-      <mkdir dir="${temp.dir}/accrual-ear"/>
-      <delete dir="${temp.dir}/accrual-ear"/>
-      <mkdir dir="${temp.dir}/accrual-ear"/>
-
       <unzip src="${pa-ear.dir.dist}/${pa-ear.ear.file}" dest="${temp.dir}/pa-ear"/>
-      <unzip src="${pa-ear.dir.dist}/${accrual-ear.ear.file}" dest="${temp.dir}/accrual-ear"/>
       <unzip src="${temp.dir}/pa-ear/pa-ejb.jar" dest="${temp.dir}/pa-ejb-jar"/>
       <unzip src="${temp.dir}/pa-ear/pa-web.war" dest="${temp.dir}/pa-web-war"/>
-      <unzip src="${temp.dir}/accrual-ear/accrual-services.jar" dest="${temp.dir}/accrual-services-jar"/>
 
       <delete file="${temp.dir}/pa-ejb-jar/paear.properties"/>
       <echo message="Looking for paear.properties in ${pa-ear.dir.dist}"/>
@@ -233,35 +227,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                      match="^(java.naming.provider.url)=.*"
                      replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
 
-      <replaceregexp file="${temp.dir}/accrual-services-jar/jndi.properties" byline="true"
-                     match="^(java.naming.provider.url)=.*"
-                     replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
-
-      <replaceregexp file="${temp.dir}/accrual-services-jar/pa.jndi.properties" byline="true"
-                     match="^(java.naming.provider.url)=.*"
-                     replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
-
-      <replaceregexp file="${temp.dir}/accrual-services-jar/po.jndi.properties" byline="true"
-                     match="^(outcomes.url)=.*"
-                     replace="# modified by installer ${line.separator}\1=http://${jboss.server.hostname}:${jboss.server.port}/outcomes"/>
-
-
       <move file="${pa-ear.dir.dist}/${pa-ear.ear.file}" tofile="${pa-ear.dir.dist}/${pa-ear.ear.file}.orig"/>
       <move file="${temp.dir}/pa-ear/pa-ejb.jar" tofile="${temp.dir}/pa-ejb.jar.orig"/>
       <move file="${temp.dir}/pa-ear/pa-web.war" tofile="${temp.dir}/pa-web.war.orig"/>
-
-      <move file="${pa-ear.dir.dist}/${accrual-ear.ear.file}" tofile="${pa-ear.dir.dist}/${accrual-ear.ear.file}.orig"/>
-      <move file="${temp.dir}/accrual-ear/accrual-services.jar" tofile="${temp.dir}/accrual-services.jar.orig"/>
 
       <jar jarfile="${temp.dir}/pa-ear/pa-ejb.jar"
            compress="true"
            index="false"
            basedir="${temp.dir}/pa-ejb-jar"/>
-
-      <jar jarfile="${temp.dir}/accrual-ear/accrual-services.jar"
-           compress="true"
-           index="false"
-           basedir="${temp.dir}/accrual-services-jar"/>
 
       <war destfile="${temp.dir}/pa-ear/pa-web.war"
            compress="true"
@@ -273,10 +246,43 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
            compress="false"
            appxml="${temp.dir}/pa-ear/META-INF/application.xml" />
 
+      <runtarget target="install:pa-ear-jboss:app:re-configure-accrual" />
+
+  </target>
+
+  <target name="install:pa-ear-jboss:app:re-configure-accrual" unless="exclude.accrual">
+      <mkdir dir="${temp.dir}/accrual-ear"/>
+      <delete dir="${temp.dir}/accrual-ear"/>
+      <mkdir dir="${temp.dir}/accrual-ear"/>
+
+      <unzip src="${pa-ear.dir.dist}/${accrual-ear.ear.file}" dest="${temp.dir}/accrual-ear"/>
+      <unzip src="${temp.dir}/accrual-ear/accrual-services.jar" dest="${temp.dir}/accrual-services-jar"/>
+
+      <echo message="Fixing jndi.properties"/>
+      <replaceregexp file="${temp.dir}/accrual-services-jar/jndi.properties" byline="true"
+                     match="^(java.naming.provider.url)=.*"
+                     replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
+      <replaceregexp file="${temp.dir}/accrual-services-jar/pa.jndi.properties" byline="true"
+                     match="^(java.naming.provider.url)=.*"
+                     replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
+
+      <replaceregexp file="${temp.dir}/accrual-services-jar/po.jndi.properties" byline="true"
+                     match="^(outcomes.url)=.*"
+                     replace="# modified by installer ${line.separator}\1=http://${jboss.server.hostname}:${jboss.server.port}/outcomes"/>
+
+      <move file="${pa-ear.dir.dist}/${accrual-ear.ear.file}" tofile="${pa-ear.dir.dist}/${accrual-ear.ear.file}.orig"/>
+      <move file="${temp.dir}/accrual-ear/accrual-services.jar" tofile="${temp.dir}/accrual-services.jar.orig"/>
+
+      <jar jarfile="${temp.dir}/accrual-ear/accrual-services.jar"
+           compress="true"
+           index="false"
+           basedir="${temp.dir}/accrual-services-jar"/>
+
       <ear destfile="${pa-ear.dir.dist}/${accrual-ear.ear.file}"
            basedir="${temp.dir}/accrual-ear"
            compress="false"
            appxml="${temp.dir}/accrual-ear/META-INF/application.xml" />
+
   </target>
 
 
