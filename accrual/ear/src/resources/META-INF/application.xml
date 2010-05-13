@@ -40,6 +40,12 @@
 	<module>
 	    <java>commons-lang-2.4.jar</java>
 	</module>
+    <module>
+        <java>phr-connector-ws-client-2010-05-06.jar</java>
+    </module>
+    <module>
+       <java>phr-client-config.wsdd</java>
+   </module>
     <security-role><role-name>Submitter</role-name></security-role>
     <security-role><role-name>Outcomes</role-name></security-role>
 </application>

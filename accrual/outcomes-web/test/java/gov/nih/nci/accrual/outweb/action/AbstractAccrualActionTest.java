@@ -96,6 +96,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
+import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockHttpSession;
 import com.mockrunner.mock.web.MockServletContext;
 import com.opensymphony.xwork2.ActionContext;
@@ -152,10 +153,12 @@ public class AbstractAccrualActionTest {
         assertNotNull(ActionContext.getContext());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
         request.setSession(new MockHttpSession());
         request.setRemoteUser(TEST_USER);
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
+        ServletActionContext.setResponse(response);
 
         setRole(AccrualConstants.ROLE_OUTCOMES);
     }

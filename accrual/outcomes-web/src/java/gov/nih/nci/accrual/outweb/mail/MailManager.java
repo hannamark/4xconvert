@@ -29,9 +29,10 @@ public class MailManager {
     /**
      * Sends an email notifying user to activate their user account.
      * @param mailTo mailTo
+     * @param identity loginName
      * @param password password
      */
-    public void sendConfirmationMail(String mailTo, String password) {
+    public void sendConfirmationMail(String mailTo, String identity, String password) {
 
         try {
             String[] params = {mailTo , };
@@ -52,8 +53,8 @@ public class MailManager {
             // added new line characters to fix URL link issues when users type
             // in special characters in their passwords
             String url = formatterBodyUrl.format(params)
-                + "/userAccountactivate.action?loginName=" + EncoderDecoder.encodeString(mailTo)
-                + "&password=" + EncoderDecoder.encodeString(password);
+                + "/register/activate.action?loginName=" + EncoderDecoder.encodeString(identity)
+                + "&email=" + EncoderDecoder.encodeString(mailTo);
             String emailBody = "<html><body><p>" + formatterBody.format(params) + "</p><p><a href=\"" + url + "\">" 
                 + url + "</a></p></body></html>";
             logger.info("emailBody is: " + emailBody);

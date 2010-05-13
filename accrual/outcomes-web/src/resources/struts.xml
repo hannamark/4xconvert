@@ -50,6 +50,11 @@
                 <param name="actionName">logout</param>
             </result>
         </global-results> 
+        
+        <global-exception-mappings>
+            <exception-mapping result="error" exception="java.lang.Throwable" />
+        </global-exception-mappings>
+        
         <action name="login">
            <result>/WEB-INF/jsp/login.jsp</result>
         </action>
@@ -63,24 +68,35 @@
            <result>/WEB-INF/jsp/accrualContact.jsp</result>
         </action>
         
-        <action name="userAccount*" class="gov.nih.nci.accrual.outweb.action.UserAccountAction" method="{1}">
-            <result>/WEB-INF/jsp/userAccountrequest.jsp</result>
-            <result name="input">/WEB-INF/jsp/userAccount{1}.jsp</result>
-            <result name="requestConfirmation">/WEB-INF/jsp/userAccountrequestConfirmation.jsp</result>
-            <result name="initTreatmentSiteLookup">/WEB-INF/jsp/nodecorate/lookupTreatmentSite.jsp</result>
-            <result name="initPhysicianLookup">/WEB-INF/jsp/nodecorate/lookupPhysician.jsp</result>
-            <result name="create">/WEB-INF/jsp/userAccountcreate.jsp</result>
-            <result name="redirectToLogin" type="redirectAction">
-                <param name="actionName">welcome.action</param>
-                <param name="namespace">/common</param>
-                <param name="parse">true</param>
-                <param name="userAction">${userAction}</param>
-            </result>
-        </action>
         <action name="lookup*" class="gov.nih.nci.accrual.outweb.action.UserAccountAction" method="lookup{1}">
             <result>/WEB-INF/jsp/nodecorate/lookup{1}.jsp</result>
             <result name="create_pers_response">/WEB-INF/jsp/nodecorate/lookupPhysician.jsp</result>
             <result name="create_org_response">/WEB-INF/jsp/nodecorate/lookupTreatmentSite.jsp</result>
+        </action>
+    </package>
+
+    <package name="account" namespace="/account" extends="default">
+        <action name="*" class="gov.nih.nci.accrual.outweb.action.UserAccountAction" method="{1}">
+            <result name="input">/WEB-INF/jsp/account/update.jsp</result>
+            <result name="initTreatmentSiteLookup">/WEB-INF/jsp/nodecorate/lookupTreatmentSite.jsp</result>
+            <result name="initPhysicianLookup">/WEB-INF/jsp/nodecorate/lookupPhysician.jsp</result>
+        </action>
+    </package>
+    
+    <package name="register" namespace="/register" extends="default">
+        <action name="*" class="gov.nih.nci.accrual.outweb.action.RegisterAction" method="{1}">
+            <result name="input">/WEB-INF/jsp/register/{1}.jsp</result>
+            <result name="success">/WEB-INF/jsp/register/{1}.jsp</result>
+            <result name="redirectToLogoutThenLogin" type="redirectAction">
+                <param name="actionName">logout.action</param>
+                <param name="namespace">/</param>
+                <param name="parse">true</param>
+                <param name="userAction">${userAction}</param>
+            </result>
+            <result name="start">/WEB-INF/jsp/register/start.jsp</result>
+            <result name="activate">/WEB-INF/jsp/register/activate.jsp</result>
+            <result name="initTreatmentSiteLookup">/WEB-INF/jsp/nodecorate/lookupTreatmentSite.jsp</result>
+            <result name="initPhysicianLookup">/WEB-INF/jsp/nodecorate/lookupPhysician.jsp</result>
         </action>
     </package>
 
@@ -122,6 +138,11 @@
         <action name="edit*" class="gov.nih.nci.accrual.outweb.action.{1}Action" method="edit"> 
             <result>/WEB-INF/jsp/{1}.jsp</result>
             <result name="input">/WEB-INF/jsp/{1}Detail.jsp</result>
+        </action>
+        <action name="healthRecord*" class="gov.nih.nci.accrual.outweb.action.{1}Action" method="healthRecord"> 
+            <result>/WEB-INF/jsp/{1}.jsp</result>
+            <result name="input">/WEB-INF/jsp/{1}Detail.jsp</result>
+            <result name="phrForward">/WEB-INF/jsp/phrForward.jsp</result>
         </action>
         <!-- ******************************************************* -->
         <action name="saveTumorMarker" class="gov.nih.nci.accrual.outweb.action.TumorMarkerAction" method="save"> 

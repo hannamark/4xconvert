@@ -33,7 +33,7 @@
         
         var url = '/outcomes/outcomes/popupInterventiondisplayList.action?searchName='+jsName+'&includeSynonym='+includeSyn+'&exactMatch='+exactMat+'&type='+type;
         var div = document.getElementById('getInterventions');
-        div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+        div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="<%=request.getContextPath()%>/images/loading.gif"/>&nbsp;Loading...</div>';    
         var aj = new Ajax.Updater(div,url, {
             asynchronous: true,
             method: 'get',

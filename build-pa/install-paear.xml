@@ -158,7 +158,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
   <target name="install:pa-ear-jboss:app"
           description="Deploy pa-ear pa-ear.ear, pa-ear-api.war and common libraries"
           unless="exclude.pa-ear"
-          depends="install:pa-ear-jboss:accrual-ear">
+          >
       <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
       <delete dir="${jboss.home}/server/${jboss.server.name}/work" failonerror="false"/>
       <move file="${jboss.home}/server/${jboss.server.name}/log/server.log" tofile="${jboss.home}/server/${jboss.server.name}/log/server.log.${install.time}" failonerror="false"/>
@@ -170,8 +170,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           <fileset dir="${jboss.home}/server/${jboss.server.name}/lib" includesfile="jboss-server-lib-deletes.txt" />
       </delete>
       <copy todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true">
-          <fileset dir="${pa-container-jar.dist.dir}"/>
+          <fileset dir="${pa-container-jar.dist.dir}">
+            <exclude name="commons-httpclient-3.0.jar"/>
+          </fileset>
       </copy>
+      
+      <runtarget target="install:pa-ear-jboss:accrual-ear"/>
   </target>
 
   <target name="install:pa-ear-jboss:app:configure" description="Configure pa-ear application" unless="exclude.pa-ear">
@@ -289,6 +293,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <copy todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true">
           <fileset dir="${pa-container-jar.dist.dir}"/>
       </copy>
+      <!-- deploy jars to server lib but remove old ones first -->
+        <delete file="${jboss.home}/server/${jboss.server.name}/lib/commons-httpclient.jar"/>
+        <delete file="${jboss.home}/server/${jboss.server.name}/lib/commons-httpclient-3.0.jar"/>
+        <copy todir="${jboss.home}/server/${jboss.server.name}/lib/">
+            <fileset dir="${pa-ear.dir.dist}/runtime">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
   </target>
 
   <target name="install:pa-ear-jboss:configure" unless="exclude.pa-ear">

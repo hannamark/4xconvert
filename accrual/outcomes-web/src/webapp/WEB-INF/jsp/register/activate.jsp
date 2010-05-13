@@ -4,99 +4,69 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>   
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<c:url value="/userAccountinitTreatmentSiteLookup.action" var="treatmentSiteLookupUrl" />
-<c:url value="/userAccountinitPhysicianLookup.action" var="physicianLookupUrl" />
+<c:url value="/register/initTreatmentSiteLookup.action" var="treatmentSiteLookupUrl" />
+<c:url value="/register/initPhysicianLookup.action" var="physicianLookupUrl" />
 <head>
     <script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 
     <script type="text/javascript">
-        function handleAction(){
-			<s:if test="!patients">
-					if (confirm("Once patients have been entered the associated Treatment Site and Physician can no longer be changed.")){
-						document.forms[0].action="userAccountcreate.action";
-						document.forms[0].submit();
-				}
-			</s:if>
-			<s:else>
-				document.forms[0].action="userAccountcreate.action";
-				document.forms[0].submit();
-			</s:else>            
-        }
         
         function lookupTreatmentSite(action){
-            if (action == 'activateAccount') {
-                showPopWinOutsideContext('${treatmentSiteLookupUrl}', '', 'Select Treatment Site');
-            } else {
-                showPopup('${treatmentSiteLookupUrl}', '', 'Select Treatment Site');
-            }
+            showPopWinOutsideContext('${treatmentSiteLookupUrl}', '', 'Select Treatment Site');
         }
         
         function lookupPhysician(action){
-            if (action == 'activateAccount') {
-                showPopWinOutsideContext('${physicianLookupUrl}', '', 'Select Physician');
-            } else {
-                showPopup('${physicianLookupUrl}', '', 'Select Physician');
-            }
+            showPopWinOutsideContext('${physicianLookupUrl}', '', 'Select Physician');
         }
     </script>
     
-    <title><fmt:message key="user.account.create.page.title"/></title>   
+    <title>Create Account</title>   
     <s:head/>
 </head>
 
 <body>
-    <h1><fmt:message key="user.account.create.page.title"/></h1>
+    <h1>Create Account</h1>
     <c:set var="topic" scope="request" value="create_account"/> 
     <div class="box">
     
-        <s:if test="userAction == 'updateAccount'">
-            <div class="confirm_msg"><strong>Your account was successfully updated</strong></div>
-        </s:if>
+<!--        <s:if test="userAction == 'updateAccount'">-->
+<!--            <div class="confirm_msg"><strong>Your account was successfully updated</strong></div>-->
+<!--        </s:if>-->
     
-        <s:form name="myAccount" method="POST">
+        <s:form name="createAccount" method="POST" action="create.action">
             <s:actionerror/>
-            <s:hidden name="userAccount.identifier" />
             <s:if test="userAccount.identifier == null">
                 <p>To activate your account for NCI Outcomes, please begin by creating your login information.<br>                   
                    Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
-                   Passwords must have a minimum of 8 characters and contain at least one special character and one digit.<br>
                    <b><i>Please provide professional contact information only.</i></b>
                 </p>             
             </s:if>
             <s:else>
                 <p>You may update your account information. Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
-                   Passwords must have a minimum of 8 characters and contain at least one special character and one digit.<br>
+                   <fmt:message key="user.account.password.rules"/><br>
                    <b><i>Please provide professional contact information only.</i></b>
                 </p>
             </s:else>
             <table class="form">
-                <tr><th colspan="3">Login Information</th></tr> 
-                <tr><td colspan="2" class="space">&nbsp;</td></tr>          
+                <tr><th colspan="3">Grid Credential Information</th></tr> 
+                <tr><td colspan="2" class="space">&nbsp;</td></tr>    
                 <tr>
-                    <td scope="row" class="label"><label><fmt:message key="user.account.email.label"/><span class="required">*</span></label></td>
+                    <td scope="row" class="label"><label><fmt:message key="user.account.identity.label"/><span class="required">*</span></label></td>
                     <td>
-                        <s:textfield name="userAccount.identity" maxlength="100" size="35" readonly="true" cssStyle="width:200px"/>
-                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.identity</s:param></s:fielderror>
-                    </td>                
-                </tr>
-                <tr>
-                    <td scope="row" class="label"><label><fmt:message key="user.account.password.label"/><span class="required">*</span></label></td>
-                    <td>
-                        <s:password name="userAccount.password" showPassword="true" maxlength="100" size="35" cssStyle="width:200px"/>
-                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.password</s:param></s:fielderror>
-                    </td>                
-                </tr>
-                <tr>
-                    <td scope="row" class="label"><label><fmt:message key="user.account.retypePassword.label"/><span class="required">*</span></label></td>
-                    <td>
-                        <s:password name="userAccount.retypePassword" showPassword="true" maxlength="100" size="35" cssStyle="width:200px"/>
-                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.retypePassword</s:param></s:fielderror>
-                    </td>               
+                        <s:property value="userAccount.identity"/>
+                    </td>
                 </tr>
                 <tr><td class="space" colspan="2">&nbsp;</td></tr>
                 <tr><th colspan="3">Your Account Profile</th></tr>
                 <tr><td class="space" colspan="2">&nbsp;</td></tr>
+                <tr>
+                    <td scope="row" class="label"><label><fmt:message key="user.account.email.label"/><span class="required">*</span></label></td>
+                    <td>
+                        <s:textfield name="userAccount.email" maxlength="150" size="50" cssStyle="width:150px"/>
+                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.email</s:param></s:fielderror>
+                    </td>              
+                </tr>
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.firstName.label"/><span class="required">*</span></label></td>
                     <td>
@@ -182,7 +152,7 @@
                         <s:textfield readonly="true" size="30" name="userAccount.treatmentSite" cssStyle="float:left; width:250px" cssClass="readonly"/>                       
                         <s:hidden name="userAccount.treatmentSiteIdentifier"/>
                         <s:if test="!patients">
-                        <a href="#" class="btn" onclick="lookupTreatmentSite('<s:property value="userAction"/>');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+                        <a href="#" class="btn" onclick="lookupTreatmentSite();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
                         </s:if>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.treatmentSite</s:param></s:fielderror>
                     </td>
@@ -193,7 +163,7 @@
                         <s:textfield readonly="true" size="30" name="userAccount.physician" cssStyle="float:left; width:250px" cssClass="readonly"/>
                         <s:hidden name="userAccount.physicianIdentifier"/>
                         <s:if test="!patients">
-                        <a href="#" class="btn" onclick="lookupPhysician('<s:property value="userAction"/>');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+                        <a href="#" class="btn" onclick="lookupPhysician();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
                         </s:if>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.physician</s:param></s:fielderror>
                     </td>
@@ -208,7 +178,7 @@
                 <del class="btnwrapper">
                     <ul class="btnrow">         
                         <li>       
-                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="login">Submit</span></span></s:a>  
+                            <s:a href="#" cssClass="btn" onclick="return document.createAccount.submit();"><span class="btn_img"><span class="login">Submit</span></span></s:a>  
                         </li> 
                     </ul>   
                 </del>

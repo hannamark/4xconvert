@@ -272,7 +272,8 @@
         	        <include name="**/accrual/**/*.java"/>
         	        <include name="**/outcomes/**/*.java"/>
         	</fileset>
-        	<classpath location="${services.build.dir}/classes"/> 
+        	<classpath location="${services.build.dir}/classes"/>
+            <classpath refid="compile.classpath"/>
             <formatter type="plain"/>
             <formatter type="plain" toFile="${services.report.dir}/checkstyle.txt"/>
             <formatter type="xml" toFile="${services.report.dir}/checkstyle.xml"/>
@@ -291,6 +292,7 @@
              
         <pmd shortFilenames="true" failOnRuleViolation="true" 
                                    rulesetfiles="${pmdFile}">
+            <classpath refid="compile.classpath"/>
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${services.report.dir}/pmd.txt"/>
             <formatter type="xml"  toFile="${services.report.dir}/pmd.xml"/>

@@ -94,6 +94,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.outcomes.svc.OutcomesSvcLocal;
 import gov.nih.nci.outcomes.svc.OutcomesUserSvcLocal;
+import gov.nih.nci.outcomes.svc.PHRConnectorSvcLocal;
 import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -154,6 +155,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected BaseLookUpService baseLookupSvc;
     /** Business service. */
     protected OutcomesSvcLocal outcomesSvc;
+    /** PHRConnectorSvc. */
+    protected PHRConnectorSvcLocal phrService;
 
     /**
      * {@inheritDoc}
@@ -175,6 +178,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         userSvc = AccrualServiceLocator.getInstance().getOutcomesUserSvc();
         baseLookupSvc = AccrualServiceLocator.getInstance().getBaseLookupService();
         outcomesSvc = AccrualServiceLocator.getInstance().getOutcomesSvc();
+        phrService = AccrualServiceLocator.getInstance().getPHRConnectorService();
     }
     /**
      * Default execute method for action classes.

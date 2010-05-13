@@ -13,7 +13,7 @@ import java.util.List;
  * @author Lisa Kelley
  *
  */
-public class PhysicianWebDTO implements Serializable {
+public class PhysicianWebDTO implements Serializable, Address, PersonName {
     private static final long serialVersionUID = 1L;
     private String firstName;
     private String lastName;

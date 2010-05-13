@@ -7,3 +7,4 @@ nci-commons-core-*.jar
 po-services-client-*.jar
 postgresql-jdbc3-*.jar
 security-*.jar
+commons-httpclient*.jar

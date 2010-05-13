@@ -1,8 +1,8 @@
 # notask=-notest-noivy
 # notask=-notest
 jboss.server.hostname=localhost
-jboss.server.jndi.port=11299
-jboss.server.port=19280
+jboss.server.jndi.port=31499
+jboss.server.port=39480
 accrual.jnp.url=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}
 pa.jnp.url=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}
 po.jnp.url=jnp://${jboss.server.hostname}:${po.port.number}
@@ -13,7 +13,7 @@ database.port=5432
 database.url=jdbc:postgresql://${database.hostname}:${database.port}/ctods_pa
 jdbc.driver=org.postgresql.Driver
 hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-jboss.deploy.dir=C:/jboss/jboss-4.0.5.GA/server/default/deploy
+jboss.deploy.dir=${user.home}/apps/pa/paear/jboss-4.0.5.GA-jems-ejb3/server/paear/deploy/
 outcomes.url=http://${jboss.server.hostname}:${jboss.server.port}/outcomes
 gridServicePrincipal=Gr1DU5er
 gridServiceCredential=ltHZmZ1rqYq8j2uyHEABIQ==
@@ -21,3 +21,4 @@ po.username=ejbclient
 po.pass=pass
 po.port.number=21499
 po.server.name=localhost
+application.url=http://${jboss.server.hostname}:${jboss.server.port}/registry

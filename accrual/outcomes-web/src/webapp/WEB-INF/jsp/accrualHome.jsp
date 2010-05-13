@@ -25,8 +25,31 @@
     <p class="padme2">
         This Site enables you to submit and manage clinical outcomes data for your patients. You can:
     </p>
+    <c:set var="REQUEST_LOGIN_MISMATCH">
+    <%=gov.nih.nci.accrual.outweb.action.AccountActions.REQUEST_LOGIN_MISMATCH%>
+    </c:set>
+    <c:set var="CREATE">
+    <%=gov.nih.nci.accrual.outweb.action.AccountActions.CREATE%>
+    </c:set>
+    <c:choose>
+        <c:when test="${param.userAction eq CREATE}">
+            <div class="confirm_msg">
+                <strong>Your User Account has been successfully created. Please log in using your username and password.</strong>
+            </div>
+        </c:when>
+        <c:when test="${param.userAction eq REQUEST_LOGIN_MISMATCH}">
+            <div class="confirm_msg">
+                <strong>You authenticated using a different username and password than provided during your initial registration request. Please attempt to create your account again. </strong>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <p style="margin:0; padding:0">Log in to record patient outcome information.
+                If you do not have an account, you may <a href="/outcomes/register/start.action">create an account</a>.
+            </p>
+        </c:otherwise>
+    </c:choose>
     <ul class="padme10">
-        <li><a href="/outcomes/userAccount.action">Create an account</a> in order to submit data on your patients</li>
+        <li><a href="/outcomes/register/start.action">Create an account</a> in order to submit data on your patients</li>
         <li><a href="/outcomes/common/welcome.action">Log In</a> to your account and</li> 
         <menu> 
             <li>Create a patient</li>

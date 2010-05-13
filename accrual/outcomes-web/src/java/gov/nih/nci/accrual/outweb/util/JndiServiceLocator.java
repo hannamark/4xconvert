@@ -92,6 +92,7 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.JNDIUtil;
 import gov.nih.nci.outcomes.svc.OutcomesSvcLocal;
 import gov.nih.nci.outcomes.svc.OutcomesUserSvcLocal;
+import gov.nih.nci.outcomes.svc.PHRConnectorSvcLocal;
 
 /**
  * @author Hugh Reinhart
@@ -190,5 +191,12 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
      */
     public OutcomesSvcLocal getOutcomesSvc() {
         return (OutcomesSvcLocal) JNDIUtil.lookup("accrual/OutcomesSvcBeanLocal/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PHRConnectorSvcLocal getPHRConnectorService() {
+        return (PHRConnectorSvcLocal) JNDIUtil.lookup("accrual/PHRConnectorSvcBeanLocal/local");
     }
 }

@@ -53,6 +53,7 @@
 
     <property name="test-simian.jar.dir" location="${lib.dir}/outcomes-web/test-simian"/>
     <path id="test-simian.classpath">
+        
         <fileset dir="${test-simian.jar.dir}"/>
     </path>
 
@@ -233,6 +234,7 @@
 
         <checkstyle config="${checkstyleFile}" failOnViolation="true">
             <fileset dir="src" includes="**/*.java"/>
+            <classpath refid="compile.classpath"/>
             <formatter type="plain"/>
             <formatter type="plain" toFile="${web.report.dir}/checkstyle.txt"/>
             <formatter type="xml"   toFile="${web.report.dir}/checkstyle.xml"/>
@@ -251,6 +253,7 @@
 
         <pmd shortFilenames="true" failOnRuleViolation="true"
                                    rulesetfiles="${pmdFile}">
+            <classpath refid="compile.classpath"/>
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${web.report.dir}/pmd.txt"/>
             <formatter type="xml"  toFile="${web.report.dir}/pmd.xml"/>
@@ -398,7 +401,7 @@
             <sequential>
                 <copy todir="@{toDir}">
                     <fileset dir="${basedir}/src/webapp">
-                        <include name="*.jsp"/>
+                        <include name="**/*.jsp"/>
                         <include name="WEB-INF/jsp/*.jsp"/>
                         <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
                         <include name="WEB-INF/jsp/common/*.jsp"/>

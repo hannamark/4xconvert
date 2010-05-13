@@ -27,6 +27,7 @@ public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
      */
     private static final long serialVersionUID = -2634784781070526530L;
 
+    private St email;
     private St identity;
     private St password;
     private St retypePassword;
@@ -44,10 +45,25 @@ public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
     private Ii treatmentSiteIdentifier;
     private Ii physicianIdentifier;
     private static final String USER_ACCOUNT = "userAccount";
-    private static final int MIN_PASSWORD_LENGTH = 8;
+    private static final int MIN_PASSWORD_LENGTH = 6;
+    private static final int MAX_PASSWORD_LENGTH = 20;
     private static final Pattern ONE_NON_ALPHA_NUMERIC = Pattern.compile("(.*\\p{Punct}.*)+");
     private static final Pattern ONE_DIGIT = Pattern.compile("(.*\\p{Digit}.*)+");
 
+    
+    /**
+     * @return the email
+     */
+    public St getEmail() {
+        return email;
+    }
+    
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(St email) {
+        this.email = email;
+    }
     /**
      * @param identity the identity to set
      */
@@ -247,6 +263,7 @@ public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
     @Override
     public void validate() throws OutcomesException {
         validateEmailAddress();
+        validateIdentity();
         validatePassword();
         validateRetypePassword();
         if (!PAUtil.isCdNull(getAction()) 
@@ -293,11 +310,20 @@ public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
      * @throws OutcomesFieldException on err
      */
     private void validateEmailAddress() throws OutcomesFieldException {
-        if (PAUtil.isStNull(identity)) {
-            throw new OutcomesFieldException(getClass(), USER_ACCOUNT + ".identity", "> Please enter an Email Address");
-        } else if (!PAUtil.isValidEmail(StConverter.convertToString(identity))) {
-            throw new OutcomesFieldException(getClass(), USER_ACCOUNT + ".identity",
+        if (PAUtil.isStNull(email)) {
+            throw new OutcomesFieldException(getClass(), USER_ACCOUNT + ".email", "> Please enter an Email Address");
+        } else if (!PAUtil.isValidEmail(StConverter.convertToString(email))) {
+            throw new OutcomesFieldException(getClass(), USER_ACCOUNT + ".email",
                     "> Please enter a valid Email Address");
+        }
+    }
+    /**
+     * @throws OutcomesFieldException on err
+     */
+    private void validateIdentity() throws OutcomesFieldException {
+        if (PAUtil.isStNull(identity)) {
+            throw new OutcomesFieldException(getClass(), USER_ACCOUNT + ".identity", 
+                    "> Please enter your grid identity");
         }
     }
 
@@ -305,17 +331,24 @@ public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
      * @throws OutcomesException on err
      */
     private void validatePassword()throws OutcomesException {
-        // password must have min 8 chars with at least one not alpha-numeric char and one digit
-        String dotPassword = ".password";
-        Matcher oneNonAlphaNumericMatcher = ONE_NON_ALPHA_NUMERIC.matcher(StConverter.convertToString(
-                password));
-        Matcher oneDigitMatcher = ONE_DIGIT.matcher(StConverter.convertToString(password));
-
+        // password must have at least 6 and no more than 20 chars with 
+        // at least one not alpha-numeric char and one digit and no dictionary term
+        final String dotPassword = ".password";
         if (PAUtil.isStNull(password)) {
             throw new OutcomesFieldException(getClass(), USER_ACCOUNT + dotPassword, "> Please enter a Password");
-        } else if (StConverter.convertToString(password).length() < MIN_PASSWORD_LENGTH) {
+        }
+        final Matcher oneNonAlphaNumericMatcher = ONE_NON_ALPHA_NUMERIC.matcher(StConverter.convertToString(
+                password));
+        final Matcher oneDigitMatcher = ONE_DIGIT.matcher(StConverter.convertToString(password));
+
+        if (StConverter.convertToString(password).length() < MIN_PASSWORD_LENGTH) {
             throw new OutcomesFieldException(getClass(), USER_ACCOUNT + dotPassword,
-                                 "> Please enter a Password that is at least 8 characters in length");
+                                 "> Please enter a Password that is at least " + MIN_PASSWORD_LENGTH 
+                                 + " characters in length");
+        } else if (StConverter.convertToString(password).length() > MAX_PASSWORD_LENGTH) {
+            throw new OutcomesFieldException(getClass(), USER_ACCOUNT + dotPassword,
+                                 "> Please enter a Password that is at most " + MAX_PASSWORD_LENGTH 
+                                 + " characters in length");
         } else if (!oneNonAlphaNumericMatcher.find(0)) {
             throw new OutcomesFieldException(getClass(), USER_ACCOUNT + dotPassword,
                                  "> Please enter a Password that contains at least one special character");
@@ -329,13 +362,17 @@ public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
      * @throws OutcomesFieldException on err
      */
     private void validateRetypePassword() throws OutcomesFieldException {
-        Matcher oneNonAlphaNumericMatcher = ONE_NON_ALPHA_NUMERIC.matcher(StConverter.convertToString(
+        if (PAUtil.isStNull(retypePassword)) {
+            throw new OutcomesFieldException(getClass(), USER_ACCOUNT
+                    + ".retypePassword", "> Please retype the Password");
+        }
+        final Matcher oneNonAlphaNumericMatcher = ONE_NON_ALPHA_NUMERIC.matcher(StConverter.convertToString(
                 password));
-        Matcher oneDigitMatcher = ONE_DIGIT.matcher(StConverter.convertToString(password));
+        final Matcher oneDigitMatcher = ONE_DIGIT.matcher(StConverter.convertToString(password));
 
-        if (PAUtil.isStNull(retypePassword)
-         || PAUtil.isStNull(password)
+        if (PAUtil.isStNull(password)
          || StConverter.convertToString(password).length() < MIN_PASSWORD_LENGTH
+         || StConverter.convertToString(password).length() > MAX_PASSWORD_LENGTH
          || !oneNonAlphaNumericMatcher.find(0)
          || !oneDigitMatcher.find(0)) {
             throw new OutcomesFieldException(getClass(), USER_ACCOUNT
@@ -356,9 +393,9 @@ public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
                                  "> Please select a State (select 'None' for non-US countries)");
         } else if (PAUtil.isStNull(country)) {
             if ("USA".equals(StConverter.convertToString(country))) {
-                List<USStateCode> states = Arrays.asList(USStateCode.values());
+                final List<USStateCode> states = Arrays.asList(USStateCode.values());
                 boolean stateFound = false;
-                for (USStateCode stateIterator : states) {
+                for (final USStateCode stateIterator : states) {
                    if (stateIterator.getName().equals(state)) {
                        stateFound = true;
                        break; // since match has been found

@@ -91,6 +91,7 @@ import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.outcomes.svc.OutcomesSvcLocal;
 import gov.nih.nci.outcomes.svc.OutcomesUserSvcLocal;
+import gov.nih.nci.outcomes.svc.PHRConnectorSvcLocal;
 
 /**
  * @author Hugh Reinhart
@@ -150,4 +151,8 @@ public interface ServiceLocatorAccInterface {
      * @return the outcomes business service
      */
     OutcomesSvcLocal getOutcomesSvc();
+    /**
+     * @return the phr connector service
+     */
+    PHRConnectorSvcLocal getPHRConnectorService();
 }

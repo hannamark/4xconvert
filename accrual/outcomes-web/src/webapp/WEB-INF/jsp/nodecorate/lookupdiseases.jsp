@@ -33,7 +33,7 @@
         
         var url = '/outcomes/outcomes/popupdisplayList.action?searchName='+jsName+'&includeSynonym='+includeSyn+'&exactMatch='+exactMat;
         var div = document.getElementById('getDiseases');
-        div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+        div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="<%=request.getContextPath()%>/images/loading.gif"/>&nbsp;Loading...</div>';    
         var aj = new Ajax.Updater(div,url, {
             asynchronous: true,
             method: 'get',

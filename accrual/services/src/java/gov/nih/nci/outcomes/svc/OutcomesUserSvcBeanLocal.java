@@ -375,6 +375,7 @@ public class OutcomesUserSvcBeanLocal extends BaseOutcomesSvc implements Outcome
         if (bo.getPoPersonId() != null) {
             dto.setPhysicianIdentifier(IiConverter.convertToPoPersonIi(bo.getPoPersonId().toString()));
         }
+        dto.setEmail(StConverter.convertToSt(bo.getEmailAddress()));
         return dto;
     }
     private RegistryUser converterToRegistryUser(UserSvcDto dto) {
@@ -405,6 +406,7 @@ public class OutcomesUserSvcBeanLocal extends BaseOutcomesSvc implements Outcome
         }
         bo.setPoOrganizationId(IiConverter.convertToLong(dto.getTreatmentSiteIdentifier()));
         bo.setPoPersonId(IiConverter.convertToLong(dto.getPhysicianIdentifier()));
+        bo.setEmailAddress(StConverter.convertToString(dto.getEmail()));
         return bo;
     }
     /**

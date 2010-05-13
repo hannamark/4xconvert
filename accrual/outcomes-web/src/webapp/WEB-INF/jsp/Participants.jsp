@@ -35,6 +35,12 @@ function handleDelete(rowId){
         document.forms[0].submit();
     }
 }
+function handlePHR(rowId){
+    document.forms[0].selectedRowIdentifier.value = rowId;
+    document.forms[0].action="healthRecordParticipants.action";
+    document.forms[0].target="_new";
+    document.forms[0].submit();
+}
 </script>
 </head>
 <body>
@@ -105,6 +111,11 @@ function handleDelete(rowId){
            <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
                <img src="<%=request.getContextPath()%>/images/ico_delete.gif"
                    alt="Delete" width="16" height="16" />
+           </s:a>
+       </display:column>
+       <display:column titleKey="participant.phr" headerClass="centered" class="action" style="width:30%">
+           <s:a href="#" onclick="handlePHR(%{#attr.row.identifier})">
+               <fmt:message key="participant.phrlink"/>
            </s:a>
        </display:column>
    </display:table>

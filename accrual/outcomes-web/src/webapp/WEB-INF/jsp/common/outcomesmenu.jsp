@@ -15,20 +15,20 @@
         <c:when test="${pageContext.request.remoteUser == null}">            
             <c:choose>
                 <c:when test="${requestScope.topic == 'create_account'}">
-                    <li><a href="/outcomes/userAccount.action" class="selected">Create Account</a></li>
+                    <li><a href="/outcomes/register/start.action" class="selected">Create Account</a></li>
                 </c:when>
                 <c:otherwise>
-                    <li><a href="/outcomes/userAccount.action">Create Account</a></li>
+                    <li><a href="/outcomes/register/start.action">Create Account</a></li>
                 </c:otherwise>
             </c:choose>
         </c:when>
         <c:otherwise>
             <c:choose>
                 <c:when test="${requestScope.topic == 'create_account'}">
-                    <li><a href="/outcomes/outcomes/userAccountupdateAccount.action" class="selected">My Account</a></li> 
+                    <li><a href="/outcomes/account/start.action" class="selected">My Account</a></li> 
                 </c:when>
                 <c:otherwise>
-                    <li><a href="/outcomes/outcomes/userAccountupdateAccount.action" >My Account</a></li>
+                    <li><a href="/outcomes/account/start.action" >My Account</a></li>
                 </c:otherwise>
             </c:choose>
         </c:otherwise>

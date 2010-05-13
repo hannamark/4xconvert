@@ -29,7 +29,7 @@ xsi:schemaLocation="http://www.quartzscheduler.org/ns/quartz http://www.quartzsc
         </entry>        
         <entry>
             <key>java.naming.provider.url</key>
-            <value>jnp://localhost:1099</value>
+            <value>jnp://localhost:31499</value>
         </entry>
     </job-data-map>
 </job-detail>  

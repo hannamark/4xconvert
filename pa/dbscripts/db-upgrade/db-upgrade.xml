@@ -418,4 +418,8 @@
        <comment>PO-1782-Data Model changes for Org Access</comment>
        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1782.sql"/>
     </changeSet>
+    <changeSet id="ESD-233" author="smatyas">
+       <comment>ESD-233 Introduce function to enable Unregistered Role to be added for JAAS</comment>
+       <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/ESD-233.sql"/>
+    </changeSet> 
 </databaseChangeLog>

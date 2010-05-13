@@ -91,6 +91,7 @@ import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.outcomes.svc.OutcomesSvcLocal;
 import gov.nih.nci.outcomes.svc.OutcomesUserSvcLocal;
+import gov.nih.nci.outcomes.svc.PHRConnectorSvcLocal;
 
 
 /**
@@ -218,5 +219,12 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
      */
     public OutcomesSvcLocal getOutcomesSvc() {
         return serviceLocator.getOutcomesSvc();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public PHRConnectorSvcLocal getPHRConnectorService() {
+        return serviceLocator.getPHRConnectorService();
     }
 }

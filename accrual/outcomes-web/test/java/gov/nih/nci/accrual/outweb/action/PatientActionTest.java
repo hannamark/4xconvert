@@ -80,11 +80,13 @@
 package gov.nih.nci.accrual.outweb.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.outweb.dto.util.ParticipantWebDto;
 import gov.nih.nci.accrual.outweb.dto.util.SearchParticipantCriteriaWebDto;
 import gov.nih.nci.accrual.outweb.dto.util.SearchStudySiteResultWebDto;
+import gov.nih.nci.accrual.outweb.util.MockPrincipal;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
@@ -93,15 +95,20 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
+import com.mockrunner.mock.web.MockHttpServletRequest;
+import com.mockrunner.mock.web.MockHttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
@@ -116,7 +123,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
 
     @Before
     public void initAction() throws Exception {
-        action = new ParticipantsAction();
+        action = new ParticipantActionStub();
         action.prepare();
         criteria = new SearchParticipantCriteriaWebDto();
         patient = new ParticipantWebDto();
@@ -222,5 +229,50 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         criteria.setBirthDate("7/16/2009");
         action.setCriteria(criteria);
         assertEquals(ActionSupport.SUCCESS, action.execute());
+    }
+    
+    @Test
+    public void healthRecordTest() {
+        MockPrincipal mockPrincipal = new MockPrincipal("testCN=test");
+        getRequest().setUserPrincipal(mockPrincipal);
+        action.setSelectedRowIdentifier("1");
+        assertEquals("phrForward", action.healthRecord());
+        assertEquals(0, action.getActionErrors().size());
+    }
+    
+    @Test
+    public void healthRecordTestException() {
+        // Error occurs when no user name is available
+        getRequest().setUserPrincipal(null);
+        action.setSelectedRowIdentifier("1");
+        assertEquals(ActionSupport.SUCCESS, action.healthRecord());
+        assertEquals(1, action.getActionErrors().size());
+        assertFalse(getResponse().wasRedirectSent());
+    }
+    
+    /**
+     * @return MockHttpServletRequest
+     */
+    protected MockHttpServletResponse getResponse() {
+        return (MockHttpServletResponse) ServletActionContext.getResponse();
+    }
+    
+    /**
+     * @return MockHttpServletRequest
+     */
+    protected MockHttpServletRequest getRequest() {
+        return (MockHttpServletRequest) ServletActionContext.getRequest();
+    }
+    
+    public class ParticipantActionStub extends ParticipantsAction {
+        private static final long serialVersionUID = 1L;
+        @Override
+        /**
+         * Get the users credential.
+         * @return credential in String format
+         */
+        protected String getCredential() {
+            return "test";
+        }
     }
 }

@@ -25,6 +25,25 @@ import java.util.List;
 public class UserAccountWebDto extends AbstractUserDto {
     private St treatmentSite;
     private St physician;
+    private transient String authServiceUrl = "https://dorian.training.cagrid.org:8443/wsrf/services/cagrid/Dorian"; 
+    
+    
+    /**
+     * @param authServiceUrl the authServiceUrl to set
+     */
+    public void setAuthServiceUrl(String authServiceUrl) {
+        this.authServiceUrl = authServiceUrl;
+    }
+
+
+    /**
+     * @return the authServiceUrl
+     */
+    public String getAuthServiceUrl() {
+        return authServiceUrl;
+    }
+
+
     /**
      * 
      */
@@ -38,9 +57,9 @@ public class UserAccountWebDto extends AbstractUserDto {
         action.clearFieldErrors();
         try {
             validate();
-        } catch (OutcomesFieldException e) {
-            action.addFieldError(((OutcomesFieldException) e).getField(), e.getLocalizedMessage());
-        } catch (OutcomesException e) {
+        } catch (final OutcomesFieldException e) {
+            action.addFieldError(e.getField(), e.getLocalizedMessage());
+        } catch (final OutcomesException e) {
             action.addActionError(e.getLocalizedMessage());
         }
     }
@@ -60,7 +79,7 @@ public class UserAccountWebDto extends AbstractUserDto {
         List<Country> countries;
         try {
             countries = PaServiceLocator.getInstance().getLookUpTableService().getCountries();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // just return empty list
             countries = new ArrayList<Country>();
         }
@@ -72,7 +91,7 @@ public class UserAccountWebDto extends AbstractUserDto {
      * @return the svc dto
      */
     public UserSvcDto getSvcDto() {
-        UserSvcDto svcDto = new UserSvcDto();
+        final UserSvcDto svcDto = new UserSvcDto();
         svcDto.setIdentifier(getIdentifier());
         svcDto.setIdentity(getIdentity());
         svcDto.setPassword(getPassword());
@@ -90,6 +109,7 @@ public class UserAccountWebDto extends AbstractUserDto {
         svcDto.setPrsOrg(getPrsOrg());
         svcDto.setRetypePassword(getRetypePassword());
         svcDto.setState(getState());
+        svcDto.setEmail(getEmail());
         return svcDto;
     }
 

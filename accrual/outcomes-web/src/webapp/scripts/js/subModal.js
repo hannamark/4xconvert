@@ -22,8 +22,8 @@ var gPopupContainer = null;
 var gPopFrame = null;
 var gReturnFunc;
 var gPopupIsShown = false;
-var gDefaultPage = "../images/loading.gif";
-var gCloseGif    = "../images/close.gif";
+var gDefaultPage = contextPath + '/images/loading.gif';
+var gCloseGif    = contextPath + '../images/close.gif';
 var gHideSelects = false;
 var gReturnVal = null;
 

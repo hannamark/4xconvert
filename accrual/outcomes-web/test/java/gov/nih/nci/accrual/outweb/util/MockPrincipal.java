@@ -87,6 +87,13 @@ import java.security.Principal;
  */
 public class MockPrincipal implements Principal {
     public String name;
+    
+    public MockPrincipal(String name) {
+        this.name = name;
+    }
+    
+    public MockPrincipal() {
+    }
 
     /**
      * {@inheritDoc}

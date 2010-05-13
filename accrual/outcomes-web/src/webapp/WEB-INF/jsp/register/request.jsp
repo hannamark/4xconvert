@@ -16,7 +16,7 @@
     <c:set var="topic" scope="request" value="create_account"/>
     <h2><fmt:message key="user.account.request.confirmation"/></h2>
     <div class="box" id="filters">
-        <p>An e-mail has been sent to the e-mail address, <strong><s:property value="userAccount.loginName"/></strong>.
+        <p>An e-mail has been sent to the e-mail address, <strong><s:property value="userAccount.email"/></strong>.
            Please click on the link provided in the e-mail to activate your account.</p>
     </div>
    

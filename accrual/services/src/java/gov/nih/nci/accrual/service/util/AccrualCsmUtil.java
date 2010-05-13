@@ -84,6 +84,7 @@ import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
+import gov.nih.nci.security.exceptions.CSTransactionException;
 
 import java.rmi.RemoteException;
 
@@ -137,11 +138,7 @@ public class AccrualCsmUtil implements CsmUtil {
             ///create new user in CSM table
             UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
             upManager.createUser(csmUser);
-            // assign the created user to the appropriate group
-            // read the CSM group name from the properties            
-            //String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
-            String submitterGroup = "Outcomes"; // hardcoded temporary
-            upManager.assignUserToGroup(loginName, submitterGroup);
+            assignUserToGroups(loginName, upManager);
             createdCSMUser = upManager.getUser(loginName);
         } catch (CSException cse) {
             LOG.error(" CSM Exception while creating CSM user : " + loginName, cse);
@@ -149,6 +146,11 @@ public class AccrualCsmUtil implements CsmUtil {
         }
 
         return createdCSMUser;
+    }
+
+    private void assignUserToGroups(String loginName, UserProvisioningManager upManager) throws CSTransactionException {
+        upManager.assignUserToGroup(loginName, "Outcomes");
+        upManager.assignUserToGroup(loginName, "gridClient");
     }
     
     /**
@@ -177,8 +179,7 @@ public class AccrualCsmUtil implements CsmUtil {
             // assign the updated user to the appropriate group
             // read the CSM group name from the properties
             //String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
-            String submitterGroup = "Outcomes"; // hardcoded temporary
-            upManager.assignUserToGroup(loginName, submitterGroup);
+            assignUserToGroups(loginName, upManager);
             createdCSMUser = upManager.getUser(loginName);
         } catch (CSException cse) {
             LOG.error(" CSM Exception while updating CSM user : " + loginName, cse);

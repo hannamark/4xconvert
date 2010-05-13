@@ -104,7 +104,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.jboss.security.SecurityAssociation;
+
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -122,6 +125,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
     private SearchParticipantCriteriaWebDto criteria;
     private ParticipantWebDto participant;
     private boolean poAccessed = false;
+    private String uuid;
 
     /**
      * {@inheritDoc}
@@ -193,6 +197,31 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
         return super.execute();
      }
      return super.delete();
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @throws Exception 
+     */
+    public String healthRecord() {
+        try {
+            String username = ServletActionContext.getRequest().getUserPrincipal().getName().split("CN=")[1];
+            String passwd = getCredential();
+            String id = getSelectedRowIdentifier();
+            setUuid(phrService.getCDAIdentifierMessage(id, username, passwd));
+            return "phrForward";
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+        }
+        return execute();
+    }
+
+    /**
+     * Get the users credential.
+     * @return credential in String format
+     */
+    protected String getCredential() {
+        return SecurityAssociation.getCredential().toString();
     }
 
     /**
@@ -412,5 +441,19 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
                 }
             }
         }
+    }
+
+    /**
+     * @return the uuid
+     */
+    public String getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

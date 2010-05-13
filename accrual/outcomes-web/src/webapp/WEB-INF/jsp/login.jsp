@@ -12,19 +12,19 @@
 <div class="box">
 
     <c:choose>
-        <c:when test="${param.userAction == 'createAccount'}">
+        <c:when test="${param.userAction == '<%=gov.nih.nci.accrual.outweb.action.AccountActions.CREATE.name()%>'}">
             <div class="confirm_msg">
-                <strong>Your User Account has been successfully created. Please log in using your email address and password.</strong>
+                <strong>Your User Account has been successfully created. Please log in using your username and password.</strong>
             </div>
         </c:when>
-        <c:when test="${param.userAction == 'resetPassword'}">
+        <c:when test="${param.userAction == '<%=gov.nih.nci.accrual.outweb.action.AccountActions.REQUEST_LOGIN_MISMATCH.name()%>'}">
             <div class="confirm_msg">
-                <strong>Your password has been successfully reset. Please log in using your email address and password.</strong>
+                <strong>You authenticated using a different username and password than provided during your initial registration request. Please attempt to create your account again. </strong>
             </div>
         </c:when>
         <c:otherwise>
             <p style="margin:0; padding:0">Log in to record patient outcome information.
-                If you do not have an account, you may <a title="To Create an Account" href="${createAccountUrl}">create an account</a>.
+                If you do not have an account, you may <a href="/outcomes/register/start.action">create an account</a>.
             </p>
         </c:otherwise>
     </c:choose>

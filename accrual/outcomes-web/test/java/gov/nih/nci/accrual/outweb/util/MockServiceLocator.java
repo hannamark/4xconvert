@@ -93,8 +93,9 @@ import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.outcomes.svc.OutcomesSvc;
-import gov.nih.nci.outcomes.svc.OutcomesUserSvc;
 import gov.nih.nci.outcomes.svc.OutcomesUserSvcLocal;
+import gov.nih.nci.outcomes.svc.PHRConnectorSvc;
+import gov.nih.nci.outcomes.svc.PHRConnectorSvcLocal;
 
 /**
  * @author Hugh Reinhart
@@ -114,6 +115,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     private final OutcomesUserSvcLocal userSvc = new MockOutcomesUserSvcBean();
     private final BaseLookUpService baseLooupSvc = new MockBaseLookUpBean();
     private final OutcomesSvc outcomesSvc = new MockOutcomesSvcBean();
+    private final PHRConnectorSvc phrService = new MockPHRConnectorSvcBean();
 
 
     /**
@@ -192,9 +194,12 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
         ((MockOutcomesSvcBean) outcomesSvc).setStudySubjectService((StudySubjectServiceLocal) getStudySubjectService());
         ((MockOutcomesSvcBean) outcomesSvc).setPatientService((PatientServiceLocal) getPatientService());
         ((MockOutcomesSvcBean) outcomesSvc).setSearchTrialService(getSearchTrialService());
-        ((MockOutcomesSvcBean) outcomesSvc).setOutcomesUserService((OutcomesUserSvcLocal) getOutcomesUserSvc());
+        ((MockOutcomesSvcBean) outcomesSvc).setOutcomesUserService(getOutcomesUserSvc());
         ((MockOutcomesSvcBean) outcomesSvc).setCountryService(getCountryService());
         ((MockOutcomesSvcBean) outcomesSvc).setLookUpService(getBaseLookupService());
         return outcomesSvc;
+    }
+    public PHRConnectorSvcLocal getPHRConnectorService() {
+        return phrService;
     }
 }
