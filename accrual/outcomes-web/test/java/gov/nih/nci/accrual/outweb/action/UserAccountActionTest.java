@@ -75,8 +75,6 @@ public class UserAccountActionTest extends AbstractAccrualActionTest {
     @Test
     public void testUpdateAccountExitsingAcc() {
         userAccount.setIdentity(StConverter.convertToSt("test@test.com"));
-        userAccount.setPassword(StConverter.convertToSt("testPassword1!"));
-        userAccount.setRetypePassword(StConverter.convertToSt("testPassword1!"));
         userAccount.setFirstName(StConverter.convertToSt("firstName"));
         userAccount.setLastName(StConverter.convertToSt("lastName"));
         userAccount.setState(StConverter.convertToSt("None"));

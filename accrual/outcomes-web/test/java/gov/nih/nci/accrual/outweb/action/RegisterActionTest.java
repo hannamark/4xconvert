@@ -142,7 +142,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setupAddParameter("loginName", "testing");
-        request.setupAddParameter("password", "cGFzc3dvcmQ=");
+        request.setupAddParameter("email", "cGFzc3dvcmQ=");
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("redirectToLogoutThenLogin", action.activate());
@@ -153,7 +153,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setupAddParameter("loginName", "dGhyb3dFeGNlcHRpb24=");
-        request.setupAddParameter("password", "cGFzc3dvcmQ=");
+        request.setupAddParameter("email", "cGFzc3dvcmQ=");
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("error", action.activate());
@@ -164,7 +164,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setupAddParameter("loginName", "amFuZS5kb2VAZ29vZ2xlLmNvbQ==");
-        request.setupAddParameter("password", "cGFzc3dvcmQ=");
+        request.setupAddParameter("email", "cGFzc3dvcmQ=");
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("redirectToLogoutThenLogin", action.activate());
@@ -176,8 +176,6 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
     @Test
     public void testRequestAccount() {
         userAccount.setIdentity(StConverter.convertToSt("test@test.com"));
-        userAccount.setPassword(StConverter.convertToSt("testPassword1!"));
-        userAccount.setRetypePassword(StConverter.convertToSt("testPassword1!"));
         userAccount.setFirstName(StConverter.convertToSt("firstName"));
         userAccount.setLastName(StConverter.convertToSt("lastName"));
         userAccount.setState(StConverter.convertToSt("Texas"));
@@ -201,7 +199,6 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
     @Test
     public void testRequestAccountException() {
         userAccount.setIdentity(StConverter.convertToSt("test@test.com"));
-        userAccount.setPassword(StConverter.convertToSt("testPassword1!"));
         userAccount.setFirstName(StConverter.convertToSt("firstName"));
         userAccount.setLastName(StConverter.convertToSt("lastName"));
         userAccount.setState(StConverter.convertToSt("Texas"));
@@ -213,7 +210,6 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void testRequestAccountException2() {
-        userAccount.setPassword(StConverter.convertToSt("test"));
         action.setUserAccount(userAccount);
         assertEquals("start", action.request());
     }
@@ -221,7 +217,6 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
     @Test
     public void testRequestAccountException3() {
         userAccount.setIdentity(StConverter.convertToSt("test"));
-        userAccount.setPassword(StConverter.convertToSt("testing1"));
         action.setUserAccount(userAccount);
         assertEquals("start", action.request());
     }
@@ -229,8 +224,6 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
     @Test
     public void testCreateAccount() {
         userAccount.setIdentity(StConverter.convertToSt("test@test.com"));
-        userAccount.setPassword(StConverter.convertToSt("testPassword1!"));
-        userAccount.setRetypePassword(StConverter.convertToSt("testPassword1!"));
         userAccount.setFirstName(StConverter.convertToSt("firstName"));
         userAccount.setLastName(StConverter.convertToSt("lastName"));
         userAccount.setState(StConverter.convertToSt("Texas"));
@@ -246,8 +239,6 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
     @Test
     public void testCreateAccountException() {
         userAccount.setIdentity(StConverter.convertToSt("test@test.com"));
-        userAccount.setPassword(StConverter.convertToSt("testPassword1!"));
-        userAccount.setRetypePassword(StConverter.convertToSt("testPassword1!"));
         userAccount.setFirstName(StConverter.convertToSt("firstName"));
         userAccount.setLastName(StConverter.convertToSt("lastName"));
         userAccount.setState(StConverter.convertToSt("Texas"));
@@ -260,8 +251,6 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
     @Test
     public void testCreateAccountWithId() {
         userAccount.setIdentity(StConverter.convertToSt("test@test.com"));
-        userAccount.setPassword(StConverter.convertToSt("testPassword1!"));
-        userAccount.setRetypePassword(StConverter.convertToSt("testPassword1!"));
         userAccount.setFirstName(StConverter.convertToSt("firstName"));
         userAccount.setLastName(StConverter.convertToSt("lastName"));
         userAccount.setState(StConverter.convertToSt("Texas"));
