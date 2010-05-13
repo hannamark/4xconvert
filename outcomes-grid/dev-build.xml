@@ -18,7 +18,7 @@
     <property file="local.properties" />
     <property name="service.protocol" value="https" />
     <property name="service.hostname" value="localhost" />
-    <property name="service.port" value="19643" />
+    <property name="service.port" value="39843" />
     <property name="build.dir" location="build" />
     <property name="test.build.lib.dir" value="${build.dir}/test/lib" />
 

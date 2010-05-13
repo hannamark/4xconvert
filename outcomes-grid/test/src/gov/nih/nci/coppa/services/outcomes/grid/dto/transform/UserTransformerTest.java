@@ -29,6 +29,7 @@ public class UserTransformerTest extends
         returnVal.setIdentity(new STTransformerTest().makeDtoSimple());
         returnVal.setPhysicianIdentifier(new IITransformerTest().makeDtoSimple());
         returnVal.setTreatmentSiteIdentifier(new IITransformerTest().makeDtoSimple());
+        returnVal.setEmail(new STTransformerTest().makeDtoSimple());
         return returnVal;
     }
 
@@ -51,6 +52,7 @@ public class UserTransformerTest extends
         returnVal.setIdentity(new STTransformerTest().makeXmlSimple());
         returnVal.setPhysicianIdentifier(new IITransformerTest().makeXmlSimple());
         returnVal.setTreatmentSiteIdentifier(new IITransformerTest().makeXmlSimple());
+        returnVal.setEmail(new STTransformerTest().makeXmlSimple());
         return returnVal;
     }
 
@@ -72,6 +74,7 @@ public class UserTransformerTest extends
         new STTransformerTest().verifyDtoSimple(x.getIdentity());
         new IITransformerTest().verifyDtoSimple(x.getPhysicianIdentifier());
         new IITransformerTest().verifyDtoSimple(x.getTreatmentSiteIdentifier());
+        new STTransformerTest().verifyDtoSimple(x.getEmail());
     }
 
     @Override
@@ -92,6 +95,7 @@ public class UserTransformerTest extends
         new STTransformerTest().verifyXmlSimple(x.getIdentity());
         new IITransformerTest().verifyXmlSimple(x.getPhysicianIdentifier());
         new IITransformerTest().verifyXmlSimple(x.getTreatmentSiteIdentifier());
+        new STTransformerTest().verifyXmlSimple(x.getEmail());
     }
 
 }

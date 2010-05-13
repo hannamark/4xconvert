@@ -134,6 +134,7 @@ public final class UserTransformer
         returnVal.setIdentity(STTransformer.INSTANCE.toDto(arg0.getIdentity()));
         returnVal.setTreatmentSiteIdentifier(IITransformer.INSTANCE.toDto(arg0.getTreatmentSiteIdentifier()));
         returnVal.setPhysicianIdentifier(IITransformer.INSTANCE.toDto(arg0.getPhysicianIdentifier()));
+        returnVal.setEmail(STTransformer.INSTANCE.toDto(arg0.getEmail()));
         return returnVal;
     }
 
@@ -161,6 +162,7 @@ public final class UserTransformer
         returnVal.setIdentity(STTransformer.INSTANCE.toXml(arg0.getIdentity()));
         returnVal.setTreatmentSiteIdentifier(IITransformer.INSTANCE.toXml(arg0.getTreatmentSiteIdentifier()));
         returnVal.setPhysicianIdentifier(IITransformer.INSTANCE.toXml(arg0.getPhysicianIdentifier()));
+        returnVal.setEmail(STTransformer.INSTANCE.toXml(arg0.getEmail()));
         return returnVal;
     }
 

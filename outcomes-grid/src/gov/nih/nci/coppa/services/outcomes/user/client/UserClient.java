@@ -77,6 +77,9 @@ public class UserClient extends UserClientBase implements UserI {
         ST firstName = new ST();
         firstName.setValue("first name");
         user.setFirstName(firstName);
+        ST email = new ST();
+        email.setValue("invalid@example.com");
+        user.setEmail(email);
         ST lastName = new ST();
         lastName.setValue("last name");
         user.setLastName(lastName);
@@ -95,7 +98,7 @@ public class UserClient extends UserClientBase implements UserI {
         II poOrgId = new II();
         poOrgId.setExtension("501");
         II poPersonId = new II();
-        poPersonId.setExtension("518");
+        poPersonId.setExtension("580");
 
         user.setCountry(country);
         user.setState(state);

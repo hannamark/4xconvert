@@ -148,7 +148,7 @@
         <dependency>
             <groupId>gov.nih.nci.coppa.accrual</groupId>
             <artifactId>accrual-services-client</artifactId>
-            <version>3.2.0-20100324.212702-1</version>
+            <version>3.2.0-20100513.195035-1</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
