@@ -147,7 +147,7 @@ public class RegisterUserAction extends ActionSupport {
         }
         
         // check if it's  update action
-        if (registryUser.getId() != null) {
+        if (registryUser.getId() != null && registryUser.getId() != 0) {
             String loginName =  ServletActionContext.getRequest().getRemoteUser();
             if (loginName != null) {
                 redirectPage = "myAccount";
@@ -168,6 +168,7 @@ public class RegisterUserAction extends ActionSupport {
                 return Constants.APPLICATION_ERROR;
             }
         } else { //create user
+            registryUser.setId(null);
             // first create the CSM user
             userAction =  "create";
             redirectPage = "redirect_to_login";
