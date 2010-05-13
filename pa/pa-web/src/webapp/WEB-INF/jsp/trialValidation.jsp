@@ -92,7 +92,7 @@
     <s:actionerror/> 
      <s:hidden name="gtdDTO.submissionNumber" id="gtdDTO.submissionNumber"/>
      <s:hidden name="gtdDTO.studyProtocolId" id="gtdDTO.studyProtocolId"/>
-
+     <s:hidden name="gtdDTO.ctGovXmlRequired" id="gtdDTO.ctGovXmlRequired"/>
      <h2>Trial Details</h2>
     <table class="form">
           <tr>

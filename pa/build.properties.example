@@ -38,6 +38,9 @@ po.topic.clientId=PAApplication
 # Note: The value has to be in sync with CSM Bootstrap data
 # loaded during deployment or created via UPT.
 csm.submitter.group=Submitter
+csm.remote.group.db.creation.policy = update
+csm.remote.group.sync.seconds = 240
 
 # Use the tier-specific Registration application url
 register.mail.body.url=http://localhost:8080/registry
+

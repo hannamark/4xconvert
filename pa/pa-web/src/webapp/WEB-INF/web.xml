@@ -90,14 +90,14 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
-
-
+    
     <!-- Listeners -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-
-
+   <listener>
+        <listener-class>gov.nih.nci.pa.filter.CSMSyncListener</listener-class>
+    </listener>
     <!-- Welcome file lists -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

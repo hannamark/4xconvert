@@ -39,7 +39,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="caintegrator2"          name="caDSR-client-framework"  rev="4.0"         	  conf="runtime->master"/>
     <dependency org="springsource"           name="acegi-security"  		rev="1.0.4"         	  conf="runtime->master"/>
 
-
+   
     <!-- compile -->
     <dependency org="jakarta"                name="commons-collections"     rev="3.2.1"           conf="compile->master"/>
     <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="4.0.5.GA"        conf="compile->master"/>

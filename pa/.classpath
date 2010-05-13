@@ -76,7 +76,6 @@
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/itext-2.0.6.jar" sourcepath="/JAR_SRC/itext-2.0.6-sources.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/cglib-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/quartz-all-1.6.5.jar"/>
-	<classpathentry kind="var" path="PA_LIB"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-dorian-client-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-dorian-common-1.3.jar"/>
@@ -84,5 +83,14 @@
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-dorian-stubs-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/axis-1.2RC2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/wsrf_core_stubs_enum-4.0.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB"/>
+	<classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-csm-common-1.3.jar"/>
+    <classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-csm-service-1.3.jar"/>
+    <classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-csm-stubs-1.3.jar"/>
+    <classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-csm-client-1.3.jar"/>
+    <classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-core-1.3.jar"/>
+    <classpathentry kind="var" path="PA_LIB/commons/compile/axis-1.4.jar"/>
+    <classpathentry kind="var" path="PA_LIB/commons/compile/wsrf_core_stubs-4.0.3.jar"/>
+    
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
