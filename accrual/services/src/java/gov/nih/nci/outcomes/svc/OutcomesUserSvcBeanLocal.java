@@ -199,14 +199,13 @@ public class OutcomesUserSvcBeanLocal extends BaseOutcomesSvc implements Outcome
             registryUser.setState(USStateCode.valueOf(registryUser.getState()).getCode());
             // create the CSM user
             User csmUser = AccrualCsmUtil.getInstance().createCSMUser(registryUser,
-                loginName, StConverter.convertToString(dto.getPassword()));
+                loginName);
             registryUser.setCsmUserId(csmUser.getUserId());
             registryUser = PaRegistry.getRegisterUserService().createUser(registryUser);
             registryUser.setCountry(getCountryCode(registryUser.getCountry()));
             registryUser.setState(USStateCode.getByCode(registryUser.getState()).getName());
             resultDto = converterToSvcDto(registryUser);
             resultDto.setIdentity(StConverter.convertToSt(csmUser.getLoginName()));
-            resultDto.setPassword(StConverter.convertToSt(csmUser.getPassword()));
         } catch (RemoteException e) {
             throw new OutcomesException("Iso conversion exception in createUser().", e);
         } catch (PAException e) {
@@ -240,13 +239,12 @@ public class OutcomesUserSvcBeanLocal extends BaseOutcomesSvc implements Outcome
             registryUser.setState(USStateCode.valueOf(registryUser.getState()).getCode());
             // update the CSM user
             User csmUser = AccrualCsmUtil.getInstance().updateCSMUser(registryUser,
-                loginName, StConverter.convertToString(dto.getPassword()));
+                loginName);
             registryUser = PaRegistry.getRegisterUserService().updateUser(registryUser);
             registryUser.setCountry(getCountryCode(registryUser.getCountry()));
             registryUser.setState(USStateCode.getByCode(registryUser.getState()).getName());
             resultUserDto = converterToSvcDto(registryUser);
             resultUserDto.setIdentity(StConverter.convertToSt(csmUser.getLoginName()));
-            resultUserDto.setPassword(StConverter.convertToSt(csmUser.getPassword()));
             resultUserDto.setTreatmentSiteIdentifier(checkPoOrganizationId(
                     resultUserDto.getTreatmentSiteIdentifier()));
             resultUserDto.setPhysicianIdentifier(checkPoPersonId(
@@ -453,7 +451,6 @@ public class OutcomesUserSvcBeanLocal extends BaseOutcomesSvc implements Outcome
                 // get the CSM user
                 User csmUser = AccrualCsmUtil.getInstance().getCSMUser(loginName);
                 resultDto.setIdentity(StConverter.convertToSt(csmUser.getLoginName()));
-                resultDto.setPassword(StConverter.convertToSt(csmUser.getPassword()));
             }
         } catch (RemoteException e) {
                 throw new OutcomesException("Exception OutcomesUserSvc in getUser().", e);

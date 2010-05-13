@@ -30,9 +30,8 @@ public class MailManager {
      * Sends an email notifying user to activate their user account.
      * @param mailTo mailTo
      * @param identity loginName
-     * @param password password
      */
-    public void sendConfirmationMail(String mailTo, String identity, String password) {
+    public void sendConfirmationMail(String mailTo, String identity) {
 
         try {
             String[] params = {mailTo , };
@@ -48,7 +47,7 @@ public class MailManager {
             MessageFormat formatterBodyUrl = 
                 new MessageFormat(PoPropertyReader.getProperties().getProperty("outcomes.url"));            
 
-            // encode the loginName and password and append to the URL before
+            // encode the loginName and email and append to the URL before
             // sending the e-mail
             // added new line characters to fix URL link issues when users type
             // in special characters in their passwords

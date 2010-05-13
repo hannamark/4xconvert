@@ -11,8 +11,6 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -29,8 +27,6 @@ public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
 
     private St email;
     private St identity;
-    private St password;
-    private St retypePassword;
     private St firstName;
     private St middleName;
     private St lastName;
@@ -45,10 +41,6 @@ public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
     private Ii treatmentSiteIdentifier;
     private Ii physicianIdentifier;
     private static final String USER_ACCOUNT = "userAccount";
-    private static final int MIN_PASSWORD_LENGTH = 6;
-    private static final int MAX_PASSWORD_LENGTH = 20;
-    private static final Pattern ONE_NON_ALPHA_NUMERIC = Pattern.compile("(.*\\p{Punct}.*)+");
-    private static final Pattern ONE_DIGIT = Pattern.compile("(.*\\p{Digit}.*)+");
 
     
     /**
@@ -75,30 +67,6 @@ public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
      */
     public St getIdentity() {
         return identity;
-    }
-    /**
-     * @return the password
-     */
-    public St getPassword() {
-        return password;
-    }
-    /**
-     * @param password the password to set
-     */
-    public void setPassword(St password) {
-        this.password = password;
-    }
-    /**
-     * @param retypePassword the retypePassword to set
-     */
-    public void setRetypePassword(St retypePassword) {
-        this.retypePassword = retypePassword;
-    }
-    /**
-     * @return the retypePassword
-     */
-    public St getRetypePassword() {
-        return retypePassword;
     }
     /**
      * @return the firstName
@@ -264,8 +232,6 @@ public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
     public void validate() throws OutcomesException {
         validateEmailAddress();
         validateIdentity();
-        validatePassword();
-        validateRetypePassword();
         if (!PAUtil.isCdNull(getAction()) 
                 && (getAction().equals(SvcConstants.CREATE)
                 || getAction().equals(SvcConstants.UPDATE))) {
@@ -324,62 +290,6 @@ public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
         if (PAUtil.isStNull(identity)) {
             throw new OutcomesFieldException(getClass(), USER_ACCOUNT + ".identity", 
                     "> Please enter your grid identity");
-        }
-    }
-
-    /**
-     * @throws OutcomesException on err
-     */
-    private void validatePassword()throws OutcomesException {
-        // password must have at least 6 and no more than 20 chars with 
-        // at least one not alpha-numeric char and one digit and no dictionary term
-        final String dotPassword = ".password";
-        if (PAUtil.isStNull(password)) {
-            throw new OutcomesFieldException(getClass(), USER_ACCOUNT + dotPassword, "> Please enter a Password");
-        }
-        final Matcher oneNonAlphaNumericMatcher = ONE_NON_ALPHA_NUMERIC.matcher(StConverter.convertToString(
-                password));
-        final Matcher oneDigitMatcher = ONE_DIGIT.matcher(StConverter.convertToString(password));
-
-        if (StConverter.convertToString(password).length() < MIN_PASSWORD_LENGTH) {
-            throw new OutcomesFieldException(getClass(), USER_ACCOUNT + dotPassword,
-                                 "> Please enter a Password that is at least " + MIN_PASSWORD_LENGTH 
-                                 + " characters in length");
-        } else if (StConverter.convertToString(password).length() > MAX_PASSWORD_LENGTH) {
-            throw new OutcomesFieldException(getClass(), USER_ACCOUNT + dotPassword,
-                                 "> Please enter a Password that is at most " + MAX_PASSWORD_LENGTH 
-                                 + " characters in length");
-        } else if (!oneNonAlphaNumericMatcher.find(0)) {
-            throw new OutcomesFieldException(getClass(), USER_ACCOUNT + dotPassword,
-                                 "> Please enter a Password that contains at least one special character");
-        } else if (!oneDigitMatcher.find(0)) {
-            throw new OutcomesFieldException(getClass(), USER_ACCOUNT + dotPassword,
-                                 "> Please enter a Password that contains at least one digit");
-        }
-    }
-
-    /**
-     * @throws OutcomesFieldException on err
-     */
-    private void validateRetypePassword() throws OutcomesFieldException {
-        if (PAUtil.isStNull(retypePassword)) {
-            throw new OutcomesFieldException(getClass(), USER_ACCOUNT
-                    + ".retypePassword", "> Please retype the Password");
-        }
-        final Matcher oneNonAlphaNumericMatcher = ONE_NON_ALPHA_NUMERIC.matcher(StConverter.convertToString(
-                password));
-        final Matcher oneDigitMatcher = ONE_DIGIT.matcher(StConverter.convertToString(password));
-
-        if (PAUtil.isStNull(password)
-         || StConverter.convertToString(password).length() < MIN_PASSWORD_LENGTH
-         || StConverter.convertToString(password).length() > MAX_PASSWORD_LENGTH
-         || !oneNonAlphaNumericMatcher.find(0)
-         || !oneDigitMatcher.find(0)) {
-            throw new OutcomesFieldException(getClass(), USER_ACCOUNT
-                    + ".retypePassword", "> Please retype the Password");
-        } else if (!password.equals(retypePassword)) {
-            throw new OutcomesFieldException(getClass(), USER_ACCOUNT + ".retypePassword",
-                                 "> Please retype the Password - the passwords must match");
         }
     }
 

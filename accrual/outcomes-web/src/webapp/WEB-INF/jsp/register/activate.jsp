@@ -30,24 +30,12 @@
     <c:set var="topic" scope="request" value="create_account"/> 
     <div class="box">
     
-<!--        <s:if test="userAction == 'updateAccount'">-->
-<!--            <div class="confirm_msg"><strong>Your account was successfully updated</strong></div>-->
-<!--        </s:if>-->
-    
         <s:form name="createAccount" method="POST" action="create.action">
             <s:actionerror/>
-            <s:if test="userAccount.identifier == null">
-                <p>To activate your account for NCI Outcomes, please begin by creating your login information.<br>                   
-                   Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
-                   <b><i>Please provide professional contact information only.</i></b>
-                </p>             
-            </s:if>
-            <s:else>
-                <p>You may update your account information. Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
-                   <fmt:message key="user.account.password.rules"/><br>
-                   <b><i>Please provide professional contact information only.</i></b>
-                </p>
-            </s:else>
+            <p>To activate your account for NCI Outcomes, please begin by creating your login information.<br>                   
+               Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
+               <b><i>Please provide professional contact information only.</i></b>
+            </p>             
             <table class="form">
                 <tr><th colspan="3">Grid Credential Information</th></tr> 
                 <tr><td colspan="2" class="space">&nbsp;</td></tr>    

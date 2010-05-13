@@ -99,18 +99,16 @@ public interface CsmUtil {
     /**
      * @param user user
      * @param loginName loginName
-     * @param password  password
      * @return csm user object
      * @throws RemoteException exception
      */
-    User createCSMUser(RegistryUser user, String loginName, String password) throws RemoteException;
+    User createCSMUser(RegistryUser user, String loginName) throws RemoteException;
     
     /**
      * @param user user
      * @param loginName loginName
-     * @param password  password
      * @return csm user object
      * @throws RemoteException exception
      */
-    User updateCSMUser(RegistryUser user, String loginName, String password) throws RemoteException;
+    User updateCSMUser(RegistryUser user, String loginName) throws RemoteException;
 }

@@ -116,8 +116,6 @@ public class RegisterAction extends AccountSupportAction implements Preparable {
     public void prepare() {
         super.prepare();
         getUserAccount().setIdentity(StConverter.convertToSt(getUserDN()));
-        getUserAccount().setPassword(StConverter.convertToSt(getPassword()));
-        getUserAccount().setRetypePassword(StConverter.convertToSt(getPassword()));
     }
 
     /**
@@ -168,8 +166,7 @@ public class RegisterAction extends AccountSupportAction implements Preparable {
         try {
             final MailManager mailManager = new MailManager();
             mailManager.sendConfirmationMail(StConverter.convertToString(getUserAccount().getEmail()), StConverter
-                    .convertToString(getUserAccount().getIdentity()), StConverter.convertToString(getUserAccount()
-                    .getPassword()));
+                    .convertToString(getUserAccount().getIdentity()));
             LOG.info(" sending email to " + StConverter.convertToString(getUserAccount().getEmail()));
         } catch (Exception e) {
             LOG.error("error while sending e-mail");

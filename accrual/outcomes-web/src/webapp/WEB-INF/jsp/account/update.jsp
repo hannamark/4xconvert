@@ -48,8 +48,6 @@
         <s:form name="myAccount" method="POST" action="update.action">
             <s:hidden name="userAccount.identifier"/>
             <s:hidden name="userAccount.identity"/>
-            <s:hidden name="userAccount.password"/>
-            <s:hidden name="userAccount.retypePassword"/>
             <s:actionerror/>
             <table class="form">
                 <tr><th colspan="3">Grid Credential Information</th></tr> 

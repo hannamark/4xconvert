@@ -123,14 +123,13 @@ public class AccrualCsmUtil implements CsmUtil {
     /**
      * {@inheritDoc}
      */
-    public User createCSMUser(RegistryUser user, String loginName, String password) throws RemoteException {
+    public User createCSMUser(RegistryUser user, String loginName) throws RemoteException {
         User createdCSMUser = null;
         try {
             // create the csm user
             User csmUser = new User();
             // get values from Registry User object and set in CSM User object
             csmUser.setLoginName(loginName);
-            csmUser.setPassword(password);
             csmUser.setFirstName(user.getFirstName());
             csmUser.setLastName(user.getLastName());
             csmUser.setOrganization(user.getAffiliateOrg());
@@ -156,7 +155,7 @@ public class AccrualCsmUtil implements CsmUtil {
     /**
      * {@inheritDoc}
      */
-    public User updateCSMUser(RegistryUser user, String loginName, String password) throws RemoteException {
+    public User updateCSMUser(RegistryUser user, String loginName) throws RemoteException {
         User createdCSMUser = null;
         try {
             // create the csm user
@@ -169,7 +168,6 @@ public class AccrualCsmUtil implements CsmUtil {
             // get values from Registry User object and set in CSM User object
             csmUser.setUserId(user.getCsmUserId());
             csmUser.setLoginName(loginName);
-            csmUser.setPassword(password);
             csmUser.setFirstName(user.getFirstName());
             csmUser.setLastName(user.getLastName());
             csmUser.setOrganization(user.getAffiliateOrg());

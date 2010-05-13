@@ -94,7 +94,6 @@ public class UserAccountWebDto extends AbstractUserDto {
         final UserSvcDto svcDto = new UserSvcDto();
         svcDto.setIdentifier(getIdentifier());
         svcDto.setIdentity(getIdentity());
-        svcDto.setPassword(getPassword());
         svcDto.setFirstName(getFirstName());
         svcDto.setMiddleName(getMiddleName());
         svcDto.setLastName(getLastName());
@@ -107,7 +106,6 @@ public class UserAccountWebDto extends AbstractUserDto {
         svcDto.setPhysicianIdentifier(getPhysicianIdentifier());
         svcDto.setPostalCode(getPostalCode());
         svcDto.setPrsOrg(getPrsOrg());
-        svcDto.setRetypePassword(getRetypePassword());
         svcDto.setState(getState());
         svcDto.setEmail(getEmail());
         return svcDto;

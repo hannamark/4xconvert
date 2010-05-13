@@ -29,7 +29,7 @@ public class AccrualCsmUtilTest extends AbstractServiceTest<AccrualCsmUtil> {
             dto.setLastName("lastName");
             dto.setCsmUserId(1L);
             dto.setId(1L);
-            bean.updateCSMUser(dto,"loginName","password");
+            bean.updateCSMUser(dto,"loginName");
         } catch (Exception cse) { 
           //expected
         } 
@@ -42,7 +42,7 @@ public class AccrualCsmUtilTest extends AbstractServiceTest<AccrualCsmUtil> {
             dto.setLastName("lastName");
             dto.setCsmUserId(1L);
             dto.setId(1L);            
-            bean.createCSMUser(dto,"loginName","password");
+            bean.createCSMUser(dto,"loginName");
         } catch (Exception cse) { 
           //expected
         } 

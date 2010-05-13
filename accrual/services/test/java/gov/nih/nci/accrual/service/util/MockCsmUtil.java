@@ -118,11 +118,11 @@ public class MockCsmUtil implements CsmUtil {
         return null;
     }
     
-    public User createCSMUser(RegistryUser registryUser, String loginName, String password) throws RemoteException {
+    public User createCSMUser(RegistryUser registryUser, String loginName) throws RemoteException {
         return users.get(0);
     }
     
-    public User updateCSMUser(RegistryUser registryUser, String loginName, String password) throws RemoteException {
+    public User updateCSMUser(RegistryUser registryUser, String loginName) throws RemoteException {
         for (User user : users) {
             if (user.getLoginName().equals(loginName)) {
                 return user;

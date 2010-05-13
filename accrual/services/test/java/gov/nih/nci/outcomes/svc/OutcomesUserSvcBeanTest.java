@@ -37,7 +37,6 @@ public class OutcomesUserSvcBeanTest extends AbstractServiceTest<OutcomesUserSvc
     public void createTest() throws Exception {
         UserSvcDto svcDto = new UserSvcDto();
         svcDto.setIdentity(StConverter.convertToSt("test@mail.nih.gov"));
-        svcDto.setPassword(StConverter.convertToSt("testPassword1!"));
         svcDto.setFirstName(StConverter.convertToSt("firstName"));
         svcDto.setMiddleName(StConverter.convertToSt("middleName"));
         svcDto.setLastName(StConverter.convertToSt("lastName"));
@@ -50,7 +49,6 @@ public class OutcomesUserSvcBeanTest extends AbstractServiceTest<OutcomesUserSvc
         svcDto.setPhysicianIdentifier(IiConverter.convertToIi("1"));
         svcDto.setPostalCode(StConverter.convertToSt("postAdd"));
         svcDto.setPrsOrg(StConverter.convertToSt("prsOrg"));
-        svcDto.setRetypePassword(StConverter.convertToSt("testPassword1!"));
         svcDto.setState(StConverter.convertToSt("TX"));
         UserSvcDto r = bean.createUser(svcDto);
         assertNotNull(r);
@@ -61,7 +59,6 @@ public class OutcomesUserSvcBeanTest extends AbstractServiceTest<OutcomesUserSvc
     public void createTestException() {
         UserSvcDto svcDto = new UserSvcDto();
         svcDto.setIdentity(StConverter.convertToSt("user1@mail.nih.gov"));
-        svcDto.setPassword(StConverter.convertToSt("testPassword1!"));
         svcDto.setFirstName(StConverter.convertToSt("firstName"));
         svcDto.setMiddleName(StConverter.convertToSt("middleName"));
         svcDto.setLastName(StConverter.convertToSt("lastName"));
@@ -74,7 +71,6 @@ public class OutcomesUserSvcBeanTest extends AbstractServiceTest<OutcomesUserSvc
         svcDto.setPhysicianIdentifier(IiConverter.convertToIi("1"));
         svcDto.setPostalCode(StConverter.convertToSt("postAdd"));
         svcDto.setPrsOrg(StConverter.convertToSt("prsOrg"));
-        svcDto.setRetypePassword(StConverter.convertToSt("testPassword1!"));
         svcDto.setState(StConverter.convertToSt("TX"));
         try {
             bean.createUser(svcDto);
@@ -87,7 +83,6 @@ public class OutcomesUserSvcBeanTest extends AbstractServiceTest<OutcomesUserSvc
     public void updateTest() throws Exception {
         UserSvcDto svcDto = new UserSvcDto();
         svcDto.setIdentity(StConverter.convertToSt("user1@mail.nih.gov"));
-        svcDto.setPassword(StConverter.convertToSt("testPassword1!"));
         svcDto.setFirstName(StConverter.convertToSt("firstName"));
         svcDto.setMiddleName(StConverter.convertToSt("middleName"));
         svcDto.setLastName(StConverter.convertToSt("lastName"));
@@ -100,7 +95,6 @@ public class OutcomesUserSvcBeanTest extends AbstractServiceTest<OutcomesUserSvc
         svcDto.setPhysicianIdentifier(IiConverter.convertToIi("1"));
         svcDto.setPostalCode(StConverter.convertToSt("postAdd"));
         svcDto.setPrsOrg(StConverter.convertToSt("prsOrg"));
-        svcDto.setRetypePassword(StConverter.convertToSt("testPassword1!"));
         svcDto.setState(StConverter.convertToSt("TX"));
         svcDto.setIdentifier(IiConverter.convertToIi("1"));
         UserSvcDto r = bean.updateUser(svcDto);
@@ -112,7 +106,6 @@ public class OutcomesUserSvcBeanTest extends AbstractServiceTest<OutcomesUserSvc
     public void updateTestException() {
         UserSvcDto svcDto = new UserSvcDto();
         svcDto.setIdentity(StConverter.convertToSt("test@mail.nih.gov"));
-        svcDto.setPassword(StConverter.convertToSt("testPassword1!"));
         svcDto.setFirstName(StConverter.convertToSt("firstName"));
         svcDto.setMiddleName(StConverter.convertToSt("middleName"));
         svcDto.setLastName(StConverter.convertToSt("lastName"));
@@ -125,7 +118,6 @@ public class OutcomesUserSvcBeanTest extends AbstractServiceTest<OutcomesUserSvc
         svcDto.setPhysicianIdentifier(IiConverter.convertToIi("1"));
         svcDto.setPostalCode(StConverter.convertToSt("postAdd"));
         svcDto.setPrsOrg(StConverter.convertToSt("prsOrg"));
-        svcDto.setRetypePassword(StConverter.convertToSt("testPassword1!"));
         svcDto.setState(StConverter.convertToSt("TX"));
         svcDto.setIdentifier(IiConverter.convertToIi("1"));
         try {

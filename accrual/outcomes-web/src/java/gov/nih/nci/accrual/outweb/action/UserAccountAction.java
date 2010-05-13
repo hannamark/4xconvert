@@ -284,8 +284,6 @@ public class UserAccountAction extends AccountSupportAction {
         UserAccountWebDto usrAcct = new UserAccountWebDto();
         usrAcct.setIdentifier(userSvcDto.getIdentifier());
         usrAcct.setIdentity(userSvcDto.getIdentity());
-        usrAcct.setPassword(userSvcDto.getPassword());
-        usrAcct.setRetypePassword(userSvcDto.getPassword());
         usrAcct.setFirstName(userSvcDto.getFirstName());
         usrAcct.setMiddleName(userSvcDto.getMiddleName());
         usrAcct.setLastName(userSvcDto.getLastName());
