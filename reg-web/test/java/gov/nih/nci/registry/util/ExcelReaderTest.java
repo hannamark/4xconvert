@@ -78,7 +78,7 @@ public class ExcelReaderTest {
 		assertNotNull(list.get(0).getPhase());
 		assertNull(list.get(0).getPhaseOtherValueSp());
 		assertNotNull(list.get(0).getSponsorOrgName());
-		assertNull(list.get(0).getSponsorCTEPOrgNumber());
+		assertNull(list.get(0).getSponsorPOId());
 		assertNotNull(list.get(0).getSponsorStreetAddress());
 		assertNotNull(list.get(0).getSponsorCity());
 		assertNotNull(list.get(0).getSponsorState());
@@ -94,7 +94,7 @@ public class ExcelReaderTest {
 		assertNull(list.get(0).getSponsorContactFName());
 		assertNull(list.get(0).getSponsorContactMName());
 		assertNull(list.get(0).getSponsorContactLName());
-		assertNull(list.get(0).getSponsorContactCTEPPerNo());
+		assertNull(list.get(0).getSponsorContactPOId());
 		assertNull(list.get(0).getSponsorContactStreetAddress());
 		assertNull(list.get(0).getSponsorContactCity());
 		assertNull(list.get(0).getSponsorContactState());
@@ -106,7 +106,6 @@ public class ExcelReaderTest {
 		assertNull(list.get(0).getSponsorContactFax());
 		assertNull(list.get(0).getSponsorContactUrl());
 		assertNotNull(list.get(0).getLeadOrgName());
-		assertNull(list.get(0).getLeadOrgCTEPOrgNo());
 		assertNotNull(list.get(0).getLeadOrgStreetAddress());
 		assertNotNull(list.get(0).getLeadOrgCity());
 		assertNotNull(list.get(0).getLeadOrgState());
@@ -120,7 +119,7 @@ public class ExcelReaderTest {
 		assertNotNull(list.get(0).getPiFirstName());
 		assertNull(list.get(0).getPiMiddleName());
 		assertNotNull(list.get(0).getPiLastName());
-		assertNull(list.get(0).getPiPersonCTEPPersonNo());
+		assertNull(list.get(0).getPiPOId());
 		assertNotNull(list.get(0).getPiStreetAddress());
 		assertNotNull(list.get(0).getPiCity());
 		assertNotNull(list.get(0).getPiState());
@@ -134,7 +133,7 @@ public class ExcelReaderTest {
 		
 		assertNull(list.get(0).getSumm4FundingCat());
 		assertNull(list.get(0).getSumm4OrgName());
-		assertNull(list.get(0).getSumm4OrgCTEPOrgNo());
+		assertNull(list.get(0).getSumm4OrgPOId());
 		assertNull(list.get(0).getSumm4OrgStreetAddress());
 		assertNull(list.get(0).getSumm4City());
 		assertNull(list.get(0).getSumm4State());

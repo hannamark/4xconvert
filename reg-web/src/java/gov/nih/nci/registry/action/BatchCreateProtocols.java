@@ -124,8 +124,6 @@ import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.TrialUtil;
-import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
-import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -801,31 +799,24 @@ public class BatchCreateProtocols {
      */
     private Ii lookUpOrgs(OrganizationBatchDTO batchDto) throws PAException,
         NullifiedEntityException, URISyntaxException, EntityValidationException, CurationException {
-        LOG.info("Entering lookup Org ...");
+        LOG.debug("Entering lookup Org ...");
         Ii orgId = null;
          
         String orgName = batchDto.getName();
         String countryName = batchDto.getCountry();
+        String streetAddress = batchDto.getStreetAddress();
         String cityName = batchDto.getCity();
         String zipCode = batchDto.getZip();
 
         OrganizationDTO criteria = new OrganizationDTO();
-        if (batchDto.getOrgCTEPId() != null && batchDto.getOrgCTEPId().length() > 0) {
-               IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
-               identifiedOrganizationDTO.setAssignedId(
-                            IiConverter.convertToIdentifiedOrgEntityIi(batchDto.getOrgCTEPId()));
-               List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
-                            .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
-               if (identifiedOrgs != null && !identifiedOrgs.isEmpty()) {
-                        criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
-               }
-        } 
-        if (null == criteria.getIdentifier() || PAUtil.isEmpty(batchDto.getOrgCTEPId())) {
-               criteria.setName(EnOnConverter.convertToEnOn(orgName));
-               criteria.setPostalAddress(AddressConverterUtil.create(null, null,
-                        cityName, null, zipCode, countryName.toUpperCase(Locale.US)));
+        if (StringUtils.isNotBlank(batchDto.getPoIdentifier())) {
+            criteria.setIdentifier(IiConverter.convertToPoOrganizationIi(batchDto.getPoIdentifier()));
+        } else {
+            criteria.setName(EnOnConverter.convertToEnOn(orgName));
+            criteria.setPostalAddress(AddressConverterUtil.create(streetAddress, null,
+                     cityName, null, zipCode, countryName.toUpperCase(Locale.US)));
+            
         }
-        
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         List<OrganizationDTO> poOrgDtos = null;
         try {
@@ -834,16 +825,17 @@ public class BatchCreateProtocols {
             throw new PAException(e);
         }
         
-        if (null == poOrgDtos || poOrgDtos.isEmpty()) {
-              // create a new org and then return the new Org
-              LOG.info(" lookUpOrgs Serch return no org so creating new");
-              orgId = createOrganization(batchDto);
+        if (PAUtil.isListEmpty(poOrgDtos)) {
+            if (StringUtils.isNotBlank(batchDto.getPoIdentifier())) {
+                throw new PAException("Organization Identifier not found " + batchDto.getPoIdentifier());
+            }
+            orgId = createOrganization(batchDto);
         } else {
              // return the Id of the org
              orgId = poOrgDtos.get(0).getIdentifier();
-             LOG.info(" lookUpOrgs Serch returned orgId" + orgId.getExtension().toString());
+             LOG.debug(" lookUpOrgs search returned orgId " + orgId.getExtension().toString());
         }
-        LOG.info("leaving lookup Org with OrgId" + orgId.getExtension());
+        LOG.debug("leaving lookup Org with OrgId " + orgId.getExtension());
         return orgId;
     }
 
@@ -864,7 +856,7 @@ public class BatchCreateProtocols {
     private Ii createOrganization(OrganizationBatchDTO batchDto)
             throws PAException, URISyntaxException, EntityValidationException, NullifiedEntityException, 
         CurationException {
-        LOG.info("Entering Create Org ..");
+        LOG.debug("Entering Create Org ..");
         OrganizationDTO orgDto = new OrganizationDTO();
         Ii orgId = null;
         String orgName = batchDto.getName();
@@ -897,7 +889,7 @@ public class BatchCreateProtocols {
                     .getOrganizationEntityService().getOrganization(id));
          orgId = callConvert.get(0).getIdentifier();
         
-        LOG.info("leaving Create Org with OrgId" + orgId.getExtension());
+        LOG.debug("leaving Create Org with OrgId " + orgId.getExtension());
         return orgId;
     }
 
@@ -952,51 +944,47 @@ public class BatchCreateProtocols {
      */
     private Ii lookUpPersons(PersonBatchDTO batchDto) throws PAException,
         URISyntaxException, EntityValidationException, CurationException {
-        LOG.info("Entering Look up person...");
+        LOG.debug("Entering Look up person...");
         Ii personId = null;
         String firstName = batchDto.getFirstName();
         String lastName = batchDto.getLastName();
+        String streetAddress = batchDto.getStreetAddress(); 
         String email = batchDto.getEmail();
-        String ctep = batchDto.getPersonCTEPId();
-        gov.nih.nci.services.person.PersonDTO p = new gov.nih.nci.services.person.PersonDTO();
-        List<gov.nih.nci.services.person.PersonDTO> poPersonList = 
-                                                        new ArrayList<gov.nih.nci.services.person.PersonDTO>();
-        if (ctep != null && ctep.length() > 0) {
-           IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
-           identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi(ctep));
-           List<IdentifiedPersonDTO> retResultList = 
-                                  PoRegistry.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
-           if (retResultList != null && !retResultList.isEmpty()) {
-                    p.setIdentifier(retResultList.get(0).getPlayerIdentifier());
-           } 
-        } 
-        if (null == p.getIdentifier() || PAUtil.isEmpty(ctep)) {
+        String identifier = batchDto.getPoIdentifier();
+        PersonDTO person = new PersonDTO();
+        List<PersonDTO> poPersonList = new ArrayList<PersonDTO>();
+        if (StringUtils.isNotBlank(identifier)) {
+            person.setIdentifier(IiConverter.convertToPoPersonIi(batchDto.getPoIdentifier()));
+        } else  {
+            person.setPostalAddress(AddressConverterUtil.create(streetAddress, null,
+                    batchDto.getCity(), null, batchDto.getZip(), batchDto.getCountry().toUpperCase(Locale.US)));
             if (email != null && email.length() > 0) {
                 DSet<Tel> list = new DSet<Tel>();
                 list.setItem(new HashSet<Tel>());
                 TelEmail telemail = new TelEmail();
                 telemail.setValue(new URI("mailto:" + email));
                 list.getItem().add(telemail);
-                p.setTelecomAddress(list);
+                person.setTelecomAddress(list);
             }
-            p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
+            person.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
         }
                 
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         try {
-            poPersonList = PoRegistry.getPersonEntityService().search(p, limit);
+            poPersonList = PoRegistry.getPersonEntityService().search(person, limit);
         } catch (TooManyResultsException e) {
             throw new PAException(e);
         }
         
-        if (null == poPersonList ||  poPersonList.isEmpty()) {
-            LOG.info("No Person found so creating new Person");
+        if (PAUtil.isListEmpty(poPersonList)) {
+            if (StringUtils.isNotBlank(batchDto.getPoIdentifier())) {
+                throw new PAException("Person Identifier not found " + batchDto.getPoIdentifier());
+            }
             personId = createPerson(batchDto);
         }  else {
             personId = poPersonList.get(0).getIdentifier();             
-            LOG.info("Person found ");
         }
-        LOG.info("leaving Look up person  with personId" + personId);
+        LOG.debug("leaving Look up person  with personId" + personId);
         return personId;
     }
     /**
@@ -1011,7 +999,7 @@ public class BatchCreateProtocols {
     private Ii createPerson(PersonBatchDTO batchDto) throws PAException, 
         URISyntaxException, EntityValidationException, CurationException  {
         LOG.info("Entering created person  ...");
-        Ii personId = null; 
+        Ii personId = null;
         String firstName = batchDto.getFirstName();
         String lastName = batchDto.getLastName();
         String email = batchDto.getEmail();

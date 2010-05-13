@@ -53,7 +53,6 @@ public class TrialBatchDataValidator {
     private static List<String> countryList = null;
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     private static final int AUS_STATE_CODE_LEN = 3;
-    private static final int ORG_FIELD = 8;
     private static final String DELEMITOR = ";";
 
     /**
@@ -149,6 +148,9 @@ public class TrialBatchDataValidator {
     private Object validatePI(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         PersonBatchDTO piBatchDto = buildLeadPIDto(batchDto);
+        if (StringUtils.isNotBlank(piBatchDto.getPoIdentifier())) {
+            return fieldErr;
+        }
         fieldErr.append(validate(piBatchDto, "Principal Investigator's "));
         fieldErr.append(validateCountryAndStateInfo(piBatchDto.getCountry(), piBatchDto.getState(),
                 "Principal Investigator's"));
@@ -157,6 +159,9 @@ public class TrialBatchDataValidator {
     private StringBuffer validateLeadOrg(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         OrganizationBatchDTO leadOrgDto = buildLeadOrgDto(batchDto);
+        if (StringUtils.isNotBlank(leadOrgDto.getPoIdentifier())) {
+            return fieldErr;
+        }
         fieldErr.append(validate(leadOrgDto, "Lead Organization's "));
         fieldErr.append(validateCountryAndStateInfo(leadOrgDto.getCountry(), leadOrgDto.getState(), 
                 "Lead Organization's "));
@@ -376,10 +381,10 @@ public class TrialBatchDataValidator {
      */
     private StringBuffer validateSummary4SponsorInfo(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
-/*        if (PAUtil.isNotEmpty(batchDto.getTrialType()) 
-                && batchDto.getTrialType().equalsIgnoreCase("Interventional")) {
-*/
         OrganizationBatchDTO summ4Sponsor = buildSummary4Sponsor(batchDto);
+        if (StringUtils.isNotBlank(summ4Sponsor.getPoIdentifier())) {
+            return fieldErr;
+        }
         if (!orgDTOIsEmpty(summ4Sponsor)) {
             fieldErr.append(validate(summ4Sponsor, "Summary 4 Funding Sponsor/Source's "));
             fieldErr.append(validateCountryAndStateInfo(summ4Sponsor.getCountry(), summ4Sponsor.getState(), 
@@ -395,8 +400,10 @@ public class TrialBatchDataValidator {
     private StringBuffer validateSponsorInfo(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         OrganizationBatchDTO dto = buildSponsorOrgDto(batchDto);
-        fieldErr.append(validate(dto, "Sponsor Organization's "));
-        fieldErr.append(validateCountryAndStateInfo(dto.getCountry(), dto.getState(), "Sponsor Organization's"));
+        if (StringUtils.isBlank(dto.getPoIdentifier())) {
+            fieldErr.append(validate(dto, "Sponsor Organization's "));
+            fieldErr.append(validateCountryAndStateInfo(dto.getCountry(), dto.getState(), "Sponsor Organization's"));
+        }
         fieldErr.append(validateSponsorContactInfo(batchDto)); 
         if (PAUtil.isEmpty(batchDto.getResponsibleParty())) {
                 fieldErr.append("Sponsor Contact Type is required.\n");
@@ -413,9 +420,11 @@ public class TrialBatchDataValidator {
             if (PAUtil.isNotEmpty(batchDto.getSponsorContactType())) {
                 if (batchDto.getSponsorContactType().equalsIgnoreCase("Personal")) {
                     PersonBatchDTO sponsorContact = buildSponsorContact(batchDto);
-                    fieldErr.append(validate(sponsorContact, "Sponsor Contact's "));
-                    fieldErr.append(validateCountryAndStateInfo(sponsorContact.getCountry(), sponsorContact.getState(),
-                        "Sponsor Contact's "));
+                    if (StringUtils.isBlank(sponsorContact.getPoIdentifier())) {
+                        fieldErr.append(validate(sponsorContact, "Sponsor Contact's "));
+                        fieldErr.append(validateCountryAndStateInfo(sponsorContact.getCountry(), 
+                                sponsorContact.getState(), "Sponsor Contact's "));
+                    }
                 } 
                 if (batchDto.getSponsorContactType().equalsIgnoreCase("Generic")) {
                   if (PAUtil.isEmpty(batchDto.getResponsibleGenericContactName())) {
@@ -479,8 +488,8 @@ public class TrialBatchDataValidator {
      */
     public OrganizationBatchDTO buildLeadOrgDto(StudyProtocolBatchDTO dto) {
         OrganizationBatchDTO orgDto = new OrganizationBatchDTO();
+        orgDto.setPoIdentifier(dto.getLeadOrgPOId());
         orgDto.setName(dto.getLeadOrgName());
-        orgDto.setOrgCTEPId(dto.getLeadOrgCTEPOrgNo());
         orgDto.setStreetAddress(dto.getLeadOrgStreetAddress());
         orgDto.setCity(dto.getLeadOrgCity());
         orgDto.setState(dto.getLeadOrgState());
@@ -501,10 +510,10 @@ public class TrialBatchDataValidator {
      */
         public PersonBatchDTO buildLeadPIDto(StudyProtocolBatchDTO dto) {
         PersonBatchDTO personDto = new PersonBatchDTO();
+        personDto.setPoIdentifier(dto.getPiPOId());
         personDto.setFirstName(dto.getPiFirstName());
         personDto.setMiddleName(dto.getPiMiddleName());
         personDto.setLastName(dto.getPiLastName());
-        personDto.setPersonCTEPId(dto.getPiPersonCTEPPersonNo());
         personDto.setStreetAddress(dto.getPiStreetAddress());
         personDto.setCity(dto.getPiCity());
         personDto.setState(dto.getPiState());
@@ -524,8 +533,8 @@ public class TrialBatchDataValidator {
      */
     public OrganizationBatchDTO buildSponsorOrgDto(StudyProtocolBatchDTO dto) {
         OrganizationBatchDTO sponsorDto = new OrganizationBatchDTO();
+        sponsorDto.setPoIdentifier(dto.getSponsorPOId());
         sponsorDto.setName(dto.getSponsorOrgName());
-        sponsorDto.setOrgCTEPId(dto.getSponsorCTEPOrgNumber());
         sponsorDto.setStreetAddress(dto.getSponsorStreetAddress());
         sponsorDto.setCity(dto.getSponsorCity());
         sponsorDto.setState(dto.getSponsorState());
@@ -545,10 +554,10 @@ public class TrialBatchDataValidator {
      */
     public PersonBatchDTO buildSponsorContact(StudyProtocolBatchDTO dto) {
         PersonBatchDTO  sponsorContact = new PersonBatchDTO();
+        sponsorContact.setPoIdentifier(dto.getSponsorContactPOId());
         sponsorContact.setFirstName(dto.getSponsorContactFName());
         sponsorContact.setMiddleName(dto.getSponsorContactMName());
         sponsorContact.setLastName(dto.getSponsorContactLName());
-        sponsorContact.setPersonCTEPId(dto.getSponsorContactCTEPPerNo());
         sponsorContact.setStreetAddress(dto.getSponsorContactStreetAddress());
         sponsorContact.setCity(dto.getSponsorContactCity());
         sponsorContact.setState(dto.getSponsorContactState());
@@ -569,8 +578,8 @@ public class TrialBatchDataValidator {
      */
     public OrganizationBatchDTO buildSummary4Sponsor(StudyProtocolBatchDTO dto) {
         OrganizationBatchDTO summ4Sponsor = new OrganizationBatchDTO();
+        summ4Sponsor.setPoIdentifier(dto.getSumm4OrgPOId());
         summ4Sponsor.setName(dto.getSumm4OrgName());
-        summ4Sponsor.setOrgCTEPId(dto.getSumm4OrgCTEPOrgNo());
         summ4Sponsor.setStreetAddress(dto.getSumm4OrgStreetAddress());
         summ4Sponsor.setCity(dto.getSumm4City());
         summ4Sponsor.setState(dto.getSumm4State());
@@ -584,41 +593,21 @@ public class TrialBatchDataValidator {
         return summ4Sponsor;
     }
     /**
-     * 
+     * returns true if all the attributes is null.
      * @param dto dto
      * @return result
      */
     public boolean orgDTOIsEmpty(OrganizationBatchDTO dto) {
-        int nullCount = 0;
-        boolean orgIsEmpty = false;
-        if (PAUtil.isEmpty(dto.getName())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getStreetAddress())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getCity())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getState())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getZip())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getCountry())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getEmail())) {
-            nullCount += 1;
-        }
-        if (PAUtil.isEmpty(dto.getPhone())) {
-            nullCount += 1;
-        }
-        if (nullCount == ORG_FIELD) {
-            orgIsEmpty = true;
-        }
-        return orgIsEmpty;
+        
+        return !(StringUtils.isNotBlank(dto.getPoIdentifier()) 
+                || StringUtils.isNotBlank(dto.getName())     
+                || StringUtils.isNotBlank(dto.getStreetAddress()) 
+                || StringUtils.isNotBlank(dto.getCity()) 
+                || StringUtils.isNotBlank(dto.getState()) 
+                || StringUtils.isNotBlank(dto.getZip()) 
+                || StringUtils.isNotBlank(dto.getCountry()) 
+                || StringUtils.isNotBlank(dto.getEmail()) 
+                || StringUtils.isNotBlank(dto.getPhone()));
     }
     /**
      * 

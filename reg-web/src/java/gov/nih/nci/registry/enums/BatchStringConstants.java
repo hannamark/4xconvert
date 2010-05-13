@@ -47,8 +47,8 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      SPONSOR_ORG_NAME("[Sponsor] Organization Name", "setSponsorOrgName"),
     /** */
-     SPONSOR_CETP_ORG_NO("[Sponsor] CTEP Organization Number", "setSponsorCTEPOrgNumber"),
-    /** */
+     SPONSOR_CETP_ORG_NO("[Sponsor] PO-ID", "setSponsorPOId"),
+     /** */
      SPONSOR_STREET_ADDRESS("[Sponsor] Street Address", "setSponsorStreetAddress"),
     /** */
      SPONSOR_CITY("[Sponsor] City", "setSponsorCity"),
@@ -81,7 +81,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      SPONSOR_CONTACT_LAST_NAME("[Sponsor Contact] Last Name", "setSponsorContactLName"),
     /** */
-     SPONSOR_CONTACT_CTEP_PERSON_NO("[Sponsor Contact] CTEP Person Number", "setSponsorContactCTEPPerNo"),
+     SPONSOR_CONTACT_PERSON_ID("[Sponsor Contact] Person PO-ID", "setSponsorContactPOId"),
     /** */
      SPONSOR_CONTACT_STREET_ADDRESS("[Sponsor Contact] Street Address", "setSponsorContactStreetAddress"),
     /** */
@@ -105,7 +105,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      LEAD_ORG_NAME("[Lead Organization] Name", "setLeadOrgName"),
     /** */
-     LEAD_ORG_CTEP_IDENTIFIER("[Lead Organization] CTEP Organization Number", "setLeadOrgCTEPOrgNo"),
+     LEAD_ORG_PO_ID("[Lead Organization] PO-ID", "setLeadOrgPOId"),
     /** */
      LEAD_ORG_STREET_ADDRESS("[Lead Organization] Street Address", "setLeadOrgStreetAddress"),
     /** */
@@ -135,7 +135,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      PI_LAST_NAME("[Principal Investigator] Last Name", "setPiLastName"),
     /** */
-     PI_PERSON_CTEP_PERSON_NUMBER("[Principal Investigator] CTEP Person Number", "setPiPersonCTEPPersonNo"),
+     PI_PERSON_PERSON_PO_ID("[Principal Investigator] PO-ID", "setPiPOId"),
     /** */
      PI_STREET_ADDRESS("[Principal Investigator] Street Address", "setPiStreetAddress"),
     /** */
@@ -161,7 +161,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      S4_FUND_ORG_NAME("[Summary 4 Funding Sponsor/Source] Organization Name", "setSumm4OrgName"),
     /** */
-     S4_FUND_ORG_CTEP_ORG_NO("[Summary 4 Funding Sponsor/Source] CTEP Organization Number", "setSumm4OrgCTEPOrgNo"),
+     S4_FUND_ORG_ORG_PO_ID("[Summary 4 Funding Sponsor/Source] PO-ID", "setSumm4OrgPOId"),
     /** */
      S4_FUND_ORG_STREET_ADDRESS("[Summary 4 Funding Sponsor/Source] Street Address", "setSumm4OrgStreetAddress"),
     /** */

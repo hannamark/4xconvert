@@ -22,9 +22,9 @@ public class StudyProtocolBatchDTO {
     private String primaryPurposeOtherValueSp;
     private String phase;
     private String phaseOtherValueSp;
-    //Sponser 
+    //Sponsor 
+    private String sponsorPOId;
     private String sponsorOrgName;
-    private String sponsorCTEPOrgNumber;
     private String sponsorStreetAddress;
     private String sponsorCity;
     private String sponsorState;
@@ -37,11 +37,10 @@ public class StudyProtocolBatchDTO {
     private String sponsorURL;
     
     private String responsibleParty;
-    
+    private String sponsorContactPOId;
     private String sponsorContactFName;
     private String sponsorContactMName;
     private String sponsorContactLName;
-    private String sponsorContactCTEPPerNo;
     private String sponsorContactStreetAddress;
     private String sponsorContactCity;
     private String sponsorContactState;
@@ -57,8 +56,8 @@ public class StudyProtocolBatchDTO {
     private String sponsorContactType;
     
     //lead org
+    private String leadOrgPOId;
     private String leadOrgName;
-    private String leadOrgCTEPOrgNo;
     private String leadOrgStreetAddress;
     private String leadOrgCity;
     private String leadOrgState;
@@ -70,11 +69,12 @@ public class StudyProtocolBatchDTO {
     private String leadOrgFax;
     private String leadOrgUrl;
     private String leadOrgType;
+    
     //PI
+    private String piPOId;
     private String piFirstName;
     private String piMiddleName;
     private String piLastName;
-    private String piPersonCTEPPersonNo;
     private String piStreetAddress;
     private String piCity;
     private String piState;
@@ -87,8 +87,8 @@ public class StudyProtocolBatchDTO {
     private String piUrl;
 
     private String summ4FundingCat;
+    private String summ4OrgPOId;
     private String summ4OrgName;
-    private String summ4OrgCTEPOrgNo;
     private String summ4OrgStreetAddress;
     private String summ4City;
     private String summ4State;
@@ -200,6 +200,22 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
+     * 
+     * @return lead organization PO Id
+     */
+    public String getLeadOrgPOId() {
+        return leadOrgPOId;
+    }
+
+    /**
+     * 
+     * @param leadOrgPOId Org PO Id
+     */
+    public void setLeadOrgPOId(String leadOrgPOId) {
+        this.leadOrgPOId = leadOrgPOId;
+    }
+
+    /**
      * @return the leadOrgCity
      */
     public String getLeadOrgCity() {
@@ -225,20 +241,6 @@ public class StudyProtocolBatchDTO {
      */
     public void setLeadOrgCountry(String leadOrgCountry) {
         this.leadOrgCountry = leadOrgCountry;
-    }
-
-    /**
-     * @return the leadOrgCTEPOrgNo
-     */
-    public String getLeadOrgCTEPOrgNo() {
-        return leadOrgCTEPOrgNo;
-    }
-
-    /**
-     * @param leadOrgCTEPOrgNo the leadOrgCTEPOrgNo to set
-     */
-    public void setLeadOrgCTEPOrgNo(String leadOrgCTEPOrgNo) {
-        this.leadOrgCTEPOrgNo = leadOrgCTEPOrgNo;
     }
 
     /**
@@ -596,17 +598,19 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * @return the piPersonCTEPPersonNo
+     * 
+     * @return PI person ID
      */
-    public String getPiPersonCTEPPersonNo() {
-        return piPersonCTEPPersonNo;
+    public String getPiPOId() {
+        return piPOId;
     }
 
     /**
-     * @param piPersonCTEPPersonNo the piPersonCTEPPersonNo to set
+     * 
+     * @param piPOId PI person ID
      */
-    public void setPiPersonCTEPPersonNo(String piPersonCTEPPersonNo) {
-        this.piPersonCTEPPersonNo = piPersonCTEPPersonNo;
+    public void setPiPOId(String piPOId) {
+        this.piPOId = piPOId;
     }
 
     /**
@@ -760,6 +764,22 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
+     * 
+     * @return sponsor contact po id
+     */
+    public String getSponsorContactPOId() {
+        return sponsorContactPOId;
+    }
+
+    /**
+     * 
+     * @param sponsorContactPOId sponsor contact po id
+     */
+    public void setSponsorContactPOId(String sponsorContactPOId) {
+        this.sponsorContactPOId = sponsorContactPOId;
+    }
+
+    /**
      * @param responsibleParty the responsibleParty to set
      */
     public void setResponsibleParty(String responsibleParty) {
@@ -808,19 +828,6 @@ public class StudyProtocolBatchDTO {
         this.sponsorContactCountry = sponsorContactCountry;
     }
 
-    /**
-     * @return the sponsorContactCTEPPerNo
-     */
-    public String getSponsorContactCTEPPerNo() {
-        return sponsorContactCTEPPerNo;
-    }
-
-    /**
-     * @param sponsorContactCTEPPerNo the sponsorContactCTEPPerNo to set
-     */
-    public void setSponsorContactCTEPPerNo(String sponsorContactCTEPPerNo) {
-        this.sponsorContactCTEPPerNo = sponsorContactCTEPPerNo;
-    }
 
     /**
      * @return the sponsorContactEmail
@@ -991,17 +998,19 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * @return the sponsorCTEPOrgNumber
+     * 
+     * @return sponsor PO ID
      */
-    public String getSponsorCTEPOrgNumber() {
-        return sponsorCTEPOrgNumber;
+    public String getSponsorPOId() {
+        return sponsorPOId;
     }
 
     /**
-     * @param sponsorCTEPOrgNumber the sponsorCTEPOrgNumber to set
+     * 
+     * @param sponsorPOId sponsor PO ID
      */
-    public void setSponsorCTEPOrgNumber(String sponsorCTEPOrgNumber) {
-        this.sponsorCTEPOrgNumber = sponsorCTEPOrgNumber;
+    public void setSponsorPOId(String sponsorPOId) {
+        this.sponsorPOId = sponsorPOId;
     }
 
     /**
@@ -1231,17 +1240,18 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * @return the summ4OrgCTEPOrgNo
+     * 
+     * @return summary 4 PO ID
      */
-    public String getSumm4OrgCTEPOrgNo() {
-        return summ4OrgCTEPOrgNo;
+    public String getSumm4OrgPOId() {
+        return summ4OrgPOId;
     }
-
     /**
-     * @param summ4OrgCTEPOrgNo the summ4OrgCTEPOrgNo to set
+     * 
+     * @param summ4OrgPOId summary 4 PO ID
      */
-    public void setSumm4OrgCTEPOrgNo(String summ4OrgCTEPOrgNo) {
-        this.summ4OrgCTEPOrgNo = summ4OrgCTEPOrgNo;
+    public void setSumm4OrgPOId(String summ4OrgPOId) {
+        this.summ4OrgPOId = summ4OrgPOId;
     }
 
     /**

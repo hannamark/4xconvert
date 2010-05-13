@@ -12,7 +12,7 @@ public class PersonBatchDTO extends AddressDTO {
     private String firstName;
     private String middleName;
     private String lastName;
-    private String personCTEPId;
+    private String poIdentifier;
     
     /**
      * @return the firstName
@@ -53,16 +53,16 @@ public class PersonBatchDTO extends AddressDTO {
         this.middleName = middleName;
     }
     /**
-     * @return the personCTEPId
+     * @return poIdentifier person identifier
      */
-    public String getPersonCTEPId() {
-        return personCTEPId;
+    public String getPoIdentifier() {
+        return poIdentifier;
     }
     /**
-     * @param personCTEPId the personCTEPId to set
+     * @param poIdentifier  person identifier
      */
-    public void setPersonCTEPId(String personCTEPId) {
-        this.personCTEPId = personCTEPId;
+    public void setPoIdentifier(String poIdentifier) {
+        this.poIdentifier = poIdentifier;
     }
     /**
      * @return the phone

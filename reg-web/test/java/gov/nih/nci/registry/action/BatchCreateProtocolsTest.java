@@ -35,8 +35,6 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           dto.setOtherTrialRelDocumentFileName(null);
           dto.setProtocolHighlightDocFileName(null);
           dto.setChangeRequestDocFileName(null);
-          dto.setPiPersonCTEPPersonNo("1");
-          dto.setLeadOrgCTEPOrgNo("1");
           dto.setSponsorContactPhone("1234567");
           dtoList.add(dto);
           dto =  getBatchDto();
@@ -52,8 +50,6 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           dto.setOtherTrialRelDocumentFileName("ProtocolDoc.doc");
           dto.setProtocolHighlightDocFileName("ProtocolDoc.doc");
           dto.setChangeRequestDocFileName("ProtocolDoc.doc");
-          dto.setPiPersonCTEPPersonNo("2");
-          dto.setLeadOrgCTEPOrgNo("2");
           dto.setDataMonitoringCommitteeAppointedIndicator("yes");
           dto.setDelayedPostingIndicator("yes");
           dtoList.add(dto);

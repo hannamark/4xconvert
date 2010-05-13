@@ -8,11 +8,24 @@ import org.hibernate.validator.NotEmpty;
  *
  */
 public class OrganizationBatchDTO extends AddressDTO {
+    private String poIdentifier;
     private String name;
-    private String orgCTEPId;
     private String type;
     private static final int ORG_NAME_MAX_LENGTH = 160;
     
+    /**
+     * @return the po identifier
+     */
+    public String getPoIdentifier() {
+        return poIdentifier;
+    }
+    /**
+     * 
+     * @param poIdentifier identifier of the entity
+     */
+    public void setPoIdentifier(String poIdentifier) {
+        this.poIdentifier = poIdentifier;
+    }
     /**
      * @return the name
      */
@@ -27,18 +40,6 @@ public class OrganizationBatchDTO extends AddressDTO {
      */
     public void setName(String name) {
         this.name = name;
-    }
-    /**
-     * @return the orgCTEPId
-     */
-    public String getOrgCTEPId() {
-        return orgCTEPId;
-    }
-    /**
-     * @param orgCTEPId the orgCTEPId to set
-     */
-    public void setOrgCTEPId(String orgCTEPId) {
-        this.orgCTEPId = orgCTEPId;
     }
     
     /**
