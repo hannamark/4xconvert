@@ -139,7 +139,7 @@
     </security-constraint>
 
     <login-config>
-        <auth-method>FORM</auth-method>
+        <auth-method>CAGRIDFORM</auth-method>
         <form-login-config>
            <form-login-page>/login.action</form-login-page>
             <form-error-page>/login.action?failedLogin=true</form-error-page>
