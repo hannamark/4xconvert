@@ -4,8 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
-<c:url value="/userAccount.action" var="createAccountUrl" />
-<c:url value="/userAccount.action?userAction=resetPassword" var="resetPasswordUrl" />
+<c:url value="/register/start.action" var="createAccountUrl" />
 <body>
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1>Login</h1>
@@ -24,7 +23,7 @@
         </c:when>
         <c:otherwise>
             <p style="margin:0; padding:0">Log in to record patient outcome information.
-                If you do not have an account, you may <a href="/outcomes/register/start.action">create an account</a>.
+                If you do not have an account, you may <a href="${createAccountUrl}">create an account</a>.
             </p>
         </c:otherwise>
     </c:choose>
@@ -74,18 +73,20 @@
                 </td>
             <% } %>
         </c:if>
-        <tr>
-			<td>&nbsp;</td>
-			<td>
-				<span class="small"><a title="To Reset Password" href="${resetPasswordUrl}">(Forgot Your Password?)</a></span>
-			</td>
-			</tr>
-			<tr>
+        <!-- 
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    <span class="small"><a title="To Reset Password" href="">(Forgot Your Password?)</a></span>
+                </td>
+            </tr>
+            <tr>
                 <td>&nbsp;</td>
                 <td>
                     <span class="small"><a title="To Create an Account" href="${createAccountUrl}">(Create an Account)</a></span>
                 </td>
             </tr>
+         -->
     </table>
     <div class="actionsrow">
         <del class="btnwrapper">
