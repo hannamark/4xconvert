@@ -92,7 +92,10 @@
         </action> 
           <action name="ajaxStudyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
             <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>         
-          </action>             
+          </action>  
+        <action name="home">
+            <result>studyProtocolshowCriteria.action</result>         
+        </action>             
         <action name="studyOverallStatus*" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="{1}">
             <result>/WEB-INF/jsp/studyOverallStatus.jsp</result>
             <result name="historypopup">/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
