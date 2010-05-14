@@ -105,8 +105,10 @@ import org.apache.log4j.Logger;
 
 import org.cagrid.gaards.authentication.BasicAuthentication;
 import org.cagrid.gaards.authentication.client.AuthenticationClient;
+import org.cagrid.gaards.dorian.client.GridUserClient;
 import org.cagrid.gaards.dorian.client.LocalUserClient;
 import org.cagrid.gaards.dorian.common.DorianFault;
+import org.cagrid.gaards.dorian.federation.CertificateLifetime;
 import org.cagrid.gaards.dorian.idp.Application;
 import org.cagrid.gaards.dorian.idp.CountryCode;
 import org.cagrid.gaards.dorian.idp.DictionaryCheck;
@@ -115,6 +117,7 @@ import org.cagrid.gaards.dorian.idp.StateCode;
 import org.cagrid.gaards.dorian.stubs.types.DorianInternalFault;
 import org.cagrid.gaards.dorian.stubs.types.InvalidUserPropertyFault;
 import org.cagrid.gaards.dorian.stubs.types.PermissionDeniedFault;
+import org.globus.gsi.GlobusCredential;
 
 /**
  * @author aevansel
@@ -123,7 +126,10 @@ import org.cagrid.gaards.dorian.stubs.types.PermissionDeniedFault;
 @SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class GridAccountServiceBean implements GridAccountServiceRemote {
     private static final Logger LOG = Logger.getLogger(GridAccountServiceBean.class);
-    private static final String GRID_URL = PaEarPropertyReader.getProperties().getProperty("grid.dorian.url");
+    /**
+     * Default dorian url.
+     */
+    public static final String GRID_URL = PaEarPropertyReader.getProperties().getProperty("grid.dorian.url");
     private static final int MAX_PASSWORD_LENGTH = 20;
     private static final int MIN_PASSWORD_LENGTH = 6;
 
@@ -158,7 +164,7 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         app.setOrganization(registryUser.getAffiliateOrg());
 
         LOG.debug("Creating grid user: " + ToStringBuilder.reflectionToString(app));
-        
+
         try {
             return gridClient.register(app);
         } catch (DorianFault e) {
@@ -206,7 +212,7 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         }
         return results;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -227,8 +233,8 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
             throw new PAException("Exception: " + e.getMessage(), e);   
         }
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
@@ -243,7 +249,7 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         }
         return urls;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -251,9 +257,9 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         BasicAuthentication auth = new BasicAuthentication();
         auth.setUserId(username);
         auth.setPassword(password);
-        
+
         Map<String, String> userInfo = new HashMap<String, String>();
-        
+
         try {
             AuthenticationClient authClient = new AuthenticationClient(authUrl);
             SAMLAssertion saml = authClient.authenticate(auth);
@@ -262,5 +268,33 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
             LOG.error("ERROR Authenticating User.", e);
         }
         return userInfo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getFullyQualifiedUsername(String username, String password, String authUrl) {
+        BasicAuthentication auth = new BasicAuthentication();
+        auth.setUserId(username);
+        auth.setPassword(password);
+        
+        String results = username;
+        try {
+            AuthenticationClient authClient = new AuthenticationClient(authUrl);
+            SAMLAssertion saml = authClient.authenticate(auth);
+
+
+            CertificateLifetime lifetime = new CertificateLifetime();
+            lifetime.setHours(12);
+
+            // Request PKI/Grid Credential
+            GridUserClient dorian = new GridUserClient(authUrl);
+            GlobusCredential credential = dorian.requestUserCertificate(saml, lifetime);
+            results = credential.getIdentity();
+        } catch (Exception e) {
+            LOG.error("ERROR Authenticating User.", e);
+
+        }
+        return results;
     }    
 }

@@ -146,5 +146,16 @@ public interface GridAccountServiceRemote {
      * if authentication fails
      */
     Map<String, String> authenticateUser(String username, String password, String authUrl);
+    
+    
+    /**
+     * Returns the fully qualified username from the short form username. 
+     * i.e /O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=testuser from testuser.
+     * @param username The username
+     * @param password The password
+     * @param authUrl the authorization url
+     * @return The fully qualified username if found, short form username is returned otherwise
+     */
+    String getFullyQualifiedUsername(String username, String password, String authUrl);
    
 }

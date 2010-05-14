@@ -148,8 +148,9 @@ function handleAction(){
                                 <s:textfield name="registryUserWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" />
                             </s:if>
                             <s:else>
-                                <s:textfield name="registryUserWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" disabled="true" />
+                                <s:textfield name="registryUserWebDTO.displayUsername" maxlength="15" size="20" cssStyle="width:200px" disabled="true" />
                                 <s:hidden name="registryUserWebDTO.hasExistingGridAccount" />
+                                <s:hidden name="registryUserWebDTO.username" />
                             </s:else>
                             <span class="formErrorMsg"> 
                                 <s:fielderror>

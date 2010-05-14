@@ -7,6 +7,8 @@ import java.util.Map;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.GridAccountServiceBean;
+import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
@@ -183,17 +185,19 @@ public class RegisterUserAction extends ActionSupport {
             userAction =  "create";
             redirectPage = "redirect_to_login";
             try {
-                
+                GridAccountServiceRemote gridService = PaRegistry.getGridAccountService();
                 //First create the grid account if one doesn't already 
                 if (!registryUserWebDTO.isHasExistingGridAccount()) {
-                    String results = PaRegistry.getGridAccountService().createGridAccount(registryUser, 
-                            registryUserWebDTO.getUsername(), registryUserWebDTO.getPassword());
+                    String results = gridService.createGridAccount(registryUser, registryUserWebDTO.getUsername(), 
+                            registryUserWebDTO.getPassword());
                     LOG.debug("Grid User Creation Results: " + results);
-                }
+                } 
                 
-                //Then the csm user account
-                User csmUser = CSMUserService.getInstance().createCSMUser(registryUser, 
-                        registryUserWebDTO.getUsername(), registryUserWebDTO.getPassword());
+                //Then the csm user account being sure to retrieve the long form grid username
+                String username = gridService.getFullyQualifiedUsername(registryUserWebDTO.getUsername(), 
+                        registryUserWebDTO.getPassword(), GridAccountServiceBean.GRID_URL);
+                User csmUser = CSMUserService.getInstance().createCSMUser(registryUser, username, 
+                        registryUserWebDTO.getPassword());
 
                 if (csmUser != null) {
                     registryUser.setCsmUserId(csmUser.getUserId());
@@ -231,8 +235,8 @@ public class RegisterUserAction extends ActionSupport {
      * @return the forward
      */
     public String registerExistingGridAccount() {
-        Map<String, String> userInfo = 
-            PaRegistry.getGridAccountService().authenticateUser(registryUserWebDTO.getUsername(), 
+        GridAccountServiceRemote gridService = PaRegistry.getGridAccountService();
+        Map<String, String> userInfo = gridService.authenticateUser(registryUserWebDTO.getUsername(), 
                     registryUserWebDTO.getPassword(), getSelectedIdentityProvider());
         
         if (userInfo.isEmpty()) {

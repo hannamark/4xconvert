@@ -3,6 +3,8 @@
  */
 package gov.nih.nci.registry.dto;
 
+import org.apache.commons.lang.StringUtils;
+
 import gov.nih.nci.pa.domain.RegistryUser;
 
 /**
@@ -96,6 +98,14 @@ public class RegistryUserWebDTO {
      */
     public void setUsername(String username) {
         this.username = username;
+    }
+    
+    
+    /**
+     * @return displayUsername
+     */
+    public String getDisplayUsername() {
+        return StringUtils.contains(username, "CN=") ? username.split("CN=")[1] : username;
     }
     
     /**

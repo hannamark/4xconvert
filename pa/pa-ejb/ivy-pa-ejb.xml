@@ -74,6 +74,7 @@ This is the definition of a virtual module called bda-download that has a depend
     </dependency>
     <dependency org="globus"                 name="axis"                    rev="1.2RC2"          conf="compile->master"/>
     <dependency org="globus"                 name="ws-enumeration"          rev="4.0.3"           conf="compile->master"/>
+    <dependency org="globus"                 name="jcog"                    rev="1.2"             conf="compile->master"/>
     
     
     <!-- test -->

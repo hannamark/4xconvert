@@ -142,4 +142,11 @@ public class MockGridAccountService implements GridAccountServiceRemote {
         results.put(CGMMConstants.CGMM_LAST_NAME, "lastName");
         return results;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public  String getFullyQualifiedUsername(String username, String password, String url) {
+        return "/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=" + username;
+    }
 }
