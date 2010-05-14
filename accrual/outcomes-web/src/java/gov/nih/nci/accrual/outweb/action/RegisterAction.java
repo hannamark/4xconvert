@@ -104,10 +104,9 @@ import com.opensymphony.xwork2.Preparable;
 public class RegisterAction extends AccountSupportAction implements Preparable {
 
     private static final long serialVersionUID = 1L;
-    
+
     private UserAccountWebDto userAccount = new UserAccountWebDto();
     private AccountActions userAction = null;
-
 
     /**
      * {@inheritDoc}
@@ -116,13 +115,6 @@ public class RegisterAction extends AccountSupportAction implements Preparable {
     public void prepare() {
         super.prepare();
         getUserAccount().setIdentity(StConverter.convertToSt(getUserDN()));
-    }
-
-    /**
-     * @return the authenticated user's Grid Identity Credential
-     */
-    protected String getPassword() {
-        return org.jboss.security.SecurityAssociation.getCredential().toString();
     }
 
     /**
@@ -205,6 +197,7 @@ public class RegisterAction extends AccountSupportAction implements Preparable {
 
     /**
      * Creates the user account.
+     * 
      * @return the result
      */
     public String create() {
@@ -251,5 +244,5 @@ public class RegisterAction extends AccountSupportAction implements Preparable {
     public AccountActions getUserAction() {
         return userAction;
     }
-    
+
 }
