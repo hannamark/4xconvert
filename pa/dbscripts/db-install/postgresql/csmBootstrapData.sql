@@ -113,12 +113,23 @@ INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_
 ;
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'firebird-nci'), (select group_id from csm_group where group_name = 'Subscriber'))
 ;
-COMMIT
-;
+
 -- Password is pass
 INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD, UPDATE_DATE) VALUES ('submitter', 'Test', 'Submitter','BtM2GNbiAxg=',current_date)
 ;
 INSERT INTO CSM_USER_PE(PROTECTION_ELEMENT_ID, USER_ID, UPDATE_DATE) VALUES ((select protection_element_id from csm_protection_element where protection_element_name = 'pa'), (select user_id from csm_user where login_name = 'submitter'),current_date)
 ;
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'submitter'), (select group_id from csm_group where group_name = 'Submitter'))
+;
+-- grid user for abstractor
+INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD, UPDATE_DATE) VALUES ('/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=abstractor', 'Test', 'PA Abstractor','',current_date)
+;
+INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = '/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=abstractor'), (select group_id from csm_group where group_name = 'Abstractor'))
+;
+-- grid user for submitter
+INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD, UPDATE_DATE) VALUES ('/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=submitter', 'Test', 'PA Submitter','',current_date)
+;
+INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = '/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=submitter'), (select group_id from csm_group where group_name = 'Submitter'))
+;
+COMMIT
 ;
