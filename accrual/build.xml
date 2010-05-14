@@ -190,6 +190,16 @@
             <property name="po.port.number" value="${po.port.number}" />
             <property name="jboss.server.hostname" value="${jboss.server.hostname}" />
             <property name="outcomes.url" value="${outcomes.url}" />
+            <property name="accrual.jnp.url" value="${accrual.jnp.url}" />
+            <property name="pa.jnp.url" value="${pa.jnp.url}" />
+            <property name="po.jnp.url" value="${po.jnp.url}" />
+            
+            <property name="outcomes.url" value="${outcomes.url}"/>
+            <property name="outcomes.cds.url" value="${outcomes.cds.url}"/>
+            <property name="outcomes.phr.system.id" value="${outcomes.phr.system.id}"/>
+            <property name="outcomes.auth.service.url" value="${outcomes.auth.service.url}"/>
+            <property name="outcomes.issued.credential.lifetime" value="${outcomes.issued.credential.lifetime}"/>
+            <property name="outcomes.delegation.lifetime" value="${outcomes.delegation.lifetime}"/>
             <target name="${services.build.target}${notask}"/>
         </ant>
     </target>

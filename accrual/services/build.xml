@@ -157,6 +157,13 @@
         <fail unless="po.server.name" message="Property po.server.name not set.  Check build.properties file."/>
         <fail unless="po.username" message="Property po.username not set.  Check build.properties file."/>
         <fail unless="po.pass" message="Property po.pass not set.  Check build.properties file."/>
+        
+        <fail unless="outcomes.url" message="Property outcomes.cds.url not set.  Check build.properties file."/>
+        <fail unless="outcomes.cds.url" message="Property outcomes.cds.url not set.  Check build.properties file."/>
+        <fail unless="outcomes.phr.system.id" message="Property outcomes.phr.system.id not set.  Check build.properties file."/>
+        <fail unless="outcomes.auth.service.url" message="Property outcomes.auth.service.url not set.  Check build.properties file."/>
+        <fail unless="outcomes.issued.credential.lifetime" message="Property outcomes.issued.credential.lifetime not set.  Check build.properties file."/>
+        <fail unless="outcomes.delegation.lifetime" message="Property outcomes.delegation.lifetime not set.  Check build.properties file."/>
         <copy todir="${services.build.outputDir}">
             <filterset>
                 <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
@@ -169,6 +176,13 @@
             	<filter token="po.username" value="${po.username}"/>
             	<filter token="po.pass" value="${po.pass}"/>
                 <filter token="po.server.name" value="${po.server.name}"/>
+                
+                <filter token="outcomes.url" value="${outcomes.url}"/>
+                <filter token="outcomes.cds.url" value="${outcomes.cds.url}"/>
+                <filter token="outcomes.phr.system.id" value="${outcomes.phr.system.id}"/>
+                <filter token="outcomes.auth.service.url" value="${outcomes.auth.service.url}"/>
+                <filter token="outcomes.issued.credential.lifetime" value="${outcomes.issued.credential.lifetime}"/>
+                <filter token="outcomes.delegation.lifetime" value="${outcomes.delegation.lifetime}"/>
             </filterset>
             <fileset dir="${services.build.resourceDir}"/>
         </copy>

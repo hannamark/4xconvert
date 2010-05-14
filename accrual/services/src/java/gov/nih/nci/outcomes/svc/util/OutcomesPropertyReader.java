@@ -91,9 +91,13 @@ import org.apache.log4j.Logger;
 @SuppressWarnings("PMD")
 public class OutcomesPropertyReader {
 
+    /**
+     * 
+     */
     private static final Logger LOG = Logger.getLogger(OutcomesPropertyReader.class);
     private static final String RESOURCE_NAME = "outcomes.properties";
     private static Properties props = null;
+    private static final String OUTCOMES_URL = "outcomes.url";
     private static final String CDS_URL = "outcomes.cds.url";
     private static final String PHR_SYSTEM_ID = "outcomes.phr.system.id";
     private static final String AUTH_SERVICE_URL = "outcomes.auth.service.url";
@@ -152,6 +156,9 @@ public class OutcomesPropertyReader {
         return  convertToInt(getProperty(DELEGATION_LIFETIME));
     }  
    
+    public static String getSystemUrl() {
+        return getProperty(OUTCOMES_URL);
+    }
 
     /**
      * 

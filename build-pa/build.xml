@@ -120,9 +120,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="viewer-web.build.target" value="war-notest"/>
     <property name="accrual-ear.build.target" value="build-notest"/>
     <property name="accrual-ear.deploy.target" value="deploy-ear"/>
-    <property name="accrual.po.jnp.url" value="jnp://${po.server.name}:${po.port.number}" />
-    <property name="accrual.pa.jnp.url" value="jnp://${jboss.server.hostname}:${jboss.server.jndi.port}" />
-    <property name="accrual.jnp.url" value="jnp://${jboss.server.hostname}:${jboss.server.jndi.port}" />
 
     <!-- Distribution Structure properties, used to copy files into the distribution area.
             Use project.properties relative dir names becasue they are used by install also-->
@@ -458,26 +455,34 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="build:accrual-ear" depends="init" unless="exclude.accrual">
         <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
             dir="${accrual-ear.base.dir}" >
-            <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
-            <property name="hibernate.dialect" value="${database.dialect}"/>
-            <property name="jdbc.driver" value="${database.driver}"/>
+            <property name="jboss.deploy.dir" location="%%jboss.deploy.dir%%" />
+            <property name="hibernate.dialect" value="%%database.dialect%%"/>
+            <property name="jdbc.driver" value="%%database.driver%%"/>
             <property name="accrual-ear.build.dir" location="${pa-ear.dist.dir}" />
-            <property name="application.url" location="${application.url}" />
-            <property name="database.url" value="${database.url}" />
-            <property name="database.user" value="${database.user}" />
-            <property name="database.password" value="${database.password}" />
-            <property name="po.jnp.url" value="${accrual.po.jnp.url}" />
-            <property name="pa.jnp.url" value="${accrual.pa.jnp.url}" />
-            <property name="accrual.jnp.url" value="${accrual.jnp.url}" />
-            <property name="po.port.number" value="${po.port.number}" />
-            <property name="jboss.server.hostname" value="${jboss.server.hostname}" />
-            <property name="outcomes.url" value="${outcomes.url}" />
-            <property name="gridServicePrincipal" value="${outcomes-grid.jndi.principal}"/>
-            <property name="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrypted}"/>
-            <property name="po.username" value="${po.username}"/>
-            <property name="po.pass" value="${po.pass}"/>
-            <property name="po.server.name" value="${po.server.name}"/>
-            <property name="grid.dorian.url" value="${grid.dorian.url}"/>
+            <property name="application.url" location="%%application.url%%" />
+            <property name="database.url" value="%%database.url%%" />
+            <property name="database.user" value="%%database.user%%" />
+            <property name="database.password" value="%%database.password%%" />
+            <property name="po.jnp.url" value="%%po.jnp.url%%" />
+            <property name="pa.jnp.url" value="%%pa.jnp.url%%" />
+            <property name="accrual.jnp.url" value="%%accrual.jnp.url%%" />
+            <property name="po.port.number" value="%%po.port.number%%" />
+            <property name="jboss.server.hostname" value="%%jboss.server.hostname%%" />
+            <property name="outcomes.url" value="%%outcomes.url%%" />
+            <property name="gridServicePrincipal" value="%%gridServicePrincipal%%"/>
+            <property name="gridServiceCredential" value="%%gridServiceCredential%%"/>
+            <property name="po.username" value="%%po.username%%"/>
+            <property name="po.pass" value="%%po.pass%%"/>
+            <property name="po.server.name" value="%%po.server.name%%"/>
+            <property name="grid.dorian.url" value="%%grid.dorian.url%%"/>
+            
+            <property name="outcomes.url" value="%%outcomes.url%%"/>
+            <property name="outcomes.cds.url" value="%%outcomes.cds.url%%"/>
+            <property name="outcomes.phr.system.id" value="%%outcomes.phr.system.id%%"/>
+            <property name="outcomes.auth.service.url" value="%%outcomes.auth.service.url%%"/>
+            <property name="outcomes.issued.credential.lifetime" value="%%outcomes.issued.credential.lifetime%%"/>
+            <property name="outcomes.delegation.lifetime" value="%%outcomes.delegation.lifetime%%"/>
+            
             <target name="${accrual-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${accrual-ear.build.target}"/>
@@ -1392,8 +1397,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <property name="database.url" value="${database.url}" />
         <property name="database.user" value="${database.user}" />
         <property name="database.password" value="${database.password}" />
-        <property name="po.jnp.url" value="${accrual.po.jnp.url}" />
-        <property name="pa.jnp.url" value="${accrual.pa.jnp.url}" />
+        <property name="po.jnp.url" value="${po.jnp.url}" />
+        <property name="pa.jnp.url" value="${pa.jnp.url}" />
         <property name="accrual.jnp.url" value="${accrual.jnp.url}" />
         <property name="po.port.number" value="${po.port.number}" />
         <property name="jboss.server.hostname" value="${jboss.server.hostname}" />

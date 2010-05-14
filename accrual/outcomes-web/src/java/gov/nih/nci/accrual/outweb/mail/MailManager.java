@@ -2,7 +2,7 @@ package gov.nih.nci.accrual.outweb.mail;
 
 import gov.nih.nci.accrual.outweb.util.EncoderDecoder;
 import gov.nih.nci.accrual.outweb.util.PaServiceLocator;
-import gov.nih.nci.accrual.util.PoPropertyReader;
+import gov.nih.nci.outcomes.svc.util.OutcomesPropertyReader;
 
 import java.text.MessageFormat;
 import java.util.Properties;
@@ -45,7 +45,7 @@ public class MailManager {
                 PaServiceLocator.getInstance().getLookUpTableService().getPropertyValue("outcomes.email.body"));
 
             MessageFormat formatterBodyUrl = 
-                new MessageFormat(PoPropertyReader.getProperties().getProperty("outcomes.url"));            
+                new MessageFormat(OutcomesPropertyReader.getSystemUrl());            
 
             // encode the loginName and email and append to the URL before
             // sending the e-mail

@@ -258,18 +258,59 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
       <unzip src="${pa-ear.dir.dist}/${accrual-ear.ear.file}" dest="${temp.dir}/accrual-ear"/>
       <unzip src="${temp.dir}/accrual-ear/accrual-services.jar" dest="${temp.dir}/accrual-services-jar"/>
+      
+      <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
+      <var name="file.list"
+        value="accrual-services-jar/jndi.properties,accrual-services-jar/pa.jndi.properties,accrual-services-jar/po.jndi.properties,accrual-services-jar/outcomes.properties,accrual-ear/META-INF/security-config.xml"/>
 
-      <echo message="Fixing jndi.properties"/>
-      <replaceregexp file="${temp.dir}/accrual-services-jar/jndi.properties" byline="true"
-                     match="^(java.naming.provider.url)=.*"
-                     replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
-      <replaceregexp file="${temp.dir}/accrual-services-jar/pa.jndi.properties" byline="true"
-                     match="^(java.naming.provider.url)=.*"
-                     replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
+      <for list="${file.list}" param="file.relative.name">
+        <sequential>
+          <propertyregex property="file.name"
+            input="@{file.relative.name}"
+            regexp="^.*\/(.*)"
+            select="\1"
+            override="true"
+            />
+          <propertyregex property="relative.dir"
+            input="@{file.relative.name}"
+            regexp="^(.*)\/.*"
+            select="\1"
+            override="true"
+            />
+          <echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
+          <replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
+          <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
+            <filterset>
+                <filter token="database.dialect" value="${database.dialect}"/>
+                <filter token="database.driver" value="${database.driver}"/>
+                <filter token="application.url" value="${application.url}" />
+                <filter token="database.url" value="${database.url}" />
+                <filter token="database.user" value="${database.user}" />
+                <filter token="database.password" value="${database.password}" />
+                <filter token="po.jnp.url" value="jnp://${po.server.name}:${po.port.number}" />
+                <filter token="pa.jnp.url" value="jnp://${jboss.server.hostname}:${jboss.server.jndi.port}" />
+                <filter token="accrual.jnp.url" value="jnp://${jboss.server.hostname}:${jboss.server.jndi.port}" />
+                <filter token="po.port.number" value="${po.port.number}" />
+                <filter token="jboss.server.hostname" value="${jboss.server.hostname}" />
+                <filter token="outcomes.url" value="${outcomes.url}" />
+                <filter token="gridServicePrincipal" value="${outcomes-grid.jndi.principal}"/>
+                <filter token="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrypted}"/>
+                <filter token="po.username" value="${po.username}"/>
+                <filter token="po.pass" value="${po.pass}"/>
+                <filter token="po.server.name" value="${po.server.name}"/>
+                <filter token="grid.dorian.url" value="${grid.dorian.url}"/>
 
-      <replaceregexp file="${temp.dir}/accrual-services-jar/po.jndi.properties" byline="true"
-                     match="^(outcomes.url)=.*"
-                     replace="# modified by installer ${line.separator}\1=http://${jboss.server.hostname}:${jboss.server.port}/outcomes"/>
+                <filter token="outcomes.url" value="${application.url}/outcomes/"/>
+                <filter token="outcomes.cds.url" value="${outcomes.cds.url}"/>
+                <filter token="outcomes.phr.system.id" value="${outcomes.phr.system.id}"/>
+                <filter token="outcomes.auth.service.url" value="${outcomes.auth.service.url}"/>
+                <filter token="outcomes.issued.credential.lifetime" value="${outcomes.issued.credential.lifetime}"/>
+                <filter token="outcomes.delegation.lifetime" value="${outcomes.delegation.lifetime}"/>
+            </filterset>
+          </copy>
+          <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
+        </sequential>
+      </for>
 
       <move file="${pa-ear.dir.dist}/${accrual-ear.ear.file}" tofile="${pa-ear.dir.dist}/${accrual-ear.ear.file}.orig"/>
       <move file="${temp.dir}/accrual-ear/accrual-services.jar" tofile="${temp.dir}/accrual-services.jar.orig"/>
