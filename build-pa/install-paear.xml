@@ -172,6 +172,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <copy todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true">
           <fileset dir="${pa-container-jar.dist.dir}">
             <exclude name="commons-httpclient-3.0.jar"/>
+            <exclude name="servlet-2.2.jar"/>
           </fileset>
       </copy>
 
@@ -297,7 +298,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
       <!-- deploy jars to server lib -->
       <copy todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true">
-          <fileset dir="${pa-container-jar.dist.dir}"/>
+          <fileset dir="${pa-container-jar.dist.dir}">
+              <exclude name="servlet-2.2.jar"/>
+          </fileset>
       </copy>
       <!-- deploy jars to server lib but remove old ones first -->
         <delete file="${jboss.home}/server/${jboss.server.name}/lib/commons-httpclient.jar"/>
@@ -305,6 +308,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <copy todir="${jboss.home}/server/${jboss.server.name}/lib/">
             <fileset dir="${pa-ear.dir.dist}/runtime">
                 <include name="*.jar"/>
+                <exclude name="servlet-2.2.jar"/>
             </fileset>
         </copy>
   </target>
