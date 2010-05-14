@@ -95,9 +95,9 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>-->
  
-    <listener>
+  <!--   <listener>
         <listener-class>gov.nih.nci.pa.filter.CSMSyncListener</listener-class>
-    </listener>
+    </listener>  -->
     <!-- Servlets -->
     <servlet>
     	<servlet-name>jspSupportServlet</servlet-name>
