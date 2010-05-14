@@ -10,7 +10,7 @@
 		<cgmm-standalone-mode>false</cgmm-standalone-mode>
 	</cgmm-information>
 	<host-application-information>
-		<host-context-name>@cgmm.application.context.name@-web</host-context-name>
+		<host-context-name>@cgmm.application.context.name@</host-context-name>
 		<host-application-name-for-csm>@cgmm.application.name@</host-application-name-for-csm>
 		<host-public-home-page-url>/public/publicHome.jsp</host-public-home-page-url>
         <host-user-home-page-url>/secured/userHomePage.jsp</host-user-home-page-url>

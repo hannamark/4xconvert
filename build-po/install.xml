@@ -116,7 +116,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <import file="install-pogrid-3.2.xml"/>
   <import file="install-pogrid-3.1.xml"/>
   <import file="install-pogrid-3.0.xml"/>
-  
+
    <macrodef name="configure-grid-log4j">
        <attribute name="log.level" default="INFO"/>
        <attribute name="config.dir" default=""/>
@@ -128,7 +128,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             </copy>
        </sequential>
    </macrodef>
-    
+
     <!-- Start logging -->
     <mkdir dir="${log.dir}" />
     <tstamp>
@@ -190,6 +190,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
         <property name="properties.template.file" value="${basedir}/properties.template" />
         <property file="${basedir}/cagrid-target/${grid.target}/service_urls.properties"/>
+        <set-grid-auth-service />
         <property name="grid.index.url" value="${cagrid.master.index.service.url}"/>
         <filterset id="embedded.filterset">
             <filter token="application.base.path" value="${application.base.path}"/>
@@ -222,6 +223,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             <filter token="project.name" value="${project.name}"/>
             <filter token="grid.dorian.name" value="${grid.target}-Dorian"/>
             <filter token="grid.dorian.url" value="${cagrid.master.dorian.service.url}"/>
+            <filter token="grid.auth.service.url" value="${grid.auth.service.url}"/>
+            <filter token="grid.auth.service.name" value="${grid.auth.service.name}"/>
         </filterset>
 
         <!--OS Temp dir -->
@@ -299,7 +302,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         depends="common:init, install:database:prep, install:database:validation:pre-install">
         <!-- Drop all schema objects or re-create the db -->
         <database-clean/>
-        
+
         <switch value="${database.type}">
             <case value="postgresql">
                 <database-upgrade database.changelog.file="${os.temp.dir}/${project.name}/db-install.xml"/>
@@ -533,16 +536,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         <database-rollback/>
     </target>
 
-  <target name="install:common:post" 
+  <target name="install:common:post"
       depends="
       install:po-ear-jboss:post,
       install:po-grid-3.2-jboss:post,
       install:po-grid-3.1-jboss:post,
       install:po-grid-3.0-jboss:post"/>
 
-  <target name="upgrade:common:init" 
+  <target name="upgrade:common:init"
       depends="
-      upgrade:po-ear-jboss:init, 
+      upgrade:po-ear-jboss:init,
       upgrade:po-grid-3.2-jboss:init,
       upgrade:po-grid-3.1-jboss:init,
       upgrade:po-grid-3.0-jboss:init" />
@@ -597,10 +600,105 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
           />
     </target>
 
-  <target name="upgrade:common:post" 
+  <target name="upgrade:common:post"
       depends="
       upgrade:po-ear-jboss:post,
       upgrade:po-grid-3.2-jboss:post,
       upgrade:po-grid-3.1-jboss:post,
       upgrade:po-grid-3.0-jboss:post"/>
+
+    <macrodef name="jboss-configure-cgmm">
+        <attribute name="jboss.home" default="${jboss.home}"/>
+        <attribute name="jboss.server.name" default="${jboss.server.name}"/>
+        <attribute name="jboss.tomcat.dir" default="@{jboss.home}/server/@{jboss.server.name}/deploy/jbossweb-tomcat55.sar"/>
+        <attribute name="jboss.lib.dir" default="@{jboss.home}/server/@{jboss.server.name}/lib"/>
+        <attribute name="cgmm.conf.dest.dir" default="@{jboss.home}/server/@{jboss.server.name}/cgmm_config"/>
+        <attribute name="cgmm.conf.src.dir" default="${jboss-conf.dir.dest}/cgmm"/>
+        <attribute name="cgmm.jars.base.dir" default="${basedir}/cgmm-libs"/>
+        <attribute name="cgmm.version" default="0.7.0"/>
+        <attribute name="cagrid-target.dir" default="${basedir}/cagrid-target"/>
+        <attribute name="grid.target" default="${grid.target}"/>
+        <attribute name="login-config.policy.file" default="@{cgmm.conf.dest.dir}/login-config.cgmm-block.xml"/>
+        <sequential>
+            <mkdir dir="@{cgmm.conf.dest.dir}"/>
+            <copy todir="@{jboss.tomcat.dir}" overwrite="true">
+                <fileset dir="@{cgmm.jars.base.dir}/jbossweb-tomcat55-sar-jars">
+                    <include name="*.jar"/>
+                    <exclude name="xerces*.jar"/>
+                    <exclude name="xalan*.jar"/>
+                </fileset>
+            </copy>
+            <copy file="@{cgmm.jars.base.dir}/cgmm/cgmmapi-@{cgmm.version}.jar" todir="@{jboss.tomcat.dir}" overwrite="true"/>
+            <copy file="@{jboss.tomcat.dir}/catalina.jar" tofile="@{jboss.tomcat.dir}/catalina.jar.orig" overwrite="true"/>
+            <move file="@{cgmm.jars.base.dir}/jbossweb-tomcat55-sar-jars/catalina-5.0.jar" tofile="@{jboss.tomcat.dir}/catalina.jar"/>
+            <copy todir="@{jboss.lib.dir}" overwrite="true">
+                <fileset dir="@{cgmm.jars.base.dir}/jboss-default-lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </copy>
+            <copy todir="@{cgmm.conf.dest.dir}" overwrite="true">
+                <fileset dir="@{cgmm.conf.src.dir}">
+                    <include name="*"/>
+                </fileset>
+            </copy>
+            <if>
+                <equals arg1="@{grid.target}" arg2="training-1.3"/>
+                <then>
+                    <echo message="Training grid selected using alternate cgmm-properties.xml."/>
+                    <copy file="@{cgmm.conf.dest.dir}/cgmm-properties.xml" tofile="@{cgmm.conf.dest.dir}/cgmm-properties.xml-orig" overwrite="true"/>
+                    <copy file="@{cgmm.conf.dest.dir}/alt-cgmm-properties.xml" tofile="@{cgmm.conf.dest.dir}/cgmm-properties.xml" overwrite="true"/>
+                </then>
+            </if>
+            <copy file="@{cagrid-target.dir}/@{grid.target}/sync-description.xml" todir="@{cgmm.conf.dest.dir}" overwrite="true"/>
+            <var name="property.block" value="gov.nih.nci.security.cgmm.syncgts.file=@{cgmm.conf.dest.dir}/sync-description.xml${line.separator}
+gov.nih.nci.security.cgmm.properties.file=@{cgmm.conf.dest.dir}/cgmm-properties.xml${line.separator}
+gov.nih.nci.security.configFile=@{cgmm.conf.dest.dir}/ApplicationSecurityConfig.xml${line.separator}
+gov.nih.nci.security.cgmm.login.config.file=@{cgmm.conf.dest.dir}/cgmm.login.config${line.separator}"/>
+
+            <jboss-update-properties-service
+                property.block="${property.block}"
+                />
+            <xmltask preservetype="true" source="@{jboss.home}/server/@{jboss.server.name}/conf/login-config.xml"
+                dest="@{jboss.home}/server/@{jboss.server.name}/conf/login-config.xml">
+                <xmlcatalog refid="bda.xml.catalog"/>
+                <remove path="//policy/application-policy[@name='@{application.context.name}']"/>
+            </xmltask>
+            <xmltask preservetype="true" failWithoutMatch="true" source="@{jboss.home}/server/@{jboss.server.name}/conf/login-config.xml"
+                dest="@{jboss.home}/server/@{jboss.server.name}/conf/login-config.xml">
+                <xmlcatalog refid="bda.xml.catalog"/>
+                <insert path="//policy" file="@{login-config.policy.file}"/>
+            </xmltask>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="set-grid-auth-service">
+            <attribute name="grid.target" default="${grid.target}"/>
+            <attribute name="grid.auth.service.url.property.name" default="grid.auth.service.url"/>
+            <attribute name="grid.auth.service.name.property.name" default="grid.auth.service.name"/>
+            <sequential>
+                <var name="{grid.auth.service.url.property.name}" unset="true"/>
+                <switch value="@{grid.target}">
+                    <case value="nci_prod-1.3">
+                        <property name="@{grid.auth.service.url.property.name}" value="https://cagrid-auth.nci.nih.gov:8443/wsrf/services/cagrid/AuthenticationService"/>
+                        <property name="@{grid.auth.service.name.property.name}" value="nci_prod-1.3-Auth-Svc"/>
+                    </case>
+                    <case value="nci_stage-1.3">
+                        <property name="@{grid.auth.service.url.property.name}" value="https://cagrid-auth-stage.nci.nih.gov:8443/wsrf/services/cagrid/AuthenticationService"/>
+                        <property name="@{grid.auth.service.name.property.name}" value="nci_stage-1.3-Auth-Svc"/>
+                    </case>
+                    <case value="nci_qa-1.3">
+                        <property name="@{grid.auth.service.url.property.name}" value="https://cagrid-auth-qa.nci.nih.gov:8443/wsrf/services/cagrid/AuthenticationService"/>
+                        <property name="@{grid.auth.service.name.property.name}" value="nci_qa-1.3-Auth-Svc"/>
+                    </case>
+                    <case value="training-1.3">
+                        <property name="@{grid.auth.service.url.property.name}" value=""/>
+                        <property name="@{grid.auth.service.name.property.name}" value=""/>
+                    </case>
+                    <default>
+                        <fail message="grid.target=@{grid.target} is an invalid option, please use a valid name (nci_prod-1.3 nci_stage-1.3 nci_qa-1.3 training-1.3)"/>
+                    </default>
+                </switch>
+            </sequential>
+        </macrodef>
+
 </project>
