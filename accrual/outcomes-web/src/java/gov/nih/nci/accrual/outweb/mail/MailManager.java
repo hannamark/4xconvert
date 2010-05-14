@@ -34,7 +34,7 @@ public class MailManager {
     public void sendConfirmationMail(String mailTo, String identity) {
 
         try {
-            String[] params = {mailTo , };
+            String[] params = {mailTo};
 
             MessageFormat formatterSubject = new MessageFormat(
                 PaServiceLocator.getInstance().getLookUpTableService().getPropertyValue("outcomes.email.subject"));

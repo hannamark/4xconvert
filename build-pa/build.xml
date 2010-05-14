@@ -468,7 +468,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="accrual.jnp.url" value="%%accrual.jnp.url%%" />
             <property name="po.port.number" value="%%po.port.number%%" />
             <property name="jboss.server.hostname" value="%%jboss.server.hostname%%" />
-            <property name="outcomes.url" value="%%outcomes.url%%" />
             <property name="gridServicePrincipal" value="%%gridServicePrincipal%%"/>
             <property name="gridServiceCredential" value="%%gridServiceCredential%%"/>
             <property name="po.username" value="%%po.username%%"/>

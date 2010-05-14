@@ -292,7 +292,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 <filter token="accrual.jnp.url" value="jnp://${jboss.server.hostname}:${jboss.server.jndi.port}" />
                 <filter token="po.port.number" value="${po.port.number}" />
                 <filter token="jboss.server.hostname" value="${jboss.server.hostname}" />
-                <filter token="outcomes.url" value="${outcomes.url}" />
                 <filter token="gridServicePrincipal" value="${outcomes-grid.jndi.principal}"/>
                 <filter token="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrypted}"/>
                 <filter token="po.username" value="${po.username}"/>
@@ -300,7 +299,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 <filter token="po.server.name" value="${po.server.name}"/>
                 <filter token="grid.dorian.url" value="${grid.dorian.url}"/>
 
-                <filter token="outcomes.url" value="${application.url}/outcomes/"/>
+                <filter token="outcomes.url" value="${outcomes.url}"/>
                 <filter token="outcomes.cds.url" value="${outcomes.cds.url}"/>
                 <filter token="outcomes.phr.system.id" value="${outcomes.phr.system.id}"/>
                 <filter token="outcomes.auth.service.url" value="${outcomes.auth.service.url}"/>
