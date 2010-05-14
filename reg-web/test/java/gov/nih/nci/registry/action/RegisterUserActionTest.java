@@ -108,6 +108,7 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             registryUserWebDTO.setId(1L);
             registryUserWebDTO.setUsername("testuser");
             registryUserWebDTO.setEmailAddress("test@test.com");
+            registryUserWebDTO.setOldPassword("Testing@01");
             registryUserWebDTO.setPassword("Mvedjbtp123!!!");
             registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
             registryUserWebDTO.setFirstName("firstName");

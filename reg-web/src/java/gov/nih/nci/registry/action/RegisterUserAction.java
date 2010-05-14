@@ -156,7 +156,12 @@ public class RegisterUserAction extends ActionSupport {
                 redirectPage = "redirect_to_login";
             }
 
-            try {
+            try {                
+                if (!registryUserWebDTO.getOldPassword().equals(registryUserWebDTO.getPassword())) {
+                    // updating the grid password programmatically
+                    PaRegistry.getGridAccountService().changePassword(registryUserWebDTO.getUsername(), 
+                            registryUserWebDTO.getOldPassword(), registryUserWebDTO.getPassword());
+                }
                 // first update the CSM user
                 CSMUserService.getInstance().updateCSMUser(registryUser, registryUserWebDTO.getUsername(), 
                         registryUserWebDTO.getPassword());

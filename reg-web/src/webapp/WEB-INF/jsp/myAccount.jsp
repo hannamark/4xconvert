@@ -69,9 +69,31 @@ function handleAction(){
                     <td scope="row" class="label">&nbsp;</td>
                     <td><fmt:message key="register.user.password.rules" /></td>
                   </tr>
+                  <s:if test="%{registryUserWebDTO.id != null && registryUserWebDTO.id != ' '}">
                   <tr>
                         <td scope="row" class="label">
-                            <label for="registerUsershowMyAccount_registryUserWebDTO_password"> <fmt:message key="register.user.password"/><span class="required">*</span></label>
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_password"> Old <fmt:message key="register.user.password"/><span class="required">*</span></label>
+                        </td>
+                        <td>
+                            <s:password  name="registryUserWebDTO.oldPassword"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>registryUserWebDTO.oldPassword</s:param>
+                               </s:fielderror>                            
+                             </span>
+                        </td>                
+                  </tr>
+                  </s:if>
+                  <tr>
+                        <td scope="row" class="label">
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_password">
+                              <s:if test="%{registryUserWebDTO.id != null && registryUserWebDTO.id != ' '}">
+                             		New <fmt:message key="register.user.password"/>
+                             </s:if>
+                             <s:else>
+                             		<fmt:message key="register.user.password"/>
+                             </s:else>
+                             <span class="required">*</span></label>
                         </td>
                         <td>
                             <s:password  name="registryUserWebDTO.password"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
@@ -84,7 +106,14 @@ function handleAction(){
                   </tr>
                   <tr>
                         <td scope="row" class="label">
-                            <label for="registerUsershowMyAccount_registryUserWebDTO_retypePassword"> <fmt:message key="register.user.retypePassword"/><span class="required">*</span></label>
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_retypePassword"> 
+                            <s:if test="%{registryUserWebDTO.id != null && registryUserWebDTO.id != ' '}">
+                             		Retype New Password
+                             </s:if>
+                             <s:else>
+                            	<fmt:message key="register.user.retypePassword"/>
+							</s:else>                            	
+                            <span class="required">*</span></label>
                         </td>
                         <td>
                             <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
@@ -120,7 +149,6 @@ function handleAction(){
                             </s:if>
                             <s:else>
                                 <s:textfield name="registryUserWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" readonly="true" />
-                                <s:hidden name="registryUserWebDTO.username" />
                             </s:else>
                             <span class="formErrorMsg"> 
                                 <s:fielderror>

@@ -30,6 +30,7 @@ public class RegistryUserWebDTO {
     private Long treatmentSiteId;
     private Long physicianId;
     private String emailAddress;
+    private String oldPassword;
     
     /**
      * 
@@ -57,6 +58,7 @@ public class RegistryUserWebDTO {
         this.emailAddress = registryUser.getEmailAddress();
         this.treatmentSiteId = registryUser.getPoOrganizationId();
         this.physicianId = registryUser.getPoPersonId();
+        this.oldPassword = password;
     }
 
     /** .
@@ -311,5 +313,19 @@ public class RegistryUserWebDTO {
      */
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    /**
+     * @return the oldPassword
+     */
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    /**
+     * @param oldPassword oldPassword to set
+     */
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 }

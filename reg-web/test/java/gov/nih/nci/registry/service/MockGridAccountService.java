@@ -111,5 +111,14 @@ public class MockGridAccountService implements GridAccountServiceRemote {
     public boolean isValidGridPassword(String password) {
         return true;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void changePassword(String username, String oldPassword,
+            String newPassword) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

@@ -119,4 +119,13 @@ public interface GridAccountServiceRemote {
      * @return true iff the password passes the grid's strength tests
      */
     boolean isValidGridPassword(String password);
+    
+    /**
+     * Change password for the given username and password.
+     * @param username the username
+     * @param oldPassword the password
+     * @param newPassword the new password
+     * @throws PAException on error
+     */
+    void changePassword(String username, String oldPassword, String newPassword) throws PAException;
 }

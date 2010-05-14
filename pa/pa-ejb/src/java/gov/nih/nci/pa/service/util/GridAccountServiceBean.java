@@ -96,6 +96,7 @@ import javax.ejb.Stateless;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
+import org.cagrid.gaards.authentication.BasicAuthentication;
 import org.cagrid.gaards.dorian.client.LocalUserClient;
 import org.cagrid.gaards.dorian.common.DorianFault;
 import org.cagrid.gaards.dorian.idp.Application;
@@ -105,6 +106,7 @@ import org.cagrid.gaards.dorian.idp.PasswordUtils;
 import org.cagrid.gaards.dorian.idp.StateCode;
 import org.cagrid.gaards.dorian.stubs.types.DorianInternalFault;
 import org.cagrid.gaards.dorian.stubs.types.InvalidUserPropertyFault;
+import org.cagrid.gaards.dorian.stubs.types.PermissionDeniedFault;
 
 /**
  * @author aevansel
@@ -152,11 +154,11 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         try {
             return gridClient.register(app);
         } catch (DorianFault e) {
-            throw new PAException("ERROR: " + e.getFaultReason(), e);
+            throw new PAException("DorianFault ERROR: " + e.getFaultReason(), e);
         } catch (DorianInternalFault e) {
-            throw new PAException("ERROR: " + e.getFaultReason(), e);
+            throw new PAException("DorianInternalFault ERROR: " + e.getFaultReason(), e);
         } catch (InvalidUserPropertyFault e) {
-            throw new PAException("ERROR: " + e.getMessage(), e);   
+            throw new PAException("InvalidUserPropertyFault ERROR: " + e.getMessage(), e);   
         }
     }
 
@@ -195,5 +197,26 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
             }
         }
         return results;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void changePassword(String username, String oldPassword, String newPassword) throws PAException {
+        try {
+            LocalUserClient gridClient = new LocalUserClient(GRID_URL);
+            BasicAuthentication cred = new BasicAuthentication();
+            cred.setUserId(username);
+            cred.setPassword(oldPassword);
+            gridClient.changePassword(cred, newPassword);
+        } catch (PermissionDeniedFault e) {
+            throw new PAException("PermissionDeniedFault ERROR: " + e.getFaultReason(), e);
+        } catch (DorianInternalFault e) {
+            throw new PAException("DorianInternalFault ERROR: " + e.getFaultReason(), e);
+        } catch (InvalidUserPropertyFault e) {
+            throw new PAException("InvalidUserPropertyFault ERROR: " + e.getMessage(), e);   
+        } catch (Exception e) {
+            throw new PAException("Exception: " + e.getMessage(), e);   
+        }
     }
 }
