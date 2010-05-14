@@ -82,9 +82,13 @@
  */
 package gov.nih.nci.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
+import gov.nih.nci.security.cgmm.constants.CGMMConstants;
 
 /**
  * @author aevansel
@@ -111,14 +115,30 @@ public class MockGridAccountService implements GridAccountServiceRemote {
     public boolean isValidGridPassword(String password) {
         return true;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void changePassword(String username, String oldPassword, String newPassword) throws PAException {
+        // TODO Auto-generated method stub    
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, String> getIdentityProviders() {
+        return new HashMap<String, String>();
+    }
 
     /**
      * {@inheritDoc}
      */
-    public void changePassword(String username, String oldPassword,
-            String newPassword) throws PAException {
-        // TODO Auto-generated method stub
-        
+    public Map<String, String> authenticateUser(String username, String password, String authUrl) {
+        Map<String, String> results = new HashMap<String, String>();
+        results.put(CGMMConstants.CGMM_EMAIL_ID, "test@test.com");
+        results.put(CGMMConstants.CGMM_FIRST_NAME, "firstName");
+        results.put(CGMMConstants.CGMM_LAST_NAME, "lastName");
+        return results;
     }
 
 }

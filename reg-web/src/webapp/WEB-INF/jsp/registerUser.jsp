@@ -47,9 +47,12 @@ function handleAction(){
             </c:otherwise>
         </c:choose>
         <table class="form"> 
-          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
+            <tr>
+                <s:url id="existingGridAccountUrl" action="registerUserexistingGridAccount.action"/>
+                <td colspan="2" class="space">
+                    <h3>If you already have a caGrid account, click <s:a href="%{existingGridAccountUrl}">here.</s:a></h3>
+                </td>
+            </tr>
           <tr>
                 <td scope="row" class="label">
                     <label for="registerUser_registryUserWebDTO_emailAddress"><fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>

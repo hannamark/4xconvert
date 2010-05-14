@@ -144,11 +144,12 @@ function handleAction(){
                             <label for="registerUsershowMyAccount_registryUserWebDTO_username"><fmt:message key="register.user.username"/><span class="required">*</span></label>
                         </td>
                         <td>
-                            <s:if test="%{registryUserWebDTO.id == null}">
+                            <s:if test="%{registryUserWebDTO.id == null && !registryUserWebDTO.hasExistingGridAccount}">
                                 <s:textfield name="registryUserWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" />
                             </s:if>
                             <s:else>
-                                <s:textfield name="registryUserWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" readonly="true" />
+                                <s:textfield name="registryUserWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" disabled="true" />
+                                <s:hidden name="registryUserWebDTO.hasExistingGridAccount" />
                             </s:else>
                             <span class="formErrorMsg"> 
                                 <s:fielderror>

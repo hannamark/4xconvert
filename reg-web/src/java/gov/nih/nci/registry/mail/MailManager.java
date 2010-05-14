@@ -20,7 +20,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 
 /**
@@ -49,8 +48,6 @@ public class MailManager {
             
             MessageFormat formatterBody = 
                 new MessageFormat(PaRegistry.getLookUpTableService().getPropertyValue("user.account.body"));
-            LOG.debug("URL: " + REG_PROPERTIES.getProperty("register.mail.body.url"));
-            LOG.debug("Properties: " + ToStringBuilder.reflectionToString(REG_PROPERTIES));
             MessageFormat formatterBodyUrl = new MessageFormat(REG_PROPERTIES.getProperty("register.mail.body.url"));
             
             // encode the loginName and password and append to the URL before

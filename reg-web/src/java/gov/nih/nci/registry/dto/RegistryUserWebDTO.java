@@ -31,6 +31,7 @@ public class RegistryUserWebDTO {
     private Long physicianId;
     private String emailAddress;
     private String oldPassword;
+    private boolean hasExistingGridAccount = false;
     
     /**
      * 
@@ -94,10 +95,9 @@ public class RegistryUserWebDTO {
      * @param username the username to set
      */
     public void setUsername(String username) {
-        if (username != null) {
-            this.username = username.trim();
-        }
+        this.username = username;
     }
+    
     /**
      * @return the password
      */
@@ -327,5 +327,19 @@ public class RegistryUserWebDTO {
      */
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
+    }
+    
+    /**
+     * @return whether or not this user has an exisiting grid account
+     */
+    public boolean isHasExistingGridAccount() {
+        return hasExistingGridAccount;
+    }
+
+    /**
+     * @param hasExistingGridAccount whether or not the user has an exisiting grid account
+     */
+    public void setHasExistingGridAccount(boolean hasExistingGridAccount) {
+        this.hasExistingGridAccount = hasExistingGridAccount;
     }
 }

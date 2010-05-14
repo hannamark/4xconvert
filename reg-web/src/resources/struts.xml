@@ -56,6 +56,7 @@
                  <param name="parse">true</param>
                  <param name="userAction">${userAction}</param>
             </result>
+            <result name="existingGridAccount">/WEB-INF/jsp/existingGridAccount.jsp</result>
         </action> 
         <action name="login">
 	       <result>/WEB-INF/jsp/login.jsp</result>

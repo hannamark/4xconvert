@@ -3,6 +3,8 @@
  */
 package gov.nih.nci.registry.action;
 
+import java.util.Map;
+
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
@@ -13,6 +15,7 @@ import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.EncoderDecoder;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.security.cgmm.constants.CGMMConstants;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
@@ -26,9 +29,12 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 @SuppressWarnings({ "PMD" })
 public class RegisterUserAction extends ActionSupport {
+    private static final long serialVersionUID = 1L;
     private static final Logger LOG  = Logger.getLogger(RegisterUserAction.class);
     private RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
+    private Map<String, String> identityProviders = PaRegistry.getGridAccountService().getIdentityProviders();
     private String userAction;
+    private String selectedIdentityProvider;
 
     /**
      * Send e-mail to the registering user.
@@ -104,7 +110,6 @@ public class RegisterUserAction extends ActionSupport {
         String loginName = null;
         RegistryUser registryUser = null;
         User csmUser = null;
-
         try {
             loginName =  ServletActionContext.getRequest().getRemoteUser();
             // retrieve user info
@@ -179,11 +184,12 @@ public class RegisterUserAction extends ActionSupport {
             redirectPage = "redirect_to_login";
             try {
                 
-                //First create the grid account.
-                String results = PaRegistry.getGridAccountService().createGridAccount(registryUser, 
-                        registryUserWebDTO.getUsername(), registryUserWebDTO.getPassword());
-                LOG.debug("Grid User Creation Results: " + results);
-                    
+                //First create the grid account if one doesn't already 
+                if (!registryUserWebDTO.isHasExistingGridAccount()) {
+                    String results = PaRegistry.getGridAccountService().createGridAccount(registryUser, 
+                            registryUserWebDTO.getUsername(), registryUserWebDTO.getPassword());
+                    LOG.debug("Grid User Creation Results: " + results);
+                }
                 
                 //Then the csm user account
                 User csmUser = CSMUserService.getInstance().createCSMUser(registryUser, 
@@ -209,22 +215,39 @@ public class RegisterUserAction extends ActionSupport {
         //redirect to the appropriate page
         return redirectPage;
     }
-
+    
     /**
-     * @return the registryUserWebDTO
+     * Forward to existing account page. 
+     * @return success
      */
-    public RegistryUserWebDTO getRegistryUserWebDTO() {
-        return registryUserWebDTO;
+    public String existingGridAccount() {
+        //Setting the default idp here
+        selectedIdentityProvider = identityProviders.size() != 1 ? null : identityProviders.values().iterator().next();
+        return Constants.EXISTING_GRID_ACCOUNT;
     }
-
+    
     /**
-     * @param registryUserWebDTO the registryUserWebDTO to set
+     * creates an account from an existing grid account.
+     * @return the forward
      */
-    public void setRegistryUserWebDTO(RegistryUserWebDTO registryUserWebDTO) {
-        this.registryUserWebDTO = registryUserWebDTO;
+    public String registerExistingGridAccount() {
+        Map<String, String> userInfo = 
+            PaRegistry.getGridAccountService().authenticateUser(registryUserWebDTO.getUsername(), 
+                    registryUserWebDTO.getPassword(), getSelectedIdentityProvider());
+        
+        if (userInfo.isEmpty()) {
+            addActionError(getText("errors.password.mismatch"));
+            return Constants.EXISTING_GRID_ACCOUNT;
+        }
+        
+        registryUserWebDTO.setRetypePassword(registryUserWebDTO.getPassword());
+        registryUserWebDTO.setEmailAddress(userInfo.get(CGMMConstants.CGMM_EMAIL_ID));
+        registryUserWebDTO.setFirstName(userInfo.get(CGMMConstants.CGMM_FIRST_NAME));
+        registryUserWebDTO.setLastName(userInfo.get(CGMMConstants.CGMM_LAST_NAME));
+        registryUserWebDTO.setHasExistingGridAccount(true);
+        return Constants.MY_ACCOUNT;
     }
-
-
+    
     /**
      * validate the  form elements.
      */
@@ -264,7 +287,8 @@ public class RegisterUserAction extends ActionSupport {
                 addFieldError("registryUserWebDTO.username", getText("error.register.username"));
             }
             
-            if (PAUtil.isNotEmpty(registryUserWebDTO.getUsername()) && !isAccountEdit
+            if (PAUtil.isNotEmpty(registryUserWebDTO.getUsername()) && !isAccountEdit 
+                    && !registryUserWebDTO.isHasExistingGridAccount()
                     && PaRegistry.getGridAccountService().doesGridAccountExist(registryUserWebDTO.getUsername())) {
                 addFieldError("registryUserWebDTO.username", getText("error.register.usernameTaken"));
             }
@@ -322,6 +346,20 @@ public class RegisterUserAction extends ActionSupport {
             }
         }
     }
+    
+    /**
+     * @return the registryUserWebDTO
+     */
+    public RegistryUserWebDTO getRegistryUserWebDTO() {
+        return registryUserWebDTO;
+    }
+
+    /**
+     * @param registryUserWebDTO the registryUserWebDTO to set
+     */
+    public void setRegistryUserWebDTO(RegistryUserWebDTO registryUserWebDTO) {
+        this.registryUserWebDTO = registryUserWebDTO;
+    }
 
     /**
      * @return the userAction
@@ -335,6 +373,34 @@ public class RegisterUserAction extends ActionSupport {
      */
     public void setUserAction(String userAction) {
         this.userAction = userAction;
+    }
+    
+    /**
+     * @return the identity providers
+     */
+    public Map<String, String> getIdentityProviders() {
+        return identityProviders;
+    }
+    
+    /**
+     * @param identityProviders the identity providers to set
+     */
+    public void setIdentityProviders(Map<String, String> identityProviders) {
+        this.identityProviders = identityProviders;
+    }
+    
+    /**
+     * @return the selected identity provider
+     */
+    public String getSelectedIdentityProvider() {
+        return selectedIdentityProvider;
+    }
+    
+    /**
+     * @param selectedIdentityProvider the selected identity provider to set
+     */
+    public void setSelectedIdentityProvider(String selectedIdentityProvider) {
+        this.selectedIdentityProvider = selectedIdentityProvider;
     }
 
 }

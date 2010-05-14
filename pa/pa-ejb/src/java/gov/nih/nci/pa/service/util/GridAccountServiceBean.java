@@ -82,21 +82,29 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.USStateCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.security.cgmm.CGMMManager;
+import gov.nih.nci.security.cgmm.CGMMManagerImpl;
+import gov.nih.nci.security.cgmm.helper.impl.SAMLToAttributeMapperImpl;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
+
 import org.cagrid.gaards.authentication.BasicAuthentication;
+import org.cagrid.gaards.authentication.client.AuthenticationClient;
 import org.cagrid.gaards.dorian.client.LocalUserClient;
 import org.cagrid.gaards.dorian.common.DorianFault;
 import org.cagrid.gaards.dorian.idp.Application;
@@ -219,4 +227,40 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
             throw new PAException("Exception: " + e.getMessage(), e);   
         }
     }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, String> getIdentityProviders() {
+        Map<String, String> urls = new HashMap<String, String>();
+        try {
+            CGMMManager cgmmManager = new CGMMManagerImpl();
+            urls.putAll(cgmmManager.getAuthenticationServiceURLMap());
+        } catch (Exception e) {
+            LOG.error("ERROR retrieving idps", e);
+        }
+        return urls;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, String> authenticateUser(String username, String password, String authUrl) {
+        BasicAuthentication auth = new BasicAuthentication();
+        auth.setUserId(username);
+        auth.setPassword(password);
+        
+        Map<String, String> userInfo = new HashMap<String, String>();
+        
+        try {
+            AuthenticationClient authClient = new AuthenticationClient(authUrl);
+            SAMLAssertion saml = authClient.authenticate(auth);
+            userInfo = new SAMLToAttributeMapperImpl().convertSAMLtoHashMap(saml);
+        } catch (Exception e) {
+            LOG.error("ERROR Authenticating User.", e);
+        }
+        return userInfo;
+    }    
 }

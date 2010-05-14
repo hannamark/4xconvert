@@ -132,6 +132,11 @@ public class Constants {
     /** IRB Approval Document. */
     public static final String STUDY_INDIDE = "studyIndIde";
     
+    /**
+     * Existing Grid account page.
+     */
+    public static final String EXISTING_GRID_ACCOUNT = "existingGridAccount";
+    
     /** My Account Page. */
     public static final String MY_ACCOUNT = "myAccount";
     

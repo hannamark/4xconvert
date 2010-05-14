@@ -85,12 +85,16 @@
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/wsrf_core_stubs_enum-4.0.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB"/>
 	<classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-csm-common-1.3.jar"/>
-    <classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-csm-service-1.3.jar"/>
-    <classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-csm-stubs-1.3.jar"/>
-    <classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-csm-client-1.3.jar"/>
-    <classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-core-1.3.jar"/>
-    <classpathentry kind="var" path="PA_LIB/commons/compile/axis-1.4.jar"/>
-    <classpathentry kind="var" path="PA_LIB/commons/compile/wsrf_core_stubs-4.0.3.jar"/>
-    
+	<classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-csm-service-1.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-csm-stubs-1.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-csm-client-1.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/commons/compile/caGrid-core-1.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/commons/compile/axis-1.4.jar"/>
+	<classpathentry kind="var" path="PA_LIB/commons/compile/wsrf_core_stubs-4.0.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-authentication-service-client-1.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-opensaml-1.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-authentication-service-stubs-1.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/cgmmapi-0.7.0.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/cog-jglobus-1.2.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
