@@ -6,12 +6,12 @@ import org.junit.Test;
 
 public class CsmHelperTest {
 
-    private static final String username = "myUser";
+    private static final String USERNAME = "myUser";
 
     @Test
     public void testConst() {
         CsmHelper helper = new CsmHelper("myUser");
-        assertEquals(username, helper.getUsername());
+        assertEquals(USERNAME, helper.getUsername());
 
         try {
             helper.getFirstName();
