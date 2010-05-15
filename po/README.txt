@@ -33,8 +33,8 @@
   * Install maven (if needed)
     PO is not compatible with maven 2.1.0+, so you'll need to use 2.0.10 (or a later version of 2.0.x).
 
-  * Install postgres (if needed)
-    Postgres 8.3 should work with no issues.  With Postgres 8.4, you'll have to set max_prepared_transactions to 5 in postgresql.conf (on a Mac, that file is located in /Library/PostgreSQL/8.4/data/);
+  * Install postgres 8.4+ (if needed)
+    With Postgres 8.4, you'll have to set max_prepared_transactions to 5 in postgresql.conf (on a Mac, that file is located in /Library/PostgreSQL/8.4/data/);
     you'll need to restart Postgres after changing the value.
 
   * Install JBoss
@@ -57,10 +57,10 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
         mvn -Plocal,init-db sql:execute
 
     NOTE: If you plan on running against a dev po instance against the same db that was created with build po, you'll need to run the following sql commands to prevent liquibase from balking:
-	$ psql -U poadmin podb
-	(password: poadmin123 [default])
-	podb=# update databasechangelog set filename='db-install.xml' where id = '1.0';
-	podb=# update databasechangelog set filename='db-upgrade.xml' where filename like '%db-upgrade.xml';
+    $ psql -U poadmin podb
+    (password: poadmin123 [default])
+    podb=# update databasechangelog set filename='db-install.xml' where id = '1.0';
+    podb=# update databasechangelog set filename='db-upgrade.xml' where filename like '%db-upgrade.xml';
 
 1.3 CI build (Maven 2.0.9)
     mvn -Plocal,init-db sql:execute

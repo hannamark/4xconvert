@@ -10,21 +10,21 @@
     </profile>
     <profile>
         <!--
-            Use to run integration-tests against a poear serverinstance running from build-po build process
+            Use to run integration-tests against a poear server instance running from build-po build process
             (easily populates instance with data for testing of grid service instances)
         -->
-        <id>podb</id>
+        <id>buildpo</id>
         <activation>
             <activeByDefault>false</activeByDefault>
         </activation>
         <properties>
             <database.name>podb</database.name>
             <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
-            <jdbc.username>poadmin</jdbc.username>
-            <jdbc.password>poadmin123</jdbc.password>
+            <jdbc.username>pouser</jdbc.username>
+            <jdbc.password>pouser</jdbc.password>
             <jboss.configuration>poear</jboss.configuration>
-            <jboss.port>29480</jboss.port>
-            <jboss.naming.port>21499</jboss.naming.port>
+            <jboss.port>39080</jboss.port>
+            <jboss.naming.port>31099</jboss.naming.port>
             <maven.surefire.debug>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8787 -Xnoagent -Djava.compiler=NONE</maven.surefire.debug>
         </properties>
     </profile>

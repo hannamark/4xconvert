@@ -161,7 +161,7 @@ public class CtepImportAction extends ActionSupport {
          * @param value CTEP identifier to lookup and import
          * @return COPPA-PO Object saved, otherwise null
          * @throws JMSException the JMS related exception encountered
-         * @throws EntityValidationException if any validation error occurs 
+         * @throws EntityValidationException if any validation error occurs
          */
         Object invoke(Ii value) throws JMSException, EntityValidationException;
 
@@ -217,8 +217,7 @@ public class CtepImportAction extends ActionSupport {
          * {@inheritDoc}
          */
         public Object invoke(Ii value) throws JMSException, EntityValidationException {
-            return PoRegistry.getInstance().getServiceLocator().
-            getCtepImportService().importCtepOrganization(value);
+            return PoRegistry.getInstance().getServiceLocator().getCtepImportService().importCtepOrganization(value);
         }
         /**
          * {@inheritDoc}
