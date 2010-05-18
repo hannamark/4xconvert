@@ -112,7 +112,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           </else>
       </if>
   </target>
-  <target name="common:pa-ear-jboss:init" depends="common:init:pre" unless="exclude.pa-ear">
+  <target name="common:pa-ear-jboss:init" depends="common:init:pre,install:pa-ear-jboss:init" unless="exclude.pa-ear">
       <property name="jboss.ssl.enable" value="false"/>
       <property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
       <jboss-version
