@@ -49,7 +49,7 @@ function loadAffliatedOrgDiv() {
         <s:hidden name="registryUserWebDTO.csmUserId" />
         <s:hidden name="registryUserWebDTO.treatmentSiteId" />
         <s:hidden name="registryUserWebDTO.physicianId" />
-        <s:hidden name="registryUserWebDTO.affiliatedOrganizationId"/>
+        <s:hidden name="registryUserWebDTO.affiliatedOrganizationId" id="registryUserWebDTO.affiliatedOrganizationId"/>
         <s:hidden name="page" />
         <s:if test="%{registryUserWebDTO.id == null}">
             <p>To register for NCI Clinical Trials Reporting Program, please begin by creating your login information. <br>
@@ -317,7 +317,7 @@ function loadAffliatedOrgDiv() {
                             <label for="registerUsershowMyAccount_registryUserWebDTO_affiliateOrg"> <fmt:message key="register.user.affiliateOrg"/><span class="required">*</span></label>
                         </td>
                         <td>
-                        <s:textfield readonly="true" size="30" name="registryUserWebDTO.affiliateOrg" cssStyle="float:left; width:250px" cssClass="readonly"/>                       
+                        <s:textfield readonly="true" size="30" name="registryUserWebDTO.affiliateOrg" id="registryUserWebDTO.affiliateOrg" cssStyle="float:left; width:250px" cssClass="readonly"/>                       
                         <a href="#" class="btn" onclick="lookupAffiliateOrg();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
                         <span class="formErrorMsg"> 
                           <s:fielderror>
