@@ -4,6 +4,7 @@
 package gov.nih.nci.registry.service;
 
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
@@ -54,5 +55,19 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
         // TODO Auto-generated method stub
         return null;
     }
-
+    /**
+     * 
+     */
+    public List<RegistryUser> getUserByUserOrgType(UserOrgType userType)
+			throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    /**
+     * 
+     */
+	public RegistryUser getUserById(Long userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
