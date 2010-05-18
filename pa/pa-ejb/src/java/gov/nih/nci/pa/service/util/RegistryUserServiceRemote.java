@@ -78,7 +78,10 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import java.util.List;
+
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 
 import javax.ejb.Remote;
@@ -116,7 +119,16 @@ public interface RegistryUserServiceRemote {
      * @throws PAException PAException
      */
     RegistryUser getUser(String loginName) throws PAException;
-    
-    
+    /**
+     * @param userType of user
+     * @return list of pending user admin 
+     * @throws PAException on error
+     */
+    List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException;
+    /**
+     * @param userId  csm user id
+     * @return user
+     */
+    RegistryUser getUserById(Long userId);
 
 }

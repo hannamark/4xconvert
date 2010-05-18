@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -95,8 +97,11 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
 
 /**
  *
@@ -141,7 +146,7 @@ public class RegistryUserServiceBean implements RegistryUserServiceRemote {
         Session session = null;
         // first create the Registry user
         session = HibernateUtil.getCurrentSession();
-        session.saveOrUpdate(user);
+        session.merge(user);
         return user;
     }
 
@@ -198,4 +203,41 @@ public class RegistryUserServiceBean implements RegistryUserServiceRemote {
 
     }
 
+    /**
+     * @param userId  csm user id
+     * @return user
+     */
+    public RegistryUser getUserById(Long userId) {
+        RegistryUser registryUser = null;
+        Session session;
+        if (userId != null) {
+            session = HibernateUtil.getCurrentSession();
+            registryUser = (RegistryUser) session.get(RegistryUser.class, userId);
+        }
+        return registryUser;
+    }
+    /**
+     * @param userType type of user
+     * @return list of pending user admin 
+     * @throws PAException on error
+     */
+    public List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException {
+        if (userType == null) {
+            throw new PAException("UserOrgType cannot be null.");
+        }
+        Session session = null;
+        List<RegistryUser> registryUserList = new ArrayList<RegistryUser>();
+        session = HibernateUtil.getCurrentSession();
+        Criteria criteria = session.createCriteria(RegistryUser.class, "regUser") 
+            .add(Property.forName("regUser.affiliatedOrganizationId").isNotNull())
+            .add(Restrictions.eq("regUser.affiliatedOrgUserType", userType));
+        
+        registryUserList = criteria.list();
+        for (RegistryUser usr : registryUserList) {
+            PAServiceUtils servUtil = new PAServiceUtils();
+            usr.setAffiliateOrg(servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(
+                    String.valueOf(usr.getAffiliatedOrganizationId()))));
+        }
+        return registryUserList;
+    }
 }

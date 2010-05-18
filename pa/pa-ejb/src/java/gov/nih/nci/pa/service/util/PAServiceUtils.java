@@ -1466,6 +1466,9 @@ public class PAServiceUtils {
        */
       public String getOrgName(Ii entityIi) {
           OrganizationDTO orgDto = getPOOrganizationEntity(entityIi);
+          if (orgDto == null) {
+              return "No Org Found";
+          }
           return EnOnConverter.convertEnOnToString(
                   orgDto.getName());
       }

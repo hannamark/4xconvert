@@ -72,7 +72,7 @@ function remove(id){
 
  </div>
  <div class="line"></div>
- 
+<jsp:include page="/WEB-INF/jsp/pendingAdminUserResults.jsp"/>
  <s:if test="records != null">                       
         <h2>Search Results</h2>  
         <jsp:include page="/WEB-INF/jsp/inboxProcessingQueryResults.jsp"/>

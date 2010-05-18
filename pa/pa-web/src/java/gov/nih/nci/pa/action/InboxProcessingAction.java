@@ -78,9 +78,11 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -97,6 +99,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
@@ -115,6 +118,7 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private Long studyProtocolId = null;
     private HttpServletResponse servletResponse;
+    private List<RegistryUser> pendingAdminUsers = null;
     /**
      * @return res
      * @throws PAException exception
@@ -124,6 +128,7 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
         if (!userRoleInSession()) {
             return showCriteria();
         }
+        getPendingAdminUserRole();
         return SUCCESS;
     }
 
@@ -293,5 +298,84 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
     
     private boolean userRoleInSession() {
         return (null != ServletActionContext.getRequest().getSession().getAttribute(Constants.USER_ROLE));
+    }
+    /**
+     *@return success 
+     */
+    public String getPendingAdminUserRole() {
+        try {
+            pendingAdminUsers = PaRegistry.getRegisterUserService().getUserByUserOrgType(UserOrgType.PENDING_ADMIN);
+        } catch (PAException e) {
+            LOG.error("Exception while getting pending admin request:-" + e.getMessage());
+        }
+        return SUCCESS;
+    }
+
+    /**
+     * @param pendingAdminUser the pendingAdminUser to set
+     */
+    public void setPendingAdminUsers(List<RegistryUser> pendingAdminUser) {
+        this.pendingAdminUsers = pendingAdminUser;
+    }
+
+    /**
+     * @return the pendingAdminUser
+     */
+    public List<RegistryUser> getPendingAdminUsers() {
+        return pendingAdminUsers;
+    }
+    /**
+     * 
+     * @return view
+     */
+    public String viewPendingUserAdmin() {
+        String userId = ServletActionContext.getRequest().getParameter("id");
+        if (StringUtils.isEmpty(userId)) {
+            return SUCCESS;
+        }
+        try {
+            RegistryUser pendingUsr = PaRegistry.getRegisterUserService().getUserById(Long.parseLong(userId));
+            ServletActionContext.getRequest().setAttribute("user", pendingUsr);
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+        }
+        return "viewpendingUserAdmin";
+    }
+    /**
+     * 
+     * @return success
+     */
+    public String processUserRole() {
+        String abstractorResponse = ServletActionContext.getRequest().getParameter("action");
+        String userId = ServletActionContext.getRequest().getParameter("id");
+        if (StringUtils.isNotEmpty(abstractorResponse) && StringUtils.isNotEmpty(userId)) { 
+            try {
+                if (abstractorResponse.equalsIgnoreCase("accept")) {
+                    updateUserRole(UserOrgType.ADMIN, userId);
+                } else {
+                    updateUserRole(UserOrgType.MEMBER, userId);
+                }
+            } catch (Exception e) {
+                LOG.error(e.getMessage());
+                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            }
+        }
+     return getPendingAdminUserRole();   
+    }
+
+    /**
+     * @param userOrgType
+     * @param userId
+     * @throws PAException
+     */
+    private void updateUserRole(UserOrgType affiliatedOrgUserType, String userId)
+            throws PAException {
+        RegistryUser pendingUsr = PaRegistry.getRegisterUserService().getUserById(Long.parseLong(userId));
+        if (pendingUsr == null) {
+            throw new PAException("User not found");
+        }
+        pendingUsr.setAffiliatedOrgUserType(affiliatedOrgUserType);
+        PaRegistry.getRegisterUserService().updateUser(pendingUsr);
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
     }
 }
