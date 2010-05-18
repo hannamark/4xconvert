@@ -4,6 +4,7 @@
 package gov.nih.nci.registry.dto;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.validator.NotEmpty;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 
@@ -34,7 +35,8 @@ public class RegistryUserWebDTO {
     private String emailAddress;
     private String oldPassword;
     private boolean hasExistingGridAccount = false;
-    
+    private Long affiliatedOrganizationId;
+        
     /**
      * 
      * @param registryUser registryUser
@@ -62,6 +64,7 @@ public class RegistryUserWebDTO {
         this.treatmentSiteId = registryUser.getPoOrganizationId();
         this.physicianId = registryUser.getPoPersonId();
         this.oldPassword = password;
+        this.affiliatedOrganizationId = registryUser.getAffiliatedOrganizationId();
     }
 
     /** .
@@ -89,6 +92,7 @@ public class RegistryUserWebDTO {
     /**
      * @return the username
      */
+    @NotEmpty (message = "error.register.username")
     public String getUsername() {
         return username;
     }
@@ -111,6 +115,7 @@ public class RegistryUserWebDTO {
     /**
      * @return the password
      */
+    @NotEmpty (message = "error.register.password")
     public String getPassword() {
         return password;
     }
@@ -124,6 +129,7 @@ public class RegistryUserWebDTO {
     /**
      * @return the firstName
      */
+    @NotEmpty (message = "error.register.firstName")
     public String getFirstName() {
         return firstName;
     }
@@ -136,6 +142,7 @@ public class RegistryUserWebDTO {
     /**
      * @return the lastName
      */
+    @NotEmpty (message = "error.register.lastName")
     public String getLastName() {
         return lastName;
     }
@@ -161,6 +168,7 @@ public class RegistryUserWebDTO {
     /**
      * @return the addressLine
      */
+    @NotEmpty (message = "error.register.streetAddress")
     public String getAddressLine() {
         return addressLine;
     }
@@ -173,6 +181,7 @@ public class RegistryUserWebDTO {
     /**
      * @return the city
      */
+    @NotEmpty (message = "error.register.city")
     public String getCity() {
         return city;
     }
@@ -185,6 +194,7 @@ public class RegistryUserWebDTO {
     /**
      * @return the state
      */
+    @NotEmpty (message = "error.register.state")
     public String getState() {
         return state;
     }
@@ -197,6 +207,7 @@ public class RegistryUserWebDTO {
     /**
      * @return the postalCode
      */
+    @NotEmpty (message = "error.register.zipCode")
     public String getPostalCode() {
         return postalCode;
     }
@@ -209,6 +220,7 @@ public class RegistryUserWebDTO {
     /**
      * @return the country
      */
+    @NotEmpty (message = "error.register.country")
     public String getCountry() {
         return country;
     }
@@ -221,6 +233,7 @@ public class RegistryUserWebDTO {
     /**
      * @return the phone
      */
+    @NotEmpty (message = "error.register.phone")
     public String getPhone() {
         return phone;
     }
@@ -233,6 +246,7 @@ public class RegistryUserWebDTO {
     /**
      * @return the affiliateOrg
      */
+    @NotEmpty (message = "error.register.affiliateOrg")
     public String getAffiliateOrg() {
         return affiliateOrg;
     }
@@ -258,6 +272,7 @@ public class RegistryUserWebDTO {
     /**
      * @return the retypePassword
      */
+    @NotEmpty (message = "error.register.retypePassword")
     public String getRetypePassword() {
         return retypePassword;
     }
@@ -352,4 +367,18 @@ public class RegistryUserWebDTO {
     public void setHasExistingGridAccount(boolean hasExistingGridAccount) {
         this.hasExistingGridAccount = hasExistingGridAccount;
     }
+
+    /**
+     * @return the affiliatedOrganizationId
+     */
+     public Long getAffiliatedOrganizationId() {
+       return affiliatedOrganizationId;
+     }
+
+    /**
+     * @param affiliatedOrganizationId the affiliatedOrganizationId to set
+     */
+     public void setAffiliatedOrganizationId(Long affiliatedOrganizationId) {
+        this.affiliatedOrganizationId = affiliatedOrganizationId;
+     }
 }

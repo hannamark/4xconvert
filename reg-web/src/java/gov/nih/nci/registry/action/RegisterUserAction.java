@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.registry.action;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -22,6 +23,8 @@ import gov.nih.nci.security.cgmm.constants.CGMMConstants;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.validator.ClassValidator;
+import org.hibernate.validator.InvalidValue;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -37,6 +40,9 @@ public class RegisterUserAction extends ActionSupport {
     private Map<String, String> identityProviders = PaRegistry.getGridAccountService().getIdentityProviders();
     private String userAction;
     private String selectedIdentityProvider;
+    private static final int MIN_UN = 4;
+    private static final int MAX_UN = 15;
+    
 
     /**
      * Send e-mail to the registering user.
@@ -255,7 +261,10 @@ public class RegisterUserAction extends ActionSupport {
     /**
      * validate the  form elements.
      */
-    private void validateForm(boolean isMyAccountPage, boolean isAccountEdit)  {        
+    private void validateForm(boolean isMyAccountPage, boolean isAccountEdit)  {     
+        Map<String, String> addFieldError = new HashMap<String, String>(); 
+        InvalidValue[] invalidValues = null;
+        
         if (PAUtil.isEmpty(registryUserWebDTO.getEmailAddress())) {
             addFieldError("registryUserWebDTO.emailAddress", getText("error.register.emailAddress"));
         }
@@ -268,14 +277,23 @@ public class RegisterUserAction extends ActionSupport {
         
         // if it's My Account page validate required fields
         if (isMyAccountPage) {
-            if (PAUtil.isEmpty(registryUserWebDTO.getPassword())) {
-                addFieldError("registryUserWebDTO.password", getText("error.register.password"));
+            ClassValidator<RegistryUserWebDTO> classValidator = new ClassValidator(registryUserWebDTO.getClass());
+            invalidValues = classValidator.getInvalidValues(registryUserWebDTO);
+            for (int i = 0; i < invalidValues.length; i++) {
+                addFieldError.put("registryUserWebDTO." + invalidValues[i].getPropertyName(), 
+                        getText(invalidValues[i].getMessage().trim()));
             }
-            
-            if (PAUtil.isEmpty(registryUserWebDTO.getRetypePassword())) {
-                addFieldError("registryUserWebDTO.retypePassword", getText("error.register.retypePassword"));
+            addErrors(addFieldError); 
+            if (!isAccountEdit && PAUtil.isNotEmpty(registryUserWebDTO.getUsername())) {
+               if (registryUserWebDTO.getUsername().length() < MIN_UN 
+                   || registryUserWebDTO.getUsername().length() > MAX_UN) {
+                   addFieldError("registryUserWebDTO.username", getText("error.register.usernameLength"));
+               }    
             }
-            
+            if (isAccountEdit && registryUserWebDTO.getAffiliatedOrganizationId() == null) {
+                   registryUserWebDTO.setAffiliateOrg(""); 
+                   addFieldError("registryUserWebDTO.affiliateOrg", getText("error.register.affiliateOrg"));
+            }
             if (PAUtil.isNotEmpty(registryUserWebDTO.getPassword()) 
                     && PAUtil.isNotEmpty(registryUserWebDTO.getRetypePassword())
                     && !registryUserWebDTO.getPassword().equals(registryUserWebDTO.getRetypePassword())) {            
@@ -287,49 +305,10 @@ public class RegisterUserAction extends ActionSupport {
                 addFieldError("registryUserWebDTO.password", getText("error.register.invalidPassword"));
             }
             
-            if (PAUtil.isEmpty(registryUserWebDTO.getUsername())) {
-                addFieldError("registryUserWebDTO.username", getText("error.register.username"));
-            }
-            
             if (PAUtil.isNotEmpty(registryUserWebDTO.getUsername()) && !isAccountEdit 
                     && !registryUserWebDTO.isHasExistingGridAccount()
                     && PaRegistry.getGridAccountService().doesGridAccountExist(registryUserWebDTO.getUsername())) {
                 addFieldError("registryUserWebDTO.username", getText("error.register.usernameTaken"));
-            }
-            
-            if (PAUtil.isEmpty(registryUserWebDTO.getFirstName())) {
-                addFieldError("registryUserWebDTO.firstName", getText("error.register.firstName"));
-            }
-            if (PAUtil.isEmpty(registryUserWebDTO.getLastName())) {
-                addFieldError("registryUserWebDTO.lastName", getText("error.register.lastName"));
-            }
-            
-            if (PAUtil.isEmpty(registryUserWebDTO.getAddressLine())) {
-                addFieldError("registryUserWebDTO.addressLine", getText("error.register.streetAddress"));
-            }
-            
-            if (PAUtil.isEmpty(registryUserWebDTO.getCity())) {
-                addFieldError("registryUserWebDTO.city", getText("error.register.city"));
-            }
-            
-            if (PAUtil.isEmpty(registryUserWebDTO.getState())) {
-                addFieldError("registryUserWebDTO.state", getText("error.register.state"));
-            }
-            
-            if (PAUtil.isEmpty(registryUserWebDTO.getCountry())) {
-                addFieldError("registryUserWebDTO.country", getText("error.register.country"));
-            }
-            
-            if (PAUtil.isEmpty(registryUserWebDTO.getPostalCode())) {
-                addFieldError("registryUserWebDTO.postalCode", getText("error.register.zipCode"));
-            }
-            
-            if (PAUtil.isEmpty(registryUserWebDTO.getPhone())) {
-                addFieldError("registryUserWebDTO.phone", getText("error.register.phone"));
-            }
-            if (PAUtil.isEmpty(registryUserWebDTO.getAffiliateOrg())) {
-                addFieldError("registryUserWebDTO.affiliateOrg",
-                        getText("error.register.affiliateOrg"));
             }
             
             if (PAUtil.isNotEmpty(registryUserWebDTO.getState())
@@ -351,6 +330,13 @@ public class RegisterUserAction extends ActionSupport {
         }
     }
     
+    private void addErrors(Map<String, String> err) {
+        if (!err.isEmpty()) {
+            for (String msg : err.keySet()) {
+                addFieldError(msg, err.get(msg));
+            }
+        }
+    }
     /**
      * @return the registryUserWebDTO
      */

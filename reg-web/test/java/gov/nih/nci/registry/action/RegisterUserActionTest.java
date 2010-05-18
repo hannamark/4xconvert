@@ -120,6 +120,7 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             registryUserWebDTO.setCountry("country");
             registryUserWebDTO.setPhone("phone");
             registryUserWebDTO.setAffiliateOrg("affiliateOrg");
+            registryUserWebDTO.setAffiliatedOrganizationId(2L);
             action.setRegistryUserWebDTO(registryUserWebDTO);
             assertEquals("applicationError", action.updateAccount());
         }
@@ -141,6 +142,7 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             registryUserWebDTO.setCountry("country");
             registryUserWebDTO.setPhone("phone");
             registryUserWebDTO.setAffiliateOrg("affiliateOrg");
+            registryUserWebDTO.setAffiliatedOrganizationId(2L);
             registryUserWebDTO.setId(1L);
             registryUserWebDTO.setCsmUserId(1L);
             action.setRegistryUserWebDTO(registryUserWebDTO);

@@ -5,7 +5,7 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/orgSearch.js'/>"></script>
 <SCRIPT language="JavaScript">
-		
+	
 	function createOrg(){
         var orgName = document.getElementById("orgName").value;
         var stAddress = document.getElementById("orgAddress").value;
@@ -24,9 +24,9 @@
         var orgUrl = document.getElementById("orgUrl").value;
         var tty = document.getElementById("orgTty").value;
         var fax = document.getElementById("orgFax").value;
-        var url = '/registry/protected/popupcreateOrganization.action?orgName='+orgName+'&orgStAddress='+stAddress+'&countryName='+country+'&cityName='+city+'&zipCode='+zip+'&stateName='+state+'&phoneNumber='+phone+'&email='+email+'&tty='+tty+'&url='+orgUrl+'&fax='+fax;
+        var url = '/registry/orgPopcreateOrganization.action?orgName='+orgName+'&orgStAddress='+stAddress+'&countryName='+country+'&cityName='+city+'&zipCode='+zip+'&stateName='+state+'&phoneNumber='+phone+'&email='+email+'&tty='+tty+'&url='+orgUrl+'&fax='+fax;
         var div = document.getElementById('getOrgs'); 
-        div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Creating...</div>';
+        div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="./images/loading.gif"/>&nbsp;Creating...</div>';
         ajaxCall(div, url);
     }
 	function loadDiv() {
@@ -36,13 +36,11 @@
 		var orgZip = document.getElementById("orgZipSearch").value;	
 		var ctepid = document.getElementById("orgCtepIdSearch").value;		
 		var orgState = document.getElementById("orgStateSearch").value;
-		var url = '/registry/protected/popupdisplayOrgList.action?orgName='+orgName+'&countryName='+orgCountry+'&cityName='+orgCity+'&zipCode='+orgZip+'&ctepid='+ctepid+'&stateName='+orgState;
+		var url = '/registry/orgPopdisplayOrgList.action?orgName='+orgName+'&countryName='+orgCountry+'&cityName='+orgCity+'&zipCode='+orgZip+'&ctepid='+ctepid+'&stateName='+orgState;
 	    var div = document.getElementById('getOrgs');   	   
-	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';
+	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="./images/loading.gif"/>&nbsp;Loading...</div>';
 	    ajaxCall(div, url);    
 	}
-	
-		
 </SCRIPT>
 
 </head> 
@@ -58,7 +56,7 @@
 	<jsp:include page="/WEB-INF/jsp/nodecorate/createOrg.jsp"/>
 </div>
 <div id="getOrgs" align="center">	
-	<jsp:include page="/WEB-INF/jsp/nodecorate/displayOrgList.jsp"/>        	      
+	<jsp:include page="/WEB-INF/jsp/nodecorate/displayAffOrgList.jsp"/>        	      
 </div>
 </s:form>
 </div>

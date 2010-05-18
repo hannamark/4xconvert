@@ -8,15 +8,33 @@
     <title><fmt:message key="register.user.myaccount.title"/></title>   
     <s:head/>
 </head>
-
+<link href="<%=request.getContextPath()%>/styles/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
+<link href="<%=request.getContextPath()%>/styles/subModal.css" rel="stylesheet" type="text/css" media="all"/>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+<c:url value="/orgPoplookuporgs.action" var="lookupOrgUrl"/>
 <SCRIPT LANGUAGE="JavaScript">
+var orgid;
+var chosenname;
+
+function setorgid(orgIdentifier, oname){
+    orgid = orgIdentifier;
+    chosenname = oname.replace(/&apos;/g,"'");
+}
 function handleAction(){   
     document.forms[0].page.value = "Submit";
     document.forms[0].action="registerUserupdateAccount.action";
     document.forms[0].submit();  
 }
+function lookupAffiliateOrg(){
+   showPopWinOutsideContext('${lookupOrgUrl}', 900, 400, loadAffliatedOrgDiv, 'Select Affiliated Organization');
+}
+function loadAffliatedOrgDiv() { 
+    document.getElementById('registryUserWebDTO.affiliatedOrganizationId').value = orgid;
+    document.getElementById('registryUserWebDTO.affiliateOrg').value = chosenname;
+}
 </SCRIPT>
-
 <body>
 <!-- main content begins-->
     <h1><fmt:message key="register.user.myaccount.header"/></h1>
@@ -31,6 +49,7 @@ function handleAction(){
         <s:hidden name="registryUserWebDTO.csmUserId" />
         <s:hidden name="registryUserWebDTO.treatmentSiteId" />
         <s:hidden name="registryUserWebDTO.physicianId" />
+        <s:hidden name="registryUserWebDTO.affiliatedOrganizationId"/>
         <s:hidden name="page" />
         <s:if test="%{registryUserWebDTO.id == null}">
             <p>To register for NCI Clinical Trials Reporting Program, please begin by creating your login information. <br>
@@ -298,13 +317,14 @@ function handleAction(){
                             <label for="registerUsershowMyAccount_registryUserWebDTO_affiliateOrg"> <fmt:message key="register.user.affiliateOrg"/><span class="required">*</span></label>
                         </td>
                         <td>
-                            <s:textfield name="registryUserWebDTO.affiliateOrg"  maxlength="200" size="100"  cssStyle="width:200px" />
-                            <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                <s:param>registryUserWebDTO.affiliateOrg</s:param>
-                               </s:fielderror>                            
-                             </span>
-                        </td>                
+                        <s:textfield readonly="true" size="30" name="registryUserWebDTO.affiliateOrg" cssStyle="float:left; width:250px" cssClass="readonly"/>                       
+                        <a href="#" class="btn" onclick="lookupAffiliateOrg();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+                        <span class="formErrorMsg"> 
+                          <s:fielderror>
+                            <s:param>registryUserWebDTO.affiliateOrg</s:param>
+                          </s:fielderror>                            
+                        </span>
+                       </td>                                      
                   </tr>
                   <tr>
                         <td scope="row" class="label">
