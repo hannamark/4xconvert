@@ -431,8 +431,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="grid.dorian.url" value="${grid.dorian.url}"/>
             <property name="gridServicePrincipal" value="${grid.security.jndi.principal}"/>
             <property name="gridServiceCredential" value="${grid.security.jndi.credentials.encrypted}"/>
-        	<property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
-        	<property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
+            <property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
+            <property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-ear.build.target}"/>
@@ -474,30 +474,30 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.pass" value="%%po.pass%%"/>
             <property name="po.server.name" value="%%po.server.name%%"/>
             <property name="grid.dorian.url" value="%%grid.dorian.url%%"/>
-            
+
             <property name="outcomes.url" value="%%outcomes.url%%"/>
             <property name="outcomes.cds.url" value="%%outcomes.cds.url%%"/>
             <property name="outcomes.phr.system.id" value="%%outcomes.phr.system.id%%"/>
             <property name="outcomes.auth.service.url" value="%%outcomes.auth.service.url%%"/>
             <property name="outcomes.issued.credential.lifetime" value="%%outcomes.issued.credential.lifetime%%"/>
             <property name="outcomes.delegation.lifetime" value="%%outcomes.delegation.lifetime%%"/>
-            
+
             <target name="${accrual-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${accrual-ear.build.target}"/>
         </ant>
-    	<copy todir="${pa-ear.dist.dir}">
-    		<fileset dir="${target.dir}/../accrual/lib/ear/">
-    				<include name="runtime/caGrid-cds-*.jar"/>
-    				<include name="runtime/caGrid-dorian-service-1.3.jar"/>
-	    			<include name="runtime/commons-httpclient-3.1.jar"/>
-	    			<include name="runtime/httpclient-4.0.1.jar"/>
-	    			<include name="runtime/grouper-1.1.jar"/>
-	    			<include name="runtime/subject-0.2.1.jar"/>
-    				<include name="runtime/wsrf_core-4.0.3.jar"/>
-    				<include name="runtime/wsrf_core_stubs-4.0.3.jar"/>
-    		</fileset>
-    	</copy>
+        <copy todir="${pa-ear.dist.dir}">
+            <fileset dir="${target.dir}/../accrual/lib/ear/">
+                    <include name="runtime/caGrid-cds-*.jar"/>
+                    <include name="runtime/caGrid-dorian-service-1.3.jar"/>
+                    <include name="runtime/commons-httpclient-3.1.jar"/>
+                    <include name="runtime/httpclient-4.0.1.jar"/>
+                    <include name="runtime/grouper-1.1.jar"/>
+                    <include name="runtime/subject-0.2.1.jar"/>
+                    <include name="runtime/wsrf_core-4.0.3.jar"/>
+                    <include name="runtime/wsrf_core_stubs-4.0.3.jar"/>
+            </fileset>
+        </copy>
     </target>
 
     <target name="build:pa-web" depends="init" unless="exclude.pa-ear">
@@ -523,9 +523,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
             <property name="grid.dorian.url" value="${grid.dorian.url}"/>
-        	<property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
+            <property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
             <property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
-        	<target name="${pa-clean.build.target}"/>
+            <target name="${pa-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-web.build.target}"/>
         </ant>
@@ -554,8 +554,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
             <property name="grid.dorian.url" value="${grid.dorian.url}"/>
-        	<property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
-        	<property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
+            <property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
+            <property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${reg-web.build.target}"/>
@@ -585,8 +585,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <property name="po.topic.clientId" value="${po.topic.clientId}"/>
                 <property name="csm.submitter.group" value="${csm.submitter.group}"/>
                 <property name="grid.dorian.url" value="${grid.dorian.url}"/>
-            	<property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
-            	<property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
+                <property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
+                <property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
                 <target name="${pa-clean.build.target}"/>
                 <target name="${pa-ivy-clean.build.target}"/>
                 <target name="${pa-commons.build.target}"/>
@@ -1402,6 +1402,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <property name="po.port.number" value="${po.port.number}" />
         <property name="jboss.server.hostname" value="${jboss.server.hostname}" />
         <property name="outcomes.url" value="${outcomes.url}" />
+        <property name="outcomes.cds.url" value="${outcomes.cds.url}"/>
+        <property name="outcomes.phr.system.id" value="${outcomes.phr.system.id}"/>
+        <property name="outcomes.auth.service.url" value="${outcomes.auth.service.url}"/>
+        <property name="outcomes.issued.credential.lifetime" value="${outcomes.issued.credential.lifetime}"/>
+        <property name="outcomes.delegation.lifetime" value="${outcomes.delegation.lifetime}"/>
         <property name="gridServicePrincipal" value="${outcomes-grid.jndi.principal}"/>
         <property name="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrypted}"/>
         <property name="po.username" value="${po.username}"/>
