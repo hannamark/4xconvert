@@ -127,7 +127,7 @@ public class DisplayInfoAction extends ActionSupport implements Preparable {
             RegistryUser userInfo = PaRegistry.getRegisterUserService().getUser(user);
             persWebDTO.setFirstName(userInfo.getFirstName());
             persWebDTO.setLastName(userInfo.getLastName());
-            persWebDTO.setEmail(user);
+            persWebDTO.setEmail(userInfo.getEmailAddress());
             persWebDTO.setMiddleName(userInfo.getMiddleName());
             persWebDTO.setCity(userInfo.getCity());
             persWebDTO.setState(userInfo.getState());
@@ -174,7 +174,7 @@ public class DisplayInfoAction extends ActionSupport implements Preparable {
                                     .getUser(studyProtocolQueryDTO.getStudyCheckoutBy());
             persWebDTO.setFirstName(userInfo.getFirstName());
             persWebDTO.setLastName(userInfo.getLastName());
-            persWebDTO.setEmail(studyProtocolQueryDTO.getStudyCheckoutBy());
+            persWebDTO.setEmail(userInfo.getEmailAddress());
             persWebDTO.setMiddleName(userInfo.getMiddleName());
             persWebDTO.setCity(userInfo.getCity());
             persWebDTO.setState(userInfo.getState());

@@ -16,7 +16,7 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
@@ -96,7 +96,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
   @EJB
   ProtocolQueryServiceLocal protocolQueryService;
   @EJB
-  RegistryUserServiceRemote registryUserService;
+  RegistryUserServiceLocal registryUserService;
   @EJB
   CTGovXmlGeneratorServiceRemote ctGovXmlGeneratorService;
   @EJB
@@ -660,16 +660,18 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
   }
 
 
-  private void sendEmail(StudyProtocolQueryDTO spDTO, String body,
-          File[] attachments, String mailSubject) {
+  private void sendEmail(StudyProtocolQueryDTO spDTO, String body, File[] attachments, String mailSubject) {
       String emailSubject = mailSubject;
       emailSubject = emailSubject.replace(leadOrgTrialIdentifier, spDTO.getLocalStudyProtocolIdentifier());
       emailSubject = emailSubject.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
-
-      // Send Message
-      sendMailWithAttachment(spDTO.getUserLastCreated(), //Mail Recipient
-              emailSubject, // Mail Subject
-              body, // Mail Body
-              attachments); // Mail Attachments if any
+      
+      try {
+          //We are making the assumption here that if the user created the trial then they have a registry
+          //account and thus an email address saved in our system - aevansel 05/18/2010.
+          RegistryUser submitter = registryUserService.getUser(spDTO.getUserLastCreated());
+          sendMailWithAttachment(submitter.getEmailAddress(), emailSubject, body, attachments);
+      } catch (PAException e) {
+          LOG.error("Error attempting to send email to " + spDTO.getUserLastCreated(), e);
+      }
   }
- }
+}

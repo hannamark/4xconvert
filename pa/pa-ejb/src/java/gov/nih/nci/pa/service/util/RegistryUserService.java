@@ -82,19 +82,52 @@
  */
 package gov.nih.nci.pa.service.util;
 
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.service.PAException;
 
 /**
  * @author aevansel@5amsolutions.com
  */
-@Stateless
-@Interceptors({ HibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class RegistryUserServiceBean extends RegistryUserBeanLocal implements RegistryUserServiceRemote {
-   
+public interface RegistryUserService {
+    
+    /**
+     * Create a new Registry user.
+     * @param user user
+     * @return user
+     * @throws PAException PAException
+     */
+    RegistryUser createUser(RegistryUser user) throws PAException;
+    
+    /**
+     * Update an existing Registry user.
+     * @param user user
+     * @return user
+     * @throws PAException PAException
+     */
+    RegistryUser updateUser(RegistryUser user) throws PAException;
+    
+    /**
+     * Retrieves user by login name.
+     * @param loginName loginName
+     * @return user
+     * @throws PAException PAException
+     */
+    RegistryUser getUser(String loginName) throws PAException;
+    
+    /**
+     * @param userType of user
+     * @return list of pending user admin 
+     * @throws PAException on error
+     */
+    List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException;
+    
+    /**
+     * @param userId  csm user id
+     * @return user
+     * @throws PAException on error
+     */
+    RegistryUser getUserById(Long userId) throws PAException;
 }

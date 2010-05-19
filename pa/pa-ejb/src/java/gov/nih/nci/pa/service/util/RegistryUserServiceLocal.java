@@ -82,12 +82,12 @@
  */
 package gov.nih.nci.pa.service.util;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
 /**
  * @author aevansel@5amsolutions.com
  */
-@Remote
-public interface RegistryUserServiceRemote extends RegistryUserService {
+@Local
+public interface RegistryUserServiceLocal extends RegistryUserService {
 
 }

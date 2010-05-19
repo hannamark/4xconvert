@@ -40,7 +40,7 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceBean;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -57,7 +57,7 @@ public class MailManagerServiceTest {
     
 	MailManagerBeanLocal bean = new MailManagerBeanLocal();
     ProtocolQueryServiceLocal protocolQrySrv = new ProtocolQueryServiceBean();
-    RegistryUserServiceRemote registryUserSrv = new RegistryUserServiceBean();
+    RegistryUserServiceLocal registryUserSrv = new RegistryUserServiceBean();
     CTGovXmlGeneratorServiceRemote ctGovXmlSrv = new CTGovXmlGeneratorServiceBean ();
     TSRReportGeneratorServiceRemote tsrReptSrv = new TSRReportGeneratorServiceBean();
     LookUpTableServiceRemote lookUpTableSrv = new LookUpTableServiceBean();

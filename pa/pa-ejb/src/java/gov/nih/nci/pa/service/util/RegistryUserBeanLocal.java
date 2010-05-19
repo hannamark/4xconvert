@@ -82,12 +82,139 @@
  */
 package gov.nih.nci.pa.service.util;
 
-import javax.ejb.Remote;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
+
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.security.SecurityServiceProvider;
+import gov.nih.nci.security.UserProvisioningManager;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 /**
  * @author aevansel@5amsolutions.com
  */
-@Remote
-public interface RegistryUserServiceRemote extends RegistryUserService {
+@Stateless
+@Interceptors({ HibernateSessionInterceptor.class })
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
+    private static final Logger LOG = Logger.getLogger(RegistryUserBeanLocal.class);
 
+    /**
+     * {@inheritDoc}
+     */
+    public RegistryUser createUser(RegistryUser user) throws PAException {
+        HibernateUtil.getCurrentSession().saveOrUpdate(user);
+        return user;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public RegistryUser updateUser(RegistryUser user) throws PAException {
+        HibernateUtil.getCurrentSession().saveOrUpdate(user);
+        return user;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public RegistryUser getUser(String loginName) throws PAException {
+        RegistryUser registryUser = null;
+        Session session = null;
+        List<RegistryUser> queryList = new ArrayList<RegistryUser>();
+        try {
+            // /first get the CSM user
+            UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
+            User csmUser = upManager.getUser(loginName);
+
+            // if csm user exists retrieve the registry user
+            if (csmUser != null) {
+                LOG.info(" CSM User ID = " + csmUser.getUserId());
+                session = HibernateUtil.getCurrentSession();
+
+                Query query = null;
+                // HQL query
+                String hql = "select reguser from RegistryUser reguser where reguser.csmUserId = :csmuserId ";
+                LOG.info("query RegistryUser = " + hql);
+
+                // construct query object
+                query = session.createQuery(hql);
+                query.setParameter("csmuserId", csmUser.getUserId());
+                queryList = query.list();
+                // there should only one user with the login name
+                if (queryList != null && !queryList.isEmpty()) {
+                    registryUser = queryList.get(0);
+                }
+            }
+
+        } catch (Exception cse) {
+            LOG.error("CSM Exception while retrieving user: " + loginName, cse);
+            throw new PAException("CSM exception while retrieving user: " + loginName, cse);
+        }
+
+        return registryUser;
+
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public RegistryUser getUserById(Long userId) throws PAException {
+        RegistryUser registryUser = null;
+        Session session;
+        if (userId != null) {
+            try {
+                session = HibernateUtil.getCurrentSession();
+                registryUser = (RegistryUser) session.get(RegistryUser.class, userId);
+            } catch (Exception e) {
+                LOG.error(" CSM Exception while retrieving user with id: " + userId, e);
+                throw new PAException(" CSM exception while retrieving  user with id: " + userId, e);
+            }
+        }
+        return registryUser;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException {
+        if (userType == null) {
+            throw new PAException("UserOrgType cannot be null.");
+        }
+        Session session = null;
+        List<RegistryUser> registryUserList = new ArrayList<RegistryUser>();
+        session = HibernateUtil.getCurrentSession();
+        Criteria criteria = session.createCriteria(RegistryUser.class, "regUser") 
+            .add(Property.forName("regUser.affiliatedOrganizationId").isNotNull())
+            .add(Restrictions.eq("regUser.affiliatedOrgUserType", userType));
+        
+        registryUserList = criteria.list();
+        for (RegistryUser usr : registryUserList) {
+            PAServiceUtils servUtil = new PAServiceUtils();
+            usr.setAffiliateOrg(servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(
+                    String.valueOf(usr.getAffiliatedOrganizationId()))));
+        }
+        return registryUserList;
+    }
 }

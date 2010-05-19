@@ -50,11 +50,10 @@ public class MailManager {
                 new MessageFormat(PaRegistry.getLookUpTableService().getPropertyValue("user.account.body"));
             MessageFormat formatterBodyUrl = new MessageFormat(REG_PROPERTIES.getProperty("register.mail.body.url"));
             
-            // encode the loginName and password and append to the URL before
+            // encode the loginName and append to the URL before
             // sending the e-mail
             EncoderDecoder encodeDecoder = new EncoderDecoder();
-            // added new line characters to fix URL link issues when users type
-            // in special characters in their passwords
+            
             String emailBody = formatterBody.format(params) + "\n\n"
                     + formatterBodyUrl.format(params) + "/registerUseractivate.action?emailAddress="
                     + encodeDecoder.encodeString(mailTo) + "&action=myaccount\n\n";
@@ -72,10 +71,8 @@ public class MailManager {
     public String formatFromAddress() {
         String fromEmailAddress = null;
         try {
-            String fromAddress = PaRegistry.getLookUpTableService().
-                                                   getPropertyValue("fromaddress");
-            fromEmailAddress = new MessageFormat(fromAddress).
-                                        format(new String[] {fromAddress });
+            String fromAddress = PaRegistry.getLookUpTableService().getPropertyValue("fromaddress");
+            fromEmailAddress = new MessageFormat(fromAddress).format(new String[] {fromAddress });
         } catch (PAException e) {
             LOG.error("Error retrieving, from mail address from database for Subission e-mail", e);
         }

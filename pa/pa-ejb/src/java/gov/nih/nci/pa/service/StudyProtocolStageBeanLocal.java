@@ -24,7 +24,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -63,7 +63,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
     @EJB
     LookUpTableServiceRemote lookUpTableService = null;
     @EJB
-    RegistryUserServiceRemote registryUserService = null;
+    RegistryUserServiceLocal registryUserServiceLocal = null;
     
     /**
      * @param dto dto
@@ -365,7 +365,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
                 title = StConverter.convertToString(spDTO.getOfficialTitle());
             }
             submissionMailBody = submissionMailBody.replace("${trialTitle}", title);
-            RegistryUser registryUser = registryUserService.getUser(
+            RegistryUser registryUser = registryUserServiceLocal.getUser(
                     StConverter.convertToString(spDTO.getUserLastCreated()));
             submissionMailBody = submissionMailBody.replace("${SubmitterName}",
                  registryUser.getFirstName() + " " + registryUser.getLastName());
