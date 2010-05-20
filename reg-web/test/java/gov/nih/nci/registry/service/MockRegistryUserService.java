@@ -23,6 +23,15 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
         dto.setFirstName("firstName");
         dto.setLastName("lastName");
         dto.setId(1L);
+        dto.setAffiliatedOrganizationId(1L);
+        dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        userList.add(dto);
+        dto = new RegistryUser();
+        dto.setFirstName("affiliated Org");
+        dto.setLastName("lastName");
+        dto.setId(2L);
+        dto.setAffiliatedOrganizationId(2L);
+        dto.setAffiliatedOrgUserType(UserOrgType.ADMIN);
         userList.add(dto);
     }
     /* (non-Javadoc)
@@ -70,4 +79,16 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public List<RegistryUser> search(RegistryUser regUser) throws PAException {
+       List<RegistryUser> returnList = new ArrayList<RegistryUser>();
+       for(RegistryUser usrDto :userList){
+            if(usrDto.getAffiliatedOrganizationId().equals(regUser.getAffiliatedOrganizationId())
+                 && usrDto.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)){
+                 returnList.add(usrDto);
+            }
+        }
+		return returnList;
+	}
+
 }

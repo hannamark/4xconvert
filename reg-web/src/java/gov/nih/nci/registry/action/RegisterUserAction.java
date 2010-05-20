@@ -3,10 +3,9 @@
  */
 package gov.nih.nci.registry.action;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.GridAccountServiceBean;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
@@ -20,7 +19,12 @@ import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.cgmm.constants.CGMMConstants;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.validator.ClassValidator;
@@ -96,6 +100,9 @@ public class RegisterUserAction extends ActionSupport {
         if (registryUser != null) {
             registryUserWebDTO = new RegistryUserWebDTO(registryUser, csmUser == null ? "" : csmUser.getLoginName(), 
                     csmUser == null ? "" : csmUser.getPassword());
+            if (registryUser.getAffiliatedOrganizationId() != null) {
+                loadAdminUsers(registryUser.getAffiliatedOrganizationId());
+            }
         } else {
             registryUserWebDTO.setEmailAddress(decodedEmailAddress);
         }
@@ -114,7 +121,6 @@ public class RegisterUserAction extends ActionSupport {
         if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
             return "show_Disclaimer_Page";
         }
-
         String loginName = null;
         RegistryUser registryUser = null;
         User csmUser = null;
@@ -130,6 +136,13 @@ public class RegisterUserAction extends ActionSupport {
         
         if (registryUser != null && csmUser != null) {
             registryUserWebDTO = new RegistryUserWebDTO(registryUser, loginName, csmUser.getPassword());
+            if (registryUser.getAffiliatedOrganizationId() != null
+                 && registryUser.getAffiliatedOrgUserType() != null 
+                 && !(registryUser.getAffiliatedOrgUserType().equals(UserOrgType.PENDING_ADMIN)
+                         || registryUser.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN))) {
+                loadAdminUsers(registryUser.getAffiliatedOrganizationId());
+            }
+            
         }
         
         // show the My Account page
@@ -147,6 +160,9 @@ public class RegisterUserAction extends ActionSupport {
         validateForm(true, registryUserWebDTO.getId() != null);
         
         if (hasFieldErrors()) {
+             if (registryUserWebDTO.getAffiliatedOrganizationId() != null) {
+                 loadAdminUsers(registryUserWebDTO.getAffiliatedOrganizationId());
+             }
             return Constants.MY_ACCOUNT_ERROR;
         }
 
@@ -158,7 +174,11 @@ public class RegisterUserAction extends ActionSupport {
            LOG.error("ERROR COPYING PROPERTIES.", e);
            return Constants.APPLICATION_ERROR;
         }
-        
+        if (registryUserWebDTO.isRequestAdminAccess()) {
+            registryUser.setAffiliatedOrgUserType(UserOrgType.PENDING_ADMIN);
+        } else {
+            registryUser.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        }
         // check if it's  update action
         if (registryUser.getId() != null && registryUser.getId() != 0) {
             String loginName =  ServletActionContext.getRequest().getRemoteUser();
@@ -364,8 +384,7 @@ public class RegisterUserAction extends ActionSupport {
     public void setUserAction(String userAction) {
         this.userAction = userAction;
     }
-    
-    /**
+/**
      * @return the identity providers
      */
     public Map<String, String> getIdentityProviders() {
@@ -392,5 +411,27 @@ public class RegisterUserAction extends ActionSupport {
     public void setSelectedIdentityProvider(String selectedIdentityProvider) {
         this.selectedIdentityProvider = selectedIdentityProvider;
     }
-
+    /**
+     * @return s
+     */
+    public String loadAdminUsers() {
+        String affOrgId = ServletActionContext.getRequest().getParameter("affiliatedOrgId");
+        ServletActionContext.getRequest().getSession().removeAttribute("adminUsers");
+        if (StringUtils.isNotEmpty(affOrgId)) {
+            loadAdminUsers(Long.parseLong(affOrgId));
+        }
+        return "viewAdminUser";
+    }
+    private void loadAdminUsers(Long affOrgId) {
+        RegistryUser criteriaUser = new RegistryUser();
+        criteriaUser.setAffiliatedOrgUserType(UserOrgType.ADMIN);
+        criteriaUser.setAffiliatedOrganizationId(affOrgId);
+        try {
+             List<RegistryUser> adminUsers = PaRegistry.getRegisterUserService().search(criteriaUser);
+             ServletActionContext.getRequest().getSession().setAttribute("adminUsers", adminUsers);
+             ServletActionContext.getRequest().setAttribute("orgSelected", affOrgId);
+        } catch (PAException e) {
+            LOG.error(e.getMessage());
+        }
+    }
 }

@@ -130,4 +130,11 @@ public interface RegistryUserService {
      * @throws PAException on error
      */
     RegistryUser getUserById(Long userId) throws PAException;
+    /**
+     * 
+     * @param regUser user
+     * @return list of user
+     * @throws PAException on error
+     */
+    List<RegistryUser> search(RegistryUser regUser) throws PAException;
 }

@@ -6,11 +6,18 @@ package gov.nih.nci.registry.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
+import java.util.List;
+
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
+import gov.nih.nci.registry.service.MockCSMUserService;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
@@ -22,6 +29,11 @@ import com.mockrunner.mock.web.MockHttpSession;
  */
 public class RegisterUserActionTest extends AbstractRegWebTest{
         private RegisterUserAction action;
+        @Before
+        public void setup() {
+            CSMUserService.getInstance();
+            CSMUserService.setRegistryUserService(new MockCSMUserService());
+        }
         @Test 
         public void testUserActionProperty(){
             action = new RegisterUserAction();
@@ -99,7 +111,18 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             request.setRemoteUser("firstName");
             request.setSession(sess);
             ServletActionContext.setRequest(request);
-            assertEquals("applicationError", action.showMyAccount());
+            assertEquals("myAccount", action.showMyAccount());
+            List<RegistryUser> lst = (List<RegistryUser>) sess.getAttribute("adminUsers");
+            assertEquals(0, lst.size());
+            request = new MockHttpServletRequest();
+            sess = new MockHttpSession();
+            sess.setAttribute("disclaimer", "accept");
+            request.setRemoteUser("affiliated Org");
+            request.setSession(sess);
+            ServletActionContext.setRequest(request);
+            assertEquals("myAccount", action.showMyAccount());
+            lst = (List<RegistryUser>) sess.getAttribute("adminUsers");
+            assertNull(lst);
         }
         @Test
         public void testUpdateAccount(){
@@ -119,10 +142,9 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             registryUserWebDTO.setState("None");
             registryUserWebDTO.setCountry("country");
             registryUserWebDTO.setPhone("phone");
-            registryUserWebDTO.setAffiliateOrg("affiliateOrg");
             registryUserWebDTO.setAffiliatedOrganizationId(2L);
             action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("applicationError", action.updateAccount());
+            assertEquals("myAccountError", action.updateAccount());
         }
         @Test
         public void testUpdateAccountExitsingAcc(){

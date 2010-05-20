@@ -82,21 +82,6 @@
  */
 package gov.nih.nci.pa.service.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
-
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -107,12 +92,29 @@ import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
+
 /**
  * @author aevansel@5amsolutions.com
  */
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final Logger LOG = Logger.getLogger(RegistryUserBeanLocal.class);
 
@@ -129,7 +131,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     public RegistryUser updateUser(RegistryUser user) throws PAException {
-        HibernateUtil.getCurrentSession().saveOrUpdate(user);
+        HibernateUtil.getCurrentSession().merge(user);
         return user;
     }
 
@@ -217,4 +219,50 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         }
         return registryUserList;
     }
+    /**
+     * 
+     * @param regUser user
+     * @return list of user
+     * @throws PAException on error
+     */
+    public List<RegistryUser> search(RegistryUser regUser) throws PAException {
+        Session session = null;
+        List<RegistryUser> registryUserList = new ArrayList<RegistryUser>();
+        session = HibernateUtil.getCurrentSession();
+        Criteria criteria = session.createCriteria(RegistryUser.class, "regUser");
+        if (regUser != null) {
+            if (regUser.getAffiliatedOrgUserType() != null 
+                    && StringUtils.isNotEmpty(regUser.getAffiliatedOrgUserType().getCode())) {
+                criteria.add(Restrictions.eq("regUser.affiliatedOrgUserType",
+                        regUser.getAffiliatedOrgUserType()));
+            }
+            if (regUser.getAffiliatedOrganizationId() != null) {
+                criteria.add(Restrictions.eq("regUser.affiliatedOrganizationId",
+                        regUser.getAffiliatedOrganizationId()));
+            }
+            if (regUser.getPoOrganizationId() != null) {
+                criteria.add(Restrictions.eq("regUser.poOrganizationId",
+                        regUser.getPoOrganizationId()));
+            }
+            if (regUser.getPoPersonId() != null) {
+                criteria.add(Restrictions.eq("regUser.poPersonId",
+                        regUser.getPoPersonId()));
+            }
+            if (regUser.getCsmUserId() != null) {
+                criteria.add(Restrictions.eq("regUser.csmUserId",
+                        regUser.getCsmUserId()));
+            }
+            if (StringUtils.isNotEmpty(regUser.getEmailAddress())) {
+                criteria.add(Restrictions.eq("regUser.emailAddress",
+                        regUser.getEmailAddress()));
+            }
+            if (StringUtils.isNotEmpty(regUser.getPrsOrgName())) {
+                criteria.add(Restrictions.eq("regUser.prsOrgName",
+                        regUser.getPrsOrgName()));
+            }
+        }
+        registryUserList = criteria.list();
+        return registryUserList;
+    }
+
 }

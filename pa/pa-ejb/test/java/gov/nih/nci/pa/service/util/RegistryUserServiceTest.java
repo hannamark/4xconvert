@@ -82,7 +82,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.MockPoServiceLocator;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -100,6 +105,7 @@ public class RegistryUserServiceTest {
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
+        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }
 
     @Test
@@ -117,7 +123,23 @@ public class RegistryUserServiceTest {
         RegistryUser saved = remoteEjb.updateUser(create);
         assertRegistryUser(create , saved);
     }
-
+    @Test
+    public void getUserById() throws PAException {
+        RegistryUser usr = remoteEjb.getUserById(1L);
+        assertNotNull(usr);
+    }
+    @Test
+    public void getUserByUserOrgType() throws PAException {
+        List<RegistryUser> usrLst = remoteEjb.getUserByUserOrgType(UserOrgType.PENDING_ADMIN);
+        assertEquals(0, usrLst.size());
+        usrLst = remoteEjb.getUserByUserOrgType(UserOrgType.ADMIN);
+        assertEquals(2, usrLst.size());
+    }
+    @Test
+    public void search() throws PAException{
+        List<RegistryUser> usrLst = remoteEjb.search(new RegistryUser());
+        assertNotNull(usrLst);
+    }
     private RegistryUser createRegisterUserObj() {
         RegistryUser create = new RegistryUser();
         create.setAddressLine("xxxxx");

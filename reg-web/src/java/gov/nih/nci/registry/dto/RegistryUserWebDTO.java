@@ -36,7 +36,7 @@ public class RegistryUserWebDTO {
     private String oldPassword;
     private boolean hasExistingGridAccount = false;
     private Long affiliatedOrganizationId;
-        
+    private boolean requestAdminAccess;
     /**
      * 
      * @param registryUser registryUser
@@ -380,5 +380,19 @@ public class RegistryUserWebDTO {
      */
      public void setAffiliatedOrganizationId(Long affiliatedOrganizationId) {
         this.affiliatedOrganizationId = affiliatedOrganizationId;
+     }
+
+     /**
+      * @param requestAdminAccess the requestAdminAccess to set
+      */
+     public void setRequestAdminAccess(boolean requestAdminAccess) {
+         this.requestAdminAccess = requestAdminAccess;
+     }
+
+     /**
+      * @return the requestAdminAccess
+      */
+     public boolean isRequestAdminAccess() {
+         return requestAdminAccess;
      }
 }

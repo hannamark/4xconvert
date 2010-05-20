@@ -30,9 +30,18 @@ function handleAction(){
 function lookupAffiliateOrg(){
    showPopWinOutsideContext('${lookupOrgUrl}', 900, 400, loadAffliatedOrgDiv, 'Select Affiliated Organization');
 }
-function loadAffliatedOrgDiv() { 
+function loadAffliatedOrgDiv() {
     document.getElementById('registryUserWebDTO.affiliatedOrganizationId').value = orgid;
     document.getElementById('registryUserWebDTO.affiliateOrg').value = chosenname;
+    var  url = '/registry/ajaxUsersloadAdminUsers.action?affiliatedOrgId='+orgid;    
+    var div = document.getElementById('adminAccessDiv');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+    var aj = new Ajax.Updater(div, url, {
+        asynchronous: true,
+        method: 'get',
+        evalScripts: false
+    });
+    return false;
 }
 </SCRIPT>
 <body>
@@ -325,6 +334,13 @@ function loadAffliatedOrgDiv() {
                           </s:fielderror>                            
                         </span>
                        </td>                                      
+                  </tr>
+                  <tr>
+                        <td colspan="2" class="space">  
+                            <div id="adminAccessDiv">
+                                <%@ include file="/WEB-INF/jsp/nodecorate/adminUsers.jsp" %>
+                            </div>
+                        </td>
                   </tr>
                   <tr>
                         <td scope="row" class="label">
