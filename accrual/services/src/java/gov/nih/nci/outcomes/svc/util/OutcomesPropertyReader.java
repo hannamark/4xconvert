@@ -156,6 +156,10 @@ public class OutcomesPropertyReader {
         return  convertToInt(getProperty(DELEGATION_LIFETIME));
     }  
    
+    /**
+     * 
+     * @return the system URL
+     */
     public static String getSystemUrl() {
         return getProperty(OUTCOMES_URL);
     }
