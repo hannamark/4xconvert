@@ -107,16 +107,29 @@ public class RegisterAction extends AccountSupportAction implements Preparable {
 
     private UserAccountWebDto userAccount = new UserAccountWebDto();
     private AccountActions userAction = null;
+    private String credential;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void prepare() {
-        super.prepare();
         getUserAccount().setIdentity(StConverter.convertToSt(getUserDN()));
+        //intialize the password before EJB initializes
+        getPassword();
+        super.prepare();
     }
-
+    
+    /**
+     * @return the authenticated user's Grid Identity Credential
+     */
+    protected String getPassword() {
+        if (credential == null) {
+            credential = org.jboss.security.SecurityAssociation.getCredential().toString();
+        }
+        return credential; 
+    }
+    
     /**
      * @return the authenicated user's Grid Identity DN
      */

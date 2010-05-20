@@ -1,8 +1,11 @@
 package gov.nih.nci.accrual.outweb.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+
+import java.util.List;
 
 /**
  * @author Vrushali
@@ -10,19 +13,19 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
  */
 public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote {
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#createUser(gov.nih.nci.pa.domain.RegistryUser)
+    /**
+     * {@inheritDoc}
      */
     public RegistryUser createUser(RegistryUser user) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#getUser(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public RegistryUser getUser(String loginName) throws PAException {
-        if(loginName != null && loginName.equals("exceptionName")){
+        if (loginName != null && loginName.equals("exceptionName")) {
             throw new PAException("test");
         }
         RegistryUser regUser = new RegistryUser();
@@ -34,11 +37,25 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote 
         return regUser;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#updateUser(gov.nih.nci.pa.domain.RegistryUser)
+    /**
+     * {@inheritDoc}
      */
     public RegistryUser updateUser(RegistryUser user) throws PAException {
         // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public RegistryUser getUserById(Long userId) throws PAException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException {
         return null;
     }
 

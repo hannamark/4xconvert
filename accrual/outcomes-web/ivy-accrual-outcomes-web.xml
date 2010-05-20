@@ -53,11 +53,12 @@
     <dependency org="jboss"                  name="jbosssx"                    rev="4.0.5.GA"        conf="compile->runtime"/>
 
     <!-- test -->
+    <dependency org="jboss"                  name="jboss-common-client"     rev="3.2.3"           conf="test->master"/>
     <dependency org="jboss"                  name="jboss-ejb3x"             rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="jboss"                  name="jboss-jaxrpc"            rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->master"/>
     <dependency org="mockrunner"             name="mockrunner"              rev="0.4.1"           conf="test->master"/>
-    <dependency org="ncicb"                  name="pa-commons"              rev="3.2.0m11-b1"    conf="test->test"/>
+    <dependency org="ncicb"                  name="pa-commons"              rev="3.2.0m11-b1"     conf="test->test"/>
 
     <!-- other test targets -->
     <dependency org="checkstyle"             name="checkstyle-all"          rev="4.4"             conf="test-checkstyle->runtime"/>

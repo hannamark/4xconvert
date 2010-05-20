@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.accrual.outweb.action;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import gov.nih.nci.accrual.outweb.dto.util.PhysicianWebDTO;
 import gov.nih.nci.accrual.outweb.dto.util.TreatmentSiteWebDTO;
 import gov.nih.nci.accrual.outweb.dto.util.UserAccountWebDto;
@@ -107,6 +107,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
     UserAccountWebDto userAccount;
     TreatmentSiteWebDTO treatmentSiteSearchCriteria = new TreatmentSiteWebDTO();
     PhysicianWebDTO physicianSearchCriteria = new PhysicianWebDTO();
+    private static final String TEST_PASSWORD = "Coppa#12345";
 
     @Before
     public void initAction() throws Exception {
@@ -128,13 +129,14 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
              */
             @Override
             protected String getPassword() {
-                return "Coppa#12345";
+                return TEST_PASSWORD;
             }
         };
         action.prepare();
         userAccount = new UserAccountWebDto();
         action.setPhysicianSearchCriteria(physicianSearchCriteria);
         action.setTreatmentSiteSearchCriteria(treatmentSiteSearchCriteria);
+        assertSame(TEST_PASSWORD, action.getPassword());
     }
 
     @Test
@@ -145,7 +147,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
         request.setupAddParameter("email", "cGFzc3dvcmQ=");
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        assertEquals("redirectToLogoutThenLogin", action.activate());
+        assertSame("redirectToLogoutThenLogin", action.activate());
     }
 
     // @Test
@@ -156,7 +158,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
         request.setupAddParameter("email", "cGFzc3dvcmQ=");
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        assertEquals("error", action.activate());
+        assertSame("error", action.activate());
     }
 
     @Test
@@ -167,7 +169,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
         request.setupAddParameter("email", "cGFzc3dvcmQ=");
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        assertEquals("redirectToLogoutThenLogin", action.activate());
+        assertSame("redirectToLogoutThenLogin", action.activate());
     }
 
     // IllegalArgumentException on Hudson
@@ -205,20 +207,20 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
         userAccount.setCountry(StConverter.convertToSt("USA"));
         userAccount.setPhone(StConverter.convertToSt("phone"));
         action.setUserAccount(userAccount);
-        assertEquals("start", action.request());
+        assertSame("start", action.request());
     }
 
     @Test
     public void testRequestAccountException2() {
         action.setUserAccount(userAccount);
-        assertEquals("start", action.request());
+        assertSame("start", action.request());
     }
 
     @Test
     public void testRequestAccountException3() {
         userAccount.setIdentity(StConverter.convertToSt("test"));
         action.setUserAccount(userAccount);
-        assertEquals("start", action.request());
+        assertSame("start", action.request());
     }
 
     @Test
@@ -233,7 +235,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
         userAccount.setPhysicianIdentifier(IiConverter.convertToIi("physicianID"));
         userAccount.setTreatmentSiteIdentifier(IiConverter.convertToIi("treatmentSiteID"));
         action.setUserAccount(userAccount);
-        assertEquals("activate", action.create());
+        assertSame("activate", action.create());
     }
 
     @Test
@@ -245,7 +247,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
         userAccount.setCountry(StConverter.convertToSt("USA"));
         userAccount.setPhone(StConverter.convertToSt("phone"));
         action.setUserAccount(userAccount);
-        assertEquals("activate", action.create());
+        assertSame("activate", action.create());
     }
 
     @Test
@@ -263,6 +265,6 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
         userAccount.setPhysicianIdentifier(IiConverter.convertToIi("PO PERSON ID 01"));
         userAccount.setIdentifier(IiConverter.convertToIi("1"));
         action.setUserAccount(userAccount);
-        assertEquals("activate", action.create());
+        assertSame("activate", action.create());
     }
 }

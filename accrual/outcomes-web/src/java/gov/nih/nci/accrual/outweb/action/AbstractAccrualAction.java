@@ -158,23 +158,12 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     /** PHRConnectorSvc. */
     protected PHRConnectorSvcLocal phrService;
 
-    private String credential;
-    /**
-     * @return the authenticated user's Grid Identity Credential
-     */
-    protected String getPassword() {
-        if (credential == null) {
-            credential = org.jboss.security.SecurityAssociation.getCredential().toString();
-        }
-        return credential; 
-    }
+
 
     /**
      * {@inheritDoc}
      */
     public void prepare() {
-        getPassword();
-        
         searchTrialSvc = AccrualServiceLocator.getInstance().getSearchTrialService();
         searchStudySiteSvc = AccrualServiceLocator.getInstance().getSearchStudySiteService();
         studySubjectSvc = AccrualServiceLocator.getInstance().getStudySubjectService();
@@ -193,6 +182,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         outcomesSvc = AccrualServiceLocator.getInstance().getOutcomesSvc();
         phrService = AccrualServiceLocator.getInstance().getPHRConnectorService();
     }
+
     /**
      * Default execute method for action classes.
      * @return action result
