@@ -113,5 +113,11 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote 
     public List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException {
         return null;
     }
+	 /**
+     * {@inheritDoc}
+     */
+    public List<RegistryUser> search(RegistryUser user) throws PAException {
+        return null;
+    }
 
 }
