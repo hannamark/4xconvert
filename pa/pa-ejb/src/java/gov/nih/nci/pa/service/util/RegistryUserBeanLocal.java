@@ -83,6 +83,9 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -135,7 +138,38 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return user;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException {
+        RegistryUser myUser = getUser(loginName);
+        // first check that the user isn't already a trial owner
+        for (StudyProtocol sp : myUser.getStudyProtocols()) {
+            if (sp.getId().equals(studyProtocolId)) {
+                return true;
+            }
+        }
+        
+        // check that the user is an admin of something in at all
+        if (!myUser.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)) {
+            return false;
+        }
+        
+        // second check that the user isn't the lead org admin
+        Session session = null;
+        session = HibernateUtil.getCurrentSession();
+        StudyProtocol spObj = (StudyProtocol) session.get(StudyProtocol.class, studyProtocolId); 
+        
+        for (StudySite sSites : spObj.getStudySites()) {
+            if (sSites.getFunctionalCode().equals(StudySiteFunctionalCode.LEAD_ORGANIZATION) 
+                    && sSites.getResearchOrganization().getOrganization()
+                    .getId().equals(myUser.getAffiliatedOrganizationId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -264,5 +298,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         registryUserList = criteria.list();
         return registryUserList;
     }
+    
+    
 
 }

@@ -137,4 +137,14 @@ public interface RegistryUserService {
      * @throws PAException on error
      */
     List<RegistryUser> search(RegistryUser regUser) throws PAException;
+    
+    /**
+     * Given a login name and study protocol id, find out if the user is
+     * either a trial owner or the admin for the lead org.
+     * @param loginName user name  
+     * @param studyProtocolId id
+     * @return boolean
+     * @throws PAException exception
+     */
+    boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException;
 }
