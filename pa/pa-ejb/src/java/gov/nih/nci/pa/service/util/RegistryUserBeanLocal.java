@@ -156,9 +156,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         }
         
         // second check that the user isn't the lead org admin
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
-        StudyProtocol spObj = (StudyProtocol) session.get(StudyProtocol.class, studyProtocolId); 
+        StudyProtocol spObj = (StudyProtocol) HibernateUtil
+            .getCurrentSession().get(StudyProtocol.class, studyProtocolId); 
         
         for (StudySite sSites : spObj.getStudySites()) {
             if (sSites.getFunctionalCode().equals(StudySiteFunctionalCode.LEAD_ORGANIZATION) 

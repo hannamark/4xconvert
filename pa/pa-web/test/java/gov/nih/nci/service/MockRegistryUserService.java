@@ -97,4 +97,12 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserService#hasTrialAccess(java.lang.String, java.lang.Long)
+     */
+    public boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
