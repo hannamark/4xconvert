@@ -103,8 +103,6 @@ import com.opensymphony.xwork2.ActionSupport;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-@SuppressWarnings("PMD")
-
 public class AbstractionCompletionAction extends ActionSupport implements ServletResponseAware {
 
     private static final long serialVersionUID = 3504378270162991585L;
@@ -114,15 +112,13 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
     private static final String DISPLAY_XML = "displayXML";
     private HttpServletResponse servletResponse;
     private static final String TSR = "TSR_";
-    private static final String HTML = ".html";
-    private static final String WORD = ".doc";
     private static final String EXTENSION_PDF = ".pdf";
 
     /**
     * @return result
     */
     public String query() {
-        LOG.info("Entering query");
+        LOG.debug("Entering query");
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
