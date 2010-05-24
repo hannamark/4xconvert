@@ -79,16 +79,27 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.util.TestRegistryUserSchema;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -99,12 +110,50 @@ import org.junit.Test;
  */
 public class RegistryUserServiceTest {
 
-    private RegistryUserServiceBean bean = new RegistryUserServiceBean();
-    private RegistryUserServiceRemote remoteEjb = bean;
+    private class MockRegistryUserServiceBean extends RegistryUserServiceBean {
+        /**
+         * {@inheritDoc}
+         */
+        @SuppressWarnings("unchecked")
+        @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+        public RegistryUser getUser(String loginName) throws PAException {
+            RegistryUser registryUser = null;
+            Session session = HibernateUtil.getCurrentSession();
+
+            List<RegistryUser> queryList = new ArrayList<RegistryUser>();
+            try {
+                // /first get the CSM user through non csm means.
+                Criteria criteria = session.createCriteria(User.class, "csmUser");
+                criteria.add(Restrictions.eq("csmUser.loginName",
+                        loginName));
+                List<User> csmUsers =  criteria.list();
+                
+                User csmUser = csmUsers.get(csmUsers.size() - 1);
+                // if csm user exists retrieve the registry user
+                if (csmUser != null) {
+                    Criteria criteria2 = session.createCriteria(RegistryUser.class, "regUser");
+                    criteria2.add(Restrictions.eq("regUser.csmUserId",
+                            csmUser.getUserId()));
+                    List<RegistryUser> regUsers =  criteria2.list();
+                    return regUsers.get(0);
+                }
+
+            } catch (Exception cse) {
+                throw new PAException("CSM exception while retrieving user: " + loginName, cse);
+            }
+
+            return registryUser;
+
+        }
+    }
+    
+    private RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
 
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset();
+        TestRegistryUserSchema.reset();
+        TestRegistryUserSchema.reset1(); 
+        TestRegistryUserSchema.primeData();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }
 
@@ -125,7 +174,7 @@ public class RegistryUserServiceTest {
     }
     @Test
     public void getUserById() throws PAException {
-        RegistryUser usr = remoteEjb.getUserById(1L);
+        RegistryUser usr = remoteEjb.getUserById(TestRegistryUserSchema.randomUserId);
         assertNotNull(usr);
     }
     @Test
@@ -133,8 +182,18 @@ public class RegistryUserServiceTest {
         List<RegistryUser> usrLst = remoteEjb.getUserByUserOrgType(UserOrgType.PENDING_ADMIN);
         assertEquals(0, usrLst.size());
         usrLst = remoteEjb.getUserByUserOrgType(UserOrgType.ADMIN);
-        assertEquals(2, usrLst.size());
+        assertEquals(6, usrLst.size());
     }
+   
+    @Test
+    public void hasTrialAccess() throws PAException {
+        Long spId = TestRegistryUserSchema.studyProtocolId;
+        assertTrue(remoteEjb.hasTrialAccess("leadOrgAdminTest", spId));
+        assertTrue(remoteEjb.hasTrialAccess("trialOwnerTest", spId));
+        assertFalse(remoteEjb.hasTrialAccess("randomUserTest", spId));
+    }
+    
+    
     @Test
     public void search() throws PAException{
         List<RegistryUser> usrLst = remoteEjb.search(new RegistryUser());

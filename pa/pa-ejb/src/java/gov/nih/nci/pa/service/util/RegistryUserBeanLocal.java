@@ -143,15 +143,23 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      */
     public boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException {
         RegistryUser myUser = getUser(loginName);
+
+        if (myUser == null) {
+            throw new PAException("Could not find user: " + loginName);
+        }
+        
         // first check that the user isn't already a trial owner
-        for (StudyProtocol sp : myUser.getStudyProtocols()) {
-            if (sp.getId().equals(studyProtocolId)) {
-                return true;
+        if (myUser.getStudyProtocols() != null) {
+            for (StudyProtocol sp : myUser.getStudyProtocols()) {
+                if (sp.getId().equals(studyProtocolId)) {
+                    return true;
+                }
             }
         }
         
         // check that the user is an admin of something in at all
-        if (!myUser.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)) {
+        if (myUser.getAffiliatedOrgUserType() == null 
+                || !myUser.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)) {
             return false;
         }
         
@@ -159,11 +167,13 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         StudyProtocol spObj = (StudyProtocol) HibernateUtil
             .getCurrentSession().get(StudyProtocol.class, studyProtocolId); 
         
-        for (StudySite sSites : spObj.getStudySites()) {
-            if (sSites.getFunctionalCode().equals(StudySiteFunctionalCode.LEAD_ORGANIZATION) 
-                    && sSites.getResearchOrganization().getOrganization()
-                    .getId().equals(myUser.getAffiliatedOrganizationId())) {
-                return true;
+        if (spObj.getStudySites() != null) {
+            for (StudySite sSites : spObj.getStudySites()) {
+                if (sSites.getFunctionalCode().equals(StudySiteFunctionalCode.LEAD_ORGANIZATION) 
+                        && sSites.getResearchOrganization().getOrganization()
+                        .getId().equals(myUser.getAffiliatedOrganizationId())) {
+                    return true;
+                }
             }
         }
         return false;
