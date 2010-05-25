@@ -21,8 +21,6 @@ public class CSMSyncListener implements ServletContextListener {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(CSMSyncListener.class);
     private static Properties properties = new Properties();
-    private Thread t;
-    private RemoteGroupManager groupManager;
 
     /**
      * {@inheritDoc}
@@ -47,9 +45,10 @@ public class CSMSyncListener implements ServletContextListener {
                 Long.parseLong(properties.getProperty("csm.remote.group.sync.seconds")));
         props.setDatabaseProperties(dbProps);
         try {
-            groupManager = new RemoteGroupManager(new AuthorizationManagerFactory(props), props, 
+            RemoteGroupManager groupManager = new RemoteGroupManager(new AuthorizationManagerFactory(props), props, 
                     new GridGrouperRemoteGroupSynchronizer());
-            t = new Thread(groupManager);
+            Thread t = new Thread(groupManager);
+            t.setDaemon(true);
             t.start();
             LOG.info("CSM Sync Thread sucessfully started.");
         } catch (Exception e) {
@@ -61,12 +60,6 @@ public class CSMSyncListener implements ServletContextListener {
      * {@inheritDoc}
      */
     public void contextDestroyed(ServletContextEvent arg) {
-        try {
-            groupManager.shutdown();
-            t.interrupt();
-            LOG.info("CSM Sync Thread sucessfully shut down.");
-        } catch (Exception e) {
-            LOG.error("Error shutting down CSM Sync Thread.");
-        }
+      //NOTE: Not killing the thread here since it causes errors when trying to shutdown the jvm.
     }
 }
