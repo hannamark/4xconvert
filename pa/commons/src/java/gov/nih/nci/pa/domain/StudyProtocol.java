@@ -100,15 +100,10 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.NotNull;
@@ -1060,14 +1055,8 @@ public class StudyProtocol extends AbstractEntity {
     /**
      * @return the studyOwners
      */
-    @ManyToMany
-    @JoinTable(name = "study_owner",
-               joinColumns = @JoinColumn(name = "user_id"),
-               inverseJoinColumns = @JoinColumn(name = "study_id"))
-    @ForeignKey(name = "FK_STUDY_OWNER_STUDY",
-                inverseName = "FK_STUDY_OWNER_USER")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    public Set<RegistryUser> getStudyOwners() {
+     @ManyToMany(mappedBy = "studyProtocols", targetEntity = RegistryUser.class)
+     public Set<RegistryUser> getStudyOwners() {
         return studyOwners;
     }
 

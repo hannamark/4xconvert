@@ -134,18 +134,28 @@ public class MockCorrelationUtils implements CorrelationUtilsRemote {
             }
         }
         if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            orgDto.setCity("city");
-            orgDto.setCountryName("countryName");
-            orgDto.setName("name");
-            orgDto.setPostalCode("postalCode");
+            getOrgDto(orgDto);
         }
         if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            orgDto.setCity("city");
-            orgDto.setCountryName("countryName");
-            orgDto.setName("name");
-            orgDto.setPostalCode("postalCode");
+            getOrgDto(orgDto);
+        }
+        if (IiConverter.ORG_PA_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            orgDto = new Organization();
+            orgDto.setIdentifier("1");
+            getOrgDto(orgDto);
         }
         return orgDto;
+    }
+
+
+    /**
+     * @param orgDto
+     */
+    private void getOrgDto(Organization orgDto) {
+        orgDto.setCity("city");
+        orgDto.setCountryName("countryName");
+        orgDto.setName("name");
+        orgDto.setPostalCode("postalCode");
     }
 
     public Person getPAPersonByIi(Ii isoIi) throws PAException {

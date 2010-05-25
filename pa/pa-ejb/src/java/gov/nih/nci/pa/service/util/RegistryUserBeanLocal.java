@@ -143,11 +143,18 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      */
     public boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException {
         RegistryUser myUser = getUser(loginName);
+        return hasTrialAccess(myUser, studyProtocolId);
+    }
 
-        if (myUser == null) {
-            throw new PAException("Could not find user: " + loginName);
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException {
+        if (user == null || user.getId() == null) {
+            throw new PAException("Could not find user: ");
         }
-        
+        RegistryUser myUser = getUserById(user.getId());
         // first check that the user isn't already a trial owner
         if (myUser.getStudyProtocols() != null) {
             for (StudyProtocol sp : myUser.getStudyProtocols()) {

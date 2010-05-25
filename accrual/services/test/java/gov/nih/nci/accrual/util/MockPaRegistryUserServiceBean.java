@@ -127,5 +127,11 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote 
        
         return false;
     }
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException {
+        return false;
+    }
 
 }

@@ -94,13 +94,22 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
      */
     public List<RegistryUser> search(RegistryUser regUser) throws PAException {
         // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<RegistryUser>();
     }
 
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.RegistryUserService#hasTrialAccess(java.lang.String, java.lang.Long)
      */
     public boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserService#hasTrialAccess(gov.nih.nci.pa.domain.RegistryUser, java.lang.Long)
+     */
+    public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId)
+            throws PAException {
         // TODO Auto-generated method stub
         return false;
     }

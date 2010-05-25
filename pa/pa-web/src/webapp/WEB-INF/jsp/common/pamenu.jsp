@@ -77,9 +77,7 @@
 						</c:otherwise>
 					</c:choose>
                      <li><a href="#" onclick="generateTSRWord();" >View TSR</a></li>
-                     <c:if test="${(sessionScope.role == 'SuAbstractor')}">
-                       <li><a href="changeOwnershipview.action">Change Ownership</a></li>
-                     </c:if>
+                     <li><a href="assignOwnershipview.action">Assign Ownership</a></li>
 				</ul>
 			</li>
 			<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted' 

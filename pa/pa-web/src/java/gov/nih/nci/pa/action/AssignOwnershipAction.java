@@ -1,0 +1,131 @@
+/**
+ * 
+ */
+package gov.nih.nci.pa.action;
+
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.dto.TrialOwner;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
+import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.ServletActionContext;
+
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
+
+
+/**
+ * @author Vrushali
+ *
+ */
+public class AssignOwnershipAction extends ActionSupport implements Preparable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private List<TrialOwner> users = null;
+    CorrelationUtilsRemote cUtils;
+    /**
+     * @return string
+     */
+    public String view() {
+        loadRegistryUsers();
+        return SUCCESS;
+    }
+    /**
+     * 
+     * @return string
+     */
+     public String save() {
+       String userId = ServletActionContext.getRequest().getParameter("userId");
+       Ii spIi = (Ii) ServletActionContext.getRequest().getSession()
+           .getAttribute(Constants.STUDY_PROTOCOL_II);
+       try {
+           if (StringUtils.isNotEmpty(userId) && PAUtil.isIiNotNull(spIi)) {
+                // to assign the ownership add a record to study_owner
+               RegistryUser usr =  PaRegistry.getRegisterUserService().getUserById(Long.parseLong(userId));
+               if (usr != null) {
+                   Set<StudyProtocol> studyProtocols = new HashSet<StudyProtocol>();
+                   StudyProtocol sp = new StudyProtocol();
+                   sp.setId(IiConverter.convertToLong(spIi));
+                   studyProtocols.add(sp);
+                   usr.setStudyProtocols(studyProtocols);
+                   PaRegistry.getRegisterUserService().updateUser(usr);
+               } else {
+                   addActionError("User not found.");
+                   return view();
+               }
+           } else {
+               addActionError("Please select user to change ownership.");
+               return view();
+           }
+       } catch (PAException e) {
+           addActionError(e.getLocalizedMessage());
+           return view();
+       }
+       ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Ownership has been changed.");
+        return view();
+    }
+    /**
+     * 
+     * @return map of users
+     */
+    private void loadRegistryUsers() {
+            try {
+                Ii spIi = (Ii) ServletActionContext.getRequest().getSession()
+                    .getAttribute(Constants.STUDY_PROTOCOL_II);
+                if (PAUtil.isIiNotNull(spIi)) {
+                    StudyProtocolQueryDTO spqDto = PaRegistry.getProtocolQueryService()
+                        .getTrialSummaryByStudyProtocolId(Long.valueOf(spIi.getExtension()));
+                    
+                    RegistryUser regUser = new RegistryUser();
+                    regUser.setAffiliatedOrganizationId(Long.parseLong(cUtils.getPAOrganizationByIi(
+                            IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())).getIdentifier()));
+                    users = new ArrayList<TrialOwner>();
+                    List<RegistryUser> regUserList = PaRegistry.getRegisterUserService().search(regUser);
+                    TrialOwner owner = null;
+                    for (RegistryUser rUsr : regUserList) {
+                        owner = new TrialOwner();
+                        owner.setRegUser(rUsr);
+                        owner.setOwner(PaRegistry.getRegisterUserService().hasTrialAccess(rUsr, 
+                                Long.parseLong(spIi.getExtension())));
+                        users.add(owner);
+                    }
+                }
+            } catch (PAException e) {
+                addActionError("Error getting csm users.");
+            }
+    }
+    /**
+     * @param users the users to set
+     */
+    public void setUsers(List<TrialOwner> users) {
+        this.users = users;
+    }
+    /**
+     * @return the users
+     */
+    public List<TrialOwner> getUsers() {
+        return users;
+    }
+    /**
+     * 
+     */
+    public void prepare() {
+        cUtils = new CorrelationUtils();
+    }
+}

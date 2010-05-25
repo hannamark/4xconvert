@@ -87,6 +87,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -320,7 +322,10 @@ public class RegistryUser extends  AbstractEntity {
     /**
      * @return the studyProtocols
      */
-    @ManyToMany(mappedBy = "studyOwners")
+    @ManyToMany (targetEntity = StudyProtocol.class)
+    @JoinTable(name = "STUDY_OWNER",
+               joinColumns = @JoinColumn(name = "USER_ID"),
+               inverseJoinColumns = @JoinColumn(name = "STUDY_ID"))
     public Set<StudyProtocol> getStudyProtocols() {
         return studyProtocols;
     }

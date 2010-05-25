@@ -98,5 +98,11 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
         // TODO Auto-generated method stub
         return false;
     }
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException {
+        return false;
+    }
 
 }
