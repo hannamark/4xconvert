@@ -1055,7 +1055,7 @@ public class StudyProtocol extends AbstractEntity {
     /**
      * @return the studyOwners
      */
-     @ManyToMany(mappedBy = "studyProtocols", targetEntity = RegistryUser.class)
+     @ManyToMany(mappedBy = "studyProtocols")
      public Set<RegistryUser> getStudyOwners() {
         return studyOwners;
     }

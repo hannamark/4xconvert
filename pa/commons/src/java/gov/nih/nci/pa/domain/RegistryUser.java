@@ -322,7 +322,7 @@ public class RegistryUser extends  AbstractEntity {
     /**
      * @return the studyProtocols
      */
-    @ManyToMany (targetEntity = StudyProtocol.class)
+    @ManyToMany 
     @JoinTable(name = "STUDY_OWNER",
                joinColumns = @JoinColumn(name = "USER_ID"),
                inverseJoinColumns = @JoinColumn(name = "STUDY_ID"))
