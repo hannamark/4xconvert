@@ -157,5 +157,13 @@ public interface GridAccountServiceRemote {
      * @return The fully qualified username if found, short form username is returned otherwise
      */
     String getFullyQualifiedUsername(String username, String password, String authUrl);
+    
+    /**
+     * Adds the given user to the given grid group.
+     * @param username The fully qualified username i.e. /O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=testuser
+     * @param groupName the group name to add the user to
+     * @throws PAException on error
+     */
+    void addGridUserToGroup(String username, String groupName) throws PAException;
    
 }

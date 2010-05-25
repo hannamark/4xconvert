@@ -44,3 +44,7 @@ csm.remote.group.sync.seconds = 240
 # Use the tier-specific Registration application url
 register.mail.body.url=http://localhost:8080/registry
 
+gridgrouper.submitter.group=COPPA:PA:Submitter
+gridgrouper.admin.user=ctrpgrouper
+gridgrouper.admin.password=C0pp4Gr0upP@ss
+

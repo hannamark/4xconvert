@@ -426,4 +426,8 @@
        <comment>Add NCI as a default collaborator to all non-proprietary trials. </comment>
        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1770.sql"/>
     </changeSet>
+    <changeSet id="PO-1500" author="aevansel">
+       <comment>Enabling CSM Sync for PA. </comment>
+       <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1788.sql"/>
+    </changeSet>
 </databaseChangeLog>

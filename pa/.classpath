@@ -96,5 +96,9 @@
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-authentication-service-stubs-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/cgmmapi-0.7.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/cog-jglobus-1.2.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-gridgrouper-client-1.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-gridgrouper-common-1.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-gridgrouper-stubs-1.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-ServiceSecurityProvider-client-1.3.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

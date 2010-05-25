@@ -82,6 +82,13 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.cagrid.gridgrouper.bean.GroupIdentifier;
+import gov.nih.nci.cagrid.gridgrouper.bean.MemberFilter;
+import gov.nih.nci.cagrid.gridgrouper.client.GridGrouperClient;
+import gov.nih.nci.cagrid.gridgrouper.stubs.types.GridGrouperRuntimeFault;
+import gov.nih.nci.cagrid.gridgrouper.stubs.types.GroupNotFoundFault;
+import gov.nih.nci.cagrid.gridgrouper.stubs.types.InsufficientPrivilegeFault;
+import gov.nih.nci.cagrid.gridgrouper.stubs.types.MemberAddFault;
 import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -94,6 +101,7 @@ import gov.nih.nci.security.cgmm.CGMMManagerImpl;
 import gov.nih.nci.security.cgmm.helper.impl.SAMLToAttributeMapperImpl;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -126,10 +134,12 @@ import org.globus.gsi.GlobusCredential;
 public class GridAccountServiceBean implements GridAccountServiceRemote {
     private static final int CERTIFICATE_LIFETIME = 12;
     private static final Logger LOG = Logger.getLogger(GridAccountServiceBean.class);
-    /**
-     * Default dorian url.
-     */
+    /** Default dorian url.*/
     public static final String GRID_URL = PaEarPropertyReader.getProperties().getProperty("grid.dorian.url");
+    /** Grid Grouper Submitter group. */
+    public static final String GRIDGROUPER_SUBMITTER_GROUP = 
+        PaEarPropertyReader.getProperties().getProperty("gridgrouper.submitter.group");
+    private static final String GRID_GROUPER_URL = PaEarPropertyReader.getProperties().getProperty("gridgrouper.url");
     private static final int MAX_PASSWORD_LENGTH = 20;
     private static final int MIN_PASSWORD_LENGTH = 6;
 
@@ -269,7 +279,7 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         }
         return userInfo;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -278,23 +288,60 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         auth.setUserId(username);
         auth.setPassword(password);
 
-        String results = username;
+        GlobusCredential credential = authenticateUser(auth, authUrl);       
+        return credential != null ? credential.getIdentity() : username;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addGridUserToGroup(String username, String groupName) throws PAException {
+        GridGrouperClient ggClient = null;        
+        BasicAuthentication auth = new BasicAuthentication();
+        auth.setUserId(PaEarPropertyReader.getProperties().getProperty("gridgrouper.admin.user"));
+        auth.setPassword(PaEarPropertyReader.getProperties().getProperty("gridgrouper.admin.password"));
+
+        try {
+            ggClient = new GridGrouperClient(GRID_GROUPER_URL, authenticateUser(auth, GRID_URL));
+            ggClient.setAnonymousPrefered(false);
+        } catch (Exception e) {
+            throw new PAException("Error connecting to remote grid grouper instance.", e);
+        }
+        
+        GroupIdentifier groupIdentifier = new GroupIdentifier(GRID_GROUPER_URL, groupName);
+        
+        try {
+            if (!ggClient.isMemberOf(groupIdentifier, username, MemberFilter.All)) {
+                ggClient.addMember(groupIdentifier, username);
+            }
+        } catch (MemberAddFault f) {
+            throw new PAException("Error adding user to gridgrouper group", f);
+        } catch (InsufficientPrivilegeFault f) {
+            throw new PAException("Client does not have necessary privileges to add user to grid grouper group", f);
+        } catch (GroupNotFoundFault f) {
+            throw new PAException("Grid Grouper Group not found.", f);
+        } catch (GridGrouperRuntimeFault e) {
+            throw new PAException("Grid grouper runtime error.", e);
+        } catch (RemoteException e) {
+            throw new PAException("Error connecting to remote grid grouper instance.", e);
+        }
+    }
+    
+    private GlobusCredential authenticateUser(BasicAuthentication basicAuthentication, String authUrl) {
+        GlobusCredential credential = null;
         try {
             AuthenticationClient authClient = new AuthenticationClient(authUrl);
-            SAMLAssertion saml = authClient.authenticate(auth);
-
+            SAMLAssertion saml = authClient.authenticate(basicAuthentication);
 
             CertificateLifetime lifetime = new CertificateLifetime();
             lifetime.setHours(CERTIFICATE_LIFETIME);
 
             // Request PKI/Grid credentials
             GridUserClient dorian = new GridUserClient(authUrl);
-            GlobusCredential credential = dorian.requestUserCertificate(saml, lifetime);
-            results = credential.getIdentity();
+            credential = dorian.requestUserCertificate(saml, lifetime);
         } catch (Exception e) {
             LOG.error("ERROR Authenticating User.", e);
-
         }
-        return results;
+        return credential;
     }
 }

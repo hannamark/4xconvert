@@ -147,4 +147,12 @@ public class MockGridAccountService implements GridAccountServiceRemote {
     public  String getFullyQualifiedUsername(String username, String password, String url) {
         return "/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=" + username;
     }
+
+  
+    /**
+     * {@inheritDoc}
+     */
+    public void addGridUserToGroup(String username, String groupName) throws PAException {
+        // TODO Auto-generated method stub 
+    }
 }

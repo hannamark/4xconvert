@@ -429,6 +429,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
             <property name="grid.dorian.url" value="${grid.dorian.url}"/>
+            <property name="gridgrouper.url" value="${gridgrouper.url}"/>
+            <property name="gridgrouper.submitter.group" value="${gridgrouper.submitter.group}"/>
+            <property name="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
+            <property name="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
             <property name="gridServicePrincipal" value="${grid.security.jndi.principal}"/>
             <property name="gridServiceCredential" value="${grid.security.jndi.credentials.encrypted}"/>
             <property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
@@ -474,7 +478,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.pass" value="%%po.pass%%"/>
             <property name="po.server.name" value="%%po.server.name%%"/>
             <property name="grid.dorian.url" value="%%grid.dorian.url%%"/>
-
+            <property name="gridgrouper.url" value="%%gridgrouper.url%%"/>
+            <property name="gridgrouper.submitter.group" value="%%gridgrouper.submitter.group%%"/>
+            <property name="gridgrouper.admin.user" value="%%gridgrouper.admin.user%%"/>
+            <property name="gridgrouper.admin.password" value="%%gridgrouper.admin.password%%"/>
             <property name="outcomes.url" value="%%outcomes.url%%"/>
             <property name="outcomes.cds.url" value="%%outcomes.cds.url%%"/>
             <property name="outcomes.phr.system.id" value="%%outcomes.phr.system.id%%"/>
@@ -523,6 +530,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
             <property name="grid.dorian.url" value="${grid.dorian.url}"/>
+            <property name="gridgrouper.url" value="${gridgrouper.url}"/>
+            <property name="gridgrouper.submitter.group" value="${gridgrouper.submitter.group}"/>
+            <property name="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
+            <property name="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
             <property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
             <property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
             <target name="${pa-clean.build.target}"/>
@@ -554,6 +565,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
             <property name="grid.dorian.url" value="${grid.dorian.url}"/>
+            <property name="gridgrouper.url" value="${gridgrouper.url}"/>
+            <property name="gridgrouper.submitter.group" value="${gridgrouper.submitter.group}"/>
+            <property name="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
+            <property name="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
             <property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
             <property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
             <target name="${pa-clean.build.target}"/>
@@ -585,6 +600,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <property name="po.topic.clientId" value="${po.topic.clientId}"/>
                 <property name="csm.submitter.group" value="${csm.submitter.group}"/>
                 <property name="grid.dorian.url" value="${grid.dorian.url}"/>
+                <property name="gridgrouper.url" value="${gridgrouper.url}"/>
+                <property name="gridgrouper.submitter.group" value="${gridgrouper.submitter.group}"/>
+                <property name="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
+                <property name="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
                 <property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
                 <property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
                 <target name="${pa-clean.build.target}"/>
@@ -616,7 +635,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
             <property name="grid.dorian.url" value="${grid.dorian.url}"/>
-
+            <property name="gridgrouper.url" value="${gridgrouper.url}"/>
+            <property name="gridgrouper.submitter.group" value="${gridgrouper.submitter.group}"/>
+            <property name="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
+            <property name="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>

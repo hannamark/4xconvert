@@ -198,7 +198,7 @@ public class RegisterUserAction extends ActionSupport {
                 // first update the CSM user
                 CSMUserService.getInstance().updateCSMUser(registryUser, registryUserWebDTO.getUsername(), 
                         registryUserWebDTO.getPassword());
-
+                
                 //now update the RegistryUser
                 PaRegistry.getRegisterUserService().updateUser(registryUser); 
             } catch (Exception e) {
@@ -224,7 +224,10 @@ public class RegisterUserAction extends ActionSupport {
                         registryUserWebDTO.getPassword(), GridAccountServiceBean.GRID_URL);
                 User csmUser = CSMUserService.getInstance().createCSMUser(registryUser, username, 
                         registryUserWebDTO.getPassword());
-
+                
+                //Then add the user to the correct grid grouper group.               
+                gridService.addGridUserToGroup(username, GridAccountServiceBean.GRIDGROUPER_SUBMITTER_GROUP);
+                
                 if (csmUser != null) {
                     registryUser.setCsmUserId(csmUser.getUserId());
                 }
@@ -232,7 +235,7 @@ public class RegisterUserAction extends ActionSupport {
                 //now create the RegistryUser
                 registryUser =  PaRegistry.getRegisterUserService().createUser(registryUser);
             } catch (Exception e) {
-                LOG.error("error while creating user info");
+                LOG.error("error while creating user info", e);
                 return Constants.APPLICATION_ERROR;            
             }
         }
