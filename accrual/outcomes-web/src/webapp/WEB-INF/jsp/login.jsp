@@ -22,9 +22,7 @@
             </div>
         </c:when>
         <c:otherwise>
-            <p style="margin:0; padding:0">Log in to record patient outcome information.
-                If you do not have an account, you may <a href="${createAccountUrl}">create an account</a>.
-            </p>
+            <p style="margin:0; padding:0">Log in to record patient outcome information.</p>
         </c:otherwise>
     </c:choose>
     <form action="j_security_check" method="post" id="loginForm">

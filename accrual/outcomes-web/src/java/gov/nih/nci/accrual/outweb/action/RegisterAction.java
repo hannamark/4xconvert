@@ -104,6 +104,7 @@ import com.opensymphony.xwork2.Preparable;
 public class RegisterAction extends AccountSupportAction implements Preparable {
 
     private static final long serialVersionUID = 1L;
+    private static final String ACCOUNT_ACTION = "account";    
 
     private UserAccountWebDto userAccount = new UserAccountWebDto();
     private AccountActions userAction = null;
@@ -145,6 +146,9 @@ public class RegisterAction extends AccountSupportAction implements Preparable {
      * {@inheritDoc}
      */
     public String start() {
+        if (isUserRegistered()) {
+            return ACCOUNT_ACTION;
+        }
         Map<String, String> userInformation;
         try {
             userInformation = new gov.nih.nci.security.cgmm.helper.impl.GridAuthHelper().getAttributesMap(getUserCN(),
@@ -152,11 +156,19 @@ public class RegisterAction extends AccountSupportAction implements Preparable {
         } catch (CGMMException e) {
             throw new OutcomesWebException(e);
         }
-
         getUserAccount().setEmail(StConverter.convertToSt(userInformation.get("CGMM_EMAIL_ID").toString()));
         getUserAccount().setFirstName(StConverter.convertToSt(userInformation.get("CGMM_FIRST_NAME").toString()));
         getUserAccount().setLastName(StConverter.convertToSt(userInformation.get("CGMM_LAST_NAME").toString()));
         return SUCCESS;
+    }
+    
+    /**
+     * Returns true if user is already registered, otherwise false.  Used to find whether we should
+     *  redirect user when tried to create an account with a valid user/pass.
+     * @return Returns true if user is already registered, otherwise false
+     */
+    protected boolean isUserRegistered() {
+        return ServletActionContext.getRequest().isUserInRole("Outcomes");
     }
 
     /**
@@ -184,6 +196,9 @@ public class RegisterAction extends AccountSupportAction implements Preparable {
      * {@inheritDoc}
      */
     public String activate() {
+        if (isUserRegistered()) {
+            return ACCOUNT_ACTION;
+        }
         setUserAction(AccountActions.ACTIVATE);
         String loginName = decodeString(ServletActionContext.getRequest().getParameter("loginName"));
         String email = decodeString(ServletActionContext.getRequest().getParameter("email"));
@@ -214,6 +229,9 @@ public class RegisterAction extends AccountSupportAction implements Preparable {
      * @return the result
      */
     public String create() {
+        if (isUserRegistered()) {
+            return ACCOUNT_ACTION;
+        }
         getUserAccount().setAction(SvcConstants.CREATE);
         getUserAccount().validate(this);
         if (hasFieldErrors() || hasActionErrors()) {

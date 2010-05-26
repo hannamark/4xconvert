@@ -100,7 +100,7 @@
     <target name="deploy" depends="set-full, fix-server-xml, deploy-ear, echoTime"
             description="Build test and deploy."/>
 
-    <target name="test-dynamic-analysis">
+    <target name="test-dynamic-analysis" description="Runs tests and static analysis">
         <ant inheritAll="false" inheritRefs="false" antfile="${services.build.file}"
             dir="${services.dir}" >
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>

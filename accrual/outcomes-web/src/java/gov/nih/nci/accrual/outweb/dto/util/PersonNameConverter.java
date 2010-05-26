@@ -87,6 +87,8 @@ import gov.nih.nci.iso21090.Enxp;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author smatyas
  *
@@ -99,11 +101,11 @@ public class PersonNameConverter {
      * @param dest destination
      */
     public void convert(List<Enxp> src, PersonName dest) {
-        for (Enxp part : src) {
+        for (final Enxp part : src) {
             if (EntityNamePartType.FAM == part.getType()) {
                 dest.setLastName(part.getValue());
             } else if (EntityNamePartType.GIV == part.getType()) {
-                if (dest.getFirstName() == null) {
+                if (StringUtils.isBlank(dest.getFirstName())) {
                     dest.setFirstName(part.getValue());
                 } else {
                     dest.setMiddleName(part.getValue());

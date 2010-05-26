@@ -44,7 +44,7 @@
         </interceptors>
 
         <global-results>
-            <result name="error">error.jsp</result>
+            <result name="error">/WEB-INF/jsp/error.jsp</result>
             <result name="logout" type="redirectAction">
                 <param name="namespace">/</param>
                 <param name="actionName">logout</param>
@@ -97,6 +97,10 @@
             <result name="activate">/WEB-INF/jsp/register/activate.jsp</result>
             <result name="initTreatmentSiteLookup">/WEB-INF/jsp/nodecorate/lookupTreatmentSite.jsp</result>
             <result name="initPhysicianLookup">/WEB-INF/jsp/nodecorate/lookupPhysician.jsp</result>
+            <result name="account" type="redirectAction">
+                <param name="actionName">welcome.action</param>
+                <param name="namespace">/common</param>
+            </result>
         </action>
     </package>
 

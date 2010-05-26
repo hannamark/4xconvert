@@ -40,6 +40,10 @@
         <filter-name>csmUserFilter</filter-name>
         <filter-class>gov.nih.nci.pa.filter.CsmUserFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>cgmmAuthSrcMapHelper</filter-name>
+        <filter-class>gov.nih.nci.accrual.outweb.filter.CGMMAuthSourceRequestFilter</filter-class>
+    </filter>
 
     <filter-mapping>
         <filter-name>sessionFixation</filter-name>
@@ -64,6 +68,12 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>csmUserFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>cgmmAuthSrcMapHelper</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
@@ -102,6 +112,7 @@
         </web-resource-collection>
         <auth-constraint>
             <role-name>Unregistered</role-name>
+            <role-name>Outcomes</role-name>
         </auth-constraint>
     </security-constraint>
 

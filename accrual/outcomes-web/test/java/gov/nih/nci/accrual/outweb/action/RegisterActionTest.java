@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.accrual.outweb.action;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import gov.nih.nci.accrual.outweb.dto.util.PhysicianWebDTO;
 import gov.nih.nci.accrual.outweb.dto.util.TreatmentSiteWebDTO;
@@ -103,35 +104,53 @@ import com.mockrunner.mock.web.MockHttpSession;
  * 
  */
 public class RegisterActionTest extends AbstractAccrualActionTest {
-    RegisterAction action;
+    RegisterActionStub action;
     UserAccountWebDto userAccount;
     TreatmentSiteWebDTO treatmentSiteSearchCriteria = new TreatmentSiteWebDTO();
     PhysicianWebDTO physicianSearchCriteria = new PhysicianWebDTO();
     private static final String TEST_PASSWORD = "Coppa#12345";
+    private static final String ACCOUNT_ACTION = "account"; 
+    
+    public class RegisterActionStub extends RegisterAction {
+        private boolean userRegistered = true;
+        /*
+         * (non-Javadoc)
+         * 
+         * @see gov.nih.nci.accrual.outweb.action.RegisterAction#getUserDN()
+         */
+        @Override
+        protected String getUserDN() {
+            return "/OU=asdfsd/CN=username";
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see gov.nih.nci.accrual.outweb.action.RegisterAction#getPassword()
+         */
+        @Override
+        protected String getPassword() {
+            return TEST_PASSWORD;
+        }
+        
+        /*
+         * (non-Javadoc)
+         * 
+         * @see gov.nih.nci.accrual.outweb.action.RegisterAction#isUserRegistered()
+         */
+        @Override
+        protected boolean isUserRegistered() {
+            return userRegistered;
+        }
+        
+        public void setUserRegistered(boolean userRegistered) {
+            this.userRegistered = userRegistered;
+        }
+    }
 
     @Before
     public void initAction() throws Exception {
-        action = new RegisterAction() {
-            /*
-             * (non-Javadoc)
-             * 
-             * @see gov.nih.nci.accrual.outweb.action.RegisterAction#getUserDN()
-             */
-            @Override
-            protected String getUserDN() {
-                return "/OU=asdfsd/CN=username";
-            }
-
-            /*
-             * (non-Javadoc)
-             * 
-             * @see gov.nih.nci.accrual.outweb.action.RegisterAction#getPassword()
-             */
-            @Override
-            protected String getPassword() {
-                return TEST_PASSWORD;
-            }
-        };
+        action = new RegisterActionStub();
         action.prepare();
         userAccount = new UserAccountWebDto();
         action.setPhysicianSearchCriteria(physicianSearchCriteria);
@@ -141,6 +160,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void testActivateisNewUser() {
+        action.setUserRegistered(false);
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setupAddParameter("loginName", "testing");
@@ -152,6 +172,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
 
     // @Test
     public void testActivateNewUserException() {
+        action.setUserRegistered(false);
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setupAddParameter("loginName", "dGhyb3dFeGNlcHRpb24=");
@@ -163,6 +184,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void testActivateUserExist() {
+        action.setUserRegistered(false);
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setupAddParameter("loginName", "amFuZS5kb2VAZ29vZ2xlLmNvbQ==");
@@ -197,6 +219,12 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
             // expected
         }
     }
+    
+    @Test
+    public void testActivateRedirect() {
+        action.setUserRegistered(true);
+        assertEquals(ACCOUNT_ACTION, action.activate());
+    }
 
     @Test
     public void testRequestAccountException() {
@@ -225,6 +253,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void testCreateAccount() {
+        action.setUserRegistered(false);
         userAccount.setIdentity(StConverter.convertToSt("test@test.com"));
         userAccount.setFirstName(StConverter.convertToSt("firstName"));
         userAccount.setLastName(StConverter.convertToSt("lastName"));
@@ -240,6 +269,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void testCreateAccountException() {
+        action.setUserRegistered(false);
         userAccount.setIdentity(StConverter.convertToSt("test@test.com"));
         userAccount.setFirstName(StConverter.convertToSt("firstName"));
         userAccount.setLastName(StConverter.convertToSt("lastName"));
@@ -252,6 +282,7 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void testCreateAccountWithId() {
+        action.setUserRegistered(false);
         userAccount.setIdentity(StConverter.convertToSt("test@test.com"));
         userAccount.setFirstName(StConverter.convertToSt("firstName"));
         userAccount.setLastName(StConverter.convertToSt("lastName"));
@@ -266,5 +297,17 @@ public class RegisterActionTest extends AbstractAccrualActionTest {
         userAccount.setIdentifier(IiConverter.convertToIi("1"));
         action.setUserAccount(userAccount);
         assertSame("activate", action.create());
+    }
+    
+    @Test
+    public void testCreateRedirect() {
+        action.setUserRegistered(true);
+        assertEquals(ACCOUNT_ACTION, action.create());
+    }
+    
+    @Test
+    public void testStartRedirect() {
+        action.setUserRegistered(true);
+        assertEquals(ACCOUNT_ACTION, action.start());
     }
 }

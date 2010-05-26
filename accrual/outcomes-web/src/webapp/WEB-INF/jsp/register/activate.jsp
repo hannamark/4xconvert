@@ -12,13 +12,13 @@
 
     <script type="text/javascript">
         
-        function lookupTreatmentSite(action){
-            showPopWinOutsideContext('${treatmentSiteLookupUrl}', '', 'Select Treatment Site');
-        }
-        
-        function lookupPhysician(action){
-            showPopWinOutsideContext('${physicianLookupUrl}', '', 'Select Physician');
-        }
+    function lookupTreatmentSite(action){
+        showPopup('${treatmentSiteLookupUrl}', '', 'Select Treatment Site');
+    }
+    
+    function lookupPhysician(action){
+        showPopup('${physicianLookupUrl}', '', 'Select Physician');
+    }
     </script>
     
     <title>Create Account</title>   
