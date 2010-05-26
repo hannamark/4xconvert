@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
  * 
  */
 public class CGMMAuthSourceRequestFilter implements Filter {
-    
+
     /**
      * The name of the AUTHENTICATION_SOURCE_MAP variable in session and the request.
      */
@@ -32,7 +32,13 @@ public class CGMMAuthSourceRequestFilter implements Filter {
     }
 
     /**
-     * Ensures that the request always contains AUTHENTICATION_SOURCE_MAP once it has first appeared for a given session.
+     * Ensures that the request always contains AUTHENTICATION_SOURCE_MAP once it has first appeared for a given
+     * session.
+     * @param req the request
+     * @param resp the response
+     * @param chain the filter chain
+     * @throws IOException if error occurs
+     * @throws ServletException if error occurs
      */
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException,
             ServletException {
