@@ -20,6 +20,7 @@
         <deployedArtifact>${jboss.home}/server/${jboss.configuration}/deploy/po.ear</deployedArtifact>
         <jboss.jmx.username>admin</jboss.jmx.username>
         <jboss.jmx.password>admin</jboss.jmx.password>
+        <jboss.system.jars.path>${jboss.home}</jboss.system.jars.path>
     </properties>
 
     <dependencies>
@@ -112,35 +113,35 @@
             <artifactId>jbossall-client</artifactId>
             <version>4.0.5</version>
             <scope>system</scope>
-            <systemPath>${jboss.home}/client/jbossall-client.jar</systemPath>
+            <systemPath>${jboss.system.jars.path}/client/jbossall-client.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>jboss</groupId>
             <artifactId>jboss-ejb3x</artifactId>
             <version>4.0.5</version>
             <scope>system</scope>
-            <systemPath>${jboss.home}/client/jboss-ejb3x.jar</systemPath>
+            <systemPath>${jboss.system.jars.path}/client/jboss-ejb3x.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>jboss</groupId>
             <artifactId>jboss-ejb3-client</artifactId>
             <version>4.0.5</version>
             <scope>system</scope>
-            <systemPath>${jboss.home}/client/jboss-ejb3-client.jar</systemPath>
+            <systemPath>${jboss.system.jars.path}/client/jboss-ejb3-client.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>jboss</groupId>
             <artifactId>jboss-aop-jdk50-client</artifactId>
             <version>4.0.5</version>
             <scope>system</scope>
-            <systemPath>${jboss.home}/client/jboss-aop-jdk50-client.jar</systemPath>
+            <systemPath>${jboss.system.jars.path}/client/jboss-aop-jdk50-client.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>jboss</groupId>
             <artifactId>jboss-aspect-jdk50-client</artifactId>
             <version>4.0.5</version>
             <scope>system</scope>
-            <systemPath>${jboss.home}/client/jboss-aspect-jdk50-client.jar</systemPath>
+            <systemPath>${jboss.system.jars.path}/client/jboss-aspect-jdk50-client.jar</systemPath>
         </dependency>
     </dependencies>
 
