@@ -17,6 +17,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -392,7 +393,7 @@ public class StudyResourcingBeanLocal
           //check if nih institute code exists
           if (!PAUtil.isCdNull(studyResourcingDTO.getNihInstitutionCode())) {
             boolean nihExists = 
-              PAUtil.checkIfValueExists(studyResourcingDTO.getNihInstitutionCode().getCode(),
+                PADomainUtils.checkIfValueExists(studyResourcingDTO.getNihInstitutionCode().getCode(),
                                   "NIH_INSTITUTE", "nih_institute_code");
               if (!nihExists) {
                  errorBuffer.append("Error while checking for value ")
@@ -402,7 +403,7 @@ public class StudyResourcingBeanLocal
           }
           if (!PAUtil.isCdNull(studyResourcingDTO.getFundingMechanismCode())) {
              //check if Funding mechanism code exists 
-             boolean fmExists = PAUtil.checkIfValueExists(studyResourcingDTO.getFundingMechanismCode().getCode(), 
+             boolean fmExists = PADomainUtils.checkIfValueExists(studyResourcingDTO.getFundingMechanismCode().getCode(),
                  "FUNDING_MECHANISM", "funding_mechanism_code");
            
              if (!fmExists) {

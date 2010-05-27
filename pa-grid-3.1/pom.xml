@@ -155,7 +155,7 @@
         <dependency>
             <groupId>gov.nih.nci.coppa.pa</groupId>
             <artifactId>pa-commons</artifactId>
-            <version>3.2.0m10</version>
+            <version>3.2-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>

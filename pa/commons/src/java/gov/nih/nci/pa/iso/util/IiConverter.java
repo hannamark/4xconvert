@@ -102,6 +102,12 @@ public class IiConverter {
     /** Study Protocol Identifier. */
     public static final String STUDY_PROTOCOL_IDENTIFIER_NAME = "NCI study protocol entity identifier";
     
+    /** Study Protocol Other identifier Root. * */
+    public static final String STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT = "2.16.840.1.113883.19";
+    
+    /** Study Protocol Other Identifier. */
+    public static final String STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME = "Study Protocol Other Identifier";
+    
     /** Study Outcome Measure Root. * */
     public static final String STUDY_OUTCOME_MEASURE_ROOT = "2.16.840.1.113883.3.26.4.3.1";
     
@@ -886,5 +892,15 @@ public class IiConverter {
         ii.setRoot(STUDY_PROTOCOL_ROOT);
         return ii;
     }
-
+    /**
+     * 
+     * @param identifier id
+     * @return ii
+     */
+    public static Ii convertToOtherIdentifierIi(String identifier) {
+        Ii ii = convertToIi(identifier);
+        ii.setIdentifierName(STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+        return ii;
+    }
 }

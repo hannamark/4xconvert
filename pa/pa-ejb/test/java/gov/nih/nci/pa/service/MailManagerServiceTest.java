@@ -3,6 +3,9 @@
  */
 package gov.nih.nci.pa.service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
@@ -206,7 +209,11 @@ public class MailManagerServiceTest {
         sp1.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
         sp1.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp1.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
-        sp1.setIdentifier("NCI-2009-00002");
+        
+        Set<Ii> otherIdentifiers = new HashSet<Ii>();
+        otherIdentifiers.add(IiConverter.convertToAssignedIdentifierIi("NCI-2009-00002"));
+        
+        sp1.setOtherIdentifiers(otherIdentifiers);
         sp1.setSubmissionNumber(Integer.valueOf(1));
         sp1.setProprietaryTrialIndicator(Boolean.TRUE);
         sp1.setCtgovXmlRequiredIndicator(Boolean.FALSE);

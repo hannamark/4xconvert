@@ -217,7 +217,7 @@ public class TrialHelper {
      */
     private void copy(StudyProtocolDTO spDTO, GeneralTrialDesignWebDTO gtdDTO) {
         gtdDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
-        gtdDTO.setAssignedIdentifier(spDTO.getAssignedIdentifier().getExtension());
+        gtdDTO.setAssignedIdentifier(PAUtil.getAssignedIdentifierExtension(spDTO));
         gtdDTO.setAcronym(spDTO.getAcronym().getValue());
         gtdDTO.setKeywordText(spDTO.getKeywordText().getValue());
         gtdDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
@@ -231,7 +231,6 @@ public class TrialHelper {
         gtdDTO.setAmendmentReasonCode(CdConverter.convertCdToString(spDTO.getAmendmentReasonCode()));
         gtdDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
         gtdDTO.setStudyProtocolId(IiConverter.convertToString(spDTO.getIdentifier()));
-        gtdDTO.setAssignedIdentifier(IiConverter.convertToString(spDTO.getAssignedIdentifier()));
         if (!PAUtil.isBlNull(spDTO.getCtgovXmlRequiredIndicator())) {
             gtdDTO.setCtGovXmlRequired(spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue());
         }

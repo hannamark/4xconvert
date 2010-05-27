@@ -379,7 +379,7 @@ public class SearchTrialAction extends ActionSupport {
             // (InterventionalStudyProtocolWebDTO) ServletActionContext
             // .getRequest().getSession().getAttribute(Constants.PROTOCOL_DOCUMENT);
             StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
-            sb.append(File.separator).append(spDTO.getAssignedIdentifier().getExtension()).append(File.separator)
+            sb.append(File.separator).append(PAUtil.getAssignedIdentifier(spDTO)).append(File.separator)
             .append(
                     docDTO.getIdentifier().getExtension()).append('-').append(docDTO.getFileName().getValue());
             File downloadFile = new File(sb.toString());

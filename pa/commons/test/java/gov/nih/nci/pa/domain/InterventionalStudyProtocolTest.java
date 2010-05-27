@@ -80,6 +80,7 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AllocationCode;
@@ -88,6 +89,10 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.junit.Before;
@@ -122,7 +127,8 @@ public class InterventionalStudyProtocolTest {
                 create.getAccrualReportingMethodCode().getCode(), saved.getAccrualReportingMethodCode().getCode());
         assertEquals("Expanded Access Indicator does not  match " , 
                 create.getExpandedAccessIndicator(), saved.getExpandedAccessIndicator());
-        assertEquals("Identifer does not match " , create.getIdentifier() , saved.getIdentifier());
+       /* assertEquals("Identifer does not match " , create.getOtherIdentifiers().get(0).getIdentifierText(),
+               saved.getOtherIdentifiers()..get(0).getIdentifierText());*/
         assertEquals("Official Title does not match " , create.getOfficialTitle() , saved.getOfficialTitle());
         assertEquals("Phase code does not match " , create.getPhaseCode(), saved.getPhaseCode());
         assertEquals("PrimaryCompletionDate  does not match " , 
@@ -154,12 +160,15 @@ public class InterventionalStudyProtocolTest {
      */    
     public static InterventionalStudyProtocol createInterventionalStudyProtocolObj() {
         InterventionalStudyProtocol isp = new InterventionalStudyProtocol();
-        
+        Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+        Ii spSecId = new Ii();
+        spSecId.setExtension("NCI-2009-00001");
+        studySecondaryIdentifiers.add(spSecId);
+        isp.setOtherIdentifiers(studySecondaryIdentifiers);
         isp.setAcronym("Acronym .....");
         isp.setDataMonitoringCommitteeAppointedIndicator(Boolean.TRUE);
         isp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         isp.setExpandedAccessIndicator(Boolean.TRUE);
-        isp.setIdentifier("NCI-2008-0001");
         isp.setOfficialTitle("Cancer for kids");
         isp.setPhaseCode(PhaseCode.I);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());

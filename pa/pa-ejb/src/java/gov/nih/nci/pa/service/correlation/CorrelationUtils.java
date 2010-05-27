@@ -100,6 +100,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -373,7 +374,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
         Person per = new Person();
         try {
-            per = PAUtil.convertToPaPerson(poPerson);
+            per = PADomainUtils.convertToPaPerson(poPerson);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             LOG.error("Error while converting Person ISO " , e);

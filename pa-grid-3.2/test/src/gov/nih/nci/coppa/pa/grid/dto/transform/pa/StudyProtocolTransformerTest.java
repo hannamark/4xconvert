@@ -87,6 +87,7 @@ import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyProtocolTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLINTTransformerTest;
@@ -130,8 +131,9 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setPrimaryPurposeCode(new CDTransformerTest().makeDtoSimple());
         result.setStartDateTypeCode(new CDTransformerTest().makeDtoSimple());
         result.setStatusCode(new CDTransformerTest().makeDtoSimple());
+        //DSET
+        result.setSecondaryIdentifiers(new DSETIITransformerTest().makeDtoSimple());
         //II
-        result.setAssignedIdentifier(new IITransformerTest().makeDtoSimple());
         result.setIdentifier(new IITransformerTest().makeDtoSimple());
         //TS
         result.setAmendmentDate(new TSTransformerTest().makeDtoSimple());
@@ -181,8 +183,9 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setPrimaryPurposeCode(new CDTransformerTest().makeXmlSimple());
         result.setStartDateTypeCode(new CDTransformerTest().makeXmlSimple());
         result.setStatusCode(new CDTransformerTest().makeXmlSimple());
+        //DSET
+        result.setSecondaryIdentifiers(new DSETIITransformerTest().makeXmlSimple());
         //II
-        result.setAssignedIdentifier(new IITransformerTest().makeXmlSimple());
         result.setIdentifier(new IITransformerTest().makeXmlSimple());
         //TS
         result.setAmendmentDate(new TSTransformerTest().makeXmlSimple());
@@ -231,8 +234,9 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new CDTransformerTest().verifyDtoSimple(x.getPrimaryPurposeCode());
         new CDTransformerTest().verifyDtoSimple(x.getStartDateTypeCode());
         new CDTransformerTest().verifyDtoSimple(x.getStatusCode());
+        //DSET
+        new DSETIITransformerTest().verifyDtoSimple(x.getSecondaryIdentifiers());
         //II
-        new IITransformerTest().verifyDtoSimple(x.getAssignedIdentifier());
         new IITransformerTest().verifyDtoSimple(x.getIdentifier());
         //TS
         new TSTransformerTest().verifyDtoSimple(x.getAmendmentDate());
@@ -279,8 +283,10 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new CDTransformerTest().verifyXmlSimple(x.getPrimaryPurposeCode());
         new CDTransformerTest().verifyXmlSimple(x.getStartDateTypeCode());
         new CDTransformerTest().verifyXmlSimple(x.getStatusCode());
+        
+        //DSET
+        new DSETIITransformerTest().verifyXmlSimple(x.getSecondaryIdentifiers());
         //II
-        new IITransformerTest().verifyXmlSimple(x.getAssignedIdentifier());
         new IITransformerTest().verifyXmlSimple(x.getIdentifier());
         //TS
         new TSTransformerTest().verifyXmlSimple(x.getAmendmentDate());

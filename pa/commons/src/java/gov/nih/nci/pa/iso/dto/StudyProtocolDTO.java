@@ -80,6 +80,7 @@ package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
@@ -101,7 +102,7 @@ public class StudyProtocolDTO extends BaseDTO {
     private static final long serialVersionUID = 7235772554482606133L;
     private St acronym;
     private Cd accrualReportingMethodCode;
-    private Ii assignedIdentifier; 
+    private DSet<Ii> secondaryIdentifiers; 
     private Bl dataMonitoringCommitteeAppointedIndicator;
     private Bl delayedpostingIndicator;
     private Bl expandedAccessIndicator;
@@ -167,22 +168,6 @@ public class StudyProtocolDTO extends BaseDTO {
      */
     public void setAccrualReportingMethodCode(Cd accrualReportingMethodCode) {
         this.accrualReportingMethodCode = accrualReportingMethodCode;
-    }
-
-    /**
-     * 
-     * @return assignedIdentifier
-     */
-    public Ii getAssignedIdentifier() {
-        return assignedIdentifier;
-    }
-
-    /**
-     * 
-     * @param assignedIdentifier assignedIdentifier
-     */
-    public void setAssignedIdentifier(Ii assignedIdentifier) {
-        this.assignedIdentifier = assignedIdentifier;
     }
 
     /**
@@ -681,6 +666,20 @@ public void setCtgovXmlRequiredIndicator(Bl ctgovXmlRequiredIndicator) {
  */
 public Bl getCtgovXmlRequiredIndicator() {
     return ctgovXmlRequiredIndicator;
+}
+
+/**
+ * @return the secondaryIdentifiers
+ */
+public DSet<Ii> getSecondaryIdentifiers() {
+    return secondaryIdentifiers;
+}
+
+/**
+ * @param secondaryIdentifiers the secondaryIdentifiers to set
+ */
+public void setSecondaryIdentifiers(DSet<Ii> secondaryIdentifiers) {
+   this.secondaryIdentifiers = secondaryIdentifiers;
 }
     
     

@@ -388,7 +388,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             Element root = createElement("error" , doc);
             doc.appendChild(root);
             createElement("error_description" , "Unable to generate the XML" , doc , root);
-            createElement("study_identifier" , spDTO.getAssignedIdentifier().getExtension() , doc , root);
+            createElement("study_identifier" , PAUtil.getAssignedIdentifierExtension(spDTO), doc , root);
             createElement("study_title" , spDTO.getOfficialTitle().getValue() , doc , root);
             createElement("contact_info" , "Please contact CTRP staff" , doc , root);
             createElement("error_type" , e.toString() , doc , root);
@@ -660,7 +660,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             appendElement(idInfo , createElement("org_study_id" , spart.getLocalStudyProtocolIdentifier() , doc));
             break;
         }
-       appendElement(idInfo , createElement("secondary_id" , spDTO.getAssignedIdentifier().getExtension(), doc));
+       appendElement(idInfo , createElement("secondary_id" , PAUtil.getAssignedIdentifierExtension(spDTO), doc));
        
        RegistryUser registryUser = registryUserService.getUser(StConverter.convertToString(spDTO.getUserLastCreated()));
        String prsOrgName = "replace with PRS Organization Name you log in with";

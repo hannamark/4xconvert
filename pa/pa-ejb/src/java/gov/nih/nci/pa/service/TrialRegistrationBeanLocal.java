@@ -617,7 +617,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         // search the StudyProtocol to get the latest accepted protocol.
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
         StudyProtocolDTO studyToSearch = new StudyProtocolDTO();
-        studyToSearch.setAssignedIdentifier(studyProtocolDto.getAssignedIdentifier());
+        studyToSearch.setSecondaryIdentifiers(studyProtocolDto.getSecondaryIdentifiers());
         studyToSearch.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
 
         List<StudyProtocolDTO> spList = studyProtocolService.search(studyToSearch, limit);
@@ -825,7 +825,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         paServiceUtils.executeSql(sql);
         studyProtocolDTO.setAmendmentReasonCode(null);
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(
-                paServiceUtils.generateSubmissionNumber(studyProtocolDTO.getAssignedIdentifier().getExtension())));
+                paServiceUtils.generateSubmissionNumber(PAUtil.getAssignedIdentifierExtension(studyProtocolDTO))));
         studyProtocolDTO.setStatusDate(TsConverter.convertToTs(null));
 
     }
@@ -1137,6 +1137,10 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         } else {
            createStudyProtocolDTO.setCtgovXmlRequiredIndicator(studyProtocolDTO.getCtgovXmlRequiredIndicator());
         }
+    }
+    if (studyProtocolDTO.getSecondaryIdentifiers() != null 
+        && studyProtocolDTO.getSecondaryIdentifiers().getItem() != null) {
+      createStudyProtocolDTO.setSecondaryIdentifiers(studyProtocolDTO.getSecondaryIdentifiers());
     }
     return createStudyProtocolDTO;
  }
@@ -1594,6 +1598,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     sqls.add("UPDATE  STUDY_REGULATORY_AUTHORITY SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
 
     sqls.add("Delete from STUDY_RELATIONSHIP WHERE TARGET_STUDY_PROTOCOL_IDENTIFIER  = " + sourceIi.getExtension());
+    sqls.add("Delete from STUDY_OTHERIDENTIFIERS WHERE STUDY_PROTOCOL_ID  = " + sourceIi.getExtension());
     sqls.add("Delete from STUDY_PROTOCOL WHERE IDENTIFIER  = " + sourceIi.getExtension());
     return sqls;
  }

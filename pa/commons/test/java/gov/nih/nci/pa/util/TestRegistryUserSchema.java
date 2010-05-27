@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationTest;
@@ -268,7 +269,11 @@ public class TestRegistryUserSchema {
                 sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
                 sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
                 sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
-                sp.setIdentifier("NCI-2009-00001");
+                Ii ii = new Ii();
+                ii.setExtension("NCI-2009-00001");
+                Set<Ii> otherIdentifiers = new HashSet<Ii>();
+                otherIdentifiers.add(ii);
+                sp.setOtherIdentifiers(otherIdentifiers);
                 sp.setSubmissionNumber(Integer.valueOf(1));
                 sp.setProprietaryTrialIndicator(Boolean.FALSE);
                 sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);

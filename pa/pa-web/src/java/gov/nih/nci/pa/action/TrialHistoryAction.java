@@ -234,7 +234,7 @@ ServletResponseAware {
 
         StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(studyProtocolIi);
         StudyProtocolDTO toSearchspDTO = new StudyProtocolDTO();
-        toSearchspDTO.setAssignedIdentifier(spDTO.getAssignedIdentifier());
+        toSearchspDTO.setSecondaryIdentifiers(spDTO.getSecondaryIdentifiers());
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
         toSearchspDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         List<StudyProtocolDTO> spList = new ArrayList<StudyProtocolDTO>();
@@ -309,7 +309,7 @@ ServletResponseAware {
           StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(IiConverter.convertToIi(getStudyProtocolii()));
 
           StringBuffer fileName = new StringBuffer();
-          fileName.append(spDTO.getAssignedIdentifier().getExtension()).
+          fileName.append(PAUtil.getAssignedIdentifier(spDTO)).
           append('-').append(docDTO.getFileName().getValue());
 
           ByteArrayInputStream bStream = new ByteArrayInputStream(docDTO.getText().getData());

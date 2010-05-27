@@ -79,12 +79,16 @@
 
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.util.NotEmptyIiExtension;
+import gov.nih.nci.pa.util.NotEmptyIiRoot;
+import gov.nih.nci.pa.util.ValidIi;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -98,14 +102,23 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -134,7 +147,6 @@ public class StudyProtocol extends AbstractEntity {
     private Boolean expandedAccessIndicator;
     private Boolean fdaRegulatedIndicator;
     private Boolean reviewBoardApprovalRequiredIndicator;
-    private String identifier; // used to store nci-accession number
     private String keywordText;
     private Integer maximumTargetAccrualNumber;
     private Integer minimumTargetAccrualNumber;
@@ -180,7 +192,7 @@ public class StudyProtocol extends AbstractEntity {
     private Boolean ctgovXmlRequiredIndicator;
 
     private Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
-
+    private Set<Ii> otherIdentifiers = new HashSet<Ii>();
     /**
      * @return accrualReportingMethodCode
      */
@@ -302,24 +314,6 @@ public class StudyProtocol extends AbstractEntity {
     public void setReviewBoardApprovalRequiredIndicator(
             Boolean reviewBoardApprovalRequiredIndicator) {
         this.reviewBoardApprovalRequiredIndicator = reviewBoardApprovalRequiredIndicator;
-    }
-
-    /**
-     *
-     * @return identifier
-     */
-    @Column(name = "ASSIGNED_IDENTIFIER", updatable = false)
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    /**
-     *
-     * @param identifier
-     *            identifier
-     */
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
     }
 
     /**
@@ -1066,5 +1060,42 @@ public class StudyProtocol extends AbstractEntity {
     public void setStudyOwners(Set<RegistryUser> studyOwners) {
         this.studyOwners = studyOwners;
     }
+    
+    /**
+     * Gets the other identifiers.
+     * 
+     * @return the other identifiers
+     */
+    @CollectionOfElements(fetch = FetchType.EAGER)
+    @Fetch (FetchMode.SELECT)
+    @JoinTable(
+            name = "STUDY_OTHERIDENTIFIERS",
+            joinColumns = @JoinColumn(name = "STUDY_PROTOCOL_ID")
+    )
+    @ForeignKey(name = "STUDY_OI_FK")
+    @Type(type = "gov.nih.nci.pa.iso.util.IiCompositeUserType")
+    @Columns(columns = {
+            @Column(name = "null_flavor"),
+            @Column(name = "displayable"),
+            @Column(name = "extension"),
+            @Column(name = "identifier_name"),
+            @Column(name = "reliability"),
+            @Column(name = "root"),
+            @Column(name = "scope")
+    })
+    @ValidIi
+    @NotEmptyIiExtension
+    @NotEmptyIiRoot
+    public Set<Ii> getOtherIdentifiers() {
+        return otherIdentifiers;
+    }
+
+    /**
+     * @param otherIdentifiers the otherIdentifiers to set
+     */
+     public void setOtherIdentifiers(Set<Ii> otherIdentifiers) {
+        this.otherIdentifiers = otherIdentifiers;
+     }
+    
 
 }

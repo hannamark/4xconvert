@@ -178,7 +178,7 @@ public class StudyProtocolConverterTest  {
     public void assertStudyProtocol(StudyProtocol sp , StudyProtocolDTO spDTO) {
         assertEquals(sp.getAcronym(), spDTO.getAcronym().getValue());
         assertEquals(sp.getAccrualReportingMethodCode().getCode(), spDTO.getAccrualReportingMethodCode().getCode());
-        assertEquals(sp.getIdentifier() , spDTO.getAssignedIdentifier().getExtension());
+        // assertEquals(sp.getStudySecondaryIdentifiers().get(0).getIdentifierText() );
         assertEquals(sp.getDataMonitoringCommitteeAppointedIndicator(),
                 spDTO.getDataMonitoringCommitteeAppointedIndicator().getValue());
         assertEquals(sp.getDelayedpostingIndicator(), spDTO.getDelayedpostingIndicator().getValue());

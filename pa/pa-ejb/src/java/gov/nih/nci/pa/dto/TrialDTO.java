@@ -502,6 +502,5 @@ public class TrialDTO {
      */
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
-    }
-    
+    }       
 }

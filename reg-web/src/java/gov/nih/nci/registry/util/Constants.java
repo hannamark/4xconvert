@@ -231,5 +231,6 @@ public class Constants {
     /** ERROR_PROCESSING. */
     public static final String ERROR_PROCESSING = "Error Processing";
     
-    
+    /** SECONDARY_IDENTIFIERS_LIST. */
+    public static final String SECONDARY_IDENTIFIERS_LIST = "secondaryIdentifiersList";
 }

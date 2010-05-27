@@ -381,6 +381,14 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
            if (grantList != null) {
                trialDTO.setFundingDtos(grantList);
            }
+           
+           List<Ii> otherIdsList = 
+            (List<Ii>) ServletActionContext.getRequest()
+              .getSession().getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
+           if (otherIdsList != null) {
+               trialDTO.setSecondaryIdentifierList(otherIdsList);
+           }
+           
            trialUtil.setOversgtInfo(trialDTO); 
            
         } catch (IOException e) {

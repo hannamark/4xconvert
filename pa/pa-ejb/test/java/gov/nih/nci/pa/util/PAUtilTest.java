@@ -396,7 +396,7 @@ public class PAUtilTest {
 	 */
 	@Test(expected=Exception.class)
 	public void testCheckIfValueExists() throws PAException {
-		PAUtil.checkIfValueExists("GAS", "DoseForm", "code");
+		PADomainUtils.checkIfValueExists("GAS", "DoseForm", "code");
 	}
 
 	/**
@@ -456,7 +456,7 @@ public class PAUtilTest {
         org.setPostalAddress(address);
         TestSchema.reset();
         List<Country> con = TestSchema.countries;
-        PaOrganizationDTO paOrgDTO = PAUtil.convertPoOrganizationDTO(org, con);
+        PaOrganizationDTO paOrgDTO = PADomainUtils.convertPoOrganizationDTO(org, con);
         assertEquals("Testing org name", "org", paOrgDTO.getName());
         assertEquals("Testing Country name", "USA", paOrgDTO.getCountry());        
     }   
@@ -483,7 +483,7 @@ public class PAUtilTest {
     @Test
     public void testConvertToPaPerson() {
         PersonDTO poPerson = setUpPerson();        
-         Person person = PAUtil.convertToPaPerson(poPerson);
+         Person person = PADomainUtils.convertToPaPerson(poPerson);
          assertNotNull(person);
          assertEquals("Testing first name","firstName",person.getFirstName());
     }
@@ -491,7 +491,7 @@ public class PAUtilTest {
     @Test
     public void testConvertToPaPersonDTO() {
         PersonDTO poPerson = setUpPerson();
-        PaPersonDTO paPersonDTO = PAUtil.convertToPaPersonDTO(poPerson);
+        PaPersonDTO paPersonDTO = PADomainUtils.convertToPaPersonDTO(poPerson);
         assertEquals("testing last name", "lastName",paPersonDTO.getLastName());
         assertEquals("testing last name","a@a.com",paPersonDTO.getEmail());
     }

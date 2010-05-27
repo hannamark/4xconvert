@@ -106,6 +106,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -280,16 +281,13 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     } else if (studyProtocol instanceof InterventionalStudyProtocol) {
                         studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
                     } else {
-//                        throw new PAException(" Unknown StudyProtocol type found for protocol id = "
-//                                + studyProtocol.getIdentifier() + " title " + studyProtocol.getOfficialTitle());
                         studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
                     }
 
                     studyProtocolDto.setOfficialTitle(studyProtocol
                             .getOfficialTitle());
                     studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
-                    studyProtocolDto.setNciIdentifier(studyProtocol
-                            .getIdentifier());
+                    studyProtocolDto.setNciIdentifier(PADomainUtils.getAssignedIdentifierExtension(studyProtocol));
                     studyProtocolDto
                             .setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
                     studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
@@ -385,7 +383,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         populateOnHoldData(spDtos , studyOnHolds);
         return spDtos;
     }
-    private Map<Long , List<StudyOnhold>> generateOnholdMap(List<Object> onHoldReasons) {
+    
+   private Map<Long , List<StudyOnhold>> generateOnholdMap(List<Object> onHoldReasons) {
         Object[] searchResult = null;
         StudyProtocol studyProtocol = null;
         StudyOnhold studyOnhold = null;
@@ -554,7 +553,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         + PhaseCode.getByCode(studyProtocolQueryCriteria.getPhaseCode()) + "'");
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())) {
-                where.append(" and sp.identifier  like '%"
+                where.append(" and sp.otherIdentifiers.extension  like '%"
                         + studyProtocolQueryCriteria.getNciIdentifier()
                                 .toUpperCase().trim().replaceAll("'", "''")
                         + "%'");

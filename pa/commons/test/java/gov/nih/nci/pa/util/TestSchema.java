@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
@@ -152,7 +153,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -233,6 +236,7 @@ public class TestSchema {
                     statement.executeUpdate("delete from STRATUM_GROUP");
                     statement.executeUpdate("delete from STUDY_DISEASE");
                     statement.executeUpdate("delete from STUDY_RECRUITMENT_STATUS");
+                    statement.executeUpdate("delete from STUDY_OTHERIDENTIFIERS");
                     statement.executeUpdate("delete from STUDY_PROTOCOL");
                     statement.executeUpdate("delete from CLINICAL_RESEARCH_STAFF");
                     statement.executeUpdate("delete from COUNTRY");
@@ -321,7 +325,11 @@ public class TestSchema {
             sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
             sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
             sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
-            sp.setIdentifier("NCI-2009-00001");
+            Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+            Ii spSecId = new Ii();
+            spSecId.setExtension("NCI-2009-00001");
+            studySecondaryIdentifiers.add(spSecId);
+            sp.setOtherIdentifiers(studySecondaryIdentifiers);
             sp.setSubmissionNumber(Integer.valueOf(1));
             sp.setProprietaryTrialIndicator(Boolean.FALSE);
             sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);

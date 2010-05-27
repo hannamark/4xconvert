@@ -226,8 +226,8 @@ public class BatchCreateProtocols {
                }
                sucessCount +=  1;
               protocolAssignedId = strMsg 
-                 + PaRegistry.getStudyProtocolService()
-                         .getStudyProtocol(studyProtocolIi).getAssignedIdentifier().getExtension();
+                 + PAUtil.getAssignedIdentifier(PaRegistry.getStudyProtocolService()
+                         .getStudyProtocol(studyProtocolIi));
              
              }
         } catch (PAException ex) {

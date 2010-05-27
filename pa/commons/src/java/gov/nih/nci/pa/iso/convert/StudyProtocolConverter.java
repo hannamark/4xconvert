@@ -79,8 +79,6 @@
 package gov.nih.nci.pa.iso.convert;
 
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -93,12 +91,15 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.ISOUtil;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 
 /**
@@ -143,8 +144,10 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setAcronym(StConverter.convertToSt(studyProtocol.getAcronym()));
         studyProtocolDTO.setAccrualReportingMethodCode(
                 CdConverter.convertToCd(studyProtocol.getAccrualReportingMethodCode()));
-        studyProtocolDTO.setAssignedIdentifier(IiConverter.convertToAssignedIdentifierIi(
-                studyProtocol.getIdentifier()));
+        if (studyProtocol.getOtherIdentifiers() != null) {
+          studyProtocolDTO.setSecondaryIdentifiers(
+            DSetConverter.convertIiSetToDset(studyProtocol.getOtherIdentifiers()));
+        }  
         studyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(
                 BlConverter.convertToBl(studyProtocol.getDataMonitoringCommitteeAppointedIndicator()));
         studyProtocolDTO.setDelayedpostingIndicator(
@@ -216,15 +219,14 @@ public class StudyProtocolConverter {
 
        studyProtocol.setId(IiConverter.convertToLong(studyProtocolDTO.getIdentifier()));
        studyProtocol.setAcronym(StConverter.convertToString(studyProtocolDTO.getAcronym()));
-       if (studyProtocolDTO.getAssignedIdentifier() != null) {
-           studyProtocol.setIdentifier(studyProtocolDTO.getAssignedIdentifier().getExtension());
+       if (studyProtocolDTO.getSecondaryIdentifiers() != null 
+           && studyProtocolDTO.getSecondaryIdentifiers().getItem() != null) {
+           studyProtocol.setOtherIdentifiers(
+             DSetConverter.convertDsetToIiSet(studyProtocolDTO.getSecondaryIdentifiers()));
        }
        if (studyProtocolDTO.getAccrualReportingMethodCode() != null) {
            studyProtocol.setAccrualReportingMethodCode(
                    AccrualReportingMethodCode.getByCode(studyProtocolDTO.getAccrualReportingMethodCode().getCode()));
-       }
-       if (studyProtocolDTO.getAssignedIdentifier() != null) {
-           studyProtocol.setIdentifier(IiConverter.convertToString(studyProtocolDTO.getAssignedIdentifier()));
        }
        studyProtocol.setDataMonitoringCommitteeAppointedIndicator(
                BlConverter.covertToBoolean(studyProtocolDTO.getDataMonitoringCommitteeAppointedIndicator()));
@@ -329,5 +331,5 @@ public class StudyProtocolConverter {
                          studyProtocolDTO.getCtgovXmlRequiredIndicator()));
        return studyProtocol;
    }
-    
+   
 }

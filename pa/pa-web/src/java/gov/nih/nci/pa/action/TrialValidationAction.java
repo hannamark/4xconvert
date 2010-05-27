@@ -93,6 +93,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -412,8 +413,8 @@ public class TrialValidationAction extends ActionSupport {
             selectedLeadPrincipalInvestigator = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
             gtdDTO.setPiIdentifier(selectedLeadPrincipalInvestigator.getIdentifier().getExtension());
-            gov.nih.nci.pa.dto.PaPersonDTO personDTO = PAUtil
-                    .convertToPaPersonDTO(selectedLeadPrincipalInvestigator);
+            gov.nih.nci.pa.dto.PaPersonDTO personDTO = 
+                PADomainUtils.convertToPaPersonDTO(selectedLeadPrincipalInvestigator);
             gtdDTO.setPiName(personDTO.getLastName() + "," + personDTO.getFirstName());
         } catch (Exception e) {
             return "display_lead_prinicipal_inv";
@@ -477,7 +478,7 @@ public class TrialValidationAction extends ActionSupport {
         try {
             centralContact = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
-            gov.nih.nci.pa.dto.PaPersonDTO personDTO = PAUtil.convertToPaPersonDTO(centralContact);
+            gov.nih.nci.pa.dto.PaPersonDTO personDTO = PADomainUtils.convertToPaPersonDTO(centralContact);
             gtdDTO.setCentralContactIdentifier(centralContact.getIdentifier().getExtension());
             gtdDTO.setCentralContactName(personDTO.getLastName() + "," + personDTO.getFirstName());
         } catch (Exception e) {
@@ -503,8 +504,7 @@ public class TrialValidationAction extends ActionSupport {
                 try {
                     PersonDTO resultDTO = PoRegistry.getPersonEntityService().getPerson(
                             organizationalContactDTO.getPlayerIdentifier());
-                    // persons.add(convertToPaPerson(resultDTO));
-                    persons.add(PAUtil.convertToPaPersonDTO(resultDTO));
+                    persons.add(PADomainUtils.convertToPaPersonDTO(resultDTO));
                 } catch (NullifiedEntityException e) {
                     addActionError(e.getMessage());
                     ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -533,8 +533,8 @@ public class TrialValidationAction extends ActionSupport {
             PersonDTO selectedLeadPrincipalInvestigator = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
             gtdDTO.setResponsiblePersonIdentifier(selectedLeadPrincipalInvestigator.getIdentifier().getExtension());
-            gov.nih.nci.pa.dto.PaPersonDTO personDTO = PAUtil
-                    .convertToPaPersonDTO(selectedLeadPrincipalInvestigator);
+            gov.nih.nci.pa.dto.PaPersonDTO personDTO = 
+                PADomainUtils.convertToPaPersonDTO(selectedLeadPrincipalInvestigator);
             gtdDTO.setResponsiblePersonName(personDTO.getLastName() + "," + personDTO.getFirstName());
         } catch (NullifiedEntityException e) {
             LOG.error("got Nullified exception from PO for person Id " + persId);

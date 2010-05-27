@@ -100,5 +100,7 @@
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-gridgrouper-common-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-gridgrouper-stubs-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-ServiceSecurityProvider-client-1.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/commons-beanutils-1.8.0.jar"/>
+	<classpathentry kind="var" path="PA_LIB/commons/test/antlr-2.7.6.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

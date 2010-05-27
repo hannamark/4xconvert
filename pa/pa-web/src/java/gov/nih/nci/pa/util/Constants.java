@@ -125,4 +125,6 @@ public class Constants {
     public static final String ABSTRACTOR = "Abstractor";
     /** CSM Group used to define suabstractor role. **/
     public static final String SUABSTRACTOR = "SuAbstractor";
+    /** NCI. */
+    public static final String NCI = "NCI";
 }

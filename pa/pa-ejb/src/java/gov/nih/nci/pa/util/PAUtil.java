@@ -78,38 +78,30 @@
 */
 package gov.nih.nci.pa.util;
 
-import gov.nih.nci.iso21090.AddressPartType;
-import gov.nih.nci.iso21090.Adxp;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.EntityNamePartType;
-import gov.nih.nci.iso21090.Enxp;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
-import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.dto.PaOrganizationDTO;
-import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -118,9 +110,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -132,16 +121,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
 
 /**
- *
+ * This is a selection of utilities, useful for PA. This set of utilities is safe to use in the grid services. Do
+ * not, I repeat, do not add methods that reference domain objects. If you need to manipulate domain objects do so
+ * in PADomainUtils.
+ * 
  * @author Naveen Amiruddin
  * @since 05/30/2007
  * copyright NCI 2007.  All rights reserved.
@@ -151,136 +141,10 @@ import org.hibernate.Session;
 @SuppressWarnings({  "PMD.TooManyMethods" , "PMD.ExcessiveClassLength",
     "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class PAUtil {
-
     private static final int MAXF = 1024;
     private static final Logger LOG = Logger.getLogger(PAUtil.class);
-    private static final int EMAIL_IDX = 7;
     private static final String EXTN = "extn";
     private static final int EXTN_COUNT = 4;
-
-    /**
-     *
-     * @param poPerson as arg
-     * @return Person as pa object
-     */
-    public static Person convertToPaPerson(PersonDTO poPerson) {
-        Person person = new Person();
-        List<Enxp> list = poPerson.getName().getPart();
-        Iterator<Enxp> ite = list.iterator();
-        while (ite.hasNext()) {
-            Enxp part = ite.next();
-            if (EntityNamePartType.FAM == part.getType()) {
-                person.setLastName(part.getValue());
-            } else if (EntityNamePartType.GIV == part.getType()) {
-                if (person.getFirstName() == null) {
-                    person.setFirstName(part.getValue());
-                } else {
-                    person.setMiddleName(part.getValue());
-                }
-            }
-        }
-        return person;
-    }
-
-    /**
-     *
-     * @param poPerson as arg
-     * @return PaPersonDTO as pa DTO object
-     */
-    public static PaPersonDTO convertToPaPersonDTO(PersonDTO poPerson) {
-        gov.nih.nci.pa.dto.PaPersonDTO personDTO = new gov.nih.nci.pa.dto.PaPersonDTO();
-        personDTO.setId(Long.valueOf(poPerson.getIdentifier().getExtension()));
-        List<Enxp> nameList = poPerson.getName().getPart();
-        Iterator<Enxp> nameIte = nameList.iterator();
-        while (nameIte.hasNext()) {
-            Enxp part = nameIte.next();
-            if (EntityNamePartType.FAM == part.getType()) {
-                personDTO.setLastName(part.getValue());
-            } else if (EntityNamePartType.GIV == part.getType()) {
-                if (personDTO.getFirstName() == null) {
-                    personDTO.setFirstName(part.getValue());
-                } else {
-                    personDTO.setMiddleName(part.getValue());
-                }
-            }
-        }
-        //TelEmail; I need only EMAIL, So I am not using the DSETCONVERTER Class
-        DSet<Tel> telList = poPerson.getTelecomAddress();
-        Set<Tel> set = telList.getItem();
-        Iterator<Tel> iter = set.iterator();
-        while (iter.hasNext()) {
-            Object obj = iter.next();
-            if (obj instanceof TelEmail) {
-                personDTO.setEmail(((TelEmail) obj).getValue().toString().substring(EMAIL_IDX));
-            }
-        }
-        //Populate the address information now!
-        List<Adxp> addressList = poPerson.getPostalAddress().getPart();
-        Iterator<Adxp> addressIte = addressList.iterator();
-        while (addressIte.hasNext()) {
-            Adxp part = addressIte.next();
-            if (AddressPartType.STA == part.getType()) {
-                personDTO.setState(part.getValue());
-            }
-            if (AddressPartType.CTY == part.getType()) {
-                personDTO.setCity(part.getValue());
-            }
-            if (AddressPartType.CNT == part.getType()) {
-                personDTO.setCountry(part.getCode());
-            }
-            if (AddressPartType.ZIP == part.getType()) {
-                personDTO.setZip(part.getValue());
-            }
-        }
-        return personDTO;
-    }
-
-    /**
-     * @return OrganizationWebDTO for display.
-     * @param poOrgDto OrganizationDTO
-     * @param countryList CountryList
-     * @throws PAException on error
-     */
-    public static PaOrganizationDTO convertPoOrganizationDTO(OrganizationDTO poOrgDto, List<Country> countryList)
-            throws PAException {
-        PaOrganizationDTO displayElement = null;
-        displayElement = new PaOrganizationDTO();
-        displayElement.setId(poOrgDto.getIdentifier().getExtension().toString());
-        displayElement.setName(poOrgDto.getName().getPart().get(0).getValue());
-        //
-        List<Adxp> addressList = poOrgDto.getPostalAddress().getPart();
-        Iterator<Adxp> addressIte = addressList.iterator();
-        while (addressIte.hasNext()) {
-            Adxp part = addressIte.next();
-            if (AddressPartType.STA == part.getType()) {
-                displayElement.setState(part.getValue());
-            }
-            if (AddressPartType.CTY == part.getType()) {
-                displayElement.setCity(part.getValue());
-            }
-            if (AddressPartType.CNT == part.getType()) {
-                if (countryList != null) {
-                    displayElement.setCountry(getCountryNameUsingCode(part.getCode(), countryList));
-                } else {
-                    displayElement.setCountry(part.getCode());
-                }
-            }
-            if (AddressPartType.ZIP == part.getType()) {
-                displayElement.setZip(part.getValue());
-            }
-        }
-        return displayElement;
-    }
-
-    private static String getCountryNameUsingCode(String code, List<Country> countryList) {
-        for (int i = 0; i < countryList.size(); i++) {
-            Country country = countryList.get(i);
-            if (country.getAlpha3().toString().equals(code)) {
-                return country.getName();
-            }
-        }
-        return null;
-    }
 
     /**
      * checks if Ii is null.
@@ -844,6 +708,7 @@ public class PAUtil {
         }
         return value;
     }
+
     /**
      *
      * @param <TYPE> any base object extending BaseDTO
@@ -858,8 +723,6 @@ public class PAUtil {
         return type;
 
     }
-
-
 
     /**
      * Read an input stream in its entirety into a byte array.
@@ -928,6 +791,7 @@ public class PAUtil {
         Timestamp siteStatusDate = PAUtil.dateStringToTimestamp(date);
         return isDateCurrentOrPast(siteStatusDate);
     }
+    
     /**
      * @param date date
      * @return boolean
@@ -940,6 +804,7 @@ public class PAUtil {
         }
         return retValue;
     }
+    
     /**
      * check if the date is of valid format.
      * @param dateString dateString
@@ -1005,39 +870,6 @@ public class PAUtil {
         return false;
 
     }
-
-    /**
-     * Check if value exists.
-     *
-     * @param value the value
-     * @param tableName the table name
-     * @param column the column
-     *
-     * @return true, if successful
-     *
-     * @throws PAException the PA exception
-     */
-    public static boolean checkIfValueExists(String value, String tableName, String column) throws PAException {
-        String sql = "SELECT * FROM " + tableName + " WHERE " + column + " = '" + value + "'";
-        Session session = null;
-        boolean exists = true;
-        int count = 0;
-        try {
-          session = HibernateUtil.getCurrentSession();
-          Statement st = session.connection().createStatement();
-          ResultSet rs = st.executeQuery(sql);
-           while (rs.next()) {
-             count++;
-           }
-           if (count == 0) {
-             exists = false;
-           }
-
-        }  catch (SQLException sqle) {
-            LOG.error(" Hibernate exception while checking for value " + value + " from table " + tableName , sqle);
-        }
-        return exists;
-      }
 
     /**
      * @param value value
@@ -1315,6 +1147,63 @@ public class PAUtil {
             retAge = retAge.replace(".0", "");
         }
         return retAge;
-    }  
-   
+    }
+
+    /**
+     * Gets the assigned identifier extension.
+     * 
+     * @param spDTO the sp dto
+     * 
+     * @return the assigned identifier
+     */
+    public static String getAssignedIdentifierExtension(StudyProtocolDTO spDTO) {
+        String assignedIdentifier = "";
+        if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
+            for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
+                if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+                    return ii.getExtension();            
+                }
+            }
+        }
+        return assignedIdentifier;
+    }
+
+    /**
+     * Gets the assigned identifier.
+     * 
+     * @param spDTO the sp dto
+     * 
+     * @return the assigned identifier
+     */
+    public static Ii getAssignedIdentifier(StudyProtocolDTO spDTO) {
+        Ii assignedIdentifier = new Ii();
+        assignedIdentifier.setNullFlavor(NullFlavor.NI);
+        if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
+            for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
+                if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+                    return ii;            
+                }
+            }
+        }
+        return assignedIdentifier;
+    }
+
+    /**
+     * Check assigned identifier exists dto.
+     * 
+     * @param spDTO the sp dto
+     * 
+     * @return true, if successful
+     */
+    public static boolean checkAssignedIdentifierExists(StudyProtocolDTO spDTO) {
+        boolean assignedIdentifierExists = false;
+        if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
+            for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
+                if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+                    return true;                
+                }
+            }
+        }
+        return assignedIdentifierExists;
+    }
 }

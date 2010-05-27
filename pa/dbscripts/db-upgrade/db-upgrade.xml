@@ -421,7 +421,7 @@
     <changeSet id="ESD-233" author="smatyas">
        <comment>ESD-233 Introduce function to enable Unregistered Role to be added for JAAS</comment>
        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/ESD-233.sql"/>
-    </changeSet>
+    </changeSet> 
     <changeSet id="PO-1770" author="kkanchinadam">
        <comment>Add NCI as a default collaborator to all non-proprietary trials. </comment>
        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1770.sql"/>
@@ -430,4 +430,8 @@
        <comment>Enabling CSM Sync for PA. </comment>
        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1788.sql"/>
     </changeSet>
+     <changeSet id="PO-1882" author="Anu">
+       <comment>PO-1882 Refactor Study Protocol's Assigned Identifier (Model change)</comment>
+       <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1882.sql"/>
+    </changeSet> 
 </databaseChangeLog>

@@ -173,7 +173,7 @@ public class DocumentBeanLocal extends
              StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
              StudyProtocolBeanLocal spBean = new StudyProtocolBeanLocal();
              StudyProtocolDTO spDTO = spBean.getStudyProtocol(docDTO.getStudyProtocolIdentifier());
-             sb.append(File.separator).append(spDTO.getAssignedIdentifier().getExtension()).append(File.separator).
+             sb.append(File.separator).append(PAUtil.getAssignedIdentifier(spDTO)).append(File.separator).
                  append(docDTO.getIdentifier().getExtension()).append('-').append(doc.getFileName());
              File downloadFile = new File(sb.toString());
              docDTO.setText(EdConverter.convertToEd(PAUtil.readInputStream(new FileInputStream(downloadFile))));
@@ -244,7 +244,7 @@ public class DocumentBeanLocal extends
      String fromName = null;
      String toName = null;
      StudyProtocolBeanLocal spBean = new StudyProtocolBeanLocal();
-     String nciIdentifier = spBean.getStudyProtocol(fromStudyProtocolIi).getAssignedIdentifier().getExtension();
+     String nciIdentifier = PAUtil.getAssignedIdentifierExtension(spBean.getStudyProtocol(fromStudyProtocolIi));
      
      for (DocumentDTO dto : dtos) {
          Document doc = (Document) session.load(Document.class, IiConverter.convertToLong(dto.getIdentifier()));
@@ -263,16 +263,6 @@ public class DocumentBeanLocal extends
              } catch (IOException e) {
                  throw new PAException("Error while copy file from " + fromName + " to " + toName , e);
              }
-             
-//             File fromFile = new File(fromName);
-//             File toFile = new File(toName);
-//             
-//             if (!toFile.exists()) {
-//              boolean success = fromFile.renameTo(toFile);
-//              if (!success) {
-//                 throw new PAException("Unable to rename the file from " + fromName + " to " + toName);
-//              }
-//             }
          }
          session.delete(doc);
      }
@@ -353,7 +343,7 @@ public class DocumentBeanLocal extends
      StudyProtocolBeanLocal spBean = new StudyProtocolBeanLocal();
      StudyProtocolDTO sp = spBean.getStudyProtocol(docDTO.getStudyProtocolIdentifier());
      StringBuffer sb  = new StringBuffer(folderPath);
-     sb.append(File.separator).append(sp.getAssignedIdentifier().getExtension());
+     sb.append(File.separator).append(PAUtil.getAssignedIdentifier(sp));
      File f = new File(sb.toString());
      if (!f.exists()) {
          // create a new directory

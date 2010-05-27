@@ -46,6 +46,7 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
@@ -66,6 +67,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -104,7 +106,7 @@ public class TrialUtil {
      */
     private void copy(StudyProtocolDTO spDTO, TrialDTO trialDTO) {
         trialDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
-        trialDTO.setAssignedIdentifier(spDTO.getAssignedIdentifier().getExtension());
+        trialDTO.setAssignedIdentifier(PAUtil.getAssignedIdentifierExtension(spDTO));
         trialDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
         trialDTO.setPhaseOtherText(spDTO.getPhaseOtherText().getValue());
         trialDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
@@ -372,7 +374,13 @@ public class TrialUtil {
                     IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
         }
         isoDto = convertToStudyProtocolDTO(trialDTO, isoDto);
-        isoDto.setAssignedIdentifier(IiConverter.convertToIi(trialDTO.getAssignedIdentifier()));
+        if (isoDto.getSecondaryIdentifiers() != null && isoDto.getSecondaryIdentifiers().getItem() != null) {
+            for (Ii ii : isoDto.getSecondaryIdentifiers().getItem()) {
+                if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+                    ii.setExtension(trialDTO.getAssignedIdentifier());
+                }
+            }
+        }
         isoDto.setAmendmentDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(
                 ((TrialDTO) trialDTO).getAmendmentDate())));
         isoDto.setAmendmentNumber(StConverter.convertToSt(((TrialDTO) trialDTO).getLocalAmendmentNumber()));
@@ -473,12 +481,19 @@ public class TrialUtil {
         }
         if  (trialDTO.getXmlRequired()) {
             isoDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
-       } else {
+        } else {
             isoDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.FALSE));
-       }
+        }
         isoDto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.getByCode(
                 trialDTO.getPrimaryPurposeCode())));
         isoDto.setPrimaryPurposeOtherText(StConverter.convertToSt(trialDTO.getPrimaryPurposeOtherText()));
+        if (trialDTO.getSecondaryIdentifierList() != null && !trialDTO.getSecondaryIdentifierList().isEmpty()) {
+           List<Ii> iis = new ArrayList<Ii>();
+           for (Ii sps : trialDTO.getSecondaryIdentifierList()) {
+             iis.add(IiConverter.convertToOtherIdentifierIi(sps.getExtension()));
+           }
+           isoDto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(new HashSet<Ii>(iis)));
+        }
     }
     
     /**
@@ -616,7 +631,6 @@ public class TrialUtil {
         isoDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getLeadOrgTrialIdentifier()));
         return isoDto;
     }
-    
     /**
      * Convert to nct study site dto.
      * 
@@ -1639,7 +1653,7 @@ public class TrialUtil {
             PersonDTO perDto = paServiceUtil.getPoPersonEntity(IiConverter.convertToPoPersonIi(
                     spStageDTO.getResponsibleIdentifier().getExtension()));
             if (perDto != null) {
-                trialDto.setResponsiblePersonName(PAUtil.convertToPaPersonDTO(perDto).getFullName());
+                trialDto.setResponsiblePersonName(PADomainUtils.convertToPaPersonDTO(perDto).getFullName());
             } else {
                OrganizationalContactDTO orgContactDTO = (OrganizationalContactDTO) paServiceUtil.getCorrelationByIi(
                  IiConverter.convertToPoOrganizationalContactIi(spStageDTO.getResponsibleIdentifier().getExtension()));
@@ -1863,7 +1877,7 @@ public class TrialUtil {
         if (perDto == null) {
             return NULLIFIED_PERSON;
         }
-        return PAUtil.convertToPaPersonDTO(perDto).getFullName();
+        return PADomainUtils.convertToPaPersonDTO(perDto).getFullName();
     }
     /**
      * 

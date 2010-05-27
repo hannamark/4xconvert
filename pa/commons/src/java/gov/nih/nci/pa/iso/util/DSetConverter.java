@@ -271,8 +271,7 @@ public class DSetConverter {
             Set<Ii> iis = identifier.getItem();
             for (Ii ii : iis) {
                 // Since PO only assigns one ID, our identifier will be the only ISS with our root
-                if (IdentifierReliability.ISS == ii.getReliability()
-                        && ii.getRoot().startsWith(BASE_ROOT)) {
+                if (IdentifierReliability.ISS == ii.getReliability() && ii.getRoot().startsWith(BASE_ROOT)) {
                     return ii;
                 }
             }
@@ -297,4 +296,39 @@ public class DSetConverter {
         return dSet;
     }
 
+
+    /**
+     * Convert ii set to dset.
+     * 
+     * @param identifierList the identifier list
+     * 
+     * @return the d set< ii>
+     */
+    public static DSet<Ii> convertIiSetToDset(Set<Ii> identifierList) {
+
+        DSet<Ii> dSet = null;
+        if (identifierList != null) {
+            dSet = new DSet<Ii>();
+            dSet.setItem(identifierList);        
+              
+        }
+        return dSet;
+    }
+    
+    /**
+     * Convert dset to ii set.
+     * 
+     * @param identifierList the identifier list
+     * 
+     * @return the set< ii>
+     */
+    public static Set<Ii> convertDsetToIiSet(DSet<Ii> identifierList) {
+
+        Set<Ii> iiset = null;
+        if (identifierList != null && identifierList.getItem() != null) {
+            iiset = new HashSet<Ii>();
+            iiset.addAll(identifierList.getItem());               
+        }
+        return iiset;
+    }
 }

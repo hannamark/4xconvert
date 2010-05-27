@@ -125,6 +125,7 @@ import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -599,8 +600,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
 
         // convert the PO DTO to the pa domain
-        paOrgDTO = PAUtil.convertPoOrganizationDTO(selectedOrgDTO, null);
-        //paOrgDTO = ISOOrgDisplayConverter.convertPoOrganizationDTO(selectedOrgDTO);
+        paOrgDTO = PADomainUtils.convertPoOrganizationDTO(selectedOrgDTO, null);
+        
         // store selection
         Organization org = new Organization();
         org.setCity(paOrgDTO.getCity());
@@ -953,7 +954,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 personContactWebDTO.setSelectedPersId(Long.valueOf(persId));
             }
             if (selectedPersTO != null && selectedPersTO.getName() != null) {
-                gov.nih.nci.pa.dto.PaPersonDTO personDTO = PAUtil.convertToPaPersonDTO(selectedPersTO);
+                gov.nih.nci.pa.dto.PaPersonDTO personDTO = PADomainUtils.convertToPaPersonDTO(selectedPersTO);
                 personContactWebDTO.setFirstName(personDTO.getFirstName());
                 personContactWebDTO.setLastName(personDTO.getLastName());
                 personContactWebDTO.setMiddleName(personDTO.getMiddleName());
@@ -1020,7 +1021,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             selectedPersTO = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(contactPersId)));
             personContactWebDTO.setSelectedPersId(Long.valueOf(selectedPersTO.getIdentifier().getExtension()));
-            gov.nih.nci.pa.dto.PaPersonDTO personDTO = PAUtil.convertToPaPersonDTO(selectedPersTO);
+            gov.nih.nci.pa.dto.PaPersonDTO personDTO = PADomainUtils.convertToPaPersonDTO(selectedPersTO);
             personContactWebDTO.setFirstName(personDTO.getFirstName());
             personContactWebDTO.setLastName(personDTO.getLastName());
             personContactWebDTO.setMiddleName(personDTO.getMiddleName());
@@ -1439,7 +1440,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         try {
             perDTO = PoRegistry.getPersonEntityService().search(criteria, limit).get(0);
             // convert the PO DTO to the pa domain
-            personContactWebDTO = PAUtil.convertToPaPersonDTO(perDTO);
+            personContactWebDTO = PADomainUtils.convertToPaPersonDTO(perDTO);
             personContactWebDTO.setSelectedPersId(personContactWebDTO.getId());
         } catch (PAException e) {
             LOG.error(e);

@@ -163,7 +163,7 @@ public class ProtocolQueryServiceTest {
         assertNotNull(data);
         assertEquals("Size does not match  " , data.size(), 1);
         assertEquals("Title does not match  " , data.get(0).getOfficialTitle(), "Cancer for kids");
-        assertEquals("NCI Identifier does not match  " , data.get(0).getNciIdentifier(), "NCI-2008-0001");
+        assertEquals("NCI Identifier does not match  " , data.get(0).getNciIdentifier(), "NCI-2009-00001");
         
     }
 
@@ -172,7 +172,7 @@ public class ProtocolQueryServiceTest {
         StudyProtocolQueryDTO data = localEjb.getTrialSummaryByStudyProtocolId(Long.valueOf(1));
         assertNotNull(data);
         assertEquals("Title does not match  " , data.getOfficialTitle(), "Cancer for kids");
-        assertEquals("NCI Identifier does not match  " , data.getNciIdentifier(), "NCI-2008-0001");
+        assertEquals("NCI Identifier does not match  " , data.getNciIdentifier(), "NCI-2009-00001");
     }
     
     @Test(expected=PAException.class)

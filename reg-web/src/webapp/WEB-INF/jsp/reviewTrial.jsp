@@ -548,6 +548,11 @@ var winprint=window.open("","",sOption);
      <c:if test="${trialDTO.fundingDtos != null}">  
         <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
      </c:if>
+      <c:if test="${fn:length(trialDTO.secondaryIdentifierList) > 0}">
+        <div class="box"><h3>Secondary Identifiers </h3>   
+          <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp" %>
+        </div>
+       </c:if>
      <c:if test="${fn:trim(trialDTO.propritaryTrialIndicator) == 'No' && trialDTO.xmlRequired == true}">
         <table class="form">
         <tr>

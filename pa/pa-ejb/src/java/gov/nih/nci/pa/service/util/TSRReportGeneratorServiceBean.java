@@ -322,8 +322,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             }
             outputByteStream = tsrReportGenerator.generateTsrReport();
         } catch (Exception e) {
-            TSRErrorReport tsrErrorReport = new TSRErrorReport(REPORT_TITLE, studyProtocolDto
-                    .getAssignedIdentifier().getExtension(), getValue(studyProtocolDto.getOfficialTitle()));
+            TSRErrorReport tsrErrorReport = 
+                new TSRErrorReport(REPORT_TITLE, PAUtil.getAssignedIdentifierExtension(studyProtocolDto), 
+                        getValue(studyProtocolDto.getOfficialTitle()));
             tsrErrorReport.setErrorType(e.toString());
             for (StackTraceElement ste : e.getStackTrace()) {
                 tsrErrorReport.getErrorReasons().add(ste.toString());
@@ -386,7 +387,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private void setTrialIdentificationDetails() throws PAException {
         TSRReportTrialIdentification trialIdentification = new TSRReportTrialIdentification();
         trialIdentification.setTrialCategory(isProprietaryTrial ? PROPRIETARY : NON_PROPRIETARY);
-        trialIdentification.setNciIdentifier(studyProtocolDto.getAssignedIdentifier().getExtension());
+        trialIdentification.setNciIdentifier(PAUtil.getAssignedIdentifierExtension(studyProtocolDto));
         trialIdentification.setLeadOrgIdentifier(getTiLeadOrgIdentifier());
         trialIdentification.setNctNumber(getIdentifier(PAConstants.NCT_IDENTIFIER_TYPE));
         trialIdentification.setDcpIdentifier(getIdentifier(PAConstants.DCP_IDENTIFIER_TYPE));

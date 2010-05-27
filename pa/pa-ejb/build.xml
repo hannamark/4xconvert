@@ -148,6 +148,9 @@
                 <filter token="po.port.number" value="${po.port.number}" />
                 <filter token="csm.submitter.group" value="${csm.submitter.group}" />
                 <filter token="grid.dorian.url" value="${grid.dorian.url}" />
+                <filter token="gridgrouper.submitter.group" value="${gridgrouper.submitter.group}"/>
+                <filter token="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
+                <filter token="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
             </filterset>
         </copy>
         <copy file="${pa.resourceDir}/ejb-jar.xml"
@@ -420,6 +423,7 @@
                        **/util/Hibernate*
                        **/util/TrialUtil*
                        **/util/PaEarPropertyReader*
+                       **/util/PADomainUtils*
         "/>
     </target>
 

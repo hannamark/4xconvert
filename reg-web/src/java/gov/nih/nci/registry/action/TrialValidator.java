@@ -360,6 +360,7 @@ public class TrialValidator {
     public static void removeSessionAttributes() {
         ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");
         ServletActionContext.getRequest().getSession().removeAttribute("grantList");
+        ServletActionContext.getRequest().getSession().removeAttribute("secondaryIdentifiersList");
         ServletActionContext.getRequest().getSession().removeAttribute("PoLeadOrg");
         ServletActionContext.getRequest().getSession().removeAttribute("PoLeadPI");
         ServletActionContext.getRequest().getSession().removeAttribute("PoSponsor");
@@ -400,6 +401,10 @@ public class TrialValidator {
         if (!tDTO.getFundingDtos().isEmpty()) {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,
                     tDTO.getFundingDtos());
+        }
+        if (!tDTO.getSecondaryIdentifierList().isEmpty()) {
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST,
+                    tDTO.getSecondaryIdentifierList());
         }
         List<DocumentDTO> documentISOList;
         try {

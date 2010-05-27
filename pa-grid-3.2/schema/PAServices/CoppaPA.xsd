@@ -93,7 +93,7 @@
                 <xs:sequence>
                     <xs:element name="acronym" type="ISO:ST" />
                     <xs:element name="accrualReportingMethodCode" type="ISO:CD" />
-                    <xs:element name="assignedIdentifier" type="ISO:II" />
+                    <xs:element name="secondaryIdentifiers" type="ISO:DSET_II" />
                     <xs:element name="dataMonitoringCommitteeAppointedIndicator" type="ISO:BL" />
                     <xs:element name="delayedpostingIndicator" type="ISO:BL" />
                     <xs:element name="expandedAccessIndicator" type="ISO:BL" />

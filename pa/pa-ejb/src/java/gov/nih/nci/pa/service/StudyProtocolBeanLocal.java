@@ -79,9 +79,9 @@
 
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
@@ -105,13 +105,16 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -327,6 +330,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         Session session = HibernateUtil.getCurrentSession();
         setDefaultValues(isp , ispDTO , session , CREATE);
         session.save(isp);
+        LOG.debug("Creating isp for id = " + isp.getId());
         return IiConverter.convertToStudyProtocolIi(isp.getId());
 
     }
@@ -489,11 +493,11 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     private String generateNciIdentifier(Session session) {
         Calendar today = Calendar.getInstance();
         int currentYear  = today.get(Calendar.YEAR);
-        String query = "select max(sp.identifier) from StudyProtocol sp where "
-            + "sp.identifier like '%" + currentYear + "%' ";
+        String query = "select max(extension) from study_otheridentifiers sp where "
+            + "sp.extension like '%" + currentYear + "%' ";
         String nciIdentifier;
 
-        Query queryObject = session.createQuery(query);
+        Query queryObject = session.createSQLQuery(query);
         String maxValue = (String) queryObject.list().get(0);
         if (maxValue != null && PAUtil.isNotEmpty(maxValue)) {
             String maxNumber = maxValue.substring(maxValue.lastIndexOf('-') + 1 , maxValue.length());
@@ -609,9 +613,17 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
 //        if (CREATE.equals(operation) && ActStatusCode.ACTIVE.equals(sp.getStatusCode())) {
 //          sp.setSubmissionNumber(generateSubmissionNumber(sp.getIdentifier(), session));
 //        }
-
-        if (sp.getIdentifier() == null) {
-            sp.setIdentifier(generateNciIdentifier(session));
+        //check if the assigned identifier exists
+        //if no - generate the nci identifier and set it in the sp.
+        if (!PADomainUtils.checkAssignedIdentifier(sp)) {        
+          Ii spSecAssignedId = IiConverter.convertToAssignedIdentifierIi(generateNciIdentifier(session));
+          if (sp.getOtherIdentifiers() != null) {
+            sp.getOtherIdentifiers().add(spSecAssignedId);
+          } else {
+            Set<Ii> secondaryIds = new HashSet<Ii>();
+            secondaryIds.add(spSecAssignedId);
+            sp.setOtherIdentifiers(secondaryIds);
+          }
         }
         if (ejbContext != null && CREATE.equals(operation)) {
             sp.setUserLastCreated(spDTO.getUserLastCreated() != null ? spDTO.getUserLastCreated().getValue()
@@ -638,8 +650,8 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         List<StudyProtocol> studyProtocolList = null;
         session = HibernateUtil.getCurrentSession();
         StudyProtocol exampleDO = new StudyProtocol();
-        if (dto.getAssignedIdentifier() != null) {
-            exampleDO.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
+        if (dto.getSecondaryIdentifiers() != null && dto.getSecondaryIdentifiers().getItem() != null) {
+            exampleDO.setOtherIdentifiers(dto.getSecondaryIdentifiers().getItem());
         }
         if (dto.getPhaseCode() != null) {
             exampleDO.setPhaseCode(PhaseCode.getByCode(dto.getPhaseCode().getCode()));

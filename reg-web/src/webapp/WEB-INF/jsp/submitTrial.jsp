@@ -38,6 +38,7 @@ var persid;
 var respartOrgid;
 var contactMail;
 var contactPhone;
+var countOfOtherIdentifiers=0;
 function setorgid(orgIdentifier, oname){
     orgid = orgIdentifier;
     chosenname = oname.replace(/&apos;/g,"'");
@@ -209,6 +210,13 @@ function deleteGrantRow(rowid){
     callAjax(url, div);             
 }
 
+function deleteOtherIdentifierRow(rowid){ 
+    var  url = '/registry/protected/ajaxManageOtherIdentifiersActiondeleteOtherIdentifier.action?uuid='+rowid;
+    var div = document.getElementById('otherIdentifierdiv');
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+    callAjax(url, div);             
+}
+
 function resetGrantRow(){
     document.getElementById('fundingMechanismCode').value = '';
     document.getElementById('nihInstitutionCode').value = '';
@@ -279,6 +287,18 @@ function loadRegAuthoritiesDiv() {
     function showRow(row){
         row.style.display = '';
     }
+    function addOtherIdentifier() {
+      var orgValue=document.getElementById("otherIdentifierOrg").value;
+      if (orgValue != null && orgValue != '') {
+       var  url = '/registry/protected/ajaxManageOtherIdentifiersActionaddOtherIdentifier.action?otherIdentifier='+orgValue;    
+       var div = document.getElementById('otherIdentifierdiv');   
+       div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
+       callAjax(url, div);
+       document.getElementById("otherIdentifierOrg").value="";
+      } else {
+        alert("Please enter a valid Other identifier to add");
+      }
+    }
 </SCRIPT>
 <script language="javascript">
 
@@ -309,12 +329,12 @@ function toggledisplayDivs(val) {
     <c:set var="topic" scope="request" value="submit_trial"/> 
     <div class="box" id="filters">
     <reg-web:failureMessage/>
-	    <s:form name="submitTrial" method="POST" enctype="multipart/form-data">
-	    <s:if test="hasActionErrors()">
-	    <div class="error_msg">
-	    <s:actionerror/>
-	    </div>
-	    </s:if>
+        <s:form name="submitTrial" method="POST" enctype="multipart/form-data">
+        <s:if test="hasActionErrors()">
+        <div class="error_msg">
+        <s:actionerror/>
+        </div>
+        </s:if>
         <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
         <s:hidden name="trialDTO.piIdentifier" id="trialDTO.piIdentifier"/> 
         <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>
@@ -334,7 +354,25 @@ function toggledisplayDivs(val) {
        </tr>
        <tr><td></td></tr>
        <tr><td></td></tr>
-            <%@ include file="/WEB-INF/jsp/nodecorate/trialIdentifiers.jsp" %>      
+            <%@ include file="/WEB-INF/jsp/nodecorate/trialIdentifiers.jsp" %>     
+          <tr>
+                <th colspan="2"><fmt:message key="submit.trial.otherIdentifiers"/></th>
+          </tr>
+          <tr>
+                <td scope="row" class="label">
+                     <label for="submitTrial_protocolWebDTO_otherIdentifiers"> <fmt:message key="submit.trial.otherIdentifier"/></label>
+                </td>
+                <td>
+                  <input type="text" name="otherIdentifierOrg" id="otherIdentifierOrg" value=""/>&nbsp; <input type="button" id="otherIdbtnid" value="Add Other Identifier" onclick="addOtherIdentifier();" /></td>           
+          </tr> 
+           <tr>
+                <td colspan="2" class="space">  
+                <div id="otherIdentifierdiv">
+                    <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp" %>
+                </div>
+                </td>
+                
+          </tr>  
           <tr>
                 <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>
           </tr>

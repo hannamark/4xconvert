@@ -22,6 +22,7 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -46,7 +47,7 @@ public class TrialUtilTest {
 	@Test
 	public void testCopyStudyProtocolDTOTrialDTO() {
 		spDTO.setOfficialTitle(StConverter.convertToSt("test"));
-		spDTO.setAssignedIdentifier(IiConverter.convertToIi("1"));
+		spDTO.setSecondaryIdentifiers(DSetConverter.convertIiToDset(IiConverter.convertToIi("1")));
 		spDTO.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.O.getCode()));
 		spDTO.setPhaseOtherText(StConverter.convertToSt("test"));
 		spDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(PrimaryPurposeCode.OBSERVATIONAL.getCode()));

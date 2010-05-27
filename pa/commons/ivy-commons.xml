@@ -85,6 +85,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jboss"                  name="jnpserver"               rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="hsqldb"                 name="hsqldb"                  rev="1.8.0.7"         conf="test->master"/>
     <dependency org="mockrunner"             name="mockrunner"              rev="0.3.1"           conf="test->master"/>
+    <dependency org="jakarta"                name="commons-beanutils"       rev="1.8.0"           conf="test->master"/>
 
     <!-- other test targets -->
     <dependency org="checkstyle"             name="checkstyle-all"          rev="4.4"             conf="test-checkstyle->runtime"/>

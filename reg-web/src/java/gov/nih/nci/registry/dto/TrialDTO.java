@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.registry.dto;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
@@ -66,9 +67,11 @@ public class TrialDTO extends BaseTrialDTO {
     private String trialOversgtAuthCountryName;
     private String trialOversgtAuthOrgName;
     private boolean xmlRequired = true;
+    private List<Ii> secondaryIdentifierList;
+    private String assignedIdentifier;
     
     /**
-     * 
+     * Constructor.
      */
     public TrialDTO() {
         super();
@@ -78,7 +81,7 @@ public class TrialDTO extends BaseTrialDTO {
         indIdeUpdateDtos = new ArrayList<StudyIndldeWebDTO>();
         fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
         indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
-        
+        secondaryIdentifierList = new ArrayList<Ii>();        
     }
     /**
      * @return the accrualReportingMethodCode
@@ -372,6 +375,7 @@ public class TrialDTO extends BaseTrialDTO {
     public void setParticipatingSites(List<PaOrganizationDTO> participatingSites) {
         this.participatingSites = participatingSites;
     }
+    
     /**
      * @return the countryList
      */
@@ -590,5 +594,29 @@ public class TrialDTO extends BaseTrialDTO {
      */
     public void setXmlRequired(boolean xmlRequired) {
         this.xmlRequired = xmlRequired;
+    }
+    /**
+     * @return the secondaryIdentifierList
+     */
+    public List<Ii> getSecondaryIdentifierList() {
+      return secondaryIdentifierList;
+    }
+    /**
+    * @param secondaryIdentifierList the secondaryIdentifierList to set
+    */
+    public void setSecondaryIdentifierList(List<Ii> secondaryIdentifierList) {
+      this.secondaryIdentifierList = secondaryIdentifierList;
+    }
+    /**
+     * @return the assignedIdentifier
+     */
+     public String getAssignedIdentifier() {
+       return assignedIdentifier;
+     }
+     /**
+      * @param assignedIdentifier the assignedIdentifier to set
+      */
+      public void setAssignedIdentifier(String assignedIdentifier) {
+       this.assignedIdentifier = assignedIdentifier;
     }
 }

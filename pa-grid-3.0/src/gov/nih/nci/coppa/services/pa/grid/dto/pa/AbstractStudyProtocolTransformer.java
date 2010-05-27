@@ -94,6 +94,8 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLINTTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 /**
  * Transforms StudyProtocol instances.
@@ -160,7 +162,8 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setStartDateTypeCode(CDTransformer.INSTANCE.toDto(input.getStartDateTypeCode()));
         result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
         // II
-        result.setAssignedIdentifier(IITransformer.INSTANCE.toDto(input.getAssignedIdentifier()));
+        result.setSecondaryIdentifiers(
+                DSetConverter.convertIiToDset(IITransformer.INSTANCE.toDto(input.getAssignedIdentifier())));
         result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
         // TS
         result.setAmendmentDate(TSTransformer.INSTANCE.toDto(input.getAmendmentDate()));
@@ -218,7 +221,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setStartDateTypeCode(CDTransformer.INSTANCE.toXml(input.getStartDateTypeCode()));
         result.setStatusCode(CDTransformer.INSTANCE.toXml(input.getStatusCode()));
         // II
-        result.setAssignedIdentifier(IITransformer.INSTANCE.toXml(input.getAssignedIdentifier()));
+        result.setAssignedIdentifier(IITransformer.INSTANCE.toXml(PAUtil.getAssignedIdentifier(input)));
         result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
         // TS
         result.setAmendmentDate(TSTransformer.INSTANCE.toXml(input.getAmendmentDate()));

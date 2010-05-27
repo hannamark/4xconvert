@@ -1065,11 +1065,11 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
     }
 
-    private void enforceGeneralTrailDetails(StudyProtocolDTO studyProtocolDTO,
-            List<AbstractionCompletionDTO> abstractionList) {
-        if (studyProtocolDTO.getAssignedIdentifier().getExtension() == null) {
-            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
-                    "NCI Trial Identifier must be Entered"));
+  private void enforceGeneralTrailDetails(StudyProtocolDTO studyProtocolDTO,
+          List<AbstractionCompletionDTO> abstractionList) {
+        if (!PAUtil.checkAssignedIdentifierExists(studyProtocolDTO)) {
+         abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+              "NCI Trial Identifier must be Entered"));
         }
         if (studyProtocolDTO.getOfficialTitle().getValue() == null) {
             abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",

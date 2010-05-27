@@ -89,7 +89,7 @@ import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -306,7 +306,7 @@ public class PopUpAction extends ActionSupport {
             List<OrganizationDTO> personsList = new ArrayList<OrganizationDTO>();            
             personsList = PoRegistry.getOrganizationEntityService().search(criteria, limit);
             for (OrganizationDTO dto : personsList) {
-                orgs.add(PAUtil.convertPoOrganizationDTO(dto, countryList));
+                orgs.add(PADomainUtils.convertPoOrganizationDTO(dto, countryList));
             }
             return retvalue;
         } catch (Exception e) {
@@ -348,7 +348,7 @@ public class PopUpAction extends ActionSupport {
             List<PersonDTO> persList = new ArrayList<PersonDTO>();
             persList = PoRegistry.getPersonEntityService().search(p, limit);
             for (PersonDTO dto : persList) {
-                persons.add(PAUtil.convertToPaPersonDTO(dto));
+                persons.add(PADomainUtils.convertToPaPersonDTO(dto));
             }
         } catch (PAException e) {
             addActionError(e.getMessage());

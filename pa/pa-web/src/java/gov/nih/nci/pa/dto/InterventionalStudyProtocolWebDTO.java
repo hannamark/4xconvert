@@ -80,7 +80,6 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -108,7 +107,7 @@ public class InterventionalStudyProtocolWebDTO {
             this.studyProtocolType = iso.getStudyProtocolType().getValue();
             this.trialPhase = iso.getPhaseCode().getCode();
             this.trialTitle = iso.getOfficialTitle().getValue();
-            this.nciAccessionNumber =  IiConverter.convertToString(iso.getAssignedIdentifier());
+            this.nciAccessionNumber =  PAUtil.getAssignedIdentifierExtension(iso);
             if (iso.getStartDate() != null) {
                 this.startDate = PAUtil.normalizeDateString(
                                TsConverter.convertToTimestamp(iso.getStartDate()).toString());

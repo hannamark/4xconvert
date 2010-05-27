@@ -151,7 +151,7 @@ public class TrialUtil {
      */
     public void copy(StudyProtocolDTO spDTO, TrialDTO trialDTO) {
         trialDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
-        trialDTO.setAssignedIdentifier(spDTO.getAssignedIdentifier().getExtension());
+        trialDTO.setAssignedIdentifier(PAUtil.getAssignedIdentifierExtension(spDTO));
         trialDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
         trialDTO.setPhaseOtherText(spDTO.getPhaseOtherText().getValue());
         trialDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
@@ -387,7 +387,8 @@ public class TrialUtil {
             isoDto  = PaRegistry.getStudyProtocolService().getInterventionalStudyProtocol(
                     IiConverter.convertToIi(trialDTO.getIdentifier()));
         }
-        isoDto.setAssignedIdentifier(IiConverter.convertToIi(trialDTO.getAssignedIdentifier()));
+        Ii assignedId = IiConverter.convertToAssignedIdentifierIi(trialDTO.getAssignedIdentifier()); 
+        isoDto.setSecondaryIdentifiers(DSetConverter.convertIiToDset(assignedId));
         isoDto.setOfficialTitle(StConverter.convertToSt(trialDTO.getOfficialTitle()));
         isoDto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDTO.getPhaseCode())));
         if (PAUtil.isNotEmpty(trialDTO.getPhaseOtherText())) {

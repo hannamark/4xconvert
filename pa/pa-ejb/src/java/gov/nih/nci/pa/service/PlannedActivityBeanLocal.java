@@ -21,6 +21,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -432,7 +433,7 @@ public class PlannedActivityBeanLocal
  private void checkIfValuesExist(PlannedSubstanceAdministrationDTO dto) throws PAException {
   StringBuffer errorBuffer = new StringBuffer();  
   if (!PAUtil.isCdNull(dto.getDoseFormCode())) {
-   boolean doseFormExists = PAUtil.checkIfValueExists(dto.getDoseFormCode().getCode(), "DOSE_FORM", "CODE");
+   boolean doseFormExists = PADomainUtils.checkIfValueExists(dto.getDoseFormCode().getCode(), "DOSE_FORM", "CODE");
    if (!doseFormExists) {
        errorBuffer.append("Error while checking for value ")
                   .append(dto.getDoseFormCode().getCode())
@@ -440,8 +441,8 @@ public class PlannedActivityBeanLocal
     }
   }
   if (!PAUtil.isCdNull(dto.getDoseFrequencyCode())) {
-      boolean doseFreqExists = PAUtil
-          .checkIfValueExists(dto.getDoseFrequencyCode().getCode(), "DOSE_FREQUENCY", "CODE");
+      boolean doseFreqExists = PADomainUtils.checkIfValueExists(dto.getDoseFrequencyCode().getCode(), 
+              "DOSE_FREQUENCY", "CODE");
       if (!doseFreqExists) {
           errorBuffer.append("Error while checking for value ")
                      .append(dto.getDoseFrequencyCode().getCode())
@@ -449,8 +450,8 @@ public class PlannedActivityBeanLocal
        }
      }
   if (!PAUtil.isCdNull(dto.getRouteOfAdministrationCode())) {
-      boolean roaExists = PAUtil
-          .checkIfValueExists(dto.getRouteOfAdministrationCode().getCode(), "ROUTE_OF_ADMINISTRATION", "CODE");
+      boolean roaExists = PADomainUtils.checkIfValueExists(dto.getRouteOfAdministrationCode().getCode(), 
+              "ROUTE_OF_ADMINISTRATION", "CODE");
       if (!roaExists) {
           errorBuffer.append("Error while checking for value ")
                      .append(dto.getRouteOfAdministrationCode().getCode())
@@ -458,8 +459,8 @@ public class PlannedActivityBeanLocal
        }
      }
   if (dto.getDose() != null &&  dto.getDose().getHigh().getUnit() != null) {
-      boolean doseUOMExists = PAUtil
-         .checkIfValueExists(dto.getDose().getHigh().getUnit(), "UNIT_OF_MEASUREMENT", "CODE");
+      boolean doseUOMExists = PADomainUtils.checkIfValueExists(dto.getDose().getHigh().getUnit(), 
+              "UNIT_OF_MEASUREMENT", "CODE");
       if (!doseUOMExists) {
           errorBuffer.append("Error while checking for value ")
                      .append(dto.getDose().getHigh().getUnit())
@@ -467,8 +468,8 @@ public class PlannedActivityBeanLocal
        }
   }
   if (dto.getDoseTotal() != null && dto.getDoseTotal().getHigh().getUnit() != null) {
-      boolean dosetotalExists = PAUtil
-            .checkIfValueExists(dto.getDoseTotal().getHigh().getUnit(), "UNIT_OF_MEASUREMENT", "CODE");
+      boolean dosetotalExists = PADomainUtils.checkIfValueExists(dto.getDoseTotal().getHigh().getUnit(), 
+              "UNIT_OF_MEASUREMENT", "CODE");
       if (!dosetotalExists) {
           errorBuffer.append("Error while checking for value ")
                      .append(dto.getDoseTotal().getHigh().getUnit())
@@ -476,8 +477,8 @@ public class PlannedActivityBeanLocal
        }
   }
  if (dto.getDoseDuration() != null && dto.getDoseDuration().getUnit() != null) {
-   boolean doseDurExists = PAUtil
-     .checkIfValueExists(dto.getDoseDuration().getUnit(), "UNIT_OF_MEASUREMENT", "CODE");
+   boolean doseDurExists = PADomainUtils.checkIfValueExists(dto.getDoseDuration().getUnit(), "UNIT_OF_MEASUREMENT", 
+           "CODE");
    if (!doseDurExists) {
      errorBuffer.append("Error while checking for value ")
                 .append(dto.getDoseDuration().getUnit())
@@ -486,8 +487,8 @@ public class PlannedActivityBeanLocal
  }
  if (dto.getSubcategoryCode().getCode().equals(ActivitySubcategoryCode.RADIATION.getCode())) {
    if (!PAUtil.isCdNull(dto.getApproachSiteCode())) {
-     boolean approachSite = PAUtil
-          .checkIfValueExists(dto.getApproachSiteCode().getCode(), "TARGET_SITE", "CODE");
+     boolean approachSite = 
+         PADomainUtils.checkIfValueExists(dto.getApproachSiteCode().getCode(), "TARGET_SITE", "CODE");
      if (!approachSite) {
         errorBuffer.append("Error while checking for value ")
         .append(dto.getApproachSiteCode().getCode())
@@ -495,8 +496,7 @@ public class PlannedActivityBeanLocal
      }
    }
    if (!PAUtil.isCdNull(dto.getTargetSiteCode())) {
-    boolean targetSite = PAUtil
-         .checkIfValueExists(dto.getTargetSiteCode().getCode(), "TARGET_SITE", "CODE");
+    boolean targetSite = PADomainUtils.checkIfValueExists(dto.getTargetSiteCode().getCode(), "TARGET_SITE", "CODE");
     if (!targetSite) {
       errorBuffer.append("Error while checking for value ")
       .append(dto.getTargetSiteCode().getCode())
@@ -519,8 +519,7 @@ public class PlannedActivityBeanLocal
  private void checkIfValuesExist(PlannedProcedureDTO dto) throws PAException {
   StringBuffer errorBuffer = new StringBuffer();  
   if (!PAUtil.isCdNull(dto.getMethodCode())) {
-     boolean approachSite = PAUtil
-             .checkIfValueExists(dto.getMethodCode().getCode(), "METHOD_CODE", "CODE");
+     boolean approachSite = PADomainUtils.checkIfValueExists(dto.getMethodCode().getCode(), "METHOD_CODE", "CODE");
     if (!approachSite) {
            errorBuffer.append("Error while checking for value ")
            .append(dto.getMethodCode().getCode())
@@ -528,8 +527,7 @@ public class PlannedActivityBeanLocal
      }
   }
   if (!PAUtil.isCdNull(dto.getTargetSiteCode())) {
-     boolean targetSite = PAUtil
-            .checkIfValueExists(dto.getTargetSiteCode().getCode(), "TARGET_SITE", "CODE");
+     boolean targetSite = PADomainUtils.checkIfValueExists(dto.getTargetSiteCode().getCode(), "TARGET_SITE", "CODE");
      if (!targetSite) {
          errorBuffer.append("Error while checking for value ")
          .append(dto.getTargetSiteCode().getCode())
