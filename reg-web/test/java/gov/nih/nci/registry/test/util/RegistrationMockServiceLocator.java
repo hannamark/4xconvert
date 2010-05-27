@@ -84,10 +84,10 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 public class RegistrationMockServiceLocator implements ServiceLocator {
-    
+
     private final StudyProtocolServiceLocal studyProtocolService = new MockStudyProtocolService();
     private final ProtocolQueryServiceLocal protocolQueryService = new MockProtocolQueryService();
-    private final DocumentServiceLocal documentService = new MockDocumentService(); 
+    private final DocumentServiceLocal documentService = new MockDocumentService();
     private final StudyOverallStatusServiceLocal studyOverallStatusService = new MockStudyOverallStatusService();
     private final LookUpTableServiceRemote lookUpTableService = new MockLookUpTableService();
     private final TrialRegistrationServiceLocal  trialRegistrationService = new MockTrialRegistrationService();
@@ -108,9 +108,9 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final RegulatoryInformationServiceRemote regulatoryInfoService = new MockRegulatoryInformationService();
     private final StudyRegulatoryAuthorityServiceLocal studyRegulatorAuthService = new MockStudyRegulatoryAuthorityService();
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
-    private final StudyProtocolStageServiceLocal studyProtocolStageService = new MockStudyProtocolStageService(); 
+    private final StudyProtocolStageServiceLocal studyProtocolStageService = new MockStudyProtocolStageService();
     private final GridAccountServiceRemote gridAccountService = new MockGridAccountService();
-    
+
     public DocumentServiceLocal getDocumentService() {
         return documentService;
     }
@@ -397,12 +397,12 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
         return studyProtocolStageService;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public GridAccountServiceRemote getGridAccountService() {
         return gridAccountService;
     }
-    
+
 }

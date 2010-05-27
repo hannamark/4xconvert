@@ -1,12 +1,13 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.dto;
 
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.UserOrgType;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.NotEmpty;
-
-import gov.nih.nci.pa.domain.RegistryUser;
 
 /**
  * @author Bala Nair
@@ -36,35 +37,48 @@ public class RegistryUserWebDTO {
     private String oldPassword;
     private boolean hasExistingGridAccount = false;
     private Long affiliatedOrganizationId;
+    private UserOrgType affiliatedOrgType;
+    private boolean adminForAffiliatedOrg;
     private boolean requestAdminAccess;
+
     /**
-     * 
+    *
+    * @param registryUser registryUser
+    */
+   public RegistryUserWebDTO(RegistryUser registryUser) {
+       this.id = registryUser.getId();
+       this.csmUserId = registryUser.getCsmUserId();
+       this.firstName = registryUser.getFirstName();
+       this.lastName =  registryUser.getLastName();
+       this.middleName =  registryUser.getMiddleName();
+       this.addressLine = registryUser.getAddressLine();
+       this.city = registryUser.getCity();
+       this.state = registryUser.getState();
+       this.postalCode = registryUser.getPostalCode();
+       this.country = registryUser.getCountry();
+       this.phone = registryUser.getPhone();
+       this.affiliateOrg = registryUser.getAffiliateOrg();
+       this.prsOrgName = registryUser.getPrsOrgName();
+       this.emailAddress = registryUser.getEmailAddress();
+       this.treatmentSiteId = registryUser.getPoOrganizationId();
+       this.physicianId = registryUser.getPoPersonId();
+       this.affiliatedOrganizationId = registryUser.getAffiliatedOrganizationId();
+       this.affiliatedOrgType = registryUser.getAffiliatedOrgUserType();
+       this.adminForAffiliatedOrg = this.affiliatedOrgType == UserOrgType.ADMIN ? true : false;
+   }
+
+    /**
+     *
      * @param registryUser registryUser
      * @param username username
      * @param password password
      */
     public RegistryUserWebDTO(RegistryUser registryUser, String username, String password) {
-        this.id = registryUser.getId();
-        this.csmUserId = registryUser.getCsmUserId();
+        this(registryUser);
         this.username = username;
-        this.firstName = registryUser.getFirstName();
-        this.lastName =  registryUser.getLastName();
-        this.middleName =  registryUser.getMiddleName();
-        this.addressLine = registryUser.getAddressLine();
-        this.city = registryUser.getCity();
-        this.state = registryUser.getState();
-        this.postalCode = registryUser.getPostalCode();
-        this.country = registryUser.getCountry();
-        this.phone = registryUser.getPhone();
-        this.affiliateOrg = registryUser.getAffiliateOrg();
         this.password = password;
         this.retypePassword = password;
-        this.prsOrgName = registryUser.getPrsOrgName();
-        this.emailAddress = registryUser.getEmailAddress();
-        this.treatmentSiteId = registryUser.getPoOrganizationId();
-        this.physicianId = registryUser.getPoPersonId();
         this.oldPassword = password;
-        this.affiliatedOrganizationId = registryUser.getAffiliatedOrganizationId();
     }
 
     /** .
@@ -73,7 +87,7 @@ public class RegistryUserWebDTO {
     public RegistryUserWebDTO() {
         super();
     }
-    
+
     /**
      * @return the id
      */
@@ -88,7 +102,7 @@ public class RegistryUserWebDTO {
         this.id = id;
     }
 
-    
+
     /**
      * @return the username
      */
@@ -96,22 +110,22 @@ public class RegistryUserWebDTO {
     public String getUsername() {
         return username;
     }
-    
+
     /**
      * @param username the username to set
      */
     public void setUsername(String username) {
         this.username = username;
     }
-    
-    
+
+
     /**
      * @return displayUsername
      */
     public String getDisplayUsername() {
         return StringUtils.contains(username, "CN=") ? username.split("CN=")[1] : username;
     }
-    
+
     /**
      * @return the password
      */
@@ -125,7 +139,7 @@ public class RegistryUserWebDTO {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     /**
      * @return the firstName
      */
@@ -268,7 +282,7 @@ public class RegistryUserWebDTO {
     public void setCsmUserId(Long csmUserId) {
         this.csmUserId = csmUserId;
     }
-    
+
     /**
      * @return the retypePassword
      */
@@ -311,7 +325,7 @@ public class RegistryUserWebDTO {
     public void setTreatmentSiteId(Long treatmentSiteId) {
         this.treatmentSiteId = treatmentSiteId;
     }
-    
+
     /**
      * @return the physicianId
      */
@@ -325,14 +339,14 @@ public class RegistryUserWebDTO {
     public void setPhysicianId(Long physicianId) {
         this.physicianId = physicianId;
     }
-    
+
     /**
      * @return the email address
      */
     public String getEmailAddress() {
         return this.emailAddress;
     }
-    
+
     /**
      * @param emailAddress the emailAddress to set
      */
@@ -353,7 +367,7 @@ public class RegistryUserWebDTO {
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
     }
-    
+
     /**
      * @return whether or not this user has an exisiting grid account
      */
@@ -395,4 +409,33 @@ public class RegistryUserWebDTO {
      public boolean isRequestAdminAccess() {
          return requestAdminAccess;
      }
+
+    /**
+     * @return the affiliatedOrgType
+     */
+    public UserOrgType getAffiliatedOrgType() {
+        return affiliatedOrgType;
+    }
+
+    /**
+     * @param affiliatedOrgType the affiliatedOrgType to set
+     */
+    public void setAffiliatedOrgType(UserOrgType affiliatedOrgType) {
+        this.affiliatedOrgType = affiliatedOrgType;
+    }
+
+    /**
+     * @return the adminForAffiliatedOrg
+     */
+    public boolean isAdminForAffiliatedOrg() {
+        return adminForAffiliatedOrg;
+    }
+
+    /**
+     * @param adminForAffiliatedOrg the adminForAffiliatedOrg to set
+     */
+    public void setAdminForAffiliatedOrg(boolean adminForAffiliatedOrg) {
+        this.adminForAffiliatedOrg = adminForAffiliatedOrg;
+    }
+
 }

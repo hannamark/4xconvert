@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.service;
 
@@ -33,6 +33,31 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
         dto.setAffiliatedOrganizationId(2L);
         dto.setAffiliatedOrgUserType(UserOrgType.ADMIN);
         userList.add(dto);
+
+        // add three members.
+        dto = new RegistryUser();
+        dto.setFirstName("RegUser");
+        dto.setLastName("lastName");
+        dto.setId(3L);
+        dto.setAffiliatedOrganizationId(3L);
+        dto.setAffiliatedOrgUserType(UserOrgType.ADMIN);
+        userList.add(dto);
+
+        dto = new RegistryUser();
+        dto.setFirstName("reguser2");
+        dto.setLastName("lastName Two");
+        dto.setId(4L);
+        dto.setAffiliatedOrganizationId(3L);
+        dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        userList.add(dto);
+
+        dto = new RegistryUser();
+        dto.setFirstName("reguser3");
+        dto.setLastName("lastName Three");
+        dto.setId(5L);
+        dto.setAffiliatedOrganizationId(3L);
+        dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        userList.add(dto);
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#createUser(gov.nih.nci.pa.domain.RegistryUser)
@@ -65,7 +90,7 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
         return null;
     }
     /**
-     * 
+     *
      */
     public List<RegistryUser> getUserByUserOrgType(UserOrgType userType)
 			throws PAException {
@@ -73,7 +98,7 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
 		return null;
 	}
     /**
-     * 
+     *
      */
 	public RegistryUser getUserById(Long userId) {
 		// TODO Auto-generated method stub
@@ -83,10 +108,17 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
 	public List<RegistryUser> search(RegistryUser regUser) throws PAException {
        List<RegistryUser> returnList = new ArrayList<RegistryUser>();
        for(RegistryUser usrDto :userList){
-            if(usrDto.getAffiliatedOrganizationId().equals(regUser.getAffiliatedOrganizationId())
-                 && usrDto.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)){
-                 returnList.add(usrDto);
-            }
+           if (regUser.getAffiliatedOrgUserType() != null) {
+               if(usrDto.getAffiliatedOrganizationId().equals(regUser.getAffiliatedOrganizationId())
+                       && usrDto.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)){
+                       returnList.add(usrDto);
+                  }
+           } else {
+               if(usrDto.getAffiliatedOrganizationId().equals(regUser.getAffiliatedOrganizationId())) {
+                   returnList.add(usrDto);
+               }
+           }
+
         }
 		return returnList;
 	}

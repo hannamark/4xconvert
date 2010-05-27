@@ -1,20 +1,25 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.mail.MailManager;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +34,7 @@ import org.apache.log4j.Logger;
 @SuppressWarnings("PMD")
 public class RegistryUtil {
     private static final Logger LOG = Logger.getLogger(RegistryUtil.class);
-    
+
     /**
      * check if the uploaded file type is valid.
      * @param fileName filename
@@ -61,7 +66,7 @@ public class RegistryUtil {
         return isValidFileType;
 
     }
-    
+
     /**
      * check if the email address is valid.
      * @param emailAddress emailAddress
@@ -74,10 +79,10 @@ public class RegistryUtil {
         Matcher fit = email.matcher(emailAddress);
         if (fit.matches()) {
             isvalidEmailAddr = true;
-        } 
+        }
         return isvalidEmailAddr;
     }
-    
+
     /**
      * check if the date is of valid format.
      * @param dateString dateString
@@ -87,19 +92,19 @@ public class RegistryUtil {
         if (PAUtil.isEmpty(dateString)) {
             return false;
         }
-        //set the format to use as a constructor argument   
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");        
-        if (dateString.trim().length() != dateFormat.toPattern().length())  {    
+        //set the format to use as a constructor argument
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        if (dateString.trim().length() != dateFormat.toPattern().length())  {
             return false;
         }
-        dateFormat.setLenient(false);       
-        try {      
-            //parse the date    
-            dateFormat.parse(dateString.trim());   
-        } catch (ParseException pe) {    
-            return false;    
-        }    
-        return true;  
+        dateFormat.setLenient(false);
+        try {
+            //parse the date
+            dateFormat.parse(dateString.trim());
+        } catch (ParseException pe) {
+            return false;
+        }
+        return true;
    }
    /**
     * validates the phone number format.
@@ -117,7 +122,7 @@ public class RegistryUtil {
         }
         return isValidPhoneNumber;
    }
-   
+
    /**
     * validates the upload file type against the passed file type.
     * @param fileName filename
@@ -128,17 +133,17 @@ public class RegistryUtil {
        boolean isValidFileType = false;
        int pos = fileName.lastIndexOf(".");
        String uploadedFileType = fileName.substring(pos + 1, fileName.length());
-       if (uploadedFileType != null 
+       if (uploadedFileType != null
                && allowedFileType.equalsIgnoreCase(uploadedFileType)) {
            isValidFileType = true;
        }
        return isValidFileType;
 
    }
-   
+
    /**
     * Generate batch upload report email.
-    * 
+    *
     * @param action the action
     * @param userName the user name
     * @param successCount the success count
@@ -148,10 +153,10 @@ public class RegistryUtil {
     * @param errorMessage the error message
     */
    public static void generateMail(String action,
-                                   String userName,  
+                                   String userName,
                                    String successCount,
-                                   String failedCount, 
-                                   String totalCount, 
+                                   String failedCount,
+                                   String totalCount,
                                    String attachFileName,
                                    String errorMessage) {
       final MailManager mailManager = new MailManager();
@@ -160,11 +165,11 @@ public class RegistryUtil {
           Calendar calendar = new GregorianCalendar();
           Date date = calendar.getTime();
           DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-          
+
          //get the values of email's subject and email body from the database
          String emailSubject = PaRegistry.getLookUpTableService().getPropertyValue("trial.batchUpload.subject");
-         LOG.debug("emailSubject is: " + emailSubject);         
-         
+         LOG.debug("emailSubject is: " + emailSubject);
+
          //add the mail header
          String submissionMailBodyHeader = PaRegistry.getLookUpTableService().
                   getPropertyValue("trial.batchUpload.bodyHeader");
@@ -185,7 +190,7 @@ public class RegistryUtil {
             getPropertyValue("trial.batchUpload.reportMsg");
             submissionMailBody.append("\n").append(submissionMailReportBody);
          } else {
-            submissionMailBody.append("Error: ").append(errorMessage).append("\n");  
+            submissionMailBody.append("Error: ").append(errorMessage).append("\n");
             String submissionMailErrorBody = PaRegistry.getLookUpTableService().
                getPropertyValue("trial.batchUpload.errorMsg");
             String currentReleaseNumber = PaRegistry.getLookUpTableService().
@@ -215,17 +220,53 @@ public class RegistryUtil {
 
   /**
    * Gets the sumitter full name.
-   * 
+   *
    * @param userLastCreated the user last created
-   * 
+   *
    * @return the sumitter full name
-   * 
+   *
    * @throws PAException the PA exception
    */
   public static String getSumitterFullName(String userLastCreated) throws PAException {
     RegistryUser registryUser = PaRegistry.getRegisterUserService().getUser(userLastCreated);
     return  registryUser.getFirstName() + " " + registryUser.getLastName();
   }
-   
+
+  /**
+   * Get Registry user web dto.
+   * @param loginName the login name.
+   * @return registryUserWebDto the registry user web dto.
+   */
+  public static RegistryUserWebDTO getRegistryUserWebDto(String loginName) {
+      RegistryUserWebDTO regUserWebDto = null;
+      RegistryUser registryUser = null;
+      User csmUser = null;
+      try {
+          registryUser = PaRegistry.getRegisterUserService().getUser(loginName);
+          csmUser = CSMUserService.getInstance().getCSMUser(loginName);
+          if (registryUser != null && csmUser != null) {
+              regUserWebDto = new RegistryUserWebDTO(registryUser, loginName, csmUser.getPassword());
+          }
+      } catch (Exception ex) {
+          LOG.error("Error getting the csm user for login name = " + loginName);
+      }
+      return regUserWebDto;
+  }
+
+  /**
+   * Given a list of RegistryUser objects, return a corresponding list of RegistryUserWebDTO objects.
+   * @param registryUsers the list of registry users.
+   * @return registryUserWebDto the list of registry user web dtos.
+   */
+  public static ArrayList<RegistryUserWebDTO> getRegistryUserWebDto(List<RegistryUser> registryUsers) {
+      ArrayList<RegistryUserWebDTO> registryUserWebDtos = null;
+      if (registryUsers != null && !registryUsers.isEmpty()) {
+          registryUserWebDtos = new ArrayList<RegistryUserWebDTO>();
+          for (RegistryUser regUser : registryUsers) {
+              registryUserWebDtos.add(new RegistryUserWebDTO(regUser));
+          }
+      }
+      return registryUserWebDtos;
+  }
 
 }

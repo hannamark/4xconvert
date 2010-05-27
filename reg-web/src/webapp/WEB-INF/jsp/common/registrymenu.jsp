@@ -22,10 +22,10 @@ function selectTrialType(){
                    </c:otherwise>
                 </c:choose>
 				<c:choose>
-				    <c:when test="${pageContext.request.remoteUser != null}">				    
+				    <c:when test="${pageContext.request.remoteUser != null}">
 								<c:choose>
 									<c:when test="${requestScope.topic == 'my_account'}">
-									   <li><a href="/registry/protected/registerUsershowMyAccount.action" class="selected">My Account</a></li> 
+									   <li><a href="/registry/protected/registerUsershowMyAccount.action" class="selected">My Account</a></li>
 									</c:when>
 									<c:otherwise>
 									   <li><a href="/registry/protected/registerUsershowMyAccount.action" >My Account</a></li>
@@ -49,7 +49,18 @@ function selectTrialType(){
                                     <c:otherwise>
                                        <li><a href="/registry/protected/searchTrial.action" >Search Trials</a></li>
                                     </c:otherwise>
-                                </c:choose>                           		
+                                </c:choose>
+                                <c:if test="${sessionScope.regUserWebDto != null && sessionScope.regUserWebDto.affiliatedOrgType.code == 'Admin'}">
+                                    <c:choose>
+                                        <c:when test="${requestScope.topic == 'site_administration'}">
+                                            <li><a href="/registry/protected/siteAdministrationsearch.action" class="selected">Site Administration</a></li>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <li><a href="/registry/protected/siteAdministrationsearch.action" >Site Administration</a></li>
+                                        </c:otherwise>
+                                    </c:choose>
+
+                                 </c:if>
                         		<li><a href="/registry/logout.action" >Log Out</a></li>
 				    </c:when>
 			        <c:otherwise>
@@ -65,9 +76,9 @@ function selectTrialType(){
 		                                  <c:otherwise>
 		                                     <li><a href="/registry/registerUser.action" >Create Account</a></li>
 		                                  </c:otherwise>
-		                                </c:choose> 
+		                                </c:choose>
                                     </c:otherwise>
-                                </c:choose>                         		
+                                </c:choose>
                         		<li><a href="/registry/protected/disClaimerAction.action?actionName=submitTrial.action" >Register Trial</a></li>
                                 <li><a href="/registry/protected/disClaimerAction.action?actionName=searchTrial.action" >Search Trials</a></li>
                                 <c:choose>
@@ -83,5 +94,5 @@ function selectTrialType(){
 				<li><a href="#" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a></li>
         	</ul>
         </li>
-        
+
 
