@@ -405,7 +405,7 @@
                 </dependencies>
             </plugin>
             <plugin>
-            	<groupId>org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>${maven-antrun-plugin.version}</version>
                 <executions>
@@ -512,6 +512,7 @@
                             <url>${jdbc.url}</url>
                             <username>${jdbc.username}</username>
                             <password>${jdbc.password}</password>
+                            <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
                         </configuration>
                     </plugin>
                 </plugins>
