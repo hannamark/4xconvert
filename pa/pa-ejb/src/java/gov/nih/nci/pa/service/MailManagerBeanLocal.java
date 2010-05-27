@@ -368,7 +368,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 subOrgTrialIdentifier = dto.getLocalStudyProtocolIdentifier().getValue();
                 submissionMailBody = submissionMailBody.replace("${subOrgTrialIdentifier}", subOrgTrialIdentifier);
                 submissionMailBody = submissionMailBody.replace("${subOrg}", 
-                        serviceUtil.getPAOrganizationByIi(dto.getHealthcareFacilityIi()).getName());
+                        serviceUtil.getOrCreatePAOrganizationByIi(dto.getHealthcareFacilityIi()).getName());
             }
         }        
     }

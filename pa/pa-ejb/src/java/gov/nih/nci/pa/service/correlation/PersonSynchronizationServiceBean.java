@@ -313,7 +313,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
                         && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
                     //this means scoper is changed. check if exist in PA if not create and update the SR
-                    Organization paOrg = paServiceUtil.getPAOrganizationByIi(crsDto.getScoperIdentifier());
+                    Organization paOrg = paServiceUtil.getOrCreatePAOrganizationByIi(crsDto.getScoperIdentifier());
                     crs.setOrganization(paOrg);
                 } 
                 if (!crs.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(crsDto.getStatus()))) {
@@ -379,7 +379,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
                         && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
                     //this means scoper is changed. check if exist in PA if not create and update the SR
-                    Organization paOrg = paServiceUtil.getPAOrganizationByIi(hcpDto.getScoperIdentifier());
+                    Organization paOrg = paServiceUtil.getOrCreatePAOrganizationByIi(hcpDto.getScoperIdentifier());
                     hcp.setOrganization(paOrg);
                 }
 
@@ -495,7 +495,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
                         && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
                     //this means scoper is changed. check if exist in PA if not create and update the SR
-                    Organization paOrg = paServiceUtil.getPAOrganizationByIi(ocDto.getScoperIdentifier());
+                    Organization paOrg = paServiceUtil.getOrCreatePAOrganizationByIi(ocDto.getScoperIdentifier());
                     oc.setOrganization(paOrg);
                 }
                 if (!oc.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(ocDto.getStatus()))) {

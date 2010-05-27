@@ -1196,7 +1196,7 @@ public class PAServiceUtils {
        * @return Organization
        * @throws PAException on error
        */
-      public Organization getPAOrganizationByIi(Ii isoIi) throws PAException {
+      public Organization getOrCreatePAOrganizationByIi(Ii isoIi) throws PAException {
           Organization org = null;
           CorrelationUtils cUtils = new CorrelationUtils();
           org = cUtils.getPAOrganizationByIi(isoIi);
@@ -1235,7 +1235,7 @@ public class PAServiceUtils {
           } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
               dupSR =  new OversightCommittee();
           }
-          dupSR.setOrganization(getPAOrganizationByIi(((AbstractEnhancedOrganizationRoleDTO) poDto)
+          dupSR.setOrganization(getOrCreatePAOrganizationByIi(((AbstractEnhancedOrganizationRoleDTO) poDto)
                   .getPlayerIdentifier()));
           dupSR.setIdentifier(DSetConverter.convertToIi(poDto.getIdentifier()).getExtension());
           dupSR.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(poDto.getStatus()));
@@ -1283,7 +1283,7 @@ public class PAServiceUtils {
           if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
                   && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
               //this means scoper is changed. check if exist in PA if not create and update the SR
-              Organization paOrg = getPAOrganizationByIi(poIi);
+              Organization paOrg = getOrCreatePAOrganizationByIi(poIi);
               srDTO.setOrganization(paOrg);
           }
           return srDTO;

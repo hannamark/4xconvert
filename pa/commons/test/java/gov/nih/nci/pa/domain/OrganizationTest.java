@@ -137,7 +137,7 @@ public class OrganizationTest   {
      * 
      * @return Organization
      */
-    public  static Organization createOrganizationObj() {
+    public static Organization createOrganizationObj() {
         Organization create = new Organization();
         create.setName("Mayo University");
         create.setIdentifier("P001");

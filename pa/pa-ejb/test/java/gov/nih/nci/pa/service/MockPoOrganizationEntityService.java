@@ -22,133 +22,129 @@ import java.util.Map;
 
 /**
  * @author Vrushali
- *
+ * 
  */
-public class MockPoOrganizationEntityService implements
-        OrganizationEntityServiceRemote {
-    static List<OrganizationDTO> orgDtoList;
-    static {
+public class MockPoOrganizationEntityService implements OrganizationEntityServiceRemote {
+
+    final private Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
+
+    private final List<OrganizationDTO> orgDtoList;
+
+    public MockPoOrganizationEntityService() {
         orgDtoList = new ArrayList<OrganizationDTO>();
-        OrganizationDTO dto = new OrganizationDTO();
-        dto.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        dto.setName(EnOnConverter.convertToEnOn("OrgName"));
-        dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
-        dto.setPostalAddress(AddressConverterUtil.
-                create("streetAddressLine", "deliveryAddressLine", 
-                        "cityOrMunicipality", "stateOrProvince",
-                        "postalCode", "USA"));
-        orgDtoList.add(dto);
+  
+        orgDtoList.add(basicOrgDto("abc"));
+        orgDtoList.add(basicOrgDto("abc1"));
+        orgDtoList.add(basicOrgDto("1"));
+        orgDtoList.add(basicOrgDto("584"));
+
+        orgDtoList.add(basicOrgDto("22"));
         
-        dto = new OrganizationDTO();
-        dto.setIdentifier(IiConverter.convertToPoOrganizationIi("abc1"));
-        dto.setName(EnOnConverter.convertToEnOn("OrgName"));
-        dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
-        dto.setPostalAddress(AddressConverterUtil.
-                create("streetAddressLine", "deliveryAddressLine", 
-                        "cityOrMunicipality", "stateOrProvince",
-                        "postalCode", "USA"));
-        orgDtoList.add(dto);    
+        OrganizationDTO orgDto = basicOrgDto("2");
+        orgDto.setStatusCode(CdConverter.convertStringToCd("NULLIFIED"));  
+        orgDto.setName(EnOnConverter.convertToEnOn("IsNullified"));
+        orgDtoList.add(orgDto);
         
-        dto = new OrganizationDTO();
-        dto.setIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-        dto.setName(EnOnConverter.convertToEnOn("OrgName"));
-        dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
-        dto.setPostalAddress(AddressConverterUtil.
-                create("streetAddressLine", "deliveryAddressLine", 
-                        "cityOrMunicipality", "stateOrProvince",
-                        "postalCode", "USA"));
-        orgDtoList.add(dto);
-        
-        dto = new OrganizationDTO();
-        dto.setIdentifier(IiConverter.convertToPoOrganizationIi("584"));
-        dto.setName(EnOnConverter.convertToEnOn("OrgName"));
-        dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
-        dto.setPostalAddress(AddressConverterUtil.
-                create("streetAddressLine", "deliveryAddressLine", 
-                        "cityOrMunicipality", "stateOrProvince",
-                        "postalCode", "USA"));
-        orgDtoList.add(dto);
-        
+        nullifiedEntities.put(IiConverter.convertToPoOrganizationIi("2"), IiConverter.convertToPoOrganizationIi("22"));
     }
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#createOrganization(gov.nih.nci.services.organization.OrganizationDTO)
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @seegov.nih.nci.services.organization.OrganizationEntityServiceRemote#createOrganization(gov.nih.nci.services.
+     * organization.OrganizationDTO)
      */
-    public Ii createOrganization(OrganizationDTO arg0)
-            throws EntityValidationException {
+    public Ii createOrganization(OrganizationDTO arg0) throws EntityValidationException {
         return IiConverter.convertToPoOrganizationIi("1");
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#getOrganization(gov.nih.nci.iso21090.Ii)
      */
-    public OrganizationDTO getOrganization(Ii arg0)
-            throws NullifiedEntityException {
-        if (NullFlavor.NA.equals(arg0.getNullFlavor())) {
-            Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
-            nullifiedEntities.put(arg0, IiConverter.convertToPoOrganizationIi("584"));
+    public OrganizationDTO getOrganization(Ii id) throws NullifiedEntityException {
+        if (NullFlavor.NA.equals(id.getNullFlavor())) {
             throw new NullifiedEntityException(nullifiedEntities);
         }
-        
-        for(OrganizationDTO dto:orgDtoList){
-            if(dto.getIdentifier().getExtension().equals(arg0.getExtension())){
+
+        for (OrganizationDTO dto : orgDtoList) {
+            if (dto.getIdentifier().getExtension().equals(id.getExtension())) {
+                if (dto.getStatusCode().getCode().equals("NULLIFIED")) {
+                    throw new NullifiedEntityException(nullifiedEntities);
+                }
                 return dto;
             }
         }
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#search(gov.nih.nci.services.organization.OrganizationDTO)
+    /*
+     * (non-Javadoc)
+     * 
+     * @seegov.nih.nci.services.organization.OrganizationEntityServiceRemote#search(gov.nih.nci.services.organization.
+     * OrganizationDTO)
      */
     @Deprecated
     public List<OrganizationDTO> search(OrganizationDTO arg0) {
         List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
         String inputName = EnOnConverter.convertEnOnToString(arg0.getName());
-        for(OrganizationDTO dto:orgDtoList){
+        for (OrganizationDTO dto : orgDtoList) {
             String dtoName = EnOnConverter.convertEnOnToString(dto.getName());
-            if(dtoName .equals(inputName)){
+            if (dtoName.equals(inputName)) {
                 matchingDtosList.add(dto);
             }
         }
-        return matchingDtosList ;
+        return matchingDtosList;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#updateOrganization(gov.nih.nci.services.organization.OrganizationDTO)
+    /*
+     * (non-Javadoc)
+     * 
+     * @seegov.nih.nci.services.organization.OrganizationEntityServiceRemote#updateOrganization(gov.nih.nci.services.
+     * organization.OrganizationDTO)
      */
-    public void updateOrganization(OrganizationDTO arg0)
-            throws EntityValidationException {
+    public void updateOrganization(OrganizationDTO arg0) throws EntityValidationException {
         // TODO Auto-generated method stub
 
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#updateOrganizationStatus(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Cd)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * gov.nih.nci.services.organization.OrganizationEntityServiceRemote#updateOrganizationStatus(gov.nih.nci.iso21090
+     * .Ii, gov.nih.nci.iso21090.Cd)
      */
-    public void updateOrganizationStatus(Ii arg0, Cd arg1)
-            throws EntityValidationException {
+    public void updateOrganizationStatus(Ii arg0, Cd arg1) throws EntityValidationException {
         // TODO Auto-generated method stub
 
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#validate(gov.nih.nci.services.organization.OrganizationDTO)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * gov.nih.nci.services.organization.OrganizationEntityServiceRemote#validate(gov.nih.nci.services.organization.
+     * OrganizationDTO)
      */
     public Map<String, String[]> validate(OrganizationDTO arg0) {
         // TODO Auto-generated method stub
         return null;
     }
-    
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#search(gov.nih.nci.services.organization.OrganizationDTO, gov.nih.nci.coppa.services.LimitOffset)
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @seegov.nih.nci.services.organization.OrganizationEntityServiceRemote#search(gov.nih.nci.services.organization.
+     * OrganizationDTO, gov.nih.nci.coppa.services.LimitOffset)
      */
-    public List<OrganizationDTO> search(OrganizationDTO arg0, LimitOffset arg1)
-        throws TooManyResultsException {
-    	List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
+    public List<OrganizationDTO> search(OrganizationDTO arg0, LimitOffset arg1) throws TooManyResultsException {
+        List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
         String inputName = EnOnConverter.convertEnOnToString(arg0.getName());
-        for(OrganizationDTO dto:orgDtoList){
+        for (OrganizationDTO dto : orgDtoList) {
             String dtoName = EnOnConverter.convertEnOnToString(dto.getName());
-            if(dtoName .equals(inputName)){
+            if (dtoName.equals(inputName)) {
                 matchingDtosList.add(dto);
             }
         }
@@ -157,16 +153,26 @@ public class MockPoOrganizationEntityService implements
         int toIndex = Math.min(fromIndex + arg1.getLimit(), matchingDtosList.size());
 
         try {
-	        matchingDtosList = matchingDtosList.subList(fromIndex, toIndex);
+            matchingDtosList = matchingDtosList.subList(fromIndex, toIndex);
         } catch (IndexOutOfBoundsException e) { // fromIndex > toIndex
-	        matchingDtosList.clear();  // return empty list
+            matchingDtosList.clear(); // return empty list
         }
 
         if (matchingDtosList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }
 
-        return matchingDtosList ;
+        return matchingDtosList;
     }
 
+    private OrganizationDTO basicOrgDto(String id) {
+        OrganizationDTO orgDto = new OrganizationDTO();
+        orgDto.setIdentifier(IiConverter.convertToPoOrganizationIi(id));
+        orgDto.setName(EnOnConverter.convertToEnOn("OrgName"));
+        orgDto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
+        orgDto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine",
+                "cityOrMunicipality", "stateOrProvince", "postalCode", "USA"));
+        return orgDto;
+    }
+    
 }
