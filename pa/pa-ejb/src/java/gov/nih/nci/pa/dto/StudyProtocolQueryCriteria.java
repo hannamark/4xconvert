@@ -123,13 +123,13 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private Boolean myTrialsOnly;
     private String searchOnHold;
     private String studyMilestone;
-
     private String submissionType;
     
     //for Inbox Processing
     private Boolean inBoxProcessing;
     private String studyLockedBy;
     private String trialCategory;
+    private Long userId;
     /**
      * @return the inBoxProcessing
      */
@@ -430,6 +430,18 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setTrialCategory(String trialCategory) {
         this.trialCategory = trialCategory;
+    }
+    /**
+     * @param userId the userId to set
+     */
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+    /**
+     * @return the userId
+     */
+    public Long getUserId() {
+        return userId;
     }
     
 }

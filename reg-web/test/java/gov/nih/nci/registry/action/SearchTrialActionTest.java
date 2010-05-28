@@ -6,6 +6,7 @@ package gov.nih.nci.registry.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
@@ -35,6 +36,10 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         session.clear();*/
         action = new SearchTrialAction();
         action.paServiceUtils = new MockPAServiceUtil();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteUser("firstName");
+        ServletActionContext.setRequest(request);
+
     }
 
     @Test
@@ -311,8 +316,24 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         queryCriteria.setNciIdentifier("NCI-2009-00001");
         session.setAttribute("studySearchCriteria", queryCriteria);
         request.setSession(session);
-        request.setRemoteUser("TestUser@test.com");
+        request.setRemoteUser("firstName");
         ServletActionContext.setRequest(request);
         assertEquals("success",action.sendXml());
+    }
+    @Test
+    public void testMyTrialsOnly(){
+        action = new SearchTrialAction();
+        SearchProtocolCriteria criteria = new SearchProtocolCriteria();
+        criteria.setIdentifier("");
+        criteria.setIdentifierType("");
+        criteria.setMyTrialsOnly("true");
+        criteria.setOfficialTitle("");
+        criteria.setOrganizationType("");
+        action.setCriteria(criteria );
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteUser("userLastCreated");
+        ServletActionContext.setRequest(request);
+        assertEquals("success",action.query());
+        assertTrue(action.getRecords().size() >=1);
     }
 }

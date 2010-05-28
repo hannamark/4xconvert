@@ -82,6 +82,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.PhaseCode;
@@ -173,9 +174,25 @@ public class SearchTrialAction extends ActionSupport {
             if (hasFieldErrors()) {
                 return ERROR;
             }
-            records = new ArrayList<StudyProtocolQueryDTO>();
-            records = PaRegistry.getProtocolQueryService().
-                              getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
+            List<StudyProtocolQueryDTO> studyProtocolList = new ArrayList<StudyProtocolQueryDTO>();
+            studyProtocolList = PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(
+                    convertToStudyProtocolQueryCriteria());
+            if (studyProtocolList != null) {
+                records = new ArrayList<StudyProtocolQueryDTO>();
+                // when selected search my trials
+                if (StringUtils.isNotEmpty(criteria.getMyTrialsOnly()) && criteria.getMyTrialsOnly().equals("true")) {
+                    String loginName =  ServletActionContext.getRequest().getRemoteUser();
+                    for (StudyProtocolQueryDTO queryDto : studyProtocolList) {
+                        if (PaRegistry.getRegisterUserService().hasTrialAccess(loginName, 
+                              queryDto.getStudyProtocolId())) {
+                           records.add(queryDto);
+                        }
+                    }
+                } else {
+                    // when selected search all trials
+                    records = studyProtocolList;
+                }
+            }
             checkToShowSendXml();
             return SUCCESS;
         } catch (Exception e) {
@@ -186,15 +203,12 @@ public class SearchTrialAction extends ActionSupport {
         }
     }
 
-    private void checkToShowSendXml() {
-        String loginName = null;
-        loginName =  ServletActionContext.getRequest().getRemoteUser();
-        if (!records.isEmpty()) {
+    private void checkToShowSendXml() throws PAException {
+        if (records != null && !records.isEmpty()) {
             for (StudyProtocolQueryDTO queryDto : records) {
                 if (queryDto.getIsProprietaryTrial().equalsIgnoreCase("false") 
-                        && queryDto.getUserLastCreated().equals(loginName)    
-                        && PAUtil.isAbstractedAndAbove(
-                                CdConverter.convertStringToCd(queryDto.getDocumentWorkflowStatusCode().getCode()))
+                        && PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(
+                                queryDto.getDocumentWorkflowStatusCode().getCode()))
                          && queryDto.getCtgovXmlRequiredIndicator()) {               
                     queryDto.setShowSendXml(true);
                 }
@@ -204,8 +218,9 @@ public class SearchTrialAction extends ActionSupport {
 
     /**
      * @return StudyProtocolQueryCriteria
+     * @throws PAException 
      */
-    private StudyProtocolQueryCriteria convertToStudyProtocolQueryCriteria() {
+    private StudyProtocolQueryCriteria convertToStudyProtocolQueryCriteria() throws PAException {
         
         StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
         queryCriteria.setOfficialTitle(criteria.getOfficialTitle());
@@ -243,6 +258,10 @@ public class SearchTrialAction extends ActionSupport {
         if (PAUtil.isNotEmpty(criteria.getPrincipalInvestigatorId())) {
             queryCriteria.setPrincipalInvestigatorId(criteria.getPrincipalInvestigatorId());
         }
+        String loginName =  ServletActionContext.getRequest().getRemoteUser();
+        RegistryUser loggedInUser = PaRegistry.getRegisterUserService().getUser(loginName);
+        queryCriteria.setUserId(loggedInUser.getId());
+        
         return queryCriteria;
     }
 

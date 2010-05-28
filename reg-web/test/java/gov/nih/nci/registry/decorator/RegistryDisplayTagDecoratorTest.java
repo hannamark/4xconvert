@@ -15,7 +15,9 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
+import gov.nih.nci.registry.test.util.RegistrationMockServiceLocator;
 
 import java.util.Calendar;
 
@@ -45,6 +47,7 @@ public class RegistryDisplayTagDecoratorTest {
         request.setRemoteUser("userLastCreated");
         PageContext context = new MockPageContext(null, request, new MockHttpServletResponse());
         decorator.init(context, null, null);
+        PaRegistry.getInstance().setServiceLocator(new RegistrationMockServiceLocator());
     }
     @Test
     public void testGetStudyStatusDate() {
@@ -62,6 +65,7 @@ public class RegistryDisplayTagDecoratorTest {
         StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
         dto.setIsProprietaryTrial("");
+        dto.setStudyProtocolId(1L);
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
@@ -120,6 +124,7 @@ public class RegistryDisplayTagDecoratorTest {
     public void testGetUpdate() {
         StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
+        dto.setStudyProtocolId(1L);
         dto.setIsProprietaryTrial("");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
         dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
@@ -202,6 +207,7 @@ public class RegistryDisplayTagDecoratorTest {
         dto = new StudyProtocolQueryDTO();
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
         dto.setUserLastCreated("userLastCreated");
+        dto.setStudyProtocolId(1L);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals(DocumentWorkflowStatusCode.ABSTRACTED,decorator.getDocumentWorkflowStatusCode());
         
@@ -278,6 +284,7 @@ public class RegistryDisplayTagDecoratorTest {
     public void testGetCompletePartialSubmission() {
         StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
+        dto.setStudyProtocolId(1L);
         dto.setIsProprietaryTrial("");
         dto.setNciIdentifier("");
         decorator.initRow(dto, currentViewIndex, currentListIndex);
@@ -303,6 +310,7 @@ public class RegistryDisplayTagDecoratorTest {
         dto.setUserLastCreated("userLastCreated");
         dto.setIsProprietaryTrial("");
         dto.setNciIdentifier("");
+        dto.setStudyProtocolId(1L);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("Delete",decorator.getDeletePartialSubmission());
         

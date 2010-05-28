@@ -73,6 +73,9 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
                     && sp.getNciIdentifier().equalsIgnoreCase(sc.getNciIdentifier())) {
                 returnList.add(sp);
             }
+            if (sc.getMyTrialsOnly()) {
+                return list;
+            }
         }
         return returnList;
     }

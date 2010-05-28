@@ -58,6 +58,13 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
         dto.setAffiliatedOrganizationId(3L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         userList.add(dto);
+        dto = new RegistryUser();
+        dto.setFirstName("userLastCreated");
+        dto.setLastName("lastName");
+        dto.setId(1L);
+        dto.setAffiliatedOrganizationId(1L);
+        dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        userList.add(dto);
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#createUser(gov.nih.nci.pa.domain.RegistryUser)
@@ -127,7 +134,10 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
      * @see gov.nih.nci.pa.service.util.RegistryUserService#hasTrialAccess(java.lang.String, java.lang.Long)
      */
     public boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException {
-        // TODO Auto-generated method stub
+        if (loginName != null && loginName.equalsIgnoreCase("userLastCreated")
+              && studyProtocolId != null && studyProtocolId == 1) {
+              return true;
+        }
         return false;
     }
     /**

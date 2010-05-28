@@ -178,7 +178,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             for (StudySite sSites : spObj.getStudySites()) {
                 if (sSites.getFunctionalCode().equals(StudySiteFunctionalCode.LEAD_ORGANIZATION)
                         && sSites.getResearchOrganization().getOrganization()
-                        .getId().equals(myUser.getAffiliatedOrganizationId())) {
+                        .getIdentifier().equals(myUser.getAffiliatedOrganizationId().toString())) {
                     return true;
                 }
             }

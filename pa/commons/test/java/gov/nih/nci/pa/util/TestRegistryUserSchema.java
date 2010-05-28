@@ -286,6 +286,7 @@ public class TestRegistryUserSchema {
                 
                 Organization org = OrganizationTest.createOrganizationObj();
                 addUpdObject(org);
+                org.setIdentifier(String.valueOf(org.getId()));
                 
                 RegistryUser leadOrgAdmin = new RegistryUser();
                 leadOrgAdmin.setCsmUserId(csmUserLeadOrg.getUserId());

@@ -102,6 +102,7 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -504,7 +505,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             + "left outer join sps.researchOrganization as ro "
                             + "left outer join ro.organization as org "
                             + "left outer join sp.studyInbox as sinbx "
-                            + "left outer join sp.studyCheckout as scheckout ");
+                            + "left outer join sp.studyCheckout as scheckout "
+                            + "left outer join sp.studyOwners as sowner ");
             
 
             hql.append(generateWhereClause(studyProtocolQueryCriteria));
@@ -544,8 +546,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getOfficialTitle())) {
                 where.append(" and upper(sp.officialTitle)  like '%"
-                        + studyProtocolQueryCriteria.getOfficialTitle()
-                                .toUpperCase().trim().replaceAll("'", "''")
+                        + studyProtocolQueryCriteria.getOfficialTitle().toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
             }
             if (StringUtils.isNotBlank(studyProtocolQueryCriteria.getPhaseCode())) {
@@ -572,8 +573,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                 + " or sos.id is null ) ");
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getPrimaryPurposeCode())) {
-                where.append(" and sp.primaryPurposeCode  = '"
-                        + PrimaryPurposeCode.getByCode(studyProtocolQueryCriteria
+                where.append(" and sp.primaryPurposeCode  = '" + PrimaryPurposeCode.getByCode(studyProtocolQueryCriteria
                                         .getPrimaryPurposeCode()) + "'");
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode())) {
@@ -587,23 +587,26 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 if (studyProtocolQueryCriteria.getMyTrialsOnly() != null
                         && PAUtil.isNotEmpty(studyProtocolQueryCriteria.getUserLastCreated())) {
                     if (studyProtocolQueryCriteria.getMyTrialsOnly().booleanValue()) {
-                            where.append(" and sp.userLastCreated = '").append(
-                                    studyProtocolQueryCriteria.getUserLastCreated() + "'");
+                            where.append(" and ( sowner.id = ").append(studyProtocolQueryCriteria.getUserId());
+                            where.append(" or ").append(studyProtocolQueryCriteria.getUserId());
+                            where.append(" in (select id from RegistryUser where affiliatedOrgUserType = '")
+                            .append(UserOrgType.ADMIN).append("' and str(affiliatedOrganizationId) in ( select ")
+                            .append(" researchOrganization.organization.identifier from StudySite where ") 
+                            .append(" functionalCode ='" + StudySiteFunctionalCode.LEAD_ORGANIZATION 
+                            + "' and studyProtocol.id = sp.id))) ");
                             where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
                             // add the subquery to pick the latest record
                             where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                                             + "                where sp.id = dws1.studyProtocol )"
                                             + " or dws.id is null ) ");
                     } else if (!studyProtocolQueryCriteria.getMyTrialsOnly().booleanValue()) {
-                            where.append(" and ((sp.userLastCreated = '").append(
-                                    studyProtocolQueryCriteria.getUserLastCreated() + "'");
+                            where.append(" and ((sowner.id ='").append(studyProtocolQueryCriteria.getUserId() + "'");
                             where.append(" and dws.statusCode <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
                             // add the subquery to pick the latest record
                             where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                                             + "                where sp.id = dws1.studyProtocol )"
                                             + " or dws.id is null )) ");
-                            where.append(" or (sp.userLastCreated <> '").append(
-                                    studyProtocolQueryCriteria.getUserLastCreated() + "'");
+                            where.append(" or (sowner.id <> '").append(studyProtocolQueryCriteria.getUserId() + "'");
                             where.append(" and dws.statusCode not in('" + DocumentWorkflowStatusCode.REJECTED + "',"
                                     + "'" + DocumentWorkflowStatusCode.SUBMITTED + "'" 
                                     + "'" + DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED + "')");
