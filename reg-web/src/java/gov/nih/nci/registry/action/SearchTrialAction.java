@@ -85,6 +85,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -113,7 +114,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -128,13 +131,15 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Bala Nair
  * 
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.TooManyMethods" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.TooManyMethods" , 
+    "PMD.ExcessiveClassLength" })
 public class SearchTrialAction extends ActionSupport {
     private List<StudyProtocolQueryDTO> records = null;
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
     private Long studyProtocolId = null;
     PAServiceUtils paServiceUtils = new PAServiceUtils();
     TrialUtil trialUtil = new TrialUtil();
+    private static final String TRUE = "true";
     
     /**
      * @return res
@@ -181,7 +186,8 @@ public class SearchTrialAction extends ActionSupport {
             if (studyProtocolList != null) {
                 records = new ArrayList<StudyProtocolQueryDTO>();
                 // when selected search my trials
-                if (StringUtils.isNotEmpty(criteria.getMyTrialsOnly()) && criteria.getMyTrialsOnly().equals("true")) {
+                if (StringUtils.isNotEmpty(criteria.getMyTrialsOnly()) 
+                        && criteria.getMyTrialsOnly().equals(TRUE)) {
                     String loginName =  ServletActionContext.getRequest().getRemoteUser();
                     for (StudyProtocolQueryDTO queryDto : studyProtocolList) {
                         if (PaRegistry.getRegisterUserService().hasTrialAccess(loginName, 
@@ -195,6 +201,7 @@ public class SearchTrialAction extends ActionSupport {
                 }
             }
             checkToShowSendXml();
+            checkToShowUpdate();
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -213,6 +220,48 @@ public class SearchTrialAction extends ActionSupport {
                          && queryDto.getCtgovXmlRequiredIndicator()) {               
                     queryDto.setShowSendXml(true);
                 }
+            }
+        }
+    }
+    
+    private void checkToShowUpdate() {
+        String loginUser = null;
+        loginUser =  ServletActionContext.getRequest().getRemoteUser();
+        if (!records.isEmpty()) {
+            for (StudyProtocolQueryDTO queryDto : records) {
+                String userCreated = queryDto.getUserLastCreated();
+                String isProprietaryTrial = 
+                    queryDto.getIsProprietaryTrial() != null ? queryDto.getIsProprietaryTrial() : "";
+                DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
+                StudyStatusCode statusCode = queryDto.getStudyStatusCode();
+                if (dwfs == null) {
+                    queryDto.setUpdate("");
+                }
+                if (statusCode == null) {
+                    queryDto.setUpdate("");
+                }
+                
+                Set<StudyStatusCode> updatableStatuses = new HashSet<StudyStatusCode>();
+                updatableStatuses.add(StudyStatusCode.DISAPPROVED);
+                updatableStatuses.add(StudyStatusCode.WITHDRAWN);
+                updatableStatuses.add(StudyStatusCode.COMPLETE);
+                updatableStatuses.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
+                
+                
+                if (statusCode != null && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
+                        && loginUser.equalsIgnoreCase(userCreated)
+                        && (!(updatableStatuses.contains(statusCode)))) {
+                    queryDto.setUpdate("Update");
+                } else  {
+                    queryDto.setUpdate("");
+                }
+
+                if (StringUtils.isNotEmpty(isProprietaryTrial) 
+                        && isProprietaryTrial.equalsIgnoreCase(TRUE)
+                        && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
+                        && loginUser.equalsIgnoreCase(userCreated)) {
+                        queryDto.setUpdate("Update");
+                    }
             }
         }
     }
@@ -248,7 +297,8 @@ public class SearchTrialAction extends ActionSupport {
             queryCriteria.setParticipatingSiteId(criteria.getParticipatingSiteId().toString());            
         }
         queryCriteria.setOrganizationType(criteria.getOrganizationType());
-        if (StringUtils.isNotEmpty(criteria.getMyTrialsOnly()) && criteria.getMyTrialsOnly().equals("true")) {
+        if (StringUtils.isNotEmpty(criteria.getMyTrialsOnly()) 
+                && criteria.getMyTrialsOnly().equals(TRUE)) {
             queryCriteria.setMyTrialsOnly(Boolean.TRUE);
         } else {
             queryCriteria.setMyTrialsOnly(Boolean.FALSE);
@@ -569,7 +619,7 @@ public class SearchTrialAction extends ActionSupport {
             spQueryDTO.setUserLastCreated(StConverter.convertToString(studyProtocolStageDTO.getUserLastCreated()));
             if (!PAUtil.isBlNull(studyProtocolStageDTO.getProprietaryTrialIndicator()) 
                     && BlConverter.covertToBoolean(studyProtocolStageDTO.getProprietaryTrialIndicator())) {
-                spQueryDTO.setIsProprietaryTrial("true");
+                spQueryDTO.setIsProprietaryTrial(TRUE);
             } else {
                 spQueryDTO.setIsProprietaryTrial("");
             }

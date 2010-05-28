@@ -14,6 +14,7 @@ import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
+import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
@@ -63,6 +64,7 @@ import gov.nih.nci.registry.service.MockOrganizationEntityService;
 import gov.nih.nci.registry.service.MockOrganizationalContactCorrelationService;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
 import gov.nih.nci.registry.service.MockPersonEntityService;
+import gov.nih.nci.registry.service.MockProprietaryTrialManagementService;
 import gov.nih.nci.registry.service.MockProtocolQueryService;
 import gov.nih.nci.registry.service.MockRegistryUserService;
 import gov.nih.nci.registry.service.MockRegulatoryInformationService;
@@ -110,7 +112,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
     private final StudyProtocolStageServiceLocal studyProtocolStageService = new MockStudyProtocolStageService();
     private final GridAccountServiceRemote gridAccountService = new MockGridAccountService();
-
+    private final ProprietaryTrialManagementServiceLocal proprietaryTrialService = new MockProprietaryTrialManagementService();
+    
     public DocumentServiceLocal getDocumentService() {
         return documentService;
     }
@@ -405,4 +408,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return gridAccountService;
     }
 
+    public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
+        return proprietaryTrialService;
+    }
+    
 }

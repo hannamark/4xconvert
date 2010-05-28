@@ -230,5 +230,18 @@
         <result name="input">/WEB-INF/jsp/siteAdministration.jsp</result>
         <result name="viewResults">/WEB-INF/jsp/siteAdministration.jsp</result>
     </action>
+    <action name="updateProprietaryTrial*" class="gov.nih.nci.registry.action.UpdateProprietaryTrialAction" method="{1}">
+        <interceptor-ref name="methodValidationStack" />
+        <result name="success">/WEB-INF/jsp/updateProprietaryTrial.jsp</result>
+        <result name="input">/WEB-INF/jsp/updateProprietaryTrial.jsp</result>
+        <result name="error">/WEB-INF/jsp/updateProprietaryTrial.jsp</result>
+        <result name="review">/WEB-INF/jsp/reviewUpdateProprietaryTrial.jsp</result>
+        <result name="edit">/WEB-INF/jsp/updateProprietaryTrial.jsp</result>
+        <result name="redirect_to_search" type="redirectAction">
+             <param name="actionName">searchTrial.action</param>
+             <param name="parse">true</param>
+             <param name="trialAction">${trialAction}</param>
+        </result>
+    </action>       
     </package>
 </struts>

@@ -37,10 +37,16 @@
     <display:column titleKey="search.trial.piFullName" property="piFullName"    sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column titleKey="search.trial.documentWorkflowStatus" property="documentWorkflowStatusCode"   sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column titleKey="search.trial.recordVerificationDate" property="recordVerificationDate"  format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
-    <display:column titleKey="search.trial.update" 
-        href="updateTrialview.action" property="update"
-        paramId="studyProtocolId" paramProperty="studyProtocolId"
-        sortable="true" headerClass="sortable"/>
+    <display:column titleKey="search.trial.update"  sortable="true" headerClass="sortable">
+        <s:if test="%{#attr.row.isProprietaryTrial == 'true'}">
+            <s:url id="url" action="updateProprietaryTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+        	<s:a href="%{url}"><s:property value="%{#attr.row.update}" /></s:a>
+        </s:if>
+        <s:else>
+        	<s:url id="url" action="updateTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+        	<s:a href="%{url}"><s:property value="%{#attr.row.update}" /></s:a>
+        </s:else>
+     </display:column>
      <display:column titleKey="search.trial.amend" 
         href="amendTrialview.action" property="amend"
         paramId="studyProtocolId" paramProperty="studyProtocolId"

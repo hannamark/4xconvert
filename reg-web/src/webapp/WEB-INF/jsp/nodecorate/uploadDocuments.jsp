@@ -163,7 +163,7 @@
       </table>
 </s:if>
 
-<s:if test="%{pageFrom == 'proprietaryTrial'}">
+<s:if test="%{pageFrom == 'proprietaryTrial' || pageFrom == 'updateProprietaryTrial'}">
 	<table class="form">  
         <tr>
               <th colspan="2"><fmt:message key="submit.trial.documents"/></th>

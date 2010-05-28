@@ -3,6 +3,9 @@
  */
 package gov.nih.nci.registry.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.validator.NotEmpty;
 
 /**
@@ -20,6 +23,7 @@ public class ProprietaryTrialDTO extends BaseTrialDTO {
     private String dateOpenedforAccrual;
     private String dateClosedforAccrual;
     private String siteProgramCodeText;
+    private List<SubmittedOrganizationDTO> participatingSitesList = new ArrayList<SubmittedOrganizationDTO>();
     
     /**
      * @return the sitePiIdentifier
@@ -145,6 +149,22 @@ public class ProprietaryTrialDTO extends BaseTrialDTO {
      */
     public void setSiteStatusCode(String siteStatusCode) {
         this.siteStatusCode = siteStatusCode;
+    }
+    
+    /**
+     * Gets the participating sites.
+     * @return the participatingSites
+     */
+    public List<SubmittedOrganizationDTO> getParticipatingSitesList() {
+        return participatingSitesList;
+    }
+
+    /**
+     * Sets the participating sites.
+     * @param participatingSites the participatingSites to set
+     */
+    public void setParticipatingSitesList(List<SubmittedOrganizationDTO> participatingSites) {
+        this.participatingSitesList = participatingSites;
     }
     
 }

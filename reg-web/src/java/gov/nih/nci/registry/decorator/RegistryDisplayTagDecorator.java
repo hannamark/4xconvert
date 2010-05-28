@@ -181,7 +181,6 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         String isProprietaryTrial = 
             ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() != null 
                    ? ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() : "";
-  
         DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) 
                 this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
         StudyStatusCode statusCode = ((StudyProtocolQueryDTO) 

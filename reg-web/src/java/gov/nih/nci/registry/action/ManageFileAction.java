@@ -79,6 +79,7 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.util.TrialUtil;
@@ -387,97 +388,114 @@ public class ManageFileAction extends ActionSupport {
     }
 
     /**
+     * Check other doc.
+     * @param session the session
+     * @param validator the validator
+     */
+    public void checkOtherDoc(HttpSession session, TrialValidator validator) {
+        Map<String, String> errMap;
+        if (PAUtil.isNotEmpty(otherDocumentFileName) 
+                && session.getAttribute(DocumentTypeCode.OTHER.getShortName()) == null) {
+            errMap = new HashMap<String, String>();
+            errMap = validator.validateDocument(otherDocumentFileName, otherDocument, "trialDTO.otherDocumentFileName"
+                    , "");
+            addErrors(errMap);
+        }
+    }
+
+    /**
+     * Check protocol doc.
+     * @param session the session
+     * @param validator the validator
+     */
+    public void checkProtocolDoc(HttpSession session, TrialValidator validator) {
+        Map<String, String> errMap;
+        if (PAUtil.isNotEmpty(protocolDocFileName) 
+                && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
+            errMap = new HashMap<String, String>();
+            errMap = validator.validateDocument(protocolDocFileName, protocolDoc, "trialDTO.protocolDocFileName", "");
+            addErrors(errMap);
+        }
+    }
+
+    /**
      * @return pageFrom
      */
     public String getPageFrom() {
         return pageFrom;
     }
-
     /**
      * @param pageFrom pageFrom to set
      */
     public void setPageFrom(String pageFrom) {
         this.pageFrom = pageFrom;
     }
-
     /**
      * @return protocolDoc
      */
     public File getProtocolDoc() {
         return protocolDoc;
     }
-
     /**
      * @param protocolDoc protocolDoc
      */
     public void setProtocolDoc(File protocolDoc) {
         this.protocolDoc = protocolDoc;
     }
-
     /**
      * @return protocolDocFileName
      */
     public String getProtocolDocFileName() {
         return protocolDocFileName;
     }
-
     /**
      * @param protocolDocFileName protocolDocFileName
      */
     public void setProtocolDocFileName(String protocolDocFileName) {
         this.protocolDocFileName = protocolDocFileName;
     }
-
     /**
      * @return irbApproval
      */
     public File getIrbApproval() {
         return irbApproval;
     }
-
     /**
      * @param irbApproval irbApproval
      */
     public void setIrbApproval(File irbApproval) {
         this.irbApproval = irbApproval;
     }
-
     /**
      * @return irbApprovalFileName
      */
     public String getIrbApprovalFileName() {
         return irbApprovalFileName;
     }
-
     /**
      * @param irbApprovalFileName irbApprovalFileName
      */
     public void setIrbApprovalFileName(String irbApprovalFileName) {
         this.irbApprovalFileName = irbApprovalFileName;
     }
-
-
     /**
      * @return the informedConsentDocument
      */
     public File getInformedConsentDocument() {
         return informedConsentDocument;
     }
-
     /**
      * @param informedConsentDocument the informedConsentDocument to set
      */
     public void setInformedConsentDocument(File informedConsentDocument) {
         this.informedConsentDocument = informedConsentDocument;
     }
-
     /**
      * @return the informedConsentDocumentFileName
      */
     public String getInformedConsentDocumentFileName() {
         return informedConsentDocumentFileName;
     }
-
     /**
      * @param informedConsentDocumentFileName the
      *            informedConsentDocumentFileName to set
@@ -485,85 +503,72 @@ public class ManageFileAction extends ActionSupport {
     public void setInformedConsentDocumentFileName(String informedConsentDocumentFileName) {
         this.informedConsentDocumentFileName = informedConsentDocumentFileName;
     }
-
     /**
      * @return the otherDocument
      */
     public File getOtherDocument() {
         return otherDocument;
     }
-
     /**
      * @param otherDocument the otherDocument to set
      */
     public void setOtherDocument(File otherDocument) {
         this.otherDocument = otherDocument;
     }
-
     /**
      * @return the otherDocumentFileName
      */
     public String getOtherDocumentFileName() {
         return otherDocumentFileName;
     }
-
     /**
      * @param otherDocumentFileName the otherDocumentFileName to set
      */
     public void setOtherDocumentFileName(String otherDocumentFileName) {
         this.otherDocumentFileName = otherDocumentFileName;
     }
-
-
     /**
      * @return the participatingSites
      */
     public File getParticipatingSites() {
         return participatingSites;
     }
-
     /**
      * @param participatingSites the participatingSites to set
      */
     public void setParticipatingSites(File participatingSites) {
         this.participatingSites = participatingSites;
     }
-
     /**
      * @return the participatingSitesFileName
      */
     public String getParticipatingSitesFileName() {
         return participatingSitesFileName;
     }
-
     /**
      * @param participatingSitesFileName the participatingSitesFileName to set
      */
     public void setParticipatingSitesFileName(String participatingSitesFileName) {
         this.participatingSitesFileName = participatingSitesFileName;
     }
-
     /**
      * @return the protocolHighlightDocument
      */
     public File getProtocolHighlightDocument() {
         return protocolHighlightDocument;
     }
-
     /**
      * @param protocolHighlightDocument the protocolHighlightDocument to set
      */
     public void setProtocolHighlightDocument(File protocolHighlightDocument) {
         this.protocolHighlightDocument = protocolHighlightDocument;
     }
-
     /**
      * @return the protocolHighlightDocumentFileName
      */
     public String getProtocolHighlightDocumentFileName() {
         return protocolHighlightDocumentFileName;
     }
-
     /**
      * @param protocolHighlightDocumentFileName the protocolHighlightDocumentFileName to set
      */
@@ -571,33 +576,28 @@ public class ManageFileAction extends ActionSupport {
             String protocolHighlightDocumentFileName) {
         this.protocolHighlightDocumentFileName = protocolHighlightDocumentFileName;
     }
-
     /**
      * @return the changeMemoDoc
      */
     public File getChangeMemoDoc() {
         return changeMemoDoc;
     }
-
     /**
      * @param changeMemoDoc the changeMemoDoc to set
      */
     public void setChangeMemoDoc(File changeMemoDoc) {
         this.changeMemoDoc = changeMemoDoc;
-    }
-    
+    }    
     /**
      * @return the changeMemoDocFileName
      */
     public String getChangeMemoDocFileName() {
         return changeMemoDocFileName;
-    }
-    
+    }    
     /**
      * @param changeMemoDocFileName the changeMemoDocFileName to set
      */
     public void setChangeMemoDocFileName(String changeMemoDocFileName) {
         this.changeMemoDocFileName = changeMemoDocFileName;
     }
-
 }

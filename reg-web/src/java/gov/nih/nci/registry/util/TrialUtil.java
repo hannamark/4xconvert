@@ -39,6 +39,7 @@ import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -52,6 +53,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.StudyIndldeWebDTO;
+import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
@@ -100,7 +102,6 @@ public class TrialUtil {
 
     /**
      * Copy.
-     * 
      * @param spDTO sdto
      * @param trialDTO gdto
      */
@@ -139,7 +140,6 @@ public class TrialUtil {
     }
     /**
      * Adds the secondary identifiers.
-     * 
      * @param spDTO the sp dto
      * @param trialDTO the trial dto
      */
@@ -160,7 +160,6 @@ public class TrialUtil {
           }
         }
          
-        //remove the dset
          spDTO.getSecondaryIdentifiers().setItem(null);
          trialDTO.getSecondaryIdentifierList().clear();
          trialDTO.setSecondaryIdentifierList(secondaryIis);
@@ -168,7 +167,6 @@ public class TrialUtil {
 
     /**
      * Copy.
-     * 
      * @param spqDTO sdto
      * @param trialDTO gdto
      */
@@ -178,21 +176,18 @@ public class TrialUtil {
         trialDTO.setStatusCode(spqDTO.getStudyStatusCode().getCode());
         trialDTO.setStatusDate(PAUtil.normalizeDateString(spqDTO.getStudyStatusDate().toString()));
     }
-    
     /**
      * Copy lo.
-     * 
      * @param o o
      * @param trialDTO gdto
      */
-    private void copyLO(Organization o, TrialDTO trialDTO) {
+    private void copyLO(Organization o, BaseTrialDTO trialDTO) {
         trialDTO.setLeadOrganizationIdentifier(o.getIdentifier());
         trialDTO.setLeadOrganizationName(o.getName());
     }
     
     /**
      * Copy pi.
-     * 
      * @param p p
      * @param trialDTO dto
      */
@@ -200,13 +195,10 @@ public class TrialUtil {
         trialDTO.setPiIdentifier(p.getIdentifier());
         trialDTO.setPiName(p.getFullName());
     }
-    
     /**
      * Copy responsible party.
-     * 
      * @param studyProtocolIi ii
      * @param trialDTO dto
-     * 
      * @throws PAException ex
      * @throws NullifiedRoleException the nullified role exception
      */
@@ -269,13 +261,10 @@ public class TrialUtil {
             trialDTO.setContactEmail(emails.get(0));
         }
     }
-    
     /**
      * Copy sponsor.
-     * 
      * @param studyProtocolIi ii
      * @param trialDTO dto
-     * 
      * @throws PAException ex
      */
     private void copySponsor(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
@@ -289,18 +278,14 @@ public class TrialUtil {
             trialDTO.setSponsorName(o.getName());
             trialDTO.setSponsorIdentifier(o.getIdentifier());
         }
-
     }
-    
     /**
      * Copy nct nummber.
-     * 
      * @param studyProtocolIi ii
      * @param trialDTO dto
-     * 
      * @throws PAException ex
      */
-    private void copyNctNummber(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
+    private void copyNctNummber(Ii studyProtocolIi, BaseTrialDTO trialDTO) throws PAException {
         String nctNumber = paServiceUtil.getStudyIdentifier(studyProtocolIi, PAConstants.NCT_IDENTIFIER_TYPE);
         if (nctNumber != null) {
             trialDTO.setNctIdentifier(nctNumber);
@@ -308,13 +293,11 @@ public class TrialUtil {
     }
     /**
      * Copy summary four.
-     * 
      * @param srDTO sdto
      * @param trialDTO tdto
-     * 
      * @throws PAException ex
      */
-    private void copySummaryFour(StudyResourcingDTO srDTO, TrialDTO trialDTO) throws PAException {
+    private void copySummaryFour(StudyResourcingDTO srDTO, BaseTrialDTO trialDTO) throws PAException {
         if (srDTO == null) {
             return;
         }
@@ -352,10 +335,8 @@ public class TrialUtil {
     
     /**
      * Copy indide update list.
-     * 
      * @param studyIndldeDTOList iiDto
      * @param trialDTO dto
-     * 
      * @throws PAException ex
      */
     private void copyINDIDEUpdateList(List<StudyIndldeDTO> studyIndldeDTOList, TrialDTO trialDTO) throws PAException {
@@ -372,7 +353,6 @@ public class TrialUtil {
     
     /**
      * Copy grant list.
-     * 
      * @param isoGrantlist iso
      * @param trialDTO dto
      */
@@ -393,11 +373,8 @@ public class TrialUtil {
     
     /**
      * Convert to study protocol dto for amendment.
-     * 
      * @param trialDTO dtotoConvert
-     * 
      * @return isoDto
-     * 
      * @throws PAException on error
      */
     public StudyProtocolDTO convertToStudyProtocolDTOForAmendment(BaseTrialDTO trialDTO) throws PAException {
@@ -434,7 +411,7 @@ public class TrialUtil {
      * @return the study protocol dto
      */
     @SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
-    private StudyProtocolDTO convertToStudyProtocolDTO(BaseTrialDTO trialDTO,
+    public StudyProtocolDTO convertToStudyProtocolDTO(BaseTrialDTO trialDTO,
             StudyProtocolDTO isoDto) {
         if (PAUtil.isNotEmpty(trialDTO.getOfficialTitle())) {
             isoDto.setOfficialTitle(StConverter.convertToSt(trialDTO.getOfficialTitle()));
@@ -537,12 +514,9 @@ public class TrialUtil {
            isoDto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(new HashSet<Ii>(iis)));
         }
     }
-    
     /**
      * Convert to study overall status dto.
-     * 
      * @param trialDTO Dto
-     * 
      * @return isoDto
      */
     public StudyOverallStatusDTO convertToStudyOverallStatusDTO(TrialDTO trialDTO) {
@@ -557,7 +531,6 @@ public class TrialUtil {
     
     /**
      * Convert to study overall status dto.
-     * 
      * @param isoDto StudyOverallStatusDTO
      * @param trialDTO Dto
      */
@@ -571,9 +544,7 @@ public class TrialUtil {
     
     /**
      * Convert to summary4 org dto.
-     * 
      * @param trialDTO do
-     * 
      * @return iso
      */
     public OrganizationDTO convertToSummary4OrgDTO(BaseTrialDTO trialDTO) {
@@ -586,9 +557,7 @@ public class TrialUtil {
     }
     /**
      * Convert to lead org dto.
-     * 
      * @param trialDTO do
-     * 
      * @return iso
      */
     public OrganizationDTO convertToLeadOrgDTO(BaseTrialDTO trialDTO) {
@@ -599,9 +568,7 @@ public class TrialUtil {
     
     /**
      * Convert to sponsor org dto.
-     * 
      * @param trialDTO do
-     * 
      * @return iso
      */
     public OrganizationDTO convertToSponsorOrgDTO(TrialDTO trialDTO) {
@@ -612,9 +579,7 @@ public class TrialUtil {
     
     /**
      * Convert to lead pi.
-     * 
      * @param trialDTO dto
-     * 
      * @return iso
      */
     public PersonDTO convertToLeadPI(TrialDTO trialDTO) {
@@ -625,9 +590,7 @@ public class TrialUtil {
     
     /**
      * Convert to responsible party contact dto.
-     * 
      * @param trialDTO dto
-     * 
      * @return iso
      */
     public PersonDTO convertToResponsiblePartyContactDTO(TrialDTO trialDTO) {
@@ -638,7 +601,6 @@ public class TrialUtil {
     
     /**
      * Convert to summary4 study resourcing dto.
-     * 
      * @param trialDTO dto
      * @param studyProtocolIi ii
      * @return iso
@@ -663,9 +625,7 @@ public class TrialUtil {
     }
     /**
      * Convert to study site dto.
-     * 
      * @param trialDTO dto
-     * 
      * @return iso
      */
     public StudySiteDTO convertToleadOrgSiteIdDTO(BaseTrialDTO trialDTO) {
@@ -711,9 +671,7 @@ public class TrialUtil {
     
     /**
      * Convert to study contact dto.
-     * 
      * @param trialDTO dto
-     * 
      * @return iso
      */
     public StudyContactDTO convertToStudyContactDTO(TrialDTO trialDTO) {
@@ -1272,11 +1230,9 @@ public class TrialUtil {
     }
     /**
      * Gets the study reg auth.
-     * 
      * @param studyProtocolIi the study protocol ii
      * @param trialDTO trialDTO
      * @return the study reg auth
-     * 
      * @throws PAException the PA exception
      */
     public StudyRegulatoryAuthorityDTO getStudyRegAuth(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
@@ -1300,9 +1256,7 @@ public class TrialUtil {
         }
     }
     /**
-     * 
      * @param trialDTO trialDTO
-     * 
      */
     @SuppressWarnings({"PMD" })
     public void populateRegulatoryList(TrialDTO trialDTO) {
@@ -1319,7 +1273,6 @@ public class TrialUtil {
     
     /**
      * Convert to Ctep study site dto.
-     * 
      * @param trialDTO dto
      * @param studyProtocolIi Ii
      * @return iso
@@ -1355,7 +1308,6 @@ public class TrialUtil {
     }
     /**
      * Convert to Dcp study site dto.
-     * 
      * @param trialDTO dto
      * @param studyProtocolIi Ii
      * @return iso
@@ -1391,10 +1343,8 @@ public class TrialUtil {
     }
     /**
      * Copy dcp nummber.
-     * 
      * @param studyProtocolIi ii
      * @param trialDTO dto
-     * 
      * @throws PAException ex
      */
     private void copyDcpIdentifier(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
@@ -1468,7 +1418,6 @@ public class TrialUtil {
         spStageDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));
         trialDto.setPropritaryTrialIndicator(CommonsConstant.YES);
     }
-
     /**
      * @param trialDto
      * @param spStageDTO
@@ -1530,7 +1479,6 @@ public class TrialUtil {
         
     }
     /**
-     * 
      * @param spStageDTO isoDto
      * @return webDto
      * @throws NullifiedRoleException on err
@@ -1721,7 +1669,6 @@ public class TrialUtil {
         return trialDto;
     }
     /**
-     * 
      * @param grant webDto
      * @return isoDto
      */
@@ -1734,7 +1681,6 @@ public class TrialUtil {
         return tempFundingDTO;
     }
     /**
-     * 
      * @param isoDTO isoDto
      * @return webDto
      */
@@ -1748,7 +1694,6 @@ public class TrialUtil {
         return retDTO;
     }
     /**
-     * 
      * @param indDto indIdedto
      * @return tempStudyIndIdeDto
      */
@@ -1909,7 +1854,6 @@ public class TrialUtil {
                 orgDto.getName());
     }
     /**
-     * 
      * @param entityIi ii
      * @return name
      */
@@ -1938,5 +1882,115 @@ public class TrialUtil {
             trialDTO.setTrialOversgtAuthCountryName(countryName);
        }
     }
-
+    /**
+     * Gets the Proprietary trial dto from db.
+     * @param studyProtocolIi the study protocol ii
+     * @param trialDTO the trial dto
+     * @throws PAException the PA exception
+     * @throws NullifiedRoleException the nullified role exception
+     */
+    public void getProprietaryTrialDTOFromDb(Ii studyProtocolIi, ProprietaryTrialDTO trialDTO) 
+    throws PAException, NullifiedRoleException {
+        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+        StudyProtocolQueryDTO spqDto = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+                                                Long.valueOf(studyProtocolIi.getExtension()));
+        trialDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
+//        trialDTO.setAssignedIdentifier(spDTO.getAssignedIdentifier().getExtension());
+        trialDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
+        trialDTO.setPhaseOtherText(spDTO.getPhaseOtherText().getValue());
+        trialDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
+        trialDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
+        trialDTO.setTrialType(spDTO.getStudyProtocolType().getValue());
+        trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
+        trialDTO.setStudyProtocolId(spqDto.getStudyProtocolId().toString());
+        trialDTO.setLeadOrgTrialIdentifier(spqDto.getLocalStudyProtocolIdentifier());
+        CorrelationUtils cUtils = new CorrelationUtils();
+        copyLO(cUtils.getPAOrganizationByIi(
+                IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())), trialDTO);
+        copyNctNummber(studyProtocolIi, trialDTO);
+        copySummaryFour(PaRegistry.getStudyResourcingService().
+                getsummary4ReportedResource(studyProtocolIi), trialDTO);
+    }   
+       
+    /**
+     * Convert to iso document list.
+     * @param docList the doc list
+     * @param studyProtocolIi the study protocol ii
+     * @return the list< document dto>
+     * @throws PAException the PA exception
+     */
+    public List<DocumentDTO> convertToISODocumentList(List<TrialDocumentWebDTO> docList, Ii studyProtocolIi) 
+    throws PAException {
+        List<DocumentDTO> docs = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(studyProtocolIi);
+        DocumentDTO protocolDocToUpdate = null;
+        DocumentDTO otherDocToUpdate = null;
+        List<DocumentDTO> docToUpdateList = new ArrayList<DocumentDTO>();
+        if (docList != null && !docList.isEmpty()) {  
+            for (DocumentDTO doc : docs) {
+                if (DocumentTypeCode.PROTOCOL_DOCUMENT.getCode().equals(
+                        CdConverter.convertCdToString(doc.getTypeCode()))) {
+                    protocolDocToUpdate = doc;
+                } else if (DocumentTypeCode.OTHER.getCode().equals(
+                        CdConverter.convertCdToString(doc.getTypeCode()))) {
+                    otherDocToUpdate = doc;
+                }
+            }
+            for (TrialDocumentWebDTO dto : docList) {
+                if (DocumentTypeCode.PROTOCOL_DOCUMENT.getCode().equals(dto.getTypeCode())) {
+                    if (protocolDocToUpdate != null) {
+                        protocolDocToUpdate.setFileName(StConverter.convertToSt(dto.getFileName()));
+                        protocolDocToUpdate.setText(EdConverter.convertToEd(dto.getText()));
+                    } else {
+                        protocolDocToUpdate = new DocumentDTO();
+                        protocolDocToUpdate.setTypeCode(CdConverter.convertStringToCd(dto.getTypeCode()));
+                        protocolDocToUpdate.setFileName(StConverter.convertToSt(dto.getFileName()));
+                        protocolDocToUpdate.setText(EdConverter.convertToEd(dto.getText()));
+                    }
+                } else if (DocumentTypeCode.OTHER.getCode().equals(dto.getTypeCode())) {
+                    if (otherDocToUpdate != null) {
+                        otherDocToUpdate.setFileName(StConverter.convertToSt(dto.getFileName()));
+                        otherDocToUpdate.setText(EdConverter.convertToEd(dto.getText()));
+                    } else {
+                        otherDocToUpdate = new DocumentDTO();
+                        otherDocToUpdate.setTypeCode(CdConverter.convertStringToCd(dto.getTypeCode()));
+                        otherDocToUpdate.setFileName(StConverter.convertToSt(dto.getFileName()));
+                        otherDocToUpdate.setText(EdConverter.convertToEd(dto.getText()));
+                    }
+                }
+            }
+            if (protocolDocToUpdate != null && protocolDocToUpdate.getText() != null) {
+                docToUpdateList.add(protocolDocToUpdate);
+            }
+            if (otherDocToUpdate != null && otherDocToUpdate.getText() != null) {
+                docToUpdateList.add(otherDocToUpdate);
+            }
+        }
+        return docToUpdateList;
+    }
+    /**
+     * Gets the study site to update.
+     * @param ps the ps
+     * @return the study site to update
+     * @throws PAException the PA exception
+     */
+    public List<StudySiteDTO> getStudySiteToUpdate(List<SubmittedOrganizationDTO> ps) 
+    throws PAException {
+        List<StudySiteDTO> ssDTO = new ArrayList<StudySiteDTO>();
+        for (SubmittedOrganizationDTO dto : ps) {
+            StudySiteDTO sp = PaRegistry.getStudySiteService().get(IiConverter.convertToIi(dto.getId()));
+            sp.setProgramCodeText(StConverter.convertToSt(dto.getProgramCode()));
+            sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt(dto.getSiteLocalTrialIdentifier()));
+            if (StringUtils.isNotEmpty(dto.getDateOpenedforAccrual()) 
+                    && StringUtils.isNotEmpty(dto.getDateClosedforAccrual())) {
+                sp.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(dto.getDateOpenedforAccrual(),
+                        dto.getDateClosedforAccrual()));
+            }
+            if (StringUtils.isNotEmpty(dto.getDateOpenedforAccrual()) 
+                    && StringUtils.isEmpty(dto.getDateClosedforAccrual())) {
+                sp.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(dto.getDateOpenedforAccrual(), null));
+            }
+            ssDTO.add(sp);
+        }
+         return ssDTO;        
+    }
 }
