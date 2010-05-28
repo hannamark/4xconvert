@@ -68,6 +68,7 @@ public class TrialDTO extends BaseTrialDTO {
     private String trialOversgtAuthOrgName;
     private boolean xmlRequired = true;
     private List<Ii> secondaryIdentifierList;
+    private List<Ii> secondaryIdentifierAddList;
     private String assignedIdentifier;
     
     /**
@@ -81,7 +82,8 @@ public class TrialDTO extends BaseTrialDTO {
         indIdeUpdateDtos = new ArrayList<StudyIndldeWebDTO>();
         fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
         indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
-        secondaryIdentifierList = new ArrayList<Ii>();        
+        secondaryIdentifierList = new ArrayList<Ii>(); 
+        secondaryIdentifierAddList = new ArrayList<Ii>();
     }
     /**
      * @return the accrualReportingMethodCode
@@ -619,4 +621,16 @@ public class TrialDTO extends BaseTrialDTO {
       public void setAssignedIdentifier(String assignedIdentifier) {
        this.assignedIdentifier = assignedIdentifier;
     }
+     /**
+      * @return the secondaryIdentifierAddList
+      */
+   public List<Ii> getSecondaryIdentifierAddList() {
+      return secondaryIdentifierAddList;
+   }
+  /**
+   * @param secondaryIdentifierAddList the secondaryIdentifierAddList to set
+   */
+   public void setSecondaryIdentifierAddList(List<Ii> secondaryIdentifierAddList) {
+     this.secondaryIdentifierAddList = secondaryIdentifierAddList;
+   }
 }

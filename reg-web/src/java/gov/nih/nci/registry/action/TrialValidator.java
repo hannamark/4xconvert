@@ -404,7 +404,7 @@ public class TrialValidator {
         }
         if (!tDTO.getSecondaryIdentifierList().isEmpty()) {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST,
-                    tDTO.getSecondaryIdentifierList());
+                    tDTO.getSecondaryIdentifierAddList());
         }
         List<DocumentDTO> documentISOList;
         try {
@@ -424,6 +424,7 @@ public class TrialValidator {
      * 
      * @param tDTO dto
      */
+    @SuppressWarnings("PMD")
     public static void addSessionAttributesForUpdate(TrialDTO tDTO) {
         if (tDTO == null) {
             return;
@@ -459,6 +460,10 @@ public class TrialValidator {
         if (!tDTO.getParticipatingSites().isEmpty()) {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_SITES_LIST,
                     tDTO.getParticipatingSites());
+        }
+        if (!tDTO.getSecondaryIdentifierAddList().isEmpty()) {
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST,
+                    tDTO.getSecondaryIdentifierAddList());
         }
         List<DocumentDTO> documentISOList;
         try {

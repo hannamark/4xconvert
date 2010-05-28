@@ -117,8 +117,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
     @Element (value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
     private List<TrialFundingWebDTO> fundingDtos = new ArrayList<TrialFundingWebDTO>();
     
-    
-    /** The programcodenihselectedvalue. */
+   /** The programcodenihselectedvalue. */
     private String programcodenihselectedvalue;
     
     /** The programcodenciselectedvalue. */
@@ -479,7 +478,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
       if (trialDTO.getFundingAddDtos() != null && !trialDTO.getFundingAddDtos().isEmpty()) {
        setFundingAddDtos(trialDTO.getFundingAddDtos());
       } 
-   }
+  }
   
  /**
   * Synch dto with action.
@@ -553,7 +552,13 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
            }
            if (trialDTO.getXmlRequired()) {
               trialUtil.setOversgtInfo(trialDTO);
-           }   
+           }
+           List<Ii> otherIdsList = 
+               (List<Ii>) ServletActionContext.getRequest()
+                 .getSession().getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
+              if (otherIdsList != null) {
+                  trialDTO.setSecondaryIdentifierAddList(otherIdsList);
+              }
            synchDTOWithAction();
 
         } catch (IOException e) {
@@ -605,6 +610,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier()));
             //get the studyProtocol DTO
             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            util.addSecondaryIdentifiers(spDTO, trialDTO);
             util.updateStudyProtcolDTO(spDTO, trialDTO);
             spDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser()));
 
@@ -720,6 +726,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
         ServletActionContext.getRequest().getSession().removeAttribute("indIdeAddList");
      return "redirect_to_search";   
     }
+    
     
     /**
      * validate the submit trial form elements.
@@ -989,5 +996,5 @@ public int getIndIdeUpdateDtosLen() {
 public void setIndIdeUpdateDtosLen(int indIdeUpdateDtosLen) {
     this.indIdeUpdateDtosLen = indIdeUpdateDtosLen;
 }
- 
+
 }

@@ -80,7 +80,7 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.registry.util.Constants;
-
+import gov.nih.nci.pa.iso.util.IiConverter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,15 +104,15 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
         String otherIdentifier = ServletActionContext.getRequest().getParameter("otherIdentifier");
         List<Ii> sessionList = (List<Ii>) ServletActionContext.getRequest()
             .getSession().getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
-        Ii sp = new Ii();
+        Ii sp;
         if (sessionList != null) {
-            sp.setExtension(otherIdentifier);
+            sp = IiConverter.convertToOtherIdentifierIi(otherIdentifier);
             sessionList.add(sp);
             ServletActionContext.getRequest().getSession().
                setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST, sessionList); 
         } else {
             List<Ii> tempList = new ArrayList<Ii>();
-            sp.setExtension(otherIdentifier);
+            sp = IiConverter.convertToOtherIdentifierIi(otherIdentifier);
             tempList.add(sp);
             ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST, tempList);
         }
@@ -132,6 +132,20 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
         
          ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST, sessionList);
          return "display_otherIdentifiers";
+     }
+     
+     /**
+      * 
+      * @return result
+      */
+      public String deleteOtherIdentifierUpdate() {
+         int rowid =  Integer.parseInt(ServletActionContext.getRequest().getParameter("uuid"));
+         List<Ii> sessionList = (List<Ii>) ServletActionContext.getRequest()
+             .getSession().getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
+         sessionList.remove(rowid - 1);
+        
+         ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST, sessionList);
+         return "display_otherIdentifiersUpdate";
      }
     /**
      * Keeps the user looking at the spinning wheel until a SUCCESS/EXCEPTION

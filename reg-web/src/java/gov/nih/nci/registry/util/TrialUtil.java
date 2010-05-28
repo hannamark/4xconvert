@@ -127,7 +127,44 @@ public class TrialUtil {
         } else {
            trialDTO.setXmlRequired(false);
         }
+        if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
+            List<Ii> listIi = new ArrayList<Ii>(); 
+            for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
+              if (!IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+                listIi.add(ii);
+              }
+            }
+            trialDTO.setSecondaryIdentifierList(listIi);
+        }  
     }
+    /**
+     * Adds the secondary identifiers.
+     * 
+     * @param spDTO the sp dto
+     * @param trialDTO the trial dto
+     */
+    public void addSecondaryIdentifiers(StudyProtocolDTO spDTO, TrialDTO trialDTO) {
+        List <Ii> secondaryIis = new ArrayList<Ii>();
+        if (trialDTO.getSecondaryIdentifierList() != null && !trialDTO.getSecondaryIdentifierList().isEmpty()) {
+          secondaryIis.addAll(trialDTO.getSecondaryIdentifierList());
+        }
+        if (trialDTO.getSecondaryIdentifierAddList() != null && !trialDTO.getSecondaryIdentifierAddList().isEmpty()) {
+          secondaryIis.addAll(trialDTO.getSecondaryIdentifierAddList());
+        }
+        if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
+          for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
+            if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+              secondaryIis.add(ii);
+              break;
+            }
+          }
+        }
+         
+        //remove the dset
+         spDTO.getSecondaryIdentifiers().setItem(null);
+         trialDTO.getSecondaryIdentifierList().clear();
+         trialDTO.setSecondaryIdentifierList(secondaryIis);
+      }
 
     /**
      * Copy.
@@ -373,6 +410,7 @@ public class TrialUtil {
             isoDto  = PaRegistry.getStudyProtocolService().getInterventionalStudyProtocol(
                     IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
         }
+        addSecondaryIdentifiers(isoDto, (TrialDTO) trialDTO);
         isoDto = convertToStudyProtocolDTO(trialDTO, isoDto);
         if (isoDto.getSecondaryIdentifiers() != null && isoDto.getSecondaryIdentifiers().getItem() != null) {
             for (Ii ii : isoDto.getSecondaryIdentifiers().getItem()) {
@@ -490,7 +528,11 @@ public class TrialUtil {
         if (trialDTO.getSecondaryIdentifierList() != null && !trialDTO.getSecondaryIdentifierList().isEmpty()) {
            List<Ii> iis = new ArrayList<Ii>();
            for (Ii sps : trialDTO.getSecondaryIdentifierList()) {
-             iis.add(IiConverter.convertToOtherIdentifierIi(sps.getExtension()));
+            if (IiConverter.STUDY_PROTOCOL_ROOT.equals(sps.getRoot())) {
+              iis.add(IiConverter.convertToAssignedIdentifierIi(sps.getExtension())); 
+            } else {
+               iis.add(IiConverter.convertToOtherIdentifierIi(sps.getExtension()));
+            }
            }
            isoDto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(new HashSet<Ii>(iis)));
         }

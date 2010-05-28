@@ -151,6 +151,7 @@ public class SearchTrialAction extends ActionSupport {
             String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
             ServletActionContext.getRequest().setAttribute("studyProtocolId", pId);
             studyProtocolId = Long.valueOf(pId);
+            getCriteria().setMyTrialsOnly("true");
             return view();
         }
         return SUCCESS;
