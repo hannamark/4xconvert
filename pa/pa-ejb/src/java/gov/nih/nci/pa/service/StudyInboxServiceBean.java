@@ -78,17 +78,26 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyInbox;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.iso.convert.StudyInboxConverter;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -109,6 +118,11 @@ implements StudyInboxServiceLocal {
     public static final int FN_DATE_OPEN = 1;
     /** id for inboxDateRange.close. */
     public static final int FN_DATE_CLOSE = 2;
+    @EJB
+    DocumentWorkflowStatusServiceLocal docWrkFlowStatusService = null;
+    @EJB
+    AbstractionCompletionServiceRemote abstractionCompletionService = null;
+
 
    
     /**
@@ -123,6 +137,36 @@ implements StudyInboxServiceLocal {
         return super.create(dto);
     }
 
+
+    /**
+     * This method creates a record in the inbox (Only When some conditions are more). 
+     * This method should be called during update workflow. 
+     * @param documentDTOs list of document Dtos
+     * @param studyProtocolIi studyProtocol Identifier
+     * @throws PAException on any error
+     */
+    public void create(List<DocumentDTO> documentDTOs , Ii studyProtocolIi) throws PAException {
+        StringBuffer comments = new StringBuffer();
+        if (PAUtil.isIiNull(studyProtocolIi)) {
+            throw new PAException(" Study Protocol Identifier cannot be null");
+        }
+        DocumentWorkflowStatusDTO dws = docWrkFlowStatusService.getCurrentByStudyProtocol(studyProtocolIi);
+        if (dws == null) {
+            throw new PAException(" Document workflow status is null for StudyProtocol identifier " 
+                    + studyProtocolIi.getExtension());
+        }
+        comments.append(createComments(documentDTOs));
+        comments.append(createComments(dws, studyProtocolIi));
+        if (comments.length() > 0) {
+            StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
+            studyInboxDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            studyInboxDTO.setInboxDateRange(
+                    IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
+            studyInboxDTO.setComments(StConverter.convertToSt(comments.toString()));
+            create(studyInboxDTO);
+        }
+    }
+    
     /**
      * @param dto dto
      * @return dto
@@ -139,6 +183,7 @@ implements StudyInboxServiceLocal {
         return super.update(wrkDto);
     }
 
+    
     private void setTimeIfToday(StudyInboxDTO dto) {
         Timestamp now = new Timestamp(new Date().getTime());
         Timestamp tsLow = IvlConverter.convertTs().convertLow(dto.getInboxDateRange());
@@ -172,5 +217,31 @@ implements StudyInboxServiceLocal {
                         "Close date must be bigger than open date for the same open record.");
             }
         }
+    }
+    
+    private StringBuffer createComments(List<DocumentDTO> documentDTOs)  {
+        StringBuffer comments = new StringBuffer();
+        if (PAUtil.isListNotEmpty(documentDTOs)) {
+            for (DocumentDTO doc : documentDTOs) {
+                comments.append(CdConverter.convertCdToString(doc.getTypeCode())).append(" Document was uploaded <br>");
+            }        
+        }
+        return comments;
+    }
+    
+    private StringBuffer createComments(DocumentWorkflowStatusDTO dws, Ii studyProtocolIi) throws PAException {
+        StringBuffer comments = new StringBuffer();
+        if (PAUtil.isAbstractedAndAbove(dws.getStatusCode())) {
+            List<AbstractionCompletionDTO> errorList =
+                abstractionCompletionService.validateAbstractionCompletion(studyProtocolIi);
+            if (!errorList.isEmpty()) {
+                comments.append("<b>Type :</b>  <b>Description :</b> <b>Comments :</b><br>");
+                for (AbstractionCompletionDTO abDTO : errorList) {
+                    comments.append(abDTO.getErrorType()).append(" : ").append(abDTO.getErrorDescription())
+                        .append(" : ").append(abDTO.getComment()).append("<br>");
+                }
+            }
+         }
+        return comments;
     }
 }

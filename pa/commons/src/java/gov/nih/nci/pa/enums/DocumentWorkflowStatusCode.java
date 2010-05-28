@@ -242,4 +242,17 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }
+    
+    /**
+     * Checks if is status accepted or above.
+     * @param dwStatus the dw status
+     * @return true, if is status accepted or above
+     */
+    public static boolean isStatusAcceptedOrAbove(DocumentWorkflowStatusCode dwStatus) {
+        return dwStatus.equals(DocumentWorkflowStatusCode.ACCEPTED)
+        || dwStatus.equals(DocumentWorkflowStatusCode.ABSTRACTED)
+        || dwStatus.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
+        || dwStatus.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE)
+        || dwStatus.equals(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
+    }
 }

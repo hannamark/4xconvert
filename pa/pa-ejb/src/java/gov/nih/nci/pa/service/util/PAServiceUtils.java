@@ -141,6 +141,7 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -1030,6 +1031,97 @@ public class PAServiceUtils {
          }
       }
     }
+    /**
+     * 
+     * @param <Entity> Person or Organization class
+     * @param entity Person or Organization class
+     * @return PoDto Person or Organization class
+     * @throws PAException on error
+     *
+     */
+     public <Entity extends PoDto> Entity createEntity(Entity entity) throws PAException {
+         Ii entityIi = null;
+         try {   
+             if (entity instanceof OrganizationDTO) {
+                 entityIi = PoRegistry.getOrganizationEntityService().createOrganization((OrganizationDTO) entity);
+                 return (Entity) PoRegistry.getOrganizationEntityService().getOrganization(entityIi);
+             }  else if (entity instanceof PersonDTO) {
+                 entityIi = PoRegistry.getPersonEntityService().createPerson((PersonDTO) entity);
+                 return (Entity) PoRegistry.getPersonEntityService().getPerson(entityIi);
+             } else {
+                 throw new PAException("createEntity Should be called only for Entity/Person");
+             }
+         } catch (Exception e) {
+            throw new PAException(e);
+         }
+         
+    }
+     /**
+      * @param <Entity> Person or Organization 
+      * @param entityIi Organization of Person Ii
+      * @return PoDto Organization of Person entity
+      * @throws PAException e
+      *
+      */
+      public <Entity extends PoDto> Entity getEntityByIi(Ii entityIi) throws PAException {
+          Entity retEntity = null;
+          try {   
+              if (IiConverter.ORG_ROOT.equals(entityIi.getRoot())) {
+                  retEntity = (Entity) PoRegistry.getOrganizationEntityService().getOrganization(entityIi);
+              } else if (IiConverter.PERSON_ROOT.equals(entityIi.getRoot())) {
+                  retEntity = (Entity) PoRegistry.getPersonEntityService().getPerson(entityIi);
+              } else {
+                  throw new PAException("getEntityByIi Should be called only for Entity/Person");
+              }
+              
+          } catch (Exception e) {
+             throw new PAException(e);
+          }
+          return retEntity;
+     }
+    /**
+     * 
+     * @param <Entity> Person or Organization
+     * @param entity Person or Organization
+     * @return PoDto
+     * @throws PAException on error
+     */
+    public <Entity extends PoDto> Entity findOrCreateEntity(Entity entity) throws PAException {
+        if (entity == null) {
+            throw new PAException("Entity cannot be null");
+        }
+        Entity retEntity = findEntity(entity);
+        if (retEntity != null) {
+            return retEntity;
+        }
+        String validMsg = isDTOValidInPO(entity);
+        if (validMsg.length() > 0) {
+            throw new PAException(validMsg);
+        }        
+        
+        return entity;
+    }
+    
+    private <Entity extends PoDto> Entity findEntity(Entity entity) throws PAException {
+        LimitOffset limit = new LimitOffset(PAAttributeMaxLen.LEN_2, 0);
+        List<? extends Entity> entities = null; 
+        Entity retEntity = null;
+        try {
+            if (entity instanceof OrganizationDTO) {
+                entities = (List<Entity>) PoRegistry.getOrganizationEntityService()
+                                .search((OrganizationDTO) entity, limit);
+            } else if (entity instanceof OrganizationDTO) {
+                entities = (List<Entity>) PoRegistry.getPersonEntityService().search((PersonDTO) entity, limit);
+            }
+            if (!entities.isEmpty()) {
+                retEntity =  entities.get(0);
+            }
+        } catch (Exception e) {
+            throw new PAException(e);
+        }
+        return retEntity;
+    }
+
     /**
      * @param studySiteAccrualStatusDTO accrualdto
      * @param studySiteDTO site dto

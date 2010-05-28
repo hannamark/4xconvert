@@ -89,6 +89,7 @@ import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
+import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
@@ -521,6 +522,14 @@ public final class PaRegistry {
      */
     public static StudyProtocolStageServiceLocal getStudyProtocolStageService() {
         return getInstance().getServiceLocator().getStudyProtocolStageService();
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public static ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
+        return getInstance().getServiceLocator().getProprietaryTrialService();
     }
 }
 

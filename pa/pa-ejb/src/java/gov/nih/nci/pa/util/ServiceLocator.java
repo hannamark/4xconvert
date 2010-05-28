@@ -89,6 +89,7 @@ import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
+import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
@@ -389,5 +390,10 @@ public interface ServiceLocator {
      * @return service for partial save
      */
     StudyProtocolStageServiceLocal getStudyProtocolStageService();
+    
+    /**
+     * @return service for ProprietaryTrial
+     */
+    ProprietaryTrialManagementServiceLocal getProprietaryTrialService();
 }
 

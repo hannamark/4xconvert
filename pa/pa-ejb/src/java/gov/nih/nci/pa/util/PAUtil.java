@@ -838,6 +838,7 @@ public class PAUtil {
       boolean retValue = false;
       String dwfs = documentWorkFlowStatusCode.getCode();
       if (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTED.getCode())
+              || dwfs.equals(DocumentWorkflowStatusCode.VERIFICATION_PENDING.getCode())  
             || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
             || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode())) {
         retValue = true;

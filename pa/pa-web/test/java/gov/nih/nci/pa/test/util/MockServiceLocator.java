@@ -91,6 +91,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceBean;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
+import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.RegulatoryAuthorityBeanLocal;
 import gov.nih.nci.pa.service.RegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupBeanLocal;
@@ -565,6 +566,11 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public GridAccountServiceRemote getGridAccountService() {
         return gridAccountService;
+    }
+
+    public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
+        // TODO Auto-generated method stub
+        return null;
     }
    
 }

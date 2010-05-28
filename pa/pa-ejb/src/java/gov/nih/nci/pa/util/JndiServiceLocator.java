@@ -89,6 +89,7 @@ import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
+import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
@@ -466,5 +467,12 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
         return (StudyProtocolStageServiceLocal) JNDIUtil.lookup("pa/StudyProtocolStageBeanLocal/local");
+    }
+
+    /**
+     * @return service for ProprietaryTrial
+     */
+    public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
+        return (ProprietaryTrialManagementServiceLocal) JNDIUtil.lookup("pa/ProprietaryTrialManagementBeanLocal/local");
     }
 }

@@ -142,6 +142,7 @@ public enum MilestoneCode implements CodedEnum<String> {
     private boolean allowedIfOnhold;
     private boolean allowedInInBox;
     private static final Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> ALLOWED_DWF_STATUSES;
+    private static Set<MilestoneCode> tsrAndAbove = new HashSet<MilestoneCode>();
     static {
         Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> tmp 
                 = new HashMap<MilestoneCode, Set<DocumentWorkflowStatusCode>>();
@@ -250,6 +251,14 @@ public enum MilestoneCode implements CodedEnum<String> {
         tmp.put(LATE_REJECTION_DATE, Collections.unmodifiableSet(tmpSet));
 
         ALLOWED_DWF_STATUSES = Collections.unmodifiableMap(tmp);
+
+        tsrAndAbove.add(MilestoneCode.TRIAL_SUMMARY_SENT);
+        tsrAndAbove.add(MilestoneCode.TRIAL_SUMMARY_FEEDBACK);
+        tsrAndAbove.add(MilestoneCode.INITIAL_ABSTRACTION_VERIFY);
+        tsrAndAbove.add(MilestoneCode.INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE);
+        tsrAndAbove.add(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION);
+        tsrAndAbove.add(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION);    
+    
     }
 
     /**
@@ -392,5 +401,14 @@ public enum MilestoneCode implements CodedEnum<String> {
         codedNames = new String[list.size()];
         codedNames = list.toArray(codedNames);
         return codedNames;
+    }
+    
+    /**
+     * Checks if is above trial summary report.
+     * @param mc the mc
+     * @return true, if is above trial summary report
+     */
+    public static boolean isAboveTrialSummaryReport(MilestoneCode mc) {
+        return tsrAndAbove.contains(mc);
     }
 }
