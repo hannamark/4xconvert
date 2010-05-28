@@ -439,6 +439,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         dbStudyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(
                 studyProtocolDTO.getDataMonitoringCommitteeAppointedIndicator());
         dbStudyProtocolDTO.setProgramCodeText(studyProtocolDTO.getProgramCodeText());
+        dbStudyProtocolDTO.setSecondaryIdentifiers(studyProtocolDTO.getSecondaryIdentifiers());
         updateStudyProtocolObjs(
                 dbStudyProtocolDTO ,
                 overallStatusDTO ,

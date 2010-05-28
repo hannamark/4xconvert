@@ -125,8 +125,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
-
 /**
  * This is a selection of utilities, useful for PA. This set of utilities is safe to use in the grid services. Do
  * not, I repeat, do not add methods that reference domain objects. If you need to manipulate domain objects do so
@@ -142,7 +140,6 @@ import org.apache.log4j.Logger;
     "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class PAUtil {
     private static final int MAXF = 1024;
-    private static final Logger LOG = Logger.getLogger(PAUtil.class);
     private static final String EXTN = "extn";
     private static final int EXTN_COUNT = 4;
 
