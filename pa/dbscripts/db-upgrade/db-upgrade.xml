@@ -434,4 +434,8 @@
        <comment>PO-1882 Refactor Study Protocol's Assigned Identifier (Model change)</comment>
        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1882.sql"/>
     </changeSet> 
+    <changeSet id="PO-1882-populate-script" author="aevansel">
+       <comment>Migrating assigned identifiers columns</comment>
+       <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1882-populate-script.sql"/>
+    </changeSet>
 </databaseChangeLog>
