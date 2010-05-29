@@ -11,6 +11,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -63,6 +64,7 @@ import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -158,6 +160,8 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
      StudyInboxServiceLocal studyInboxServiceLocal = null;
     @EJB
      MailManagerServiceLocal mailManagerSerivceLocal = null;
+    @EJB
+    RegistryUserServiceLocal userServiceLocal = null;
 
    private static final String CREATE = "Create";
    private static final String AMENDMENT = "Amendment";
@@ -1053,7 +1057,9 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                 IiConverter.convertToStudyRegulatoryAuthorityIi(null) , studyProtocolIi);
 
     }
-
+    //assign ownership
+    RegistryUser usr = userServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO.getUserLastCreated()));
+    userServiceLocal.assignOwnership(usr.getId(), IiConverter.convertToLong(studyProtocolIi));
     sendMail(operation, isBatchMode, studyProtocolIi);
     return studyProtocolIi;
  }
@@ -1302,9 +1308,8 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(
                 studyProtocolDTO.getIdentifier());
         String dwfs = isoDocWrkStatus.getStatusCode().getCode();
-        String userCreated = StConverter.convertToString(
-                studyProtocolService.getStudyProtocol(studyProtocolDTO.getIdentifier()).getUserLastCreated());
-        if (!userCreated.equalsIgnoreCase(StConverter.convertToString(studyProtocolDTO.getUserLastCreated()))) {
+        if (!userServiceLocal.hasTrialAccess(loginName, Long.parseLong(studyProtocolDTO.getIdentifier()
+                .getExtension()))) {
            errorMsg.append(operation).append("to Trial can be submitted by the submitter of the original Trial.\n");
         }
         StudyOverallStatusDTO statusDTO = studyOverallStatusService.getCurrentByStudyProtocol(

@@ -5,7 +5,6 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialOwner;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -17,9 +16,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -56,19 +53,8 @@ public class AssignOwnershipAction extends ActionSupport implements Preparable {
            .getAttribute(Constants.STUDY_PROTOCOL_II);
        try {
            if (StringUtils.isNotEmpty(userId) && PAUtil.isIiNotNull(spIi)) {
-                // to assign the ownership add a record to study_owner
-               RegistryUser usr =  PaRegistry.getRegisterUserService().getUserById(Long.parseLong(userId));
-               if (usr != null) {
-                   Set<StudyProtocol> studyProtocols = new HashSet<StudyProtocol>();
-                   StudyProtocol sp = new StudyProtocol();
-                   sp.setId(IiConverter.convertToLong(spIi));
-                   studyProtocols.add(sp);
-                   usr.setStudyProtocols(studyProtocols);
-                   PaRegistry.getRegisterUserService().updateUser(usr);
-               } else {
-                   addActionError("User not found.");
-                   return view();
-               }
+               PaRegistry.getRegisterUserService().assignOwnership(Long.parseLong(userId), 
+                       IiConverter.convertToLong(spIi));
            } else {
                addActionError("Please select user to change ownership.");
                return view();

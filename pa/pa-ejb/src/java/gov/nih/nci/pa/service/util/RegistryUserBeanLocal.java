@@ -97,6 +97,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -311,5 +312,49 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             criteria.add(Restrictions.ilike(criteriaName, criteriaValue + "%"));
         }
     }
-
+    /**
+     * Assign ownership of given protocol to given user.
+     * @param userId user id
+     * @param studyProtocolId study protocol id
+     * @throws PAException on error
+     */
+    public void assignOwnership(Long userId, Long studyProtocolId) throws PAException {
+        RegistryUser usr =  getUser(userId, studyProtocolId);
+        Set<StudyProtocol> studyProtocols = usr.getStudyProtocols();
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(studyProtocolId);
+        studyProtocols.add(sp);
+        usr.setStudyProtocols(studyProtocols);
+    }
+    /**
+     * remove ownership .
+     * @param userId user id
+     * @param studyProtocolId study protocol id
+     * @throws PAException on error
+     */
+    public void removeOwnership(Long userId, Long studyProtocolId) throws PAException {
+        RegistryUser usr = getUser(userId, studyProtocolId);
+        Set<StudyProtocol> newspList = usr.getStudyProtocols();
+        for (StudyProtocol sp : usr.getStudyProtocols()) {
+            if (!sp.getId().equals(studyProtocolId)) {
+                newspList.add(sp);
+            }
+        }
+        usr.setStudyProtocols(newspList);
+        updateUser(usr);
+    }
+    private RegistryUser getUser(Long userId, Long studyProtocolId) throws PAException {
+        // to assign the ownership add a record to study_owner
+        if (userId == null) {
+            throw new PAException("user id cannot be null.");
+        }
+        if (studyProtocolId == null) {
+            throw new PAException("studyProtocol id cannot be null.");
+        }
+        RegistryUser usr =  getUserById(userId);
+        if (usr == null) {
+            throw new PAException("user not found.");
+        }
+        return usr;
+    }
 }

@@ -156,4 +156,18 @@ public interface RegistryUserService {
      * @throws PAException exception
      */
     boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException;
+    /**
+     * Assign ownership of given protocol to given user.
+     * @param userId user id
+     * @param studyProtocolId study protocol id
+     * @throws PAException on error
+     */
+    void assignOwnership(Long userId, Long studyProtocolId) throws PAException;
+    /**
+     * Removes ownership.
+     * @param userId user id
+     * @param studyProtocolId study protocol id
+     * @throws PAException on error
+     */
+    void removeOwnership(Long userId, Long studyProtocolId) throws PAException;
 }

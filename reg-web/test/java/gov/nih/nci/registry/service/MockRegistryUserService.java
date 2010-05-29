@@ -146,5 +146,21 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
     public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException {
         return false;
     }
+	/**
+     * {@inheritDoc}
+     */
+    public void assignOwnership(Long userId, Long studyProtocolId)
+			throws PAException {
+		// TODO Auto-generated method stub
+		
+	}
+    /**
+     * {@inheritDoc}
+     */
+	public void removeOwnership(Long userId, Long studyProtocolId)
+			throws PAException {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

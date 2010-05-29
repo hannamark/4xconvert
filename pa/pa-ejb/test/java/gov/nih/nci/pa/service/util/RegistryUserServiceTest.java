@@ -199,6 +199,22 @@ public class RegistryUserServiceTest {
         List<RegistryUser> usrLst = remoteEjb.search(new RegistryUser());
         assertNotNull(usrLst);
     }
+    @Test
+    public void assignOwnership() throws PAException{
+        Long spId = TestRegistryUserSchema.studyProtocolId;
+        Long userId = TestRegistryUserSchema.randomUserId;
+        remoteEjb.assignOwnership(userId, spId);
+        RegistryUser usr = remoteEjb.getUserById(userId);
+        assertTrue(usr.getStudyProtocols().size() >=1);
+    }
+    @Test
+    public void removeOwnership() throws PAException{
+        Long spId = TestRegistryUserSchema.studyProtocolId;
+        Long userId = TestRegistryUserSchema.randomUserId;
+        remoteEjb.removeOwnership(userId, spId);
+        RegistryUser usr = remoteEjb.getUserById(userId);
+        assertTrue(usr.getStudyProtocols().size() >=0);
+    }
     private RegistryUser createRegisterUserObj() {
         RegistryUser create = new RegistryUser();
         create.setAddressLine("xxxxx");
