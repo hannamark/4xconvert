@@ -1895,7 +1895,7 @@ public class TrialUtil {
         StudyProtocolQueryDTO spqDto = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                                                 Long.valueOf(studyProtocolIi.getExtension()));
         trialDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
-//        trialDTO.setAssignedIdentifier(spDTO.getAssignedIdentifier().getExtension());
+        trialDTO.setAssignedIdentifier(PAUtil.getAssignedIdentifierExtension(spDTO));
         trialDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
         trialDTO.setPhaseOtherText(spDTO.getPhaseOtherText().getValue());
         trialDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());

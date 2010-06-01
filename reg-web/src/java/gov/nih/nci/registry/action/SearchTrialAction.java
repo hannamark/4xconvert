@@ -81,7 +81,6 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -97,13 +96,13 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
+import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
@@ -379,19 +378,16 @@ public class SearchTrialAction extends ActionSupport {
             StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     studyProtocolIi);
             if (!PAUtil.isBlNull(protocolDTO.getProprietaryTrialIndicator()) 
-                  && BlConverter.covertToBoolean(protocolDTO.getProprietaryTrialIndicator())) {
-              // prop trial
-              String strNctNo = paServiceUtils.getStudyIdentifier(
-                      studyProtocolIi, PAConstants.NCT_IDENTIFIER_TYPE);
-              CorrelationUtils cUtils = new CorrelationUtils();
-              StudyProtocolQueryDTO spqDto = PaRegistry.getProtocolQueryService()
-                   .getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));
-              Organization org = cUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(
-                      spqDto.getLeadOrganizationId()));
-              ServletActionContext.getRequest().setAttribute("leadOrganizationName", org.getName());
-              ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier",
-                    spqDto.getLocalStudyProtocolIdentifier());
-              ServletActionContext.getRequest().setAttribute("nctIdentifier", strNctNo);
+                    && BlConverter.covertToBoolean(protocolDTO.getProprietaryTrialIndicator())) {
+                // prop trial
+                ProprietaryTrialDTO trialDTO = new ProprietaryTrialDTO();
+                trialUtil.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
+                ServletActionContext.getRequest().setAttribute("leadOrganizationName", 
+                        trialDTO.getLeadOrganizationName());
+                ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier", 
+                        trialDTO.getLeadOrgTrialIdentifier());
+                ServletActionContext.getRequest().setAttribute("nctIdentifier", trialDTO.getNctIdentifier());
+                ServletActionContext.getRequest().setAttribute("assignedIdentifier", trialDTO.getAssignedIdentifier());
             } else {
                // non prop trial
                 TrialDTO trialDTO = new TrialDTO();

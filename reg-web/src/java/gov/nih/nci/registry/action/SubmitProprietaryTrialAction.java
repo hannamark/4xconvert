@@ -266,7 +266,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
             TrialValidator.removeSessionAttributes();
             ServletActionContext.getRequest().setAttribute(SESSION_TRIAL_DTO, trialDTO);
             ServletActionContext.getRequest().setAttribute("protocolId", 
-                    PAUtil.getAssignedIdentifier(protocolDTO));
+                    PAUtil.getAssignedIdentifier(protocolDTO).getExtension());
             if (PAUtil.isNotEmpty(trialDTO.getStudyProtocolId())) {
                 PaRegistry.getStudyProtocolStageService().delete(IiConverter.convertToIi(
                         trialDTO.getStudyProtocolId()));

@@ -41,7 +41,16 @@
      </c:if>
        <c:if test="${param.trialAction == 'update'}">
         <div class="confirm_msg">
-          <strong>The trial update with the NCI Identifier ${requestScope.trialDTO.assignedIdentifier} was successfully submitted.</strong>
+          <strong>The trial update with the NCI Identifier 
+          <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
+                    || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
+                         ${requestScope.trialDTO.assignedIdentifier}
+          </c:if>
+          <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
+                    || requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'}">
+                         ${requestScope.assignedIdentifier}
+			</c:if>
+           was successfully submitted.</strong>
         </div>
      </c:if>
     <s:form > <s:actionerror/>          
@@ -68,7 +77,16 @@
                     </label></strong>
                 </td>
                 <td class="value">
-                     <strong><c:out value="${requestScope.trialDTO.assignedIdentifier}"/></strong> 
+                     <strong>
+                     <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
+                    || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
+                         <c:out value="${requestScope.trialDTO.assignedIdentifier}"/>
+                  </c:if>
+                  <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
+                    || requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'}">
+                         <c:out value="${requestScope.assignedIdentifier}"/>
+                  </c:if>
+                     </strong> 
                 </td>
                 
           </tr>
