@@ -158,6 +158,12 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
            if (trialDTO.getXmlRequired()) {
               trialUtil.setOversgtInfo(trialDTO);
            }
+           List<Ii> otherIdsList = 
+               (List<Ii>) ServletActionContext.getRequest()
+                 .getSession().getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
+              if (otherIdsList != null) {
+                  trialDTO.setSecondaryIdentifierAddList(otherIdsList);
+              }
         } catch (IOException e) {
             LOG.error(e.getMessage());
             addActionError(e.getMessage());

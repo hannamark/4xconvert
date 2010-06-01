@@ -274,6 +274,24 @@ function loadRegAuthoritiesDiv() {
     function showRow(row){
         row.style.display = '';
     }
+    function addOtherIdentifier() {
+      var orgValue=document.getElementById("otherIdentifierOrg").value;
+      if (orgValue != null && orgValue != '') {
+       var  url = '/registry/protected/ajaxManageOtherIdentifiersActionaddOtherIdentifier.action?otherIdentifier='+orgValue;    
+       var div = document.getElementById('otherIdentifierdiv');   
+       div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
+       callAjax(url, div);
+       document.getElementById("otherIdentifierOrg").value="";
+      } else {
+        alert("Please enter a valid Other identifier to add");
+      }
+    }
+    function deleteOtherIdentifierRow(rowid){ 
+    var  url = '/registry/protected/ajaxManageOtherIdentifiersActiondeleteOtherIdentifierUpdate.action?uuid='+rowid;
+    var div = document.getElementById('otherIdentifierdiv');
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+    callAjax(url, div);             
+   }
 </SCRIPT>
 <script language="javascript">
 function toggledisplay (it, box) {
@@ -400,7 +418,34 @@ function toggledisplayDivs(val) {
                 </td>                
           </tr>
           </c:if>
-          
+           <tr>
+                <th colspan="2"><fmt:message key="submit.trial.otherIdentifiers"/></th>
+          </tr>
+           <s:iterator id="trialDTO.secondaryIdentifierList" value="trialDTO.secondaryIdentifierList" status="sstats">
+             <tr>
+                <td scope="row" class="label">
+                     <label for="updateTrial_protocolWebDTO_otherIdentifiers"> <fmt:message key="submit.trial.otherIdentifier"/></label>
+                 </td>
+                  <td>
+                       <s:textfield  name="trialDTO.secondaryIdentifierList[%{#sstats.index}].extension" value="%{extension}" size="100"  cssStyle="width:200px"/>
+                  </td>
+               </tr>
+          </s:iterator >
+          <tr>
+                <td scope="row" class="label">
+                     <label for="updateTrial_protocolWebDTO_otherIdentifiers"> <fmt:message key="submit.trial.otherIdentifier"/></label>
+                </td>
+                <td>
+                  <input type="text" name="otherIdentifierOrg" id="otherIdentifierOrg" value=""/>&nbsp; <input type="button" id="otherIdbtnid" value="Add Other Identifier" onclick="addOtherIdentifier();" />
+               </td>           
+          </tr> 
+           <tr>
+                <td colspan="2" class="space">  
+                <div id="otherIdentifierdiv">
+                    <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiersForUpdate.jsp" %>
+                </div>
+                </td>
+          </tr>      
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
           <tr>
                 <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>
