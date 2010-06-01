@@ -285,6 +285,9 @@ public class SearchTrialAction extends ActionSupport {
             } else if (criteria.getIdentifierType().equals(
                         Constants.IDENTIFIER_TYPE_NCT)) {
                 queryCriteria.setNctNumber(criteria.getIdentifier());
+            } else if (criteria.getIdentifierType().equals(
+                    Constants.IDENTIFIER_TYPE_OTHER_IDENTIFIER)) {
+                queryCriteria.setOtherIdentifier(criteria.getIdentifier());
             }
         }
         if (criteria.getOrganizationId() != null 

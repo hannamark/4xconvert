@@ -216,6 +216,9 @@ public class Constants {
     /** TRIAL IDENTIFIER TYPE CODE - NCT. */
     public static final String IDENTIFIER_TYPE_NCT = "NCT";
     
+    /** Trial Identifier Type Code - Other Identifiers */
+    public static final String IDENTIFIER_TYPE_OTHER_IDENTIFIER = "Other Identifier";
+    
     /** TRIAL TITLE - Max Length. */
     public static final int TRIAL_TITLE_MAX_LENGTH = 4000;    
     
