@@ -73,22 +73,14 @@ public class DownloadTerminology {
     private static void preCheck() {
         File disease = new File("disease.sql");
         File intervention = new File("intervention.sql");
-        if (disease.exists()) {
-            System.out.println(" file exist, move disease.sql to scripts before continuing");
-            System.exit(0);
-        }
-        if (intervention.exists()) {
-            System.out.println(" file exist, move intervention.sql to scripts before continuing");
-            System.exit(0);
-        }
-
+        intervention.delete();
+        disease.delete();
     }
     private static void cleanUp() {
         File ter = new File(filename);
         ter.delete();
         File f = new File("./Terminology");
         File[] files = f.listFiles();
-        System.out.println(files.length);
         for (int i = 0 ; i < files.length ; i++) {
             File file = files[i];
             if (file.getName().endsWith(".xml")) {
