@@ -3,6 +3,10 @@
  */
 package gov.nih.nci.registry.dto;
 
+import gov.nih.nci.iso21090.Ii;
+
+import java.util.List;
+
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.Pattern;
@@ -146,20 +150,20 @@ public class StudyProtocolBatchDTO {
     private String ctepIdentifier;
     private String dcpIdentifier;
     private boolean ctGovXmlIndicator = true;
-    private String otherTrialIdentifier;
+    private List<Ii> otherTrialIdentifiers;
     
     /**
-     * @return the otherTrialIdentifier
+     * @return the otherTrialIdentifiers
      */
-     public String getOtherTrialIdentifier() {
-        return otherTrialIdentifier;
+     public List<Ii> getOtherTrialIdentifiers() {
+        return otherTrialIdentifiers;
      }
 
      /**
-      * @param otherTrialIdentifier the otherTrialIdentifier to set
+      * @param otherTrialIdentifiers the otherTrialIdentifiers to set
       */
-     public void setOtherTrialIdentifier(String otherTrialIdentifier) {
-       this.otherTrialIdentifier = otherTrialIdentifier;
+     public void setOtherTrialIdentifiers(List<Ii> otherTrialIdentifiers) {
+       this.otherTrialIdentifiers = otherTrialIdentifiers;
      }
 
     /**

@@ -31,7 +31,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      NCT_NUMBER("NCT", "setNctNumber"),
     /** */
-     OTHER_TRIAL_IDENTIFIER("Other Trial Identifier", "setOtherTrialIdentifier"),    
+     OTHER_TRIAL_IDENTIFIER("Other Trial Identifier", "setOtherTrialIdentifiers"),    
     /** */
      TITLE("Title", "setTitle"),
     /** */

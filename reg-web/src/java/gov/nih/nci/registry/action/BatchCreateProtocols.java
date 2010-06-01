@@ -226,7 +226,7 @@ public class BatchCreateProtocols {
                }
                sucessCount +=  1;
               protocolAssignedId = strMsg 
-                 + PAUtil.getAssignedIdentifier(PaRegistry.getStudyProtocolService()
+                 + PAUtil.getAssignedIdentifierExtension(PaRegistry.getStudyProtocolService()
                          .getStudyProtocol(studyProtocolIi));
              
              }
@@ -283,6 +283,17 @@ public class BatchCreateProtocols {
             
             StudyProtocolDTO studyProtocolDTO = null;
             studyProtocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            if (studyProtocolDTO.getSecondaryIdentifiers() != null 
+                    && studyProtocolDTO.getSecondaryIdentifiers().getItem() != null) {
+                List<Ii> listIi = new ArrayList<Ii>(); 
+                for (Ii ii : studyProtocolDTO.getSecondaryIdentifiers().getItem()) {
+                  if (!IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+                    listIi.add(ii);
+                  }
+                }
+                trialDTO.setSecondaryIdentifierList(listIi);
+            }
+            util.addSecondaryIdentifiers(studyProtocolDTO, trialDTO);
             util.updateStudyProtcolDTO(studyProtocolDTO, trialDTO);
             
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
@@ -458,6 +469,7 @@ public class BatchCreateProtocols {
                 trialDTO.setNctIdentifier(batchDto.getNctNumber());
                 trialDTO.setDcpIdentifier(batchDto.getDcpIdentifier());
                 trialDTO.setCtepIdentifier(batchDto.getCtepIdentifier());
+                trialDTO.setSecondaryIdentifierAddList(batchDto.getOtherTrialIdentifiers());
                 return trialDTO;
     }
 
@@ -534,6 +546,12 @@ public class BatchCreateProtocols {
         TrialUtil util = new TrialUtil();
         StudyProtocolDTO studyProtocolDTO = null;
         TrialDTO trialDTO = convertToTrialDTO(dto, folderPath);
+        
+        if (dto.getSubmissionType().equalsIgnoreCase("O") && !PAUtil.isNotEmpty(trialDTO.getAssignedIdentifier())) {
+            trialDTO.setSecondaryIdentifierList(dto.getOtherTrialIdentifiers());
+        }  else if (dto.getSubmissionType().equalsIgnoreCase("A")) {
+            trialDTO.setSecondaryIdentifierAddList(dto.getOtherTrialIdentifiers());
+        }
         
         if (trialDTO.getTrialType().equals("Interventional")) {
             studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
@@ -625,6 +643,21 @@ public class BatchCreateProtocols {
                     }
                 }
             }
+            
+            StudyProtocolDTO sPDTO = null;
+            sPDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(IiConverter.convertToStudyProtocolIi(
+                    Long.valueOf(trialDTO.getIdentifier())));
+            if (sPDTO.getSecondaryIdentifiers() != null 
+                    && sPDTO.getSecondaryIdentifiers().getItem() != null) {
+                List<Ii> listIi = new ArrayList<Ii>(); 
+                for (Ii ii : sPDTO.getSecondaryIdentifiers().getItem()) {
+                  if (!IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+                    listIi.add(ii);
+                  }
+                }
+                trialDTO.setSecondaryIdentifierList(listIi);
+            }
+            
             studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
             studyProtocolIi =  PaRegistry.getTrialRegistrationService().

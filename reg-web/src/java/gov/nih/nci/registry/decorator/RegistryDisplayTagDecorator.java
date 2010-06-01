@@ -173,46 +173,6 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     
     /**
      * 
-     * @return link
-     */
-    public String getUpdate() {
-        Long studyProtocolId = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyProtocolId();
-        String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
-        String isProprietaryTrial = 
-            ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() != null 
-                   ? ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() : "";
-        DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) 
-                this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
-        StudyStatusCode statusCode = ((StudyProtocolQueryDTO) 
-                this.getCurrentRowObject()).getStudyStatusCode();
-        if (PAUtil.isNotEmpty(isProprietaryTrial) 
-                && isProprietaryTrial.equalsIgnoreCase("true")) {
-            return "";
-          }
-        if (dwfs == null) {
-            return "";
-        }
-        if (statusCode == null) {
-            return "";
-        }
-        if ((dwfs.equals(DocumentWorkflowStatusCode.ACCEPTED)
-                || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTED)
-                || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
-                || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE)
-                || dwfs.equals(DocumentWorkflowStatusCode.VERIFICATION_PENDING))
-                && isOwner(studyProtocolId, loginUser)
-                && (!(statusCode.equals(StudyStatusCode.DISAPPROVED) 
-                      || statusCode.equals(StudyStatusCode.WITHDRAWN) 
-                      || statusCode.equals(StudyStatusCode.COMPLETE) 
-                      || statusCode.equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE)))) {
-            return "Update";
-        } else  {
-            return "";
-        }
-    }
-    
-    /**
-     * 
      * @return formated date
      */
     public String getDocumentWorkflowStatusDate() {

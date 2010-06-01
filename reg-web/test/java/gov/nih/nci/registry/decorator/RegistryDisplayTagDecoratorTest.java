@@ -121,65 +121,6 @@ public class RegistryDisplayTagDecoratorTest {
         assertEquals("",decorator.getAmend());
     }
     @Test
-    public void testGetUpdate() {
-        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
-        dto.setUserLastCreated("userLastCreated");
-        dto.setStudyProtocolId(1L);
-        dto.setIsProprietaryTrial("");
-        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
-        dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
-        decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("Update",decorator.getUpdate());
-        
-        dto = new StudyProtocolQueryDTO();
-        dto.setUserLastCreated("muserLastCreated");
-        dto.setIsProprietaryTrial("");
-        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
-        dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
-        decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("",decorator.getUpdate());
-        
-        dto = new StudyProtocolQueryDTO();
-        dto.setUserLastCreated("userLastCreated");
-        dto.setIsProprietaryTrial("true");
-        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
-        dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
-        decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("",decorator.getUpdate());
-        
-        dto = new StudyProtocolQueryDTO();
-        dto.setUserLastCreated("userLastCreated");
-        dto.setIsProprietaryTrial("");
-        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        dto.setStudyStatusCode(StudyStatusCode.DISAPPROVED);
-        decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("",decorator.getUpdate());
-        
-        dto = new StudyProtocolQueryDTO();
-        dto.setUserLastCreated("userLastCreated");
-        dto.setIsProprietaryTrial("");
-        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        dto.setStudyStatusCode(StudyStatusCode.WITHDRAWN);
-        decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("",decorator.getUpdate());
-        
-        dto = new StudyProtocolQueryDTO();
-        dto.setUserLastCreated("userLastCreated");
-        dto.setIsProprietaryTrial("");
-        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
-        dto.setStudyStatusCode(StudyStatusCode.COMPLETE);
-        decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("",decorator.getUpdate());
-        
-        dto = new StudyProtocolQueryDTO();
-        dto.setUserLastCreated("userLastCreated");
-        dto.setIsProprietaryTrial("");
-        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
-        dto.setStudyStatusCode(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
-        decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("",decorator.getUpdate());
-    }
-    @Test
     public void testGetDocumentWorkflowStatusDate() {
         StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
         dto.setDocumentWorkflowStatusDate(null);

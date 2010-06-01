@@ -70,7 +70,7 @@ public class ExcelReaderTest {
 		}  
 		assertNotNull(list.get(0).getLocalProtocolIdentifier());
 		assertNotNull(list.get(0).getNctNumber());
-		assertNull(list.get(0).getOtherTrialIdentifier());
+		assertNull(list.get(0).getOtherTrialIdentifiers());
 		assertNotNull(list.get(0).getTitle());
 		assertNotNull(list.get(0).getTrialType());
 		assertNotNull(list.get(0).getPrimaryPurpose());

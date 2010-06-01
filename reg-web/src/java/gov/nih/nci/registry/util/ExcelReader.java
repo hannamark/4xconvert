@@ -3,6 +3,8 @@
  */
 package gov.nih.nci.registry.util;
 
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.enums.BatchStringConstants;
@@ -18,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -206,7 +209,18 @@ public class ExcelReader {
                batchDto.setCtGovXmlIndicator(true); 
               } 
               break;
-        case OTHER_TRIAL_IDENTIFIER: break; //to do
+        case OTHER_TRIAL_IDENTIFIER: 
+            String otherIdentifiersValues = cellValue; 
+            List<Ii> otherIdentifiers = null;
+            if (StringUtils.isNotEmpty(otherIdentifiersValues)) {
+                otherIdentifiers = new ArrayList<Ii>();
+                StringTokenizer st = new StringTokenizer(otherIdentifiersValues, ";");
+                while (st.hasMoreTokens()) {  
+                    otherIdentifiers.add(IiConverter.convertToOtherIdentifierIi(st.nextToken()));
+                } 
+            }
+            batchDto.setOtherTrialIdentifiers(otherIdentifiers);
+            break;
         default: setDtoAttributes(colHeader, cellValue, batchDto);
         }
         return batchDto;

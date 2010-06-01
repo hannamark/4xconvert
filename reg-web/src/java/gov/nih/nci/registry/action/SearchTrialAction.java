@@ -223,12 +223,21 @@ public class SearchTrialAction extends ActionSupport {
         }
     }
     
+    private boolean isOwner(Long spId, String loginUser) {
+        boolean owner;
+        try {
+            owner = PaRegistry.getRegisterUserService().hasTrialAccess(loginUser, spId);
+        } catch (PAException e) {
+            owner = false;
+        }
+        return owner;
+    }
+    
     private void checkToShowUpdate() {
         String loginUser = null;
         loginUser =  ServletActionContext.getRequest().getRemoteUser();
         if (!records.isEmpty()) {
             for (StudyProtocolQueryDTO queryDto : records) {
-                String userCreated = queryDto.getUserLastCreated();
                 String isProprietaryTrial = 
                     queryDto.getIsProprietaryTrial() != null ? queryDto.getIsProprietaryTrial() : "";
                 DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
@@ -248,7 +257,7 @@ public class SearchTrialAction extends ActionSupport {
                 
                 
                 if (statusCode != null && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
-                        && loginUser.equalsIgnoreCase(userCreated)
+                        && isOwner(queryDto.getStudyProtocolId(), loginUser)
                         && (!(updatableStatuses.contains(statusCode)))) {
                     queryDto.setUpdate("Update");
                 } else  {
@@ -258,7 +267,7 @@ public class SearchTrialAction extends ActionSupport {
                 if (StringUtils.isNotEmpty(isProprietaryTrial) 
                         && isProprietaryTrial.equalsIgnoreCase(TRUE)
                         && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
-                        && loginUser.equalsIgnoreCase(userCreated)) {
+                        && isOwner(queryDto.getStudyProtocolId(), loginUser)) {
                         queryDto.setUpdate("Update");
                     }
             }
