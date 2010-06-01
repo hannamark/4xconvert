@@ -158,11 +158,11 @@
     	              todir="${pa-web.build.outputDir}"
     	              overwrite="true">
     	           <filterset>
-    	               <filter token="jdbc.driver" value="${jdbc.driver}"/>
-    	               <filter token="jdbc.url" value="${jdbc.url}"/>
-    	               <filter token="db.username" value="${db.username}"/>
-    	               <filter token="db.password" value="${db.password}"/>
-    	           	   <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
+    	               <filter token="database.driver" value="${jdbc.driver}"/>
+    	               <filter token="database.url" value="${jdbc.url}"/>
+    	               <filter token="database.user" value="${db.username}"/>
+    	               <filter token="database.password" value="${db.password}"/>
+    	           	   <filter token="database.dialect" value="${hibernate.dialect}"/>
     	           	   <filter token="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
     	           	   <filter token="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
     	           </filterset>

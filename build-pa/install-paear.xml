@@ -210,6 +210,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           </fileset>
           <filterset refid="embedded.filterset"/>
       </copy>
+      
+      <delete file="${temp.dir}/pa-web-war/csm.properties"/>
+      <echo message="Looking for csm.properties in ${pa-ear.dir.dist}"/>
+      <copy todir="${temp.dir}/pa-web-war/WEB-INF/classes" filtering="true">
+          <fileset dir="${pa-ear.dir.dist}">
+              <include name="csm.properties"/>
+          </fileset>
+          <filterset refid="embedded.filterset"/>
+      </copy>
 
       <delete file="${temp.dir}/pa-ear/META-INF/security-config.xml"/>
       <copy todir="${temp.dir}/pa-ear/META-INF" filtering="true">

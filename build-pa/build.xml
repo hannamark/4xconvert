@@ -453,6 +453,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <include name="quartz_jobs.xml"/>
             </fileset>
         </copy>
+        <!-- copy csm properties file into the exploded pa ear dist folder -->
+        <copy todir="${pa-ear.dist.dir}">
+            <fileset dir="${pa-resources.base.dir}">
+                <include name="csm.properties"/>
+            </fileset>
+        </copy>
     </target>
 
     <!-- Build accrual.ear -->
