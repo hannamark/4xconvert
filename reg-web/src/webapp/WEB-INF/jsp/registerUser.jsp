@@ -50,7 +50,7 @@ function handleAction(){
             <tr>
                 <s:url id="existingGridAccountUrl" action="registerUserexistingGridAccount.action"/>
                 <td colspan="2" class="space">
-                    <h3>If you already have a caGrid account, click <s:a href="%{existingGridAccountUrl}">here.</s:a></h3>
+                    <h3>If you already have an NIH or caGrid account, click <s:a href="%{existingGridAccountUrl}">here.</s:a></h3>
                 </td>
             </tr>
           <tr>
