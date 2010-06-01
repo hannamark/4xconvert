@@ -103,4 +103,12 @@ public class MockMailManagerService implements MailManagerServiceLocal {
         // TODO Auto-generated method stub
         
     }
+
+    public void sendAdminAcceptanceEmail(Long userId) {
+         // TODO Auto-generated method stub
+    }
+
+    public void sendAdminRejectionEmail(Long userId, String reason) {
+         // TODO Auto-generated method stub
+    }
 }

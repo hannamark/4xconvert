@@ -674,4 +674,41 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
           LOG.error("Error attempting to send email to " + spDTO.getUserLastCreated(), e);
       }
   }
+
+  /**
+   * @param userId userid
+   */
+  public void sendAdminAcceptanceEmail(Long userId) {
+      try {
+          RegistryUser submitter = registryUserService.getUserById(userId);
+          String emailBody =  lookUpTableService.getPropertyValue("trial.admin.accept.body");
+          emailBody = emailBody.replace(currentDate, getFormatedCurrentDate());
+          emailBody = emailBody.replace("${affliateOrgName}", submitter.getAffiliateOrg());
+          emailBody = emailBody.replace(submitterName, submitter.getFirstName() 
+                  + " " + submitter.getLastName());
+          sendMailWithAttachment(submitter.getEmailAddress(), lookUpTableService.getPropertyValue(
+                "trial.admin.accept.subject"), emailBody, null);
+      } catch (PAException e) {
+          LOG.error("Error attempting to send email to ", e);
+      }
+  }
+
+  /**
+   *@param userId id
+   *@param reason reason 
+   */
+    public void sendAdminRejectionEmail(Long userId, String reason) {
+        try {
+            RegistryUser submitter = registryUserService.getUserById(userId);
+            String emailBody =  lookUpTableService.getPropertyValue("trial.admin.reject.body");
+            emailBody = emailBody.replace(currentDate, getFormatedCurrentDate());
+            emailBody = emailBody.replace("${affliateOrgName}", submitter.getAffiliateOrg());
+            emailBody = emailBody.replace(submitterName, submitter.getFirstName() 
+                    + " " + submitter.getLastName());
+            sendMailWithAttachment(submitter.getEmailAddress(), lookUpTableService.getPropertyValue(
+                  "trial.admin.accept.subject"), emailBody, null);
+        } catch (PAException e) {
+            LOG.error("Error attempting to send email to ", e);
+        }
+    }
 }

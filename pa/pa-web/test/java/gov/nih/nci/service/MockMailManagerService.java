@@ -110,4 +110,20 @@ public class MockMailManagerService implements MailManagerServiceLocal {
         
     }
 
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.MailManagerService#sendAdminAcceptanceEmail(java.lang.Long)
+     */
+    public void sendAdminAcceptanceEmail(Long userId) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.MailManagerService#sendAdminRejectionEmail(java.lang.Long, java.lang.String)
+     */
+    public void sendAdminRejectionEmail(Long userId, String reason) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

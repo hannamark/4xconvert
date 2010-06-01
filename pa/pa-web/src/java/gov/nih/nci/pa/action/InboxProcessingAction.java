@@ -376,6 +376,11 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
         }
         pendingUsr.setAffiliatedOrgUserType(affiliatedOrgUserType);
         PaRegistry.getRegisterUserService().updateUser(pendingUsr);
+        if (pendingUsr.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)) {
+            PaRegistry.getMailManagerService().sendAdminAcceptanceEmail(pendingUsr.getId());
+        } else {
+            PaRegistry.getMailManagerService().sendAdminRejectionEmail(pendingUsr.getId(), "");
+        }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
     }
 }

@@ -438,4 +438,8 @@
        <comment>Migrating assigned identifiers columns</comment>
        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1882-populate-script.sql"/>
     </changeSet>
+	<changeSet id="PO-1879" author="Vrushali">
+       <comment>excute PO-1879</comment>
+       <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1879.sql"/>
+    </changeSet>
 </databaseChangeLog>

@@ -178,4 +178,15 @@ public interface MailManagerService {
      * @throws PAException the PA exception
      */
     void sendXMLAndTSREmail(Ii studyProtocolIi) throws PAException;
+    /**
+     * 
+     * @param userId userId
+     */
+    void sendAdminAcceptanceEmail(Long userId);
+    /**
+     * 
+     * @param userId user
+     * @param reason rejection reason
+     */
+    void sendAdminRejectionEmail(Long userId, String reason);
 }
