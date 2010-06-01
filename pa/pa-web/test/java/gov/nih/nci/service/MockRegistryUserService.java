@@ -1,18 +1,15 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.UserOrgType;
-import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vrushali
@@ -29,7 +26,7 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
         usr.setAffiliatedOrganizationId(1L);
         usr.setAffiliatedOrgUserType(UserOrgType.PENDING_ADMIN);
         usrList.add(usr);
-        
+
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#createUser(gov.nih.nci.pa.domain.RegistryUser)
@@ -120,7 +117,7 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
     public void assignOwnership(Long userId, Long studyProtocolId)
             throws PAException {
         // TODO Auto-generated method stub
-        
+
     }
 
     /* (non-Javadoc)
@@ -129,7 +126,15 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
     public void removeOwnership(Long userId, Long studyProtocolId)
             throws PAException {
         // TODO Auto-generated method stub
-        
+
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserService#isTrialOwner(java.lang.Long, java.lang.Long)
+     */
+    public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

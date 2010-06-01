@@ -96,6 +96,7 @@ import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -147,16 +148,38 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return hasTrialAccess(myUser, studyProtocolId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
+        if (userId != null) {
+            RegistryUser myUser = getUserById(userId);
+            if (myUser == null || myUser.getId() == null) {
+                throw new PAException("Could not find user.");
+            }
+            if (myUser.getStudyProtocols() != null) {
+                for (StudyProtocol sp : myUser.getStudyProtocols()) {
+                    if (sp.getId().equals(studyProtocolId)) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            throw new PAException("User id is null.");
+        }
+        return false;
+    }
 
     /**
      * {@inheritDoc}
      */
     public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException {
-        if (user == null || user.getId() == null) {
-            throw new PAException("Could not find user: ");
-        }
-        RegistryUser myUser = getUserById(user.getId());
         // first check that the user isn't already a trial owner
+        if (isTrialOwner(user.getId(), studyProtocolId)) {
+            return true;
+        }
+
+        RegistryUser myUser = getUserById(user.getId());
         if (myUser.getStudyProtocols() != null) {
             for (StudyProtocol sp : myUser.getStudyProtocols()) {
                 if (sp.getId().equals(studyProtocolId)) {
@@ -326,6 +349,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         studyProtocols.add(sp);
         usr.setStudyProtocols(studyProtocols);
     }
+
     /**
      * remove ownership .
      * @param userId user id
@@ -334,14 +358,15 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      */
     public void removeOwnership(Long userId, Long studyProtocolId) throws PAException {
         RegistryUser usr = getUser(userId, studyProtocolId);
-        Set<StudyProtocol> newspList = usr.getStudyProtocols();
-        for (StudyProtocol sp : usr.getStudyProtocols()) {
-            if (!sp.getId().equals(studyProtocolId)) {
-                newspList.add(sp);
+        Set<StudyProtocol> studyProtocols = usr.getStudyProtocols();
+        for (Iterator<StudyProtocol> iter = studyProtocols.iterator(); iter.hasNext();) {
+            StudyProtocol sp = iter.next();
+            if (sp.getId().equals(studyProtocolId)) {
+                iter.remove();
             }
         }
-        usr.setStudyProtocols(newspList);
-        updateUser(usr);
+        HibernateUtil.getCurrentSession().saveOrUpdate(usr);
+        HibernateUtil.getCurrentSession().flush();
     }
     private RegistryUser getUser(Long userId, Long studyProtocolId) throws PAException {
         // to assign the ownership add a record to study_owner

@@ -1,17 +1,18 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vrushali
@@ -38,7 +39,7 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         spQueryDTO.setStudyStatusCode(StudyStatusCode.ACTIVE);
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
         list.add(spQueryDTO);
-        
+
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByCriteria(gov.nih.nci.pa.dto.StudyProtocolQueryCriteria)
@@ -63,12 +64,20 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
      */
     public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(
             Long studyProtocolId) throws PAException {
-     
+
         for (StudyProtocolQueryDTO sp: list) {
             if(sp.getStudyProtocolId().equals(studyProtocolId)) {
                 return sp;
             }
         }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByOrgIdentifier(java.lang.Long)
+     */
+    public List<StudyProtocol> getStudyProtocolByOrgIdentifier(Long orgIdentifier) throws PAException {
+        // TODO Auto-generated method stub
         return null;
     }
 

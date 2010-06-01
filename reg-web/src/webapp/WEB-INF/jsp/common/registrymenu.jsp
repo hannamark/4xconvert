@@ -59,7 +59,14 @@ function selectTrialType(){
                                             <li><a href="/registry/protected/siteAdministrationsearch.action" >Site Administration</a></li>
                                         </c:otherwise>
                                     </c:choose>
-
+                                    <c:choose>
+                                        <c:when test="${requestScope.topic == 'manage_user_trial_ownership'}">
+                                            <li><a href="/registry/protected/manageTrialOwnershipsearch.action" class="selected">Manage Trial Ownership</a></li>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <li><a href="/registry/protected/manageTrialOwnershipsearch.action" >Manage Trial Ownership</a></li>
+                                        </c:otherwise>
+                                    </c:choose>
                                  </c:if>
                         		<li><a href="/registry/logout.action" >Log Out</a></li>
 				    </c:when>

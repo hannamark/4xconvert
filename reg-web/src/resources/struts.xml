@@ -165,12 +165,12 @@
         <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
     </action>
 
-    <action name="ajaxManageOtherIdentifiersAction*" class="gov.nih.nci.registry.action.ManageOtherIdentifiersAction" method="{1}"> 
-        <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result> 
+    <action name="ajaxManageOtherIdentifiersAction*" class="gov.nih.nci.registry.action.ManageOtherIdentifiersAction" method="{1}">
+        <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
         <result name="display_otherIdentifiers">/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp</result>
         <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
     </action>
-    
+
     <action name="ajaxManageIndIdeAction*" class="gov.nih.nci.registry.action.ManageIndIdeAction" method="{1}">
         <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
         <result name="display_ideind">/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp</result>
@@ -242,6 +242,19 @@
              <param name="parse">true</param>
              <param name="trialAction">${trialAction}</param>
         </result>
-    </action>       
+    </action>
+    <action name="manageTrialOwnership*" class="gov.nih.nci.registry.action.ManageTrialOwnershipAction" method="{1}">
+        <interceptor-ref name="params">
+          <!--
+              Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+           -->
+          <param name="excludeParams">
+            _,d-\d+?-[sop]
+         </param>
+        </interceptor-ref>
+        <result name="success">/WEB-INF/jsp/manageTrialOwnership.jsp</result>
+        <result name="input">/WEB-INF/jsp/manageTrialOwnership.jsp</result>
+        <result name="viewResults">/WEB-INF/jsp/manageTrialOwnership.jsp</result>
+    </action>
     </package>
 </struts>

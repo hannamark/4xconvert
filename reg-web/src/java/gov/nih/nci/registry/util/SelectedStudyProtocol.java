@@ -80,103 +80,41 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.service.util;
 
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.enums.UserOrgType;
-import gov.nih.nci.pa.service.PAException;
+package gov.nih.nci.registry.util;
 
-import java.util.List;
+import gov.nih.nci.pa.domain.StudyProtocol;
 
 /**
- * @author aevansel@5amsolutions.com
+ * Selected trial.
+ * @author kkanchinadam
+ *
  */
-public interface RegistryUserService {
-
+public class SelectedStudyProtocol {
+    private StudyProtocol studyProtocol;
+    private boolean selected;
     /**
-     * Create a new Registry user.
-     * @param user user
-     * @return user
-     * @throws PAException PAException
+     * @return the studyProtocol
      */
-    RegistryUser createUser(RegistryUser user) throws PAException;
-
+    public StudyProtocol getStudyProtocol() {
+        return studyProtocol;
+    }
     /**
-     * Update an existing Registry user.
-     * @param user user
-     * @return user
-     * @throws PAException PAException
+     * @param studyProtocol the studyProtocol to set
      */
-    RegistryUser updateUser(RegistryUser user) throws PAException;
-
+    public void setStudyProtocol(StudyProtocol studyProtocol) {
+        this.studyProtocol = studyProtocol;
+    }
     /**
-     * Retrieves user by login name.
-     * @param loginName loginName
-     * @return user
-     * @throws PAException PAException
+     * @return the selected
      */
-    RegistryUser getUser(String loginName) throws PAException;
-
+    public boolean isSelected() {
+        return selected;
+    }
     /**
-     * @param userType of user
-     * @return list of pending user admin
-     * @throws PAException on error
+     * @param selected the selected to set
      */
-    List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException;
-
-    /**
-     * @param userId  csm user id
-     * @return user
-     * @throws PAException on error
-     */
-    RegistryUser getUserById(Long userId) throws PAException;
-    /**
-     *
-     * @param regUser user
-     * @return list of user
-     * @throws PAException on error
-     */
-    List<RegistryUser> search(RegistryUser regUser) throws PAException;
-
-    /**
-     * Given a login name and study protocol id, find out if the user is
-     * either a trial owner or the admin for the lead org.
-     * @param loginName user name
-     * @param studyProtocolId id
-     * @return boolean
-     * @throws PAException exception
-     */
-    boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException;
-    /**
-     * Given a Registry User and study protocol id, find out if the user is
-     * either a trial owner or the admin for the lead org.
-     * @param user user name
-     * @param studyProtocolId id
-     * @return boolean
-     * @throws PAException exception
-     */
-    boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException;
-    /**
-     * Assign ownership of given protocol to given user.
-     * @param userId user id
-     * @param studyProtocolId study protocol id
-     * @throws PAException on error
-     */
-    void assignOwnership(Long userId, Long studyProtocolId) throws PAException;
-    /**
-     * Removes ownership.
-     * @param userId user id
-     * @param studyProtocolId study protocol id
-     * @throws PAException on error
-     */
-    void removeOwnership(Long userId, Long studyProtocolId) throws PAException;
-
-    /**
-     * Given a Registry User Id and study protocol id, find out if the user is a trial owner.
-     * @param userId the user id
-     * @param studyProtocolId id
-     * @return boolean
-     * @throws PAException exception
-     */
-    boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException;
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 }

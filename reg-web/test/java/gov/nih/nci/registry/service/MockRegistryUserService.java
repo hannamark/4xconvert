@@ -152,7 +152,7 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
     public void assignOwnership(Long userId, Long studyProtocolId)
 			throws PAException {
 		// TODO Auto-generated method stub
-		
+
 	}
     /**
      * {@inheritDoc}
@@ -160,7 +160,15 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
 	public void removeOwnership(Long userId, Long studyProtocolId)
 			throws PAException {
 		// TODO Auto-generated method stub
-		
+
 	}
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserService#isTrialOwner(java.lang.Long, java.lang.Long)
+     */
+    public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

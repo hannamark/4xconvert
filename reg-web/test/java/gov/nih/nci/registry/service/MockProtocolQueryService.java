@@ -1,8 +1,9 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.service;
 
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -69,7 +70,7 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
                 // TODO need to check with OrgId too
                 returnList.add(sp);
             }
-            if(sc.getNciIdentifier() != null && !sc.getNciIdentifier().equals("") 
+            if(sc.getNciIdentifier() != null && !sc.getNciIdentifier().equals("")
                     && sp.getNciIdentifier().equalsIgnoreCase(sc.getNciIdentifier())) {
                 returnList.add(sp);
             }
@@ -85,12 +86,20 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
      */
     public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(
             Long studyProtocolId) throws PAException {
-     
+
         for (StudyProtocolQueryDTO sp: list) {
             if(sp.getStudyProtocolId().equals(studyProtocolId)) {
                 return sp;
             }
         }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByOrgIdentifier(java.lang.Long)
+     */
+    public List<StudyProtocol> getStudyProtocolByOrgIdentifier(Long orgIdentifier) throws PAException {
+        // TODO Auto-generated method stub
         return null;
     }
 
