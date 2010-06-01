@@ -1604,7 +1604,9 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     sqls.add("UPDATE  STUDY_REGULATORY_AUTHORITY SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
 
     sqls.add("Delete from STUDY_RELATIONSHIP WHERE TARGET_STUDY_PROTOCOL_IDENTIFIER  = " + sourceIi.getExtension());
-    sqls.add("Delete from STUDY_OTHERIDENTIFIERS WHERE STUDY_PROTOCOL_ID  = " + sourceIi.getExtension());
+    sqls.add("Delete from STUDY_OTHERIDENTIFIERS WHERE STUDY_PROTOCOL_ID  = " + targetId);
+    sqls.add("Update STUDY_OTHERIDENTIFIERS SET STUDY_PROTOCOL_ID = " + targetId 
+              + " WHERE STUDY_PROTOCOL_ID  = " + sourceIi.getExtension());
     sqls.add("Delete from STUDY_PROTOCOL WHERE IDENTIFIER  = " + sourceIi.getExtension());
     return sqls;
  }
