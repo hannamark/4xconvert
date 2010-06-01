@@ -152,6 +152,14 @@ function loadAffliatedOrgDiv() {
                              </span>
                         </td>                
                   </tr>
+                  <s:if test="%{registryUserWebDTO.id != null && registryUserWebDTO.id != ' '}">
+                    <tr>
+                        <td scope="row" class="label">&nbsp;</td>
+                        <td>
+                            <fmt:message key="register.user.password.instructions"/>
+                        </td>
+                    </tr>
+                  </s:if>
                   <tr>
                       <td class="space" colspan="2">
                           &nbsp;
