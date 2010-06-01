@@ -76,7 +76,27 @@
     	var orgid = document.getElementById('sponsorIdentifier').value;
     	showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid,  createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
     }
-        
+
+
+    function deleteOtherIdentifierRow(rowid){ 
+        var  url = 'ajaxManageOtherIdentifiersActiondeleteOtherIdentifier.action?uuid='+rowid;
+        var div = document.getElementById('otherIdentifierdiv');
+        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+        callAjax(url, div);             
+    }
+
+    function addOtherIdentifier() {
+        var orgValue=document.getElementById("otherIdentifierOrg").value;
+        if (orgValue != null && orgValue != '') {
+            var  url = 'ajaxManageOtherIdentifiersActionaddOtherIdentifier.action?otherIdentifier='+orgValue;    
+            var div = document.getElementById('otherIdentifierdiv');   
+            div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
+            callAjax(url, div);
+            document.getElementById("otherIdentifierOrg").value="";
+        } else {
+            alert("Please enter a valid Other identifier.");
+        }
+    }
 
 </script>
     
@@ -214,7 +234,28 @@
         </td>
     </tr>
     </c:if>
-	<%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>    
+
+    <tr>
+        <th colspan="2">Other Identifiers</th>
+    </tr>
+    <tr>
+        <td scope="row" class="label">
+            <label for="submitTrial_protocolWebDTO_otherIdentifiers">Other Identifier</label>
+        </td>
+        <td>
+            <input type="text" name="otherIdentifierOrg" id="otherIdentifierOrg" value="" />&nbsp; 
+            <input type="button" id="otherIdbtnid" value="Add Other Identifier" onclick="addOtherIdentifier();" />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" class="space">
+            <div id="otherIdentifierdiv">
+                <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp"%>
+            </div>
+        </td>
+    </tr>
+    
+    <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>    
     <tr>
         <th colspan="2"> Summary 4 Information </th>
     </tr>

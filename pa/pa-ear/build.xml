@@ -192,7 +192,7 @@
         <available file="${pa-web.package}" property="pa-web.present"/>
         <fail unless="pa-web.present" message="War file not found."/>
         <available file="${reg-web.package}" property="reg-web.present"/>
-        <fail unless="reg-web.present" message="Protocol regestry war not found."/>
+        <fail unless="reg-web.present" message="Protocol registry war not found."/>
         <mkdir dir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
         <condition property="omit.viewer">
             <istrue value="${exclude.viewer}"/>

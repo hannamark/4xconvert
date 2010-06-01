@@ -86,7 +86,9 @@ import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -138,6 +140,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Date recordVerificationDate;
     private Boolean ctgovXmlRequiredIndicator;
     private Boolean showSendXml = false;
+    private List<String> otherIdentifiers = new ArrayList<String>();
     
    /**
     * @return the trialCategory
@@ -652,5 +655,19 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public void setShowSendXml(Boolean showSendXml) {
         this.showSendXml = showSendXml;
+    }
+    
+    /**
+     * @return secondaryIdentifiers
+     */
+    public List<String> getOtherIdentifiers() {
+        return otherIdentifiers;
+    }
+    
+    /** 
+     * @param otherIdentifiers the secondary identifiers to set
+     */
+    public void setOtherIdentifiers(List<String> otherIdentifiers) {
+        this.otherIdentifiers = otherIdentifiers;
     }    
 }

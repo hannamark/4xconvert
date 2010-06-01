@@ -285,12 +285,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
                     }
 
-                    studyProtocolDto.setOfficialTitle(studyProtocol
-                            .getOfficialTitle());
+                    studyProtocolDto.setOfficialTitle(studyProtocol.getOfficialTitle());
                     studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
                     studyProtocolDto.setNciIdentifier(PADomainUtils.getAssignedIdentifierExtension(studyProtocol));
-                    studyProtocolDto
-                            .setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
+                    studyProtocolDto.setOtherIdentifiers(PADomainUtils.getOtherIdentifierExtensions(studyProtocol));
+                    studyProtocolDto.setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
                     studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
                     studyProtocolDto.setUserLastCreated(studyProtocol.getUserLastCreated());
                     studyProtocolDto.setDateLastCreated(studyProtocol.getDateLastCreated());

@@ -103,10 +103,13 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
@@ -304,6 +307,23 @@ public class PADomainUtils {
             }
         }
         return assignedIdentifier;
+    }
+    
+    /**
+     * Returns a listing of a study protocols other identifier extensions.
+     * @param sp the study protocol to get the other identifier extensions for
+     * @return the other identifier extensions.
+     */
+    public static List<String> getOtherIdentifierExtensions(StudyProtocol sp) {
+        List<String> results = new ArrayList<String>();
+        if (CollectionUtils.isNotEmpty(sp.getOtherIdentifiers())) {
+            for (Ii id : sp.getOtherIdentifiers()) {
+                if (StringUtils.equals(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT, id.getRoot())) {
+                    results.add(id.getExtension());
+                }
+            }
+        }
+        return results;
     }
 
     private static String getCountryNameUsingCode(String code, List<Country> countryList) {

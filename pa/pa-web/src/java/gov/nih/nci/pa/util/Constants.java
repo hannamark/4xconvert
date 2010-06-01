@@ -127,4 +127,6 @@ public class Constants {
     public static final String SUABSTRACTOR = "SuAbstractor";
     /** NCI. */
     public static final String NCI = "NCI";
+    /** OTHER_IDENTIFIERS_LIST. */
+    public static final String OTHER_IDENTIFIERS_LIST = "otherIdentifiersList";
 }

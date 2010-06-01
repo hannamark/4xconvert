@@ -114,6 +114,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -124,6 +125,9 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This is a selection of utilities, useful for PA. This set of utilities is safe to use in the grid services. Do
@@ -1185,7 +1189,44 @@ public class PAUtil {
         }
         return assignedIdentifier;
     }
+    
+    /**
+     * Returns a listing of a study protocols other identifier extensions.
+     * @param spDTO the study protocol dto
+     * @return the other identifiers
+     */
+    public static List<Ii> getOtherIdentifiers(StudyProtocolDTO spDTO) {
+        List<Ii> results = new ArrayList<Ii>();
+        if (spDTO.getSecondaryIdentifiers() != null 
+                && CollectionUtils.isNotEmpty(spDTO.getSecondaryIdentifiers().getItem())) {
+            for (Ii id : spDTO.getSecondaryIdentifiers().getItem()) {
+                if (StringUtils.equals(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT, id.getRoot())) {
+                    results.add(id);
+                }
+            }
+        }
+        return results;
+    }
+    
+    /**
+     * Returns a listing of a study protocols identifiers that are not other identifiers.
+     * @param spDTO the study protocol dto
+     * @return the identifiers
+     */
+    public static List<Ii> getNonOtherIdentifiers(StudyProtocolDTO spDTO) {
+        List<Ii> results = new ArrayList<Ii>();
+        if (spDTO.getSecondaryIdentifiers() != null 
+                && CollectionUtils.isNotEmpty(spDTO.getSecondaryIdentifiers().getItem())) {
+            for (Ii id : spDTO.getSecondaryIdentifiers().getItem()) {
+                if (!StringUtils.equals(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT, id.getRoot())) {
+                    results.add(id);
+                }
+            }
+        }
+        return results;
+    }
 
+    
     /**
      * Check assigned identifier exists dto.
      * 

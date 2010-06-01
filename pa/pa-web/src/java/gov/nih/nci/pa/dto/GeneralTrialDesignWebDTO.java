@@ -78,6 +78,11 @@
 */
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.iso21090.Ii;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 
 /**
@@ -139,7 +144,8 @@ public class GeneralTrialDesignWebDTO {
     private boolean ctGovXmlRequired;
     private String ctepIdentifier;
     private String dcpIdentifier;
-
+    private List<Ii> otherIdentifiers = new ArrayList<Ii>();
+    private List<Ii> nonOtherIdentifiers = new ArrayList<Ii>();
     
     
     /**
@@ -781,5 +787,33 @@ public class GeneralTrialDesignWebDTO {
      public void setDcpIdentifier(String dcpIdentifier) {
          this.dcpIdentifier = dcpIdentifier;
      }
+
+     /**
+      * @return otherIdentifiers
+      */
+     public List<Ii> getOtherIdentifiers() {
+         return otherIdentifiers;
+     }
+
+     /**
+      * @param otherIdentifiers the other identifiers to set
+      */
+     public void setOtherIdentifiers(List<Ii> otherIdentifiers) {
+         this.otherIdentifiers = otherIdentifiers;
+     }
      
+     /**
+      * @return nonOtherIdentifiers
+      */
+     public List<Ii> getNonOtherIdentifiers() {
+         return nonOtherIdentifiers;
+     }
+     
+     /**
+      * @param nonOtherIdentifiers the identifiers to set
+      */
+     public void setNonOtherIdentifiers(List<Ii> nonOtherIdentifiers) {
+         this.nonOtherIdentifiers = nonOtherIdentifiers;
+     }
+
 }

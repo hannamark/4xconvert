@@ -65,7 +65,22 @@
              <c:out value="${sessionScope.trialSummary.localStudyProtocolIdentifier }"/>
              <span class="formErrorMsg"> <s:fielderror><s:param>localTrialIdentifier</s:param></s:fielderror></span>  
             </td>
-            </tr>  
+            </tr>
+            <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+                <tr>
+                    <td scope="row" class="label">
+                        <label for="secondaryIdentifiers">Other Identifiers</label>
+                    </td>
+                    <td class="value">
+                        <c:forEach items="${sessionScope.trialSummary.otherIdentifiers}" var="extension" varStatus="status"> 
+                            <c:choose>
+                                <c:when test="${status.last}">${extension}</c:when>
+                                <c:otherwise>${extension},&nbsp;</c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+                    </td>
+                </tr> 
+            </c:if> 
             <tr>
                 <td scope="row" class="label"> <label for="nciIdentifier"> NCT Number </label></td>
                 <td class="value">

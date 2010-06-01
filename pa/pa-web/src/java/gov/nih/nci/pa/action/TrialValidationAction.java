@@ -134,13 +134,16 @@ public class TrialValidationAction extends ActionSupport {
      */
     public String query() {
         try {
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    Constants.STUDY_PROTOCOL_II);
+            Ii studyProtocolIi = 
+                (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
             TrialHelper helper = new TrialHelper();
             gtdDTO = helper.getTrialDTO(studyProtocolIi, "validation");
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, 
+                    gtdDTO.getOtherIdentifiers());
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         } 
+        populateOtherIdentifiers();
         return EDIT;
     }
 
@@ -158,6 +161,7 @@ public class TrialValidationAction extends ActionSupport {
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
+        populateOtherIdentifiers();
         return EDIT;
     }
     /**
@@ -193,7 +197,8 @@ public class TrialValidationAction extends ActionSupport {
             }
         } catch (Exception e) {
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-        } 
+        }
+        populateOtherIdentifiers();
         return EDIT;
     }
 
@@ -257,6 +262,7 @@ public class TrialValidationAction extends ActionSupport {
         query();
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Rejected");
         ServletActionContext.getRequest().getSession().removeAttribute(submissionNo);
+        populateOtherIdentifiers();
         return EDIT;
     }
 
@@ -602,5 +608,11 @@ public class TrialValidationAction extends ActionSupport {
             return true;
         }
         return false;
+    }
+    
+    
+    private void populateOtherIdentifiers() {
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, 
+                gtdDTO.getOtherIdentifiers());
     }
 }
