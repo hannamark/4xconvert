@@ -163,7 +163,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             StudyProtocolQueryCriteria spsc) throws PAException {
         LOG.debug("Entering getStudyProtocolByCriteria ");
         if (isCriteriaEmpty(spsc)) {
-            throw new PAException("Atleast one criteria is required.");
+            throw new PAException("At least one criteria is required.");
         }
         // StudyProtocolServiceImpl pImpl = new StudyProtocolServiceImpl();
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
@@ -506,7 +506,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             + "left outer join sp.studyInbox as sinbx "
                             + "left outer join sp.studyCheckout as scheckout "
                             + "left outer join sp.studyOwners as sowner ");
-            
 
             hql.append(generateWhereClause(studyProtocolQueryCriteria));
             hql.append(" order by dws.statusDateRangeLow asc");
@@ -553,8 +552,13 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         + PhaseCode.getByCode(studyProtocolQueryCriteria.getPhaseCode()) + "'");
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())) {
-                where.append(" and sp.otherIdentifiers.extension  like '%"
+                where.append(" and sp.otherIdentifiers.extension like '%"
                         + studyProtocolQueryCriteria.getNciIdentifier()
+                                .toUpperCase().trim().replaceAll("'", "''")
+                        + "%'");
+            } else if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getOtherIdentifier())) {
+                where.append(" and upper(sp.otherIdentifiers.extension) like '%"
+                        + studyProtocolQueryCriteria.getOtherIdentifier()
                                 .toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
             }
@@ -754,8 +758,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 && PAUtil.isEmpty(criteria.getPrimaryPurposeCode())
                 && PAUtil.isEmpty(criteria.getPhaseCode())
                 && PAUtil.isEmpty(criteria.getStudyStatusCode()) 
-                &&  PAUtil.isEmpty(criteria.getDocumentWorkflowStatusCode())
+                && PAUtil.isEmpty(criteria.getDocumentWorkflowStatusCode())
                 && PAUtil.isEmpty(criteria.getStudyMilestone())
+                && PAUtil.isEmpty(criteria.getOtherIdentifier())
                 && ((PAUtil.isNotEmpty(criteria.getSearchOnHold()) && criteria.getSearchOnHold()
                         .equalsIgnoreCase("false")) || PAUtil.isEmpty(criteria.getSearchOnHold()))
                 && ((PAUtil.isNotEmpty(criteria.getStudyLockedBy()) && criteria.getStudyLockedBy()
