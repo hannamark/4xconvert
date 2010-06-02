@@ -58,7 +58,7 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote 
     public List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException {
         return null;
     }
-	 /**
+     /**
      * {@inheritDoc}
      */
     public List<RegistryUser> search(RegistryUser user) throws PAException {
@@ -81,18 +81,25 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote 
     /**
      * {@inheritDoc}
      */
-	public void assignOwnership(Long userId, Long studyProtocolId)
-			throws PAException {
-		// TODO Auto-generated method stub
-		
-	}
+    public void assignOwnership(Long userId, Long studyProtocolId)
+            throws PAException {
+        // TODO Auto-generated method stub
+
+    }
     /**
      * {@inheritDoc}
      */
-	public void removeOwnership(Long userId, Long studyProtocolId)
-			throws PAException {
-		// TODO Auto-generated method stub
-		
-	}
+    public void removeOwnership(Long userId, Long studyProtocolId)
+            throws PAException {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
+        return false;
+    }
 
 }

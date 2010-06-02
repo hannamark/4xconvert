@@ -37,10 +37,9 @@ public class DateConverter extends StrutsTypeConverter {
      * @param toClass class to convert to
      * @return Object date object
      */
-    public final Object convertFromString(final Map context
-                         , final String[] values, final Class toClass) {
-        if (values != null && values.length > 0
-                           && values[0] != null && values[0].length() > 0) {
+    @Override
+    public final Object convertFromString(final Map context, final String[] values, final Class toClass) {
+        if (values != null && values.length > 0 && values[0] != null && values[0].length() > 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
             try {
                 return sdf.parse(values[0]);
@@ -56,6 +55,7 @@ public class DateConverter extends StrutsTypeConverter {
      * @param o object
      * @return String date string
      */
+    @Override
     public final String convertToString(final Map context, final Object o) {
         if (o instanceof Date) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
