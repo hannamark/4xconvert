@@ -438,7 +438,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         int x = 0;
         for (StudyProtocolQueryDTO spqDto : spDtos) {
             pids[x++] = spqDto.getStudyProtocolId().longValue();
-
         }
         return pids;
     }

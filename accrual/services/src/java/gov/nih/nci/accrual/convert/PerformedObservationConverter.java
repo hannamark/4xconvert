@@ -102,6 +102,7 @@ public class PerformedObservationConverter extends AbstractConverter
      * @return the performed Observation dto
      * @throws DataFormatException the data format exception
      */
+    @Override
     public PerformedObservationDto convertFromDomainToDto(PerformedObservation bo)
             throws DataFormatException {
         PerformedObservationDto dto = (PerformedObservationDto)
@@ -122,16 +123,17 @@ public class PerformedObservationConverter extends AbstractConverter
      * @return the performed Observation
      * @throws DataFormatException the data format exception
      */
+    @Override
     public PerformedObservation convertFromDtoToDomain(PerformedObservationDto dto)
             throws DataFormatException {
         PerformedObservation bo = (PerformedObservation)
-        PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedObservation());   
+        PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedObservation());
         List<Cd> cds =  DSetConverter.convertDsetToCdList(dto.getMethodCode());
         if (cds != null) {
             for (Cd cd : cds) {
                 bo.setMethodCode(cd.getCode());
             }
-        }  
+        }
         if (!PAUtil.isCdNull(dto.getTargetSiteCode())) {
             bo.setTargetSiteCode(dto.getTargetSiteCode().getCode());
         }

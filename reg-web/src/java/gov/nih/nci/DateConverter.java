@@ -49,7 +49,6 @@ public class DateConverter extends StrutsTypeConverter {
         }
         return null;
     }
-
     /**
      * @param context context
      * @param o object

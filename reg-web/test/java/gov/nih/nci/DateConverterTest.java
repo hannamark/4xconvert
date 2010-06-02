@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci;
 
@@ -16,7 +16,7 @@ import org.junit.Test;
  *
  */
 public class DateConverterTest {
-    private DateConverter  converter = new DateConverter();
+    private final DateConverter  converter = new DateConverter();
     @Test
     public void testConvertFromString() {
         String[] values = {"2009/12/15"};
@@ -26,7 +26,7 @@ public class DateConverterTest {
         converter.convertFromString(null, invalidValues, null);
         fail();
         } catch (Exception e) {
-        
+
         }
         String[] nullValues = null;
         assertNull(converter.convertFromString(null, nullValues , null));
@@ -34,6 +34,6 @@ public class DateConverterTest {
     @Test
     public void testConvertToString() {
         converter.convertToString(null, Calendar.getInstance().getTime());
-        assertEquals("",converter.convertToString(null, new String()));
+        assertEquals("",converter.convertToString(null, "abcd"));
     }
 }
