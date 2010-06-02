@@ -502,6 +502,11 @@ function toggledisplayDivs(val) {
              <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
             </div>
             </s:if>
+            <s:else>
+            <div id="sponsorDiv" style="display:none">
+          <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
+            </div>
+            </s:else>
            </td> 
          </tr>  
           <tr>
@@ -788,6 +793,13 @@ function toggledisplayDivs(val) {
         <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInforamtion.jsp" %>
         </div>
         </s:if>
+        <s:else>
+        <div id="regDiv" style="display:none">
+            <!-- Regulatory page -->
+            <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInforamtion.jsp" %>
+        </div>
+        
+        </s:else>
         <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
