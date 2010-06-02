@@ -169,6 +169,9 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         hcfDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
 
         hcfDTOs = PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
+        if (hcfDTOs != null && hcfDTOs.size() > 1) {
+            LOG.info("PO HealthCareFacilityDTOs Correlation has more than 1. Using first.  "+ orgPoIdentifier);
+        }
         if (hcfDTOs == null || hcfDTOs.isEmpty()) {
             try {
                 Ii ii = PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
@@ -237,14 +240,9 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         ResearchOrganizationDTO roDTO = new ResearchOrganizationDTO();
         List<ResearchOrganizationDTO> roDTOs = null;
         roDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
-//        Cd cd = new Cd();
-//        cd.setCode(CANCER_CENTER_CODE);
-//        roDTO.setTypeCode(cd);
-//        roDTO.setFundingMechanism(CdConverter.convertStringToCd(FUNDING_MECHANISM_CODE));
         roDTOs = PoRegistry.getResearchOrganizationCorrelationService().search(roDTO);
         if (roDTOs != null && roDTOs.size() > 1) {
-//            throw new PAException("PO ResearchOrganizationDTOs Correlation should not have more than 1  ");
-            LOG.warn("PO ResearchOrganizationDTOs Correlation has more than 1.  Using first.");
+            LOG.info("PO ResearchOrganizationDTOs Correlation has more than 1.  Using first. "+orgPoIdentifier);
         }
         if (roDTOs == null || roDTOs.isEmpty()) {
             try {
@@ -315,7 +313,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         ocDTO.setTypeCode(CdConverter.convertStringToCd(PAConstants.IRB_CODE));
         ocDTOs = PoRegistry.getOversightCommitteeCorrelationService().search(ocDTO);
         if (ocDTOs != null && ocDTOs.size() > 1) {
-            throw new PAException("PO OversightCommitteeDTOs Correlation should not have more than 1.  ");
+            LOG.info("PO OversightCommitteeDTOs Correlation has more than 1. Using first.  "+orgPoIdentifier);
         }
         if (ocDTOs == null || ocDTOs.isEmpty()) {
             try {
