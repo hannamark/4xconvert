@@ -609,44 +609,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         + "                where sp.id = dws1.studyProtocol )"
                         + " or dws.id is null ) ");
             } else {
-                // added for Registry Trial Search
-                if (studyProtocolQueryCriteria.getMyTrialsOnly() != null
-                        && PAUtil.isNotEmpty(studyProtocolQueryCriteria.getUserLastCreated())) {
-                    if (studyProtocolQueryCriteria.getMyTrialsOnly().booleanValue()) {
-                            where.append(" and ( sowner.id = ").append(studyProtocolQueryCriteria.getUserId());
-                            where.append(" or ").append(studyProtocolQueryCriteria.getUserId());
-                            where.append(" in (select id from RegistryUser where affiliatedOrgUserType = '")
-                            .append(UserOrgType.ADMIN).append("' and str(affiliatedOrganizationId) in ( select ")
-                            .append(" researchOrganization.organization.identifier from StudySite where ")
-                            .append(" functionalCode ='" + StudySiteFunctionalCode.LEAD_ORGANIZATION
-                            + "' and studyProtocol.id = sp.id))) ");
-                            where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
-                            // add the subquery to pick the latest record
-                            where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                                            + "                where sp.id = dws1.studyProtocol )"
-                                            + " or dws.id is null ) ");
-                    } else if (!studyProtocolQueryCriteria.getMyTrialsOnly().booleanValue()) {
-                            where.append(" and ((sowner.id ='").append(studyProtocolQueryCriteria.getUserId() + "'");
-                            where.append(" and dws.statusCode <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
-                            // add the subquery to pick the latest record
-                            where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                                            + "                where sp.id = dws1.studyProtocol )"
-                                            + " or dws.id is null )) ");
-                            where.append(" or (sowner.id <> '").append(studyProtocolQueryCriteria.getUserId() + "'");
-                            where.append(" and dws.statusCode not in('" + DocumentWorkflowStatusCode.REJECTED + "',"
-                                    + "'" + DocumentWorkflowStatusCode.SUBMITTED + "'"
-                                    + "'" + DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED + "')");
-                            // add the subquery to pick the latest record
-                            where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                                            + "                where sp.id = dws1.studyProtocol )"
-                                            + " or dws.id is null ))) ");
-                    }
-                } else {
-                    // add the subquery to pick the latest record
-                    where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                                    + "                where sp.id = dws1.studyProtocol )"
-                                    + " or dws.id is null ) ");
-                }
+                whereClauseForRegistrySearch(studyProtocolQueryCriteria, where);
            }
            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier())) {
                 where.append(" and upper(sps.localStudyProtocolIdentifier) like '%"
@@ -710,6 +673,47 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             LOG.debug("Leaving generateWhereClause ");
         }
         return where.toString();
+    }
+
+    private void whereClauseForRegistrySearch(StudyProtocolQueryCriteria studyProtocolQueryCriteria, StringBuffer where) {
+        // added for Registry Trial Search
+        if (studyProtocolQueryCriteria.getMyTrialsOnly() != null
+                && PAUtil.isNotEmpty(studyProtocolQueryCriteria.getUserLastCreated())) {
+            if (studyProtocolQueryCriteria.getMyTrialsOnly().booleanValue()) {
+                    where.append(" and ( sowner.id = ").append(studyProtocolQueryCriteria.getUserId());
+                    where.append(" or ").append(studyProtocolQueryCriteria.getUserId());
+                    where.append(" in (select id from RegistryUser where affiliatedOrgUserType = '")
+                    .append(UserOrgType.ADMIN).append("' and str(affiliatedOrganizationId) in ( select ")
+                    .append(" researchOrganization.organization.identifier from StudySite where ")
+                    .append(" functionalCode ='" + StudySiteFunctionalCode.LEAD_ORGANIZATION
+                    + "' and studyProtocol.id = sp.id))) ");
+                    where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
+                    // add the subquery to pick the latest record
+                    where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+                                    + "                where sp.id = dws1.studyProtocol )"
+                                    + " or dws.id is null ) ");
+            } else if (!studyProtocolQueryCriteria.getMyTrialsOnly().booleanValue()) {
+                    where.append(" and ((sowner.id ='").append(studyProtocolQueryCriteria.getUserId() + "'");
+                    where.append(" and dws.statusCode <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
+                    // add the subquery to pick the latest record
+                    where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+                                    + "                where sp.id = dws1.studyProtocol )"
+                                    + " or dws.id is null )) ");
+                    where.append(" or (sowner.id <> '").append(studyProtocolQueryCriteria.getUserId() + "'");
+                    where.append(" and dws.statusCode not in('" + DocumentWorkflowStatusCode.REJECTED + "',"
+                            + "'" + DocumentWorkflowStatusCode.SUBMITTED + "'"
+                            + "'" + DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED + "')");
+                    // add the subquery to pick the latest record
+                    where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+                                    + "                where sp.id = dws1.studyProtocol )"
+                                    + " or dws.id is null ))) ");
+            }
+        } else {
+            // add the subquery to pick the latest record
+            where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+                            + "                where sp.id = dws1.studyProtocol )"
+                            + " or dws.id is null ) ");
+        }
     }
 
     private void studyCheckoutWhereClause(StringBuffer where) {

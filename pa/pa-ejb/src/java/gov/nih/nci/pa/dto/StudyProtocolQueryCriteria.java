@@ -203,14 +203,14 @@ public class StudyProtocolQueryCriteria implements Serializable {
 
     /**
      *
-     * @return other identifier
+     * @return the other identifier
      */
     public String getOtherIdentifier() {
         return otherIdentifier;
     }
     /**
      *
-     * @param  other identifier
+     * @param otherId identifier
      */
     public void setOtherIdentifier(String otherId) {
         this.otherIdentifier = otherId;
