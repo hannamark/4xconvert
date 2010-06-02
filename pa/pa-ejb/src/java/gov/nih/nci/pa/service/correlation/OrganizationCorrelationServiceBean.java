@@ -169,9 +169,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         hcfDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
 
         hcfDTOs = PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
-        if (hcfDTOs != null && hcfDTOs.size() > 1) {
-            throw new PAException("PO hcfDTOs Correlation should not have more than 1  ");
-        }
         if (hcfDTOs == null || hcfDTOs.isEmpty()) {
             try {
                 Ii ii = PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
