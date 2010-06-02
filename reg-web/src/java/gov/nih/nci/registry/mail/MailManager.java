@@ -55,7 +55,7 @@ public class MailManager {
             EncoderDecoder encodeDecoder = new EncoderDecoder();
             
             String emailBody = formatterBody.format(params) + "\n\n"
-                    + formatterBodyUrl.format(params) + "/registerUseractivate.action?emailAddress="
+                    + formatterBodyUrl.format(params) + "?emailAddress="
                     + encodeDecoder.encodeString(mailTo) + "&action=myaccount\n\n";
 
             LOG.info("emailBody is: " + emailBody);

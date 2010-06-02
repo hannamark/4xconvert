@@ -121,13 +121,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           <equals arg1="${jboss.http-connector.remove}" arg2="true"/>
           <then>
               <property name="jboss.application.url" value="https://${jboss.server.hostname}:${jboss.grid.secure.port}/registry"/>
+              <property name="jboss.application.external.url" value="https://${jboss.external.http.host}:${jboss.grid.secure.port}/registry"/>
           </then>
           <else>
               <property name="jboss.application.url" value="http://${jboss.server.hostname}:${jboss.server.port}/registry"/>
+              <property name="jboss.application.external.url" value="http://${jboss.external.http.host}:${jboss.server.port}/registry"/>
           </else>
       </if>
       <property name="application.url" value="${jboss.application.url}"/>
-      <property name="register.mail.body.url" value="${application.url}/${register.mail.body.url.action}"/>
+      <property name="register.mail.body.url" value="${jboss.application.external.url}/${register.mail.body.url.action}"/>
       <property name="doc.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}"/>
       <available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
       <basename file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.file"/>
