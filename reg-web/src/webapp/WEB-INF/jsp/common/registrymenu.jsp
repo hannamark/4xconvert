@@ -59,14 +59,26 @@ function selectTrialType(){
                                             <li><a href="/registry/protected/siteAdministrationsearch.action" >Site Administration</a></li>
                                         </c:otherwise>
                                     </c:choose>
-                                    <c:choose>
-                                        <c:when test="${requestScope.topic == 'manage_user_trial_ownership'}">
-                                            <li><a href="/registry/protected/manageTrialOwnershipsearch.action" class="selected">Manage Trial Ownership</a></li>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <li><a href="/registry/protected/manageTrialOwnershipsearch.action" >Manage Trial Ownership</a></li>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <li>
+                                        <c:choose>
+                                            <c:when test="${requestScope.topic == 'display_trial_ownership'}">
+                                                <a href="/registry/protected/displayTrialOwnershipsearch.action" class="selected">Display Trial Ownership</a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a href="/registry/protected/displayTrialOwnershipsearch.action" >Display Trial Ownership</a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </li>
+                                    <li>
+                                        <c:choose>
+                                            <c:when test="${requestScope.topic == 'manage_user_trial_ownership'}">
+                                                <a href="/registry/protected/manageTrialOwnershipsearch.action" class="selected">Manage Trial Ownership</a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a href="/registry/protected/manageTrialOwnershipsearch.action" >Manage Trial Ownership</a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </li>
                                  </c:if>
                         		<li><a href="/registry/logout.action" >Log Out</a></li>
 				    </c:when>

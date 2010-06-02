@@ -256,5 +256,18 @@
         <result name="input">/WEB-INF/jsp/manageTrialOwnership.jsp</result>
         <result name="viewResults">/WEB-INF/jsp/manageTrialOwnership.jsp</result>
     </action>
+    <action name="displayTrialOwnership*" class="gov.nih.nci.registry.action.DisplayTrialOwnershipAction" method="{1}">
+        <interceptor-ref name="params">
+          <!--
+              Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+           -->
+          <param name="excludeParams">
+            _,d-\d+?-[sop]
+         </param>
+        </interceptor-ref>
+        <result name="success">/WEB-INF/jsp/displayTrialOwnership.jsp</result>
+        <result name="input">/WEB-INF/jsp/displayTrialOwnership.jsp</result>
+        <result name="viewResults">/WEB-INF/jsp/displayTrialOwnership.jsp</result>
+    </action>
     </package>
 </struts>
