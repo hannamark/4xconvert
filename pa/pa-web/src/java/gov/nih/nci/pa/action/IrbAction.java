@@ -514,6 +514,10 @@ public class IrbAction extends ActionSupport implements Preparable {
                 ct.setCountry(adxp.getCode());
             }
         }
+        getEmailAndPhone(poOrg);
+    }
+
+    private void getEmailAndPhone(OrganizationDTO poOrg) {
         Object[] telList = poOrg.getTelecomAddress().getItem().toArray();
         boolean eMailSet = false;
         boolean phoneSet = false;
@@ -523,8 +527,11 @@ public class IrbAction extends ActionSupport implements Preparable {
                 eMailSet = true;
             }
             if (!phoneSet && tel instanceof TelPhone) {
-                ct.setPhone(((TelPhone) tel).getValue().getSchemeSpecificPart());
-                phoneSet = true;
+                String schema = ((TelPhone) tel).getValue().getScheme();
+                if (("tel").equals(schema)) {
+                    ct.setPhone(((TelPhone) tel).getValue().getSchemeSpecificPart());
+                    phoneSet = true;
+                }
             }
         }
     }
