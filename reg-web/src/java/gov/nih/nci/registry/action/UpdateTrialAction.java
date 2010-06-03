@@ -718,6 +718,8 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
             TrialValidator.addSessionAttributes(trialDTO);
             trialUtil.populateRegulatoryList(trialDTO);
             synchActionWithDTO();
+            ServletActionContext.getRequest().getSession().removeAttribute("secondaryIdentifiersList");
+            trialDTO.setSecondaryIdentifierAddList(null);
             setDocumentsInSession(trialDTO);
             return ERROR;
         }

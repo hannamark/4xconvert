@@ -108,6 +108,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.validator.ClassValidator;
@@ -402,9 +403,13 @@ public class TrialValidator {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,
                     tDTO.getFundingDtos());
         }
-        if (!tDTO.getSecondaryIdentifierList().isEmpty()) {
+        if (StringUtils.isNotEmpty(tDTO.getAssignedIdentifier()) && !tDTO.getSecondaryIdentifierAddList().isEmpty()) {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST,
                     tDTO.getSecondaryIdentifierAddList());
+        }
+        if (StringUtils.isEmpty(tDTO.getAssignedIdentifier()) && !tDTO.getSecondaryIdentifierList().isEmpty()) {
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST,
+                tDTO.getSecondaryIdentifierList());
         }
         List<DocumentDTO> documentISOList;
         try {

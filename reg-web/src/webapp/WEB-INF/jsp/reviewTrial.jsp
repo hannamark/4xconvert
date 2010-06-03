@@ -19,19 +19,19 @@
 <c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="submitProtocol"/>
 <script language="javascript">
 function submitTrial(){
-	var assignedId = document.getElementById("trialDTO.assignedIdentifier").value ;
-	if (assignedId != '') {
-		document.forms[0].action="amendTrialamend.action";
-		document.forms[0].submit();
-		showPopWin('${amendProtocol}', 600, 200, '', 'Amend Trial');	
-	} else {
+    var assignedId = document.getElementById("trialDTO.assignedIdentifier").value ;
+    if (assignedId != '') {
+        document.forms[0].action="amendTrialamend.action";
+        document.forms[0].submit();
+        showPopWin('${amendProtocol}', 600, 200, '', 'Amend Trial');    
+    } else {
         document.forms[0].action = "submitTrialcreate.action";
         document.forms[0].submit();
         showPopWin('${submitProtocol}', 600, 200, '', 'Submit Register Trial');  
-	}
+    }
 }
 function editTrial() {
-	var assignedId = document.getElementById("trialDTO.assignedIdentifier").value ;
+    var assignedId = document.getElementById("trialDTO.assignedIdentifier").value ;
     if (assignedId != '') {
         document.forms[0].action="amendTrialedit.action";
         document.forms[0].submit();
@@ -43,7 +43,7 @@ function editTrial() {
     
 }
 function printProtocol (){   
-	var sOption="toolbar=no,location=no,directories=no,menubar=yes,"; 
+    var sOption="toolbar=no,location=no,directories=no,menubar=yes,"; 
     sOption+="scrollbars=yes,width=750,height=600,left=100,top=25"; 
 var sWinHTML = document.getElementById('contentprint').innerHTML; 
 
@@ -63,7 +63,7 @@ var winprint=window.open("","",sOption);
 <div class="box">
     <s:form > <s:actionerror/>
     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>  
-	<s:hidden name="pageFrom" id="pageFrom"/>            
+    <s:hidden name="pageFrom" id="pageFrom"/>            
     <c:if test="${requestScope.protocolId != null && requestScope.partialSubmission != null && requestScope.partialSubmission == 'submit'}">
         <div class="confirm_msg">
           <strong>The trial draft has been successfully saved and assigned the Identifier ${requestScope.protocolId}</strong>
@@ -548,11 +548,22 @@ var winprint=window.open("","",sOption);
      <c:if test="${trialDTO.fundingDtos != null}">  
         <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
      </c:if>
-      <c:if test="${fn:length(trialDTO.secondaryIdentifierList) > 0}">
+     <c:choose>
+     <c:when test="${trialDTO.assignedIdentifier !=null && trialDTO.assignedIdentifier!= ''}">
+      <c:if test="${fn:length(trialDTO.secondaryIdentifierAddList) > 0}">
+        <div class="box"><h3>Secondary Identifiers </h3>   
+          <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiersForUpdate.jsp" %>
+        </div>
+       </c:if>
+     </c:when>
+     <c:when test="${trialDTO.assignedIdentifier == null || trialDTO.assignedIdentifier == ''}">  
+       <c:if test="${fn:length(trialDTO.secondaryIdentifierList) > 0}">
         <div class="box"><h3>Secondary Identifiers </h3>   
           <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp" %>
         </div>
        </c:if>
+     </c:when>
+     </c:choose>
      <c:if test="${fn:trim(trialDTO.propritaryTrialIndicator) == 'No' && trialDTO.xmlRequired == true}">
         <table class="form">
         <tr>

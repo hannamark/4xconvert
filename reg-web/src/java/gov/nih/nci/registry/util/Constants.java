@@ -236,4 +236,8 @@ public class Constants {
     
     /** SECONDARY_IDENTIFIERS_LIST. */
     public static final String SECONDARY_IDENTIFIERS_LIST = "secondaryIdentifiersList";
+    
+    /** Study Protocol Root. * */
+    public static final String STUDY_PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3";
+    
 }

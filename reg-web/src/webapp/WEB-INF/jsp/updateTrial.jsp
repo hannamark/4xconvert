@@ -1,3 +1,4 @@
+<%@ page import="gov.nih.nci.registry.util.Constants" %>
 <!DOCTYPE html PUBLIC 
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -351,14 +352,17 @@ function toggledisplay2 (it) {
            <tr>
                 <th colspan="2"><fmt:message key="submit.trial.otherIdentifiers"/></th>
           </tr>
+           <c:set var="rootConstant" value="<%=Constants.STUDY_PROTOCOL_ROOT%>"/>
            <s:iterator id="trialDTO.secondaryIdentifierList" value="trialDTO.secondaryIdentifierList" status="sstats">
              <tr>
+              <s:if test="root != rootConstant" >
                 <td scope="row" class="label">
                      <label for="updateTrial_protocolWebDTO_otherIdentifiers"> <fmt:message key="submit.trial.otherIdentifier"/></label>
                  </td>
                   <td>
-                       <s:textfield  name="trialDTO.secondaryIdentifierList[%{#sstats.index}].extension" value="%{extension}" size="100"  cssStyle="width:200px"/>
+                    <s:textfield  name="trialDTO.secondaryIdentifierList[%{#sstats.index}].extension" value="%{extension}" size="100"  cssStyle="width:200px"/>                       
                   </td>
+               </s:if>   
                </tr>
            <tr> 
             <td colspan="2" class="space">&nbsp;</td>
