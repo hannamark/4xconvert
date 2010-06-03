@@ -222,6 +222,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           <filterset refid="embedded.filterset"/>
       </copy>
 
+	  <echo message="Looking for jboss-service.xml in ${pa-ear.dir.dist}"/>	
+      <delete file="${temp.dir}/pa-ear/jboss-service.xml"/>
+      <copy todir="${temp.dir}/pa-ear" filtering="true">
+          <fileset dir="${pa-ear.dir.dist}">
+              <include name="jboss-service.xml"/>
+          </fileset>
+          <filterset refid="embedded.filterset"/>
+      </copy>
+      
       <delete file="${temp.dir}/pa-ear/META-INF/security-config.xml"/>
       <copy todir="${temp.dir}/pa-ear/META-INF" filtering="true">
           <fileset dir="${jboss-conf.dir.dest}">
