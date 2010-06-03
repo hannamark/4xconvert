@@ -170,7 +170,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 
         hcfDTOs = PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
         if (hcfDTOs != null && hcfDTOs.size() > 1) {
-            LOG.info("PO HealthCareFacilityDTOs Correlation has more than 1. Using first.  "+ orgPoIdentifier);
+            LOG.info("PO HealthCareFacilityDTOs Correlation has more than 1. Using first.  " + orgPoIdentifier);
         }
         if (hcfDTOs == null || hcfDTOs.isEmpty()) {
             try {
@@ -242,7 +242,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         roDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         roDTOs = PoRegistry.getResearchOrganizationCorrelationService().search(roDTO);
         if (roDTOs != null && roDTOs.size() > 1) {
-            LOG.info("PO ResearchOrganizationDTOs Correlation has more than 1.  Using first. "+orgPoIdentifier);
+            LOG.info("PO ResearchOrganizationDTOs Correlation has more than 1.  Using first. " + orgPoIdentifier);
         }
         if (roDTOs == null || roDTOs.isEmpty()) {
             try {
@@ -313,7 +313,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         ocDTO.setTypeCode(CdConverter.convertStringToCd(PAConstants.IRB_CODE));
         ocDTOs = PoRegistry.getOversightCommitteeCorrelationService().search(ocDTO);
         if (ocDTOs != null && ocDTOs.size() > 1) {
-            LOG.info("PO OversightCommitteeDTOs Correlation has more than 1. Using first.  "+orgPoIdentifier);
+            LOG.info("PO OversightCommitteeDTOs Correlation has more than 1. Using first.  " + orgPoIdentifier);
         }
         if (ocDTOs == null || ocDTOs.isEmpty()) {
             try {
