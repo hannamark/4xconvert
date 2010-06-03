@@ -134,5 +134,11 @@ public interface LookUpTableServiceRemote {
      * @throws PAException PAException
      */
     String getPropertyValue(String name) throws PAException;
-    
+    /**
+     * 
+     * @param country country
+     * @return list of countries
+     * @throws PAException on error
+     */
+    List<Country> searchCountry(Country country) throws PAException;
 }

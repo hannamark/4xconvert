@@ -167,6 +167,7 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -1127,7 +1128,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             appendElement(address , createElement("city" , orgBo.getCity() , doc));
             appendElement(address , createElement("state" , orgBo.getState() , doc));
             appendElement(address , createElement("zip" , orgBo.getPostalCode() , doc));
-            appendElement(address , createElement("country" , orgBo.getCountryName() , doc));
+            appendElement(address , createElement("country" , PADomainUtils.getCountryNameUsingAlpha3Code(
+                    orgBo.getCountryName()) , doc));
             appendElement(facility , address);
             appendElement(location , facility);
             if (ssas != null) {

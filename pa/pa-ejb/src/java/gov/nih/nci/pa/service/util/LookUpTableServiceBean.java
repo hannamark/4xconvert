@@ -94,9 +94,12 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 
 /**
 * Bean implementation for providing access to look up tables.
@@ -207,5 +210,28 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         LOG.debug("Leaving getPropertyValue");
         return value;
     }
-
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<Country> searchCountry(Country country) throws PAException {
+        LOG.debug("Entering search");
+        if (country == null) {
+            throw new PAException("country connot be null");
+        }
+        List<Country> countryList = new ArrayList<Country>();
+        Session session = HibernateUtil.getCurrentSession();
+        Criteria criteria = session.createCriteria(Country.class, "country");
+        if (StringUtils.isNotEmpty(country.getName())) {
+            criteria.add(Restrictions.eq("country.name", country.getName()));
+        }
+        if (StringUtils.isNotEmpty(country.getAlpha2())) {
+            criteria.add(Restrictions.eq("country.alpha2", country.getAlpha2()));
+        }
+        if (StringUtils.isNotEmpty(country.getAlpha3())) {
+            criteria.add(Restrictions.eq("country.alpha3", country.getAlpha3()));
+        }
+        countryList = criteria.list();
+        return countryList;
+    }
 }

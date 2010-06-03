@@ -79,12 +79,14 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.CountryTest;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.domain.PAPropertiesTest;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -139,6 +141,12 @@ public class LookUpTableServiceTest {
         TestSchema.addUpdObject(prop);
         String data = remoteEjb.getPropertyValue("xxxx");
         assertEquals("Size does not match  " , data, "yyyyyyyyyyyyyyy");
+    }
+    @Test
+    public void getCountryNameUsingAlpha3Code() throws PAException {
+        Country country = CountryTest.createCountryObj();
+        TestSchema.addUpdObject(country);
+        assertTrue(remoteEjb.searchCountry(country).size() > 1);
     }
 
 }

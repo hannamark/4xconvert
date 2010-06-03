@@ -335,4 +335,27 @@ public class PADomainUtils {
         }
         return null;
     }
+    /**
+     * 
+     * @param code Alpha3 countryCode
+     * @return Country name
+     */
+    public static String getCountryNameUsingAlpha3Code(String code) {
+        String countryName = "";
+        if (StringUtils.isEmpty(code)) {
+            return countryName;
+        }
+        Country criteriaCountry = null;
+        try {
+            criteriaCountry = new Country();
+            criteriaCountry.setAlpha3(code);
+            List<Country> countryList = PaRegistry.getLookUpTableService().searchCountry(criteriaCountry);
+            if (PAUtil.isListNotEmpty(countryList)) {
+                countryName =  ((Country) countryList.get(0)).getName();
+           }
+        } catch (PAException e) {
+            countryName = "";
+        }
+        return countryName;
+    }
 }

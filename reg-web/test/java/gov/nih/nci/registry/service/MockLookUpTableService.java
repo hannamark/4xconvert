@@ -85,4 +85,9 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
         return map.get(name);
     }
 
+	public List<Country> searchCountry(Country country) throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
