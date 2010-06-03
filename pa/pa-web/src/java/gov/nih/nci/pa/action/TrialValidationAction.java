@@ -170,9 +170,9 @@ public class TrialValidationAction extends ActionSupport {
      */
     public String accept() {
         enforceBusinessRules("");
+        TrialHelper helper = new TrialHelper();
         //check if submission number is greater than 1 then it is amend
-        if (isTrialForAmendment(gtdDTO.getSubmissionNumber())
-                && PAUtil.isEmpty(gtdDTO.getAmendmentReasonCode())) {
+        if (gtdDTO.getSubmissionNumber() > 1 && PAUtil.isEmpty(gtdDTO.getAmendmentReasonCode())) {
            addFieldError("gtdDTO.amendmentReasonCode", "Amendment Reason Code is Required.");
         }
         if (hasFieldErrors()) {
@@ -180,14 +180,12 @@ public class TrialValidationAction extends ActionSupport {
         }
         try { 
             save();
-            TrialHelper helper = new TrialHelper();
-            
             createMilestones(MilestoneCode.SUBMISSION_ACCEPTED);
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Accepted");
             ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
                     helper.setMenuLinks(DocumentWorkflowStatusCode.ACCEPTED));
             //send mail only if the trial is Amended
-            if (isTrialForAmendment(gtdDTO.getSubmissionNumber())) {
+            if (gtdDTO.getSubmissionNumber() > 1) {
                 //send mail
                 PaRegistry.getMailManagerService()
                 .sendAmendAcceptEmail(IiConverter.convertToIi(gtdDTO.getStudyProtocolId()));
@@ -238,7 +236,7 @@ public class TrialValidationAction extends ActionSupport {
             TrialHelper helper = new TrialHelper();
             
             //if trial is amend then hard delete 
-            if (isTrialForAmendment(intSubNo)) {
+            if (intSubNo > 1) {
                 //send mail
                 PaRegistry.getMailManagerService()
                   .sendAmendRejectEmail(studyProtocolIi, gtdDTO.getCommentText());
@@ -603,13 +601,6 @@ public class TrialValidationAction extends ActionSupport {
     public void setCountryList(List<Country> countryList) {
         this.countryList = countryList;
     }
-    private boolean isTrialForAmendment(Integer submissionNumber) {
-        if (submissionNumber > 1) {
-            return true;
-        }
-        return false;
-    }
-    
     
     private void populateOtherIdentifiers() {
         ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, 

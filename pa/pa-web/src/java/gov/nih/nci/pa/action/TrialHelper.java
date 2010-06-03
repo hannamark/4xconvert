@@ -436,7 +436,9 @@ public class TrialHelper {
         spDTO.setOfficialTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getOfficialTitle(), OFFICIAL_TITLE)));
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
         spDTO.setKeywordText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getKeywordText(), KEYWORD)));
-        
+        if (gtdDTO.getSubmissionNumber() > 1) {
+            spDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(gtdDTO.getAmendmentReasonCode()));
+        }
         if (gtdDTO != null && gtdDTO.getProprietarytrialindicator() != null) {
                 if (gtdDTO.getProprietarytrialindicator().equalsIgnoreCase("true")) {
                    spDTO.setPhaseCode(CdConverter.convertStringToCd(gtdDTO.getPhaseCode()));
@@ -627,5 +629,4 @@ public class TrialHelper {
         }
         return action;
     }
-
 }
