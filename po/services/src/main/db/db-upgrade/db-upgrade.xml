@@ -124,4 +124,8 @@
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.2/PO-1501.MigrationScript4.1.sql"/>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.2/PO-1501.MigrationScript4.2.sql"/>
     </changeSet>
+    <changeSet id="PO-1696" author="aevansel">
+       <comment>Setting csm_applications settings for po to null.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-1696.sql"/>
+    </changeSet>
 </databaseChangeLog>

@@ -16,7 +16,6 @@
     <url>../../services/target/site</url>
 
     <properties>
-        <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
         <schema.file>schema.sql</schema.file>
         <csm.users.file>csmTestUsers.sql</csm.users.file>
         <test.jdbc.url>jdbc:hsqldb:mem:po-test</test.jdbc.url>

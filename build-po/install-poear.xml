@@ -30,6 +30,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <property name="po-ear.app-sec-conf.file" value="ApplicationSecurityConfig.xml" />
   <property name="po-ear.hibernate.file" value="hibernate.cfg.xml" />
   <property name="po-ear.ear.file" value="po.ear" />
+  <property name="resource.file.jboss-csm-lib" value="jboss-csm-libs.zip" />  
 
   <target name="install:po-ear-jboss:clean" unless="exclude.po-ear">
     <sleep seconds="5" />
@@ -156,7 +157,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     <copy file="${po-ear.dir.dist}/${po-ear.ear.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
     <copy file="${bda-utils.dir}/clm-3.2.jar" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
     <copy file="${database.driver.file}" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
-
+    <unzip dest="${jboss.home}/server/${jboss.server.name}/lib" src="${ear.dist.relative.dir}/${resource.file.jboss-csm-lib}" />
+    
     <!-- Replace this with file from ivy when project is ivy'fied -->
   </target>
 
@@ -281,7 +283,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
     <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
     <var name="file.list"
-      value="${po-ear.dist.relative.dir}/po-ds.xml,${po-ear.dist.relative.dir}/po-log4j.xml,${po-ear.dist.relative.dir}/META-INF/security-config.xml,po-web/WEB-INF/classes/jndi.properties,${po-ear.dist.relative.dir}/jboss-service.xml,po-services/ctep-services.properties"/>
+      value="${po-ear.dist.relative.dir}/po-ds.xml,${po-ear.dist.relative.dir}/po-log4j.xml,${po-ear.dist.relative.dir}/META-INF/security-config.xml,po-web/WEB-INF/classes/jndi.properties,po-web/WEB-INF/classes/csm.properties,${po-ear.dist.relative.dir}/jboss-service.xml,po-services/ctep-services.properties"/>
 
     <for list="${file.list}" param="file.relative.name">
       <sequential>
@@ -327,6 +329,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             <filter token="pogrid.jndi.principal" value="${pogrid-3.2.jndi.principal}"/>
             <filter token="pogrid.jndi.credentials" value="${pogrid-3.2.jndi.credentials}"/>
             <filter token="pogrid.jndi.credentials.encrypted" value="${pogrid-3.2.jndi.credentials.encrypted}"/>
+            
+            <filter token="jdbc.url" value="${database.url}"/>
+            <filter token="jdbc.driverClassName" value="${database.driver}"/>
+            <filter token="hibernate.dialect" value="${database.dialect}"/>
+            <filter token="csm.sync.frequency.seconds" value="${csm.sync.frequency.seconds}"/>
+            <filter token="csm.jdbc.username" value="${database.system.user}"/>
+            <filter token="csm.jdbc.password" value="${database.system.password}"/>
           </filterset>
         </copy>
         <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>

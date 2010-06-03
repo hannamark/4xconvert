@@ -13,7 +13,11 @@
     <listener>
         <listener-class>gov.nih.nci.po.web.util.PO1129UpdaterListener</listener-class>
     </listener>
-
+    
+    <!-- This servlet handles the syncing of GridGrouper groups to CSM.  -->
+    <listener>
+        <listener-class>gov.nih.nci.coppa.web.CSMSyncListener</listener-class>
+    </listener>
 
     <!-- Define the basename for a resource bundle for I18N -->
     <context-param>
