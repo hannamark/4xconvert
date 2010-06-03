@@ -51,20 +51,20 @@ else
             </div>
             <div>
             <c:set var="authMap" scope="page"
-                value="${requestScope['AUTHENTICATION_SOURCE_MAP']}"/>
-            <c:if test="${!empty requestScope['AUTHENTICATION_SOURCE_MAP']}">
+                value="${applicationScope['AUTHENTICATION_SOURCE_MAP']}"/>
+            <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">
                   <%
-                    java.util.Map myMap = (java.util.Map)request.getAttribute("AUTHENTICATION_SOURCE_MAP");
+                    java.util.Map myMap = (java.util.Map)session.getServletContext().getAttribute("AUTHENTICATION_SOURCE_MAP");
                     if (myMap.size() == 1) {
                   %>
-                  <c:forEach var="item" items="${requestScope.AUTHENTICATION_SOURCE_MAP}">
+                  <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
                     <input type="hidden" name="authenticationServiceURL"
                          value="<c:out value="${item.value}"/>" />
                   </c:forEach>
                   <% } else { %>
                     Authentication Source:
                      <select name="authenticationServiceURL" size="1">
-                        <c:forEach var="item" items="${requestScope.AUTHENTICATION_SOURCE_MAP}">
+                        <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
                         <option value="<c:out value="${item.value}" />">
                             <c:out value="${item.key}" />
                         </option>
