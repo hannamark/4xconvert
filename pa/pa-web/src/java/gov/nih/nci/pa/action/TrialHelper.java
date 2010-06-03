@@ -149,9 +149,9 @@ public class TrialHelper {
                     principalInvestigatorDto, StudyTypeCode.INTERVENTIONAL);
             paServUtil.removeResponsibleParty(studyProtocolIi);
             createSponorContact(studyProtocolIi, gtdDTO);
-            if (ABSTRACTION.equalsIgnoreCase(operation)) {
-                createOrUpdateCentralContact(studyProtocolIi, gtdDTO);
-            }
+        }
+        if (ABSTRACTION.equalsIgnoreCase(operation)) {
+            createOrUpdateCentralContact(studyProtocolIi, gtdDTO);
         }
         //summ4 info
         if (PAUtil.isNotEmpty(gtdDTO.getSummaryFourOrgIdentifier())) {
@@ -448,7 +448,9 @@ public class TrialHelper {
                 allIdentifiers.addAll(gtdDTO.getNonOtherIdentifiers());
                 List<Ii> secondaryIds = (List<Ii>) ServletActionContext.getRequest().getSession()
                         .getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
-                allIdentifiers.addAll(secondaryIds);
+                if (secondaryIds != null) {
+                    allIdentifiers.addAll(secondaryIds);
+                }
                 spDTO.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(allIdentifiers));
         }
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
