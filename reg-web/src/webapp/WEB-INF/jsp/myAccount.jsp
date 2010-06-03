@@ -93,6 +93,7 @@ function loadAffliatedOrgDiv() {
                              </span>
                         </td>                
                   </tr>
+                  <s:if test="%{!registryUserWebDTO.hasExistingGridAccount}">                  
                   <tr>
                     <td scope="row" class="label">&nbsp;</td>
                     <td><fmt:message key="register.user.password.rules" /></td>
@@ -159,6 +160,7 @@ function loadAffliatedOrgDiv() {
                             <fmt:message key="register.user.password.instructions"/>
                         </td>
                     </tr>
+                  </s:if>
                   </s:if>
                   <tr>
                       <td class="space" colspan="2">
