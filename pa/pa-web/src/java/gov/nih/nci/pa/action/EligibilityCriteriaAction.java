@@ -709,7 +709,7 @@ private void populateList() throws PAException {
       pecDTO.setStudyProtocolIdentifier(studyProtocolIi);
       pecDTO.setCriterionName(StConverter.convertToSt(dtoWeb.getCriterionName()));
       pecDTO.setValue(convertToIvlPq(
-              dtoWeb.getMinUOM(), dtoWeb.getValueIntegerMin(), dtoWeb.getMaxUOM(), dtoWeb.getValueIntegerMax()));
+              dtoWeb.getUnit(), dtoWeb.getValueIntegerMin(), dtoWeb.getUnit(), dtoWeb.getValueIntegerMax()));
       if (dtoWeb.getInclusionIndicator() == null) {
           pecDTO.setInclusionIndicator(BlConverter.convertToBl(null));
       } else  if (dtoWeb.getInclusionIndicator().equalsIgnoreCase("Inclusion")) {
