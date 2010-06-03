@@ -450,4 +450,8 @@
         <comment>Migrate current Trial Creators into trial Owners</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1919.sql"/>
     </changeSet>
+    <changeSet id="PO-1938" author="aevansel">
+        <comment>Clean out pa application setting so csm.properties is always used.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1938.sql"/>
+    </changeSet>
 </databaseChangeLog>
