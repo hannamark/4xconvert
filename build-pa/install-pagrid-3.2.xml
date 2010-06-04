@@ -535,30 +535,30 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <target name="install:pa-grid-3.2-jboss:post" unless="exclude.pa-grid-3.2">
     <if>
       <not>
-        <equals arg1="${exclude.jboss.backup}" arg2="true"/>
+        <equals arg1="${exclude.pa-grid-3.2-jboss.backup}" arg2="true"/>
       </not>
       <then>
-        <property name="changelogFile" location="${log.dir}/changeLog-${install.time}.txt"/>
-        <property name="compare1.dir" location="${backup.pa-grid-3.2-jboss.base.dir}/backup/${jboss.binaries.relative.path}"/>
-        <property name="compare2.dir" location="${pa-grid-3.2-jboss.home}"/>
-        <report-dir-diff
-          dir1="${compare1.dir}"
-          dir2="${compare2.dir}"
-          reportFile="${changelogFile}"
+      	
+        <property name="changelogFile-pa-grid-3.2" location="${log.dir}/changeLog-${install.time}.txt"/>
+        <property name="compare1-pa-grid-3.2.dir" location="${backup.pa-grid-3.2-jboss.base.dir}/backup/${jboss.binaries.relative.dir}"/>
+        <property name="compare2-pa-grid-3.2.dir" location="${pa-grid-3.2-jboss.home}"/>
+      	<report-dir-diff
+          dir1="${compare1-pa-grid-3.2.dir}"
+          dir2="${compare2-pa-grid-3.2.dir}"
+          reportFile="${changelogFile-pa-grid-3.2}"
           />
         <!-- Copy app server logs -->
-        <mkdir dir="${pa-grid-3.2-jboss.home}/server/${jboss.server.name}/log"/>
-        <mkdir dir="${backup.pa-grid-3.2-jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log"/>
+        <mkdir dir="${pa-grid-3.2-jboss.home}/server/${pa-grid-3.2-jboss.server.name}/log"/>
+        <mkdir dir="${backup.pa-grid-3.2-jboss.base.dir}/backup/${pa-grid-3.2-jboss.relative.path}/server/${pa-grid-3.2-jboss.server.name}/log"/>
         <!-- so the logs wont be included in the zip -->
-        <move todir="${pa-grid-3.2-jboss.home}/server/${jboss.server.name}/log">
-          <fileset dir="${backup.pa-grid-3.2-jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log">
+        <move todir="${pa-grid-3.2-jboss.home}/server/${pa-grid-3.2-jboss.server.name}/log">
+          <fileset dir="${backup.pa-grid-3.2-jboss.base.dir}/backup/${pa-grid-3.2-jboss.relative.path}/server/${pa-grid-3.2-jboss.server.name}/log">
             <include name="*"/>
           </fileset>
         </move>
-
         <!-- Compress backup and cleanup -->
         <mkdir dir="${backup.pa-grid-3.2-jboss.base.dir}/backup1"/>
-        <zip destfile="${backup.pa-grid-3.2-jboss.base.dir}/backup1/${jboss.binaries.relative.path}.zip" basedir="${backup.pa-grid-3.2-jboss.base.dir}/backup" />
+        <zip destfile="${backup.pa-grid-3.2-jboss.base.dir}/backup1/${jboss.binaries.relative.dir}.zip" basedir="${backup.pa-grid-3.2-jboss.base.dir}/backup" />
         <delete dir="${backup.pa-grid-3.2-jboss.base.dir}/backup"/>
       </then>
     </if>

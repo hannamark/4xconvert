@@ -558,7 +558,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       </not>
       <then>
         <property name="changelogFile" location="${log.dir}/changeLog-${install.time}.txt"/>
-        <property name="compare1.dir" location="${backup.pa-ear-jboss.base.dir}/${jboss.binaries.relative.path}"/>
+        <property name="compare1.dir" location="${backup.pa-ear-jboss.base.dir}/backup/${jboss.binaries.relative.dir}"/>
         <property name="compare2.dir" location="${jboss.home}"/>
         <report-dir-diff
           dir1="${compare1.dir}"
