@@ -447,6 +447,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <include name="paear.properties"/>
             </fileset>
         </copy>
+        <!-- copy ejb-jar.xml file into the exploded pa ear dist folder -->
+        <echo message="copy ejb-jar.xml file to ${pa-ear.dist.dir}"/>
+        <copy todir="${pa-ear.dist.dir}">
+            <fileset dir="${pa-resources.base.dir}">
+                <include name="ejb-jar.xml"/>
+            </fileset>
+        </copy>
         <!-- copy quartz jobs xml file into the exploded pa ear dist folder -->
         <copy todir="${pa-ear.dist.dir}">
             <fileset dir="${pa-resources.base.dir}">

@@ -196,10 +196,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <unzip src="${temp.dir}/pa-ear/pa-web.war" dest="${temp.dir}/pa-web-war"/>
 
       <delete file="${temp.dir}/pa-ejb-jar/paear.properties"/>
-      <echo message="Looking for paear.properties in ${pa-ear.dir.dist}"/>
+	  <delete file="${temp.dir}/pa-ejb-jar/ejb-jar.xml"/>
+
+      <echo message="Looking for paear.properties and ejb-jar.xml in ${pa-ear.dir.dist}"/>
       <copy todir="${temp.dir}/pa-ejb-jar" filtering="true">
           <fileset dir="${pa-ear.dir.dist}">
               <include name="paear.properties"/>
+              <include name="ejb-jar.xml"/>
           </fileset>
           <filterset refid="embedded.filterset"/>
       </copy>

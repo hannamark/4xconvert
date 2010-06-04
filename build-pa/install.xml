@@ -213,6 +213,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <filter token="po.port.number" value="${po.port.number}"/>
             <filter token="po.topic.serverName" value="${po.topic.serverName}"/>
             <filter token="po.topic.port" value="${po.topic.port}"/>
+            <filter token="po.topic.userName" value="${po.topic.userName}"/>
+            <filter token="po.topic.password" value="${po.topic.password}"/>
+            <filter token="po.topic.clientId" value="${po.topic.clientId}"/>
             <filter token="gridgrouper.url" value="${cagrid.master.gridgrouper.service.url}"/>
             <filter token="gridgrouper.submitter.group" value="${gridgrouper.submitter.group}"/>
             <filter token="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
