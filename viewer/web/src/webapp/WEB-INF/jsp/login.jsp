@@ -27,7 +27,30 @@
                 <label for="j_password">Password:</label>
             </td>
             <td class="value"><input name="j_password" maxlength="100" size="25" type="password"></td>
-        </tr>
+        </tr>                
+            <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">
+               <c:choose>
+               <c:when test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) == 1 }">
+                  <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
+                    <input type="hidden" name="authenticationServiceURL" value="<c:out value="${item.value}"/>" />
+                  </c:forEach>
+                </c:when>
+                <c:otherwise>
+                <tr>
+                   <td class="label">Account Source: </td>
+                    <td>
+                     <select name="authenticationServiceURL" size="1">
+                        <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
+                        <option value="<c:out value="${item.value}" />">
+                            <c:out value="${item.key}" />
+                        </option>
+                        </c:forEach>
+                    </select>
+                    </td>                    
+                 </tr>
+                </c:otherwise>
+              </c:choose>
+           </c:if>
     </table>
     <div class="actionsrow">
         <del class="btnwrapper">
