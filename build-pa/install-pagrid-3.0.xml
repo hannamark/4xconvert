@@ -511,7 +511,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <target name="install:pa-grid-3.0-jboss:post" unless="exclude.pa-grid-3.0">
     <if>
       <not>
-        <equals arg1="${exclude.jboss.backup}" arg2="true"/>
+        <equals arg1="${exclude.pa-grid-3.0-jboss.backup}" arg2="true"/>
       </not>
       <then>
         <property name="changelogFile-pa-grid-3.0" location="${log.dir}/changeLog-${install.time}.txt"/>
