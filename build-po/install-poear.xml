@@ -334,8 +334,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             <filter token="jdbc.driverClassName" value="${database.driver}"/>
             <filter token="hibernate.dialect" value="${database.dialect}"/>
             <filter token="csm.sync.frequency.seconds" value="${csm.sync.frequency.seconds}"/>
-            <filter token="csm.jdbc.username" value="${database.system.user}"/>
-            <filter token="csm.jdbc.password" value="${database.system.password}"/>
           </filterset>
         </copy>
         <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
