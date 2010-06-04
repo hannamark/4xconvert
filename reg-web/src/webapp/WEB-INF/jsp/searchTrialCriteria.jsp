@@ -28,8 +28,8 @@ function handleAction(){
      document.forms[0].action="searchTrialquery.action";
      document.forms[0].submit();  
 }
-function sendXml(){
-     document.forms[0].action="searchTrialsendXml.action";
+function sendXml(pId){
+     document.forms[0].action="searchTrialsendXml.action?studyProtocolId="+pId;
      document.forms[0].submit();  
 }
 

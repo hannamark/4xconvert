@@ -139,6 +139,7 @@ public class SearchTrialAction extends ActionSupport {
     PAServiceUtils paServiceUtils = new PAServiceUtils();
     TrialUtil trialUtil = new TrialUtil();
     private static final String TRUE = "true";
+    private static final String SPID = "studyProtocolId";
     
     /**
      * @return res
@@ -153,7 +154,7 @@ public class SearchTrialAction extends ActionSupport {
         if (PAUtil.isNotEmpty(trialAction) && (trialAction.equalsIgnoreCase("submit") 
                 || trialAction.equalsIgnoreCase("amend") || trialAction.equalsIgnoreCase("update"))) {
             String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
-            ServletActionContext.getRequest().setAttribute("studyProtocolId", pId);
+            ServletActionContext.getRequest().setAttribute(SPID, pId);
             studyProtocolId = Long.valueOf(pId);
             getCriteria().setMyTrialsOnly("true");
             return view();
@@ -379,7 +380,7 @@ public class SearchTrialAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
             if (studyProtocolId == null) {
-                String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+                String pId = (String) ServletActionContext.getRequest().getParameter(SPID);
                 studyProtocolIi = IiConverter.convertToIi(pId);
             }
             String usercreated = (String) ServletActionContext.getRequest().getParameter("usercreated");
@@ -564,7 +565,7 @@ public class SearchTrialAction extends ActionSupport {
      * @return view
      */
     public String partiallySubmittedView() {
-        String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+        String pId = (String) ServletActionContext.getRequest().getParameter(SPID);
         if (PAUtil.isEmpty(pId)) {
             addActionError("study protocol id cannot null.");
             return ERROR;
@@ -642,7 +643,8 @@ public class SearchTrialAction extends ActionSupport {
      * @return the string
      */
     public String sendXml() {
-        Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+        String pId = (String) ServletActionContext.getRequest().getParameter(SPID);
+        Ii studyProtocolIi = IiConverter.convertToIi(pId);
         try {
             PaRegistry.getMailManagerService().sendXMLAndTSREmail(studyProtocolIi);
         } catch (PAException e) {
