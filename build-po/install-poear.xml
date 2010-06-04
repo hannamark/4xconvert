@@ -435,13 +435,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         <equals arg1="${exclude.jboss.backup}" arg2="true"/>
       </not>
       <then>
-        <var name="changelogFile" value="${log.dir}/changeLog-${install.time}.txt"/>
-        <var name="compare1.dir" value="${backup.po-ear-jboss.base.dir}/backup/${jboss.binaries.relative.dir}"/>
-        <var name="compare2.dir" value="${jboss.home}"/>
+        <var name="changelogFile-po-ear" value="${log.dir}/changeLog-${install.time}.txt"/>
+        <var name="compare1-po-ear.dir" value="${backup.po-ear-jboss.base.dir}/backup/${jboss.binaries.relative.dir}"/>
+        <var name="compare2-po-ear.dir" value="${jboss.home}"/>
         <report-dir-diff
-          dir1="${compare1.dir}"
-          dir2="${compare2.dir}"
-          reportFile="${changelogFile}"
+          dir1="${compare1-po-ear.dir}"
+          dir2="${compare2-po-ear.dir}"
+          reportFile="${changelogFile-po-ear}"
           />
         <!-- Copy app server logs -->
         <mkdir dir="${jboss.home}/server/${jboss.server.name}/log"/>

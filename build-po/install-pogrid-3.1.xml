@@ -472,20 +472,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         <equals arg1="${exclude.po-grid-3.1-jboss.backup}" arg2="true"/>
       </not>
       <then>
-        <var name="changelogFile" value="${log.dir}/changeLog-${install.time}.txt" />
-        <var name="compare1.dir" value="${backup.po-grid-3.1-jboss.base.dir}/backup/${jboss.binaries.relative.dir}"/>
-        <var name="compare2.dir" value="${jboss.home}"/>
+        <var name="changelogFile-po-grid-3.1" value="${log.dir}/changeLog-${install.time}.txt" />
+        <var name="compare1-po-grid-3.1.dir" value="${backup.po-grid-3.1-jboss.base.dir}/backup/${jboss.binaries.relative.dir}"/>
+        <var name="compare2-po-grid-3.1.dir" value="${jboss.home}"/>
         <report-dir-diff
-          dir1="${compare1.dir}"
-          dir2="${compare2.dir}"
-          reportFile="${changelogFile}"
+          dir1="${compare1-po-grid-3.1.dir}"
+          dir2="${compare2-po-grid-3.1.dir}"
+          reportFile="${changelogFile-po-grid-3.1}"
           />
         <!-- Copy app server logs -->
-        <mkdir dir="${jboss.home}/server/${jboss.server.name}/log"/>
-        <mkdir dir="${backup.po-grid-3.1-jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log"/>
+        <mkdir dir="${jboss.home}/server/${po-grid-3.1-jboss.server.name}/log"/>
+        <mkdir dir="${backup.po-grid-3.1-jboss.base.dir}/backup/${po-grid-3.1-jboss.relative.path}/server/${po-grid-3.1-jboss.server.name}/log"/>
         <!-- so the logs wont be included in the zip -->
-        <move todir="${jboss.home}/server/${jboss.server.name}/log">
-          <fileset dir="${backup.po-grid-3.1-jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log">
+        <move todir="${jboss.home}/server/${po-grid-3.1-jboss.server.name}/log">
+          <fileset dir="${backup.po-grid-3.1-jboss.base.dir}/backup/${po-grid-3.1-jboss.relative.path}/server/${po-grid-3.1-jboss.server.name}/log">
             <include name="*"/>
           </fileset>
         </move>
