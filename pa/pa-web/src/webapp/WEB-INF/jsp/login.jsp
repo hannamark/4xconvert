@@ -62,7 +62,7 @@ else
                          value="<c:out value="${item.value}"/>" />
                   </c:forEach>
                   <% } else { %>
-                    Authentication Source:
+                    Account Source:
                      <select name="authenticationServiceURL" size="1">
                         <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
                         <option value="<c:out value="${item.value}" />">

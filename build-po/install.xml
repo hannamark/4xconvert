@@ -221,7 +221,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             <filter token="ctep.jms.topic.connection.factory.name" value="${ctep.jms.topic.connection.factory.name}"/>
             <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
             <filter token="project.name" value="${project.name}"/>
-            <filter token="grid.dorian.name" value="${grid.target}-Dorian"/>
+            <filter token="grid.dorian.name" value="${grid.dorian.name}"/>
             <filter token="grid.dorian.url" value="${cagrid.master.dorian.service.url}"/>
             <filter token="grid.auth.service.url" value="${grid.auth.service.url}"/>
             <filter token="grid.auth.service.name" value="${grid.auth.service.name}"/>
@@ -675,25 +675,30 @@ gov.nih.nci.security.cgmm.login.config.file=@{cgmm.conf.dest.dir}/cgmm.login.con
             <attribute name="grid.target" default="${grid.target}"/>
             <attribute name="grid.auth.service.url.property.name" default="grid.auth.service.url"/>
             <attribute name="grid.auth.service.name.property.name" default="grid.auth.service.name"/>
+            <attribute name="grid.dorian.name.property.name" default="grid.dorian.name"/>
             <sequential>
                 <var name="{grid.auth.service.url.property.name}" unset="true"/>
                 <switch value="@{grid.target}">
                     <case value="nci_prod-1.3">
                         <property name="@{grid.auth.service.url.property.name}" value="https://cagrid-auth.nci.nih.gov:8443/wsrf/services/cagrid/AuthenticationService"/>
-                        <property name="@{grid.auth.service.name.property.name}" value="nci_prod-1.3-Auth-Svc"/>
+                        <property name="@{grid.auth.service.name.property.name}" value="National Cancer Institute"/>
+                        <property name="@{grid.dorian.name.property.name}" value="caBIG"/>
                     </case>
                     <case value="nci_stage-1.3">
                         <property name="@{grid.auth.service.url.property.name}" value="https://cagrid-auth-stage.nci.nih.gov:8443/wsrf/services/cagrid/AuthenticationService"/>
-                        <property name="@{grid.auth.service.name.property.name}" value="nci_stage-1.3-Auth-Svc"/>
+                        <property name="@{grid.auth.service.name.property.name}" value="National Cancer Institute"/>
+                        <property name="@{grid.dorian.name.property.name}" value="Stage"/>
                     </case>
                     <case value="nci_qa-1.3">
                         <property name="@{grid.auth.service.url.property.name}" value="https://cagrid-auth-qa.nci.nih.gov:8443/wsrf/services/cagrid/AuthenticationService"/>
-                        <property name="@{grid.auth.service.name.property.name}" value="nci_qa-1.3-Auth-Svc"/>
+                        <property name="@{grid.auth.service.name.property.name}" value="National Cancer Institute"/>
+                        <property name="@{grid.dorian.name.property.name}" value="QA"/>
                     </case>
                     <case value="training-1.3">
                         <property name="@{grid.auth.service.url.property.name}" value=""/>
                         <property name="@{grid.auth.service.name.property.name}" value=""/>
-                    </case>
+                        <property name="@{grid.dorian.name.property.name}" value="Training"/>
+                   </case>
                     <default>
                         <fail message="grid.target=@{grid.target} is an invalid option, please use a valid name (nci_prod-1.3 nci_stage-1.3 nci_qa-1.3 training-1.3)"/>
                     </default>

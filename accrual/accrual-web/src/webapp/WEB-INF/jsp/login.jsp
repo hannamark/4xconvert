@@ -47,7 +47,7 @@
                        value="<c:out value="${item.value}"/>" />
                 </c:forEach>
             <% } else { %>
-                <td class="label" scope="row">Authentication Source:</td>
+                <td class="label" scope="row">Account Source:</td>
                 <td class="value">
                     <select name="authenticationServiceURL" size="1">
                        <c:forEach var="item" items="${requestScope.AUTHENTICATION_SOURCE_MAP}">

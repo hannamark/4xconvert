@@ -52,7 +52,7 @@
                         <input type="hidden" name="authenticationServiceURL" value="<c:out value="${item.value}"/>" />
                     </c:forEach>
                     <% } else { %>
-                        <label for="authenticationServiceURL">Authentication Source:</label>
+                        <label for="authenticationServiceURL">Account Source:</label>
                         <div class="fieldbox_m">
                             <select name="authenticationServiceURL" size="1">
                                 <c:forEach var="item" items="${requestScope.AUTHENTICATION_SOURCE_MAP}">
