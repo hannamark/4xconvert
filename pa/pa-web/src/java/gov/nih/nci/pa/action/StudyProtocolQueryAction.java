@@ -343,7 +343,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
         }
-        return SHOW_VIEW;
+        return view();
     }
 
     /**
