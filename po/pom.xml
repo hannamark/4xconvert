@@ -51,8 +51,8 @@
         <database.url.prefix>jdbc:postgresql://${database.hostname}:${database.port}/</database.url.prefix>
         <database.name>po</database.name>
         <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
-        <jdbc.username>pouser</jdbc.username>
-        <jdbc.password>pouser</jdbc.password>
+        <jdbc.username>po</jdbc.username>
+        <jdbc.password>po</jdbc.password>
         <jdbc.groupId>postgresql</jdbc.groupId>
         <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
         <jdbc.xa.driverClassName>org.postgresql.xa.PGXADataSource</jdbc.xa.driverClassName>
