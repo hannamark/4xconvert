@@ -18,13 +18,8 @@ function resetSearch() {
     document.getElementById("firstName").value="";
     document.getElementById("lastName").value="";
     document.getElementById("emailAddress").value="";
-    document.getElementById("trialIdentifier").value="";
+    document.getElementById("nciIdentifier").value="";
     submitForm();
-}
-
-function removeOwnership(userId, trialId) {
-    document.forms[0].action="displayTrialOwnershipremoveOwnership.action?userId=" + userId + "&trialId=" + trialId;
-    document.forms[0].submit();
 }
 
 </SCRIPT>
@@ -63,10 +58,10 @@ function removeOwnership(userId, trialId) {
             </tr>
             <tr>
                 <td scope="row" class="label">
-                    <label for="displayTrialOwnership_criteria_trialIdentifier"> <fmt:message key="displaytrialownership.criteria.trialidentifier"/></label>
+                    <label for="displayTrialOwnership_criteria_nciIdentifier"> <fmt:message key="displaytrialownership.criteria.nciidentifier"/></label>
                 </td>
                 <td>
-                    <s:textfield id="trialIdentifier" name="criteria.trialIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textfield id="nciIdentifier" name="criteria.nciIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                 </td>
             </tr>
         </table>
@@ -74,8 +69,8 @@ function removeOwnership(userId, trialId) {
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li>
-                        <s:a href="#" cssClass="btn" onclick="submitForm();"><span class="btn_img"><span class="search"><fmt:message key="displaytrialownership.buttons.search"/></span></span></s:a>
-                        <s:a href="#" cssClass="btn" onclick="resetSearch();"><span class="btn_img"><span class="cancel"><fmt:message key="displaytrialownership.buttons.reset"/></span></span></s:a>
+                       <s:a href="#" cssClass="btn" onclick="submitForm();"><span class="btn_img"><span class="search"><fmt:message key="displaytrialownership.buttons.search"/></span></span></s:a>
+                       <s:a href="#" cssClass="btn" onclick="resetSearch();"><span class="btn_img"><span class="cancel"><fmt:message key="displaytrialownership.buttons.reset"/></span></span></s:a>
                     </li>
                 </ul>
             </del>
@@ -84,14 +79,18 @@ function removeOwnership(userId, trialId) {
         <s:set name="records" value="trialOwnershipInfo" scope="request"/>
         <h2 id="search_results">Search Results</h2>
         <display:table class="data" summary="This table contains your search results."
-                    decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
+                     sort="list" pagesize="10" id="row"
                       name="records" requestURI="displayTrialOwnershipview.action" export="false">
             <display:column titleKey="displaytrialownership.results.firstname" property="firstName" maxLength= "200" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.lastname" property="lastName" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.email" property="emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
-            <display:column titleKey="displaytrialownership.results.trialidentifier" property="officialTitle"  sortable="true" headerClass="sortable" headerScope="col"/>
+            <display:column titleKey="displaytrialownership.results.nciidentifier" property="nciIdentifier"  sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.action">
-                <a href="#" class="btn" onclick="removeOwnership('${row.userId}', '${row.trialId}');">
+                <c:url var="removeUrl" value="displayTrialOwnershipremoveOwnership.action">
+                    <c:param name="userId" value="${row.userId}" />
+                    <c:param name="trialId" value="${row.trialId}" />
+                </c:url>
+                <a href="<c:out value="${removeUrl}"/>" class="btn" >
                     <span class="btn_img"><span class="delete"><fmt:message key="displaytrialownership.buttons.remove"/></span></span>
                 </a>
             </display:column>

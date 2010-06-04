@@ -85,6 +85,7 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -127,7 +128,7 @@ public class RegistryUserServiceTest {
                 criteria.add(Restrictions.eq("csmUser.loginName",
                         loginName));
                 List<User> csmUsers =  criteria.list();
-                
+
                 User csmUser = csmUsers.get(csmUsers.size() - 1);
                 // if csm user exists retrieve the registry user
                 if (csmUser != null) {
@@ -146,13 +147,13 @@ public class RegistryUserServiceTest {
 
         }
     }
-    
+
     private RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
 
     @Before
     public void setUp() throws Exception {
         TestRegistryUserSchema.reset();
-        TestRegistryUserSchema.reset1(); 
+        TestRegistryUserSchema.reset1();
         TestRegistryUserSchema.primeData();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }
@@ -184,7 +185,7 @@ public class RegistryUserServiceTest {
         usrLst = remoteEjb.getUserByUserOrgType(UserOrgType.ADMIN);
         assertTrue(usrLst.size() >= 1);
     }
-   
+
     @Test
     public void hasTrialAccess() throws PAException {
         Long spId = TestRegistryUserSchema.studyProtocolId;
@@ -192,8 +193,15 @@ public class RegistryUserServiceTest {
         assertFalse(remoteEjb.hasTrialAccess("trialOwnerTest", spId));
         assertFalse(remoteEjb.hasTrialAccess("randomUserTest", spId));
     }
-    
-    
+
+    @Test
+    public void searchTrialOwnershipInformation() throws PAException{
+        DisplayTrialOwnershipInformation criteria = new DisplayTrialOwnershipInformation();
+        //criteria.setFirstName("kri");
+        List<DisplayTrialOwnershipInformation> usrLst = remoteEjb.searchTrialOwnership(criteria, Long.parseLong("553"));
+        assertNotNull(usrLst);
+    }
+
     @Test
     public void search() throws PAException{
         List<RegistryUser> usrLst = remoteEjb.search(new RegistryUser());

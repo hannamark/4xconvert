@@ -7,6 +7,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,6 +136,15 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
     public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserService#searchTrialOwnership(gov.nih.nci.pa.util.DisplayTrialOwnershipInformation, java.lang.Long)
+     */
+    public List<DisplayTrialOwnershipInformation> searchTrialOwnership(
+            DisplayTrialOwnershipInformation trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
+        // TODO Auto-generated method stub
+        return new ArrayList<DisplayTrialOwnershipInformation>();
     }
 
 }

@@ -85,6 +85,7 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 
 import java.util.List;
 
@@ -137,6 +138,15 @@ public interface RegistryUserService {
      * @throws PAException on error
      */
     List<RegistryUser> search(RegistryUser regUser) throws PAException;
+
+    /**
+     * @param trialOwnershipInfo the criteria object.
+     * @param affiliatedOrgId the affiliated org id.
+     * @return list of trial ownership information objects.
+     * @throws PAException on error.
+     */
+    List<DisplayTrialOwnershipInformation> searchTrialOwnership(DisplayTrialOwnershipInformation
+            trialOwnershipInfo, Long affiliatedOrgId) throws PAException;
 
     /**
      * Given a login name and study protocol id, find out if the user is

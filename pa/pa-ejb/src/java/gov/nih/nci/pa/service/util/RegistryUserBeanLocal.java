@@ -85,10 +85,12 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.security.SecurityServiceProvider;
@@ -119,9 +121,17 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({"PMD.CyclomaticComplexity" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final Logger LOG = Logger.getLogger(RegistryUserBeanLocal.class);
+    private static final int INDEX_USER_ID = 0;
+    private static final int INDEX_FIRST_NAME = 1;
+    private static final int INDEX_LAST_NAME = 2;
+    private static final int INDEX_EMAIL = 3;
+    private static final int INDEX_TRIAL_ID = 4;
+    private static final int INDEX_NCI_IDENTIFIER = 5;
+    private static final int INDEX_ORG_ID = 6;
+
 
     /**
      * {@inheritDoc}
@@ -324,6 +334,67 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return registryUserList;
     }
 
+    /**
+     * @param trialOwnershipInfo the criteria object.
+     * @param affiliatedOrgId the affiliated org id.
+     * @return list of trial ownership information objects.
+     * @throws PAException on error.
+     */
+    public List<DisplayTrialOwnershipInformation> searchTrialOwnership(DisplayTrialOwnershipInformation
+            trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
+        List<DisplayTrialOwnershipInformation> lst = new ArrayList<DisplayTrialOwnershipInformation>();
+        StringBuffer hql = new StringBuffer();
+        hql.append("select sowner.id, sowner.firstName, sowner.lastName, sowner.emailAddress, "
+                + "sp.id, sp.otherIdentifiers.extension, sowner.affiliatedOrganizationId "
+                + "from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws "
+                + "left outer join sp.studySites as sps "
+                + "left outer join sps.researchOrganization as ro left outer join ro.organization as org "
+                + " left outer join sp.studyOwners as sowner where '")
+                .append(affiliatedOrgId.toString())
+                .append("' in (select researchOrganization.organization.identifier from StudySite "
+                        + "where functionalCode ='")
+                .append(StudySiteFunctionalCode.LEAD_ORGANIZATION)
+                .append("' and studyProtocol.id = sp.id) and dws.statusCode  <> '")
+                .append(DocumentWorkflowStatusCode.REJECTED)
+                .append("' and (dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+                        + "where sp.id=dws1.studyProtocol) or dws.id is null) and sps.functionalCode = '")
+                .append(StudySiteFunctionalCode.LEAD_ORGANIZATION)
+                .append("' and sp.otherIdentifiers.root = '")
+                .append(IiConverter.STUDY_PROTOCOL_ROOT)
+                .append("' and sowner.id IS NOT NULL ");
+
+        String criteriaClause = getTrialOwnershipInformationSearchCriteria(trialOwnershipInfo);
+        if (StringUtils.isNotEmpty(criteriaClause)) {
+            hql.append(criteriaClause);
+        }
+
+        Session session = HibernateUtil.getCurrentSession();
+        Query query = session.createQuery(hql.toString());
+        for (Iterator iter = query.iterate(); iter.hasNext();) {
+            Object[] row = (Object[]) iter.next();
+            DisplayTrialOwnershipInformation trialInfo = new DisplayTrialOwnershipInformation();
+            trialInfo.setUserId(row[INDEX_USER_ID].toString());
+            trialInfo.setFirstName(row[INDEX_FIRST_NAME].toString());
+            trialInfo.setLastName(row[INDEX_LAST_NAME].toString());
+            trialInfo.setEmailAddress(row[INDEX_EMAIL].toString());
+            trialInfo.setTrialId(row[INDEX_TRIAL_ID].toString());
+            trialInfo.setNciIdentifier(row[INDEX_NCI_IDENTIFIER].toString());
+            trialInfo.setAffiliatedOrgId(row[INDEX_ORG_ID].toString());
+            lst.add(trialInfo);
+        }
+
+        return lst;
+    }
+
+    private String getTrialOwnershipInformationSearchCriteria(DisplayTrialOwnershipInformation criteria) {
+        StringBuffer criteriaClause = new StringBuffer();
+        criteriaClause.append(addCriteria("sowner.firstName", criteria.getFirstName()))
+            .append(addCriteria("sowner.lastName", criteria.getLastName()))
+            .append(addCriteria("sowner.emailAddress", criteria.getEmailAddress()))
+            .append(addCriteria("sp.otherIdentifiers.extension", criteria.getNciIdentifier()));
+        return criteriaClause.toString();
+    }
+
     private void addCriteria(Criteria criteria, Long id, String criteriaName) {
         if (id != null) {
             criteria.add(Restrictions.eq(criteriaName, id));
@@ -335,6 +406,16 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             criteria.add(Restrictions.ilike(criteriaName, criteriaValue + "%"));
         }
     }
+
+    private String addCriteria(String criteriaName, String criteriaValue) {
+        StringBuffer retVal = new StringBuffer();
+        if (StringUtils.isNotEmpty(criteriaValue)) {
+            retVal.append(" and (lower(").append(criteriaName).append(") like lower('")
+            .append(criteriaValue).append("%')) ");
+        }
+        return retVal.toString();
+    }
+
     /**
      * Assign ownership of given protocol to given user.
      * @param userId user id

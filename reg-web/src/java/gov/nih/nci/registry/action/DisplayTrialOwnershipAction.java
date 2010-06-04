@@ -84,30 +84,27 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.registry.util.DisplayTrialOwnershipCriteria;
-import gov.nih.nci.registry.util.DisplayTrialOwnershipInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
+ * Action class for displaying the trial ownership information.
  * @author kkanchinadam
  *
  */
 public class DisplayTrialOwnershipAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
-    private static final Logger LOG  = Logger.getLogger(DisplayTrialOwnershipAction.class);
-    private List<DisplayTrialOwnershipInfo> trialOwnershipInfo = new ArrayList<DisplayTrialOwnershipInfo>();
-    private DisplayTrialOwnershipCriteria criteria = new DisplayTrialOwnershipCriteria();
+    private List<DisplayTrialOwnershipInformation> trialOwnershipInfo =
+        new ArrayList<DisplayTrialOwnershipInformation>();
+    private DisplayTrialOwnershipInformation criteria = new DisplayTrialOwnershipInformation();
     private static final String TRIAL_INFO = "trialInfoList";
     private static final String VIEW_RESULTS = "viewResults";
     private static final String SUCCESS_MSG = "successMessage";
@@ -129,7 +126,7 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
      */
     @SuppressWarnings("unchecked")
     public String view() {
-        trialOwnershipInfo = (List<DisplayTrialOwnershipInfo>) ServletActionContext.getRequest().getSession().
+        trialOwnershipInfo = (List<DisplayTrialOwnershipInformation>) ServletActionContext.getRequest().getSession().
         getAttribute(DisplayTrialOwnershipAction.TRIAL_INFO);
         return VIEW_RESULTS;
     }
@@ -154,75 +151,44 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
     }
 
     private void performSearch() throws PAException {
-        RegistryUser regUserCriteria = new RegistryUser();
-        String loginName = null;
-        ServletActionContext.getRequest().getSession().removeAttribute(DisplayTrialOwnershipAction.TRIAL_INFO);
         try {
-            loginName =  ServletActionContext.getRequest().getRemoteUser();
+            ServletActionContext.getRequest().getSession().removeAttribute(DisplayTrialOwnershipAction.TRIAL_INFO);
+            String loginName = ServletActionContext.getRequest().getRemoteUser();
             RegistryUser loggedInUser = PaRegistry.getRegisterUserService().getUser(loginName);
-            regUserCriteria.setFirstName(criteria.getFirstName());
-            regUserCriteria.setLastName(criteria.getLastName());
-            regUserCriteria.setEmailAddress(criteria.getEmailAddress());
-            regUserCriteria.setAffiliatedOrganizationId(loggedInUser.getAffiliatedOrganizationId());
-            StudyProtocol sp = new StudyProtocol();
-            sp.setOfficialTitle(criteria.getTrialIdentifier());
-            regUserCriteria.getStudyProtocols().add(sp);
-            trialOwnershipInfo = getTrialOwners(regUserCriteria);
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    DisplayTrialOwnershipAction.TRIAL_INFO, trialOwnershipInfo);
-
-       } catch (PAException e) {
-           LOG.error(e.getMessage());
-           throw new PAException(e);
-       }
-    }
-
-    private List<DisplayTrialOwnershipInfo> getTrialOwners(RegistryUser regUserCriteria) throws PAException {
-        List<RegistryUser> allUsers = PaRegistry.getRegisterUserService().search(regUserCriteria);
-        // Filter the records.
-        List<DisplayTrialOwnershipInfo> trialOwnershipDetails = new ArrayList<DisplayTrialOwnershipInfo>();
-
-        for (RegistryUser user : allUsers) {
-            user = (RegistryUser) HibernateUtil.getCurrentSession().get(RegistryUser.class, user.getId());
-            for (StudyProtocol sp : user.getStudyProtocols()) {
-                DisplayTrialOwnershipInfo trialInfo = new DisplayTrialOwnershipInfo();
-                trialInfo.setUserId(user.getId());
-                trialInfo.setFirstName(user.getFirstName());
-                trialInfo.setLastName(user.getLastName());
-                trialInfo.setEmailAddress(user.getEmailAddress());
-                trialInfo.setTrialId(sp.getId());
-                trialInfo.setOfficialTitle(sp.getOfficialTitle());
-                trialOwnershipDetails.add(trialInfo);
-            }
+            trialOwnershipInfo = PaRegistry.getRegisterUserService().searchTrialOwnership(criteria,
+                    loggedInUser.getAffiliatedOrganizationId());
+            ServletActionContext.getRequest().getSession().setAttribute(DisplayTrialOwnershipAction.TRIAL_INFO,
+                    trialOwnershipInfo);
+        } catch (Exception e) {
+            throw new PAException(e);
         }
-        return trialOwnershipDetails;
     }
 
     /**
      * @return the trialOwnershipInfo
      */
-    public List<DisplayTrialOwnershipInfo> getTrialOwnershipInfo() {
+    public List<DisplayTrialOwnershipInformation> getTrialOwnershipInfo() {
         return trialOwnershipInfo;
     }
 
     /**
      * @param trialOwnershipInfo the trialOwnershipInfo to set
      */
-    public void setTrialOwnershipInfo(List<DisplayTrialOwnershipInfo> trialOwnershipInfo) {
+    public void setTrialOwnershipInfo(List<DisplayTrialOwnershipInformation> trialOwnershipInfo) {
         this.trialOwnershipInfo = trialOwnershipInfo;
     }
 
     /**
      * @return the criteria
      */
-    public DisplayTrialOwnershipCriteria getCriteria() {
+    public DisplayTrialOwnershipInformation getCriteria() {
         return criteria;
     }
 
     /**
      * @param criteria the criteria to set
      */
-    public void setCriteria(DisplayTrialOwnershipCriteria criteria) {
+    public void setCriteria(DisplayTrialOwnershipInformation criteria) {
         this.criteria = criteria;
     }
 

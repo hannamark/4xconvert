@@ -81,91 +81,121 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package gov.nih.nci.registry.util;
+package gov.nih.nci.pa.util;
 
+import java.io.Serializable;
 
 /**
- * Information for displaying trial ownership.
+ * Class for querying/displaying trial ownership information.
  * @author kkanchinadam
  *
  */
-public class DisplayTrialOwnershipInfo {
-    private Long userId;
+public class DisplayTrialOwnershipInformation implements Serializable {
+    private String userId;
     private String firstName;
     private String lastName;
     private String emailAddress;
-    private Long trialId;
-    private String officialTitle;
+    private String trialId;
+    private String nciIdentifier;
+    private String affiliatedOrgId;
+    private static final long serialVersionUID = 1L;
+
     /**
      * @return the userId
      */
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
+
     /**
      * @param userId the userId to set
      */
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
+
     /**
      * @return the firstName
      */
     public String getFirstName() {
         return firstName;
     }
+
     /**
      * @param firstName the firstName to set
      */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+
     /**
      * @return the lastName
      */
     public String getLastName() {
         return lastName;
     }
+
     /**
      * @param lastName the lastName to set
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
     /**
      * @return the emailAddress
      */
     public String getEmailAddress() {
         return emailAddress;
     }
+
     /**
      * @param emailAddress the emailAddress to set
      */
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
+
     /**
      * @return the trialId
      */
-    public Long getTrialId() {
+    public String getTrialId() {
         return trialId;
     }
+
     /**
      * @param trialId the trialId to set
      */
-    public void setTrialId(Long trialId) {
+    public void setTrialId(String trialId) {
         this.trialId = trialId;
     }
+
     /**
-     * @return the officialTitle
+     * @return the nciIdentifier
      */
-    public String getOfficialTitle() {
-        return officialTitle;
+    public String getNciIdentifier() {
+        return nciIdentifier;
     }
+
     /**
-     * @param officialTitle the officialTitle to set
+     * @param nciIdentifier the nciIdentifier to set
      */
-    public void setOfficialTitle(String officialTitle) {
-        this.officialTitle = officialTitle;
+    public void setNciIdentifier(String nciIdentifier) {
+        this.nciIdentifier = nciIdentifier;
     }
+
+    /**
+     * @return the affiliatedOrgId
+     */
+    public String getAffiliatedOrgId() {
+        return affiliatedOrgId;
+    }
+
+    /**
+     * @param affiliatedOrgId the affiliatedOrgId to set
+     */
+    public void setAffiliatedOrgId(String affiliatedOrgId) {
+        this.affiliatedOrgId = affiliatedOrgId;
+    }
+
 }
