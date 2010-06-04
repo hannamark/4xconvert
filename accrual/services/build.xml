@@ -78,7 +78,7 @@
     <!-- ====================================================================== -->
     <!-- Task definitions                                                       -->
     <!-- ====================================================================== -->
-    
+
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${services.report.dir}"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
@@ -87,7 +87,7 @@
     <!-- Cleaning target                                                        -->
     <!-- ====================================================================== -->
 
-    <target name="pre-clean" 
+    <target name="pre-clean"
             description="Deletes subproject's classes and other target directories which should not exist before starting the build">
         <delete dir="${services.build.dir}"/>
     </target>
@@ -97,7 +97,7 @@
     <!-- Get hibernate annotated classes/configuration                          -->
     <!-- ====================================================================== -->
 
-    <target name="get-domain"> 
+    <target name="get-domain">
         <delete dir="${services.build.domainDir}"/>
         <!-- <copy todir="${services.build.domainDir}/domain">
             <fileset dir="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/domain"/>
@@ -118,6 +118,7 @@
         </copy>
         <copy todir="${services.build.domainDir}/util">
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/util/PaEarPropertyReader.java"/>
+            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/util/DisplayTrialOwnershipInformation.java"/>
         </copy>
         <copy todir="${services.build.domainDir}/service/correlation">
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/correlation/OrganizationCorrelationServiceRemote.java"/>
@@ -134,20 +135,20 @@
 
     <target name="compile" depends="pre-clean, get-domain" description="Compiles the subproject">
         <mkdir dir="${services.build.outputDir}"/>
-        <javac destdir="${services.build.outputDir}" 
-               nowarn="false" 
-               debug="true" 
-               optimize="false" 
-               deprecation="true" 
-               target="1.5" 
-               verbose="false" 
-               fork="false" 
+        <javac destdir="${services.build.outputDir}"
+               nowarn="false"
+               debug="true"
+               optimize="false"
+               deprecation="true"
+               target="1.5"
+               verbose="false"
+               fork="false"
                source="1.5">
             <src>
                 <pathelement location="${services.build.srcDir}"/>
             </src>
             <classpath>
-                <path refid="compile.classpath"/> 
+                <path refid="compile.classpath"/>
             </classpath>
         </javac>
         <fail unless="hibernate.dialect" message="Property hibernate.dialect not set.  Check build.properties file."/>
@@ -157,7 +158,7 @@
         <fail unless="po.server.name" message="Property po.server.name not set.  Check build.properties file."/>
         <fail unless="po.username" message="Property po.username not set.  Check build.properties file."/>
         <fail unless="po.pass" message="Property po.pass not set.  Check build.properties file."/>
-        
+
         <fail unless="outcomes.url" message="Property outcomes.cds.url not set.  Check build.properties file."/>
         <fail unless="outcomes.cds.url" message="Property outcomes.cds.url not set.  Check build.properties file."/>
         <fail unless="outcomes.phr.system.id" message="Property outcomes.phr.system.id not set.  Check build.properties file."/>
@@ -176,7 +177,7 @@
             	<filter token="po.username" value="${po.username}"/>
             	<filter token="po.pass" value="${po.pass}"/>
                 <filter token="po.server.name" value="${po.server.name}"/>
-                
+
                 <filter token="outcomes.url" value="${outcomes.url}"/>
                 <filter token="outcomes.cds.url" value="${outcomes.cds.url}"/>
                 <filter token="outcomes.phr.system.id" value="${outcomes.phr.system.id}"/>
@@ -193,25 +194,25 @@
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests" 
-      depends="compile" 
-      description="Compile the test code"> 
+    <target name="compile-tests"
+      depends="compile"
+      description="Compile the test code">
         <mkdir dir="${services.build.testOutputDir}"/>
-        <javac destdir="${services.build.testOutputDir}" 
-               nowarn="false" 
-               debug="true" 
-               optimize="false" 
-               deprecation="true" 
-               target="1.5" 
-               verbose="false" 
-               fork="false" 
+        <javac destdir="${services.build.testOutputDir}"
+               nowarn="false"
+               debug="true"
+               optimize="false"
+               deprecation="true"
+               target="1.5"
+               verbose="false"
+               fork="false"
                source="1.5">
             <src>
                 <pathelement location="${services.build.testSrcDir}"/>
             </src>
             <classpath>
-                <pathelement location="${services.build.outputDir}"/> 
-                <path refid="compile.classpath"/> 
+                <pathelement location="${services.build.outputDir}"/>
+                <path refid="compile.classpath"/>
                 <path refid="test.classpath"/>
             </classpath>
         </javac>
@@ -256,18 +257,18 @@
                 </fileset>
             </batchtest>
         </junit>
-        
+
         <cobertura-report datafile="${services.build.dir}/cobertura.ser"
-                          destdir="${services.test.reports}" 
+                          destdir="${services.test.reports}"
                           srcdir="${services.build.srcDir}"/>
-        
+
         <cobertura-report datafile="${services.build.dir}/cobertura.ser"
                           format="xml"
-                          destdir="${services.test.reports}" 
+                          destdir="${services.test.reports}"
                           srcdir="${services.build.srcDir}"/>
 
         <cobertura-check datafile="${services.build.dir}/cobertura.ser"
-                         totalbranchrate="2" 
+                         totalbranchrate="2"
                          totallinerate="2"
                          haltonfailure="true"/>
      </target>
@@ -278,9 +279,9 @@
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle">
-        <taskdef resource="checkstyletask.properties" 
+        <taskdef resource="checkstyletask.properties"
              classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
-             
+
         <checkstyle config="${checkstyleFile}" failOnViolation="true">
         	<fileset dir="src">
         	        <include name="**/accrual/**/*.java"/>
@@ -300,11 +301,11 @@
     <!-- ====================================================================== -->
 
     <target name="test-pmd">
-        <taskdef name="pmd" 
+        <taskdef name="pmd"
              classpath="${test-pmd.jar.dir}/pmd-4.2.2.jar"
              classname="net.sourceforge.pmd.ant.PMDTask"/>
-             
-        <pmd shortFilenames="true" failOnRuleViolation="true" 
+
+        <pmd shortFilenames="true" failOnRuleViolation="true"
                                    rulesetfiles="${pmdFile}">
             <classpath refid="compile.classpath"/>
             <formatter type="text" toConsole="true"/>
@@ -323,7 +324,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-simian">
-       <taskdef resource="simiantask.properties" 
+       <taskdef resource="simiantask.properties"
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
        <simian>
        		<fileset dir="src">
@@ -364,14 +365,14 @@
     <!-- ====================================================================== -->
 
     <target name="create-jar" depends="compile">
-        <jar jarfile="${services.build.dir}/${services.jar}" 
-             compress="true" 
-             index="false" 
+        <jar jarfile="${services.build.dir}/${services.jar}"
+             compress="true"
+             index="false"
              basedir="${services.build.outputDir}"/>
-    	
-    	<jar jarfile="${services.build.dir}/${services-client.jar}" 
-    	             compress="true" 
-    	             index="false" 
+
+    	<jar jarfile="${services.build.dir}/${services-client.jar}"
+    	             compress="true"
+    	             index="false"
     	             basedir="${services.build.outputDir}"
     	             includes="**/*.class"
     	             excludes="**/pa/**/*.class
@@ -392,11 +393,11 @@
     		                        **/svc/util/*.class
     		"/>
     </target>
-    
-    <target name="jar" depends="ivy-get, create-jar, test-dynamic-analysis" 
+
+    <target name="jar" depends="ivy-get, create-jar, test-dynamic-analysis"
             description="Makes services jar">
     </target>
-    
+
     <target name="jar-notest" depends="ivy-compile, create-jar"
             description="Makes services jar, doesn't run tests">
     </target>
@@ -414,7 +415,7 @@
         <property name="ivy.dep.file" value="${ivy.def.file}"/>
         <ivy:settings file="${ivy.settings.file}"/>
     </target>
-    
+
     <target name="ivy-test-pmd" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-pmd"/>
         <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="test-pmd"/>
@@ -435,24 +436,24 @@
         <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura"/>
     </target>
 
-    <target name="ivy-compile" depends="init:ivy" 
+    <target name="ivy-compile" depends="init:ivy"
             description="Resolves and retrieves the JARs needed to compile the subproject">
         <ivy:resolve refresh="true" conf="compile"/>
         <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="compile"/>
     </target>
 
-    <target name="ivy-test" 
-            depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-cobertura" 
+    <target name="ivy-test"
+            depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-cobertura"
             description="Resolves and retrieves the JARs needed to test the subproject">
         <ivy:resolve refresh="true" conf="test"/>
         <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="test"/>
     </target>
 
-    <target name="ivy-get" 
-            depends="ivy-compile, ivy-test" 
+    <target name="ivy-get"
+            depends="ivy-compile, ivy-test"
             description="Updates the local ivy repository">
     </target>
-    
+
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/services"/>
     </target>
