@@ -8,6 +8,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.List;
@@ -155,6 +156,14 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote 
      */
     public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<DisplayTrialOwnershipInformation> searchTrialOwnership(
+            DisplayTrialOwnershipInformation trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
+        return null;
     }
 
 }
