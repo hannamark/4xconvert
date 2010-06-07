@@ -62,18 +62,15 @@
                 </td>
             </tr>
 </table>
-<c:set var="authMap" scope="page"
-                value="${applicationScope['AUTHENTICATION_SOURCE_MAP']}"/>
-            <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">
-                  <%
-                    java.util.Map myMap = (java.util.Map)session.getServletContext().getAttribute("AUTHENTICATION_SOURCE_MAP");
-                    if (myMap.size() == 1) {
-                  %>
+         <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">
+         <c:choose>
+             <c:when test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) == 1}">
                   <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
                     <input type="hidden" name="authenticationServiceURL"
                          value="<c:out value="${item.value}"/>" />
                   </c:forEach>
-                  <% } else { %>
+             </c:when>
+             <c:otherwise>
                     Identity Provider:
                      <select name="authenticationServiceURL" size="1">
                         <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
@@ -82,8 +79,9 @@
                         </option>
                         </c:forEach>
                     </select>
-                 <% } %>
-               </c:if>
+             </c:otherwise>
+         </c:choose>
+      </c:if>
             </div>
            <div class="actionsrow">
             <del class="btnwrapper">
