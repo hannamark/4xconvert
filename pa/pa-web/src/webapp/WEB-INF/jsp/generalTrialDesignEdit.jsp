@@ -1,8 +1,8 @@
-<!DOCTYPE html PUBLIC 
+<!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
+
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title><fmt:message key="studyProtocol.general.title"/></title>
@@ -19,28 +19,28 @@
      <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
      <c:url value="/protected/ajaxTrialValidationgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
 <c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
-<!-- /po integration -->    
- <script type="text/javascript"> 
+<!-- /po integration -->
+ <script type="text/javascript">
     var orgid;
     var persid;
     var contactMail;
     var contactPhone;
-    var selectedName;    
-    
+    var selectedName;
+
     // this function is called from body onload in main.jsp (decorator)
     function callOnloadFunctions(){
         setFocusToFirstControl();
     }
-    
+
     function handleAction(){
         document.forms[0].action="generalTrialDesignupdate.action";
-        document.forms[0].submit(); 
-    } 
-    //function which handles the remove of the Central contact.   
+        document.forms[0].submit();
+    }
+    //function which handles the remove of the Central contact.
     function handleRemove(){
         document.forms[0].action="generalTrialDesignremoveCentralContact.action";
-        document.forms[0].submit(); 
-    }    
+        document.forms[0].submit();
+    }
     function lookup4loadresponsibleparty(){
        var orgid = document.getElementById('sponsorIdentifier').value;
        showPopup('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, createOrgContactDiv, 'Select Responsible contact');
@@ -57,21 +57,21 @@
     }
     function tooltip() {
         BubbleTips.activateTipOn("acronym");
-        BubbleTips.activateTipOn("dfn"); 
+        BubbleTips.activateTipOn("dfn");
     }
     function lookupCentralContact(){
     	showPopup('${lookupPersUrl}', loadCentralContactDiv, 'Select Central Contact');
     }
-    
+
     function loadCentralContactDiv() {
         var url = 'ajaxTrialValidationdisplayCentralContact.action?persId='+persid;
         document.getElementById('gtdDTO.centralContactTitle').value = '';
         document.getElementById('gtdDTO.centralContactIdentifier').value =  persid;
         document.getElementById("gtdDTO.centralContactEmail").value = '';
         document.getElementById("gtdDTO.centralContactPhone").value = '';
-        var div = document.getElementById('loadCentralContactDiv');   
+        var div = document.getElementById('loadCentralContactDiv');
         div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-        callAjax(url, div);    
+        callAjax(url, div);
     }
     function lookupGenericCentralContact(){
         var orgid = document.getElementById('gtdDTO.leadOrganizationIdentifier').value;
@@ -80,15 +80,15 @@
     function createGenericCentralContactDiv() {
        document.getElementById('gtdDTO.centralContactName').value = '';
        document.getElementById('gtdDTO.centralContactTitle').value = selectedName;
-       document.getElementById('gtdDTO.centralContactIdentifier').value =  persid;   
+       document.getElementById('gtdDTO.centralContactIdentifier').value =  persid;
        document.getElementById("gtdDTO.centralContactEmail").value = contactMail;
-       document.getElementById("gtdDTO.centralContactPhone").value = contactPhone;    
+       document.getElementById("gtdDTO.centralContactPhone").value = contactPhone;
     }
 
     function loadDiv(orgid){
     	document.getElementById('gtdDTO.centralContactName').value = "";
         document.getElementById('gtdDTO.centralContactTitle').value = "";
-        document.getElementById('gtdDTO.centralContactIdentifier').value =  "";   
+        document.getElementById('gtdDTO.centralContactIdentifier').value =  "";
         document.getElementById("gtdDTO.centralContactEmail").value = "";
         document.getElementById("gtdDTO.centralContactPhone").value = "";
     }
@@ -99,7 +99,7 @@
         return false;
     }
 </script>
-    
+
 </head>
 
 <body>
@@ -114,9 +114,10 @@
   <pa:sucessMessage/>
    <pa:failureMessage/>
     <s:form >
-    <s:actionerror/> 
+    <s:actionerror/>
     <table class="form">
-    <h2>General Trial Details</h2>    
+    <h2>General Trial Details</h2>
+    <s:hidden name="gtdDTO.submissionNumber" id="gtdDTO.submissionNumber"/>
      <s:hidden name="gtdDTO.nonOtherIdentifiers.extension" id="gtdDTO.nonOtherIdentifiers.extension"/>
      <s:hidden name="gtdDTO.nonOtherIdentifiers.root" id="gtdDTO.nonOtherIdentifiers.root"/>
      <s:hidden name="gtdDTO.nonOtherIdentifiers.identifierName" id="gtdDTO.nonOtherIdentifiers.identifierName"/>
@@ -127,7 +128,7 @@
         <s:hidden name="gtdDTO.primaryPurposeOtherText" id= "gtdDTO.primaryPurposeOtherText"></s:hidden>        
         <tr>
         <td scope="row" class="label">
-          <a href="http://ClinicalTrials.gov">ClinicalTrials.gov</a> XML required?  
+          <a href="http://ClinicalTrials.gov">ClinicalTrials.gov</a> XML required?
         </td>
         <td>
           <s:radio name="gtdDTO.ctGovXmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="toggledisplayDivs(this);"/>
@@ -144,58 +145,58 @@
     <tr>
         <td scope="row" class="label"><label for="LocalProtocolIdentifier">
              <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/><span class="required">*</span></label> </td>
-        <td><s:textfield name="gtdDTO.localProtocolIdentifier" id="gtdDTO.localProtocolIdentifier"/> 
-        <span class="formErrorMsg"> 
+        <td><s:textfield name="gtdDTO.localProtocolIdentifier" id="gtdDTO.localProtocolIdentifier"/>
+        <span class="formErrorMsg">
              <s:fielderror>
                <s:param>gtdDTO.localProtocolIdentifier</s:param>
-             </s:fielderror>                            
+             </s:fielderror>
           </span> </td>
     </tr>
     <tr>
         <td scope="row" class="label"><label for="Nct Identifier">
              <fmt:message key="studyProtocol.nctNumber"/></label> </td>
-        <td><s:textfield name="gtdDTO.nctIdentifier" id="gtdDTO.nctIdentifier"/> 
-        <span class="formErrorMsg"> 
+        <td><s:textfield name="gtdDTO.nctIdentifier" id="gtdDTO.nctIdentifier"/>
+        <span class="formErrorMsg">
              <s:fielderror>
                <s:param>gtdDTO.nctIdentifier</s:param>
-             </s:fielderror>                            
+             </s:fielderror>
           </span> </td>
     </tr>
     <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
     <tr>
         <td scope="row" class="label"><label for="CtepIdentifier">
              <fmt:message key="studyProtocol.ctepId"/></label> </td>
-        <td><s:textfield name="gtdDTO.ctepIdentifier" id="gtdDTO.ctepIdentifier"/> 
-        <span class="formErrorMsg"> 
+        <td><s:textfield name="gtdDTO.ctepIdentifier" id="gtdDTO.ctepIdentifier"/>
+        <span class="formErrorMsg">
              <s:fielderror>
                <s:param>gtdDTO.ctepIdentifier</s:param>
-             </s:fielderror>                            
+             </s:fielderror>
           </span> </td>
     </tr>
     <tr>
         <td scope="row" class="label"><label for="dcpIdentifier">
              <fmt:message key="studyProtocol.dcpId"/></label> </td>
-        <td><s:textfield name="gtdDTO.dcpIdentifier" id="gtdDTO.dcpIdentifier"/> 
-        <span class="formErrorMsg"> 
+        <td><s:textfield name="gtdDTO.dcpIdentifier" id="gtdDTO.dcpIdentifier"/>
+        <span class="formErrorMsg">
              <s:fielderror>
                <s:param>gtdDTO.dcpIdentifier</s:param>
-             </s:fielderror>                            
+             </s:fielderror>
           </span> </td>
     </tr>
     </c:if>
-    
+
     <c:if test="${sessionScope.trialSummary.isProprietaryTrial != null && sessionScope.trialSummary.isProprietaryTrial == 'true'}">
       <tr>
         <td scope="row" class="label"><label for="studyPhase">
              <fmt:message key="studyProtocol.studyPhase"/><span class="required">*</span></label> </td>
         <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
         <td>
-            <s:select headerKey="" headerValue="" name="gtdDTO.phaseCode" list="#phaseCodeValues" 
+            <s:select headerKey="" headerValue="" name="gtdDTO.phaseCode" list="#phaseCodeValues"
                 value="gtdDTO.phaseCode" cssStyle="width:120px" />
-            <span class="formErrorMsg"> 
+            <span class="formErrorMsg">
              <s:fielderror>
                <s:param>gtdDTO.phaseCode</s:param>
-             </s:fielderror>                            
+             </s:fielderror>
           </span>
         </td>
     </tr>
@@ -204,12 +205,12 @@
             <fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
         <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
         <td>
-          <s:select headerKey="" headerValue="" name="gtdDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
+          <s:select headerKey="" headerValue="" name="gtdDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"
                    value="gtdDTO.primaryPurposeCode" cssStyle="width:150px" onchange="activate()"/>
-          <span class="formErrorMsg"> 
+          <span class="formErrorMsg">
              <s:fielderror>
                <s:param>gtdDTO.primaryPurposeCode</s:param>
-             </s:fielderror>                            
+             </s:fielderror>
           </span>
         </td>
     </tr>
@@ -225,7 +226,7 @@
            </label>
          </td>
          <td class="value">
-        <s:textfield name="gtdDTO.acronym" cssStyle="width:86px" maxlength="14"/> 
+        <s:textfield name="gtdDTO.acronym" cssStyle="width:86px" maxlength="14"/>
         </td>
     </tr>
      <tr>
@@ -237,11 +238,11 @@
        </td>
        <td class="value">
             <s:textarea name="gtdDTO.officialTitle" cssStyle="width:606px" rows="4"/>
-            <span class="formErrorMsg"> 
+            <span class="formErrorMsg">
                     <s:fielderror>
                     <s:param>gtdDTO.officialTitle</s:param>
-                   </s:fielderror>                            
-                 </span> 
+                   </s:fielderror>
+                 </span>
        </td>
     </tr>
     <tr>
@@ -253,19 +254,19 @@
            </label>
          </td>
          <td class="value">
-             <s:textarea name="gtdDTO.keywordText" cssStyle="width:606px" rows="4"/> 
+             <s:textarea name="gtdDTO.keywordText" cssStyle="width:606px" rows="4"/>
         </td>
-        
+
     </tr>
     <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>
     <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
     <tr>
         <th colspan="2"> Central Contact</th>
-    </tr> 
-    <tr> 
+    </tr>
+    <tr>
             <td/>
             <td class="info" colspan="2">Assign values to all fields below if central contact information is recorded; otherwise leave these fields empty.</td>
-     </tr>   
+     </tr>
     <tr >
         <td scope="row" class="label" >
             <label for="nciIdentifier"> Central Contact </label>
@@ -273,7 +274,7 @@
         <td class="value">
             <div id="loadCentralContactDiv">
             <%@ include file="/WEB-INF/jsp/nodecorate/centralContact.jsp" %>
-            </div>    
+            </div>
         </td>
       </tr>
       <tr>
@@ -282,9 +283,9 @@
     <tr>
     <td scope="row" class="label"><s:label for="Generic Contact">Generic Contact:</s:label></td>
     <td>
-    <table> 
+    <table>
         <tr>
-        <td><s:textfield label="Central Contact title" name="gtdDTO.centralContactTitle" id="gtdDTO.centralContactTitle" size="30"  
+        <td><s:textfield label="Central Contact title" name="gtdDTO.centralContactTitle" id="gtdDTO.centralContactTitle" size="30"
             readonly="true" cssClass="readonly" cssStyle="width:200px"/>
         </td>
         <td>
@@ -302,10 +303,10 @@
             </td>
             <td class="value">
                 <s:textfield name="gtdDTO.centralContactEmail" id="gtdDTO.centralContactEmail" maxlength="200" size="100"  cssStyle="width:200px" />
-                <span class="formErrorMsg"> 
+                <span class="formErrorMsg">
                     <s:fielderror>
                     <s:param>gtdDTO.centralContactEmail</s:param>
-                   </s:fielderror>                            
+                   </s:fielderror>
                  </span>
             </td>
         </tr>
@@ -314,16 +315,16 @@
             <td class="value">
                 <s:textfield name="gtdDTO.centralContactPhone" id="gtdDTO.centralContactPhone" maxlength="200" size="15"  cssStyle="width:100px" />
                 Extn:<s:textfield name="gtdDTO.centralContactPhoneExtn" id="gtdDTO.centralContactPhoneExtn" maxlength="15" size="10"  cssStyle="width:60px" />
-                <span class="formErrorMsg"> 
+                <span class="formErrorMsg">
                     <s:fielderror>
                     <s:param>gtdDTO.centralContactPhone</s:param>
-                   </s:fielderror>                            
+                   </s:fielderror>
                  </span>
-                
-            </td>           
-        </tr>             
+
+            </td>
+        </tr>
     </c:if>
-    </table>  
+    </table>
          <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">
@@ -331,14 +332,14 @@
                 					|| (sessionScope.role == 'SuAbstractor')}">
                     <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
                  </c:if>
-                 <!-- 
+                 <!--
                    <li><a href="manageAccrualAccess.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
                    <li><a href="nciSpecificInformationquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
                     -->
-                </ul>   
+                </ul>
             </del>
 
-        </div>          
+        </div>
     </s:form>
    </div>
 
