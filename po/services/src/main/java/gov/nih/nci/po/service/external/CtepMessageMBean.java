@@ -98,15 +98,15 @@ import org.jboss.annotation.ejb.Service;
 /**
  * CTEP JMS connection and subscription service. Startup is asynchronous and non-failing, for speed and ease of
  * deployment in an environment that may no have CTEP services (testing, dev...).
- * 
+ *
  * <pre>
- * NOTE: An extension offered by JBoss EJB 3.0 is the notion of a @org.jboss.annotation.ejb.Service annotated 
- * bean. They are singleton beans and are not pooled, so only one instance of the bean exists in the server. 
- * They can have both @Remote and @Local interfaces so they can be accessed by java clients. When different 
- * clients look up the interfaces for @Service beans, all clients will work on the same instance of the 
+ * NOTE: An extension offered by JBoss EJB 3.0 is the notion of a @org.jboss.annotation.ejb.Service annotated
+ * bean. They are singleton beans and are not pooled, so only one instance of the bean exists in the server.
+ * They can have both @Remote and @Local interfaces so they can be accessed by java clients. When different
+ * clients look up the interfaces for @Service beans, all clients will work on the same instance of the
  * bean on the server. When installing the bean it gets given a JMX ObjectName in the MBean server it runs on.
  * </pre>
- * 
+ *
  * @author gax
  */
 @Service
@@ -208,7 +208,7 @@ public class CtepMessageMBean extends CtepMessageBean implements CtepMessageMana
             LOG.error("property ctep.jms.subscription.name in resource ctep-services.properties not set.");
             throw new IllegalStateException("subscriptionName not set.");
         }
-        busy = true; // will remain busy untill startup thread finishes.
+        busy = true; // will remain busy until startup thread finishes.
         statusMessage = "Starting";
 
         Thread t = new Thread(this);

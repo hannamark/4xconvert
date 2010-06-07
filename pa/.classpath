@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="pa-web/test/resources"/>
-	<classpathentry kind="src" path="pa-ear/test/resources"/>
-	<classpathentry kind="src" path="pa-ejb/test/resources"/>
-	<classpathentry kind="src" path="pa-ear/test/java"/>
-	<classpathentry kind="src" path="pa-ejb/test/java"/>
-	<classpathentry kind="src" path="pa-web/test/java"/>
+	<classpathentry kind="src" path="commons/src/java"/>
+	<classpathentry kind="src" path="commons/src/resources"/>
+	<classpathentry kind="src" path="commons/test/java"/>
+	<classpathentry kind="src" path="commons/test/resources"/>
 	<classpathentry kind="src" path="pa-ejb/src/java"/>
 	<classpathentry kind="src" path="pa-ejb/src/resources"/>
-	<classpathentry kind="src" path="pa-web/src/resources"/>
+	<classpathentry kind="src" path="pa-ejb/test/java"/>
+	<classpathentry kind="src" path="pa-ejb/test/resources"/>
 	<classpathentry kind="src" path="pa-web/src/java"/>
-	<classpathentry kind="src" path="commons/test/resources"/>
-	<classpathentry kind="src" path="commons/test/java"/>
-	<classpathentry kind="src" path="commons/src/resources"/>
-	<classpathentry kind="src" path="commons/src/java"/>
+	<classpathentry kind="src" path="pa-web/src/resources"/>
+	<classpathentry kind="src" path="pa-web/test/java"/>
+	<classpathentry kind="src" path="pa-web/test/resources"/>
+	<classpathentry kind="src" path="pa-ear/test/java"/>
+	<classpathentry kind="src" path="pa-ear/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/ajaxtags-1.3-beta-rc7.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/aopalliance-1.0.jar"/>
@@ -31,7 +31,7 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jboss-annotations-ejb3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jericho-html-2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jstl-1.1.2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-struts2-1.2.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-struts2-1.2.10.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/persistence-api-1.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/postgresql-jdbc3-8.3-603.jar"/>

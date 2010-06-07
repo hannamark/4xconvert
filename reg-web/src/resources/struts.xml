@@ -8,15 +8,22 @@
  <constant name="struts.devMode" value="true" />
     <package name="default" extends="struts-default">
         <interceptors>
-			 <interceptor name="parameterTrim"
-			    class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
-			 <interceptor name="maliciousInput"
+             <interceptor name="parameterTrim"
+                class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
+             <interceptor name="maliciousInput"
                 class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor" />
 
-			<interceptor-stack name="methodValidationStack">
+            <interceptor-stack name="methodValidationStack">
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
-                <interceptor-ref name="params"/>
+                <interceptor-ref name="params">
+                    <!--
+                        Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                     -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
                 <interceptor-ref name="prepare"/>
                 <interceptor-ref name="i18n" />
@@ -35,21 +42,22 @@
                     <param name="trimToNull">true</param>
                     <param name="trimFromFront">true</param>
                 </interceptor-ref>
-			  </interceptor-stack>
+            </interceptor-stack>
+
         </interceptors>
         <global-results>
-			<result name="applicationError">/WEB-INF/jsp/registryError.jsp</result>
-			<result name="show_Disclaimer_Page">/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>
+            <result name="applicationError">/WEB-INF/jsp/registryError.jsp</result>
+            <result name="show_Disclaimer_Page">/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>
         </global-results>
         <action name="logout" class="gov.nih.nci.registry.action.Logout" method="logout">
-			<result>/index.jsp</result>
+            <result>/index.jsp</result>
         </action>
         <action name="registerUser*" class="gov.nih.nci.registry.action.RegisterUserAction" method="{1}">
-			<result>/WEB-INF/jsp/registerUser.jsp</result>
-			<result name="myAccount">/WEB-INF/jsp/myAccount.jsp</result>
-			<result name="confirmation">/WEB-INF/jsp/emailConfirmation.jsp</result>
-			<result name="registerUserError">/WEB-INF/jsp/registerUser.jsp</result>
-			<result name="myAccountError">/WEB-INF/jsp/myAccount.jsp</result>
+            <result>/WEB-INF/jsp/registerUser.jsp</result>
+            <result name="myAccount">/WEB-INF/jsp/myAccount.jsp</result>
+            <result name="confirmation">/WEB-INF/jsp/emailConfirmation.jsp</result>
+            <result name="registerUserError">/WEB-INF/jsp/registerUser.jsp</result>
+            <result name="myAccountError">/WEB-INF/jsp/myAccount.jsp</result>
             <result name="viewAdminUser">/WEB-INF/jsp/nodecorate/viewadminUsers.jsp</result>
             <result name="redirect_to_login" type="redirectAction">
                  <param name="actionName">searchTrial.action</param>
@@ -60,10 +68,10 @@
             <result name="existingGridAccount">/WEB-INF/jsp/existingGridAccount.jsp</result>
         </action>
         <action name="login">
-	       <result>/WEB-INF/jsp/login.jsp</result>
+           <result>/WEB-INF/jsp/login.jsp</result>
         </action>
-		<action name="home">
-			<result>/WEB-INF/jsp/registryHome.jsp</result>
+        <action name="home">
+            <result>/WEB-INF/jsp/registryHome.jsp</result>
         </action>
         <action name="contact">
            <result>/WEB-INF/jsp/registryContact.jsp</result>
@@ -71,7 +79,7 @@
         <action name="ajaxUsers*" class="gov.nih.nci.registry.action.RegisterUserAction"  method="{1}">
             <result name="viewAdminUser">/WEB-INF/jsp/nodecorate/adminUsers.jsp</result>
         </action>
-	</package>
+    </package>
     <package name="global" extends="default">
         <action name="disClaimerAction*" class="gov.nih.nci.registry.action.DisclaimerAction" method="{1}">
         <result name="show_Disclaimer_Page">/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>
@@ -88,8 +96,8 @@
     </package>
     <package name="admin" namespace="/admin" extends="global">
         <action name="batchUpload*" class="gov.nih.nci.registry.action.BatchUploadAction" method="{1}">
-	        <interceptor-ref name="fileUpload"/>
-	         <interceptor-ref name="params">
+            <interceptor-ref name="fileUpload"/>
+             <interceptor-ref name="params">
           <!--
               Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
            -->
@@ -98,65 +106,58 @@
          </param>
         </interceptor-ref>
 
-	        <result>/WEB-INF/jsp/processBatch.jsp</result>
-	        <result name="error">/WEB-INF/jsp/processBatch.jsp</result>
-	        <result name="batch_confirm">/WEB-INF/jsp/batchUploadConfirm.jsp</result>
+            <result>/WEB-INF/jsp/processBatch.jsp</result>
+            <result name="error">/WEB-INF/jsp/processBatch.jsp</result>
+            <result name="batch_confirm">/WEB-INF/jsp/batchUploadConfirm.jsp</result>
         </action>
     </package>
     <package name="protected" namespace="/protected" extends="global">
         <action name="searchTrial*" class="gov.nih.nci.registry.action.SearchTrialAction" method="{1}">
-		 <interceptor-ref name="params">
-          <!--
-              Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
-           -->
-          <param name="excludeParams">
-            _,d-\d+?-[sop]
-         </param>
-        </interceptor-ref>
+            <interceptor-ref name="methodValidationStack" />
 
-		<result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>
-		<result name="view">/WEB-INF/jsp/searchTrialView.jsp</result>
-		<result name="error">/WEB-INF/jsp/searchTrialCriteria.jsp</result>
-        <result name="partialView">/WEB-INF/jsp/reviewTrial.jsp</result>
+            <result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>
+            <result name="view">/WEB-INF/jsp/searchTrialView.jsp</result>
+            <result name="error">/WEB-INF/jsp/searchTrialCriteria.jsp</result>
+            <result name="partialView">/WEB-INF/jsp/reviewTrial.jsp</result>
         </action>
         <action name="submitTrial*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}">
-        <interceptor-ref name="methodValidationStack" />
-		<result name="success">/WEB-INF/jsp/submitTrial.jsp</result>
-		<result name="input">/WEB-INF/jsp/submitTrial.jsp</result>
-		<result name="error">/WEB-INF/jsp/submitTrial.jsp</result>
-		<result name="edit">/WEB-INF/jsp/submitTrial.jsp</result>
-		<result name="review">/WEB-INF/jsp/reviewTrial.jsp</result>
-        <result name="redirect_to_search" type="redirectAction">
-             <param name="actionName">searchTrial.action</param>
-             <param name="parse">true</param>
-             <param name="trialAction">${trialAction}</param>
-        </result>
+            <interceptor-ref name="methodValidationStack" />
+            <result name="success">/WEB-INF/jsp/submitTrial.jsp</result>
+            <result name="input">/WEB-INF/jsp/submitTrial.jsp</result>
+            <result name="error">/WEB-INF/jsp/submitTrial.jsp</result>
+            <result name="edit">/WEB-INF/jsp/submitTrial.jsp</result>
+            <result name="review">/WEB-INF/jsp/reviewTrial.jsp</result>
+            <result name="redirect_to_search" type="redirectAction">
+                <param name="actionName">searchTrial.action</param>
+                <param name="parse">true</param>
+                <param name="trialAction">${trialAction}</param>
+            </result>
         </action>
         <action name="amendTrial*" class="gov.nih.nci.registry.action.AmendmentTrialAction" method="{1}">
-		<interceptor-ref name="methodValidationStack" />
-		<result name="success">/WEB-INF/jsp/amendTrial.jsp</result>
-		<result name="input">/WEB-INF/jsp/amendTrial.jsp</result>
-		<result name="error">/WEB-INF/jsp/amendTrial.jsp</result>
-		<result name="edit">/WEB-INF/jsp/amendTrial.jsp</result>
-		<result name="review">/WEB-INF/jsp/reviewTrial.jsp</result>
-        <result name="redirect_to_search" type="redirectAction">
-             <param name="actionName">searchTrial.action</param>
-             <param name="parse">true</param>
-             <param name="trialAction">${trialAction}</param>
-        </result>
+            <interceptor-ref name="methodValidationStack" />
+            <result name="success">/WEB-INF/jsp/amendTrial.jsp</result>
+            <result name="input">/WEB-INF/jsp/amendTrial.jsp</result>
+            <result name="error">/WEB-INF/jsp/amendTrial.jsp</result>
+            <result name="edit">/WEB-INF/jsp/amendTrial.jsp</result>
+            <result name="review">/WEB-INF/jsp/reviewTrial.jsp</result>
+            <result name="redirect_to_search" type="redirectAction">
+                <param name="actionName">searchTrial.action</param>
+                <param name="parse">true</param>
+                <param name="trialAction">${trialAction}</param>
+            </result>
         </action>
         <action name="updateTrial*" class="gov.nih.nci.registry.action.UpdateTrialAction" method="{1}">
-        <interceptor-ref name="methodValidationStack" />
-        <result name="success">/WEB-INF/jsp/updateTrial.jsp</result>
-        <result name="input">/WEB-INF/jsp/updateTrial.jsp</result>
-        <result name="error">/WEB-INF/jsp/updateTrial.jsp</result>
-        <result name="edit">/WEB-INF/jsp/updateTrial.jsp</result>
-        <result name="review">/WEB-INF/jsp/reviewUpdateTrial.jsp</result>
-        <result name="redirect_to_search" type="redirectAction">
-           <param name="actionName">searchTrial.action</param>
-             <param name="parse">true</param>
-             <param name="trialAction">${trialAction}</param>
-        </result>
+            <interceptor-ref name="methodValidationStack" />
+            <result name="success">/WEB-INF/jsp/updateTrial.jsp</result>
+            <result name="input">/WEB-INF/jsp/updateTrial.jsp</result>
+            <result name="error">/WEB-INF/jsp/updateTrial.jsp</result>
+            <result name="edit">/WEB-INF/jsp/updateTrial.jsp</result>
+            <result name="review">/WEB-INF/jsp/reviewUpdateTrial.jsp</result>
+            <result name="redirect_to_search" type="redirectAction">
+               <param name="actionName">searchTrial.action</param>
+                 <param name="parse">true</param>
+                 <param name="trialAction">${trialAction}</param>
+            </result>
         </action>
     <action name="ajaxManageGrantsAction*" class="gov.nih.nci.registry.action.ManageGrantsAction" method="{1}">
         <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
@@ -179,24 +180,24 @@
 
     </action>
     <action name="popup*" class="gov.nih.nci.registry.action.PopupAction" method="{1}">
-		<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
-		<result name="orgs">/WEB-INF/jsp/nodecorate/lookuporgs.jsp</result>
-		<result name="persons">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
-		<result name="create_org_response">/WEB-INF/jsp/nodecorate/displayOrgList.jsp</result>
-		<result name="create_pers_response">/WEB-INF/jsp/nodecorate/displayPersonsList.jsp</result>
-	</action>
-	<action name="ajaxorganizationContact*" class="gov.nih.nci.registry.action.OrganizationContactAction" method="{1}">
-		<result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
-		<result name="display_org_contacts">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
-		<result name="display_org_created_contact">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result>
-	</action>
-	<action name="ajaxorganizationGenericContact*" class="gov.nih.nci.registry.action.OrganizationGenericContactAction" method="{1}">
+        <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
+        <result name="orgs">/WEB-INF/jsp/nodecorate/lookuporgs.jsp</result>
+        <result name="persons">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
+        <result name="create_org_response">/WEB-INF/jsp/nodecorate/displayOrgList.jsp</result>
+        <result name="create_pers_response">/WEB-INF/jsp/nodecorate/displayPersonsList.jsp</result>
+    </action>
+    <action name="ajaxorganizationContact*" class="gov.nih.nci.registry.action.OrganizationContactAction" method="{1}">
+        <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
+        <result name="display_org_contacts">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
+        <result name="display_org_created_contact">/WEB-INF/jsp/nodecorate/responsibleContact.jsp</result>
+    </action>
+    <action name="ajaxorganizationGenericContact*" class="gov.nih.nci.registry.action.OrganizationGenericContactAction" method="{1}">
         <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
         <result name="display_org_genericcontacts">/WEB-INF/jsp/nodecorate/lookupByTitle.jsp</result>
         <result name="display_org_created_genericcontact">/WEB-INF/jsp/nodecorate/responsibleGenericContact.jsp</result>
         <result name="create_org_contact_response">/WEB-INF/jsp/nodecorate/displayTitleList.jsp</result>
     </action>
-	<action name="ajaxselectTrial*" class="gov.nih.nci.registry.action.SubmitProprietaryTrialAction" method="{1}">
+    <action name="ajaxselectTrial*" class="gov.nih.nci.registry.action.SubmitProprietaryTrialAction" method="{1}">
         <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
     </action>
     <action name="submitProprietaryTrial*" class="gov.nih.nci.registry.action.SubmitProprietaryTrialAction" method="{1}">

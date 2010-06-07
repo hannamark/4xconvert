@@ -131,9 +131,8 @@ public abstract class AbstractBaseOutSvcDto implements Serializable {
         if (PAUtil.isCdNull(cd)) {
             if (nullable) {
                 return;
-            } else {
-                throw new OutcomesFieldException(getClass(), fieldName, "Cd should not be null.");
             }
+            throw new OutcomesFieldException(getClass(), fieldName, "Cd should not be null.");
         }
         List<String> validValues = new ArrayList<String>();
         for (CodedEnum<E> value : codedEnums) {

@@ -2,6 +2,7 @@
 <ruleset name="pmd-rules">
 
     <description>5AM PMD Rules</description>
+    <exclude-pattern>.*/test/.*</exclude-pattern>
 
     <rule ref="rulesets/basic.xml" />
     <rule ref="rulesets/basic.xml/EmptyCatchBlock">
