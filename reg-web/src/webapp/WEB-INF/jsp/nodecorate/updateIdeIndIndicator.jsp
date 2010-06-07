@@ -126,7 +126,7 @@
                   <s:textfield id="indIdesDTOs.indldeNumberUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].indldeNumber" value="%{indIdeUpdateDtos[#indidestats.index].indldeNumber}" size="10" />
                    <span class="formErrorMsg" >
                                         <s:fielderror>
-                                        <s:param>updindideNumber</s:param>
+                                        <s:param>updindideNumber<s:property value="%{#indidestats.index}"/></s:param>
                                        </s:fielderror>                            
                                      </span> 
                  </td>
@@ -139,7 +139,7 @@
                   </s:else>
                    <span class="formErrorMsg" >
                                         <s:fielderror>
-                                        <s:param>updindideGrantor</s:param>
+                                        <s:param>updindideGrantor<s:property value="%{#indidestats.index}"/></s:param>
                                        </s:fielderror>                            
                                      </span>
                  </td>   
@@ -148,7 +148,7 @@
                    list="#{'Investigator':'Investigator','Organization':'Organization','Industry':'Industry','NIH':'NIH','NCI':'NCI'}" />
                    <span class="formErrorMsg" >
                                         <s:fielderror>
-                                        <s:param>updindideHolderType</s:param>
+                                        <s:param>updindideHolderType<s:property value="%{#indidestats.index}"/></s:param>
                                        </s:fielderror>                            
                                      </span>
                 </td>
@@ -157,7 +157,7 @@
                   <s:select id="programcodenihselectedvalueUpdate%{#indidestats.index}" headerKey="" headerValue="-Select-" cssStyle="width:300px" name="indIdeUpdateDtos[%{#indidestats.index}].nihInstHolder" value="%{indIdeUpdateDtos[#indidestats.index].nihInstHolder}" list="#phaseCodeValuesNIH" />
                    <span class="formErrorMsg" >
                                         <s:fielderror>
-                                        <s:param>updindideNihInstHolder</s:param>
+                                        <s:param>updindideNihInstHolder<s:property value="%{#indidestats.index}"/></s:param>
                                        </s:fielderror>                            
                                      </span>
                 </s:div>
@@ -165,7 +165,7 @@
                   <s:select id="programcodenciselectedvalueUpdate%{#indidestats.index}" headerKey="" headerValue="-Select-" cssStyle="width:300px" name="indIdeUpdateDtos[%{#indidestats.index}].nciDivProgHolder" value="%{indIdeUpdateDtos[#indidestats.index].nciDivProgHolder}" list="#phaseCodeValuesNCI" />
                    <span class="formErrorMsg" >
                                         <s:fielderror>
-                                        <s:param>updindideNciDivPrgHolder</s:param>
+                                        <s:param>updindideNciDivPrgHolder<s:property value="%{#indidestats.index}"/></s:param>
                                        </s:fielderror>                            
                                      </span>
                 </s:div>
@@ -181,7 +181,7 @@
                   <s:select id="expanded_status_update" headerKey="" headerValue="-Select-" name="indIdeUpdateDtos[%{#indidestats.index}].expandedAccessStatus" value="%{indIdeUpdateDtos[#indidestats.index].expandedAccessStatus}" list="#expandedAccessStatusCodeValues" />
                  <span class="formErrorMsg" >
                                         <s:fielderror>
-                                        <s:param>updindideExpandedStatus</s:param>
+                                        <s:param>updindideExpandedStatus<s:property value="%{#indidestats.index}"/></s:param>
                                        </s:fielderror>                            
                                      </span>  
                </s:div> 

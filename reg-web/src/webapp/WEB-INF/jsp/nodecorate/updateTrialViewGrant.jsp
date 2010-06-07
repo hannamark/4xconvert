@@ -23,7 +23,7 @@
                                      cssStyle="width:150px" />
                                      <span class="formErrorMsg" >
                                         <s:fielderror>
-                                        <s:param>updfundingMechanismCode</s:param>
+                                        <s:param>updfundingMechanismCode<s:property value="%{#fundstats.index}"/></s:param>
                                        </s:fielderror>                            
                                      </span>
                             </td>
@@ -39,7 +39,7 @@
                                      cssStyle="width:150px"  />
                                      <span class="formErrorMsg" >
                                         <s:fielderror>
-                                        <s:param>updnihInstitutionCode</s:param>
+                                        <s:param>updnihInstitutionCode<s:property value="%{#fundstats.index}"/></s:param>
                                        </s:fielderror>                            
                                      </span>
                             </td>
@@ -47,7 +47,7 @@
                                 <s:textfield name="fundingDtos[%{#fundstats.index}].serialNumber" value="%{serialNumber}" id="serialNumber" maxlength="200" size="100"  cssStyle="width:150px"  />
                                 <span class="formErrorMsg"> 
                                     <s:fielderror>
-                                    <s:param>updserialNumber</s:param>
+                                    <s:param>updserialNumber<s:property value="%{#fundstats.index}"/></s:param>
                                     </s:fielderror>                            
                                 </span>
                             </td>
@@ -56,7 +56,7 @@
                                 <s:select headerKey="" headerValue="--Select--" name="fundingDtos[%{#fundstats.index}].nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="%{nciDivisionProgramCode}" cssStyle="width:150px" />
                                 <span class="formErrorMsg"> 
                                    <s:fielderror>
-                                   <s:param>updnciDivisionProgramCode</s:param>
+                                   <s:param>updnciDivisionProgramCode<s:property value="%{#fundstats.index}"/></s:param>
                                   </s:fielderror>                            
                                 </span>
                                 <s:hidden  name="fundingDtos[%{#fundstats.index}].id" value="%{id}"/>      

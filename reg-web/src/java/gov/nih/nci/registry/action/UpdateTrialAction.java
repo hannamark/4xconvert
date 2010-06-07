@@ -755,81 +755,73 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
         }
          //Add other validation rules
         //Regulatory information validation moved to validator
-        
+
+        int ind = 0;        
         if (getCollaborators() != null && !getCollaborators().isEmpty()) {
             for (PaOrganizationDTO coll : getCollaborators()) {
                 if (coll.getFunctionalRole() == null) {
-                    addFieldError("collaborator.functionalCode", "Functional role should not be null");
-                    break;
+                    addFieldError("collaborator.functionalCode" + ind, "Functional role should not be null");
                 }
+                ind++;
             }
         }
+        ind = 0;
         if (getParticipatingSitesList() != null && !getParticipatingSitesList().isEmpty()) {
             for (PaOrganizationDTO ps : getParticipatingSitesList()) {
                 if (ps.getRecruitmentStatus() == null) {
-                    addFieldError("participatingsite.recStatus", "Recruitment Status should not be null");
-                    break;
+                    addFieldError("participatingsite.recStatus" + ind, "Recruitment Status should not be null");
                 }
                 if (ps.getRecruitmentStatusDate() == null) {
-                    addFieldError("participatingsite.recStatusDate", "Recruitment Status date should not be null");
-                    break;
+                    addFieldError("participatingsite.recStatusDate" + ind, 
+                            "Recruitment Status date should not be null");
                 }
+                ind++;
             }
         }
-        
+        ind = 0;
         if (getFundingDtos() != null && !getFundingDtos().isEmpty()) {
             for (TrialFundingWebDTO fm : getFundingDtos()) {
                 if (fm.getFundingMechanismCode() == null) {
-                    addFieldError("updfundingMechanismCode", "Funding Mechanism Code should not be null");
-                    break;
+                    addFieldError("updfundingMechanismCode" + ind, "Funding Mechanism Code should not be null");
                 }
                 if (fm.getNciDivisionProgramCode() == null) {
-                    addFieldError("updnciDivisionProgramCode", "NCI Division Code should not be null");
-                    break;
+                    addFieldError("updnciDivisionProgramCode" + ind, "NCI Division Code should not be null");
                 }
                 if (fm.getNihInstitutionCode() == null) {
-                    addFieldError("updnihInstitutionCode", "NIH Institution Code  should not be null");
-                    break;
+                    addFieldError("updnihInstitutionCode" + ind, "NIH Institution Code  should not be null");
                 }
                 if (fm.getSerialNumber() == null) {
-                    addFieldError("updserialNumber", "Serial Number should not be null");
-                    break;
+                    addFieldError("updserialNumber" + ind, "Serial Number should not be null");
                 }
-                
+                ind++;                
             }
         }
-        
+        ind = 0;
         if (getIndIdeUpdateDtos() != null && !getIndIdeUpdateDtos().isEmpty()) {
             for (StudyIndldeWebDTO indide : getIndIdeUpdateDtos()) {
                 if (indide.getGrantor() == null) {
-                    addFieldError("updindideGrantor", "Grantor should not be null");
-                    break;
+                    addFieldError("updindideGrantor" + ind, "Grantor should not be null");
                 }
                 if (indide.getIndldeNumber() == null) {
-                    addFieldError("updindideNumber", "IND/IDE Number should not be null");
-                    break;
+                    addFieldError("updindideNumber" + ind, "IND/IDE Number should not be null");
                 }
                 if (indide.getHolderType() == null) {
-                    addFieldError("updindideHolderType", "Ind/IDE Holder Type should not be null");
-                    break;
+                    addFieldError("updindideHolderType" + ind, "Ind/IDE Holder Type should not be null");
                 }
                 if (indide.getHolderType() != null &&  indide.getHolderType().equalsIgnoreCase("NIH")
                   && indide.getNihInstHolder() == null) {
-                    addFieldError("updindideNihInstHolder", "NIH Institute holder should not be null");
-                    break;
+                    addFieldError("updindideNihInstHolder" + ind, "NIH Institute holder should not be null");
                 }
                 if (indide.getHolderType() != null &&  indide.getHolderType().equalsIgnoreCase("NCI")
                    && indide.getNciDivProgHolder() == null) {
-                      addFieldError("updindideNciDivPrgHolder", "NCI Divsion Program holder should not be null");
-                      break;
+                      addFieldError("updindideNciDivPrgHolder" + ind, "NCI Division Program holder should not be null");
                 }
                 if (indide.getExpandedAccessIndicator() != null 
                     && indide.getExpandedAccessIndicator().equalsIgnoreCase("yes")
                     && indide.getExpandedAccessStatus() == null) {
-                      addFieldError("updindideExpandedStatus", "Expanded Access Status should not be null");
-                      break;
+                      addFieldError("updindideExpandedStatus" + ind, "Expanded Access Status should not be null");
                 }
-                
+                ind++;                
             }
         }
     } 

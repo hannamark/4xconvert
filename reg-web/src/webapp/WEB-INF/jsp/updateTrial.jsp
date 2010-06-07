@@ -790,11 +790,19 @@ function toggledisplay2 (it) {
                         <td class="value"><s:select headerKey="" headerValue="--Select--"
                             name="participatingSitesList[%{#psstats.index}].recruitmentStatus" value="%{recruitmentStatus}"
                             list="#recruitmentStatusValues" cssStyle="text-align:left;"/>
-                       
+          				<span class="formErrorMsg"> 
+                              <s:fielderror>
+                              <s:param>participatingsite.recStatus<s:property value="%{#psstats.index}"/></s:param>
+                              </s:fielderror>                            
+                        </span>             
                       </td> 
                        <td>
                             <s:textfield  name="participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}"/>
-                           
+                           <span class="formErrorMsg"> 
+                              <s:fielderror>
+                              <s:param>participatingsite.recStatusDate<s:property value="%{#psstats.index}"/></s:param>
+                              </s:fielderror>                            
+                        </span>
                         </td>
                        <td>
                            <s:textfield  name="participatingSitesList[%{#psstats.index}].programCode" value="%{programCode}"/>
@@ -804,18 +812,7 @@ function toggledisplay2 (it) {
                     </s:iterator >
                       
                 </tbody>   
-         </table> 
-       
-          <span class="formErrorMsg"> 
-                              <s:fielderror>
-                              <s:param>participatingsite.recStatus</s:param>
-                              </s:fielderror>                            
-                        </span>
-                         <span class="formErrorMsg"> 
-                              <s:fielderror>
-                              <s:param>participatingsite.recStatusDate</s:param>
-                              </s:fielderror>                            
-                        </span>
+         </table>                          
          </td></tr></table> 
          </s:if>
             <tr>
@@ -846,21 +843,16 @@ function toggledisplay2 (it) {
                                 value="@gov.nih.nci.pa.enums.StudySiteFunctionalCode@getCollaboratorDisplayNames()"/>
                          <td class="value" colspan="2"><s:select headerKey="" headerValue="--Select--" 
                              name="collaborators[%{#stat.index}].functionalRole" list="#functionalCodeValues" value="%{functionalRole}"/>
-                             
-                             
-                             </td>
-                     </tr>
-                    </s:iterator>
-                     
-                </tbody>   
-           
-        </table>
-        
-        <span class="formErrorMsg"> 
+                             <span class="formErrorMsg"> 
                               <s:fielderror>
-                              <s:param>collaborator.functionalCode</s:param>
+                              <s:param>collaborator.functionalCode<s:property value="%{#stat.index}"/></s:param>
                               </s:fielderror>                            
-                        </span>
+                        	</span>	                             
+                         </td>
+                     </tr>
+                    </s:iterator>                     
+                </tbody>              
+        </table>        
         </td></tr></table>
        </s:if>
         <div id="uploadDocDiv">
