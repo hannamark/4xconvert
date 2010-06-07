@@ -218,9 +218,9 @@ public class TrialHelper {
     
     private void copyOtherIdentifiers(StudyProtocolDTO spDTO, GeneralTrialDesignWebDTO gtdDTO) {
         List<Ii> otherIdentifiers = PAUtil.getOtherIdentifiers(spDTO);
-        List<Ii> nonOtherIdentifiers = PAUtil.getNonOtherIdentifiers(spDTO);
+        Ii assignedIdentifier = PAUtil.getAssignedIdentifier(spDTO);
         gtdDTO.setOtherIdentifiers(otherIdentifiers);
-        gtdDTO.setNonOtherIdentifiers(nonOtherIdentifiers);
+        gtdDTO.setNonOtherIdentifiers(assignedIdentifier);
     }
     
     /**
@@ -447,12 +447,13 @@ public class TrialHelper {
                    spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(gtdDTO.getCtGovXmlRequired()));
                 }
                 Set<Ii> allIdentifiers = new HashSet<Ii>();
-                allIdentifiers.addAll(gtdDTO.getNonOtherIdentifiers());
+                allIdentifiers.add(gtdDTO.getNonOtherIdentifiers());
                 List<Ii> secondaryIds = (List<Ii>) ServletActionContext.getRequest().getSession()
                         .getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
                 if (secondaryIds != null) {
                     allIdentifiers.addAll(secondaryIds);
-                }
+                }  
+                spDTO.setSecondaryIdentifiers(null);
                 spDTO.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(allIdentifiers));
         }
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);

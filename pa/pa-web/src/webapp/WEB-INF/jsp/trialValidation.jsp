@@ -113,6 +113,9 @@
      <s:hidden name="gtdDTO.submissionNumber" id="gtdDTO.submissionNumber"/>
      <s:hidden name="gtdDTO.studyProtocolId" id="gtdDTO.studyProtocolId"/>
      <s:hidden name="gtdDTO.ctGovXmlRequired" id="gtdDTO.ctGovXmlRequired"/>
+     <s:hidden name="gtdDTO.nonOtherIdentifiers.extension" id="gtdDTO.nonOtherIdentifiers.extension"/>
+     <s:hidden name="gtdDTO.nonOtherIdentifiers.root" id="gtdDTO.nonOtherIdentifiers.root"/>
+     <s:hidden name="gtdDTO.nonOtherIdentifiers.identifierName" id="gtdDTO.nonOtherIdentifiers.identifierName"/>
      <h2>Trial Details</h2>
     <table class="form">
           <tr>

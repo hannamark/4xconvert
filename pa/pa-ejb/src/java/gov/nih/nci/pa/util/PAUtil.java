@@ -1213,13 +1213,13 @@ public class PAUtil {
      * @param spDTO the study protocol dto
      * @return the identifiers
      */
-    public static List<Ii> getNonOtherIdentifiers(StudyProtocolDTO spDTO) {
-        List<Ii> results = new ArrayList<Ii>();
+    public static Ii getNonOtherIdentifiers(StudyProtocolDTO spDTO) {
+        Ii results = new Ii();
         if (spDTO.getSecondaryIdentifiers() != null 
                 && CollectionUtils.isNotEmpty(spDTO.getSecondaryIdentifiers().getItem())) {
             for (Ii id : spDTO.getSecondaryIdentifiers().getItem()) {
                 if (!StringUtils.equals(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT, id.getRoot())) {
-                    results.add(id);
+                    return id;
                 }
             }
         }

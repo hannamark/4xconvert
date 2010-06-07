@@ -145,7 +145,7 @@ public class GeneralTrialDesignWebDTO {
     private String ctepIdentifier;
     private String dcpIdentifier;
     private List<Ii> otherIdentifiers = new ArrayList<Ii>();
-    private List<Ii> nonOtherIdentifiers = new ArrayList<Ii>();
+    private Ii nonOtherIdentifiers = new Ii();
     
     
     /**
@@ -805,14 +805,14 @@ public class GeneralTrialDesignWebDTO {
      /**
       * @return nonOtherIdentifiers
       */
-     public List<Ii> getNonOtherIdentifiers() {
+     public Ii getNonOtherIdentifiers() {
          return nonOtherIdentifiers;
      }
      
      /**
       * @param nonOtherIdentifiers the identifiers to set
       */
-     public void setNonOtherIdentifiers(List<Ii> nonOtherIdentifiers) {
+     public void setNonOtherIdentifiers(Ii nonOtherIdentifiers) {
          this.nonOtherIdentifiers = nonOtherIdentifiers;
      }
 

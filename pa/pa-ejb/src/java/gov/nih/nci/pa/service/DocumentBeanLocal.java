@@ -243,8 +243,8 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
                 StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
                 StudyProtocolBeanLocal spBean = new StudyProtocolBeanLocal();
                 StudyProtocolDTO spDTO = spBean.getStudyProtocol(docDTO.getStudyProtocolIdentifier());
-                sb.append(File.separator).append(PAUtil.getAssignedIdentifier(spDTO)).append(File.separator).append(
-                        docDTO.getIdentifier().getExtension()).append('-').append(doc.getFileName());
+                sb.append(File.separator).append(PAUtil.getAssignedIdentifierExtension(spDTO)).append(File.separator)
+                  .append(docDTO.getIdentifier().getExtension()).append('-').append(doc.getFileName());
                 File downloadFile = new File(sb.toString());
                 docDTO.setText(EdConverter.convertToEd(PAUtil.readInputStream(new FileInputStream(downloadFile))));
 
