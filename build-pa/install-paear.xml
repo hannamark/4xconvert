@@ -161,7 +161,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           description="Deploy pa-ear pa-ear.ear, pa-ear-api.war and common libraries"
           unless="exclude.pa-ear"
           >
-      <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
+  	  <mkdir dir="${doc.upload.filepath.loc}" /> 
+  	  <available file="${doc.upload.filepath.loc}" property="doc.upload.filepath.exists" />
+  	  <fail unless="doc.upload.filepath.exists" message="The doc upload dir at ${doc.upload.filepath.loc} has not been created." />
+      
+  	  <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
       <delete dir="${jboss.home}/server/${jboss.server.name}/work" failonerror="false"/>
       <move file="${jboss.home}/server/${jboss.server.name}/log/server.log" tofile="${jboss.home}/server/${jboss.server.name}/log/server.log.${install.time}" failonerror="false"/>
 
