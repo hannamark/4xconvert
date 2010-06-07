@@ -36,29 +36,26 @@
             </td>
             <td class="value"><input name="j_password" maxlength="100" size="25" type="password"></td>
         </tr>
-        <c:set var="authMap" scope="page" value="${requestScope['AUTHENTICATION_SOURCE_MAP']}"/>
-        <c:if test="${!empty requestScope['AUTHENTICATION_SOURCE_MAP']}">
-            <%
-              java.util.Map myMap = (java.util.Map)request.getAttribute("AUTHENTICATION_SOURCE_MAP");
-              if (myMap.size() == 1) {
-            %>
-                <c:forEach var="item" items="${requestScope.AUTHENTICATION_SOURCE_MAP}">
-                  <input type="hidden" name="authenticationServiceURL"
-                       value="<c:out value="${item.value}"/>" />
-                </c:forEach>
-            <% } else { %>
-                <td class="label" scope="row">Account Source:</td>
-                <td class="value">
-                    <select name="authenticationServiceURL" size="1">
-                       <c:forEach var="item" items="${requestScope.AUTHENTICATION_SOURCE_MAP}">
-                       <option value="<c:out value="${item.value}" />">
-                           <c:out value="${item.key}" />
-                       </option>
-                       </c:forEach>
-                   </select>
-                </td>
-            <% } %>
-        </c:if>
+         <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">
+                <c:choose>
+                  <c:when test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) == 1}">
+                    <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
+                     <input type="hidden" name="authenticationServiceURL"
+                         value="<c:out value="${item.value}"/>" />
+                    </c:forEach>
+                  </c:when>
+                 <c:otherwise>   
+                   Authentication Source:
+                     <select name="authenticationServiceURL" size="1">
+                        <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
+                        <option value="<c:out value="${item.value}" />">
+                            <c:out value="${item.key}" />
+                        </option>
+                        </c:forEach>
+                    </select>
+                 </c:otherwise>
+                </c:choose>
+               </c:if>
         <tr>
 			<td>&nbsp;</td>
 			<td>

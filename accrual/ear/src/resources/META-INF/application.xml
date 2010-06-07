@@ -26,7 +26,7 @@
         <java>pa-ejb-client-3.2.0-SNAPSHOT.jar</java>
     </module>
     <module>
-        <java>pa-commons-3.2.0m11-b1.jar</java>
+        <java>pa-commons-3.2.0m11-b2.jar</java>
     </module>
 	<module>
 		<java>commons-collections-3.2.1.jar</java>
