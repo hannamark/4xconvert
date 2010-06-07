@@ -196,12 +196,19 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <unzip src="${temp.dir}/pa-ear/pa-web.war" dest="${temp.dir}/pa-web-war"/>
 
       <delete file="${temp.dir}/pa-ejb-jar/paear.properties"/>
-	  <delete file="${temp.dir}/pa-ejb-jar/ejb-jar.xml"/>
+      <delete file="${temp.dir}/pa-ejb-jar/META-INF/ejb-jar.xml"/>
 
-      <echo message="Looking for paear.properties and ejb-jar.xml in ${pa-ear.dir.dist}"/>
+      <echo message="Looking for paear.properties in ${pa-ear.dir.dist}"/>
       <copy todir="${temp.dir}/pa-ejb-jar" filtering="true">
           <fileset dir="${pa-ear.dir.dist}">
               <include name="paear.properties"/>
+          </fileset>
+          <filterset refid="embedded.filterset"/>
+      </copy>
+
+      <echo message="Looking for ejb-jar.xml in ${pa-ear.dir.dist}"/>
+      <copy todir="${temp.dir}/pa-ejb-jar/META-INF" filtering="true">
+          <fileset dir="${pa-ear.dir.dist}">
               <include name="ejb-jar.xml"/>
           </fileset>
           <filterset refid="embedded.filterset"/>
@@ -215,7 +222,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           </fileset>
           <filterset refid="embedded.filterset"/>
       </copy>
-      
+
       <delete file="${temp.dir}/pa-web-war/csm.properties"/>
       <echo message="Looking for csm.properties in ${pa-ear.dir.dist}"/>
       <copy todir="${temp.dir}/pa-web-war/WEB-INF/classes" filtering="true">
@@ -225,7 +232,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           <filterset refid="embedded.filterset"/>
       </copy>
 
-	  <echo message="Looking for jboss-service.xml in ${pa-ear.dir.dist}"/>	
+      <echo message="Looking for jboss-service.xml in ${pa-ear.dir.dist}"/>
       <delete file="${temp.dir}/pa-ear/jboss-service.xml"/>
       <copy todir="${temp.dir}/pa-ear" filtering="true">
           <fileset dir="${pa-ear.dir.dist}">
@@ -233,7 +240,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           </fileset>
           <filterset refid="embedded.filterset"/>
       </copy>
-      
+
       <delete file="${temp.dir}/pa-ear/META-INF/security-config.xml"/>
       <copy todir="${temp.dir}/pa-ear/META-INF" filtering="true">
           <fileset dir="${jboss-conf.dir.dest}">
@@ -281,7 +288,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
       <unzip src="${pa-ear.dir.dist}/${accrual-ear.ear.file}" dest="${temp.dir}/accrual-ear"/>
       <unzip src="${temp.dir}/accrual-ear/accrual-services.jar" dest="${temp.dir}/accrual-services-jar"/>
-      
+
       <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
       <var name="file.list"
         value="accrual-services-jar/jndi.properties,accrual-services-jar/pa.jndi.properties,accrual-services-jar/po.jndi.properties,accrual-services-jar/outcomes.properties,accrual-ear/META-INF/security-config.xml"/>
