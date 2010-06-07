@@ -10,6 +10,7 @@ BEGIN
         EXECUTE 'update ' || tr.table_name || ' set user_last_updated=' || quote_literal(new_login_name) || ', date_last_updated = now() where user_last_updated=' || quote_literal(old_login_name) || ';';
      END IF;
 END LOOP;   
+     update study_checkout set user_identifier = new_login_name where user_identifier = old_login_name;
 END 
 $$ LANGUAGE 'plpgsql';
 
