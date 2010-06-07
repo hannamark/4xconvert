@@ -19,6 +19,11 @@
           <strong>Your password has been successfully reset. Please log in using your username and password.</strong>
         </div>
      </c:when>
+     <c:when test="${param.userAction == 'existingAccount'}">
+        <div class="confirm_msg">
+          <strong>A User Account for that grid user already exists. Please log in using your username and password.</strong>
+        </div>
+     </c:when>
      <c:otherwise>
            <p style="margin:0; padding:0">Please log in to search, view and register clinical trial details.
              If you do not have an account, you may <a title="To Create an Account" href="/registry/registerUser.action">create an account</a>. </p>

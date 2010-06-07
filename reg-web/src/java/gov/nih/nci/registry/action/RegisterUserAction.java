@@ -10,6 +10,7 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.GridAccountServiceBean;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.mail.MailManager;
@@ -186,7 +187,7 @@ public class RegisterUserAction extends ActionSupport {
                 redirectPage = "myAccount";
             } else {
                 userAction =  "reset";
-                redirectPage = "redirect_to_login";
+                redirectPage = Constants.REDIRECT_TO_LOGIN;
             }
 
             try {                
@@ -209,9 +210,10 @@ public class RegisterUserAction extends ActionSupport {
             registryUser.setId(null);
             // first create the CSM user
             userAction =  "create";
-            redirectPage = "redirect_to_login";
+            redirectPage = Constants.REDIRECT_TO_LOGIN;
             try {
                 GridAccountServiceRemote gridService = PaRegistry.getGridAccountService();
+                CSMUserService csmUserService = CSMUserService.getInstance();
                 //First create the grid account if one doesn't already 
                 if (!registryUserWebDTO.isHasExistingGridAccount()) {
                     String results = gridService.createGridAccount(registryUser, registryUserWebDTO.getUsername(), 
@@ -222,16 +224,22 @@ public class RegisterUserAction extends ActionSupport {
                 //Then the csm user account being sure to retrieve the long form grid username
                 String username = gridService.getFullyQualifiedUsername(registryUserWebDTO.getUsername(), 
                         registryUserWebDTO.getPassword(), GridAccountServiceBean.GRID_URL);
-                User csmUser = CSMUserService.getInstance().createCSMUser(registryUser, username, 
-                        registryUserWebDTO.getPassword());
+                User csmUser = csmUserService.getCSMUser(username);
+                
+                //Only create a new csm account if one doesn't already exist otherwise just add the user to the proper
+                //group.
+                if (csmUser == null) {
+                    csmUser = csmUserService.createCSMUser(registryUser, username, 
+                            registryUserWebDTO.getPassword());
+                } else {
+                    csmUserService.assignUserToGroup(csmUser.getLoginName(), 
+                            PaEarPropertyReader.getCSMSubmitterGroup());
+                }
+                registryUser.setCsmUserId(csmUser.getUserId());
                 
                 //Then add the user to the correct grid grouper group.               
                 gridService.addGridUserToGroup(username, GridAccountServiceBean.GRIDGROUPER_SUBMITTER_GROUP);
                 
-                if (csmUser != null) {
-                    registryUser.setCsmUserId(csmUser.getUserId());
-                }
-
                 //now create the RegistryUser
                 registryUser =  PaRegistry.getRegisterUserService().createUser(registryUser);
             } catch (Exception e) {
@@ -267,10 +275,15 @@ public class RegisterUserAction extends ActionSupport {
         GridAccountServiceRemote gridService = PaRegistry.getGridAccountService();
         Map<String, String> userInfo = gridService.authenticateUser(registryUserWebDTO.getUsername(), 
                     registryUserWebDTO.getPassword(), getSelectedIdentityProvider());
+        String fullyQualifiedUsername = gridService.getFullyQualifiedUsername(registryUserWebDTO.getUsername(), 
+                registryUserWebDTO.getPassword(), getSelectedIdentityProvider());
         
         if (userInfo.isEmpty()) {
             addActionError(getText("errors.password.mismatch"));
             return Constants.EXISTING_GRID_ACCOUNT;
+        } else if (PaRegistry.getRegisterUserService().doesRegistryUserExist(fullyQualifiedUsername)) {
+            userAction = "existingAccount";
+            return Constants.REDIRECT_TO_LOGIN;
         }
         
         registryUserWebDTO.setRetypePassword(registryUserWebDTO.getPassword());

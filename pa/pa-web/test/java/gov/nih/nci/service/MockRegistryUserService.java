@@ -146,5 +146,12 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
         // TODO Auto-generated method stub
         return new ArrayList<DisplayTrialOwnershipInformation>();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean doesRegistryUserExist(String loginName) {
+        return false;
+    }
 
 }

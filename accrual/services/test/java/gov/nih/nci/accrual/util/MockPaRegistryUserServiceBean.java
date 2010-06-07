@@ -165,5 +165,12 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote 
             DisplayTrialOwnershipInformation trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
         return null;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean doesRegistryUserExist(String loginName) {
+        return false;
+    }
 
 }

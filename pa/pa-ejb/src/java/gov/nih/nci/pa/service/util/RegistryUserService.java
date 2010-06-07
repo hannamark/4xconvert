@@ -131,6 +131,14 @@ public interface RegistryUserService {
      * @throws PAException on error
      */
     RegistryUser getUserById(Long userId) throws PAException;
+    
+    /**
+     * Determine whether a user with the given login name exists.
+     * @param loginName the login name of the user to check for
+     * @return true iff a user with the give login name exists.
+     */
+    boolean doesRegistryUserExist(String loginName);
+    
     /**
      *
      * @param regUser user

@@ -111,4 +111,11 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote 
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean doesRegistryUserExist(String loginName) {
+        return false;
+    }
+
 }

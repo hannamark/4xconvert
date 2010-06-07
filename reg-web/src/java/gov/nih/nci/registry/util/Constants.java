@@ -240,4 +240,7 @@ public class Constants {
     /** Study Protocol Root. * */
     public static final String STUDY_PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3";
     
+    /** Redirect to Login. **/
+    public static final String REDIRECT_TO_LOGIN = "redirect_to_login";
+    
 }

@@ -301,8 +301,14 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         auth.setUserId(PaEarPropertyReader.getProperties().getProperty("gridgrouper.admin.user"));
         auth.setPassword(PaEarPropertyReader.getProperties().getProperty("gridgrouper.admin.password"));
 
+        GlobusCredential credential = authenticateUser(auth, GRID_URL);
+        
+        if (credential == null) {
+            return;
+        }
+        
         try {
-            ggClient = new GridGrouperClient(GRID_GROUPER_URL, authenticateUser(auth, GRID_URL));
+            ggClient = new GridGrouperClient(GRID_GROUPER_URL, credential);
             ggClient.setAnonymousPrefered(false);
         } catch (Exception e) {
             throw new PAException("Error connecting to remote grid grouper instance.", e);

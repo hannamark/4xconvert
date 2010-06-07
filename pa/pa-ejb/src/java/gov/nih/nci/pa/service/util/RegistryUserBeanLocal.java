@@ -303,6 +303,20 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         }
         return registryUserList;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean doesRegistryUserExist(String loginName) {
+        RegistryUser registryUser = null;
+        try {
+            registryUser = getUser(loginName);
+        } catch (PAException e) {
+            LOG.error("Error retrieving user.", e);
+        }
+        return registryUser != null;
+    }
+    
     /**
      *
      * @param regUser user
