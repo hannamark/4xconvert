@@ -120,12 +120,21 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <if>
           <equals arg1="${jboss.http-connector.remove}" arg2="true"/>
           <then>
-              <property name="jboss.application.url" value="https://${jboss.server.hostname}:${jboss.grid.secure.port}/registry"/>
-              <property name="jboss.application.external.url" value="https://${jboss.external.http.host}:${jboss.grid.secure.port}/registry"/>
+              <property name="jboss.application.url" value="https://${jboss.server.hostname}:${jboss.server.port}/registry"/>
+              <property name="jboss.application.external.url" value="https://${jboss.external.http.host}:${jboss.external.ssl.port}/registry"/>
           </then>
           <else>
               <property name="jboss.application.url" value="http://${jboss.server.hostname}:${jboss.server.port}/registry"/>
-              <property name="jboss.application.external.url" value="http://${jboss.external.http.host}:${jboss.server.port}/registry"/>
+              <if>
+                  <equals arg1="${jboss.external.http.port}" arg2=""/>
+                  <then>
+                      <property name="jboss.application.external.url.port" value="${jboss.server.port}"/>
+                  </then>
+                  <else>
+                      <property name="jboss.application.external.url.port" value="${jboss.external.http.port}"/>
+                  </else>
+              </if>
+              <property name="jboss.application.external.url" value="http://${jboss.external.http.host}:${jboss.application.external.url.port}/registry"/>
           </else>
       </if>
       <property name="application.url" value="${jboss.application.url}"/>
@@ -159,13 +168,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
   <target name="install:pa-ear-jboss:app"
           description="Deploy pa-ear pa-ear.ear, pa-ear-api.war and common libraries"
-          unless="exclude.pa-ear"
-          >
-  	  <mkdir dir="${doc.upload.filepath.loc}" /> 
-  	  <available file="${doc.upload.filepath.loc}" property="doc.upload.filepath.exists" />
-  	  <fail unless="doc.upload.filepath.exists" message="The doc upload dir at ${doc.upload.filepath.loc} has not been created." />
-      
-  	  <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
+          unless="exclude.pa-ear">
+      <mkdir dir="${doc.upload.filepath.loc}" />
+      <available file="${doc.upload.filepath.loc}" property="doc.upload.filepath.exists" />
+      <fail unless="doc.upload.filepath.exists" message="The doc upload dir at ${doc.upload.filepath.loc} has not been created." />
+
+      <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
       <delete dir="${jboss.home}/server/${jboss.server.name}/work" failonerror="false"/>
       <move file="${jboss.home}/server/${jboss.server.name}/log/server.log" tofile="${jboss.home}/server/${jboss.server.name}/log/server.log.${install.time}" failonerror="false"/>
 
