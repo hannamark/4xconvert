@@ -82,77 +82,97 @@ function loadAffliatedOrgDiv() {
                   </tr>
                   <tr>
                         <td scope="row" class="label">
-                            <label for="registerUsershowMyAccount_registryUserWebDTO_emailAddress"><fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_username"><fmt:message key="register.user.username"/><span class="required">*</span></label>
                         </td>
                         <td>
-                            <s:textfield name="registryUserWebDTO.emailAddress"  maxlength="100" size="35" cssStyle="width:200px" />
+                            <s:if test="%{registryUserWebDTO.id == null && !registryUserWebDTO.hasExistingGridAccount}">
+                                <s:textfield name="registryUserWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" />
+                            </s:if>
+                            <s:else>
+                                <s:textfield name="registryUserWebDTO.displayUsername" maxlength="15" size="20" cssStyle="width:200px" disabled="true" />
+                                <s:hidden name="registryUserWebDTO.hasExistingGridAccount" />
+                                <s:hidden name="registryUserWebDTO.username" />
+                            </s:else>
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
-                                <s:param>registryUserWebDTO.emailAddress</s:param>
+                                <s:param>registryUserWebDTO.username</s:param>
                                </s:fielderror>                            
-                             </span>
+                            </span>                            
                         </td>                
                   </tr>
+                  <s:if test="#registryUserWebDTO.passwordEditingAllowed">                  
                   <tr>
                     <td scope="row" class="label">&nbsp;</td>
                     <td><fmt:message key="register.user.password.rules" /></td>
                   </tr>
-                  <s:if test="%{registryUserWebDTO.id != null && registryUserWebDTO.id != ' '}">
-                  <tr>
-                        <td scope="row" class="label">
-                            <label for="registerUsershowMyAccount_registryUserWebDTO_password"> Old <fmt:message key="register.user.password"/><span class="required">*</span></label>
-                        </td>
-                        <td>
-                            <s:password  name="registryUserWebDTO.oldPassword"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
-                            <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                <s:param>registryUserWebDTO.oldPassword</s:param>
-                               </s:fielderror>                            
-                             </span>
-                        </td>                
-                  </tr>
                   </s:if>
-                  <tr>
-                        <td scope="row" class="label">
-                            <label for="registerUsershowMyAccount_registryUserWebDTO_password">
-                              <s:if test="%{registryUserWebDTO.id != null && registryUserWebDTO.id != ' '}">
-                             		New <fmt:message key="register.user.password"/>
-                             </s:if>
-                             <s:else>
-                             		<fmt:message key="register.user.password"/>
-                             </s:else>
-                             <span class="required">*</span></label>
-                        </td>
-                        <td>
-                            <s:password  name="registryUserWebDTO.password"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
-                            <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                <s:param>registryUserWebDTO.password</s:param>
-                               </s:fielderror>                            
-                             </span>
-                        </td>                
-                  </tr>
-                  <tr>
-                        <td scope="row" class="label">
-                            <label for="registerUsershowMyAccount_registryUserWebDTO_retypePassword"> 
-                            <s:if test="%{registryUserWebDTO.id != null && registryUserWebDTO.id != ' '}">
-                             		Retype New Password
-                             </s:if>
-                             <s:else>
-                            	<fmt:message key="register.user.retypePassword"/>
-							</s:else>                            	
-                            <span class="required">*</span></label>
-                        </td>
-                        <td>
-                            <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
-                            <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                <s:param>registryUserWebDTO.retypePassword</s:param>
-                               </s:fielderror>                            
-                             </span>
-                        </td>                
-                  </tr>
                   <s:if test="%{registryUserWebDTO.id != null && registryUserWebDTO.id != ' '}">
+	                  <s:if test="#registryUserWebDTO.passwordEditingAllowed">
+	                    <s:hidden name="registryUserWebDTO.oldPassword" />
+	                  </s:if>
+	                  <s:else>
+		                  <tr>
+		                        <td scope="row" class="label">
+		                            <label for="registerUsershowMyAccount_registryUserWebDTO_password"> Old <fmt:message key="register.user.password"/><span class="required">*</span></label>
+		                        </td>
+		                        <td>
+		                            <s:password  name="registryUserWebDTO.oldPassword"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
+		                            <span class="formErrorMsg"> 
+		                                <s:fielderror>
+		                                <s:param>registryUserWebDTO.oldPassword</s:param>
+		                               </s:fielderror>                            
+		                             </span>
+		                        </td>                
+		                  </tr>
+	                  </s:else>
+                  </s:if>
+                   <s:if test="#registryUserWebDTO.passwordEditingAllowed">
+                     <s:hidden name="registryUserWebDTO.password" />
+                     <s:hidden name="registryUserWebDTO.retypePassword" />
+                   </s:if>
+                   <s:else>
+	                  <tr>
+	                        <td scope="row" class="label">
+	                            <label for="registerUsershowMyAccount_registryUserWebDTO_password">
+	                              <s:if test="%{registryUserWebDTO.id != null && registryUserWebDTO.id != ' '}">
+	                             		New <fmt:message key="register.user.password"/>
+	                             </s:if>
+	                             <s:else>
+	                             		<fmt:message key="register.user.password"/>
+	                             </s:else>
+	                             <span class="required">*</span></label>
+	                        </td>
+	                        <td>
+	                            <s:password  name="registryUserWebDTO.password"  showPassword="true" readonly="!registryUserWebDTO.passwordEditingAllowed" maxlength="100" size="35"  cssStyle="width:200px"  />
+	                            <span class="formErrorMsg"> 
+	                                <s:fielderror>
+	                                <s:param>registryUserWebDTO.password</s:param>
+	                               </s:fielderror>                            
+	                             </span>
+	                        </td>                
+	                  </tr>
+	                  <tr>
+	                        <td scope="row" class="label">
+	                            <label for="registerUsershowMyAccount_registryUserWebDTO_retypePassword"> 
+	                            <s:if test="%{registryUserWebDTO.id != null && registryUserWebDTO.id != ' '}">
+	                             		Retype New Password
+	                             </s:if>
+	                             <s:else>
+	                            	<fmt:message key="register.user.retypePassword"/>
+								</s:else>                            	
+	                            <span class="required">*</span></label>
+	                        </td>
+	                        <td>
+	                            <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" readonly="!registryUserWebDTO.passwordEditingAllowed" maxlength="100" size="35"  cssStyle="width:200px"  />
+	                            <span class="formErrorMsg"> 
+	                                <s:fielderror>
+	                                <s:param>registryUserWebDTO.retypePassword</s:param>
+	                               </s:fielderror>                            
+	                             </span>
+	                        </td>                
+	                  </tr>
+                  </s:else>
+                  <s:if test="%{registryUserWebDTO.passwordEditingAllowed && registryUserWebDTO.id != null && registryUserWebDTO.id != ' '}">
                     <tr>
                         <td scope="row" class="label">&nbsp;</td>
                         <td>
@@ -177,20 +197,13 @@ function loadAffliatedOrgDiv() {
                   </tr>
                   <tr>
                         <td scope="row" class="label">
-                            <label for="registerUsershowMyAccount_registryUserWebDTO_username"><fmt:message key="register.user.username"/><span class="required">*</span></label>
+                            <label for="registerUsershowMyAccount_registryUserWebDTO_emailAddress"><fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
                         </td>
                         <td>
-                            <s:if test="%{registryUserWebDTO.id == null && !registryUserWebDTO.hasExistingGridAccount}">
-                                <s:textfield name="registryUserWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" />
-                            </s:if>
-                            <s:else>
-                                <s:textfield name="registryUserWebDTO.displayUsername" maxlength="15" size="20" cssStyle="width:200px" disabled="true" />
-                                <s:hidden name="registryUserWebDTO.hasExistingGridAccount" />
-                                <s:hidden name="registryUserWebDTO.username" />
-                            </s:else>
+                            <s:textfield name="registryUserWebDTO.emailAddress"  maxlength="100" size="35" cssStyle="width:200px" />
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
-                                <s:param>registryUserWebDTO.username</s:param>
+                                <s:param>registryUserWebDTO.emailAddress</s:param>
                                </s:fielderror>                            
                             </span>
                         </td>                

@@ -344,6 +344,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 <filter token="gridgrouper.submitter.group" value="${gridgrouper.submitter.group}"/>
                 <filter token="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
                 <filter token="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
+                <filter token="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
                 <filter token="outcomes.url" value="${outcomes.url}"/>
                 <filter token="outcomes.cds.url" value="${outcomes.cds.url}"/>
                 <filter token="outcomes.phr.system.id" value="${outcomes.phr.system.id}"/>

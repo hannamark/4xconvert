@@ -40,6 +40,7 @@ public class RegistryUserWebDTO {
     private UserOrgType affiliatedOrgType;
     private boolean adminForAffiliatedOrg;
     private boolean requestAdminAccess;
+    private boolean passwordEditingAllowed = true;
 
     /**
     *
@@ -437,5 +438,19 @@ public class RegistryUserWebDTO {
     public void setAdminForAffiliatedOrg(boolean adminForAffiliatedOrg) {
         this.adminForAffiliatedOrg = adminForAffiliatedOrg;
     }
+
+	/**
+	 * @return the passwordEditingAllowed
+	 */
+	public boolean isPasswordEditingAllowed() {
+		return passwordEditingAllowed;
+	}
+
+	/**
+	 * @param passwordEditingAllowed the passwordEditingAllowed to set
+	 */
+	public void setPasswordEditingAllowed(boolean passwordEditingAllowed) {
+		this.passwordEditingAllowed = passwordEditingAllowed;
+	}
 
 }

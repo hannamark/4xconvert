@@ -40,6 +40,8 @@ po.topic.clientId=PAApplication
 csm.submitter.group=Submitter
 csm.remote.group.db.creation.policy = update
 csm.remote.group.sync.seconds = 240
+#List of comma separated IDPs for which we will allow password editing
+idps.allow.password.editing=Dorian
 
 # Use the tier-specific Registration application url
 register.mail.body.url=http://localhost:8080/registry
@@ -47,4 +49,3 @@ register.mail.body.url=http://localhost:8080/registry
 gridgrouper.submitter.group=COPPA:PA:Submitter
 gridgrouper.admin.user=ctrpgrouper
 gridgrouper.admin.password=C0pp4Gr0upP@ss
-

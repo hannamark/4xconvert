@@ -9,7 +9,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.GridAccountServiceBean;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
@@ -143,11 +143,14 @@ public class RegisterUserAction extends ActionSupport {
                          || registryUser.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN))) {
                 loadAdminUsers(registryUser.getAffiliatedOrganizationId());
             }
-            
+            registryUserWebDTO.setPasswordEditingAllowed(isPasswordEditingAllowed(loginName));
         }
-        
         // show the My Account page
         return Constants.MY_ACCOUNT;
+    }
+    
+    private boolean isPasswordEditingAllowed(String loginName) {
+    	return StringUtils.indexOfAny(loginName, PaEarPropertyReader.getProperties().getProperty("idps.allow.password.editing","").split(",")) >= 0;
     }
     
     /**
@@ -203,7 +206,7 @@ public class RegisterUserAction extends ActionSupport {
                 //now update the RegistryUser
                 PaRegistry.getRegisterUserService().updateUser(registryUser); 
             } catch (Exception e) {
-                LOG.error("error while updating user info");
+                LOG.error("error while updating user info", e);
                 return Constants.APPLICATION_ERROR;
             }
         } else { //create user
@@ -286,6 +289,7 @@ public class RegisterUserAction extends ActionSupport {
             return Constants.REDIRECT_TO_LOGIN;
         }
         
+        registryUserWebDTO.setPasswordEditingAllowed(false);
         registryUserWebDTO.setRetypePassword(registryUserWebDTO.getPassword());
         registryUserWebDTO.setEmailAddress(userInfo.get(CGMMConstants.CGMM_EMAIL_ID));
         registryUserWebDTO.setFirstName(userInfo.get(CGMMConstants.CGMM_FIRST_NAME));
@@ -301,12 +305,12 @@ public class RegisterUserAction extends ActionSupport {
         Map<String, String> addFieldError = new HashMap<String, String>(); 
         InvalidValue[] invalidValues = null;
         
-        if (PAUtil.isEmpty(registryUserWebDTO.getEmailAddress())) {
+        if (StringUtils.isEmpty(registryUserWebDTO.getEmailAddress())) {
             addFieldError("registryUserWebDTO.emailAddress", getText("error.register.emailAddress"));
         }
 
         // check if the login name is a valid e-mail address
-        if (PAUtil.isNotEmpty(registryUserWebDTO.getEmailAddress()) 
+        if (StringUtils.isNotEmpty(registryUserWebDTO.getEmailAddress()) 
                 && !RegistryUtil.isValidEmailAddress(registryUserWebDTO.getEmailAddress())) {
             addFieldError("registryUserWebDTO.emailAddress", getText("error.register.invalidEmailAddress"));
         }
@@ -314,13 +318,15 @@ public class RegisterUserAction extends ActionSupport {
         // if it's My Account page validate required fields
         if (isMyAccountPage) {
             ClassValidator<RegistryUserWebDTO> classValidator = new ClassValidator(registryUserWebDTO.getClass());
+            boolean allowPasswordEditing = registryUserWebDTO.isPasswordEditingAllowed();
+            
             invalidValues = classValidator.getInvalidValues(registryUserWebDTO);
             for (int i = 0; i < invalidValues.length; i++) {
                 addFieldError.put("registryUserWebDTO." + invalidValues[i].getPropertyName(), 
                         getText(invalidValues[i].getMessage().trim()));
             }
             addErrors(addFieldError); 
-            if (!isAccountEdit && PAUtil.isNotEmpty(registryUserWebDTO.getUsername())) {
+            if (!isAccountEdit && StringUtils.isNotEmpty(registryUserWebDTO.getUsername())) {
                if (registryUserWebDTO.getUsername().length() < MIN_UN 
                    || registryUserWebDTO.getUsername().length() > MAX_UN) {
                    addFieldError("registryUserWebDTO.username", getText("error.register.usernameLength"));
@@ -330,25 +336,25 @@ public class RegisterUserAction extends ActionSupport {
                    registryUserWebDTO.setAffiliateOrg(""); 
                    addFieldError("registryUserWebDTO.affiliateOrg", getText("error.register.affiliateOrg"));
             }
-            if (PAUtil.isNotEmpty(registryUserWebDTO.getPassword()) 
-                    && PAUtil.isNotEmpty(registryUserWebDTO.getRetypePassword())
+            if (allowPasswordEditing && StringUtils.isNotEmpty(registryUserWebDTO.getPassword()) 
+                    && StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword())
                     && !registryUserWebDTO.getPassword().equals(registryUserWebDTO.getRetypePassword())) {            
                 addFieldError("registryUserWebDTO.retypePassword", getText("error.register.matchPassword"));
             }
             
-            if (PAUtil.isNotEmpty(registryUserWebDTO.getPassword()) 
+            if (allowPasswordEditing && StringUtils.isNotEmpty(registryUserWebDTO.getPassword()) 
                     && !PaRegistry.getGridAccountService().isValidGridPassword(registryUserWebDTO.getPassword())) {
                 addFieldError("registryUserWebDTO.password", getText("error.register.invalidPassword"));
             }
             
-            if (PAUtil.isNotEmpty(registryUserWebDTO.getUsername()) && !isAccountEdit 
+            if (StringUtils.isNotEmpty(registryUserWebDTO.getUsername()) && !isAccountEdit 
                     && !registryUserWebDTO.isHasExistingGridAccount()
                     && PaRegistry.getGridAccountService().doesGridAccountExist(registryUserWebDTO.getUsername())) {
                 addFieldError("registryUserWebDTO.username", getText("error.register.usernameTaken"));
             }
             
-            if (PAUtil.isNotEmpty(registryUserWebDTO.getState())
-                        && PAUtil.isNotEmpty(registryUserWebDTO.getCountry())) {
+            if (StringUtils.isNotEmpty(registryUserWebDTO.getState())
+                        && StringUtils.isNotEmpty(registryUserWebDTO.getCountry())) {
                 if (registryUserWebDTO.getCountry().equalsIgnoreCase("United States")
                                 && registryUserWebDTO.getState().startsWith("None")) {
                     addFieldError("registryUserWebDTO.state",
