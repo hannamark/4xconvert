@@ -1,11 +1,11 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudySite;
@@ -29,6 +29,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.AssignedIdentifierEnum;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -61,13 +62,13 @@ import org.hibernate.criterion.Expression;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudySiteBeanLocal  extends AbstractRoleIsoService<StudySiteDTO, StudySite, StudySiteConverter>
 implements StudySiteServiceLocal {
- 
+
   @EJB
   StudySiteContactServiceLocal studySiteContactService = null;
   @EJB
   StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = null;
-  
-  
+
+
   /**
    * @param dto StudySiteDTO
    * @return StudySiteDTO
@@ -100,9 +101,9 @@ implements StudySiteServiceLocal {
 
 /**
    * creates a new record of studyprotocol by changing to new studyprotocol identifier.
-   * @param fromStudyProtocolIi from where the study protocol objects to be copied  
+   * @param fromStudyProtocolIi from where the study protocol objects to be copied
    * @param toStudyProtocolIi to where the study protocol objects to be copied
-   * @return map 
+   * @return map
    * @throws PAException on error
    */
   public Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
@@ -137,7 +138,7 @@ implements StudySiteServiceLocal {
               }
           }
           // create study accrual status
-          if (StudySiteFunctionalCode.TREATING_SITE.getCode().equals(dto.getFunctionalCode().getCode())) { 
+          if (StudySiteFunctionalCode.TREATING_SITE.getCode().equals(dto.getFunctionalCode().getCode())) {
                   accDtos = studySiteAccrualStatusService.getStudySiteAccrualStatusByStudySite(from);
                   for (StudySiteAccrualStatusDTO accDto : accDtos) {
                       accDto.setIdentifier(null);
@@ -149,23 +150,23 @@ implements StudySiteServiceLocal {
       }
       return map;
   }
-  
+
   @SuppressWarnings("PMD.NPathComplexity")
   private StudySiteDTO businessRules(StudySiteDTO dto) throws PAException {
-      if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi()) 
+      if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi())
               && PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
-          throw new PAException("Either healthcare facility or research organization or Oversight committee" 
+          throw new PAException("Either healthcare facility or research organization or Oversight committee"
                   + " must be set.  ");
       }
       if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && !PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
           throw new PAException("Healthcare facility , research organization cannot both be set.  ");
       }
       if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && !PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
-          throw new PAException("Healthcare facility and over sight " 
+          throw new PAException("Healthcare facility and over sight "
                   + "committee cannot both be set.  ");
       }
       if (!PAUtil.isIiNull(dto.getResearchOrganizationIi()) && !PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
-          throw new PAException("research organization and over sight " 
+          throw new PAException("research organization and over sight "
                   + "committee cannot both be set.  ");
       }
       ReviewBoardApprovalStatusCode code = ReviewBoardApprovalStatusCode.getByCode(
@@ -226,8 +227,8 @@ implements StudySiteServiceLocal {
                       + newFunction + "' for this study.");
           }
       }
-      
-      
+
+
   }
 
   private void enforceOnlyOneOversightCommittee(StudySiteDTO dto) throws PAException {
@@ -244,7 +245,7 @@ implements StudySiteServiceLocal {
       }
   }
   /**
-   * 
+   *
    * @param dto dto
    * @throws PAException e
    */
@@ -273,11 +274,11 @@ implements StudySiteServiceLocal {
       query = session.createQuery(hql);
       query.setParameter("localStudyProtocolIdentifier",
               StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
-      if (PAUtil.isIiNotNull(dto.getResearchOrganizationIi()) 
+      if (PAUtil.isIiNotNull(dto.getResearchOrganizationIi())
               && IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equalsIgnoreCase(
               dto.getResearchOrganizationIi().getIdentifierName())) {
           CorrelationUtils cUtils = new CorrelationUtils();
-          ResearchOrganization ro = cUtils.getStructuralRoleByIi(dto.getResearchOrganizationIi()); 
+          ResearchOrganization ro = cUtils.getStructuralRoleByIi(dto.getResearchOrganizationIi());
           query.setParameter("orgIdentifier", ro.getId());
       } else {
           query.setParameter("orgIdentifier",
@@ -289,7 +290,7 @@ implements StudySiteServiceLocal {
           for (StudySite sp : queryList) {
               //When create DTO get Id will be null and if queryList is having value then its duplicate
               //When update check if the record is same if not then throw ex
-              if ((dto.getIdentifier() == null) 
+              if ((dto.getIdentifier() == null)
                       || (!String.valueOf(sp.getId()).equals(dto.getIdentifier().getExtension()))) {
                   throw new PAException("Duplicate Trial Submission: A trial exists in the system with the same "
                           + "Lead Organization Trial Identifier for the selected Lead Organization");
@@ -301,10 +302,10 @@ implements StudySiteServiceLocal {
               for (StudySite sp : queryList) {
                   //When create DTO get Id will be null and if queryList is having value then its duplicate
                   //When update check if the record is same if not then throw ex
-                  if ((dto.getIdentifier() == null) 
+                  if ((dto.getIdentifier() == null)
                           || (!String.valueOf(sp.getId()).equals(dto.getIdentifier().getExtension()))) {
                   throw new PAException("Duplicate Trial Submission: A trial exists in the system with the same "
-                          + "NCT Trial Identifier.");
+                          + getIdentifierName(sp));
                   }
               }
       }
@@ -312,7 +313,21 @@ implements StudySiteServiceLocal {
       getLogger().info("Leaving enforceNoDuplicateTrial..");
 
   }
-  
+
+  private String getIdentifierName(StudySite sp) {
+      StringBuffer sbuf = new StringBuffer();
+      String spOrgName = sp.getResearchOrganization().getOrganization().getName();
+      if (AssignedIdentifierEnum.NCT.getDisplayValue().equals(spOrgName)) {
+          sbuf.append(AssignedIdentifierEnum.NCT.getCode());
+      } else if (AssignedIdentifierEnum.DCP.getDisplayValue().equals(spOrgName)) {
+          sbuf.append(AssignedIdentifierEnum.DCP.getCode());
+      } else if (AssignedIdentifierEnum.CTEP.getDisplayValue().equals(spOrgName)) {
+          sbuf.append(AssignedIdentifierEnum.CTEP.getCode());
+      }
+
+      return sbuf.append(" Trial Identifier").toString();
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -338,7 +353,7 @@ implements StudySiteServiceLocal {
           .add(Expression.eq("sp.id", IiConverter.convertToLong(dto.getStudyProtocolIdentifier())));
       }
       if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi())) {
-          if (PAConstants.PA_INTERNAL.equals(dto.getHealthcareFacilityIi().getIdentifierName())) { 
+          if (PAConstants.PA_INTERNAL.equals(dto.getHealthcareFacilityIi().getIdentifierName())) {
               criteria.createAlias("healthCareFacility", "hcf")
               .add(Expression.eq("hcf.id", IiConverter.convertToLong(dto.getHealthcareFacilityIi())));
           } else {
@@ -359,7 +374,7 @@ implements StudySiteServiceLocal {
       }
 
       if (!PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
-          if (PAConstants.PA_INTERNAL.equals(dto.getOversightCommitteeIi().getIdentifierName())) { 
+          if (PAConstants.PA_INTERNAL.equals(dto.getOversightCommitteeIi().getIdentifierName())) {
               criteria.createAlias("oversightCommittee", "oc")
               .add(Expression.eq("oc.id", IiConverter.convertToLong(dto.getOversightCommitteeIi())));
           } else {
@@ -416,11 +431,11 @@ implements StudySiteServiceLocal {
       getLogger().info("Leaving search");
       return studySiteDTOList;
   }
-  
+
   private List<StudySiteDTO> convertFromDomainToDTO(List<StudySite> studySiteList) throws PAException {
       List<StudySiteDTO> studySiteDTOList = null;
       StudySiteConverter ssConverter = new StudySiteConverter();
-      if (studySiteList != null) { 
+      if (studySiteList != null) {
           studySiteDTOList = new ArrayList<StudySiteDTO>();
           for (StudySite ss : studySiteList) {
               StudySiteDTO studySiteDTO = ssConverter.convertFromDomainToDto(ss);
@@ -434,7 +449,7 @@ implements StudySiteServiceLocal {
    * @throws PAException e
    */
   public void validate(StudySiteDTO dto) throws PAException {
-      enforceNoDuplicateTrial(dto);    
+      enforceNoDuplicateTrial(dto);
   }
 
   private void getStatusCode(StudySiteDTO dto) throws PAException {
@@ -456,6 +471,6 @@ implements StudySiteServiceLocal {
           dto.setStatusCode(getFunctionalRoleStatusCode(CdConverter.convertStringToCd(
                   sr.getStatusCode().getCode()), ActStatusCode.ACTIVE));
      }
-      
+
   }
 }
