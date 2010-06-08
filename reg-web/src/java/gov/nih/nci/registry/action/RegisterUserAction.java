@@ -5,13 +5,14 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.GridAccountServiceBean;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.Constants;
@@ -19,6 +20,8 @@ import gov.nih.nci.registry.util.EncoderDecoder;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.cgmm.constants.CGMMConstants;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.HashMap;
 import java.util.List;
@@ -150,7 +153,8 @@ public class RegisterUserAction extends ActionSupport {
     }
     
     private boolean isPasswordEditingAllowed(String loginName) {
-    	return StringUtils.indexOfAny(loginName, PaEarPropertyReader.getProperties().getProperty("idps.allow.password.editing","").split(",")) >= 0;
+      return StringUtils.indexOfAny(loginName, PaEarPropertyReader.getProperties()
+               .getProperty("idps.allow.password.editing", "").split(",")) >= 0;
     }
     
     /**
@@ -169,7 +173,23 @@ public class RegisterUserAction extends ActionSupport {
              }
             return Constants.MY_ACCOUNT_ERROR;
         }
-
+        // if the user adds a new organization or assigns org from po - the org needs to be created in pa too
+        try {
+          if (registryUserWebDTO.getAffiliatedOrganizationId() != null) {
+             OrganizationDTO poOrgDTO = PoRegistry.getOrganizationEntityService()
+              .getOrganization(
+                IiConverter.convertToPoOrganizationIi(registryUserWebDTO.getAffiliatedOrganizationId().toString()));
+             if (poOrgDTO != null) {
+              PaRegistry.getOrganizationCorrelationService().createPAOrganizationUsingPO(poOrgDTO);
+             } 
+          }
+        } catch (PAException e) {
+           LOG.error("ERROR retrieving po org details.", e);
+           return Constants.APPLICATION_ERROR;
+        } catch (NullifiedEntityException ne) {
+           LOG.error("ERROR retrieving po org details.", ne);
+           return Constants.APPLICATION_ERROR;
+        }
         // convert RegistryUserWebDTO to RegistryUser
         RegistryUser registryUser = new RegistryUser();
         try {
