@@ -304,7 +304,7 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         GlobusCredential credential = authenticateUser(auth, GRID_URL);
         
         if (credential == null) {
-            return;
+            throw new PAException("Error authenticating grid grouper admin user.");
         }
         
         try {

@@ -21,7 +21,7 @@
      </c:when>
      <c:when test="${param.userAction == 'existingAccount'}">
         <div class="confirm_msg">
-          <strong>A User Account for that grid user already exists. Please log in using your username and password.</strong>
+          <strong>A user account for that grid user already exists. Please log in using your username and password.</strong>
         </div>
      </c:when>
      <c:otherwise>
