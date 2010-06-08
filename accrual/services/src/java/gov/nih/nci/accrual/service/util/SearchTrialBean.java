@@ -183,7 +183,7 @@ public class SearchTrialBean implements SearchTrialService {
             session = HibernateUtil.getCurrentSession();
             Query query = null;
             String hql =
-                " select sp.identifier, org.name, ss.localStudyProtocolIdentifier, sp.officialTitle, "
+                " select oi.extension, org.name, ss.localStudyProtocolIdentifier, sp.officialTitle, "
                 + "      sp.id, sos.statusCode, per "
                 + "from StudyProtocol as sp "
                 + "left outer join sp.studyOverallStatuses as sos "
@@ -193,6 +193,7 @@ public class SearchTrialBean implements SearchTrialService {
                 + "left outer join sp.studySites as ss  "
                 + "left outer join ss.researchOrganization as ro "
                 + "left outer join ro.organization as org "
+                + "left outer join sp.otherIdentifiers as oi "
                 + "where sp.id = " + IiConverter.convertToString(studyProtocolIi)
                 + "  and (ss.functionalCode ='" + StudySiteFunctionalCode.LEAD_ORGANIZATION + "' "
                 + "       or ss.functionalCode is null) "
@@ -200,7 +201,9 @@ public class SearchTrialBean implements SearchTrialService {
                 + "       or sc.roleCode is null) "
                 + "  and (sos.id in (select max(id) from StudyOverallStatus as sos1 "
                 + "                where sos.studyProtocol = sos1.studyProtocol ) "
-                + "       or sos.id is null) ";
+                + "       or sos.id is null)"
+                + "  and (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
+                + "       and oi.identifierName = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "')";
             query = session.createQuery(hql);
             List<Object> queryList = query.list();
             if (queryList.size() < 1) {
@@ -234,10 +237,8 @@ public class SearchTrialBean implements SearchTrialService {
             try {
                 session = HibernateUtil.getCurrentSession();
                 Query query = null;
-                String hql = "select sp.id "
-                           + "from StudyProtocol sp "
-                           + "where sp.identifier = 'Outcomes' "
-                           + "order by sp.id ";
+                String hql = "select sp.id from StudyProtocol sp left outer join sp.otherIdentifiers as oi "
+                           + " where oi.extension = 'Outcomes' order by sp.id ";
                 query = session.createQuery(hql);
                 queryList = query.list();
             } catch (HibernateException hbe) {
@@ -286,7 +287,8 @@ public class SearchTrialBean implements SearchTrialService {
         try {
             hql.append("select distinct sp.id "
                             + "from StudyProtocol as sp "
-                            + "left outer join sp.studySites as sps ");
+                            + "left outer join sp.studySites as sps " 
+                            + "left outer join sp.otherIdentifiers as oi ");
             hql.append(generateWhereClause(criteria));
         } catch (Exception e) {
             throw new RemoteException("Exception thrown in SearchTrialBean.generateStudyProtocolQuery().", e);
@@ -303,7 +305,7 @@ public class SearchTrialBean implements SearchTrialService {
         try {
             where.append("where sp.statusCode = '" + ActStatusCode.ACTIVE.name() + "' ");
             if (PAUtil.isNotEmpty(assignedIdentifier)) {
-                where.append(" and upper(sp.identifier)  like '%"
+                where.append(" and upper(oi.extension)  like '%"
                         + assignedIdentifier.toUpperCase(Locale.US).trim().replaceAll("'", "''")
                         + "%'");
             }

@@ -97,6 +97,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -158,7 +159,15 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
 
         // get by assigned identifier
         SearchTrialCriteriaDto crit = new SearchTrialCriteriaDto();
-        crit.setAssignedIdentifier(StConverter.convertToSt(TestSchema.studyProtocols.get(0).getIdentifier()));
+        Ii assignedId = new Ii();
+        for (Ii id : TestSchema.studyProtocols.get(0).getOtherIdentifiers()) {
+            if (StringUtils.equals(id.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT)) {
+                assignedId = id;
+                break;
+            }
+        }
+        
+        crit.setAssignedIdentifier(StConverter.convertToSt(assignedId.getExtension()));
         assertEquals(goodCount, bean.search(crit, authUser).size());
         crit.setAssignedIdentifier(BST);
         assertEquals(0, bean.search(crit, authUser).size());

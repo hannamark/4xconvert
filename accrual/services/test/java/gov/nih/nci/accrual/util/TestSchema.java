@@ -79,6 +79,7 @@ package gov.nih.nci.accrual.util;
 import gov.nih.nci.accrual.service.MockPoOrganizationEntityService;
 import gov.nih.nci.accrual.service.MockPoPersonEntityService;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ActivityRelationship;
 import gov.nih.nci.pa.domain.AnatomicSites;
 import gov.nih.nci.pa.domain.AssessmentType;
@@ -147,7 +148,9 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -217,6 +220,7 @@ public class TestSchema {
         statement.executeUpdate("delete from study_site");
         statement.executeUpdate("delete from submission");
         statement.executeUpdate("delete from study_overall_status");
+        statement.executeUpdate("delete from study_otheridentifiers");
         statement.executeUpdate("delete from study_protocol");
         statement.executeUpdate("delete from disease");
         statement.executeUpdate("delete from healthcare_facility");
@@ -332,7 +336,12 @@ public class TestSchema {
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
-        sp.setIdentifier("NCI-2009-00001");
+        
+        Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+        Ii assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00001");
+        studySecondaryIdentifiers.add(assignedId);
+        
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(false);
@@ -346,7 +355,12 @@ public class TestSchema {
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
-        sp.setIdentifier("NCI-2009-00002");
+        
+        studySecondaryIdentifiers =  new HashSet<Ii>();
+        assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00001");
+        studySecondaryIdentifiers.add(assignedId);
+        
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
         sp.setStatusCode(ActStatusCode.INACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(false);
@@ -360,7 +374,12 @@ public class TestSchema {
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
-        sp.setIdentifier("NCI-2009-00002");
+        
+        studySecondaryIdentifiers =  new HashSet<Ii>();
+        assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00001");
+        studySecondaryIdentifiers.add(assignedId);
+        
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(2));
         sp.setProprietaryTrialIndicator(false);
@@ -452,7 +471,12 @@ public class TestSchema {
         // Outcomes SP
         outcomesSpId = studyProtocols.size();
         sp = new StudyProtocol();
-        sp.setIdentifier("Outcomes");
+        
+        studySecondaryIdentifiers =  new HashSet<Ii>();
+        assignedId = IiConverter.convertToAssignedIdentifierIi("Outcomes");
+        studySecondaryIdentifiers.add(assignedId);
+        
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
         sp.setSubmissionNumber(1);
         addUpdObject(sp);
         studyProtocols.add(sp);
