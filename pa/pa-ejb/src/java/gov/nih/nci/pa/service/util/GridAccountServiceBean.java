@@ -287,8 +287,13 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         BasicAuthentication auth = new BasicAuthentication();
         auth.setUserId(username);
         auth.setPassword(password);
+        GlobusCredential credential = null;
 
-        GlobusCredential credential = authenticateUser(auth, authUrl);       
+        try {
+            credential = new CGMMManagerImpl().performGridLogin(username, password, authUrl);
+        } catch (Exception e) {
+            LOG.error("Error determing fully Qualified username", e);
+        }
         return credential != null ? credential.getIdentity() : username;
     }
 
