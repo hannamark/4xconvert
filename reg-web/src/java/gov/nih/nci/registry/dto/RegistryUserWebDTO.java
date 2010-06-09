@@ -439,18 +439,18 @@ public class RegistryUserWebDTO {
         this.adminForAffiliatedOrg = adminForAffiliatedOrg;
     }
 
-	/**
-	 * @return the passwordEditingAllowed
-	 */
-	public boolean isPasswordEditingAllowed() {
-		return passwordEditingAllowed;
-	}
+    /**
+     * @return the passwordEditingAllowed
+     */
+    public boolean isPasswordEditingAllowed() {
+        return passwordEditingAllowed;
+    }
 
-	/**
-	 * @param passwordEditingAllowed the passwordEditingAllowed to set
-	 */
-	public void setPasswordEditingAllowed(boolean passwordEditingAllowed) {
-		this.passwordEditingAllowed = passwordEditingAllowed;
-	}
+    /**
+     * @param passwordEditingAllowed the passwordEditingAllowed to set
+     */
+    public void setPasswordEditingAllowed(boolean passwordEditingAllowed) {
+        this.passwordEditingAllowed = passwordEditingAllowed;
+    }
 
 }
