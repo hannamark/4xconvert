@@ -36,9 +36,9 @@ function submitForm(btnSelected){
 <br>
 <center><b>NCI CLINICAL TRIALS REPORTING PROGRAM (CTRP) SYSTEM </b></center><br> 
 <hr>
-<p align="right">OMB#: 0925-0600 EXP. DATE: 01/31/2010 </p>
+<p align="right">OMB#: 0925-0600 EXP. DATE: 3/31/2013 </p>
 <center><b>NOTIFICATION TO RESPONDENT OF ESTIMATED BURDEN </b></center><br><br>
-Public reporting burden for this collection of information is estimated to average on (1) to two (2) hours for this questionnaire, <br>
+Public reporting burden for this collection of information is estimated to average one (1) to two (2) hours for this questionnaire, 
 including the time to review instructions, search existing data sources, gather and maintain the data needed, and complete and review 
 the collection of information.  An agency may not conduct or sponsor, and a person is not required to respond to, a collection of 
 information unless it displays a current, valid OMB control number.  Send comments regarding this burden estimate or any other aspect 
