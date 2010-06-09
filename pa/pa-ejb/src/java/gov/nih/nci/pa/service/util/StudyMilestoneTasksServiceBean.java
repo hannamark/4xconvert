@@ -122,8 +122,7 @@ import org.apache.log4j.Logger;
 public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(StudyMilestoneTasksServiceBean.class);
-    private static final int PAST_5_DAYS = 5;
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final int PAST_7_DAYS = 7;
     
     @EJB
     StudyMilestoneServicelocal smRemote;
@@ -132,89 +131,60 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
      * Perform task.
      * @throws PAException exception
      */
-    @SuppressWarnings({ "PMD" })
+    @SuppressWarnings ({"PMD.PreserveStackTrace" })
     public void performTask() throws PAException {
-     
-    LOG.info("Entering Perform Task");    
-    
-    // create the criteria search object
-    StudyMilestoneDTO studyMilestoneDTO = new StudyMilestoneDTO();
-    studyMilestoneDTO.setMilestoneCode(
-    CdConverter.convertStringToCd(MilestoneCode.TRIAL_SUMMARY_SENT.getCode()));
-    
-    LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0); 
-    Calendar offsetTime = Calendar.getInstance();
-    Calendar milestoneDate = Calendar.getInstance();
-    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(DATE_FORMAT);     
-    
-    
-    try {
-        LOG.info("Performing the Search");    
-        List<StudyMilestoneDTO> studyMilestoneDTOList = smRemote.
-                                                       search(studyMilestoneDTO, limit);
+        LOG.debug("Entering Perform Task");    
+        // create the criteria search object
+        StudyMilestoneDTO studyMilestoneDTO = new StudyMilestoneDTO();
+        studyMilestoneDTO.setMilestoneCode(
+        CdConverter.convertStringToCd(MilestoneCode.TRIAL_SUMMARY_SENT.getCode()));
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0); 
+        Calendar milestoneDate = Calendar.getInstance();
         
-        LOG.info("The Search results returned" + studyMilestoneDTOList.size());
-        
-        if (studyMilestoneDTOList != null && !studyMilestoneDTOList.isEmpty()) {
-      
-            for (StudyMilestoneDTO smdto : studyMilestoneDTOList) { 
+        try {
+            List<StudyMilestoneDTO> studyMilestoneDTOList = smRemote.search(studyMilestoneDTO, limit);
+            LOG.debug("The Search results returned" + studyMilestoneDTOList.size());
+            
+            if (studyMilestoneDTOList != null && !studyMilestoneDTOList.isEmpty()) {
           
-                milestoneDate.setTime(smdto.getMilestoneDate().getValue());
-          
-                //get the offset of 5 business days
-                offsetTime.setTime(smdto.getMilestoneDate().getValue());
-                offsetTime.add(Calendar.DAY_OF_YEAR, -PAST_5_DAYS);
-           
-                String milestoneDtString = sdf.format(milestoneDate.getTime());
-                String currDtString = sdf.format(Calendar.getInstance().getTime());
-           
-                if (!milestoneDtString.equals(currDtString) 
-                        && checkIfBusinessdays(PAST_5_DAYS, milestoneDate)
-                        && !checkMilestoneExists(smdto)) {
-                    LOG.info("Creating a new milestone with code - initial abstration verify");   
-                    StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
-                    newDTO.setCommentText(
-                             StConverter.convertToSt("Milestone auto-set based on Non-Response within 5 days"));
-                    newDTO.setMilestoneCode(CdConverter.convertStringToCd(
-                                               MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode()));
-                    newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-                    newDTO.setStudyProtocolIdentifier(smdto.getStudyProtocolIdentifier());
-                    smRemote.create(newDTO);
-               }
-            } 
-          }
-          LOG.info("Done with the task.");
-       } catch (TooManyResultsException e) {
-         LOG.error("Too Many Results Exception" + e.getLocalizedMessage());  
-         throw new PAException("ToomanyReusltsException occured");
-       } 
+                for (StudyMilestoneDTO smdto : studyMilestoneDTOList) { 
+                    milestoneDate.setTime(smdto.getMilestoneDate().getValue());
+                    if (isMoreThan5Businessdays(milestoneDate)
+                            && !checkMilestoneExists(smdto)) {
+                        LOG.debug("Creating a new milestone with code - initial abstration verify");   
+                        StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
+                        newDTO.setCommentText(
+                                 StConverter.convertToSt("Milestone auto-set based on Non-Response within 5 days"));
+                        newDTO.setMilestoneCode(CdConverter.convertStringToCd(
+                                                   MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode()));
+                        newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+                        newDTO.setStudyProtocolIdentifier(smdto.getStudyProtocolIdentifier());
+                        smRemote.create(newDTO);
+                   }
+                } 
+              }
+              LOG.debug("Done with the task.");
+           } catch (TooManyResultsException e) {
+             LOG.error("Too Many Results Exception" + e.getLocalizedMessage());  
+             throw new PAException("ToomanyReusltsException occured");
+           } 
     }   
     /**
-     * Check if businessdays.
      * 
-     * @param weekdays the weekdays
-     * @param cal the cal
-     * 
+     * @param milestoneDate milestoneDate
      * @return true, if successful
      */
-    @SuppressWarnings({"PMD" }) 
-    private static boolean checkIfBusinessdays(int weekdays, Calendar cal) {
-        boolean allBusinessDays = false;
-        while (weekdays > 0) {
-            int day = cal.get(Calendar.DAY_OF_WEEK);
-            if ((day != Calendar.SUNDAY) && (day != Calendar.SATURDAY)) {
-                weekdays--;
-                allBusinessDays = true;
-            } else {
-                allBusinessDays = false;
-                break;
-            }
-         
-            cal.add(Calendar.DAY_OF_WEEK, -1);
+    private static boolean isMoreThan5Businessdays(Calendar milestoneDate) {
+        boolean ret = false;
+        LOG.debug("milestoneDate :- " + milestoneDate.getTime());
+        Calendar today = Calendar.getInstance();
+        today.add(Calendar.DAY_OF_MONTH, -PAST_7_DAYS);
+        if (milestoneDate.before(today)) {
+            ret = true;
         }
-        return allBusinessDays;
+        LOG.debug("isMoreThan5Businessdays :- " + ret);
+      return ret;
     }
-
     /**
      * Check milestone exists.
      * 
@@ -232,6 +202,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                 milestoneExits = true;
             }
         }
+        LOG.debug("milestoneExits-" + milestoneExits);   
         return milestoneExits;
     }
 
