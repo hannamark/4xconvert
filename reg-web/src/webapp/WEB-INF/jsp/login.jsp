@@ -5,6 +5,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
+
+<SCRIPT>
+    function showPasswordResetInfo(){
+        showPopWinOutsideContext('/registry/popupdisplayPasswordReset.action', 900, 400, '', 'Resetting Your Password');
+    }
+</SCRIPT>
 <body><h1>Login</h1>
 <c:set var="topic" scope="request" value="login"/>
 <div class="box">
@@ -57,7 +63,7 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td>
-					<span class="small"><a title="To Reset Password" href="/registry/registerUser.action?resetPassword=true">(Forgot Your Password?)</a></span>
+					<span class="small"><a title="To Reset Password" onclick="showPasswordResetInfo();">(Forgot Your Password?)</a></span>
 				</td>
 			</tr>
 			<tr>

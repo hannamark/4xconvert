@@ -186,7 +186,14 @@ public class PopupAction extends ActionSupport implements Preparable {
       */
      public String displayPersonsList() throws PAException {
          return populatePersons(false);
-     }    
+     }
+     
+     /**
+      * @return results
+      */
+     public String displayPasswordReset() {
+         return "displayPasswordReset";
+     }
     
 
     private String populatePersons(boolean pagination) throws PAException {
