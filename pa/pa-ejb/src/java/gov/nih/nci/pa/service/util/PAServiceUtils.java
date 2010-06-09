@@ -857,16 +857,7 @@ public class PAServiceUtils {
                  BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
                  && PAUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator())) {
                    errMsg.append("Delayed posting Indicator is required if Section 801 is true.");
-            }
-            //Display error in abstraction validation if section 801 indicator = ‘yes’,  
-            if (PAConstants.YES.equalsIgnoreCase(
-                  BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
-                  && PAConstants.YES.equalsIgnoreCase(
-                          BlConverter.convertBLToString(studyProtocolDTO.getDelayedpostingIndicator()))
-                  && !isDeviceFound(studyProtocolDTO.getIdentifier() , paList)) {
-              errMsg.append("Delay posting indicator can only be set to \'yes\' " 
-                  + " if study includes at least one intervention with type \'device\'.");
-            }
+            }            
 
             if ("Update".equalsIgnoreCase(operation) && PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode()) 
                  && PAUtil.isListNotEmpty(studyIndldeDTOs)) { 
