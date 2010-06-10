@@ -1066,7 +1066,6 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
 
  private void addNciOrgAsCollaborator(StudyProtocolDTO studyProtocolDTO, Ii studyProtocolIi) 
  throws TooManyResultsException, PAException {
-     if (!studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
          StudySiteDTO nCiCollaborator = new StudySiteDTO();
          nCiCollaborator.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
          nCiCollaborator.setStatusCode(CdConverter.convertToCd(StudySiteStatusCode.ACTIVE));
@@ -1089,13 +1088,12 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                  nCiCollaborator.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.FUNDING_SOURCE));
                  nCiCollaborator.setHealthcareFacilityIi(null);
                  nCiCollaborator.setIdentifier(null);
+                 nCiCollaborator.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
                  studySiteService.create(nCiCollaborator);
                  break;
              }
          
          }
-     
-     }    
  }
 
  /**
