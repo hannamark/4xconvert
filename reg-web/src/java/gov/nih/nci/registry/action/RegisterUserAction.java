@@ -244,8 +244,10 @@ public class RegisterUserAction extends ActionSupport {
                     LOG.debug("Grid User Creation Results: " + results);
                 } 
                 
-                //Check if IDP URL was previously set, if not, then this is a creation of a new Grid Account and should use the default GRID_URL (Dorian)
-                String idpURL = (String)ServletActionContext.getRequest().getSession().getAttribute("selectedIdentityProvider");
+                //Check if IDP URL was previously set, if not, then this is a creation 
+                //of a new Grid Account and should use the default GRID_URL (Dorian)
+                String idpURL = (String) ServletActionContext.getRequest().getSession()
+                            .getAttribute("selectedIdentityProvider");
                 idpURL = (idpURL == null) ? GridAccountServiceBean.GRID_URL : idpURL;
                 
                 //Then the csm user account being sure to retrieve the long form grid username
@@ -313,7 +315,8 @@ public class RegisterUserAction extends ActionSupport {
             return Constants.REDIRECT_TO_LOGIN;
         }
         
-        ServletActionContext.getRequest().getSession().setAttribute("selectedIdentityProvider",getSelectedIdentityProvider());
+        ServletActionContext.getRequest().getSession().setAttribute("selectedIdentityProvider"
+              , getSelectedIdentityProvider());
         registryUserWebDTO.setPasswordEditingAllowed(false);
         registryUserWebDTO.setRetypePassword(registryUserWebDTO.getPassword());
         registryUserWebDTO.setEmailAddress(userInfo.get(CGMMConstants.CGMM_EMAIL_ID));
