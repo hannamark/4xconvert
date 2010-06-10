@@ -526,8 +526,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             + "left outer join sp.studyInbox as sinbx "
                             + "left outer join sp.studyCheckout as scheckout "
                             + "left outer join sp.studyOwners as sowner ");
-
-
+            
+            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
+                hql.append(" left outer join sp.studySites as sps_nct ");
+            }
+            
             hql.append(generateWhereClause(studyProtocolQueryCriteria));
             hql.append(" order by dws.statusDateRangeLow asc");
         } catch (Exception e) {
@@ -613,6 +616,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 where.append(" and upper(sps.localStudyProtocolIdentifier) like '%"
                                 + studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier()
                                         .toUpperCase().trim().replaceAll("'", "''") + "%'");
+           }
+           if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
+               where.append(" and upper(sps_nct.localStudyProtocolIdentifier) = '"
+                       + studyProtocolQueryCriteria.getNctNumber().toUpperCase().trim().replaceAll("'", "''") 
+                       + "' and sps_nct.functionalCode = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER + "'"); 
            }
            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationId())) {
                     where.append(" and org.id = " + studyProtocolQueryCriteria.getLeadOrganizationId());
@@ -722,14 +730,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
      */
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private void addSubQueries(StudyProtocolQueryCriteria studyProtocolQueryCriteria, StringBuffer where) {
-        // sub-query for searching trials by NCT number
-        if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
-            where.append(" and sp.id in(select sp1.id from StudyProtocol as sp1 "
-                    + " left outer join sp1.studySites as sps1 "
-                    + " where upper(sps1.localStudyProtocolIdentifier) = '"
-                    + studyProtocolQueryCriteria.getNctNumber().toUpperCase().trim().replaceAll("'", "''") + "'"
-                    + " and sps1.functionalCode = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER + "')");
-        }
         // sub-query for searching trials by Participating site
         if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getOrganizationType())
                 && studyProtocolQueryCriteria.getOrganizationType().equalsIgnoreCase(PAConstants.PARTICIPATING_SITE)) {
