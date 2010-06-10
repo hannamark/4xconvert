@@ -84,6 +84,7 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -122,6 +123,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String primaryPurpose;
     private String primaryPurposeOtherText;
     private String userLastCreated;
+    private String userLastCreatedUsername;
     private Date dateLastCreated;
     private String onHoldReasons;
     private String offHoldDates;
@@ -135,13 +137,14 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Long studyInboxId;
     private String isProprietaryTrial;
     private String studyCheckoutBy;
+    private String studyCheckoutByUsername;
     private Long studyCheckoutId;
     private String trialCategory;
     private Date recordVerificationDate;
     private Boolean ctgovXmlRequiredIndicator;
     private Boolean showSendXml = false;
     private List<String> otherIdentifiers = new ArrayList<String>();
-    
+
    /**
     * @return the trialCategory
     */
@@ -154,7 +157,7 @@ public class StudyProtocolQueryDTO implements Serializable {
         return trialCategory;
       }
     }
-    
+
     /**
      * @return the isProprietaryTrial
      */
@@ -425,7 +428,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setStudyProtocolType(String studyProtocolType) {
         this.studyProtocolType = studyProtocolType;
     }
-    
+
     /**
      * @return the amend
      */
@@ -499,6 +502,7 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public void setUserLastCreated(String userLastCreated) {
         this.userLastCreated = userLastCreated;
+        this.userLastCreatedUsername = PAUtil.getGridIdentityUsername(userLastCreated);
     }
     /**
      * @return dateLastCreated
@@ -513,35 +517,35 @@ public class StudyProtocolQueryDTO implements Serializable {
       this.dateLastCreated = dateLastCreated;
     }
     /**
-     * 
-     * @return onHoldReasons 
+     *
+     * @return onHoldReasons
      */
     public String getOnHoldReasons() {
         return onHoldReasons;
     }
     /**
-     * 
+     *
      * @param onHoldReasons onHoldReasons
      */
     public void setOnHoldReasons(String onHoldReasons) {
         this.onHoldReasons = onHoldReasons;
     }
     /**
-     * 
+     *
      * @return offHoldDates
      */
     public String getOffHoldDates() {
         return offHoldDates;
     }
-    
+
     /**
-     * 
+     *
      * @param offHoldDates offHoldDates
      */
     public void setOffHoldDates(String offHoldDates) {
         this.offHoldDates = offHoldDates;
     }
-    
+
     /**
      * @param studyMilsetone the studyMilsetone to set
      */
@@ -601,6 +605,7 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public void setStudyCheckoutBy(String studyCheckoutBy) {
         this.studyCheckoutBy = studyCheckoutBy;
+        this.studyCheckoutByUsername = PAUtil.getGridIdentityUsername(studyCheckoutBy);
     }
     /**
      * @return the studyCheckoutId
@@ -656,18 +661,33 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setShowSendXml(Boolean showSendXml) {
         this.showSendXml = showSendXml;
     }
-    
+
     /**
      * @return secondaryIdentifiers
      */
     public List<String> getOtherIdentifiers() {
         return otherIdentifiers;
     }
-    
-    /** 
+
+    /**
      * @param otherIdentifiers the secondary identifiers to set
      */
     public void setOtherIdentifiers(List<String> otherIdentifiers) {
         this.otherIdentifiers = otherIdentifiers;
-    }    
+    }
+
+    /**
+     * @return the userLastCreatedUsername
+     */
+    public String getUserLastCreatedUsername() {
+        return userLastCreatedUsername;
+    }
+
+    /**
+     * @return the studyCheckoutByUsername
+     */
+    public String getStudyCheckoutByUsername() {
+        return studyCheckoutByUsername;
+    }
+
 }

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<s:form name="sForm"><s:actionerror/>    
+<s:form name="sForm"><s:actionerror/>
 <s:set name="records" value="records" scope="request"/>
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" id="row"
     name="records" requestURI="studyProtocolquery.action" export="false">
@@ -17,13 +17,13 @@
     <display:column titleKey="studyProtocol.studyOnholdDates" property="offHoldDates" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.submissionType" property="submissionTypeCode"  headerClass="sortable"/>
     <display:column titleKey="studyProtocol.checkOutBy"  sortable="true" headerClass="sortable">
-    	<s:if test="%{#attr.row.studyCheckoutBy != null}">
-    		<c:out value="${row.studyCheckoutBy}"/>
+    	<s:if test="%{#attr.row.studyCheckoutByUsername != null}">
+    		<c:out value="${row.studyCheckoutByUsername}"/>
     	</s:if>
     </display:column>
     <c:if test="${(sessionScope.role == 'Abstractor') || (sessionScope.role == 'SuAbstractor')}">
-        <display:column class="title" 
-            titleKey="studyProtocol.action" 
+        <display:column class="title"
+            titleKey="studyProtocol.action"
             href="studyProtocolview.action" property="action"
             paramId="studyProtocolId" paramProperty="studyProtocolId"
             sortable="true" headerClass="sortable"/>
@@ -35,8 +35,8 @@
         		<s:a href="%{url}">Check-In</s:a>
             </s:if>
         </display:column>
-    </c:if>        
-    <display:column titleKey="studyProtocol.viewTSR"  
+    </c:if>
+    <display:column titleKey="studyProtocol.viewTSR"
         href="studyProtocolviewTSR.action" property="viewTSR"       />
 </display:table>
 </s:form>
@@ -46,6 +46,6 @@ function generateTSR(Id) {
     document.sForm.target = "TSR";
     document.sForm.action = url;
     document.sForm.submit();
-    
+
 }
 </script>

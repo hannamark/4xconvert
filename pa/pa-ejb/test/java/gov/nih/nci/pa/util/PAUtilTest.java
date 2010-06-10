@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.util;
 
@@ -52,7 +52,7 @@ import org.junit.Test;
  *
  */
 public class PAUtilTest {
- 
+
 	/**
 	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNull(gov.nih.nci.iso21090.Ii)}.
 	 */
@@ -60,7 +60,7 @@ public class PAUtilTest {
 	public void testIsIiNull() {
 		Ii ii = null;
 		assertTrue(PAUtil.isIiNull(ii));
-		
+
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class PAUtilTest {
 	 */
 	@Test
 	public void testConvertTsToFormarttedDate() {
-		String date = 
+		String date =
 			PAUtil.convertTsToFormarttedDate(TsConverter.convertToTs(new Timestamp(new Date("11/16/2009").getTime())), "yyyy-MM");
 		assertEquals("2009-11",date);
 	}
@@ -215,9 +215,9 @@ public class PAUtilTest {
 	public void testDateStringToTimestamp() {
 		 Timestamp now = new Timestamp(new Date().getTime());
 	     assertTrue(now.after(PAUtil.dateStringToTimestamp(now.toString())));
-	        
+
 	}
-	
+
 	/**
 	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#today()}.
 	 */
@@ -446,10 +446,10 @@ public class PAUtilTest {
 	public void testIsTypeIntervention() {
 		assertTrue(PAUtil.isTypeIntervention(CdConverter.convertStringToCd(ActivityCategoryCode.INTERVENTION.getCode())));
 	}
-    
+
     @Test
     public void testConvertPoOrganizationDTO() throws Exception{
-        OrganizationDTO org = new OrganizationDTO(); 
+        OrganizationDTO org = new OrganizationDTO();
         org.setName(EnOnConverter.convertToEnOn("org"));
         org.setIdentifier(IiConverter.convertToPoOrganizationalContactIi("1"));
         Ad address = AddressConverterUtil.create("101 Renner rd", "deliveryAddress", "Richardson", "TX", "75081", "USA");
@@ -458,11 +458,11 @@ public class PAUtilTest {
         List<Country> con = TestSchema.countries;
         PaOrganizationDTO paOrgDTO = PADomainUtils.convertPoOrganizationDTO(org, con);
         assertEquals("Testing org name", "org", paOrgDTO.getName());
-        assertEquals("Testing Country name", "USA", paOrgDTO.getCountry());        
-    }   
-    
+        assertEquals("Testing Country name", "USA", paOrgDTO.getCountry());
+    }
+
     private PersonDTO setUpPerson() {
-        PersonDTO poPerson = new PersonDTO();  
+        PersonDTO poPerson = new PersonDTO();
         poPerson.setName(EnPnConverter.convertToEnPn("firstName", "middleName", "lastName", "prefix", "suffix"));
         poPerson.setIdentifier(IiConverter.convertToPoPersonIi("1"));
          List<String> phones = new ArrayList<String>();
@@ -482,12 +482,12 @@ public class PAUtilTest {
 
     @Test
     public void testConvertToPaPerson() {
-        PersonDTO poPerson = setUpPerson();        
+        PersonDTO poPerson = setUpPerson();
          Person person = PADomainUtils.convertToPaPerson(poPerson);
          assertNotNull(person);
          assertEquals("Testing first name","firstName",person.getFirstName());
     }
-    
+
     @Test
     public void testConvertToPaPersonDTO() {
         PersonDTO poPerson = setUpPerson();
@@ -496,4 +496,21 @@ public class PAUtilTest {
         assertEquals("testing last name","a@a.com",paPersonDTO.getEmail());
     }
 
+    @Test
+    public void testGetGridIdentityUsername() {
+        String gridIdentity = "/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=abstractor";
+        assertEquals("abstractor", PAUtil.getGridIdentityUsername(gridIdentity));
+
+        gridIdentity = "/O=caBIG/OU=caGrid/OU=Stage LOA1/OU=Dorian/CN=abstractor";
+        assertEquals("abstractor", PAUtil.getGridIdentityUsername(gridIdentity));
+
+        gridIdentity = "/O=SomeString/OU=Dorian/CN=abstractor";
+        assertEquals("abstractor", PAUtil.getGridIdentityUsername(gridIdentity));
+
+        gridIdentity = "/O=cdskjfjfdskfjdsU=Dorian/CN=abstractor";
+        assertEquals("abstractor", PAUtil.getGridIdentityUsername(gridIdentity));
+
+        gridIdentity = "/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/cn=abstractor";
+        assertEquals(gridIdentity, PAUtil.getGridIdentityUsername(gridIdentity));
+    }
 }

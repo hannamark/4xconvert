@@ -133,7 +133,7 @@ import org.apache.commons.lang.StringUtils;
  * This is a selection of utilities, useful for PA. This set of utilities is safe to use in the grid services. Do
  * not, I repeat, do not add methods that reference domain objects. If you need to manipulate domain objects do so
  * in PADomainUtils.
- * 
+ *
  * @author Naveen Amiruddin
  * @since 05/30/2007
  * copyright NCI 2007.  All rights reserved.
@@ -565,12 +565,12 @@ public class PAUtil {
        Matcher m = p.matcher(match);
        return  m.matches();
     }
-    
+
     /**
      * Checks if is valid phone.
-     * 
+     *
      * @param phone the phone
-     * 
+     *
      * @return true, if is valid phone
      */
     public static boolean isValidPhone(String phone) {
@@ -792,7 +792,7 @@ public class PAUtil {
         Timestamp siteStatusDate = PAUtil.dateStringToTimestamp(date);
         return isDateCurrentOrPast(siteStatusDate);
     }
-    
+
     /**
      * @param date date
      * @return boolean
@@ -805,7 +805,7 @@ public class PAUtil {
         }
         return retValue;
     }
-    
+
     /**
      * check if the date is of valid format.
      * @param dateString dateString
@@ -842,7 +842,7 @@ public class PAUtil {
       boolean retValue = false;
       String dwfs = documentWorkFlowStatusCode.getCode();
       if (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTED.getCode())
-              || dwfs.equals(DocumentWorkflowStatusCode.VERIFICATION_PENDING.getCode())  
+              || dwfs.equals(DocumentWorkflowStatusCode.VERIFICATION_PENDING.getCode())
             || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
             || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode())) {
         retValue = true;
@@ -1153,9 +1153,9 @@ public class PAUtil {
 
     /**
      * Gets the assigned identifier extension.
-     * 
+     *
      * @param spDTO the sp dto
-     * 
+     *
      * @return the assigned identifier
      */
     public static String getAssignedIdentifierExtension(StudyProtocolDTO spDTO) {
@@ -1163,7 +1163,7 @@ public class PAUtil {
         if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
             for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
                 if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
-                    return ii.getExtension();            
+                    return ii.getExtension();
                 }
             }
         }
@@ -1172,9 +1172,9 @@ public class PAUtil {
 
     /**
      * Gets the assigned identifier.
-     * 
+     *
      * @param spDTO the sp dto
-     * 
+     *
      * @return the assigned identifier
      */
     public static Ii getAssignedIdentifier(StudyProtocolDTO spDTO) {
@@ -1183,13 +1183,13 @@ public class PAUtil {
         if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
             for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
                 if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
-                    return ii;            
+                    return ii;
                 }
             }
         }
         return assignedIdentifier;
     }
-    
+
     /**
      * Returns a listing of a study protocols other identifier extensions.
      * @param spDTO the study protocol dto
@@ -1197,7 +1197,7 @@ public class PAUtil {
      */
     public static List<Ii> getOtherIdentifiers(StudyProtocolDTO spDTO) {
         List<Ii> results = new ArrayList<Ii>();
-        if (spDTO.getSecondaryIdentifiers() != null 
+        if (spDTO.getSecondaryIdentifiers() != null
                 && CollectionUtils.isNotEmpty(spDTO.getSecondaryIdentifiers().getItem())) {
             for (Ii id : spDTO.getSecondaryIdentifiers().getItem()) {
                 if (StringUtils.equals(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT, id.getRoot())) {
@@ -1207,7 +1207,7 @@ public class PAUtil {
         }
         return results;
     }
-    
+
     /**
      * Returns a listing of a study protocols identifiers that are not other identifiers.
      * @param spDTO the study protocol dto
@@ -1215,7 +1215,7 @@ public class PAUtil {
      */
     public static Ii getNonOtherIdentifiers(StudyProtocolDTO spDTO) {
         Ii results = new Ii();
-        if (spDTO.getSecondaryIdentifiers() != null 
+        if (spDTO.getSecondaryIdentifiers() != null
                 && CollectionUtils.isNotEmpty(spDTO.getSecondaryIdentifiers().getItem())) {
             for (Ii id : spDTO.getSecondaryIdentifiers().getItem()) {
                 if (!StringUtils.equals(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT, id.getRoot())) {
@@ -1226,12 +1226,12 @@ public class PAUtil {
         return results;
     }
 
-    
+
     /**
      * Check assigned identifier exists dto.
-     * 
+     *
      * @param spDTO the sp dto
-     * 
+     *
      * @return true, if successful
      */
     public static boolean checkAssignedIdentifierExists(StudyProtocolDTO spDTO) {
@@ -1239,10 +1239,23 @@ public class PAUtil {
         if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
             for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
                 if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
-                    return true;                
+                    return true;
                 }
             }
         }
         return assignedIdentifierExists;
+    }
+
+    /**
+     * Given a username string, determines if its in the grid format, returns the CN.
+     * @param gridIdentity the grid identity string.
+     * @return the username or the grid identity.
+     */
+    public static String getGridIdentityUsername(String gridIdentity) {
+        String splitString = "CN=";
+        if (StringUtils.contains(gridIdentity, splitString)) {
+            return gridIdentity.split(splitString)[1];
+        }
+        return gridIdentity;
     }
 }
