@@ -726,8 +726,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
             where.append(" and sp.id in(select sp1.id from StudyProtocol as sp1 "
                     + " left outer join sp1.studySites as sps1 "
-                    + " where upper(sps1.localStudyProtocolIdentifier) like '%"
-                    + studyProtocolQueryCriteria.getNctNumber().toUpperCase().trim().replaceAll("'", "''") + "%'"
+                    + " where upper(sps1.localStudyProtocolIdentifier) = '"
+                    + studyProtocolQueryCriteria.getNctNumber().toUpperCase().trim().replaceAll("'", "''") + "'"
                     + " and sps1.functionalCode = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER + "')");
         }
         // sub-query for searching trials by Participating site

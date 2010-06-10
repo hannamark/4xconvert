@@ -454,4 +454,8 @@
         <comment>Clean out pa application setting so csm.properties is always used.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1938.sql"/>
     </changeSet>
+    <changeSet id="PO-2008" author="aevansel">
+        <comment>Adding index to upper(local_sp_indentifier) of study_site table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2008.sql"/>
+    </changeSet>
 </databaseChangeLog>
