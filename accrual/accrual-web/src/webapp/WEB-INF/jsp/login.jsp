@@ -45,7 +45,11 @@
                     </c:forEach>
                   </c:when>
                  <c:otherwise>   
-                   Authentication Source:
+        <tr>
+            <td class="label" scope="row">
+                <label for="authenticationServiceURL">Account Source:</label>
+            </td>
+            <td class="value">
                      <select name="authenticationServiceURL" size="1">
                         <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
                         <option value="<c:out value="${item.value}" />">
@@ -53,6 +57,7 @@
                         </option>
                         </c:forEach>
                     </select>
+            </td>
                  </c:otherwise>
                 </c:choose>
                </c:if>

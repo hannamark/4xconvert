@@ -38,7 +38,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="label" scope="row"><label for="selectedIdentityProvider">Authentication Source:</label></td>
+                        <td class="label" scope="row"><label for="selectedIdentityProvider">Account Source:</label></td>
                         <td class="value">
                             <s:if test="%{identityProviders.size == 1}">
                                 <s:iterator var="idp" value="identityProviders">

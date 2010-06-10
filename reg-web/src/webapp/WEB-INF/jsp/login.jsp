@@ -60,19 +60,6 @@
                 </td>
 				<td class="value"><input name="j_password" maxlength="100" size="25" type="password"></td>
 			</tr>
-			<tr>
-				<td>&nbsp;</td>
-				<td>
-					<span class="small"><a title="To Reset Password" onclick="showPasswordResetInfo();">(Forgot Your Password?)</a></span>
-				</td>
-			</tr>
-			<tr>
-                <td>&nbsp;</td>
-                <td>
-                    <span class="small"><a title="To Create an Account" href="/registry/registerUser.action">(Create an Account)</a></span>
-                </td>
-            </tr>
-</table>
          <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">
          <c:choose>
              <c:when test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) == 1}">
@@ -82,7 +69,11 @@
                   </c:forEach>
              </c:when>
              <c:otherwise>
-                    Identity Provider:
+            <tr>
+                <td class="label" scope="row">
+                <label for="authenticationServiceURL">Account Source:</label>
+                </td>
+                <td class="value">
                      <select name="authenticationServiceURL" size="1">
                         <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
                         <c:choose>
@@ -97,9 +88,24 @@
                                 </option>
                         </c:forEach>
                     </select>
+                </td>
+            </tr>
              </c:otherwise>
          </c:choose>
          </c:if>
+			<tr>
+				<td>&nbsp;</td>
+				<td>
+					<span class="small"><a title="To Reset Password" onclick="showPasswordResetInfo();">(Forgot Your Password?)</a></span>
+				</td>
+			</tr>
+			<tr>
+                <td>&nbsp;</td>
+                <td>
+                    <span class="small"><a title="To Create an Account" href="/registry/registerUser.action">(Create an Account)</a></span>
+                </td>
+            </tr>
+</table>
             </div>
            <div class="actionsrow">
             <del class="btnwrapper">
