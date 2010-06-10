@@ -61,11 +61,18 @@ else
                  <c:otherwise>   
                    Account Source:
                      <select name="authenticationServiceURL" size="1">
-                        <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
-                        <option value="<c:out value="${item.value}" />">
-                            <c:out value="${item.key}" />
-                        </option>
-                        </c:forEach>
+                      <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
+                        <c:choose>
+                            <c:when test="${fn:contains(item.value,'AuthenticationService')}">
+                                <option value="<c:out value="${item.value}" />" selected="selected">
+                            </c:when>
+                            <c:otherwise>
+                                <option value="<c:out value="${item.value}" />">
+                            </c:otherwise>
+                        </c:choose>
+		                            <c:out value="${item.key}" />
+		                        </option>
+                      </c:forEach>
                     </select>
                  </c:otherwise>
                 </c:choose>

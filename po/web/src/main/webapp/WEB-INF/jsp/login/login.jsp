@@ -56,9 +56,16 @@
                         <div class="fieldbox_m">
                             <select name="authenticationServiceURL" size="1">
                                 <c:forEach var="item" items="${requestScope.AUTHENTICATION_SOURCE_MAP}">
-                                    <option value="<c:out value="${item.value}" />">
-                                        <c:out value="${item.key}" />
-                                    </option>
+			                        <c:choose>
+			                            <c:when test="${fn:contains(item.value,'AuthenticationService')}">
+			                                <option value="<c:out value="${item.value}" />" selected="selected">
+			                            </c:when>
+			                            <c:otherwise>
+			                                <option value="<c:out value="${item.value}" />">
+			                            </c:otherwise>
+			                        </c:choose>
+			                                    <c:out value="${item.key}" />
+			                                </option>
                                 </c:forEach>
                             </select>
                         </div>
