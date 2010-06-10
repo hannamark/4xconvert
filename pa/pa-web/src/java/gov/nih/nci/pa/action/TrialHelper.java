@@ -97,8 +97,8 @@ public class TrialHelper {
             if (ABSTRACTION.equalsIgnoreCase(operation)) {
                 copyCentralContact(studyProtocolIi, gtdDTO);
             }
-            copyOtherIdentifiers(spDTO, gtdDTO);
         }
+        copyOtherIdentifiers(spDTO, gtdDTO);
         copyNctNummber(studyProtocolIi, gtdDTO);
         if (VALIDATION.equalsIgnoreCase(operation)) {
             copySummaryFour(PaRegistry.getStudyResourcingService()
