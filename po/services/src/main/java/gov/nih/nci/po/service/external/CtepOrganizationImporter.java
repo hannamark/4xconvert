@@ -127,7 +127,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * @author Scott Miller
- * 
+ *
  */
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class CtepOrganizationImporter extends CtepEntityImporter {
@@ -154,7 +154,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Constructor.
-     * 
+     *
      * @param ctepContext the initial context providing access to ctep services.
      */
     public CtepOrganizationImporter(Context ctepContext) {
@@ -163,7 +163,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Get the organization representing ctep.
-     * 
+     *
      * @return the org
      * @throws JMSException on error
      * @throws EntityValidationException if a validation error occurs anywhere throughout
@@ -181,7 +181,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Imports the given org but will not update an existing entry.
-     * 
+     *
      * @param ctepOrgId the org id.
      * @return the org
      * @throws JMSException on error
@@ -197,7 +197,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Method to import an organization based on its ctep id.
-     * 
+     *
      * @param ctepOrgId the ctep id.
      * @return the organization record.
      * @throws JMSException on error
@@ -207,7 +207,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     public Organization importOrganization(Ii ctepOrgId) throws JMSException, EntityValidationException {
         try {
             // get org from ctep and convert to local data model
-            OrganizationDTO ctepOrgDto = getCtepOrgService().getOrganizationById(CtepUtils.convertToOldIi(ctepOrgId));
+            OrganizationDTO ctepOrgDto = getCtepOrgService().getOrganizationById(ctepOrgId);
             printOrgDataToDebugLog(ctepOrgDto);
             Ii assignedId = ctepOrgDto.getIdentifier();
             assignedId.setReliability(IdentifierReliability.VRF);
@@ -240,9 +240,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         }
     }
 
-    private boolean isNewCtepOrg(IdentifiedOrganization identifiedOrg, 
+    private boolean isNewCtepOrg(IdentifiedOrganization identifiedOrg,
             HealthCareFacility hcf, ResearchOrganization ro) {
-        return (identifiedOrg == null && (hcf == null || hcf.getPlayer() == null) 
+        return (identifiedOrg == null && (hcf == null || hcf.getPlayer() == null)
                 && (ro == null || ro.getPlayer() == null));
     }
 
@@ -298,6 +298,10 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         if (hcf != null) {
             hcf.setPlayer(ctepOrg);
             hcf.setStatus(roleStatus);
+            // CTEP already sets their ID in the identifiers set, but they set the reliability as ISS
+            // (since the ID is internally assigned there), but we want it be VRF, so we replace their identifier
+            // with our copy of it with the reliability set to VRF
+            hcf.getOtherIdentifiers().clear();
             hcf.getOtherIdentifiers().add(ctepOrgId);
             this.hcfService.curate(hcf);
         }
@@ -306,6 +310,10 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         if (ro != null) {
             ro.setPlayer(ctepOrg);
             ro.setStatus(roleStatus);
+            // CTEP already sets their ID in the identifiers set, but they set the reliability as ISS
+            // (since the ID is internally assigned there), but we want it be VRF, so we replace their identifier
+            // with our copy of it with the reliability set to VRF
+            ro.getOtherIdentifiers().clear();
             ro.getOtherIdentifiers().add(ctepOrgId);
             this.roService.curate(ro);
         }
@@ -379,7 +387,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Either updates a pending local org, or creates a CR for a active org based upon incoming ctep data.
-     * 
+     *
      * @param ctep incoming ctep data
      * @param local current local state
      * @throws JMSException unable to publish
@@ -534,6 +542,12 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             changed = true;
         }
 
+        if (!CtepUtils.arePhoneNumberListsEqual(role.getPhone(), ctepRole.getPhone())) {
+            role.getPhone().clear();
+            role.getPhone().addAll(ctepRole.getPhone());
+            changed = true;
+        }
+
         return changed;
     }
 
@@ -587,8 +601,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         // then change it to VRF for the rest of the import process.
         try {
             ctepOrgId.setReliability(IdentifierReliability.ISS);
-            HealthCareFacilityDTO hcfDto = 
-                getCtepOrgService().getHealthCareFacility(CtepUtils.convertToOldIi(ctepOrgId));
+            HealthCareFacilityDTO hcfDto = getCtepOrgService().getHealthCareFacility(ctepOrgId);
             printHcf(hcfDto);
 
             return (HealthCareFacility) PoXsnapshotHelper.createModel(hcfDto);
@@ -611,8 +624,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         // then change it to VRF for the rest of the import process.
         try {
             ctepOrgId.setReliability(IdentifierReliability.ISS);
-            ResearchOrganizationDTO roDto = 
-                getCtepOrgService().getResearchOrganization(CtepUtils.convertToOldIi(ctepOrgId));
+            ResearchOrganizationDTO roDto = getCtepOrgService().getResearchOrganization(ctepOrgId);
             print(roDto);
             return (ResearchOrganization) PoXsnapshotHelper.createModel(roDto);
         } catch (CTEPEntException e) {
@@ -630,7 +642,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Handle the nullification with duplicate of an organization from the ctep system.
-     * 
+     *
      * @param ctepOrgId the ctep org id
      * @param duplicateOfId the ID of the organization of which this is a duplicate
      * @param orgType organization type

@@ -123,7 +123,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * @author Scott Miller
- * 
+ *
  */
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class CtepPersonImporter extends CtepEntityImporter {
@@ -151,7 +151,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
 
     /**
      * Constructor.
-     * 
+     *
      * @param ctepContext the initial context providing access to ctep services.
      * @param orgImporter the org importer.
      */
@@ -166,7 +166,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
 
     /**
      * Method to import a person based on its ctep id.
-     * 
+     *
      * @param ctepPersonId the ctep id.
      * @throws JMSException on error
      * @throws EntityValidationException if a validation error occurs
@@ -176,7 +176,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
     public Person importPerson(Ii ctepPersonId) throws JMSException, EntityValidationException {
         try {
             // get org from ctep and convert to local data model
-            PersonDTO ctepPersonDto = getCtepPersonService().getPersonById(CtepUtils.convertToOldIi(ctepPersonId));
+            PersonDTO ctepPersonDto = getCtepPersonService().getPersonById(ctepPersonId);
             printPersonDataToDebugLog(ctepPersonDto);
             Ii assignedId = ctepPersonDto.getIdentifier();
             assignedId.setReliability(IdentifierReliability.VRF);
@@ -198,9 +198,9 @@ public class CtepPersonImporter extends CtepEntityImporter {
             return null;
         }
     }
-    
+
     /**
-     * @return {@link IdentifiedOrganizationServiceLocal} bean
+     * @return IdentifiedOrganizationServiceLocal bean
      */
     protected IdentifiedPersonServiceLocal getIdentifiedPerService() {
         return identifiedPersonService;
@@ -253,7 +253,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
     private Person createCtepPerson(Person ctepPerson, Ii assignedId) throws JMSException, EntityValidationException {
         // create the local entity record
         this.personService.curate(ctepPerson);
-           
+
         // create the identified entity record for the db id in ctep
         createIdentifiedPerson(ctepPerson, assignedId);
 
@@ -270,7 +270,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
             printHcpDataToDebugLog(hcp);
             createHcp(hcp, ctepPerson);
         }
-        
+
 
         // create records for all clinical research staff records.
         ClinicalResearchStaffDTO crs = getCrsFromCtep(assignedId);
@@ -278,8 +278,8 @@ public class CtepPersonImporter extends CtepEntityImporter {
             printCrsDataToDebugLog(crs);
             createCrs(crs, ctepPerson);
         }
-        
-        
+
+
 
         return ctepPerson;
     }
@@ -290,7 +290,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         // then change it to VRF for the rest of the import process.
         try {
             assignedId.setReliability(IdentifierReliability.ISS);
-            return getCtepPersonService().getIdentifiedPersonById(CtepUtils.convertToOldIi(assignedId));
+            return getCtepPersonService().getIdentifiedPersonById(assignedId);
         } catch (CTEPEntException e) {
             return null;
         } finally {
@@ -312,7 +312,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         identifiedPerson.getAssignedIdentifier().setRoot(assignedId.getRoot());
         identifiedPerson.getAssignedIdentifier().setScope(assignedId.getScope());
         identifiedPerson.setStatus(RoleStatus.ACTIVE);
-  
+
         this.identifiedPersonService.curate(identifiedPerson);
     }
 
@@ -329,7 +329,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         if (newIdentifier != null) {
             updateOtherIdentifier(p, identifiedPerson, newIdentifier);
         }
-        
+
         // update the hcp role
         HealthCareProviderDTO hcpDto = getHcpFromCtep(unPrefixedIi);
         if (hcpDto != null) {
@@ -341,7 +341,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         if (crsDto != null) {
             updateCrsRoles(p, crsDto);
         }
-        
+
 
         return p;
     }
@@ -510,7 +510,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         // then change it to VRF for the rest of the import process.
         try {
             personIi.setReliability(IdentifierReliability.ISS);
-            return getCtepPersonService().getHealthCareProviderByPlayerId(CtepUtils.convertToOldIi(personIi));
+            return getCtepPersonService().getHealthCareProviderByPlayerId(personIi);
         } catch (CTEPEntException e) {
             return null;
         } finally {
@@ -546,7 +546,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         // then change it to VRF for the rest of the import process.
         try {
             personIi.setReliability(IdentifierReliability.ISS);
-            return getCtepPersonService().getClinicalResearchStaffByPlayerId(CtepUtils.convertToOldIi(personIi));
+            return getCtepPersonService().getClinicalResearchStaffByPlayerId(personIi);
         } catch (CTEPEntException e) {
             return null;
         } finally {

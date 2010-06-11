@@ -29,7 +29,7 @@ public class CTEPPersonServiceStub implements PersonService {
     public HealthCareProviderDTO getHcp() {
         return hcp;
     }
-    
+
     public IdentifiedPersonDTO getIp() {
         return ip;
     }
@@ -54,7 +54,7 @@ public class CTEPPersonServiceStub implements PersonService {
         return hcp;
     }
 
-    public PersonDTO getPersonById(gov.nih.nci.coppa.iso.Ii arg0) throws CTEPEntException {
+    public PersonDTO getPersonById(Ii arg0) throws CTEPEntException {
         return per;
     }
 
@@ -62,35 +62,35 @@ public class CTEPPersonServiceStub implements PersonService {
         throw new CTEPEntException(0, "Doesn't work");
     }
 
-    public ClinicalResearchStaffDTO getClinicalResearchStaff(gov.nih.nci.coppa.iso.Ii arg0) throws CTEPEntException {
+    public ClinicalResearchStaffDTO getClinicalResearchStaff(Ii arg0) throws CTEPEntException {
         if (crs == null) {
             throw new CTEPEntException(0, "Ii not for a ClinicalResearchStaff");
         }
         return crs;
     }
 
-    public ClinicalResearchStaffDTO getClinicalResearchStaffByPlayerId(gov.nih.nci.coppa.iso.Ii arg0) throws CTEPEntException {
+    public ClinicalResearchStaffDTO getClinicalResearchStaffByPlayerId(Ii arg0) throws CTEPEntException {
         if (crs == null) {
             throw new CTEPEntException(0, "Ii not for a ClinicalResearchStaff");
         }
         return crs;
     }
 
-    public HealthCareProviderDTO getHealthCareProviderByPlayerId(gov.nih.nci.coppa.iso.Ii arg0) throws CTEPEntException {
+    public HealthCareProviderDTO getHealthCareProviderByPlayerId(Ii arg0) throws CTEPEntException {
         if (hcp == null) {
             throw new CTEPEntException(0, "Ii not for a HealthCareProvider");
         }
         return hcp;
     }
 
-    public HealthCareProviderDTO getHealthCareProviderByRoleId(gov.nih.nci.coppa.iso.Ii arg0) throws CTEPEntException {
+    public HealthCareProviderDTO getHealthCareProviderByRoleId(Ii arg0) throws CTEPEntException {
         if (hcp == null) {
             throw new CTEPEntException(0, "Ii not for a HealthCareProvider");
         }
         return hcp;
     }
 
-    public IdentifiedPersonDTO getIdentifiedPersonById(gov.nih.nci.coppa.iso.Ii arg0) throws CTEPEntException {
+    public IdentifiedPersonDTO getIdentifiedPersonById(Ii arg0) throws CTEPEntException {
         if (ip == null) {
             throw new CTEPEntException(0, "Ii not for a IdentifiedPerson");
         }

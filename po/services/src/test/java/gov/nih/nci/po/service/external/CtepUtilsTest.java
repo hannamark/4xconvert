@@ -122,6 +122,33 @@ public class CtepUtilsTest {
         o1.getEmail().add(e3);
         assertFalse(CtepUtils.isDifferent(o1, o1));
     }
+    
+    @Test
+    public void testNeedsCRPhoneDifferences() {
+        Organization o1 = new Organization();
+        Organization o2 = new Organization();
+
+        PhoneNumber e1 = new PhoneNumber();
+        o1.getPhone().add(e1);
+        assertTrue(CtepUtils.isDifferent(o1, o2));
+        assertTrue(CtepUtils.isDifferent(o2, o1));
+
+        PhoneNumber e2 = new PhoneNumber();
+        o2.getPhone().add(e2);
+        assertFalse(CtepUtils.isDifferent(o1, o1));
+
+        e1.setValue("111-222-3333");
+        assertTrue(CtepUtils.isDifferent(o1, o2));
+        assertTrue(CtepUtils.isDifferent(o2, o1));
+
+        e2.setValue("111-222-3333");
+        assertFalse(CtepUtils.isDifferent(o1, o1));
+
+        PhoneNumber e3 = new PhoneNumber();
+        e3.setValue("444-555-6666");
+        o1.getPhone().add(e3);
+        assertFalse(CtepUtils.isDifferent(o1, o1));
+    }
 
     @Test
     public void testNeedsCRMultipleDifferences() {
@@ -159,7 +186,6 @@ public class CtepUtilsTest {
         o1.setStatusCode(EntityStatus.NULLIFIED);
         o1.setStatusDate(new Date());
         o1.getFax().add(new PhoneNumber("5"));
-        o1.getPhone().add(new PhoneNumber("6"));
         o1.getTty().add(new PhoneNumber("7"));
         o1.getUrl().add(new URL("http://www.example.com"));
         o1.getHealthCareFacilities().add(new HealthCareFacility());
@@ -239,6 +265,28 @@ public class CtepUtilsTest {
         list1.add(email2copy);
         list2.add(email1copy);
         assertTrue(CtepUtils.areEmailListsEqual(list1, list2));
+    }
+    
+    @Test
+    public void arePhoneNumberListsEqual() {
+        List<PhoneNumber> list1 = new ArrayList<PhoneNumber>();
+        List<PhoneNumber> list2 = new ArrayList<PhoneNumber>();
+        assertTrue(CtepUtils.arePhoneNumberListsEqual(list1, list2));
+
+        PhoneNumber phone1 = new PhoneNumber("111-222-3333");
+        PhoneNumber phone1copy = new PhoneNumber("111-222-3333");
+        PhoneNumber phone2 = new PhoneNumber("111-222-3333x12345");
+        PhoneNumber phone2copy = new PhoneNumber("111-222-3333x12345");
+
+        list1.add(phone1);
+        assertFalse(CtepUtils.arePhoneNumberListsEqual(list1, list2));
+
+        list2.add(phone2);
+        assertFalse(CtepUtils.arePhoneNumberListsEqual(list1, list2));
+
+        list1.add(phone2copy);
+        list2.add(phone1copy);
+        assertTrue(CtepUtils.arePhoneNumberListsEqual(list1, list2));
     }
 
 

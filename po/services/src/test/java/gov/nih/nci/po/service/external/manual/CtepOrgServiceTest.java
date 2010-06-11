@@ -1,8 +1,8 @@
 package gov.nih.nci.po.service.external.manual;
 
 import gov.nih.nci.common.exceptions.CTEPEntException;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.OrganizationService;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.service.external.CtepImportServiceBean;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.service.external.CtepUtils;
@@ -29,25 +29,25 @@ public class CtepOrgServiceTest {
         Context ctepContext = CtepImportServiceBean.createCtepInitialContext();
         organizationService = (OrganizationService) ctepContext.lookup("OrganizationService");
     }
-    
+
     @Test
     public void getHCFs() throws CTEPEntException {
         for (String id : HCF_IDS) {
             Ii ii = new Ii();
             ii.setExtension(id);
             ii.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
-            HealthCareFacilityDTO hcf = organizationService.getHealthCareFacility(CtepUtils.convertToOldIi(ii));
+            HealthCareFacilityDTO hcf = organizationService.getHealthCareFacility(ii);
             print(hcf);
         }
     }
-    
+
     @Test
     public void getROs() throws CTEPEntException {
         for (String id : RO_IDS) {
             Ii ii = new Ii();
             ii.setExtension(id);
             ii.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
-            ResearchOrganizationDTO hcf = organizationService.getResearchOrganization(CtepUtils.convertToOldIi(ii));
+            ResearchOrganizationDTO hcf = organizationService.getResearchOrganization(ii);
             print(hcf);
         }
     }

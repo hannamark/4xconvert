@@ -7,6 +7,7 @@ import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
@@ -25,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
  * @author smatyas
  *
  */
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public final class CtepUtils {
     private static final String NULL_STRING = "null";
 
@@ -105,11 +107,7 @@ public final class CtepUtils {
      * @return true if the ctep org has different data than localOrg
      */
     static boolean isDifferent(Organization ctepOrg, Organization localOrg) {
-        if (!StringUtils.equals(localOrg.getName(), ctepOrg.getName())) {
-            return true;
-        }
-
-        if (!areEmailListsEqual(localOrg.getEmail(), ctepOrg.getEmail())) {
+        if (isDifferentHelper(ctepOrg, localOrg)) {
             return true;
         }
 
@@ -117,6 +115,22 @@ public final class CtepUtils {
         Address localAddr = localOrg.getPostalAddress() == null ? new Address() : localOrg.getPostalAddress();
 
         return !localAddr.contentEquals(ctepAddr);
+    }
+    
+    private static boolean isDifferentHelper(Organization ctepOrg, Organization localOrg) {
+        if (!StringUtils.equals(localOrg.getName(), ctepOrg.getName())) {
+            return true;
+        }
+
+        if (!areEmailListsEqual(localOrg.getEmail(), ctepOrg.getEmail())) {
+            return true;
+        }
+        
+        if (!arePhoneNumberListsEqual(localOrg.getPhone(), ctepOrg.getPhone())) {
+            return true;
+        }
+        
+        return false;
     }
 
     /**
@@ -170,26 +184,17 @@ public final class CtepUtils {
     }
     
     /**
-     * Converts the given 2.0 Ii to the 1.2.6 version. This is needed to support the ctep importers until they
-     * are upgraded to use the iso-datatypes 2.0.
-     * @param ii The Ii to convert
-     * @return The Ii from 1.2.6
-     */
-    public static gov.nih.nci.coppa.iso.Ii convertToOldIi(Ii ii) {
-        gov.nih.nci.coppa.iso.Ii oldIi = null;
-        if (ii != null) {
-            oldIi = new gov.nih.nci.coppa.iso.Ii();
-            oldIi.setIdentifierName(ii.getIdentifierName());
-            oldIi.setExtension(ii.getExtension());
-            oldIi.setRoot(ii.getRoot());
-            oldIi.setDisplayable(ii.getDisplayable());
-            oldIi.setReliability(ii.getReliability() == null 
-                    ? null : gov.nih.nci.coppa.iso.IdentifierReliability.valueOf(ii.getReliability().name()));
-            oldIi.setNullFlavor(ii.getNullFlavor() == null 
-                    ? null : gov.nih.nci.coppa.iso.NullFlavor.valueOf(ii.getNullFlavor().name()));
-            oldIi.setScope(ii.getScope() == null 
-                    ? null : gov.nih.nci.coppa.iso.IdentifierScope.valueOf(ii.getScope().name()));
-        } 
-        return oldIi;
+    * Checks if two lists of Phone Number contain the same addresses, regardless of order.
+    * @param list1 first list of Phone Number
+    * @param list2 other list of Phone Number
+    * @return true if both lists contain the same Phone Number, ignoring order
+    */
+    public static boolean arePhoneNumberListsEqual(List<PhoneNumber> list1, List<PhoneNumber> list2) {
+        Transformer valueTransformer = TransformerUtils.invokerTransformer("getValue");
+        List<PhoneNumber> transformedList1 = new ArrayList<PhoneNumber>(list1);
+        List<PhoneNumber> transformedList2 = new ArrayList<PhoneNumber>(list2);
+        CollectionUtils.transform(transformedList1, valueTransformer);
+        CollectionUtils.transform(transformedList2, valueTransformer);
+        return CollectionUtils.isEqualCollection(transformedList1, transformedList2);
     }
 }
