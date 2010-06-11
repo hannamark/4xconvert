@@ -8,18 +8,16 @@
  <constant name="struts.devMode" value="true" />
     <package name="default" extends="struts-default">
         <interceptors>
-             <interceptor name="parameterTrim"
+            <interceptor name="parameterTrim"
                 class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
-             <interceptor name="maliciousInput"
+            <interceptor name="maliciousInput"
                 class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor" />
 
             <interceptor-stack name="methodValidationStack">
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
                 <interceptor-ref name="params">
-                    <!--
-                        Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
-                     -->
+                    <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
                         _,d-\d+?-[sop]
                     </param>

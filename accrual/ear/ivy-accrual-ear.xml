@@ -14,7 +14,7 @@
     <dependency org="jakarta"                name="commons-fileupload"      rev="1.2.1"             force="true"   conf="runtime->master"/>
     <dependency org="jakarta"                name="commons-io"              rev="1.4"               force="true"   conf="runtime->master"/>
     <dependency org="jakarta"                name="commons-lang"            rev="2.4"               force="true"   conf="runtime->master"/>
-    
+
     <!-- To integrate with PHR Connector and use Credential Delegation Client; ESD-219 -->
         <dependency org="caGrid" name="cds" rev="1.3" force="true" conf="runtime->service">
             <exclude module="core"/>
@@ -70,7 +70,7 @@
             conf="runtime->default"/>
         <dependency org="saic" name="phr-connector-ws-client" rev="2010-05-06" transitive="false" force="true"
             conf="runtime->master"/>
-    
+
   </dependencies>
 
 </ivy-module>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry combineaccessrules="false" kind="src" path="/pa"/>
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -54,7 +55,6 @@
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/iso-datatypes-2.0.0-alpha1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/po-services-client-3.2.0-alpha1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/hibernate3-4.0.5.GA.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/pa"/>
 	<classpathentry kind="var" path="PA_LIB"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/commons-beanutils-1.8.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/cgmmapi-0.7.0.jar"/>

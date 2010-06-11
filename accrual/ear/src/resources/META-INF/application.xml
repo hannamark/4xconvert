@@ -28,18 +28,18 @@
     <module>
         <java>pa-commons-3.2.0m11-b2.jar</java>
     </module>
-	<module>
-		<java>commons-collections-3.2.1.jar</java>
-	</module>
-	<module>
-	    <java>commons-io-1.4.jar</java>
-	</module>
-	<module>
-	    <java>commons-fileupload-1.2.1.jar</java>
-	</module>
-	<module>
-	    <java>commons-lang-2.4.jar</java>
-	</module>
+    <module>
+        <java>commons-collections-3.2.1.jar</java>
+    </module>
+    <module>
+        <java>commons-io-1.4.jar</java>
+    </module>
+    <module>
+        <java>commons-fileupload-1.2.1.jar</java>
+    </module>
+    <module>
+        <java>commons-lang-2.4.jar</java>
+    </module>
     <module>
         <java>phr-connector-ws-client-2010-05-06.jar</java>
     </module>
