@@ -13,9 +13,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -27,12 +27,12 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 
 /**
- * 
+ *
  * @author Vrushali
- * 
- * 
+ *
+ *
  */
-public class BatchHelper implements Runnable { 
+public class BatchHelper implements Runnable {
 
     private static final Logger LOG = Logger.getLogger(BatchHelper.class);
     private String uploadLoc = null;
@@ -41,7 +41,7 @@ public class BatchHelper implements Runnable {
     private String userName = null;
     private String orgName = null;
    /**
-    * 
+    *
     * @param uploadLoc loc
     * @param trialDataFileName name
     * @param unzipLoc loc
@@ -59,7 +59,7 @@ public class BatchHelper implements Runnable {
 
 
     /**
-     * 
+     *
      * @param fileName
      *            fileName
      * @throws PAException
@@ -86,45 +86,45 @@ public class BatchHelper implements Runnable {
      */
     public void run() {
      try {
-           
+
          // open a new Hibernate session and bind to the context
          HibernateUtil.getHibernateHelper().openAndBindSession();
-         
+
          // start reading the xls file and create the required DTO
          List<StudyProtocolBatchDTO> dtoList = processExcel(uploadLoc
                   + File.separator + trialDataFileName);
-         HashMap<String, String> map = new BatchCreateProtocols().createProtocols(dtoList, unzipLoc
+         Map<String, String> map = new BatchCreateProtocols().createProtocols(dtoList, unzipLoc
                    + File.separator, userName);
-        
-         //get the Failed and Sucess count and remove it from map so that reporting of each trial 
+
+         //get the Failed and Sucess count and remove it from map so that reporting of each trial
          String sucessCount = (String) map.get("Sucess Trial Count");
          map.remove("Sucess Trial Count");
          String failedCount = (String) map.get("Failed Trial Count");
          map.remove("Failed Trial Count");
          String totalCount = Integer.valueOf(map.size()).toString();
          String attachFileName = generateExcelFileForAttachement(map);
-         //generate the email 
+         //generate the email
          RegistryUtil.generateMail(Constants.PROCESSED,
                  userName, sucessCount, failedCount, totalCount, attachFileName, "");
        } catch (Exception e) {
          LOG.error("Exception while processing batch" + e.getMessage());
-         //generate the email 
+         //generate the email
          RegistryUtil.generateMail(Constants.ERROR_PROCESSING, userName, "", "", "", "", e.getMessage());
       } finally {
          // unbind the  Hibernate session
          HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
      }
-        
+
     }
-    
-  
+
+
     /**
-     * 
+     *
      * @param map ma
      * @return st
      */
     @SuppressWarnings({"PMD.LooseCoupling" })
-    private String generateExcelFileForAttachement(HashMap<String, String> map) {
+    private String generateExcelFileForAttachement(Map<String, String> map) {
         try {
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFSheet sheet = wb.createSheet("new sheet");
@@ -147,14 +147,14 @@ public class BatchHelper implements Runnable {
             }
             sheet.autoSizeColumn((short) 0);
             sheet.autoSizeColumn((short) 1);
-            
+
             FileOutputStream fileOut = new FileOutputStream(uploadLoc + File.separator + "batchUploadReport.xls");
             wb.write(fileOut);
-           fileOut.close();          
-           LOG.error("Your file has been created succesfully");    
+           fileOut.close();
+           LOG.error("Your file has been created succesfully");
                } catch (Exception ex) {
                    LOG.error("exception while generating excel report" + ex.getMessage());
-            }    
+            }
 
         return uploadLoc + File.separator + "batchUploadReport.xls";
     }

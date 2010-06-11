@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.action;
 
@@ -19,27 +19,29 @@ import com.mockrunner.mock.web.MockHttpSession;
  */
 public class DisclaimerActionTest extends AbstractRegWebTest {
     private DisclaimerAction action = new DisclaimerAction();
+
     @Test
     public void testActionNameProperty() {
         assertNull(action.getActionName());
         action.setActionName("actionName");
         assertNotNull(action.getActionName());
     }
+
     @Test
     public void testExecute() {
-        assertEquals("show_Disclaimer_Page",action.execute());   
+        assertEquals("show_Disclaimer_Page", action.execute());
     }
+
     @Test
     public void testAccept() {
-     action.accept();
-     action.setActionName("");
-     MockHttpServletRequest request = new MockHttpServletRequest();
-     MockHttpSession session = new MockHttpSession();
-     request.setSession(session);
-     ServletActionContext.setRequest(request);
-     action.accept();
-     assertEquals("accept",(String)ServletActionContext.getRequest()
-             .getSession().getAttribute("disclaimer"));
-     assertEquals("searchTrial.action", action.getActionName());
+        action.accept();
+        action.setActionName("");
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        action.accept();
+        assertEquals("accept", ServletActionContext.getRequest().getSession().getAttribute("disclaimer"));
+        assertEquals("searchTrial.action", action.getActionName());
     }
 }

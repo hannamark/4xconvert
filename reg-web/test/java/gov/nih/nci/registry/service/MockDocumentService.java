@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.service;
 
@@ -19,9 +19,9 @@ import java.util.Map;
  * @author Vrushali
  *
  */
-public class MockDocumentService  extends MockAbstractBaseIsoService<DocumentDTO> implements DocumentServiceLocal {
+public class MockDocumentService extends MockAbstractBaseIsoService<DocumentDTO> implements DocumentServiceLocal {
 
-    static List<DocumentDTO> docList; 
+    static List<DocumentDTO> docList;
     static {
         docList = new ArrayList<DocumentDTO>();
         DocumentDTO dto = new DocumentDTO();
@@ -37,74 +37,57 @@ public class MockDocumentService  extends MockAbstractBaseIsoService<DocumentDTO
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
         docList.add(dto);
     }
-    
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.DocumentService#create(gov.nih.nci.pa.iso.dto.DocumentDTO)
-     */
+
+    @Override
     public DocumentDTO create(DocumentDTO docDTO) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.DocumentService#delete(gov.nih.nci.pa.iso.dto.DocumentDTO)
-     */
     public void delete(DocumentDTO docDTO) throws PAException {
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.DocumentService#get(gov.nih.nci.iso21090.Ii)
-     */
+    @Override
     public DocumentDTO get(Ii id) throws PAException {
-        DocumentDTO  matchingDto = new DocumentDTO();
-        for (DocumentDTO dto: docList){
-            if(dto.getIdentifier().getExtension().equals(id.getExtension())) {
+        DocumentDTO matchingDto = new DocumentDTO();
+        for (DocumentDTO dto : docList) {
+            if (dto.getIdentifier().getExtension().equals(id.getExtension())) {
                 matchingDto = dto;
             }
         }
         return matchingDto;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.DocumentService#getDocumentsByStudyProtocol(gov.nih.nci.iso21090.Ii)
-     */
-    public List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi)
-            throws PAException {
+    public List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException {
         List<DocumentDTO> matchingDtos = new ArrayList<DocumentDTO>();
-        for (DocumentDTO dto: docList){
-            if(dto.getStudyProtocolIdentifier().getExtension().equals(studyProtocolIi.getExtension())) {
+        for (DocumentDTO dto : docList) {
+            if (dto.getStudyProtocolIdentifier().getExtension().equals(studyProtocolIi.getExtension())) {
                 matchingDtos.add(dto);
             }
         }
         return matchingDtos;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.DocumentService#update(gov.nih.nci.pa.iso.dto.DocumentDTO)
-     */
+    @Override
     public DocumentDTO update(DocumentDTO docDTO) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
-	/* (non-Javadoc)
-	 * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
-	 */
-	public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
-			throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public List<DocumentDTO> getByStudyProtocol(Ii ii) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public List<DocumentDTO> getByStudyProtocol(Ii ii) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public void delete(Ii ii) throws PAException {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void delete(Ii ii) throws PAException {
+        // TODO Auto-generated method stub
 
-   
+    }
+
 }

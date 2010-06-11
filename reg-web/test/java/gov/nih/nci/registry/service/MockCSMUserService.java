@@ -1,24 +1,24 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.service;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author vrushali
  *
  */
 public class MockCSMUserService extends CSMUserService {
-	public static List<User> users;
+    public static List<User> users;
     static {
         users = new ArrayList<User>();
         User user = new User();
@@ -40,16 +40,18 @@ public class MockCSMUserService extends CSMUserService {
         user.setUserId(3L);
         users.add(user);
     }
-    public User createCSMUser(RegistryUser user, String loginName,
-            String password) throws PAException {
+
+    @Override
+    public User createCSMUser(RegistryUser user, String loginName, String password) throws PAException {
         return new User();
     }
 
-    public User updateCSMUser(RegistryUser user, String loginName,
-            String password) throws PAException {
+    @Override
+    public User updateCSMUser(RegistryUser user, String loginName, String password) throws PAException {
         return new User();
     }
-    
+
+    @Override
     public User getCSMUser(String loginName) throws PAException {
         for (User user : users) {
             if (user.getLoginName().equals(loginName)) {
@@ -58,13 +60,12 @@ public class MockCSMUserService extends CSMUserService {
         }
         return new User();
     }
-    
-    @SuppressWarnings("unchecked")
+
+    @Override
     public Set<User> getCSMUsers() throws PAException {
-        Set <User> userSet = new HashSet<User>();
+        Set<User> userSet = new HashSet<User>();
         userSet.addAll(users);
         return userSet;
     }
-
 
 }

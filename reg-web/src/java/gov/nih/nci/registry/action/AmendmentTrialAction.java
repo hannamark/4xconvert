@@ -1,6 +1,5 @@
 package gov.nih.nci.registry.action;
 
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -39,16 +38,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
 /**
- * 
+ *
  * @author Vrushali
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength",
-    "PMD.TooManyFields", "unchecked" })
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class AmendmentTrialAction extends ManageFileAction implements ServletResponseAware {
     private static final long serialVersionUID = 1L;
     private HttpServletResponse servletResponse;
@@ -58,7 +57,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
     private String studyProtocolId = null;
     private static String sessionTrialDTO = "trialDTO";
     private final TrialUtil trialUtil = new TrialUtil();
-    
+
     /**
      * @param response servletResponse
      */
@@ -72,25 +71,26 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
     public HttpServletResponse getServletResponse() {
         return servletResponse;
     }
+
     /**
-     * 
+     *
      * @return res
      */
     public String view() {
-        //clear the session
+        // clear the session
         TrialValidator.removeSessionAttributes();
         try {
-                String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
-                if (studyProtocolId == null) {
-                    studyProtocolId = pId;
-                }
-                Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
-                TrialUtil util = new TrialUtil();
-                trialDTO = new TrialDTO();
-                util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
-                TrialValidator.addSessionAttributes(trialDTO);
-                ServletActionContext.getRequest().getSession().setAttribute(sessionTrialDTO, trialDTO);
-                setPageFrom("amendTrial");
+            String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
+            if (studyProtocolId == null) {
+                studyProtocolId = pId;
+            }
+            Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+            TrialUtil util = new TrialUtil();
+            trialDTO = new TrialDTO();
+            util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
+            TrialValidator.addSessionAttributes(trialDTO);
+            ServletActionContext.getRequest().getSession().setAttribute(sessionTrialDTO, trialDTO);
+            setPageFrom("amendTrial");
             LOG.info("Trial retrieved: " + trialDTO.getOfficialTitle());
         } catch (Exception e) {
             LOG.error("Exception occured while querying trial " + e);
@@ -98,72 +98,60 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         }
         return SUCCESS;
     }
+
     /**
      * @return the trialDTO
      */
     public TrialDTO getTrialDTO() {
         return trialDTO;
     }
+
     /**
      * @param trialDTO the trialDTO to set
      */
     public void setTrialDTO(TrialDTO trialDTO) {
         this.trialDTO = trialDTO;
     }
+
     /**
      * Clears the session variables and redirect to search.
+     *
      * @return s
      */
     public String cancel() {
         TrialValidator.removeSessionAttributes();
         return "redirect_to_search";
     }
+
     /**
-     * 
+     *
      * @return s
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
+    @SuppressWarnings("unchecked")
     public String review() {
         try {
             clearErrorsAndMessages();
             enforceBusinessRules();
             List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
-            if (hasFieldErrors()) {
-                ServletActionContext.getRequest().setAttribute(
-                        "failureMessage" , "The form has errors and could not be submitted, "
-                        + "please check the fields highlighted below");
-                TrialValidator.addSessionAttributes(trialDTO);
-                trialUtil.populateRegulatoryList(trialDTO);
-            return ERROR;
+            String errorReturn = handleErrors();
+            if (errorReturn != null) {
+                return errorReturn;
             }
-            if (hasActionErrors()) {
-                TrialValidator.addSessionAttributes(trialDTO);
-                trialUtil.populateRegulatoryList(trialDTO);
-                return ERROR;
-            }            
-            populateList(docDTOList);            
-           trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
-           trialDTO.setDocDtos(docDTOList);
-           // get the document and put in list add the IndIde,FundingList 
-           List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
-           .getSession().getAttribute(Constants.INDIDE_LIST);
-           if (indList != null) {
-               trialDTO.setIndIdeDtos(indList);
-           }
-           List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
-           .getSession().getAttribute(Constants.GRANT_LIST);
-           if (grantList != null) {
-               trialDTO.setFundingDtos(grantList);
-           }
-           if (trialDTO.getXmlRequired()) {
-              trialUtil.setOversgtInfo(trialDTO);
-           }
-           List<Ii> otherIdsList = 
-               (List<Ii>) ServletActionContext.getRequest()
-                 .getSession().getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
-              if (otherIdsList != null) {
-                  trialDTO.setSecondaryIdentifierAddList(otherIdsList);
-              }
+            populateList(docDTOList);
+            trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
+            trialDTO.setDocDtos(docDTOList);
+            // get the document and put in list add the IndIde,FundingList
+            populateIndIdes();
+            populateGrantList();
+            if (trialDTO.getXmlRequired()) {
+                trialUtil.setOversgtInfo(trialDTO);
+            }
+            List<Ii> otherIdsList =
+                    (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(
+                            Constants.SECONDARY_IDENTIFIERS_LIST);
+            if (otherIdsList != null) {
+                trialDTO.setSecondaryIdentifierAddList(otherIdsList);
+            }
         } catch (IOException e) {
             LOG.error(e.getMessage());
             addActionError(e.getMessage());
@@ -176,11 +164,47 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         TrialValidator.removeSessionAttributes();
         ServletActionContext.getRequest().getSession().setAttribute(sessionTrialDTO, trialDTO);
         LOG.info("Calling the review page...");
-        return "review";    
+        return "review";
     }
-    
+
+    @SuppressWarnings("unchecked")
+    private void populateGrantList() {
+        List<TrialFundingWebDTO> grantList =
+                (List<TrialFundingWebDTO>) ServletActionContext.getRequest().getSession().getAttribute(
+                        Constants.GRANT_LIST);
+        if (grantList != null) {
+            trialDTO.setFundingDtos(grantList);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void populateIndIdes() {
+        List<TrialIndIdeDTO> indList =
+                (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession().getAttribute(
+                        Constants.INDIDE_LIST);
+        if (indList != null) {
+            trialDTO.setIndIdeDtos(indList);
+        }
+    }
+
+    private String handleErrors() {
+        if (hasFieldErrors()) {
+            ServletActionContext.getRequest().setAttribute("failureMessage",
+                    "The form has errors and could not be submitted, please check the fields highlighted below");
+            TrialValidator.addSessionAttributes(trialDTO);
+            trialUtil.populateRegulatoryList(trialDTO);
+            return ERROR;
+        }
+        if (hasActionErrors()) {
+            TrialValidator.addSessionAttributes(trialDTO);
+            trialUtil.populateRegulatoryList(trialDTO);
+            return ERROR;
+        }
+        return null;
+    }
+
     /**
-     * 
+     *
      * @return s
      */
     public String edit() {
@@ -190,15 +214,16 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         setDocumentsInSession(trialDTO);
         return "edit";
     }
+
     /**
-     * 
+     *
      * @return s
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public String amend() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
         if (trialDTO == null) {
-           return ERROR; 
+            return ERROR;
         }
         TrialUtil util = new TrialUtil();
         Ii amendId = null;
@@ -210,8 +235,8 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
                 trialDTO.setSection801Indicator(null);
             }
             StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
-            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(
-                    ServletActionContext.getRequest().getRemoteUser()));
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext.getRequest()
+                    .getRemoteUser()));
             StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
             OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
@@ -228,46 +253,46 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO, null);
             Ii responsiblePartyContactIi = null;
-            // updated only if the ctGovXmlRequired is true 
+            // updated only if the ctGovXmlRequired is true
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
                 if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
                     studyContactDTO = util.convertToStudyContactDTO(trialDTO);
                 } else {
-                   studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
-                   if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
-                       responsiblePartyContactIi = IiConverter.convertToPoPersonIi(
-                              trialDTO.getResponsiblePersonIdentifier());
-                   }
-                   if (trialDTO.getResponsibleGenericContactName() != null 
-                          && !trialDTO.getResponsibleGenericContactName().equals("")) {
-                        responsiblePartyContactIi = IiConverter.
-                          convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
-                   }
+                    studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
+                    if (StringUtils.isNotBlank(trialDTO.getResponsiblePersonName())) {
+                        responsiblePartyContactIi =
+                                IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
+                    }
+                    if (StringUtils.isNotBlank(trialDTO.getResponsibleGenericContactName())) {
+                        responsiblePartyContactIi =
+                                IiConverter.convertToPoOrganizationalContactIi(trialDTO
+                                        .getResponsiblePersonIdentifier());
+                    }
                 }
-            }    
+            }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
-            
+
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
             studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));
             studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, null));
             studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, null));
-            // updated only if the ctGovXmlRequired is true 
+            // updated only if the ctGovXmlRequired is true
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = null;
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
                 studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
             }
-            amendId = PaRegistry.getTrialRegistrationService().
-            amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, 
-                    leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO, 
-                    studyIdentifierDTOs, studyContactDTO, studySiteContactDTO, summary4orgDTO, 
-                    summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO, 
-                    BlConverter.convertToBl(Boolean.FALSE));  
+            amendId =
+                    PaRegistry.getTrialRegistrationService().amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                            studyResourcingDTOs, documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO,
+                            leadOrgSiteIdDTO, studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
+                            summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO,
+                            BlConverter.convertToBl(Boolean.FALSE));
             TrialValidator.removeSessionAttributes();
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", amendId.getExtension());
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", amendId);
         } catch (PAException e) {
-            LOG.error(e.getMessage());
+            LOG.error(e);
             addActionError(e.getMessage());
             TrialValidator.addSessionAttributes(trialDTO);
             ServletActionContext.getRequest().getSession().removeAttribute("secondaryIdentifiersList");
@@ -277,25 +302,24 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
             return ERROR;
         }
         setTrialAction("amend");
-     return "redirect_to_search";   
+        return "redirect_to_search";
     }
+
     /**
      * validate the submit trial form elements.
-     * @throws PAException 
+     *
+     * @throws PAException
      */
     private void enforceBusinessRules() throws PAException {
-        if (PAUtil.isEmpty(trialDTO.getAmendmentDate())) {
-            addFieldError("trialDTO.amendmentDate",
-                    getText("error.submit.amendmentDate"));
+        if (StringUtils.isBlank(trialDTO.getAmendmentDate())) {
+            addFieldError("trialDTO.amendmentDate", getText("error.submit.amendmentDate"));
         }
         if (!RegistryUtil.isValidDate(trialDTO.getAmendmentDate())) {
-                    addFieldError("trialDTO.amendmentDate", 
-                            getText("error.submit.invalidDate"));
+            addFieldError("trialDTO.amendmentDate", getText("error.submit.invalidDate"));
         } else {
             Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
             if (currentTimeStamp.before(PAUtil.dateStringToTimestamp(trialDTO.getAmendmentDate()))) {
-                addFieldError("trialDTO.amendmentDate", 
-                    getText("error.submit.invalidAmendDate"));                
+                addFieldError("trialDTO.amendmentDate", getText("error.submit.invalidAmendDate"));
             }
         }
         TrialValidator validator = new TrialValidator();
@@ -303,8 +327,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         err = validator.validateTrialDTO(trialDTO);
         addErrors(err);
         // validate trial status and dates specific for amendment
-        if (PAUtil.isNotEmpty(trialDTO.getStatusCode())
-                && RegistryUtil.isValidDate(trialDTO.getStatusDate())
+        if (StringUtils.isNotBlank(trialDTO.getStatusCode()) && RegistryUtil.isValidDate(trialDTO.getStatusDate())
                 && RegistryUtil.isValidDate(trialDTO.getCompletionDate())
                 && RegistryUtil.isValidDate(trialDTO.getStartDate())
                 && validator.isTrialStatusOrDateChanged(trialDTO)) {
@@ -315,34 +338,38 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
                 }
             }
         }
-        //validate the docs
+        // validate the docs
         validateDocuments();
-        //Only allow completing amendment submission of the pre-IRB approved study is the 
-        //current trial status 'In-Review' is replaced with 'Approved'.
-        if (PAUtil.isNotEmpty(trialDTO.getStatusCode()) && trialDTO.getStatusCode().equalsIgnoreCase("In Review")) {
-            addActionError("To Amend Submission of pre-IRB approved study replace " 
-              + " current trial status 'In-Review' with 'Approved'");
+        // Only allow completing amendment submission of the pre-IRB approved study is the
+        // current trial status 'In-Review' is replaced with 'Approved'.
+        if (StringUtils.isNotBlank(trialDTO.getStatusCode())
+                && trialDTO.getStatusCode().equalsIgnoreCase("In Review")) {
+            addActionError("To Amend Submission of pre-IRB approved study replace "
+                    + " current trial status 'In-Review' with 'Approved'");
         }
     }
-    
+
     /**
      * @return the trialAction
      */
     public String getTrialAction() {
         return trialAction;
     }
+
     /**
      * @param trialAction the trialAction to set
      */
     public void setTrialAction(String trialAction) {
         this.trialAction = trialAction;
     }
+
     /**
      * @return the studyProtocolId
      */
     public String getStudyProtocolId() {
         return studyProtocolId;
     }
+
     /**
      * @param studyProtocolId the studyProtocolId to set
      */
