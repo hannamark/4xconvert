@@ -10,17 +10,15 @@
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1>Login</h1>
 <div class="box">
-    <p style="margin:0; padding:0">Please log in to manage Accrual Submissions.
-             If you do not have an account, you may <a title="To Create an Account" href="${createAccountUrl}">create an account</a>.
-         </p>
     <form action="j_security_check" method="post" id="loginForm">
-
     <table style="margin:0 auto">
+        <c:if test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) > 1}">
+            <p><fmt:message key="login.instructions"/></p>
+        </c:if>
+        <p>If you have not yet registered, you may do so by clicking <a title="To Create an Account" href="${createAccountUrl}">here</a>.</p>
         <c:if test="${not empty param.failedLogin}">
           <p class="directions"><fmt:message key="errors.password.mismatch"/></p>
         </c:if>
-
-
         <tr><td class="space" colspan="2">&nbsp;</td></tr>
         <tr>
             <td class="label" scope="row">

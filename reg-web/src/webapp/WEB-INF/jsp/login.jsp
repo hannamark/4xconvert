@@ -30,6 +30,9 @@
           <strong>A user account for that grid user already exists. Please log in using your username and password.</strong>
         </div>
      </c:when>
+     <c:when test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) > 1}">
+        <p><fmt:message key="login.instructions"/></p>
+     </c:when>
      <c:otherwise>
            <p style="margin:0; padding:0">Please log in to search, view and register clinical trial details.
              If you do not have an account, you may <a title="To Create an Account" href="/registry/registerUser.action">create an account</a>. </p>

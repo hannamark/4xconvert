@@ -30,6 +30,9 @@
         </div>
         <form action="j_security_check" method="post" id="loginForm" onsubmit="startLogin(); return false;">
             <input id="enableEnterSubmit" type="submit"/>
+            <c:if test="${fn:length(requestScope.AUTHENTICATION_SOURCE_MAP) > 1}">
+                <p><fmt:message key="login.instructions"/></p>
+            </c:if>
             <c:if test="${not empty param.failedLogin}">
               <p class="directions"><fmt:message key="errors.password.mismatch"/></p>
             </c:if>

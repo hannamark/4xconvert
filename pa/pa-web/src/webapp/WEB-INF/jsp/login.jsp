@@ -37,6 +37,9 @@ else
 <form action="j_security_check" method="post" id="loginForm">
 <c:set var="topic" scope="request" value="login"/>
  <table class="form">
+            <c:if test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) > 1}">
+                <p><fmt:message key="login.instructions"/></p>
+            </c:if>
             <c:if test="${not empty param.failedLogin}">
               <p class="directions"><fmt:message key="errors.password.mismatch"/></p>
             </c:if>
@@ -59,24 +62,25 @@ else
                     </c:forEach>
                   </c:when>
                  <c:otherwise>   
-            <div class="fieldrow">
-                <label for="authenticationServiceURL">Account Source:</label>
-                <div class="fieldbox_m required">
-                    <select name="authenticationServiceURL" size="1">
-                      <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
-                        <c:choose>
-                            <c:when test="${fn:contains(item.value,'AuthenticationService')}">
-                                <option value="<c:out value="${item.value}" />" selected="selected">
-                            </c:when>
-                            <c:otherwise>
-                                <option value="<c:out value="${item.value}" />">
-                            </c:otherwise>
-                        </c:choose>
-		                            <c:out value="${item.key}" />
-		                        </option>
-                      </c:forEach>
-                    </select>
-                 </div>
+                     <div class="fieldrow">
+                         <label for="authenticationServiceURL">Account Source:</label>
+                         <div class="fieldbox_m required">
+                            <select name="authenticationServiceURL" size="1">
+                              <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
+                                <c:choose>
+                                    <c:when test="${fn:contains(item.value,'AuthenticationService')}">
+                                        <option value="<c:out value="${item.value}" />" selected="selected">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <option value="<c:out value="${item.value}" />">
+                                    </c:otherwise>
+                                </c:choose>
+        		                            <c:out value="${item.key}" />
+        		                        </option>
+                              </c:forEach>
+                            </select>
+                         </div>
+                     </div>
                  </c:otherwise>
                 </c:choose>
                </c:if>
