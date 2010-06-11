@@ -458,4 +458,8 @@
         <comment>Adding index to upper(local_sp_indentifier) of study_site table.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2008.sql"/>
     </changeSet>
+    <changeSet id="PO-1985" author="ludetc">
+        <comment>Fixes grammatical errors and non-standard characters</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1985.sql"/>
+    </changeSet>
 </databaseChangeLog>
