@@ -79,6 +79,7 @@ package gov.nih.nci.pa.report.service;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -147,21 +148,19 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
             session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer(
-                "SELECT sp.assigned_identifier, sp.submission_number, cm.organization, sp.date_last_created "
-              + "    , dws.status_code, dws.status_date_range_low "
-              + "    , sm.milestone_code, sm.milestone_date, sp.identifier "
-              + "FROM study_protocol AS sp "
-              + "INNER JOIN document_workflow_status AS dws ON (sp.identifier = dws.study_protocol_identifier) "
-              + "INNER JOIN study_milestone AS sm ON (sp.identifier = sm.study_protocol_identifier) "
-              + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
-              + "WHERE dws.identifier in "
-              + "      ( select max(identifier) "
-              + "        from document_workflow_status "
-              + "        group by study_protocol_identifier ) "
-              + "  AND sm.identifier in "
-              + "      ( select max(identifier) "
-              + "        from study_milestone "
-              + "        group by study_protocol_identifier ) ");
+                    "SELECT oi.extension, sp.submission_number, cm.organization, sp.date_last_created "
+                    + "    , dws.status_code, dws.status_date_range_low "
+                    + "    , sm.milestone_code, sm.milestone_date, sp.identifier "
+                    + "FROM study_protocol AS sp "
+                    + "LEFT OUTER JOIN study_otheridentifiers as oi ON (sp.identifier = oi.study_protocol_id) "
+                    + "INNER JOIN document_workflow_status AS dws ON (sp.identifier = dws.study_protocol_identifier) "
+                    + "INNER JOIN study_milestone AS sm ON (sp.identifier = sm.study_protocol_identifier) "
+                    + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
+                    + "WHERE dws.identifier in ( select max(identifier) from document_workflow_status " 
+                    + " group by study_protocol_identifier )  AND sm.identifier in  ( select max(identifier)" 
+                    + " from study_milestone group by study_protocol_identifier ) ");
+            sql.append("  AND (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
+                    + "   and oi.identifier_name = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "')");
             sql.append(dateRangeSql(criteria, "sp.date_last_created"));
             sql.append(ctepSql(criteria));
             sql.append(submissionTypeSql(criteria));

@@ -46,6 +46,7 @@
     <dependency org="jboss"                  name="cglib"                   rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="jboss"                  name="jbossall-client"         rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->runtime"/>
+    <dependency org="jakarta"                name="commons-beanutils"       rev="1.8.0"           conf="test->master"/>
 
     <!-- other test targets -->
     <dependency org="checkstyle"             name="checkstyle-all"          rev="4.4"             conf="test-checkstyle->runtime"/>

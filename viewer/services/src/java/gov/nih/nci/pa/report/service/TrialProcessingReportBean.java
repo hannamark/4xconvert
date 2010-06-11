@@ -79,6 +79,7 @@ package gov.nih.nci.pa.report.service;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.AssignedIdentifierCriteriaDto;
@@ -145,19 +146,17 @@ public class TrialProcessingReportBean
             session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer(
-                  "SELECT cm.organization, cm.first_name, cm.last_name, sp.assigned_identifier "
-                + "       , sp.official_title, dws.status_code, sp.identifier "
-                + "FROM study_protocol AS sp "
-                + "INNER JOIN document_workflow_status AS dws ON (sp.identifier = dws.study_protocol_identifier) "
-                + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
-                + "WHERE dws.identifier in "
-                + "      ( SELECT MAX(identifier) "
-                + "        FROM document_workflow_status "
-                + "        GROUP BY study_protocol_identifier ) "
-                + "  AND sp.identifier = "
-                + "     ( SELECT MAX(identifier) "
-                + "       FROM study_protocol "
-                + "       WHERE assigned_identifier = :ASSIGNED_IDENTIFIER ) ");
+                    "SELECT cm.organization, cm.first_name, cm.last_name, oi.extension "
+                    + "       , sp.official_title, dws.status_code, sp.identifier "
+                    + "FROM study_protocol AS sp "
+                    + "INNER JOIN document_workflow_status AS dws ON (sp.identifier = dws.study_protocol_identifier) "
+                    + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
+                    + "LEFT OUTER JOIN study_otheridentifiers as oi ON (sp.identifier = oi.study_protocol_id) "
+                    + "WHERE dws.identifier in  ( SELECT MAX(identifier) FROM document_workflow_status "
+                    + "        GROUP BY study_protocol_identifier ) "                
+                    + "  AND oi.extension =  :ASSIGNED_IDENTIFIER  ");
+            sql.append("  AND (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
+                    + "   and oi.identifier_name = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "')");
             query = session.createSQLQuery(sql.toString());
             setStParameter(query, "ASSIGNED_IDENTIFIER", criteria.getAssignedIdentifier());
             @SuppressWarnings(UNCHECKED)
@@ -196,11 +195,15 @@ public class TrialProcessingReportBean
             session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
             String sql = "SELECT sp.submission_number, sm.milestone_code, sm.milestone_date "
-                       + "FROM study_milestone AS sm "
-                       + "  INNER JOIN study_protocol AS sp ON (sm.study_protocol_identifier = sp.identifier) "
-                       + "WHERE sp.assigned_identifier = :ASSIGNED_IDENTIFIER "
-                       + "  AND sm.milestone_code IN (:REPORTING_MILESTONES) "
-                       + "ORDER BY sp.submission_number, sm.milestone_date, sm.identifier ";
+                    + "FROM study_milestone AS sm "
+                    + "  INNER JOIN study_protocol AS sp ON (sm.study_protocol_identifier = sp.identifier) "
+                    + "  INNER JOIN study_otheridentifiers as oi ON "
+                    + " (sm.study_protocol_identifier = oi.study_protocol_id) "
+                    + "WHERE oi.extension = :ASSIGNED_IDENTIFIER "
+                    + "  AND sm.milestone_code IN (:REPORTING_MILESTONES) "
+                    + "  AND (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
+                    + "   and oi.identifier_name = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "')"
+                    + " ORDER BY sp.submission_number, sm.milestone_date, sm.identifier ";
             logger.info("query = " + sql);
             query = session.createSQLQuery(sql);
             setStParameter(query, "ASSIGNED_IDENTIFIER", criteria.getAssignedIdentifier());

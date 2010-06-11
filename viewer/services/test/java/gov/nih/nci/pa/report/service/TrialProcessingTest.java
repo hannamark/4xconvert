@@ -79,7 +79,9 @@ package gov.nih.nci.pa.report.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.AssignedIdentifierCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialProcessingHeaderResultDto;
@@ -92,17 +94,26 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TrialProcessingTest
     extends AbstractReportBeanTest<AssignedIdentifierCriteriaDto, TrialProcessingResultDto, TrialProcessingReportBean> {
 
+    Ii assignedIdentifier = new Ii();
+    
     @Override
     @Before
     public void setUp() throws Exception {
         bean = new TrialProcessingReportBean();
-        super.setUp();
+        super.setUp();        
+        for (Ii id : TestSchema.studyProtocol.get(0).getOtherIdentifiers()) {
+            if (StringUtils.equals(id.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT)) {
+                assignedIdentifier = id;
+                break;
+            }
+        }
     }
 
     @Override
@@ -119,7 +130,7 @@ public class TrialProcessingTest
     @Test
     public void getTest() throws Exception {
         AssignedIdentifierCriteriaDto criteria = new AssignedIdentifierCriteriaDto();
-        criteria.setAssignedIdentifier(StConverter.convertToSt(TestSchema.studyProtocol.get(0).getIdentifier()));
+        criteria.setAssignedIdentifier(StConverter.convertToSt(assignedIdentifier.getExtension()));
         List<TrialProcessingResultDto> resultList = bean.get(criteria);
         assertTrue(resultList.size() == TestSchema.studyMilestone.size());
     }
@@ -130,7 +141,7 @@ public class TrialProcessingTest
     @Test
     public void getHeaderTest() throws Exception {
         AssignedIdentifierCriteriaDto criteria = new AssignedIdentifierCriteriaDto();
-        criteria.setAssignedIdentifier(StConverter.convertToSt(TestSchema.studyProtocol.get(0).getIdentifier()));
+        criteria.setAssignedIdentifier(StConverter.convertToSt(assignedIdentifier.getExtension()));
         TrialProcessingHeaderResultDto result = bean.getHeader(criteria);
         String username = TestSchema.user.get(0).getFirstName() + " " + TestSchema.user.get(0).getLastName();
         assertEquals(username, StConverter.convertToString(result.getUserLastCreated()));

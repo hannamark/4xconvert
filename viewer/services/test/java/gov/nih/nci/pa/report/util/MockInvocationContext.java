@@ -99,7 +99,7 @@ public class MockInvocationContext implements InvocationContext {
 
 	public Object[] getParameters() {
 		// TODO Auto-generated method stub
-		return null;
+		return new Object[0];
 	}
 
 	public Object getTarget() {

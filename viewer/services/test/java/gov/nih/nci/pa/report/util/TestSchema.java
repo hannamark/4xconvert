@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.pa.report.util;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
@@ -91,6 +92,7 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.CtrpHibernateHelper;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -100,7 +102,9 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -215,7 +219,12 @@ public class TestSchema {
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setIdentifier("NCI-2009-00001");
+
+        Set<Ii> studyOtherIdentifiers =  new HashSet<Ii>();
+        Ii assignedIdentifier = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00001");
+        studyOtherIdentifiers.add(assignedIdentifier);
+        
+        sp.setOtherIdentifiers(studyOtherIdentifiers);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setUserLastCreated(usr.getLoginName());
         sp.setDateLastCreated(PAUtil.dateStringToTimestamp("1/1/2009"));
