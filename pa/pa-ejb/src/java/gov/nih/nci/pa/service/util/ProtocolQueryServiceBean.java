@@ -159,8 +159,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
      *             PAException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
-            StudyProtocolQueryCriteria spsc) throws PAException {
+    public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(StudyProtocolQueryCriteria spsc) throws PAException {
         LOG.debug("Entering getStudyProtocolByCriteria ");
         if (isCriteriaEmpty(spsc)) {
             throw new PAException("At least one criteria is required.");
@@ -577,8 +576,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())) {
                 where.append(" and sp.otherIdentifiers.extension like '%"
-                        + studyProtocolQueryCriteria.getNciIdentifier()
-                                .toUpperCase().trim().replaceAll("'", "''")
+                        + studyProtocolQueryCriteria.getNciIdentifier().toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
             } else if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getOtherIdentifier())) {
                 where.append(" and upper(sp.otherIdentifiers.extension) like '%"
@@ -776,6 +774,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 && PAUtil.isEmpty(criteria.getDocumentWorkflowStatusCode())
                 && PAUtil.isEmpty(criteria.getStudyMilestone())
                 && PAUtil.isEmpty(criteria.getOtherIdentifier())
+                && PAUtil.isEmpty(criteria.getNctNumber())
                 && ((PAUtil.isNotEmpty(criteria.getSearchOnHold()) && criteria.getSearchOnHold().equalsIgnoreCase(
                         "false")) || PAUtil.isEmpty(criteria.getSearchOnHold()))
                 && ((PAUtil.isNotEmpty(criteria.getStudyLockedBy()) && criteria.getStudyLockedBy().equalsIgnoreCase(

@@ -162,22 +162,13 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
-        if (userId != null) {
-            RegistryUser myUser = getUserById(userId);
-            if (myUser == null || myUser.getId() == null) {
-                throw new PAException("Could not find user.");
-            }
-            if (myUser.getStudyProtocols() != null) {
-                for (StudyProtocol sp : myUser.getStudyProtocols()) {
-                    if (sp.getId().equals(studyProtocolId)) {
-                        return true;
-                    }
-                }
-            }
-        } else {
-            throw new PAException("User id is null.");
+        RegistryUser myUser = getUserById(userId);
+        StudyProtocol studyProtocol =  
+            (StudyProtocol) HibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
+        if (myUser == null) {
+            throw new PAException("Could not find user.");
         }
-        return false;
+        return studyProtocol.getStudyOwners().contains(myUser);       
     }
 
     /**
@@ -189,30 +180,23 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             return true;
         }
 
-        RegistryUser myUser = getUserById(user.getId());
-        if (myUser.getStudyProtocols() != null) {
-            for (StudyProtocol sp : myUser.getStudyProtocols()) {
-                if (sp.getId().equals(studyProtocolId)) {
-                    return true;
-                }
-            }
+        StudyProtocol studyProtocol =  
+            (StudyProtocol) HibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
+        if (user.getStudyProtocols().contains(studyProtocol)) {
+            return true;
         }
-
+        
         // check that the user is an admin of something in at all
-        if (myUser.getAffiliatedOrgUserType() == null
-                || !myUser.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)) {
+        if (!UserOrgType.ADMIN.equals(user.getAffiliatedOrgUserType())) {
             return false;
         }
 
-        // second check that the user isn't the lead org admin
-        StudyProtocol spObj = (StudyProtocol) HibernateUtil
-            .getCurrentSession().get(StudyProtocol.class, studyProtocolId);
-
-        if (spObj.getStudySites() != null) {
-            for (StudySite sSites : spObj.getStudySites()) {
+        // second check that the user isn't the lead org admin        
+        if (studyProtocol.getStudySites() != null) {
+            for (StudySite sSites : studyProtocol.getStudySites()) {
                 if (sSites.getFunctionalCode().equals(StudySiteFunctionalCode.LEAD_ORGANIZATION)
                         && sSites.getResearchOrganization().getOrganization()
-                        .getIdentifier().equals(myUser.getAffiliatedOrganizationId().toString())) {
+                        .getIdentifier().equals(user.getAffiliatedOrganizationId().toString())) {
                     return true;
                 }
             }

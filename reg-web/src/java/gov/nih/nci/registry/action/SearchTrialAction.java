@@ -120,6 +120,7 @@ import java.util.Set;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -181,13 +182,12 @@ public class SearchTrialAction extends ActionSupport {
                 return ERROR;
             }
             List<StudyProtocolQueryDTO> studyProtocolList = new ArrayList<StudyProtocolQueryDTO>();
-            studyProtocolList = PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(
-                    convertToStudyProtocolQueryCriteria());
+            studyProtocolList = 
+                PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
             if (studyProtocolList != null) {
                 records = new ArrayList<StudyProtocolQueryDTO>();
                 // when selected search my trials
-                if (StringUtils.isNotEmpty(criteria.getMyTrialsOnly()) 
-                        && criteria.getMyTrialsOnly().equals(TRUE)) {
+                if (BooleanUtils.toBoolean(criteria.getMyTrialsOnly())) {
                     String loginName =  ServletActionContext.getRequest().getRemoteUser();
                     for (StudyProtocolQueryDTO queryDto : studyProtocolList) {
                         if (PaRegistry.getRegisterUserService().hasTrialAccess(loginName, 
