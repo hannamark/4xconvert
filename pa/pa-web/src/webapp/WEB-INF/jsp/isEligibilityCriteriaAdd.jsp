@@ -28,6 +28,7 @@ function callOnloadFunctions(){
        }
      }  
     activate(selElement);         
+    activateMax();    
 }
 function lookup(){
     showPopWin('${lookupUrl}', 900, 400, '', 'caDSR Lookup');

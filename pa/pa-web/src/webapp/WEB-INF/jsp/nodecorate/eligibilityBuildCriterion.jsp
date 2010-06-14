@@ -37,7 +37,7 @@
                      </label>
                     </td>
                     <td class="value">                        
-                      <s:select name="webDTO.operator" list="#{'':'-Select-','=':'=', '<':'<', '<=':'<=', '>':'>', '>=':'>=', 'in':'in'}" cssStyle="width:106px" value="webDTO.operator" onclick="activateMax()"/>
+                      <s:select name="webDTO.operator" list="#{'':'-Select-','=':'=', '<':'<', '<=':'<=', '>':'>', '>=':'>=', 'in':'in'}" cssStyle="width:106px" value="webDTO.operator" onchange="activateMax()"/>
                     </td>         
                 </tr> 
                 <s:if test="permValues == null">

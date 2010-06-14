@@ -173,7 +173,7 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         app.setEmail(registryUser.getEmailAddress());
         app.setOrganization(registryUser.getAffiliateOrg());
 
-        LOG.debug("Creating grid user: " + ToStringBuilder.reflectionToString(app));
+        LOG.info("Creating grid user: " + username);
 
         try {
             return gridClient.register(app);

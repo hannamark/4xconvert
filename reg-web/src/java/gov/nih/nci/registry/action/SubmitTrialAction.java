@@ -246,7 +246,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             }
             trialUtil.populateRegulatoryList(trialDTO);
             setDocumentsInSession(trialDTO);
-            LOG.error("Exception occured while submitting trial: " + e);
+            LOG.error("Exception occured while submitting trial", e);
             return ERROR;
         }
         return "redirect_to_search";
