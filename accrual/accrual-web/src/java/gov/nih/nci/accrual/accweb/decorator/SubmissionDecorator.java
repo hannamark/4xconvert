@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * @author Hugh Reinhart
@@ -100,15 +101,23 @@ public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
      * @return cutOffDate as a String
      */
     public String getCutOffDate() {
-        Ts cutOffDate = ((SubmissionDto) this.getCurrentRowObject()).getCutOffDate();
+        Ts cutOffDate = ((SubmissionDto) getCurrentRowObject()).getCutOffDate();
         return cutOffDate == null ? " " : TsConverter.convertToString(cutOffDate);
+    }
+
+    /**
+     * @return cutOffDate as a Date.
+     */
+    public Date getDateCutOff() {
+        Ts cutOffDate = ((SubmissionDto) getCurrentRowObject()).getCutOffDate();
+        return cutOffDate.getValue();
     }
 
     /**
      * @return label as a string
      */
     public String getLabel() {
-        St label = ((SubmissionDto) this.getCurrentRowObject()).getLabel();
+        St label = ((SubmissionDto) getCurrentRowObject()).getLabel();
         return label == null ? " " : StConverter.convertToString(label);
     }
 
@@ -116,7 +125,7 @@ public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
      * @return description as a string
      */
     public String getDescription() {
-        St description = ((SubmissionDto) this.getCurrentRowObject()).getDescription();
+        St description = ((SubmissionDto) getCurrentRowObject()).getDescription();
         return description == null ?  " " : StConverter.convertToString(description);
     }
 
@@ -125,8 +134,16 @@ public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
      */
     public String getCreatedDate() {
         Timestamp createdDate = IvlConverter.convertTs().convertLow(
-                ((SubmissionDto) this.getCurrentRowObject()).getStatusDateRange());
+                ((SubmissionDto) getCurrentRowObject()).getStatusDateRange());
         return createdDate == null ? " " : PAUtil.normalizeDateString(createdDate.toString());
+    }
+
+    /**
+     * @return Status Date Range Low as a Date
+     */
+    public Date getDateStatusDateRangeLow() {
+        return IvlConverter.convertTs().convertLow(
+                ((SubmissionDto) getCurrentRowObject()).getStatusDateRange());
     }
 
     /**
@@ -134,15 +151,23 @@ public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
      */
     public String getSubmittedDate() {
         Timestamp submittedDate = IvlConverter.convertTs().convertHigh(
-                ((SubmissionDto) this.getCurrentRowObject()).getStatusDateRange());
+                ((SubmissionDto) getCurrentRowObject()).getStatusDateRange());
         return submittedDate == null ? " " : PAUtil.normalizeDateString(submittedDate.toString());
+    }
+
+    /**
+     * @return Status Date range High as a Date.
+     */
+    public Date getDateStatusDateRangeHigh() {
+        return IvlConverter.convertTs().convertHigh(
+                ((SubmissionDto) getCurrentRowObject()).getStatusDateRange());
     }
 
     /**
      * @return status as a string
      */
     public String getStatus() {
-        Cd status = ((SubmissionDto) this.getCurrentRowObject()).getStatusCode();
+        Cd status = ((SubmissionDto) getCurrentRowObject()).getStatusCode();
         return PAUtil.isCdNull(status) ? " " : CdConverter.convertCdToString(status);
     }
 
@@ -150,15 +175,15 @@ public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
      * @return createUser as a string
      */
     public String getCreateUser() {
-         St createUser = ((SubmissionDto) this.getCurrentRowObject()).getCreateUser();
+         St createUser = ((SubmissionDto) getCurrentRowObject()).getCreateUser();
          return createUser == null ?  " " : StConverter.convertToString(createUser);
     }
 
-     /**
+    /**
      * @return submitUser as a string
     */
     public String getSubmitUser() {
-        St submitUser = ((SubmissionDto) this.getCurrentRowObject()).getSubmitUser();
+        St submitUser = ((SubmissionDto) getCurrentRowObject()).getSubmitUser();
         return submitUser == null ?  " " : StConverter.convertToString(submitUser);
     }
 }
