@@ -214,14 +214,15 @@ public class RegisterUserAction extends ActionSupport {
             }
 
             try {                
-                if (!registryUserWebDTO.getOldPassword().equals(registryUserWebDTO.getPassword())) {
+                if (isChangingGridPassword(registryUserWebDTO.getOldPassword(), registryUserWebDTO.getPassword()) 
+                        && registryUserWebDTO.isPasswordEditingAllowed()) {
                     // updating the grid password programmatically
-                    PaRegistry.getGridAccountService().changePassword(registryUserWebDTO.getUsername(), 
+                    PaRegistry.getGridAccountService().changePassword(registryUserWebDTO.getDisplayUsername(), 
                             registryUserWebDTO.getOldPassword(), registryUserWebDTO.getPassword());
                 }
                 // first update the CSM user
                 CSMUserService.getInstance().updateCSMUser(registryUser, registryUserWebDTO.getUsername(), 
-                        registryUserWebDTO.getPassword());
+                        null);
                 
                 //now update the RegistryUser
                 PaRegistry.getRegisterUserService().updateUser(registryUser); 
@@ -230,6 +231,7 @@ public class RegisterUserAction extends ActionSupport {
                 return Constants.APPLICATION_ERROR;
             }
         } else { //create user
+            
             registryUser.setId(null);
             // first create the CSM user
             userAction =  "create";
@@ -258,8 +260,7 @@ public class RegisterUserAction extends ActionSupport {
                 //Only create a new csm account if one doesn't already exist otherwise just add the user to the proper
                 //group.
                 if (csmUser == null) {
-                    csmUser = csmUserService.createCSMUser(registryUser, username, 
-                            registryUserWebDTO.getPassword());
+                    csmUser = csmUserService.createCSMUser(registryUser, username, null);
                 } else {
                     csmUserService.assignUserToGroup(csmUser.getLoginName(), 
                             PaEarPropertyReader.getCSMSubmitterGroup());
@@ -284,6 +285,11 @@ public class RegisterUserAction extends ActionSupport {
 
         //redirect to the appropriate page
         return redirectPage;
+    }
+    
+    private boolean isChangingGridPassword(String oldPassword, String newPassword) {
+        return StringUtils.isNotEmpty(oldPassword) && StringUtils.isNotEmpty(newPassword) 
+                && !oldPassword.equals(newPassword);
     }
     
     /**
@@ -364,13 +370,18 @@ public class RegisterUserAction extends ActionSupport {
                    registryUserWebDTO.setAffiliateOrg(""); 
                    addFieldError("registryUserWebDTO.affiliateOrg", getText("error.register.affiliateOrg"));
             }
-            if (allowPasswordEditing && StringUtils.isNotEmpty(registryUserWebDTO.getPassword()) 
-                    && StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword())
-                    && !registryUserWebDTO.getPassword().equals(registryUserWebDTO.getRetypePassword())) {            
-                addFieldError("registryUserWebDTO.retypePassword", getText("error.register.matchPassword"));
-            }
             
-            if (allowPasswordEditing && StringUtils.isNotEmpty(registryUserWebDTO.getPassword()) 
+            validateOldPassword(allowPasswordEditing);
+            
+            validateNewPassword(allowPasswordEditing);
+            
+            validateRetypePassword(allowPasswordEditing);
+            
+            validatePasswordMatch(allowPasswordEditing);
+            
+            if (allowPasswordEditing
+                    && StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
+                    && StringUtils.isNotEmpty(registryUserWebDTO.getPassword()) 
                     && !PaRegistry.getGridAccountService().isValidGridPassword(registryUserWebDTO.getPassword())) {
                 addFieldError("registryUserWebDTO.password", getText("error.register.invalidPassword"));
             }
@@ -397,6 +408,47 @@ public class RegisterUserAction extends ActionSupport {
                 }
                 
             }
+        }
+    }
+    
+    private void validateOldPassword(boolean allowPasswordEditing) {
+     // did the user provide an old password?
+        if (allowPasswordEditing 
+                && !StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
+                && (StringUtils.isNotEmpty(registryUserWebDTO.getPassword())
+                        || StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword()))) {            
+            addFieldError("registryUserWebDTO.retypePassword", getText("error.register.oldPassword"));
+        }
+    }
+    
+    private void validateNewPassword(boolean allowPasswordEditing) {
+        // did the user provide a new password?
+        if (allowPasswordEditing 
+                && !StringUtils.isNotEmpty(registryUserWebDTO.getPassword())
+                && (StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
+                        || StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword()))) {            
+            addFieldError("registryUserWebDTO.retypePassword", getText("error.register.password"));
+        }
+    } 
+    
+    private void validateRetypePassword(boolean allowPasswordEditing) {
+        // did the user retype the password?
+        if (allowPasswordEditing 
+                && !StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword()) 
+                && (StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
+                        || StringUtils.isNotEmpty(registryUserWebDTO.getPassword()))) {         
+            addFieldError("registryUserWebDTO.retypePassword", getText("error.register.retypePassword"));
+        }
+    }
+    
+    private void validatePasswordMatch(boolean allowPasswordEditing) {
+        // does the retype password equal the new password?
+        if (allowPasswordEditing 
+                && StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
+                && StringUtils.isNotEmpty(registryUserWebDTO.getPassword()) 
+                && StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword())
+                && !registryUserWebDTO.getPassword().equals(registryUserWebDTO.getRetypePassword())) {            
+            addFieldError("registryUserWebDTO.retypePassword", getText("error.register.matchPassword"));
         }
     }
     

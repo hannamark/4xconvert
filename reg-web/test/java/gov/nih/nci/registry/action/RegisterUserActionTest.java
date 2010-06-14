@@ -153,8 +153,6 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             registryUserWebDTO.setId(1L);
             registryUserWebDTO.setUsername("testuser");
             registryUserWebDTO.setEmailAddress("test@test.com");
-            registryUserWebDTO.setPassword("Mvedjbtp123!!!");
-            registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
             registryUserWebDTO.setFirstName("firstName");
             registryUserWebDTO.setLastName("lastName");
             registryUserWebDTO.setAddressLine("123 Fake St.");
@@ -168,7 +166,29 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             registryUserWebDTO.setId(1L);
             registryUserWebDTO.setCsmUserId(1L);
             action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("applicationError", action.updateAccount());
+            assertEquals("redirect_to_login", action.updateAccount());
+            registryUserWebDTO.setPassword("Mvedjbtp123!!!");
+            registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
+            action.setRegistryUserWebDTO(registryUserWebDTO);
+            assertEquals("myAccountError", action.updateAccount());
+            action = new RegisterUserAction();
+            registryUserWebDTO.setPassword("");
+            registryUserWebDTO.setOldPassword("Testing@01");
+            registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
+            action.setRegistryUserWebDTO(registryUserWebDTO);
+            assertEquals("myAccountError", action.updateAccount());
+            action = new RegisterUserAction();
+            registryUserWebDTO.setPassword("Mvedjbtp123!!!");
+            registryUserWebDTO.setOldPassword("Testing@01");
+            registryUserWebDTO.setRetypePassword("");
+            action.setRegistryUserWebDTO(registryUserWebDTO);
+            assertEquals("myAccountError", action.updateAccount());
+            action = new RegisterUserAction();
+            registryUserWebDTO.setPassword("Mvedjbtp123!!!");
+            registryUserWebDTO.setOldPassword("Testing@01");
+            registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
+            action.setRegistryUserWebDTO(registryUserWebDTO);
+            assertEquals("redirect_to_login", action.updateAccount());
         }
         @Test
         public void testUpdateAccountErr(){

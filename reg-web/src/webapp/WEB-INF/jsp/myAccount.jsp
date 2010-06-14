@@ -113,7 +113,7 @@ function loadAffliatedOrgDiv() {
 	                  <s:else>
 		                  <tr>
 		                        <td scope="row" class="label">
-		                            <label for="registerUsershowMyAccount_registryUserWebDTO_password"> Old <fmt:message key="register.user.password"/><span class="required">*</span></label>
+		                            <label for="registerUsershowMyAccount_registryUserWebDTO_password"> Old <fmt:message key="register.user.password"/></label>
 		                        </td>
 		                        <td>
 		                            <s:password  name="registryUserWebDTO.oldPassword"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
@@ -139,8 +139,9 @@ function loadAffliatedOrgDiv() {
 	                             </s:if>
 	                             <s:else>
 	                             		<fmt:message key="register.user.password"/>
+	                             		<span class="required">*</span>
 	                             </s:else>
-	                             <span class="required">*</span></label>
+	                             </label>
 	                        </td>
 	                        <td>
 	                            <s:password  name="registryUserWebDTO.password"  showPassword="true" readonly="!registryUserWebDTO.passwordEditingAllowed" maxlength="100" size="35"  cssStyle="width:200px"  />
@@ -159,8 +160,9 @@ function loadAffliatedOrgDiv() {
 	                             </s:if>
 	                             <s:else>
 	                            	<fmt:message key="register.user.retypePassword"/>
+	                            	<span class="required">*</span>
 								</s:else>                            	
-	                            <span class="required">*</span></label>
+	                            </label>
 	                        </td>
 	                        <td>
 	                            <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" readonly="!registryUserWebDTO.passwordEditingAllowed" maxlength="100" size="35"  cssStyle="width:200px"  />

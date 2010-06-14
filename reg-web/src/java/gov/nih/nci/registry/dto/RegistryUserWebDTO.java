@@ -130,7 +130,6 @@ public class RegistryUserWebDTO {
     /**
      * @return the password
      */
-    @NotEmpty (message = "error.register.password")
     public String getPassword() {
         return password;
     }
@@ -287,7 +286,6 @@ public class RegistryUserWebDTO {
     /**
      * @return the retypePassword
      */
-    @NotEmpty (message = "error.register.retypePassword")
     public String getRetypePassword() {
         return retypePassword;
     }
