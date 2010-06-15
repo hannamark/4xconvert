@@ -125,7 +125,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
                 getAttribute(Constants.STUDY_PROTOCOL_II);
                 TrialHelper helper = new TrialHelper();
                 gtdDTO = helper.getTrialDTO(studyProtocolIi, "Abstraction");
-                
+                populateOtherIdentifiers();
             } catch (NullifiedRoleException e) {
                 ServletActionContext.getRequest().setAttribute("failureMessage", 
                         e.getLocalizedMessage());
@@ -168,6 +168,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
                 Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         ServletActionContext.getRequest().getSession().setAttribute(
                 Constants.DOC_WFS_MENU, helper.setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
+        populateOtherIdentifiers();
         query(); 
     }
     /**
@@ -257,6 +258,12 @@ public class GeneralTrialDesignAction extends ActionSupport {
           }
       }
     }
+    
+    private void populateOtherIdentifiers() {
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, 
+                gtdDTO.getOtherIdentifiers());
+    }
+    
     /**
      *
      * @return gtdDTO
