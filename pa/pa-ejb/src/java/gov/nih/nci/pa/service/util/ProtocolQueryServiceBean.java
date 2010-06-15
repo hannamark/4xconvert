@@ -511,7 +511,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         StringBuffer hql = new StringBuffer();
         try {
             hql
-                 .append(" select sp , dws , sms , sos  , per , org , sps , sc, sinbx, "
+                 .append(" select distinct sp , dws , sms , sos  , per , org , sps , sc, sinbx, "
                             + "scheckout from StudyProtocol as sp  "
                             + "left outer join sp.documentWorkflowStatuses as dws  "
                             + "left outer join sp.studyMilestones as sms  "
@@ -525,11 +525,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             + "left outer join sp.studyInbox as sinbx "
                             + "left outer join sp.studyCheckout as scheckout "
                             + "left outer join sp.studyOwners as sowner ");
-            
+
             if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
                 hql.append(" left outer join sp.studySites as sps_nct ");
             }
-            
+
             hql.append(generateWhereClause(studyProtocolQueryCriteria));
             hql.append(" order by dws.statusDateRangeLow asc");
         } catch (Exception e) {
@@ -617,8 +617,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
            }
            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
                where.append(" and upper(sps_nct.localStudyProtocolIdentifier) = '"
-                       + studyProtocolQueryCriteria.getNctNumber().toUpperCase().trim().replaceAll("'", "''") 
-                       + "' and sps_nct.functionalCode = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER + "'"); 
+                       + studyProtocolQueryCriteria.getNctNumber().toUpperCase().trim().replaceAll("'", "''")
+                       + "' and sps_nct.functionalCode = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER + "'");
            }
            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationId())) {
                     where.append(" and org.id = " + studyProtocolQueryCriteria.getLeadOrganizationId());
