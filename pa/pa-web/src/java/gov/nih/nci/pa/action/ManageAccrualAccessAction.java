@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -94,6 +95,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -189,7 +191,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
             csmUserId = null;
         }
         User user = getCsmUsers().get(csmUserId);
-        setEmail(user == null ? null : user.getLoginName());
+        setEmail(user == null ? null : getUserEmail(user.getLoginName()));
         return SUCCESS;
     }
 
@@ -205,7 +207,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
             csmUserId = null;
         }
         User user = getCsmUsers().get(csmUserId);
-        setPhone(user == null ? null : user.getPhoneNumber());
+        setPhone(user == null ? null : getUserPhone(user.getLoginName()));
         return SUCCESS;
     }
 
@@ -294,6 +296,28 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         }
         return csmUsers;
     }
+    
+    private String getUserEmail(String loginName) {
+      try {
+    	   return registryUserSvc.getUser(loginName).getEmailAddress();
+          } catch (PAException e) {
+             addActionError("Error getting csm users email.");
+          } catch (NullPointerException ne) {
+        	  addActionError("Error getting csm users email.");
+          }
+      return "";
+    }
+    
+    private String getUserPhone(String loginName) {
+       try {
+            return registryUserSvc.getUser(loginName).getPhone();
+           } catch (PAException e) {
+             addActionError("Error getting csm users phone.");
+           } catch (NullPointerException ne) {
+         	  addActionError("Error getting csm users phone.");
+           } 
+        return "";
+      }
 
     /**
      * @return the csmUserNames

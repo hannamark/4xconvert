@@ -94,6 +94,7 @@ import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -158,6 +159,8 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     protected StudySiteAccrualAccessServiceLocal accrualAccessSvc;
     /** StudySiteAccrualStatusService. */
     protected StudySiteAccrualStatusServiceLocal accrualStatusSvc;
+    /** RegistryUserSvc. */
+    protected RegistryUserServiceRemote registryUserSvc;
 
     /**
      * @throws PAException exception
@@ -179,6 +182,7 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
         spDTO = (StudyProtocolQueryDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
+        registryUserSvc = PaRegistry.getRegisterUserService();
     }
 
     /**
