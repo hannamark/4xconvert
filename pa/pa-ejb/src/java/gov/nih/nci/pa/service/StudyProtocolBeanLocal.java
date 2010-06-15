@@ -82,7 +82,6 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -90,7 +89,6 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
@@ -123,16 +121,10 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Example;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
 
 /**
  * @author Naveen Amiruddin
@@ -648,42 +640,47 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         LOG.debug("Entering search");
         Session session = null;
         List<StudyProtocol> studyProtocolList = null;
-        session = HibernateUtil.getCurrentSession();
-        StudyProtocol exampleDO = new StudyProtocol();
+        StringBuffer hql = new StringBuffer();
+        hql.append("select sp from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws "
+                + " where dws.statusCode  <> '");
+        hql.append(DocumentWorkflowStatusCode.REJECTED);
+        hql.append("' and (dws.id in (select max(id) from DocumentWorkflowStatus as dws1 " 
+                + " where sp.id=dws1.studyProtocol) or dws.id is null)");
+
+        StringBuffer criteriaClause = new StringBuffer();
         if (dto.getSecondaryIdentifiers() != null && dto.getSecondaryIdentifiers().getItem() != null) {
-            exampleDO.setOtherIdentifiers(dto.getSecondaryIdentifiers().getItem());
+            for (Ii id : dto.getSecondaryIdentifiers().getItem()) {
+                criteriaClause.append(addCriteriaEq("sp.otherIdentifiers.root" , id.getRoot()));
+                criteriaClause.append(addCriteriaLike("sp.otherIdentifiers.extension", id.getExtension()));
+            }
         }
         if (dto.getPhaseCode() != null) {
-            exampleDO.setPhaseCode(PhaseCode.getByCode(dto.getPhaseCode().getCode()));
+            criteriaClause.append(addCriteriaEq("sp.phaseCode", dto.getPhaseCode().getCode()));
         }
         if (dto.getOfficialTitle() != null) {
-            String title = "%" + StConverter.convertToString(dto.getOfficialTitle()) + "%";
-            exampleDO.setOfficialTitle(title);
+            criteriaClause.append(addCriteriaLike("sp.officialTitle", StConverter.convertToString(
+                    dto.getOfficialTitle())));
         }
         if (dto.getPublicTitle() != null) {
-            String title = "%" + StConverter.convertToString(dto.getPublicTitle()) + "%";
-            exampleDO.setPublicTitle(title);
+           criteriaClause.append(addCriteriaLike("sp.publicTitle", StConverter.convertToString(dto.getPublicTitle())));
         }
         if (dto.getStatusCode() == null || dto.getStatusCode().getCode().equals(ActStatusCode.ACTIVE.getCode())) {
-            exampleDO.setStatusCode(ActStatusCode.ACTIVE);
+            criteriaClause.append(addCriteriaEq("sp.statusCode", ActStatusCode.ACTIVE.getCode()));
         }
         if (dto.getStatusCode() != null && dto.getStatusCode().getCode().equals(ActStatusCode.INACTIVE.getCode())) {
-            exampleDO.setStatusCode(ActStatusCode.INACTIVE);
+            criteriaClause.append(addCriteriaEq("sp.statusCode", ActStatusCode.INACTIVE.getCode()));
         }
-        Example example = Example.create(exampleDO);
-        example.enableLike(MatchMode.ANYWHERE).ignoreCase();
-        DetachedCriteria protocolId = DetachedCriteria.forClass(DocumentWorkflowStatus.class, "dws")
-            .setProjection(Projections.distinct(Property.forName("dws.studyProtocol")))
-            .add(Expression.eq("dws.statusCode", DocumentWorkflowStatusCode.REJECTED));
-            
-        
-        Criteria criteria = session.createCriteria(StudyProtocol.class, "sp").add(example) 
-            .add(Property.forName("sp.id").notIn(protocolId));
-        int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
-        criteria.setMaxResults(maxLimit);
-        criteria.setFirstResult(pagingParams.getOffset());
-        studyProtocolList = criteria.list();
+        if (StringUtils.isNotEmpty(criteriaClause.toString())) {
+            hql.append(criteriaClause);
+        }
 
+        session = HibernateUtil.getCurrentSession();
+        Query query = session.createQuery(hql.toString());
+        int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
+        query.setMaxResults(maxLimit);
+        query.setFirstResult(pagingParams.getOffset());
+        
+        studyProtocolList = query.list();
         if (studyProtocolList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }
@@ -731,5 +728,22 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
                 Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
 
         StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, newSp);
+    }
+    private String addCriteriaLike(String criteriaName, String criteriaValue) {
+        StringBuffer retVal = new StringBuffer();
+        if (StringUtils.isNotEmpty(criteriaValue)) {
+            String criteria = "%" + criteriaValue + "%";
+            retVal.append(" and lower(").append(criteriaName).append(") like lower('")
+            .append(criteria).append("') ");
+        }
+        return retVal.toString();
+    }
+    private String addCriteriaEq(String criteriaName, String criteriaValue) {
+        StringBuffer retVal = new StringBuffer();
+        if (StringUtils.isNotEmpty(criteriaValue)) {
+            retVal.append(" and lower(").append(criteriaName).append(") = lower('")
+            .append(criteriaValue).append("')");
+        }
+        return retVal.toString();
     }
 }
