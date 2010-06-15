@@ -107,7 +107,7 @@ function loadAffliatedOrgDiv() {
                   </tr>
                   </s:if>
                   <s:if test="%{registryUserWebDTO.id != null && registryUserWebDTO.id != ' '}">
-	                  <s:if test="#registryUserWebDTO.passwordEditingAllowed">
+	                  <s:if test="!registryUserWebDTO.passwordEditingAllowed">
 	                    <s:hidden name="registryUserWebDTO.oldPassword" />
 	                  </s:if>
 	                  <s:else>
@@ -126,7 +126,7 @@ function loadAffliatedOrgDiv() {
 		                  </tr>
 	                  </s:else>
                   </s:if>
-                   <s:if test="#registryUserWebDTO.passwordEditingAllowed">
+                   <s:if test="!registryUserWebDTO.passwordEditingAllowed">
                      <s:hidden name="registryUserWebDTO.password" />
                      <s:hidden name="registryUserWebDTO.retypePassword" />
                    </s:if>
@@ -144,7 +144,7 @@ function loadAffliatedOrgDiv() {
 	                             </label>
 	                        </td>
 	                        <td>
-	                            <s:password  name="registryUserWebDTO.password"  showPassword="true" readonly="!registryUserWebDTO.passwordEditingAllowed" maxlength="100" size="35"  cssStyle="width:200px"  />
+	                            <s:password  name="registryUserWebDTO.password"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
 	                            <span class="formErrorMsg"> 
 	                                <s:fielderror>
 	                                <s:param>registryUserWebDTO.password</s:param>
@@ -165,7 +165,7 @@ function loadAffliatedOrgDiv() {
 	                            </label>
 	                        </td>
 	                        <td>
-	                            <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" readonly="!registryUserWebDTO.passwordEditingAllowed" maxlength="100" size="35"  cssStyle="width:200px"  />
+	                            <s:password  name="registryUserWebDTO.retypePassword"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
 	                            <span class="formErrorMsg"> 
 	                                <s:fielderror>
 	                                <s:param>registryUserWebDTO.retypePassword</s:param>
