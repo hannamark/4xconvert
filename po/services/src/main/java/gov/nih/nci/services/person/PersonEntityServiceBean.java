@@ -175,7 +175,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     public void setPersonServiceBean(PersonServiceLocal svc) {
         this.perService = svc;
     }
-    
+
     /**
      * @param svc service, injected
      */
@@ -183,7 +183,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     public void setPatientServiceBean(PatientServiceLocal svc) {
         this.patientService = svc;
     }
-    
+
     /**
      * @param svc service, injected
      */
@@ -198,7 +198,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     public PersonServiceLocal getPersonServiceBean() {
         return this.perService;
     }
-    
+
     /**
      * @return perService that was injected by container.
      */
@@ -216,12 +216,11 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
              long targetId = IiConverter.convertPatientToLong(id);
              Patient patBO = patientService.getById(targetId);
              return genPersonFromPatient(patBO, id);
-        } else {
-            Person perBO = perService.getById(IiConverter.convertToLong(id));
-            return (PersonDTO) PoXsnapshotHelper.createSnapshot(perBO);
         }
+        Person perBO = perService.getById(IiConverter.convertToLong(id));
+        return (PersonDTO) PoXsnapshotHelper.createSnapshot(perBO);
     }
-    
+
     private PersonDTO genPersonFromPatient(Patient patBO, Ii id) {
         PersonDTO pDto = new PersonDTO();
         pDto.setBirthDate(DateConverter.convertToTs(patBO.getBirthDate()));
@@ -230,7 +229,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
         RaceCodeConverter.EnumConverter rc = new RaceCodeConverter.EnumConverter();
         pDto.setRaceCode(rc.convert(DSet.class, patBO.getRaceCode()));
         pDto.setSexCode(SexCodeConverter.convertToCd(patBO.getSexCode()));
-        
+
         pDto.setIdentifier(id);
         EnPn enPn = new EnPn();
         enPn.setNullFlavor(NullFlavor.MSK);
@@ -245,16 +244,16 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
         tels.setItem(new HashSet<Tel>());
         tels.getItem().add(tel);
         pDto.setTelecomAddress(tels);
-        
+
         return pDto;
     }
-    
+
     private boolean isPatient(Ii id) {
-        if (id != null && id.getNullFlavor() == null 
+        if (id != null && id.getNullFlavor() == null
                 && id.getExtension() != null && id.getExtension().startsWith(IdConverter.PATIENT_PREFIX)) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -272,7 +271,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
             throw new CurationException("Unable to publish the creation message.");
         }
     }
-  
+
     /**
      * {@inheritDoc}
      */
@@ -342,7 +341,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
             }
         }
     }
-    
+
     private void updatePatient(PersonDTO proposedState) {
         long pid = IiConverter.convertPatientToLong(proposedState.getIdentifier());
         Patient patBO = patientService.getById(pid);
@@ -355,7 +354,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
                     .convert(Set.class, proposedState.getEthnicGroupCode()));
             RaceCodeConverter.DSetConverter rcConv = new RaceCodeConverter.DSetConverter();
             patBO.setRaceCode((Set<PersonRace>) rcConv.convert(Set.class, proposedState.getRaceCode()));
-            
+
             try {
                 patientService.curate(patBO);
             } catch (JMSException jms) {
@@ -366,7 +365,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
             throw new IllegalArgumentException("Patient could not be found with provided identifier.");
         }
     }
-    
+
     private void updatePatientStatus(Ii targetIi, Cd statusCode) {
         long pid = IiConverter.convertPatientToLong(targetIi);
         Patient target = patientService.getById(pid);
@@ -382,7 +381,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
             throw new IllegalArgumentException("Patient could not be found with provided identifier.");
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -394,7 +393,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
             Long pId = IiConverter.convertToLong(targetOrg);
             if (pId != null) {
                 Person target = perService.getById(pId);
-                if (target != null) { 
+                if (target != null) {
                     // lazy way to clone with stripped hibernate IDs.
                     PersonDTO tmp = (PersonDTO) PoXsnapshotHelper.createSnapshot(target);
                     PersonCR cr = new PersonCR(target);

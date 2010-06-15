@@ -136,7 +136,7 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
     /** Default dorian url.*/
     public static final String GRID_URL = PaEarPropertyReader.getProperties().getProperty("grid.dorian.url");
     /** Grid Grouper Submitter group. */
-    public static final String GRIDGROUPER_SUBMITTER_GROUP = 
+    public static final String GRIDGROUPER_SUBMITTER_GROUP =
         PaEarPropertyReader.getProperties().getProperty("gridgrouper.submitter.group");
     private static final String GRID_GROUPER_URL = PaEarPropertyReader.getProperties().getProperty("gridgrouper.url");
     private static final int MAX_PASSWORD_LENGTH = 20;
@@ -278,7 +278,7 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         }
         return userInfo;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -300,26 +300,26 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
      * {@inheritDoc}
      */
     public void addGridUserToGroup(String username, String groupName) throws PAException {
-        GridGrouperClient ggClient = null;        
+        GridGrouperClient ggClient = null;
         BasicAuthentication auth = new BasicAuthentication();
         auth.setUserId(PaEarPropertyReader.getProperties().getProperty("gridgrouper.admin.user"));
         auth.setPassword(PaEarPropertyReader.getProperties().getProperty("gridgrouper.admin.password"));
 
         GlobusCredential credential = authenticateUser(auth, GRID_URL);
-        
+
         if (credential == null) {
             throw new PAException("Error authenticating grid grouper admin user.");
         }
-        
+
         try {
             ggClient = new GridGrouperClient(GRID_GROUPER_URL, credential);
             ggClient.setAnonymousPrefered(false);
         } catch (Exception e) {
             throw new PAException("Error connecting to remote grid grouper instance.", e);
         }
-        
+
         GroupIdentifier groupIdentifier = new GroupIdentifier(GRID_GROUPER_URL, groupName);
-        
+
         try {
             if (!ggClient.isMemberOf(groupIdentifier, username, MemberFilter.All)) {
                 ggClient.addMember(groupIdentifier, username);
@@ -336,7 +336,7 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
             throw new PAException("Error connecting to remote grid grouper instance.", e);
         }
     }
-    
+
     private GlobusCredential authenticateUser(BasicAuthentication basicAuthentication, String authUrl) {
         GlobusCredential credential = null;
         try {
