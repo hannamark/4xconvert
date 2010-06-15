@@ -17,6 +17,7 @@
 	    showPopWin('ajaxdisplaypersoninfoqueryPiInfo.action', 600, 300, '', 'Principal Investigator Information');
 	}
 	function displayCheckoutUser(){
+		// currently not used. will be used with po-2163
 	    showPopWin('ajaxdisplaypersoninfocheckoutUser.action', 600, 300, '', 'Checked Out User Information');
 	}
 </script>
@@ -85,7 +86,7 @@
 			    <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null}">
                     <div class="row">
                         <span class="label"><fmt:message key="studyProtocol.checkOutBy"/>:</span>
-                        <span class="value"><a href="javascript:displayCheckoutUser();"><c:out value="${sessionScope.trialSummary.studyCheckoutByUsername }"/></a></span>
+                        <span class="value"><c:out value="${sessionScope.trialSummary.studyCheckoutByUsername }"/></span>
                     </div>
                 </c:if>
 			</div>
