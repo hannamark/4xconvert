@@ -833,12 +833,12 @@ public class TrialUtil {
    private static byte[] readInputStream(InputStream inputStream) throws IOException {
        int bufSize = MAXF * MAXF;
        byte[] content;
-       List<byte[]> parts = new LinkedList();
+       List<byte[]> parts = new LinkedList<byte[]>();
        InputStream in = new BufferedInputStream(inputStream);
        byte[] readBuffer = new byte[bufSize];
        byte[] part = null;
        int bytesRead = 0;
-       // read everyting into a list of byte arrays
+       // read everything into a list of byte arrays
        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
            part = new byte[bytesRead];
            System.arraycopy(readBuffer, 0, part, 0, bytesRead);
@@ -1249,11 +1249,11 @@ public class TrialUtil {
         if (sraFromDatabaseDTO == null) {
             sraDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(trialDTO.getSelectedRegAuth()));
             return sraDTO;
-        } else {
-            sraFromDatabaseDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(trialDTO.getSelectedRegAuth()));
-            return sraFromDatabaseDTO;
         }
+        sraFromDatabaseDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(trialDTO.getSelectedRegAuth()));
+        return sraFromDatabaseDTO;
     }
+
     /**
      * @param trialDTO trialDTO
      */
@@ -1786,6 +1786,7 @@ public class TrialUtil {
      * @return dto
      * @throws PAException on err
      */
+    @SuppressWarnings("unchecked")
     public BaseTrialDTO saveDraft(BaseTrialDTO trialDTO) throws PAException {
         StringBuffer errMsg =  new StringBuffer();
          //lead org local id and lead org is mandatory

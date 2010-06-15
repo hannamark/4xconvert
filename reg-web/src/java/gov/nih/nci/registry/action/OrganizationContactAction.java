@@ -18,32 +18,34 @@ import com.opensymphony.xwork2.Preparable;
 
 /**
  * This action class manages the Organization contact(s).
- * 
+ *
  * @author Harsha
- * 
+ *
  */
-@SuppressWarnings("PMD")
 public class OrganizationContactAction extends ActionSupport implements Preparable {
+    private static final long serialVersionUID = 1L;
+    private static final String DISPLAY_ORG_CONTACTS = "display_org_contacts";
     private List<PersonDTO> persons = new ArrayList<PersonDTO>();
     private List countryList = new ArrayList();
     private String personName;
 
     /**
-     * @throws Exception on error
+     * {@inheritDoc}
      */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() throws Exception {
         populateCountryList();
     }
 
     /**
-     * 
+     *
      * @return res
      */
     public String getOrganizationContacts() {
         String orgContactIdentifier = ServletActionContext.getRequest().getParameter("orgContactIdentifier");
         try {
             if (orgContactIdentifier != null && orgContactIdentifier.equals("undefined")) {
-                return "display_org_contacts";
+                return DISPLAY_ORG_CONTACTS;
             }
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
             contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgContactIdentifier));
@@ -57,16 +59,16 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
                     addActionError(e.getMessage());
                     ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
                     LOG.error("NullifiedEntityException occured while getting organization contact : " + e);
-                    return "display_org_contacts";
+                    return DISPLAY_ORG_CONTACTS;
                 }
             }
         } catch (Exception e) {
             //addActionError(e.getMessage());
             //ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             LOG.error("Exception occured while getting organization contact : " + e);
-            return "display_org_contacts";
+            return DISPLAY_ORG_CONTACTS;
         }
-        return "display_org_contacts";
+        return DISPLAY_ORG_CONTACTS;
     }
 
     /**
@@ -97,6 +99,7 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
         this.countryList = countryList;
     }
 
+    @SuppressWarnings("unchecked")
     private void populateCountryList() throws PAException {
         countryList = (List) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
         if (countryList == null) {

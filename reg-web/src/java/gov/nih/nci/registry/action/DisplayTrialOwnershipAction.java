@@ -103,7 +103,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class DisplayTrialOwnershipAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private List<DisplayTrialOwnershipInformation> trialOwnershipInfo =
-        new ArrayList<DisplayTrialOwnershipInformation>();
+            new ArrayList<DisplayTrialOwnershipInformation>();
     private DisplayTrialOwnershipInformation criteria = new DisplayTrialOwnershipInformation();
     private static final String TRIAL_INFO = "trialInfoList";
     private static final String VIEW_RESULTS = "viewResults";
@@ -126,8 +126,9 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
      */
     @SuppressWarnings("unchecked")
     public String view() {
-        trialOwnershipInfo = (List<DisplayTrialOwnershipInformation>) ServletActionContext.getRequest().getSession().
-        getAttribute(DisplayTrialOwnershipAction.TRIAL_INFO);
+        trialOwnershipInfo =
+                (List<DisplayTrialOwnershipInformation>) ServletActionContext.getRequest().getSession().getAttribute(
+                        DisplayTrialOwnershipAction.TRIAL_INFO);
         return VIEW_RESULTS;
     }
 
@@ -141,8 +142,7 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
             String userId = ServletActionContext.getRequest().getParameter("userId");
             String trialId = ServletActionContext.getRequest().getParameter("trialId");
             PaRegistry.getRegisterUserService().removeOwnership(Long.parseLong(userId), Long.parseLong(trialId));
-            ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
-            "Trial ownership successfully removed");
+            ServletActionContext.getRequest().setAttribute(SUCCESS_MSG, "Trial ownership successfully removed");
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(FAILURE_MSG, e.getMessage());
             throw new PAException(e);
@@ -155,8 +155,9 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().removeAttribute(DisplayTrialOwnershipAction.TRIAL_INFO);
             String loginName = ServletActionContext.getRequest().getRemoteUser();
             RegistryUser loggedInUser = PaRegistry.getRegisterUserService().getUser(loginName);
-            trialOwnershipInfo = PaRegistry.getRegisterUserService().searchTrialOwnership(criteria,
-                    loggedInUser.getAffiliatedOrganizationId());
+            trialOwnershipInfo =
+                    PaRegistry.getRegisterUserService().searchTrialOwnership(criteria,
+                            loggedInUser.getAffiliatedOrganizationId());
             ServletActionContext.getRequest().getSession().setAttribute(DisplayTrialOwnershipAction.TRIAL_INFO,
                     trialOwnershipInfo);
         } catch (Exception e) {
