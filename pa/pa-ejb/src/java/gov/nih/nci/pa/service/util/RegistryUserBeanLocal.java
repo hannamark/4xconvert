@@ -163,12 +163,12 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      */
     public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
         RegistryUser myUser = getUserById(userId);
-        StudyProtocol studyProtocol =  
+        StudyProtocol studyProtocol =
             (StudyProtocol) HibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
         if (myUser == null) {
             throw new PAException("Could not find user.");
         }
-        return studyProtocol.getStudyOwners().contains(myUser);       
+        return studyProtocol.getStudyOwners().contains(myUser);
     }
 
     /**
@@ -180,18 +180,18 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             return true;
         }
 
-        StudyProtocol studyProtocol =  
+        StudyProtocol studyProtocol =
             (StudyProtocol) HibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
         if (user.getStudyProtocols().contains(studyProtocol)) {
             return true;
         }
-        
+
         // check that the user is an admin of something in at all
         if (!UserOrgType.ADMIN.equals(user.getAffiliatedOrgUserType())) {
             return false;
         }
 
-        // second check that the user isn't the lead org admin        
+        // second check that the user isn't the lead org admin
         if (studyProtocol.getStudySites() != null) {
             for (StudySite sSites : studyProtocol.getStudySites()) {
                 if (sSites.getFunctionalCode().equals(StudySiteFunctionalCode.LEAD_ORGANIZATION)
@@ -287,7 +287,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         }
         return registryUserList;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -300,7 +300,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         }
         return registryUser != null;
     }
-    
+
     /**
      *
      * @param regUser user
@@ -343,11 +343,11 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         List<DisplayTrialOwnershipInformation> lst = new ArrayList<DisplayTrialOwnershipInformation>();
         StringBuffer hql = new StringBuffer();
         hql.append("select sowner.id, sowner.firstName, sowner.lastName, sowner.emailAddress, "
-                + "sp.id, sp.otherIdentifiers.extension, sowner.affiliatedOrganizationId "
+                + "sp.id, otherid.extension, sowner.affiliatedOrganizationId "
                 + "from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws "
                 + "left outer join sp.studySites as sps "
                 + "left outer join sps.researchOrganization as ro left outer join ro.organization as org "
-                + " left outer join sp.studyOwners as sowner where '")
+                + " left outer join sp.studyOwners as sowner left outer join sp.otherIdentifiers otherid where '")
                 .append(affiliatedOrgId.toString())
                 .append("' in (select researchOrganization.organization.identifier from StudySite "
                         + "where functionalCode ='")
@@ -357,7 +357,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                 .append("' and (dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                         + "where sp.id=dws1.studyProtocol) or dws.id is null) and sps.functionalCode = '")
                 .append(StudySiteFunctionalCode.LEAD_ORGANIZATION)
-                .append("' and sp.otherIdentifiers.root = '")
+                .append("' and otherid.root = '")
                 .append(IiConverter.STUDY_PROTOCOL_ROOT)
                 .append("' and sowner.id IS NOT NULL ");
 
