@@ -714,7 +714,7 @@ public class PAServiceUtils {
         if (PAUtil.isListNotEmpty(studyResourcingDTOs)) {
             for (int i = 0; i < studyResourcingDTOs.size(); i++) {
                 StudyResourcingDTO sp =  studyResourcingDTOs.get(i);
-                if (PAUtil.isIiNotNull(sp.getIdentifier()) && !isIiExistInPA(IiConverter.convertToStudyIndIdeIi(
+                if (PAUtil.isIiNotNull(sp.getIdentifier()) && !isIiExistInPA(IiConverter.convertToStudyResourcingIi(
                         Long.valueOf(sp.getIdentifier().getExtension())))) {
                     errorMsg.append("Grant id " + sp.getIdentifier().getExtension() + " does not exist");
                 }
