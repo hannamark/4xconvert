@@ -371,7 +371,9 @@ public class RegisterUserAction extends ActionSupport {
                    addFieldError("registryUserWebDTO.affiliateOrg", getText("error.register.affiliateOrg"));
             }
             
-            validateOldPassword(allowPasswordEditing);
+            if (isAccountEdit) {
+                validateOldPassword(allowPasswordEditing);
+            }
             
             validateNewPassword(allowPasswordEditing);
             
