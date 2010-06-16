@@ -178,7 +178,12 @@
    <category name="jacorb">
       <priority value="WARN"/>
    </category>
-
+   
+   <!-- Hide Struts 2 OGNL false Error message: https://issues.apache.org/jira/browse/WW-1714 -->
+   <category name="com.opensymphony.xwork2.ObjectFactory">
+      <priority value="FATAL"/>
+   </category>
+    
    <!-- Limit JBoss categories
    <category name="org.jboss">
       <priority value="INFO"/>
