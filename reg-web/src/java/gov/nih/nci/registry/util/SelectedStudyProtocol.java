@@ -93,6 +93,8 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 public class SelectedStudyProtocol {
     private StudyProtocol studyProtocol;
     private boolean selected;
+    private String nciIdentifier;
+
     /**
      * @return the studyProtocol
      */
@@ -116,5 +118,17 @@ public class SelectedStudyProtocol {
      */
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+    /**
+     * @return the nciIdentifier
+     */
+    public String getNciIdentifier() {
+        return nciIdentifier;
+    }
+    /**
+     * @param nciIdentifier the nciIdentifier to set
+     */
+    public void setNciIdentifier(String nciIdentifier) {
+        this.nciIdentifier = nciIdentifier;
     }
 }

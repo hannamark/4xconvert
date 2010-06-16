@@ -86,6 +86,7 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.util.SelectedRegistryUser;
 import gov.nih.nci.registry.util.SelectedStudyProtocol;
@@ -164,6 +165,7 @@ public class ManageTrialOwnershipAction extends ActionSupport {
         for (StudyProtocol sp : trials) {
             SelectedStudyProtocol selectedStudyProtocol = new SelectedStudyProtocol();
             selectedStudyProtocol.setStudyProtocol(sp);
+            selectedStudyProtocol.setNciIdentifier(PADomainUtils.getAssignedIdentifierExtension(sp));
             studyProtocols.add(selectedStudyProtocol);
         }
         ServletActionContext.getRequest().getSession().setAttribute(
