@@ -21,7 +21,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      NCI_TRIAL_IDENTIFIER("NCI Trial Identifier", "setNciTrialIdentifier"),
     /** */
-     CTGOV_XML_INDICATOR("ClinicalTrials.gov XML required?", "setCtGovXmlIndicator"),
+     CTGOV_XML_INDICATOR("ClinicalTrials.gov XML Required?", "setCtGovXmlIndicator"),
     /** */
      AMENDMENT_NUMBER("Amendment Number", "setAmendmentNumber"),
     /** */
@@ -47,7 +47,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      SPONSOR_ORG_NAME("[Sponsor] Organization Name", "setSponsorOrgName"),
     /** */
-     SPONSOR_CETP_ORG_NO("[Sponsor] PO-ID", "setSponsorPOId"),
+     SPONSOR_CETP_ORG_NO("[Sponsor] Organization PO-ID", "setSponsorPOId"),
      /** */
      SPONSOR_STREET_ADDRESS("[Sponsor] Street Address", "setSponsorStreetAddress"),
     /** */
@@ -85,7 +85,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      SPONSOR_CONTACT_STREET_ADDRESS("[Sponsor Contact] Street Address", "setSponsorContactStreetAddress"),
     /** */
-     SPONSOR_CONTACT_CITY("[Sponsor Contact]City", "setSponsorContactCity"),
+     SPONSOR_CONTACT_CITY("[Sponsor Contact] City", "setSponsorContactCity"),
     /** */
      SPONSOR_CONTACT_STATE("[Sponsor Contact] State/Province", "setSponsorContactState"),
     /** */
@@ -105,7 +105,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      LEAD_ORG_NAME("[Lead Organization] Name", "setLeadOrgName"),
     /** */
-     LEAD_ORG_PO_ID("[Lead Organization] PO-ID", "setLeadOrgPOId"),
+     LEAD_ORG_PO_ID("[Lead Organization] Organization PO-ID", "setLeadOrgPOId"),
     /** */
      LEAD_ORG_STREET_ADDRESS("[Lead Organization] Street Address", "setLeadOrgStreetAddress"),
     /** */
@@ -135,7 +135,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      PI_LAST_NAME("[Principal Investigator] Last Name", "setPiLastName"),
     /** */
-     PI_PERSON_PERSON_PO_ID("[Principal Investigator] PO-ID", "setPiPOId"),
+     PI_PERSON_PERSON_PO_ID("[Principal Investigator] Person PO-ID", "setPiPOId"),
     /** */
      PI_STREET_ADDRESS("[Principal Investigator] Street Address", "setPiStreetAddress"),
     /** */
@@ -161,7 +161,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      S4_FUND_ORG_NAME("[Summary 4 Funding Sponsor/Source] Organization Name", "setSumm4OrgName"),
     /** */
-     S4_FUND_ORG_ORG_PO_ID("[Summary 4 Funding Sponsor/Source] PO-ID", "setSumm4OrgPOId"),
+     S4_FUND_ORG_ORG_PO_ID("[Summary 4 Funding Sponsor/Source] Organization PO-ID", "setSumm4OrgPOId"),
     /** */
      S4_FUND_ORG_STREET_ADDRESS("[Summary 4 Funding Sponsor/Source] Street Address", "setSumm4OrgStreetAddress"),
     /** */
@@ -247,7 +247,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      OTHER_TRIAL_DOC_FILE_NAME("Other Trial Related Document File Name", "setOtherTrialRelDocumentFileName"),
     /** */
-     CHANGE_MEMO_DOC_FILE_NAME("Change Memo Document Name", "setChangeRequestDocFileName"),    
+     CHANGE_MEMO_DOC_FILE_NAME("Change Request Document Name", "setChangeRequestDocFileName"),    
     /** */
     PROTOCOL_HIGHLIGHTED_DOC_FILE_NAME("Protocol Highlight Document Name", "setProtocolHighlightDocFileName");
      
