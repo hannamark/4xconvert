@@ -130,7 +130,7 @@ function getMyPartialTrial() {
 						headerKey="" 
 						headerValue="--Select--" 
 						name="criteria.identifierType"  
-						list="#{'NCI':'NCI','NCT':'NCT','Lead Organization':'Lead Organization','Other Identifier':'Other Identifier'}" 
+						list="#{'NCI':'NCI','NCT':'NCT (Exact Match)','Lead Organization':'Lead Organization','Other Identifier':'Other Identifier'}" 
 						value="criteria.identifierType" 
 						cssStyle="width:206px" 
 						/>
