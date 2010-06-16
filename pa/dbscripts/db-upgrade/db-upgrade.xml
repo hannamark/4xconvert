@@ -466,4 +466,8 @@
         <comment>Fixes grammatical errors and non-standard characters</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1985.sql"/>
     </changeSet>
+    <changeSet id="PO-2135" author="aevansel">
+        <comment>Conditonally adding missing SuAbstractor group.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2135.sql"/>
+    </changeSet>
 </databaseChangeLog>
