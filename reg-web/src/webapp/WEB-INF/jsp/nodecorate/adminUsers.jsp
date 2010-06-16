@@ -3,7 +3,7 @@
 <c:if test="${sessionScope.adminUsers != null && fn:length(sessionScope.adminUsers) > 0}">
        <tr>
         <td colspan="2" class="space">
-            <li><a href="registerUserloadAdminUsers.action?affiliatedOrgId=${requestScope.orgSelected}"/>View Admins</a></li>
+            <li><a href="#" onclick="viewAdmin();"/>View Admins</a></li>
         </td>
        </tr>          
  </c:if>

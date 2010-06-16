@@ -14,6 +14,7 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <c:url value="/orgPoplookuporgs.action" var="lookupOrgUrl"/>
+<c:url value="/registry/ajaxUsersloadAdminUsers.action" var="displayUrl"/>
 <SCRIPT LANGUAGE="JavaScript">
 var orgid;
 var chosenname;
@@ -33,7 +34,7 @@ function lookupAffiliateOrg(){
 function loadAffliatedOrgDiv() {
     document.getElementById('registryUserWebDTO.affiliatedOrganizationId').value = orgid;
     document.getElementById('registryUserWebDTO.affiliateOrg').value = chosenname;
-    var  url = '/registry/ajaxUsersloadAdminUsers.action?affiliatedOrgId='+orgid;    
+    var  url = '/registry/ajaxUsersloadAdminUsers.action?affiliatedOrgId='+orgid+'&action=';    
     var div = document.getElementById('adminAccessDiv');   
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
     var aj = new Ajax.Updater(div, url, {
@@ -41,6 +42,13 @@ function loadAffliatedOrgDiv() {
         method: 'get',
         evalScripts: false
     });
+    return false;
+}
+function viewAdmin() {
+	var orgId = document.getElementById('registryUserWebDTO.affiliatedOrganizationId').value ;
+	showPopWin('${displayUrl}?affiliatedOrgId='+orgId+'&action=viewUsers', 900, 400, loadnothing, 'Affiliated Organization Admin');
+}
+function loadnothing() {
     return false;
 }
 </SCRIPT>

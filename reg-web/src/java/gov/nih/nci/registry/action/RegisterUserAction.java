@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.action;
 
@@ -50,7 +50,7 @@ public class RegisterUserAction extends ActionSupport {
     private String selectedIdentityProvider;
     private static final int MIN_UN = 4;
     private static final int MAX_UN = 15;
-    
+
 
     /**
      * Send e-mail to the registering user.
@@ -85,24 +85,24 @@ public class RegisterUserAction extends ActionSupport {
             decodedEmailAddress =  encoderDecoder.decodeString(emailAddress);
             ServletActionContext.getRequest().setAttribute("emailAddress" , decodedEmailAddress);
         }
-        
+
         RegistryUser registryUser = null;
         User csmUser = null;
         try {
             // check if user already exists
             registryUser = PaRegistry.getRegisterUserService().getUser(decodedEmailAddress);
-            
+
             if (registryUser != null && registryUser.getCsmUserId() != null) {
                 csmUser = CSMUserService.getInstance().getCSMUserById(registryUser.getCsmUserId());
             }
-            
+
         } catch (Exception ex) {
             LOG.error("error while activating user :" + decodedEmailAddress);
             return Constants.APPLICATION_ERROR;
         }
-        
+
         if (registryUser != null) {
-            registryUserWebDTO = new RegistryUserWebDTO(registryUser, csmUser == null ? "" : csmUser.getLoginName(), 
+            registryUserWebDTO = new RegistryUserWebDTO(registryUser, csmUser == null ? "" : csmUser.getLoginName(),
                     csmUser == null ? "" : csmUser.getPassword());
             if (registryUser.getAffiliatedOrganizationId() != null) {
                 loadAdminUsers(registryUser.getAffiliatedOrganizationId());
@@ -114,7 +114,7 @@ public class RegisterUserAction extends ActionSupport {
         // show the My Account page
         return Constants.MY_ACCOUNT;
     }
-    
+
     /**
      * Show My Account Page.
      * @return String
@@ -135,13 +135,13 @@ public class RegisterUserAction extends ActionSupport {
             csmUser = CSMUserService.getInstance().getCSMUser(loginName);
         } catch (Exception ex) {
             LOG.error("error while displaying My Account page for user :" + loginName);
-            return Constants.APPLICATION_ERROR;   
+            return Constants.APPLICATION_ERROR;
         }
-        
+
         if (registryUser != null && csmUser != null) {
             registryUserWebDTO = new RegistryUserWebDTO(registryUser, loginName, csmUser.getPassword());
             if (registryUser.getAffiliatedOrganizationId() != null
-                 && registryUser.getAffiliatedOrgUserType() != null 
+                 && registryUser.getAffiliatedOrgUserType() != null
                  && !(registryUser.getAffiliatedOrgUserType().equals(UserOrgType.PENDING_ADMIN)
                          || registryUser.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN))) {
                 loadAdminUsers(registryUser.getAffiliatedOrganizationId());
@@ -151,12 +151,12 @@ public class RegisterUserAction extends ActionSupport {
         // show the My Account page
         return Constants.MY_ACCOUNT;
     }
-    
+
     private boolean isPasswordEditingAllowed(String loginName) {
       return StringUtils.indexOfAny(loginName, PaEarPropertyReader.getProperties()
                .getProperty("idps.allow.password.editing", "").split(",")) >= 0;
     }
-    
+
     /**
      * create/update registry user.
      * @return String
@@ -166,7 +166,7 @@ public class RegisterUserAction extends ActionSupport {
 
         // first validate the form fields before creating user
         validateForm(true, registryUserWebDTO.getId() != null);
-        
+
         if (hasFieldErrors()) {
              if (registryUserWebDTO.getAffiliatedOrganizationId() != null) {
                  loadAdminUsers(registryUserWebDTO.getAffiliatedOrganizationId());
@@ -181,7 +181,7 @@ public class RegisterUserAction extends ActionSupport {
                 IiConverter.convertToPoOrganizationIi(registryUserWebDTO.getAffiliatedOrganizationId().toString()));
              if (poOrgDTO != null) {
               PaRegistry.getOrganizationCorrelationService().createPAOrganizationUsingPO(poOrgDTO);
-             } 
+             }
           }
         } catch (PAException e) {
            LOG.error("ERROR retrieving po org details.", e);
@@ -213,25 +213,25 @@ public class RegisterUserAction extends ActionSupport {
                 redirectPage = Constants.REDIRECT_TO_LOGIN;
             }
 
-            try {                
-                if (isChangingGridPassword(registryUserWebDTO.getOldPassword(), registryUserWebDTO.getPassword()) 
+            try {
+                if (isChangingGridPassword(registryUserWebDTO.getOldPassword(), registryUserWebDTO.getPassword())
                         && registryUserWebDTO.isPasswordEditingAllowed()) {
                     // updating the grid password programmatically
-                    PaRegistry.getGridAccountService().changePassword(registryUserWebDTO.getDisplayUsername(), 
+                    PaRegistry.getGridAccountService().changePassword(registryUserWebDTO.getDisplayUsername(),
                             registryUserWebDTO.getOldPassword(), registryUserWebDTO.getPassword());
                 }
                 // first update the CSM user
-                CSMUserService.getInstance().updateCSMUser(registryUser, registryUserWebDTO.getUsername(), 
+                CSMUserService.getInstance().updateCSMUser(registryUser, registryUserWebDTO.getUsername(),
                         null);
-                
+
                 //now update the RegistryUser
-                PaRegistry.getRegisterUserService().updateUser(registryUser); 
+                PaRegistry.getRegisterUserService().updateUser(registryUser);
             } catch (Exception e) {
                 LOG.error("error while updating user info", e);
                 return Constants.APPLICATION_ERROR;
             }
         } else { //create user
-            
+
             registryUser.setId(null);
             // first create the CSM user
             userAction =  "create";
@@ -239,61 +239,61 @@ public class RegisterUserAction extends ActionSupport {
             try {
                 GridAccountServiceRemote gridService = PaRegistry.getGridAccountService();
                 CSMUserService csmUserService = CSMUserService.getInstance();
-                //First create the grid account if one doesn't already 
+                //First create the grid account if one doesn't already
                 if (!registryUserWebDTO.isHasExistingGridAccount()) {
-                    String results = gridService.createGridAccount(registryUser, registryUserWebDTO.getUsername(), 
+                    String results = gridService.createGridAccount(registryUser, registryUserWebDTO.getUsername(),
                             registryUserWebDTO.getPassword());
                     LOG.debug("Grid User Creation Results: " + results);
-                } 
-                
-                //Check if IDP URL was previously set, if not, then this is a creation 
+                }
+
+                //Check if IDP URL was previously set, if not, then this is a creation
                 //of a new Grid Account and should use the default GRID_URL (Dorian)
                 String idpURL = (String) ServletActionContext.getRequest().getSession()
                             .getAttribute("selectedIdentityProvider");
                 idpURL = (idpURL == null) ? GridAccountServiceBean.GRID_URL : idpURL;
-                
+
                 //Then the csm user account being sure to retrieve the long form grid username
-                String username = gridService.getFullyQualifiedUsername(registryUserWebDTO.getUsername(), 
+                String username = gridService.getFullyQualifiedUsername(registryUserWebDTO.getUsername(),
                         registryUserWebDTO.getPassword(), idpURL);
                 User csmUser = csmUserService.getCSMUser(username);
-                
+
                 //Only create a new csm account if one doesn't already exist otherwise just add the user to the proper
                 //group.
                 if (csmUser == null) {
                     csmUser = csmUserService.createCSMUser(registryUser, username, null);
                 } else {
-                    csmUserService.assignUserToGroup(csmUser.getLoginName(), 
+                    csmUserService.assignUserToGroup(csmUser.getLoginName(),
                             PaEarPropertyReader.getCSMSubmitterGroup());
                 }
                 registryUser.setCsmUserId(csmUser.getUserId());
-                
-                //Then add the user to the correct grid grouper group.               
+
+                //Then add the user to the correct grid grouper group.
                 gridService.addGridUserToGroup(username, GridAccountServiceBean.GRIDGROUPER_SUBMITTER_GROUP);
-                
+
                 //now create the RegistryUser
                 registryUser =  PaRegistry.getRegisterUserService().createUser(registryUser);
             } catch (Exception e) {
                 LOG.error("error while creating user info", e);
-                return Constants.APPLICATION_ERROR;            
+                return Constants.APPLICATION_ERROR;
             }
         }
-            
+
         if (ServletActionContext.getRequest().getRemoteUser() != null) {
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                     "Your account was successfully updated");
         }
 
         //redirect to the appropriate page
         return redirectPage;
     }
-    
+
     private boolean isChangingGridPassword(String oldPassword, String newPassword) {
-        return StringUtils.isNotEmpty(oldPassword) && StringUtils.isNotEmpty(newPassword) 
+        return StringUtils.isNotEmpty(oldPassword) && StringUtils.isNotEmpty(newPassword)
                 && !oldPassword.equals(newPassword);
     }
-    
+
     /**
-     * Forward to existing account page. 
+     * Forward to existing account page.
      * @return success
      */
     public String existingGridAccount() {
@@ -301,18 +301,18 @@ public class RegisterUserAction extends ActionSupport {
         selectedIdentityProvider = identityProviders.size() != 1 ? null : identityProviders.values().iterator().next();
         return Constants.EXISTING_GRID_ACCOUNT;
     }
-    
+
     /**
      * creates an account from an existing grid account.
      * @return the forward
      */
     public String registerExistingGridAccount() {
         GridAccountServiceRemote gridService = PaRegistry.getGridAccountService();
-        Map<String, String> userInfo = gridService.authenticateUser(registryUserWebDTO.getUsername(), 
+        Map<String, String> userInfo = gridService.authenticateUser(registryUserWebDTO.getUsername(),
                     registryUserWebDTO.getPassword(), getSelectedIdentityProvider());
-        String fullyQualifiedUsername = gridService.getFullyQualifiedUsername(registryUserWebDTO.getUsername(), 
+        String fullyQualifiedUsername = gridService.getFullyQualifiedUsername(registryUserWebDTO.getUsername(),
                 registryUserWebDTO.getPassword(), getSelectedIdentityProvider());
-        
+
         if (userInfo.isEmpty()) {
             addActionError(getText("errors.password.mismatch"));
             return Constants.EXISTING_GRID_ACCOUNT;
@@ -320,7 +320,7 @@ public class RegisterUserAction extends ActionSupport {
             userAction = "existingAccount";
             return Constants.REDIRECT_TO_LOGIN;
         }
-        
+
         ServletActionContext.getRequest().getSession().setAttribute("selectedIdentityProvider"
               , getSelectedIdentityProvider());
         registryUserWebDTO.setPasswordEditingAllowed(false);
@@ -331,129 +331,129 @@ public class RegisterUserAction extends ActionSupport {
         registryUserWebDTO.setHasExistingGridAccount(true);
         return Constants.MY_ACCOUNT;
     }
-    
+
     /**
      * validate the  form elements.
      */
-    private void validateForm(boolean isMyAccountPage, boolean isAccountEdit)  {     
-        Map<String, String> addFieldError = new HashMap<String, String>(); 
+    private void validateForm(boolean isMyAccountPage, boolean isAccountEdit)  {
+        Map<String, String> addFieldError = new HashMap<String, String>();
         InvalidValue[] invalidValues = null;
-        
+
         if (StringUtils.isEmpty(registryUserWebDTO.getEmailAddress())) {
             addFieldError("registryUserWebDTO.emailAddress", getText("error.register.emailAddress"));
         }
 
         // check if the login name is a valid e-mail address
-        if (StringUtils.isNotEmpty(registryUserWebDTO.getEmailAddress()) 
+        if (StringUtils.isNotEmpty(registryUserWebDTO.getEmailAddress())
                 && !RegistryUtil.isValidEmailAddress(registryUserWebDTO.getEmailAddress())) {
             addFieldError("registryUserWebDTO.emailAddress", getText("error.register.invalidEmailAddress"));
         }
-        
+
         // if it's My Account page validate required fields
         if (isMyAccountPage) {
             ClassValidator<RegistryUserWebDTO> classValidator = new ClassValidator(registryUserWebDTO.getClass());
             boolean allowPasswordEditing = registryUserWebDTO.isPasswordEditingAllowed();
-            
+
             invalidValues = classValidator.getInvalidValues(registryUserWebDTO);
             for (int i = 0; i < invalidValues.length; i++) {
-                addFieldError.put("registryUserWebDTO." + invalidValues[i].getPropertyName(), 
+                addFieldError.put("registryUserWebDTO." + invalidValues[i].getPropertyName(),
                         getText(invalidValues[i].getMessage().trim()));
             }
-            addErrors(addFieldError); 
+            addErrors(addFieldError);
             if (!isAccountEdit && StringUtils.isNotEmpty(registryUserWebDTO.getUsername())) {
-               if (registryUserWebDTO.getUsername().length() < MIN_UN 
+               if (registryUserWebDTO.getUsername().length() < MIN_UN
                    || registryUserWebDTO.getUsername().length() > MAX_UN) {
                    addFieldError("registryUserWebDTO.username", getText("error.register.usernameLength"));
-               }    
+               }
             }
             if (isAccountEdit && registryUserWebDTO.getAffiliatedOrganizationId() == null) {
-                   registryUserWebDTO.setAffiliateOrg(""); 
+                   registryUserWebDTO.setAffiliateOrg("");
                    addFieldError("registryUserWebDTO.affiliateOrg", getText("error.register.affiliateOrg"));
             }
-            
+
             if (isAccountEdit) {
                 validateOldPassword(allowPasswordEditing);
             }
-            
+
             validateNewPassword(allowPasswordEditing);
-            
+
             validateRetypePassword(allowPasswordEditing);
-            
+
             validatePasswordMatch(allowPasswordEditing);
-            
+
             if (allowPasswordEditing
                     && StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
-                    && StringUtils.isNotEmpty(registryUserWebDTO.getPassword()) 
+                    && StringUtils.isNotEmpty(registryUserWebDTO.getPassword())
                     && !PaRegistry.getGridAccountService().isValidGridPassword(registryUserWebDTO.getPassword())) {
                 addFieldError("registryUserWebDTO.password", getText("error.register.invalidPassword"));
             }
-            
-            if (StringUtils.isNotEmpty(registryUserWebDTO.getUsername()) && !isAccountEdit 
+
+            if (StringUtils.isNotEmpty(registryUserWebDTO.getUsername()) && !isAccountEdit
                     && !registryUserWebDTO.isHasExistingGridAccount()
                     && PaRegistry.getGridAccountService().doesGridAccountExist(registryUserWebDTO.getUsername())) {
                 addFieldError("registryUserWebDTO.username", getText("error.register.usernameTaken"));
             }
-            
+
             if (StringUtils.isNotEmpty(registryUserWebDTO.getState())
                         && StringUtils.isNotEmpty(registryUserWebDTO.getCountry())) {
                 if (registryUserWebDTO.getCountry().equalsIgnoreCase("United States")
                                 && registryUserWebDTO.getState().startsWith("None")) {
                     addFieldError("registryUserWebDTO.state",
                             getText("error.register.validState"));
-                    
+
                 }
                 if (!registryUserWebDTO.getCountry().equalsIgnoreCase("United States")
                         && !registryUserWebDTO.getState().startsWith("None")) {
                              addFieldError("registryUserWebDTO.state",
                              getText("error.register.validNonUSState"));
-            
+
                 }
-                
+
             }
         }
     }
-    
+
     private void validateOldPassword(boolean allowPasswordEditing) {
      // did the user provide an old password?
-        if (allowPasswordEditing 
+        if (allowPasswordEditing
                 && !StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
                 && (StringUtils.isNotEmpty(registryUserWebDTO.getPassword())
-                        || StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword()))) {            
+                        || StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword()))) {
             addFieldError("registryUserWebDTO.retypePassword", getText("error.register.oldPassword"));
         }
     }
-    
+
     private void validateNewPassword(boolean allowPasswordEditing) {
         // did the user provide a new password?
-        if (allowPasswordEditing 
+        if (allowPasswordEditing
                 && !StringUtils.isNotEmpty(registryUserWebDTO.getPassword())
                 && (StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
-                        || StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword()))) {            
+                        || StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword()))) {
             addFieldError("registryUserWebDTO.retypePassword", getText("error.register.password"));
         }
-    } 
-    
+    }
+
     private void validateRetypePassword(boolean allowPasswordEditing) {
         // did the user retype the password?
-        if (allowPasswordEditing 
-                && !StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword()) 
+        if (allowPasswordEditing
+                && !StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword())
                 && (StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
-                        || StringUtils.isNotEmpty(registryUserWebDTO.getPassword()))) {         
+                        || StringUtils.isNotEmpty(registryUserWebDTO.getPassword()))) {
             addFieldError("registryUserWebDTO.retypePassword", getText("error.register.retypePassword"));
         }
     }
-    
+
     private void validatePasswordMatch(boolean allowPasswordEditing) {
         // does the retype password equal the new password?
-        if (allowPasswordEditing 
+        if (allowPasswordEditing
                 && StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
-                && StringUtils.isNotEmpty(registryUserWebDTO.getPassword()) 
+                && StringUtils.isNotEmpty(registryUserWebDTO.getPassword())
                 && StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword())
-                && !registryUserWebDTO.getPassword().equals(registryUserWebDTO.getRetypePassword())) {            
+                && !registryUserWebDTO.getPassword().equals(registryUserWebDTO.getRetypePassword())) {
             addFieldError("registryUserWebDTO.retypePassword", getText("error.register.matchPassword"));
         }
     }
-    
+
     private void addErrors(Map<String, String> err) {
         if (!err.isEmpty()) {
             for (String msg : err.keySet()) {
@@ -494,21 +494,21 @@ public class RegisterUserAction extends ActionSupport {
     public Map<String, String> getIdentityProviders() {
         return identityProviders;
     }
-    
+
     /**
      * @param identityProviders the identity providers to set
      */
     public void setIdentityProviders(Map<String, String> identityProviders) {
         this.identityProviders = identityProviders;
     }
-    
+
     /**
      * @return the selected identity provider
      */
     public String getSelectedIdentityProvider() {
         return selectedIdentityProvider;
     }
-    
+
     /**
      * @param selectedIdentityProvider the selected identity provider to set
      */
@@ -524,7 +524,12 @@ public class RegisterUserAction extends ActionSupport {
         if (StringUtils.isNotEmpty(affOrgId)) {
             loadAdminUsers(Long.parseLong(affOrgId));
         }
-        return "viewAdminUser";
+        String retResult = "loadAdminList";
+        String action = ServletActionContext.getRequest().getParameter("action");
+        if ("viewUsers".equals(action)) {
+            retResult =  "viewAdminUser";
+        }
+        return retResult;
     }
     private void loadAdminUsers(Long affOrgId) {
         RegistryUser criteriaUser = new RegistryUser();
