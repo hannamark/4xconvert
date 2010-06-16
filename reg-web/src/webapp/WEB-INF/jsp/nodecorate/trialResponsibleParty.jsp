@@ -22,8 +22,7 @@
                 <s:radio name="trialDTO.responsiblePartyType" id="trialDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
                 </td>
         </tr>
-        <c:choose>
-         <c:when test="${trialDTO.responsiblePartyType == 'sponsor'}">
+        <s:if test="trialDTO.responsiblePartyType == 'sponsor'">
              <tr id="rpcid" >
               <td scope="row" class="label">
                           <label for="submitTrial_resPartyContactFullName"> <fmt:message key="submit.trial.responsiblePartyContact"/></label> 
@@ -44,8 +43,8 @@
                         </div>      
                     </td>
           </tr>   
-         </c:when>
-         <c:otherwise>
+         </s:if>
+         <s:else>
             <tr id="rpcid" style="display:none">
                      <td scope="row" class="label">
                                  <label for="submitTrial_resPartyContactFullName"> <fmt:message key="submit.trial.responsiblePartyContact"/></label> 
@@ -66,8 +65,7 @@
                         </div>      
                     </td>
           </tr>   
-         </c:otherwise>
-        </c:choose>                                          
+         </s:else>                                          
                 
          <tr>
          <td colspan="2">
