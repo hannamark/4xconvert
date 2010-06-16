@@ -22,8 +22,8 @@ var gPopupContainer = null;
 var gPopFrame = null;
 var gReturnFunc;
 var gPopupIsShown = false;
-var gDefaultPage = "../images/loading.gif";
-var gCloseGif    = "../images/close.gif";
+var gDefaultPage = contextPath + "/images/loading.gif";
+var gCloseGif    = contextPath + "/images/close.gif";
 var gHideSelects = false;
 var gReturnVal = null;
 
@@ -94,12 +94,6 @@ function initPopUp() {
     }
 }
 //addEvent(window, "load", initPopUp);
-
-function showPopWinOutsideContext(url, width, height, returnFunc, title) {
-    gDefaultPage = "./images/loading.gif";
-    gCloseGif    = "./images/close.gif";
-    showPopWin(url, width, height, returnFunc, title);
-}
 
  /**
     * @argument width - int in pixels

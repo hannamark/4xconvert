@@ -8,7 +8,7 @@
 
 <SCRIPT>
     function showPasswordResetInfo(){
-        showPopWinOutsideContext('/registry/popupdisplayPasswordReset.action', 900, 400, '', 'Resetting Your Password');
+        showPopWin('/registry/popupdisplayPasswordReset.action', 900, 400, '', 'Resetting Your Password');
     }
 </SCRIPT>
 <body><h1>Login</h1>

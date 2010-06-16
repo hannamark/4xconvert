@@ -28,7 +28,7 @@ function handleAction(){
     document.forms[0].submit();  
 }
 function lookupAffiliateOrg(){
-   showPopWinOutsideContext('${lookupOrgUrl}', 900, 400, loadAffliatedOrgDiv, 'Select Affiliated Organization');
+   showPopWin('${lookupOrgUrl}', 900, 400, loadAffliatedOrgDiv, 'Select Affiliated Organization');
 }
 function loadAffliatedOrgDiv() {
     document.getElementById('registryUserWebDTO.affiliatedOrganizationId').value = orgid;
