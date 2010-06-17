@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessDTO;
@@ -130,7 +131,8 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
 
     @EJB
     StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
-
+    @EJB
+    RegistryUserServiceLocal registryUserService;
     @Resource
     void setSessionContext(SessionContext ctx) {
         ejbContext = ctx;
@@ -175,7 +177,7 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
             RecruitmentStatusCode recruitmentStatus = null;
             if (ssas != null) {
                 recruitmentStatus = RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode());
-                if (recruitmentStatus.isEligibleForAccrual()) {                        
+                if (recruitmentStatus.isEligibleForAccrual()) {
                     result.put((Long) oArr[0], (String) oArr[1]);
                 }
             }
@@ -278,9 +280,11 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
     }
 
     private StudySiteAccrualAccessDTO getDTO(StudySiteAccrualAccess bo) throws PAException {
+        RegistryUser regUser = new RegistryUser();
         User csmUser = new User();
         for (User u : getSubmitters()) {
             if (u.getUserId().equals(bo.getCsmUserId())) {
+                regUser = registryUserService.getUser(u.getLoginName());
                 csmUser = u;
             }
         }
@@ -290,9 +294,9 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         result.setCsmUserId(bo.getCsmUserId());
         result.setDateLastCreated(bo.getDateLastCreated());
         result.setDateLastUpdated(bo.getDateLastUpdated());
-        result.setEmail(csmUser.getLoginName());
+        result.setEmail(regUser.getEmailAddress());
         result.setId(bo.getId());
-        result.setPhone(csmUser.getPhoneNumber());
+        result.setPhone(regUser.getPhone());
         result.setRequestDetails(bo.getRequestDetails());
 
         StudySite ss;
@@ -306,7 +310,7 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         result.setStudySiteId(bo.getStudySite().getId());
         result.setUserLastCreated(bo.getUserLastCreated());
         result.setUserLastUpdated(bo.getUserLastUpdated());
-        result.setUserName(getFullName(csmUser));
+        result.setUserName(PAUtil.getGridIdentityUsername(csmUser.getLoginName()));
         return result;
     }
 
@@ -344,10 +348,10 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
     }
 
     /**
-     * @param user The csm user object
-     * @return Name of the user formated last, first.  If no name is entered use login name.
+     * @param user The registry user object
+     * @return Name of the user formated last, first.  If no name is entered use email add.
      */
-    public static String getFullName(User user) {
+    public static String getFullName(RegistryUser user) {
         String fullName = null;
         if (user.getLastName() != null) {
             fullName = user.getLastName();
@@ -356,7 +360,7 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
             fullName = user.getLastName() + ", " + user.getFirstName();
         }
         if (PAUtil.isEmpty(fullName)) {
-            fullName = user.getLoginName();
+            fullName = user.getEmailAddress();
         }
         return fullName;
     }

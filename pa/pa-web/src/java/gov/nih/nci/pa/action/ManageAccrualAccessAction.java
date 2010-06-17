@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceBean;
 import gov.nih.nci.pa.util.LabelValueBean;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
@@ -107,8 +108,8 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
 
     private List<StudySiteAccrualAccessDTO> accessList;
     private StudySiteAccrualAccessDTO access;
-    private Map<Long, User> csmUsers = null;
-    private List<LabelValueBean> csmUserNames = null;
+    private Map<Long, RegistryUser> regUsers = null;
+    private List<LabelValueBean> regUserNames = null;
     private Map<Long, String> sites = null;
     private String email;
     private String phone;
@@ -188,8 +189,8 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         } catch (NumberFormatException e) {
             csmUserId = null;
         }
-        User user = getCsmUsers().get(csmUserId);
-        setEmail(getUserEmail(user));
+        RegistryUser user = getRegUsers().get(csmUserId);
+        setEmail(user.getEmailAddress());
         return SUCCESS;
     }
 
@@ -204,8 +205,8 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         } catch (NumberFormatException e) {
             csmUserId = null;
         }
-        User user = getCsmUsers().get(csmUserId);
-        setPhone(getUserPhone(user));
+        RegistryUser user = getRegUsers().get(csmUserId);
+        setPhone(user.getPhone());
         return SUCCESS;
     }
 
@@ -268,47 +269,44 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     /**
      * @return the csmUsers
      */
-    public Map<Long, User> getCsmUsers() {
-        if (csmUsers == null) {
+    public Map<Long, RegistryUser> getRegUsers() {
+        if (regUsers == null) {
             try {
-                csmUsers = new HashMap<Long, User>();
-                csmUserNames = new ArrayList<LabelValueBean>();
-                Set<User> uSet = accrualAccessSvc.getSubmitters();
-
-                List<LabelValueBean> lvBeanList = new ArrayList<LabelValueBean>();
-                for (User u : uSet) {
-                    csmUsers.put(u.getUserId(), u);
-                    String emailId = u.getLoginName() != null ? u.getLoginName() : " ";
-                    LabelValueBean lvBean = new LabelValueBean();
-                    lvBean.setId(u.getUserId());
-                    lvBean.setName(StudySiteAccrualAccessServiceBean.getFullName(u) + " - " + emailId);
-                    lvBeanList.add(lvBean);
-                }
+                regUsers = new HashMap<Long, RegistryUser>();
+                regUserNames = new ArrayList<LabelValueBean>();
+                List<LabelValueBean> lvBeanList = getDisplayUsersList();
                 Collections.sort(lvBeanList);
                 for (LabelValueBean bean : lvBeanList) {
-                    csmUserNames.add(bean);
+                    regUserNames.add(bean);
                 }
             } catch (PAException e) {
                 addActionError("Error getting csm users.");
             }
         }
-        return csmUsers;
+        return regUsers;
     }
 
-    private String getUserEmail(User user) {
-        RegistryUser regUser = getRegistryUser(user);
-        if (regUser == null) {
-            return null;
-        }
-        return regUser.getEmailAddress();
-    }
+    /**
+     * @return
+     * @throws PAException
+     */
+    private List<LabelValueBean> getDisplayUsersList() throws PAException {
+        Set<User> uSet = accrualAccessSvc.getSubmitters();
 
-    private String getUserPhone(User user) {
-        RegistryUser regUser = getRegistryUser(user);
-        if (regUser == null) {
-            return null;
+        List<LabelValueBean> lvBeanList = new ArrayList<LabelValueBean>();
+        for (User u : uSet) {
+            RegistryUser usr = getRegistryUser(u);
+            if (usr != null) {
+                regUsers.put(u.getUserId(), usr);
+                String loginId = u.getLoginName() != null ? u.getLoginName() : " ";
+                LabelValueBean lvBean = new LabelValueBean();
+                lvBean.setId(u.getUserId());
+                lvBean.setName(StudySiteAccrualAccessServiceBean.getFullName(usr) + " - "
+                            + PAUtil.getGridIdentityUsername(loginId));
+                lvBeanList.add(lvBean);
+            }
         }
-        return regUser.getPhone();
+        return lvBeanList;
     }
 
     private RegistryUser getRegistryUser(User user) {
@@ -326,16 +324,16 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
             return null;
         }
     }
-
     /**
-     * @return the csmUserNames
+     * @return the regUserNames
      */
-    public List<LabelValueBean> getCsmUserNames() {
-        if (csmUserNames == null) {
-            getCsmUsers();
+    public List<LabelValueBean> getRegUserNames() {
+        if (regUserNames == null) {
+            getRegUsers();
         }
-        return csmUserNames;
+        return regUserNames;
     }
+
 
     /**
      * @return the email

@@ -128,7 +128,7 @@ public class StudySiteAccrualAccessServiceTest {
         user.setUserId(1L);
         user.setFirstName("John");
         user.setLastName("Doe");
-        user.setLoginName("john.doe@yahoo.com");
+        user.setLoginName("/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=john.doe");
         Set<User> users = new HashSet<User>();
         users.add(user);
         StudySiteAccrualAccessServiceBean.submitterList = users;
