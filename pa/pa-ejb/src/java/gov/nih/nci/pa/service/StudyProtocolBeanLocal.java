@@ -111,6 +111,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -210,7 +211,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
                 Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
 
         StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, sp);
-        
+
         setDefaultValues(sp, spDTO, session, UPDATE);
         session.update(sp);
         spDTO =  StudyProtocolConverter.convertFromDomainToDTO(sp);
@@ -425,7 +426,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
      * @throws PAException on any error
      */
     public void deleteStudyProtocol(Ii ii) throws PAException {
-    
+
      throw new PAException(" Method Not Yey Implemented ");
       /*  if (PAUtil.isIiNull(ii)) {
             LOG.error(" Ii should not be null ");
@@ -460,7 +461,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
                 resultList = docService.getDocumentsByStudyProtocol(targetSpIi);
                 for (DocumentDTO docDTO : resultList) {
                     if (docDTO.getTypeCode().getCode().equals(DocumentTypeCode.TSR.getCode())) {
-                        docService.delete(docDTO.getIdentifier());                        
+                        docService.delete(docDTO.getIdentifier());
                     }
                 }
             }
@@ -469,9 +470,9 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             throw new PAException(e);
         }*/
     }
-    
+
     /**
-     * 
+     *
      * @param studyProtocolDTO study protocol Dto
      * @throws PAException error on any validation
      */
@@ -479,7 +480,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         StringBuffer sb = new StringBuffer();
         sb.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null , " : "");
         sb.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null , " : "");
-        
+
     }
 
     private String generateNciIdentifier(Session session) {
@@ -508,15 +509,15 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
 
     private void enForceBusinessRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
         boolean dateRulesApply = false;
-        
+
         ActStatusCode ascStatusCode = null;
         if (!PAUtil.isCdNull(studyProtocolDTO.getStatusCode())) {
             ascStatusCode  = ActStatusCode.getByCode(studyProtocolDTO.getStatusCode().getCode());
-        } 
-        if (PAUtil.isIiNull(studyProtocolDTO.getIdentifier()) &&  ascStatusCode != null 
+        }
+        if (PAUtil.isIiNull(studyProtocolDTO.getIdentifier()) &&  ascStatusCode != null
                 && ascStatusCode.equals(ActStatusCode.ACTIVE)) {
             dateRulesApply = true;
-        } 
+        }
         if (!PAUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
             StudyProtocol oldBo = StudyProtocolConverter.convertFromDTOToDomain(
                     getStudyProtocol(studyProtocolDTO.getIdentifier()));
@@ -607,7 +608,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
 //        }
         //check if the assigned identifier exists
         //if no - generate the nci identifier and set it in the sp.
-        if (!PADomainUtils.checkAssignedIdentifier(sp)) {        
+        if (!PADomainUtils.checkAssignedIdentifier(sp)) {
           Ii spSecAssignedId = IiConverter.convertToAssignedIdentifierIi(generateNciIdentifier(session));
           if (sp.getOtherIdentifiers() != null) {
             sp.getOtherIdentifiers().add(spSecAssignedId);
@@ -621,10 +622,10 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             sp.setUserLastCreated(spDTO.getUserLastCreated() != null ? spDTO.getUserLastCreated().getValue()
                                                                      : ejbContext.getCallerPrincipal().getName());
             sp.setDateLastCreated(new Timestamp((new Date()).getTime()));
-        } 
-        
+        }
+
     }
-    
+
 
     /**
      * {@inheritDoc}
@@ -644,14 +645,22 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         hql.append("select sp from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws "
                 + " where dws.statusCode  <> '");
         hql.append(DocumentWorkflowStatusCode.REJECTED);
-        hql.append("' and (dws.id in (select max(id) from DocumentWorkflowStatus as dws1 " 
+        hql.append("' and (dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                 + " where sp.id=dws1.studyProtocol) or dws.id is null)");
 
         StringBuffer criteriaClause = new StringBuffer();
         if (dto.getSecondaryIdentifiers() != null && dto.getSecondaryIdentifiers().getItem() != null) {
-            for (Ii id : dto.getSecondaryIdentifiers().getItem()) {
-                criteriaClause.append(addCriteriaEq("sp.otherIdentifiers.root" , id.getRoot()));
-                criteriaClause.append(addCriteriaLike("sp.otherIdentifiers.extension", id.getExtension()));
+            Iterator<Ii> ids = dto.getSecondaryIdentifiers().getItem().iterator();
+            criteriaClause.append(" and ( ");
+            while (ids.hasNext()) {
+                Ii id = ids.next();
+                criteriaClause.append("exists (select oi.extension from sp.otherIdentifiers oi where oi.root = '"
+                        + id.getRoot() + "' and oi.extension = '" + id.getExtension() + "') ");
+                if (ids.hasNext()) {
+                    criteriaClause.append(" or ");
+                } else {
+                    criteriaClause.append(") ");
+                }
             }
         }
         if (dto.getPhaseCode() != null) {
@@ -679,7 +688,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
         query.setMaxResults(maxLimit);
         query.setFirstResult(pagingParams.getOffset());
-        
+
         studyProtocolList = query.list();
         if (studyProtocolList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
@@ -719,7 +728,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         if (PAUtil.isNotEmpty(newUserLastCreated) && PAUtil.isNotEmpty(prevUserLastCreated)
                 && !prevUserLastCreated.equals(newUserLastCreated)) {
             session = HibernateUtil.getCurrentSession();
-            String sql = "UPDATE STUDY_PROTOCOL SET USER_LAST_CREATED='" + newUserLastCreated 
+            String sql = "UPDATE STUDY_PROTOCOL SET USER_LAST_CREATED='" + newUserLastCreated
                 + "' WHERE IDENTIFIER=" + prevStudyProtocol.getId();
             session.createSQLQuery(sql).executeUpdate();
             session.flush();
