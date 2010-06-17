@@ -785,13 +785,13 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         StringBuffer data = new StringBuffer();
         data.append('\n');
         if (nullCrit.length() > 1) {
-            data.append("Criteria \n" + nullCrit.toString() + "\n");
+            data.append("Criteria: \n" + nullCrit.toString() + "\n");
         }
         if (incCrit.length() > 1) {
-            data.append("Inclusion \n").append(incCrit).append('\n');
+            data.append("Inclusion Criteria: \n").append(incCrit).append('\n');
         }
         if (exCrit.length() > 1) {
-            data.append("Exclusion \n").append(exCrit).append('\n');
+            data.append("Exclusion Criteria: \n").append(exCrit).append('\n');
         }
         if (data.length() > 1) {
             createCdataBlock("criteria", StConverter.convertToSt(data.toString()),
