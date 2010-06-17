@@ -49,3 +49,6 @@ register.mail.body.url=http://localhost:8080/registry
 gridgrouper.submitter.group=COPPA:PA:Submitter
 gridgrouper.admin.user=ctrpgrouper
 gridgrouper.admin.password=C0pp4Gr0upP@ss
+
+grid.dorian.url=https\://dorian.training.cagrid.org\:8443/wsrf/services/cagrid/Dorian
+gridgrouper.url=https\://grouper.training.cagrid.org\:8443/wsrf/services/cagrid/GridGrouper
