@@ -38,6 +38,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -158,6 +159,14 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
                 && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
             addFieldError("trialDTO.nctIdentifier", "Provide either NCT Number or Protocol Trial Template.\n");
             addFieldError("trialDTO.protocolDocFileName", "Provide either NCT Number or Protocol Trial Template.\n");
+        }
+        if (!StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode()) 
+                && StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
+            addFieldError("summary4FundingSponsor", "Select the Summary 4 Funding Sponsor");
+        }
+        if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode()) 
+                && !StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
+            addFieldError("trialDTO.summaryFourFundingCategoryCode", "Select the Summary 4 Funding Sponsor Type");
         }
         TrialValidator validator = new TrialValidator();
         Map<String, String> errMap = new HashMap<String, String>();

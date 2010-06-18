@@ -280,12 +280,23 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
             addFieldError("trialDTO.phaseCode", getText("error.submit.trialPhase"));
             addFieldError("trialDTO.primaryPurposeCode", getText("error.submit.trialPurpose"));
         }
-
+        checkSummary4Funding();
         checkNctAndDoc(session);
         TrialValidator validator = new TrialValidator();
         checkProtocolDoc(session, validator);
         checkOtherDoc(session, validator);
         checkSubmittingOrgRules();
+    }
+
+    private void checkSummary4Funding() {
+        if (!StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode()) 
+                && StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
+            addFieldError("summary4FundingSponsor", "Select the Summary 4 Funding Sponsor");
+        }
+        if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode()) 
+                && !StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
+            addFieldError("trialDTO.summaryFourFundingCategoryCode", "Select the Summary 4 Funding Sponsor Type");
+        }
     }
 
     private void checkNctAndDoc(HttpSession session) {

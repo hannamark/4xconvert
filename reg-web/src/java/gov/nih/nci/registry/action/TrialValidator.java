@@ -150,12 +150,10 @@ public class TrialValidator {
         }
         return addFieldError;
     }
-
     private String getText(String errorMsg) {
         // TODO Auto-generated method stub
         return ResourceBundle.getBundle("ApplicationResources").getString(errorMsg);
     }
-
     /**
      * 
      * @param trialDto dto
@@ -212,36 +210,28 @@ public class TrialValidator {
             addFieldError.putAll(validateTrialDates(trialDto));
         }
         if (trialDto.getXmlRequired()) {     
-
             if (PAUtil.isEmpty(trialDto.getResponsiblePartyType())) {
-                addFieldError.put("ResponsiblePartyNotSelected", 
-                     getText("error.submit.ResponsibleParty"));
+                addFieldError.put("ResponsiblePartyNotSelected", getText("error.submit.ResponsibleParty"));
             }
             if (PAUtil.isEmpty(trialDto.getSponsorIdentifier())) {
-               addFieldError.put("trialDTO.sponsorIdentifier", 
-                     getText("error.submit.sponsor"));
+               addFieldError.put("trialDTO.sponsorIdentifier", getText("error.submit.sponsor"));
             }
             if (!(trialDto.getResponsiblePartyType().equals("pi"))
                 && (PAUtil.isEmpty(trialDto.getResponsiblePersonIdentifier()))) {
-               addFieldError.put("ResponsiblePartyNotSelected", 
-                       getText("error.submit.sponsorResponsibleParty"));
+               addFieldError.put("ResponsiblePartyNotSelected", getText("error.submit.sponsorResponsibleParty"));
             }
             if (PAUtil.isEmpty(trialDto.getContactPhone())) {
-               addFieldError.put("trialDTO.contactPhone", 
-                  getText("error.submit.contactPhone"));
+               addFieldError.put("trialDTO.contactPhone", getText("error.submit.contactPhone"));
             } else {
                if (!PAUtil.isValidPhone(trialDto.getContactPhone())) {
-                  addFieldError.put("trialDTO.contactPhone", 
-                         getText("error.register.invalidPhoneNumber"));
+                  addFieldError.put("trialDTO.contactPhone", getText("error.register.invalidPhoneNumber"));
                } 
             }
             if (PAUtil.isEmpty(trialDto.getContactEmail())) {
-               addFieldError.put("trialDTO.contactEmail", 
-                  getText("error.submit.contactEmail"));
+               addFieldError.put("trialDTO.contactEmail", getText("error.submit.contactEmail"));
             } else {
                if (!PAUtil.isValidEmail(trialDto.getContactEmail())) {
-                  addFieldError.put("trialDTO.contactEmail", 
-                         getText("error.register.invalidContactEmailAddress"));
+                  addFieldError.put("trialDTO.contactEmail", getText("error.register.invalidContactEmailAddress"));
                } 
             }
             if (PAUtil.isEmpty(trialDto.getSelectedRegAuth())) {
@@ -249,6 +239,15 @@ public class TrialValidator {
             }
             if (PAUtil.isEmpty(trialDto.getLst())) {
              addFieldError.put("trialDTO.lst", "Select the Oversight authority country");
+            }
+            if (!StringUtils.isEmpty(trialDto.getSummaryFourFundingCategoryCode()) 
+                    && StringUtils.isEmpty(trialDto.getSummaryFourOrgIdentifier())) {
+                addFieldError.put("summary4FundingSponsor", "Select the Summary 4 Funding Sponsor");
+            }
+            if (StringUtils.isEmpty(trialDto.getSummaryFourFundingCategoryCode()) 
+                    && !StringUtils.isEmpty(trialDto.getSummaryFourOrgIdentifier())) {
+                addFieldError.put("trialDTO.summaryFourFundingCategoryCode", 
+                        "Select the Summary 4 Funding Sponsor Type");
             }
         }  
         return addFieldError;
@@ -333,7 +332,6 @@ public class TrialValidator {
         }
         return addActionError;
     }
-
     /**
      * 
      * @param id id
@@ -612,5 +610,4 @@ public class TrialValidator {
         }   
         return addFieldError;
     }
-
 }
