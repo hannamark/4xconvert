@@ -66,20 +66,8 @@ function getMyPartialTrial() {
         document.forms[0].action="searchTrialpartiallySubmittedView.action?studyProtocolId="+pId+"&usercreated="+user;
         document.forms[0].submit(); 
     }
-   function deletePartialProtocol(pId,user) {
-	   delete_box = confirm("Do you want to delete?");
-	   if (delete_box==true){       
-		    document.forms[0].action="submitTrialdeletePartialSubmission.action?studyProtocolId="+pId+"&usercreated="+user;
-		    document.forms[0].submit(); 
-	   }
-   }
-   function completeDraft(pId,trialCategory) {
-	   if (trialCategory != "" && trialCategory == "true" ){
-		    document.forms[0].action="submitProprietaryTrialcomplete.action?studyProtocolId="+pId;
-	   } else {
-		   document.forms[0].action="submitTrialcompletePartialSubmission.action?studyProtocolId="+pId;
-	   }
-	   document.forms[0].submit();
+   function deletePartialProtocol() {
+	   return confirm("Do you want to delete?");
    }
 </SCRIPT>
 <body>

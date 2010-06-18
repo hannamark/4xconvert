@@ -15,10 +15,20 @@
     <display:column titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier"    sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column titleKey="search.trial.trialCategory" property="trialCategory"    sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column titleKey="search.trial.action" >
-        <a href="#" onclick="completeDraft('${row.studyProtocolId}','${row.isProprietaryTrial}');">Complete</a>
-        </display:column>
+        <s:if test="%{#attr.row.isProprietaryTrial == 'true'}">
+            <s:url id="completeUrl" action="submitProprietaryTrialcomplete"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+        </s:if>
+        <s:else>
+            <s:url id="completeUrl" action="submitTrialcompletePartialSubmission"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+        </s:else>
+        <s:a href="%{completeUrl}">Complete</s:a>
+    </display:column>
     <display:column titleKey="search.trial.action">
-        <a href="#" onclick="deletePartialProtocol('${row.studyProtocolId}','${row.userLastCreated}');">Delete</a> 
+        <s:url id="deleteUrl" action="submitTrialdeletePartialSubmission">
+            <s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" />
+            <s:param name="usercreated" value="%{#attr.row.userLastCreated}" />
+        </s:url>
+        <s:a href="%{deleteUrl}" onclick="return deletePartialProtocol();">Delete</s:a>
     </display:column>
 </display:table>
 </c:when>

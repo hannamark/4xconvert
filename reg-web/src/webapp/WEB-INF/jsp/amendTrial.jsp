@@ -671,46 +671,29 @@ function toggledisplayDivs(val) {
                             <s:set name="fundingMechanismValues" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getFundingMechanisms()" />
                             <td>                                             
                                 <s:select headerKey="" headerValue="--Select--" 
-                                     name="trialFundingDTO.fundingMechanismCode" 
+                                     name="fundingMechanismCode" 
                                      list="#fundingMechanismValues"                             
                                      listKey="fundingMechanismCode"  
                                      listValue="fundingMechanismCode" 
                                      id="fundingMechanismCode"
-                                     value="trialFundingDTO.fundingMechanismCode" 
                                      cssStyle="width:150px" />
                             </td>
                             <s:set name="nihInstituteCodes" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getNihInstitutes()" />
                             <td>                                             
                                 <s:select headerKey="" headerValue="--Select--" 
-                                     name="trialFundingDTO.nihInstitutionCode" 
+                                     name="nihInstitutionCode" 
                                      list="#nihInstituteCodes"
                                      listKey="nihInstituteCode" 
                                      listValue="nihInstituteCode"
                                      id="nihInstitutionCode"
-                                     value="trialFundingDTO.nihInstitutionCode" 
                                      cssStyle="width:150px"  />
-                                     <span class="formErrorMsg" >
-                                        <s:fielderror>
-                                        <s:param>trialFundingDTO.nihInstitutionCode</s:param>
-                                       </s:fielderror>                            
-                                     </span>
                             </td>
                             <td>
-                                <s:textfield name="trialFundingDTO.serialNumber" id="serialNumber" maxlength="200" size="100"  cssStyle="width:150px"  />
-                                <span class="formErrorMsg"> 
-                                    <s:fielderror>
-                                    <s:param>trialFundingDTO.serialNumber</s:param>
-                                    </s:fielderror>                            
-                                </span>
+                                <s:textfield name="serialNumber" id="serialNumber" maxlength="200" size="100"  cssStyle="width:150px"  />
                             </td>
                             <s:set name="programCodes" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
                             <td>                                             
-                                <s:select headerKey="" headerValue="--Select--" name="trialFundingDTO.nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="trialFundingDTO.nciDivisionProgramCode" cssStyle="width:150px" />
-                                <span class="formErrorMsg"> 
-                                   <s:fielderror>
-                                   <s:param>trialFundingDTO.nciDivisionProgramCode</s:param>
-                                  </s:fielderror>                            
-                                </span>
+                                <s:select headerKey="" headerValue="--Select--" name="nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  cssStyle="width:150px" />
                             </td>
                             <td> <input type="button" id="grantbtnid" value="Add Grant" onclick="addGrant();" /></td>
                             <td> &nbsp;</td><td> &nbsp;</td><td> &nbsp;</td>
