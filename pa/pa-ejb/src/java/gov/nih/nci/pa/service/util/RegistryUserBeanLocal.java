@@ -371,13 +371,13 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         for (Iterator iter = query.iterate(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();
             DisplayTrialOwnershipInformation trialInfo = new DisplayTrialOwnershipInformation();
-            trialInfo.setUserId(row[INDEX_USER_ID].toString());
-            trialInfo.setFirstName(row[INDEX_FIRST_NAME].toString());
-            trialInfo.setLastName(row[INDEX_LAST_NAME].toString());
-            trialInfo.setEmailAddress(row[INDEX_EMAIL].toString());
-            trialInfo.setTrialId(row[INDEX_TRIAL_ID].toString());
-            trialInfo.setNciIdentifier(row[INDEX_NCI_IDENTIFIER].toString());
-            trialInfo.setAffiliatedOrgId(row[INDEX_ORG_ID].toString());
+            trialInfo.setUserId(row[INDEX_USER_ID] == null ? null : row[INDEX_USER_ID].toString());
+            trialInfo.setFirstName(row[INDEX_FIRST_NAME] == null ? null : row[INDEX_FIRST_NAME].toString());
+            trialInfo.setLastName(row[INDEX_LAST_NAME] == null ? null : row[INDEX_LAST_NAME].toString());
+            trialInfo.setEmailAddress(row[INDEX_EMAIL] == null ? null : row[INDEX_EMAIL].toString());
+            trialInfo.setTrialId(row[INDEX_TRIAL_ID] == null ? null : row[INDEX_TRIAL_ID].toString());
+            trialInfo.setNciIdentifier(row[INDEX_NCI_IDENTIFIER] == null ? null : row[INDEX_NCI_IDENTIFIER].toString());
+            trialInfo.setAffiliatedOrgId(row[INDEX_ORG_ID] == null ? null : row[INDEX_ORG_ID].toString());
             lst.add(trialInfo);
         }
 
