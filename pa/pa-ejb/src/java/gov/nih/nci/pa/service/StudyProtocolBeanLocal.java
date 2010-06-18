@@ -655,7 +655,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             while (ids.hasNext()) {
                 Ii id = ids.next();
                 criteriaClause.append("exists (select oi.extension from sp.otherIdentifiers oi where oi.root = '"
-                        + id.getRoot() + "' and oi.extension = '" + id.getExtension() + "') ");
+                        + id.getRoot() + "' and oi.extension like '%" + id.getExtension() + "%') ");
                 if (ids.hasNext()) {
                     criteriaClause.append(" or ");
                 } else {
