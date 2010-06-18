@@ -1,31 +1,31 @@
 /*
 * caBIG Open Source Software License
-* 
+*
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-* 
+*
 * This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
 * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
 * entity.  Control for purposes of this definition means
-* 
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract 
+*
+* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
 * or otherwise,or
-*  
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or 
-* 
+*
+* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
+*
 * (iii) beneficial ownership of such entity.
 * License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
 * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to 
-* 
+* rights in the caBIG Software, including any copyright or patent rights therein, to
+*
 * (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
 * publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so; 
-* 
+* or permit others to do so;
+*
 * (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof); 
-* 
+* (or portions thereof);
+*
 * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
 * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
 * including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
@@ -34,22 +34,22 @@
 * displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
 * Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
 * distribute or use the caBIG Software.
-* 
+*
 * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
 * of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
 * form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
 * documentation and/or other materials provided with the distribution, if any.
-* 
+*
 * 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
 * This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally 
+* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
 * appear.
-* 
+*
 * 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
 * caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
 * any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
 * as required to comply with the terms of this License.
-* 
+*
 * 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
 * programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
 * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
@@ -59,22 +59,22 @@
 * In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
 * against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
 * to obtain such permissions.
-* 
+*
 * 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
 * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
 * sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
 * provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
 * License.
-* 
+*
 * 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN 
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
 * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
 * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* 
+*
+*
 */
 
 package gov.nih.nci.pa.service.util;
@@ -109,7 +109,6 @@ import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -175,10 +174,10 @@ import org.hibernate.Session;
  * @since 10/26/2009
  */
 
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength", 
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength",
     "PMD.TooManyMethods" , "PMD.ExcessiveParameterList" , "PMD.ExcessiveMethodLength" })
 public class PAServiceUtils {
-    
+
     private static final String ORGANIZATION_IDENTIFIER_IS_NULL = "Organization Identifier is null";
     private static final String UNCHECKED = "unchecked";
     /**
@@ -190,7 +189,7 @@ public class PAServiceUtils {
         Session session = HibernateUtil.getCurrentSession();
         return session.createSQLQuery(sql).executeUpdate();
     }
-    
+
     /**
      * Executes an list of sql.
      * @param sqls list of sqls
@@ -199,12 +198,12 @@ public class PAServiceUtils {
         for (String sql : sqls) {
             executeSql(sql);
         }
-    }    
+    }
     /**
      * does a deep copy of protocol to a new protocol.
      * @param fromStudyProtocolIi study protocol ii
-     * @throws PAException  on error 
-     * @return ii 
+     * @throws PAException  on error
+     * @return ii
      */
     public Ii copy(Ii fromStudyProtocolIi) throws PAException {
         InterventionalStudyProtocolDTO dto = PaRegistry.getStudyProtocolService().
@@ -234,18 +233,18 @@ public class PAServiceUtils {
             , fromStudyProtocolIi, toIi);
         executeCopy(getRemoteService(IiConverter.convertToDocumentIi(null)) , fromStudyProtocolIi, toIi);
         return toIi;
-        
+
     }
-    
+
     @SuppressWarnings(UNCHECKED)
     private void executeCopy(StudyPaService sp , Ii from , Ii to) throws PAException {
         sp.copy(from, to);
-        
+
     }
-    
+
     /**
      * an utility method to create or update.
-     * @param dtos list of dtos 
+     * @param dtos list of dtos
      * @param id identifier
      * @param studyProtocolIi study protocol ii
      * @throws PAException on error
@@ -263,57 +262,57 @@ public class PAServiceUtils {
                 paService.update(dto);
             }
         }
-    } 
+    }
 
-    
+
     /**
-     * 
-     * @param <TYPE> any type extending StudyPaService 
+     *
+     * @param <TYPE> any type extending StudyPaService
      * @param isoIi iso ii
-     * @return any type extending StudyPaService 
+     * @return any type extending StudyPaService
      * @throws PAException on error
      */
     @SuppressWarnings(UNCHECKED)
     public <TYPE extends StudyPaService>  TYPE getRemoteService(Ii isoIi) throws PAException {
-        if (IiConverter.STUDY_MILESTONE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStudyMilestoneService(); 
-        } else if (IiConverter.STUDY_IND_IDE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStudyIndldeService(); 
-        } else if (IiConverter.STUDY_DISEASE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStudyDiseaseService(); 
-        } else if (IiConverter.STUDY_OBJECTIVE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStudyObjectiveService(); 
-        } else if (IiConverter.STRATUM_GROUP_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStratumGroupService(); 
-        } else if (IiConverter.STUDY_RESOURCING_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStudyResourcingService(); 
-        } else if (IiConverter.STUDY_ONHOLD_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStudyOnholdService(); 
-        } else if (IiConverter.STUDY_OVERALL_STATUS_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStudyOverallStatusService(); 
-        } else if (IiConverter.STUDY_RECRUITMENT_STATUS_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStudyRecruitmentStatusService(); 
-        } else if (IiConverter.PLANNED_ACTIVITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getPlannedActivityService(); 
-        } else if (IiConverter.ARM_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getArmService(); 
-        } else if (IiConverter.STUDY_SITE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStudySiteService(); 
-        } else if (IiConverter.STUDY_CONTACT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStudyContactService(); 
-        } else if (IiConverter.STUDY_OUTCOME_MEASURE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStudyOutcomeMeasurService(); 
-        } else if (IiConverter.DOCUMENT_WORKFLOW_STATUS_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getDocumentWorkflowStatusService(); 
-        } else if (IiConverter.STUDY_REGULATORY_AUTHORITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getStudyRegulatoryAuthorityService(); 
-        } else if (IiConverter.DOCUMENT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            return (TYPE) PaRegistry.getDocumentService(); 
+        if (IiConverter.STUDY_MILESTONE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStudyMilestoneService();
+        } else if (IiConverter.STUDY_IND_IDE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStudyIndldeService();
+        } else if (IiConverter.STUDY_DISEASE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStudyDiseaseService();
+        } else if (IiConverter.STUDY_OBJECTIVE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStudyObjectiveService();
+        } else if (IiConverter.STRATUM_GROUP_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStratumGroupService();
+        } else if (IiConverter.STUDY_RESOURCING_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStudyResourcingService();
+        } else if (IiConverter.STUDY_ONHOLD_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStudyOnholdService();
+        } else if (IiConverter.STUDY_OVERALL_STATUS_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStudyOverallStatusService();
+        } else if (IiConverter.STUDY_RECRUITMENT_STATUS_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStudyRecruitmentStatusService();
+        } else if (IiConverter.PLANNED_ACTIVITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getPlannedActivityService();
+        } else if (IiConverter.ARM_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getArmService();
+        } else if (IiConverter.STUDY_SITE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStudySiteService();
+        } else if (IiConverter.STUDY_CONTACT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStudyContactService();
+        } else if (IiConverter.STUDY_OUTCOME_MEASURE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStudyOutcomeMeasurService();
+        } else if (IiConverter.DOCUMENT_WORKFLOW_STATUS_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getDocumentWorkflowStatusService();
+        } else if (IiConverter.STUDY_REGULATORY_AUTHORITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getStudyRegulatoryAuthorityService();
+        } else if (IiConverter.DOCUMENT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            return (TYPE) PaRegistry.getDocumentService();
         } else {
-            throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());            
+            throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
         }
     }
-    
+
     /**
      * removes the sponsor contact.
      * @param studyProtocolIi studyPorotocol Ii
@@ -352,7 +351,7 @@ public class PAServiceUtils {
         if (PAUtil.isListNotEmpty(spDtos)) {
             PaRegistry.getStudySiteService().delete(spDtos.get(0).getIdentifier());
         }
-    }     
+    }
     /**
      * removes the regulatory authority.
      * @param studyProtocolIi studyPorotocol Ii
@@ -366,11 +365,11 @@ public class PAServiceUtils {
             }
 
    }
-    
+
     /**
-     * 
+     *
      * @param studyProtocolIi study protocol ii
-     * @param leadOrganizationDTO Lead Organization 
+     * @param leadOrganizationDTO Lead Organization
      * @param principalInvestigatorDTO Principal Investigator
      * @param sponsorOrganizationDTO Sponsor Organization
      * @param responsiblePartyContactIi Responsible Party
@@ -378,19 +377,19 @@ public class PAServiceUtils {
      * @param studySiteContactDTO Study Site Contact
      * @throws PAException on error
      */
-    public void createResponsibleParty(Ii studyProtocolIi , OrganizationDTO leadOrganizationDTO , 
-            PersonDTO principalInvestigatorDTO , OrganizationDTO sponsorOrganizationDTO , Ii responsiblePartyContactIi, 
+    public void createResponsibleParty(Ii studyProtocolIi , OrganizationDTO leadOrganizationDTO ,
+            PersonDTO principalInvestigatorDTO , OrganizationDTO sponsorOrganizationDTO , Ii responsiblePartyContactIi,
             StudyContactDTO studyContactDTO , StudySiteContactDTO studySiteContactDTO) throws PAException {
         if (studyContactDTO != null) {
-            createPIAsResponsibleParty(studyProtocolIi, leadOrganizationDTO , 
+            createPIAsResponsibleParty(studyProtocolIi, leadOrganizationDTO ,
                     principalInvestigatorDTO , studyContactDTO);
         } else {
             createSponsorAsPrimaryContact(studyProtocolIi, sponsorOrganizationDTO ,
                     responsiblePartyContactIi, studySiteContactDTO);
         }
-        
+
     }
-    
+
 
     private void createPIAsResponsibleParty(Ii studyProtocolIi ,
             OrganizationDTO leadOrganizationDto ,
@@ -428,7 +427,7 @@ public class PAServiceUtils {
         new PARelationServiceBean().createSponsorAsPrimaryContactRelations(contactDto);
     }
     /**
-     * 
+     *
      * @param studyProtocolIi study protocol identifier
      * @param organizationDto organization Dto
      * @param summary4studyResourcingDTO summary four Resourcing Dto
@@ -438,7 +437,7 @@ public class PAServiceUtils {
             StudyResourcingDTO summary4studyResourcingDTO) throws PAException {
         if (organizationDto != null && organizationDto.getIdentifier() != null) {
             SummaryFourFundingCategoryCode summaryFourFundingCategoryCode = null;
-        
+
             if (summary4studyResourcingDTO != null && !PAUtil.isCdNull(summary4studyResourcingDTO.getTypeCode())) {
                 summaryFourFundingCategoryCode = SummaryFourFundingCategoryCode.getByCode(
                         summary4studyResourcingDTO.getTypeCode().getCode());
@@ -448,7 +447,7 @@ public class PAServiceUtils {
             if (orgPoIdentifier  == null) {
                 throw new PAException(" Organization PO Identifier is null");
             }
-           
+
             // Step 1 : get the PO Organization
             OrganizationDTO poOrg = null;
             try {
@@ -466,7 +465,7 @@ public class PAServiceUtils {
             if (paOrg == null) {
                 paOrg = corrUtils.createPAOrganization(poOrg);
             }
-            
+
             StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService().getsummary4ReportedResource(
                     studyProtocolIi);
             if (summary4ResoureDTO == null) {
@@ -490,12 +489,12 @@ public class PAServiceUtils {
                 PaRegistry.getStudyResourcingService().updateStudyResourcing(summary4ResoureDTO);
             }
         }
-        
-        
+
+
     }
-    
+
     /**
-     * 
+     *
      * @param studyProtocolIi Study Protocol Identifier
      * @param sponsorDto Lead Organization Dto
      * @throws PAException on error
@@ -527,11 +526,11 @@ public class PAServiceUtils {
         studySiteDtos  = new ArrayList<StudySiteDTO>();
         studySiteDtos.add(studySiteDTO);
         createOrUpdate(studySiteDtos, IiConverter.convertToStudySiteIi(null), studyProtocolIi);
-        
-    }    
-    
+
+    }
+
     /**
-     * 
+     *
      * @param studyProtocolIi study protocol identifier
      * @param leadOrganizationDto lead organization identifier
      * @param principalInvestigatorDto pi
@@ -563,14 +562,14 @@ public class PAServiceUtils {
         if (StudyTypeCode.INTERVENTIONAL.equals(studyTypeCode)) {
             hcpId = hcp.createHealthCareProviderCorrelationBeans(orgPoIdentifier, personPoIdentifer);
         }
-        List<StudyContactDTO> studyContactDtos = 
+        List<StudyContactDTO> studyContactDtos =
             getStudyContact(studyProtocolIi, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true);
         StudyContactDTO studyContactDTO = null;
         if (PAUtil.getFirstObj(studyContactDtos) != null) {
             studyContactDTO = PAUtil.getFirstObj(studyContactDtos);
         } else {
             studyContactDTO = new StudyContactDTO();
-        }        
+        }
         studyContactDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(crsId));
         studyContactDTO.setHealthCareProviderIi(IiConverter.convertToIi(hcpId));
         studyContactDTO.setRoleCode(CdConverter.convertStringToCd(
@@ -580,7 +579,7 @@ public class PAServiceUtils {
         studyContactDtos.add(studyContactDTO);
         createOrUpdate(studyContactDtos, IiConverter.convertToStudyContactIi(null), studyProtocolIi);
     }
-    
+
     /**
      * checks if any device is found in the planned activities list.
      * @param studyProtocolIi sp id
@@ -606,7 +605,7 @@ public class PAServiceUtils {
     }
 
     /**
-     * 
+     *
      * @param spDto functional code, StudyProtocol Identifier
      * @param isUnique determines if the result is unique
      * @return list of StudySiteDtos
@@ -624,14 +623,14 @@ public class PAServiceUtils {
             spDtos = PaRegistry.getStudySiteService().search(spDto, pagingParams);
         } catch (TooManyResultsException e) {
             throw new PAException(" Found more than 1 record for a protocol id = "
-                    + spDto.getStudyProtocolIdentifier().getExtension() + " for a given status " 
+                    + spDto.getStudyProtocolIdentifier().getExtension() + " for a given status "
                     + spDto.getFunctionalCode().getCode());
         }
         if (spDtos != null && spDtos.size() == 1) {
             return spDtos;
         } else if (spDtos != null && spDtos.size() > 1 && isUnique) {
             throw new PAException(" Found more than 1 record for a protocol id = "
-                    + spDto.getStudyProtocolIdentifier().getExtension() + " for a given status " 
+                    + spDto.getStudyProtocolIdentifier().getExtension() + " for a given status "
                     + spDto.getFunctionalCode().getCode());
 
         }
@@ -640,7 +639,7 @@ public class PAServiceUtils {
     }
 
     /**
-     * 
+     *
      * @param studyProtocolIi StudyProtocol Identifier
      * @param scCode functional code
      * @param isUnique determines if the result is unique
@@ -666,16 +665,16 @@ public class PAServiceUtils {
         }
         return spDtos;
 
-    }   
-        
+    }
+
     /**
-     * 
+     *
      * @param studyIndldeDTOs list of dtos
-     * @param studyProtocolDTO studyProtocol 
+     * @param studyProtocolDTO studyProtocol
      * @throws PAException on error
      */
     @SuppressWarnings(UNCHECKED)
-    public void enforceNoDuplicateIndIde(List<StudyIndldeDTO> studyIndldeDTOs, StudyProtocolDTO studyProtocolDTO) 
+    public void enforceNoDuplicateIndIde(List<StudyIndldeDTO> studyIndldeDTOs, StudyProtocolDTO studyProtocolDTO)
     throws PAException {
         StringBuffer errorMsg = new StringBuffer();
         if (PAUtil.isListNotEmpty(studyIndldeDTOs)) {
@@ -686,7 +685,7 @@ public class PAServiceUtils {
                     errorMsg.append("Ind/Ide id " + sp.getIdentifier().getExtension() + " does not exist");
                 }
                 for (int j = ++i; j < studyIndldeDTOs.size(); j++) {
-                    StudyIndldeDTO newType = (StudyIndldeDTO) studyIndldeDTOs.get(j);        
+                    StudyIndldeDTO newType = (StudyIndldeDTO) studyIndldeDTOs.get(j);
                     boolean sameType = newType.getIndldeTypeCode().getCode().equals(sp.getIndldeTypeCode().getCode());
                     boolean sameNumber = newType.getIndldeNumber().getValue().equals(sp.getIndldeNumber().getValue());
                     boolean sameGrantor = newType.getGrantorCode().getCode().equals(sp.getGrantorCode().getCode());
@@ -701,11 +700,11 @@ public class PAServiceUtils {
             if (errorMsg.length() > 1) {
                 new PAException(errorMsg.toString());
             }
-        }  
-    }    
+        }
+    }
     /**
-     * 
-     * @param studyResourcingDTOs list of 
+     *
+     * @param studyResourcingDTOs list of
      * @throws PAException on error
      */
     @SuppressWarnings(UNCHECKED)
@@ -737,12 +736,12 @@ public class PAServiceUtils {
            if (errorMsg.length() > 1) {
                new PAException(errorMsg.toString());
            }
-       }  
+       }
     }
-    
+
 
     /**
-     * 
+     *
      * @param identifier nci Identifier
      * @return next submission number
      */
@@ -753,22 +752,22 @@ public class PAServiceUtils {
         Integer maxValue = (Integer) session.createQuery(query).list().get(0);
         return (maxValue == null ? 1 : maxValue + 1);
     }
-    
+
     /**
      * Enforce recruitment status.
-     * 
+     *
      * @param studyProtocolDTO the study protocol dto
      * @param participatingSites the participating sites
      * @param recruitmentStatusDto the recruitment status dto
-     * 
+     *
      * @throws PAException the PA exception
      */
     @SuppressWarnings({"PMD" })
-    public void enforceRecruitmentStatus(StudyProtocolDTO studyProtocolDTO, 
-                                         List<StudySiteAccrualStatusDTO> participatingSites, 
+    public void enforceRecruitmentStatus(StudyProtocolDTO studyProtocolDTO,
+                                         List<StudySiteAccrualStatusDTO> participatingSites,
                                          StudyRecruitmentStatusDTO recruitmentStatusDto) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
-        if (PAUtil.isListNotEmpty(participatingSites)) { 
+        if (PAUtil.isListNotEmpty(participatingSites)) {
                if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().
                       equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {
                   boolean recruiting = false;
@@ -778,7 +777,7 @@ public class PAServiceUtils {
                       if (PAUtil.isIiNotNull(studySiteAccuralStatus.getStudySiteIi())
                               && !isIiExistInPA(IiConverter.convertToStudySiteIi(Long.valueOf(
                                       studySiteAccuralStatus.getStudySiteIi().getExtension())))) {
-                          errorMsg.append("Study Site Id " + studySiteAccuralStatus.getStudySiteIi().getExtension() 
+                          errorMsg.append("Study Site Id " + studySiteAccuralStatus.getStudySiteIi().getExtension()
                                   + " does not exit");
                       }
                       Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
@@ -797,7 +796,7 @@ public class PAServiceUtils {
                           participatingSitesOld.add(studySiteAccuralStatus);
                       }
                   }
-                  if (participatingSitesOld != null && !participatingSitesOld.isEmpty()) { 
+                  if (participatingSitesOld != null && !participatingSitesOld.isEmpty()) {
                       //else sort the old statuses and the get the latest
                       Collections.sort(participatingSitesOld, new Comparator<StudySiteAccrualStatusDTO>() {
                           public int compare(StudySiteAccrualStatusDTO o1, StudySiteAccrualStatusDTO o2) {
@@ -812,34 +811,27 @@ public class PAServiceUtils {
                       }
                       if (!recruiting) {
                               new PAException("Data inconsistency: Atleast one location needs to be recruiting"
-                                      + " if the overall status recruitment status is\'Recruiting\'");   
+                                      + " if the overall status recruitment status is\'Recruiting\'");
                       }
-                  }   
+                  }
               }
-        } 
+        }
     }
-    
-    
+
+
     /**
      * Enforce regulatory info.
-     * 
+     *
      * @param studyProtocolDTO the study protocol dto
      * @param studyRegAuthDTO the study reg auth dto
      * @param studyIndldeDTOs the study indlde dt os
-     * @param isoDocWrkStatus the iso doc wrk status
-     * @param paList the pa list
      * @param regulatoryInfoBean the regulatory info bean
-     * @param operation operation
      * @throws PAException the PA exception
      */
-    @SuppressWarnings({"PMD" })
-    public void enforceRegulatoryInfo(StudyProtocolDTO studyProtocolDTO, 
-                                      StudyRegulatoryAuthorityDTO studyRegAuthDTO , 
+    public void enforceRegulatoryInfo(StudyProtocolDTO studyProtocolDTO,
+                                      StudyRegulatoryAuthorityDTO studyRegAuthDTO ,
                                       List<StudyIndldeDTO> studyIndldeDTOs,
-                                      DocumentWorkflowStatusDTO isoDocWrkStatus ,
-                                      List<PlannedActivityDTO> paList ,
-                                      RegulatoryInformationServiceRemote regulatoryInfoBean,
-                                      String operation) throws PAException {
+                                      RegulatoryInformationServiceRemote regulatoryInfoBean) throws PAException {
         StringBuffer errMsg = new StringBuffer();
         if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
             if (studyRegAuthDTO == null) {
@@ -857,38 +849,39 @@ public class PAServiceUtils {
                  BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
                  && PAUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator())) {
                    errMsg.append("Delayed posting Indicator is required if Section 801 is true.");
-            }            
-
-            if ("Update".equalsIgnoreCase(operation) && PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode()) 
-                 && PAUtil.isListNotEmpty(studyIndldeDTOs)) { 
-                  /*if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
+            }
+            if (PAUtil.isListNotEmpty(studyIndldeDTOs)) {
+                     if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
                         studyProtocolDTO.getFdaRegulatedIndicator()))) {
-                    errMsg.append("FDA Regulated Intervention Indicator must be Yes " 
-                      +                       " since it has Trial IND/IDE records.\n");         
-                  } */
-                  Long sraId = Long.valueOf(studyRegAuthDTO.getRegulatoryAuthorityIdentifier().getExtension());
-                  //doing this just to load the country since its lazy loaded. 
-                  Country country = regulatoryInfoBean.getRegulatoryAuthorityCountry(sraId);
-                  String regAuthName = regulatoryInfoBean.getCountryOrOrgName(sraId, "RegulatoryAuthority");
-                  if (!(country.getAlpha3().equals("USA")  
-                      && regAuthName.equalsIgnoreCase("Food and Drug Administration"))) {
-                       errMsg.append("For IND protocols, Oversight Authorities "
-                          + " must include United States: Food and Drug Administration.\n");
-                 }
+                         errMsg.append("FDA Regulated Intervention Indicator must be Yes "
+                      +                       " since it has Trial IND/IDE records.\n");
+                     }
+                     if (studyRegAuthDTO != null && PAUtil.isIiNotNull(
+                              studyRegAuthDTO.getRegulatoryAuthorityIdentifier())) {
+                          Long sraId = Long.valueOf(studyRegAuthDTO.getRegulatoryAuthorityIdentifier().getExtension());
+                          //doing this just to load the country since its lazy loaded.
+                          Country country = regulatoryInfoBean.getRegulatoryAuthorityCountry(sraId);
+                          String regAuthName = regulatoryInfoBean.getCountryOrOrgName(sraId, "RegulatoryAuthority");
+                          if (!(country.getAlpha3().equals("USA")
+                                  && regAuthName.equalsIgnoreCase("Food and Drug Administration"))) {
+                           errMsg.append("For IND protocols, Oversight Authorities "
+                              + " must include United States: Food and Drug Administration.\n");
+                          }
+                  }
           }
-        }     
+        }
         if (errMsg.length() > 1) {
             throw new PAException(errMsg.toString());
-        }  
-  }    
+        }
+  }
     /**
-     * 
+     *
      * @param studyProtocolIi Ii
      * @param msc milestonCode
      * @param commentText text
      * @throws PAException e
      */
-    
+
     public void createMilestone(Ii studyProtocolIi, MilestoneCode msc, St commentText) throws PAException {
         StudyMilestoneDTO smDto = new StudyMilestoneDTO();
         smDto.setMilestoneDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
@@ -899,7 +892,7 @@ public class PAServiceUtils {
         spService.create(smDto);
     }
     /**
-     * 
+     *
      * @param documentDTOs listOf doc
      * @param docTypeCode type code
      * @return s
@@ -911,11 +904,11 @@ public class PAServiceUtils {
                         CdConverter.convertCdToString(doc.getTypeCode()))) {
                 retValue = true;
             }
-        }  
-     return retValue;   
+        }
+     return retValue;
     }
     /**
-     * 
+     *
      * @param poIi po  Ii
      * @return true
      */
@@ -925,7 +918,7 @@ public class PAServiceUtils {
             retValue = false;
             return retValue;
         }
-        if (IiConverter.ORG_IDENTIFIER_NAME.equals(poIi.getIdentifierName())) {  
+        if (IiConverter.ORG_IDENTIFIER_NAME.equals(poIi.getIdentifierName())) {
             OrganizationDTO poOrg = getPOOrganizationEntity(IiConverter.convertToPoOrganizationIi(poIi.getExtension()));
             if (poOrg != null) {
                 retValue = true;
@@ -935,7 +928,7 @@ public class PAServiceUtils {
         }
         if (IiConverter.PERSON_IDENTIFIER_NAME.equalsIgnoreCase(poIi.getIdentifierName())
                 || IiConverter.PERSON_ROOT.equalsIgnoreCase(poIi.getRoot())) {
-            PersonDTO poPerson = getPoPersonEntity(IiConverter.convertToPoPersonIi(poIi.getExtension())); 
+            PersonDTO poPerson = getPoPersonEntity(IiConverter.convertToPoPersonIi(poIi.getExtension()));
             if (poPerson != null) {
                 retValue = true;
             } else {
@@ -958,7 +951,7 @@ public class PAServiceUtils {
         return retValue;
     }
     /**
-     * 
+     *
      * @param paIi Ii
      * @return s
      */
@@ -973,10 +966,10 @@ public class PAServiceUtils {
         } catch (PAException e) {
             retValue = false;
         }
-     return retValue;   
+     return retValue;
     }
     /**
-     * 
+     *
      * @param poDTO poDTO
      * @return s
      */
@@ -985,7 +978,7 @@ public class PAServiceUtils {
         if (poDTO == null) {
             return "";
         }
-            
+
         try {
             if (poDTO instanceof OrganizationDTO) {
                 Map <String, String[]> errMap = PoRegistry.getOrganizationEntityService().validate(
@@ -994,7 +987,7 @@ public class PAServiceUtils {
             }
             if (poDTO instanceof PersonDTO) {
                 Map <String, String[]> errMap = PoRegistry.getPersonEntityService().validate((PersonDTO) poDTO);
-                retValue = PAUtil.getErrorMsg(errMap);    
+                retValue = PAUtil.getErrorMsg(errMap);
             }
         } catch (PAException e) {
             retValue = e.getMessage();
@@ -1002,7 +995,7 @@ public class PAServiceUtils {
         return retValue;
     }
     /**
-     * 
+     *
      * @param listOfObject to create
      * @throws PAException e
      *
@@ -1010,7 +1003,7 @@ public class PAServiceUtils {
     @SuppressWarnings({"PMD.PreserveStackTrace" })
     public void createPoObject(List<? extends PoDto> listOfObject) throws PAException {
       for (PoDto poDto : listOfObject) {
-         try {   
+         try {
              if (poDto instanceof OrganizationDTO && PAUtil.isIiNull(((OrganizationDTO) poDto).getIdentifier())) {
                      PoRegistry.getOrganizationEntityService().createOrganization((OrganizationDTO) poDto);
                  }
@@ -1023,7 +1016,7 @@ public class PAServiceUtils {
       }
     }
     /**
-     * 
+     *
      * @param <Entity> Person or Organization class
      * @param entity Person or Organization class
      * @return PoDto Person or Organization class
@@ -1032,7 +1025,7 @@ public class PAServiceUtils {
      */
      public <Entity extends PoDto> Entity createEntity(Entity entity) throws PAException {
          Ii entityIi = null;
-         try {   
+         try {
              if (entity instanceof OrganizationDTO) {
                  entityIi = PoRegistry.getOrganizationEntityService().createOrganization((OrganizationDTO) entity);
                  return (Entity) PoRegistry.getOrganizationEntityService().getOrganization(entityIi);
@@ -1045,10 +1038,10 @@ public class PAServiceUtils {
          } catch (Exception e) {
             throw new PAException(e);
          }
-         
+
     }
      /**
-      * @param <Entity> Person or Organization 
+      * @param <Entity> Person or Organization
       * @param entityIi Organization of Person Ii
       * @return PoDto Organization of Person entity
       * @throws PAException e
@@ -1056,7 +1049,7 @@ public class PAServiceUtils {
       */
       public <Entity extends PoDto> Entity getEntityByIi(Ii entityIi) throws PAException {
           Entity retEntity = null;
-          try {   
+          try {
               if (IiConverter.ORG_ROOT.equals(entityIi.getRoot())) {
                   retEntity = (Entity) PoRegistry.getOrganizationEntityService().getOrganization(entityIi);
               } else if (IiConverter.PERSON_ROOT.equals(entityIi.getRoot())) {
@@ -1064,14 +1057,14 @@ public class PAServiceUtils {
               } else {
                   throw new PAException("getEntityByIi Should be called only for Entity/Person");
               }
-              
+
           } catch (Exception e) {
              throw new PAException(e);
           }
           return retEntity;
      }
     /**
-     * 
+     *
      * @param <Entity> Person or Organization
      * @param entity Person or Organization
      * @return PoDto
@@ -1088,14 +1081,14 @@ public class PAServiceUtils {
         String validMsg = isDTOValidInPO(entity);
         if (validMsg.length() > 0) {
             throw new PAException(validMsg);
-        }        
-        
+        }
+
         return entity;
     }
-    
+
     private <Entity extends PoDto> Entity findEntity(Entity entity) throws PAException {
         LimitOffset limit = new LimitOffset(PAAttributeMaxLen.LEN_2, 0);
-        List<? extends Entity> entities = null; 
+        List<? extends Entity> entities = null;
         Entity retEntity = null;
         try {
             if (entity instanceof OrganizationDTO) {
@@ -1140,7 +1133,7 @@ public class PAServiceUtils {
               Timestamp dateOpenedForAccrual = IvlConverter.convertTs().convertLow(studySiteDTO.getAccrualDateRange());
               Timestamp dateClosedForAccrual = IvlConverter.convertTs().convertHigh(studySiteDTO.getAccrualDateRange());
               if (dateOpenedForAccrual != null) {
-                  errorMsg.append(PAUtil.isDateCurrentOrPast(dateOpenedForAccrual) 
+                  errorMsg.append(PAUtil.isDateCurrentOrPast(dateOpenedForAccrual)
                   ? "Date Opened for Accrual cannot be in the future , " : "");
               }
               if (dateClosedForAccrual != null) {
@@ -1150,14 +1143,14 @@ public class PAServiceUtils {
               if (dateClosedForAccrual != null && dateOpenedForAccrual == null) {
                   errorMsg.append("Opened for Accrual Date is  mandatory if Closed for Accrual Date is provided.");
               }
-              if (dateClosedForAccrual != null  && dateOpenedForAccrual != null 
+              if (dateClosedForAccrual != null  && dateOpenedForAccrual != null
                       && dateClosedForAccrual.before(dateOpenedForAccrual)) {
                  errorMsg.append("Date Closed for Accrual must be same or bigger "
-                         + " than Date Opened for Accrual.");                
+                         + " than Date Opened for Accrual.");
               }
               if (!PAUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())) {
                   String recStatus = CdConverter.convertCdToString(studySiteAccrualStatusDTO.getStatusCode());
-                  if (RecruitmentStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(recStatus) 
+                  if (RecruitmentStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(recStatus)
                           || RecruitmentStatusCode.NOT_YET_RECRUITING.getCode().equalsIgnoreCase(recStatus)) {
                       if (dateOpenedForAccrual != null) {
                           errorMsg.append("Date Opened for Acrual must be null for ").append(recStatus);
@@ -1166,7 +1159,7 @@ public class PAServiceUtils {
                       errorMsg.append("Date Opened for Acrual must be a valid date for ").append(recStatus);
                   }
                   if ((RecruitmentStatusCode.TERMINATED_RECRUITING.getCode().equalsIgnoreCase(recStatus)
-                          || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus)) 
+                          || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus))
                           && dateClosedForAccrual == null) {
                          errorMsg.append("Date Closed for Acrual must be a valid date for ").append(recStatus);
                   }
@@ -1176,7 +1169,7 @@ public class PAServiceUtils {
         return errorMsg.toString();
       }
       /**
-       * 
+       *
        * @param <TYPE> type
        * @param correlationIi ii
        * @return service
@@ -1204,42 +1197,42 @@ public class PAServiceUtils {
           throw new PAException(" Unknown identifier for " + correlationIi.getIdentifierName());
       }
       /**
-       * 
-       * @param <T> any class extends {@link StructuralRole} 
+       *
+       * @param <T> any class extends {@link StructuralRole}
        * @param isoIi iso identitifier
        * @return StucturalRole class for an correspondong iso ii
        * @throws PAException on error
        */
-      
+
       public <T extends StructuralRole> T getStructuralRole(Ii isoIi) throws PAException {
-          
+
           StringBuffer hql = new StringBuffer("select role from ");
-          if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-              hql.append("HealthCareFacility role where role.id = '" + isoIi.getExtension() + "'"); 
+          if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+              hql.append("HealthCareFacility role where role.id = '" + isoIi.getExtension() + "'");
           } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
               hql.append("ResearchOrganization role where role.id = '" + isoIi.getExtension() + "'");
-          } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+          } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
               hql.append("OversightCommittee role where role.id = '" + isoIi.getExtension() + "'");
-          } else if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+          } else if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
               hql.append("ClinicalResearchStaff role where role.id = '" + isoIi.getExtension() + "'");
           } else if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-              hql.append("HealthCareProvider role where role.id = '" + isoIi.getExtension() + "'");   
+              hql.append("HealthCareProvider role where role.id = '" + isoIi.getExtension() + "'");
           } else if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-              hql.append("OrganizationalContact role where role.id  = '" + isoIi.getExtension() + "'");   
+              hql.append("OrganizationalContact role where role.id  = '" + isoIi.getExtension() + "'");
           } else {
-              throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());            
+              throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
           }
           List<T> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
           T sr = null;
 
-          if (!queryList.isEmpty()) { 
+          if (!queryList.isEmpty()) {
               sr = queryList.get(0);
           }
-          
+
           return sr;
       }
       /**
-       * 
+       *
        * @param correlationIi Ii
        * @return poDto
        * @throws PAException e
@@ -1266,7 +1259,7 @@ public class PAServiceUtils {
                   try {
                       poCorrelationDto = corrService.getCorrelation(dupCorrelationIi);
                   } catch (NullifiedRoleException e2) {
-                      throw new PAException("This scenario is currrently not handled .... " 
+                      throw new PAException("This scenario is currrently not handled .... "
                       + "Duplicate Ii of nullified is also nullified" , e2);
                   }
               }
@@ -1274,7 +1267,7 @@ public class PAServiceUtils {
           return poCorrelationDto;
       }
       /**
-       * 
+       *
        * @param isoIi iso Identifier
        * @return Organization
        * @throws PAException on error
@@ -1293,10 +1286,10 @@ public class PAServiceUtils {
               }
               org = cUtils.createPAOrganization(poOrg);
           }
-          return org;  
+          return org;
       }
       /**
-       * 
+       *
        * @param <T> type
        * @param isoIi ii
        * @return sr
@@ -1310,7 +1303,7 @@ public class PAServiceUtils {
           OrganizationalStructuralRole dupSR = cUtils.getStructuralRoleByIi(DSetConverter.convertToIi(
                   poDto.getIdentifier()));
       if (dupSR == null) {
-          // create a new structural role 
+          // create a new structural role
           if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
               dupSR =  new HealthCareFacility();
           } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
@@ -1348,13 +1341,13 @@ public class PAServiceUtils {
             if (nullfiedIi != null) {
                 //this scenario is sr nullification with duplicate
                 dupSRIi = nullifiedEntities.get(nullfiedIi);
-            } 
+            }
           }
           return dupSRIi;
       }
       /**
-       * 
-       * @param <T> type 
+       *
+       * @param <T> type
        * @param poIi poIi
        * @param srDTO srdto
        * @return srdto
@@ -1363,7 +1356,7 @@ public class PAServiceUtils {
       public <T extends OrganizationalStructuralRole> T updateScoper(Ii poIi, T srDTO) throws PAException {
           String poOrgIi = poIi.getExtension();
           String paOrgAssignedId = srDTO.getOrganization().getIdentifier();
-          if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
+          if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId)
                   && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
               //this means scoper is changed. check if exist in PA if not create and update the SR
               Organization paOrg = getOrCreatePAOrganizationByIi(poIi);
@@ -1371,13 +1364,13 @@ public class PAServiceUtils {
           }
           return srDTO;
       }
-      
+
      /**
-       * 
+       *
        * @param studyProtocolIi ii
        * @param identifierType type
        * @return str
-       * @throws PAException e 
+       * @throws PAException e
        */
       public String getStudyIdentifier(Ii studyProtocolIi, String identifierType) throws PAException {
           String retIdentifier = "";
@@ -1397,7 +1390,7 @@ public class PAServiceUtils {
          if (spDto != null && !PAUtil.isStNull(spDto.getLocalStudyProtocolIdentifier())) {
              retIdentifier = StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier());
          }
-         return retIdentifier; 
+         return retIdentifier;
       }
 
       /**
@@ -1427,7 +1420,7 @@ public class PAServiceUtils {
                            IiConverter.convertToPoResearchOrganizationIi(
                       identifierDTO.getResearchOrganizationIi().getExtension()));
                  if (poSrDto == null) {
-                     throw new PAException("Structral Role is not found in PO" 
+                     throw new PAException("Structral Role is not found in PO"
                              + identifierDTO.getResearchOrganizationIi());
                  }
                  Long roId = PaRegistry.getOrganizationCorrelationService().createResearchOrganizationCorrelations(
@@ -1435,7 +1428,7 @@ public class PAServiceUtils {
                  srRO = getStructuralRole(IiConverter.convertToPoResearchOrganizationIi(String.valueOf(roId)));
               }
               //here only using pa ro id but expecting allways po ro id
-              identifierDTO.setResearchOrganizationIi(IiConverter.convertToIi(srRO.getId()));              
+              identifierDTO.setResearchOrganizationIi(IiConverter.convertToIi(srRO.getId()));
           }
           //check if any record is there in db
           LimitOffset pagingParams = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
@@ -1451,7 +1444,7 @@ public class PAServiceUtils {
               spDtos = PaRegistry.getStudySiteService().search(criteriaDTO, pagingParams);
           } catch (TooManyResultsException e) {
               throw new PAException(" Found more than 1 record for a protocol id = "
-                      + identifierDTO.getStudyProtocolIdentifier().getExtension() + " for a given status " 
+                      + identifierDTO.getStudyProtocolIdentifier().getExtension() + " for a given status "
                       + identifierDTO.getFunctionalCode().getCode());
           }
           StudySiteDTO studySiteDB = PAUtil.getFirstObj(spDtos);
@@ -1464,26 +1457,26 @@ public class PAServiceUtils {
                       identifierDTO.getStudyProtocolIdentifier());
       }
       /**
-       * 
+       *
        * @param entityIi ii
        * @return s
        */
-      
+
       public boolean isEntityCountryUSAOrCanada(Ii entityIi) {
           boolean countryUsaOrCan = false;
           if (PAUtil.isIiNull(entityIi)) {
               return countryUsaOrCan;
           }
           String countryName = "";
-          if (IiConverter.ORG_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {  
-              OrganizationDTO orgDTO = getPOOrganizationEntity(entityIi); 
+          if (IiConverter.ORG_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
+              OrganizationDTO orgDTO = getPOOrganizationEntity(entityIi);
               countryName = getCountryName(orgDTO.getPostalAddress());
           }
           if (IiConverter.PERSON_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
               PersonDTO perDTO = getPoPersonEntity(entityIi);
               countryName = getCountryName(perDTO.getPostalAddress());
           }
-          if (PAConstants.USA.equalsIgnoreCase(countryName) 
+          if (PAConstants.USA.equalsIgnoreCase(countryName)
                   || PAConstants.CANADA.equalsIgnoreCase(countryName)) {
               countryUsaOrCan = true;
           }
@@ -1507,7 +1500,7 @@ public class PAServiceUtils {
           return countryName;
     }
       /**
-       * 
+       *
        * @param entityIi Ii
        * @return poEntity
        */
@@ -1516,7 +1509,7 @@ public class PAServiceUtils {
           try {
               poOrg = PoRegistry.getOrganizationEntityService().
                   getOrganization(IiConverter.convertToPoOrganizationIi(entityIi.getExtension()));
-              
+
           } catch (NullifiedEntityException e) {
               poOrg = null;
           } catch (PAException e) {
@@ -1525,7 +1518,7 @@ public class PAServiceUtils {
           return poOrg;
       }
       /**
-       * 
+       *
        * @param entityIi Ii
        * @return personDto
        */
@@ -1533,8 +1526,8 @@ public class PAServiceUtils {
           PersonDTO poPerson = null;
           try {
               poPerson = PoRegistry.getPersonEntityService().getPerson(IiConverter.
-                         convertToPoPersonIi(entityIi.getExtension())); 
-               
+                         convertToPoPersonIi(entityIi.getExtension()));
+
               } catch (NullifiedEntityException e) {
                   poPerson = null;
               } catch (PAException e) {
@@ -1543,7 +1536,7 @@ public class PAServiceUtils {
           return poPerson;
       }
       /**
-       * 
+       *
        * @param entityIi ii
        * @return name
        */
@@ -1555,5 +1548,5 @@ public class PAServiceUtils {
           return EnOnConverter.convertEnOnToString(
                   orgDto.getName());
       }
-      
+
 }
