@@ -112,7 +112,6 @@
     <s:actionerror/> 
      <s:hidden name="gtdDTO.submissionNumber" id="gtdDTO.submissionNumber"/>
      <s:hidden name="gtdDTO.studyProtocolId" id="gtdDTO.studyProtocolId"/>
-     <s:hidden name="gtdDTO.ctGovXmlRequired" id="gtdDTO.ctGovXmlRequired"/>
      <s:hidden name="gtdDTO.nonOtherIdentifiers.extension" id="gtdDTO.nonOtherIdentifiers.extension"/>
      <s:hidden name="gtdDTO.nonOtherIdentifiers.root" id="gtdDTO.nonOtherIdentifiers.root"/>
      <s:hidden name="gtdDTO.nonOtherIdentifiers.identifierName" id="gtdDTO.nonOtherIdentifiers.identifierName"/>
@@ -127,7 +126,15 @@
             <td class="value">
                 <c:out value="${sessionScope.trialSummary.nciIdentifier }"/> 
             </td>
-       </tr>
+        </tr>
+        <tr>
+            <td scope="row" class="label">
+                <a href="http://ClinicalTrials.gov" target="_blank">ClinicalTrials.gov</a> XML required?  
+            </td>
+            <td>
+                <s:radio name="gtdDTO.ctGovXmlRequired" id="gtdDTO.ctGovXmlRequired" list="#{true:'Yes', false:'No'}" onclick="toggledisplayDivs(this);"/>
+            </td>
+        </tr>
         <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">
