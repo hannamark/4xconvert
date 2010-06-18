@@ -85,7 +85,6 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -120,15 +119,11 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
     public String query() {
         LOG.debug("Entering query");
         try {
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-            getAttribute(Constants.STUDY_PROTOCOL_II);
+            Ii studyProtocolIi =
+                (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
 
-            PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
-            IiConverter.convertToLong(studyProtocolIi));
-
-            abstractionList = new ArrayList<AbstractionCompletionDTO>();
-            abstractionList = PaRegistry.getAbstractionCompletionService().
-                validateAbstractionCompletion(studyProtocolIi);
+            abstractionList =
+                PaRegistry.getAbstractionCompletionService().validateAbstractionCompletion(studyProtocolIi);
             abstractionError = errorExists();
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
@@ -141,14 +136,10 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
      */
     public String generateXML() {
         try {
-            String pId = ServletActionContext.getRequest()
-                    .getParameter("studyProtocolId");
+            String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
             if (pId == null) {
                 return DISPLAY_XML;
             }
-
-            PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
-                Long.valueOf(pId));
 
             String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(IiConverter
                     .convertToIi(studyProtocolId));
@@ -169,13 +160,11 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
      */
     public String viewTSR() {
       try {
-        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-        getAttribute(Constants.STUDY_PROTOCOL_II);
+        Ii studyProtocolIi =
+            (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
 
-        PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
-            IiConverter.convertToLong(studyProtocolIi));
-          ByteArrayOutputStream reportData = PaRegistry.getTSRReportGeneratorService()
-          .generateTsrReport(studyProtocolIi);
+          ByteArrayOutputStream reportData =
+              PaRegistry.getTSRReportGeneratorService().generateTsrReport(studyProtocolIi);
 
         final int i = 1000;
         Random randomGenerator = new Random();
@@ -204,10 +193,8 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
      * @return res
      */
     public String displayReportingXML() {
-        String pId = ServletActionContext.getRequest().getParameter(
-                "studyProtocolId");
-        ServletActionContext.getRequest().setAttribute(
-                "protocolIdForXmlGeneration", pId);
+        String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
+        ServletActionContext.getRequest().setAttribute("protocolIdForXmlGeneration", pId);
         return DISPLAY_XML;
     }
 

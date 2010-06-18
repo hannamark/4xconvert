@@ -28,11 +28,11 @@
  *
  * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
  * derivative works thereof; and (iv) sublicense the  foregoing rights  set out in (i), (ii) and (iii) to third parties,
- * including the right to license such rights to further third parties. For sake of clarity, 
+ * including the right to license such rights to further third parties. For sake of clarity,
  * and not by way of limitation, caBIG Participant shall have no right of accounting or right of payment from You or
- * Your sub licensees for the rights granted under this License.   This  License  is  granted  at no  charge  to You. 
+ * Your sub licensees for the rights granted under this License.   This  License  is  granted  at no  charge  to You.
  * Your downloading, copying, modifying, displaying, distributing or use of caBIG Software constitutes acceptance  of
- * all of the terms and conditions of this Agreement.  If You do not agree to such terms and conditions,  You have 
+ * all of the terms and conditions of this Agreement.  If You do not agree to such terms and conditions,  You have
  * no right to download,  copy,  modify, display, distribute or use the caBIG Software.
  *
  * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
@@ -70,7 +70,7 @@
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
  * NO EVENT SHALL ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
  * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO, PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * caBIG SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
@@ -154,9 +154,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * service bean for validating the Abstraction.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 11/27/2008 copyright NCI 2007. All rights reserved. This code may not be used without the express written
  *        permission of the copyright holder, NCI.
@@ -512,7 +514,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                         abstractionWarnList
                                 .add(createError(
                                         "Warning",
-                                        "Select Human Subject Safety under Regulatory" 
+                                        "Select Human Subject Safety under Regulatory"
                                         + " Information from Administrative Data menu.",
                                         "Board status has been set to nullified, " + "Please select another Board"));
                     }
@@ -651,7 +653,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
         }
     }
-    
+
     private void enforceTrialStatus(StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList)
             throws PAException {
         StudyOverallStatusDTO sos = studyOverallStatusService.getCurrentByStudyProtocol(studyProtocolDTO
@@ -791,7 +793,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                                 + "only valid for the current trial status \'Disapproved\'."));
 
             }
-                       
+
             if (studySite.getFunctionalCode().getCode()
                     .equals(StudySiteFunctionalCode.STUDY_OVERSIGHT_COMMITTEE.getCode())
                     && studySite.getReviewBoardApprovalStatusCode().getCode()
@@ -801,24 +803,24 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 abstractionWarnList.add(createError("Warning", "Select a different review board status",
                         "Data inconsistency. Review Board Approval Status cannot be ‘Not required’"
                         + " for an interventional study that is recruiting patients"));
-            }           
+            }
         }
-        
+
     }
 
     @SuppressWarnings({ "PMD" })
-    private void enforceRecruitmentStatus(Ii studyProtocolIi,
-            List<AbstractionCompletionDTO> abstractionList, List<AbstractionCompletionDTO> abstractionWarnList)
-            throws PAException {
-
+    private void enforceRecruitmentStatus(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList,
+            List<AbstractionCompletionDTO> abstractionWarnList) throws PAException {
         StudySiteDTO srDTO = new StudySiteDTO();
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
         List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, srDTO);
 
         // check recruitment status
-        StudyRecruitmentStatusDTO recruitmentStatusDto = studyRecruitmentStatusServiceLocal
-                .getCurrentByStudyProtocol(studyProtocolIi);
+        StudyRecruitmentStatusDTO recruitmentStatusDto =
+            studyRecruitmentStatusServiceLocal.getCurrentByStudyProtocol(studyProtocolIi);
 
+        boolean recruitmentError = false;
+        boolean recruitmentWarning = false;
         for (StudySiteDTO spartDto : spList) {
             List<StudySiteAccrualStatusDTO> studySiteList = new ArrayList<StudySiteAccrualStatusDTO>();
             studySiteList.addAll(studySiteAccrualStatusServicLocal.getStudySiteAccrualStatusByStudySite(spartDto
@@ -832,53 +834,55 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     tmp = latestId;
                     latestDTO = studySiteAccuralStatus;
                 }
-
             }
 
             if (latestDTO != null) {
-                if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().equalsIgnoreCase(
+                recruitmentError = true;
+                if (StringUtils.equalsIgnoreCase(StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode(),
                         recruitmentStatusDto.getStatusCode().getCode())
-                        && (RecruitmentStatusCode.RECRUITING.getCode().equalsIgnoreCase(latestDTO.getStatusCode()
-                                .getCode()))) {
-                    abstractionList.add(createError("Error", "Select Participating Sites from "
-                            + "Administrative Data menu.",
-                            "Data inconsistency: Atleast one location needs to be recruiting"
-                                    + " if the overall status recruitment status is\'Recruiting\'"));
+                        && StringUtils.equalsIgnoreCase(RecruitmentStatusCode.RECRUITING.getCode(),
+                                latestDTO.getStatusCode().getCode())) {
+                    recruitmentError = false;
                     break;
                 }
-                if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().equalsIgnoreCase(
+                if (StringUtils.equalsIgnoreCase(StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode(),
                         recruitmentStatusDto.getStatusCode().getCode())
-                        && (RecruitmentStatusCode.RECRUITING.getCode().equalsIgnoreCase(latestDTO.getStatusCode()
-                                .getCode()))) {
-                    abstractionList.add(createError("Error", "Select Participating Sites from "
-                            + "Administrative Data menu.",
-                            "Data inconsistency: At least one location needs to be recruiting"
-                                    + " if the overall status recruitment status is\'Recruiting\'"));
+                        && StringUtils.equalsIgnoreCase(RecruitmentStatusCode.RECRUITING.getCode(),
+                                latestDTO.getStatusCode().getCode())) {
+                    recruitmentError = false;
                     break;
                 }
-                if (StudyRecruitmentStatusCode.NOT_YET_RECRUITING.getCode().equalsIgnoreCase(
+                if (StringUtils.equalsIgnoreCase(StudyRecruitmentStatusCode.NOT_YET_RECRUITING.getCode(),
                         recruitmentStatusDto.getStatusCode().getCode())
-                        && (!RecruitmentStatusCode.NOT_YET_RECRUITING.getCode()
-                                .equalsIgnoreCase(latestDTO.getStatusCode()
-                                .getCode()))) {
-                    abstractionWarnList.add(createError("Warning", "Select Participating Sites from "
-                            + "Administrative Data menu.",
-                            "Data inconsistency. No site can recruit patients if overall "
-                            + "study recruitment status is ‘Not yet recruiting’"));
+                        && !StringUtils.equalsIgnoreCase(RecruitmentStatusCode.NOT_YET_RECRUITING.getCode(),
+                                latestDTO.getStatusCode().getCode())) {
+                    recruitmentWarning = true;
                     break;
                 }
             }
         }
-        
+
+        if (recruitmentError) {
+            abstractionList.add(createError("Error", "Select Participating Sites from Administrative Data menu.",
+                    "Data inconsistency: At least one location needs to be recruiting if the overall status "
+                    + "recruitment status is 'Recruiting'"));
+        }
+
+        if (recruitmentWarning) {
+            abstractionWarnList.add(createError("Warning", "Select Participating Sites from Administrative Data menu.",
+                    "Data inconsistency. No site can recruit patients if overall study recruitment status "
+                    + " is 'Not yet recruiting'"));
+        }
+
         StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
         if ((studyProtocolDTO.getStartDate().getValue().getTime() > System.currentTimeMillis())
                 && (recruitmentStatusDto.getStatusCode().getCode()
                         .equals(RecruitmentStatusCode.NOT_YET_RECRUITING.getCode()))) {
             abstractionWarnList.add(createError("Warning", "Select recruitment status date",
-                    "Data inconsistency. Study Start Date cannot be in the past for" 
+                    "Data inconsistency. Study Start Date cannot be in the past for"
                     + " the study that is Not yet recruiting’"));
         }
-        
+
     }
 
     private void enforceTreatingSite(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
