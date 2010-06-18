@@ -159,6 +159,31 @@
    <!-- Limit categories -->
    <!-- ================ -->
 
+   <!-- Set the logging level for PA packages -->
+   <category name="gov.nih.nci.pa">
+      <priority value="@LOG_LEVEL@"/>
+   </category>
+
+   <!-- Set the logging level for Registry packages -->
+   <category name="gov.nih.nci.registry">
+      <priority value="@LOG_LEVEL@"/>
+   </category>
+
+   <!-- Set the logging level for Accrual packages -->
+   <category name="gov.nih.nci.accrual">
+      <priority value="@LOG_LEVEL@"/>
+   </category>
+
+   <!-- Set the logging level for Accrual/outcomes packages -->
+   <category name="gov.nih.nci.outcomes">
+      <priority value="@LOG_LEVEL@"/>
+   </category>
+
+   <!-- Set the logging level for Coppa packages -->
+   <category name="gov.nih.nci.coppa">
+      <priority value="@LOG_LEVEL@"/>
+   </category>
+
    <!-- Limit the org.apache category to INFO as its DEBUG is verbose -->
    <category name="org.apache">
       <priority value="INFO"/>
@@ -270,7 +295,7 @@
    <!-- ======================= -->
 
    <root>
-      <priority value="@LOG_LEVEL@"/>
+      <priority value="@LOG_LEVEL_DEFAULT@"/>
       <appender-ref ref="CONSOLE"/>
       <appender-ref ref="FILE"/>
    </root>

@@ -195,7 +195,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
   <target name="install:pa-ear-jboss:app:configure" description="Configure pa-ear application" unless="exclude.pa-ear">
       <copy file="${jboss-conf.dir.dest}/${pa-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
-      <configure-grid-log4j log.level="${app.log.level}" config.dir="${jboss.home}/server/${jboss.server.name}/conf"/>
+      <configure-grid-log4j log.level="${app.log.level}" log.level.default="${app.log.level.default}" config.dir="${jboss.home}/server/${jboss.server.name}/conf"/>
   </target>
 
   <target name="install:pa-ear-jboss:app:re-configure" unless="exclude.pa-ear">

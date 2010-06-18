@@ -127,11 +127,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
     <macrodef name="configure-grid-log4j">
         <attribute name="log.level" default="INFO"/>
+        <attribute name="log.level.default" default="WARN"/>
         <attribute name="config.dir" default=""/>
         <sequential>
-            <copy file="${grid.dist.relative.dir}/log4j.xml" todir="@{config.dir}" overwrite="true" filtering="true">
+            <copy file="${common.resources.dist.relative.dir}/log4j.xml" todir="@{config.dir}" overwrite="true" filtering="true">
                 <filterset>
                     <filter token="LOG_LEVEL" value="@{log.level}"/>
+                    <filter token="LOG_LEVEL_DEFAULT" value="@{log.level.default}"/>
                 </filterset>
             </copy>
        </sequential>

@@ -209,7 +209,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		jboss.grid.secure.cert.file="${outcomes-grid-jboss.grid.secure.cert.file}"
 		grid.application.name="${outcomes-grid.introduce.skeleton.service.name}"
 		/>
-        <configure-grid-log4j log.level="${app.log.level.default}" config.dir="${outcomes-grid-jboss.home}/server/${outcomes-grid-jboss.server.name}/conf"/>
+        <configure-grid-log4j log.level="${app.log.level}" log.level.default="${app.log.level.default}" config.dir="${outcomes-grid-jboss.home}/server/${outcomes-grid-jboss.server.name}/conf"/>
     </target>
 
   <target name="install:outcomes-grid-jboss:configure" unless="exclude.outcomes-grid">
