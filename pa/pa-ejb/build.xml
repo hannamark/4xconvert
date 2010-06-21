@@ -152,6 +152,7 @@
                 <filter token="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
                 <filter token="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
                 <filter token="gridgrouper.url" value="${gridgrouper.url}"/>
+                <filter token="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
             </filterset>
         </copy>
         <copy file="${pa.resourceDir}/ejb-jar.xml"
