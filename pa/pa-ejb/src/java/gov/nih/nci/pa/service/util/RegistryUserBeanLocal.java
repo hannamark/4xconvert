@@ -312,6 +312,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         List<RegistryUser> registryUserList = new ArrayList<RegistryUser>();
         session = HibernateUtil.getCurrentSession();
         Criteria criteria = session.createCriteria(RegistryUser.class, "regUser");
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
         if (regUser != null) {
             if (regUser.getAffiliatedOrgUserType() != null
                     && StringUtils.isNotEmpty(regUser.getAffiliatedOrgUserType().getCode())) {

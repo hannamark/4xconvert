@@ -83,8 +83,7 @@ public class AssignOwnershipAction extends ActionSupport implements Preparable {
      */
     private void loadRegistryUsers() {
             try {
-                Ii spIi = (Ii) ServletActionContext.getRequest().getSession()
-                    .getAttribute(Constants.STUDY_PROTOCOL_II);
+                Ii spIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
                 if (PAUtil.isIiNotNull(spIi)) {
                     RegistryUser regUser = new RegistryUser();
                     regUser.setFirstName(criteria.getFirstName());

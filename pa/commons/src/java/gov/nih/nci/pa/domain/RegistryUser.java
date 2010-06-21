@@ -87,6 +87,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -322,7 +323,7 @@ public class RegistryUser extends  AbstractEntity {
     /**
      * @return the studyProtocols
      */
-    @ManyToMany 
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "STUDY_OWNER",
                joinColumns = @JoinColumn(name = "USER_ID"),
                inverseJoinColumns = @JoinColumn(name = "STUDY_ID"))
