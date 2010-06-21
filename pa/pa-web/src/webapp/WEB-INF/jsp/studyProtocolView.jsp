@@ -69,7 +69,7 @@
             <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
                 <tr>
                     <td scope="row" class="label">
-                        <label for="secondaryIdentifiers">Other Identifiers</label>
+                        <label for="secondaryIdentifiers">Other Trial Identifiers</label>
                     </td>
                     <td class="value">
                         <c:forEach items="${sessionScope.trialSummary.otherIdentifiers}" var="extension" varStatus="status"> 
@@ -89,13 +89,13 @@
             </tr>
             <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
             <tr>
-                <td scope="row" class="label"> <label for="ctepIdentifier"> CTEP Identifier</label></td>
+                <td scope="row" class="label"> <label for="ctepIdentifier"> CTEP Trial Identifier</label></td>
                 <td class="value">
                 <c:out value="${sessionScope.ctepIdentifier }"/> 
             </td>
             </tr>
             <tr>
-                <td scope="row" class="label"> <label for="dcpIdentifier"> DCP Identifier</label></td>
+                <td scope="row" class="label"> <label for="dcpIdentifier"> DCP Trial Identifier</label></td>
                 <td class="value">
                 <c:out value="${sessionScope.dcpIdentifier }"/> 
             </td>
