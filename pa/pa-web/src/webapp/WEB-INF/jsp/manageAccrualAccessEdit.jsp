@@ -69,7 +69,7 @@
 </script>
 </head>
 <body>
-<h1><fmt:message key="onhold.title" /></h1>
+<h1><fmt:message key="manageAccrualAccess.title" /></h1>
 <c:set var="topic" scope="request" value="accrual_edit"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">

@@ -52,7 +52,7 @@ function handleEdit(rowId){
                 <display:column property="statusCode.code" sortable="true" titleKey="manageAccrualAccess.statusCode"/>
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                 					|| (sessionScope.role == 'SuAbstractor')}">
-                <display:column titleKey="magageAccrualAccess.edit" headerClass="centered" class="action">
+                <display:column titleKey="manageAccrualAccess.edit" headerClass="centered" class="action">
                     <s:a href="#" onclick="handleEdit(%{#attr.row.id})">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
                             alt="Edit" width="16" height="16" />
