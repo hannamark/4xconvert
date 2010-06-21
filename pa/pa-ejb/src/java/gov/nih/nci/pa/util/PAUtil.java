@@ -435,6 +435,17 @@ public class PAUtil {
     }
 
     /**
+    * Convert a Ts to a formatted date string. Output format is
+    * determined by the first element in the static dateFormats array.
+    *
+    * @param isoTs timestamp
+    * @return String
+    */
+   public static String convertTsToFormattedDate(Ts isoTs) {
+       return convertTsToFormarttedDate(isoTs, dateFormats[0].pattern);
+   }
+
+    /**
      * Convert an input string to a normalized date string.
      * The output format is determined by the first element in
      * the static dateFormats array.

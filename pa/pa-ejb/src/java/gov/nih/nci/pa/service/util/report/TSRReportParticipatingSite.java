@@ -102,6 +102,8 @@ public class TSRReportParticipatingSite {
     private String localTrialIdentifier;
     private String openForAccrualDate;
     private String closedForAccrualDate;
+    private String programCode;
+
     /**
      * @return the facility
      */
@@ -192,6 +194,18 @@ public class TSRReportParticipatingSite {
      */
     public List<TSRReportInvestigator> getInvestigators() {
         return investigators;
+    }
+    /**
+     * @return the programCode
+     */
+    public String getProgramCode() {
+        return programCode;
+    }
+    /**
+     * @param programCode the programCode to set
+     */
+    public void setProgramCode(String programCode) {
+        this.programCode = programCode;
     }
 
 }

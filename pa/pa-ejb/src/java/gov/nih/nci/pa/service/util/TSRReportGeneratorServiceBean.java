@@ -89,7 +89,6 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
-import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -182,7 +181,6 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.io.ByteArrayOutputStream;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -312,8 +310,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             isProprietaryTrial = !PAUtil.isBlNull(studyProtocolDto.getProprietaryTrialIndicator())
                     && BlConverter.covertToBoolean(studyProtocolDto.getProprietaryTrialIndicator());
 
-            TSRReport tsrReport = new TSRReport(REPORT_TITLE, PAUtil.today(), getNormalizedDateString(studyProtocolDto
-                    .getRecordVerificationDate()));
+            TSRReport tsrReport = new TSRReport(REPORT_TITLE, PAUtil.today(),
+                    PAUtil.convertTsToFormattedDate(studyProtocolDto.getRecordVerificationDate()));
             tsrReportGenerator = new PdfTsrReportGenerator(tsrReport, isProprietaryTrial);
             if (isProprietaryTrial) {
                 setProprietaryTrialReportDetails();
@@ -322,8 +320,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             }
             outputByteStream = tsrReportGenerator.generateTsrReport();
         } catch (Exception e) {
-            TSRErrorReport tsrErrorReport = 
-                new TSRErrorReport(REPORT_TITLE, PAUtil.getAssignedIdentifierExtension(studyProtocolDto), 
+            TSRErrorReport tsrErrorReport =
+                new TSRErrorReport(REPORT_TITLE, PAUtil.getAssignedIdentifierExtension(studyProtocolDto),
                         getValue(studyProtocolDto.getOfficialTitle()));
             tsrErrorReport.setErrorType(e.toString());
             for (StackTraceElement ste : e.getStackTrace()) {
@@ -393,7 +391,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         trialIdentification.setDcpIdentifier(getIdentifier(PAConstants.DCP_IDENTIFIER_TYPE));
         trialIdentification.setCtepIdentifier(getIdentifier(PAConstants.CTEP_IDENTIFIER_TYPE));
         trialIdentification.setAmendmentNumber(getValue(studyProtocolDto.getAmendmentNumber()));
-        trialIdentification.setAmendmentDate(getNormalizedDateString(studyProtocolDto.getAmendmentDate()));
+        trialIdentification.setAmendmentDate(PAUtil.convertTsToFormattedDate(studyProtocolDto.getAmendmentDate()));
         Organization lead = ocsr.getOrganizationByFunctionRole(studyProtocolDtoIdentifier, CdConverter
                 .convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
         trialIdentification.setLeadOrganization(lead.getName());
@@ -464,7 +462,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 if (studyProtocolDto.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
                    // Responsible Party
                    gtd.setResponsibleParty(getResponsiblePartyDetails());
-                }   
+                }
             }
         }
 
@@ -558,7 +556,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         StudyOverallStatusDTO statusDateDto = studyOverallStatusService
                 .getCurrentByStudyProtocol(studyProtocolDtoIdentifier);
         statusDate.setCurrentTrialStatus(getValue(statusDateDto.getStatusCode()) + AS_OF
-                + getNormalizedDateString(statusDateDto.getStatusDate()));
+                + PAUtil.convertTsToFormattedDate(statusDateDto.getStatusDate()));
         statusDate.setReasonText(getValue(statusDateDto.getReasonText(), null));
         statusDate.setTrialStartDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
                 studyProtocolDto.getStartDate()).toString())
@@ -602,7 +600,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
               regInfo.setIndIdeStudy(NO);
            }
           regInfo.setDelayedPosting(getValue(studyProtocolDto.getDelayedpostingIndicator(), INFORMATION_NOT_PROVIDED));
-        }  
+        }
         tsrReportGenerator.setRegulatoryInformation(regInfo);
     }
 
@@ -963,7 +961,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 Organization orgBo = correlationUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
                 participatingSite.setFacility(getFacility(orgBo.getName(), getLocation(orgBo)));
                 String recruitmentStatus = getValue(ssas.getStatusCode()) + " as of "
-                        + getNormalizedDateString(ssas.getStatusDate());
+                        + PAUtil.convertTsToFormattedDate(ssas.getStatusDate());
                 participatingSite.setRecruitmentStatus(recruitmentStatus);
                 if (isProprietaryTrial) {
                     List<StudySiteContactDTO> spcDTOs = studySiteContactService.getByStudySite(sp.getIdentifier());
@@ -984,6 +982,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                             sp.getAccrualDateRange()), INFORMATION_NOT_PROVIDED));
                     participatingSite.setClosedForAccrualDate(getValue(IvlConverter.convertTs().convertHighToString(
                             sp.getAccrualDateRange()), INFORMATION_NOT_PROVIDED));
+                    participatingSite.setProgramCode(getValue(sp.getProgramCodeText()));
                 } else {
                     participatingSite.setTargetAccrual(getValue(sp.getTargetAccrualNumber()));
                     List<StudySiteContactDTO> spcDTOs = studySiteContactService.getByStudySite(sp.getIdentifier());
@@ -1128,14 +1127,4 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return (i != null && i.getValue() != null ? i.getValue().toString() : defaultValue);
     }
 
-    private String getNormalizedDateString(Ts ts) {
-        String retVal = null;
-        if (ts != null) {
-            Timestamp tmStamp = TsConverter.convertToTimestamp(ts);
-            if (tmStamp != null) {
-                retVal = tmStamp.toString();
-            }
-        }
-        return retVal;
-    }
 }

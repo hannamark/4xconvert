@@ -166,7 +166,7 @@ import com.lowagie.text.DocumentException;
  */
 public class TSRReportGeneratorServiceTest {
 
-    private TSRReportGeneratorServiceBean bean = new TSRReportGeneratorServiceBean();
+    private final TSRReportGeneratorServiceBean bean = new TSRReportGeneratorServiceBean();
 
     private final StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
 
@@ -392,7 +392,7 @@ public class TSRReportGeneratorServiceTest {
         TSRReportSummary4Information summaryInfo = new TSRReportSummary4Information();
         summaryInfo.setFundingCategory("Industrial");
         summaryInfo.setFundingSponsor("Cancer Therapy Evaluation Program");
-        summaryInfo.setProgramCode("123");
+        summaryInfo.setProgramCode("Summary4_123");
         pdfTsrReportGenerator.setSummary4Information(summaryInfo);
 
         // Collaborators
@@ -564,6 +564,7 @@ public class TSRReportGeneratorServiceTest {
         site.setLocalTrialIdentifier("234232334");
         site.getInvestigators().add(new TSRReportInvestigator("Sarah", "M.", "Guisti", "Principal Investigator"));
         site.getInvestigators().add(new TSRReportInvestigator("John", "M.", "Guisti", "PI"));
+        site.setProgramCode("SITE1_CODE");
         participatingSites.add(site);
 
         site = new TSRReportParticipatingSite();
@@ -576,6 +577,7 @@ public class TSRReportGeneratorServiceTest {
         site.setOpenForAccrualDate("01/01/2009");
         site.getInvestigators().add(new TSRReportInvestigator("Sarah", "M.", "Guisti", "Principal Investigator"));
         site.getInvestigators().add(new TSRReportInvestigator("John", "M.", "Guisti", "PI"));
+        site.setProgramCode("SITE1_CODE_2");
         participatingSites.add(site);
         pdfTsrReportGenerator.setParticipatingSites(participatingSites);
     }

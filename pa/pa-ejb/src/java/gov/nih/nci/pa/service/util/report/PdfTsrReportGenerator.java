@@ -685,11 +685,9 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
                 TSRReportLabelText.PS_RECRUITMENT_STATUS_AND_DATES, TSRReportLabelText.PS_TARGET_ACCRUAL,
                 TSRReportLabelText.PS_SUMMARY4_SPONSOR, TSRReportLabelText.PS_PROGRAM_CODE)));
         String summary4Sponsor = "";
-        String programCode = "";
         if (getSummary4Information() != null) {
             summary4Sponsor = "Funding Sponsor/Source: " + getSummary4Information().getFundingSponsor()
                     + "; Category: " + getSummary4Information().getFundingCategory();
-            programCode = getSummary4Information().getProgramCode();
         }
         for (TSRReportParticipatingSite site : getParticipatingSites()) {
             siteTable.addCell(getItemValueCell(site.getFacility()));
@@ -705,7 +703,7 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
             siteTable.addCell(getItemValueCell(getPSRecruitmentStatusAndDates(site)));
             siteTable.addCell(getItemValueCell(site.getTargetAccrual()));
             siteTable.addCell(getItemValueCell(summary4Sponsor));
-            siteTable.addCell(getItemValueCell(programCode));
+            siteTable.addCell(getItemValueCell(site.getProgramCode()));
         }
 
         return siteTable;

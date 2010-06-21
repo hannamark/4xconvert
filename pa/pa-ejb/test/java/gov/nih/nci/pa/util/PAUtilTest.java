@@ -192,6 +192,16 @@ public class PAUtilTest {
 	}
 
 	/**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertTsToFormattedDate(gov.nih.nci.iso21090.Ts)}.
+     */
+    @Test
+    public void testConvertTsToDefaultFormattedDate() {
+        String date =
+            PAUtil.convertTsToFormattedDate(TsConverter.convertToTs(new Timestamp(new Date("1/16/2009").getTime())));
+        assertEquals("01/16/2009",date);
+    }
+
+	/**
 	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#normalizeDateString(java.lang.String)}.
 	 */
 	@Test
