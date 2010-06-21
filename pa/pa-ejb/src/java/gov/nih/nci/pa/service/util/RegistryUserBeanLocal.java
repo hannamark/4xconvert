@@ -107,6 +107,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -373,18 +374,19 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         for (Iterator iter = query.iterate(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();
             DisplayTrialOwnershipInformation trialInfo = new DisplayTrialOwnershipInformation();
-            trialInfo.setUserId(row[INDEX_USER_ID] == null ? null : row[INDEX_USER_ID].toString());
-            trialInfo.setFirstName(row[INDEX_FIRST_NAME] == null ? null : row[INDEX_FIRST_NAME].toString());
-            trialInfo.setLastName(row[INDEX_LAST_NAME] == null ? null : row[INDEX_LAST_NAME].toString());
-            trialInfo.setEmailAddress(row[INDEX_EMAIL] == null ? null : row[INDEX_EMAIL].toString());
-            trialInfo.setTrialId(row[INDEX_TRIAL_ID] == null ? null : row[INDEX_TRIAL_ID].toString());
-            trialInfo.setNciIdentifier(row[INDEX_NCI_IDENTIFIER] == null ? null : row[INDEX_NCI_IDENTIFIER].toString());
-            trialInfo.setAffiliatedOrgId(row[INDEX_ORG_ID] == null ? null : row[INDEX_ORG_ID].toString());
+            trialInfo.setUserId(ObjectUtils.toString(row[INDEX_USER_ID]));
+            trialInfo.setFirstName(ObjectUtils.toString(row[INDEX_FIRST_NAME]));
+            trialInfo.setLastName(ObjectUtils.toString(row[INDEX_LAST_NAME]));
+            trialInfo.setEmailAddress(ObjectUtils.toString(row[INDEX_EMAIL]));
+            trialInfo.setTrialId(ObjectUtils.toString(row[INDEX_TRIAL_ID]));
+            trialInfo.setNciIdentifier(ObjectUtils.toString(row[INDEX_NCI_IDENTIFIER]));
+            trialInfo.setAffiliatedOrgId(ObjectUtils.toString(row[INDEX_ORG_ID]));
             lst.add(trialInfo);
         }
 
         return lst;
     }
+   
 
     private String getTrialOwnershipInformationSearchCriteria(DisplayTrialOwnershipInformation criteria) {
         StringBuffer criteriaClause = new StringBuffer();
