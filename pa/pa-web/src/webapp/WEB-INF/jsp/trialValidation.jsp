@@ -251,7 +251,7 @@
         </td>
     </tr>
     </c:if>
-
+    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
     <tr>
         <th colspan="2">Other Identifiers</th>
     </tr>
@@ -271,6 +271,7 @@
             </div>
         </td>
     </tr>
+    </c:if>
     
     <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>    
     <tr>
