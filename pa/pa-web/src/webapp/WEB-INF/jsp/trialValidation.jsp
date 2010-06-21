@@ -127,14 +127,21 @@
                 <c:out value="${sessionScope.trialSummary.nciIdentifier }"/> 
             </td>
         </tr>
-        <tr>
-            <td scope="row" class="label">
-                <a href="http://ClinicalTrials.gov" target="_blank">ClinicalTrials.gov</a> XML required?  
-            </td>
-            <td>
-                <s:radio name="gtdDTO.ctGovXmlRequired" id="gtdDTO.ctGovXmlRequired" list="#{true:'Yes', false:'No'}" onclick="toggledisplayDivs(this);"/>
-            </td>
-        </tr>
+        <c:choose>
+            <c:when test="${sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+                <tr>
+                    <td scope="row" class="label">
+                        <a href="http://ClinicalTrials.gov" target="_blank">ClinicalTrials.gov</a> XML required?  
+                    </td>
+                    <td>
+                        <s:radio name="gtdDTO.ctGovXmlRequired" id="gtdDTO.ctGovXmlRequired" list="#{true:'Yes', false:'No'}" onclick="toggledisplayDivs(this);"/>
+                    </td>
+                </tr>
+            </c:when>
+            <c:otherwise>
+                <s:hidden name="gtdDTO.ctGovXmlRequired" id="gtdDTO.ctGovXmlRequired"/>
+            </c:otherwise>
+        </c:choose>
         <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">
