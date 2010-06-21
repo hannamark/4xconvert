@@ -225,6 +225,16 @@
       <priority value="OFF" />
    </category>
 
+   <!-- Ignore MsgContext WARN log messages: Error sending end packet java.net.SocketException: Broken pipe -->
+   <category name="org.apache.jk.core.MsgContext">
+      <priority value="ERROR" />
+   </category>
+
+   <!-- Ignore ChannelSocket WARN log messages: processCallbacks status 2 -->
+   <category name="org.apache.jk.common.ChannelSocket">
+      <priority value="ERROR" />
+   </category>
+
    <!-- Enable JBossWS message tracing
    <category name="jbossws.SOAPMessage">
     <priority value="TRACE" class="org.jboss.logging.XLevel"/>
