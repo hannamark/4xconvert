@@ -123,54 +123,58 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
 
     private static final Logger LOG = Logger.getLogger(StudyMilestoneTasksServiceBean.class);
     private static final int PAST_7_DAYS = 7;
-    
+
     @EJB
     StudyMilestoneServicelocal smRemote;
-    
+
     /**
      * Perform task.
      * @throws PAException exception
      */
     @SuppressWarnings ({"PMD.PreserveStackTrace" })
     public void performTask() throws PAException {
-        LOG.debug("Entering Perform Task");    
+        LOG.debug("Entering Perform Task");
         // create the criteria search object
         StudyMilestoneDTO studyMilestoneDTO = new StudyMilestoneDTO();
         studyMilestoneDTO.setMilestoneCode(
         CdConverter.convertStringToCd(MilestoneCode.TRIAL_SUMMARY_SENT.getCode()));
-        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0); 
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
         Calendar milestoneDate = Calendar.getInstance();
-        
         try {
             List<StudyMilestoneDTO> studyMilestoneDTOList = smRemote.search(studyMilestoneDTO, limit);
             LOG.debug("The Search results returned" + studyMilestoneDTOList.size());
-            
+
             if (studyMilestoneDTOList != null && !studyMilestoneDTOList.isEmpty()) {
-          
-                for (StudyMilestoneDTO smdto : studyMilestoneDTOList) { 
+                for (StudyMilestoneDTO smdto : studyMilestoneDTOList) {
                     milestoneDate.setTime(smdto.getMilestoneDate().getValue());
-                    if (isMoreThan5Businessdays(milestoneDate)
-                            && !checkMilestoneExists(smdto)) {
-                        LOG.debug("Creating a new milestone with code - initial abstration verify");   
+                    if (isMoreThan5Businessdays(milestoneDate) && !checkMilestoneExists(smdto)) {
+                        LOG.debug("Creating a new milestone with code - initial abstration verify"
+                                + smdto.getStudyProtocolIdentifier());
                         StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
-                        newDTO.setCommentText(
-                                 StConverter.convertToSt("Milestone auto-set based on Non-Response within 5 days"));
+                        newDTO.setCommentText(StConverter.convertToSt(
+                                "Milestone auto-set based on Non-Response within 5 days"));
                         newDTO.setMilestoneCode(CdConverter.convertStringToCd(
                                                    MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode()));
                         newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
                         newDTO.setStudyProtocolIdentifier(smdto.getStudyProtocolIdentifier());
-                        smRemote.create(newDTO);
+                        try {
+                            smRemote.create(newDTO);
+                        } catch (Exception e) {
+                            // swallowing the exception in oder to continue processing of rest of records
+                            LOG.error("Error occurred in a quartz job while creating INITIAL_ABSTRACTION_VERIFY "
+                                    + " milestone based on Non-Response within 5 days" + e);
+                        }
                    }
-                } 
+                }
               }
               LOG.debug("Done with the task.");
            } catch (TooManyResultsException e) {
              LOG.error("Too Many Results Exception" + e.getLocalizedMessage());  
              throw new PAException("ToomanyReusltsException occured");
-           } 
-    }   
+           }
+    }
     /**
-     * 
+     *
      * @param milestoneDate milestoneDate
      * @return true, if successful
      */
@@ -187,11 +191,11 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     }
     /**
      * Check milestone exists.
-     * 
+     *
      * @param dto the dto
-     * 
+     *
      * @return true, if successful
-     * 
+     *
      * @throws PAException the PA exception
      */
     private boolean checkMilestoneExists(StudyMilestoneDTO dto) throws PAException {
@@ -202,7 +206,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                 milestoneExits = true;
             }
         }
-        LOG.debug("milestoneExits-" + milestoneExits);   
+        LOG.debug("milestoneExits-" + milestoneExits);
         return milestoneExits;
     }
 
