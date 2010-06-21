@@ -129,6 +129,14 @@
                                 <li><a href="trialIndidequery.action">Trial IND/IDE</a></li>
                             </c:otherwise>
                         </c:choose>
+                        <c:choose>
+                            <c:when test="${requestScope.topic == 'review_regulatory'}">
+                                <li><a href="regulatoryInfoquery.action" class="selected">Regulatory Information</a></li>
+                            </c:when>
+                            <c:otherwise>
+                                <li><a href="regulatoryInfoquery.action">Regulatory Information</a></li>
+                            </c:otherwise>
+                        </c:choose>
                     </c:otherwise>
                     </c:choose>
                     <c:choose>

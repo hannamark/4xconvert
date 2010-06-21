@@ -1189,6 +1189,7 @@ public class TrialUtil {
                                                 getRegulatoryAuthorityNameId(Long.valueOf(regInfo.get(1).toString())));
                trialDTO.setSelectedRegAuth(regInfo.get(0).toString());
            }
+           setOversgtInfo(trialDTO);
        }
    }
 

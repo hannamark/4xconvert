@@ -105,7 +105,12 @@
 <!-- main content begins-->
 <!-- <div id="contentwide"> -->
 <h1><fmt:message key="regulatory.title" /></h1>
+<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
+<c:set var="topic" scope="request" value="review_regulatory"/>
+</c:if>
+<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  != 'Submitted'}">
 <c:set var="topic" scope="request" value="abstract_regulatory"/>
+</c:if>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
    <pa:sucessMessage/>

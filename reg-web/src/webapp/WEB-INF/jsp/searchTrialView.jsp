@@ -484,6 +484,52 @@
     			<jsp:include page="/WEB-INF/jsp/searchTrialViewGrants.jsp"/>
 			</div>
 		</c:if>
+		<c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
+        || fn:trim(requestScope.trialSummary.proprietaryTrialIndicator.value) == 'false' 
+        && requestScope.trialDTO.xmlRequired == true}">
+        <table class="form">
+        <tr>
+              <th colspan="2">Regulatory Information</th>
+          </tr>
+        <tr>
+                <td colspan="2" class="space">&nbsp;</td>
+          </tr>
+<!--  Trial Oversight Authority Country -->
+        <tr>
+        <td scope="row" class="label">
+        <fmt:message key="regulatory.oversight.country.name"/></td>
+          <td class="value"> <c:out value="${requestScope.trialDTO.trialOversgtAuthCountryName }"/> </td>
+       </tr>
+       <tr>
+         <td scope="row" class="label">
+           <fmt:message key="regulatory.oversight.auth.name"/></td>
+                <td class="value"> <c:out value="${requestScope.trialDTO.trialOversgtAuthOrgName }"/> </td>
+         </tr>   
+    
+ <!--   FDA Regulated Intervention Indicator-->
+     <tr>
+         <td scope="row"  class="label">
+         <fmt:message key="regulatory.FDA.regulated.interv.ind"/></td>
+         <td class="value"><c:out value="${requestScope.trialDTO.fdaRegulatoryInformationIndicator}" /> </td>
+     </tr>
+     <!--   Section 801 Indicator-->
+     <tr id="sec801row">
+         <td scope="row" class="label"><fmt:message key="regulatory.section801.ind"/></td>
+         <td class="value"><c:out value="${requestScope.trialDTO.section801Indicator}" /> </td>
+     </tr>
+     
+     <!--   Delayed Posting Indicator-->
+     <tr id="delpostindrow">
+         <td scope="row" class="label"><fmt:message key="regulatory.delayed.posting.ind"/></td>
+         <td class="value"><c:out value="${requestScope.trialDTO.delayedPostingIndicator}" /></td>       
+     </tr>
+     <!--   Data Monitoring Committee Appointed Indicator -->
+     <tr id="datamonrow">
+         <td scope="row" class="label"><fmt:message key="regulatory.data.monitoring.committee.ind"/></td>
+         <td class="value"><c:out value="${requestScope.trialDTO.dataMonitoringCommitteeAppointedIndicator}" /></td>       
+     </tr>
+      </table>
+      </c:if>
 		<c:if test="${requestScope.protocolDocument != null}">
 			<div class="box">
 				<h3>Trial Related Documents</h3>
