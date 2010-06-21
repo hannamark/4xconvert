@@ -733,8 +733,9 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
 
     private String getPSRecruitmentStatusAndDates(TSRReportParticipatingSite site) {
         StringBuffer sb = new StringBuffer();
-        sb.append(site.getRecruitmentStatus()).append(";\nAccrual Date: ").append(site.getOpenForAccrualDate())
-        .append("\nClosed for Accrual Date: ").append(site.getClosedForAccrualDate());
+        sb.append(site.getRecruitmentStatus()).append(";\nOpened for Accrual Date: ")
+        .append(site.getOpenForAccrualDate()).append("\nClosed for Accrual Date: ")
+        .append(site.getClosedForAccrualDate());
         return sb.toString();
     }
 
