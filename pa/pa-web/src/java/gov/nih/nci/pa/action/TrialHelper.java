@@ -31,6 +31,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PAExceptionConstants;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
@@ -613,7 +614,15 @@ public class TrialHelper {
                   contactDto.setSrIdentifier(IiConverter.convertToPoOrganizationalContactIi(
                           gtdDTO.getResponsiblePersonIdentifier()));
               }
-            parb.createSponsorAsPrimaryContactRelations(contactDto);
+              try {  
+                parb.createSponsorAsPrimaryContactRelations(contactDto);
+              } catch (PAException pae) {
+                if (PAExceptionConstants.NULLIFIED_PERSON.equals(pae.getMessage())) {
+                    throw new PAException(PAServiceUtils.SPONSOR_NULLIFIED , pae);
+                } else {
+                    throw pae;
+                }
+              }
         }
     }
     /**

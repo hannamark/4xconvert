@@ -85,6 +85,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PAExceptionConstants;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
@@ -132,10 +133,10 @@ public class HealthCareProviderCorrelationBean {
         
         CorrelationUtils corrUtils = new CorrelationUtils();
         if (orgPoIdentifier == null) {
-            throw new PAException(" Organization PO Identifier is null");
+            throw new PAException(PAExceptionConstants.NULL_II_ORG);
         }
         if (personPoIdentifer == null) {
-            throw new PAException(" Person PO Identifier is null");
+            throw new PAException(PAExceptionConstants.NULL_II_PERSON);
         }
 
         // Step 1 : get the PO Organization
@@ -145,8 +146,8 @@ public class HealthCareProviderCorrelationBean {
                 getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
-           LOG.error("This Organization is no longer available instead use " , e);
-           throw new PAException("This Organization is no longer available instead use " , e);
+           LOG.error(PAExceptionConstants.NULLIFIED_ORG , e);
+           throw new PAException(PAExceptionConstants.NULLIFIED_ORG , e);
         }
         
         // Step 2 : get the PO Person
@@ -156,8 +157,8 @@ public class HealthCareProviderCorrelationBean {
                 getPerson(IiConverter.convertToPoPersonIi(personPoIdentifer));
         } catch (NullifiedEntityException e) {
 //            Map m = e.getNullifiedEntities();
-            LOG.error("This Person is no longer available instead use " , e);
-            throw new PAException("This Person is no longer available instead use " , e);
+            LOG.error(PAExceptionConstants.NULLIFIED_PERSON , e);
+            throw new PAException(PAExceptionConstants.NULLIFIED_PERSON , e);
          }
         
         

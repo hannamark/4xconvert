@@ -10,6 +10,7 @@ import gov.nih.nci.pa.iso.convert.AbstractPoConverter;
 import gov.nih.nci.pa.iso.convert.POConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PAExceptionConstants;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -86,17 +87,17 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
     public Long create(PADTO dto) throws PAException {   
         CorrelationUtils corrUtils = new CorrelationUtils();
         if (dto.isPersonMandatory() && PAUtil.isIiNull(dto.getPersonIdentifier())) {
-            throw new PAException(" Person Ii must not be null");
+            throw new PAException(PAExceptionConstants.NULL_II_PERSON);
         }
         if (dto.isOrganizationMandatory() && PAUtil.isIiNull(dto.getOrganizationIdentifier())) {
-            throw new PAException(" Organization PO Identifier is null");
+            throw new PAException(PAExceptionConstants.NULL_II_ORG);
         }
         OrganizationDTO poOrg = null;
         try {
             poOrg = PoRegistry.getOrganizationEntityService().
                 getOrganization(dto.getOrganizationIdentifier());
         } catch (NullifiedEntityException e) {
-           throw new PAException("This Organization is no longer available instead use ", e);
+           throw new PAException(PAExceptionConstants.NULLIFIED_ORG, e);
         }
         
         //check if Ii is of Person or SR
@@ -108,7 +109,7 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
                 poPer = PoRegistry.getPersonEntityService().
                 getPerson(dto.getPersonIdentifier());
             } catch (NullifiedEntityException e) {
-                throw new PAException("This Person is no longer available instead use ", e);
+                throw new PAException(PAExceptionConstants.NULLIFIED_PERSON, e);
             }
         }
         CorrelationService corrService = getPoService(getTypeArgument());

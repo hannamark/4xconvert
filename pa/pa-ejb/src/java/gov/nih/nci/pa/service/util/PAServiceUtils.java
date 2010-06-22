@@ -132,6 +132,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PAExceptionConstants;
 import gov.nih.nci.pa.service.StudyPaService;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
@@ -178,8 +179,24 @@ import org.hibernate.Session;
     "PMD.TooManyMethods" , "PMD.ExcessiveParameterList" , "PMD.ExcessiveMethodLength" })
 public class PAServiceUtils {
 
-    private static final String ORGANIZATION_IDENTIFIER_IS_NULL = "Organization Identifier is null";
+    /**
+     * ORGANIZATION_IDENTIFIER_IS_NULL.
+     */
+    public static final String ORGANIZATION_IDENTIFIER_IS_NULL = "Organization Identifier is null";
     private static final String UNCHECKED = "unchecked";
+    /**
+     * PRINCIPAL_INVESTIGATOR_NULLIFIED.
+     */
+    public static final String PRINCIPAL_INVESTIGATOR_NULLIFIED = "The Principal Investigator has been nullified";
+    /**
+     * SPONSOR_NULLIFIED.
+     */
+    public static final String SPONSOR_NULLIFIED = "The Sponsor has been nullified";
+    /**
+     * LEAD_ORGANIZATION_NULLIFIED.
+     */
+    public static final String LEAD_ORGANIZATION_NULLIFIED = "The Lead Organization has been nullified";
+    
     /**
      * Executes an sql.
      * @param sql sql to be executed
@@ -525,7 +542,15 @@ public class PAServiceUtils {
         studySiteDTO.setStudyProtocolIdentifier(studyProtocolIi);
         studySiteDtos  = new ArrayList<StudySiteDTO>();
         studySiteDtos.add(studySiteDTO);
-        createOrUpdate(studySiteDtos, IiConverter.convertToStudySiteIi(null), studyProtocolIi);
+        try {
+            createOrUpdate(studySiteDtos, IiConverter.convertToStudySiteIi(null), studyProtocolIi);
+        }  catch (PAException pae) {
+            if (PAExceptionConstants.NULLIFIED_PERSON.equals(pae.getMessage())) {
+                throw new PAException(SPONSOR_NULLIFIED , pae);
+            } else {
+                throw pae;
+            }
+        }
 
     }
 
@@ -557,10 +582,22 @@ public class PAServiceUtils {
         }
         ClinicalResearchStaffCorrelationServiceBean crs = new ClinicalResearchStaffCorrelationServiceBean();
         HealthCareProviderCorrelationBean hcp = new HealthCareProviderCorrelationBean();
-        Long crsId = crs.createClinicalResearchStaffCorrelations(orgPoIdentifier, personPoIdentifer);
+        Long crsId = null;
         Long hcpId = null;
-        if (StudyTypeCode.INTERVENTIONAL.equals(studyTypeCode)) {
-            hcpId = hcp.createHealthCareProviderCorrelationBeans(orgPoIdentifier, personPoIdentifer);
+        try {
+            crsId = crs.createClinicalResearchStaffCorrelations(orgPoIdentifier, personPoIdentifer);
+               
+            if (StudyTypeCode.INTERVENTIONAL.equals(studyTypeCode)) {
+                hcpId = hcp.createHealthCareProviderCorrelationBeans(orgPoIdentifier, personPoIdentifer);
+            }
+        } catch (PAException pae) {
+            if (PAExceptionConstants.NULLIFIED_PERSON.equals(pae.getMessage())) {
+                throw new PAException(PRINCIPAL_INVESTIGATOR_NULLIFIED , pae);
+            } else if (PAExceptionConstants.NULLIFIED_ORG.equals(pae.getMessage())) {
+                throw new PAException(LEAD_ORGANIZATION_NULLIFIED , pae);
+            } else {
+                throw pae;
+            }
         }
         List<StudyContactDTO> studyContactDtos =
             getStudyContact(studyProtocolIi, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true);
