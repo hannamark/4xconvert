@@ -586,7 +586,10 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         //set PI
         createStudySiteContact(studySiteIi, studyProtocolIi, studySiteOrganizationDTO,
                 studySiteInvestigatorDTO, studyTypeCode);
-        //
+
+        //assign ownership
+        RegistryUser usr = userServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO.getUserLastCreated()));
+        userServiceLocal.assignOwnership(usr.getId(), IiConverter.convertToLong(studyProtocolIi));
         sendMail(CREATE, isBatchMode, studyProtocolIi);
     } catch (Exception e) {
         ejbContext.setRollbackOnly();

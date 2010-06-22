@@ -386,7 +386,6 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
 
         return lst;
     }
-   
 
     private String getTrialOwnershipInformationSearchCriteria(DisplayTrialOwnershipInformation criteria) {
         StringBuffer criteriaClause = new StringBuffer();
@@ -426,11 +425,11 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      */
     public void assignOwnership(Long userId, Long studyProtocolId) throws PAException {
         RegistryUser usr =  getUser(userId, studyProtocolId);
-        Set<StudyProtocol> studyProtocols = usr.getStudyProtocols();
         StudyProtocol sp = new StudyProtocol();
         sp.setId(studyProtocolId);
-        studyProtocols.add(sp);
-        usr.setStudyProtocols(studyProtocols);
+        usr.getStudyProtocols().add(sp);
+        HibernateUtil.getCurrentSession().update(usr);
+        HibernateUtil.getCurrentSession().flush();
     }
 
     /**

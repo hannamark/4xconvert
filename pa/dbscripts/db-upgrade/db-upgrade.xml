@@ -470,4 +470,8 @@
         <comment>Conditonally adding missing SuAbstractor group.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2135.sql"/>
     </changeSet>
+    <changeSet id="PO-2241" author="aevansel">
+        <comment>Adding missing owners to trials.</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-2241.sql"/>
+    </changeSet>
 </databaseChangeLog>

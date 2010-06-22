@@ -92,7 +92,6 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestRegistryUserSchema;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.TransactionAttribute;
@@ -115,13 +114,13 @@ public class RegistryUserServiceTest {
         /**
          * {@inheritDoc}
          */
+        @Override
         @SuppressWarnings("unchecked")
         @TransactionAttribute(TransactionAttributeType.SUPPORTS)
         public RegistryUser getUser(String loginName) throws PAException {
             RegistryUser registryUser = null;
             Session session = HibernateUtil.getCurrentSession();
 
-            List<RegistryUser> queryList = new ArrayList<RegistryUser>();
             try {
                 // /first get the CSM user through non csm means.
                 Criteria criteria = session.createCriteria(User.class, "csmUser");
@@ -207,22 +206,23 @@ public class RegistryUserServiceTest {
         List<RegistryUser> usrLst = remoteEjb.search(new RegistryUser());
         assertNotNull(usrLst);
     }
+
     @Test
     public void assignOwnership() throws PAException{
         Long spId = TestRegistryUserSchema.studyProtocolId;
         Long userId = TestRegistryUserSchema.randomUserId;
         remoteEjb.assignOwnership(userId, spId);
-        RegistryUser usr = remoteEjb.getUserById(userId);
-        assertTrue(usr.getStudyProtocols().size() >=1);
+        assertTrue(remoteEjb.isTrialOwner(userId, spId));
     }
+
     @Test
     public void removeOwnership() throws PAException{
         Long spId = TestRegistryUserSchema.studyProtocolId;
         Long userId = TestRegistryUserSchema.randomUserId;
         remoteEjb.removeOwnership(userId, spId);
-        RegistryUser usr = remoteEjb.getUserById(userId);
-        assertTrue(usr.getStudyProtocols().size() >=0);
+        assertFalse(remoteEjb.isTrialOwner(userId, spId));
     }
+
     private RegistryUser createRegisterUserObj() {
         RegistryUser create = new RegistryUser();
         create.setAddressLine("xxxxx");
