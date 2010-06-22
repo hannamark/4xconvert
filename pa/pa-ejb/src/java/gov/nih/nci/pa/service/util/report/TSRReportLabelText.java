@@ -159,6 +159,10 @@ public class TSRReportLabelText {
      */
     public static final String TI_LEAD_ORG_IDENTIFIER = "Lead Organization Trial Identifier";
     /**
+     * Trial Other identifiers.
+     */
+    public static final String TI_OTHER_IDENTIFIER = "Other Identifiers";
+    /**
      * NCT number.
      */
     public static final String TI_NCT_NUMBER = "NCT Number";

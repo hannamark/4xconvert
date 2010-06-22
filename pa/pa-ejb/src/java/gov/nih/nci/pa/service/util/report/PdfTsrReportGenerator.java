@@ -338,6 +338,9 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
             if (isProprietaryTrial()) {
                 addTableRow(table, TSRReportLabelText.TI_LEAD_ORGANIZATION, getTrialIdentification()
                         .getLeadOrganization());
+            } else {
+                addTableRow(table, TSRReportLabelText.TI_OTHER_IDENTIFIER, getTrialIdentification()
+                        .getOtherIdentifiers());
             }
 
             addTableRow(table, TSRReportLabelText.TI_NCT_NUMBER, getTrialIdentification().getNctNumber());
@@ -781,6 +784,13 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
 
     private void addTableRow(PdfPTable table, String columnHeader, String columnValue) {
         addTableRow(table, columnHeader, columnValue, 1);
+    }
+
+    private void addTableRow(PdfPTable table, String columnHeader, List<String> colValues) {
+        if (!colValues.isEmpty()) {
+            table.addCell(getItemCell(columnHeader, 1));
+            table.addCell(getItemValueCell(colValues));
+        }
     }
 
     private void addTableRow(PdfPTable table, String columnHeader, String columnValue, int colspan) {

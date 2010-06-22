@@ -83,6 +83,9 @@
 
 package gov.nih.nci.pa.service.util.report;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Trial Identification.
@@ -100,6 +103,7 @@ public class TSRReportTrialIdentification {
     private String leadOrganization;
     private String amendmentNumber;
     private String amendmentDate;
+    private final List<String> otherIdentifiers = new ArrayList<String>();
 
     /**
     * Default Constructor.
@@ -233,6 +237,13 @@ public class TSRReportTrialIdentification {
      */
     public void setAmendmentDate(String amendmentDate) {
         this.amendmentDate = amendmentDate;
+    }
+
+    /**
+     * @return the otherIdentifiers
+     */
+    public List<String> getOtherIdentifiers() {
+        return otherIdentifiers;
     }
 
 }

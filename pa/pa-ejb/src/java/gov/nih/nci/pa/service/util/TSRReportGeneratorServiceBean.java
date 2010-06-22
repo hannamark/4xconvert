@@ -385,6 +385,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private void setTrialIdentificationDetails() throws PAException {
         TSRReportTrialIdentification trialIdentification = new TSRReportTrialIdentification();
         trialIdentification.setTrialCategory(isProprietaryTrial ? PROPRIETARY : NON_PROPRIETARY);
+        if (!isProprietaryTrial) {
+            List<Ii> otherIdentifierIis = PAUtil.getOtherIdentifiers(studyProtocolDto);
+            for (Ii otherIdIi : otherIdentifierIis) {
+                trialIdentification.getOtherIdentifiers().add(otherIdIi.getExtension());
+            }
+        }
         trialIdentification.setNciIdentifier(PAUtil.getAssignedIdentifierExtension(studyProtocolDto));
         trialIdentification.setLeadOrgIdentifier(getTiLeadOrgIdentifier());
         trialIdentification.setNctNumber(getIdentifier(PAConstants.NCT_IDENTIFIER_TYPE));

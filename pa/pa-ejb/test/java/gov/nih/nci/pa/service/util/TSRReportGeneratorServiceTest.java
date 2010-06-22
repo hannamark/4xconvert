@@ -305,6 +305,10 @@ public class TSRReportGeneratorServiceTest {
         trialIdentification.setDcpIdentifier("5678");
         trialIdentification.setCtepIdentifier("3442323");
         trialIdentification.setAmendmentNumber("7367632746");
+        List<String> oid = new ArrayList<String>();
+        trialIdentification.getOtherIdentifiers().add("OID - 1");
+        trialIdentification.getOtherIdentifiers().add("OID - 2");
+        trialIdentification.getOtherIdentifiers().add("OID - 3");
         pdfTsrReportGenerator.setTrialIdentification(trialIdentification);
 
         // General Trial Details Data
