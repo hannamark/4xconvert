@@ -159,7 +159,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                         newDTO.setStudyProtocolIdentifier(smdto.getStudyProtocolIdentifier());
                         try {
                             smRemote.create(newDTO);
-                        } catch (Exception e) {
+                        } catch (PAException e) {
                             // swallowing the exception in oder to continue processing of rest of records
                             LOG.error("Error occurred in a quartz job while creating INITIAL_ABSTRACTION_VERIFY "
                                     + " milestone based on Non-Response within 5 days" + e);
@@ -169,7 +169,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
               }
               LOG.debug("Done with the task.");
            } catch (TooManyResultsException e) {
-             LOG.error("Too Many Results Exception" + e.getLocalizedMessage());  
+             LOG.error("Too Many Results Exception" + e.getLocalizedMessage());
              throw new PAException("ToomanyReusltsException occured");
            }
     }
