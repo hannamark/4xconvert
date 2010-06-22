@@ -161,7 +161,7 @@ public class TSRReportLabelText {
     /**
      * Trial Other identifiers.
      */
-    public static final String TI_OTHER_IDENTIFIER = "Other Identifiers";
+    public static final String TI_OTHER_IDENTIFIER = "Other Trial Identifiers";
     /**
      * NCT number.
      */
