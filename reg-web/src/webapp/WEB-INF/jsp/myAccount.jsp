@@ -108,7 +108,7 @@ function loadnothing() {
                             </span>                            
                         </td>                
                   </tr>
-                  <s:if test="#registryUserWebDTO.passwordEditingAllowed">                  
+                  <s:if test="%{registryUserWebDTO.passwordEditingAllowed}">                  
                   <tr>
                     <td scope="row" class="label">&nbsp;</td>
                     <td><fmt:message key="register.user.password.rules" /></td>

@@ -382,7 +382,8 @@ public class RegisterUserAction extends ActionSupport {
             validatePasswordMatch(allowPasswordEditing);
 
             if (allowPasswordEditing
-                    && StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
+                    && (StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
+                            || StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword()))
                     && StringUtils.isNotEmpty(registryUserWebDTO.getPassword())
                     && !PaRegistry.getGridAccountService().isValidGridPassword(registryUserWebDTO.getPassword())) {
                 addFieldError("registryUserWebDTO.password", getText("error.register.invalidPassword"));
