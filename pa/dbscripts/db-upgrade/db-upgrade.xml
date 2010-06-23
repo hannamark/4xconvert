@@ -470,4 +470,8 @@
         <comment>Conditonally adding missing SuAbstractor group.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2135.sql"/>
     </changeSet>
+    <changeSet id="PO-2251" author="oweisms">
+        <comment>PO-2251: Add time UOMs.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2251.sql"/>
+    </changeSet>
 </databaseChangeLog>
