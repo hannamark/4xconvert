@@ -67,7 +67,7 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           Map<String,String> map = trial.createProtocols(dtoList, f.getParent()+ File.separator, "testUserName");
           //Map<String,String> map = trial.createProtocols(dtoList, "C:\\NCI\\Projects\\COPPA\\code\\reg-web\\test\\resources"+ File.separator, "testUserName");
           assertNotNull(map);
-          assertEquals("2",map.get("Sucess Trial Count"));
+          assertEquals("2",map.get("Success Trial Count"));
       }
       @Test
       public void testCreateProtocolsNullList() {

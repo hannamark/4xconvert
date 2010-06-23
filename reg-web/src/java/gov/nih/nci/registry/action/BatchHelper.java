@@ -171,8 +171,8 @@ public class BatchHelper implements Runnable {
                     new BatchCreateProtocols().createProtocols(dtoList, unzipLoc + File.separator, userName);
 
             // get the Failed and Sucess count and remove it from map so that reporting of each trial
-            String sucessCount = map.get("Sucess Trial Count");
-            map.remove("Sucess Trial Count");
+            String sucessCount = map.get("Success Trial Count");
+            map.remove("Success Trial Count");
             String failedCount = map.get("Failed Trial Count");
             map.remove("Failed Trial Count");
             String totalCount = Integer.toString(map.size());
@@ -223,7 +223,7 @@ public class BatchHelper implements Runnable {
             FileOutputStream fileOut = new FileOutputStream(uploadLoc + File.separator + "batchUploadReport.xls");
             wb.write(fileOut);
             fileOut.close();
-            LOG.error("Your file has been created succesfully");
+            LOG.info("Your file has been created succesfully");
         } catch (Exception ex) {
             LOG.error("exception while generating excel report" + ex.getMessage());
         }

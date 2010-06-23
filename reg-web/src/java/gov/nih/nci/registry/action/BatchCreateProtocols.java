@@ -169,7 +169,7 @@ public class BatchCreateProtocols {
         HashMap<String, String> map = new HashMap<String, String>();
         if (dtoList == null || dtoList.size() < 1) {
             map.put("Failed Trial Count", String.valueOf(failedCount));
-            map.put("Sucess Trial Count", String.valueOf(sucessCount));
+            map.put("Success Trial Count", String.valueOf(sucessCount));
             return map;
         }
         LOG.info("Entering into createProtocols...having size of dtolist" + dtoList.size());
@@ -193,9 +193,9 @@ public class BatchCreateProtocols {
                 map.put(batchDto.getUniqueTrialId(), result.toString());
             }
         }
-        LOG.error("leaving into createProtocols... failed count" + failedCount + "sucess count" + sucessCount);
+        LOG.info("leaving from createProtocols... failed count = " + failedCount + " success count = " + sucessCount);
         map.put("Failed Trial Count", String.valueOf(failedCount));
-        map.put("Sucess Trial Count", String.valueOf(sucessCount));
+        map.put("Success Trial Count", String.valueOf(sucessCount));
         return map;
     }
 

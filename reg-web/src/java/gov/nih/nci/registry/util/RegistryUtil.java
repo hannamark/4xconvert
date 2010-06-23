@@ -173,7 +173,11 @@ public class RegistryUtil {
          //add the mail header
          String submissionMailBodyHeader = PaRegistry.getLookUpTableService().
                   getPropertyValue("trial.batchUpload.bodyHeader");
-         submissionMailBodyHeader = submissionMailBodyHeader.replace("${SubmitterName}", getSumitterFullName(userName));
+         
+         RegistryUser registryUser = PaRegistry.getRegisterUserService().getUser(userName);
+         
+         submissionMailBodyHeader = submissionMailBodyHeader.replace("${SubmitterName}", 
+                 registryUser.getFirstName() + " " + registryUser.getLastName());
          submissionMailBodyHeader = submissionMailBodyHeader.replace("${CurrentDate}", format.format(date));
          submissionMailBody.append(submissionMailBodyHeader);
          //append the body text for processed or error
@@ -204,32 +208,18 @@ public class RegistryUtil {
         submissionMailBody.append(submissionMailBodyFooter);
 
         String emailBody =  submissionMailBody.toString();
-
+        String emailTo = registryUser.getEmailAddress();
         if (!StringUtils.isEmpty(attachFileName)) {
           // Send the batch upload report to the submitter
-          mailManager.sendMailWithAattchement(userName, null, emailBody, emailSubject, attachFileName);
+          mailManager.sendMailWithAattchement(emailTo, null, emailBody, emailSubject, attachFileName);
         } else {
          // Send the batch upload Error to the submitter
-         mailManager.sendMail(userName, null, emailBody, emailSubject);
+         mailManager.sendMail(emailTo, null, emailBody, emailSubject);
         }
 
       } catch (PAException e) {
          LOG.error("Error occured while generating the batch upload email " + e.getMessage());
       }
-  }
-
-  /**
-   * Gets the sumitter full name.
-   *
-   * @param userLastCreated the user last created
-   *
-   * @return the sumitter full name
-   *
-   * @throws PAException the PA exception
-   */
-  public static String getSumitterFullName(String userLastCreated) throws PAException {
-    RegistryUser registryUser = PaRegistry.getRegisterUserService().getUser(userLastCreated);
-    return  registryUser.getFirstName() + " " + registryUser.getLastName();
   }
 
   /**
