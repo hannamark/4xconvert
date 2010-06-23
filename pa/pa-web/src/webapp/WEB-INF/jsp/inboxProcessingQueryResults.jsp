@@ -25,7 +25,7 @@
             sortable="true" headerClass="sortable"/>
     </c:if>    
         <display:column class="title" titleKey="inboxTrial.remove"> 
-            <a href="#" class="title" onclick="remove('${row.studyInboxId}')">Remove</a>
+            <a href="#" class="title" onclick="removeInboxEntry('${row.studyInboxId}');">Remove</a>
         </display:column>
 </display:table>
 </s:form>
