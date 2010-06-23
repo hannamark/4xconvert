@@ -81,7 +81,7 @@ function handleCreate(){
                     titleKey="disease.parentPreferredName" headerClass="sortable" />
                 <display:column property="lead" sortable="true"
                     titleKey="disease.lead" headerClass="sortable" />
-                <display:column property="ctGovXmlIndicator" sortable="true" titleKey="disease.ctGovXmlIndicator" headerClass="sortable"/>    
+                <display:column property="ctGovXmlIndicator" sortable="true" titleKey="disease.includeInXML" headerClass="sortable"/>    
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                 						|| (sessionScope.role == 'SuAbstractor')}">
                 <display:column titleKey="disease.edit" headerClass="centered" class="action">
