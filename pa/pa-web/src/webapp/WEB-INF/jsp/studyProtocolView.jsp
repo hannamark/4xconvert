@@ -141,7 +141,7 @@
                  </c:if>
                  <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName != sessionScope.trialSummary.studyCheckoutBy
                  						&& sessionScope.role != 'SuAbstractor')}">
-                 		<b><c:out value="${sessionScope.trialSummary.studyCheckoutBy }"/> </b>
+                 		<b><c:out value="${sessionScope.trialSummary.studyCheckoutByUsername}"/> </b>
                  </c:if>
             </td>
             </tr>     
