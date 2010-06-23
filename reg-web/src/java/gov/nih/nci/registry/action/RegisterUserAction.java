@@ -163,10 +163,8 @@ public class RegisterUserAction extends ActionSupport {
      */
     public String updateAccount() {
         String redirectPage =  null;
-
         // first validate the form fields before creating user
         validateForm(true, registryUserWebDTO.getId() != null);
-
         if (hasFieldErrors()) {
              if (registryUserWebDTO.getAffiliatedOrganizationId() != null) {
                  loadAdminUsers(registryUserWebDTO.getAffiliatedOrganizationId());
@@ -190,21 +188,49 @@ public class RegisterUserAction extends ActionSupport {
            LOG.error("ERROR retrieving po org details.", ne);
            return Constants.APPLICATION_ERROR;
         }
+
         // convert RegistryUserWebDTO to RegistryUser
-        RegistryUser registryUser = new RegistryUser();
+        RegistryUser registryUser = null;
+        boolean isExistingUser = registryUserWebDTO.getId() != null && registryUserWebDTO.getId() != 0;
+        UserOrgType currentUserOrgType = null;
+        boolean affiliatedOrgUpdated = false;
+        boolean adminAccessRequested = registryUserWebDTO.isRequestAdminAccess();
+        if (isExistingUser) {
+            try {
+                registryUser = PaRegistry.getRegisterUserService().getUserById(registryUserWebDTO.getId());
+                if (registryUser != null) {
+                    currentUserOrgType = registryUser.getAffiliatedOrgUserType();
+                    affiliatedOrgUpdated = !registryUserWebDTO.getAffiliatedOrganizationId()
+                        .equals(registryUser.getAffiliatedOrganizationId());
+                }
+            } catch (PAException e) {
+                LOG.error("Error retrieving CSM User with Id = " + registryUserWebDTO.getId().toString(), e);
+                return Constants.APPLICATION_ERROR;
+            }
+        }
+
         try {
+            if (registryUser == null) {
+                registryUser = new RegistryUser();
+            }
             BeanUtils.copyProperties(registryUser, registryUserWebDTO);
         } catch (Exception e) {
            LOG.error("ERROR COPYING PROPERTIES.", e);
            return Constants.APPLICATION_ERROR;
         }
-        if (registryUserWebDTO.isRequestAdminAccess()) {
+        if (adminAccessRequested) {
+            // new user requests admin access, or existing user updates affiliated org and requests admin access.
             registryUser.setAffiliatedOrgUserType(UserOrgType.PENDING_ADMIN);
         } else {
-            registryUser.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+            if (isExistingUser && !affiliatedOrgUpdated) {
+                registryUser.setAffiliatedOrgUserType(currentUserOrgType);
+            } else {
+                registryUser.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+            }
         }
+
         // check if it's  update action
-        if (registryUser.getId() != null && registryUser.getId() != 0) {
+        if (isExistingUser) {
             String loginName =  ServletActionContext.getRequest().getRemoteUser();
             if (loginName != null) {
                 redirectPage = "myAccount";
@@ -212,7 +238,6 @@ public class RegisterUserAction extends ActionSupport {
                 userAction =  "reset";
                 redirectPage = Constants.REDIRECT_TO_LOGIN;
             }
-
             try {
                 if (isChangingGridPassword(registryUserWebDTO.getOldPassword(), registryUserWebDTO.getPassword())
                         && registryUserWebDTO.isPasswordEditingAllowed()) {
