@@ -16,152 +16,143 @@
     <i t="Viewing Trial Identification Details" l="10">
       <i t="Checking In and Checking Out Trials" l="11" />
     </i>
-    <i t="Processing Updated Trials in the Inbox" l="12">
-      <i t="Accessing Trials in the Inbox" l="13">
-        <i t="Listing Updated Trials in the Inbox" l="14" />
-        <i t="Searching for Trials in the Inbox" l="15" />
+    <i t="Processing Updated Trials and Requests for Admin Rights" l="12">
+      <i t="Accessing Trials in the Inbox" l="13" />
+      <i t="Removing Trials From the Inbox" l="14" />
+      <i t="Granting Admin Rights to NCI CTRP Registration Site Users" l="15" />
+    </i>
+  </i>
+  <i t="Validating Trials" l="16">
+    <i t="About Trial Validation" l="17" />
+    <i t="Selecting Trials that Require Validation" l="18" />
+    <i t="Main Steps for Validating Submitted Trials" l="19" />
+    <i t="Reviewing Trial Overview Details" l="20" />
+    <i t="Validating Trial Documents" l="21">
+      <i t="Accessing Trial Summary Reports" l="22" />
+    </i>
+    <i t="Validating Participating Sites" l="23" />
+    <i t="Validating Trial Status Details" l="24" />
+    <i t="Validating Funding Details" l="25" />
+    <i t="Validating IND/IDE Details" l="26" />
+    <i t="Validating Trial Details" l="27">
+      <i t="Validating the Trial Identifiers Section" l="28" />
+      <i t="Validating the Other Identifiers Section" l="29" />
+      <i t="Validating the Lead Organization/Principal Investigator Section" l="30" />
+      <i t="Validating the Sponsor/Responsible Party Section" l="31" />
+      <i t="Validating the Summary 4 Information Section" l="32" />
+    </i>
+    <i t="Validating Amended Trial Submissions" l="33" />
+    <i t="Accepting and Rejecting Trials" l="34" />
+  </i>
+  <i t="Abstracting Trial Overview Data" l="35">
+    <i t="About Trial Overview Data" l="36" />
+    <i t="Abstracting Trial History Information" l="37" />
+    <i t="Abstracting Trial Milestones" l="38">
+      <i t="Trial Summary Report Life Cycle" l="39" />
+      <i t="Milestone and Processing Status Rules" l="40" />
+      <i t="Viewing and Adding Milestones" l="41" />
+    </i>
+    <i t="Abstracting On-hold Information" l="42">
+      <i t="Adding On-hold Records" l="43" />
+      <i t="Editing On-hold Records" l="44" />
+    </i>
+  </i>
+  <i t="Abstracting Administrative Data" l="45">
+    <i t="About Administrative Data" l="46" />
+    <i t="Abstracting General Trial Details" l="47">
+      <i t="Abstracting Trial Titles" l="48" />
+      <i t="Abstracting Trial Descriptions" l="49" />
+      <i t="Abstracting Lead Organizations and Principal Investigators" l="50" />
+      <i t="Abstracting Sponsors and Responsible Parties" l="51" />
+      <i t="Abstracting Central Contacts" l="52" />
+    </i>
+    <i t="Abstracting NCI-Specific Information" l="53" />
+    <i t="Abstracting Regulatory Information" l="54">
+      <i t="Abstracting Human Subject Safety Information" l="55" />
+      <i t="Abstracting Trial IND/IDE Information" l="56" />
+    </i>
+    <i t="Abstracting Trial Status Information" l="57" />
+    <i t="Abstracting Trial Funding Information" l="58" />
+    <i t="Abstracting Participating Site Information" l="59">
+      <i t="Linking Organizations to a Trial" l="60" />
+      <i t="Linking Investigators to a Trial" l="61" />
+      <i t="Linking Contacts to a Trial" l="62" />
+      <i t="Deleting Participating Sites From a Trial" l="63" />
+      <i t="Editing Participating Site Information" l="64" />
+    </i>
+    <i t="Abstracting Collaborator Information" l="65">
+      <i t="Deleting Collaborators From a Trial" l="66" />
+      <i t="Editing Collaborator Roles" l="67" />
+    </i>
+    <i t="Abstracting Trial-Related Documents" l="68">
+      <i t="Adding Trial-Related Documents" l="69" />
+      <i t="Deleting Trial-Related Documents" l="70" />
+      <i t="Editing and Replacing Documents" l="71" />
+    </i>
+  </i>
+  <i t="Abstracting Scientific Data" l="72">
+    <i t="Abstracting Trial Descriptions" l="73" />
+    <i t="Abstracting Trial Design" l="74">
+      <i t="Abstracting Interventional Trial Design Details" l="75" />
+      <i t="Abstracting Trial Outcome Measures" l="76">
+        <i t="Adding Outcome Measures" l="77" />
+        <i t="Editing Outcome Measures" l="78" />
+        <i t="Deleting Outcome Measures" l="79" />
       </i>
-      <i t="Removing Trials From the Inbox" l="16" />
-    </i>
-  </i>
-  <i t="Validating Trials" l="17">
-    <i t="About Trial Validation" l="18">
-      <i t="Selecting Trials that Require Validation" l="19" />
-      <i t="Navigating the Validation Workspace" l="20" />
-      <i t="Saving Trial Information" l="21" />
-    </i>
-    <i t="Reviewing Recorded Trial Details" l="22" />
-    <i t="Reviewing Trial Overview Details" l="23" />
-    <i t="Reviewing Trial Documents" l="24" />
-    <i t="Reviewing Trial Status Details" l="25" />
-    <i t="Reviewing Funding Details" l="26" />
-    <i t="Reviewing IND/IDE Details" l="27" />
-    <i t="Validating Amended Trial Submissions" l="28" />
-    <i t="Accepting and Rejecting Trials" l="29" />
-  </i>
-  <i t="Abstracting Trial Overview Data" l="30">
-    <i t="About Trial Overview Data" l="31" />
-    <i t="Abstracting Trial History Information" l="32" />
-    <i t="Abstracting Trial Milestones" l="33">
-      <i t="Trial Summary Report Life Cycle" l="34" />
-      <i t="Milestone and Processing Status Rules" l="35" />
-      <i t="Viewing and Adding Milestones" l="36" />
-    </i>
-    <i t="Abstracting On-hold Information" l="37">
-      <i t="Adding On-hold Records" l="38" />
-      <i t="Editing On-hold Records" l="39" />
-    </i>
-  </i>
-  <i t="Abstracting Administrative Data" l="40">
-    <i t="About Administrative Data" l="41" />
-    <i t="Abstracting General Trial Details" l="42">
-      <i t="Abstracting Trial Titles" l="43" />
-      <i t="Abstracting Trial Descriptions" l="44" />
-      <i t="Abstracting Lead Organizations and Principle Investigators" l="45" />
-      <i t="Abstracting Sponsors and Responsible Parties" l="46" />
-      <i t="Abstracting Central Contacts" l="47" />
-    </i>
-    <i t="Abstracting NCI-Specific Information" l="48" />
-    <i t="Abstracting Regulatory Information" l="49">
-      <i t="Abstracting Human Subject Safety Information" l="50" />
-      <i t="Abstracting Trial IND/IDE Information" l="51" />
-    </i>
-    <i t="Abstracting Trial Status Information" l="52" />
-    <i t="Abstracting Trial Funding Information" l="53" />
-    <i t="Abstracting Participating Site Information" l="54">
-      <i t="Linking Organizations to a Trial" l="55" />
-      <i t="Linking Investigators to a Trial" l="56" />
-      <i t="Linking Contacts" l="57" />
-      <i t="Unlinking Participating Sites From a Trial" l="58" />
-      <i t="Editing Participating Site Information" l="59" />
-    </i>
-    <i t="Abstracting Collaborator Information" l="60">
-      <i t="Unlinking Collaborators From a Trial" l="61" />
-    </i>
-    <i t="Abstracting Trial-Related Documents" l="62">
-      <i t="Adding Trial-Related Documents" l="63" />
-      <i t="Deleting Trial-Related Documents" l="64" />
-      <i t="Editing and Replacing Documents" l="65" />
-    </i>
-  </i>
-  <i t="Abstracting Scientific Data" l="66">
-    <i t="Abstracting Trial Descriptions" l="67" />
-    <i t="Abstracting Interventional Trial Design" l="68">
-      <i t="Abstracting Interventional Trial Design Details" l="69" />
-      <i t="Abstracting Interventional Trial Outcome Measures" l="70">
-        <i t="Adding Outcome Measures" l="71" />
-        <i t="Editing Outcome Measures" l="72" />
-        <i t="Deleting Outcome Measures" l="73" />
+      <i t="Abstracting Trial Eligibility Criteria" l="80" />
+      <i t="Adding Other Eligibility Criteria" l="81">
+        <i t="Adding Eligibility Criteria in Free-Form Text" l="82" />
+        <i t="Building Eligibility Criteria" l="83" />
       </i>
-      <i t="Abstracting Interventional Trial Eligibility Criteria" l="74" />
-      <i t="Adding Other Eligibility Criteria" l="75" />
-      <i t="Editing Other Eligibility Criteria" l="76" />
-      <i t="Deleting Eligibility Criteria" l="77" />
+      <i t="Re-Ordering Other Eligibility Criteria" l="84" />
+      <i t="Editing Other Eligibility Criteria" l="85" />
+      <i t="Deleting Eligibility Criteria" l="86" />
     </i>
-    <i t="Abstracting Diseases/Conditions" l="78">
-      <i t="Viewing Disease/Condition Details" l="79" />
-      <i t="Adding Diseases/Conditions to a Trial" l="80" />
-      <i t="Unlinking Diseases/Conditions from a Trial" l="81" />
+    <i t="Abstracting Diseases/Conditions" l="87">
+      <i t="Viewing Disease/Condition Details" l="88" />
+      <i t="Adding Diseases/Conditions to a Trial" l="89">
+        <i t="Editing Disease/Condition Indicators" l="90" />
+      </i>
+      <i t="Deleting Diseases/Conditions from a Trial" l="91" />
     </i>
-    <i t="Abstracting Interventions" l="82">
-      <i t="Adding Interventions to a Trial" l="83" />
-      <i t="Editing Intervention Records" l="84" />
-      <i t="Unlinking Interventions from a Trial" l="85" />
+    <i t="Abstracting Interventions" l="92">
+      <i t="Adding Interventions to a Trial" l="93">
+        <i t="Abstracting Drug, Radiation, and Procedure/Surgery Information" l="94" />
+      </i>
+      <i t="Editing Intervention Records" l="95" />
+      <i t="Deleting Interventions from a Trial" l="96" />
     </i>
-    <i t="Abstracting Arm Information" l="86">
-      <i t="Adding Arms to a Trial" l="87" />
-      <i t="Editing Arm Records" l="88" />
-      <i t="Deleting Arms" l="89" />
+    <i t="Abstracting Arm Information" l="97">
+      <i t="Adding Arms to a Trial" l="98" />
+      <i t="Editing Arm Records" l="99" />
+      <i t="Deleting Arms" l="100" />
     </i>
-    <i t="Abstracting Sub-Groups" l="90">
-      <i t="Adding Sub-groups to a Trial" l="91" />
-      <i t="Editing Sub-group Records" l="92" />
-      <i t="Deleting Sub-groups" l="93" />
+    <i t="Abstracting Sub-Groups" l="101">
+      <i t="Adding Sub-groups to a Trial" l="102" />
+      <i t="Editing Sub-group Records" l="103" />
+      <i t="Deleting Sub-groups" l="104" />
     </i>
   </i>
-  <i t="Completing Abstractions" l="94">
-    <i t="About Abstraction Validation" l="95">
-      <i t="Trial Completion Criteria" l="96" />
-      <i t="Trial Reporting" l="97" />
+  <i t="Completing Abstractions" l="105">
+    <i t="About Abstraction Validation" l="106">
+      <i t="Trial Completion Criteria" l="107" />
+      <i t="Trial Reporting" l="108" />
     </i>
-    <i t="Completing and Validating Abstractions" l="98" />
+    <i t="Validating Abstractions" l="109" />
   </i>
-  <i t="Working With Organization Records" l="99">
-    <i t="Looking Up Registered Organizations" l="100" />
+  <i t="Granting Access to the Accrual Application" l="110">
+    <i t="Managing Accrual Access" l="111" />
+    <i t="Setting Up Accrual Access" l="112" />
+    <i t="Activating and Inactivating Accrual Access" l="113" />
   </i>
-  <i t="Working With Person Records" l="101">
-    <i t="Looking Up Registered Persons" l="102" />
+  <i t="Assigning Trial Ownership" l="114">
+    <i t="Managing Trial Ownership" l="115" />
   </i>
-  <i t="Metadata Definitions" l="103">
-    <i t="Allocation" l="104" />
-    <i t="Amendment Number" l="105" />
-    <i t="Current Trial Status Date" l="106" />
-    <i t="Funding Mechanism" l="107" />
-    <i t="Identifier Type" l="108" />
-    <i t="Institute Code (NIH Grant Code)" l="109" />
-    <i t="Intervention Model" l="110" />
-    <i t="Lead Organization" l="111" />
-    <i t="Lead Organization Trial Identifier (ID)" l="112" />
-    <i t="Masking" l="113" />
-    <i t="Milestones" l="114" />
-    <i t="NCI Division/Program Code" l="115" />
-    <i t="NCI Trial Identifier" l="116" />
-    <i t="NIH Grant Information" l="117" />
-    <i t="Non-proprietary Trial" l="118" />
-    <i t="Primary Purpose" l="119" />
-    <i t="Principal Investigator" l="120" />
-    <i t="Processing Status" l="121" />
-    <i t="Proprietary Trial" l="122" />
-    <i t="Responsible Party" l="123" />
-    <i t="Sponsor" l="124" />
-    <i t="Study Classification" l="125" />
-    <i t="Summary 4 Funding Category" l="126" />
-    <i t="Summary 4 Sponsor/Source" l="127" />
-    <i t="Title" l="128" />
-    <i t="Trial Phase" l="129" />
-    <i t="Trial Status" l="130" />
-    <i t="Trial Type" l="131" />
+  <i t="Working With Organization Records" l="116">
+    <i t="Looking Up Registered Organizations" l="117" />
   </i>
-  <i t="Glossary" l="132" />
-  <i t="Application Support" l="133" />
+  <i t="Working With Person Records" l="118">
+    <i t="Looking Up Registered Persons" l="119" />
+  </i>
+  <i t="Application Support" l="120" />
 </WebWorksHelpTOC>
