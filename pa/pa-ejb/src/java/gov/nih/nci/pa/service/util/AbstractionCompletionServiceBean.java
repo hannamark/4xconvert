@@ -847,7 +847,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (StringUtils.equalsIgnoreCase(StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode(),
                 recruitmentStatusDto.getStatusCode().getCode()) && !studySiteRecruiting) {
             abstractionList.add(createError("Error", "Select Participating Sites from Administrative Data menu.",
-                    "Data inconsistency: At least one location needs to be recruiting if the overall status "
+                    "Data inconsistency: At least one location needs to be recruiting if the overall "
                     + "recruitment status is 'Recruiting'"));
         }
 
