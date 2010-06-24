@@ -819,56 +819,40 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         StudyRecruitmentStatusDTO recruitmentStatusDto =
             studyRecruitmentStatusServiceLocal.getCurrentByStudyProtocol(studyProtocolIi);
 
-        boolean recruitmentError = false;
-        boolean recruitmentWarning = false;
+        boolean studySiteRecruiting = false;
+
         for (StudySiteDTO spartDto : spList) {
             List<StudySiteAccrualStatusDTO> studySiteList = new ArrayList<StudySiteAccrualStatusDTO>();
             studySiteList.addAll(studySiteAccrualStatusServicLocal.getStudySiteAccrualStatusByStudySite(spartDto
                     .getIdentifier()));
 
             Long tmp = 1L;
-            StudySiteAccrualStatusDTO latestDTO = null;
+            StudySiteAccrualStatusDTO lastestStudySiteAccrualStatusDTO = null;
             for (StudySiteAccrualStatusDTO studySiteAccuralStatus : studySiteList) {
                 Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
                 if (latestId > tmp) {
                     tmp = latestId;
-                    latestDTO = studySiteAccuralStatus;
+                    lastestStudySiteAccrualStatusDTO = studySiteAccuralStatus;
                 }
             }
 
-            if (latestDTO != null) {
-                recruitmentError = true;
-                if (StringUtils.equalsIgnoreCase(StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode(),
-                        recruitmentStatusDto.getStatusCode().getCode())
-                        && StringUtils.equalsIgnoreCase(RecruitmentStatusCode.RECRUITING.getCode(),
-                                latestDTO.getStatusCode().getCode())) {
-                    recruitmentError = false;
-                    break;
-                }
-                if (StringUtils.equalsIgnoreCase(StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode(),
-                        recruitmentStatusDto.getStatusCode().getCode())
-                        && StringUtils.equalsIgnoreCase(RecruitmentStatusCode.RECRUITING.getCode(),
-                                latestDTO.getStatusCode().getCode())) {
-                    recruitmentError = false;
-                    break;
-                }
-                if (StringUtils.equalsIgnoreCase(StudyRecruitmentStatusCode.NOT_YET_RECRUITING.getCode(),
-                        recruitmentStatusDto.getStatusCode().getCode())
-                        && !StringUtils.equalsIgnoreCase(RecruitmentStatusCode.NOT_YET_RECRUITING.getCode(),
-                                latestDTO.getStatusCode().getCode())) {
-                    recruitmentWarning = true;
-                    break;
+            if (lastestStudySiteAccrualStatusDTO != null) {
+                if (StringUtils.equalsIgnoreCase(RecruitmentStatusCode.RECRUITING.getCode(),
+                        lastestStudySiteAccrualStatusDTO.getStatusCode().getCode())) {
+                        studySiteRecruiting = true;
                 }
             }
         }
 
-        if (recruitmentError) {
+        if (StringUtils.equalsIgnoreCase(StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode(),
+                recruitmentStatusDto.getStatusCode().getCode()) && !studySiteRecruiting) {
             abstractionList.add(createError("Error", "Select Participating Sites from Administrative Data menu.",
                     "Data inconsistency: At least one location needs to be recruiting if the overall status "
                     + "recruitment status is 'Recruiting'"));
         }
 
-        if (recruitmentWarning) {
+        if (StringUtils.equalsIgnoreCase(StudyRecruitmentStatusCode.NOT_YET_RECRUITING.getCode(),
+                recruitmentStatusDto.getStatusCode().getCode()) && studySiteRecruiting) {
             abstractionWarnList.add(createError("Warning", "Select Participating Sites from Administrative Data menu.",
                     "Data inconsistency. No site can recruit patients if overall study recruitment status "
                     + " is 'Not yet recruiting'"));
