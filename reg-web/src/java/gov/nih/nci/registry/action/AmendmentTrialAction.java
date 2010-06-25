@@ -375,6 +375,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
             TrialValidator.addSessionAttributes(trialDTO);
             ServletActionContext.getRequest().getSession().removeAttribute("secondaryIdentifiersList");
             trialDTO.setSecondaryIdentifierAddList(null);
+            trialUtil.removeAssignedIdentifierFromSecondaryIds(trialDTO);
             trialUtil.populateRegulatoryList(trialDTO);
             setDocumentsInSession(trialDTO);
             return ERROR;

@@ -70,6 +70,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -504,11 +505,13 @@ public class TrialUtil {
         if (trialDTO.getSecondaryIdentifierList() != null && !trialDTO.getSecondaryIdentifierList().isEmpty()) {
            List<Ii> iis = new ArrayList<Ii>();
            for (Ii sps : trialDTO.getSecondaryIdentifierList()) {
-            if (IiConverter.STUDY_PROTOCOL_ROOT.equals(sps.getRoot())) {
-              iis.add(IiConverter.convertToAssignedIdentifierIi(sps.getExtension()));
-            } else {
-               iis.add(IiConverter.convertToOtherIdentifierIi(sps.getExtension()));
-            }
+             if (sps != null &&  StringUtils.isNotEmpty(sps.getExtension())) {
+               if (IiConverter.STUDY_PROTOCOL_ROOT.equals(sps.getRoot())) {
+                  iis.add(IiConverter.convertToAssignedIdentifierIi(sps.getExtension()));
+               } else {
+                  iis.add(IiConverter.convertToOtherIdentifierIi(sps.getExtension()));
+               }
+             }
            }
            isoDto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(new HashSet<Ii>(iis)));
         }
@@ -1113,10 +1116,8 @@ public class TrialUtil {
 
    /**
     * Copy participating sites.
-    *
     * @param studyProtocolIi the study protocol ii
     * @param trialDTO the trial dto
-    *
     * @throws PAException the PA exception
     */
    private void copyParticipatingSites(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
@@ -1152,10 +1153,8 @@ public class TrialUtil {
 
    /**
    * Copy regulatory information.
-   *
    * @param studyProtocolIi the study protocol ii
    * @param trialDTO the trial dto
-   *
    * @throws PAException the PA exception
    */
    private void copyRegulatoryInformation(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
@@ -1195,11 +1194,8 @@ public class TrialUtil {
 
    /**
     * Convert to interventional study protocol dto.
-    *
     * @param trialDTO dtotoConvert
-    *
     * @return isoDto
-    *
     * @throws PAException on error
     */
    public InterventionalStudyProtocolDTO convertToInterventionalStudyProtocolDTO(BaseTrialDTO trialDTO)
@@ -1209,14 +1205,6 @@ public class TrialUtil {
        return isoDto;
    }
 
-   /**
-    * Methods used by update trial.
-    *
-    * @param spdto the spdto
-    * @param trialDTO the trial dto
-    *
-    * @throws PAException the PA exception
-    */
    /**
     * updates the studyprocol dto with the trail details and status information.
     * @param trialDTO TrialDTO
@@ -1292,7 +1280,6 @@ public class TrialUtil {
                 criteriaCTEPStudySite.setStudyProtocolIdentifier(studyProtocolIi);
                 criteriaCTEPStudySite.setFunctionalCode(CdConverter.convertToCd(
                         StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-
                 criteriaCTEPStudySite.setResearchOrganizationIi(ctepROIi);
                 StudySiteDTO ssCTEPIdDto = PAUtil.getFirstObj(paServiceUtil.getStudySite(criteriaCTEPStudySite,
                         true));
@@ -1337,7 +1324,6 @@ public class TrialUtil {
             }
             isoDto.setResearchOrganizationIi(dcpRoIi);
             isoDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getDcpIdentifier()));
-
         }
         return isoDto;
     }
@@ -1355,10 +1341,8 @@ public class TrialUtil {
     }
     /**
      * Copy dcp nummber.
-     *
      * @param studyProtocolIi ii
      * @param trialDTO dto
-     *
      * @throws PAException ex
      */
     private void copyCtepIdentifier(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
@@ -1368,7 +1352,6 @@ public class TrialUtil {
         }
     }
     /**
-     *
      * @param trialDto dot
      * @return isoDto
      */
@@ -1441,7 +1424,6 @@ public class TrialUtil {
         spStageDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDto.getStartDate())));
         spStageDTO.setStartDateTypeCode(CdConverter.convertToCd(
                 ActualAnticipatedTypeCode.getByCode(trialDto.getStartDateType())));
-
         if (trialDto.getFdaRegulatoryInformationIndicator() == null) {
             spStageDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(null));
         } else if  (CommonsConstant.YES.equalsIgnoreCase(trialDto.getFdaRegulatoryInformationIndicator())) {
@@ -1782,7 +1764,6 @@ public class TrialUtil {
         return trialDTO;
     }
     /**
-     *
      * @param trialDTO dto
      * @return dto
      * @throws PAException on err
@@ -1841,7 +1822,6 @@ public class TrialUtil {
         return trialDTO;
     }
     /**
-     *
      * @param entityIi ii
      * @return name
      */
@@ -1912,7 +1892,6 @@ public class TrialUtil {
         copySummaryFour(PaRegistry.getStudyResourcingService().
                 getsummary4ReportedResource(studyProtocolIi), trialDTO);
     }
-
     /**
      * Convert to iso document list.
      * @param docList the doc list
@@ -1994,4 +1973,17 @@ public class TrialUtil {
         }
          return ssDTO;
     }
+    /**
+    * @param trialDTO2 trialDTO
+    */
+   public void removeAssignedIdentifierFromSecondaryIds(TrialDTO trialDTO2) {
+       for (Iterator<Ii> iter = trialDTO2.getSecondaryIdentifierList().iterator(); iter.hasNext();) {
+           Ii ii = iter.next();
+           if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+               iter.remove();
+           } else {
+               ii.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+           }
+       }
+   }
 }

@@ -55,43 +55,43 @@ import com.opensymphony.xwork2.util.Element;
 
 /**
  * The Class UpdateTrialAction.
- * 
+ *
  * @author Vrushali
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" , "PMD.ExcessiveParameterList" , "unchecked",
     "PMD.ExcessiveClassLength" , "PMD.TooManyMethods" , "PMD.ExcessiveMethodLength" , "PMD.TooManyFields" })
 
 public class UpdateTrialAction extends ManageFileAction implements ServletResponseAware {
-    
+
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    
+
     /** The servlet response. */
     private HttpServletResponse servletResponse;
-    
+
     /** The Constant LOG. */
     private static final Logger LOG = Logger.getLogger(UpdateTrialAction.class);
-    
+
     /** The trial dto. */
     private TrialDTO trialDTO = new TrialDTO();
-    
+
     /** The trial action. */
     private String trialAction = null;
-    
+
     /** The study protocol id. */
     private String studyProtocolId = null;
-    
+
     /** The session trial dto. */
     private static String sessionTrialDTO = "trialDTO";
-    
+
     private final TrialUtil trialUtil = new TrialUtil();
-    
+
     //for update
     /** The collaborators. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.pa.dto.PaOrganizationDTO.class)
     private List<PaOrganizationDTO> collaborators = new ArrayList<PaOrganizationDTO>();
-    
+
     /** The participating sites. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.pa.dto.PaOrganizationDTO.class)
@@ -101,45 +101,45 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.registry.dto.StudyIndldeWebDTO.class)
     private List <StudyIndldeWebDTO> indIdeUpdateDtos = new ArrayList<StudyIndldeWebDTO>();
-    
+
     /** The funding add dtos. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
     private List<TrialFundingWebDTO> fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
-    
+
     /** The ind ide add dtos. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.registry.dto.TrialIndIdeDTO.class)
     private List <TrialIndIdeDTO> indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
-    
+
     /** The funding dtos. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
     private List<TrialFundingWebDTO> fundingDtos = new ArrayList<TrialFundingWebDTO>();
-    
+
    /** The programcodenihselectedvalue. */
     private String programcodenihselectedvalue;
-    
+
     /** The programcodenciselectedvalue. */
     private String programcodenciselectedvalue;
-    
+
     /** The pa organization dto. */
     private PaOrganizationDTO paOrganizationDTO;
-    
+
     /** The study indlde web dto. */
     private StudyIndldeWebDTO studyIndldeWebDTO;
-    
+
     /** The trial funding dto. */
     private TrialFundingWebDTO trialFundingDTO;
-    
+
     /** The trial ind ide dto. */
     private TrialIndIdeDTO trialIndIdeDTO;
-    
-    private int indIdeUpdateDtosLen = 0; 
-    
+
+    private int indIdeUpdateDtosLen = 0;
+
     /**
      * Gets the study indlde web dto.
-     * 
+     *
      * @return the studyIndldeWebDTO
      */
     public StudyIndldeWebDTO getStudyIndldeWebDTO() {
@@ -148,7 +148,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
     /**
      * Sets the study indlde web dto.
-     * 
+     *
      * @param studyIndldeWebDTO the studyIndldeWebDTO to set
      */
     public void setStudyIndldeWebDTO(StudyIndldeWebDTO studyIndldeWebDTO) {
@@ -157,7 +157,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
     /**
      * Gets the trial funding dto.
-     * 
+     *
      * @return the trialFundingDTO
      */
     public TrialFundingWebDTO getTrialFundingDTO() {
@@ -166,7 +166,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
     /**
      * Sets the trial funding dto.
-     * 
+     *
      * @param trialFundingDTO the trialFundingDTO to set
      */
     public void setTrialFundingDTO(TrialFundingWebDTO trialFundingDTO) {
@@ -175,7 +175,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
     /**
      * Gets the trial ind ide dto.
-     * 
+     *
      * @return the trialIndIdeDTO
      */
     public TrialIndIdeDTO getTrialIndIdeDTO() {
@@ -184,7 +184,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
     /**
      * Sets the trial ind ide dto.
-     * 
+     *
      * @param trialIndIdeDTO the trialIndIdeDTO to set
      */
     public void setTrialIndIdeDTO(TrialIndIdeDTO trialIndIdeDTO) {
@@ -193,7 +193,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
     /**
      * Gets the pa organization dto.
-     * 
+     *
      * @return the paOrganizationDTO
      */
     public PaOrganizationDTO getPaOrganizationDTO() {
@@ -202,7 +202,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
     /**
      * Sets the pa organization dto.
-     * 
+     *
      * @param paOrganizationDTO the paOrganizationDTO to set
      */
     public void setPaOrganizationDTO(PaOrganizationDTO paOrganizationDTO) {
@@ -211,7 +211,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
     /**
      * Sets the servlet response.
-     * 
+     *
      * @param response servletResponse
      */
     public void setServletResponse(HttpServletResponse response) {
@@ -220,61 +220,61 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
     /**
      * Gets the servlet response.
-     * 
+     *
      * @return servletResponse
      */
     public HttpServletResponse getServletResponse() {
         return servletResponse;
     }
-    
+
     /**
      * Gets the trial dto.
-     * 
+     *
      * @return the trialDTO
      */
     public TrialDTO getTrialDTO() {
         return trialDTO;
     }
-    
+
     /**
      * Sets the trial dto.
-     * 
+     *
      * @param trialDTO the trialDTO to set
      */
     public void setTrialDTO(TrialDTO trialDTO) {
         this.trialDTO = trialDTO;
     }
-     
+
    /**
     * Gets the trial action.
-    * 
+    *
     * @return the trialAction
     */
    public String getTrialAction() {
        return trialAction;
    }
-   
+
    /**
     * Sets the trial action.
-    * 
+    *
     * @param trialAction the trialAction to set
     */
    public void setTrialAction(String trialAction) {
        this.trialAction = trialAction;
    }
-   
+
    /**
     * Gets the study protocol id.
-    * 
+    *
     * @return the studyProtocolId
     */
    public String getStudyProtocolId() {
        return studyProtocolId;
    }
-   
+
    /**
     * Sets the study protocol id.
-    * 
+    *
     * @param studyProtocolId the studyProtocolId to set
     */
    public void setStudyProtocolId(String studyProtocolId) {
@@ -283,7 +283,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Gets the collaborators.
-    * 
+    *
     * @return the collaborators
     */
    public List<PaOrganizationDTO> getCollaborators() {
@@ -292,7 +292,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Sets the collaborators.
-    * 
+    *
     * @param collaborators the collaborators to set
     */
    public void setCollaborators(List<PaOrganizationDTO> collaborators) {
@@ -301,7 +301,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Gets the participating sites.
-    * 
+    *
     * @return the participatingSites
     */
    public List<PaOrganizationDTO> getParticipatingSitesList() {
@@ -310,7 +310,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Sets the participating sites.
-    * 
+    *
     * @param participatingSites the participatingSites to set
     */
    public void setParticipatingSitesList(List<PaOrganizationDTO> participatingSites) {
@@ -319,7 +319,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Gets the ind ide update dtos.
-    * 
+    *
     * @return the indIdeUpdateDtos
     */
    public List<StudyIndldeWebDTO> getIndIdeUpdateDtos() {
@@ -328,7 +328,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Sets the ind ide update dtos.
-    * 
+    *
     * @param indIdeUpdateDtos the indIdeUpdateDtos to set
     */
    public void setIndIdeUpdateDtos(List<StudyIndldeWebDTO> indIdeUpdateDtos) {
@@ -337,7 +337,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Gets the funding add dtos.
-    * 
+    *
     * @return the fundingAddDtos
     */
    public List<TrialFundingWebDTO> getFundingAddDtos() {
@@ -346,7 +346,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Sets the funding add dtos.
-    * 
+    *
     * @param fundingAddDtos the fundingAddDtos to set
     */
    public void setFundingAddDtos(List<TrialFundingWebDTO> fundingAddDtos) {
@@ -355,7 +355,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Gets the ind ide add dtos.
-    * 
+    *
     * @return the indIdeAddDtos
     */
    public List<TrialIndIdeDTO> getIndIdeAddDtos() {
@@ -364,7 +364,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Sets the ind ide add dtos.
-    * 
+    *
     * @param indIdeAddDtos the indIdeAddDtos to set
     */
    public void setIndIdeAddDtos(List<TrialIndIdeDTO> indIdeAddDtos) {
@@ -372,7 +372,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
    }
    /**
     * Gets the programcodenihselectedvalue.
-    * 
+    *
     * @return the programcodenihselectedvalue
     */
    public String getProgramcodenihselectedvalue() {
@@ -381,7 +381,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Sets the programcodenihselectedvalue.
-    * 
+    *
     * @param programcodenihselectedvalue the programcodenihselectedvalue to set
     */
    public void setProgramcodenihselectedvalue(String programcodenihselectedvalue) {
@@ -390,7 +390,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Gets the programcodenciselectedvalue.
-    * 
+    *
     * @return the programcodenciselectedvalue
     */
    public String getProgramcodenciselectedvalue() {
@@ -399,7 +399,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Sets the programcodenciselectedvalue.
-    * 
+    *
     * @param programcodenciselectedvalue the programcodenciselectedvalue to set
     */
    public void setProgramcodenciselectedvalue(String programcodenciselectedvalue) {
@@ -408,7 +408,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Gets the funding dtos.
-    * 
+    *
     * @return the fundingDtos
     */
    public List<TrialFundingWebDTO> getFundingDtos() {
@@ -417,16 +417,16 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
 
    /**
     * Sets the funding dtos.
-    * 
+    *
     * @param fundingDtos the fundingDtos to set
     */
    public void setFundingDtos(List<TrialFundingWebDTO> fundingDtos) {
        this.fundingDtos = fundingDtos;
    }
-    
+
     /**
      * View.
-     * 
+     *
      * @return res
      */
     public String view() {
@@ -452,49 +452,49 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
         }
         return SUCCESS;
     }
-    
-    
+
+
   /**
    * Synch action with dto.
    */
   private void synchActionWithDTO() {
-      
+
       if (trialDTO.getCollaborators() != null && !trialDTO.getCollaborators().isEmpty()) {
         setCollaborators(trialDTO.getCollaborators());
-      } 
-      if (trialDTO.getParticipatingSites() != null && !trialDTO.getParticipatingSites().isEmpty()) { 
+      }
+      if (trialDTO.getParticipatingSites() != null && !trialDTO.getParticipatingSites().isEmpty()) {
        setParticipatingSitesList(trialDTO.getParticipatingSites());
       }
       if (trialDTO.getIndIdeUpdateDtos() != null && !trialDTO.getIndIdeUpdateDtos().isEmpty()) {
           setIndIdeUpdateDtos(trialDTO.getIndIdeUpdateDtos());
-      }    
-      
+      }
+
       if (trialDTO.getFundingDtos() != null && !trialDTO.getFundingDtos().isEmpty()) {
           setFundingDtos(trialDTO.getFundingDtos());
-      } 
+      }
       if (trialDTO.getIndIdeAddDtos() != null && !trialDTO.getIndIdeAddDtos().isEmpty()) {
        setIndIdeAddDtos(trialDTO.getIndIdeAddDtos());
       }
       if (trialDTO.getFundingAddDtos() != null && !trialDTO.getFundingAddDtos().isEmpty()) {
        setFundingAddDtos(trialDTO.getFundingAddDtos());
-      } 
+      }
   }
-  
+
  /**
   * Synch dto with action.
   */
  private void synchDTOWithAction() {
-      
+
       trialDTO.setCollaborators(getCollaborators());
       trialDTO.setParticipatingSites(getParticipatingSitesList());
       trialDTO.setIndIdeUpdateDtos(getIndIdeUpdateDtos());
       trialDTO.setFundingDtos(getFundingDtos());
-       
+
    }
-   
+
     /**
      * Clears the session variables and redirect to search.
-     * 
+     *
      * @return s
      */
     public String cancel() {
@@ -503,10 +503,10 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
         ServletActionContext.getRequest().getSession().removeAttribute("indIdeAddList");
         return "redirect_to_search";
     }
-    
+
     /**
      * Review update.
-     * 
+     *
      * @return s
      */
 
@@ -525,17 +525,17 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                 synchActionWithDTO();
             return ERROR;
             }
-            
+
             if (hasActionErrors()) {
                 TrialValidator.addSessionAttributes(trialDTO);
                 synchActionWithDTO();
                 trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
             }
-           
+
             populateList(docDTOList);
             trialDTO.setDocDtos(docDTOList);
-            
+
             //add the IndIde,FundingList
             List<TrialIndIdeDTO> indAddList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
            .getSession().getAttribute(Constants.INDIDE_ADD_LIST);
@@ -543,7 +543,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                trialDTO.setIndIdeAddDtos(indAddList);
                setIndIdeAddDtos(indAddList);
            }
-           
+
            List<TrialFundingWebDTO> grantAddList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
            .getSession().getAttribute(Constants.GRANT_ADD_LIST);
            if (grantAddList != null) {
@@ -553,7 +553,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
            if (trialDTO.getXmlRequired()) {
               trialUtil.setOversgtInfo(trialDTO);
            }
-           List<Ii> otherIdsList = 
+           List<Ii> otherIdsList =
                (List<Ii>) ServletActionContext.getRequest()
                  .getSession().getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
               if (otherIdsList != null) {
@@ -575,12 +575,12 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
         TrialValidator.removeSessionAttributes();
         ServletActionContext.getRequest().getSession().setAttribute(sessionTrialDTO, trialDTO);
         LOG.info("Calling the review page...");
-        return "review";    
+        return "review";
     }
-    
+
     /**
      * Edits the.
-     * 
+     *
      * @return s
      */
     public String edit() {
@@ -591,18 +591,18 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
         TrialValidator.addSessionAttributes(trialDTO);
         return "edit";
     }
-    
+
     /**
      * Update.
-     * 
+     *
      * @return s
      */
     @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String update() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
         if (trialDTO == null) {
-           synchActionWithDTO(); 
-           return ERROR; 
+           synchActionWithDTO();
+           return ERROR;
         }
         TrialUtil util = new TrialUtil();
         Ii updateId = null;
@@ -627,43 +627,43 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(
                     trialDTO, studyProtocolIi);
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
-          
+
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studyParticipationContactDTO = null;
             Ii responsiblePartyContactIi = null;
-            // updated only if the ctGovXmlRequired is true 
+            // updated only if the ctGovXmlRequired is true
             if (spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
                 if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
                     studyContactDTO = new StudyContactDTO();
                     util.convertToStudyContactDTO(trialDTO, studyContactDTO);
-                
+
                 } else {
                     studyParticipationContactDTO = new StudySiteContactDTO();
                     util.convertToStudySiteContactDTO(trialDTO, studyParticipationContactDTO);
-                
+
                    if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
-                        responsiblePartyContactIi = 
+                        responsiblePartyContactIi =
                           IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
                    }
-                   if (trialDTO.getResponsibleGenericContactName() != null 
+                   if (trialDTO.getResponsibleGenericContactName() != null
                           && !trialDTO.getResponsibleGenericContactName().equals("")) {
                        responsiblePartyContactIi = IiConverter.
                           convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
                    }
                }
-            }     
+            }
             //indide updates and adds
-            
+
             List<StudyIndldeDTO> studyIndldeDTOList = new ArrayList<StudyIndldeDTO>();
             //updated
             if (trialDTO.getIndIdeUpdateDtos() != null && trialDTO.getIndIdeUpdateDtos().size() > 0) {
                 for (StudyIndldeWebDTO webdto : trialDTO.getIndIdeUpdateDtos()) {
                     studyIndldeDTOList.add(convetToIndIdeWebDTO(webdto, studyProtocolIi));
                 }
-            } 
+            }
             //newly added
             if (trialDTO.getIndIdeAddDtos() != null && trialDTO.getIndIdeAddDtos().size() > 0) {
-                List<StudyIndldeDTO> studyIndldeDTOs = 
+                List<StudyIndldeDTO> studyIndldeDTOs =
                         util.convertISOINDIDEList(trialDTO.getIndIdeAddDtos(), studyProtocolIi);
                 studyIndldeDTOList.addAll(studyIndldeDTOs);
             }
@@ -673,42 +673,42 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                 for (TrialFundingWebDTO webdto : trialDTO.getFundingDtos()) {
                     studyResourcingDTOs.add(convertToStudyResourcingDTO(webdto, studyProtocolIi));
                 }
-            } 
+            }
             //newly added
             if (trialDTO.getFundingAddDtos() != null && trialDTO.getFundingAddDtos().size() > 0) {
-             List<StudyResourcingDTO> studyResourcingAddDTOs = 
+             List<StudyResourcingDTO> studyResourcingAddDTOs =
                          util.convertISOGrantsList(trialDTO.getFundingAddDtos(), studyProtocolIi);
              studyResourcingDTOs.addAll(studyResourcingAddDTOs);
             }
-            
-            // updated only if the ctGovXmlRequired is true 
+
+            // updated only if the ctGovXmlRequired is true
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = null;
             if (spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-              //update StudyRegulatory 
+              //update StudyRegulatory
               studyRegAuthDTO = util.getStudyRegAuth(studyProtocolIi, trialDTO);
             }
             //collaborators update - send the collaborators list
             List<StudySiteDTO> collaboratorsDTOList = getCollaboratorsForUpdate(trialDTO.getCollaborators());
-            
+
             //ps update- send the participating sites list
-            List<StudySiteAccrualStatusDTO> pssDTOList = 
+            List<StudySiteAccrualStatusDTO> pssDTOList =
                getParticipatingSitesForUpdate(trialDTO.getParticipatingSites());
-          
+
             //list of studysite dtos with updated program code
             List<StudySiteDTO> prgCdUpdatedList = getStudySiteToUpdateProgramCode(trialDTO.getParticipatingSites());
-          
-            updateId = studyProtocolIi; 
+
+            updateId = studyProtocolIi;
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
             studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, studyProtocolIi));
             studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
             studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, studyProtocolIi));
             //call the service to invoke the update method
             PaRegistry.getTrialRegistrationService().
-                        update(spDTO, sosDto, studyIdentifierDTOs, studyIndldeDTOList, studyResourcingDTOs, 
+                        update(spDTO, sosDto, studyIdentifierDTOs, studyIndldeDTOList, studyResourcingDTOs,
                                 documentDTOs, studyContactDTO, studyParticipationContactDTO,
                                summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,
-                              studyRegAuthDTO, collaboratorsDTOList, 
-                              pssDTOList, prgCdUpdatedList, BlConverter.convertToBl(Boolean.FALSE));  
+                              studyRegAuthDTO, collaboratorsDTOList,
+                              pssDTOList, prgCdUpdatedList, BlConverter.convertToBl(Boolean.FALSE));
             TrialValidator.removeSessionAttributes();
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", updateId.getExtension());
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", updateId);
@@ -720,19 +720,20 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
             synchActionWithDTO();
             ServletActionContext.getRequest().getSession().removeAttribute("secondaryIdentifiersList");
             trialDTO.setSecondaryIdentifierAddList(null);
+            trialUtil.removeAssignedIdentifierFromSecondaryIds(trialDTO);
             setDocumentsInSession(trialDTO);
             return ERROR;
         }
         setTrialAction("update");
         ServletActionContext.getRequest().getSession().removeAttribute("grantAddList");
         ServletActionContext.getRequest().getSession().removeAttribute("indIdeAddList");
-     return "redirect_to_search";   
+     return "redirect_to_search";
     }
-    
-    
+
+
     /**
      * validate the submit trial form elements.
-     * 
+     *
      * @throws PAException the PA exception
      */
     private void enforceBusinessRules() throws PAException {
@@ -756,7 +757,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
          //Add other validation rules
         //Regulatory information validation moved to validator
 
-        int ind = 0;        
+        int ind = 0;
         if (getCollaborators() != null && !getCollaborators().isEmpty()) {
             for (PaOrganizationDTO coll : getCollaborators()) {
                 if (coll.getFunctionalRole() == null) {
@@ -772,7 +773,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                     addFieldError("participatingsite.recStatus" + ind, "Recruitment Status should not be null");
                 }
                 if (ps.getRecruitmentStatusDate() == null) {
-                    addFieldError("participatingsite.recStatusDate" + ind, 
+                    addFieldError("participatingsite.recStatusDate" + ind,
                             "Recruitment Status date should not be null");
                 }
                 ind++;
@@ -793,7 +794,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                 if (fm.getSerialNumber() == null) {
                     addFieldError("updserialNumber" + ind, "Serial Number should not be null");
                 }
-                ind++;                
+                ind++;
             }
         }
         ind = 0;
@@ -816,29 +817,29 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                    && indide.getNciDivProgHolder() == null) {
                       addFieldError("updindideNciDivPrgHolder" + ind, "NCI Division Program holder should not be null");
                 }
-                if (indide.getExpandedAccessIndicator() != null 
+                if (indide.getExpandedAccessIndicator() != null
                     && indide.getExpandedAccessIndicator().equalsIgnoreCase("yes")
                     && indide.getExpandedAccessStatus() == null) {
                       addFieldError("updindideExpandedStatus" + ind, "Expanded Access Status should not be null");
                 }
-                ind++;                
+                ind++;
             }
         }
-    } 
-   
-    
+    }
+
+
   /**
    * Convet to ind ide web dto.
-   * 
+   *
    * @param indldeWebDTO the indlde web dto
-   * 
+   *
    * @return the study indlde dto
    */
   private StudyIndldeDTO convetToIndIdeWebDTO(StudyIndldeWebDTO indldeWebDTO, Ii studyProtocolIi) {
       StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();
       studyIndldeDTO.setIdentifier(IiConverter.convertToStudyIndIdeIi(
                                   Long.valueOf(indldeWebDTO.getId())));
-      
+
       studyIndldeDTO.setStudyProtocolIdentifier(studyProtocolIi);
       if (indldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase("Yes")) {
           studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
@@ -860,20 +861,20 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                   indldeWebDTO.getNciDivProgHolder()));
       }
       studyIndldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(indldeWebDTO.getIndldeType()));
-      
+
       return studyIndldeDTO;
-      
+
   }
-  
+
   /**
    * Convert to study resourcing dto.
-   * 
+   *
    * @param trialFundingWebDTO the trial funding web dto
    * @param studyProtocolIi the study protocol ii
-   * 
+   *
    * @return the study resourcing dto
    */
-  private StudyResourcingDTO convertToStudyResourcingDTO(TrialFundingWebDTO trialFundingWebDTO, Ii studyProtocolIi) 
+  private StudyResourcingDTO convertToStudyResourcingDTO(TrialFundingWebDTO trialFundingWebDTO, Ii studyProtocolIi)
   throws PAException {
       StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
       studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourceByID(
@@ -888,14 +889,14 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
       studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
       return studyResoureDTO;
   }
-  
+
   /**
    * Gets the collaborators for update.
-   * 
+   *
    * @param collaboratorsList the collaborators list
-   * 
+   *
    * @return the collaborators for update
-   * 
+   *
    * @throws PAException the PA exception
    */
   private List<StudySiteDTO> getCollaboratorsForUpdate(List<PaOrganizationDTO> collaboratorsList) throws PAException {
@@ -907,25 +908,25 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
       }
       return ssDTO;
   }
-  
+
   /**
    * Gets the participating sites for update.
-   * 
+   *
    * @param ps the ps
-   * 
+   *
    * @return the participating sites for update
-   * 
+   *
    * @throws PAException the PA exception
    */
-  private List<StudySiteAccrualStatusDTO> getParticipatingSitesForUpdate(List<PaOrganizationDTO> ps) 
+  private List<StudySiteAccrualStatusDTO> getParticipatingSitesForUpdate(List<PaOrganizationDTO> ps)
   throws PAException {
       List<StudySiteAccrualStatusDTO> ssaDTO = new ArrayList<StudySiteAccrualStatusDTO>();
       for (PaOrganizationDTO dto : ps) {
           StudySiteAccrualStatusDTO ssasOld = PaRegistry.getStudySiteAccrualStatusService()
                                               .getCurrentStudySiteAccrualStatusByStudySite(
                                                       IiConverter.convertToIi(dto.getId()));
-                                                      
-       
+
+
           StudySiteAccrualStatusDTO ssas =  new StudySiteAccrualStatusDTO();
           ssas.setStudySiteIi(ssasOld.getStudySiteIi());
           ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(dto.getRecruitmentStatus())));
@@ -934,7 +935,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
       }
       return ssaDTO;
   }
-  
+
   private List<StudySiteDTO> getStudySiteToUpdateProgramCode(List<PaOrganizationDTO> ps) throws PAException {
       List<StudySiteDTO> ssDTO = new ArrayList<StudySiteDTO>();
       for (PaOrganizationDTO dto : ps) {
@@ -943,16 +944,16 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
           ssDTO.add(sp);
       }
        return ssDTO;
-      
+
   }
-  
+
   /**
   * Gets the overall status for update.
-  * 
+  *
   * @param util the util
-  * 
+  *
   * @return the overall status for update
-  * 
+  *
   * @throws PAException the PA exception
   */
  private StudyOverallStatusDTO getOverallStatusForUpdate(TrialUtil util) throws PAException {
@@ -961,13 +962,13 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                                       Long.parseLong(trialDTO.getIdentifier()));
 
        //original submission
-      if (spqDTO.getDocumentWorkflowStatusCode() != null 
-              && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED") 
+      if (spqDTO.getDocumentWorkflowStatusCode() != null
+              && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED")
       && IntConverter.convertToInteger(IntConverter.convertToInt(trialDTO.getSubmissionNumber())) == 1) {
-          
+
           sosDto = PaRegistry.getStudyOverallStatusService().
                       getCurrentByStudyProtocol(IiConverter.convertToIi(trialDTO.getIdentifier()));
-          
+
       } else {
           sosDto = new StudyOverallStatusDTO();
           sosDto.setIdentifier(IiConverter.convertToIi((Long) null));
