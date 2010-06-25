@@ -150,16 +150,12 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
             sdDto.setIdentifier(null);
             sdDto.setDiseaseIdentifier(IiConverter.convertToIi(getDisease().getDiseaseIdentifier()));
             Bl blLead = null;
-            if (getDisease().getLead() != null) {
-                Boolean bLead = Boolean.valueOf(getDisease().getLead());
-                blLead = BlConverter.convertToBl(bLead);
-            }  
+            blLead = BlConverter.convertToBl((getDisease().getLead() != null) 
+                    && Boolean.valueOf(getDisease().getLead()));
             sdDto.setLeadDiseaseIndicator(blLead);
             Bl blctGovXmlIndicator = null;
-            if (getDisease().getCtGovXmlIndicator() != null) {
-                Boolean bctGovXmlIndicator =  Boolean.valueOf(getDisease().getCtGovXmlIndicator());
-                blctGovXmlIndicator = BlConverter.convertToBl(bctGovXmlIndicator);
-            }
+            blctGovXmlIndicator = BlConverter.convertToBl((getDisease().getCtGovXmlIndicator() != null) 
+                    && Boolean.valueOf(getDisease().getCtGovXmlIndicator()));
             sdDto.setCtGovXmlIndicator(blctGovXmlIndicator);
             sdDto.setStudyProtocolIdentifier(spIi);
             try {
@@ -184,16 +180,12 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
         if (!hasActionErrors()) {
             StudyDiseaseDTO pa = studyDisesaeSvc.get(IiConverter.convertToIi(disease.getStudyDiseaseIdentifier()));
             Bl blLead = null;
-            if (getDisease().getLead() != null) {
-                Boolean bLead = Boolean.valueOf(getDisease().getLead());
-                blLead = BlConverter.convertToBl(bLead);
-            }
+            blLead = BlConverter.convertToBl((getDisease().getLead() != null) 
+                    && Boolean.valueOf(getDisease().getLead()));
             pa.setLeadDiseaseIndicator(blLead);
             Bl blctGovXmlIndicator = null;
-            if (getDisease().getCtGovXmlIndicator() != null) {
-                Boolean bctGovXmlIndicator =  Boolean.valueOf(getDisease().getCtGovXmlIndicator());
-                blctGovXmlIndicator = BlConverter.convertToBl(bctGovXmlIndicator);
-            }
+            blctGovXmlIndicator = BlConverter.convertToBl((getDisease().getCtGovXmlIndicator() != null) 
+                    && Boolean.valueOf(getDisease().getCtGovXmlIndicator()));
             pa.setCtGovXmlIndicator(blctGovXmlIndicator);
             try {
                 studyDisesaeSvc.update(pa);
@@ -261,10 +253,14 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
             if (!PAUtil.isBlNull(sd.getLeadDiseaseIndicator()) 
                     && BlConverter.covertToBoolean(sd.getLeadDiseaseIndicator())) {
                 n.setLead("Yes");
+            } else {
+                n.setLead("No");
             }
             if (!PAUtil.isBlNull(sd.getCtGovXmlIndicator()) 
                     && BlConverter.covertToBoolean(sd.getCtGovXmlIndicator())) {
                 n.setCtGovXmlIndicator("Yes");
+            } else {
+                n.setCtGovXmlIndicator("No");
             }
             n.setMenuDisplayName(StConverter.convertToString(d.getMenuDisplayName()));
             n.setParentPreferredName(buildParentPreferredName(IiConverter.convertToString(d.getIdentifier())));

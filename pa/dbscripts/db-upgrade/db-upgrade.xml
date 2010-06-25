@@ -478,4 +478,8 @@
         <comment>Adding missing owners to trials.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-2241.sql"/>
     </changeSet>
+	<changeSet id="PO-2298" author="Kalpana">
+		<comment>Updating ctgovxml_indicator in study_disease when it is null.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2298.sql"/>
+    </changeSet>
 </databaseChangeLog>

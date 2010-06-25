@@ -53,7 +53,7 @@
     </tr>
     <tr><td/>
         <td class="value">
-            <s:checkbox name="disease.includeInXML"/>
+            <s:checkbox name="disease.ctGovXmlIndicator"/>
             <s:label cssClass="label">Include in XML?</s:label>
         </td>
     </tr>

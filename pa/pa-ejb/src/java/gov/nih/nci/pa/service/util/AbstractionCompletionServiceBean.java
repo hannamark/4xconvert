@@ -598,7 +598,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
         if (!ctgovxmlIndicator) {
             abstractionList.add(createError("Error", "Select Disease/Condition from Scientific Data Menu",
-                    "Abstraction cannot be valid if trial has no diseases with ctgov xml idicator = 'yes'"));
+                    "Abstraction cannot be valid if trial has no diseases with ctgov xml indicator = 'yes'"));
         }
     }
 
