@@ -269,7 +269,7 @@ function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,e
         return false;
     }
      function addOtherIdentifier() {
-      var orgValue=document.getElementById("otherIdentifierOrg").value;
+      var orgValue=trim(document.getElementById("otherIdentifierOrg").value);
       if (orgValue != null && orgValue != '') {
        var  url = '/registry/protected/ajaxManageOtherIdentifiersActionaddOtherIdentifier.action?otherIdentifier='+orgValue;    
        var div = document.getElementById('otherIdentifierdiv');   
