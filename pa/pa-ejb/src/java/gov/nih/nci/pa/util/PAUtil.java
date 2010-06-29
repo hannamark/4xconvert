@@ -593,6 +593,15 @@ public class PAUtil {
        Matcher m = p.matcher(match);
        return  m.matches();
     }
+    /**
+     * Util method to validate Selection Yes/No.
+     *
+     * @param selection to check the string
+     * @return boolean whether selection is valid or not
+     */
+    public static boolean isYesNo(String selection) {
+       return "yes".equalsIgnoreCase(selection) || "no".equalsIgnoreCase(selection); 
+    }
 
     /**
      * util method to trim a length.
