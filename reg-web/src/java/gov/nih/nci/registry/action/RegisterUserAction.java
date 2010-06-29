@@ -2,11 +2,12 @@
  *
  */
 package gov.nih.nci.registry.action;
-
+ 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PAInvalidPasswordException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.GridAccountServiceBean;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
@@ -248,15 +249,16 @@ public class RegisterUserAction extends ActionSupport {
                 // first update the CSM user
                 CSMUserService.getInstance().updateCSMUser(registryUser, registryUserWebDTO.getUsername(),
                         null);
-
                 //now update the RegistryUser
                 PaRegistry.getRegisterUserService().updateUser(registryUser);
+            } catch (PAInvalidPasswordException e) {
+                addFieldError("registryUserWebDTO.oldPassword", getText("error.register.invalidPassword"));
+                return Constants.MY_ACCOUNT_ERROR;                    
             } catch (Exception e) {
                 LOG.error("error while updating user info", e);
                 return Constants.APPLICATION_ERROR;
             }
         } else { //create user
-
             registryUser.setId(null);
             // first create the CSM user
             userAction =  "create";
@@ -294,7 +296,6 @@ public class RegisterUserAction extends ActionSupport {
 
                 //Then add the user to the correct grid grouper group.
                 gridService.addGridUserToGroup(username, GridAccountServiceBean.GRIDGROUPER_SUBMITTER_GROUP);
-
                 //now create the RegistryUser
                 registryUser =  PaRegistry.getRegisterUserService().createUser(registryUser);
             } catch (Exception e) {

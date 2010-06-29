@@ -94,6 +94,7 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.USStateCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PAInvalidPasswordException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.cgmm.CGMMManager;
@@ -233,7 +234,7 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
             cred.setPassword(oldPassword);
             gridClient.changePassword(cred, newPassword);
         } catch (PermissionDeniedFault e) {
-            throw new PAException("PermissionDeniedFault ERROR: " + e.getFaultReason(), e);
+            throw new PAInvalidPasswordException("PermissionDeniedFault ERROR: " + e.getFaultReason(), e);
         } catch (DorianInternalFault e) {
             throw new PAException("DorianInternalFault ERROR: " + e.getFaultReason(), e);
         } catch (InvalidUserPropertyFault e) {
