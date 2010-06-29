@@ -38,7 +38,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 /**
- * Prop trial Management Bean for registering and updating the protocol. 
+ * Prop trial Management Bean for registering and updating the protocol.
  * @author Naveen Amiruddin
  * @since 05/24/2010
  *
@@ -59,7 +59,7 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
     @EJB
     StudySiteServiceLocal studySiteService = null;
     @EJB
-    StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = null;    
+    StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = null;
     @EJB
     MailManagerServiceLocal mailManagerSerivceLocal = null;
     @EJB
@@ -69,8 +69,8 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
     @EJB
     StudyInboxServiceLocal studyInboxServiceLocal = null;
     @EJB
-    DocumentServiceLocal documentService = null;    
-    
+    DocumentServiceLocal documentService = null;
+
     @EJB
     StudyMilestoneServicelocal studyMilestoneService = null;
 
@@ -81,7 +81,7 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
 
     /**
      * update a proprietary trial.
-     * @param studyProtocolDTO study protocol dto 
+     * @param studyProtocolDTO study protocol dto
      * @param leadOrganizationDTO lead organization dto
      * @param summary4OrganizationDTO summary 4 organization dto
      * @param leadOrganizationIdentifier lead organization identifier
@@ -93,7 +93,7 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    @SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" , 
+    @SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" ,
         "PMD.ExcessiveParameterList" , "PMD.ExcessiveMethodLength" })
     public void update(
             StudyProtocolDTO studyProtocolDTO,
@@ -108,16 +108,16 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
     throws PAException {
         if (studyProtocolDTO == null) {
             throw new PAException(VALIDATION_EXCEPTION + "Study Protocol DTO is null");
-        }        
+        }
         if (PAUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
             throw new PAException(VALIDATION_EXCEPTION + "Study Protocol DTO identifier is null");
         }
         try {
-            StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(studyProtocolDTO.getIdentifier());  
+            StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(studyProtocolDTO.getIdentifier());
             String userLastCreated = StConverter.convertToString(spDto.getUserLastCreated());
-    
+
             validate(studyProtocolDTO , leadOrganizationDTO ,  leadOrganizationIdentifier ,
-                    nctIdentifier, documentDTOs , studySiteDTOs , studySiteAccrualDTOs , 
+                    nctIdentifier, documentDTOs , studySiteDTOs , studySiteAccrualDTOs ,
                     userLastCreated);
             // the validation are done, proceed to update
             Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
@@ -125,7 +125,7 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
             spDto.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
             spDto.setPhaseCode(studyProtocolDTO.getPhaseCode());
             studyProtocolService.updateStudyProtocol(spDto);
-            updateLeadOrganization(paServiceUtils.findOrCreateEntity(leadOrganizationDTO) , 
+            updateLeadOrganization(paServiceUtils.findOrCreateEntity(leadOrganizationDTO) ,
                     leadOrganizationIdentifier , studyProtocolIi);
             updateNctIdentifier(nctIdentifier, studyProtocolIi);
             StudyResourcingDTO srDto = null;
@@ -133,7 +133,7 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
                 srDto = new StudyResourcingDTO();
                 srDto.setTypeCode(summary4TypeCode);
             }
-            paServiceUtils.manageSummaryFour(studyProtocolIi, (summary4OrganizationDTO != null 
+            paServiceUtils.manageSummaryFour(studyProtocolIi, (summary4OrganizationDTO != null
                     ? paServiceUtils.findOrCreateEntity(summary4OrganizationDTO) : null) , srDto);
             for (StudySiteDTO ssDto : studySiteDTOs) {
                 StudySiteDTO studySiteDto = studySiteService.get(ssDto.getIdentifier());
@@ -142,7 +142,7 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
                 studySiteDto.setAccrualDateRange(ssDto.getAccrualDateRange());
                 studySiteService.update(studySiteDto);
             }
-            
+
             for (StudySiteAccrualStatusDTO ssasDto : studySiteAccrualDTOs) {
                 ssasDto.setIdentifier(null);
                 studySiteAccrualStatusService.createStudySiteAccrualStatus(ssasDto);
@@ -160,10 +160,10 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
-        }        
+        }
     }
-    
-    private void updateLeadOrganization(OrganizationDTO leadOrg , St leadOrganizationIdentifier , 
+
+    private void updateLeadOrganization(OrganizationDTO leadOrg , St leadOrganizationIdentifier ,
             Ii studyProtocolIi) throws PAException {
         StudySiteDTO ssCriteriaDTO = new StudySiteDTO();
         ssCriteriaDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
@@ -171,7 +171,7 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
         List<StudySiteDTO> studySiteDtos = paServiceUtils.getStudySite(ssCriteriaDTO, true);
         StudySiteDTO studySiteDTO = PAUtil.getFirstObj(studySiteDtos);
         if (studySiteDTO == null) {
-            throw new PAException(VALIDATION_EXCEPTION + "Lead organization not found for Study Protocol " 
+            throw new PAException(VALIDATION_EXCEPTION + "Lead organization not found for Study Protocol "
                     + studyProtocolIi.getExtension());
         }
         studySiteDTO.setResearchOrganizationIi(IiConverter.convertToIi(PaRegistry.getOrganizationCorrelationService().
@@ -179,7 +179,7 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
         studySiteDTO.setLocalStudyProtocolIdentifier(leadOrganizationIdentifier);
         studySiteService.update(studySiteDTO);
     }
-    
+
     private void updateNctIdentifier(St nctIdentifier , Ii studyProtocolIi) throws PAException {
         StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
         nctIdentifierDTO.setLocalStudyProtocolIdentifier(nctIdentifier);
@@ -191,7 +191,7 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
                 getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId)));
         paServiceUtils.manageStudyIdentifiers(nctIdentifierDTO);
     }
-    @SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" , "PMD.ExcessiveParameterList" 
+    @SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" , "PMD.ExcessiveParameterList"
         , "PMD.ExcessiveMethodLength" })
     private void validate(StudyProtocolDTO studyProtocolDTO,
             OrganizationDTO leadOrganizationDTO ,
@@ -203,32 +203,34 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
         StringBuffer errorMsg = new StringBuffer();
         errorMsg.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null , " : "");
         errorMsg.append(leadOrganizationDTO == null ? "Lead Organization DTO cannot be null , " : "");
-        errorMsg.append(PAUtil.isStNull(leadOrganizationIdentifier) 
+        errorMsg.append(PAUtil.isStNull(leadOrganizationIdentifier)
                 ? "Lead Organization identifier cannot be null , " : "");
         if (studyProtocolDTO != null) {
-            errorMsg.append(PAUtil.isIiNull(studyProtocolDTO.getIdentifier())  
+            errorMsg.append(PAUtil.isIiNull(studyProtocolDTO.getIdentifier())
                     ? "Study Protocol Identifier cannot be null " : "");
-            errorMsg.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle())  
+            errorMsg.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle())
                     ? "Official Title cannot be null " : "");
-            errorMsg.append(PAUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode())  
+            if (PAUtil.isStNull(nctIdentifier)) {
+                errorMsg.append(PAUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode())
                     ? "Purpose cannot be null " : "");
-            errorMsg.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null " : "");
-            errorMsg.append(PAUtil.isStNull(studyProtocolDTO.getUserLastCreated())  
+                errorMsg.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null " : "");
+            }
+            errorMsg.append(PAUtil.isStNull(studyProtocolDTO.getUserLastCreated())
                     ? "User created by cannot be null " : "");
         } else {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
         }
         if (PAUtil.isListNotEmpty(studySiteDTOs)) {
             for (StudySiteDTO studySiteDto : studySiteDTOs) {
-                errorMsg.append(PAUtil.isIiNull(studySiteDto.getStudyProtocolIdentifier()) 
+                errorMsg.append(PAUtil.isIiNull(studySiteDto.getStudyProtocolIdentifier())
                         ? "Study Protocol Identifier  from Study Site cannot be null " : "");
-                errorMsg.append(PAUtil.isIiNull(studySiteDto.getIdentifier())  
+                errorMsg.append(PAUtil.isIiNull(studySiteDto.getIdentifier())
                         ? "Study Site Identifier cannot be null " : "");
             }
         }
-        if (PAUtil.isStNull(nctIdentifier) 
+        if (PAUtil.isStNull(nctIdentifier)
                 && PAUtil.isListEmpty(documentService.getByStudyProtocol(studyProtocolDTO.getIdentifier()))) {
-                errorMsg.append("NCT identifier is required as there are no Documents");                
+                errorMsg.append("NCT identifier is required as there are no Documents");
         }
         if (userCreated != null && !userCreated.equalsIgnoreCase(
                 StConverter.convertToString(studyProtocolDTO.getUserLastCreated()))) {
@@ -253,10 +255,10 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
             if (PAUtil.isIiNull(ssasDto.getStudySiteIi())) {
                 errorMsg.append(" Study Site Accrual Status identifier cannot be null");
                 continue;
-            }            
+            }
             if (studySiteMap.get(ssasDto.getStudySiteIi().getExtension()) == null) {
                 errorMsg.append(" Study site identifier not found in Study Site Accural Status DTO ")
-                        .append(ssasDto.getStudySiteIi().getExtension());  
+                        .append(ssasDto.getStudySiteIi().getExtension());
             }
         }
         DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(

@@ -126,14 +126,14 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 
 /**
  * The Class UpdateProprietaryTrialAction.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since May 18 2010
  */
 @SuppressWarnings({"unchecked"  })
 public class UpdateProprietaryTrialAction extends ManageFileAction implements
         ServletResponseAware {
-    
+
     private static final Logger LOG = Logger.getLogger(UpdateProprietaryTrialAction.class);
     private static final long serialVersionUID = 1L;
     private static final String SESSION_TRIAL_DTO = "trialDTO";
@@ -141,7 +141,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
     private ProprietaryTrialDTO trialDTO;
     private final TrialUtil  util = new TrialUtil();
     private String trialAction = null;
-        
+    private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     /**
      * View.
      * @return res
@@ -164,7 +164,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
         }
         return SUCCESS;
     }
-    
+
     /**
      * Review.
      * @return st
@@ -184,19 +184,19 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
                 return ERROR;
             }
             populateList(docDTOList);
-            
+
             trialDTO.setDocDtos(docDTOList);
         } catch (IOException e) {
             addActionError(e.getMessage());
             return ERROR;
-        }        
+        }
         ServletActionContext.getRequest().getSession().removeAttribute(
                 DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName());
         ServletActionContext.getRequest().getSession().removeAttribute(DocumentTypeCode.OTHER.getShortName());
         ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_DTO, trialDTO);
         return "review";
     }
-    
+
     /**
      * Cancel.
      * @return s
@@ -205,7 +205,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
         TrialValidator.removeSessionAttributes();
         return "redirect_to_search";
     }
-    
+
     /**
      * Edits the.
      * @return s
@@ -222,7 +222,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
         return "edit";
     }
 
-    
+
     /**
      * Update.
      * @return the string
@@ -239,25 +239,25 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
                     IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
             util.convertToStudyProtocolDTO(trialDTO, studyProtocolDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext.
-                    getRequest().getRemoteUser()));            
+                    getRequest().getRemoteUser()));
             OrganizationDTO leadOrganizationDTO = util.convertToLeadOrgDTO(trialDTO);
             St leadOrganizationIdentifier = StConverter.convertToSt(trialDTO.getLeadOrgTrialIdentifier());
             St nctIdentifier = StConverter.convertToSt(trialDTO.getNctIdentifier());
             Cd summary4TypeCode = CdConverter.convertStringToCd(trialDTO.getSummaryFourFundingCategoryCode());
-            OrganizationDTO summary4organizationDTO = util.convertToSummary4OrgDTO(trialDTO);            
+            OrganizationDTO summary4organizationDTO = util.convertToSummary4OrgDTO(trialDTO);
             List<StudySiteAccrualStatusDTO> siteAccrualStatusDTOList = getParticipatingSitesForUpdate(
                     trialDTO.getParticipatingSitesList());
             List<StudySiteDTO> siteDTOList = util.getStudySiteToUpdate(trialDTO.getParticipatingSitesList());
-            List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos(), 
+            List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos(),
                     studyProtocolDTO.getIdentifier());
-            
-           PaRegistry.getProprietaryTrialService().update(studyProtocolDTO, leadOrganizationDTO, 
-                   summary4organizationDTO, leadOrganizationIdentifier, 
+
+           PaRegistry.getProprietaryTrialService().update(studyProtocolDTO, leadOrganizationDTO,
+                   summary4organizationDTO, leadOrganizationIdentifier,
                     nctIdentifier, summary4TypeCode, documentDTOs, siteDTOList, siteAccrualStatusDTOList);
             StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
             TrialValidator.removeSessionAttributes();
-            ServletActionContext.getRequest().getSession().setAttribute("protocolId", 
+            ServletActionContext.getRequest().getSession().setAttribute("protocolId",
                     protocolDTO.getIdentifier().getExtension());
         } catch (PAException e) {
             LOG.error(e);
@@ -273,7 +273,12 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
      */
     private void enforceBusinessRules() {
         HttpSession session = ServletActionContext.getRequest().getSession();
-        if (StringUtils.isEmpty(trialDTO.getNctIdentifier()) 
+        if (StringUtils.isEmpty(trialDTO.getOfficialTitle())) {
+            addFieldError("trialDTO.officialTitle", getText("error.submit.trialTitle"));
+        } else if (trialDTO.getOfficialTitle().length() > TRIAL_TITLE_MAX_LENGTH) {
+            addFieldError("trialDTO.officialTitle", getText("error.submit.trialTitleLength"));
+        }
+        if (StringUtils.isEmpty(trialDTO.getNctIdentifier())
                 && StringUtils.isEmpty(trialDTO.getPhaseCode())
                 && StringUtils.isEmpty(trialDTO.getPrimaryPurposeCode())) {
             //if the nct Number is not present throw error phase code and primary purpose codes
@@ -289,19 +294,19 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
     }
 
     private void checkSummary4Funding() {
-        if (!StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode()) 
+        if (!StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())
                 && StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
             addFieldError("summary4FundingSponsor", "Select the Summary 4 Funding Sponsor");
         }
-        if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode()) 
+        if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())
                 && !StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
             addFieldError("trialDTO.summaryFourFundingCategoryCode", "Select the Summary 4 Funding Sponsor Type");
         }
     }
 
     private void checkNctAndDoc(HttpSession session) {
-        if (PAUtil.isEmpty(trialDTO.getNctIdentifier()) 
-                && PAUtil.isEmpty(protocolDocFileName) 
+        if (PAUtil.isEmpty(trialDTO.getNctIdentifier())
+                && PAUtil.isEmpty(protocolDocFileName)
                 && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
             addFieldError("trialDTO.nctIdentifier", "Provide either NCT Number or Protocol Trial Template.\n");
             addFieldError("trialDTO.protocolDocFileName", "Provide either NCT Number or Protocol Trial Template.\n");
@@ -318,7 +323,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
             StudySiteDTO studySiteDTO = getSubmittingStudySiteDTO(dto);
             String errMsg = paServiceUtils.validateRecuritmentStatusDateRule(studySiteAccrualStatusDTO, studySiteDTO);
             if (StringUtils.isNotEmpty(errMsg)) {
-                addActionError(errMsg);    
+                addActionError(errMsg);
             }
         }
     }
@@ -331,19 +336,19 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
         StudySiteDTO siteDTO = new StudySiteDTO();
         siteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(dto.getSiteLocalTrialIdentifier()));
         siteDTO.setProgramCodeText(StConverter.convertToSt(dto.getProgramCode()));
-        if (StringUtils.isNotEmpty(dto.getDateOpenedforAccrual()) 
+        if (StringUtils.isNotEmpty(dto.getDateOpenedforAccrual())
                 && StringUtils.isNotEmpty(dto.getDateClosedforAccrual())) {
             siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(dto.getDateOpenedforAccrual(),
                     dto.getDateClosedforAccrual()));
         }
-        if (StringUtils.isNotEmpty(dto.getDateOpenedforAccrual()) 
+        if (StringUtils.isNotEmpty(dto.getDateOpenedforAccrual())
                 && StringUtils.isEmpty(dto.getDateClosedforAccrual())) {
             siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(dto.getDateOpenedforAccrual(),
                     null));
         }
         return siteDTO;
     }
-    
+
     /**
      * Convert to study site accrual status dto.
      * @param trialDto the trial dto
@@ -357,7 +362,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
                 .getRecruitmentStatusDate())));
         return isoDto;
     }
-    
+
     private void setDocumentsInSession() {
         if (trialDTO != null && trialDTO.getDocDtos() != null && !trialDTO.getDocDtos().isEmpty()) {
             for (TrialDocumentWebDTO webDto : trialDTO.getDocDtos()) {
@@ -397,13 +402,13 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
         }
         trialDTO.setParticipatingSitesList(organizationList);
     }
-        
-    private List<StudySiteAccrualStatusDTO> getParticipatingSitesForUpdate(List<SubmittedOrganizationDTO> ps) 
+
+    private List<StudySiteAccrualStatusDTO> getParticipatingSitesForUpdate(List<SubmittedOrganizationDTO> ps)
     throws PAException {
         List<StudySiteAccrualStatusDTO> ssaDTO = new ArrayList<StudySiteAccrualStatusDTO>();
         for (SubmittedOrganizationDTO dto : ps) {
             StudySiteAccrualStatusDTO ssasOld = PaRegistry.getStudySiteAccrualStatusService()
-             .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToIi(dto.getId()));     
+             .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToIi(dto.getId()));
             StudySiteAccrualStatusDTO ssas =  new StudySiteAccrualStatusDTO();
             ssas.setStudySiteIi(ssasOld.getStudySiteIi());
             ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(dto.getRecruitmentStatus())));
@@ -428,7 +433,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
     public HttpServletResponse getServletResponse() {
         return servletResponse;
     }
-    
+
     /**
      * Gets the trial dto.
      * @return the trialDTO
@@ -444,7 +449,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
     public void setTrialDTO(ProprietaryTrialDTO trialDTO) {
         this.trialDTO = trialDTO;
     }
-    
+
     /**
      * Gets the trial action.
      * @return the trialAction
@@ -452,7 +457,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
     public String getTrialAction() {
         return trialAction;
     }
-    
+
     /**
      * Sets the trial action.
      * @param trialAction the trialAction to set
