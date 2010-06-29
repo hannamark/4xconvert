@@ -16,14 +16,16 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.HashMap;
@@ -37,6 +39,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.apache.commons.lang.StringUtils;
 /**
  * Prop trial Management Bean for registering and updating the protocol.
  * @author Naveen Amiruddin
@@ -70,10 +74,10 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
     StudyInboxServiceLocal studyInboxServiceLocal = null;
     @EJB
     DocumentServiceLocal documentService = null;
-
     @EJB
     StudyMilestoneServicelocal studyMilestoneService = null;
-
+    @EJB
+    RegistryUserServiceLocal userServiceLocal = null;
     @Resource
     void setSessionContext(SessionContext ctx) {
       this.ejbContext = ctx;
@@ -114,11 +118,8 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
         }
         try {
             StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(studyProtocolDTO.getIdentifier());
-            String userLastCreated = StConverter.convertToString(spDto.getUserLastCreated());
-
             validate(studyProtocolDTO , leadOrganizationDTO ,  leadOrganizationIdentifier ,
-                    nctIdentifier, documentDTOs , studySiteDTOs , studySiteAccrualDTOs ,
-                    userLastCreated);
+                    nctIdentifier, documentDTOs , studySiteDTOs , studySiteAccrualDTOs);
             // the validation are done, proceed to update
             Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
             spDto.setOfficialTitle(studyProtocolDTO.getOfficialTitle());
@@ -191,54 +192,82 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
                 getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId)));
         paServiceUtils.manageStudyIdentifiers(nctIdentifierDTO);
     }
-    @SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" , "PMD.ExcessiveParameterList"
-        , "PMD.ExcessiveMethodLength" })
+    @SuppressWarnings({"PMD.ExcessiveParameterList" })
     private void validate(StudyProtocolDTO studyProtocolDTO,
             OrganizationDTO leadOrganizationDTO ,
             St leadOrganizationIdentifier ,
             St nctIdentifier,
             List<DocumentDTO> documentDTOs ,
             List<StudySiteDTO> studySiteDTOs ,
-            List<StudySiteAccrualStatusDTO> studySiteAccrualDTOs , String userCreated) throws PAException {
+            List<StudySiteAccrualStatusDTO> studySiteAccrualDTOs) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
-        errorMsg.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null , " : "");
-        errorMsg.append(leadOrganizationDTO == null ? "Lead Organization DTO cannot be null , " : "");
-        errorMsg.append(PAUtil.isStNull(leadOrganizationIdentifier)
-                ? "Lead Organization identifier cannot be null , " : "");
-        if (studyProtocolDTO != null) {
-            errorMsg.append(PAUtil.isIiNull(studyProtocolDTO.getIdentifier())
-                    ? "Study Protocol Identifier cannot be null " : "");
-            errorMsg.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle())
-                    ? "Official Title cannot be null " : "");
-            if (PAUtil.isStNull(nctIdentifier)) {
-                errorMsg.append(PAUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode())
-                    ? "Purpose cannot be null " : "");
-                errorMsg.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null " : "");
-            }
-            errorMsg.append(PAUtil.isStNull(studyProtocolDTO.getUserLastCreated())
-                    ? "User created by cannot be null " : "");
-        } else {
-            throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
+        notNullCheck(studyProtocolDTO, leadOrganizationDTO,
+                leadOrganizationIdentifier, nctIdentifier, errorMsg);
+        validateOwner(studyProtocolDTO, errorMsg);
+        if (PAUtil.isStNull(nctIdentifier) && PAUtil.isListEmpty(
+                documentService.getByStudyProtocol(studyProtocolDTO.getIdentifier()))) {
+                errorMsg.append("NCT identifier is required as there are no Documents");
         }
         if (PAUtil.isListNotEmpty(studySiteDTOs)) {
             for (StudySiteDTO studySiteDto : studySiteDTOs) {
-                errorMsg.append(PAUtil.isIiNull(studySiteDto.getStudyProtocolIdentifier())
-                        ? "Study Protocol Identifier  from Study Site cannot be null " : "");
-                errorMsg.append(PAUtil.isIiNull(studySiteDto.getIdentifier())
-                        ? "Study Site Identifier cannot be null " : "");
+                if (PAUtil.isIiNull(studySiteDto.getStudyProtocolIdentifier())) {
+                    errorMsg.append("Study Protocol Identifier  from Study Site cannot be null ");
+                }
+                if (PAUtil.isIiNull(studySiteDto.getIdentifier())) {
+                    errorMsg.append("Study Site Identifier cannot be null ");
+                }
             }
-        }
-        if (PAUtil.isStNull(nctIdentifier)
-                && PAUtil.isListEmpty(documentService.getByStudyProtocol(studyProtocolDTO.getIdentifier()))) {
-                errorMsg.append("NCT identifier is required as there are no Documents");
-        }
-        if (userCreated != null && !userCreated.equalsIgnoreCase(
-                StConverter.convertToString(studyProtocolDTO.getUserLastCreated()))) {
-            errorMsg.append("Update to Trial can be submitted by the submitter of the Trial.");
         }
         if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
         }
+        validateStudySites(studySiteDTOs, studySiteAccrualDTOs, errorMsg);
+        validateDocWrkStatus(studyProtocolDTO, errorMsg);
+        validateDocuments(documentDTOs, errorMsg);
+        if (errorMsg.length() > 0) {
+            throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
+        }
+    }
+
+    /**
+     * @param documentDTOs
+     * @param errorMsg
+     */
+    private void validateDocuments(List<DocumentDTO> documentDTOs,
+            StringBuffer errorMsg) {
+        for (DocumentDTO docDto : documentDTOs) {
+            if (PAUtil.isIiNotNull(docDto.getIdentifier()) && (!paServiceUtils.isIiExistInPA(docDto.getIdentifier()))) {
+                errorMsg.append("Document id " + docDto.getIdentifier().getExtension() + " does not exits.");
+            }
+        }
+    }
+
+    /**
+     * @param studyProtocolDTO
+     * @param errorMsg
+     * @throws PAException
+     */
+    private void validateDocWrkStatus(StudyProtocolDTO studyProtocolDTO,
+            StringBuffer errorMsg) throws PAException {
+        DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(
+                studyProtocolDTO.getIdentifier());
+        String dwfs = isoDocWrkStatus.getStatusCode().getCode();
+        if (dwfs.equals(DocumentWorkflowStatusCode.SUBMITTED.getCode())
+                || dwfs.equals(DocumentWorkflowStatusCode.REJECTED.getCode())) {
+            errorMsg.append("Only Trials with processing status Accepted or Abstracted or  "
+                    + " Abstraction Verified No Response or   Abstraction Verified No Response can be Updated.");
+        }
+    }
+
+    /**
+     * @param studySiteDTOs
+     * @param studySiteAccrualDTOs
+     * @param errorMsg
+     * @throws PAException
+     */
+    private void validateStudySites(List<StudySiteDTO> studySiteDTOs,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualDTOs,
+            StringBuffer errorMsg) throws PAException {
         Map<String , StudySiteDTO> studySiteMap = new HashMap<String, StudySiteDTO>();
         for (StudySiteDTO ssDto : studySiteDTOs) {
             if (PAUtil.isIiNull(ssDto.getIdentifier())) {
@@ -261,21 +290,69 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
                         .append(ssasDto.getStudySiteIi().getExtension());
             }
         }
-        DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(
-                studyProtocolDTO.getIdentifier());
-        String dwfs = isoDocWrkStatus.getStatusCode().getCode();
-        if (dwfs.equals(DocumentWorkflowStatusCode.SUBMITTED.getCode())
-                || dwfs.equals(DocumentWorkflowStatusCode.REJECTED.getCode())) {
-            errorMsg.append("Only Trials with processing status Accepted or Abstracted or  "
-                    + " Abstraction Verified No Response or   Abstraction Verified No Response can be Updated.");
+    }
+
+    /**
+     * @param studyProtocolDTO
+     * @param leadOrganizationDTO
+     * @param leadOrganizationIdentifier
+     * @param nctIdentifier
+     * @param errorMsg
+     * @throws PAException
+     */
+    private void notNullCheck(StudyProtocolDTO studyProtocolDTO,
+            OrganizationDTO leadOrganizationDTO, St leadOrganizationIdentifier,
+            St nctIdentifier, StringBuffer errorMsg) throws PAException {
+        if (studyProtocolDTO == null) {
+            errorMsg.append("Study Protocol DTO cannot be null , ");
         }
-        for (DocumentDTO docDto : documentDTOs) {
-            if (PAUtil.isIiNotNull(docDto.getIdentifier()) && (!paServiceUtils.isIiExistInPA(docDto.getIdentifier()))) {
-                errorMsg.append("Document id " + docDto.getIdentifier().getExtension() + " does not exits.");
+        if (leadOrganizationDTO == null) {
+            errorMsg.append("Lead Organization DTO cannot be null , ");
+        }
+        if (PAUtil.isStNull(leadOrganizationIdentifier)) {
+            errorMsg.append("Lead Organization identifier cannot be null , ");
+        }
+        if (studyProtocolDTO != null) {
+            if (PAUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
+                errorMsg.append("Study Protocol Identifier cannot be null ");
             }
+            if (PAUtil.isStNull(studyProtocolDTO.getOfficialTitle())) {
+                errorMsg.append("Official Title cannot be null ");
+            }
+            if (PAUtil.isStNull(nctIdentifier)) {
+                if (PAUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode())) {
+                    errorMsg.append("Purpose cannot be null ");
+                }
+                if (PAUtil.isCdNull(studyProtocolDTO.getPhaseCode())) {
+                    errorMsg.append("Phase cannot be null ");
+                }
+            }
+        } else {
+                throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
         }
-        if (errorMsg.length() > 0) {
-            throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
+    }
+
+    /**
+     * @param studyProtocolDTO
+     * @param errorMsg
+     * @throws PAException
+     */
+    private void validateOwner(StudyProtocolDTO studyProtocolDTO,
+            StringBuffer errorMsg) throws PAException {
+        String loginName = "";
+        if (!PAUtil.isStNull(studyProtocolDTO.getUserLastCreated())) {
+            loginName = studyProtocolDTO.getUserLastCreated().getValue();
+            CSMUserService userService = new CSMUserService();
+            User user = userService.getCSMUser(loginName);
+            if (user == null) {
+                errorMsg.append("Submitter " + loginName + " does not exist. Please do self register in CTRP.");
+            }
+        } else {
+            errorMsg.append("Submitter is required.");
+        }
+        if (StringUtils.isNotEmpty(loginName) && !userServiceLocal.hasTrialAccess(loginName,
+                Long.parseLong(studyProtocolDTO.getIdentifier().getExtension()))) {
+           errorMsg.append("Update to Trial can be submitted by the Owner of the original Trial.\n");
         }
     }
 }
