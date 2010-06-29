@@ -73,7 +73,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      SPONSOR_CONTACT_TYPE("Sponsor Contact Type", "setSponsorContactType"),
     /** */
-     SPONSOR_CONTACT_TITLE("Sponsor Contact Title", "setResponsibleGenericContactName"),
+     SPONSOR_CONTACT_TITLE("[Sponsor Contact] Title", "setResponsibleGenericContactName"),
     /** */
      SPONSOR_CONTACT_FIRST_NAME("[Sponsor Contact] First Name", "setSponsorContactFName"),
     /** */
@@ -247,7 +247,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      OTHER_TRIAL_DOC_FILE_NAME("Other Trial Related Document File Name", "setOtherTrialRelDocumentFileName"),
     /** */
-     CHANGE_MEMO_DOC_FILE_NAME("Change Request Document Name", "setChangeRequestDocFileName"),    
+     CHANGE_MEMO_DOC_FILE_NAME("Change Memo Document Name", "setChangeRequestDocFileName"),    
     /** */
     PROTOCOL_HIGHLIGHTED_DOC_FILE_NAME("Protocol Highlight Document Name", "setProtocolHighlightDocFileName");
      
