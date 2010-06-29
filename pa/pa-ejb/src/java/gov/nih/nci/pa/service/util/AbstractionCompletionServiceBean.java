@@ -289,7 +289,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             enforceStudySiteContactNullification(studyProtocolIi, abstractionWarnList, abstractionList);
             enforceArmGroup(studyProtocolIi, studyProtocolDTO, abstractionList);
             enforceTrialFunding(studyProtocolIi, abstractionList);
-            enforceDisease(studyProtocolIi, abstractionList);
+            enforceDisease(studyProtocolDTO, abstractionList);
             enforceArmInterventional(studyProtocolIi, abstractionList);
             enforceEligibility(studyProtocolIi, abstractionList);
             enforceCollaborator(studyProtocolIi, abstractionList);
@@ -310,7 +310,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         enforceStudySiteNullification(studyProtocolIi, abstractionWarnList);
         enforceStudySiteContactNullification(studyProtocolIi, abstractionWarnList, abstractionList);
         enforceTrialFunding(studyProtocolIi, abstractionList);
-        enforceDisease(studyProtocolIi, abstractionList);
+        enforceDisease(studyProtocolDTO, abstractionList);
         // check duplicate for IND
         /*
          * List<StudyIndldeDTO> siList = studyIndldeService.getByStudyProtocol(studyProtocolIi); if
@@ -576,9 +576,11 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
     }
 
-    private void enforceDisease(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) throws PAException {
+    private void enforceDisease(StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList) 
+    throws PAException {
         boolean leadExist = false;
         boolean ctgovxmlIndicator = false;
+        Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
         List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
         for (StudyDiseaseDTO sdDto : sdDtos) {
             if (sdDto.getLeadDiseaseIndicator() != null && sdDto.getLeadDiseaseIndicator().getValue()) {
@@ -596,7 +598,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             abstractionList.add(createError("Error", "Select Disease/Condition from Scientific Data Menu",
                     "Trial must include at least one LEAD disease"));
         }
-        if (!ctgovxmlIndicator) {
+        //not a proprietary trial and the studyprotocol is set to ctgov = true 
+        //and there are no diseases with xml inclusion indicator set to true
+        if ((PAUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator())
+             || !BlConverter.covertToBoolean(studyProtocolDTO.getProprietaryTrialIndicator()))
+            && (!PAUtil.isBlNull(studyProtocolDTO.getCtgovXmlRequiredIndicator())
+                && BlConverter.covertToBoolean(studyProtocolDTO.getCtgovXmlRequiredIndicator()))
+            && !ctgovxmlIndicator) {
             abstractionList.add(createError("Error", "Select Disease/Condition from Scientific Data Menu",
                     "Abstraction cannot be valid if trial has no diseases with ctgov xml indicator = 'yes'"));
         }
@@ -791,21 +799,20 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                         "Select Human Subject Safety under Regulatory Information",
                         "Data inconsistency: \'Submitted, denied\' value (Review Board Approval Status) is "
                                 + "only valid for the current trial status \'Disapproved\'."));
-
-            }
-
-            if (studySite.getFunctionalCode().getCode()
-                    .equals(StudySiteFunctionalCode.STUDY_OVERSIGHT_COMMITTEE.getCode())
-                    && studySite.getReviewBoardApprovalStatusCode().getCode()
-                    .equals(ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED)
-                    && studyRecruitmentStatusServiceLocal.getCurrentByStudyProtocol(spDto.getIdentifier())
-                    .equals(StudyRecruitmentStatusCode.RECRUITING_ACTIVE)) {
-                abstractionWarnList.add(createError("Warning", "Select a different review board status",
-                        "Data inconsistency. Review Board Approval Status cannot be ÔNot requiredÕ"
-                        + " for an interventional study that is recruiting patients"));
             }
         }
 
+        // spList Empty => No Study Oversight Committee.
+        // Display warning if Study is recruiting && reviewBoardindicator is false =>
+        // Board Approval Status = Submission Not Required.
+        if (spList.isEmpty() && !reviewBoardIndicator.booleanValue()
+                && studyRecruitmentStatusServiceLocal.getCurrentByStudyProtocol(
+                        spDto.getIdentifier()).getStatusCode().getCode()
+                .equals(StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode())) {
+            abstractionWarnList.add(createError("Warning", "Select a different review board status",
+                    "Data inconsistency. Review Board Approval Status cannot be 'Not required'"
+                    + " for an interventional study that is recruiting patients"));
+        }
     }
 
     @SuppressWarnings({ "PMD" })
