@@ -30,6 +30,7 @@
         }
     }
     function cancel(){
+        if (winCal != null ) winCal.close();
         document.milestoneForm.action="milestone.action";
         document.milestoneForm.submit();
     }
