@@ -317,6 +317,7 @@ public abstract class AbstractRegWebTest {
         dto.setDelayedPostingIndicator("NO");
         dto.setOversightAuthorityCountry("oversightAuthorityCountry");
         dto.setOversightOrgName("oversightOrgName");
+        dto.setCtGovXmlIndicator(true);
         return dto;
     }
     /**

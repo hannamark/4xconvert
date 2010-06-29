@@ -186,8 +186,34 @@ public class TrialBatchDataValidator {
     }
     private StringBuffer validateOversightInfo(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
+        if (StringUtils.isEmpty(batchDto.getOversightOrgName())) {
+          fieldErr.append("Oversight Authority Organization Name is required. \n");
+        }
+        if (StringUtils.isEmpty(batchDto.getOversightAuthorityCountry())) {
+          fieldErr.append("Oversight Authority Country is required. \n");
+        }
+        if (StringUtils.isEmpty(batchDto.getFdaRegulatoryInformationIndicator())) {
+          fieldErr.append("FDA Regulatory Information Indicator is required. \n");
+        }
+        if (StringUtils.isEmpty(batchDto.getDataMonitoringCommitteeAppointedIndicator())) {
+          fieldErr.append("Data Monitoring Committee Appointed Indicator is required. \n");
+        }
+        if (StringUtils.isNotEmpty(batchDto.getFdaRegulatoryInformationIndicator()) 
+            && !PAUtil.isYesNo(batchDto.getFdaRegulatoryInformationIndicator())) {
+           fieldErr.append("FDA Regulatory Information Indicator can be Yes or No.\n");
+        }
+        if (!PAUtil.isYesNo(batchDto.getSection801Indicator())) {
+           fieldErr.append("Section 801 Indicator can be Yes or No.\n");
+        }
+        if (!PAUtil.isYesNo(batchDto.getDelayedPostingIndicator())) {
+           fieldErr.append("Delayed Posting Indicator can be Yes or No.\n");
+        }
+        if (StringUtils.isNotEmpty(batchDto.getDataMonitoringCommitteeAppointedIndicator()) 
+            && !PAUtil.isYesNo(batchDto.getDataMonitoringCommitteeAppointedIndicator())) {
+            fieldErr.append("Data Monitoring Committee Appointed Indicator can be Yes or No.\n");
+        }
         if (PAUtil.isNotEmpty(batchDto.getFdaRegulatoryInformationIndicator())
-                && batchDto.getFdaRegulatoryInformationIndicator().equalsIgnoreCase("YES")) {
+            && batchDto.getFdaRegulatoryInformationIndicator().equalsIgnoreCase("YES")) {
             if (PAUtil.isEmpty(batchDto.getSection801Indicator())) {
                 fieldErr.append("Must be not NULL if FDA Regulatory Information Indicator is 'Yes'.\n");
             } else if (batchDto.getSection801Indicator().equalsIgnoreCase("YES")

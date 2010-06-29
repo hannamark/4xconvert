@@ -1737,7 +1737,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the oversightAuthorityCountry
      */
-    @NotEmpty(message = "Oversight Authority Country is required. \n")
     public String getOversightAuthorityCountry() {
         return oversightAuthorityCountry;
     }
@@ -1752,8 +1751,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the oversightOrgName
      */
-    @NotEmpty(message = "Oversight Authority Organization Name is required. \n")
-    public String getOversightOrgName() {
+     public String getOversightOrgName() {
         return oversightOrgName;
     }
 
@@ -1767,9 +1765,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the fdaRegulatoryInformationIndicator
      */
-    @NotEmpty(message = "FDA Regulatory Information Indicator is required. \n")
-    @Pattern(regex = "^[Y][e][s]|[y][e][s]|[Y][E][S]|[N][O]|[N][o]|[n][o]$",
-            message = "FDA Regulatory Information Indicator can be Yes or No.\n")
     public String getFdaRegulatoryInformationIndicator() {
         return fdaRegulatoryInformationIndicator;
     }
@@ -1785,8 +1780,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the section801Indicator
      */
-    @Pattern(regex = "^[Y][e][s]|[y][e][s]|[Y][E][S]|[N][O]|[N][o]|[n][o]$",
-            message = "Section 801 Indicator can be Yes or No.\n")
     public String getSection801Indicator() {
         return section801Indicator;
     }
@@ -1801,8 +1794,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the delayedPostingIndicator
      */
-    @Pattern(regex = "^[Y][e][s]|[y][e][s]|[Y][E][S]|[N][O]|[N][o]|[n][o]$",
-            message = "Delayed Posting Indicator can be Yes or No.\n")
     public String getDelayedPostingIndicator() {
         return delayedPostingIndicator;
     }
@@ -1817,9 +1808,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the dataMonitoringCommitteeAppointedIndicator
      */
-    @Pattern(regex = "^[Y][e][s]|[y][e][s]|[Y][E][S]|[N][O]|[N][o]|[n][o]$",
-            message = "Data Monitoring Committee Appointed Indicator can be Yes or No.\n")
-    @NotEmpty (message = "Data Monitoring Committee Appointed Indicator is required. \n")
     public String getDataMonitoringCommitteeAppointedIndicator() {
         return dataMonitoringCommitteeAppointedIndicator;
     }
