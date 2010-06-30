@@ -105,6 +105,7 @@ import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.data.bo.UsOrCanEnforceable;
 import gov.nih.nci.po.service.AbstractBaseServiceBean;
 import gov.nih.nci.po.service.AbstractCuratableServiceBean;
 import gov.nih.nci.po.service.AbstractServiceBeanTest;
@@ -493,32 +494,71 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
     public void testSearchByPhoneNumber() throws Exception {
         T obj = createSample();
         if (obj instanceof Contactable) {
-            ((Contactable) obj).getPhone().add(new PhoneNumber("101 555 8888"));
-            ((Contactable) obj).getPhone().add(new PhoneNumber("202 555 8888"));
+            ((Contactable) obj).getPhone().add(new PhoneNumber("101-555-8888"));
+            ((Contactable) obj).getPhone().add(new PhoneNumber("202-555-8888"));
             getService().update(obj);
             
             obj = getSampleStructuralRole();
-            ((Contactable) obj).getPhone().add(new PhoneNumber("202 555 8888"));
-            ((Contactable) obj).getPhone().add(new PhoneNumber("303 555 8888"));
+            ((Contactable) obj).getPhone().add(new PhoneNumber("202-555-8888"));
+            ((Contactable) obj).getPhone().add(new PhoneNumber("303-555-8888"));
             getService().create(obj);
      
             obj = getNewStructuralRole();
-            ((Contactable) obj).getPhone().add(new PhoneNumber("101 555 8888"));
+            ((Contactable) obj).getPhone().add(new PhoneNumber("101-555-8888"));
             
             List<T> obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
             assertEquals(1, obj_result.size());
     
             obj = getNewStructuralRole();
-            ((Contactable) obj).getPhone().add(new PhoneNumber("202 555 8888"));
+            ((Contactable) obj).getPhone().add(new PhoneNumber("202-555-8888"));
             
             obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
             assertEquals(2, obj_result.size());
     
             obj = getNewStructuralRole();
-            ((Contactable) obj).getPhone().add(new PhoneNumber("404 555 8888"));
+            ((Contactable) obj).getPhone().add(new PhoneNumber("404-555-8888"));
             
             obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
             assertEquals(0, obj_result.size());
+        }
+    }
+    
+    @Test(expected = EntityValidationException.class)
+    public void testInvalidPhoneNumberCreate() throws Exception {
+        T obj = createSample();
+        if ((obj instanceof UsOrCanEnforceable)     
+                && ((UsOrCanEnforceable) obj).isUsOrCanadaAddress()) {
+            obj = getSampleStructuralRole();
+            ((Contactable) obj).getPhone().add(new PhoneNumber("202-555-8888ext4"));
+            getService().create(obj);
+        } else {
+            throw new EntityValidationException(null);
+        }
+    }
+    
+    @Test(expected = EntityValidationException.class)
+    public void testInvalidFaxNumberCreate() throws Exception {
+        T obj = createSample();
+        if ((obj instanceof UsOrCanEnforceable)     
+                && ((UsOrCanEnforceable) obj).isUsOrCanadaAddress()) {
+            obj = getSampleStructuralRole();
+            ((Contactable) obj).getFax().add(new PhoneNumber("2025558888"));
+            getService().create(obj);
+        } else {
+            throw new EntityValidationException(null);
+        }
+    }
+    
+    @Test(expected = EntityValidationException.class)
+    public void testInvalidTtyNumberCreate() throws Exception {
+        T obj = createSample();
+        if ((obj instanceof UsOrCanEnforceable)     
+                && ((UsOrCanEnforceable) obj).isUsOrCanadaAddress()) {
+            obj = getSampleStructuralRole();
+            ((Contactable) obj).getTty().add(new PhoneNumber("2025558888"));
+            getService().create(obj);
+        } else {
+            throw new EntityValidationException(null);
         }
     }
     
@@ -560,29 +600,29 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
     public void testSearchByFaxNumber() throws Exception {
         T obj = createSample();
         if (obj instanceof Contactable) {
-            ((Contactable) obj).getFax().add(new PhoneNumber("101 555 8888"));
-            ((Contactable) obj).getFax().add(new PhoneNumber("202 555 8888"));
+            ((Contactable) obj).getFax().add(new PhoneNumber("101-555-8888"));
+            ((Contactable) obj).getFax().add(new PhoneNumber("202-555-8888"));
             getService().update(obj);
             
             obj = getSampleStructuralRole();
-            ((Contactable) obj).getFax().add(new PhoneNumber("202 555 8888"));
-            ((Contactable) obj).getFax().add(new PhoneNumber("303 555 8888"));
+            ((Contactable) obj).getFax().add(new PhoneNumber("202-555-8888"));
+            ((Contactable) obj).getFax().add(new PhoneNumber("303-555-8888"));
             getService().create(obj);
      
             obj = getNewStructuralRole();
-            ((Contactable) obj).getFax().add(new PhoneNumber("101 555 8888"));
+            ((Contactable) obj).getFax().add(new PhoneNumber("101-555-8888"));
             
             List<T> obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
             assertEquals(1, obj_result.size());
     
             obj = getNewStructuralRole();
-            ((Contactable) obj).getFax().add(new PhoneNumber("202 555 8888"));
+            ((Contactable) obj).getFax().add(new PhoneNumber("202-555-8888"));
             
             obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
             assertEquals(2, obj_result.size());
     
             obj = getNewStructuralRole();
-            ((Contactable) obj).getFax().add(new PhoneNumber("404 555 8888"));
+            ((Contactable) obj).getFax().add(new PhoneNumber("404-555-8888"));
             
             obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
             assertEquals(0, obj_result.size());
@@ -593,29 +633,29 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
     public void testSearchByTtyNumber() throws Exception {
         T obj = createSample();
         if (obj instanceof Contactable) {
-            ((Contactable) obj).getTty().add(new PhoneNumber("101 555 8888"));
-            ((Contactable) obj).getTty().add(new PhoneNumber("202 555 8888"));
+            ((Contactable) obj).getTty().add(new PhoneNumber("101-555-8888"));
+            ((Contactable) obj).getTty().add(new PhoneNumber("202-555-8888"));
             getService().update(obj);
             
             obj = getSampleStructuralRole();
-            ((Contactable) obj).getTty().add(new PhoneNumber("202 555 8888"));
-            ((Contactable) obj).getTty().add(new PhoneNumber("303 555 8888"));
+            ((Contactable) obj).getTty().add(new PhoneNumber("202-555-8888"));
+            ((Contactable) obj).getTty().add(new PhoneNumber("303-555-8888"));
             getService().create(obj);
      
             obj = getNewStructuralRole();
-            ((Contactable) obj).getTty().add(new PhoneNumber("101 555 8888"));
+            ((Contactable) obj).getTty().add(new PhoneNumber("101-555-8888"));
             
             List<T> obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
             assertEquals(1, obj_result.size());
     
             obj = getNewStructuralRole();
-            ((Contactable) obj).getTty().add(new PhoneNumber("202 555 8888"));
+            ((Contactable) obj).getTty().add(new PhoneNumber("202-555-8888"));
             
             obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
             assertEquals(2, obj_result.size());
     
             obj = getNewStructuralRole();
-            ((Contactable) obj).getTty().add(new PhoneNumber("404 555 8888"));
+            ((Contactable) obj).getTty().add(new PhoneNumber("404-555-8888"));
             
             obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
             assertEquals(0, obj_result.size());

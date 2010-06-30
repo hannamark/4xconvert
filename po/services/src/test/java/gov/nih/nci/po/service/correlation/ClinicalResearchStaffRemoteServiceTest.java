@@ -154,7 +154,7 @@ public class ClinicalResearchStaffRemoteServiceTest
     @Override
     protected void alter(ClinicalResearchStaffDTO dto) throws Exception {
         TelPhone email = new TelPhone();
-        String uri = TelPhone.SCHEME_X_TEXT_TEL + ":+1234567890";
+        String uri = TelPhone.SCHEME_X_TEXT_TEL + ":123-456-7890";
         email.setValue(new URI(uri));
         dto.getTelecomAddress().getItem().add(email);
 
@@ -170,7 +170,7 @@ public class ClinicalResearchStaffRemoteServiceTest
 
         assertTrue(CollectionUtils.exists(cr.getTty(), new Predicate(){
             public boolean evaluate(Object object) {
-                return ((PhoneNumber)object).getValue().equals("+1234567890");
+                return ((PhoneNumber)object).getValue().equals("123-456-7890");
             }
         }));
 

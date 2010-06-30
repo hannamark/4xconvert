@@ -158,10 +158,20 @@ public class PoHibernateUtil {
             m.add(msg);
         }
 
+        return convertMapListToMapArray(messageMap);
+    }
+    
+    /**
+     * Convert list to array for map of string, string list.
+     * @param messageMap map of string, string list to convert.
+     * @return map string, string list.
+     */
+    public static Map<String, String[]> convertMapListToMapArray(Map<String, List<String>> messageMap) {
         Map<String, String[]> returnMap = new HashMap<String, String[]>();
         for (Map.Entry<String, List<String>> entry : messageMap.entrySet()) {
             returnMap.put(entry.getKey(), entry.getValue().toArray(new String[entry.getValue().size()]));
         }
         return returnMap;
+        
     }
 }

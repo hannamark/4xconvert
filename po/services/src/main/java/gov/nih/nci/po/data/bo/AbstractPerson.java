@@ -127,7 +127,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @MappedSuperclass
 @SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyFields", "PMD.UselessOverridingMethod" })
-public abstract class AbstractPerson implements PersistentObject, Contactable {
+public abstract class AbstractPerson implements PersistentObject, UsOrCanEnforceable {
     private static final long serialVersionUID = 1L;
     private static final int SHORT_COL_LENGTH = 10;
     private static final int LONG_COL_LENGTH = 50;
@@ -501,8 +501,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     }
 
     /**
-     * Returns boolean if the address is US.
-     * @return bool
+     * {@inheritDoc}
      */
     @Transient
     public boolean isUsOrCanadaAddress() {

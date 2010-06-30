@@ -1,10 +1,9 @@
 package gov.nih.nci.po.web.util.validator;
 
 import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.util.UsOrCanadaPhoneHelper;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
@@ -30,7 +29,7 @@ public class UsOrCanadaPhoneValidator extends FieldValidatorSupport {
         if (isUsOrCanadaFormat) { 
             
             for (PhoneNumber phone : contacts) {
-                if (!isUsOrCanadaPhonenumber(phone)) {
+                if (!UsOrCanadaPhoneHelper.isUsOrCanadaPhonenumber(phone)) {
                     addActionError(object);
                 }
             }
@@ -40,9 +39,4 @@ public class UsOrCanadaPhoneValidator extends FieldValidatorSupport {
     }
     
     
-    private boolean isUsOrCanadaPhonenumber(PhoneNumber tel) {
-        Pattern p = Pattern.compile("^\\d{3}-\\d{3}-\\d{4}(x\\d+)?$");
-        Matcher m = p.matcher(tel.getValue());
-        return m.matches();
-    }
 }

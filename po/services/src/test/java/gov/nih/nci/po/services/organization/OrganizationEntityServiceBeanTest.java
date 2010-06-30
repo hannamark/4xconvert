@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.AddressPartType;
 import gov.nih.nci.iso21090.Adxp;
@@ -18,8 +20,6 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.TelUrl;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
@@ -85,26 +85,12 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
 
     @Test
     public void createOrg() throws EntityValidationException, URISyntaxException, CurationException {
-        OrganizationDTO dto = new OrganizationDTO();
-        dto.setName(StringConverter.convertToEnOn("some name"));
-        dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine",
-                "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3(),
-                getDefaultCountry().getName()));
-        DSet<Tel> telco = new DSet<Tel>();
-        telco.setItem(new HashSet<Tel>());
+        OrganizationDTO dto = createOrgWithNoPhones();
+        
         Tel t = new Tel();
-        String phone = "+1-201-555-0123;extension=4756";
+        String phone = "201-555-0123x4756";
         t.setValue(new URI("tel", phone, null));
-        telco.getItem().add(t);
-        dto.setTelecomAddress(telco);
-
-        TelEmail email = new TelEmail();
-        email.setValue(new URI("mailto:another.email@example.com"));
-        dto.getTelecomAddress().getItem().add(email);
-
-        TelUrl url = new TelUrl();
-        url.setValue(new URI("http://example.com"));
-        dto.getTelecomAddress().getItem().add(url);
+        dto.getTelecomAddress().getItem().add(t);
 
         Ii id = remote.createOrganization(dto);
         assertNotNull(id);
@@ -118,6 +104,75 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
         assertEquals("another.email@example.com", o.getEmail().get(0).getValue());
         assertEquals("http://example.com", o.getUrl().get(0).getValue());
    }
+    
+    private OrganizationDTO createOrgWithNoPhones() throws URISyntaxException {
+        OrganizationDTO dto = new OrganizationDTO();
+        dto.setName(StringConverter.convertToEnOn("some name"));
+        dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine",
+                "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry().getAlpha3(),
+                getDefaultCountry().getName()));
+        DSet<Tel> telco = new DSet<Tel>();
+        telco.setItem(new HashSet<Tel>());
+        dto.setTelecomAddress(telco);
+        
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:another.email@example.com"));
+        dto.getTelecomAddress().getItem().add(email);
+
+        TelUrl url = new TelUrl();
+        url.setValue(new URI("http://example.com"));
+        dto.getTelecomAddress().getItem().add(url);
+        
+        return dto;
+    }
+    
+    @Test
+    public void createOrgWithInvalidPhone() throws EntityValidationException, URISyntaxException, CurationException {
+        OrganizationDTO dto = createOrgWithNoPhones();
+        
+        TelPhone t = new TelPhone();
+        String phone = "201-555-0123x4756i";
+        t.setValue(new URI("tel", phone, null));
+        dto.getTelecomAddress().getItem().add(t);
+        
+        try {
+            remote.createOrganization(dto);
+        } catch (EntityValidationException eve) {
+            assertTrue(eve.getErrors().containsKey("Phone number 201-555-0123x4756i"));
+        }
+   } 
+   
+    @Test
+    public void createOrgWithInvalidFax() throws EntityValidationException, URISyntaxException, CurationException {
+        OrganizationDTO dto = createOrgWithNoPhones();
+        
+        TelPhone t = new TelPhone();
+        String phone = "201-555-0123x4756i";
+        t.setValue(new URI("x-text-fax", phone, null));
+        dto.getTelecomAddress().getItem().add(t);
+        
+        try {
+            remote.createOrganization(dto);
+        } catch (EntityValidationException eve) {
+            assertTrue(eve.getErrors().containsKey("Phone number 201-555-0123x4756i"));
+        }
+   } 
+    
+   @Test
+   public void createOrgWithInvalidTty() throws EntityValidationException, URISyntaxException, CurationException {
+        OrganizationDTO dto = createOrgWithNoPhones();
+        
+        TelPhone t = new TelPhone();
+        String phone = "201-555-0123x4756i";
+        t.setValue(new URI("x-text-tel", phone, null));
+        dto.getTelecomAddress().getItem().add(t);
+        
+        try {
+            remote.createOrganization(dto);
+        } catch (EntityValidationException eve) {
+            assertTrue(eve.getErrors().containsKey("Phone number 201-555-0123x4756i"));
+        }
+   } 
 
     @Test
     public void createMinimalOrg() throws Exception {

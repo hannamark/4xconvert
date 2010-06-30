@@ -111,8 +111,8 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @MappedSuperclass
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public abstract class AbstractPersonRole extends AbstractRole implements Contactable, Mailable, PlayedRole<Person>,
-        ScopedRole {
+public abstract class AbstractPersonRole extends AbstractRole implements UsOrCanEnforceable, 
+    Mailable, PlayedRole<Person>, ScopedRole {
 
     private static final long serialVersionUID = 2L;
 

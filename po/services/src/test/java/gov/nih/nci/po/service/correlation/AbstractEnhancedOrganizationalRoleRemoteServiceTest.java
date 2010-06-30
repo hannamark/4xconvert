@@ -191,7 +191,7 @@ public abstract
                 t.setValue(
                         new URI(t.getValue().toString() + "n"));
             } else {
-                t.setValue(new URI(t.getValue().toString() + "2"));
+                t.setValue(new URI(t.getValue().toString() + "x2"));
             }
         }
     }
@@ -361,7 +361,7 @@ public abstract
                 t.setValue(
                         new URI(t.getValue().toString() + "n"));
             } else {
-                t.setValue(new URI(t.getValue().toString() + "2"));
+                t.setValue(new URI(t.getValue().toString() + "x2"));
             }
             searchCriteria.getTelecomAddress().getItem().add(t);
             results = getCorrelationService().search(searchCriteria);

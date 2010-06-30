@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Adxp;
 import gov.nih.nci.iso21090.AdxpAdl;
@@ -17,9 +19,8 @@ import gov.nih.nci.iso21090.Enxp;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
+import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.TelUrl;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
@@ -116,7 +117,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         // everything other than the status and 4 bio fields should be masked nullflavor
         assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, result.getName().getNullFlavor());
         assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, result.getPostalAddress().getNullFlavor());
-        assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, ((Tel) result.getTelecomAddress().getItem().iterator()
+        assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, (result.getTelecomAddress().getItem().iterator()
                 .next()).getNullFlavor());
         assertEquals(RoleStatus.ACTIVE, CdConverter.convertToRoleStatus(result.getStatusCode()));
 
@@ -124,9 +125,9 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertEquals(IdConverter.PATIENT_PREFIX + pat.getId(), result.getIdentifier().getExtension());
         assertEquals(pat.getBirthDate(), TsConverter.convertToDate(result.getBirthDate()));
         assertEquals(pat.getSexCode(), SexCodeConverter.convertToStatusEnum(result.getSexCode()));
-        assertEquals((PersonEthnicGroup) pat.getEthnicGroupCode().iterator().next(), EthnicGroupCodeConverter
+        assertEquals(pat.getEthnicGroupCode().iterator().next(), EthnicGroupCodeConverter
                 .convertToEthnicGroupEnum((Cd) result.getEthnicGroupCode().getItem().iterator().next()));
-        assertEquals((PersonRace) pat.getRaceCode().iterator().next(), RaceCodeConverter.convertToRaceEnum((Cd) result
+        assertEquals(pat.getRaceCode().iterator().next(), RaceCodeConverter.convertToRaceEnum((Cd) result
                 .getRaceCode().getItem().iterator().next()));
     }
 
@@ -191,6 +192,21 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
 
     @Test
     public void createPersonRemote() throws EntityValidationException, URISyntaxException, CurationException {
+        PersonDTO dto = createPersonWithNoPhones();
+        Tel t = new Tel();
+        String phone = "201-555-0123x4756";
+        t.setValue(new URI("tel", phone, null));
+        dto.getTelecomAddress().getItem().add(t);
+
+        Ii id = remote.createPerson(dto);
+        assertNotNull(id);
+        assertNotNull(id.getExtension());
+        Person p = (Person) PoHibernateUtil.getCurrentSession().get(Person.class, IiConverter.convertToLong(id));
+        assertEquals(findValueByType(dto.getName(), EntityNamePartType.FAM), p.getLastName());
+        assertEquals(findValueByType(dto.getName(), EntityNamePartType.GIV), p.getFirstName());
+    }
+    
+    private PersonDTO createPersonWithNoPhones() throws URISyntaxException {
         PersonDTO dto = new PersonDTO();
         dto.setName(new EnPn());
         Enxp part = new Enxp(EntityNamePartType.GIV);
@@ -205,10 +221,6 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
 
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
-        Tel t = new Tel();
-        String phone = "+1-201-555-0123;extension=4756";
-        t.setValue(new URI("tel", phone, null));
-        telco.getItem().add(t);
         dto.setTelecomAddress(telco);
 
         TelEmail email = new TelEmail();
@@ -218,14 +230,57 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         TelUrl url = new TelUrl();
         url.setValue(new URI("http://example.com"));
         dto.getTelecomAddress().getItem().add(url);
-
-        Ii id = remote.createPerson(dto);
-        assertNotNull(id);
-        assertNotNull(id.getExtension());
-        Person p = (Person) PoHibernateUtil.getCurrentSession().get(Person.class, IiConverter.convertToLong(id));
-        assertEquals(findValueByType(dto.getName(), EntityNamePartType.FAM), p.getLastName());
-        assertEquals(findValueByType(dto.getName(), EntityNamePartType.GIV), p.getFirstName());
+        
+        return dto;
     }
+    
+    @Test
+    public void createPersonWithInvalidPhone() throws EntityValidationException, URISyntaxException, CurationException {
+        PersonDTO dto = createPersonWithNoPhones();
+        
+        TelPhone t = new TelPhone();
+        String phone = "201-555-0123x4756i";
+        t.setValue(new URI("tel", phone, null));
+        dto.getTelecomAddress().getItem().add(t);
+        
+        try {
+            remote.createPerson(dto);
+        } catch (EntityValidationException eve) {
+            assertTrue(eve.getErrors().containsKey("Phone number 201-555-0123x4756i"));
+        }
+   } 
+   
+    @Test
+    public void createPersonWithInvalidFax() throws EntityValidationException, URISyntaxException, CurationException {
+        PersonDTO dto = createPersonWithNoPhones();
+        
+        TelPhone t = new TelPhone();
+        String phone = "201-555-0123x4756i";
+        t.setValue(new URI("x-text-fax", phone, null));
+        dto.getTelecomAddress().getItem().add(t);
+        
+        try {
+            remote.createPerson(dto);
+        } catch (EntityValidationException eve) {
+            assertTrue(eve.getErrors().containsKey("Phone number 201-555-0123x4756i"));
+        }
+   } 
+    
+   @Test
+   public void createPersonWithInvalidTty() throws EntityValidationException, URISyntaxException, CurationException {
+        PersonDTO dto = createPersonWithNoPhones();
+        
+        TelPhone t = new TelPhone();
+        String phone = "201-555-0123x4756i";
+        t.setValue(new URI("x-text-tel", phone, null));
+        dto.getTelecomAddress().getItem().add(t);
+        
+        try {
+            remote.createPerson(dto);
+        } catch (EntityValidationException eve) {
+            assertTrue(eve.getErrors().containsKey("Phone number 201-555-0123x4756i"));
+        }
+   } 
 
     @Test
     public void validate() {
@@ -340,7 +395,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
         Tel t = new Tel();
-        String phone = "+1-201-555-0123;extension=4756";
+        String phone = "201-555-0123x4756";
         t.setValue(new URI("tel", phone, null));
         telco.getItem().add(t);
         dto.setTelecomAddress(telco);

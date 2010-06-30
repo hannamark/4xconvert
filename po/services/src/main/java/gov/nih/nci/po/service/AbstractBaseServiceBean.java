@@ -85,6 +85,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.UsOrCanadaPhoneHelper;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Collections;
@@ -235,6 +236,7 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Map<String, String[]> validate(T entity) {
          Map<String, String[]> messages = PoHibernateUtil.validate(entity);
+         messages.putAll(UsOrCanadaPhoneHelper.phonesValidCheck(entity));
          messages.remove("statusCode");
          return messages;
     }

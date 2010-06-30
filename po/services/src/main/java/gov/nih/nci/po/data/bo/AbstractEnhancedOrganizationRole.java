@@ -26,7 +26,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @MappedSuperclass
 public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizationRole
-    implements Contactable, Mailable {
+    implements UsOrCanEnforceable, Mailable {
 
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_TEXT_COL_LENGTH = 160;
