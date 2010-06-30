@@ -482,4 +482,8 @@
 		<comment>Updating ctgovxml_indicator in study_disease when it is null.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2298.sql"/>
     </changeSet>
+    <changeSet id="PO-1985b" author="moweis">
+        <comment>PO 1985: (Re-opened) Fixes grammatical errors and non-standard characters</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1985b.sql"/>
+    </changeSet>
 </databaseChangeLog>
