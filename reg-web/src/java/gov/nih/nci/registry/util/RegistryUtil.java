@@ -261,7 +261,7 @@ public class RegistryUtil {
   }
 
   /**
-   * @param e
+   * @param e Exception used for the message
    * @return boolean if Failure Message was set or not
    */
   public static boolean setFailureMessage(Exception e) {
