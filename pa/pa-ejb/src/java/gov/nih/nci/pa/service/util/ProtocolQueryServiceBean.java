@@ -120,6 +120,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -164,7 +165,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         if (isCriteriaEmpty(spsc)) {
             throw new PAException("At least one criteria is required.");
         }
-        // StudyProtocolServiceImpl pImpl = new StudyProtocolServiceImpl();
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<Object> queryList = getStudyProtocolQueryResults(spsc);
         pdtos = convertToStudyProtocolDTO(queryList);
@@ -184,8 +184,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
      *             PAException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(
-            Long studyProtocolId) throws PAException {
+    public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(Long studyProtocolId) throws PAException {
         LOG.debug("Entering getTrialSummaryByStudyProtocolId ");
         if (studyProtocolId == null) {
             LOG.error(" studyProtocol Identifier cannot be null ");
@@ -198,18 +197,15 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             // this will never happen is real scenario, as a practice throw
             // exception
             LOG.error(" Study protcol was not found for id " + studyProtocolId);
-            throw new PAException(" Study protcol was not found for id "
-                    + studyProtocolId);
+            throw new PAException(" Study protcol was not found for id " + studyProtocolId);
         }
         List<StudyProtocolQueryDTO> trialSummarys = convertToStudyProtocolDTO(queryList);
 
         if (trialSummarys == null || trialSummarys.size() <= 0) {
             // this will never happen is real scenario, as a practice throw
             // exception
-            LOG.error(" Could not be converted to DTO for id "
-                    + studyProtocolId);
-            throw new PAException(" Could not be converted to DTO for id "
-                    + studyProtocolId);
+            LOG.error(" Could not be converted to DTO for id " + studyProtocolId);
+            throw new PAException(" Could not be converted to DTO for id " + studyProtocolId);
         }
         StudyProtocolQueryDTO trialSummary = trialSummarys.get(0);
         LOG.debug("Leaving getTrialSummaryByStudyProtocolId ");
@@ -268,12 +264,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
 
                 // transfer protocol to studyProtocolDto
                 if (documentWorkflowStatus != null) {
-                    studyProtocolDto
-                            .setDocumentWorkflowStatusCode(documentWorkflowStatus
-                                    .getStatusCode());
-                    studyProtocolDto
-                            .setDocumentWorkflowStatusDate(documentWorkflowStatus
-                                    .getStatusDateRangeLow());
+                    studyProtocolDto.setDocumentWorkflowStatusCode(documentWorkflowStatus.getStatusCode());
+                    studyProtocolDto.setDocumentWorkflowStatusDate(documentWorkflowStatus.getStatusDateRangeLow());
                 }
                 if (studyProtocol != null) {
                     if (studyProtocol instanceof ObservationalStudyProtocol) {
@@ -530,6 +522,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 hql.append(" left outer join sp.studySites as sps_nct ");
             }
 
+            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())
+                    || StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
+                hql.append(" left outer join sp.otherIdentifiers as sp_oids ");
+            }
+
             hql.append(generateWhereClause(studyProtocolQueryCriteria));
             hql.append(" order by dws.statusDateRangeLow asc");
         } catch (Exception e) {
@@ -575,19 +572,17 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         + PhaseCode.getByCode(studyProtocolQueryCriteria.getPhaseCode()) + "'");
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())) {
-                where.append(" and sp.otherIdentifiers.extension like '%"
+                where.append(" and sp_oids.extension like '%"
                         + studyProtocolQueryCriteria.getNciIdentifier().toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
             } else if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getOtherIdentifier())) {
-                where.append(" and upper(sp.otherIdentifiers.extension) like '%"
-                        + studyProtocolQueryCriteria.getOtherIdentifier()
-                                .toUpperCase().trim().replaceAll("'", "''")
+                where.append(" and upper(sp_oids.extension) like '%"
+                        + studyProtocolQueryCriteria.getOtherIdentifier().toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getStudyStatusCode())) {
                 where.append(" and sos.statusCode  = '"
-                        + StudyStatusCode.getByCode(studyProtocolQueryCriteria
-                                .getStudyStatusCode()) + "'");
+                        + StudyStatusCode.getByCode(studyProtocolQueryCriteria.getStudyStatusCode()) + "'");
                 where.append(" and ( sos.id in (select max(id) from StudyOverallStatus as sos1 "
                         + "                where sp.id = sos1.studyProtocol )"
                         + " or sos.id is null ) ");
@@ -629,13 +624,12 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
            }
            // required for Registry duplicate trial check
            // Rejected trial should be excluded from duplicate check
-           if (studyProtocolQueryCriteria.getExcludeRejectProtocol() != null
-                   && studyProtocolQueryCriteria.getExcludeRejectProtocol().booleanValue()) {
+           if (BooleanUtils.isTrue(studyProtocolQueryCriteria.getExcludeRejectProtocol()))  {
                where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
            }
            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getStudyMilestone())) {
-               where.append(" and sms.milestoneCode  = '" + MilestoneCode.
-                       getByCode(studyProtocolQueryCriteria.getStudyMilestone()) + "'");
+               where.append(" and sms.milestoneCode  = '"
+                       + MilestoneCode.getByCode(studyProtocolQueryCriteria.getStudyMilestone()) + "'");
                where.append(" and ( sms.id in (select max(id) from StudyMilestone as sms1 "
                        + " where sp.id = sms1.studyProtocol )"
                        + " or sms.id is null ) ");
@@ -657,8 +651,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                          + " or sinbx.id is null)");
            }
            studyCheckoutWhereClause(where);
-           where.append(" and sps.functionalCode ='"
-                   + StudySiteFunctionalCode.LEAD_ORGANIZATION + "'");
+           where.append(" and sps.functionalCode ='" + StudySiteFunctionalCode.LEAD_ORGANIZATION + "'");
            where.append(" and (sc.roleCode ='"
                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "' or sc.studyProtocol is null) ");
            where.append(" and sp.statusCode ='" + ActStatusCode.ACTIVE + "'");
@@ -702,8 +695,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                         + "                where sp.id = dws1.studyProtocol )" + " or dws.id is null )) ");
                 where.append(" or (sowner.id <> '").append(criteria.getUserId());
-                where.append("' and dws.statusCode not in('" + DocumentWorkflowStatusCode.REJECTED + "'," + "'"
-                        + DocumentWorkflowStatusCode.SUBMITTED + "'" + "'"
+                where.append("' and dws.statusCode not in('" + DocumentWorkflowStatusCode.REJECTED + "',"
+                        + "'" + DocumentWorkflowStatusCode.SUBMITTED + "', '"
                         + DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED + "')");
                 // add the subquery to pick the latest record
                 where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "

@@ -486,4 +486,8 @@
         <comment>PO 1985: (Re-opened) Fixes grammatical errors and non-standard characters</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1985b.sql"/>
     </changeSet>
+    <changeSet id="PO-1987" author="aevansel">
+        <comment>Adding indices to study protocol related tables to speed up search in PA/Registry</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1987.sql"/>
+    </changeSet>
 </databaseChangeLog>

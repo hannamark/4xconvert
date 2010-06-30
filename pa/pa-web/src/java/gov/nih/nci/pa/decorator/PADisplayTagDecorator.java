@@ -98,12 +98,12 @@ public class PADisplayTagDecorator extends TableDecorator {
      * @return formated date
      */
     public String getAction() {
-        DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO)
-                this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
-        if (dwfs.equals(DocumentWorkflowStatusCode.SUBMITTED)
-            || dwfs.equals(DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED)) {
+        DocumentWorkflowStatusCode dwfs =
+            ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
+        if (DocumentWorkflowStatusCode.SUBMITTED.equals(dwfs)
+                || DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED.equals(dwfs)) {
             return "Validate";
-        } else if (dwfs.equals(DocumentWorkflowStatusCode.REJECTED)) {
+        } else if (DocumentWorkflowStatusCode.REJECTED.equals(dwfs)) {
             return "";
         } else  {
             return "Abstract";
@@ -115,12 +115,12 @@ public class PADisplayTagDecorator extends TableDecorator {
      * @return formated String
      */
     public String getViewTSR() {
-        DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO)
-                this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
-        if (dwfs.equals(DocumentWorkflowStatusCode.SUBMITTED)
-            || dwfs.equals(DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED)) {
+        DocumentWorkflowStatusCode dwfs =
+            ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
+        if (DocumentWorkflowStatusCode.SUBMITTED.equals(dwfs)
+                || DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED.equals(dwfs)) {
             return "";
-        } else if (dwfs.equals(DocumentWorkflowStatusCode.REJECTED)) {
+        } else if (DocumentWorkflowStatusCode.REJECTED.equals(dwfs)) {
             return "";
         } else  {
             Long id = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyProtocolId();
@@ -132,8 +132,7 @@ public class PADisplayTagDecorator extends TableDecorator {
      * @return remove string
      */
     public String getRemove() {
-        Date updateDt = ((StudyProtocolQueryDTO)
-                this.getCurrentRowObject()).getUpdatedDate();
+        Date updateDt = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUpdatedDate();
         if (updateDt != null) {
             return "Remove";
         } else {
