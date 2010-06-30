@@ -713,8 +713,10 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", updateId.getExtension());
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", updateId);
         } catch (PAException e) {
-            LOG.error(e.getMessage());
-            addActionError(e.getMessage());
+            if (!RegistryUtil.setFailureMessage(e)) {
+                addActionError("Error occured, please try again");
+            }
+            LOG.error("Exception occured while updating trial", e);
             TrialValidator.addSessionAttributes(trialDTO);
             trialUtil.populateRegulatoryList(trialDTO);
             synchActionWithDTO();

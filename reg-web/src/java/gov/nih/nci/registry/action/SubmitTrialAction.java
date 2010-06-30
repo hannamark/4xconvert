@@ -101,6 +101,7 @@ import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
+import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -237,16 +238,12 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
              }
         } catch (Exception e) {
             TrialValidator.addSessionAttributes(trialDTO);
-            if (e != null && e.getMessage() != null) {
-                String exceptionStr = e.getLocalizedMessage().
-                        substring(e.getLocalizedMessage().indexOf(":") + 1);
-                ServletActionContext.getRequest().setAttribute("failureMessage", exceptionStr);
-            } else {
+            if (!RegistryUtil.setFailureMessage(e)) {
                 addActionError("Error occured, please try again");
             }
+            LOG.error("Exception occured while submitting trial", e);
             trialUtil.populateRegulatoryList(trialDTO);
             setDocumentsInSession(trialDTO);
-            LOG.error("Exception occured while submitting trial", e);
             return ERROR;
         }
         return "redirect_to_search";

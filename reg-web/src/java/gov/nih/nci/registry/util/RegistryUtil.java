@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 
 /**
  * @author Bala Nair
@@ -259,4 +260,17 @@ public class RegistryUtil {
       return registryUserWebDtos;
   }
 
+  /**
+   * @param e
+   * @return boolean if Failure Message was set or not
+   */
+  public static boolean setFailureMessage(Exception e) {
+       if (e != null && e.getMessage() != null) {
+           String exceptionStr = e.getLocalizedMessage().
+               substring(e.getLocalizedMessage().indexOf(":") + 1);
+           ServletActionContext.getRequest().setAttribute("failureMessage", exceptionStr);
+           return true;
+       } 
+       return false;
+  }
 }

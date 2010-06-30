@@ -370,8 +370,10 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", amendId.getExtension());
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", amendId);
         } catch (PAException e) {
-            LOG.error(e);
-            addActionError(e.getMessage());
+            if (!RegistryUtil.setFailureMessage(e)) {
+                addActionError("Error occured, please try again");
+            }
+            LOG.error("Exception occured while ammending trial", e);
             TrialValidator.addSessionAttributes(trialDTO);
             ServletActionContext.getRequest().getSession().removeAttribute("secondaryIdentifiersList");
             trialDTO.setSecondaryIdentifierAddList(null);
