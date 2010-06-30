@@ -487,7 +487,8 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         Calendar today = Calendar.getInstance();
         int currentYear  = today.get(Calendar.YEAR);
         String query = "select max(extension) from study_otheridentifiers sp where "
-            + "sp.extension like '%" + currentYear + "%' and root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "'";
+            + "sp.extension like '%" + currentYear + "%' and sp.root = '"
+            + IiConverter.STUDY_PROTOCOL_ROOT + "'";
         String nciIdentifier;
 
         Query queryObject = session.createSQLQuery(query);
