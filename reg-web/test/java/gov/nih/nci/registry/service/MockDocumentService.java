@@ -26,7 +26,7 @@ public class MockDocumentService extends MockAbstractBaseIsoService<DocumentDTO>
         docList = new ArrayList<DocumentDTO>();
         DocumentDTO dto = new DocumentDTO();
         dto.setFileName(StConverter.convertToSt("fileName"));
-        dto.setTypeCode(CdConverter.convertStringToCd("typeCode"));
+        dto.setTypeCode(CdConverter.convertStringToCd("Protocol Document"));
         dto.setIdentifier(IiConverter.convertToIi("1"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
         docList.add(dto);

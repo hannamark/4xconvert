@@ -364,11 +364,20 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
     }
 
     private void setDocumentsInSession() {
-        if (trialDTO != null && trialDTO.getDocDtos() != null && !trialDTO.getDocDtos().isEmpty()) {
-            for (TrialDocumentWebDTO webDto : trialDTO.getDocDtos()) {
-                ServletActionContext.getRequest().getSession().setAttribute(
-                        DocumentTypeCode.getByCode(webDto.getTypeCode()).getShortName(), webDto);
+        List<DocumentDTO> documentISOList;
+        try {
+            documentISOList = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(
+                  IiConverter.convertToIi(trialDTO.getIdentifier()));
+            if (!(documentISOList.isEmpty())) {
+                TrialDocumentWebDTO webDto = null;
+                for (DocumentDTO docDTO : documentISOList) {
+                     webDto = new TrialDocumentWebDTO(docDTO);
+                     ServletActionContext.getRequest().getSession().setAttribute(DocumentTypeCode.getByCode(
+                            webDto.getTypeCode()).getShortName(), webDto);
+                }
             }
+        } catch (PAException e) {
+            LOG.error("exception while setting Document in session", e);
         }
     }
 

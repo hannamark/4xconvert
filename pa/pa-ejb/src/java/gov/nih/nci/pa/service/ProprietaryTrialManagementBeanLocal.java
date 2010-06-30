@@ -16,6 +16,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -29,6 +30,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +42,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 /**
  * Prop trial Management Bean for registering and updating the protocol.
@@ -154,14 +157,30 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
             mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi);
             StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(studyProtocolIi);
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(studyProtocolIi);
-            if (PAUtil.isListEmpty(inbox) && MilestoneCode.isAboveTrialSummaryReport(
+            if (!isActiveRecordInInbox(inbox) && MilestoneCode.isAboveTrialSummaryReport(
                     MilestoneCode.getByCode(CdConverter.convertCdToString(smDto.getMilestoneCode())))) {
-                paServiceUtils.createMilestone(studyProtocolIi, MilestoneCode.TRIAL_SUMMARY_SENT, null);
+                        paServiceUtils.createMilestone(studyProtocolIi, MilestoneCode.TRIAL_SUMMARY_SENT, null);
             }
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
+    }
+
+    /**
+     * @param inbox
+     */
+    private boolean isActiveRecordInInbox(List<StudyInboxDTO> inbox) {
+        boolean activeRecord = false;
+        if (CollectionUtils.isNotEmpty(inbox)) {
+            for (StudyInboxDTO inboxDto : inbox) {
+                String strCloseDate = IvlConverter.convertTs().convertHighToString(inboxDto.getInboxDateRange());
+                if (StringUtils.isEmpty(strCloseDate)) {
+                    activeRecord = true;
+                }
+            }
+        }
+        return activeRecord;
     }
 
     private void updateLeadOrganization(OrganizationDTO leadOrg , St leadOrganizationIdentifier ,
@@ -240,8 +259,13 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
                 errorMsg.append("Document id " + docDto.getIdentifier().getExtension() + " does not exits.");
             }
         }
+        for (Iterator<DocumentDTO> iter = documentDTOs.listIterator(); iter.hasNext();) {
+            DocumentDTO docDto = iter.next();
+            if (PAUtil.isEdNull(docDto.getText())) {
+                iter.remove();
+            }
+        }
     }
-
     /**
      * @param studyProtocolDTO
      * @param errorMsg

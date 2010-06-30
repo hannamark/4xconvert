@@ -81,6 +81,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
@@ -600,7 +601,7 @@ public class PAUtil {
      * @return boolean whether selection is valid or not
      */
     public static boolean isYesNo(String selection) {
-       return "yes".equalsIgnoreCase(selection) || "no".equalsIgnoreCase(selection); 
+       return "yes".equalsIgnoreCase(selection) || "no".equalsIgnoreCase(selection);
     }
 
     /**
@@ -1277,5 +1278,13 @@ public class PAUtil {
             return gridIdentity.split(splitString)[1];
         }
         return gridIdentity;
+    }
+    /**
+     *checks if Ed is null.
+     * @param ed ed
+     * @return boolean
+     */
+    public static boolean isEdNull(Ed ed) {
+      return (ed == null || ed.getData() == null);
     }
 }
