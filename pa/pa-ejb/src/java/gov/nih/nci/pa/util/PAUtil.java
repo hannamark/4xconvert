@@ -184,7 +184,7 @@ public class PAUtil {
         boolean isValid = true;
         StringBuffer sb = new StringBuffer();
         if (isIiNull(toValidate)) {
-            sb.append("Ii is null");
+            throw new PAException("to Validate Identifier is null");
         }
         if (!source.getIdentifierName().equals(toValidate.getIdentifierName())) {
             sb.append(" Identifier Name does not match for " + source.getIdentifierName()
@@ -568,13 +568,13 @@ public class PAUtil {
      * @return boolean whether email is valid or not
      */
     public static boolean isValidEmail(String email) {
-        String match = email;
-        if (match != null) {
-            match = match.trim();
-       }
-       Pattern p = Pattern.compile("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$");
-       Matcher m = p.matcher(match);
-       return  m.matches();
+        if (StringUtils.isBlank(email)) {
+            return false;
+        }
+        String match = email.trim();
+        Pattern p = Pattern.compile("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,4}$");
+        Matcher m = p.matcher(match);
+        return  m.matches();
     }
 
     /**
@@ -585,13 +585,13 @@ public class PAUtil {
      * @return true, if is valid phone
      */
     public static boolean isValidPhone(String phone) {
-        String match = phone;
-        if (match != null) {
-            match = match.trim();
-       }
-       Pattern p = Pattern.compile("^([\\w\\s\\-\\.\\+\\(\\)])*$");
-       Matcher m = p.matcher(match);
-       return  m.matches();
+        if (StringUtils.isBlank(phone)) {
+            return false;
+        }
+        String match = phone.trim();
+        Pattern p = Pattern.compile("^([\\w\\s\\-\\.\\+\\(\\)])*$");
+        Matcher m = p.matcher(match);
+        return  m.matches();
     }
     /**
      * Util method to validate Selection Yes/No.
@@ -723,7 +723,7 @@ public class PAUtil {
         }
         for (Ii tmp : map.keySet()) {
             if (tmp.getExtension().equals(key.getExtension())) {
-              value = map.get(tmp);
+                value = map.get(tmp);
                 break;
             }
         }
