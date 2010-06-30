@@ -78,13 +78,15 @@
 */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -93,7 +95,6 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.enums.ActStatusCode;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -234,7 +235,7 @@ ServletResponseAware {
 
         StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(studyProtocolIi);
         StudyProtocolDTO toSearchspDTO = new StudyProtocolDTO();
-        toSearchspDTO.setSecondaryIdentifiers(spDTO.getSecondaryIdentifiers());
+        toSearchspDTO.setSecondaryIdentifiers(DSetConverter.convertIiToDset(PAUtil.getAssignedIdentifier(spDTO)));
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
         toSearchspDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         List<StudyProtocolDTO> spList = new ArrayList<StudyProtocolDTO>();
@@ -243,13 +244,13 @@ ServletResponseAware {
             if (activeList != null && !activeList.isEmpty()) {
                 spList.addAll(activeList);
             }
-            
+
             toSearchspDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
             List<StudyProtocolDTO> inactiveList = studyProtocolSvc.search(toSearchspDTO, limit);
             if (inactiveList != null && !inactiveList.isEmpty()) {
                 spList.addAll(inactiveList);
             }
-            
+
         } catch (TooManyResultsException e) {
              throw new PAException(e.getMessage());
         }
@@ -262,10 +263,7 @@ ServletResponseAware {
             }
         }
         setTrialHistoryWebDTO(trialHistoryWebdtos);
-
     }
-
-
 
     /**
      * Gets the documents.
@@ -289,7 +287,6 @@ ServletResponseAware {
         documents.append("&nbsp;- <B>");
         documents.append(fileName);
         documents.append("</B></a><br>");
-
       }
       return documents.toString();
     }
