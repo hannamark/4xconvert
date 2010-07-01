@@ -272,10 +272,10 @@ function toggledisplay2 (it) {
          <tbody> 
                     <tr>
                         <th>Organization/Investigator</th>
-                        <th>Local Trial<br/> Identifier</th>
+                        <th>Local Trial<br/> Identifier<span class="required">*</span></th>
                         <th>Program Code</th>
-                        <th>Current Site<br/> Recruitment Status</th>
-                        <th>Current Site<br/> Recruitment <br/>Status Date</th>
+                        <th>Current Site<br/> Recruitment Status<span class="required">*</span></th>
+                        <th>Current Site<br/> Recruitment <br/>Status Date<span class="required">*</span></th>
                         <th>Date Opened <br/>for Accrual <br/>(mm/dd/yyyy) </th>
                         <th>Date Closed <br/>for Accrual <br/>(mm/dd/yyyy) </th>
                         
