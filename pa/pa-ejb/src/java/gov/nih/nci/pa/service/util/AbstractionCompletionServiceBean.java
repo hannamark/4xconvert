@@ -154,6 +154,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -576,7 +577,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
     }
 
-    private void enforceDisease(StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList) 
+    private void enforceDisease(StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList)
     throws PAException {
         boolean leadExist = false;
         boolean ctgovxmlIndicator = false;
@@ -598,7 +599,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             abstractionList.add(createError("Error", "Select Disease/Condition from Scientific Data Menu",
                     "Trial must include at least one LEAD disease"));
         }
-        //not a proprietary trial and the studyprotocol is set to ctgov = true 
+        //not a proprietary trial and the studyprotocol is set to ctgov = true
         //and there are no diseases with xml inclusion indicator set to true
         if ((PAUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator())
              || !BlConverter.covertToBoolean(studyProtocolDTO.getProprietaryTrialIndicator()))
@@ -805,7 +806,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         // spList Empty => No Study Oversight Committee.
         // Display warning if Study is recruiting && reviewBoardindicator is false =>
         // Board Approval Status = Submission Not Required.
-        if (spList.isEmpty() && !reviewBoardIndicator.booleanValue()
+        if (spList.isEmpty() && BooleanUtils.isFalse(reviewBoardIndicator)
                 && studyRecruitmentStatusServiceLocal.getCurrentByStudyProtocol(
                         spDto.getIdentifier()).getStatusCode().getCode()
                 .equals(StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode())) {
