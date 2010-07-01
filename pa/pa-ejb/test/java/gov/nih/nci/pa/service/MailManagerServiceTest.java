@@ -315,7 +315,7 @@ public class MailManagerServiceTest {
 
     @Test (expected=PAException.class)
     public void testSendXmlTSREmail() throws PAException {
-        bean.sendXMLAndTSREmail(nonProprietaryTrialIi);
+        bean.sendXMLAndTSREmail(email1, email1, nonProprietaryTrialIi);
     }
 
     @Test

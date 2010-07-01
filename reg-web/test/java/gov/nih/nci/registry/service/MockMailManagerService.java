@@ -99,7 +99,7 @@ public class MockMailManagerService implements MailManagerServiceLocal {
 		
 	}
 
-    public void sendXMLAndTSREmail(Ii studyProtocolIi) throws PAException {
+    public void sendXMLAndTSREmail(String fullName, String emailAddress, Ii studyProtocolIi) throws PAException {
         // TODO Auto-generated method stub
         
     }

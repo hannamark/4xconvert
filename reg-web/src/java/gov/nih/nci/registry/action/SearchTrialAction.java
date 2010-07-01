@@ -103,9 +103,11 @@ import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
+import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
+import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
@@ -645,8 +647,12 @@ public class SearchTrialAction extends ActionSupport {
     public String sendXml() {
         String pId = (String) ServletActionContext.getRequest().getParameter(SPID);
         Ii studyProtocolIi = IiConverter.convertToIi(pId);
+        String loginName = ServletActionContext.getRequest().getRemoteUser();
+        RegistryUserWebDTO regUserWebDto = RegistryUtil.getRegistryUserWebDto(loginName);
+        String fullName = regUserWebDto.getFirstName() + " " + regUserWebDto.getLastName();
+        String emailAddress = regUserWebDto.getEmailAddress();
         try {
-            PaRegistry.getMailManagerService().sendXMLAndTSREmail(studyProtocolIi);
+            PaRegistry.getMailManagerService().sendXMLAndTSREmail(fullName, emailAddress, studyProtocolIi);
         } catch (PAException e) {
             addActionError("Exception while sending XML email:" + e.getMessage());
         }        

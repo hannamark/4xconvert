@@ -167,11 +167,13 @@ public interface MailManagerService {
     /**
      * Send xml and tsr email.
      *
+     * @param fullName name of the recepient
+     * @param mailTo who to send the xml and tsr email to
      * @param studyProtocolIi the study protocol ii
      *
      * @throws PAException the PA exception
      */
-    void sendXMLAndTSREmail(Ii studyProtocolIi) throws PAException;
+    void sendXMLAndTSREmail(String fullName, String mailTo, Ii studyProtocolIi) throws PAException;
     /**
      *
      * @param userId userId

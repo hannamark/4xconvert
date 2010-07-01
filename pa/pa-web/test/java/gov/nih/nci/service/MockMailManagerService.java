@@ -3,11 +3,11 @@
  */
 package gov.nih.nci.service;
 
-import java.io.File;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+
+import java.io.File;
 
 /**
  * @author Vrushali
@@ -105,7 +105,7 @@ public class MockMailManagerService implements MailManagerServiceLocal {
         
     }
 
-    public void sendXMLAndTSREmail(Ii studyProtocolIi) throws PAException {
+    public void sendXMLAndTSREmail(String fullName, String emailAddress, Ii studyProtocolIi) throws PAException {
         // TODO Auto-generated method stub
         
     }

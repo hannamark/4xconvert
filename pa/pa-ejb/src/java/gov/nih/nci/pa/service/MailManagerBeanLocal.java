@@ -589,7 +589,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     /**
      * {@inheritDoc}
      */
-  public void sendXMLAndTSREmail(Ii studyProtocolIi) throws PAException {
+  public void sendXMLAndTSREmail(String fullName, String mailTo, Ii studyProtocolIi) throws PAException {
       LOG.debug("Entering sendXMLAndTSREmail");
       try {
           StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
@@ -602,6 +602,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
           body = body.replace(receiptDate, getFormatedDate(spDTO.getDateLastCreated()));
           body = body.replace(nciTrialIdentifier, spDTO.getNciIdentifier().toString());
           body = body.replace("${fileName}", spDTO.getNciIdentifier().toString() + ".xml");
+          body = body.replace(ownerName, fullName);
 
           String folderPath = PaEarPropertyReader.getDocUploadPath();
           StringBuffer sb  = new StringBuffer(folderPath);
@@ -610,8 +611,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
           String tsrFile = getTSRFile(studyProtocolIi, spDTO, sb2);
 
           String mailSubject = lookUpTableService.getPropertyValue("xml.subject");
+          mailSubject = mailSubject.replace(leadOrgTrialIdentifier, spDTO.getLocalStudyProtocolIdentifier());
+          mailSubject = mailSubject.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
+          
           File[] attachments = {new File(xmlFile), new File(tsrFile)};
-          sendEmail(spDTO, body, attachments, mailSubject);
+          sendMailWithAttachment(mailTo, mailSubject, body, attachments);
           new File(tsrFile).delete();
           new File(xmlFile).delete();
       } catch (Exception e) {
