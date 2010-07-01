@@ -466,7 +466,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <fileset dir="${pa-ear.base.dir}/src/resources">
                 <include name="jboss-service.xml"/>
             </fileset>
-        </copy>        
+        </copy>
         <!-- copy csm properties file into the exploded pa ear dist folder -->
         <copy todir="${pa-ear.dist.dir}">
             <fileset dir="${pa-resources.base.dir}">
@@ -502,7 +502,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="gridgrouper.submitter.group" value="%%gridgrouper.submitter.group%%"/>
             <property name="gridgrouper.admin.user" value="%%gridgrouper.admin.user%%"/>
             <property name="gridgrouper.admin.password" value="%%gridgrouper.admin.password%%"/>
-            <property name="idps.allow.password.editing" value="%%idps.allow.password.editing%%"/>                
+            <property name="idps.allow.password.editing" value="%%idps.allow.password.editing%%"/>
             <property name="outcomes.url" value="%%outcomes.url%%"/>
             <property name="outcomes.cds.url" value="%%outcomes.cds.url%%"/>
             <property name="outcomes.phr.system.id" value="%%outcomes.phr.system.id%%"/>
@@ -1074,10 +1074,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <delete file="${dist.dir}/${outcomes-grid.upgrade.zip.file}"/>
 
         <!-- Set environment name to external -->
-        <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
+        <replaceregexp file="${dist.exploded.dir}/upgrade.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
 
         <obfuscate-properties-file
-            properties.file="${dist.exploded.dir}/install.properties"
+            properties.file="${dist.exploded.dir}/upgrade.properties"
             required.property.list="application.base.path.linux,application.base.path.windows,database.system.user,database.system.password,database.server,database.port,database.name,database.user,database.password,mail.smtp.host,jboss.server.hostname"
             optional.property.list="ldap.url,ldap.basedn"
             delete.property.list="exclude.jboss.backup"
@@ -1125,6 +1125,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         -->
         <deploy-local
             target.name="${upgrade.target}"
+            properties.file="${upgrade.properties.file}"
             />
     </target>
 
