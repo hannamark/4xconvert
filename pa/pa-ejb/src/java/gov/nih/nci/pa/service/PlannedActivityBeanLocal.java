@@ -263,6 +263,7 @@ public class PlannedActivityBeanLocal
      if (PAUtil.isIiNull(dto.getIdentifier())) {
          throw new PAException("Create method should be used to modify existing.  ");
      }
+     validatePlannedSubstance(dto);
      return createOrUpdatePlannedSubstanceAdministration(dto);
  }
  /**
@@ -349,6 +350,7 @@ public class PlannedActivityBeanLocal
      if (PAUtil.isIiNull(dto.getIdentifier())) {
          throw new PAException("Create method should be used to modify existing.  ");
      }
+     validatePlannedProcedure(dto);
      return createOrUpdatePlannedProcedure(dto);
  }
  /**
@@ -638,7 +640,7 @@ public class PlannedActivityBeanLocal
              throw new PAException("An Intervention must be selected.");
          }            
          if (checkDuplicate(dto)) {
-             throw new PAException("Redundancy error:  this trial already includes the selected intervention. ");
+             throw new PAException("Redundancy error:  This trial already includes the selected intervention.");
          }
       }
  }
