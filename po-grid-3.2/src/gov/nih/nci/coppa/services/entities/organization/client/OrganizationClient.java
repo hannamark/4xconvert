@@ -2,14 +2,20 @@ package gov.nih.nci.coppa.services.entities.organization.client;
 
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Organization;
+import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationTransformer;
 import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.organization.common.OrganizationI;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.iso21090.Constants;
+import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.extensions.Id;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 
 import org.apache.axis.client.Stub;
@@ -88,6 +94,40 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
         id.setExtension(helper.getArgument("-getId", "1"));
         Organization result = client.getById(id);
         ClientUtils.print(result);
+    }
+    
+    @GridTestMethod
+    private static void createOrganization(OrganizationClient client) throws RemoteException {
+        Id id = new Id();
+        id.setRoot(ORG_ROOT);
+        id.setIdentifierName(ORG_IDENTIFIER_NAME);
+        id.setExtension(helper.getArgument("-getId", "1"));
+        Organization result = client.getById(id);
+        result.setIdentifier(null);
+        OrganizationDTO orgDTO = null;
+        
+        try {
+            orgDTO = OrganizationTransformer.INSTANCE.toDto(result);
+       //     URI sss = new URI("mailto:aaaaaaaaaaa");
+           
+            URI sss = new URI("tel:301-977-05605");
+            TelPhone tf = new TelPhone();
+            tf.setValue(sss);
+            orgDTO.getTelecomAddress().getItem().add(tf);
+             
+            
+            client.create(OrganizationTransformer.INSTANCE.toXml(orgDTO));
+            
+        } catch (DtoTransformException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        
+        
     }
 
     private static Organization createCriteria() {

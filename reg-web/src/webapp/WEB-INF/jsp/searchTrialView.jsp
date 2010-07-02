@@ -370,31 +370,62 @@
 	     		<td colspan="2" class="space">&nbsp;</td>
 	       </tr>
        </c:if>
-       <c:if test="${requestScope.trialDTO.summaryFourOrgName != null}">
-	       <tr>
-	     		<th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
-	       </tr>
-	       <tr>
-				<td scope="row" class="label">
-					<label for="Summary 4 Funding Category">
-					<fmt:message key="view.trial.FundingCategory"/>
-					</label>
-				</td>
-				<td class="value">
-					<c:out value="${requestScope.trialDTO.summaryFourFundingCategoryCode }"/>
-				</td>
-		   </tr>
-	  	   <tr>
-				<td scope="row" class="label">
-					<label for="Summary 4 Funding Sponsor/Source">
-					<fmt:message key="view.trial.FundingSponsor"/>
-					</label>
-				</td>
-				<td class="value">
-					<c:out value="${requestScope.trialDTO.summaryFourOrgName }"/>
-				</td>
-		   </tr>
-      </c:if>
+       
+       <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null
+                && requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'
+                && requestScope.summaryFourOrgName != null}">
+           <tr>
+                <th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
+           </tr>
+           <tr>
+                <td scope="row" class="label">
+                    <label for="Summary 4 Funding Category">
+                    <fmt:message key="view.trial.FundingCategory"/>
+                    </label>
+                </td>
+                <td class="value">
+                    <c:out value="${requestScope.summaryFourFundingCategoryCode }"/>
+                </td>
+           </tr>
+           <tr>
+                <td scope="row" class="label">
+                    <label for="Summary 4 Funding Sponsor/Source">
+                    <fmt:message key="view.trial.FundingSponsor"/>
+                    </label>
+                </td>
+                <td class="value">
+                    <c:out value="${requestScope.summaryFourOrgName }"/>
+                </td>
+           </tr>
+       </c:if>
+       <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null
+                && requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'
+                && requestScope.trialDTO.summaryFourOrgName != null}">
+           <tr>
+                <th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
+           </tr>
+           <tr>
+                <td scope="row" class="label">
+                    <label for="Summary 4 Funding Category">
+                    <fmt:message key="view.trial.FundingCategory"/>
+                    </label>
+                </td>
+                <td class="value">
+                    <c:out value="${requestScope.trialDTO.summaryFourFundingCategoryCode }"/>
+                </td>
+           </tr>
+           <tr>
+                <td scope="row" class="label">
+                    <label for="Summary 4 Funding Sponsor/Source">
+                    <fmt:message key="view.trial.FundingSponsor"/>
+                    </label>
+                </td>
+                <td class="value">
+                    <c:out value="${requestScope.trialDTO.summaryFourOrgName }"/>
+                </td>
+           </tr>
+       </c:if>
+       
       <c:if test="${requestScope.trialSummary.programCodeText.value != null}">
        <c:if test="${requestScope.trialDTO.summaryFourOrgName == null}">
            <tr>
@@ -410,8 +441,26 @@
         <tr>
               <td colspan="2" class="space">&nbsp;</td>
           </tr>
-        </c:if>
-        <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
+      </c:if>
+      <c:if test="${requestScope.participatingSitesList != null && fn:length(requestScope.participatingSitesList) > 0}">
+        <div class="box">
+        <tr>
+                <th colspan="2">Participating sites</th>
+         </tr>
+         
+         <display:table class="data" sort="list"  uid="row"  name="${requestScope.participatingSitesList}" >
+             <display:column title="Organization Name" property="name"  headerClass="sortable"/>
+             <display:column title="Site Principal Investigator" property="investigator"  headerClass="sortable"/>
+             <display:column title="Local Trial<br/> Identifier" property="siteLocalTrialIdentifier"  headerClass="sortable"/>
+             <display:column title="Program Code" property="programCode"  headerClass="sortable"/>
+             <display:column title="Current Site<br/> Recruitment Status" property="recruitmentStatus"  headerClass="sortable"/>
+             <display:column title="Current Site<br/> Recruitment Status Date" property="recruitmentStatusDate"  headerClass="sortable"/>
+             <display:column title="Date Opened <br/>for Accrual" property="dateOpenedforAccrual"  headerClass="sortable"/>
+             <display:column title="Date Closed <br/>for Accrual" property="dateClosedforAccrual"  headerClass="sortable"/>
+         </display:table>
+       </div>  
+      </c:if>
+      <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
         || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
       <tr>
           <th colspan="2"><fmt:message key="view.trial.statusDates"/></th>

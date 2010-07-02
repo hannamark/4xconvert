@@ -149,13 +149,14 @@ public class SearchTrialAction extends ActionSupport {
     /**
      * @return res
      */
+    @Override
     public String execute() {
         //check if users accepted the desclaimer if not show one
         String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
         if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
             return "show_Disclaimer_Page";
         }
-        String trialAction = (String) ServletActionContext.getRequest().getParameter("trialAction");
+        String trialAction = ServletActionContext.getRequest().getParameter("trialAction");
         if (PAUtil.isNotEmpty(trialAction) && (trialAction.equalsIgnoreCase("submit")
                 || trialAction.equalsIgnoreCase("amend") || trialAction.equalsIgnoreCase("update"))) {
             String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
@@ -387,10 +388,10 @@ public class SearchTrialAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
             if (studyProtocolId == null) {
-                String pId = (String) ServletActionContext.getRequest().getParameter(SPID);
+                String pId = ServletActionContext.getRequest().getParameter(SPID);
                 studyProtocolIi = IiConverter.convertToIi(pId);
             }
-            String usercreated = (String) ServletActionContext.getRequest().getParameter("usercreated");
+            String usercreated = ServletActionContext.getRequest().getParameter("usercreated");
             if (usercreated != null && !usercreated.equals(ServletActionContext.getRequest().getRemoteUser())) {
                     maskFields = true;
             }
@@ -407,11 +408,18 @@ public class SearchTrialAction extends ActionSupport {
                 ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier",
                         trialDTO.getLeadOrgTrialIdentifier());
                 ServletActionContext.getRequest().setAttribute("nctIdentifier", trialDTO.getNctIdentifier());
-                ServletActionContext.getRequest().setAttribute("assignedIdentifier", trialDTO.getAssignedIdentifier());
+                ServletActionContext.getRequest().setAttribute("assignedIdentifier", 
+                        trialDTO.getAssignedIdentifier());
+                ServletActionContext.getRequest().setAttribute("summaryFourOrgName", 
+                        trialDTO.getSummaryFourOrgName());
+                ServletActionContext.getRequest().setAttribute("summaryFourFundingCategoryCode", 
+                        trialDTO.getSummaryFourFundingCategoryCode());
+                ServletActionContext.getRequest().setAttribute("participatingSitesList", 
+                        trialDTO.getParticipatingSitesList());
             } else {
                // non prop trial
                 TrialDTO trialDTO = new TrialDTO();
-                trialUtil.getTrialDTOFromDb(studyProtocolIi, (TrialDTO) trialDTO);
+                trialUtil.getTrialDTOFromDb(studyProtocolIi, trialDTO);
                 if (trialDTO.getTrialType().equals("InterventionalStudyProtocol")) {
                    trialDTO.setTrialType("Interventional");
                 } else if (trialDTO.getTrialType().equals("ObservationalStudyProtocol")) {
@@ -572,7 +580,7 @@ public class SearchTrialAction extends ActionSupport {
      * @return view
      */
     public String partiallySubmittedView() {
-        String pId = (String) ServletActionContext.getRequest().getParameter(SPID);
+        String pId = ServletActionContext.getRequest().getParameter(SPID);
         if (PAUtil.isEmpty(pId)) {
             addActionError("study protocol id cannot null.");
             return ERROR;
@@ -650,7 +658,7 @@ public class SearchTrialAction extends ActionSupport {
      * @return the string
      */
     public String sendXml() {
-        String pId = (String) ServletActionContext.getRequest().getParameter(SPID);
+        String pId = ServletActionContext.getRequest().getParameter(SPID);
         Ii studyProtocolIi = IiConverter.convertToIi(pId);
         String loginName = ServletActionContext.getRequest().getRemoteUser();
         RegistryUserWebDTO regUserWebDto = RegistryUtil.getRegistryUserWebDto(loginName);

@@ -85,12 +85,8 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
-import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
-import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -101,7 +97,6 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAUtil;
@@ -141,7 +136,9 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
     private ProprietaryTrialDTO trialDTO;
     private final TrialUtil  util = new TrialUtil();
     private String trialAction = null;
+    private final TrialUtil trialUtil = new TrialUtil();
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
+
     /**
      * View.
      * @return res
@@ -149,12 +146,12 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
     public String view() {
         TrialValidator.removeSessionAttributes();
         try {
-            String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+            String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(pId));
             trialDTO = new ProprietaryTrialDTO();
             util.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
             setDocumentsInSession();
-            getParticipatingSites(studyProtocolIi);
+            
             ServletActionContext.getRequest().getSession().setAttribute("trialDTO", trialDTO);
             setPageFrom("updateProprietaryTrial");
             LOG.debug("Trial retrieved: " + trialDTO.getOfficialTitle());
@@ -214,7 +211,8 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
         trialDTO = (ProprietaryTrialDTO) ServletActionContext.getRequest().getSession().getAttribute("trialDTO");
         setDocumentsInSession();
         try {
-            getParticipatingSites(IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
+            trialUtil.copyParticipatingSites(IiConverter.convertToStudyProtocolIi(
+                    Long.parseLong(trialDTO.getIdentifier())), trialDTO);
         } catch (Exception e) {
             LOG.error("Exception occured while calling edit() " + e);
             return ERROR;
@@ -379,37 +377,6 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
         } catch (PAException e) {
             LOG.error("exception while setting Document in session", e);
         }
-    }
-
-    /**
-     * Gets the participating sites.
-     * @param studyProtocolIi the study protocol ii
-     * @return the participating sites
-     * @throws PAException the PA exception
-     */
-    private void getParticipatingSites(Ii studyProtocolIi) throws PAException {
-        CorrelationUtils cUtils = new CorrelationUtils();
-        List<SubmittedOrganizationDTO> organizationList = new ArrayList<SubmittedOrganizationDTO>();
-        StudySiteDTO srDTO = new StudySiteDTO();
-        srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE.getCode()));
-        List<StudySiteDTO> spList = PaRegistry.getStudySiteService().getByStudyProtocol(studyProtocolIi, srDTO);
-        for (StudySiteDTO sp : spList) {
-            StudySiteAccrualStatusDTO ssas = PaRegistry.getStudySiteAccrualStatusService()
-                                .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
-            Organization orgBo = cUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
-            SubmittedOrganizationDTO orgWebDTO = new SubmittedOrganizationDTO(sp, ssas, orgBo);
-            List<PaPersonDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
-                        .getPersonsByStudySiteId(Long.valueOf(sp.getIdentifier().getExtension().toString()),
-                    StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
-            if (!principalInvresults.isEmpty()) {
-                for (PaPersonDTO per : principalInvresults) {
-                    orgWebDTO.setInvestigator(per.getFullName() != null ? per.getFullName() : "");
-                }
-            }
-            orgWebDTO.setNameInvestigator(orgWebDTO.getName() + " - " + orgWebDTO.getInvestigator());
-            organizationList.add(orgWebDTO);
-        }
-        trialDTO.setParticipatingSitesList(organizationList);
     }
 
     private List<StudySiteAccrualStatusDTO> getParticipatingSitesForUpdate(List<SubmittedOrganizationDTO> ps)
