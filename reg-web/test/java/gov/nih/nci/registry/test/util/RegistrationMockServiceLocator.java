@@ -53,6 +53,7 @@ import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.registry.service.MockAbstractionCompletionService;
 import gov.nih.nci.registry.service.MockDocumentService;
 import gov.nih.nci.registry.service.MockGridAccountService;
 import gov.nih.nci.registry.service.MockIdentifiedOrganizationCorrelationService;
@@ -113,7 +114,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final StudyProtocolStageServiceLocal studyProtocolStageService = new MockStudyProtocolStageService();
     private final GridAccountServiceRemote gridAccountService = new MockGridAccountService();
     private final ProprietaryTrialManagementServiceLocal proprietaryTrialService = new MockProprietaryTrialManagementService();
-    
+    private final AbstractionCompletionServiceRemote abstractionCompletionService = new MockAbstractionCompletionService();
     public DocumentServiceLocal getDocumentService() {
         return documentService;
     }
@@ -262,8 +263,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
 
     public AbstractionCompletionServiceRemote getAbstractionCompletionService()
             throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        return abstractionCompletionService;
     }
 
     public ArmServiceLocal getArmService() {
@@ -411,5 +411,5 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
         return proprietaryTrialService;
     }
-    
+
 }

@@ -1,31 +1,31 @@
 /***
 * caBIG Open Source Software License
-* 
+*
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-* 
+*
 * This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
 * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
 * entity.  Control for purposes of this definition means
-* 
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract 
+*
+* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
 * or otherwise,or
-*  
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or 
-* 
+*
+* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
+*
 * (iii) beneficial ownership of such entity.
 * License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
 * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to 
-* 
+* rights in the caBIG Software, including any copyright or patent rights therein, to
+*
 * (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
 * publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so; 
-* 
+* or permit others to do so;
+*
 * (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof); 
-* 
+* (or portions thereof);
+*
 * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
 * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
 * including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
@@ -34,22 +34,22 @@
 * displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
 * Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
 * distribute or use the caBIG Software.
-* 
+*
 * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
 * of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
 * form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
 * documentation and/or other materials provided with the distribution, if any.
-* 
+*
 * 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
 * This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally 
+* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
 * appear.
-* 
+*
 * 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
 * caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
 * any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
 * as required to comply with the terms of this License.
-* 
+*
 * 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
 * programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
 * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
@@ -59,22 +59,22 @@
 * In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
 * against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
 * to obtain such permissions.
-* 
+*
 * 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
 * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
 * sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
 * provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
 * License.
-* 
+*
 * 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN 
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
 * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
 * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* 
+*
+*
 */
 package gov.nih.nci.registry.action;
 
@@ -82,6 +82,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -122,6 +123,7 @@ import java.util.Set;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -129,11 +131,11 @@ import org.apache.struts2.ServletActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
- * 
+ *
  * @author Bala Nair
- * 
+ *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.TooManyMethods" , 
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.TooManyMethods" ,
     "PMD.ExcessiveClassLength" })
 public class SearchTrialAction extends ActionSupport {
     private List<StudyProtocolQueryDTO> records = null;
@@ -143,7 +145,7 @@ public class SearchTrialAction extends ActionSupport {
     TrialUtil trialUtil = new TrialUtil();
     private static final String TRUE = "true";
     private static final String SPID = "studyProtocolId";
-    
+
     /**
      * @return res
      */
@@ -154,7 +156,7 @@ public class SearchTrialAction extends ActionSupport {
             return "show_Disclaimer_Page";
         }
         String trialAction = (String) ServletActionContext.getRequest().getParameter("trialAction");
-        if (PAUtil.isNotEmpty(trialAction) && (trialAction.equalsIgnoreCase("submit") 
+        if (PAUtil.isNotEmpty(trialAction) && (trialAction.equalsIgnoreCase("submit")
                 || trialAction.equalsIgnoreCase("amend") || trialAction.equalsIgnoreCase("update"))) {
             String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
             ServletActionContext.getRequest().setAttribute(SPID, pId);
@@ -163,7 +165,7 @@ public class SearchTrialAction extends ActionSupport {
             return view();
         }
         return SUCCESS;
-        
+
     }
 
     /**
@@ -184,7 +186,7 @@ public class SearchTrialAction extends ActionSupport {
                 return ERROR;
             }
             List<StudyProtocolQueryDTO> studyProtocolList = new ArrayList<StudyProtocolQueryDTO>();
-            studyProtocolList = 
+            studyProtocolList =
                 PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
             if (studyProtocolList != null) {
                 records = new ArrayList<StudyProtocolQueryDTO>();
@@ -192,7 +194,7 @@ public class SearchTrialAction extends ActionSupport {
                 if (BooleanUtils.toBoolean(criteria.getMyTrialsOnly())) {
                     String loginName =  ServletActionContext.getRequest().getRemoteUser();
                     for (StudyProtocolQueryDTO queryDto : studyProtocolList) {
-                        if (PaRegistry.getRegisterUserService().hasTrialAccess(loginName, 
+                        if (PaRegistry.getRegisterUserService().hasTrialAccess(loginName,
                               queryDto.getStudyProtocolId())) {
                            records.add(queryDto);
                         }
@@ -214,18 +216,21 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     private void checkToShowSendXml() throws PAException {
+        String loginUser =  ServletActionContext.getRequest().getRemoteUser();
         if (records != null && !records.isEmpty()) {
             for (StudyProtocolQueryDTO queryDto : records) {
-                if (queryDto.getIsProprietaryTrial().equalsIgnoreCase("false") 
-                        && PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(
-                                queryDto.getDocumentWorkflowStatusCode().getCode()))
-                         && queryDto.getCtgovXmlRequiredIndicator()) {               
+                String dwfs = queryDto.getDocumentWorkflowStatusCode().getCode();
+                if (queryDto.getIsProprietaryTrial().equalsIgnoreCase("false")
+                        && (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
+                        || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode()))
+                        && queryDto.getCtgovXmlRequiredIndicator() && isOwner(queryDto.getStudyProtocolId(),
+                            loginUser)) {
                     queryDto.setShowSendXml(true);
                 }
             }
         }
     }
-    
+
     private boolean isOwner(Long spId, String loginUser) {
         boolean owner;
         try {
@@ -235,13 +240,13 @@ public class SearchTrialAction extends ActionSupport {
         }
         return owner;
     }
-    
+
     private void checkToShowUpdate() {
         String loginUser = null;
         loginUser =  ServletActionContext.getRequest().getRemoteUser();
         if (!records.isEmpty()) {
             for (StudyProtocolQueryDTO queryDto : records) {
-                String isProprietaryTrial = 
+                String isProprietaryTrial =
                     queryDto.getIsProprietaryTrial() != null ? queryDto.getIsProprietaryTrial() : "";
                 DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
                 StudyStatusCode statusCode = queryDto.getStudyStatusCode();
@@ -251,14 +256,14 @@ public class SearchTrialAction extends ActionSupport {
                 if (statusCode == null) {
                     queryDto.setUpdate("");
                 }
-                
+
                 Set<StudyStatusCode> updatableStatuses = new HashSet<StudyStatusCode>();
                 updatableStatuses.add(StudyStatusCode.DISAPPROVED);
                 updatableStatuses.add(StudyStatusCode.WITHDRAWN);
                 updatableStatuses.add(StudyStatusCode.COMPLETE);
                 updatableStatuses.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
-                
-                
+
+
                 if (statusCode != null && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
                         && isOwner(queryDto.getStudyProtocolId(), loginUser)
                         && (!(updatableStatuses.contains(statusCode)))) {
@@ -267,7 +272,7 @@ public class SearchTrialAction extends ActionSupport {
                     queryDto.setUpdate("");
                 }
 
-                if (StringUtils.isNotEmpty(isProprietaryTrial) 
+                if (StringUtils.isNotEmpty(isProprietaryTrial)
                         && isProprietaryTrial.equalsIgnoreCase(TRUE)
                         && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
                         && isOwner(queryDto.getStudyProtocolId(), loginUser)) {
@@ -279,16 +284,16 @@ public class SearchTrialAction extends ActionSupport {
 
     /**
      * @return StudyProtocolQueryCriteria
-     * @throws PAException 
+     * @throws PAException
      */
     private StudyProtocolQueryCriteria convertToStudyProtocolQueryCriteria() throws PAException {
-        
+
         StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
         queryCriteria.setOfficialTitle(criteria.getOfficialTitle());
         queryCriteria.setPhaseCode(criteria.getPhaseCode());
         queryCriteria.setPrimaryPurposeCode(criteria.getPrimaryPurposeCode());
         if (PAUtil.isNotEmpty(criteria.getIdentifierType())
-                 && PAUtil.isNotEmpty(criteria.getIdentifier())) {            
+                 && PAUtil.isNotEmpty(criteria.getIdentifier())) {
             if (criteria.getIdentifierType().equals(Constants.IDENTIFIER_TYPE_NCI)) {
                 queryCriteria.setNciIdentifier(criteria.getIdentifier());
             } else if (criteria.getIdentifierType().equals(
@@ -302,16 +307,16 @@ public class SearchTrialAction extends ActionSupport {
                 queryCriteria.setOtherIdentifier(criteria.getIdentifier());
             }
         }
-        if (criteria.getOrganizationId() != null 
+        if (criteria.getOrganizationId() != null
                 && criteria.getOrganizationId().trim().length() > 0) {
             queryCriteria.setLeadOrganizationId(criteria.getOrganizationId().toString());
-        } 
+        }
         if (criteria.getParticipatingSiteId() != null
                 && criteria.getParticipatingSiteId().trim().length() > 0) {
-            queryCriteria.setParticipatingSiteId(criteria.getParticipatingSiteId().toString());            
+            queryCriteria.setParticipatingSiteId(criteria.getParticipatingSiteId().toString());
         }
         queryCriteria.setOrganizationType(criteria.getOrganizationType());
-        if (StringUtils.isNotEmpty(criteria.getMyTrialsOnly()) 
+        if (StringUtils.isNotEmpty(criteria.getMyTrialsOnly())
                 && criteria.getMyTrialsOnly().equals(TRUE)) {
             queryCriteria.setMyTrialsOnly(Boolean.TRUE);
         } else {
@@ -326,12 +331,12 @@ public class SearchTrialAction extends ActionSupport {
         String loginName =  ServletActionContext.getRequest().getRemoteUser();
         RegistryUser loggedInUser = PaRegistry.getRegisterUserService().getUser(loginName);
         queryCriteria.setUserId(loggedInUser.getId());
-        
+
         return queryCriteria;
     }
 
     /**
-     * 
+     *
      * @return records
      */
     public List<StudyProtocolQueryDTO> getRecords() {
@@ -339,7 +344,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @return SearchProtocolCriteria SearchProtocolCriteria
      */
     public SearchProtocolCriteria getCriteria() {
@@ -347,7 +352,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @param criteria SearchProtocolCriteria
      */
     public void setCriteria(SearchProtocolCriteria criteria) {
@@ -355,7 +360,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @return studyProtocolId
      */
     public Long getStudyProtocolId() {
@@ -363,7 +368,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @param studyProtocolId studyProtocolId
      */
     public void setStudyProtocolId(Long studyProtocolId) {
@@ -378,7 +383,7 @@ public class SearchTrialAction extends ActionSupport {
         boolean maskFields = false;
         try {
             // remove the session variables stored during a previous view if any
-            
+
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
             if (studyProtocolId == null) {
@@ -392,14 +397,14 @@ public class SearchTrialAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
             StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     studyProtocolIi);
-            if (!PAUtil.isBlNull(protocolDTO.getProprietaryTrialIndicator()) 
+            if (!PAUtil.isBlNull(protocolDTO.getProprietaryTrialIndicator())
                     && BlConverter.covertToBoolean(protocolDTO.getProprietaryTrialIndicator())) {
                 // prop trial
                 ProprietaryTrialDTO trialDTO = new ProprietaryTrialDTO();
                 trialUtil.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
-                ServletActionContext.getRequest().setAttribute("leadOrganizationName", 
+                ServletActionContext.getRequest().setAttribute("leadOrganizationName",
                         trialDTO.getLeadOrganizationName());
-                ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier", 
+                ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier",
                         trialDTO.getLeadOrgTrialIdentifier());
                 ServletActionContext.getRequest().setAttribute("nctIdentifier", trialDTO.getNctIdentifier());
                 ServletActionContext.getRequest().setAttribute("assignedIdentifier", trialDTO.getAssignedIdentifier());
@@ -416,7 +421,7 @@ public class SearchTrialAction extends ActionSupport {
                 getReponsibleParty(trialDTO, maskFields);
                 if (!maskFields && !(trialDTO.getFundingDtos().isEmpty())) {
                     // put an entry in the session and store TrialFunding
-                     ServletActionContext.getRequest().setAttribute(Constants.TRIAL_FUNDING_LIST, 
+                     ServletActionContext.getRequest().setAttribute(Constants.TRIAL_FUNDING_LIST,
                               trialDTO.getFundingDtos());
                 }
                 if (!maskFields && !(trialDTO.getIndIdeDtos().isEmpty())) {
@@ -442,7 +447,7 @@ public class SearchTrialAction extends ActionSupport {
             return ERROR;
         }
     }
-    
+
     /**
      * @return result
      */
@@ -467,7 +472,7 @@ public class SearchTrialAction extends ActionSupport {
             HttpServletResponse servletResponse = ServletActionContext.getResponse();
             servletResponse.setContentType("application/x-unknown");
             FileInputStream fileToDownload = new FileInputStream(downloadFile);
-            servletResponse.setHeader("Cache-Control", "cache"); 
+            servletResponse.setHeader("Cache-Control", "cache");
             servletResponse.setHeader("Pragma", "cache");
             servletResponse.setHeader("Content-Disposition", "attachment; filename=" + downloadFile.getName());
             servletResponse.setContentLength(fileToDownload.available());
@@ -489,23 +494,23 @@ public class SearchTrialAction extends ActionSupport {
         }
         return NONE;
     }
-    
+
     /**
      * validate the search trial form elements.
      */
     private void validateForm() {
-        if (PAUtil.isNotEmpty(criteria.getIdentifierType()) 
+        if (PAUtil.isNotEmpty(criteria.getIdentifierType())
                  && PAUtil.isEmpty(criteria.getIdentifier())) {
             addFieldError("criteria.identifier",
                     getText("error.search.identifier"));
         }
-        if (PAUtil.isNotEmpty(criteria.getIdentifier()) 
+        if (PAUtil.isNotEmpty(criteria.getIdentifier())
                 && PAUtil.isEmpty(criteria.getIdentifierType())) {
            addFieldError("criteria.identifierType",
                    getText("error.search.identifierType"));
        }
        if (PAUtil.isNotEmpty(criteria.getOrganizationType())
-               && (criteria.getOrganizationId() == null 
+               && (criteria.getOrganizationId() == null
                        && criteria.getParticipatingSiteId() == null)) {
            addFieldError("criteria.organizationId",
                    getText("error.search.organization"));
@@ -513,7 +518,7 @@ public class SearchTrialAction extends ActionSupport {
        }
 
     }
-    
+
     private void getReponsibleParty(
                 TrialDTO trialDTO, boolean maskFields) throws PAException, NullifiedRoleException {
             if (!maskFields) {
@@ -532,13 +537,13 @@ public class SearchTrialAction extends ActionSupport {
                 ServletActionContext.getRequest().setAttribute(
                                 Constants.SPONSOR, trialDTO.getSponsorName());
                 ServletActionContext.getRequest().setAttribute(
-                                Constants.RESP_PARTY_PHONE, trialDTO.getContactPhone()); 
+                                Constants.RESP_PARTY_PHONE, trialDTO.getContactPhone());
                 ServletActionContext.getRequest().setAttribute(
-                                Constants.RESP_PARTY_EMAIL, trialDTO.getContactEmail()); 
+                                Constants.RESP_PARTY_EMAIL, trialDTO.getContactEmail());
             }
     }
     /**
-     * 
+     *
      * @return st
      */
     public String getMyPartiallySavedTrial() {
@@ -563,7 +568,7 @@ public class SearchTrialAction extends ActionSupport {
         return SUCCESS;
     }
     /**
-     * 
+     *
      * @return view
      */
     public String partiallySubmittedView() {
@@ -590,13 +595,13 @@ public class SearchTrialAction extends ActionSupport {
             ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
             ServletActionContext.getRequest().setAttribute("partialSubmission", "search");
             ServletActionContext.getRequest().setAttribute("protocolId", pId);
-            
+
         } catch (PAException e) {
             addActionError(e.getMessage());
         } catch (NullifiedRoleException e) {
             addActionError(e.getMessage());
         }
-     return "partialView";   
+     return "partialView";
     }
     private List<StudyProtocolQueryDTO> convertToSpQueryDTO(List<StudyProtocolStageDTO> spStageDTOs) {
         StudyProtocolQueryDTO spQueryDTO;
@@ -613,7 +618,7 @@ public class SearchTrialAction extends ActionSupport {
                 studyProtocolStageDTO.getPrimaryPurposeOtherText()));
             spQueryDTO.setLocalStudyProtocolIdentifier(StConverter.convertToString(
                 studyProtocolStageDTO.getLocalProtocolIdentifier()));
-            
+
             spQueryDTO.setLeadOrganizationId(IiConverter.convertToLong(
                 studyProtocolStageDTO.getLeadOrganizationIdentifier()));
             if (PAUtil.isIiNotNull(studyProtocolStageDTO.getLeadOrganizationIdentifier())) {
@@ -628,7 +633,7 @@ public class SearchTrialAction extends ActionSupport {
                 studyProtocolStageDTO.getTrialStatusCode())));
             spQueryDTO.setStudyStatusDate(TsConverter.convertToTimestamp(studyProtocolStageDTO.getTrialStatusDate()));
             spQueryDTO.setUserLastCreated(StConverter.convertToString(studyProtocolStageDTO.getUserLastCreated()));
-            if (!PAUtil.isBlNull(studyProtocolStageDTO.getProprietaryTrialIndicator()) 
+            if (!PAUtil.isBlNull(studyProtocolStageDTO.getProprietaryTrialIndicator())
                     && BlConverter.covertToBoolean(studyProtocolStageDTO.getProprietaryTrialIndicator())) {
                 spQueryDTO.setIsProprietaryTrial(TRUE);
             } else {
@@ -636,12 +641,12 @@ public class SearchTrialAction extends ActionSupport {
             }
             returnList.add(spQueryDTO);
         }
-        return returnList;   
+        return returnList;
     }
-    
+
     /**
      * Send xml.
-     * 
+     *
      * @return the string
      */
     public String sendXml() {
@@ -652,10 +657,27 @@ public class SearchTrialAction extends ActionSupport {
         String fullName = regUserWebDto.getFirstName() + " " + regUserWebDto.getLastName();
         String emailAddress = regUserWebDto.getEmailAddress();
         try {
-            PaRegistry.getMailManagerService().sendXMLAndTSREmail(fullName, emailAddress, studyProtocolIi);
+             List<AbstractionCompletionDTO> errorList = PaRegistry.getAbstractionCompletionService()
+                     .validateAbstractionCompletion(studyProtocolIi);
+             if (CollectionUtils.isEmpty(errorList) || !hasAnyAbstractionErrors(errorList)) {
+                PaRegistry.getMailManagerService().sendXMLAndTSREmail(fullName, emailAddress, studyProtocolIi);
+             } else {
+                  ServletActionContext.getRequest().setAttribute("failureMessage" ,
+                         "As Abstraction is not valid, sending letter is disabled .");
+             }
         } catch (PAException e) {
-            addActionError("Exception while sending XML email:" + e.getMessage());
-        }        
+             addActionError("Exception while sending XML email:" + e.getMessage());
+        }
         return query();
     }
+    private boolean hasAnyAbstractionErrors(List<AbstractionCompletionDTO> errorList) {
+        boolean errorExist = false;
+         for (AbstractionCompletionDTO  absDto : errorList) {
+            if (absDto.getErrorType().equalsIgnoreCase("error")) {
+                errorExist = true;
+                break;
+            }
+         }
+        return errorExist;
+     }
 }

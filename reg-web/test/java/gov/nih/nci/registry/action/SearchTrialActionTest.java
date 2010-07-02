@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.action;
 
@@ -9,7 +9,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
+import gov.nih.nci.registry.service.MockCSMUserService;
 import gov.nih.nci.registry.test.util.MockPAServiceUtil;
 
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +31,7 @@ import com.mockrunner.mock.web.MockHttpSession;
 public class SearchTrialActionTest extends AbstractRegWebTest{
     private SearchTrialAction action;
     //private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
-    @Before 
+    @Before
     public void setup(){
        /* HibernateUtil.testHelper = testHelper;
         Session session = HibernateUtil.getCurrentSession();
@@ -39,7 +41,8 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteUser("firstName");
         ServletActionContext.setRequest(request);
-
+        CSMUserService.getInstance();
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
     }
 
     @Test
@@ -60,7 +63,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         assertNull(action.getStudyProtocolId());
         action.setStudyProtocolId(1L);
         assertNotNull(action.getStudyProtocolId());
-    } 
+    }
     @Test
     public void testShowCriteria(){
         action = new SearchTrialAction();
@@ -181,7 +184,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         try {
             action.execute();
         } catch (Exception e) {
-            
+
         }
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
@@ -193,7 +196,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         try {
         action.execute();
         } catch (Exception e) {
-            
+
         }
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
@@ -205,9 +208,9 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         try {
         action.execute();
         } catch (Exception e) {
-            
+
         }
-        
+
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         session.setAttribute("protocolId", "1");
@@ -218,7 +221,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         try {
             action.execute();
         } catch (Exception e) {
-            
+
         }
     }
     @Test
@@ -232,7 +235,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         try {
             action.view();
         } catch (Exception e) {
-            
+
         }
     }
     @Test
@@ -247,7 +250,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         try {
             action.view();
         } catch (Exception e) {
-            
+
         }
     }
     @Test
@@ -275,7 +278,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("success",action.getMyPartiallySavedTrial());
-        
+
         action = new SearchTrialAction();
         criteria = new SearchProtocolCriteria();
         criteria.setOfficialTitle("ThrowException");
@@ -297,7 +300,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("partialView",action.partiallySubmittedView());
-        
+
         action = new SearchTrialAction();
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
