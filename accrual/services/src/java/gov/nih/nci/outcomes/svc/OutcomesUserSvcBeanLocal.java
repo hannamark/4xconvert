@@ -109,6 +109,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -159,7 +160,7 @@ public class OutcomesUserSvcBeanLocal extends BaseOutcomesSvc implements Outcome
         } catch (Exception e) {
             Logger.getLogger(getClass()).error("Context not found." + e.getMessage());
         }
-       if (PAUtil.isNotEmpty(contextName) && !lName.equals(contextName)) {
+       if (StringUtils.isNotEmpty(contextName) && !lName.equals(contextName)) {
             Logger.getLogger(getClass()).error("LoginName " + lName + " does not match context" + contextName + ".");
        }
 

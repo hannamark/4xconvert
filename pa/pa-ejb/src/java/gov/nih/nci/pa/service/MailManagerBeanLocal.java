@@ -21,7 +21,6 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 import java.io.ByteArrayOutputStream;
@@ -134,7 +133,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
           } else {
               body = lookUpTableService.getPropertyValue("noxml.tsr.amend.body");
           }
-      } else if (PAUtil.isNotEmpty(spDTO.getIsProprietaryTrial())
+      } else if (StringUtils.isNotEmpty(spDTO.getIsProprietaryTrial())
               && spDTO.getIsProprietaryTrial().equalsIgnoreCase("true")) {
           body = lookUpTableService.getPropertyValue("tsr.proprietary.body");
       } else {
@@ -151,7 +150,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       body = body.replace(nciTrialIdentifier, spDTO.getNciIdentifier().toString());
       body = body.replace("${fileName}", TSR
                                          + spDTO.getNciIdentifier().toString() + EXTENSION_PDF);
-      if (PAUtil.isEmpty(spDTO.getIsProprietaryTrial())
+      if (StringUtils.isEmpty(spDTO.getIsProprietaryTrial())
               || spDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
           body = body.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
       }
@@ -169,7 +168,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       String tsrFile = getTSRFile(studyProtocolIi, spDTO, sb2);
       String mailSubject = "";
 
-      if (PAUtil.isNotEmpty(spDTO.getIsProprietaryTrial())
+      if (StringUtils.isNotEmpty(spDTO.getIsProprietaryTrial())
               && spDTO.getIsProprietaryTrial().equalsIgnoreCase("true")) {
           File[] attachments = {new File(tsrFile)};
 
@@ -613,7 +612,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
           String mailSubject = lookUpTableService.getPropertyValue("xml.subject");
           mailSubject = mailSubject.replace(leadOrgTrialIdentifier, spDTO.getLocalStudyProtocolIdentifier());
           mailSubject = mailSubject.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
-          
+
           File[] attachments = {new File(xmlFile), new File(tsrFile)};
           sendMailWithAttachment(mailTo, mailSubject, body, attachments);
           new File(tsrFile).delete();

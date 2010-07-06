@@ -143,11 +143,6 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     private static final int FIVE_5 = 5;
     private static final String CREATE = "Create";
     private static final String UPDATE = "Update";
-   /* @EJB
-    StudyRelationshipServiceLocal studyRelationshipService = null;
-    @EJB
-    DocumentServiceLocal docService = null;*/
-
     private SessionContext ejbContext;
 
     @Resource
@@ -173,7 +168,6 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         session = HibernateUtil.getCurrentSession();
         studyProtocol = (InterventionalStudyProtocol)
         session.get(InterventionalStudyProtocol.class, Long.valueOf(ii.getExtension()));
-        //session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
         if (studyProtocol == null) {
             studyProtocol = (ObservationalStudyProtocol)
             session.get(ObservationalStudyProtocol.class, Long.valueOf(ii.getExtension()));
@@ -493,7 +487,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
 
         Query queryObject = session.createSQLQuery(query);
         String maxValue = (String) queryObject.list().get(0);
-        if (maxValue != null && PAUtil.isNotEmpty(maxValue)) {
+        if (StringUtils.isNotEmpty(maxValue)) {
             String maxNumber = maxValue.substring(maxValue.lastIndexOf('-') + 1 , maxValue.length());
             StringBuffer nextNumber = new StringBuffer(String.valueOf(Integer.parseInt(maxNumber) + 1));
             while (nextNumber.length() < FIVE_5) {
@@ -726,7 +720,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
                 Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
         String newUserLastCreated = StConverter.convertToString(studyProtocolDTO.getUserLastCreated());
         String prevUserLastCreated = prevStudyProtocol.getUserLastCreated();
-        if (PAUtil.isNotEmpty(newUserLastCreated) && PAUtil.isNotEmpty(prevUserLastCreated)
+        if (StringUtils.isNotEmpty(newUserLastCreated) && StringUtils.isNotEmpty(prevUserLastCreated)
                 && !prevUserLastCreated.equals(newUserLastCreated)) {
             session = HibernateUtil.getCurrentSession();
             String sql = "UPDATE STUDY_PROTOCOL SET USER_LAST_CREATED='" + newUserLastCreated

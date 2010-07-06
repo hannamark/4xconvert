@@ -111,6 +111,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -359,7 +360,7 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         if (user.getFirstName() != null) {
             fullName = user.getLastName() + ", " + user.getFirstName();
         }
-        if (PAUtil.isEmpty(fullName)) {
+        if (StringUtils.isEmpty(fullName)) {
             fullName = user.getEmailAddress();
         }
         return fullName;

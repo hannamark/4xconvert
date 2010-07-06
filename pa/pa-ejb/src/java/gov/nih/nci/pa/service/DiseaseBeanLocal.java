@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -22,6 +22,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -35,8 +36,8 @@ import org.hibernate.Session;
 @SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.NPathComplexity" })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DiseaseBeanLocal extends AbstractBaseIsoService<DiseaseDTO, Disease, DiseaseConverter>
-implements DiseaseServiceLocal , DiseaseServiceRemote { 
-  
+implements DiseaseServiceLocal , DiseaseServiceRemote {
+
   private static final Logger LOG = Logger.getLogger(DiseaseBeanLocal.class);
   private static final String TRUE = "true";
 /**
@@ -66,10 +67,10 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
 
     } else {
         hql.append("select distinct dis "
-                + "from Disease dis " 
+                + "from Disease dis "
                 + "left join dis.diseaseAlternames alt ");
     }
-    hql.append(generateWhereClause(searchCriteria));   
+    hql.append(generateWhereClause(searchCriteria));
     hql.append("order by dis.preferredName asc");
     getLogger().info("query Disease = " + hql.toString());
 
@@ -91,11 +92,11 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
 
  /**
   * Generate where clause.
-  * 
+  *
   * @param searchCriteria the search criteria
-  * 
+  *
   * @return the string
-  * 
+  *
   * @throws PAException the PA exception
   */
   @SuppressWarnings({"PMD" })
@@ -104,56 +105,56 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
     StringBuffer where = new StringBuffer();
     try {
         where.append("where 1 = 1 ");
-       // 
-       if (PAUtil.isNotEmpty(StConverter.convertToString(searchCriteria.getPreferredName()))) {
-           
-           where.append(" and (dis.statusCode = 'ACTIVE')");  
-                         
+       //
+       if (StringUtils.isNotEmpty(StConverter.convertToString(searchCriteria.getPreferredName()))) {
+
+           where.append(" and (dis.statusCode = 'ACTIVE')");
+
            //Case1:include synonym is checked and exact match is unchecked
            if (StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)
                  && !StConverter.convertToString(searchCriteria.getExactMatch()).equals(TRUE)) {
-              
+
               String term = PAUtil.wildcardCriteria(
                       StConverter.convertToString(searchCriteria.getPreferredName()))
                       .toUpperCase().trim().replaceAll("'", "''");
-                where.append(" and (upper(dis.preferredName) like upper('%" + term + "%') " 
+                where.append(" and (upper(dis.preferredName) like upper('%" + term + "%') "
                 + "or ((upper(alt.alternateName) like upper('%" + term + "%')) and (alt.statusCode = 'ACTIVE'))) ");
-               
+
            }
            //Case2:include synonym is unchecked and exact match is checked
            if (!StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)
                  && StConverter.convertToString(searchCriteria.getExactMatch()).equals(TRUE)) {
-               
+
                String exactString = stringToSearch(StConverter.convertToString(
                        searchCriteria.getPreferredName()).toUpperCase().trim().replaceAll("'", "''"));
                where.append(" and upper(dis.preferredName) like '" + exactString + "'");
-                
+
            }
            //Case3:include synonym and exact match are both checked
            if (StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)
                  && StConverter.convertToString(searchCriteria.getExactMatch()).equals(TRUE)) {
-              
+
 
                String exactString = stringToSearch(StConverter.convertToString(
                        searchCriteria.getPreferredName()).toUpperCase().trim().replaceAll("'", "''"));
-               
+
                where.append(" and (upper(dis.preferredName) like upper('" + exactString + "') "
-                    + "or ((upper(alt.alternateName) like upper('" + exactString + "')) " 
+                    + "or ((upper(alt.alternateName) like upper('" + exactString + "')) "
                     + "and (alt.statusCode = 'ACTIVE'))) ");
-                    
+
            } else if (!StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)
                    && !StConverter.convertToString(searchCriteria.getExactMatch()).equals(TRUE)) {
-               //Case4: both include Synonym and exact match are unchecked  
-                   where.append(" and upper(dis.preferredName)  like '%" 
+               //Case4: both include Synonym and exact match are unchecked
+                   where.append(" and upper(dis.preferredName)  like '%"
                            + PAUtil.wildcardCriteria(StConverter.
                               convertToString(searchCriteria.getPreferredName())
                                .toUpperCase().trim().replaceAll("'", "''"))
                            + "%'");
-                   
+
             }
-             
+
         }
-  
+
     } catch (Exception e) {
         LOG.error("General error in while create where cluase", e);
         throw new PAException("General error in while create where cluase", e);
@@ -161,13 +162,13 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
         LOG.debug("Leaving generateWhereClause ");
     }
     return where.toString();
- }  
+ }
 
  /**
   * String to search.
-  * 
+  *
   * @param searchTerm the search term
-  * 
+  *
   * @return the string
   */
   private String stringToSearch(String searchTerm) {
@@ -175,16 +176,16 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
     //checks if wildcard is present within the string not at extremities
     Pattern pat = Pattern.compile("^[^*].*\\**.*[^*]$");
     Matcher mat = pat.matcher(searchTerm);
-    
+
     if (!searchTerm.contains("*")) {
         term = searchTerm;
-    } 
+    }
     if (mat.find()) {
          term = PAUtil.wildcardCriteria(searchTerm);
       } else {
         term = searchTerm;
-    } 
-    
+    }
+
     return term;
  }
 

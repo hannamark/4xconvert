@@ -165,9 +165,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
-
-
 
 /**
  * A utility class for all pa services .
@@ -196,7 +196,7 @@ public class PAServiceUtils {
      * LEAD_ORGANIZATION_NULLIFIED.
      */
     public static final String LEAD_ORGANIZATION_NULLIFIED = "The Lead Organization has been nullified";
-    
+
     /**
      * Executes an sql.
      * @param sql sql to be executed
@@ -267,7 +267,7 @@ public class PAServiceUtils {
      * @throws PAException on error
      */
     public void createOrUpdate(List<? extends StudyDTO> dtos, Ii id, Ii studyProtocolIi) throws PAException {
-        if (PAUtil.isListEmpty(dtos)) {
+        if (CollectionUtils.isEmpty(dtos)) {
             return;
         }
         for (StudyDTO dto : dtos) {
@@ -339,7 +339,7 @@ public class PAServiceUtils {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
-        if (PAUtil.isListNotEmpty(scDtos)) {
+        if (CollectionUtils.isNotEmpty(scDtos)) {
             scDto = scDtos.get(0);
             PaRegistry.getStudyContactService().delete(scDtos.get(0).getIdentifier());
         } else {
@@ -349,7 +349,7 @@ public class PAServiceUtils {
                   StudySiteFunctionalCode.RESPONSIBLE_PARTY_SPONSOR));
               List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
                   .getByStudyProtocol(studyProtocolIi, spart);
-            if (PAUtil.isListNotEmpty(spDtos)) {
+            if (CollectionUtils.isNotEmpty(spDtos)) {
                 PaRegistry.getStudySiteService().delete(spDtos.get(0).getIdentifier());
             }
 
@@ -365,7 +365,7 @@ public class PAServiceUtils {
         ssCriteriaDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
         ssCriteriaDTO.setStudyProtocolIdentifier(studyProtocolIi);
         List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService().getByStudyProtocol(studyProtocolIi, ssCriteriaDTO);
-        if (PAUtil.isListNotEmpty(spDtos)) {
+        if (CollectionUtils.isNotEmpty(spDtos)) {
             PaRegistry.getStudySiteService().delete(spDtos.get(0).getIdentifier());
         }
     }
@@ -377,7 +377,7 @@ public class PAServiceUtils {
     public void removeRegulatoryAuthority(Ii studyProtocolIi) throws PAException {
       List<StudyRegulatoryAuthorityDTO> sraDtos = PaRegistry.getStudyRegulatoryAuthorityService()
                   .getByStudyProtocol(studyProtocolIi);
-            if (PAUtil.isListNotEmpty(sraDtos)) {
+            if (CollectionUtils.isNotEmpty(sraDtos)) {
                 PaRegistry.getStudyRegulatoryAuthorityService().delete(sraDtos.get(0).getIdentifier());
             }
 
@@ -586,7 +586,7 @@ public class PAServiceUtils {
         Long hcpId = null;
         try {
             crsId = crs.createClinicalResearchStaffCorrelations(orgPoIdentifier, personPoIdentifer);
-               
+
             if (StudyTypeCode.INTERVENTIONAL.equals(studyTypeCode)) {
                 hcpId = hcp.createHealthCareProviderCorrelationBeans(orgPoIdentifier, personPoIdentifer);
             }
@@ -710,19 +710,18 @@ public class PAServiceUtils {
      * @param studyProtocolDTO studyProtocol
      * @throws PAException on error
      */
-    @SuppressWarnings(UNCHECKED)
     public void enforceNoDuplicateIndIde(List<StudyIndldeDTO> studyIndldeDTOs, StudyProtocolDTO studyProtocolDTO)
     throws PAException {
         StringBuffer errorMsg = new StringBuffer();
-        if (PAUtil.isListNotEmpty(studyIndldeDTOs)) {
+        if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
             for (int i = 0; i < studyIndldeDTOs.size(); i++) {
-                StudyIndldeDTO sp = (StudyIndldeDTO) studyIndldeDTOs.get(i);
+                StudyIndldeDTO sp = studyIndldeDTOs.get(i);
                 if (PAUtil.isIiNotNull(sp.getIdentifier()) && !isIiExistInPA(IiConverter.convertToStudyIndIdeIi(
                         Long.valueOf(sp.getIdentifier().getExtension())))) {
                     errorMsg.append("Ind/Ide id " + sp.getIdentifier().getExtension() + " does not exist");
                 }
                 for (int j = ++i; j < studyIndldeDTOs.size(); j++) {
-                    StudyIndldeDTO newType = (StudyIndldeDTO) studyIndldeDTOs.get(j);
+                    StudyIndldeDTO newType = studyIndldeDTOs.get(j);
                     boolean sameType = newType.getIndldeTypeCode().getCode().equals(sp.getIndldeTypeCode().getCode());
                     boolean sameNumber = newType.getIndldeNumber().getValue().equals(sp.getIndldeNumber().getValue());
                     boolean sameGrantor = newType.getGrantorCode().getCode().equals(sp.getGrantorCode().getCode());
@@ -739,15 +738,15 @@ public class PAServiceUtils {
             }
         }
     }
+
     /**
      *
      * @param studyResourcingDTOs list of
      * @throws PAException on error
      */
-    @SuppressWarnings(UNCHECKED)
     public void enforceNoDuplicateGrants(List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
-        if (PAUtil.isListNotEmpty(studyResourcingDTOs)) {
+        if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
             for (int i = 0; i < studyResourcingDTOs.size(); i++) {
                 StudyResourcingDTO sp =  studyResourcingDTOs.get(i);
                 if (PAUtil.isIiNotNull(sp.getIdentifier()) && !isIiExistInPA(IiConverter.convertToStudyResourcingIi(
@@ -804,7 +803,7 @@ public class PAServiceUtils {
                                          List<StudySiteAccrualStatusDTO> participatingSites,
                                          StudyRecruitmentStatusDTO recruitmentStatusDto) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
-        if (PAUtil.isListNotEmpty(participatingSites)) {
+        if (CollectionUtils.isNotEmpty(participatingSites)) {
                if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().
                       equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {
                   boolean recruiting = false;
@@ -887,7 +886,7 @@ public class PAServiceUtils {
                  && PAUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator())) {
                    errMsg.append("Delayed posting Indicator is required if Section 801 is true.");
             }
-            if (PAUtil.isListNotEmpty(studyIndldeDTOs)) {
+            if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
                      if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
                         studyProtocolDTO.getFdaRegulatedIndicator()))) {
                          errMsg.append("FDA Regulated Intervention Indicator must be Yes "
@@ -1393,7 +1392,7 @@ public class PAServiceUtils {
       public <T extends OrganizationalStructuralRole> T updateScoper(Ii poIi, T srDTO) throws PAException {
           String poOrgIi = poIi.getExtension();
           String paOrgAssignedId = srDTO.getOrganization().getIdentifier();
-          if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId)
+          if (StringUtils.isNotEmpty(poOrgIi) && StringUtils.isNotEmpty(paOrgAssignedId)
                   && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
               //this means scoper is changed. check if exist in PA if not create and update the SR
               Organization paOrg = getOrCreatePAOrganizationByIi(poIi);

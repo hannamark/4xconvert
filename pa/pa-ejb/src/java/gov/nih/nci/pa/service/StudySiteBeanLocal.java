@@ -46,6 +46,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -106,7 +107,8 @@ implements StudySiteServiceLocal {
    * @return map
    * @throws PAException on error
    */
-  public Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
+  @Override
+public Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
       List<StudySiteDTO> dtos = getByStudyProtocol(fromStudyProtocolIi);
       Map<Ii , Ii> map = new HashMap<Ii , Ii>();
       List<StudySiteContactDTO> spcDtos = null;
@@ -298,7 +300,7 @@ implements StudySiteServiceLocal {
           }
       }
       if (StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getCode().equalsIgnoreCase(dto.getFunctionalCode().getCode())
-              && PAUtil.isListNotEmpty(queryList)) {
+              && CollectionUtils.isNotEmpty(queryList)) {
               for (StudySite sp : queryList) {
                   //When create DTO get Id will be null and if queryList is having value then its duplicate
                   //When update check if the record is same if not then throw ex
@@ -448,7 +450,8 @@ implements StudySiteServiceLocal {
    * @param dto dto
    * @throws PAException e
    */
-  public void validate(StudySiteDTO dto) throws PAException {
+  @Override
+public void validate(StudySiteDTO dto) throws PAException {
       enforceNoDuplicateTrial(dto);
   }
 

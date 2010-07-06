@@ -81,6 +81,8 @@ import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author Hugh Reinhart
  * @since 05/06/2009
@@ -144,7 +146,7 @@ public abstract class AbstractBaseCriteriaWebDto<ISODTO extends AbstractStandard
     }
 
     private static void validateDate(String date) throws PAException {
-        if (!PAUtil.isEmpty(date)  && PAUtil.isEmpty(PAUtil.normalizeDateString(date))) {
+        if (StringUtils.isNotEmpty(date)  && StringUtils.isEmpty(PAUtil.normalizeDateString(date))) {
             throw new PAException("Invalid date.");
         }
     }

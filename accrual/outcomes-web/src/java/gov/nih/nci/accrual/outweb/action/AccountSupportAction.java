@@ -113,6 +113,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -328,12 +329,12 @@ public class AccountSupportAction extends AbstractAccrualAction {
         String state = ServletActionContext.getRequest().getParameter("state");
         if (country != null && (country.equalsIgnoreCase("USA")
                             || country.equalsIgnoreCase("CAN"))) {
-            if (PAUtil.isEmpty(state) || state.trim().length() > 2) {
+            if (StringUtils.isEmpty(state) || state.trim().length() > 2) {
                 addActionError("2-letter State/Province Code required for USA/Canada");
             }
         }
         if (country != null && country.equalsIgnoreCase("AUS")) {
-            if (PAUtil.isEmpty(state) || state.trim().length() > ausStateCodeLen) {
+            if (StringUtils.isEmpty(state) || state.trim().length() > ausStateCodeLen) {
                 addActionError("2/3-letter State/Province Code required for Australia");
             }
         }
@@ -362,7 +363,7 @@ public class AccountSupportAction extends AbstractAccrualAction {
         part.setValue(firstName);
         dto.getName().getPart().add(part);
         // if middel name exists stick it in here!
-        if (midName != null && PAUtil.isNotEmpty(midName)) {
+        if (StringUtils.isNotEmpty(midName)) {
             Enxp partMid = new Enxp(EntityNamePartType.GIV);
             partMid.setValue(midName);
             dto.getName().getPart().add(partMid);
@@ -370,12 +371,12 @@ public class AccountSupportAction extends AbstractAccrualAction {
         Enxp partFam = new Enxp(EntityNamePartType.FAM);
         partFam.setValue(lastName);
         dto.getName().getPart().add(partFam);
-        if (preFix != null && PAUtil.isNotEmpty(preFix)) {
+        if (StringUtils.isNotEmpty(preFix)) {
             Enxp partPfx = new Enxp(EntityNamePartType.PFX);
             partPfx.setValue(preFix);
             dto.getName().getPart().add(partPfx);
         }
-        if (suffix != null && PAUtil.isNotEmpty(suffix)) {
+        if (StringUtils.isNotEmpty(suffix)) {
             Enxp partSfx = new Enxp(EntityNamePartType.SFX);
             partSfx.setValue(suffix);
             dto.getName().getPart().add(partSfx);
@@ -409,7 +410,7 @@ public class AccountSupportAction extends AbstractAccrualAction {
             list.getItem().add(telemail);
             dto.setTelecomAddress(list);
             //PO Service requires upper case state codes for US and Canada
-            if (PAUtil.isNotEmpty(state)) {
+            if (StringUtils.isNotEmpty(state)) {
                 state = state.trim().toUpperCase();
             }
             dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
@@ -435,7 +436,7 @@ public class AccountSupportAction extends AbstractAccrualAction {
     }
 
     private void required(String value, String fieldName) {
-        if (value != null && !PAUtil.isNotEmpty(value)) {
+        if (StringUtils.isEmpty(value)) {
             addActionError(String.format("%s is a required field", fieldName));
         }
     }
@@ -446,11 +447,11 @@ public class AccountSupportAction extends AbstractAccrualAction {
     public String lookupCreateOrganization() {
         OrganizationDTO orgDto = new OrganizationDTO();
         String orgName = ServletActionContext.getRequest().getParameter("orgName");
-        if (orgName != null && !PAUtil.isNotEmpty(orgName)) {
+        if (StringUtils.isEmpty(orgName)) {
             addActionError("Organization is a required field");
         }
         String orgStAddress = ServletActionContext.getRequest().getParameter("orgStAddress");
-        if (orgStAddress != null && !PAUtil.isNotEmpty(orgStAddress)) {
+        if (StringUtils.isEmpty(orgStAddress)) {
             addActionError("Street address is a required field");
         }
         String countryName = ServletActionContext.getRequest().getParameter("countryName");
@@ -458,28 +459,28 @@ public class AccountSupportAction extends AbstractAccrualAction {
             addActionError("Country is a required field");
         }
         String cityName = ServletActionContext.getRequest().getParameter("cityName");
-        if (cityName != null && !PAUtil.isNotEmpty(cityName)) {
+        if (StringUtils.isEmpty(cityName)) {
             addActionError("City is a required field");
         }
         String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
-        if (zipCode != null && !PAUtil.isNotEmpty(zipCode)) {
+        if (StringUtils.isEmpty(zipCode)) {
             addActionError("Zip is a required field");
         }
         String stateName = ServletActionContext.getRequest().getParameter("stateName");
         if (countryName != null && (countryName.equalsIgnoreCase("USA")
                                 || countryName.equalsIgnoreCase("CAN"))) {
-            if (PAUtil.isEmpty(stateName) || stateName.trim().length() > 2) {
+            if (StringUtils.isEmpty(stateName) || stateName.trim().length() > 2) {
                 addActionError("2-letter State/Province Code required for USA/Canada");
             }
         }
         if (countryName != null && countryName.equalsIgnoreCase("AUS")) {
-            if (PAUtil.isEmpty(stateName) || stateName.trim().length() > ausStateCodeLen) {
+            if (StringUtils.isEmpty(stateName) || stateName.trim().length() > ausStateCodeLen) {
                 addActionError("2/3-letter State/Province Code required for Australia");
             }
         }
 
         String email = ServletActionContext.getRequest().getParameter("email");
-        if (email != null && !PAUtil.isNotEmpty(email)) {
+        if (StringUtils.isEmpty(email)) {
             addActionError("Email is a required field");
         } else if (!PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
@@ -499,7 +500,7 @@ public class AccountSupportAction extends AbstractAccrualAction {
         }
         orgDto.setName(EnOnConverter.convertToEnOn(orgName));
         //PO Service requires upper case state codes for US and Canada
-        if (PAUtil.isNotEmpty(stateName)) {
+        if (StringUtils.isNotEmpty(stateName)) {
             stateName = stateName.trim().toUpperCase();
         }
         orgDto.setPostalAddress(AddressConverterUtil.create(orgStAddress, null, cityName, stateName, zipCode,

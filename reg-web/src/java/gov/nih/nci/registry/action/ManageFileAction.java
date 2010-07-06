@@ -1,31 +1,31 @@
 /***
 * caBIG Open Source Software License
-* 
+*
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-* 
+*
 * This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
 * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
 * entity.  Control for purposes of this definition means
-* 
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract 
+*
+* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
 * or otherwise,or
-*  
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or 
-* 
+*
+* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
+*
 * (iii) beneficial ownership of such entity.
 * License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
 * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to 
-* 
+* rights in the caBIG Software, including any copyright or patent rights therein, to
+*
 * (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
 * publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so; 
-* 
+* or permit others to do so;
+*
 * (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof); 
-* 
+* (or portions thereof);
+*
 * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
 * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
 * including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
@@ -34,22 +34,22 @@
 * displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
 * Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
 * distribute or use the caBIG Software.
-* 
+*
 * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
 * of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
 * form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
 * documentation and/or other materials provided with the distribution, if any.
-* 
+*
 * 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
 * This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally 
+* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
 * appear.
-* 
+*
 * 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
 * caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
 * any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
 * as required to comply with the terms of this License.
-* 
+*
 * 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
 * programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
 * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
@@ -59,27 +59,26 @@
 * In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
 * against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
 * to obtain such permissions.
-* 
+*
 * 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
 * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
 * sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
 * provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
 * License.
-* 
+*
 * 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN 
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
 * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
 * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* 
+*
+*
 */
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.enums.DocumentTypeCode;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.util.TrialUtil;
@@ -103,46 +102,46 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * The Class ManageFileAction.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since April 23 2010
  */
 @SuppressWarnings({ "unchecked" })
 public class ManageFileAction extends ActionSupport {
-    
+
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(ManageFileAction.class);
-    
+
     /** The page from. */
-    public String pageFrom;    
+    public String pageFrom;
     /** The protocol doc. */
-    public File protocolDoc;    
+    public File protocolDoc;
     /** The protocol doc file name. */
-    public String protocolDocFileName;    
+    public String protocolDocFileName;
     /** The irb approval. */
-    public File irbApproval;    
+    public File irbApproval;
     /** The irb approval file name. */
-    public String irbApprovalFileName;    
+    public String irbApprovalFileName;
     /** The participating sites. */
-    public File participatingSites = null;    
+    public File participatingSites = null;
     /** The participating sites file name. */
-    public String participatingSitesFileName = null;    
+    public String participatingSitesFileName = null;
     /** The informed consent document. */
-    public File informedConsentDocument = null;    
+    public File informedConsentDocument = null;
     /** The informed consent document file name. */
-    public String informedConsentDocumentFileName = null;    
+    public String informedConsentDocumentFileName = null;
     /** The other document. */
-    public File otherDocument = null;    
+    public File otherDocument = null;
     /** The other document file name. */
-    public String otherDocumentFileName = null;    
+    public String otherDocumentFileName = null;
     /** The protocol highlight document. */
-    public File protocolHighlightDocument = null;    
+    public File protocolHighlightDocument = null;
     /** The protocol highlight document file name. */
-    public String protocolHighlightDocumentFileName = null;    
+    public String protocolHighlightDocumentFileName = null;
     /** The change memo doc. */
-    public File changeMemoDoc;    
+    public File changeMemoDoc;
     /** The change memo doc file name. */
-    public String changeMemoDocFileName = null;    
+    public String changeMemoDocFileName = null;
     private static final String PROTOCOLDOC = DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName();
     private static final String IRBAPPROVALDOC = DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getShortName();
     private static final String PARTICIPATINGSITESDOC = DocumentTypeCode.PARTICIPATING_SITES.getShortName();
@@ -150,10 +149,10 @@ public class ManageFileAction extends ActionSupport {
     private static final String CHANGEMEMODOC = DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getShortName();
     private static final String PROTOCOLHIGHDOC = DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getShortName();
     private static final String OTHERDOC = DocumentTypeCode.OTHER.getShortName();
-    
+
     /**
      * Delete document.
-     * 
+     *
      * @return the string
      */
     public String deleteDocument() {
@@ -164,10 +163,10 @@ public class ManageFileAction extends ActionSupport {
         LOG.debug("Leaving deleteDocument()");
         return SUCCESS;
     }
-    
+
     /**
      * Adds the errors.
-     * 
+     *
      * @param err the err
      */
     public void addErrors(Map<String, String> err) {
@@ -177,7 +176,7 @@ public class ManageFileAction extends ActionSupport {
             }
         }
     }
-    
+
     /**
      * validate the submit trial form elements.
      */
@@ -193,11 +192,11 @@ public class ManageFileAction extends ActionSupport {
                     "trialDTO.participatingSitesFileName", ""));
         }
         if (session.getAttribute(INFORMEDCONSENTDOC) == null) {
-            err.putAll(validator.validateDocument(informedConsentDocumentFileName, informedConsentDocument, 
+            err.putAll(validator.validateDocument(informedConsentDocumentFileName, informedConsentDocument,
                     "trialDTO.informedConsentDocumentFileName", ""));
         }
         if (session.getAttribute(OTHERDOC) == null) {
-            err.putAll(validator.validateDocument(otherDocumentFileName, otherDocument, 
+            err.putAll(validator.validateDocument(otherDocumentFileName, otherDocument,
                     "trialDTO.otherDocumentFileName", ""));
         }
         if (session.getAttribute(PROTOCOLHIGHDOC) == null) {
@@ -211,7 +210,7 @@ public class ManageFileAction extends ActionSupport {
     private void checkChangeMemoDoc(TrialValidator validator,
             HttpSession session, Map<String, String> err) {
         if (session.getAttribute(CHANGEMEMODOC) == null && "amendTrial".equals(pageFrom)) {
-            err.putAll(validator.validateDocument(changeMemoDocFileName, changeMemoDoc, 
+            err.putAll(validator.validateDocument(changeMemoDocFileName, changeMemoDoc,
                     "trialDTO.changeMemoDocFileName", "error.submit.changeMemo"));
         }
     }
@@ -233,12 +232,12 @@ public class ManageFileAction extends ActionSupport {
             "error.submit.irbApproval"));
         }
     }
-    
+
     /**
      * Adds the doc dto to list.
-     * 
+     *
      * @return the list< trial document web dt o>
-     * 
+     *
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public List<TrialDocumentWebDTO> addDocDTOToList() throws IOException {
@@ -258,12 +257,12 @@ public class ManageFileAction extends ActionSupport {
     private void getProtocolHighlightDoc(TrialUtil util,
             List<TrialDocumentWebDTO> docDTOList, HttpSession session)
             throws IOException {
-        if (StringUtils.isNotEmpty(protocolHighlightDocumentFileName) 
+        if (StringUtils.isNotEmpty(protocolHighlightDocumentFileName)
                 && session.getAttribute(PROTOCOLHIGHDOC) == null) {
             TrialDocumentWebDTO webDto = util.convertToDocumentDTO(
-                    DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getCode(), 
+                    DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getCode(),
                     protocolHighlightDocumentFileName, protocolHighlightDocument);
-            docDTOList.add(webDto);  
+            docDTOList.add(webDto);
             session.setAttribute(PROTOCOLHIGHDOC, webDto);
         }
     }
@@ -274,7 +273,7 @@ public class ManageFileAction extends ActionSupport {
         if (StringUtils.isNotEmpty(changeMemoDocFileName) && session.getAttribute(CHANGEMEMODOC) == null) {
             TrialDocumentWebDTO webDto = util.convertToDocumentDTO(
                     DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode(), changeMemoDocFileName, changeMemoDoc);
-            docDTOList.add(webDto);  
+            docDTOList.add(webDto);
             session.setAttribute(CHANGEMEMODOC, webDto);
         }
     }
@@ -283,9 +282,9 @@ public class ManageFileAction extends ActionSupport {
             List<TrialDocumentWebDTO> docDTOList, HttpSession session)
             throws IOException {
         if (StringUtils.isNotEmpty(otherDocumentFileName) && session.getAttribute(OTHERDOC) == null) {
-            TrialDocumentWebDTO webDto = util.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(), 
+            TrialDocumentWebDTO webDto = util.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(),
                     otherDocumentFileName, otherDocument);
-            docDTOList.add(webDto);  
+            docDTOList.add(webDto);
             session.setAttribute(OTHERDOC, webDto);
         }
     }
@@ -304,7 +303,7 @@ public class ManageFileAction extends ActionSupport {
     private void getInformedConsentDoc(TrialUtil util,
             List<TrialDocumentWebDTO> docDTOList, HttpSession session)
             throws IOException {
-        if (StringUtils.isNotEmpty(informedConsentDocumentFileName) 
+        if (StringUtils.isNotEmpty(informedConsentDocumentFileName)
                 && session.getAttribute(INFORMEDCONSENTDOC) == null) {
             TrialDocumentWebDTO webDto = util.convertToDocumentDTO(
                     DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getCode(),
@@ -335,10 +334,10 @@ public class ManageFileAction extends ActionSupport {
             session.setAttribute(PROTOCOLDOC, webDto);
         }
     }
-    
+
     /**
      * Sets the documents in session.
-     * 
+     *
      * @param trialDTO the new documents in session
      */
     public void setDocumentsInSession(TrialDTO trialDTO) {
@@ -349,12 +348,12 @@ public class ManageFileAction extends ActionSupport {
             }
         }
     }
-    
+
     /**
      * Populate the documents List.
-     * 
+     *
      * @param docDTOList the doc dto list
-     * 
+     *
      */
     public void populateList(List<TrialDocumentWebDTO> docDTOList) {
         TrialDocumentWebDTO protocolDocument = (TrialDocumentWebDTO) ServletActionContext.getRequest()
@@ -366,7 +365,7 @@ public class ManageFileAction extends ActionSupport {
         TrialDocumentWebDTO participatingSitesDocument = (TrialDocumentWebDTO) ServletActionContext.getRequest()
         .getSession().getAttribute(PARTICIPATINGSITESDOC);
         TrialDocumentWebDTO otherDoc = (TrialDocumentWebDTO) ServletActionContext.getRequest()
-        .getSession().getAttribute(OTHERDOC);        
+        .getSession().getAttribute(OTHERDOC);
         TrialDocumentWebDTO changeMemoDocument = (TrialDocumentWebDTO) ServletActionContext.getRequest()
         .getSession().getAttribute(CHANGEMEMODOC);
         TrialDocumentWebDTO protocolHighlightDoc = (TrialDocumentWebDTO) ServletActionContext.getRequest()
@@ -380,7 +379,7 @@ public class ManageFileAction extends ActionSupport {
         docDTOList.add(otherDoc);
         docDTOList.add(changeMemoDocument);
         docDTOList.add(protocolHighlightDoc);
-        
+
         Set set = new HashSet(docDTOList);
         set.remove(null);
         docDTOList.clear();
@@ -394,7 +393,7 @@ public class ManageFileAction extends ActionSupport {
      */
     public void checkOtherDoc(HttpSession session, TrialValidator validator) {
         Map<String, String> errMap;
-        if (PAUtil.isNotEmpty(otherDocumentFileName) 
+        if (StringUtils.isNotEmpty(otherDocumentFileName)
                 && session.getAttribute(DocumentTypeCode.OTHER.getShortName()) == null) {
             errMap = new HashMap<String, String>();
             errMap = validator.validateDocument(otherDocumentFileName, otherDocument, "trialDTO.otherDocumentFileName"
@@ -410,7 +409,7 @@ public class ManageFileAction extends ActionSupport {
      */
     public void checkProtocolDoc(HttpSession session, TrialValidator validator) {
         Map<String, String> errMap;
-        if (PAUtil.isNotEmpty(protocolDocFileName) 
+        if (StringUtils.isNotEmpty(protocolDocFileName)
                 && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
             errMap = new HashMap<String, String>();
             errMap = validator.validateDocument(protocolDocFileName, protocolDoc, "trialDTO.protocolDocFileName", "");
@@ -587,13 +586,13 @@ public class ManageFileAction extends ActionSupport {
      */
     public void setChangeMemoDoc(File changeMemoDoc) {
         this.changeMemoDoc = changeMemoDoc;
-    }    
+    }
     /**
      * @return the changeMemoDocFileName
      */
     public String getChangeMemoDocFileName() {
         return changeMemoDocFileName;
-    }    
+    }
     /**
      * @param changeMemoDocFileName the changeMemoDocFileName to set
      */

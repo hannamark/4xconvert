@@ -85,7 +85,8 @@ import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
 import gov.nih.nci.outcomes.svc.util.OutcomesUtil;
 import gov.nih.nci.pa.enums.RadiationProcedureTypeCode;
-import gov.nih.nci.pa.util.PAUtil;
+
+import org.apache.commons.lang.math.NumberUtils;
 
 /**
  * @author Kalpana Guthikonda
@@ -112,7 +113,7 @@ public abstract class AbstractRadiationDto extends AbstractBaseOutSvcDto {
         if (getTotalDose() == null || getTotalDose().getValue() == null) {
             throw new OutcomesFieldException(getClass(), "totalDose.value", "Please enter Total Dose Value.");
         }
-        if (getTotalDose().getValue() != null && !PAUtil.isNumber(getTotalDose().getValue().toString())) {
+        if (getTotalDose().getValue() != null && !NumberUtils.isNumber(getTotalDose().getValue().toString())) {
             throw new OutcomesFieldException(getClass(), "totalDose.value", NUMERICMESSAGE);
         }
         if (getTotalDose() == null || getTotalDose().getUnit().equals("")) {
@@ -123,7 +124,7 @@ public abstract class AbstractRadiationDto extends AbstractBaseOutSvcDto {
             throw new OutcomesFieldException(getClass(), "duration.value", "Please enter Duration Value.");
         }
         if (getDuration() != null && getDuration().getValue() != null
-                && !PAUtil.isNumber(getDuration().getValue().toString())) {
+                && !NumberUtils.isNumber(getDuration().getValue().toString())) {
             throw new OutcomesFieldException(getClass(), "duration.value", NUMERICMESSAGE);
         }
         if (getDuration() != null && getDuration().getUnit() != null
@@ -133,7 +134,7 @@ public abstract class AbstractRadiationDto extends AbstractBaseOutSvcDto {
         if (getDose() == null || getDose().getValue() == null) {
             throw new OutcomesFieldException(getClass(), "dose.value", "Please enter Dose Value.");
         }
-        if (getDose().getValue() != null && !PAUtil.isNumber(getDose().getValue().toString())) {
+        if (getDose().getValue() != null && !NumberUtils.isNumber(getDose().getValue().toString())) {
             throw new OutcomesFieldException(getClass(), "dose.value", NUMERICMESSAGE);
         }
         if (getDose() == null || getDose().getUnit().equals("")) {

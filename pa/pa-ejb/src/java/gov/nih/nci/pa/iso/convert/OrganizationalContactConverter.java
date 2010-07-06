@@ -14,12 +14,14 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
- * 
+ *
  * @author NAmiruddin
  *
  */
-public class OrganizationalContactConverter 
+public class OrganizationalContactConverter
     extends AbstractPoConverter <PAOrganizationalContactDTO , OrganizationalContactDTO ,  OrganizationalContact > {
 
     /**
@@ -32,7 +34,6 @@ public class OrganizationalContactConverter
         OrganizationalContact oc = new OrganizationalContact();
         oc.setPerson(per);
         oc.setOrganization(org);
-        //oc.setIdentifier(dto.getIdentifier().getExtension());
         oc.setStatusCode(StructuralRoleStatusCode.PENDING);
         return oc;
     }
@@ -55,17 +56,18 @@ public class OrganizationalContactConverter
              ii.setReliability(IdentifierReliability.ISS);
              poOcDto.setIdentifier(DSetConverter.convertIiToDset(ii));
             }
-            if (PAUtil.isNotEmpty(dto.getTypeCode())) {
+            if (StringUtils.isNotEmpty(dto.getTypeCode())) {
                 poOcDto.setTypeCode(CdConverter.convertStringToCd(dto.getTypeCode()));
             }
         }
         return poOcDto;
 
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public OrganizationalContact convertFromPODtoToPADto(
             OrganizationalContactDTO dto) throws PAException {
         // TODO Auto-generated method stub

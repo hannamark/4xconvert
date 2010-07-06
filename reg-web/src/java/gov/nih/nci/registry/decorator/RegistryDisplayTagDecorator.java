@@ -85,7 +85,6 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 
@@ -93,6 +92,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.displaytag.decorator.TableDecorator;
 
@@ -132,7 +132,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         StudyStatusCode statusCode = ((StudyProtocolQueryDTO)
                 this.getCurrentRowObject()).getStudyStatusCode();
 
-        if (PAUtil.isNotEmpty(isProprietaryTrial)
+        if (StringUtils.isNotEmpty(isProprietaryTrial)
                 && isProprietaryTrial.equalsIgnoreCase("true")) {
           return "";
         }
@@ -257,7 +257,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
         String nciNumber =  ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getNciIdentifier();
         String retComplete = "";
-        if (isOwner(studyProtocolId, loginUser) && PAUtil.isEmpty(nciNumber)) {
+        if (isOwner(studyProtocolId, loginUser) && StringUtils.isEmpty(nciNumber)) {
             retComplete = "Complete";
         }
         return retComplete;
@@ -272,7 +272,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
         String nciNumber =  ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getNciIdentifier();
         String retComplete = "";
-        if (isOwner(studyProtocolId, loginUser) && PAUtil.isEmpty(nciNumber)) {
+        if (isOwner(studyProtocolId, loginUser) && StringUtils.isEmpty(nciNumber)) {
             retComplete = "Delete";
         }
         return retComplete;
@@ -287,7 +287,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         String isProprietaryTrial =
             ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() != null
                    ? ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() : "";
-        if (PAUtil.isNotEmpty(isProprietaryTrial)
+        if (StringUtils.isNotEmpty(isProprietaryTrial)
                 && isProprietaryTrial.equalsIgnoreCase("true")) {
             trialCat = "Proprietary Trial";
         } else {

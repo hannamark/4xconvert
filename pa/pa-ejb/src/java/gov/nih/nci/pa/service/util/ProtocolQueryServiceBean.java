@@ -562,25 +562,25 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             if (studyProtocolQueryCriteria.getStudyProtocolId() != null) {
                 where.append(" and sp.id = ").append(studyProtocolQueryCriteria.getStudyProtocolId());
             }
-            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getOfficialTitle())) {
+            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getOfficialTitle())) {
                 where.append(" and upper(sp.officialTitle)  like '%"
                         + studyProtocolQueryCriteria.getOfficialTitle().toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
             }
-            if (StringUtils.isNotBlank(studyProtocolQueryCriteria.getPhaseCode())) {
+            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getPhaseCode())) {
                 where.append(" and sp.phaseCode  = '"
                         + PhaseCode.getByCode(studyProtocolQueryCriteria.getPhaseCode()) + "'");
             }
-            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())) {
+            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())) {
                 where.append(" and sp_oids.extension like '%"
                         + studyProtocolQueryCriteria.getNciIdentifier().toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
-            } else if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getOtherIdentifier())) {
+            } else if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getOtherIdentifier())) {
                 where.append(" and upper(sp_oids.extension) like '%"
                         + studyProtocolQueryCriteria.getOtherIdentifier().toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
             }
-            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getStudyStatusCode())) {
+            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getStudyStatusCode())) {
                 where.append(" and sos.statusCode  = '"
                         + StudyStatusCode.getByCode(studyProtocolQueryCriteria.getStudyStatusCode()) + "'");
                 where.append(" and ( sos.id in (select max(id) from StudyOverallStatus as sos1 "
@@ -592,11 +592,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                 + "                where sp.id = sos1.studyProtocol )"
                                 + " or sos.id is null ) ");
             }
-            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getPrimaryPurposeCode())) {
+            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getPrimaryPurposeCode())) {
                 where.append(" and sp.primaryPurposeCode  = '" + PrimaryPurposeCode.getByCode(studyProtocolQueryCriteria
                                         .getPrimaryPurposeCode()) + "'");
             }
-            if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode())) {
+            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode())) {
                 where.append(" and dws.statusCode  = '" + DocumentWorkflowStatusCode.
                         getByCode(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode()) + "'");
                 where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
@@ -605,7 +605,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             } else {
                 whereClauseForRegistrySearch(studyProtocolQueryCriteria, where);
            }
-           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier())) {
+           if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier())) {
                 where.append(" and upper(sps.localStudyProtocolIdentifier) like '%"
                                 + studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier()
                                         .toUpperCase().trim().replaceAll("'", "''") + "%'");
@@ -615,11 +615,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                        + studyProtocolQueryCriteria.getNctNumber().toUpperCase().trim().replaceAll("'", "''")
                        + "' and sps_nct.functionalCode = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER + "'");
            }
-           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationId())) {
+           if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationId())) {
                     where.append(" and org.id = " + studyProtocolQueryCriteria.getLeadOrganizationId());
 
            }
-           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getPrincipalInvestigatorId())) {
+           if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getPrincipalInvestigatorId())) {
                 where.append(" and per.id = " + studyProtocolQueryCriteria.getPrincipalInvestigatorId());
            }
            // required for Registry duplicate trial check
@@ -627,7 +627,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
            if (BooleanUtils.isTrue(studyProtocolQueryCriteria.getExcludeRejectProtocol()))  {
                where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
            }
-           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getStudyMilestone())) {
+           if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getStudyMilestone())) {
                where.append(" and sms.milestoneCode  = '"
                        + MilestoneCode.getByCode(studyProtocolQueryCriteria.getStudyMilestone()) + "'");
                where.append(" and ( sms.id in (select max(id) from StudyMilestone as sms1 "
@@ -655,7 +655,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
            where.append(" and (sc.roleCode ='"
                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "' or sc.studyProtocol is null) ");
            where.append(" and sp.statusCode ='" + ActStatusCode.ACTIVE + "'");
-           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getTrialCategory())) {
+           if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getTrialCategory())) {
                if (studyProtocolQueryCriteria.getTrialCategory().equalsIgnoreCase("p")) {
                    where.append(" and sp.proprietaryTrialIndicator is true");
                } else if (studyProtocolQueryCriteria.getTrialCategory().equalsIgnoreCase("n")) {
@@ -675,7 +675,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private void whereClauseForRegistrySearch(StudyProtocolQueryCriteria criteria, StringBuffer where) {
         // added for Registry Trial Search
-        if (criteria.getMyTrialsOnly() != null && PAUtil.isNotEmpty(criteria.getUserLastCreated())) {
+        if (criteria.getMyTrialsOnly() != null && StringUtils.isNotEmpty(criteria.getUserLastCreated())) {
             if (criteria.getMyTrialsOnly().booleanValue()) {
                 where.append(" and ( sowner.id = ").append(criteria.getUserId());
                 where.append(" or ").append(criteria.getUserId());
@@ -722,7 +722,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private void addSubQueries(StudyProtocolQueryCriteria studyProtocolQueryCriteria, StringBuffer where) {
         // sub-query for searching trials by Participating site
-        if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getOrganizationType())
+        if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getOrganizationType())
                 && studyProtocolQueryCriteria.getOrganizationType().equalsIgnoreCase(PAConstants.PARTICIPATING_SITE)) {
             where.append(" and sp.id in(select sp2.id from StudyProtocol as sp2  "
                     + "left outer join sp2.studySites as sps2  " + "left outer join sps2.healthCareFacility as hcf "
@@ -730,24 +730,24 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     + studyProtocolQueryCriteria.getParticipatingSiteId() + ")");
         }
         // sub-query for searching only on hold trials
-        if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getSearchOnHold())
+        if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getSearchOnHold())
                 && studyProtocolQueryCriteria.getSearchOnHold().equals("true")) {
             where.append(" and sp.id in(select distinct sp3.id from StudyProtocol as sp3 "
                     + " left outer join sp3.studyOnholds as spoh " + " where spoh.onholdDate is not null and "
                     + " spoh.offholdDate is null)");
         }
         // sub-query for searching only Amend trials
-        if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getSubmissionType())
+        if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getSubmissionType())
                 && studyProtocolQueryCriteria.getSubmissionType().equalsIgnoreCase(SubmissionTypeCode.A.getCode())) {
             where.append(" and sp.submissionNumber > 1 and sp.amendmentNumber is not null and "
                     + " sp.amendmentDate is not null)");
         }
-        if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getSubmissionType())
+        if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getSubmissionType())
                 && studyProtocolQueryCriteria.getSubmissionType().equalsIgnoreCase(SubmissionTypeCode.O.getCode())) {
             where.append(" and sp.submissionNumber = 1 and sp.amendmentNumber is null and "
                     + " sp.amendmentDate is null)");
         }
-        if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getStudyLockedBy())
+        if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getStudyLockedBy())
                 && studyProtocolQueryCriteria.getStudyLockedBy().equals("true")) {
             where.append(" and sp.id in(select sp3.id from StudyProtocol as sp3 "
                     + " left outer join sp3.studyCheckout as spco " + " where spco.userIdentifier='"
@@ -756,24 +756,26 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
     }
 
     private boolean isCriteriaEmpty(StudyProtocolQueryCriteria criteria) {
-        return (PAUtil.isEmpty(criteria.getNciIdentifier())
-                && PAUtil.isEmpty(criteria.getOfficialTitle())
-                && PAUtil.isEmpty(criteria.getLeadOrganizationId())
-                && PAUtil.isEmpty(criteria.getLeadOrganizationTrialIdentifier())
-                && PAUtil.isEmpty(criteria.getPrincipalInvestigatorId())
-                && PAUtil.isEmpty(criteria.getPrimaryPurposeCode())
-                && PAUtil.isEmpty(criteria.getPhaseCode())
-                && PAUtil.isEmpty(criteria.getStudyStatusCode())
-                && PAUtil.isEmpty(criteria.getDocumentWorkflowStatusCode())
-                && PAUtil.isEmpty(criteria.getStudyMilestone())
-                && PAUtil.isEmpty(criteria.getOtherIdentifier())
-                && PAUtil.isEmpty(criteria.getNctNumber())
-                && ((PAUtil.isNotEmpty(criteria.getSearchOnHold()) && criteria.getSearchOnHold().equalsIgnoreCase(
-                        "false")) || PAUtil.isEmpty(criteria.getSearchOnHold()))
-                && ((PAUtil.isNotEmpty(criteria.getStudyLockedBy()) && criteria.getStudyLockedBy().equalsIgnoreCase(
-                        "false")) || PAUtil.isEmpty(criteria.getStudyLockedBy()))
-                && PAUtil.isEmpty(criteria.getSubmissionType())
-                && PAUtil.isEmpty(criteria.getTrialCategory())
+        return (StringUtils.isEmpty(criteria.getNciIdentifier())
+                && StringUtils.isEmpty(criteria.getOfficialTitle())
+                && StringUtils.isEmpty(criteria.getLeadOrganizationId())
+                && StringUtils.isEmpty(criteria.getLeadOrganizationTrialIdentifier())
+                && StringUtils.isEmpty(criteria.getPrincipalInvestigatorId())
+                && StringUtils.isEmpty(criteria.getPrimaryPurposeCode())
+                && StringUtils.isEmpty(criteria.getPhaseCode())
+                && StringUtils.isEmpty(criteria.getStudyStatusCode())
+                && StringUtils.isEmpty(criteria.getDocumentWorkflowStatusCode())
+                && StringUtils.isEmpty(criteria.getStudyMilestone())
+                && StringUtils.isEmpty(criteria.getOtherIdentifier())
+                && StringUtils.isEmpty(criteria.getNctNumber())
+                && ((StringUtils.isNotEmpty(criteria.getSearchOnHold())
+                        && StringUtils.equals(criteria.getSearchOnHold(), "false"))
+                        || StringUtils.isEmpty(criteria.getSearchOnHold()))
+                && ((StringUtils.isNotEmpty(criteria.getStudyLockedBy())
+                        && StringUtils.equals(criteria.getStudyLockedBy(), "false"))
+                        || StringUtils.isEmpty(criteria.getStudyLockedBy()))
+                && StringUtils.isEmpty(criteria.getSubmissionType())
+                && StringUtils.isEmpty(criteria.getTrialCategory())
                 && (criteria.getMyTrialsOnly() != null && !criteria.getMyTrialsOnly()
                         || criteria.getMyTrialsOnly() == null));
     }

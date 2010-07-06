@@ -46,6 +46,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -433,7 +434,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
         //clear the session
         TrialValidator.removeSessionAttributes();
         try {
-                String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+                String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
                 if (studyProtocolId == null) {
                     studyProtocolId = pId;
                 }
@@ -744,7 +745,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
         err = validator.validateTrialDTO(trialDTO);
         addErrors(err);
         // validate trial status and dates specific for amendment
-        if (PAUtil.isNotEmpty(trialDTO.getStatusCode())
+        if (StringUtils.isNotEmpty(trialDTO.getStatusCode())
                 && RegistryUtil.isValidDate(trialDTO.getStatusDate())
                 && RegistryUtil.isValidDate(trialDTO.getCompletionDate())
                 && RegistryUtil.isValidDate(trialDTO.getStartDate())

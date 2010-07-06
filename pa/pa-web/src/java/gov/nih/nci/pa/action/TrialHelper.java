@@ -158,11 +158,11 @@ public class TrialHelper {
             createOrUpdateCentralContact(studyProtocolIi, gtdDTO);
         }
         //summ4 info
-        if (PAUtil.isNotEmpty(gtdDTO.getSummaryFourOrgIdentifier())) {
+        if (StringUtils.isNotEmpty(gtdDTO.getSummaryFourOrgIdentifier())) {
             OrganizationDTO sum4OrgDto = new OrganizationDTO();
             sum4OrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi(gtdDTO.getSummaryFourOrgIdentifier()));
             StudyResourcingDTO summary4ResoureDTO = new StudyResourcingDTO();
-            if (PAUtil.isNotEmpty(gtdDTO.getSummaryFourFundingCategoryCode())) {
+            if (StringUtils.isNotEmpty(gtdDTO.getSummaryFourFundingCategoryCode())) {
               summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                         .getByCode(gtdDTO.getSummaryFourFundingCategoryCode())));
             } else {
@@ -371,7 +371,7 @@ public class TrialHelper {
      */
     private void copyNctNummber(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException {
         String nctNumber = new PAServiceUtils().getStudyIdentifier(studyProtocolIi, PAConstants.NCT_IDENTIFIER_TYPE);
-        if (PAUtil.isNotEmpty(nctNumber)) {
+        if (StringUtils.isNotEmpty(nctNumber)) {
             gtdDTO.setNctIdentifier(nctNumber);
         }
     }
@@ -437,9 +437,9 @@ public class TrialHelper {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         spDTO.setIdentifier(spDTO.getIdentifier());
-        spDTO.setOfficialTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getOfficialTitle(), OFFICIAL_TITLE)));
+        spDTO.setOfficialTitle(StConverter.convertToSt(StringUtils.left(gtdDTO.getOfficialTitle(), OFFICIAL_TITLE)));
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
-        spDTO.setKeywordText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getKeywordText(), KEYWORD)));
+        spDTO.setKeywordText(StConverter.convertToSt(StringUtils.left(gtdDTO.getKeywordText(), KEYWORD)));
         if (gtdDTO.getSubmissionNumber() > 1) {
             spDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(gtdDTO.getAmendmentReasonCode()));
         }
@@ -478,13 +478,13 @@ public class TrialHelper {
         List<StudyContactDTO> srDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
         if (srDtos != null && !srDtos.isEmpty()) {
             scDto = srDtos.get(0);
-            if (PAUtil.isNotEmpty(gtdDTO.getCentralContactIdentifier())) {
+            if (StringUtils.isNotEmpty(gtdDTO.getCentralContactIdentifier())) {
                 PaRegistry.getStudyContactService().update(createStudyContactObj(studyProtocolIi, scDto, gtdDTO));
             } else {
                 //this mean lead org is changed and not selected the central contact so delete
                 PaRegistry.getStudyContactService().delete(scDto.getIdentifier());
             }
-        } else if (PAUtil.isNotEmpty(gtdDTO.getCentralContactIdentifier())) {
+        } else if (StringUtils.isNotEmpty(gtdDTO.getCentralContactIdentifier())) {
             PaRegistry.getStudyContactService().create(createStudyContactObj(studyProtocolIi, scDto, gtdDTO));
         }
     }
@@ -504,13 +504,13 @@ public class TrialHelper {
 
         ClinicalResearchStaffCorrelationServiceBean crbb = new ClinicalResearchStaffCorrelationServiceBean();
         String phone = gtdDTO.getCentralContactPhone().trim();
-        if (PAUtil.isNotEmpty(gtdDTO.getCentralContactPhoneExtn())) {
+        if (StringUtils.isNotEmpty(gtdDTO.getCentralContactPhoneExtn())) {
             StringBuffer phoneWithExtn = new StringBuffer();
             phoneWithExtn.append(phone).append("extn").append(gtdDTO.getCentralContactPhoneExtn());
             phone = phoneWithExtn.toString();
         }
         Ii selectedCenteralContactIi  = null;
-        if (PAUtil.isNotEmpty(gtdDTO.getCentralContactIdentifier())) {
+        if (StringUtils.isNotEmpty(gtdDTO.getCentralContactIdentifier())) {
             PersonDTO isoPerDTO = PoRegistry.getPersonEntityService().getPerson(
                     IiConverter.convertToPoPersonIi(gtdDTO.getCentralContactIdentifier()));
             if (isoPerDTO == null) {
@@ -572,7 +572,7 @@ public class TrialHelper {
             gtdDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
         }
         if (srDTO.getOrganizationIdentifier() != null
-                && PAUtil.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {
+                && StringUtils.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {
             CorrelationUtils cUtils = new CorrelationUtils();
             Organization o = cUtils.getPAOrganizationByIi(srDTO.getOrganizationIdentifier());
             gtdDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
@@ -591,7 +591,7 @@ public class TrialHelper {
             GeneralTrialDesignWebDTO gtdDTO) throws PAException {
         PARelationServiceBean parb = new PARelationServiceBean();
         String phone = gtdDTO.getContactPhone().trim();
-        if (PAUtil.isNotEmpty(gtdDTO.getContactPhoneExtn())) {
+        if (StringUtils.isNotEmpty(gtdDTO.getContactPhoneExtn())) {
             StringBuffer phoneWithExtn = new StringBuffer();
             phoneWithExtn.append(phone).append("extn").append(gtdDTO.getContactPhoneExtn());
             phone = phoneWithExtn.toString();
@@ -606,15 +606,15 @@ public class TrialHelper {
             contactDto.setStudyProtocolIdentifier(studyProtocolIi);
             contactDto.setEmail(gtdDTO.getContactEmail());
             contactDto.setPhone(phone);
-            if (!PAUtil.isEmpty(gtdDTO.getResponsiblePersonName())) {
+            if (StringUtils.isNotEmpty(gtdDTO.getResponsiblePersonName())) {
                 contactDto.setPersonIdentifier(IiConverter.convertToPoPersonIi(
                         gtdDTO.getResponsiblePersonIdentifier()));
               }
-              if (!PAUtil.isEmpty(gtdDTO.getResponsibleGenericContactName())) {
+              if (StringUtils.isNotEmpty(gtdDTO.getResponsibleGenericContactName())) {
                   contactDto.setSrIdentifier(IiConverter.convertToPoOrganizationalContactIi(
                           gtdDTO.getResponsiblePersonIdentifier()));
               }
-              try {  
+              try {
                 parb.createSponsorAsPrimaryContactRelations(contactDto);
               } catch (PAException pae) {
                 if (PAExceptionConstants.NULLIFIED_PERSON.equals(pae.getMessage())) {

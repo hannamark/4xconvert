@@ -95,6 +95,7 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -104,6 +105,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.Action;
@@ -168,7 +170,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
         try {
         loadForm();
         } catch (PAException e) {
-            addActionError(e.getMessage());   
+            addActionError(e.getMessage());
         }
         return Action.SUCCESS;
     }
@@ -186,7 +188,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
             statusDto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
             statusDto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
             statusDto.setStudyProtocolIdentifier(spIdIi);
-            
+
             StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
             studyProtocolDTO.setIdentifier(spIdIi);
             studyProtocolDTO.setStartDateTypeCode(CdConverter.convertStringToCd(startDateType));
@@ -198,7 +200,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
 
             insertOrUpdateStudyOverallStatus();
             updateStudyProtocol();
-            
+
             if (!hasActionErrors()) {
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
                 loadForm();
@@ -317,7 +319,7 @@ public class StudyOverallStatusAction extends ActionSupport implements
      * @param statusReason the statusReason to set
      */
     public void setStatusReason(String statusReason) {
-        this.statusReason = PAUtil.stringSetter(statusReason);
+        this.statusReason = StringUtils.left(statusReason, PAAttributeMaxLen.LONG_TEXT_LENGTH);
     }
 
     /**
@@ -361,8 +363,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
 
             StudyProtocolDTO spDTO = spService.getStudyProtocol(spIdIi);
                 //original submission
-                if (spqDTO.getDocumentWorkflowStatusCode() != null 
-                        && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED") 
+                if (spqDTO.getDocumentWorkflowStatusCode() != null
+                        && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED")
                 && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) {
                     StudyOverallStatusDTO sosDto = null;
                     sosDto = sosService.getCurrentByStudyProtocol(spIdIi);

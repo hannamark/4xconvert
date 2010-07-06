@@ -87,11 +87,12 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Hugh Reinhart
@@ -157,7 +158,7 @@ public class MockSearchTrialBean implements SearchTrialService {
         boolean result = true;
         String c = StConverter.convertToString(crit);
         String v = StConverter.convertToString(value);
-        if (!PAUtil.isEmpty(c) &&  !v.contains(c)) {
+        if (StringUtils.isNotEmpty(c) &&  !v.contains(c)) {
             result = false;
         }
         return result;

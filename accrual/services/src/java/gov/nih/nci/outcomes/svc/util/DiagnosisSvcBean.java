@@ -96,6 +96,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
+import org.apache.commons.collections.CollectionUtils;
+
 /**
  * @author Hugh Reinhart
  * @since Feb 22, 2010
@@ -222,7 +224,7 @@ public class DiagnosisSvcBean extends AbstractOutcomesBusSvcBean<DiagnosisSvcDto
                 cctx.getPerFormedObservationResultService().
                     getPerformedDiagnosisByPerformedActivity(dto.getIdentifier());
 
-            if (PAUtil.isListEmpty(pdList)) {
+            if (CollectionUtils.isEmpty(pdList)) {
                 throw new OutcomesException("Performed Diagnosis is not found for identifier = "
                         + dto.getIdentifier().getExtension());
             }

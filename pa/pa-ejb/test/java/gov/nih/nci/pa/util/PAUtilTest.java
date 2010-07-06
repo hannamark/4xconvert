@@ -80,7 +80,7 @@ public class PAUtilTest {
         assertTrue(PAUtil.isIiNull(ii));
 
 	}
-	
+
 	/**
 	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNotNull(gov.nih.nci.iso21090.Ii)}.
 	 */
@@ -105,7 +105,7 @@ public class PAUtilTest {
         PAUtil.isValidIi(null , null);
     }
 
-	
+
 	/**
 	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isCdNull(gov.nih.nci.iso21090.Cd)}.
 	 */
@@ -189,7 +189,7 @@ public class PAUtilTest {
 		Pq pq =null;
 		assertTrue(PAUtil.isPqUnitNull(pq));
 		pq = new Pq();
-        pq.setUnit(null);		
+        pq.setUnit(null);
         assertTrue(PAUtil.isPqUnitNull(pq));
 	}
 
@@ -319,44 +319,6 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isEmpty(java.lang.String)}.
-	 */
-	@Test
-	public void testIsEmpty() {
-		assertTrue(PAUtil.isEmpty(null));
-		assertFalse(PAUtil.isEmpty("Hello"));
-		assertTrue(PAUtil.isEmpty(" "));
-	}
-
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isNotEmpty(java.lang.String)}.
-	 */
-	@Test
-	public void testIsNotEmpty() {
-		assertTrue(PAUtil.isNotEmpty("hello"));
-		assertFalse(PAUtil.isNotEmpty(null));
-		assertFalse(PAUtil.isNotEmpty(""));
-	}
-
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#stringSetter(java.lang.String, int)}.
-	 */
-	@Test
-	public void testStringSetterStringInt() {
-		assertEquals("He",PAUtil.stringSetter("Hello",2));
-		assertNull(PAUtil.stringSetter(null,2));
-		assertEquals("Hello",PAUtil.stringSetter("Hello",-2));
-	}
-
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#stringSetter(java.lang.String)}.
-	 */
-	@Test
-	public void testStringSetterString() {
-		assertEquals("Hello",PAUtil.stringSetter("Hello"));
-	}
-
-	/**
 	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidEmail(java.lang.String)}.
 	 */
 	@Test
@@ -373,16 +335,6 @@ public class PAUtilTest {
         assertTrue(PAUtil.isValidPhone("111111"));
         assertFalse(PAUtil.isValidPhone(null));
     }
-
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#trim(java.lang.String, int)}.
-	 */
-	@Test
-	public void testTrim() {
-		assertNull(PAUtil.trim(null,2));
-		assertEquals(PAUtil.trim("abcde",2),"a...");
-		assertEquals(PAUtil.trim("abcde",10),"abcde");
-	}
 
 	/**
 	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#wildcardCriteria(java.lang.String)}.
@@ -443,8 +395,8 @@ public class PAUtilTest {
         String keyArr[] = {"k","e","y"};
         errMap.put(key, keyArr);
         assertEquals("key -  k, e, y ",PAUtil.getErrorMsg(errMap));
-        
-        
+
+
     }
 
 	/**
@@ -463,11 +415,11 @@ public class PAUtilTest {
 		iiMap.put(IiConverter.convertToIi("2"), IiConverter.convertToIi("2"));
 		iiKey = IiConverter.convertToIi("1");
 		assertEquals(PAUtil.containsIi(iiMap, iiKey).getExtension(),"1");
-		
+
 	}
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#readInputStream(InputStream )}.
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException
      */
     @Test
     public void testReadInputStream() throws Exception {
@@ -484,7 +436,7 @@ public class PAUtilTest {
         assertEquals(b.length,4);
     }
 
-	
+
 	/**
 	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#getFirstObj(java.util.List)}.
 	 */
@@ -557,36 +509,6 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isListNotEmpty(java.util.List)}.
-	 */
-	@Test
-	public void testIsListNotEmpty() {
-		assertFalse(PAUtil.isListNotEmpty(new ArrayList()));
-        StudyCheckoutDTO scDto = new StudyCheckoutDTO();
-        List<StudyDTO> studyList = null;
-        studyList = new ArrayList<StudyDTO>();
-        assertFalse(PAUtil.isListNotEmpty(studyList));
-        studyList.add(scDto);
-        assertTrue(PAUtil.isListNotEmpty(studyList));
-
-	}
-
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isListEmpty(java.util.List)}.
-	 */
-	@Test
-	public void testIsListEmpty() {
-		assertFalse(PAUtil.isListNotEmpty(new ArrayList()));
-        StudyCheckoutDTO scDto = new StudyCheckoutDTO();
-        List<StudyDTO> studyList = null;
-        studyList = new ArrayList<StudyDTO>();
-        assertFalse(PAUtil.isListNotEmpty(studyList));
-        studyList.add(scDto);
-        assertTrue(PAUtil.isListNotEmpty(studyList));
-	}
-	
-
-	/**
 	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#checkIfValueExists(java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	@Test(expected=Exception.class)
@@ -602,15 +524,6 @@ public class PAUtilTest {
 		assertNotNull(PAUtil.convertStringToDecimal("2"));
 		assertNull(PAUtil.convertStringToDecimal(null));
 		assertNull(PAUtil.convertStringToDecimal("abc"));
-	}
-
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isNumber(java.lang.String)}.
-	 */
-	@Test
-	public void testIsNumber() {
-		assertTrue(PAUtil.isNumber("3"));
-		assertFalse(PAUtil.isNumber("3x"));
 	}
 
 	/**
@@ -662,24 +575,6 @@ public class PAUtilTest {
 
 	}
 
-	/**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidNumber(String)}.
-     */
-    @Test
-    public void testIsValidNumber() {
-        assertTrue(PAUtil.isValidNumber("1"));
-        assertFalse(PAUtil.isValidNumber("1a"));
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isNumeric(String)}.
-     */
-    @Test
-    public void testIsValidNumeric() {
-        assertTrue(PAUtil.isNumeric("1"));
-        assertFalse(PAUtil.isNumeric("1a"));
-    }
-
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPhoneValidForUSA(String)}.
      */
@@ -689,7 +584,7 @@ public class PAUtilTest {
         assertFalse(PAUtil.isPhoneValidForUSA("test"));
         assertFalse(PAUtil.isPhoneValidForUSA(null));
     }
-    
+
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#isDSetTelNull(gov.nih.nci.iso21090.DSet<Tel>)}.
      */
@@ -705,7 +600,7 @@ public class PAUtilTest {
         st = new ArrayList<String>();
         st.add("tel:111-111-1111");
         DSetConverter.convertListToDSet(st, "PHONE", telecomAddresses);
-        assertFalse(PAUtil.isDSetTelNull(telecomAddresses));        
+        assertFalse(PAUtil.isDSetTelNull(telecomAddresses));
     }
 
     /**
@@ -776,7 +671,7 @@ public class PAUtilTest {
         assertEquals(PAUtil.getPhoneExtn("tel:111-111-1111"),"");
         assertEquals(PAUtil.getPhoneExtn("tel:111-111-1111extn2222"),"2222");
     }
-    
+
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#isUnitLessOrSame(String,String)}.
      */
@@ -808,7 +703,7 @@ public class PAUtilTest {
         assertEquals(PAUtil.getAge(new BigDecimal("100.00")),"100.00");
         assertEquals(PAUtil.getAge(new BigDecimal("100")),"100");
     }
-    
+
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#getAssignedIdentifierExtension(StudyProtocolDTO)}.
      */
@@ -867,7 +762,7 @@ public class PAUtilTest {
         Set<Ii> iiSet = new HashSet<Ii>();
         spDto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(iiSet));
         assertEquals(PAUtil.getAssignedIdentifier(spDto).getExtension(),null);
-        
+
         iiSet.add(IiConverter.convertToIi("1"));
         iiSet.add(IiConverter.convertToStudyProtocolIi(new Long(2222)));
         spDto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(iiSet));
@@ -889,7 +784,7 @@ public class PAUtilTest {
         spDto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(iiSet));
         assertTrue(PAUtil.checkAssignedIdentifierExists(spDto));
     }
-    
+
     @Test
     public void testConvertPoOrganizationDTO() throws Exception{
         OrganizationDTO org = new OrganizationDTO();

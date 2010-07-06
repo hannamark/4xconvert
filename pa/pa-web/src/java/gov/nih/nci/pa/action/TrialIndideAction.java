@@ -87,7 +87,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
@@ -95,6 +94,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -271,43 +271,43 @@ public class TrialIndideAction extends ActionSupport {
 
     private void enforceBusinessRules() {
 
-      if (PAUtil.isEmpty(studyIndldeWebDTO.getExpandedAccessIndicator())) {
+      if (StringUtils.isEmpty(studyIndldeWebDTO.getExpandedAccessIndicator())) {
         addFieldError("studyIndldeWebDTO.expandedAccessIndicator",
             getText("error.trialIndide.expandedAccessIndicator"));
       }
-      if (PAUtil.isNotEmpty(studyIndldeWebDTO.getExpandedAccessIndicator())
+      if (StringUtils.isNotEmpty(studyIndldeWebDTO.getExpandedAccessIndicator())
           &&  studyIndldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase("true")
-          && PAUtil.isEmpty(studyIndldeWebDTO.getExpandedAccessStatus())) {
+          && StringUtils.isEmpty(studyIndldeWebDTO.getExpandedAccessStatus())) {
         addFieldError("studyIndldeWebDTO.expandedAccessStatus", getText("error.trialIndide.expandedAccessStatus"));
       }
-      if (PAUtil.isEmpty(studyIndldeWebDTO.getGrantor())) {
+      if (StringUtils.isEmpty(studyIndldeWebDTO.getGrantor())) {
         addFieldError("studyIndldeWebDTO.grantor",
             getText("error.trialIndide.grantor"));
       }
-      if (PAUtil.isEmpty(studyIndldeWebDTO.getHolderType())) {
+      if (StringUtils.isEmpty(studyIndldeWebDTO.getHolderType())) {
         addFieldError("studyIndldeWebDTO.holderType", getText("error.trialIndide.holderType"));
       }
-      if (PAUtil.isNotEmpty(studyIndldeWebDTO.getHolderType())
+      if (StringUtils.isNotEmpty(studyIndldeWebDTO.getHolderType())
           && studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())
-          && PAUtil.isEmpty(studyIndldeWebDTO.getNihInstHolder())) {
+          && StringUtils.isEmpty(studyIndldeWebDTO.getNihInstHolder())) {
         addFieldError("studyIndldeWebDTO.nihInstHolder", getText("error.trialIndide.nihInstHolder"));
       }
-      if (PAUtil.isNotEmpty(studyIndldeWebDTO.getHolderType())
+      if (StringUtils.isNotEmpty(studyIndldeWebDTO.getHolderType())
           && studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())
-          && PAUtil.isEmpty(studyIndldeWebDTO.getNciDivProgHolder())) {
+          && StringUtils.isEmpty(studyIndldeWebDTO.getNciDivProgHolder())) {
         addFieldError("studyIndldeWebDTO.nciDivProgHolder", getText("error.trialIndide.nciDivProgHolder"));
       }
-      if (PAUtil.isEmpty(studyIndldeWebDTO.getIndldeNumber())) {
+      if (StringUtils.isEmpty(studyIndldeWebDTO.getIndldeNumber())) {
         addFieldError("studyIndldeWebDTO.indldeNumber", getText("error.trialIndide.indldeNumber"));
       }
-      if (PAUtil.isNotEmpty(studyIndldeWebDTO.getIndldeNumber())) {
+      if (StringUtils.isNotEmpty(studyIndldeWebDTO.getIndldeNumber())) {
           Pattern indIdePattern = Pattern.compile("^[A-Za-z0-9,._]+$");
           Matcher indIdematch = indIdePattern.matcher(studyIndldeWebDTO.getIndldeNumber());
           if (!indIdematch.matches()) {
               addFieldError("studyIndldeWebDTO.indldeNumber", getText("error.numeric"));
           }
       }
-      if (PAUtil.isEmpty(studyIndldeWebDTO.getIndldeType())) {
+      if (StringUtils.isEmpty(studyIndldeWebDTO.getIndldeType())) {
         addFieldError("studyIndldeWebDTO.indldeType",
             getText("error.trialIndide.indldeType"));
       }

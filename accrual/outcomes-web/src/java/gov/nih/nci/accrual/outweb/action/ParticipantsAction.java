@@ -104,10 +104,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.jboss.security.SecurityAssociation;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.jboss.security.SecurityAssociation;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -368,7 +368,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
 
     private void loadParticipant(String id) {
         participant = null;
-        if (!PAUtil.isEmpty(id)) {
+        if (StringUtils.isNotEmpty(id)) {
             PatientSvcDto pat = new PatientSvcDto();
             pat.setIdentifier(IiConverter.convertToIi(id));
             List<PatientSvcDto> patList;

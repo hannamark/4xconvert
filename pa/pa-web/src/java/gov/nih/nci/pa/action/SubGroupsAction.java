@@ -85,12 +85,12 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -295,15 +295,15 @@ public class SubGroupsAction extends ActionSupport {
      * based on an interaction between services.
      */
     private void enforceBusinessRules() {
-        if (PAUtil.isEmpty(subGroupsWebDTO.getDescription())) {
+        if (StringUtils.isEmpty(subGroupsWebDTO.getDescription())) {
             addFieldError("subGroupsWebDTO.description",
                     getText("error.subGroups.description"));
         }
-        if (PAUtil.isEmpty(subGroupsWebDTO.getGroupNumberText())) {
+        if (StringUtils.isEmpty(subGroupsWebDTO.getGroupNumberText())) {
             addFieldError("subGroupsWebDTO.code",
                     getText("error.subGroups.code"));
         }
-        if (!PAUtil.isEmpty(subGroupsWebDTO.getDescription()) 
+        if (StringUtils.isNotEmpty(subGroupsWebDTO.getDescription())
                 && subGroupsWebDTO.getDescription().length() > PAAttributeMaxLen.SPGP_LEN_200) {
             addFieldError("subGroupsWebDTO.description",
                     getText("Cannot enter more than 200 characters"));

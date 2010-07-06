@@ -51,7 +51,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -108,7 +110,7 @@ public class TrialUtil extends TrialConvertUtils {
             trialDTO.setSecondaryIdentifierList(listIi);
         }
     }
-   
+
 
     /**
      * Copy.
@@ -249,7 +251,7 @@ public class TrialUtil extends TrialConvertUtils {
             trialDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
         }
         if (srDTO.getOrganizationIdentifier() != null
-                && PAUtil.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {
+                && StringUtils.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {
             CorrelationUtils cUtils = new CorrelationUtils();
             Organization o = cUtils.getPAOrganizationByIi(srDTO.getOrganizationIdentifier());
             trialDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
@@ -315,7 +317,7 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setFundingDtos(grantList);
     }
 
-   
+
 
    /**
     * Gets the trial dto from db.
@@ -456,7 +458,7 @@ public class TrialUtil extends TrialConvertUtils {
        }
        trialDTO.setParticipatingSites(participatingSitesList);
    }
-   
+
    /**
     * Copy participating sites for proprietary trial.
     *
@@ -490,7 +492,7 @@ public class TrialUtil extends TrialConvertUtils {
        }
        trialDTO.setParticipatingSitesList(organizationList);
    }
-   
+
    /**
    * Copy regulatory information.
    * @param studyProtocolIi the study protocol ii
@@ -532,7 +534,7 @@ public class TrialUtil extends TrialConvertUtils {
        }
    }
 
-   
+
 
    /**
     * updates the studyprocol dto with the trail details and status information.
@@ -561,7 +563,7 @@ public class TrialUtil extends TrialConvertUtils {
                     studyProtocolIi);
             sraDTO.setStudyProtocolIdentifier(studyProtocolIi);
         }
-        if (PAUtil.isEmpty(trialDTO.getSelectedRegAuth())) {
+        if (StringUtils.isEmpty(trialDTO.getSelectedRegAuth())) {
             return sraFromDatabaseDTO;
         }
         if (sraFromDatabaseDTO == null) {
@@ -579,7 +581,7 @@ public class TrialUtil extends TrialConvertUtils {
     public void populateRegulatoryList(TrialDTO trialDTO) {
         try {
             trialDTO.setCountryList(PaRegistry.getRegulatoryInformationService().getDistinctCountryNames());
-            if (PAUtil.isNotEmpty(trialDTO.getLst()) &&  PAUtil.isNumber(trialDTO.getLst())) {
+            if (NumberUtils.isNumber(trialDTO.getLst())) {
                 trialDTO.setRegIdAuthOrgList(PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityNameId(
                         Long.valueOf(trialDTO.getLst())));
             }
@@ -588,7 +590,7 @@ public class TrialUtil extends TrialConvertUtils {
         }
     }
 
-    
+
     /**
      * Copy dcp nummber.
      * @param studyProtocolIi ii
@@ -597,7 +599,7 @@ public class TrialUtil extends TrialConvertUtils {
      */
     private void copyDcpIdentifier(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
         String dcpId = paServiceUtil.getStudyIdentifier(studyProtocolIi, PAConstants.DCP_IDENTIFIER_TYPE);
-        if (PAUtil.isNotEmpty(dcpId)) {
+        if (StringUtils.isNotEmpty(dcpId)) {
             trialDTO.setDcpIdentifier(dcpId);
         }
     }
@@ -609,11 +611,11 @@ public class TrialUtil extends TrialConvertUtils {
      */
     private void copyCtepIdentifier(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
         String ctepId = paServiceUtil.getStudyIdentifier(studyProtocolIi, PAConstants.CTEP_IDENTIFIER_TYPE);
-        if (PAUtil.isNotEmpty(ctepId)) {
+        if (StringUtils.isNotEmpty(ctepId)) {
             trialDTO.setCtepIdentifier(ctepId);
         }
     }
-   
+
     /**
      *
      * @param tempStudyProtocolId ii
@@ -641,7 +643,7 @@ public class TrialUtil extends TrialConvertUtils {
                 webIndDtos.add(convertToTrialIndIdeDTO(isoIndDto));
             }
             trialDTO.setIndIdeDtos(webIndDtos);
-            if (PAUtil.isEmpty(trialDTO.getPropritaryTrialIndicator())
+            if (StringUtils.isEmpty(trialDTO.getPropritaryTrialIndicator())
                     || trialDTO.getPropritaryTrialIndicator().equalsIgnoreCase(CommonsConstant.NO)) {
                 populateRegulatoryList((TrialDTO) trialDTO);
             }
@@ -656,10 +658,10 @@ public class TrialUtil extends TrialConvertUtils {
     public BaseTrialDTO saveDraft(BaseTrialDTO trialDTO) throws PAException {
         StringBuffer errMsg =  new StringBuffer();
          //lead org local id and lead org is mandatory
-        if (PAUtil.isEmpty(trialDTO.getLeadOrgTrialIdentifier())) {
+        if (StringUtils.isEmpty(trialDTO.getLeadOrgTrialIdentifier())) {
             errMsg.append("Lead Organization Trial Identifier is required.");
         }
-        if (PAUtil.isEmpty(trialDTO.getLeadOrganizationIdentifier())) {
+        if (StringUtils.isEmpty(trialDTO.getLeadOrganizationIdentifier())) {
             errMsg.append("Lead Organization is required.");
         }
         if (errMsg.length() > 1) {
@@ -672,18 +674,18 @@ public class TrialUtil extends TrialConvertUtils {
             .getSession().getAttribute(Constants.INDIDE_LIST);
         List<StudyFundingStageDTO> fundingDTOS = new ArrayList<StudyFundingStageDTO>();
         List<StudyIndIdeStageDTO> indDTOS = new ArrayList<StudyIndIdeStageDTO>();
-        if (PAUtil.isListNotEmpty(grantList)) {
+        if (CollectionUtils.isNotEmpty(grantList)) {
                 for (TrialFundingWebDTO fundingDto : grantList) {
                     fundingDTOS.add(convertToStudyFundingStage(fundingDto));
                 }
         }
         //inds
-        if (PAUtil.isListNotEmpty(indList)) {
+        if (CollectionUtils.isNotEmpty(indList)) {
             for (TrialIndIdeDTO indDto : indList) {
                 indDTOS.add(convertToStudyIndIdeStage(indDto));
             }
         }
-        if (PAUtil.isNotEmpty(trialDTO.getStudyProtocolId())) {
+        if (StringUtils.isNotEmpty(trialDTO.getStudyProtocolId())) {
             StudyProtocolStageDTO dto = PaRegistry.getStudyProtocolStageService().update(
                     convertToStudyProtocolStageDTO(trialDTO), fundingDTOS, indDTOS);
             tempStudyProtocolIi =  dto.getIdentifier();
@@ -705,7 +707,7 @@ public class TrialUtil extends TrialConvertUtils {
        trialDTO.setStudyProtocolId(tempStudyProtocolIi.getExtension());
         return trialDTO;
     }
-    
+
     /**
      *
      * @param trialDTO dto
@@ -753,7 +755,7 @@ public class TrialUtil extends TrialConvertUtils {
                 getsummary4ReportedResource(studyProtocolIi), trialDTO);
         copyParticipatingSites(studyProtocolIi, trialDTO);
     }
-    
+
     /**
      * Gets the study site to update.
      * @param ps the ps

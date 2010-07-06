@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -41,6 +41,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -54,7 +55,7 @@ import org.hibernate.criterion.Example;
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", 
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals",
     "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.TooManyMethods" })
 public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLocal {
     private static final Logger LOG  = Logger.getLogger(StudyProtocolStageBeanLocal.class);
@@ -64,7 +65,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
     LookUpTableServiceRemote lookUpTableService = null;
     @EJB
     RegistryUserServiceLocal registryUserServiceLocal = null;
-    
+
     /**
      * @param dto dto
      * @param pagingParams pagingParams
@@ -100,8 +101,8 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         }
         Example example = Example.create(exampleDO);
         example.enableLike();
-        
-        Criteria criteria = session.createCriteria(StudyProtocolStage.class, "sp").add(example);            
+
+        Criteria criteria = session.createCriteria(StudyProtocolStage.class, "sp").add(example);
         int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
         criteria.setMaxResults(maxLimit);
         criteria.setFirstResult(pagingParams.getOffset());
@@ -153,7 +154,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
 
     }
     /**
-     * 
+     *
      * @param studyProtocolStageIi ii
      * @return list
      * @throws PAException e
@@ -173,7 +174,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolStageIi));
         queryList = query.list();
         for (AbstractEntity bo : queryList) {
-            resultList.add(StudyFundingStageConverter.convertFromDomainToDTO((StudyFundingStage) bo));    
+            resultList.add(StudyFundingStageConverter.convertFromDomainToDTO((StudyFundingStage) bo));
         }
         return resultList;
     }
@@ -198,7 +199,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolStageIi));
         queryList = query.list();
         for (AbstractEntity bo : queryList) {
-            resultList.add(StudyIndIdeStageConverter.convertFromDomainToDTO((StudyIndIdeStage) bo));    
+            resultList.add(StudyIndIdeStageConverter.convertFromDomainToDTO((StudyIndIdeStage) bo));
         }
         return resultList;
     }
@@ -241,7 +242,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
      * @param isoDTO isoDto
      * @return ii
      * @throws PAException e
-     */    
+     */
     private Ii createOrUpdateStudyProtocol(StudyProtocolStageDTO isoDTO, String operation)
             throws PAException {
         LOG.info("inside create...");
@@ -267,14 +268,14 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
             }
         }
         return studyProtocolDTOList;
-    }       
+    }
     /**
      * @param studyFundingStageDTO studyFundingStageDTO
      * @throws PAException on error
      */
-    private void createGrants(List<StudyFundingStageDTO> studyFundingStageDTOs, 
+    private void createGrants(List<StudyFundingStageDTO> studyFundingStageDTOs,
             Ii studyProtocolStageIi) throws PAException {
-        if (PAUtil.isListNotEmpty(studyFundingStageDTOs)) {
+        if (CollectionUtils.isNotEmpty(studyFundingStageDTOs)) {
             if (PAUtil.isIiNull(studyProtocolStageIi)) {
                 throw new PAException("StudyProtocolStageIi can not be null");
             }
@@ -291,7 +292,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
 
     }
     /**
-     * 
+     *
      * @param tempStudyProtocolIi ii to delete
      * @throws PAException on error
      */
@@ -313,7 +314,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
      */
     private void createIndIde(List<StudyIndIdeStageDTO> studyIndIdeStageDTOs, Ii studyProtocolStageIi)
             throws PAException {
-        if (PAUtil.isListNotEmpty(studyIndIdeStageDTOs)) {
+        if (CollectionUtils.isNotEmpty(studyIndIdeStageDTOs)) {
             if (PAUtil.isIiNull(studyProtocolStageIi)) {
                 throw new PAException("StudyProtocolStageIi can not be null");
             }
@@ -324,7 +325,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
                 StudyIndIdeStage studyIndIdeStage = StudyIndIdeStageConverter.convertFromDTOToDomain(
                         indDto);
                 studyIndIdeStage.setDateLastCreated(new Timestamp((new Date()).getTime()));
-                session.save(studyIndIdeStage);                
+                session.save(studyIndIdeStage);
             }
         }
     }
@@ -344,9 +345,9 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
             .append(IiConverter.convertToString(studyProtocolStageIi));
         LOG.info(" query  = " + sql);
         session.createSQLQuery(sql.toString()).executeUpdate();
-        
+
     }
-    
+
     private void sendPartialSubmissionMail(Ii studyProtocolStageIi) {
        try {
             PAServiceUtils paServiceUtil = new PAServiceUtils();
@@ -369,7 +370,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
                     StConverter.convertToString(spDTO.getUserLastCreated()));
             submissionMailBody = submissionMailBody.replace("${SubmitterName}",
                  registryUser.getFirstName() + " " + registryUser.getLastName());
-            
+
             String mailSubject = lookUpTableService.getPropertyValue("trial.partial.register.subject");
             mailSubject = mailSubject.replace("${leadOrgTrialIdentifier}",
                 StConverter.convertToString(spDTO.getLocalProtocolIdentifier()));

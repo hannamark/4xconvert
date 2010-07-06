@@ -109,6 +109,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -304,17 +305,17 @@ public class SearchTrialBean implements SearchTrialService {
 
         try {
             where.append("where sp.statusCode = '" + ActStatusCode.ACTIVE.name() + "' ");
-            if (PAUtil.isNotEmpty(assignedIdentifier)) {
+            if (StringUtils.isNotEmpty(assignedIdentifier)) {
                 where.append(" and upper(oi.extension)  like '%"
                         + assignedIdentifier.toUpperCase(Locale.US).trim().replaceAll("'", "''")
                         + "%'");
             }
-            if (PAUtil.isNotEmpty(officialTitle)) {
+            if (StringUtils.isNotEmpty(officialTitle)) {
                 where.append(" and upper(sp.officialTitle)  like '%"
                         + officialTitle.toUpperCase(Locale.US).trim().replaceAll("'", "''")
                         + "%'");
             }
-            if (PAUtil.isNotEmpty(leadOrgTrialIdentifier)) {
+            if (StringUtils.isNotEmpty(leadOrgTrialIdentifier)) {
                 where.append(" and upper(sps.localStudyProtocolIdentifier) like '%"
                                 + leadOrgTrialIdentifier.toUpperCase(Locale.US).trim().replaceAll("'", "''") + "%'");
             }

@@ -92,6 +92,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
 /**
@@ -236,7 +238,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
 
     Ii studyProtocolIi = null;
     try {
-        if (PAUtil.isListNotEmpty(studyResourcingDTOs)) {
+        if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
             for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
                 studyResourcingDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.FALSE));
                 studyResourcingDTO.setOrganizationIdentifier(null);
@@ -628,7 +630,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         studyToSearch.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
 
         List<StudyProtocolDTO> spList = studyProtocolService.search(studyToSearch, limit);
-        if (PAUtil.isListNotEmpty(spList)) {
+        if (CollectionUtils.isNotEmpty(spList)) {
           Collections.sort(spList, new Comparator<StudyProtocolDTO>() {
             public int compare(StudyProtocolDTO o1, StudyProtocolDTO o2) {
                  return o1.getSubmissionNumber().getValue()
@@ -638,7 +640,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
          });
           sourceSpIi = spList.get(spList.size() - 1).getIdentifier();
         }
-        if (PAUtil.isListEmpty(spList)) {
+        if (CollectionUtils.isEmpty(spList)) {
          throw new PAException("Discrepancies occured while Rejecting the Amended Protocol");
         }
         if (sourceSpIi == null) {
@@ -859,7 +861,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
 
     if (UPDAT.equalsIgnoreCase(operation)) {
         List<StudySiteDTO> collaboratorDTOs  = new ArrayList<StudySiteDTO>();
-        if (PAUtil.isListNotEmpty(collaborators)) {
+        if (CollectionUtils.isNotEmpty(collaborators)) {
             for (StudySiteDTO collaborator : collaborators) {
                 StudySiteDTO dbCollaborator = studySiteService.get(collaborator.getIdentifier());
                 dbCollaborator.setFunctionalCode(collaborator.getFunctionalCode());
@@ -1282,7 +1284,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         } catch (PAException e) {
             errorMsg.append(e.getMessage());
         }
-        if (PAUtil.isListNotEmpty(studyResourcingDTOs)) {
+        if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
             for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
                 try {
                 studyResourcingDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
@@ -1292,7 +1294,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                 }
             }
         }
-        if (PAUtil.isListNotEmpty(studyIndldeDTOs)) {
+        if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
             for (StudyIndldeDTO indIdeDto : studyIndldeDTOs) {
                 try {
                 indIdeDto.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
@@ -1402,7 +1404,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         }
     } else {
             String poValidErr = paServiceUtils.isDTOValidInPO(poDTO);
-            if (PAUtil.isNotEmpty(poValidErr)) {
+            if (StringUtils.isEmpty(poValidErr)) {
                 errorMsg.append("Error validating ")
                     .append(fieldName)
                     .append(strNewLine)
@@ -1747,7 +1749,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
           errorMsg.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
           errorMsg.append(PAUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode())
                   ? "Purpose cannot be null , " : "");
-          if (PAUtil.isListEmpty(documentDTOs)
+          if (CollectionUtils.isEmpty(documentDTOs)
                   || !paServiceUtils.isDocumentInList(documentDTOs, DocumentTypeCode.PROTOCOL_DOCUMENT)) {
               errorMsg.append("Proprietary template document is mandatory if NCT number is not provided");
           }

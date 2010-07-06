@@ -122,6 +122,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -146,7 +147,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
     private static final String STUDY_CONTACT = "STUDY_CONTACT";
     private static final String STUDY_SITE_CONTACT = "STUDY_SITE_CONTACT";
     private static  PAServiceUtils paServiceUtil = new PAServiceUtils();
-    private CorrelationService correlationService = null; 
+    private CorrelationService correlationService = null;
     private SessionContext ejbContext;
     @EJB
     StudyContactServiceLocal scLocal = null;
@@ -163,7 +164,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
      * @param perIdentifier ii of Person
      * @throws PAException on error
      */
-    
+
     public void synchronizePerson(final Ii perIdentifier) throws PAException {
 
         PersonDTO personDto = null;
@@ -194,7 +195,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         }
         LOG.debug("Leaving synchronizeClinicalResearchStaff");
     }
-    
+
     /***
      * @param hcpIdentifier po HealthCareProvider identifier
      * @throws PAException on error
@@ -262,7 +263,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         LOG.debug("Leaving updatePerson");
     }
 
-    private void updateClinicalResearchStaff(final Ii crsIdentifier 
+    private void updateClinicalResearchStaff(final Ii crsIdentifier
             , final ClinicalResearchStaffDTO crsDto) throws PAException {
         ClinicalResearchStaff crs = cUtils.getStructuralRoleByIi(crsIdentifier);
         Session session = null;
@@ -270,7 +271,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         if (crs != null) {
             // process only if pa has any clinical research staff records
             session = HibernateUtil.getCurrentSession();
-            if (crsDto == null) { 
+            if (crsDto == null) {
                 // this is a nullified, so treat it in a special manner
                 // step 1: get the po person,org identifier (player)
                 Long paOrgId = crs.getOrganization().getId();
@@ -282,8 +283,8 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 PersonDTO personDto = getPoPerson(poPerId);
                 OrganizationDTO organizationDto = getPoOrganization(poOrgId);
                 if (personDto != null && organizationDto != null) {
-                    // create a new crs 
-                    ClinicalResearchStaffCorrelationServiceBean crsBean = 
+                    // create a new crs
+                    ClinicalResearchStaffCorrelationServiceBean crsBean =
                         new ClinicalResearchStaffCorrelationServiceBean();
                     duplicateCrsId = crsBean.createClinicalResearchStaffCorrelations(
                             organizationDto.getIdentifier().getExtension(), personDto.getIdentifier().getExtension());
@@ -293,14 +294,14 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                     newRoleCode = dupCrs.getStatusCode();
                     // replace the old, with the new change identifiers
                     replaceStudyContactIdentifiers(
-                                IiConverter.convertToPoClinicalResearchStaffIi(crs.getId().toString()), 
-                                IiConverter.convertToPoClinicalResearchStaffIi(duplicateCrsId.toString()) , 
+                                IiConverter.convertToPoClinicalResearchStaffIi(crs.getId().toString()),
+                                IiConverter.convertToPoClinicalResearchStaffIi(duplicateCrsId.toString()) ,
                                 STUDY_CONTACT);
                     replaceStudyContactIdentifiers(
-                            IiConverter.convertToPoClinicalResearchStaffIi(crs.getId().toString()), 
-                            IiConverter.convertToPoClinicalResearchStaffIi(duplicateCrsId.toString()) , 
+                            IiConverter.convertToPoClinicalResearchStaffIi(crs.getId().toString()),
+                            IiConverter.convertToPoClinicalResearchStaffIi(duplicateCrsId.toString()) ,
                             STUDY_SITE_CONTACT);
-                    // nullify the current 
+                    // nullify the current
                     crs.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                 } else {
                     // this is nullified scenario with no org or person associated, in that case nullify the role
@@ -310,28 +311,28 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             } else {
                 String poOrgIi = crsDto.getScoperIdentifier().getExtension();
                 String paOrgAssignedId = crs.getOrganization().getIdentifier();
-                if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
+                if (StringUtils.isNotEmpty(poOrgIi) && StringUtils.isNotEmpty(paOrgAssignedId)
                         && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
                     //this means scoper is changed. check if exist in PA if not create and update the SR
                     Organization paOrg = paServiceUtil.getOrCreatePAOrganizationByIi(crsDto.getScoperIdentifier());
                     crs.setOrganization(paOrg);
-                } 
+                }
                 if (!crs.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(crsDto.getStatus()))) {
                     // this is a update scenario with a status change
                     newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(crsDto.getStatus());
                     crs.setStatusCode(newRoleCode);
                 }
-                
+
             }
             crs.setDateLastUpdated(new Timestamp((new Date()).getTime()));
             session.update(crs);
             session.flush();
             scLocal.cascadeRoleStatus(crsIdentifier, CdConverter.convertToCd(newRoleCode));
             spcLocal.cascadeRoleStatus(crsIdentifier, CdConverter.convertToCd(newRoleCode));
-        } //if (crsDto == null)        
+        } //if (crsDto == null)
     }
-    
-    private void updateHealthCareProvider(final Ii hcpIdentifier , 
+
+    private void updateHealthCareProvider(final Ii hcpIdentifier ,
             final HealthCareProviderDTO hcpDto) throws PAException {
         HealthCareProvider hcp = cUtils.getStructuralRoleByIi(hcpIdentifier);
         Session session = null;
@@ -339,7 +340,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         if (hcp != null) {
             // process only if pa has any clinical research staff records
             session = HibernateUtil.getCurrentSession();
-            if (hcpDto == null) { 
+            if (hcpDto == null) {
                 // this is a nullified, so treat it in a special manner
                 // step 1: get the po person,org identifier (player)
                 Long paOrgId = hcp.getOrganization().getId();
@@ -351,7 +352,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 PersonDTO personDto = getPoPerson(poPerId);
                 OrganizationDTO organizationDto = getPoOrganization(poOrgId);
                 if (personDto != null && organizationDto != null) {
-                    // create a new crs 
+                    // create a new crs
                     HealthCareProviderCorrelationBean hcpBean = new HealthCareProviderCorrelationBean();
                     duplicateHcpId = hcpBean.createHealthCareProviderCorrelationBeans(
                             organizationDto.getIdentifier().getExtension(), personDto.getIdentifier().getExtension());
@@ -361,12 +362,12 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                     newRoleCode = dupHcp.getStatusCode();
                     // replace the old, with the new change identifiers
                     replaceStudyContactIdentifiers(
-                                IiConverter.convertToPoHealtcareProviderIi(hcp.getId().toString()), 
+                                IiConverter.convertToPoHealtcareProviderIi(hcp.getId().toString()),
                                 IiConverter.convertToPoHealtcareProviderIi(duplicateHcpId.toString()) , STUDY_CONTACT);
                     replaceStudyContactIdentifiers(
-                            IiConverter.convertToPoHealtcareProviderIi(hcp.getId().toString()), 
+                            IiConverter.convertToPoHealtcareProviderIi(hcp.getId().toString()),
                             IiConverter.convertToPoHealtcareProviderIi(duplicateHcpId.toString()) , STUDY_SITE_CONTACT);
-                    // nullify the current 
+                    // nullify the current
                     hcp.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                 } else {
                     // this is nullified scenario with no org or person associated, in that case nullify the role
@@ -376,7 +377,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             } else {
                 String poOrgIi = hcpDto.getScoperIdentifier().getExtension();
                 String paOrgAssignedId = hcp.getOrganization().getIdentifier();
-                if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
+                if (StringUtils.isNotEmpty(poOrgIi) && StringUtils.isNotEmpty(paOrgAssignedId)
                         && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
                     //this means scoper is changed. check if exist in PA if not create and update the SR
                     Organization paOrg = paServiceUtil.getOrCreatePAOrganizationByIi(hcpDto.getScoperIdentifier());
@@ -388,7 +389,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(hcpDto.getStatus());
                 hcp.setStatusCode(newRoleCode);
                 }
-                
+
             }
             hcp.setDateLastUpdated(new Timestamp((new Date()).getTime()));
             session.update(hcp);
@@ -398,7 +399,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         }
     }
 
-    private void updateOrganizationalContact(final Ii ocIdentifier , 
+    private void updateOrganizationalContact(final Ii ocIdentifier ,
             final OrganizationalContactDTO ocDto) throws PAException {
         OrganizationalContact oc = getPAOrganizationalContact(ocIdentifier.getExtension());
         Session session = null;
@@ -406,11 +407,11 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         if (oc != null) {
             // process only if pa has any oc  records
             session = HibernateUtil.getCurrentSession();
-            if (ocDto == null) { 
+            if (ocDto == null) {
                 Ii srIi = null;
                 //nullified without duplicate
-                //so check if Entity or SR are not nullified 
-                //if nullified just update the Status to nullified in PA 
+                //so check if Entity or SR are not nullified
+                //if nullified just update the Status to nullified in PA
                 // this is a nullified, so treat it in a special manner
                 // step 1: get the po person,org identifier (player)
                 Long duplicateOcId = null;
@@ -431,16 +432,16 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                       srIi = nullifiedEntities.get(nullfiedIi);
                       //srIi = IiConverter.converToPoOrganizationalContactIi("12897");
                   }
-                  PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , 
-                  OrganizationalContact , OrganizationalContactConverter> ocBean = new 
-                      PABaseCorrelation<PAOrganizationalContactDTO , 
+                  PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO ,
+                  OrganizationalContact , OrganizationalContactConverter> ocBean = new
+                      PABaseCorrelation<PAOrganizationalContactDTO ,
                       OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
                       PAOrganizationalContactDTO.class, OrganizationalContact.class,
                       OrganizationalContactConverter.class);
 
                   if (PAUtil.isIiNotNull(srIi)) {
                       //nullified with Duplicate
-                      OrganizationalContactDTO poOrgContactDto = (OrganizationalContactDTO) 
+                      OrganizationalContactDTO poOrgContactDto = (OrganizationalContactDTO)
                           paServiceUtil.getCorrelationByIi(srIi);
                       PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
                       orgContacPaDto.setOrganizationIdentifier(poOrgContactDto.getScoperIdentifier());
@@ -459,14 +460,14 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                     String poPerId = null;
                     OrganizationDTO organizationDto = getPoOrganization(poOrgId);
 
-                    if (oc.getPerson() != null && PAUtil.isNotEmpty(oc.getPerson().getIdentifier())) {
+                    if (oc.getPerson() != null && StringUtils.isNotEmpty(oc.getPerson().getIdentifier())) {
                           poPerId = oc.getPerson().getIdentifier();
                           personDto = getPoPerson(poPerId);
                     }
                     if (organizationDto != null && personDto != null) {
                         //This means Oc is having player as person
-                      // create a new crs 
-                            
+                      // create a new crs
+
                       PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
                       orgContacPaDto.setOrganizationIdentifier(organizationDto.getIdentifier());
                       orgContacPaDto.setPersonIdentifier(personDto.getIdentifier());
@@ -476,10 +477,10 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                       newRoleCode = dupOc.getStatusCode();
                       // replace the old, with the new change identifiers
                       replaceStudyContactIdentifiers(
-                             IiConverter.convertToPoOrganizationalContactIi(oc.getId().toString()), 
+                             IiConverter.convertToPoOrganizationalContactIi(oc.getId().toString()),
                              IiConverter.convertToPoOrganizationalContactIi(duplicateOcId.toString()) ,
                                     STUDY_SITE_CONTACT);
-                                // nullify the current 
+                                // nullify the current
                       oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                   } else {
                       // this is nullified scenario with no org or person associated, in that case nullify the role
@@ -492,7 +493,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             } else {
                 String poOrgIi = ocDto.getScoperIdentifier().getExtension();
                 String paOrgAssignedId = oc.getOrganization().getIdentifier();
-                if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
+                if (StringUtils.isNotEmpty(poOrgIi) && StringUtils.isNotEmpty(paOrgAssignedId)
                         && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
                     //this means scoper is changed. check if exist in PA if not create and update the SR
                     Organization paOrg = paServiceUtil.getOrCreatePAOrganizationByIi(ocDto.getScoperIdentifier());
@@ -510,19 +511,19 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             spcLocal.cascadeRoleStatus(ocIdentifier, CdConverter.convertToCd(newRoleCode));
         }
     }
-    
+
     private void replaceStudyContactIdentifiers(final Ii fromId  , final Ii toId , final String tableName) {
         String sql = null;
-        if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(fromId.getIdentifierName())) {    
-            sql = "update " + tableName + " set clinical_research_staff_identifier = " + toId.getExtension() 
+        if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(fromId.getIdentifierName())) {
+            sql = "update " + tableName + " set clinical_research_staff_identifier = " + toId.getExtension()
             + " where clinical_research_staff_identifier = " + fromId.getExtension();
         }
-        if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(fromId.getIdentifierName())) {    
-            sql = "update " + tableName + " set healthcare_provider_identifier = " + toId.getExtension() 
+        if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(fromId.getIdentifierName())) {
+            sql = "update " + tableName + " set healthcare_provider_identifier = " + toId.getExtension()
             + " where healthcare_provider_identifier = " + fromId.getExtension();
         }
-        if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(fromId.getIdentifierName())) {    
-            sql = "update " + tableName + " set organizational_contact_identifier = " + toId.getExtension() 
+        if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(fromId.getIdentifierName())) {
+            sql = "update " + tableName + " set organizational_contact_identifier = " + toId.getExtension()
             + " where organizational_contact_identifier = " + fromId.getExtension();
         }
 
@@ -530,9 +531,9 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         int count = session.createSQLQuery(sql).executeUpdate();
         LOG.info("nullified crs indentifier is " + fromId.getExtension());
         LOG.info("duplicate hcf indentifier is " + toId.getExtension());
-        LOG.info("total records got update in  " + tableName + " is " + count);  
-    }    
-    
+        LOG.info("total records got update in  " + tableName + " is " + count);
+    }
+
 
     private PersonDTO getPoPerson(final String poPersonId) throws PAException {
         PersonDTO personDto = null;
@@ -559,12 +560,12 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                        personDto = PoRegistry.getPersonEntityService().getPerson(personIi);
                    } catch (NullifiedEntityException e1) {
                        // TODO refactor the code to handle chain of nullified entities ... Naveen Amiruddin
-                       throw new PAException("This scenario is currrently not handled .... " 
+                       throw new PAException("This scenario is currrently not handled .... "
                                + "Duplicate Ii of nullified is also nullified" , e1);
                    }
                }
        }
-       return personDto; 
+       return personDto;
     }
 
     private OrganizationDTO getPoOrganization(final  String poOrganizationId) throws PAException {
@@ -590,12 +591,12 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                        organizationDto = PoRegistry.getOrganizationEntityService().getOrganization(organizationIi);
                    } catch (NullifiedEntityException e1) {
                        // TODO refactor the code to handle chain of nullified entities ... Naveen Amiruddin
-                       throw new PAException("This scenario is currrently not handled .... " 
+                       throw new PAException("This scenario is currrently not handled .... "
                                + "Duplicate Ii of nullified is also nullified" , e1);
                    }
                }
        }
-       return organizationDto; 
+       return organizationDto;
     }
     /**
     *

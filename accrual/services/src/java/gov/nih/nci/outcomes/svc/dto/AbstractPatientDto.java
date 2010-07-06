@@ -98,6 +98,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author Kalpana Guthikonda
  * @since 02/16/2010
@@ -165,7 +167,7 @@ public abstract class AbstractPatientDto extends AbstractBaseOutSvcDto implement
     @SuppressWarnings({"PMD" })
     private boolean validateCountryCodeIsUsa() throws OutcomesFieldException {
         String alpha3 = StConverter.convertToString(getCountryAlpha3());
-        if (PAUtil.isEmpty(alpha3)) {
+        if (StringUtils.isEmpty(alpha3)) {
             throw new OutcomesFieldException(getClass(), "countryAlpha3", "Country should not be null.");
         }
         if (alpha3.length() != "USA".length()) {

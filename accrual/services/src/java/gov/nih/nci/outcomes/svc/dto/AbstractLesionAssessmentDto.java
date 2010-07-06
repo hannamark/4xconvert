@@ -87,7 +87,8 @@ import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
 import gov.nih.nci.outcomes.svc.util.OutcomesUtil;
 import gov.nih.nci.pa.enums.LesionMeasurementMethodCode;
 import gov.nih.nci.pa.enums.MeasurableEvaluableDiseaseTypeCode;
-import gov.nih.nci.pa.util.PAUtil;
+
+import org.apache.commons.lang.math.NumberUtils;
 
 /**
  * @author Kalpana Guthikonda
@@ -117,18 +118,18 @@ public abstract class AbstractLesionAssessmentDto extends AbstractBaseOutSvcDto 
         validateEnumerator(getLesionMeasurementMethod(),
                 LesionMeasurementMethodCode.values(), "lesionMeasurementMethod", false);
         if (getLesionLongestDiameter() != null && getLesionLongestDiameter().getValue() != null 
-                && !PAUtil.isNumber(getLesionLongestDiameter().getValue().toString())) {
+                && !NumberUtils.isNumber(getLesionLongestDiameter().getValue().toString())) {
             throw new OutcomesFieldException(getClass(), "lesionLongestDiameter.value", NUMERICMESSAGE);
         }
-        if (getLesionNum().getExtension() != null && !PAUtil.isNumber(getLesionNum().getExtension())) {
+        if (getLesionNum().getExtension() != null && !NumberUtils.isNumber(getLesionNum().getExtension())) {
             throw new OutcomesFieldException(getClass(), "lesionNum", NUMERICMESSAGE);
         }
         if (getImageIdentifier() != null && getImageIdentifier().getExtension() != null 
-                && !PAUtil.isNumber(getImageIdentifier().getExtension())) {
+                && !NumberUtils.isNumber(getImageIdentifier().getExtension())) {
             throw new OutcomesFieldException(getClass(), "imageIdentifier", NUMERICMESSAGE);
         }
         if (getImageSeriesIdentifier() != null && getImageSeriesIdentifier().getExtension() != null 
-                && !PAUtil.isNumber(getImageSeriesIdentifier().getExtension())) {
+                && !NumberUtils.isNumber(getImageSeriesIdentifier().getExtension())) {
             throw new OutcomesFieldException(getClass(), "imageSeriesIdentifier", NUMERICMESSAGE);
         }
         if (getClinicalAssessmentDate() != null) {

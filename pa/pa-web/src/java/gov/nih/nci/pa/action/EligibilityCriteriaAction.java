@@ -1,31 +1,31 @@
 /*
 * caBIG Open Source Software License
-* 
+*
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-* 
+*
 * This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
 * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
 * entity.  Control for purposes of this definition means
-* 
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract 
+*
+* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
 * or otherwise,or
-*  
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or 
-* 
+*
+* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
+*
 * (iii) beneficial ownership of such entity.
 * License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
 * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to 
-* 
+* rights in the caBIG Software, including any copyright or patent rights therein, to
+*
 * (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
 * publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so; 
-* 
+* or permit others to do so;
+*
 * (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof); 
-* 
+* (or portions thereof);
+*
 * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
 * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
 * including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
@@ -34,22 +34,22 @@
 * displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
 * Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
 * distribute or use the caBIG Software.
-* 
+*
 * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
 * of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
 * form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
 * documentation and/or other materials provided with the distribution, if any.
-* 
+*
 * 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
 * This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally 
+* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
 * appear.
-* 
+*
 * 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
 * caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
 * any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
 * as required to comply with the terms of this License.
-* 
+*
 * 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
 * programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
 * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
@@ -59,22 +59,22 @@
 * In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
 * against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
 * to obtain such permissions.
-* 
+*
 * 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
 * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
 * sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
 * provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
 * License.
-* 
+*
 * 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN 
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
 * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
 * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* 
+*
+*
 */
 package gov.nih.nci.pa.action;
 
@@ -122,6 +122,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
@@ -136,7 +138,7 @@ import com.opensymphony.xwork2.ActionSupport;
  *        holder, NCI.
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength",
-  "PMD.NPathComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.TooManyFields" , 
+  "PMD.NPathComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.TooManyFields" ,
       "PMD.AvoidDeeplyNestedIfStmts" })
 public class EligibilityCriteriaAction extends ActionSupport {
 
@@ -167,7 +169,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
     //private List<DataElement> cadsrResult = new ArrayList<DataElement>();
     private List<CaDSRWebDTO> cadsrResult = new ArrayList<CaDSRWebDTO>();
     private static long cadsrCsId;
-    private static float cadsrCsVersion;  
+    private static float cadsrCsVersion;
     private static List<ClassificationSchemeItem> csisResult = null;
     private static final String CSIS = "csisResult";
     private static final String CDES_BY_CSI = "cdesByCsiResult";
@@ -180,12 +182,12 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static String cdeRequestToEmail;
     private static String cdeRequestSubject;
     private static String cdeRequestText;
-    private static final int TOTAL_COUNT = 3;    
+    private static final int TOTAL_COUNT = 3;
     private String minValueUnit;
     private String maxValueUnit;
 
     /**
-     * 
+     *
      * @return String
      */
     public String query() {
@@ -208,12 +210,12 @@ public class EligibilityCriteriaAction extends ActionSupport {
                     if (weblist.getCriterionName() == null
                             || (!(weblist.getCriterionName().equalsIgnoreCase("GENDER")))
                             && (!(weblist.getCriterionName().equalsIgnoreCase("AGE")))) {
-                        eligibilityList.add(weblist);             
+                        eligibilityList.add(weblist);
                     }
                 }
             }
         }
-     
+
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         if (spDTO.getAcceptHealthyVolunteersIndicator().getValue() != null) {
@@ -225,16 +227,16 @@ public class EligibilityCriteriaAction extends ActionSupport {
             ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
             ospDTO = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
             if (ospDTO != null) {
-                if (ospDTO.getSamplingMethodCode() != null 
+                if (ospDTO.getSamplingMethodCode() != null
                     && ospDTO.getSamplingMethodCode().getCode() != null) {
                     samplingMethodCode = ospDTO.getSamplingMethodCode().getCode().toString();
-                }   
-                if (ospDTO.getStudyPopulationDescription() != null 
+                }
+                if (ospDTO.getStudyPopulationDescription() != null
                     && ospDTO.getStudyPopulationDescription().getValue() != null) {
                     studyPopulationDescription = ospDTO.getStudyPopulationDescription().getValue().toString();
                 }
             }
-        }   
+        }
 
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -257,19 +259,19 @@ public class EligibilityCriteriaAction extends ActionSupport {
             ApplicationService appService = ApplicationServiceProvider.getApplicationService();
             Collection csResult = appService.search(ClassificationScheme.class, cs);
             ClassificationScheme classifSch = (ClassificationScheme) csResult.iterator().next();
-         
+
             Collection<ClassSchemeClassSchemeItem> csItem = classifSch.getClassSchemeClassSchemeItemCollection();
             csisResult = new ArrayList<ClassificationSchemeItem>();
             for (ClassSchemeClassSchemeItem csCsi : csItem) {
                 csisResult.add(csCsi.getClassificationSchemeItem());
             }
-            
+
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-        }        
+        }
         return CSIS;
     }
-  
+
     /**
      * call this from pop-search.
      * @return result
@@ -279,22 +281,22 @@ public class EligibilityCriteriaAction extends ActionSupport {
         String csiName = ServletActionContext.getRequest().getParameter("csiName");
         String deName = ServletActionContext.getRequest().getParameter("searchName");
         try {
-            ApplicationService appService = ApplicationServiceProvider.getApplicationService();          
+            ApplicationService appService = ApplicationServiceProvider.getApplicationService();
             DetachedCriteria criteria = DetachedCriteria.forClass(DataElement.class, "de");
             criteria.add(Expression.ilike("longName", "%" + deName + "%"));
             criteria.add(Expression.eq("workflowStatusName", "RELEASED"));
             DetachedCriteria csCsiCriteria = criteria.createCriteria("administeredComponentClassSchemeItemCollection")
             .createCriteria("classSchemeClassSchemeItem");
-          
+
             DetachedCriteria csCriteria = csCsiCriteria.createCriteria("classificationScheme");
             csCriteria.add(Expression.eq("publicID", cadsrCsId));
             csCriteria.add(Expression.eq("version", cadsrCsVersion));
-          
+
             DetachedCriteria csiCriteria = csCsiCriteria.createCriteria("classificationSchemeItem");
             csiCriteria.add(Expression.eq("longName", csiName));
-          
+
             List classCes = appService.query(criteria);
-          
+
             for (Object obj : classCes) {
               CaDSRWebDTO cadsrWebDTO = new CaDSRWebDTO();
               DataElement de = (DataElement) obj;
@@ -304,19 +306,19 @@ public class EligibilityCriteriaAction extends ActionSupport {
               if (de.getReferenceDocumentCollection() != null && !de.getReferenceDocumentCollection().isEmpty()) {
                for (ReferenceDocument  refDoc : de.getReferenceDocumentCollection()) {
                  if (refDoc.getType().equals("Preferred Question Text")) {
-                   cadsrWebDTO.setPreferredQuestion(refDoc.getDoctext());  
-                  } 
+                   cadsrWebDTO.setPreferredQuestion(refDoc.getDoctext());
+                  }
                }
 
               } else {
-                 if (de.getDataElementConcept() != null && de.getDataElementConcept().getLongName() != null) { 
+                 if (de.getDataElementConcept() != null && de.getDataElementConcept().getLongName() != null) {
                    cadsrWebDTO.setPreferredQuestion(de.getDataElementConcept().getLongName());
                  }
               }
               cadsrResult.add(cadsrWebDTO);
             }
             if (cadsrResult.size() > MAX_CADSR_RESULT) {
-              ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, 
+              ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                "Search results too large returned more than 200 records");
               cadsrResult.clear();
               return CDES_BY_CSI;
@@ -325,13 +327,13 @@ public class EligibilityCriteriaAction extends ActionSupport {
             setCdeCategoryCode(csiName);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-        }     
-        return CDES_BY_CSI;      
-    }  
-    
+        }
+        return CDES_BY_CSI;
+    }
+
     /**
      * Gets the classified cd es display tag.
-     * 
+     *
      * @return the classified cd es display tag
      */
     public String getClassifiedCDEsDisplayTag() {
@@ -343,30 +345,30 @@ public class EligibilityCriteriaAction extends ActionSupport {
      * display the cdes.
      * @return String
      */
-    public String displaycde() {      
+    public String displaycde() {
         String cdeid = ServletActionContext.getRequest().getParameter("cdeid");
-        
+
         try {
           ApplicationService appService = ApplicationServiceProvider.getApplicationService();
           DataElement de = new DataElement();
           de.setId(cdeid);
-            
+
           Collection collResult = appService.search(DataElement.class, de);
-          
+
           cdeResult = (DataElement) collResult.iterator().next();
           webDTO.setCriterionName(cdeResult.getDataElementConcept().getLongName());
-          
+
           ValueDomain vd = cdeResult.getValueDomain();
           if (vd instanceof EnumeratedValueDomain) {
               EnumeratedValueDomain evd = (EnumeratedValueDomain) vd;
-              
+
               permValues = new ArrayList<String>();
               Collection<ValueDomainPermissibleValue> vdPvList = evd.getValueDomainPermissibleValueCollection();
               for (ValueDomainPermissibleValue vdPv : vdPvList) {
                  // permValues.add(vdPv.getPermissibleValue().getValue());
                   permValues.add(vdPv.getPermissibleValue().getValueMeaning().getLongName());
               }
-              
+
           } else {
               permValues = null;
           }
@@ -377,14 +379,14 @@ public class EligibilityCriteriaAction extends ActionSupport {
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
-        
+
         return DISPLAY_CDE;
-       
+
     }
-    
+
     /**
      * Request to create cde.
-     * 
+     *
      * @return the string
      */
     public String requestToCreateCDE() {
@@ -393,7 +395,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
         webDTO.setMessage(cdeRequestText);
         return REQUEST_TO_CREATE_CDE;
     }
-    
+
     /**
      * Send email to request to create cde.
      * @return the string
@@ -401,15 +403,15 @@ public class EligibilityCriteriaAction extends ActionSupport {
     public String sendCDERequestEmail() {
     try {
         StringBuffer err = new StringBuffer();
-        String fromEmail = (String) ServletActionContext.getRequest().getParameter("fromEmail");
-        String emailMessage = (String) ServletActionContext.getRequest().getParameter("emailMsg");
-        if (PAUtil.isEmpty(fromEmail)) {
+        String fromEmail = ServletActionContext.getRequest().getParameter("fromEmail");
+        String emailMessage = ServletActionContext.getRequest().getParameter("emailMsg");
+        if (StringUtils.isEmpty(fromEmail)) {
           err.append("Please enter an email address").append(BR);
-        } 
-        if (PAUtil.isNotEmpty(fromEmail) && !PAUtil.isValidEmail(fromEmail)) {
+        }
+        if (!PAUtil.isValidEmail(fromEmail)) {
           err.append("Please enter a valid email address").append(BR);
         }
-        if (PAUtil.isEmpty(emailMessage)) {
+        if (StringUtils.isEmpty(emailMessage)) {
           err.append("Please enter a request to CDE message").append(BR);
         }
         if (err.length() > 0) {
@@ -418,7 +420,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
         } else {
           PaRegistry.getMailManagerService().sendCDERequestMail(fromEmail, emailMessage);
           ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "CDE Request sent successfully");
-        }  
+        }
     } catch (PAException e) {
        ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
     }
@@ -455,7 +457,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
 
       PlannedEligibilityCriterionDTO pecDTOGender = new PlannedEligibilityCriterionDTO();
       PlannedEligibilityCriterionDTO pecDTOAge = new PlannedEligibilityCriterionDTO();
-      
+
       if (eligibleGenderCode != null) {
        pecDTOGender.setStudyProtocolIdentifier(studyProtocolIi);
        pecDTOGender.setCriterionName(StConverter.convertToSt("GENDER"));
@@ -463,7 +465,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
             .getByCode(eligibleGenderCode)));
        pecDTOGender.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
        pecDTOGender.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        if (PAUtil.isNotEmpty(eligibleGenderCodeId)) {
+        if (StringUtils.isNotEmpty(eligibleGenderCodeId)) {
           pecDTOGender.setIdentifier(IiConverter.convertToIi(eligibleGenderCodeId));
           PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTOGender);
         } else {
@@ -476,38 +478,38 @@ public class EligibilityCriteriaAction extends ActionSupport {
         pecDTOAge.setValue(convertToIvlPq(minValueUnit, minimumValue, maxValueUnit, maximumValue));
         pecDTOAge.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
         pecDTOAge.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        if (PAUtil.isNotEmpty(valueId)) {
+        if (StringUtils.isNotEmpty(valueId)) {
           pecDTOAge.setIdentifier(IiConverter.convertToIi(valueId));
           PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTOAge);
         } else {
           PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTOAge);
         }
       }
-      if (PAUtil.isNotEmpty(eligibleGenderCodeId)) {
+      if (StringUtils.isNotEmpty(eligibleGenderCodeId)) {
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
       } else {
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
       }
-      query();            
+      query();
     } catch (PAException e) {
       ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
     }
     return ELIGIBILITY;
   }
-  
-  @SuppressWarnings({"PMD" })   
+
+  @SuppressWarnings({"PMD" })
   private Ivl<Pq> convertToIvlPq(String minUom, String minValue, String maxUom, String maxValue) {
    if (minUom == null && minValue == null && maxValue == null && maxUom == null) {
-     return null; 
+     return null;
    }
    IvlConverter.JavaPq low  = new IvlConverter.JavaPq(minUom ,
       PAUtil.convertStringToDecimal(minValue), null);
-   IvlConverter.JavaPq high  = new IvlConverter.JavaPq(maxUom , 
+   IvlConverter.JavaPq high  = new IvlConverter.JavaPq(maxUom ,
       PAUtil.convertStringToDecimal(maxValue), null);
-   Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);  
+   Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);
    return ivl;
   }
-  
+
 
   /**
    * @return result
@@ -519,7 +521,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
 
   /**
    * Re order.
-   * 
+   *
    * @return the string
    */
   public String reOrder() {
@@ -534,7 +536,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
       addFieldError("reOrder", ruleError.toString());
       populateList();
       return ELIGIBILITY;
-    } 
+    }
     if (!order.isEmpty()) {
       StringBuffer orderStr =  new StringBuffer("Display Order(s) exist: ");
       orderStr.append(order.toString());
@@ -568,50 +570,50 @@ private void populateList() throws PAException {
           }
       }
 }
-  
-  
+
+
   /**
    * Generate.
-   * 
+   *
    * @return the string
-   * 
+   *
    * @throws PAException the PA exception
    */
   public String generate() throws PAException {
      StringBuffer generatedName = new StringBuffer();
-     
-     if (PAUtil.isNotEmpty(webDTO.getCriterionName())) {
+
+     if (StringUtils.isNotEmpty(webDTO.getCriterionName())) {
          generatedName.append(webDTO.getCriterionName());
      }
-     if (PAUtil.isNotEmpty(webDTO.getOperator()) && webDTO.getOperator().equalsIgnoreCase("In")) {
+     if (StringUtils.isNotEmpty(webDTO.getOperator()) && webDTO.getOperator().equalsIgnoreCase("In")) {
          generatedName.append(SP).append("In:");
      }
-     if (PAUtil.isNotEmpty(webDTO.getOperator()) && !webDTO.getOperator().equalsIgnoreCase("In")) {
+     if (StringUtils.isNotEmpty(webDTO.getOperator()) && !webDTO.getOperator().equalsIgnoreCase("In")) {
          generatedName.append(SP).append(webDTO.getOperator());
      }
-     if (PAUtil.isNotEmpty(webDTO.getValueIntegerMin())) {
-      if (PAUtil.isNotEmpty(webDTO.getValueIntegerMin())) {
+     if (StringUtils.isNotEmpty(webDTO.getValueIntegerMin())) {
+      if (StringUtils.isNotEmpty(webDTO.getValueIntegerMin())) {
          generatedName.append(webDTO.getValueIntegerMin());
       }
-      if (PAUtil.isNotEmpty(webDTO.getValueIntegerMax())) {
+      if (StringUtils.isNotEmpty(webDTO.getValueIntegerMax())) {
        generatedName.append(" - ").append(webDTO.getValueIntegerMax());
       }
-      if (PAUtil.isNotEmpty(webDTO.getUnit())) {
+      if (StringUtils.isNotEmpty(webDTO.getUnit())) {
          generatedName.append(SP).append(webDTO.getUnit());
       }
-     } else if (PAUtil.isNotEmpty(webDTO.getValueText())) {
+     } else if (StringUtils.isNotEmpty(webDTO.getValueText())) {
          generatedName.append(SP).append(webDTO.getValueText());
      }
      webDTO.setTextDescription(StringEscapeUtils.unescapeHtml(generatedName.toString()));
      webDTO.setOperator(StringEscapeUtils.unescapeHtml(webDTO.getOperator()));
      return ELIGIBILITYADD;
   }
-  
+
   /**
    * @return result
    */
   public String create() {
-   
+
    try {
       enforceEligibilityBusinessRules();
       if (hasFieldErrors()) {
@@ -646,7 +648,7 @@ private void populateList() throws PAException {
    * @return result
    */
   public String update() {
-   try { 
+   try {
     enforceEligibilityBusinessRules();
     if (hasFieldErrors()) {
       return ELIGIBILITYADD;
@@ -676,30 +678,30 @@ private void populateList() throws PAException {
     }
     return ELIGIBILITY;
   }
-  
+
   /**
    * Display selected type.
-   * 
+   *
    * @return the string
-   * 
+   *
    * @throws PAException the PA exception
    */
-  @SuppressWarnings({"PMD" })  
+  @SuppressWarnings({"PMD" })
   public String displaySelectedType() throws PAException {
       String uomid = ServletActionContext.getRequest().getParameter("id");
       String className =  ServletActionContext.getRequest().getParameter("className");
       String divName =  ServletActionContext.getRequest().getParameter("divName");
-       if (PAUtil.isNotEmpty(uomid)) {
+       if (StringUtils.isNotEmpty(uomid)) {
         if ("UnitOfMeasurement".equalsIgnoreCase(className) && divName.contains("loadUOM")) {
-           BaseLookUpService<UnitOfMeasurement> lookUpService = 
+           BaseLookUpService<UnitOfMeasurement> lookUpService =
                         new BaseLookUpService<UnitOfMeasurement>(UnitOfMeasurement.class);
            UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(uomid));
            webDTO.setUnit(uom.getCode());
          }
        }
-       return divName; 
+       return divName;
   }
-  
+
   private PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(ISDesignDetailsWebDTO dtoWeb,
                                                                            Long identifier) {
      Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
@@ -744,11 +746,11 @@ private void populateList() throws PAException {
       }
       if (dto.getCriterionName().getValue() != null
           && dto.getCriterionName().getValue().equals("AGE")) {
-        if (dto.getValue().getHigh().getValue() != null) {  
+        if (dto.getValue().getHigh().getValue() != null) {
           maximumValue = String.valueOf(dto.getValue().getHigh().getValue());
           maxValueUnit = dto.getValue().getHigh().getUnit();
         }
-        if (dto.getValue().getLow().getValue() != null) { 
+        if (dto.getValue().getLow().getValue() != null) {
           minimumValue = String.valueOf(dto.getValue().getLow().getValue());
           minValueUnit = dto.getValue().getLow().getUnit();
         }
@@ -762,7 +764,7 @@ private void populateList() throws PAException {
           webdto.setInclusionIndicator(("Inclusion"));
         } else {
           webdto.setInclusionIndicator("Exclusion");
-        } 
+        }
       }
       if (dto.getIdentifier() != null) {
         webdto.setId(dto.getIdentifier().getExtension());
@@ -793,7 +795,7 @@ private void populateList() throws PAException {
             webdto.setStructuredType(STRUCTURED);
           } else {
             webdto.setStructuredType("Unstructured");
-          } 
+          }
         }
       if (dto.getSubcategoryCode().getCode() != null) {
         webdto.setCdeCategoryCode(dto.getSubcategoryCode().getCode());
@@ -807,51 +809,50 @@ private void populateList() throws PAException {
     StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext
     .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
     if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
-      if (PAUtil.isEmpty(studyPopulationDescription)) {
+      if (StringUtils.isEmpty(studyPopulationDescription)) {
         addFieldError("studyPopulationDescription", getText("error.trialPopulationDescription"));
       }
-      if (PAUtil.isNotEmpty(studyPopulationDescription)
+      if (StringUtils.isNotEmpty(studyPopulationDescription)
           && studyPopulationDescription.length() > MAXIMUM_CHAR_POPULATION) {
-        addFieldError("studyPopulationDescription", getText("error.spType.population.maximumChar"));        
+        addFieldError("studyPopulationDescription", getText("error.spType.population.maximumChar"));
       }
-      if (PAUtil.isEmpty(samplingMethodCode)) {
+      if (StringUtils.isEmpty(samplingMethodCode)) {
         addFieldError("samplingMethodCode", getText("error.samplingMethod"));
       }
     }
 
-    if (PAUtil.isEmpty(acceptHealthyVolunteersIndicator)) {
+    if (StringUtils.isEmpty(acceptHealthyVolunteersIndicator)) {
       addFieldError("acceptHealthyVolunteersIndicator", getText("error.acceptHealthyVolunteersIndicator"));
     }
-    if (PAUtil.isEmpty(eligibleGenderCode)) {
+    if (StringUtils.isEmpty(eligibleGenderCode)) {
       addFieldError("eligibleGenderCode", getText("error.eligibleGenderCode"));
     }
-    if (PAUtil.isEmpty(this.maximumValue)) {
+    if (StringUtils.isEmpty(this.maximumValue)) {
       addFieldError("maximumValue", getText("error.maximumValue"));
     }
-    if (PAUtil.isNotEmpty(this.maximumValue) && !PAUtil.isNumeric(this.maximumValue)) {
+    if (!NumberUtils.isNumber(this.maximumValue)) {
         addFieldError("maximumValue", getText("error.numeric"));
     }
-    if (PAUtil.isEmpty(this.minValueUnit)) {
+    if (StringUtils.isEmpty(this.minValueUnit)) {
       addFieldError("minValueUnit", getText("error.valueUnit"));
     }
-    if (PAUtil.isEmpty(this.maxValueUnit)) {
+    if (StringUtils.isEmpty(this.maxValueUnit)) {
         addFieldError("maxValueUnit", getText("error.valueUnit"));
       }
     String strMinVal = "minimumValue";
-    if (PAUtil.isEmpty(this.minimumValue)) {
+    if (StringUtils.isEmpty(this.minimumValue)) {
       addFieldError(strMinVal, getText("error.minimumValue"));
     }
-    if (PAUtil.isNotEmpty(this.minimumValue) && !PAUtil.isNumeric(this.minimumValue)) {
+    if (!NumberUtils.isNumber(this.minimumValue)) {
         addFieldError(strMinVal, getText("error.numeric"));
     }
-    if (PAUtil.isNotEmpty(this.minimumValue) && PAUtil.isNotEmpty(this.maximumValue)
-            && PAUtil.isNotEmpty(minValueUnit)  && PAUtil.isNotEmpty(maxValueUnit)
-            && PAUtil.isNumeric(this.minimumValue) && PAUtil.isNumeric(this.maximumValue)) {
+    if (StringUtils.isNotEmpty(minValueUnit)  && StringUtils.isNotEmpty(maxValueUnit)
+            && NumberUtils.isNumber(this.minimumValue) && NumberUtils.isNumber(this.maximumValue)) {
         double minVal = Double.parseDouble(minimumValue);
         double maxVal = Double.parseDouble(maximumValue);
         if (minValueUnit.equalsIgnoreCase(maxValueUnit) && minVal > maxVal) {
-            addFieldError(strMinVal, "Minimum age should not be greater than maximum age.");    
-        }        
+            addFieldError(strMinVal, "Minimum age should not be greater than maximum age.");
+        }
         if (!PAUtil.isUnitLessOrSame(minValueUnit, maxValueUnit)) {
             addFieldError("minValueUnit", "Minimum UOM should not be greater than maximum UOM.");
         }
@@ -860,11 +861,11 @@ private void populateList() throws PAException {
             double maxValUOM = convertToMinutes(maxVal, maxValueUnit);
             if (minValUOM > maxValUOM) {
                 addFieldError(strMinVal, "Minimum age should not be greater than maximum age.");
-            }            
+            }
         }
     }
   }
-  
+
   private double convertToMinutes(double value, String unit) {
       double retMaxVal = 0;
       UnitsCode unitCode = UnitsCode.getByCode(unit);
@@ -872,34 +873,35 @@ private void populateList() throws PAException {
       return retMaxVal;
   }
 private void enforceEligibilityBusinessRules() throws PAException {
-   
-   if (PAUtil.isEmpty(webDTO.getStructuredType())) {
+
+   if (StringUtils.isEmpty(webDTO.getStructuredType())) {
     addFieldError("webDTO.structuredType", getText("error.structuredType.mandatory"));
    }
-   String ruleError = rulesForDisplayOrder(webDTO.getDisplayOrder());  
+   String ruleError = rulesForDisplayOrder(webDTO.getDisplayOrder());
    if (ruleError.length() > 0) {
-      addFieldError("webDTO.displayOrder", ruleError);  
+      addFieldError("webDTO.displayOrder", ruleError);
     }
-    if (PAUtil.isNotEmpty(webDTO.getTextDescription())
+    if (StringUtils.isNotEmpty(webDTO.getTextDescription())
         && webDTO.getTextDescription().length() > MAXIMUM_CHAR_DESCRIPTION) {
-      addFieldError("webDTO.TextDescription", getText("error.spType.description.maximumChar"));        
+      addFieldError("webDTO.TextDescription", getText("error.spType.description.maximumChar"));
     }
-    if (PAUtil.isNotEmpty(webDTO.getStructuredType())) {
+    if (StringUtils.isNotEmpty(webDTO.getStructuredType())) {
         if (STRUCTURED.equalsIgnoreCase(webDTO.getStructuredType())) {
-           if (PAUtil.isEmpty(webDTO.getTextDescription()) || isBuildCriterionEmpty()) {
+           if (StringUtils.isEmpty(webDTO.getTextDescription()) || isBuildCriterionEmpty()) {
                addFieldError("webDTO.buldcriterion", getText("error.mandatory"));
             }
            if (isBuildCriterionEmpty()) {
                addFieldError("webDTO.buldcriterion", getText("error.buldcriterion"));
             }
-           if (PAUtil.isNotEmpty(webDTO.getValueIntegerMax()) && PAUtil.isEmpty(webDTO.getValueIntegerMin())) {
+           if (StringUtils.isNotEmpty(webDTO.getValueIntegerMax())
+                   && StringUtils.isEmpty(webDTO.getValueIntegerMin())) {
                addFieldError("webDTO.valueIntegerMin", "Minimum value must be entered");
             }
-        } else if (PAUtil.isEmpty(webDTO.getTextDescription())) {
+        } else if (StringUtils.isEmpty(webDTO.getTextDescription())) {
             addFieldError("webDTO.buldcriterion",  getText("error.unstructured.description"));
-        }     
+        }
     }
-     
+
     HashSet<String> order =  new HashSet<String>();
     String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id, buildDisplayOrderDBList(), order);
     if (dispOrder != null && !dispOrder.equals("")) {
@@ -910,13 +912,13 @@ private void enforceEligibilityBusinessRules() throws PAException {
   private boolean isBuildCriterionEmpty() {
       int emptyCount = 0;
       boolean retVal = false;
-      if (PAUtil.isEmpty(webDTO.getCriterionName())) {
+      if (StringUtils.isEmpty(webDTO.getCriterionName())) {
           emptyCount++;
       }
-      if (PAUtil.isEmpty(webDTO.getOperator())) {
+      if (StringUtils.isEmpty(webDTO.getOperator())) {
           emptyCount++;
       }
-      if (PAUtil.isEmpty(webDTO.getValueIntegerMin()) && PAUtil.isEmpty(webDTO.getValueText())) {
+      if (StringUtils.isEmpty(webDTO.getValueIntegerMin()) && StringUtils.isEmpty(webDTO.getValueText())) {
           emptyCount++;
       }
       if (emptyCount != 0 && emptyCount <= TOTAL_COUNT) {
@@ -926,10 +928,10 @@ private void enforceEligibilityBusinessRules() throws PAException {
   }
   private String rulesForDisplayOrder(String displayOrder) throws PAException {
     StringBuffer err = new StringBuffer();
-    if (PAUtil.isEmpty(displayOrder)) {
+    if (StringUtils.isEmpty(displayOrder)) {
       err.append("Please enter display order\n");
     }
-    if (PAUtil.isNotEmpty(displayOrder)) {
+    if (StringUtils.isNotEmpty(displayOrder)) {
       try {
          Integer.parseInt(displayOrder);
       } catch (NumberFormatException e) {
@@ -938,12 +940,12 @@ private void enforceEligibilityBusinessRules() throws PAException {
     }
       return err.toString();
   }
-  @SuppressWarnings({"PMD" })  
-  private String checkDisplayOrderExists(String displayOrder, Long dtoId, HashMap<String, String> orderList, 
-    HashSet<String> order) 
+  @SuppressWarnings({"PMD" })
+  private String checkDisplayOrderExists(String displayOrder, Long dtoId, HashMap<String, String> orderList,
+    HashSet<String> order)
   throws PAException {
-    boolean exists = false; 
-   
+    boolean exists = false;
+
      if (orderList != null && !orderList.isEmpty()) {
        if (doesContainInList(displayOrder, dtoId, orderList)) {
              order.add(displayOrder);
@@ -956,7 +958,7 @@ private void enforceEligibilityBusinessRules() throws PAException {
       return "";
      }
    }
-  @SuppressWarnings({"PMD" })  
+  @SuppressWarnings({"PMD" })
   private boolean doesContainInList(String displayOrder, Long dtoId, HashMap<String, String> dList) {
     boolean containsInList = false;
     ArrayList<String> valueList = new ArrayList<String>();
@@ -964,7 +966,7 @@ private void enforceEligibilityBusinessRules() throws PAException {
         Iterator iterator = dList.keySet().iterator();
         while (iterator.hasNext()) {
          String keyId = (String) iterator.next();
-          if (dtoId == null || !dtoId.toString().equals(keyId)) {           
+          if (dtoId == null || !dtoId.toString().equals(keyId)) {
             valueList.add(dList.get(keyId));
           }
         }
@@ -972,10 +974,10 @@ private void enforceEligibilityBusinessRules() throws PAException {
      if (!valueList.isEmpty() && valueList.contains(displayOrder)) {
        containsInList = true;
      }
-    
+
      return containsInList;
   }
-  @SuppressWarnings({"PMD" }) 
+  @SuppressWarnings({"PMD" })
   private HashMap<String, String> buildDisplayOrderDBList() throws PAException {
     HashMap<String, String> orderListDB = new HashMap<String, String>();
     Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
@@ -983,7 +985,7 @@ private void enforceEligibilityBusinessRules() throws PAException {
       .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
     if (pecList != null && !pecList.isEmpty()) {
      for (PlannedEligibilityCriterionDTO dto : pecList) {
-      if (dto.getCategoryCode() != null 
+      if (dto.getCategoryCode() != null
           && dto.getCategoryCode().getCode().equals(ActivityCategoryCode.OTHER.getCode())) {
            orderListDB
             .put(dto.getIdentifier().getExtension(), Integer.toString(dto.getDisplayOrder().getValue().intValue()));
@@ -992,7 +994,7 @@ private void enforceEligibilityBusinessRules() throws PAException {
      }
     return orderListDB;
   }
-  @SuppressWarnings({"PMD" }) 
+  @SuppressWarnings({"PMD" })
   private HashMap<String, String> buildDisplayOrderUIList() throws PAException {
     HashMap<String, String> orderListUI = new HashMap<String, String>();
     if (getEligibilityList() != null && !getEligibilityList().isEmpty()) {
@@ -1001,7 +1003,7 @@ private void enforceEligibilityBusinessRules() throws PAException {
          orderListUI.put(dto.getId(), dto.getDisplayOrder());
         }
        }
-      } 
+      }
       return orderListUI;
     }
   /**
@@ -1169,7 +1171,7 @@ private void enforceEligibilityBusinessRules() throws PAException {
   public void setSamplingMethodCode(String samplingMethodCode) {
     this.samplingMethodCode = samplingMethodCode;
   }
-  
+
   /**
    * @return list
    */
@@ -1213,46 +1215,46 @@ private void enforceEligibilityBusinessRules() throws PAException {
   }
 
   /**
-   * 
+   *
    * @return cadsrResult
    */
   public List<CaDSRWebDTO> getCadsrResult() {
       return cadsrResult;
   }
   /**
-   * 
+   *
    * @param result CaDSRWebDTO
    */
   public void setCadsrResult(List<CaDSRWebDTO> result) {
       this.cadsrResult = result;
   }
-  
+
   /**
-   * 
+   *
    * @return csisResult
    */
   public List<ClassificationSchemeItem> getCsisResult() {
       return csisResult;
   }
-  
+
   private void retrieveFromPaProperties() throws PAException {
      cadsrCsId = Long.parseLong(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_ID"));
      cadsrCsVersion = Float.parseFloat(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_VERSION"));
      cdeRequestToEmail = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL");
      cdeRequestSubject = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT");
      cdeRequestText = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_TEXT");
-          
+
   }
      /**
-     * 
+     *
      * @return cdeResult
      */
     public DataElement getCdeResult() {
         return cdeResult;
     }
-    
+
     /**
-     * 
+     *
      * @return permValues
      */
     public List<String> getPermValues() {
@@ -1260,7 +1262,7 @@ private void enforceEligibilityBusinessRules() throws PAException {
     }
 
     /**
-     * 
+     *
      * @return cdeDatatype
      */
     public String getCdeDatatype() {
@@ -1287,21 +1289,21 @@ private void enforceEligibilityBusinessRules() throws PAException {
     public String getMinValueUnit() {
         return minValueUnit;
     }
-    
+
     /**
      * @param minValueUnit the minValueUnit to set
      */
     public void setMinValueUnit(String minValueUnit) {
         this.minValueUnit = minValueUnit;
     }
-    
+
     /**
      * @return the maxValueUnit
      */
     public String getMaxValueUnit() {
         return maxValueUnit;
     }
-    
+
     /**
      * @param maxValueUnit the maxValueUnit to set
      */

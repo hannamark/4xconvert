@@ -125,7 +125,6 @@ import org.apache.struts2.interceptor.ServletResponseAware;
  * @author Kalpana Guthikonda
  * @since May 18 2010
  */
-@SuppressWarnings({"unchecked"  })
 public class UpdateProprietaryTrialAction extends ManageFileAction implements
         ServletResponseAware {
 
@@ -151,7 +150,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
             trialDTO = new ProprietaryTrialDTO();
             util.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
             setDocumentsInSession();
-            
+
             ServletActionContext.getRequest().getSession().setAttribute("trialDTO", trialDTO);
             setPageFrom("updateProprietaryTrial");
             LOG.debug("Trial retrieved: " + trialDTO.getOfficialTitle());
@@ -303,8 +302,8 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
     }
 
     private void checkNctAndDoc(HttpSession session) {
-        if (PAUtil.isEmpty(trialDTO.getNctIdentifier())
-                && PAUtil.isEmpty(protocolDocFileName)
+        if (StringUtils.isEmpty(trialDTO.getNctIdentifier())
+                && StringUtils.isEmpty(protocolDocFileName)
                 && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
             addFieldError("trialDTO.nctIdentifier", "Provide either NCT Number or Protocol Trial Template.\n");
             addFieldError("trialDTO.protocolDocFileName", "Provide either NCT Number or Protocol Trial Template.\n");

@@ -157,7 +157,7 @@ public class SearchTrialAction extends ActionSupport {
             return "show_Disclaimer_Page";
         }
         String trialAction = ServletActionContext.getRequest().getParameter("trialAction");
-        if (PAUtil.isNotEmpty(trialAction) && (trialAction.equalsIgnoreCase("submit")
+        if (StringUtils.isNotEmpty(trialAction) && (trialAction.equalsIgnoreCase("submit")
                 || trialAction.equalsIgnoreCase("amend") || trialAction.equalsIgnoreCase("update"))) {
             String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
             ServletActionContext.getRequest().setAttribute(SPID, pId);
@@ -293,8 +293,8 @@ public class SearchTrialAction extends ActionSupport {
         queryCriteria.setOfficialTitle(criteria.getOfficialTitle());
         queryCriteria.setPhaseCode(criteria.getPhaseCode());
         queryCriteria.setPrimaryPurposeCode(criteria.getPrimaryPurposeCode());
-        if (PAUtil.isNotEmpty(criteria.getIdentifierType())
-                 && PAUtil.isNotEmpty(criteria.getIdentifier())) {
+        if (StringUtils.isNotEmpty(criteria.getIdentifierType())
+                 && StringUtils.isNotEmpty(criteria.getIdentifier())) {
             if (criteria.getIdentifierType().equals(Constants.IDENTIFIER_TYPE_NCI)) {
                 queryCriteria.setNciIdentifier(criteria.getIdentifier());
             } else if (criteria.getIdentifierType().equals(
@@ -326,7 +326,7 @@ public class SearchTrialAction extends ActionSupport {
         queryCriteria.setUserLastCreated(ServletActionContext.getRequest().getRemoteUser());
         // exclude rejected protocols during search
         queryCriteria.setExcludeRejectProtocol(Boolean.TRUE);
-        if (PAUtil.isNotEmpty(criteria.getPrincipalInvestigatorId())) {
+        if (StringUtils.isNotEmpty(criteria.getPrincipalInvestigatorId())) {
             queryCriteria.setPrincipalInvestigatorId(criteria.getPrincipalInvestigatorId());
         }
         String loginName =  ServletActionContext.getRequest().getRemoteUser();
@@ -408,13 +408,13 @@ public class SearchTrialAction extends ActionSupport {
                 ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier",
                         trialDTO.getLeadOrgTrialIdentifier());
                 ServletActionContext.getRequest().setAttribute("nctIdentifier", trialDTO.getNctIdentifier());
-                ServletActionContext.getRequest().setAttribute("assignedIdentifier", 
+                ServletActionContext.getRequest().setAttribute("assignedIdentifier",
                         trialDTO.getAssignedIdentifier());
-                ServletActionContext.getRequest().setAttribute("summaryFourOrgName", 
+                ServletActionContext.getRequest().setAttribute("summaryFourOrgName",
                         trialDTO.getSummaryFourOrgName());
-                ServletActionContext.getRequest().setAttribute("summaryFourFundingCategoryCode", 
+                ServletActionContext.getRequest().setAttribute("summaryFourFundingCategoryCode",
                         trialDTO.getSummaryFourFundingCategoryCode());
-                ServletActionContext.getRequest().setAttribute("participatingSitesList", 
+                ServletActionContext.getRequest().setAttribute("participatingSitesList",
                         trialDTO.getParticipatingSitesList());
             } else {
                // non prop trial
@@ -507,21 +507,15 @@ public class SearchTrialAction extends ActionSupport {
      * validate the search trial form elements.
      */
     private void validateForm() {
-        if (PAUtil.isNotEmpty(criteria.getIdentifierType())
-                 && PAUtil.isEmpty(criteria.getIdentifier())) {
-            addFieldError("criteria.identifier",
-                    getText("error.search.identifier"));
+        if (StringUtils.isNotEmpty(criteria.getIdentifierType()) && StringUtils.isEmpty(criteria.getIdentifier())) {
+            addFieldError("criteria.identifier", getText("error.search.identifier"));
         }
-        if (PAUtil.isNotEmpty(criteria.getIdentifier())
-                && PAUtil.isEmpty(criteria.getIdentifierType())) {
-           addFieldError("criteria.identifierType",
-                   getText("error.search.identifierType"));
+        if (StringUtils.isNotEmpty(criteria.getIdentifier()) && StringUtils.isEmpty(criteria.getIdentifierType())) {
+           addFieldError("criteria.identifierType", getText("error.search.identifierType"));
        }
-       if (PAUtil.isNotEmpty(criteria.getOrganizationType())
-               && (criteria.getOrganizationId() == null
+       if (StringUtils.isNotEmpty(criteria.getOrganizationType()) && (criteria.getOrganizationId() == null
                        && criteria.getParticipatingSiteId() == null)) {
-           addFieldError("criteria.organizationId",
-                   getText("error.search.organization"));
+           addFieldError("criteria.organizationId", getText("error.search.organization"));
 
        }
 
@@ -581,7 +575,7 @@ public class SearchTrialAction extends ActionSupport {
      */
     public String partiallySubmittedView() {
         String pId = ServletActionContext.getRequest().getParameter(SPID);
-        if (PAUtil.isEmpty(pId)) {
+        if (StringUtils.isEmpty(pId)) {
             addActionError("study protocol id cannot null.");
             return ERROR;
         }
@@ -589,12 +583,12 @@ public class SearchTrialAction extends ActionSupport {
         try {
             trialDTO =  trialUtil.getTrialDTOForPartiallySumbissionById(pId);
             if (trialDTO instanceof TrialDTO) {
-                if (PAUtil.isNotEmpty(((TrialDTO) trialDTO).getSelectedRegAuth())) {
+                if (StringUtils.isNotEmpty(((TrialDTO) trialDTO).getSelectedRegAuth())) {
                     String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
                             ((TrialDTO) trialDTO).getSelectedRegAuth()), "RegulatoryAuthority");
                     ((TrialDTO) trialDTO).setTrialOversgtAuthOrgName(orgName);
                 }
-                if (PAUtil.isNotEmpty(((TrialDTO) trialDTO).getLst())) {
+                if (StringUtils.isNotEmpty(((TrialDTO) trialDTO).getLst())) {
                     String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
                             Long.valueOf(((TrialDTO) trialDTO).getLst()), "Country");
                     ((TrialDTO) trialDTO).setTrialOversgtAuthCountryName(countryName);

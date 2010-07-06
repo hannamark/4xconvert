@@ -142,6 +142,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -372,7 +373,7 @@ public class BatchCreateProtocols {
         util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
         // update the trial DTO with new values
         trialDTO.setPrimaryPurposeCode(batchDto.getPrimaryPurpose());
-        if (PAUtil.isEmpty(batchDto.getPrimaryPurposeOtherValueSp())) {
+        if (StringUtils.isEmpty(batchDto.getPrimaryPurposeOtherValueSp())) {
             trialDTO.setPrimaryPurposeOtherText(batchDto.getPrimaryPurposeOtherValueSp());
         }
         if (null == PhaseCode.getByCode(batchDto.getPhase())) {
@@ -380,7 +381,7 @@ public class BatchCreateProtocols {
             trialDTO.setPhaseOtherText(batchDto.getPhase());
         } else {
             trialDTO.setPhaseCode(batchDto.getPhase());
-            if (PAUtil.isNotEmpty(batchDto.getPhaseOtherValueSp())) {
+            if (StringUtils.isNotEmpty(batchDto.getPhaseOtherValueSp())) {
                 trialDTO.setPhaseOtherText(batchDto.getPhaseOtherValueSp());
             }
         }
@@ -498,7 +499,7 @@ public class BatchCreateProtocols {
         }
         File doc = new File(folderPath + batchDto.getProtcolDocumentFileName());
         List<TrialDocumentWebDTO> docDTOList = new ArrayList<TrialDocumentWebDTO>();
-        if (PAUtil.isNotEmpty(batchDto.getIrbApprovalDocumentFileName())) {
+        if (StringUtils.isNotEmpty(batchDto.getIrbApprovalDocumentFileName())) {
             doc = new File(folderPath + batchDto.getIrbApprovalDocumentFileName());
             TrialDocumentWebDTO webDto = new TrialDocumentWebDTO();
             webDto = util.convertToDocumentDTO(irbApprovalDocCode, batchDto.getIrbApprovalDocumentFileName(), doc);
@@ -516,7 +517,7 @@ public class BatchCreateProtocols {
         TrialUtil util = new TrialUtil();
         final String participatingSitesCode = DocumentTypeCode.PARTICIPATING_SITES.getCode();
         File doc;
-        if (PAUtil.isNotEmpty(batchDto.getParticipatinSiteDocumentFileName())) {
+        if (StringUtils.isNotEmpty(batchDto.getParticipatinSiteDocumentFileName())) {
             doc = new File(folderPath + batchDto.getParticipatinSiteDocumentFileName());
             TrialDocumentWebDTO webDto = new TrialDocumentWebDTO();
             webDto =
@@ -539,7 +540,7 @@ public class BatchCreateProtocols {
         StudyProtocolDTO studyProtocolDTO = null;
         TrialDTO trialDTO = convertToTrialDTO(dto, folderPath);
 
-        if (dto.getSubmissionType().equalsIgnoreCase("O") && !PAUtil.isNotEmpty(trialDTO.getAssignedIdentifier())) {
+        if (dto.getSubmissionType().equalsIgnoreCase("O") && StringUtils.isEmpty(trialDTO.getAssignedIdentifier())) {
             trialDTO.setSecondaryIdentifierList(dto.getOtherTrialIdentifiers());
         } else if (dto.getSubmissionType().equalsIgnoreCase("A")) {
             trialDTO.setSecondaryIdentifierAddList(dto.getOtherTrialIdentifiers());
@@ -594,7 +595,7 @@ public class BatchCreateProtocols {
         studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, studyProtocolIi));
         studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
 
-        if (dto.getSubmissionType().equalsIgnoreCase("O") && !PAUtil.isNotEmpty(trialDTO.getAssignedIdentifier())) {
+        if (dto.getSubmissionType().equalsIgnoreCase("O") && StringUtils.isEmpty(trialDTO.getAssignedIdentifier())) {
             studyProtocolIi =
                     PaRegistry.getTrialRegistrationService().createInterventionalStudyProtocol(studyProtocolDTO,
                             overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, leadOrgDTO,
@@ -718,7 +719,7 @@ public class BatchCreateProtocols {
             trialDTO.setPhaseOtherText(batchDTO.getPhase());
         } else {
             trialDTO.setPhaseCode(batchDTO.getPhase());
-            if (PAUtil.isNotEmpty(batchDTO.getPhaseOtherValueSp())) {
+            if (StringUtils.isNotEmpty(batchDTO.getPhaseOtherValueSp())) {
                 trialDTO.setPhaseOtherText(batchDTO.getPhaseOtherValueSp());
             }
         }
@@ -831,7 +832,7 @@ public class BatchCreateProtocols {
         String zipCode = batchDto.getZip();
 
         OrganizationDTO criteria = new OrganizationDTO();
-        if (StringUtils.isNotBlank(batchDto.getPoIdentifier())) {
+        if (StringUtils.isNotEmpty(batchDto.getPoIdentifier())) {
             criteria.setIdentifier(IiConverter.convertToPoOrganizationIi(batchDto.getPoIdentifier()));
         } else {
             criteria.setName(EnOnConverter.convertToEnOn(orgName));
@@ -847,8 +848,8 @@ public class BatchCreateProtocols {
             throw new PAException(e);
         }
 
-        if (PAUtil.isListEmpty(poOrgDtos)) {
-            if (StringUtils.isNotBlank(batchDto.getPoIdentifier())) {
+        if (CollectionUtils.isEmpty(poOrgDtos)) {
+            if (StringUtils.isNotEmpty(batchDto.getPoIdentifier())) {
                 throw new PAException("Organization Identifier not found " + batchDto.getPoIdentifier());
             }
             orgId = createOrganization(batchDto);
@@ -884,7 +885,7 @@ public class BatchCreateProtocols {
         String zipCode = batchDto.getZip();
         String countryName = batchDto.getCountry().toUpperCase(Locale.US);
         String stateName = batchDto.getState();
-        if (PAUtil.isNotEmpty(stateName)
+        if (StringUtils.isNotEmpty(stateName)
                 && (batchDto.getCountry().equalsIgnoreCase("USA") || batchDto.getCountry().equalsIgnoreCase("CAN")
                         || batchDto.getCountry().equalsIgnoreCase("AUS"))) {
             stateName = stateName.toUpperCase(Locale.US);
@@ -969,7 +970,7 @@ public class BatchCreateProtocols {
         String identifier = batchDto.getPoIdentifier();
         PersonDTO person = new PersonDTO();
         List<PersonDTO> poPersonList = new ArrayList<PersonDTO>();
-        if (StringUtils.isNotBlank(identifier)) {
+        if (StringUtils.isNotEmpty(identifier)) {
             person.setIdentifier(IiConverter.convertToPoPersonIi(batchDto.getPoIdentifier()));
         } else {
             person.setPostalAddress(AddressConverterUtil.create(streetAddress, null, batchDto.getCity(), null, batchDto
@@ -992,8 +993,8 @@ public class BatchCreateProtocols {
             throw new PAException(e);
         }
 
-        if (PAUtil.isListEmpty(poPersonList)) {
-            if (StringUtils.isNotBlank(batchDto.getPoIdentifier())) {
+        if (CollectionUtils.isEmpty(poPersonList)) {
+            if (StringUtils.isNotEmpty(batchDto.getPoIdentifier())) {
                 throw new PAException("Person Identifier not found " + batchDto.getPoIdentifier());
             }
             personId = createPerson(batchDto);
@@ -1025,7 +1026,7 @@ public class BatchCreateProtocols {
         String zip = batchDto.getZip();
         String country = batchDto.getCountry().toUpperCase(Locale.US);
         String state = batchDto.getState();
-        if (PAUtil.isNotEmpty(state)
+        if (StringUtils.isNotEmpty(state)
                 && (batchDto.getCountry().equalsIgnoreCase("USA") || batchDto.getCountry().equalsIgnoreCase("CAN")
                         || batchDto.getCountry().equalsIgnoreCase("AUS"))) {
             state = state.toUpperCase(Locale.US);
@@ -1044,7 +1045,7 @@ public class BatchCreateProtocols {
         part.setValue(firstName);
         dto.getName().getPart().add(part);
         // if middel name exists stick it in here!
-        if (midName != null && PAUtil.isNotEmpty(midName)) {
+        if (StringUtils.isNotEmpty(midName)) {
             Enxp partMid = new Enxp(EntityNamePartType.GIV);
             partMid.setValue(midName);
             dto.getName().getPart().add(partMid);
@@ -1072,31 +1073,31 @@ public class BatchCreateProtocols {
         docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode(), dto
                 .getIrbApprovalDocumentFileName(), doc));
 
-        if (PAUtil.isNotEmpty(dto.getInformedConsentDocumentFileName())) {
+        if (StringUtils.isNotEmpty(dto.getInformedConsentDocumentFileName())) {
             doc = new File(folderPath + dto.getInformedConsentDocumentFileName());
             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getCode(), dto
                     .getInformedConsentDocumentFileName(), doc));
         }
-        if (PAUtil.isNotEmpty(dto.getParticipatinSiteDocumentFileName())) {
+        if (StringUtils.isNotEmpty(dto.getParticipatinSiteDocumentFileName())) {
             doc = new File(folderPath + dto.getParticipatinSiteDocumentFileName());
             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PARTICIPATING_SITES.getCode(), dto
                     .getParticipatinSiteDocumentFileName(), doc));
         }
         // for Amendment Other document type will be skipped.
-        if (PAUtil.isEmpty(dto.getAmendmentDate()) && PAUtil.isEmpty(dto.getNciTrialIdentifier())
-                && PAUtil.isNotEmpty(dto.getOtherTrialRelDocumentFileName())) {
+        if (StringUtils.isEmpty(dto.getAmendmentDate()) && StringUtils.isEmpty(dto.getNciTrialIdentifier())
+                && StringUtils.isNotEmpty(dto.getOtherTrialRelDocumentFileName())) {
             doc = new File(folderPath + dto.getOtherTrialRelDocumentFileName());
             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(), dto
                     .getOtherTrialRelDocumentFileName(), doc));
         }
         // original submission will not have amendment date so protocol Highlighted doc and change memo will be skipped.
-        if (PAUtil.isNotEmpty(dto.getAmendmentDate()) && PAUtil.isNotEmpty(dto.getNciTrialIdentifier())) {
-            if (PAUtil.isNotEmpty(dto.getProtocolHighlightDocFileName())) {
+        if (StringUtils.isNotEmpty(dto.getAmendmentDate()) && StringUtils.isNotEmpty(dto.getNciTrialIdentifier())) {
+            if (StringUtils.isNotEmpty(dto.getProtocolHighlightDocFileName())) {
                 doc = new File(folderPath + dto.getProtocolHighlightDocFileName());
                 docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getCode(), dto
                         .getProtocolHighlightDocFileName(), doc));
             }
-            if (PAUtil.isNotEmpty(dto.getChangeRequestDocFileName())) {
+            if (StringUtils.isNotEmpty(dto.getChangeRequestDocFileName())) {
                 doc = new File(folderPath + dto.getChangeRequestDocFileName());
                 docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode(), dto
                         .getChangeRequestDocFileName(), doc));

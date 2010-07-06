@@ -95,6 +95,7 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -127,7 +128,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
                 gtdDTO = helper.getTrialDTO(studyProtocolIi, "Abstraction");
                 populateOtherIdentifiers();
             } catch (NullifiedRoleException e) {
-                ServletActionContext.getRequest().setAttribute("failureMessage", 
+                ServletActionContext.getRequest().setAttribute("failureMessage",
                         e.getLocalizedMessage());
             } catch (Exception e) {
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -160,7 +161,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
             PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
             Long.valueOf(studyProtocolIi.getExtension()));
         // put an entry in the session and store StudyProtocolQueryDTO
-        studyProtocolQueryDTO.setOfficialTitle(PAUtil.trim(studyProtocolQueryDTO.getOfficialTitle(),
+        studyProtocolQueryDTO.setOfficialTitle(StringUtils.abbreviate(studyProtocolQueryDTO.getOfficialTitle(),
                 PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
         ServletActionContext.getRequest().getSession().setAttribute(
                 Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
@@ -169,7 +170,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         ServletActionContext.getRequest().getSession().setAttribute(
                 Constants.DOC_WFS_MENU, helper.setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
         populateOtherIdentifiers();
-        query(); 
+        query();
     }
     /**
      * Removes/Deletes the Central Contact from General Trial Details when the user click on the remove button.
@@ -204,66 +205,67 @@ public class GeneralTrialDesignAction extends ActionSupport {
     }
     @SuppressWarnings({"PMD.AvoidDeeplyNestedIfStmts" })
     private void enforceBusinessRules() {
-      if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
+      if (StringUtils.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
         addFieldError("gtdDTO.localProtocolIdentifier", getText("Organization Trial ID must be Entered"));
       }
-      if (PAUtil.isEmpty(gtdDTO.getOfficialTitle())) {
+      if (StringUtils.isEmpty(gtdDTO.getOfficialTitle())) {
         addFieldError("gtdDTO.officialTitle", getText("OfficialTitle must be Entered"));
       }
-      if (gtdDTO.getProprietarytrialindicator() == null 
+      if (gtdDTO.getProprietarytrialindicator() == null
               || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
            if (gtdDTO.getCtGovXmlRequired()) {
-              if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
+              if (StringUtils.isEmpty(gtdDTO.getSponsorIdentifier())) {
                 addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
               }
               if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
-                  && PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
+                  && StringUtils.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
                   addFieldError("gtdDTO.responsibleGenericContactName",
                           getText("Please choose Either Personal Contact or Generic Contact "));
               }
-              if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
+              if (StringUtils.isEmpty(gtdDTO.getContactEmail())) {
                   addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
               }
-              if (PAUtil.isNotEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
+              if (StringUtils.isNotEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
                   addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
               }
-              if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
+              if (StringUtils.isEmpty(gtdDTO.getContactPhone())) {
                   addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
               }
            }
-          if (PAUtil.isNotEmpty(gtdDTO.getCentralContactIdentifier()) 
-                  || PAUtil.isNotEmpty(gtdDTO.getCentralContactPhone())
-                  || PAUtil.isNotEmpty(gtdDTO.getCentralContactEmail())) {
-    
-              if (PAUtil.isEmpty(gtdDTO.getCentralContactName()) && PAUtil.isEmpty(gtdDTO.getCentralContactTitle())) {
+          if (StringUtils.isNotEmpty(gtdDTO.getCentralContactIdentifier())
+                  || StringUtils.isNotEmpty(gtdDTO.getCentralContactPhone())
+                  || StringUtils.isNotEmpty(gtdDTO.getCentralContactEmail())) {
+
+              if (StringUtils.isEmpty(gtdDTO.getCentralContactName())
+                      && StringUtils.isEmpty(gtdDTO.getCentralContactTitle())) {
                   addFieldError("gtdDTO.centralContactName", getText("Central contact Name or Title must be entered"));
               }
-              if (PAUtil.isEmpty(gtdDTO.getCentralContactPhone())) {
+              if (StringUtils.isEmpty(gtdDTO.getCentralContactPhone())) {
                addFieldError("gtdDTO.centralContactPhone", getText("Central Contact Phone must be Entered"));
               }
-              if (PAUtil.isEmpty(gtdDTO.getCentralContactEmail())) {
+              if (StringUtils.isEmpty(gtdDTO.getCentralContactEmail())) {
               addFieldError("gtdDTO.centralContactEmail", getText("Central Contact Email must be Entered"));
               }
-              if (PAUtil.isNotEmpty(gtdDTO.getCentralContactEmail()) 
+              if (StringUtils.isNotEmpty(gtdDTO.getCentralContactEmail())
                       && !PAUtil.isValidEmail(gtdDTO.getCentralContactEmail())) {
                   addFieldError("gtdDTO.centralContactEmail", getText("Central Contact Email is not a valid format"));
               }
           }
       } else {
-          if (PAUtil.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
+          if (StringUtils.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
               addFieldError("gtdDTO.primaryPurposeCode", getText("error.primary"));
           }
-          if (PAUtil.isEmpty(gtdDTO.getPhaseCode())) {
+          if (StringUtils.isEmpty(gtdDTO.getPhaseCode())) {
               addFieldError("gtdDTO.phaseCode", getText("error.phase"));
           }
       }
     }
-    
+
     private void populateOtherIdentifiers() {
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, 
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST,
                 gtdDTO.getOtherIdentifiers());
     }
-    
+
     /**
      *
      * @return gtdDTO

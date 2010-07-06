@@ -89,11 +89,11 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -122,7 +122,7 @@ public class TrialDescriptionAction extends ActionSupport {
     private String outline;
     private String primary = "";
     private String secondary = "";
-    private String ternary = ""; 
+    private String ternary = "";
     private String studyObjectiveIip;
     private String studyObjectiveIis;
     private String studyObjectiveIit;
@@ -139,7 +139,7 @@ public class TrialDescriptionAction extends ActionSupport {
             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             copy(spDTO);
             getStudyObjectiveFromDB(studyProtocolIi);
-            
+
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
@@ -169,7 +169,7 @@ public class TrialDescriptionAction extends ActionSupport {
                 PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                         Long.valueOf(studyProtocolIi.getExtension()));
             // put an entry in the session and store StudyProtocolQueryDTO
-            studyProtocolQueryDTO.setOfficialTitle(PAUtil.trim(studyProtocolQueryDTO.getOfficialTitle(),
+            studyProtocolQueryDTO.setOfficialTitle(StringUtils.abbreviate(studyProtocolQueryDTO.getOfficialTitle(),
                     PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
@@ -185,13 +185,13 @@ public class TrialDescriptionAction extends ActionSupport {
     private void copy(StudyProtocolDTO spDTO) {
         setTrialBriefTitle(spDTO.getPublicTitle().getValue());
         setTrialBriefSummary(spDTO.getPublicDescription().getValue());
-        setOutline(spDTO.getScientificDescription().getValue());   
+        setOutline(spDTO.getScientificDescription().getValue());
     }
-    
+
     private void updateStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-        spDTO.setPublicTitle(StConverter.convertToSt(PAUtil.stringSetter(getTrialBriefTitle(), PUBLIC_TITLE)));
-        spDTO.setPublicDescription(StConverter.convertToSt(PAUtil.stringSetter(getTrialBriefSummary()
+        spDTO.setPublicTitle(StConverter.convertToSt(StringUtils.left(getTrialBriefTitle(), PUBLIC_TITLE)));
+        spDTO.setPublicDescription(StConverter.convertToSt(StringUtils.left(getTrialBriefSummary()
                    , PUBLIC_DESCRIPTION)));
         spDTO.setScientificDescription(StConverter.convertToSt(getOutline()));
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
@@ -216,7 +216,7 @@ public class TrialDescriptionAction extends ActionSupport {
     }
     private void updateStudyObjective(Ii studyProtocolIi) throws PAException {
         StudyObjectiveDTO dto = new StudyObjectiveDTO();
-        if (PAUtil.isNotEmpty(getPrimary())) {
+        if (StringUtils.isNotEmpty(getPrimary())) {
             dto.setDescription(StConverter.convertToSt(getPrimary()));
         } else {
             dto.setDescription(StConverter.convertToSt(""));
@@ -228,7 +228,7 @@ public class TrialDescriptionAction extends ActionSupport {
         }
         saveOrUpdate(dto);
         dto = new StudyObjectiveDTO();
-        if (PAUtil.isNotEmpty(getSecondary())) {
+        if (StringUtils.isNotEmpty(getSecondary())) {
             dto.setDescription(StConverter.convertToSt(getSecondary()));
         } else {
             dto.setDescription(StConverter.convertToSt(""));
@@ -240,7 +240,7 @@ public class TrialDescriptionAction extends ActionSupport {
         }
         saveOrUpdate(dto);
         dto = new StudyObjectiveDTO();
-        if (PAUtil.isNotEmpty(getTernary())) {
+        if (StringUtils.isNotEmpty(getTernary())) {
             dto.setDescription(StConverter.convertToSt(getTernary()));
         } else {
             dto.setDescription(StConverter.convertToSt(""));
@@ -251,7 +251,7 @@ public class TrialDescriptionAction extends ActionSupport {
             dto.setIdentifier(IiConverter.convertToIi(getStudyObjectiveIit()));
         }
         saveOrUpdate(dto);
-        
+
     }
 
     /**
@@ -259,8 +259,8 @@ public class TrialDescriptionAction extends ActionSupport {
      * @throws PAException
      */
     private void saveOrUpdate(StudyObjectiveDTO dto) throws PAException {
-        if (PAUtil.isNotEmpty(IiConverter.convertToString(dto.getIdentifier()))) {
-            PaRegistry.getStudyObjectiveService().update(dto);    
+        if (StringUtils.isNotEmpty(IiConverter.convertToString(dto.getIdentifier()))) {
+            PaRegistry.getStudyObjectiveService().update(dto);
         } else {
             PaRegistry.getStudyObjectiveService().create(dto);
         }
@@ -395,8 +395,8 @@ public class TrialDescriptionAction extends ActionSupport {
         this.studyObjectiveIit = studyObjectiveIit;
     }
 
-    
-    
-    
+
+
+
 
 }

@@ -87,13 +87,13 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -112,7 +112,7 @@ public class PopUpIntAction extends ActionSupport {
     private String searchName;
     private String includeSynonym;
     private String exactMatch;
-    
+
     private List<InterventionWebDTO> interWebList = new ArrayList<InterventionWebDTO>();
 
     private void loadResultList() {
@@ -121,7 +121,7 @@ public class PopUpIntAction extends ActionSupport {
         String includeSyn = ServletActionContext.getRequest().getParameter("includeSynonym");
         String exactMat = ServletActionContext.getRequest().getParameter("exactMatch");
 
-        if (PAUtil.isEmpty(tName)) {
+        if (StringUtils.isEmpty(tName)) {
             error("Please enter at least one search criteria.");
             return;
         }

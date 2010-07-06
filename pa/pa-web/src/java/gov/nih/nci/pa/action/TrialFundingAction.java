@@ -87,7 +87,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
@@ -95,6 +94,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -168,7 +168,7 @@ private static final String QUERY_RESULT = "query";
       studyResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.FALSE));
       studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
           trialFundingWebDTO.getFundingMechanismCode()));
-     
+
       studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
               NciDivisionProgramCode.getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
       studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
@@ -205,7 +205,7 @@ private static final String QUERY_RESULT = "query";
       studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
       studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
           trialFundingWebDTO.getFundingMechanismCode()));
-      
+
       studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
               NciDivisionProgramCode.getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
       studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
@@ -228,7 +228,7 @@ private static final String QUERY_RESULT = "query";
   public String delete()  {
 
     LOG.info("Entering delete");
-    if (PAUtil.isEmpty(trialFundingWebDTO.getInactiveCommentText())) {
+    if (StringUtils.isEmpty(trialFundingWebDTO.getInactiveCommentText())) {
       addFieldError("trialFundingWebDTO.inactiveCommentText",
           getText("error.trialFunding.delete.reason"));
     }
@@ -271,43 +271,43 @@ private static final String QUERY_RESULT = "query";
   }
 
   private void enforceBusinessRules() {
-    if (PAUtil.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
+    if (StringUtils.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
       addFieldError("trialFundingWebDTO.fundingMechanismCode",
           getText("error.trialFunding.funding.mechanism"));
     }
-    if (PAUtil.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
+    if (StringUtils.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
       addFieldError("trialFundingWebDTO.nihInstitutionCode",
           getText("error.trialFunding.institution.code"));
     }
-    if (PAUtil.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
+    if (StringUtils.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
       addFieldError("trialFundingWebDTO.nciDivisionProgramCode",
           getText("error.studyProtocol.monitorCode"));
     }
-    if (PAUtil.isEmpty(trialFundingWebDTO.getSerialNumber())) {
+    if (StringUtils.isEmpty(trialFundingWebDTO.getSerialNumber())) {
       addFieldError("trialFundingWebDTO.serialNumber",
           getText("error.trialFunding.serial.number"));
     }
-    if (PAUtil.isNotEmpty(trialFundingWebDTO.getSerialNumber())) {
+    if (StringUtils.isNotEmpty(trialFundingWebDTO.getSerialNumber())) {
       try {
         Integer.valueOf(trialFundingWebDTO.getSerialNumber());
         boolean flag = isNumeric(trialFundingWebDTO.getSerialNumber());
         if (!flag) {
             addFieldError("trialFundingWebDTO.serialNumber",
-            "Please Enter a numeric value");  
+            "Please Enter a numeric value");
         }
-            
+
       } catch (NumberFormatException e) {
         addFieldError("trialFundingWebDTO.serialNumber",
         "Please Enter a numeric value");
       }
-      
+
     }
   }
-  
-  
-  
+
+
+
  private boolean isNumeric(String number) {
-  boolean isValid = false;   
+  boolean isValid = false;
   //Initialize reg ex for numeric data.
   String expression = "^[0-9]*[0-9]+$";
   CharSequence inputStr = number;

@@ -223,11 +223,11 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
         notNullCheck(studyProtocolDTO, leadOrganizationDTO,
                 leadOrganizationIdentifier, nctIdentifier, errorMsg);
         validateOwner(studyProtocolDTO, errorMsg);
-        if (PAUtil.isStNull(nctIdentifier) && PAUtil.isListEmpty(
-                documentService.getByStudyProtocol(studyProtocolDTO.getIdentifier()))) {
+        if (PAUtil.isStNull(nctIdentifier)
+                && CollectionUtils.isEmpty(documentService.getByStudyProtocol(studyProtocolDTO.getIdentifier()))) {
                 errorMsg.append("NCT identifier is required as there are no Documents");
         }
-        if (PAUtil.isListNotEmpty(studySiteDTOs)) {
+        if (CollectionUtils.isNotEmpty(studySiteDTOs)) {
             for (StudySiteDTO studySiteDto : studySiteDTOs) {
                 if (PAUtil.isIiNull(studySiteDto.getStudyProtocolIdentifier())) {
                     errorMsg.append("Study Protocol Identifier  from Study Site cannot be null ");

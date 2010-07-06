@@ -129,6 +129,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 /**
  * This is a selection of utilities, useful for PA. This set of utilities is safe to use in the grid services. Do
@@ -141,8 +142,8 @@ import org.apache.commons.lang.StringUtils;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({  "PMD.TooManyMethods" , "PMD.ExcessiveClassLength",
-    "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+@SuppressWarnings({  "PMD.TooManyMethods" , "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity",
+    "PMD.NPathComplexity" })
 public class PAUtil {
     private static final int MAXF = 1024;
     private static final String EXTN = "extn";
@@ -500,76 +501,13 @@ public class PAUtil {
     }
 
     /**
-    * Returns whether the argument is null or has only whitespace characters
-    * within it. This method is more efficient than performing a trim() operation
-    * because no intermediate strings are created and we often don't need to
-    * iterate over the whole string.
-    *
-    * @param aString String
-    * @return boolean
-    */
-    public static boolean isEmpty(String aString) {
-
-        if (aString == null) {
-            return true;
-        }
-
-        int length = aString.length();
-
-        for (int i = 0; i < length; i++) {
-            if (Character.isWhitespace(aString.charAt(i))) {
-                continue;
-            }
-            return false;
-        }
-
-    return true;
-    }
-
-    /**
-     *
-     * @param aString aString
-     * @return boolean
-     */
-    public static boolean isNotEmpty(String aString) {
-        return !isEmpty(aString);
-    }
-
-    /**
-     * Method designed for string setters to concatenate rather then cause exceptions.
-     * @param value a string
-     * @param maxLength the maximum length allowed for the string
-     * @return null if empty, otherwise a string no longer than maxlegth
-     */
-    public static String stringSetter(String value, int maxLength) {
-        String ret = null;
-        if (isEmpty(value)) {
-            ret = null;
-        } else if (maxLength < 0) {
-            ret = value;
-        } else {
-        ret =  (value.length() > maxLength) ? value.substring(0, maxLength) : value;
-        }
-        return ret;
-    }
-
-    /**
-     * Method designed for string setters to concatenate rather then cause exceptions.
-     * @param value a string
-     * @return null if empty, otherwise a string no longer than the default
-     */
-    public static String stringSetter(String value) {
-        return stringSetter(value, PAAttributeMaxLen.LONG_TEXT_LENGTH);
-    }
-
-    /**
      * Util method to validate email addresses.
      *
      * @param email to check the string
      * @return boolean whether email is valid or not
      */
     public static boolean isValidEmail(String email) {
-        if (StringUtils.isBlank(email)) {
+        if (StringUtils.isEmpty(email)) {
             return false;
         }
         String match = email.trim();
@@ -586,7 +524,7 @@ public class PAUtil {
      * @return true, if is valid phone
      */
     public static boolean isValidPhone(String phone) {
-        if (StringUtils.isBlank(phone)) {
+        if (StringUtils.isEmpty(phone)) {
             return false;
         }
         String match = phone.trim();
@@ -594,7 +532,8 @@ public class PAUtil {
         Matcher m = p.matcher(match);
         return  m.matches();
     }
-    /**
+
+     /**
      * Util method to validate Selection Yes/No.
      *
      * @param selection to check the string
@@ -602,23 +541,6 @@ public class PAUtil {
      */
     public static boolean isYesNo(String selection) {
        return "yes".equalsIgnoreCase(selection) || "no".equalsIgnoreCase(selection);
-    }
-
-    /**
-     * util method to trim a length.
-     * @param data String data
-     * @param len length to trim
-     * @return trimmed data
-     */
-    public static String trim(String data , int len) {
-        if (data == null) {
-            return null;
-        }
-        if (data.length() > len) {
-            return (data.substring(0, len - 1) + "...");
-        } else {
-            return data;
-        }
     }
 
     /**
@@ -834,7 +756,7 @@ public class PAUtil {
      */
     @SuppressWarnings({"PMD" })
     public static boolean isValidDate(String dateString) {
-        if (PAUtil.isEmpty(dateString)) {
+        if (StringUtils.isEmpty(dateString)) {
             return false;
         }
         //set the format to use as a constructor argument
@@ -870,29 +792,6 @@ public class PAUtil {
       }
       return retValue;
     }
-    /**
-     *
-     * @param <E> e
-     * @param list listt
-     * @return f
-     */
-    public static <E> boolean isListNotEmpty(List<? extends E> list) {
-        return !isListEmpty(list);
-
-    }
-    /**
-     *
-     * @param <E> e
-     * @param list listt
-     * @return f
-     */
-    public static <E> boolean isListEmpty(List<? extends E> list) {
-        if (list == null || list.isEmpty()) {
-            return true;
-        }
-        return false;
-
-    }
 
     /**
      * @param value value
@@ -900,28 +799,12 @@ public class PAUtil {
      */
     public static BigDecimal convertStringToDecimal(String value) {
         BigDecimal bd = null;
-        if (value != null && isNumber(value)) {
+        if (NumberUtils.isNumber(value)) {
             bd = BigDecimal.valueOf(Double.parseDouble(value));
         }
         return bd;
     }
 
-    /**
-     * Checks if is number.
-     *
-     * @param value the value
-     *
-     * @return true, if is number
-     */
-    public static boolean isNumber(String value) {
-      boolean isNumber = true;
-      try {
-         Double.parseDouble(value);
-      } catch (NumberFormatException e) {
-         isNumber = false;
-      }
-       return isNumber;
-    }
     /**
      * @param javapq javapq
      * @return bd
@@ -977,32 +860,7 @@ public class PAUtil {
       }
        return isTypeIntervention;
     }
-    /**
-     *
-     * @param strNumber str
-     * @return valid
-     */
-    public static boolean isValidNumber(String strNumber) {
-        try {
-            Long.parseLong(strNumber);
-          } catch (NumberFormatException e) {
-            return false;
-          }
-       return true;
-    }
-    /**
-     *
-     * @param strNumber str
-     * @return valid
-     */
-    public static boolean isNumeric(String strNumber) {
-        try {
-            Double.parseDouble(strNumber);
-          } catch (NumberFormatException e) {
-            return false;
-          }
-       return true;
-    }
+
     /**
      *
      * @param phoneNumber no
@@ -1050,7 +908,7 @@ public class PAUtil {
                         }
                     }
                 }
-                if (isNotEmpty(phone)) {
+                if (StringUtils.isNotEmpty(phone)) {
                     isNull = false;
                 }
             }

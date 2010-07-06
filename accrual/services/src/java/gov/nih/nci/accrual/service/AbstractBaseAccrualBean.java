@@ -98,6 +98,7 @@ import java.util.zip.DataFormatException;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -266,7 +267,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      */
     protected void validateLoginName(St loginName) throws RemoteException {
         String lName = StConverter.convertToString(loginName);
-        if (PAUtil.isEmpty(lName)) {
+        if (StringUtils.isEmpty(lName)) {
             throw new RemoteException("LoginName must be set.");
         }
 

@@ -1,31 +1,31 @@
 /***
 * caBIG Open Source Software License
-* 
+*
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-* 
+*
 * This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
 * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
 * entity.  Control for purposes of this definition means
-* 
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract 
+*
+* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
 * or otherwise,or
-*  
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or 
-* 
+*
+* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
+*
 * (iii) beneficial ownership of such entity.
 * License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
 * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to 
-* 
+* rights in the caBIG Software, including any copyright or patent rights therein, to
+*
 * (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
 * publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so; 
-* 
+* or permit others to do so;
+*
 * (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof); 
-* 
+* (or portions thereof);
+*
 * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
 * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
 * including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
@@ -34,22 +34,22 @@
 * displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
 * Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
 * distribute or use the caBIG Software.
-* 
+*
 * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
 * of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
 * form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
 * documentation and/or other materials provided with the distribution, if any.
-* 
+*
 * 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
 * This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally 
+* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
 * appear.
-* 
+*
 * 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
 * caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
 * any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
 * as required to comply with the terms of this License.
-* 
+*
 * 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
 * programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
 * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
@@ -59,22 +59,22 @@
 * In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
 * against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
 * to obtain such permissions.
-* 
+*
 * 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
 * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
 * sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
 * provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
 * License.
-* 
+*
 * 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN 
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
 * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
 * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* 
+*
+*
 */
 package gov.nih.nci.registry.action;
 
@@ -114,15 +114,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
 /**
- * 
+ *
  * @author Harsha
- * 
+ *
  */
 @SuppressWarnings("PMD")
 public class PopupAction extends ActionSupport implements Preparable {
@@ -142,7 +143,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @return String success or failure
      */
     public String lookuppersons() {
@@ -151,7 +152,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @return String success or failure
      */
     public String lookuporgs() {
@@ -166,7 +167,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @return result
      */
     public String displayOrgList() {
@@ -179,7 +180,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     public String displayPersonsListDisplayTag() throws PAException {
         return populatePersons(true);
     }
-    
+
     /**
      * @throws PAException on error
       * @return res
@@ -187,14 +188,14 @@ public class PopupAction extends ActionSupport implements Preparable {
      public String displayPersonsList() throws PAException {
          return populatePersons(false);
      }
-     
+
      /**
       * @return results
       */
      public String displayPasswordReset() {
          return "displayPasswordReset";
      }
-    
+
 
     private String populatePersons(boolean pagination) throws PAException {
         try {
@@ -209,8 +210,8 @@ public class PopupAction extends ActionSupport implements Preparable {
             //
             String ctep = ServletActionContext.getRequest().getParameter("ctepId");
             if ((firstName != null) && (firstName.equals("")) && (lastName != null) && (lastName.equals(""))
-                    && (email.equals("")) && ctep != null && !(ctep.length() > 0) 
-                    && (city != null) && (city.equals("")) 
+                    && (email.equals("")) && ctep != null && !(ctep.length() > 0)
+                    && (city != null) && (city.equals(""))
                     && (zip != null) && (zip.equals("")) && (state != null) && (state.equals(""))
                     && country.equals("")) {
                 String message = "Please enter at least one search criteria";
@@ -238,20 +239,20 @@ public class PopupAction extends ActionSupport implements Preparable {
             }
             p.setPostalAddress(AddressConverterUtil.create(null, null, city, state, zip, country));
             //
-            List<gov.nih.nci.services.person.PersonDTO> poPersonList = 
+            List<gov.nih.nci.services.person.PersonDTO> poPersonList =
                                                         new ArrayList<gov.nih.nci.services.person.PersonDTO>();
             if (ctep != null && ctep.length() > 0) {
                 IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
                 identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi(ctep));
-                List<IdentifiedPersonDTO> retResultList = 
+                List<IdentifiedPersonDTO> retResultList =
                                   PoRegistry.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
                 if (retResultList != null && retResultList.size() > 0) {
                     p.setIdentifier(retResultList.get(0).getPlayerIdentifier());
-                } 
+                }
             } else {
                 p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
             }
-            if (p.getIdentifier() != null || p.getName() != null) {                
+            if (p.getIdentifier() != null || p.getName() != null) {
                 LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
                 try {
                     poPersonList = PoRegistry.getPersonEntityService().search(p, limit);
@@ -272,13 +273,13 @@ public class PopupAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @return result
      */
     public String displayOrgListDisplayTag() {
         return populateOrgs(true);
     }
-    
+
     private String populateOrgs(boolean pagination) {
         try {
             String orgName = ServletActionContext.getRequest().getParameter("orgName");
@@ -287,7 +288,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             String stateName = ServletActionContext.getRequest().getParameter("stateName");
             String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
             String ctepId = ServletActionContext.getRequest().getParameter("ctepid");
-            
+
             if (orgName.equals("") && countryName.equals("") && cityName.equals("") && zipCode.equals("")
                     && ctepId != null && !(ctepId.length() > 0)) {
                 String message = "Please enter at least one search criteria";
@@ -325,7 +326,7 @@ public class PopupAction extends ActionSupport implements Preparable {
                         null, null, cityName, stateName, zipCode, countryName));
             }
             List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
-            if (criteria.getIdentifier() != null 
+            if (criteria.getIdentifier() != null
                     || criteria.getName() != null
                     || criteria.getPostalAddress() != null) {
                 LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
@@ -367,11 +368,11 @@ public class PopupAction extends ActionSupport implements Preparable {
     public String createOrganization() throws PAException {
         OrganizationDTO orgDto = new OrganizationDTO();
         String orgName = ServletActionContext.getRequest().getParameter("orgName");
-        if (orgName != null && !PAUtil.isNotEmpty(orgName)) {
+        if (StringUtils.isEmpty(orgName)) {
             addActionError("Organization is a required field");
         }
         String orgStAddress = ServletActionContext.getRequest().getParameter("orgStAddress");
-        if (orgStAddress != null && !PAUtil.isNotEmpty(orgStAddress)) {
+        if (StringUtils.isEmpty(orgStAddress)) {
             addActionError("Street address is a required field");
         }
         String countryName = ServletActionContext.getRequest().getParameter("countryName");
@@ -379,28 +380,28 @@ public class PopupAction extends ActionSupport implements Preparable {
             addActionError("Country is a required field");
         }
         String cityName = ServletActionContext.getRequest().getParameter("cityName");
-        if (cityName != null && !PAUtil.isNotEmpty(cityName)) {
+        if (StringUtils.isEmpty(cityName)) {
             addActionError("City is a required field");
         }
         String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
-        if (zipCode != null && !PAUtil.isNotEmpty(zipCode)) {
+        if (StringUtils.isEmpty(zipCode)) {
             addActionError("Zip is a required field");
         }
         String stateName = ServletActionContext.getRequest().getParameter("stateName");
         if (countryName != null && (countryName.equalsIgnoreCase("USA")
                                 || countryName.equalsIgnoreCase("CAN"))) {
-            if (PAUtil.isEmpty(stateName) || stateName.trim().length() > 2) {
+            if (StringUtils.isEmpty(stateName) || stateName.trim().length() > 2) {
                 addActionError("2-letter State/Province Code required for USA/Canada");
-            }           
+            }
         }
         if (countryName != null && countryName.equalsIgnoreCase("AUS")) {
-            if (PAUtil.isEmpty(stateName) || stateName.trim().length() > ausStateCodeLen) {
+            if (StringUtils.isEmpty(stateName) || stateName.trim().length() > ausStateCodeLen) {
                 addActionError("2/3-letter State/Province Code required for Australia");
-            }           
+            }
         }
 
         String email = ServletActionContext.getRequest().getParameter("email");
-        if (email != null && !PAUtil.isNotEmpty(email)) {
+        if (StringUtils.isEmpty(email)) {
             addActionError("Email is a required field");
         } else if (!PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
@@ -420,8 +421,8 @@ public class PopupAction extends ActionSupport implements Preparable {
         }
         orgDto.setName(EnOnConverter.convertToEnOn(orgName));
         //PO Service requires upper case state codes for US and Canada
-        if (PAUtil.isNotEmpty(stateName)) {
-            stateName = stateName.trim().toUpperCase();            
+        if (StringUtils.isNotEmpty(stateName)) {
+            stateName = stateName.trim().toUpperCase();
         }
         orgDto.setPostalAddress(AddressConverterUtil.create(orgStAddress, null, cityName, stateName, zipCode,
                 countryName));
@@ -477,34 +478,34 @@ public class PopupAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @return String rest
      */
     public String createPerson() {
         String firstName = ServletActionContext.getRequest().getParameter("firstName");
-        if (firstName != null && !PAUtil.isNotEmpty(firstName)) {
+        if (StringUtils.isEmpty(firstName)) {
             addActionError("First Name is a required field");
         }
         String lastName = ServletActionContext.getRequest().getParameter("lastName");
-        if (lastName != null && !PAUtil.isNotEmpty(lastName)) {
+        if (StringUtils.isEmpty(lastName)) {
             addActionError("Last Name is a required field");
         }
         String email = ServletActionContext.getRequest().getParameter("email");
-        if (email != null && !PAUtil.isNotEmpty(email)) {
+        if (StringUtils.isEmpty(email)) {
             addActionError("Email is a required field");
         } else if (!PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
         }
         String streetAddr = ServletActionContext.getRequest().getParameter("streetAddr");
-        if (streetAddr != null && !PAUtil.isNotEmpty(streetAddr)) {
+        if (StringUtils.isEmpty(streetAddr)) {
             addActionError("Street address is a required field");
         }
         String city = ServletActionContext.getRequest().getParameter("city");
-        if (city != null && !PAUtil.isNotEmpty(city)) {
+        if (StringUtils.isEmpty(city)) {
             addActionError("City is a required field");
         }
         String zip = ServletActionContext.getRequest().getParameter("zip");
-        if (zip != null && !PAUtil.isNotEmpty(zip)) {
+        if (StringUtils.isEmpty(zip)) {
             addActionError("Zip is a required field");
         }
         String country = ServletActionContext.getRequest().getParameter("country");
@@ -514,15 +515,15 @@ public class PopupAction extends ActionSupport implements Preparable {
         String state = ServletActionContext.getRequest().getParameter("state");
         if (country != null && (country.equalsIgnoreCase("USA")
                             || country.equalsIgnoreCase("CAN"))) {
-            if (PAUtil.isEmpty(state) || state.trim().length() > 2) {
+            if (StringUtils.isEmpty(state) || state.trim().length() > 2) {
                 addActionError("2-letter State/Province Code required for USA/Canada");
-            }            
-        }        
+            }
+        }
         if (country != null && country.equalsIgnoreCase("AUS")) {
-            if (PAUtil.isEmpty(state) || state.trim().length() > ausStateCodeLen) {
+            if (StringUtils.isEmpty(state) || state.trim().length() > ausStateCodeLen) {
                 addActionError("2/3-letter State/Province Code required for Australia");
-            }            
-        }        
+            }
+        }
 
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
@@ -533,9 +534,9 @@ public class PopupAction extends ActionSupport implements Preparable {
             ServletActionContext.getRequest().setAttribute("failureMessage", sb.toString());
             return PERS_CREATE_RESPONSE;
         }
-        
+
         String preFix = ServletActionContext.getRequest().getParameter("preFix");
-        String midName = ServletActionContext.getRequest().getParameter("midName");        
+        String midName = ServletActionContext.getRequest().getParameter("midName");
         String phone = ServletActionContext.getRequest().getParameter("phone");
         String tty = ServletActionContext.getRequest().getParameter("tty");
         String fax = ServletActionContext.getRequest().getParameter("fax");
@@ -548,7 +549,7 @@ public class PopupAction extends ActionSupport implements Preparable {
         part.setValue(firstName);
         dto.getName().getPart().add(part);
         // if middel name exists stick it in here!
-        if (midName != null && PAUtil.isNotEmpty(midName)) {
+        if (StringUtils.isNotEmpty(midName)) {
             Enxp partMid = new Enxp(EntityNamePartType.GIV);
             partMid.setValue(midName);
             dto.getName().getPart().add(partMid);
@@ -556,12 +557,12 @@ public class PopupAction extends ActionSupport implements Preparable {
         Enxp partFam = new Enxp(EntityNamePartType.FAM);
         partFam.setValue(lastName);
         dto.getName().getPart().add(partFam);
-        if (preFix != null && PAUtil.isNotEmpty(preFix)) {
+        if (StringUtils.isNotEmpty(preFix)) {
             Enxp partPfx = new Enxp(EntityNamePartType.PFX);
             partPfx.setValue(preFix);
             dto.getName().getPart().add(partPfx);
         }
-        if (suffix != null && PAUtil.isNotEmpty(suffix)) {
+        if (StringUtils.isNotEmpty(suffix)) {
             Enxp partSfx = new Enxp(EntityNamePartType.SFX);
             partSfx.setValue(suffix);
             dto.getName().getPart().add(partSfx);
@@ -595,8 +596,8 @@ public class PopupAction extends ActionSupport implements Preparable {
             list.getItem().add(telemail);
             dto.setTelecomAddress(list);
             //PO Service requires upper case state codes for US and Canada
-            if (PAUtil.isNotEmpty(state)) {
-                state = state.trim().toUpperCase();            
+            if (StringUtils.isNotEmpty(state)) {
+                state = state.trim().toUpperCase();
             }
             dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
             Ii id = PoRegistry.getPersonEntityService().createPerson(dto);
@@ -610,7 +611,7 @@ public class PopupAction extends ActionSupport implements Preparable {
         } catch (URISyntaxException e) {
             handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
         } catch (CurationException e) {
-            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);        
+            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
         }
         return PERS_CREATE_RESPONSE;
     }

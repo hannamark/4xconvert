@@ -103,6 +103,7 @@ import java.security.GeneralSecurityException;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -236,7 +237,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      */
     public void addActionErrorIfEmpty(Object value, String errorMsg) {
         if (value instanceof String) {
-            if (PAUtil.isEmpty((String) value)) {
+            if (StringUtils.isEmpty((String) value)) {
                 addActionError(errorMsg);
             }
         } else {

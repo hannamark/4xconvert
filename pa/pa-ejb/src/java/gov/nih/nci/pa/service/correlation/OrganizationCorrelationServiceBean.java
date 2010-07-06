@@ -78,10 +78,10 @@
 */
 package gov.nih.nci.pa.service.correlation;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
@@ -116,6 +116,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -474,7 +475,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         return identifier;
     }
     /**
-     * 
+     *
      * @param orgPoIdentifier id
      * @return ROId of PO
      * @throws PAException on error
@@ -489,7 +490,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         List<ResearchOrganizationDTO> roDTOs = null;
         criteriaRODTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier.getExtension()));
         roDTOs = PoRegistry.getResearchOrganizationCorrelationService().search(criteriaRODTO);
-        if (PAUtil.isListNotEmpty(roDTOs)) {
+        if (CollectionUtils.isNotEmpty(roDTOs)) {
             poROIi = DSetConverter.convertToIi(roDTOs.get(0).getIdentifier());
         }
         return poROIi;

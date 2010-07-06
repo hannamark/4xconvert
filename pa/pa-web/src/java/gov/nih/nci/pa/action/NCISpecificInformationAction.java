@@ -78,9 +78,9 @@
 */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
@@ -165,18 +165,11 @@ public class NCISpecificInformationAction extends ActionSupport {
         // Step1 : check for any errors
         if ((PAUtil.isBlNull(getStudyProtocol().getProprietaryTrialIndicator())
               || !getStudyProtocol().getProprietaryTrialIndicator().getValue().booleanValue())
-              && PAUtil.isEmpty(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())) {
+              && StringUtils.isEmpty(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())) {
             addFieldError("nciSpecificInformationWebDTO.accrualReportingMethodCode",
                     getText("error.studyProtocol.accrualReportingMethodCode"));
         }
-       /* if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())) {
-            addFieldError("nciSpecificInformationWebDTO.summaryFourFundingCategoryCode",
-                    getText("error.studyProtocol.summaryFourFundingCategoryCode"));
-        }
-        if (!PAUtil.isNotNullOrNotEmpty(nciSpecificInformationWebDTO.getOrganizationName())) {
-          addFieldError("nciSpecificInformationWebDTO.organizationName",
-                  getText("error.studyProtocol.summaryFourFundingSource"));
-       }*/
+
         if (hasFieldErrors()) {
             return ERROR;
         }
@@ -192,7 +185,7 @@ public class NCISpecificInformationAction extends ActionSupport {
             spDTO.setAccrualReportingMethodCode(CdConverter.convertToCd(AccrualReportingMethodCode
                     .getByCode(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())));
             spDTO.setProgramCodeText(StConverter.convertToSt(nciSpecificInformationWebDTO.getProgramCodeText()));
-            
+
             // Step2 : update values to StudyResourcing
             srDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                     .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
@@ -202,7 +195,7 @@ public class NCISpecificInformationAction extends ActionSupport {
             // Step 4: check if we have an organization for PO id
             String poIdentifer = nciSpecificInformationWebDTO.getOrganizationIi();
             Long orgId = null;
-            if (StringUtils.isNotBlank(poIdentifer)) {
+            if (StringUtils.isNotEmpty(poIdentifer)) {
                 Organization o = new Organization();
                 o.setIdentifier(poIdentifer);
                 Organization org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(o);

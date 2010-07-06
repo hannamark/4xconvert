@@ -103,6 +103,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
+
 /**
  * @author Anupama Sharma
  * @since 09/08/2009
@@ -113,7 +115,7 @@ import javax.interceptor.Interceptors;
 public class StudyInboxServiceBean
 extends AbstractStudyIsoService<StudyInboxDTO, StudyInbox, StudyInboxConverter>
 implements StudyInboxServiceLocal {
-   
+
     /** id for inboxDateRange.open. */
     public static final int FN_DATE_OPEN = 1;
     /** id for inboxDateRange.close. */
@@ -124,7 +126,7 @@ implements StudyInboxServiceLocal {
     AbstractionCompletionServiceRemote abstractionCompletionService = null;
 
 
-   
+
     /**
      * @param dto dto
      * @return dto
@@ -139,8 +141,8 @@ implements StudyInboxServiceLocal {
 
 
     /**
-     * This method creates a record in the inbox (Only When some conditions are more). 
-     * This method should be called during update workflow. 
+     * This method creates a record in the inbox (Only When some conditions are more).
+     * This method should be called during update workflow.
      * @param documentDTOs list of document Dtos
      * @param studyProtocolIi studyProtocol Identifier
      * @throws PAException on any error
@@ -152,7 +154,7 @@ implements StudyInboxServiceLocal {
         }
         DocumentWorkflowStatusDTO dws = docWrkFlowStatusService.getCurrentByStudyProtocol(studyProtocolIi);
         if (dws == null) {
-            throw new PAException(" Document workflow status is null for StudyProtocol identifier " 
+            throw new PAException(" Document workflow status is null for StudyProtocol identifier "
                     + studyProtocolIi.getExtension());
         }
         comments.append(createComments(documentDTOs));
@@ -166,7 +168,7 @@ implements StudyInboxServiceLocal {
             create(studyInboxDTO);
         }
     }
-    
+
     /**
      * @param dto dto
      * @return dto
@@ -179,11 +181,11 @@ implements StudyInboxServiceLocal {
         wrkDto.getInboxDateRange().setHigh(dto.getInboxDateRange().getHigh());
         setTimeIfToday(wrkDto);
         dateRules(wrkDto);
-        } 
+        }
         return super.update(wrkDto);
     }
 
-    
+
     private void setTimeIfToday(StudyInboxDTO dto) {
         Timestamp now = new Timestamp(new Date().getTime());
         Timestamp tsLow = IvlConverter.convertTs().convertLow(dto.getInboxDateRange());
@@ -197,7 +199,7 @@ implements StudyInboxServiceLocal {
         dto.setInboxDateRange(IvlConverter.convertTs().convertToIvl(tsLow, tsHigh));
     }
 
-    
+
     private void dateRules(StudyInboxDTO dto) throws PAException {
         Timestamp low = IvlConverter.convertTs().convertLow(dto.getInboxDateRange());
         if (low == null) {
@@ -218,17 +220,17 @@ implements StudyInboxServiceLocal {
             }
         }
     }
-    
+
     private StringBuffer createComments(List<DocumentDTO> documentDTOs)  {
         StringBuffer comments = new StringBuffer();
-        if (PAUtil.isListNotEmpty(documentDTOs)) {
+        if (CollectionUtils.isNotEmpty(documentDTOs)) {
             for (DocumentDTO doc : documentDTOs) {
                 comments.append(CdConverter.convertCdToString(doc.getTypeCode())).append(" Document was uploaded <br>");
-            }        
+            }
         }
         return comments;
     }
-    
+
     private StringBuffer createComments(DocumentWorkflowStatusDTO dws, Ii studyProtocolIi) throws PAException {
         StringBuffer comments = new StringBuffer();
         if (PAUtil.isAbstractedAndAbove(dws.getStatusCode())) {

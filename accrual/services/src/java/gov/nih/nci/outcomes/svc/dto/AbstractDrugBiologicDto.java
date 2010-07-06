@@ -86,7 +86,8 @@ import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
 import gov.nih.nci.outcomes.svc.util.OutcomesUtil;
 import gov.nih.nci.pa.enums.DoseModificationType;
-import gov.nih.nci.pa.util.PAUtil;
+
+import org.apache.commons.lang.math.NumberUtils;
 
 /**
  * @author Kalpana Guthikonda
@@ -117,7 +118,7 @@ public abstract class AbstractDrugBiologicDto extends AbstractBaseOutSvcDto {
         if (getDose() == null || getDose().getValue() == null) {
             throw new OutcomesFieldException(getClass(), "dose.value", "Please enter Dose Value.");
         }
-        if (getDose().getValue() != null && !PAUtil.isNumber(getDose().getValue().toString())) {
+        if (getDose().getValue() != null && !NumberUtils.isNumber(getDose().getValue().toString())) {
             throw new OutcomesFieldException(getClass(), "dose.value", NUMERICMESSAGE);
         }
         if (getDose() == null || getDose().getUnit().equals("")) {
@@ -128,7 +129,7 @@ public abstract class AbstractDrugBiologicDto extends AbstractBaseOutSvcDto {
             throw new OutcomesFieldException(getClass(), "doseDur.value", "Please enter Duration Value.");
         }
         if (getDoseDur() != null && getDoseDur().getValue() != null
-                && !PAUtil.isNumber(getDoseDur().getValue().toString())) {
+                && !NumberUtils.isNumber(getDoseDur().getValue().toString())) {
             throw new OutcomesFieldException(getClass(), "doseDur.value", NUMERICMESSAGE);
         }
         if (getDoseDur() != null && getDoseDur().getUnit() != null 
@@ -138,7 +139,7 @@ public abstract class AbstractDrugBiologicDto extends AbstractBaseOutSvcDto {
         if (getHeight() == null || getHeight().getValue() == null) {
             throw new OutcomesFieldException(getClass(), "height.value", "Please enter Height Value.");
         }
-        if (getHeight().getValue() != null && !PAUtil.isNumber(getHeight().getValue().toString())) {
+        if (getHeight().getValue() != null && !NumberUtils.isNumber(getHeight().getValue().toString())) {
             throw new OutcomesFieldException(getClass(), "height.value", NUMERICMESSAGE);
         }
         if (getHeight() == null || getHeight().getUnit().equals("")) {
@@ -147,20 +148,20 @@ public abstract class AbstractDrugBiologicDto extends AbstractBaseOutSvcDto {
         if (getWeight() == null || getWeight().getValue() == null) {
             throw new OutcomesFieldException(getClass(), "weight.value", "Please enter Weight Value.");
         }
-        if (getWeight().getValue() != null && !PAUtil.isNumber(getWeight().getValue().toString())) {
+        if (getWeight().getValue() != null && !NumberUtils.isNumber(getWeight().getValue().toString())) {
             throw new OutcomesFieldException(getClass(), "weight.value", NUMERICMESSAGE);
         }
         if (getWeight() == null || getWeight().getUnit().equals("")) {
             throw new OutcomesFieldException(getClass(), "weight.unit", "Please select Weight UOM.");
         }
         if (getBsa() != null && getBsa().getValue() != null
-                && !PAUtil.isNumber(getBsa().getValue().toString())) {
+                && !NumberUtils.isNumber(getBsa().getValue().toString())) {
             throw new OutcomesFieldException(getClass(), "bsa.value", NUMERICMESSAGE);
         }
         if (getDoseTotal() == null || getDoseTotal().getValue() == null) {
             throw new OutcomesFieldException(getClass(), "doseTotal.value", "Please enter Dose Total Value.");
         }
-        if (getDoseTotal().getValue() != null && !PAUtil.isNumber(getDoseTotal().getValue().toString())) {
+        if (getDoseTotal().getValue() != null && !NumberUtils.isNumber(getDoseTotal().getValue().toString())) {
             throw new OutcomesFieldException(getClass(), "doseTotal.value", NUMERICMESSAGE);
         }
         if (getDoseTotal() == null || getDoseTotal().getUnit().equals("")) {

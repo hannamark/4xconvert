@@ -1,31 +1,31 @@
 /*
 * caBIG Open Source Software License
-* 
+*
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-* 
+*
 * This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
 * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
 * entity.  Control for purposes of this definition means
-* 
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract 
+*
+* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
 * or otherwise,or
-*  
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or 
-* 
+*
+* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
+*
 * (iii) beneficial ownership of such entity.
 * License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
 * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to 
-* 
+* rights in the caBIG Software, including any copyright or patent rights therein, to
+*
 * (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
 * publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so; 
-* 
+* or permit others to do so;
+*
 * (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof); 
-* 
+* (or portions thereof);
+*
 * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
 * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
 * including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
@@ -34,22 +34,22 @@
 * displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
 * Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
 * distribute or use the caBIG Software.
-* 
+*
 * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
 * of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
 * form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
 * documentation and/or other materials provided with the distribution, if any.
-* 
+*
 * 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
 * This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally 
+* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
 * appear.
-* 
+*
 * 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
 * caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
 * any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
 * as required to comply with the terms of this License.
-* 
+*
 * 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
 * programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
 * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
@@ -59,22 +59,22 @@
 * In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
 * against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
 * to obtain such permissions.
-* 
+*
 * 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
 * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
 * sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
 * provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
 * License.
-* 
+*
 * 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN 
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
 * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
 * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* 
+*
+*
 */
 package gov.nih.nci.pa.action;
 
@@ -108,6 +108,8 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.validator.annotations.DoubleRangeFieldValidator;
@@ -117,7 +119,7 @@ import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
 * @author Hugh Reinhart
 * @since 10/31/2008
 */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.TooManyFields", 
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.TooManyFields",
   "PMD.ExcessiveMethodLength" })
 public final class TrialInterventionsAction extends AbstractListEditAction {
     private static final long serialVersionUID = 1876567890L;
@@ -125,7 +127,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     static final String SPACE = " ";
     static final String COMMA_SPACE = ", ";
     static final String DASH = "-";
-      
+
     static final String MESSAGE = "Numeric value between 0.0-999999.99";
     static final String KEY = "i18n.key";
     static final String MIN = "0.0";
@@ -139,9 +141,9 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     private Boolean interventionLeadIndicator;
     private String selectedType;
 
-    
+
    //DRUG & RADIATION Attribures
-    
+
     private String minDoseValue;
     private String maxDoseValue;
     private String doseUOM;
@@ -155,16 +157,16 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     private String doseForm;
     private String doseFrequency;
     private String doseFrequencyCode;
-    
+
     private String approachSite;
     private String targetSite;
-    
-    
+
+
     //PLANNED PROCEDURE Attributes
     private String procedureName;
-   
-    
-    
+
+
+
     /**
      * @return result
      * @throws PAException exception
@@ -221,7 +223,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
       } else {
          PlannedActivityDTO pa = generateIsoDto();
          pa.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
-         plannedActivitySvc.update(pa);        
+         plannedActivitySvc.update(pa);
     }
      } catch (PAException e) {
         addActionError(e.getMessage());
@@ -236,7 +238,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      */
     public String display() throws PAException {
         setInterventionIdentifier(ServletActionContext.getRequest().getParameter("interventionId"));
-        if (PAUtil.isNotEmpty(getInterventionIdentifier())) {
+        if (StringUtils.isNotEmpty(getInterventionIdentifier())) {
             InterventionDTO iDto = interventionSvc.get(IiConverter.convertToIi(interventionIdentifier));
             setInterventionName(StConverter.convertToString(iDto.getName()));
             setInterventionOtherNames(otherNamesCSV(iDto.getIdentifier()));
@@ -244,24 +246,24 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
         }
         return AR_EDIT;
     }
-  
+
     /**
      * Display sub page.
-     * 
+     *
      * @return the string
-     * 
+     *
      * @throws PAException the PA exception
      */
     public String displaySubPage() throws PAException {
         setInterventionIdentifier(ServletActionContext.getRequest().getParameter("interventionId"));
-        if (PAUtil.isNotEmpty(getInterventionIdentifier())) {
+        if (StringUtils.isNotEmpty(getInterventionIdentifier())) {
             setInterventionName(ServletActionContext.getRequest().getParameter("interventionName"));
             setInterventionOtherNames(ServletActionContext.getRequest().getParameter("interventionOtherNames"));
             setInterventionType(ServletActionContext.getRequest().getParameter("interventionType"));
         }
         return AR_EDIT;
     }
-    
+
     /**
      * @throws PAException exception
      */
@@ -281,11 +283,11 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      */
     @Override
     protected void loadEditForm() throws PAException {
-        if (PAUtil.isNotEmpty(selectedRowIdentifier)) {
+        if (StringUtils.isNotEmpty(selectedRowIdentifier)) {
             InterventionWebDTO i = new InterventionWebDTO();
             if (getSelectedType().equals(ActivitySubcategoryCode.DRUG.getCode())
                 || getSelectedType().equals(ActivitySubcategoryCode.RADIATION.getCode())) {
-               PlannedSubstanceAdministrationDTO plannedDto = 
+               PlannedSubstanceAdministrationDTO plannedDto =
                  plannedActivitySvc
                    .getPlannedSubstanceAdministration(IiConverter.convertToIi(getSelectedRowIdentifier()));
                i = generateWebDto(plannedDto);
@@ -306,12 +308,12 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
                setApproachSite(i.getApproachSite());
                setTargetSite(i.getTargetSite());
             } else if (getSelectedType().equals(ActivitySubcategoryCode.PROCEDURE_SURGERY.getCode())) {
-               PlannedProcedureDTO plannedDto = 
+               PlannedProcedureDTO plannedDto =
                     plannedActivitySvc.getPlannedProcedure(IiConverter.convertToIi(getSelectedRowIdentifier()));
                i = generateWebDto(plannedDto);
                setInterventionType(plannedDto.getSubcategoryCode().getCode());
                setProcedureName(i.getProcedureName());
-               setTargetSite(i.getTargetSite());            
+               setTargetSite(i.getTargetSite());
             } else {
                PlannedActivityDTO paDto = plannedActivitySvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
                i = generateWebDto(paDto);
@@ -324,7 +326,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
             setInterventionOtherNames(i.getOtherNames());
         }
     }
-    
+
     /**
      * @return the interventionsList
      */
@@ -393,8 +395,8 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      * @param interventionDescription the interventionDescription to set
      */
     public void setInterventionDescription(String interventionDescription) {
-        this.interventionDescription = PAUtil.stringSetter(interventionDescription, 
-                PlannedActivity.TEXT_DESCRIPTION_LENGTH);
+        this.interventionDescription =
+            StringUtils.left(interventionDescription, PlannedActivity.TEXT_DESCRIPTION_LENGTH);
     }
 
     /**
@@ -425,7 +427,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
         this.interventionLeadIndicator = interventionLeadIndicator;
     }
 
-      
+
     /**
      * @return result
      * @throws PAException on error.
@@ -434,58 +436,58 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
        String id =  ServletActionContext.getRequest().getParameter("id");
        String className =  ServletActionContext.getRequest().getParameter("className");
        String divName =  ServletActionContext.getRequest().getParameter("divName");
-        if (PAUtil.isNotEmpty(id)) {
+        if (StringUtils.isNotEmpty(id)) {
          if ("DoseForm".equalsIgnoreCase(className)) {
-           BaseLookUpService<DoseForm> lookUpService = 
+           BaseLookUpService<DoseForm> lookUpService =
                new BaseLookUpService<DoseForm>(DoseForm.class);
            DoseForm df = lookUpService.getById(Long.parseLong(id));
            setDoseForm(df.getCode());
          } else if ("DoseFrequency".equalsIgnoreCase(className)) {
-            BaseLookUpService<DoseFrequency> lookUpService = 
+            BaseLookUpService<DoseFrequency> lookUpService =
                     new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
             DoseFrequency dfreq = lookUpService.getById(Long.parseLong(id));
             setDoseFrequency(dfreq.getDisplayName());
             setDoseFrequencyCode(dfreq.getCode());
          } else if ("RouteOfAdministration".equalsIgnoreCase(className)) {
-             BaseLookUpService<RouteOfAdministration> lookUpService = 
+             BaseLookUpService<RouteOfAdministration> lookUpService =
                      new BaseLookUpService<RouteOfAdministration>(RouteOfAdministration.class);
              RouteOfAdministration roa = lookUpService.getById(Long.parseLong(id));
              setRouteOfAdministration(roa.getCode());
          } else if ("MethodCode".equalsIgnoreCase(className)) {
-            BaseLookUpService<MethodCode> lookUpService = 
+            BaseLookUpService<MethodCode> lookUpService =
                      new BaseLookUpService<MethodCode>(MethodCode.class);
             MethodCode mc = lookUpService.getById(Long.parseLong(id));
             setProcedureName(mc.getCode());
          } else if ("UnitOfMeasurement".equalsIgnoreCase(className) && divName.contains("loadDoseUOM")) {
-            BaseLookUpService<UnitOfMeasurement> lookUpService = 
+            BaseLookUpService<UnitOfMeasurement> lookUpService =
                      new BaseLookUpService<UnitOfMeasurement>(UnitOfMeasurement.class);
             UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(id));
             setDoseUOM(uom.getCode());
          } else if ("UnitOfMeasurement".equalsIgnoreCase(className) && divName.contains("loadDoseDurationUOM")) {
-             BaseLookUpService<UnitOfMeasurement> lookUpService = 
+             BaseLookUpService<UnitOfMeasurement> lookUpService =
                  new BaseLookUpService<UnitOfMeasurement>(UnitOfMeasurement.class);
               UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(id));
               setDoseDurationUOM(uom.getCode());
          } else if ("UnitOfMeasurement".equalsIgnoreCase(className) && divName.contains("loadTotalDoseUOM")) {
-             BaseLookUpService<UnitOfMeasurement> lookUpService = 
+             BaseLookUpService<UnitOfMeasurement> lookUpService =
                  new BaseLookUpService<UnitOfMeasurement>(UnitOfMeasurement.class);
               UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(id));
               setDoseTotalUOM(uom.getCode());
          } else if ("TargetSite".equalsIgnoreCase(className) && divName.contains("TargetSite")) {
-            BaseLookUpService<TargetSite> lookUpService = 
+            BaseLookUpService<TargetSite> lookUpService =
                      new BaseLookUpService<TargetSite>(TargetSite.class);
             TargetSite ts = lookUpService.getById(Long.parseLong(id));
             setTargetSite(ts.getCode());
          } else if ("TargetSite".equalsIgnoreCase(className) && divName.contains("ApproachSite")) {
-             BaseLookUpService<TargetSite> lookUpService = 
+             BaseLookUpService<TargetSite> lookUpService =
                  new BaseLookUpService<TargetSite>(TargetSite.class);
              TargetSite ts = lookUpService.getById(Long.parseLong(id));
              setApproachSite(ts.getCode());
-         } 
+         }
      }
         return divName;
     }
-    
+
     /**
      * @return the minDoseValue
      */
@@ -527,7 +529,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @return the doseDurationValue
      */
-      @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX) 
+      @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
      public String getDoseDurationValue() {
        return doseDurationValue;
      }
@@ -565,7 +567,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @return the minDoseTotalValue
      */
-     @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)  
+     @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
      public String getMinDoseTotalValue() {
       return minDoseTotalValue;
      }
@@ -578,7 +580,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @return the maxDoseTotalValue
      */
-    @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)  
+    @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
      public String getMaxDoseTotalValue() {
         return maxDoseTotalValue;
      }
@@ -689,44 +691,44 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      public void setTargetSite(String targetSite) {
        this.targetSite = targetSite;
      }
-     
-     
+
+
      /**
       * Generate.
-      * 
+      *
       * @return the string
-      * 
+      *
       * @throws PAException the PA exception
       */
      public String generate() throws PAException {
       try {
         enforceBusinessRules();
         String description = "";
-        if (isSubstance()) {    
+        if (isSubstance()) {
            description = convertInterventionToCSV(generateWebDto(generateSubstanceIsoDto()));
         } else if (isProcedure()) {
            description = convertInterventionToCSV(generateWebDto(generateProcedureIsoDto()));
-        } 
+        }
         setInterventionDescription(description);
        } catch (PAException e) {
           addActionError(e.getMessage());
-        
+
       }
         return AR_EDIT;
      }
      @SuppressWarnings({"PMD" })
      private String convertInterventionToCSV(InterventionWebDTO interDto) {
          StringBuffer sbuf = new StringBuffer();
-         
-         if (interDto.getMinDoseValue() != null && !"".equals(interDto.getMinDoseValue())) {         
+
+         if (interDto.getMinDoseValue() != null && !"".equals(interDto.getMinDoseValue())) {
              sbuf.append(interDto.getMinDoseValue());
          }
          if (interDto.getMaxDoseValue() != null && !"".equals(interDto.getMaxDoseValue())) {
-             sbuf.append(DASH).append(interDto.getMaxDoseValue());             
+             sbuf.append(DASH).append(interDto.getMaxDoseValue());
          }
          if (interDto.getDoseUOM() != null && !"".equals(interDto.getDoseUOM())) {
              sbuf.append(SPACE).append(interDto.getDoseUOM());
-         }    
+         }
          if (interDto.getDoseForm() != null && !"".equals(interDto.getDoseForm())) {
              sbuf.append(COMMA_SPACE);
              sbuf.append(interDto.getDoseForm());
@@ -745,8 +747,8 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          }
          if (interDto.getDoseFrequency() != null && !"".equals(interDto.getDoseFrequency())) {
              sbuf.append(COMMA_SPACE);
-             sbuf.append(interDto.getDoseFrequency());  
-         }        
+             sbuf.append(interDto.getDoseFrequency());
+         }
          if (interDto.getDoseRegimen() != null && !"".equals(interDto.getDoseRegimen())) {
              sbuf.append(COMMA_SPACE);
              sbuf.append(interDto.getDoseRegimen());
@@ -782,18 +784,18 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      }
      private boolean isSubstance() {
         boolean isSubstanceType = false;
-        if (getInterventionType().equals(ActivitySubcategoryCode.DRUG.getCode()) 
+        if (getInterventionType().equals(ActivitySubcategoryCode.DRUG.getCode())
            || getInterventionType().equals(ActivitySubcategoryCode.RADIATION.getCode())) {
           isSubstanceType = true;
         }
-        return isSubstanceType;   
+        return isSubstanceType;
      }
      private boolean isProcedure() {
          boolean isProcedureType = false;
          if (getInterventionType().equals(ActivitySubcategoryCode.PROCEDURE_SURGERY.getCode())) {
            isProcedureType = true;
          }
-         return isProcedureType;   
+         return isProcedureType;
       }
      @SuppressWarnings({"PMD" })
      private void enforceBusinessRules() throws PAException {
@@ -801,15 +803,15 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          if (getInterventionType() == null) {
             sbuf.append("Intervention type must be set.\n");
          }
-         if (PAUtil.isEmpty(getInterventionIdentifier())) {
+         if (StringUtils.isEmpty(getInterventionIdentifier())) {
              sbuf.append("An Intervention must be selected.");
          }
          if (getInterventionType() != null && isSubstance()) {
-          
-          if (getMinDoseValue() != null && !PAUtil.isNumber(getMinDoseValue())) {
+
+          if (!NumberUtils.isNumber(getMinDoseValue())) {
             sbuf.append("Please enter Numeric Min Dose Value.\n");
           }
-          if (getMaxDoseValue() != null && !PAUtil.isNumber(getMaxDoseValue())) {
+          if (!NumberUtils.isNumber(getMaxDoseValue())) {
               sbuf.append("Please enter Numeric Max Dose Value.\n");
            }
           if (getMaxDoseValue() != null && getMinDoseValue() == null) {
@@ -818,36 +820,36 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
           if (getMaxDoseTotalValue() != null && getMinDoseTotalValue() == null) {
              sbuf.append("Please enter Min and Max Dose Total Value.\n");
           }
-          if (getMaxDoseTotalValue() != null && !PAUtil.isNumber(getMaxDoseTotalValue())) {
+          if (!NumberUtils.isNumber(getMaxDoseTotalValue())) {
               sbuf.append("Please enter Numeric Max Dose Total Value.\n");
           }
-          if (getMinDoseTotalValue() != null && !PAUtil.isNumber(getMinDoseTotalValue())) {
+          if (!NumberUtils.isNumber(getMinDoseTotalValue())) {
               sbuf.append("Please enter Numeric Min Dose Total Value.\n");
             }
           if (getDoseUOM() != null) {
              if (getMinDoseValue() == null) {
-                 sbuf.append("Please enter Min Dose Value for the UOM.\n");              
+                 sbuf.append("Please enter Min Dose Value for the UOM.\n");
              }
           }
           if (getDoseUOM() == null && getMinDoseValue() != null) {
-             sbuf.append("Please enter Dose UOM.\n");              
+             sbuf.append("Please enter Dose UOM.\n");
           }
           if (getDoseTotalUOM() != null) {
              if (getMinDoseTotalValue() == null) {
-                 sbuf.append("Please enter Min Dose Total Value for the UOM.\n");              
+                 sbuf.append("Please enter Min Dose Total Value for the UOM.\n");
              }
-             
+
           }
           if (getDoseTotalUOM() == null && getMinDoseTotalValue() != null) {
-              sbuf.append("Please enter Dose Total UOM.\n");              
+              sbuf.append("Please enter Dose Total UOM.\n");
            }
           if (getDoseDurationUOM() != null) {
              if (getDoseDurationValue() == null) {
-                 sbuf.append("Please enter Dose Duration Value for the UOM.\n");              
+                 sbuf.append("Please enter Dose Duration Value for the UOM.\n");
              }
            }
           if (getDoseDurationUOM() == null && getDoseDurationValue() != null) {
-              sbuf.append("Please enter Dose Duration UOM.\n");              
+              sbuf.append("Please enter Dose Duration UOM.\n");
            }
          }
          if (sbuf.toString().length() > 0) {
@@ -893,19 +895,19 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          }
          return paDto;
      }
-     @SuppressWarnings({"PMD" })   
+     @SuppressWarnings({"PMD" })
      private Ivl<Pq> convertToIvlPq(String uom, String minValue, String maxValue) {
       if (uom == null && minValue == null && maxValue == null) {
-        return null; 
+        return null;
       }
       IvlConverter.JavaPq low  = new IvlConverter.JavaPq(uom ,
          PAUtil.convertStringToDecimal(minValue), null);
-      IvlConverter.JavaPq high  = new IvlConverter.JavaPq(uom , 
+      IvlConverter.JavaPq high  = new IvlConverter.JavaPq(uom ,
          PAUtil.convertStringToDecimal(maxValue), null);
-      Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);  
+      Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);
       return ivl;
      }
-     
+
      private Pq convertToPq(String uom, String value) {
        if (uom == null && value == null) {
          return null;
@@ -915,7 +917,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
        pq.setUnit(uom);
        return pq;
      }
-     
+
      private PlannedProcedureDTO generateProcedureIsoDto() {
          PlannedProcedureDTO paDto = new PlannedProcedureDTO();
          paDto.setIdentifier(null);
@@ -929,7 +931,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          paDto.setTargetSiteCode(CdConverter.convertStringToCd(getTargetSite()));
          return paDto;
      }
-     
+
      private InterventionWebDTO generateWebDto(PlannedActivityDTO pa) throws PAException {
          InterventionDTO i = interventionSvc.get(pa.getInterventionIdentifier());
          InterventionWebDTO webDto = new InterventionWebDTO();
@@ -943,7 +945,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
          return webDto;
      }
-     
+
      private InterventionWebDTO generateWebDto(PlannedProcedureDTO pa) throws PAException {
          InterventionDTO i = interventionSvc.get(pa.getInterventionIdentifier());
          InterventionWebDTO webDto = new InterventionWebDTO();
@@ -973,32 +975,32 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
           webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
           webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
           webDto.setDoseDurationUOM(!PAUtil.isPqUnitNull(pa.getDoseDuration()) ? pa.getDoseDuration().getUnit() : "");
-          webDto.setDoseDurationValue(!PAUtil.isPqValueNull(pa.getDoseDuration()) 
+          webDto.setDoseDurationValue(!PAUtil.isPqValueNull(pa.getDoseDuration())
                 ? pa.getDoseDuration().getValue().toString() : "");
           webDto.setDoseForm(!PAUtil.isCdNull(pa.getDoseFormCode()) ? pa.getDoseFormCode().getCode() : "");
-          webDto.setDoseFrequency(!PAUtil.isCdNull(pa.getDoseFrequencyCode()) 
+          webDto.setDoseFrequency(!PAUtil.isCdNull(pa.getDoseFrequencyCode())
                 ? getDoseFreq(pa.getDoseFrequencyCode().getCode()) : "");
-          webDto.setDoseFrequencyCode(!PAUtil.isCdNull(pa.getDoseFrequencyCode()) 
+          webDto.setDoseFrequencyCode(!PAUtil.isCdNull(pa.getDoseFrequencyCode())
                 ? pa.getDoseFrequencyCode().getCode() : "");
           webDto.setDoseRegimen(!PAUtil.isStNull(pa.getDoseRegimen()) ? pa.getDoseRegimen().getValue() : "");
-         
+
           webDto.setMinDoseValue(!PAUtil.isIvlLowNull(pa.getDose()) ? pa.getDose().getLow().getValue().toString() : "");
-          webDto.setMaxDoseValue(!PAUtil.isIvlHighNull(pa.getDose()) 
+          webDto.setMaxDoseValue(!PAUtil.isIvlHighNull(pa.getDose())
                 ? pa.getDose().getHigh().getValue().toString() : "");
-          webDto.setDoseUOM(!PAUtil.isIvlUnitNull(pa.getDose()) 
+          webDto.setDoseUOM(!PAUtil.isIvlUnitNull(pa.getDose())
                  ? IvlConverter.convertPq().convertLowToJavaPq(pa.getDose()).getUnit() : "");
-        
-          webDto.setDoseTotalUOM(!PAUtil.isIvlUnitNull(pa.getDoseTotal()) 
+
+          webDto.setDoseTotalUOM(!PAUtil.isIvlUnitNull(pa.getDoseTotal())
                 ? IvlConverter.convertPq().convertLowToJavaPq(pa.getDoseTotal()).getUnit() : "");
-          webDto.setMinDoseTotalValue(!PAUtil.isIvlLowNull(pa.getDoseTotal()) 
+          webDto.setMinDoseTotalValue(!PAUtil.isIvlLowNull(pa.getDoseTotal())
                 ? pa.getDoseTotal().getLow().getValue().toString() : "");
           webDto.setMaxDoseTotalValue(!PAUtil.isIvlHighNull(pa.getDoseTotal())
-                ? pa.getDoseTotal().getHigh().getValue().toString() : "");        
+                ? pa.getDoseTotal().getHigh().getValue().toString() : "");
           webDto.setRouteOfAdministration(!PAUtil.isCdNull(pa.getRouteOfAdministrationCode())
                 ? pa.getRouteOfAdministrationCode().getCode() : "");
           webDto.setApproachSite(!PAUtil.isCdNull(pa.getApproachSiteCode()) ? pa.getApproachSiteCode().getCode() : "");
           webDto.setTargetSite(!PAUtil.isCdNull(pa.getTargetSiteCode()) ? pa.getTargetSiteCode().getCode() : "");
-         } 
+         }
          return webDto;
      }
 
@@ -1014,10 +1016,10 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          }
          return onBuff.toString();
      }
-     
+
      private String getDoseFreq(String doseFreqCode) throws PAException {
       String doseFreqDisplayName = "";
-      BaseLookUpService<DoseFrequency> lookUpService = 
+      BaseLookUpService<DoseFrequency> lookUpService =
           new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
       DoseFrequency example = new DoseFrequency();
       example.setCode(doseFreqCode);
@@ -1025,7 +1027,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
       doseFreqDisplayName =  dfreq.getDisplayName();
       return doseFreqDisplayName;
      }
-     
+
     /**
      * @return the doseFrequencyCode
      */

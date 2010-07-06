@@ -108,6 +108,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -332,7 +333,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     public String displayDisease() {
         DiseaseWebDTO webDTO = new DiseaseWebDTO();
         webDTO.setDiseaseIdentifier(ServletActionContext.getRequest().getParameter("diseaseId"));
-        if (webDTO == null || PAUtil.isEmpty(webDTO.getDiseaseIdentifier())) {
+        if (webDTO == null || StringUtils.isEmpty(webDTO.getDiseaseIdentifier())) {
             webDTO = new DiseaseWebDTO();
         } else {
             Ii ii = IiConverter.convertToIi(webDTO.getDiseaseIdentifier());
@@ -487,7 +488,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
             validateNoPatientDuplicates();
             validateUnitedStatesRules();
             validateEligibilityCriteria();
-            if (!PAUtil.isEmpty(patient.getRegistrationDate())) {
+            if (StringUtils.isNotEmpty(patient.getRegistrationDate())) {
                 Timestamp registrationDate = PAUtil
                         .dateStringToTimestamp(patient.getRegistrationDate());
                 if (registrationDate.after(getCutOffDate())) {
@@ -496,7 +497,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                                     .toString()) + ").");
                 }
             }
-            if (PAUtil.isEmpty(patient.getRegistrationDate())) {
+            if (StringUtils.isEmpty(patient.getRegistrationDate())) {
                 addActionError("Registration Date is required.");
             }
         }
@@ -526,9 +527,9 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         if (unitedStatesId.equals(patient.getCountryIdentifier())) {
             addActionErrorIfEmpty(patient.getZip(), "Zip code is mandatory if country is United States.");
         } else {
-            if (!PAUtil.isEmpty(patient.getZip())) {
+            if (StringUtils.isNotEmpty(patient.getZip())) {
                 addActionError("Zip code should only be entered if country is United States.");
-                if (!PAUtil.isEmpty(patient.getPaymentMethodCode())) {
+                if (StringUtils.isNotEmpty(patient.getPaymentMethodCode())) {
                     addActionError("Method of payment should only be entered if country is United States.");
                 }
             }

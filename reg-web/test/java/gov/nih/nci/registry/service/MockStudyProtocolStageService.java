@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.service;
 
@@ -35,6 +35,8 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Vrushali
@@ -113,7 +115,7 @@ public class MockStudyProtocolStageService implements StudyProtocolStageServiceL
         studyFunding.setNihInstituteCode("nihInstituteCode");
         studyFunding.setStudyProtocolStage(sp);
         studyFundingList.add(studyFunding);
-        
+
         studyIndIdeList = new ArrayList<StudyIndIdeStage>();
         StudyIndIdeStage indIde = new StudyIndIdeStage();
         indIde.setIndIdeNumber("indIdeNumber");
@@ -169,7 +171,7 @@ public class MockStudyProtocolStageService implements StudyProtocolStageServiceL
 
     public List<StudyFundingStageDTO> getGrantsByStudyProtocolStage(
             Ii studyProtocolStageIi) throws PAException {
-        List<StudyFundingStageDTO> retList = new ArrayList<StudyFundingStageDTO>(); 
+        List<StudyFundingStageDTO> retList = new ArrayList<StudyFundingStageDTO>();
         for (StudyFundingStage tsf: studyFundingList) {
             if(tsf.getStudyProtocolStage().getId().equals(IiConverter.convertToLong(studyProtocolStageIi))) {
                 retList.add(StudyFundingStageConverter.convertFromDomainToDTO(tsf));
@@ -181,7 +183,7 @@ public class MockStudyProtocolStageService implements StudyProtocolStageServiceL
 
     public List<StudyIndIdeStageDTO> getIndIdesByStudyProtocolStage(
             Ii studyProtocolStageIi) throws PAException {
-        List<StudyIndIdeStageDTO> retList = new ArrayList<StudyIndIdeStageDTO>(); 
+        List<StudyIndIdeStageDTO> retList = new ArrayList<StudyIndIdeStageDTO>();
         for (StudyIndIdeStage tsf: studyIndIdeList) {
             if(tsf.getStudyProtocolStage().getId().equals(IiConverter.convertToLong(studyProtocolStageIi))) {
                 retList.add(StudyIndIdeStageConverter.convertFromDomainToDTO(tsf));
@@ -199,13 +201,13 @@ public class MockStudyProtocolStageService implements StudyProtocolStageServiceL
         }
         for (StudyProtocolStage tempSp : list) {
             String phaseCode = CdConverter.convertCdToString(dto.getPhaseCode());
-            if(PAUtil.isNotEmpty(phaseCode) && tempSp.getPhaseCode().getCode().equalsIgnoreCase(phaseCode)) {
+            if(StringUtils.isNotEmpty(phaseCode) && tempSp.getPhaseCode().getCode().equalsIgnoreCase(phaseCode)) {
                 returnList.add(StudyProtocolStageConverter.convertFromDomainToDTO(tempSp));
             }
             if(!PAUtil.isStNull(dto.getOfficialTitle()) && tempSp.getOfficialTitle().equalsIgnoreCase(
                     StConverter.convertToString(dto.getOfficialTitle()))) {
                 returnList.add(StudyProtocolStageConverter.convertFromDomainToDTO(tempSp));
-            }    
+            }
         }
         return returnList;
     }

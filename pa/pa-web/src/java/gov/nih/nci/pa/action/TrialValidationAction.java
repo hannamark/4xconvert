@@ -134,15 +134,15 @@ public class TrialValidationAction extends ActionSupport {
      */
     public String query() {
         try {
-            Ii studyProtocolIi = 
+            Ii studyProtocolIi =
                 (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
             TrialHelper helper = new TrialHelper();
             gtdDTO = helper.getTrialDTO(studyProtocolIi, "validation");
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, 
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST,
                     gtdDTO.getOtherIdentifiers());
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-        } 
+        }
         populateOtherIdentifiers();
         return EDIT;
     }
@@ -172,13 +172,13 @@ public class TrialValidationAction extends ActionSupport {
         enforceBusinessRules("");
         TrialHelper helper = new TrialHelper();
         //check if submission number is greater than 1 then it is amend
-        if (gtdDTO.getSubmissionNumber() > 1 && PAUtil.isEmpty(gtdDTO.getAmendmentReasonCode())) {
+        if (gtdDTO.getSubmissionNumber() > 1 && StringUtils.isEmpty(gtdDTO.getAmendmentReasonCode())) {
            addFieldError("gtdDTO.amendmentReasonCode", "Amendment Reason Code is Required.");
         }
         if (hasFieldErrors()) {
             return EDIT;
         }
-        try { 
+        try {
             save();
             createMilestones(MilestoneCode.SUBMISSION_ACCEPTED);
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Accepted");
@@ -222,7 +222,7 @@ public class TrialValidationAction extends ActionSupport {
      *  @return String
      */
     public String rejectReason() {
-        if (PAUtil.isEmpty(gtdDTO.getCommentText())) {
+        if (StringUtils.isEmpty(gtdDTO.getCommentText())) {
             addFieldError("gtdDTO.commentText", getText("Rejection Reason must be Entered"));
         }
         if (hasFieldErrors()) {
@@ -230,29 +230,29 @@ public class TrialValidationAction extends ActionSupport {
         }
         String submissionNo = "submissionNumber";
         try {
-            Integer intSubNo = (Integer) ServletActionContext.getRequest().getSession().getAttribute(submissionNo); 
+            Integer intSubNo = (Integer) ServletActionContext.getRequest().getSession().getAttribute(submissionNo);
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                 Constants.STUDY_PROTOCOL_II);
             TrialHelper helper = new TrialHelper();
-            
-            //if trial is amend then hard delete 
+
+            //if trial is amend then hard delete
             if (intSubNo > 1) {
                 //send mail
                 PaRegistry.getMailManagerService()
                   .sendAmendRejectEmail(studyProtocolIi, gtdDTO.getCommentText());
                 //PaRegistry.getStudyProtocolService().deleteStudyProtocol(studyProtocolIi);
-                PaRegistry.getTrialRegistrationService().reject(studyProtocolIi, 
+                PaRegistry.getTrialRegistrationService().reject(studyProtocolIi,
                   StConverter.convertToSt(gtdDTO.getCommentText()));
                 ServletActionContext.getRequest().getSession().removeAttribute(submissionNo);
                 ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
                 ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PROTOCOL_II);
-                ServletActionContext.getRequest().getSession().removeAttribute(Constants.DOC_WFS_MENU); 
-                return "amend_reject"; 
+                ServletActionContext.getRequest().getSession().removeAttribute(Constants.DOC_WFS_MENU);
+                return "amend_reject";
             } else {
                 createMilestones(MilestoneCode.SUBMISSION_REJECTED);
                 ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
                     helper.setMenuLinks(DocumentWorkflowStatusCode.REJECTED));
-            }    
+            }
             PaRegistry.getMailManagerService().sendRejectionEmail(studyProtocolIi);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
@@ -266,22 +266,22 @@ public class TrialValidationAction extends ActionSupport {
 
     /**
      * Creates the milestones.
-     * 
+     *
      * @param msc the msc
      * @throws PAException e
      */
     private void createMilestones(MilestoneCode msc) throws PAException {
-        
+
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
             PAServiceUtils paServiceUtil = new PAServiceUtils();
             paServiceUtil.createMilestone(studyProtocolIi, msc, StConverter.convertToSt(gtdDTO.getCommentText()));
             /*if (MilestoneCode.SUBMISSION_ACCEPTED.equals(msc)) {
                paServiceUtil.createMilestone(studyProtocolIi, MilestoneCode.READY_FOR_PDQ_ABSTRACTION, null);
-            }*/   
+            }*/
             StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry.getProtocolQueryService()
             .getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));
-        
+
             // put an entry in the session and store StudyProtocolQueryDTO
             ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
     }
@@ -295,52 +295,53 @@ public class TrialValidationAction extends ActionSupport {
             StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry.getProtocolQueryService()
                     .getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));
             // put an entry in the session and store StudyProtocolQueryDTO
-            studyProtocolQueryDTO.setOfficialTitle(PAUtil.trim(studyProtocolQueryDTO.getOfficialTitle(),
+            studyProtocolQueryDTO.setOfficialTitle(StringUtils.abbreviate(studyProtocolQueryDTO.getOfficialTitle(),
                     PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
             ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
                     helper.setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
-            query(); 
+            query();
     }
     @SuppressWarnings({"PMD.ExcessiveMethodLength" })
-    private void enforceBusinessRules(String operation) {   
-        if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
+    private void enforceBusinessRules(String operation) {
+        if (StringUtils.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
             addFieldError("gtdDTO.LocalProtocolIdentifier", getText("Organization Trial ID must be Entered"));
         }
-        if (PAUtil.isEmpty(gtdDTO.getOfficialTitle())) {
+        if (StringUtils.isEmpty(gtdDTO.getOfficialTitle())) {
             addFieldError("gtdDTO.OfficialTitle", getText("OfficialTitle must be Entered"));
         }
-        if (REJECT_OPERATION.equalsIgnoreCase(operation) && PAUtil.isNotEmpty(gtdDTO.getProprietarytrialindicator()) 
+        if (REJECT_OPERATION.equalsIgnoreCase(operation)
+                && StringUtils.isNotEmpty(gtdDTO.getProprietarytrialindicator())
                 && gtdDTO.getProprietarytrialindicator().equalsIgnoreCase("true")) {
-            if (PAUtil.isEmpty(gtdDTO.getNctIdentifier())) {
-                if (PAUtil.isEmpty(gtdDTO.getPhaseCode())) {
+            if (StringUtils.isEmpty(gtdDTO.getNctIdentifier())) {
+                if (StringUtils.isEmpty(gtdDTO.getPhaseCode())) {
                     addFieldError("gtdDTO.phaseCode", getText("error.phase"));
                 }
-                if (PAUtil.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
+                if (StringUtils.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
                     addFieldError("gtdDTO.primaryPurposeCode", getText("error.primary"));
                 }
             }
         } else {
-            if (PAUtil.isEmpty(gtdDTO.getPhaseCode())) {
+            if (StringUtils.isEmpty(gtdDTO.getPhaseCode())) {
                 addFieldError("gtdDTO.phaseCode", getText("error.phase"));
             }
-            if (PAUtil.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
+            if (StringUtils.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
                 addFieldError("gtdDTO.primaryPurposeCode", getText("error.primary"));
             }
         }
-        if (gtdDTO.getProprietarytrialindicator() == null 
+        if (gtdDTO.getProprietarytrialindicator() == null
                 || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
-            if (PAUtil.isNotEmpty(gtdDTO.getPrimaryPurposeCode())
+            if (StringUtils.isNotEmpty(gtdDTO.getPrimaryPurposeCode())
                     && gtdDTO.getPrimaryPurposeCode().equalsIgnoreCase("other")
-                    && PAUtil.isEmpty(gtdDTO.getPrimaryPurposeOtherText())) {
+                    && StringUtils.isEmpty(gtdDTO.getPrimaryPurposeOtherText())) {
                 addFieldError("gtdDTO.primaryPurposeOtherText",
                         getText("Primary Purpose Other other text must be entered"));
             }
-            if (PAUtil.isNotEmpty(gtdDTO.getPhaseCode()) && gtdDTO.getPhaseCode().equalsIgnoreCase("other")
-                    && PAUtil.isEmpty(gtdDTO.getPhaseOtherText())) {
+            if (StringUtils.isNotEmpty(gtdDTO.getPhaseCode()) && gtdDTO.getPhaseCode().equalsIgnoreCase("other")
+                    && StringUtils.isEmpty(gtdDTO.getPhaseOtherText())) {
                 addFieldError("gtdDTO.phaseOtherText", getText("Phase Code other text must be entered"));
             }
-            if (PAUtil.isNotEmpty(gtdDTO.getPrimaryPurposeOtherText())
+            if (StringUtils.isNotEmpty(gtdDTO.getPrimaryPurposeOtherText())
                     && gtdDTO.getPrimaryPurposeOtherText().length() > MAXIMUM_CHAR) {
                 addFieldError("gtdDTO.primaryPurposeOtherText", getText("error.spType.other.maximumChar"));
             }
@@ -362,7 +363,7 @@ public class TrialValidationAction extends ActionSupport {
               if (StringUtils.isEmpty(gtdDTO.getContactPhone())) {
                 addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
               }
-            }  
+            }
         }
     }
     /**
@@ -417,7 +418,7 @@ public class TrialValidationAction extends ActionSupport {
             selectedLeadPrincipalInvestigator = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
             gtdDTO.setPiIdentifier(selectedLeadPrincipalInvestigator.getIdentifier().getExtension());
-            gov.nih.nci.pa.dto.PaPersonDTO personDTO = 
+            gov.nih.nci.pa.dto.PaPersonDTO personDTO =
                 PADomainUtils.convertToPaPersonDTO(selectedLeadPrincipalInvestigator);
             gtdDTO.setPiName(personDTO.getLastName() + "," + personDTO.getFirstName());
         } catch (Exception e) {
@@ -537,7 +538,7 @@ public class TrialValidationAction extends ActionSupport {
             PersonDTO selectedLeadPrincipalInvestigator = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
             gtdDTO.setResponsiblePersonIdentifier(selectedLeadPrincipalInvestigator.getIdentifier().getExtension());
-            gov.nih.nci.pa.dto.PaPersonDTO personDTO = 
+            gov.nih.nci.pa.dto.PaPersonDTO personDTO =
                 PADomainUtils.convertToPaPersonDTO(selectedLeadPrincipalInvestigator);
             gtdDTO.setResponsiblePersonName(personDTO.getLastName() + "," + personDTO.getFirstName());
         } catch (NullifiedEntityException e) {
@@ -601,9 +602,9 @@ public class TrialValidationAction extends ActionSupport {
     public void setCountryList(List<Country> countryList) {
         this.countryList = countryList;
     }
-    
+
     private void populateOtherIdentifiers() {
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, 
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST,
                 gtdDTO.getOtherIdentifiers());
     }
 }

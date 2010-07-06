@@ -105,6 +105,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * @author Hugh Reinhart
@@ -162,7 +164,7 @@ public class PatientWebDto {
             action.addActionErrorIfEmpty(dto.getDiseaseIdentifier(), "Disease is required.");
             action.addActionErrorIfEmpty(dto.getStudySiteId(), "Participating site is required.");
         }
-        if (!action.hasActionErrors() && !PAUtil.isEmpty(dto.getRegistrationDate())) {
+        if (!action.hasActionErrors() && StringUtils.isNotEmpty(dto.getRegistrationDate())) {
             Timestamp registration = AccrualUtil.yearMonthStringToTimestamp(dto.getRegistrationDate());
             Timestamp birth = AccrualUtil.yearMonthStringToTimestamp(dto.getBirthDate());
             if (birth.after(registration)) {

@@ -84,9 +84,10 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.outcomes.svc.dto.AbstractTumorMarkerDto;
 import gov.nih.nci.outcomes.svc.dto.TumorMarkerSvcDto;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
+
+import org.apache.commons.lang.math.NumberUtils;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
@@ -150,7 +151,7 @@ public class TumorMarkerWebDto extends AbstractTumorMarkerDto implements Seriali
         if (dto.getTmvUom() != null && dto.getTmvUom().getUnit() != null 
             && !dto.getTmvUom().getUnit().equals("")
             && dto.getTumorMarkerValue() != null && !dto.getTumorMarkerValue().getValue().equals("")
-            && !PAUtil.isNumber(dto.getTumorMarkerValue().getValue())) {
+            && !NumberUtils.isNumber(dto.getTumorMarkerValue().getValue())) {
             action.addFieldError("tumorMarker.tumorMarkerValue", "Please enter a Numeric Tumor Marker Value.");
         }
     }    

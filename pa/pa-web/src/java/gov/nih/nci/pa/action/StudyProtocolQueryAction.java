@@ -89,7 +89,6 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
@@ -100,6 +99,7 @@ import java.util.List;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
@@ -119,7 +119,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     private Long studyProtocolId = null;
     private HttpServletResponse servletResponse;
     private boolean checkoutStatus = false;
-    private static final String TSR = "TSR_";
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     private static final String SHOW_VIEW = "view";
     /**
@@ -231,7 +230,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
                     .getProtocolQueryService()
                     .getTrialSummaryByStudyProtocolId(studyProtocolId);
             // put an entry in the session and store StudyProtocolQueryDTO
-            studyProtocolQueryDTO.setOfficialTitle(PAUtil.trim(studyProtocolQueryDTO.getOfficialTitle(),
+            studyProtocolQueryDTO.setOfficialTitle(StringUtils.abbreviate(studyProtocolQueryDTO.getOfficialTitle(),
                     PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);

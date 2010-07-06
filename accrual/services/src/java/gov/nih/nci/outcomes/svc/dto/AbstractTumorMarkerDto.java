@@ -82,7 +82,8 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.outcomes.svc.exception.OutcomesException;
-import gov.nih.nci.pa.util.PAUtil;
+
+import org.apache.commons.lang.math.NumberUtils;
 
 /**
  * @author Kalpana Guthikonda
@@ -151,7 +152,7 @@ public abstract class AbstractTumorMarkerDto extends AbstractBaseOutSvcDto {
             if (getTmvUom() != null && getTmvUom().getUnit() != null
                 && !getTmvUom().getUnit().equals("")
                 && getTumorMarkerValue() != null && !getTumorMarkerValue().getValue().equals("")
-                && !PAUtil.isNumber(getTumorMarkerValue().getValue())) {
+                && !NumberUtils.isNumber(getTumorMarkerValue().getValue())) {
                 throw new OutcomesException("Error in " + getClass()
                         +  "dto.  Please enter a Numeric Tumor Marker Value.");
             }

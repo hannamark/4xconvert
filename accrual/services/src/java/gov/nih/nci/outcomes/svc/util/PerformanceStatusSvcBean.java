@@ -87,12 +87,13 @@ import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 import gov.nih.nci.pa.enums.ActivityNameCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
+
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * @author Hugh Reinhart
@@ -136,7 +137,7 @@ public class PerformanceStatusSvcBean extends
                     }
                     pcDtoList = cctx.getPerFormedObservationResultService().
                         getPerformedClinicalResultByPerformedActivity(performance.getIdentifier());
-                    if (PAUtil.isListNotEmpty(pcDtoList)) {
+                    if (CollectionUtils.isNotEmpty(pcDtoList)) {
                         performance.setPerformanceStatus(pcDtoList.get(0).getResultCode());
                     }
                     break;
@@ -208,7 +209,7 @@ public class PerformanceStatusSvcBean extends
             dto = cctx.getPerformedActivityService().updatePerformedObservation(dto);
             pcDtoList = cctx.getPerFormedObservationResultService().
                     getPerformedClinicalResultByPerformedActivity(dto.getIdentifier());
-            if (PAUtil.isListEmpty(pcDtoList)) {
+            if (CollectionUtils.isEmpty(pcDtoList)) {
                 throw new OutcomesException("Performed Clinical Result is not found for identifier = "
                         + dto.getIdentifier().getExtension());
             }

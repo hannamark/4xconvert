@@ -86,13 +86,13 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -122,8 +122,8 @@ public class PopUpDisAction extends ActionSupport {
         String tName = ServletActionContext.getRequest().getParameter("searchName");
         String includeSyn = ServletActionContext.getRequest().getParameter("includeSynonym");
         String exactMat = ServletActionContext.getRequest().getParameter("exactMatch");
-        
-        if (PAUtil.isEmpty(tName)) {
+
+        if (StringUtils.isEmpty(tName)) {
             String message = "Please enter at least one search criteria";
             addActionError(message);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
@@ -134,7 +134,7 @@ public class PopUpDisAction extends ActionSupport {
         criteria.setPreferredName(StConverter.convertToSt(tName));
         criteria.setIncludeSynonym(StConverter.convertToSt(includeSyn));
         criteria.setExactMatch(StConverter.convertToSt(exactMat));
-        
+
         List<DiseaseDTO> diseaseList = null;
         try {
             diseaseList = PaRegistry.getDiseaseService().search(criteria);

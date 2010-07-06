@@ -87,7 +87,6 @@ import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.BufferedInputStream;
@@ -104,6 +103,7 @@ import java.util.List;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -174,11 +174,11 @@ ServletResponseAware {
       */
      public String create() {
          LOG.info("Entering create");
-         if (PAUtil.isEmpty(trialDocumentWebDTO.getTypeCode())) {
+         if (StringUtils.isEmpty(trialDocumentWebDTO.getTypeCode())) {
              addFieldError("trialDocumentWebDTO.typeCode",
                      getText("error.trialDocument.typeCode"));
          }
-         if (PAUtil.isEmpty(uploadFileName)) {
+         if (StringUtils.isEmpty(uploadFileName)) {
              addFieldError("trialDocumentWebDTO.uploadFileName",
                      getText("error.trialDocument.uploadFileName"));
          }
@@ -212,10 +212,10 @@ ServletResponseAware {
          try {
              DocumentDTO  docDTO =
                  PaRegistry.getDocumentService().get(IiConverter.convertToIi(id));
-             
+
              StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
              .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-           
+
              StringBuffer fileName = new StringBuffer();
              fileName.append(spDTO.getNciIdentifier()).append('-').append(docDTO.getFileName().getValue());
 
@@ -227,7 +227,7 @@ ServletResponseAware {
 
 
              int data;
-             ByteArrayInputStream bStream = new ByteArrayInputStream(docDTO.getText().getData()); 
+             ByteArrayInputStream bStream = new ByteArrayInputStream(docDTO.getText().getData());
              ServletOutputStream out = servletResponse.getOutputStream();
              while ((data =  bStream.read()) != -1) {
                  out.write(data);
@@ -269,10 +269,10 @@ ServletResponseAware {
       */
      public String update() {
          LOG.info("Entering update");
-         if (PAUtil.isEmpty(trialDocumentWebDTO.getTypeCode())) {
+         if (StringUtils.isEmpty(trialDocumentWebDTO.getTypeCode())) {
              addFieldError("trialDocumentWebDTO.typeCode", getText("error.trialDocument.typeCode"));
          }
-         if (PAUtil.isEmpty(uploadFileName)) {
+         if (StringUtils.isEmpty(uploadFileName)) {
              addFieldError("trialDocumentWebDTO.uploadFileName", getText("error.trialDocument.uploadFileName"));
          }
          if (hasFieldErrors()) {
@@ -305,7 +305,7 @@ ServletResponseAware {
      public String delete()  {
 
          LOG.info("Entering delete");
-         if (PAUtil.isEmpty(trialDocumentWebDTO.getInactiveCommentText())) {
+         if (StringUtils.isEmpty(trialDocumentWebDTO.getInactiveCommentText())) {
              addFieldError("trialDocumentWebDTO.inactiveCommentText", getText("error.trialDocument.delete.reason"));
          }
          if (hasFieldErrors()) {

@@ -105,6 +105,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -129,7 +130,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     private static final String ACT_LIST_GROUP = "listGroup";
     private static final String ACT_EDIT_NEW_GROUP = "editNewGroup";
     private static final String ACT_EDIT_GROUP = "editGroup";
-    
+
     private ArmServiceLocal armService;
     private PlannedActivityServiceLocal plaService;
     private InterventionServiceLocal intService;
@@ -296,15 +297,15 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     }
 
     private void businessRules() {
-        if (PAUtil.isEmpty(getArmType())) {
-            addFieldError("armType", "Select an Arm Type");   
+        if (StringUtils.isEmpty(getArmType())) {
+            addFieldError("armType", "Select an Arm Type");
         }
-        if (!PAUtil.isEmpty(getArmDescription()) 
+        if (StringUtils.isNotEmpty(getArmDescription())
               && PAUtil.isGreatenThan(StConverter.convertToSt(getArmDescription()), PAAttributeMaxLen.LEN_1000)) {
-            addFieldError("armDescription", "Arm Description length should not be greater than 1000");   
+            addFieldError("armDescription", "Arm Description length should not be greater than 1000");
         }
         if ((getCurrentAction().equals(ACT_EDIT_ARM) || getCurrentAction().equals(ACT_EDIT_NEW_ARM))
-                && (!PAUtil.isEmpty(armType) && armType.equals(ArmTypeCode.NO_INTERVENTION.getCode())
+                && (StringUtils.isNotEmpty(armType) && armType.equals(ArmTypeCode.NO_INTERVENTION.getCode())
                 && (getAssociatedIds().size() > 0))) {
             addActionError("Arms of type " + armType + " cannot have associated interventions.  ");
         }
@@ -464,7 +465,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      * @param armName the armName to set
      */
     public void setArmName(String armName) {
-        this.armName = PAUtil.stringSetter(armName, Arm.NAME_LENGTH);
+        this.armName = StringUtils.left(armName, Arm.NAME_LENGTH);
     }
 
     /**
@@ -520,6 +521,6 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      * @param selectedArmIdentifier the selectedArmIdentifier to set
      */
     public void setSelectedArmIdentifier(String selectedArmIdentifier) {
-        this.selectedArmIdentifier = PAUtil.stringSetter(selectedArmIdentifier);
+        this.selectedArmIdentifier = StringUtils.left(selectedArmIdentifier, PAAttributeMaxLen.LONG_TEXT_LENGTH);
     }
 }

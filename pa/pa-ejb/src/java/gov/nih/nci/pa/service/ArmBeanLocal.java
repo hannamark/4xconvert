@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -29,6 +29,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -41,7 +42,7 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConverter> implements ArmServiceLocal {
-   
+
    @EJB
     PlannedActivityServiceLocal plannedActivityService = null;
 
@@ -89,7 +90,7 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
     if (dto == null) {
         return;
     }
-    if (PAUtil.isEmpty(StConverter.convertToString(dto.getName()))) {
+    if (StringUtils.isEmpty(StConverter.convertToString(dto.getName()))) {
         throw new PAException("The arm/group label (name) must be set.  ");
     }
   }
@@ -118,10 +119,10 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
 
  /**
   * creates a new record of arm and arm intervetions by changing to new studyprotocol identifier.
-  * @param fromStudyProtocolIi from where the study protocol objects to be copied  
+  * @param fromStudyProtocolIi from where the study protocol objects to be copied
   * @param toStudyProtocolIi to where the study protocol objects to be copied
   * @param armMap map of ii
-  * @return map 
+  * @return map
   * @throws PAException on error
   */
   public Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi , Map<Ii, Ii> armMap) throws PAException {

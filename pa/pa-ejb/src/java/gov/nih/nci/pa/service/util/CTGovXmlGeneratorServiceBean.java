@@ -203,6 +203,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -224,7 +225,7 @@ import org.w3c.dom.Text;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRemote {
 
-    
+
     @EJB
     StudyProtocolServiceLocal studyProtocolService = null;
     @EJB
@@ -265,7 +266,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     RegistryUserServiceRemote registryUserService = null;
     @EJB
     StudyObjectiveServiceLocal studyObjectiveService = null;
-    
+
     private static final Logger LOG  = Logger.getLogger(CTGovXmlGeneratorServiceBean.class);
     private static final String TEXT_BLOCK = "textblock";
     private static final String YES = "Yes";
@@ -278,8 +279,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private static final String EMAIL = "email";
     private static final String NA = "N/A";
     private static final String TAB = "     ";
-    private static final String DASH = "- ";    
-  
+    private static final String DASH = "- ";
+
     private static Map<String , String> nv = new HashMap<String, String>();
     /**
      * @param studyProtocolIi ii of studyprotocol
@@ -297,7 +298,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         StudyProtocolDTO spDTO = null;
         try {
 
-            spDTO = getStudyProtocol(studyProtocolIi); 
+            spDTO = getStudyProtocol(studyProtocolIi);
             DocumentBuilder docBuilder = factory.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
             //create the root element
@@ -313,7 +314,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     createElement("delayed_posting" ,
                         convertBLToString(spDTO.getDelayedpostingIndicator()) , doc , root);
                 }
-            }    
+            }
             createIndInfo(spDTO , doc , root);
             createElement("brief_title" , spDTO.getPublicTitle().getValue() , doc , root);
             createElement("acronym" , spDTO.getAcronym().getValue() , doc , root);
@@ -322,7 +323,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createOversightInfo(spDTO , doc , root);
             createTextBlock("brief_summary", spDTO.getPublicDescription(), PAAttributeMaxLen.LEN_MIN_1 , doc, root);
             //createObjective(spDTO, doc , root);
-            createCdataBlock("detailed_description" , 
+            createCdataBlock("detailed_description" ,
                                  spDTO.getScientificDescription() , PAAttributeMaxLen.LEN_32000 , doc , root);
             createOverallStatus(spDTO, doc, root);
            //createElement("expanded_access_status", convertBLToString(spDTO.getExpandedAccessIndicator()), doc , root);
@@ -344,7 +345,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createPrimaryOutcome(somDtos , doc , root);
             createSecondaryOutcome(somDtos , doc , root);
             createCondition(studyProtocolIi, doc, root);
-            appendElement(root ,  createElement("enrollment", 
+            appendElement(root ,  createElement("enrollment",
                     IvlConverter.convertInt().convertLowToString(spDTO.getTargetAccrualNumber()), doc));
             appendElement(root ,  createElement("enrollment_type", "anticipated", doc));
             createArmGroup(spDTO, doc, root);
@@ -353,7 +354,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             createOverallOfficial(spDTO.getIdentifier(), doc , root);
             createOverallContact(spDTO.getIdentifier(), doc , root);
             createLocation(spDTO , doc , root);
-            
+
             appendElement(root ,  createElement("keyword", spDTO.getKeywordText(), PAAttributeMaxLen.KEYWORD , doc));
             Ts tsVerificationDate = spDTO.getRecordVerificationDate();
             if (tsVerificationDate == null || tsVerificationDate.getValue() == null) {
@@ -370,7 +371,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
             transformer.setOutputProperty("encoding", "ISO-8859-1");
-              // set indentation 
+              // set indentation
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(domSource, result);
             return writer.toString();
@@ -439,22 +440,22 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
     private void createCondition(Ii studyProtocolIi , Document doc , Element root) throws PAException {
         List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
-        
+
         if (sdDtos != null) {
             for (StudyDiseaseDTO sdDto : sdDtos) {
-                if (BlConverter.covertToBool(sdDto.getCtGovXmlIndicator()) 
-                        && sdDto.getLeadDiseaseIndicator() != null 
+                if (BlConverter.covertToBool(sdDto.getCtGovXmlIndicator())
+                        && sdDto.getLeadDiseaseIndicator() != null
                         && sdDto.getLeadDiseaseIndicator().getValue()) {
                     DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
                     appendElement(root, createElement(
                             "condition", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
-                   break; 
+                   break;
                }
-            } 
+            }
             List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
             for (StudyDiseaseDTO sdDto : sdDtos) {
-             if (BlConverter.covertToBool(sdDto.getCtGovXmlIndicator()) 
-                     && sdDto.getLeadDiseaseIndicator() != null 
+             if (BlConverter.covertToBool(sdDto.getCtGovXmlIndicator())
+                     && sdDto.getLeadDiseaseIndicator() != null
                         && !sdDto.getLeadDiseaseIndicator().getValue()) {
                     DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
                     diseases.add(d);
@@ -464,17 +465,17 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                public int compare(DiseaseDTO o1, DiseaseDTO o2) {
                     return o1.getPreferredName().getValue().compareToIgnoreCase(o2.getPreferredName().getValue());
                 }
-     
+
             });
-           for (DiseaseDTO d : diseases) { 
+           for (DiseaseDTO d : diseases) {
             appendElement(root, createElement(
                     "condition", d.getPreferredName(), PAAttributeMaxLen.LEN_160 , doc));
            }
-            
+
         }
     }
 
-    private  void createOverallContact(Ii studyProtocolIi , Document doc , Element root) 
+    private  void createOverallContact(Ii studyProtocolIi , Document doc , Element root)
         throws PAException,  NullifiedRoleException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
@@ -527,7 +528,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                 StudySiteDTO spartDTO = new StudySiteDTO();
                 spartDTO.setFunctionalCode(
                         CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-                List<StudySiteDTO> sParts = 
+                List<StudySiteDTO> sParts =
                                 studySiteService.getByStudyProtocol(studyProtocolIi, spartDTO);
 
                 for (StudySiteDTO spart : sParts) {
@@ -550,13 +551,13 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             appendElement(overSightInfo , createRegulatoryAuthority(spDTO , doc));
             appendElement(overSightInfo, createElement(
                     "has_dmc", convertBLToString(spDTO.getDataMonitoringCommitteeAppointedIndicator()), doc));
-        }    
+        }
         appendElement(overSightInfo , createIrbInfo(spDTO ,  doc));
         appendElement(root , overSightInfo);
     }
 
     private Element createRegulatoryAuthority(StudyProtocolDTO spDTO , Document doc) throws PAException {
-        StudyRegulatoryAuthorityDTO sraDTO = 
+        StudyRegulatoryAuthorityDTO sraDTO =
                         studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spDTO.getIdentifier());
         if (sraDTO == null) {
             return null;
@@ -608,7 +609,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
                 appendElement(irbInfo , createElement("approval_number" ,
                         spart.getReviewBoardApprovalNumber() , doc));
-                
+
                 Organization paOrg = cUtils.getPAOrganizationByIi(spart.getOversightCommitteeIi());
                 if (paOrg != null) {
                     OrganizationDTO poOrg = null;
@@ -619,7 +620,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                         throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);
                     }
                     appendElement(irbInfo , createElement("name" ,  paOrg.getName() , doc));
-                    appendElement(irbInfo , createElement("affiliation" ,  
+                    appendElement(irbInfo , createElement("affiliation" ,
                             spart.getReviewBoardOrganizationalAffiliation() , doc));
                     Object[] telList = poOrg.getTelecomAddress().getItem().toArray();
                     for (Object tel : telList) {
@@ -653,7 +654,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         //create info element
 
         Element idInfo = doc.createElement("id_info");
-       
+
         StudySiteDTO spartDTO = new StudySiteDTO();
         spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
         List<StudySiteDTO> sParts = studySiteService.getByStudyProtocol(spDTO.getIdentifier(), spartDTO);
@@ -662,14 +663,14 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             break;
         }
        appendElement(idInfo , createElement("secondary_id" , PAUtil.getAssignedIdentifierExtension(spDTO), doc));
-       
+
        RegistryUser registryUser = registryUserService.getUser(StConverter.convertToString(spDTO.getUserLastCreated()));
        String prsOrgName = "replace with PRS Organization Name you log in with";
-       if (PAUtil.isNotEmpty(registryUser.getPrsOrgName())) {
+       if (StringUtils.isNotEmpty(registryUser.getPrsOrgName())) {
            prsOrgName = registryUser.getPrsOrgName();
-       } 
+       }
        appendElement(idInfo , createElement("org_name" , prsOrgName , doc));
-       
+
        if (idInfo.hasChildNodes()) {
             appendElement(root, idInfo);
        }
@@ -703,8 +704,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private void createEligibility(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         List<PlannedEligibilityCriterionDTO> paECs = plannedActivityService
                                             .getPlannedEligibilityCriterionByStudyProtocol(spDTO.getIdentifier());
-       
-            
+
+
         if (paECs == null || paECs.isEmpty()) {
             return;
         }
@@ -727,7 +728,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         //sorts the list on display order
         Collections.sort(paECs, new Comparator<PlannedEligibilityCriterionDTO>() {
             public int compare(PlannedEligibilityCriterionDTO o1, PlannedEligibilityCriterionDTO o2) {
-              return (!PAUtil.isIntNull(o1.getDisplayOrder()) && !PAUtil.isIntNull(o2.getDisplayOrder())) 
+              return (!PAUtil.isIntNull(o1.getDisplayOrder()) && !PAUtil.isIntNull(o2.getDisplayOrder()))
                      ? o1.getDisplayOrder().getValue().compareTo(o2.getDisplayOrder().getValue()) : 0;
              }
          });
@@ -743,11 +744,11 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                 if (pq.getLow() != null) {
                   minAge = pq.getLow().getValue();
                   minUnit = pq.getLow().getUnit();
-                } 
+                }
                 if (pq.getHigh() != null) {
                   maxAge = pq.getHigh().getValue();
                   maxUnit = pq.getHigh().getUnit();
-                } 
+                }
             } else if (descriptionText != null) {
                 if (incIndicator == null) {
                     nullCrit.append(TAB);
@@ -806,7 +807,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             appendElement(root , eligibility);
         }
     }
-   
+
     private static String getAgeUnit(BigDecimal b , String unit) {
         if (b.intValue() == 0 || b.intValue() ==  MAX_AGE) {
             return "N/A";
@@ -817,7 +818,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     }
     private void createArmGroup(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         List<ArmDTO> arms = armService.getByStudyProtocol(spDTO.getIdentifier());
-       
+
         if (arms == null || arms.isEmpty()) {
             return;
         }
@@ -835,50 +836,50 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
       private void createIntervention(Ii studyProtocolIi , Document doc , Element root) throws PAException {
         List<PlannedActivityDTO> paList =  plannedActivityService.getByStudyProtocol(studyProtocolIi);
-      
+
         for (PlannedActivityDTO pa : paList) {
             if (PAUtil.isTypeIntervention(pa.getCategoryCode())) {
                 Element intervention = doc.createElement("intervention");
                 InterventionDTO i = interventionService.get(pa.getInterventionIdentifier());
                 if (pa.getSubcategoryCode() != null && pa.getSubcategoryCode().getCode() != null) {
-                    appendElement(intervention, createElement("intervention_type" , 
+                    appendElement(intervention, createElement("intervention_type" ,
                             pa.getSubcategoryCode().getCode() , doc));
                 }
                 appendElement(intervention,
                         createElement("intervention_name" , i.getName() , PAAttributeMaxLen.LEN_160, doc));
                 createTextBlock("intervention_description", pa.getTextDescription(),
                         PAAttributeMaxLen.LEN_1000 , doc, intervention);
-                List<InterventionAlternateNameDTO> ianList = 
-                                        interventionAlternateNameService.getByIntervention(i.getIdentifier()); 
-                          
-                int cnt = 1; 
+                List<InterventionAlternateNameDTO> ianList =
+                                        interventionAlternateNameService.getByIntervention(i.getIdentifier());
+
+                int cnt = 1;
                 List<InterventionAlternateNameDTO> interventionNames = new ArrayList<InterventionAlternateNameDTO>();
-                
+
                 for (InterventionAlternateNameDTO ian : ianList) {
-                   if (ian.getNameTypeCode().getValue() != null 
-                           && (ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.SYNONYM) 
+                   if (ian.getNameTypeCode().getValue() != null
+                           && (ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.SYNONYM)
                            || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.ABBREVIATION)
                            || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.US_BRAND_NAME)
                            || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.FOREIGN_BRAND_NAME)
                            || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.CODE_NAME))) {
-                       
+
                         interventionNames.add(ian);
-                          
+
                     if (cnt++ > PAAttributeMaxLen.LEN_5) {
                         break;
                     }
-                  } 
+                  }
                 }
                 Collections.sort(interventionNames, new Comparator<InterventionAlternateNameDTO>() {
                     public int compare(InterventionAlternateNameDTO o1, InterventionAlternateNameDTO o2) {
                           return o1.getName().getValue().compareToIgnoreCase(o2.getName().getValue());
                      }
                  });
-                
-                for (InterventionAlternateNameDTO ian : interventionNames) {                    
+
+                for (InterventionAlternateNameDTO ian : interventionNames) {
                     appendElement(intervention,
                             createElement("intervention_other_name" , ian.getName(), PAAttributeMaxLen.LEN_160 , doc));
-                    
+
                 }
 
                 List<ArmDTO> armDtos = armService.getByPlannedActivity(pa.getIdentifier());
@@ -912,7 +913,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private Element createInterventional(StudyProtocolDTO spDTO , Document doc) throws PAException {
         InterventionalStudyProtocolDTO ispDTO = studyProtocolService
                                                     .getInterventionalStudyProtocol(spDTO.getIdentifier());
-      
+
         Element invDesign = doc.createElement("interventional_design");
         appendElement(invDesign, createElement("interventional_subtype", ispDTO.getPrimaryPurposeCode(), doc));
         appendElement(invDesign, createElement("phase", ispDTO.getPhaseCode(), doc));
@@ -941,9 +942,9 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     }
 
     private Element createObservational(StudyProtocolDTO spDTO , Document doc) throws PAException {
-        ObservationalStudyProtocolDTO ospDTO = 
+        ObservationalStudyProtocolDTO ospDTO =
                                         studyProtocolService.getObservationalStudyProtocol(spDTO.getIdentifier());
-      
+
         Element obsDesign = doc.createElement("observational_design");
         appendElement(obsDesign, createElement("timing", ospDTO.getTimePerspectiveCode(), doc));
         appendElement(obsDesign, createElement("observational_study_design", ospDTO.getStudyModelCode(), doc));
@@ -994,7 +995,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         }
     }
 
-    private void createSponsors(Ii studyProtocolIi  , Document doc , Element root, StudyProtocolDTO spDTO) 
+    private void createSponsors(Ii studyProtocolIi  , Document doc , Element root, StudyProtocolDTO spDTO)
     throws PAException,
         NullifiedRoleException {
         Element sponsors = doc.createElement("sponsors");
@@ -1007,7 +1008,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
            if (rp != null && rp.hasChildNodes()) {
              appendElement(sponsors , rp);
            }
-        } 
+        }
         Element collaborator = createCollaborator(studyProtocolIi , doc);
         if (collaborator != null && collaborator.hasChildNodes()) {
             appendElement(sponsors , collaborator);
@@ -1022,7 +1023,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         Element responsibleParty = doc.createElement("resp_party");
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
-        List<StudyContactDTO> scDtos = 
+        List<StudyContactDTO> scDtos =
                studyContactService.getByStudyProtocol(studyProtocolIi, scDto);
         DSet<Tel> dset = null;
         CorrelationUtils cUtils = new CorrelationUtils();
@@ -1107,7 +1108,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         return collaborator;
     }
 
-    private void createLocation(StudyProtocolDTO spDTO , Document doc , Element root) 
+    private void createLocation(StudyProtocolDTO spDTO , Document doc , Element root)
         throws PAException, NullifiedRoleException {
 
         StudySiteDTO srDTO = new StudySiteDTO();
@@ -1121,7 +1122,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
 
             StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
                                               .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
-        
+
             Organization orgBo = cUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
 
             appendElement(facility , createElement("name" , orgBo.getName() , doc));
@@ -1198,102 +1199,16 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             }
         }
     }
-   /* private void createObjective(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
-        List<StudyObjectiveDTO> studyObjList = studyObjectiveService.getByStudyProtocol(spDTO.getIdentifier());
-        StringBuffer objectiveData = new StringBuffer();
-        for (StudyObjectiveDTO dto : studyObjList) {
-            if (!StConverter.convertToString(dto.getDescription()).trim().equals("")) {
-                if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.PRIMARY.getCode())) {
-                    objectiveData.append('\n');
-                    objectiveData.append(StudyObjectiveTypeCode.PRIMARY.getCode());
-                    objectiveData.append('\n');
-                    StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()),
-                        ".");
-                    while (stoken.hasMoreElements()) { 
-                        objectiveData.append(TAB);
-                        objectiveData.append(DASH);
-                        objectiveData.append(stoken.nextElement().toString());
-                        objectiveData.append('\n');
-                    } 
-                }
-                if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.SECONDARY.getCode())) {
-                    objectiveData.append('\n');
-                    objectiveData.append(StudyObjectiveTypeCode.SECONDARY.getCode());
-                    objectiveData.append('\n');
-                    StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()),
-                        ".");
-                    while (stoken.hasMoreElements()) { 
-                        objectiveData.append(TAB);
-                        objectiveData.append(DASH);
-                        objectiveData.append(stoken.nextElement().toString().trim());
-                        objectiveData.append('\n');
-                    } 
-                }
-                if (dto.getTypeCode().getCode().equals(StudyObjectiveTypeCode.TERNARY.getCode())) {
-                    objectiveData.append('\n');
-                    objectiveData.append(StudyObjectiveTypeCode.TERNARY.getCode());
-                    objectiveData.append('\n');
-                    StringTokenizer stoken = new StringTokenizer(StConverter.convertToString(dto.getDescription()),
-                            ".");
-                    while (stoken.hasMoreElements()) { 
-                        objectiveData.append(TAB);
-                        objectiveData.append(DASH);
-                        objectiveData.append(stoken.nextElement().toString().trim());
-                        objectiveData.append('\n');
-                    } 
-                }    
-            }
-        }
-        if (spDTO.getScientificDescription() != null && spDTO.getScientificDescription().getValue() != null) {
-            objectiveData.append(NEW_LINE);
-            objectiveData.append("Outline:\n");
-            StringTokenizer stoken = new StringTokenizer(
-                    StConverter.convertToString(spDTO.getScientificDescription()).trim(), ".");
-            while (stoken.hasMoreElements()) { 
-                objectiveData.append(TAB);
-                objectiveData.append(DASH);
-                String s = stoken.nextElement().toString().trim().replaceAll("\\n", " ");
-                String s1 = s.replaceAll("\\r", " ");
-                objectiveData.append(s1);
-                objectiveData.append('\n');
-            } 
-        }
-        Integer projectedAccrual = IvlConverter.convertInt().convertLow(spDTO.getTargetAccrualNumber());
-        if (projectedAccrual != null) {
-            objectiveData.append(NEW_LINE);
-            objectiveData.append("Projected Accrual:");
-            objectiveData.append(TAB);
-            objectiveData.append(DASH);
-            if (projectedAccrual > 0) { 
-                objectiveData.append("A total of  ").append(projectedAccrual)
-                .append(" patients will be accrued for this study");
-            } else {
-                objectiveData.append(projectedAccrual).append(" patient.");
-            }
-            objectiveData.append(NEW_LINE);
-        }
-        if (objectiveData.length() > 1) {
-            StringBuffer objectiveTitle = new StringBuffer();
-            objectiveTitle.append(NEW_LINE);
-            objectiveTitle.append("Objectives:");
-            objectiveTitle.append(DASH);
-            objectiveTitle.append(NEW_LINE);
-            objectiveTitle.append(objectiveData);
-            createCdataBlock("detailed_description", StConverter.convertToSt(objectiveTitle.toString()),
-                        PAAttributeMaxLen.LEN_15000 , doc, root);
-         }     
-
-    }*/
 
     private static void createCdataBlock(final String elementName ,  final St data , int maxLen ,
             Document doc , Element root)
     throws PAException {
-    if (data == null || data.getValue() == null || PAUtil.isEmpty(data.getValue())) {
+    if (data == null || StringUtils.isEmpty(data.getValue())) {
         return;
     }
     Element elementTxt = doc.createElement(TEXT_BLOCK);
     Element elementTag = doc.createElement(elementName);
-    Text text = doc.createCDATASection(StringEscapeUtils.unescapeHtml(PAUtil.stringSetter(data.getValue() , maxLen)));
+    Text text = doc.createCDATASection(StringEscapeUtils.unescapeHtml(StringUtils.left(data.getValue(), maxLen)));
     elementTxt.appendChild(text);
     elementTag.appendChild(elementTxt);
     root.appendChild(elementTag);
@@ -1302,14 +1217,14 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private static void createTextBlock(final String elementName ,  final St data , int maxLen ,
                 Document doc , Element root)
     throws PAException {
-        if (data == null || data.getValue() == null || PAUtil.isEmpty(data.getValue())) {
+        if (data == null || StringUtils.isEmpty(data.getValue())) {
             return;
         }
         appendElement(createElement(elementName, doc), createElement(TEXT_BLOCK, data.getValue(), maxLen , doc) , root);
 
     }
     private static Element createElement(final String elementName , final Document doc) throws PAException {
-        if (PAUtil.isEmpty(elementName)) {
+        if (StringUtils.isEmpty(elementName)) {
             LOG.error("Elementname is null");
             throw new PAException("Element name is null");
         }
@@ -1325,12 +1240,12 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         element.appendChild(text);
         return element;
     }
-    
+
     private static Element createElement(String elementName , String st , int maxLength , Document doc) {
         if (st == null || elementName == null || st == null) {
             return null;
         }
-        return createElement(elementName  , PAUtil.stringSetter(st , maxLength) , doc);
+        return createElement(elementName, StringUtils.left(st, maxLength) , doc);
     }
 
     private static Element createElement(String elementName , Cd cd , Document doc) {
@@ -1350,7 +1265,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         if (st == null || elementName == null || st.getValue() == null) {
             return null;
         }
-        return createElement(elementName  , PAUtil.stringSetter(st.getValue(), maxLength)  , doc);
+        return createElement(elementName, StringUtils.left(st.getValue(), maxLength)  , doc);
     }
 
     private static Element createElement(String elementName , Int i , Document doc) {
@@ -1394,7 +1309,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         }
         return spDTO;
     }
-    
+
 
     ///  utilitiy methods
     private static String convertBLToString(Bl bl) {

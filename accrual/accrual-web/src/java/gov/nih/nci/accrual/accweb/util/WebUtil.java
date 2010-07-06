@@ -84,7 +84,8 @@ import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Hugh Reinhart
@@ -120,10 +121,10 @@ public class WebUtil {
      * @return true if criteria is empty or value contains criteria
      */
     public static boolean stringContains(String value, String criteria) {
-        if (PAUtil.isEmpty(criteria)) {
+        if (StringUtils.isEmpty(criteria)) {
             return true;
         }
-        if (PAUtil.isEmpty(value)) {
+        if (StringUtils.isEmpty(value)) {
             return false;
         }
         return value.contains(criteria);
@@ -135,10 +136,10 @@ public class WebUtil {
      * @return true if criteria is empty or value equals criteria
      */
     public static boolean stringEquals(String value, String criteria) {
-        if (PAUtil.isEmpty(criteria)) {
+        if (StringUtils.isEmpty(criteria)) {
             return true;
         }
-        if (PAUtil.isEmpty(value)) {
+        if (StringUtils.isEmpty(value)) {
             return false;
         }
         return value.equals(criteria);

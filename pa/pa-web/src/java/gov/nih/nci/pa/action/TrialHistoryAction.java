@@ -107,6 +107,7 @@ import java.util.Locale;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
@@ -383,10 +384,10 @@ ServletResponseAware {
      * Enforce business rules.
      */
     private void enforceBusinessRules() {
-        if (PAUtil.isEmpty(trialHistoryWbDto.getAmendmentDate())) {
+        if (StringUtils.isEmpty(trialHistoryWbDto.getAmendmentDate())) {
           addFieldError("trialHistoryWbDto.amendmentDate", getText("Amendment Date must be Entered/Selected"));
         }
-        if (PAUtil.isEmpty(trialHistoryWbDto.getAmendmentReasonCode())) {
+        if (StringUtils.isEmpty(trialHistoryWbDto.getAmendmentReasonCode())) {
           addFieldError("trialHistoryWbDTO.amendmentReasonCode", getText("Reason code must be Selected"));
         }
         if (!isValidDate(trialHistoryWbDto.getAmendmentDate())) {

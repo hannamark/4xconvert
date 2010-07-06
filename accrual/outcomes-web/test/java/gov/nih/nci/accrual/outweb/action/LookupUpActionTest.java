@@ -82,11 +82,11 @@ import gov.nih.nci.accrual.outweb.dto.util.LookUpWebDto;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.DoseFrequency;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
 import org.junit.Before;
@@ -166,7 +166,7 @@ public class LookupUpActionTest extends AbstractAccrualActionTest {
     @Test
     public void testLoadResultList() throws Exception {
       action.setSearchText(searchText);
-      assertNotNull(PAUtil.isEmpty(action.getSearchText().getValue()));
+      assertNotNull(StringUtils.isEmpty(action.getSearchText().getValue()));
       DoseFrequency criteria = new DoseFrequency();
       criteria.setCode(action.getSearchText().getValue());
       assertNotNull(criteria);

@@ -6,7 +6,6 @@ package gov.nih.nci.registry.util;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.mail.MailManager;
@@ -90,7 +89,7 @@ public class RegistryUtil {
      * @return boolean
      */
     public static boolean isValidDate(String dateString) {
-        if (PAUtil.isEmpty(dateString)) {
+        if (StringUtils.isEmpty(dateString)) {
             return false;
         }
         //set the format to use as a constructor argument
@@ -174,10 +173,10 @@ public class RegistryUtil {
          //add the mail header
          String submissionMailBodyHeader = PaRegistry.getLookUpTableService().
                   getPropertyValue("trial.batchUpload.bodyHeader");
-         
+
          RegistryUser registryUser = PaRegistry.getRegisterUserService().getUser(userName);
-         
-         submissionMailBodyHeader = submissionMailBodyHeader.replace("${SubmitterName}", 
+
+         submissionMailBodyHeader = submissionMailBodyHeader.replace("${SubmitterName}",
                  registryUser.getFirstName() + " " + registryUser.getLastName());
          submissionMailBodyHeader = submissionMailBodyHeader.replace("${CurrentDate}", format.format(date));
          submissionMailBody.append(submissionMailBodyHeader);
@@ -270,7 +269,7 @@ public class RegistryUtil {
                substring(e.getLocalizedMessage().indexOf(":") + 1);
            ServletActionContext.getRequest().setAttribute("failureMessage", exceptionStr);
            return true;
-       } 
+       }
        return false;
   }
 }

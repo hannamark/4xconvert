@@ -81,10 +81,10 @@ package gov.nih.nci.accrual.outweb.converter;
 
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.util.StrutsTypeConverter;
 
@@ -109,7 +109,7 @@ public class StrutsBlConverter extends StrutsTypeConverter {
         } else if (strings.length != 1) {
             LOG.warn("Error in custom struts2 converter.  Expecting 1 string; " + strings.length + "were passed in.");
             return new Bl();
-        } else if (PAUtil.isEmpty(strings[0])) {
+        } else if (StringUtils.isEmpty(strings[0])) {
             return new Bl();
         }
         return BlConverter.convertToBl("true".equals(strings[0].trim()));

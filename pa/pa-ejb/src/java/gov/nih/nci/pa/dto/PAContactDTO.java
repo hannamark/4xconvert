@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.util.PAUtil;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Vrushali
@@ -19,7 +20,7 @@ public class PAContactDTO {
     private String phone;
     private String title;
     private String fullName;
-    
+
     /**
      * @return the srIdentifier
      */
@@ -117,15 +118,15 @@ public class PAContactDTO {
         this.fullName = fullName;
     }
     /**
-     * 
+     *
      * @return s
      */
     public String getResponsiblePartyContactName() {
         String respPartyContactName = "";
-        if (!PAUtil.isEmpty(this.fullName)) {
+        if (StringUtils.isNotEmpty(this.fullName)) {
             respPartyContactName = this.fullName;
-        } 
-        if (!PAUtil.isEmpty(this.title)) {
+        }
+        if (StringUtils.isNotEmpty(this.title)) {
             respPartyContactName = this.title;
         }
         return respPartyContactName;

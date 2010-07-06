@@ -140,6 +140,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -192,7 +193,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private String dateClosedForAccrual;
     private Long studySiteIdentifier;
     private String programCode;
-    
+
     //
     private static final String DISPLAY_SP_CONTACTS = "display_StudyPartipants_Contacts";
     private static final String DISPLAY_PRIM_CONTACTS = "display_primContacts";
@@ -201,7 +202,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private static final String DISPLAY_STUDY_PART_CONTACTS = "display_StudyPartipants";
     private static final String ERROR_PRIMARY_CONTACTS = "error_prim_contacts";
 
-    
+
     private String statusCode;
     private List<StudyOverallStatusWebDTO> overallStatusList;
     /**
@@ -229,7 +230,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         String retString = SUCCESS;
         try {
         loadForm();
-        
+
         if (proprietaryTrialIndicator != null
                 && proprietaryTrialIndicator.equalsIgnoreCase("true")) {
             retString =  "proprietaryList";
@@ -311,9 +312,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             if (IntConverter.convertToInteger(sp.getTargetAccrualNumber()) != iTargetAccrual) {
                 sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
                 spUpdated = true;
-            } 
-            if (PAUtil.isStNull(sp.getProgramCodeText()) 
-                || (!PAUtil.isStNull(sp.getProgramCodeText()) 
+            }
+            if (PAUtil.isStNull(sp.getProgramCodeText())
+                || (!PAUtil.isStNull(sp.getProgramCodeText())
                     && !StConverter.convertToString(sp.getProgramCodeText()).equalsIgnoreCase(prgCode))) {
                sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
                spUpdated = true;
@@ -355,7 +356,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         createStudySiteAccrualStatus(sp.getIdentifier());
         tab.setStudyParticipationId(IiConverter.convertToLong(sp.getIdentifier()));
         ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
-        if (PAUtil.isNotEmpty(tab.getFacilityOrganization().getName())) {
+        if (StringUtils.isNotEmpty(tab.getFacilityOrganization().getName())) {
             setOrganizationName("for " + tab.getFacilityOrganization().getName());
         }
         setStatusCode(sp.getStatusCode().getCode());
@@ -370,11 +371,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             throws PAException {
         StudySiteAccrualStatusDTO currentStatus = ssasService
                 .getCurrentStudySiteAccrualStatusByStudySite(studySiteIi);
-        if (currentStatus == null || currentStatus.getStatusCode() == null 
-                || currentStatus.getStatusDate() == null 
-                || !currentStatus.getStatusCode().getCode().equals(recStatus) 
+        if (currentStatus == null || currentStatus.getStatusCode() == null
+                || currentStatus.getStatusDate() == null
+                || !currentStatus.getStatusCode().getCode().equals(recStatus)
                 || !currentStatus.getStatusDate().equals(PAUtil.dateStringToTimestamp(recStatusDate))) {
-            
+
                  StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
                  ssas.setIdentifier(IiConverter.convertToIi((Long) null));
                  ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(recStatus)));
@@ -526,7 +527,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                     String status = per.getStatusCode() != null ? per.getStatusCode().getCode() : "";
                     invList.append(stStartB + fullName + stDash + roleName + " , "
                             + status + " ]<br>");
-                    
+
                 }
             }
 
@@ -552,7 +553,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                         PAContactDTO paDto = cUtils.getContactByPAOrganizationalContactId((
                             Long.valueOf(siteConDto.getOrganizationalContactIi().getExtension())));
                         if (paDto.getTitle() != null)  {
-                            primContactList.append(stStartB + paDto.getTitle() + stDash 
+                            primContactList.append(stStartB + paDto.getTitle() + stDash
                                     + StConverter.convertToString(siteConDto.getStatusCode().getDisplayName()) + " ]");
                         }
                     } catch (NullifiedRoleException e) {
@@ -591,7 +592,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
-        
+
         LimitOffset limit = new LimitOffset(1, 0);
         try {
             selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria, limit).get(0);
@@ -601,7 +602,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
         // convert the PO DTO to the pa domain
         paOrgDTO = PADomainUtils.convertPoOrganizationDTO(selectedOrgDTO, null);
-        
+
         // store selection
         Organization org = new Organization();
         org.setCity(paOrgDTO.getCity());
@@ -671,10 +672,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         try {
             createStudyParticationContactRecord(tab, isPrimaryContact, roleCode, null);
         } catch (PAException e) {
-            if (PAUtil.isNotEmpty(e.getLocalizedMessage())) {
+            if (StringUtils.isNotEmpty(e.getLocalizedMessage())) {
                 addActionError(e.getLocalizedMessage());
             } else {
-                addActionError("Exception:Investigator can not be added to the Nullified Org" 
+                addActionError("Exception:Investigator can not be added to the Nullified Org"
                         + e.getLocalizedMessage());
             }
             return DISPLAY_SPART_CONTACTS;
@@ -727,7 +728,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         clearErrorsAndMessages();
         ParticipatingOrganizationsTabWebDTO orgsTabWebDTO = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
-        try {        
+        try {
         List<PaPersonDTO> resultsList = PaRegistry.getPAHealthCareProviderService().getPersonsByStudySiteId(
                 orgsTabWebDTO.getStudyParticipationId(), StudySiteContactRoleCode.PRIMARY_CONTACT.getName());
         if (resultsList != null && !resultsList.isEmpty()) {
@@ -848,28 +849,28 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 perIdentifier = IiConverter.convertToString(selectedPersTOIi);
             }
             Long clinicalStfid = new ClinicalResearchStaffCorrelationServiceBean().
-                createClinicalResearchStaffCorrelations(orgPoIdentifier, 
+                createClinicalResearchStaffCorrelations(orgPoIdentifier,
                         perIdentifier);
             Long healthCareProviderIi = null;
             if (trialType.startsWith("Interventional")) {
                 healthCareProviderIi = new HealthCareProviderCorrelationBean().createHealthCareProviderCorrelationBeans(
                     orgPoIdentifier, perIdentifier);
             }
-        
+
             participationContactDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(clinicalStfid));
             if (healthCareProviderIi != null) {
                 participationContactDTO.setHealthCareProviderIi(IiConverter.convertToIi(healthCareProviderIi));
             }
         }
-        if (!PAUtil.isIiNull(selectedPersTOIi) 
+        if (!PAUtil.isIiNull(selectedPersTOIi)
                 && IiConverter.ORGANIZATIONAL_CONTACT_ROOT.equalsIgnoreCase(selectedPersTOIi.getRoot())) {
             //means title is selected for contact
-         // now create study SITE contact as 
+         // now create study SITE contact as
             PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
-                OrganizationalContactConverter> oc = new PABaseCorrelation<PAOrganizationalContactDTO , 
+                OrganizationalContactConverter> oc = new PABaseCorrelation<PAOrganizationalContactDTO ,
             OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
             PAOrganizationalContactDTO.class, OrganizationalContact.class, OrganizationalContactConverter.class);
-            
+
             PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
             orgContacPaDto.setOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
             orgContacPaDto.setIdentifier(selectedPersTOIi);
@@ -933,17 +934,17 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         String persId = ServletActionContext.getRequest().getParameter("contactpersid");
         String email = ServletActionContext.getRequest().getParameter("email");
         String telephone = ServletActionContext.getRequest().getParameter("tel");
-        
+
         if (persId == null || "".equals(persId)) {
             addFieldError("personContactWebDTO.firstName", getText("Please lookup and select person"));
-        } 
-        if (PAUtil.isEmpty(email)) {
+        }
+        if (StringUtils.isEmpty(email)) {
             addFieldError("personContactWebDTO.email", getText("error.enterEmailAddress"));
         }
-        if (PAUtil.isNotEmpty(email) && (!PAUtil.isValidEmail(email))) {
+        if (StringUtils.isNotEmpty(email) && (!PAUtil.isValidEmail(email))) {
             addFieldError("personContactWebDTO.email", getText("error.enterValidEmail"));
         }
-        if (PAUtil.isEmpty(telephone)) {
+        if (StringUtils.isEmpty(telephone)) {
             addFieldError("personContactWebDTO.telephone", getText("error.enterPhoneNumber"));
         }
         if (hasFieldErrors()) {
@@ -961,7 +962,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             }
             return ERROR_PRIMARY_CONTACTS;
         }
-    
+
         ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
             .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         try {
@@ -975,9 +976,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             } else {
                 selectedPersTOIi = isoPerDTO.getIdentifier();
             }
-            
+
             createStudyParticationContactRecord(tab, true, roleCode, selectedPersTOIi);
-            
+
             //refesh
             getStudyParticipationPrimContact();
         } catch (PAException e) {
@@ -997,7 +998,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         getStudyParticipationPrimContact();
         return DISPLAY_PRIM_CONTACTS;
     }
-    
+
     /**
      * This method is called when a primary contact is chosen.
      * @return the result
@@ -1044,20 +1045,20 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      */
     private void enforceBusinessRules() {
         clearErrorsAndMessages();
-        if (PAUtil.isEmpty(getRecStatus())) {
+        if (StringUtils.isEmpty(getRecStatus())) {
             addFieldError("recStatus", getText("error.participatingStatus"));
         }
-        if (PAUtil.isEmpty(getRecStatusDate())) {
+        if (StringUtils.isEmpty(getRecStatusDate())) {
             addFieldError(REC_STATUS_DATE, getText("error.participatingStatusDate"));
         }
-        if (PAUtil.isEmpty(orgFromPO.getName())) {
+        if (StringUtils.isEmpty(orgFromPO.getName())) {
             addFieldError("editOrg.name", "Please choose an organization");
         }
-        if (!PAUtil.isEmpty(getRecStatusDate())) {
+        if (StringUtils.isNotEmpty(getRecStatusDate())) {
             Timestamp newDate = PAUtil.dateStringToTimestamp(getRecStatusDate());
             if (newDate.after(new Timestamp(new Date().getTime()))) {
                 addFieldError(REC_STATUS_DATE, getText("error.participatingStatusDateCheck"));
-            } 
+            }
         }
     }
 
@@ -1278,7 +1279,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         this.statusCode = statusCode;
     }
     /**
-     * 
+     *
      * @return s
      */
     public String proprietaryEdit() {
@@ -1299,7 +1300,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             siteProgramCodeText = StConverter.convertToString(spDto.getProgramCodeText());
             dateOpenedForAccrual = IvlConverter.convertTs().convertLowToString(spDto.getAccrualDateRange());
             dateClosedForAccrual = IvlConverter.convertTs().convertHighToString(spDto.getAccrualDateRange());
-            
+
             //get the person info
             personContactWebDTO = new PaPersonDTO();
             StudySiteContactDTO criteriaDTO = new StudySiteContactDTO();
@@ -1315,7 +1316,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             Person per = cUtils.getPAPersonByIi(crsIi);
             personContactWebDTO.setSelectedPersId(Long.valueOf(per.getIdentifier()));
             personContactWebDTO.setFullName(per.getFullName());
-            
+
             StudySiteAccrualStatusDTO status = ssasService
             .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToStudySiteAccuralStatusIi(
                     studySiteIdentifier));
@@ -1326,12 +1327,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         } catch (PAException e) {
             LOG.equals(e);
         }
-        
 
-     return "proprietaryEdit";   
+
+     return "proprietaryEdit";
     }
     /**
-     * 
+     *
      * @return s
      */
     public String proprietaryCreate() {
@@ -1412,7 +1413,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     public void setProprietaryTrialIndicator(String proprietaryTrialIndicator) {
         this.proprietaryTrialIndicator = proprietaryTrialIndicator;
     }
-    
+
     /**
      * @return the studySiteIdentifier
      */
@@ -1428,7 +1429,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     }
 
     /**
-     * 
+     *
      * @return s
      */
     public String displayPerson() {
@@ -1452,7 +1453,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         return "displayPerson";
     }
     /**
-     * 
+     *
      * @return s
      */
    public String proprietarySave() {
@@ -1486,13 +1487,13 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         siteDTO.setStudyProtocolIdentifier(spIi);
         siteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(siteLocalTrialIdentifier));
         siteDTO.setProgramCodeText(StConverter.convertToSt(siteProgramCodeText));
-        if (PAUtil.isNotEmpty(dateOpenedForAccrual) 
-                && PAUtil.isNotEmpty(dateClosedForAccrual)) {
+        if (StringUtils.isNotEmpty(dateOpenedForAccrual)
+                && StringUtils.isNotEmpty(dateClosedForAccrual)) {
             siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(dateOpenedForAccrual,
                     dateClosedForAccrual));
         }
-        if (PAUtil.isNotEmpty(dateOpenedForAccrual) 
-                && PAUtil.isEmpty(dateClosedForAccrual)) {
+        if (StringUtils.isNotEmpty(dateOpenedForAccrual)
+                && StringUtils.isEmpty(dateClosedForAccrual)) {
             siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(dateOpenedForAccrual,
                     null));
         }
@@ -1503,7 +1504,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             sPartService.update(siteDTO);
         }
         createStudySiteAccrualStatus(IiConverter.convertToStudySiteIi(studySiteIdentifier));
-        
+
         //save the PI check if PI is there
         List<StudySiteContactDTO> contactDTOList = sPartContactService.getByStudySite(
                 IiConverter.convertToStudySiteIi(studySiteIdentifier));
@@ -1511,28 +1512,28 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             ParticipatingOrganizationsTabWebDTO orgsTabWebDTO = new ParticipatingOrganizationsTabWebDTO();
             orgsTabWebDTO.setStudyParticipationId(studySiteIdentifier);
             orgsTabWebDTO.setFacilityOrganization(editOrg);
-            
-            selectedPersTO = new PersonDTO(); 
+
+            selectedPersTO = new PersonDTO();
             selectedPersTO.setIdentifier(IiConverter.convertToPoPersonIi(
                     personContactWebDTO.getSelectedPersId().toString()));
-            
+
             createStudyParticationContactRecord(orgsTabWebDTO, false,
                 StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode(), null);
         } else {
             updateStudyParticationContactRecord(contactDTOList, poOrgId,
                     personContactWebDTO.getSelectedPersId().toString());
-                    
+
         }
     }
 
     private void updateStudyParticationContactRecord(
             List<StudySiteContactDTO> contactDTOList, String poOrgId,
             String selectedPersId) throws PAException {
-        
+
         StudyProtocolQueryDTO studyProtocolQueryDto = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
             .getSession().getAttribute(Constants.TRIAL_SUMMARY);
         String trialType = studyProtocolQueryDto.getStudyProtocolType();
-        
+
         StudySiteContactDTO participationContactDTO = contactDTOList.get(0);
             Long clinicalStfid = new ClinicalResearchStaffCorrelationServiceBean().
         createClinicalResearchStaffCorrelations(poOrgId, selectedPersId);
@@ -1543,23 +1544,23 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
         participationContactDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(clinicalStfid.toString()));
         participationContactDTO.setHealthCareProviderIi(IiConverter.convertToIi(healthCareProviderIi));
-        
+
         sPartContactService.update(participationContactDTO);
     }
 
     private void enforceBusinessRulesForProprietary() {
-        if (PAUtil.isEmpty(editOrg.getIdentifier())) {
+        if (StringUtils.isEmpty(editOrg.getIdentifier())) {
             addFieldError("editOrg.name", getText("error.orgId.required"));
         }
-        if (PAUtil.isEmpty(siteLocalTrialIdentifier)) {
+        if (StringUtils.isEmpty(siteLocalTrialIdentifier)) {
             addFieldError("siteLocalTrialIdentifier", getText("error.siteLocalTrialIdentifier.required"));
         }
         if (personContactWebDTO.getSelectedPersId() == null) {
             addFieldError("personContactWebDTO.selectedPersId", getText("error.selectedPersId.required"));
         }
-        if (PAUtil.isEmpty(recStatus)) {
+        if (StringUtils.isEmpty(recStatus)) {
             addFieldError("recStatus", getText("error.participatingOrganizations.recruitmentStatus"));
-        } 
+        }
         String err = "error.submit.invalidDate";      // validate date and its format
         if (!PAUtil.isValidDate(recStatusDate)) {
             addFieldError(REC_STATUS_DATE, getText(err));
@@ -1567,7 +1568,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 addFieldError(REC_STATUS_DATE, getText("error.submit.invalidStatusDate"));
         }
         String strDateOpenedForAccrual = "dateOpenedForAccrual";
-        if (PAUtil.isNotEmpty(dateOpenedForAccrual)) {
+        if (StringUtils.isNotEmpty(dateOpenedForAccrual)) {
                 if (!PAUtil.isValidDate(dateOpenedForAccrual)) {
                     addFieldError(strDateOpenedForAccrual, getText(err));
                 } else if (PAUtil.isDateCurrentOrPast(dateOpenedForAccrual)) {
@@ -1575,39 +1576,39 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 }
         }
         String strDateClosedForAccrual = "dateClosedForAccrual";
-        if (PAUtil.isNotEmpty(dateClosedForAccrual)) {
+        if (StringUtils.isNotEmpty(dateClosedForAccrual)) {
                 if (!PAUtil.isValidDate(dateClosedForAccrual)) {
                     addFieldError(strDateClosedForAccrual, getText(err));
                 } else if (PAUtil.isDateCurrentOrPast(dateClosedForAccrual)) {
                     addFieldError(strDateClosedForAccrual, getText("error.submit.invalidStatusDate"));
                 }
         }
-        if (PAUtil.isNotEmpty(dateClosedForAccrual)  
-            && PAUtil.isEmpty(dateOpenedForAccrual)) {
-                addFieldError(strDateOpenedForAccrual, 
+        if (StringUtils.isNotEmpty(dateClosedForAccrual)
+            && StringUtils.isEmpty(dateOpenedForAccrual)) {
+                addFieldError(strDateOpenedForAccrual,
                         getText("error.proprietary.dateOpenReq"));
         }
-        if (PAUtil.isNotEmpty(dateOpenedForAccrual)
-                && PAUtil.isNotEmpty(dateClosedForAccrual)) {
+        if (StringUtils.isNotEmpty(dateOpenedForAccrual)
+                && StringUtils.isNotEmpty(dateClosedForAccrual)) {
             Timestamp dateOpenedDateStamp = PAUtil.dateStringToTimestamp(dateOpenedForAccrual);
             Timestamp dateClosedDateStamp = PAUtil.dateStringToTimestamp(dateClosedForAccrual);
             if (dateClosedDateStamp.before(dateOpenedDateStamp)) {
-                addFieldError(strDateClosedForAccrual, 
-                        getText("error.proprietary.dateClosedAccrualBigger"));                
+                addFieldError(strDateClosedForAccrual,
+                        getText("error.proprietary.dateClosedAccrualBigger"));
             }
         }
-        if (PAUtil.isNotEmpty(recStatus)) {
-            if (RecruitmentStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(recStatus) 
+        if (StringUtils.isNotEmpty(recStatus)) {
+            if (RecruitmentStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(recStatus)
                     || RecruitmentStatusCode.NOT_YET_RECRUITING.getCode().equalsIgnoreCase(recStatus)) {
-                if (PAUtil.isNotEmpty(dateOpenedForAccrual)) {
+                if (StringUtils.isNotEmpty(dateOpenedForAccrual)) {
                     addFieldError(strDateOpenedForAccrual, "Date Opened for Acrual must be null for " + recStatus);
                 }
-            }  else if (PAUtil.isEmpty(dateOpenedForAccrual)) {
+            }  else if (StringUtils.isEmpty(dateOpenedForAccrual)) {
                 addFieldError(strDateOpenedForAccrual, "Date Opened for Acrual must be not null for " + recStatus);
             }
             if ((RecruitmentStatusCode.TERMINATED_RECRUITING.getCode().equalsIgnoreCase(recStatus)
-                    || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus)) 
-                    && PAUtil.isEmpty(dateClosedForAccrual)) {
+                    || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus))
+                    && StringUtils.isEmpty(dateClosedForAccrual)) {
                 addFieldError(strDateClosedForAccrual, "Date Closed for Acrual must not be null for " + recStatus);
             }
         }
@@ -1618,7 +1619,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      */
     public String historyPopup()  {
         String studySiteId = ServletActionContext.getRequest().getParameter("studySiteId");
-        if (PAUtil.isEmpty(studySiteId)) {
+        if (StringUtils.isEmpty(studySiteId)) {
             return "historypopup";
         }
         overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();
@@ -1636,7 +1637,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 overallStatusList.add(studySiteStatus);
             }
         } catch (PAException e) {
-            addActionError(e.getMessage());   
+            addActionError(e.getMessage());
         }
         return "historypopup";
     }
@@ -1668,5 +1669,5 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      public void setProgramCode(String programCode) {
        this.programCode = programCode;
      }
-    
+
 }

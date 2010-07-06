@@ -81,11 +81,11 @@ import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
 import org.junit.Before;
@@ -131,7 +131,7 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
     @Test
     public void testLoadResultList(){
 
-      assertNotNull(PAUtil.isEmpty(action.getSearchName()));
+      assertNotNull(StringUtils.isEmpty(action.getSearchName()));
       DiseaseDTO criteria = new DiseaseDTO();
       criteria.setPreferredName(StConverter.convertToSt(action.getSearchName()));
       criteria.setIncludeSynonym(StConverter.convertToSt(action.getIncludeSynonym()));
