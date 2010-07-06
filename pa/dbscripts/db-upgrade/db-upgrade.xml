@@ -494,4 +494,8 @@
         <comment>PO 2344: Minor modification to the letter contents (letters 5, 6, 7 and 8).</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2344.sql"/>
     </changeSet>
+    <changeSet id="PO-2262" author="moweis">
+        <comment>PO-2262: Add FK between csm_user and registry_user tables</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2262.sql"/>
+    </changeSet>
 </databaseChangeLog>
