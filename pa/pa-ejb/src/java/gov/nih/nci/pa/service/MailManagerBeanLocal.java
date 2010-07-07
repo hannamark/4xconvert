@@ -163,7 +163,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
       String folderPath = PaEarPropertyReader.getDocUploadPath();
       StringBuffer sb  = new StringBuffer(folderPath);
-      String xmlFile = getXmlFile(studyProtocolIi, spDTO, sb);
       StringBuffer sb2  = new StringBuffer(folderPath);
       String tsrFile = getTSRFile(studyProtocolIi, spDTO, sb2);
       String mailSubject = "";
@@ -177,6 +176,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
           new File(tsrFile).delete();
       } else {
           if (spDTO.getCtgovXmlRequiredIndicator().booleanValue()) {
+              String xmlFile = getXmlFile(studyProtocolIi, spDTO, sb);
               File[] attachments = {new File(xmlFile), new File(tsrFile)};
 
               if (spDTO.getAmendmentDate() != null && !spDTO.getAmendmentDate().equals("")) {

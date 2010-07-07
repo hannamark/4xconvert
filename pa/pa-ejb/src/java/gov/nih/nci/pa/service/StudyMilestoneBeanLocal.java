@@ -147,8 +147,7 @@ public class StudyMilestoneBeanLocal
          throw new PAException("Milestone date is required.");
      }
      //if the milestone is late rejection date then comment is required.
-     if (!PAUtil.isCdNull(dto.getMilestoneCode()) && MilestoneCode.LATE_REJECTION_DATE.getCode().equalsIgnoreCase(
-             dto.getMilestoneCode().getCode())) {
+     if (MilestoneCode.LATE_REJECTION_DATE.getCode().equalsIgnoreCase(dto.getMilestoneCode().getCode())) {
          if (PAUtil.isStNull(dto.getCommentText())) {
              throw new PAException("Milestone Comment is required.");
          }

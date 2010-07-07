@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.CountryTest;
 import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.DiseaseAltername;
 import gov.nih.nci.pa.domain.DiseaseAlternameTest;
@@ -90,6 +91,7 @@ import gov.nih.nci.pa.domain.DiseaseParent;
 import gov.nih.nci.pa.domain.DiseaseParentTest;
 import gov.nih.nci.pa.domain.DiseaseTest;
 import gov.nih.nci.pa.domain.Document;
+import gov.nih.nci.pa.domain.DocumentWorkFlowStatusTest;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareFacilityTest;
@@ -101,6 +103,7 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.OversightCommittee;
+import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.PlannedActivity;
@@ -111,6 +114,7 @@ import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
+import gov.nih.nci.pa.domain.StudyContactTest;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyDiseaseTest;
 import gov.nih.nci.pa.domain.StudyIndlde;
@@ -119,10 +123,14 @@ import gov.nih.nci.pa.domain.StudyMilestoneTest;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolTest;
+import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
+import gov.nih.nci.pa.domain.StudyRecruitmentStatusTest;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
+import gov.nih.nci.pa.domain.StudySiteTest;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
@@ -146,11 +154,13 @@ import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.UnitsCode;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -186,22 +196,22 @@ public class TestSchema {
         public static List<Country> countries;
 
         private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
-        
+
         /**
          *
          */
         public static void reset() {
 //            HibernateUtil.getHibernateHelper().openTestSession();
-        	HibernateUtil.testHelper = testHelper;   
+        	HibernateUtil.testHelper = testHelper;
         	HibernateUtil.getCurrentSession().clear();
-        	
+
         }
 
         /**
          *
          */
         public static void reset1() {
-            // clean up HQLDB schema            
+            // clean up HQLDB schema
 //            Session session = HibernateUtil.getHibernateHelper().getSessionFactory().openSession();
             HibernateUtil.testHelper = testHelper;
             Session session = HibernateUtil.getCurrentSession();
@@ -399,7 +409,7 @@ public class TestSchema {
             country.setName("Zanzibar");
             country.setNumeric("67");
             addUpdObject(country);
-            countries.add(country);            
+            countries.add(country);
 
             StudySiteContact spc = new StudySiteContact();
             spc.setAddressLine("Address 1");
@@ -560,7 +570,7 @@ public class TestSchema {
             pec.setMinValue(new BigDecimal("12"));
             pec.setMinUnit(UnitsCode.MONTHS.getCode());
             pec.setMaxValue(new BigDecimal("24"));
-            pec.setMaxUnit(UnitsCode.MONTHS.getCode());            
+            pec.setMaxUnit(UnitsCode.MONTHS.getCode());
             addUpdObject(pec);
             Disease dis01 = DiseaseTest.createDiseaseObj("Toe Cancer");
             addUpdObject(dis01);
@@ -592,13 +602,13 @@ public class TestSchema {
             addUpdObject(studyMilestone);
             StudyMilestone studyMilestonetss1 = StudyMilestoneTest.createTrialSummarySentStudyMilestoneObj(sp);
             addUpdObject(studyMilestonetss1);
-                        
+
             RegulatoryAuthority rega = new RegulatoryAuthority();
             rega.setCountry(country);
             rega.setAuthorityName("Authority");
             addUpdObject(rega);
             regAuthIds.add(rega.getId());
-            
+
             StudyCheckout scheckout = new StudyCheckout();
             scheckout.setStudyProtocol(sp);
             scheckout.setUserIdentifier("Abstractor");
@@ -618,8 +628,116 @@ public class TestSchema {
             psa.setRouteOfAdministrationCode("Oral");
             psa.setCategoryCode(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION);
             psa.setStudyProtocol(sp);
-            addUpdObject(psa);            
-            
+            addUpdObject(psa);
+
             HibernateUtil.getCurrentSession().clear();
         }
+        public static Ii nonPropTrialData() {
+            Organization o = OrganizationTest.createOrganizationObj();
+            TestSchema.addUpdObject(o);
+            Person p = PersonTest.createPersonObj();
+            p.setIdentifier("11");
+            TestSchema.addUpdObject(p);
+            HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(o);
+            TestSchema.addUpdObject(hcf);
+
+            HealthCareProvider hcp = HealthCareProviderTest.createHealthCareProviderObj(p, o);
+            TestSchema.addUpdObject(hcp);
+
+            Country c = CountryTest.createCountryObj();
+            TestSchema.addUpdObject(c);
+
+            ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o, p);
+            TestSchema.addUpdObject(crs);
+
+
+            ResearchOrganization ro = new ResearchOrganization();
+            ro.setOrganization(o);
+            ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+            ro.setIdentifier("abc");
+            TestSchema.addUpdObject(ro);
+
+            StudyProtocol nonpropTrial = new StudyProtocol();
+            StudyProtocolTest.createStudyProtocolObj(nonpropTrial);
+            nonpropTrial.setCtgovXmlRequiredIndicator(Boolean.FALSE);
+            TestSchema.addUpdObject(nonpropTrial);
+            IiConverter.convertToIi(nonpropTrial.getId());
+
+            StudyContact sc = StudyContactTest.createStudyContactObj(nonpropTrial, c, hcp, crs);
+            TestSchema.addUpdObject(sc);
+
+            StudySite spc = StudySiteTest.createStudySiteObj(nonpropTrial, hcf);
+            spc.setResearchOrganization(ro);
+            TestSchema.addUpdObject(spc);
+
+            StudyRecruitmentStatus studyRecStatus = StudyRecruitmentStatusTest.createStudyRecruitmentStatusobj(nonpropTrial);
+            TestSchema.addUpdObject(studyRecStatus);
+
+            DocumentWorkflowStatus docWrk = DocumentWorkFlowStatusTest.createDocumentWorkflowStatus(nonpropTrial);
+            TestSchema.addUpdObject(docWrk);
+            // properties
+            PAProperties prop = new PAProperties();
+            prop.setName("smtp");
+            prop.setValue("mail.smtp.host");
+            TestSchema.addUpdObject(prop);
+
+            prop = new PAProperties();
+            prop.setName("fromaddress");
+            prop.setValue("fromAddress@example.com");
+            TestSchema.addUpdObject(prop);
+
+            prop = new PAProperties();
+            prop.setName("tsr.amend.body");
+            prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+            TestSchema.addUpdObject(prop);
+
+            prop = new PAProperties();
+            prop.setName("tsr.proprietary.body");
+            prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+            TestSchema.addUpdObject(prop);
+
+            prop = new PAProperties();
+            prop.setName("xml.subject");
+            prop.setValue("xml.subject, ${leadOrgTrialIdentifier}, ${nciTrialIdentifier}.");
+            TestSchema.addUpdObject(prop);
+
+            prop = new PAProperties();
+            prop.setName("xml.body");
+            prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${trialTitle}, (${leadOrgTrialIdentifier}), ${receiptDate} ${fileName}.");
+            TestSchema.addUpdObject(prop);
+
+            prop = new PAProperties();
+            prop.setName("noxml.tsr.amend.body");
+            prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+            TestSchema.addUpdObject(prop);
+
+            return IiConverter.convertToIi(nonpropTrial.getId());
+        }
+
+        /**
+         * @return
+         */
+        public static Ii createAmendStudyProtocol() {
+                StudyProtocol sp = new InterventionalStudyProtocol();
+                sp.setOfficialTitle("cancer for THOLA");
+                sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
+                sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+                sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
+                sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+                sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+                Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+                Ii spSecId = new Ii();
+                spSecId.setExtension("NCI-2009-00001");
+                studySecondaryIdentifiers.add(spSecId);
+                sp.setOtherIdentifiers(studySecondaryIdentifiers);
+                sp.setSubmissionNumber(Integer.valueOf(1));
+                sp.setProprietaryTrialIndicator(Boolean.FALSE);
+                sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+                sp.setSubmissionNumber(2);
+                sp.setAmendmentDate(new Timestamp((new Date()).getTime()));
+                TestSchema.addUpdObject(sp);
+                sp.setId(sp.getId());
+                return IiConverter.convertToStudyProtocolIi(sp.getId());
+            }
+
 }
