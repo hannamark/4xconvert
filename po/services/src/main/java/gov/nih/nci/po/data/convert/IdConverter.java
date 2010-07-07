@@ -104,7 +104,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
      * The sfx of all COPPA-related structural role II roots.
      */
     public static final String STRUCTURAL_ROLE_SFX = ".4";
-    
+
     /**
      * The base of all COPPA-related structural roles.
      */

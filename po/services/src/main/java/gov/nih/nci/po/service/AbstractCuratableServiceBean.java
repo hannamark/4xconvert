@@ -116,7 +116,9 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
     }
 
     /**
-     * {@inheritDoc}
+     * Curates the object.
+     * @param curatable the object to curate.
+     * @throws JMSException any problems publishing announcements via JMS
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void curate(T curatable) throws JMSException {

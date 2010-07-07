@@ -102,13 +102,13 @@ import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.DateConverter;
 import gov.nih.nci.po.data.convert.EthnicGroupCodeConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.RaceCodeConverter;
 import gov.nih.nci.po.data.convert.RoleStatusConverter;
 import gov.nih.nci.po.data.convert.SexCodeConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.TsConverter;
-import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.PatientServiceLocal;
@@ -330,7 +330,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
                     cr.setId(null);
                     if (cr.getStatusCode() != target.getStatusCode()) {
                         throw new IllegalArgumentException(
-                                "use updateOrganizationStatus() to update the statusCode property");
+                                "use updatePersonStatus() to update the statusCode property");
                     }
                     perCRService.create(cr);
                 } else {

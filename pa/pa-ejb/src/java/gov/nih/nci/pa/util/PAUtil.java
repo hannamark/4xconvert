@@ -99,9 +99,9 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.service.PAException;
 
 import java.io.BufferedInputStream;
@@ -158,10 +158,9 @@ public class PAUtil {
         boolean isNull = false;
         if (ii == null || ii.getExtension() == null) {
             return true;
-        } else {
-            if (ii.getExtension().trim().length() == 0) {
-                isNull = true;
-            }
+        }
+        if (ii.getExtension().trim().length() == 0) {
+            isNull = true;
         }
         return isNull;
     }
@@ -209,10 +208,9 @@ public class PAUtil {
         boolean isNull = false;
         if (cd == null || cd.getCode() == null) {
             return true;
-        } else {
-            if (cd.getCode().trim().length() == 0) {
-                isNull = true;
-            }
+        }
+        if (cd.getCode().trim().length() == 0) {
+            isNull = true;
         }
         return isNull;
     }
