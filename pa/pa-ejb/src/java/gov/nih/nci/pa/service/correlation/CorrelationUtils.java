@@ -161,7 +161,11 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         OrganizationalContact oc = ocs.get(0);
 
         if (oc.getStatusCode().getCode().equals(StructuralRoleStatusCode.NULLIFIED.getCode())) {
-            returnDto.setTitle(StructuralRoleStatusCode.NULLIFIED.getDisplayName());
+            if (oc.getPerson() != null) {
+                returnDto.setFullName(StructuralRoleStatusCode.NULLIFIED.getDisplayName());
+            } else {
+                returnDto.setTitle(StructuralRoleStatusCode.NULLIFIED.getDisplayName());
+            }
         } else {
             Person paPerson = oc.getPerson();
             if (paPerson != null) {
@@ -181,7 +185,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
 
 
     /**
-     * 
+     *
      * @param isoIi iso Identifier
      * @return Organization
      * @throws PAException on error
@@ -193,24 +197,24 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         StringBuffer hql = new StringBuffer();
         Organization org = null;
         hql.append(" select org from Organization org ");
-        if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            hql.append("join org.healthCareFacilities as role where role.identifier = '" + isoIi.getExtension() + "'"); 
+        if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("join org.healthCareFacilities as role where role.identifier = '" + isoIi.getExtension() + "'");
         } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("join org.researchOrganizations as role where role.identifier = '" 
-                    + isoIi.getExtension() + "'"); 
-        } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+            hql.append("join org.researchOrganizations as role where role.identifier = '"
+                    + isoIi.getExtension() + "'");
+        } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
             hql.append("join org.oversightCommittees as role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            hql.append(" where org.identifier = '" + isoIi.getExtension() + "'"); 
-        } else if (IiConverter.ORG_PA_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            hql.append(" where org.id = ").append(isoIi.getExtension());       
+        } else if (IiConverter.ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append(" where org.identifier = '" + isoIi.getExtension() + "'");
+        } else if (IiConverter.ORG_PA_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append(" where org.id = ").append(isoIi.getExtension());
         } else {
             throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
         }
 
         List<Organization> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
         if (queryList.size() > 1) {
-            throw new PAException("  Organization  should not be more than 1 record for a Po Identifier  " 
+            throw new PAException("  Organization  should not be more than 1 record for a Po Identifier  "
                     + isoIi.getExtension() + isoIi.getIdentifierName());
         }
         if (!queryList.isEmpty()) {
@@ -219,9 +223,9 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         return org;
 
     }
-    
+
     /**
-     * 
+     *
      * @param isoIi iso Identifier
      * @return Organization
      * @throws PAException on error
@@ -233,55 +237,55 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Person per = null;
         StringBuffer hql = new StringBuffer();
         hql.append(" select per from Person per ");
-        if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            hql.append("join per.clinicalResearchStaffs as role where role.identifier = '" 
+        if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("join per.clinicalResearchStaffs as role where role.identifier = '"
                     + isoIi.getExtension() + "'");
         } else if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
             hql.append("join per.healthCareProviders as role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.PERSON_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            hql.append(" where per.identifier = '" + isoIi.getExtension() + "'"); 
-        } else if (IiConverter.PERSON_PA_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            hql.append(" where per.id = ").append(isoIi.getExtension()); 
+        } else if (IiConverter.PERSON_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append(" where per.identifier = '" + isoIi.getExtension() + "'");
+        } else if (IiConverter.PERSON_PA_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append(" where per.id = ").append(isoIi.getExtension());
         } else {
             throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
         }
 
         List<Person> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
         if (queryList.size() > 1) {
-            throw new PAException(" Person  should not be more than 1 record for a Po Identifier = " 
+            throw new PAException(" Person  should not be more than 1 record for a Po Identifier = "
                     + isoIi.getExtension());
         }
         if (!queryList.isEmpty()) {
             per = queryList.get(0);
-        }        
+        }
         return per;
 
     }
     /**
-     * 
-     * @param <T> any class extends {@link StructuralRole} 
+     *
+     * @param <T> any class extends {@link StructuralRole}
      * @param isoIi iso identitifier
      * @return StucturalRole class for an correspondong iso ii
      * @throws PAException on error
      */
 
     public <T extends StructuralRole> T getStructuralRoleByIi(Ii isoIi) throws PAException {
-        
+
         StringBuffer hql = new StringBuffer("select role from ");
-        if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
-            hql.append("HealthCareFacility role where role.identifier = '" + isoIi.getExtension() + "'"); 
+        if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("HealthCareFacility role where role.identifier = '" + isoIi.getExtension() + "'");
         } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
             hql.append("ResearchOrganization role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+        } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
             hql.append("OversightCommittee role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+        } else if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
             hql.append("ClinicalResearchStaff role where role.identifier = '" + isoIi.getExtension() + "'");
         } else if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("HealthCareProvider role where role.identifier = '" + isoIi.getExtension() + "'");   
+            hql.append("HealthCareProvider role where role.identifier = '" + isoIi.getExtension() + "'");
         } else if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("OrganizationalContact role where role.identifier = '" + isoIi.getExtension() + "'");   
+            hql.append("OrganizationalContact role where role.identifier = '" + isoIi.getExtension() + "'");
         } else {
-            throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());            
+            throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
         }
         Session session = HibernateUtil.getCurrentSession();
         List<T> queryList = session.createQuery(hql.toString()).list();
@@ -291,13 +295,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
                         + isoIi.getIdentifierName() + " " + isoIi.getExtension());
         }
 
-        if (!queryList.isEmpty()) { 
+        if (!queryList.isEmpty()) {
             sr = queryList.get(0);
         }
         session.flush();
         return sr;
     }
-    
+
     /**
     *
     * @param poOrg po
@@ -308,16 +312,16 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
        return createPAOrganization(convertPOToPAOrganization(poOrg));
    }
 
-   
+
     <T extends StructuralRole> T getStructuralRole(T sr) throws PAException {
-        
+
         Session s = HibernateUtil.getCurrentSession();
 
         T sr1 = (T) s.get(sr.getClass(), sr.getId());
         s.flush();
         return sr1;
     }
-    
+
 
     Organization convertPOToPAOrganization(OrganizationDTO poOrg) throws PAException {
         if (poOrg == null) {
@@ -390,7 +394,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
 
 
     /**
-     * 
+     *
      * @param ae ae
      * @return entity
      * @throws PAException e
@@ -476,8 +480,8 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Query query = session.createQuery("select org from Organization org  where org.identifier = :poOrg");
         query.setParameter("poOrg", organization.getIdentifier());
         if (query.uniqueResult() == null) {
-            session.saveOrUpdate(organization);    
-        } 
+            session.saveOrUpdate(organization);
+        }
         session.flush();
         LOG.debug("Leaving createStudyResourcing ");
         return organization;
@@ -508,5 +512,5 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         return person;
     }
 
-    
+
 }
