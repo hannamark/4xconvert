@@ -667,6 +667,7 @@ public class TrialUtil extends TrialConvertUtils {
         if (errMsg.length() > 1) {
             throw new PAException(errMsg.toString());
         }
+
         Ii tempStudyProtocolIi = null;
         List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
             .getSession().getAttribute(Constants.GRANT_LIST);
@@ -685,13 +686,15 @@ public class TrialUtil extends TrialConvertUtils {
                 indDTOS.add(convertToStudyIndIdeStage(indDto));
             }
         }
+
+        StudyProtocolStageDTO spStageDto = convertToStudyProtocolStageDTO(trialDTO);
         if (StringUtils.isNotEmpty(trialDTO.getStudyProtocolId())) {
             StudyProtocolStageDTO dto = PaRegistry.getStudyProtocolStageService().update(
-                    convertToStudyProtocolStageDTO(trialDTO), fundingDTOS, indDTOS);
+                    spStageDto, fundingDTOS, indDTOS);
             tempStudyProtocolIi =  dto.getIdentifier();
         } else {
             tempStudyProtocolIi = PaRegistry.getStudyProtocolStageService().create(
-                    convertToStudyProtocolStageDTO(trialDTO), fundingDTOS, indDTOS);
+                    spStageDto, fundingDTOS, indDTOS);
         }
        ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");
        ServletActionContext.getRequest().getSession().removeAttribute("grantList");

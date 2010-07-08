@@ -460,10 +460,16 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      */
     public String partialSave() {
         try {
+            List<Ii> otherIdsList = (List<Ii>) ServletActionContext.getRequest()
+            .getSession().getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
+            if (otherIdsList != null) {
+                trialDTO.setSecondaryIdentifierList(otherIdsList);
+            }
             trialDTO = (TrialDTO) trialUtil.saveDraft(trialDTO);
             ServletActionContext.getRequest().setAttribute("protocolId", trialDTO.getStudyProtocolId());
             ServletActionContext.getRequest().setAttribute("partialSubmission", "submit");
             ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
+            ServletActionContext.getRequest().getSession().removeAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
         } catch (PAException e) {
             LOG.error(e.getLocalizedMessage());
             addActionError(e.getMessage());
@@ -489,6 +495,8 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
                     trialDTO.getIndIdeDtos());
             ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,
                     trialDTO.getFundingDtos());
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST,
+                    trialDTO.getSecondaryIdentifierList());
             setPageFrom("submitTrial");
         } catch (PAException e) {
             addActionError(e.getMessage());

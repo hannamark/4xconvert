@@ -498,4 +498,8 @@
         <comment>PO-2262: Add FK between csm_user and registry_user tables</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2262.sql"/>
     </changeSet>
+    <changeSet id="PO-2334" author="kkanchinadam">
+        <comment>PO-2334: Other ID's are not saved in draft mode.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2334.sql"/>
+    </changeSet>
 </databaseChangeLog>

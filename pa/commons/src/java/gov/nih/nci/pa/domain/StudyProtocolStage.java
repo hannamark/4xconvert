@@ -1,24 +1,40 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.util.NotEmptyIiExtension;
+import gov.nih.nci.pa.util.NotEmptyIiRoot;
+import gov.nih.nci.pa.util.ValidIi;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Type;
 
 /**
  * @author Vrushali
@@ -28,10 +44,10 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @SuppressWarnings({ "PMD.TooManyFields", "PMD.AvoidDuplicateLiterals",
         "PMD.ExcessiveClassLength" })
-@Table(name = "STUDY_PROTOCOL_STAGE")        
+@Table(name = "STUDY_PROTOCOL_STAGE")
 public class StudyProtocolStage extends AbstractEntity {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private String localProtocolIdentifier;
@@ -53,7 +69,7 @@ public class StudyProtocolStage extends AbstractEntity {
     private String summaryFourOrgIdentifier;
     private SummaryFourFundingCategoryCode summaryFourFundingCategoryCode;
     private String programCodeText;
-    
+
     private StudyStatusCode  trialStatusCode;
     private Timestamp trialStatusDate;
     private String reason;
@@ -84,6 +100,8 @@ public class StudyProtocolStage extends AbstractEntity {
     private Timestamp closedForAccrualDate;
     private Boolean piInitiatedIndicator;
     private Boolean siteNciDesignatedCancerCenterIndicator;
+    private Set<Ii> otherIdentifiers = new HashSet<Ii>();
+
     /**
      * @return the localProtocolIdentifier
      */
@@ -712,4 +730,39 @@ public class StudyProtocolStage extends AbstractEntity {
         this.siteNciDesignatedCancerCenterIndicator = siteNciDesignatedCancerCenterIndicator;
     }
 
+    /**
+     * Gets the other identifiers.
+     *
+     * @return the other identifiers
+     */
+    @CollectionOfElements(fetch = FetchType.EAGER)
+    @Fetch (FetchMode.SELECT)
+    @JoinTable(
+            name = "STUDY_OTHERIDENTIFIERS_STAGE",
+            joinColumns = @JoinColumn(name = "STUDY_PROTOCOL_ID")
+    )
+    @ForeignKey(name = "STUDY_OI_STAGE_FK")
+    @Type(type = "gov.nih.nci.pa.iso.util.IiCompositeUserType")
+    @Columns(columns = {
+            @Column(name = "null_flavor"),
+            @Column(name = "displayable"),
+            @Column(name = "extension"),
+            @Column(name = "identifier_name"),
+            @Column(name = "reliability"),
+            @Column(name = "root"),
+            @Column(name = "scope")
+    })
+    @ValidIi
+    @NotEmptyIiExtension
+    @NotEmptyIiRoot
+    public Set<Ii> getOtherIdentifiers() {
+        return otherIdentifiers;
+    }
+
+    /**
+     * @param otherIdentifiers the otherIdentifiers to set
+     */
+     public void setOtherIdentifiers(Set<Ii> otherIdentifiers) {
+        this.otherIdentifiers = otherIdentifiers;
+     }
 }

@@ -14,15 +14,17 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+
+import org.apache.commons.collections.CollectionUtils;
 /**
- * 
+ *
  * @author Vrushali
  *
  */
 @SuppressWarnings ({"PMD.ExcessiveMethodLength" })
 public class StudyProtocolStageConverter {
     /**
-     * 
+     *
      * @param studyProtocolStage sp
      * @return dto
      */
@@ -30,7 +32,7 @@ public class StudyProtocolStageConverter {
         return convertFromDomainToDTO(studyProtocolStage, new StudyProtocolStageDTO());
     }
     /**
-     * 
+     *
      * @param studyProtocolStage domain
      * @param studyProtocolStageDTO isoDTO
      * @return dto
@@ -122,10 +124,13 @@ public class StudyProtocolStageConverter {
                 studyProtocolStage.getPiInitiatedIndicator()));
         studyProtocolStageDTO.setSiteNciDesignatedCancerCenterIndicator(BlConverter.convertToBl(
                 studyProtocolStage.getSiteNciDesignatedCancerCenterIndicator()));
+        if (CollectionUtils.isNotEmpty(studyProtocolStage.getOtherIdentifiers())) {
+            studyProtocolStageDTO.getSecondaryIdentifierList().addAll(studyProtocolStage.getOtherIdentifiers());
+        }
         return studyProtocolStageDTO;
     }
     /**
-     * 
+     *
      * @param studyProtocolStageDTO isoDTO
      * @return domain
      */
@@ -133,7 +138,7 @@ public class StudyProtocolStageConverter {
         return convertFromDTOToDomain(studyProtocolStageDTO , new StudyProtocolStage());
     }
     /**
-     * 
+     *
      * @param studyProtocolStageDTO isoDTO
      * @param studyProtocolStage domain
      * @return domain
@@ -227,6 +232,9 @@ public class StudyProtocolStageConverter {
                 studyProtocolStageDTO.getPiInitiatedIndicator()));
         studyProtocolStage.setSiteNciDesignatedCancerCenterIndicator(BlConverter.covertToBoolean(
                 studyProtocolStageDTO.getSiteNciDesignatedCancerCenterIndicator()));
+        if (CollectionUtils.isNotEmpty(studyProtocolStageDTO.getSecondaryIdentifierList())) {
+            studyProtocolStage.getOtherIdentifiers().addAll(studyProtocolStageDTO.getSecondaryIdentifierList());
+        }
         return studyProtocolStage;
     }
 }

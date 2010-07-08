@@ -1404,7 +1404,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         }
     } else {
             String poValidErr = paServiceUtils.isDTOValidInPO(poDTO);
-            if (StringUtils.isEmpty(poValidErr)) {
+            if (StringUtils.isNotEmpty(poValidErr)) {
                 errorMsg.append("Error validating ")
                     .append(fieldName)
                     .append(strNewLine)

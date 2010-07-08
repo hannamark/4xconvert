@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.iso.dto;
 
@@ -9,6 +9,9 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vrushali
@@ -25,7 +28,7 @@ public class StudyProtocolStageDTO extends BaseDTO {
     private St trialType;
     private Cd primaryPurposeCode;
     private St primaryPurposeOtherText;
-    
+
     private Ii leadOrganizationIdentifier;
     private Ii piIdentifier;
     private Ii sponsorIdentifier;
@@ -41,14 +44,14 @@ public class StudyProtocolStageDTO extends BaseDTO {
     private Cd trialStatusCode;
     private Ts trialStatusDate;
     private St statusReason;
-    
+
     private Ts startDate;
     private Cd startDateTypeCode;
     private Ts primaryCompletionDate;
     private Cd primaryCompletionDateTypeCode;
-    
+
     private St studyProtocolType;
-    
+
     private Bl dataMonitoringCommitteeAppointedIndicator;
     private Bl fdaRegulatedIndicator;
     private Bl section801Indicator;
@@ -73,6 +76,8 @@ public class StudyProtocolStageDTO extends BaseDTO {
     private Ts closedForAccrualDate;
     private Bl piInitiatedIndicator;
     private Bl siteNciDesignatedCancerCenterIndicator;
+    private List<Ii> secondaryIdentifierList = new ArrayList<Ii>();
+
     /**
      * @return the localProtocolIdentifier
      */
@@ -665,4 +670,19 @@ public class StudyProtocolStageDTO extends BaseDTO {
             Bl siteNciDesignatedCancerCenterIndicator) {
         this.siteNciDesignatedCancerCenterIndicator = siteNciDesignatedCancerCenterIndicator;
     }
+
+    /**
+     * @return the secondaryIdentifierList
+     */
+    public List<Ii> getSecondaryIdentifierList() {
+        return secondaryIdentifierList;
+    }
+
+    /**
+     * @param secondaryIdentifierList the secondaryIdentifierList to set
+     */
+    public void setSecondaryIdentifierList(List<Ii> secondaryIdentifierList) {
+        this.secondaryIdentifierList = secondaryIdentifierList;
+    }
+
 }

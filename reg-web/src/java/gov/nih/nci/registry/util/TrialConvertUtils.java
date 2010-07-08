@@ -1014,7 +1014,7 @@ public class TrialConvertUtils {
        trialDto.setPropritaryTrialIndicator(CommonsConstant.NO);
        spStageDTO.setCtgovXmlRequiredIndicator(trialDto.getXmlRequired()
                ? BlConverter.convertToBl(Boolean.TRUE) : BlConverter.convertToBl(Boolean.FALSE));
-
+       spStageDTO.getSecondaryIdentifierList().addAll(trialDto.getSecondaryIdentifierList());
    }
    /**
     * @param spStageDTO isoDto
@@ -1204,6 +1204,7 @@ public class TrialConvertUtils {
        } else {
               trialDto.setXmlRequired(false);
        }
+       trialDto.setSecondaryIdentifierList(spStageDTO.getSecondaryIdentifierList());
        return trialDto;
    }
    /**
