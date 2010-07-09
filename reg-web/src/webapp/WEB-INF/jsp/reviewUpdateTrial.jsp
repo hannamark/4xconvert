@@ -86,6 +86,25 @@ var winprint=window.open("","",sOption);
                     </td>
               </tr>
           </c:if>
+          <tr> <td class="value" colspan="2">
+            <c:choose>
+                <c:when test="${not empty trialDTO.assignedIdentifier}">
+                  <c:if test="${fn:length(trialDTO.secondaryIdentifierAddList) > 0}">
+                    <div class="box"><h3>Secondary Identifiers </h3>   
+                      <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiersForUpdate.jsp" %>
+                    </div>
+               </c:if>
+             </c:when>
+             <c:otherwise>  
+               <c:if test="${fn:length(trialDTO.secondaryIdentifierList) > 0}">
+                <div class="box"><h3>Secondary Identifiers </h3>   
+                  <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp" %>
+                </div>
+               </c:if>
+             </c:otherwise>
+             </c:choose>
+          </td>
+          </tr>
           <tr>
             <th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>
           </tr>
@@ -399,22 +418,6 @@ var winprint=window.open("","",sOption);
          </display:table>
        </div>  
     </c:if>
-    <c:choose>
-    <c:when test="${trialDTO.assignedIdentifier != null && trialDTO.assignedIdentifier != ''}">
-      <c:if test="${fn:length(trialDTO.secondaryIdentifierAddList) > 0}">
-        <div class="box"><h3>Secondary Identifiers </h3>   
-          <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiersForUpdate.jsp" %>
-        </div>
-       </c:if>
-     </c:when>
-     <c:otherwise>  
-       <c:if test="${fn:length(trialDTO.secondaryIdentifierList) > 0}">
-        <div class="box"><h3>Secondary Identifiers </h3>   
-          <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp" %>
-        </div>
-       </c:if>
-     </c:otherwise>
-     </c:choose>
     <c:if test="${fn:length(trialDTO.docDtos) >0}">          
             <div class="box">
                <display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
