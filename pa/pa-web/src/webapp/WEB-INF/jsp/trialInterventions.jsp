@@ -65,9 +65,6 @@ function handleCreate(){
                 <display:column property="type" sortable="true"
                     titleKey="interventions.type"
                     headerClass="sortable"  />
-                <display:column property="leadIndicator" sortable="true"
-                    titleKey="interventions.leadIndicator"
-                    headerClass="sortable"  />
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                 					|| (sessionScope.role == 'SuAbstractor')}">
                 <display:column titleKey="interventions.edit" headerClass="centered" class="action">

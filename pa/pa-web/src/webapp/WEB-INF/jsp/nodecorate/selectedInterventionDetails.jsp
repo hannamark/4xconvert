@@ -38,17 +38,6 @@ function generate(){
             <s:textfield  name="interventionType" readonly="true" cssClass="readonly" cssStyle="width:280px;float:left" />
        </s:else>
     </tr>
-    <tr><td/>
-        <td class="value">
-        <s:if test="%{interventionType == 'Drug'}">
-            <s:checkbox name="interventionLeadIndicator"/>
-            <s:label name="leadIndicatorLabel" id="leadIndicatorLabel" for="interventionLeadIndicator">Lead Product (Drug interventions only)</s:label>
-        </s:if><s:else>
-            <s:checkbox disabled="true" name="interventionLeadIndicator"/>
-            <s:label disabled="true" name="leadIndicatorLabel" id="leadIndicatorLabel" for="interventionLeadIndicator">Lead Product (Drug interventions only)</s:label>
-        </s:else>
-    </td>
-    </tr>
     <tr>
         <td scope="row" class="label"><s:label>Intervention Name:</s:label><span
             class="required">*</span></td>

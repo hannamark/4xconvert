@@ -96,7 +96,6 @@ import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedProcedureDTO;
 import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
@@ -123,7 +122,6 @@ import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
   "PMD.ExcessiveMethodLength" })
 public final class TrialInterventionsAction extends AbstractListEditAction {
     private static final long serialVersionUID = 1876567890L;
-    static final String LEAD_TEXT = "Yes";
     static final String SPACE = " ";
     static final String COMMA_SPACE = ", ";
     static final String DASH = "-";
@@ -138,7 +136,6 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     private String interventionName;
     private String interventionDescription;
     private String interventionOtherNames;
-    private Boolean interventionLeadIndicator;
     private String selectedType;
 
 
@@ -320,7 +317,6 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
                setInterventionType(paDto.getSubcategoryCode().getCode());
             }
             setInterventionIdentifier(i.getIdentifier());
-            setInterventionLeadIndicator(LEAD_TEXT.equals(i.getLeadIndicator()));
             setInterventionName(i.getName());
             setInterventionDescription(i.getDescription());
             setInterventionOtherNames(i.getOtherNames());
@@ -412,21 +408,6 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     public void setInterventionOtherNames(String interventionOtherNames) {
         this.interventionOtherNames = interventionOtherNames;
     }
-
-    /**
-     * @return the interventionLeadIndicator
-     */
-    public Boolean getInterventionLeadIndicator() {
-        return interventionLeadIndicator;
-    }
-
-    /**
-     * @param interventionLeadIndicator the interventionLeadIndicator to set
-     */
-    public void setInterventionLeadIndicator(Boolean interventionLeadIndicator) {
-        this.interventionLeadIndicator = interventionLeadIndicator;
-    }
-
 
     /**
      * @return result
@@ -808,10 +789,10 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          }
          if (getInterventionType() != null && isSubstance()) {
 
-          if (!NumberUtils.isNumber(getMinDoseValue())) {
+          if (getMinDoseValue() != null && !NumberUtils.isNumber(getMinDoseValue())) {
             sbuf.append("Please enter Numeric Min Dose Value.\n");
           }
-          if (!NumberUtils.isNumber(getMaxDoseValue())) {
+          if (getMaxDoseValue() != null && !NumberUtils.isNumber(getMaxDoseValue())) {
               sbuf.append("Please enter Numeric Max Dose Value.\n");
            }
           if (getMaxDoseValue() != null && getMinDoseValue() == null) {
@@ -820,10 +801,10 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
           if (getMaxDoseTotalValue() != null && getMinDoseTotalValue() == null) {
              sbuf.append("Please enter Min and Max Dose Total Value.\n");
           }
-          if (!NumberUtils.isNumber(getMaxDoseTotalValue())) {
+          if (getMaxDoseTotalValue() != null && !NumberUtils.isNumber(getMaxDoseTotalValue())) {
               sbuf.append("Please enter Numeric Max Dose Total Value.\n");
           }
-          if (!NumberUtils.isNumber(getMinDoseTotalValue())) {
+          if (getMinDoseTotalValue() != null && !NumberUtils.isNumber(getMinDoseTotalValue())) {
               sbuf.append("Please enter Numeric Min Dose Total Value.\n");
             }
           if (getDoseUOM() != null) {
@@ -865,7 +846,6 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          paDto.setInterventionIdentifier(IiConverter.convertToIi(getInterventionIdentifier()));
          paDto.setTextDescription(StConverter.convertToSt(getInterventionDescription()));
          paDto.setSubcategoryCode(CdConverter.convertStringToCd(getInterventionType()));
-         paDto.setLeadProductIndicator(BlConverter.convertToBl(getInterventionLeadIndicator()));
          return paDto;
      }
 
@@ -877,7 +857,6 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          paDto.setInterventionIdentifier(IiConverter.convertToIi(getInterventionIdentifier()));
          paDto.setTextDescription(StConverter.convertToSt(getInterventionDescription()));
          paDto.setSubcategoryCode(CdConverter.convertStringToCd(getInterventionType()));
-         paDto.setLeadProductIndicator(BlConverter.convertToBl(getInterventionLeadIndicator()));
          paDto.setDose(convertToIvlPq(getDoseUOM(), getMinDoseValue(), getMaxDoseValue()));
          paDto.setDoseDescription(StConverter.convertToSt(getInterventionDescription()));
          paDto.setDoseDuration(convertToPq(getDoseDurationUOM(), getDoseDurationValue()));
@@ -926,7 +905,6 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          paDto.setInterventionIdentifier(IiConverter.convertToIi(getInterventionIdentifier()));
          paDto.setTextDescription(StConverter.convertToSt(getInterventionDescription()));
          paDto.setSubcategoryCode(CdConverter.convertStringToCd(getInterventionType()));
-         paDto.setLeadProductIndicator(BlConverter.convertToBl(getInterventionLeadIndicator()));
          paDto.setMethodCode(CdConverter.convertStringToCd(getProcedureName()));
          paDto.setTargetSiteCode(CdConverter.convertStringToCd(getTargetSite()));
          return paDto;
@@ -939,7 +917,6 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          webDto.setPlannedActivityIdentifier(IiConverter.convertToString(pa.getIdentifier()));
          webDto.setOtherNames(otherNamesCSV(i.getIdentifier()));
          webDto.setDescription(StConverter.convertToString(pa.getTextDescription()));
-         webDto.setLeadIndicator(BlConverter.covertToBool(pa.getLeadProductIndicator()) ? LEAD_TEXT : null);
          webDto.setName(StConverter.convertToString(i.getName()));
          webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
          webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
@@ -953,7 +930,6 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          webDto.setPlannedActivityIdentifier(IiConverter.convertToString(pa.getIdentifier()));
          webDto.setOtherNames(otherNamesCSV(i.getIdentifier()));
          webDto.setDescription(StConverter.convertToString(pa.getTextDescription()));
-         webDto.setLeadIndicator(BlConverter.covertToBool(pa.getLeadProductIndicator()) ? LEAD_TEXT : null);
          webDto.setName(StConverter.convertToString(i.getName()));
          webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
          webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
@@ -970,7 +946,6 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
           webDto.setPlannedActivityIdentifier(IiConverter.convertToString(pa.getIdentifier()));
           webDto.setOtherNames(otherNamesCSV(i.getIdentifier()));
           webDto.setDescription(StConverter.convertToString(pa.getTextDescription()));
-          webDto.setLeadIndicator(BlConverter.covertToBool(pa.getLeadProductIndicator()) ? LEAD_TEXT : null);
           webDto.setName(StConverter.convertToString(i.getName()));
           webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
           webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));

@@ -52,27 +52,19 @@
         }
     }
      function statusChange() {
-            newType=document.interventionForm.interventionType.value;
-            if(newType=="Drug"){
-              document.interventionForm.interventionLeadIndicator.disabled=false;
-              document.getElementById("leadIndicatorLabel").disabled=false;         
-            } else {
-              document.interventionForm.interventionLeadIndicator.disabled=true;
-              document.getElementById("leadIndicatorLabel").disabled=true;          
-            }
-            
+          newType=document.interventionForm.interventionType.value;
           var interventionName = document.interventionForm.interventionName.value;
           var interventionOtherNames =  document.interventionForm.interventionOtherNames.value;
           var interventionId =  document.interventionForm.interventionIdentifier.value;
-            var url = '/pa/protected/ajaxptpInterventiondisplaySubPage.action?interventionType='+newType+'&interventionName='+interventionName+'&interventionOtherNames='+interventionOtherNames+'&interventionId='+interventionId;
-                var div = document.getElementById('loadDetails');   
+          var url = '/pa/protected/ajaxptpInterventiondisplaySubPage.action?interventionType='+newType+'&interventionName='+interventionName+'&interventionOtherNames='+interventionOtherNames+'&interventionId='+interventionId;
+          var div = document.getElementById('loadDetails');   
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
-                var aj = new Ajax.Updater(div, url, {
+          var aj = new Ajax.Updater(div, url, {
                    asynchronous: true,
                    method: 'get',
                    evalScripts: false
                 });
-         return false;
+          return false;
          
          
     }
