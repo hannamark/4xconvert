@@ -5,6 +5,7 @@
 <s:set name="persons" value="persons" scope="request"/>
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" uid="row"  
 	name="persons" export="false" requestURI="/pa/protected/popupdisplayPersonsListDisplayTag.action">
+	<display:setProperty name="basic.msg.empty_list" value="No Persons found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
 	<display:column title="PO-ID" property="id"  headerClass="sortable"/>
 	<display:column title="First Name" property="firstName"  headerClass="sortable"/> 
 	<display:column title="Middle Name" property="middleName"  headerClass="sortable"/>
