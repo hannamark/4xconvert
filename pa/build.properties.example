@@ -1,17 +1,32 @@
+########################### APPLICATION SETTINGS #########################
+application.base.path=${user.home}/apps/pa
+doc.upload.filepath.relative.dir=doc
+batch.upload.filepath.relative.dir=batch_docs
+pa.server.name=localhost
+
+########################### INCLUDE/EXCLUDE VIEWER #########################
 #exclude.viewer=true
-jboss.deploy.directory=D:/jboss-4.0.5.GAJEMS/server/default/deploy
-jboss.server.jndi.port=11299
-jboss.port=19280
-hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-db.username=ctods
-db.password=ctods
+
+########################### GENERAL SETTINGS #########################
+jboss.deploy.directory=${application.base.path}/paear/jboss-4.0.5.GA-jems-ejb3/server/paear/deploy
+jboss.server.jndi.port=31499
+jboss.port=39480
+
+db.type=postgresql
+db.server=localhost
+db.name=ctods_pa
+db.port=5432
 jdbc.driver=org.postgresql.Driver
-jdbc.url=jdbc:postgresql://localhost:5432/ctods
+hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+db.username=pauser
+db.password=pauser
+jdbc.url=jdbc:${db.type}://${db.server}:${db.port}/${db.name}
 test.schema.showsql=false
+
 test.java.naming.provider=localhost
-doc.upload.filepath.loc=D://doc
+doc.upload.filepath.loc=${application.base.path}/${doc.upload.filepath.relative.dir}
 po.server.name=localhost
-po.port.number=21499
+po.port.number=31099
 po.username=ejbclient
 po.pass=pass
 #Pre-shared JNDI principal & credential for pa-grid <-> pa.ear authentication
@@ -19,14 +34,14 @@ gridServicePrincipal=Gr1DU5er
 gridServiceCredential=ltHZmZ1rqYq8j2uyHEABIQ==
 
 # Registry batch upload docs location
-batch.upload.filepath.loc=D://batch_docs
+batch.upload.filepath.loc=${application.base.path}/${batch.upload.filepath.relative.dir}
 
 # Messaging properties
 
 # Po Server name to look up
 po.topic.serverName=localhost
 # Po Server port number for the look up
-po.topic.port=21499
+po.topic.port=31099
 # The user name for the secured topic 'topic/POTopic', this user name will be provisioned by PO team, they will creating the CSM user and providing the principla/credentials to log in.
 po.topic.userName=subscriber
 # The password for the secured user
@@ -44,7 +59,7 @@ csm.remote.group.sync.seconds = 240
 idps.allow.password.editing=Dorian
 
 # Use the tier-specific Registration application url
-register.mail.body.url=http://localhost:8080/registry
+register.mail.body.url=http://${pa.server.name}:${jboss.port}/registry
 
 gridgrouper.submitter.group=COPPA:PA:Submitter
 gridgrouper.admin.user=ctrpgrouper
