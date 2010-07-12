@@ -12,11 +12,11 @@
     <inceptionYear>2008</inceptionYear>
 
     <properties>
-        <jboss.home>/Applications/jboss-4.0.5.GA</jboss.home>
+        <jboss.home>${user.home}/apps/po/poear/jboss-4.0.5.GA-jems-ejb3</jboss.home>
         <jboss.hostname>localhost</jboss.hostname>
-        <jboss.port>8080</jboss.port>
-        <jboss.naming.port>1099</jboss.naming.port>
-        <jboss.configuration>default</jboss.configuration>
+        <jboss.port>39080</jboss.port>
+        <jboss.naming.port>31099</jboss.naming.port>
+        <jboss.configuration>poear</jboss.configuration>
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
         <nci-commons.version>1.2.9</nci-commons.version>
@@ -45,14 +45,14 @@
         <hibernate.annotations.version>3.2.0.ga</hibernate.annotations.version>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
         <csm.sync.frequency.seconds>240</csm.sync.frequency.seconds>
-        
+
         <database.hostname>localhost</database.hostname>
         <database.port>5432</database.port>
         <database.url.prefix>jdbc:postgresql://${database.hostname}:${database.port}/</database.url.prefix>
-        <database.name>po</database.name>
+        <database.name>podb</database.name>
         <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
-        <jdbc.username>po</jdbc.username>
-        <jdbc.password>po</jdbc.password>
+        <jdbc.username>pouser</jdbc.username>
+        <jdbc.password>pouser</jdbc.password>
         <jdbc.groupId>postgresql</jdbc.groupId>
         <jdbc.driverClassName>org.postgresql.Driver</jdbc.driverClassName>
         <jdbc.xa.driverClassName>org.postgresql.xa.PGXADataSource</jdbc.xa.driverClassName>
