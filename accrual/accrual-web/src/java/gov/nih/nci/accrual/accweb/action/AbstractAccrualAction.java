@@ -82,7 +82,6 @@ import gov.nih.nci.accrual.accweb.util.PaServiceLocator;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -136,9 +135,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected PlannedActivityServiceRemote plannedActivitySvc;
     /** DiseaseService. */
     protected DiseaseParentServiceRemote diseaseParentSvc;
-    /** PerformedObservationResultService. */
-    protected PerformedObservationResultService porServiceSvc;
-
+    
     /**
      * {@inheritDoc}
      */
@@ -153,7 +150,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         diseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
         diseaseParentSvc = PaServiceLocator.getInstance().getDiseaseParentService();
-        porServiceSvc = AccrualServiceLocator.getInstance().getPerformedObservationResultService();
     }
     /**
      * Default execute method for action classes.

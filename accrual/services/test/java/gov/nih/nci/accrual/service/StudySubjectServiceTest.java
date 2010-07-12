@@ -94,7 +94,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -230,38 +229,5 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         } catch (RemoteException ex) {
             // expected
         }
-    }
-    @Test
-    public void getOutcomes() throws Exception {
-        try {
-            bean.getOutcomes(null);
-            fail();
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        List<StudySubjectDto> rlist = bean.getOutcomes(StConverter.convertToSt("bar"));
-        assertEquals(0, rlist.size());
-    }
-    @Test
-    public void createOutcomes() throws Exception {
-        List<StudySubjectDto> rlist = bean.getOutcomes(StConverter.convertToSt("bar"));
-        int originalCount = rlist.size();
-        StudySubjectDto dto = bean.get(IiConverter.convertToIi(TestSchema.studySubjects.get(0).getId()));
-        dto.setIdentifier(null);
-        dto.setStudyProtocolIdentifier(null);
-        dto.setStudySiteIdentifier(IiConverter.convertToIi(TestSchema.studySites.get(TestSchema.outcomesSsId).getId()));
-        try {
-            bean.createOutcomes(dto);
-            fail();
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        dto.setOutcomesLoginName(StConverter.convertToSt("bar"));
-        StudySubjectDto rdto = bean.createOutcomes(dto);
-        assertEquals(Long.valueOf(TestSchema.studyProtocols.get(TestSchema.outcomesSpId).getId()),
-                IiConverter.convertToLong(rdto.getStudyProtocolIdentifier()));
-        assertFalse(PAUtil.isIiNull(rdto.getIdentifier()));
-        rlist = bean.getOutcomes(StConverter.convertToSt("bar"));
-        assertEquals(++originalCount, rlist.size());
     }
 }

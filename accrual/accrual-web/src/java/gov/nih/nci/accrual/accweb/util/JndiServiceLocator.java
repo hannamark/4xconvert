@@ -78,10 +78,8 @@
 */
 package gov.nih.nci.accrual.accweb.util;
 
-import gov.nih.nci.accrual.service.ActivityRelationshipService;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -150,21 +148,5 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
      */
     public CountryService getCountryService() {
         return (CountryService) JNDIUtil.lookup("accrual/CountryBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedObservationResultService getPerformedObservationResultService() {
-        return (PerformedObservationResultService) JNDIUtil.lookup(
-                "accrual/PerformedObservationResultBeanLocal/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ActivityRelationshipService getActivityRelationshipService() {
-        return (ActivityRelationshipService) JNDIUtil.lookup(
-                "accrual/ActivityRelationshipBeanLocal/remote");
     }
 }

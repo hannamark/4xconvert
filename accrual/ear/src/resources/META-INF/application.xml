@@ -9,12 +9,6 @@
     </module>
     <module>
         <web>
-            <web-uri>outcomes.war</web-uri>
-            <context-root>/outcomes</context-root>
-        </web>
-    </module>
-    <module>
-        <web>
             <web-uri>accrual.war</web-uri>
             <context-root>/accrual</context-root>
         </web>
@@ -23,7 +17,7 @@
         <java>jboss-service.xml</java>
     </module>
     <module>
-        <java>pa-ejb-client-3.2.0-rc2.jar</java>
+        <java>pa-ejb-client-3.3-m1.jar</java>
     </module>
     <module>
         <java>pa-commons-3.3m1-alpha1.jar</java>
@@ -40,12 +34,5 @@
     <module>
         <java>commons-lang-2.4.jar</java>
     </module>
-    <module>
-        <java>phr-connector-ws-client-2010-05-06.jar</java>
-    </module>
-    <module>
-       <java>phr-client-config.wsdd</java>
-   </module>
     <security-role><role-name>Submitter</role-name></security-role>
-    <security-role><role-name>Outcomes</role-name></security-role>
 </application>

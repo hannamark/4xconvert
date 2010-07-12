@@ -97,8 +97,7 @@ import gov.nih.nci.pa.util.PAUtil;
  * @since 11/09/2009
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public class PerformedActivityConverter extends AbstractConverter
-        <PerformedActivityDto, PerformedActivity> {
+public class PerformedActivityConverter extends AbstractConverter<PerformedActivityDto, PerformedActivity> {
 
     /**
      * {@inheritDoc}

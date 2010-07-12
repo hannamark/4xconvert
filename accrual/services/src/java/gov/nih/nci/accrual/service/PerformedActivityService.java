@@ -79,12 +79,7 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.dto.PerformedImagingDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.dto.PerformedProcedureDto;
-import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.iso21090.Ii;
 
 import java.rmi.RemoteException;
@@ -99,22 +94,7 @@ import javax.ejb.Remote;
  */
 @Remote
 @SuppressWarnings({"PMD.TooManyMethods" })
-public interface PerformedActivityService
-        extends BaseAccrualStudyService<PerformedActivityDto> {
-    /**
-     * @param ii studySubject index
-     * @return list of dto's
-     * @throws RemoteException exception
-     */
-    List<PerformedActivityDto> getByStudySubject(Ii ii) throws RemoteException;
-    
-    /**
-     * Gets the performed observation by study subject.
-     * @param ii the ii
-     * @return the performed observation by study subject
-     * @throws RemoteException the remote exception
-     */
-    List<PerformedObservationDto> getPerformedObservationByStudySubject(Ii ii) throws RemoteException;
+public interface PerformedActivityService extends BaseAccrualStudyService<PerformedActivityDto> {
     
     /**
      * Gets the performed subject milestone by study protocol.
@@ -122,16 +102,7 @@ public interface PerformedActivityService
      * @return the performed subject milestone by study protocol
      * @throws RemoteException the remote exception
      */
-    List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(Ii ii)
-    throws RemoteException;
-    
-    /**
-     * Gets the performed subject milestone.
-     * @param ii the ii
-     * @return the performed subject milestone
-     * @throws RemoteException the remote exception
-     */
-    PerformedSubjectMilestoneDto getPerformedSubjectMilestone(Ii ii) throws RemoteException;
+    List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(Ii ii) throws RemoteException;
     
     /**
      * Creates the performed subject milestone.
@@ -140,8 +111,8 @@ public interface PerformedActivityService
      * @throws RemoteException the remote exception
      * @throws DataFormatException the Data Format Exception 
      */
-    PerformedSubjectMilestoneDto createPerformedSubjectMilestone(
-            PerformedSubjectMilestoneDto dto) throws RemoteException, DataFormatException;
+    PerformedSubjectMilestoneDto createPerformedSubjectMilestone(PerformedSubjectMilestoneDto dto) 
+        throws RemoteException, DataFormatException;
     
     /**
      * Update performed subject milestone.
@@ -150,184 +121,6 @@ public interface PerformedActivityService
      * @throws RemoteException the remote exception
      * @throws DataFormatException the Data Format Exception  
      */
-    PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(
-            PerformedSubjectMilestoneDto dto) throws RemoteException, DataFormatException;   
-      
-    /**
-     * Gets the performed observation.
-     * @param ii the ii
-     * @return the performed observation
-     * @throws RemoteException the remote exception
-     */
-    PerformedObservationDto getPerformedObservation(Ii ii) throws RemoteException;
-    
-    /**
-     * Creates the performed observation.
-     * @param dto the dto
-     * @return the performed observation dto
-     * @throws RemoteException the remote exception
-     * @throws DataFormatException the data format exception
-     */
-    PerformedObservationDto createPerformedObservation(
-            PerformedObservationDto dto) throws RemoteException, DataFormatException;
-    
-    /**
-     * Update performed observation.
-     * @param dto the dto
-     * @return the performed observation dto
-     * @throws RemoteException the remote exception
-     * @throws DataFormatException the data format exception
-     */
-    PerformedObservationDto updatePerformedObservation(
-            PerformedObservationDto dto) throws RemoteException, DataFormatException;
-    
-    /**
-     * Gets the performed imaging by study protocol.
-     * @param ii the ii
-     * @return the performed imaging by study protocol
-     * @throws RemoteException the remote exception
-     */
-    List<PerformedImagingDto> getPerformedImagingByStudySubject(Ii ii)
-    throws RemoteException;
-    
-    /**
-     * Gets the performed imaging.
-     * @param ii the ii
-     * @return the performed imaging
-     * @throws RemoteException the remote exception
-     */
-    PerformedImagingDto getPerformedImaging(Ii ii) throws RemoteException;
-    
-    /**
-     * Creates the performed imaging.
-     * @param dto the dto
-     * @return the performed imaging dto
-     * @throws RemoteException the remote exception
-     * @throws DataFormatException the data format exception
-     */
-    PerformedImagingDto createPerformedImaging(
-            PerformedImagingDto dto) throws RemoteException, DataFormatException;
-    
-    /**
-     * Update performed imaging.
-     * @param dto the dto
-     * @return the performed imaging dto
-     * @throws RemoteException the remote exception
-     * @throws DataFormatException the data format exception
-     */
-    PerformedImagingDto updatePerformedImaging(
-            PerformedImagingDto dto) throws RemoteException, DataFormatException;
-    
-    
-    /**
-     * Gets the performed procedure by study protocol.
-     * @param ii the ii
-     * @return the performed procedure by study protocol
-     * @throws RemoteException the remote exception
-     */
-    List<PerformedProcedureDto> getPerformedProcedureByStudySubject(Ii ii)
-    throws RemoteException;
-    
-    /**
-     * Gets the performed procedure. 
-     * @param ii the ii
-     * @return the performed procedure
-     * @throws RemoteException the remote exception
-     */
-    PerformedProcedureDto getPerformedProcedure(Ii ii) throws RemoteException;
-    
-    /**
-     * Creates the performed procedure.
-     * @param dto the dto
-     * @return the performed procedure dto
-     * @throws RemoteException the remote exception
-     * @throws DataFormatException the data format exception
-     */
-    PerformedProcedureDto createPerformedProcedure(
-            PerformedProcedureDto dto) throws RemoteException, DataFormatException;
-    
-    /**
-     * Update performed procedure.
-     * @param dto the dto
-     * @return the performed procedure dto
-     * @throws RemoteException the remote exception
-     * @throws DataFormatException the data format exception
-     */
-    PerformedProcedureDto updatePerformedProcedure(
-            PerformedProcedureDto dto) throws RemoteException, DataFormatException;
-    
-    
-    /**
-     * Gets the performed substance administration by study protocol.
-     * @param ii the ii
-     * @return the performed substance administration by study protocol
-     * @throws RemoteException the remote exception
-     */
-    List<PerformedSubstanceAdministrationDto> getPerformedSubstanceAdministrationByStudySubject(Ii ii)
-    throws RemoteException;
-    
-    /**
-     * Gets the performed substance administration.
-     * @param ii the ii
-     * @return the performed substance administration
-     * @throws RemoteException the remote exception
-     */
-    PerformedSubstanceAdministrationDto getPerformedSubstanceAdministration(Ii ii) throws RemoteException;
-    
-    /**
-     * Creates the performed substance administration.
-     * @param dto the dto
-     * @return the performed substance administration dto
-     * @throws RemoteException the remote exception
-     * @throws DataFormatException the data format exception
-     */
-    PerformedSubstanceAdministrationDto createPerformedSubstanceAdministration(
-            PerformedSubstanceAdministrationDto dto) throws RemoteException, DataFormatException;
-    
-    /**
-     * Update performed substance administration.
-     * @param dto the dto
-     * @return the performed substance administration dto
-     * @throws RemoteException the remote exception
-     * @throws DataFormatException the data format exception
-     */
-    PerformedSubstanceAdministrationDto updatePerformedSubstanceAdministration(
-            PerformedSubstanceAdministrationDto dto) throws RemoteException, DataFormatException;
-    
-    /**
-     * Gets the performed radiation administration by study protocol.
-     * @param ii the ii
-     * @return the performed radiation administration by study protocol
-     * @throws RemoteException the remote exception
-     */
-    List<PerformedRadiationAdministrationDto> getPerformedRadiationAdministrationByStudySubject(Ii ii)
-    throws RemoteException;
-    
-    /**
-     * Gets the performed radiation administration.
-     * @param ii the ii
-     * @return the performed radiation administration
-     * @throws RemoteException the remote exception
-     */
-    PerformedRadiationAdministrationDto getPerformedRadiationAdministration(Ii ii) throws RemoteException;
-    
-    /**
-     * Creates the performed radiation administration.
-     * @param dto the dto
-     * @return the performed radiation administration dto
-     * @throws RemoteException the remote exception
-     * @throws DataFormatException the data format exception
-     */
-    PerformedRadiationAdministrationDto createPerformedRadiationAdministration(
-            PerformedRadiationAdministrationDto dto) throws RemoteException, DataFormatException;
-    
-    /**
-     * Update performed radiation administration.
-     * @param dto the dto
-     * @return the performed radiation administration dto
-     * @throws RemoteException the remote exception
-     * @throws DataFormatException the data format exception
-     */
-    PerformedRadiationAdministrationDto updatePerformedRadiationAdministration(
-            PerformedRadiationAdministrationDto dto) throws RemoteException, DataFormatException;
+    PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(PerformedSubjectMilestoneDto dto) 
+        throws RemoteException, DataFormatException;   
 }

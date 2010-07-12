@@ -81,36 +81,21 @@ package gov.nih.nci.accrual.service;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import gov.nih.nci.accrual.convert.PerformedSubjectMilestoneConverter;
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.dto.PerformedImagingDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.dto.PerformedProcedureDto;
-import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Pq;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivityNameCode;
 import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
-import gov.nih.nci.pa.enums.RadiationMachineTypeCode;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
-import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -120,8 +105,8 @@ import org.junit.Test;
  * @author Hugh Reinhart
  * @since Aug 29, 2009
  */
-public class PerformedActivityServiceTest
-        extends AbstractServiceTest<PerformedActivityService> {
+public class PerformedActivityServiceTest extends AbstractServiceTest<PerformedActivityService> {
+    private PerformedSubjectMilestoneConverter milestoneConverter = new PerformedSubjectMilestoneConverter();
 
     @Override
     @Before
@@ -131,18 +116,10 @@ public class PerformedActivityServiceTest
 
     @Test
     public void get() throws Exception {
-        PerformedSubjectMilestoneDto dto1 = bean.getPerformedSubjectMilestone(IiConverter.convertToIi(TestSchema.performedSubjectMilestones.get(0).getId()));
+        PerformedSubjectMilestoneDto dto1 = 
+            milestoneConverter.convertFromDomainToDto(TestSchema.performedSubjectMilestones.get(0));
         assertNotNull(dto1);
-        PerformedObservationDto dto2 = bean.getPerformedObservation(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
-        assertNotNull(dto2);
-        PerformedImagingDto dto3 = bean.getPerformedImaging(IiConverter.convertToIi(TestSchema.performedImagings.get(0).getId()));
-        assertNotNull(dto3);
-        PerformedSubstanceAdministrationDto dto4 = bean.getPerformedSubstanceAdministration(IiConverter.convertToIi(TestSchema.performedSubstanceAdministrations.get(0).getId()));
-        assertNotNull(dto4);
-        PerformedRadiationAdministrationDto dto5 = bean.getPerformedRadiationAdministration(IiConverter.convertToIi(TestSchema.performedRadiationAdministrations.get(0).getId()));
-        assertNotNull(dto5);
-        PerformedProcedureDto dto6 = bean.getPerformedProcedure(IiConverter.convertToIi(TestSchema.performedProcedures.get(0).getId()));
-        assertNotNull(dto6);
+        
         try{
             dto1.setIdentifier(null);
             dto1.setStudyProtocolIdentifier(null);
@@ -161,133 +138,8 @@ public class PerformedActivityServiceTest
         } catch (RemoteException e) {
             // expected behavior
         }
-        try{
-            dto2.setIdentifier(null);
-            dto2.setStudyProtocolIdentifier(null);
-            bean.createPerformedObservation(dto2);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try{
-            bean.createPerformedObservation(dto2);            
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try{
-            dto2.setIdentifier(null);
-            bean.updatePerformedObservation(dto2);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try{
-            dto3.setIdentifier(null);
-            dto3.setStudyProtocolIdentifier(null);
-            bean.createPerformedImaging(dto3);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try{
-            bean.createPerformedImaging(dto3);            
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try{
-            dto3.setIdentifier(null);
-            bean.updatePerformedImaging(dto3);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try{
-            dto4.setIdentifier(null);
-            dto4.setStudyProtocolIdentifier(null);
-            bean.createPerformedSubstanceAdministration(dto4);
-        } catch (RemoteException e) {
-            // expected behavior
-        }        
-        try{
-            bean.createPerformedSubstanceAdministration(dto4);            
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try{
-            dto4.setIdentifier(null);
-            bean.updatePerformedSubstanceAdministration(dto4);
-        } catch (RemoteException e) {
-            // expected behavior
-        } 
-        try{
-            dto5.setIdentifier(null);
-            dto5.setStudyProtocolIdentifier(null);
-            bean.createPerformedRadiationAdministration(dto5);
-        } catch (RemoteException e) {
-            // expected behavior
-        }       
-        try{
-            bean.createPerformedRadiationAdministration(dto5);            
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try{
-            dto5.setIdentifier(null);
-            bean.updatePerformedRadiationAdministration(dto5);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try{
-            dto6.setIdentifier(null);
-            dto6.setStudyProtocolIdentifier(null);
-            bean.createPerformedProcedure(dto6);
-        } catch (RemoteException e) {
-            // expected behavior
-        }        
-        try{
-            bean.createPerformedProcedure(dto6);            
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try{
-            dto6.setIdentifier(null);
-            bean.updatePerformedProcedure(dto6);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try {
-            assertNull(bean.getPerformedSubjectMilestone(null));
-            dto1 = bean.getPerformedSubjectMilestone(BII);            
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try {
-            assertNull(bean.getPerformedObservation(null));
-            dto2 = bean.getPerformedObservation(BII);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try {
-            assertNull(bean.getPerformedImaging(null));
-            dto3 = bean.getPerformedImaging(BII);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try {
-            assertNull(bean.getPerformedSubstanceAdministration(null));
-            dto4 = bean.getPerformedSubstanceAdministration(BII);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try {
-            assertNull(bean.getPerformedRadiationAdministration(null));
-            dto5 = bean.getPerformedRadiationAdministration(BII);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        try {
-            assertNull(bean.getPerformedProcedure(null));
-            dto6 = bean.getPerformedProcedure(BII);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
     }
+    
     @Test
     public void create() throws Exception {
         //PerformedActivity
@@ -326,192 +178,16 @@ public class PerformedActivityServiceTest
         
         Timestamp newValue = PAUtil.dateStringToTimestamp("2/3/2003");
         assertFalse(newValue.equals(TestSchema.performedSubjectMilestones.get(0).getInformedConsentDate()));
-        PerformedSubjectMilestoneDto psmdto2 = bean.getPerformedSubjectMilestone(IiConverter.convertToIi(TestSchema.performedSubjectMilestones.get(0).getId()));
+        PerformedSubjectMilestoneDto psmdto2 = 
+            milestoneConverter.convertFromDomainToDto(TestSchema.performedSubjectMilestones.get(0));
         psmdto2.setInformedConsentDate(TsConverter.convertToTs(newValue));
         PerformedSubjectMilestoneDto psmr2 = bean.updatePerformedSubjectMilestone(psmdto2);
         assertTrue(newValue.equals(TsConverter.convertToTimestamp(psmr2.getInformedConsentDate())));
-        
-        //PerformedObservation
-        PerformedObservationDto podto = new  PerformedObservationDto();
-        podto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
-        List<Cd> cds = new ArrayList<Cd>();
-        cds.add(CdConverter.convertStringToCd("methodCode"));
-        podto.setMethodCode(DSetConverter.convertCdListToDSet(cds));
-        podto.setTargetSiteCode(CdConverter.convertStringToCd("targetSiteCode"));
-        podto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.TUMOR_MARKER));
-        podto.setStudySubjectIdentifier(IiConverter.convertToIi(TestSchema.studySubjects.get(0).getId()));
-        podto.setNameCode(CdConverter.convertToCd(ActivityNameCode.PARTICIPANT_OUTCOMES));
-        podto.setInterventionIdentifier(IiConverter.convertToIi(TestSchema.interventionIds.get(0)));
-        PerformedObservationDto por = bean.createPerformedObservation(podto);
-        assertNotNull(por);
-        assertNotNull(por.getIdentifier().getExtension());
-        
-        try {
-            bean.createPerformedObservation(por);
-        } catch(RemoteException e){
-            //expected
-        }
-                
-        PerformedObservationDto podto2 = bean.getPerformedObservation(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
-        podto2.setTargetSiteCode(CdConverter.convertStringToCd("targetSiteCode2"));
-        PerformedObservationDto por2 = bean.updatePerformedObservation(podto2);
-        assertTrue(podto2.getTargetSiteCode().getCode().equals(por2.getTargetSiteCode().getCode()));
-        
-        //PerformedImaging
-        PerformedImagingDto pidto = new  PerformedImagingDto();
-        pidto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));        
-        pidto.setContrastAgentEnhancementIndicator(BlConverter.convertToBl(true));
-
-        PerformedImagingDto pir = bean.createPerformedImaging(pidto);
-        assertNotNull(pir);
-        assertNotNull(pir.getIdentifier().getExtension());
-        
-        try {
-            bean.createPerformedImaging(pir);
-        } catch(RemoteException e){
-            //expected
-        }
-                
-        PerformedImagingDto pidto2 = bean.getPerformedImaging(IiConverter.convertToIi(TestSchema.performedImagings.get(0).getId()));
-        pidto2.setContrastAgentEnhancementIndicator(BlConverter.convertToBl(false));
-        PerformedImagingDto pir2 = bean.updatePerformedImaging(pidto2);
-        assertTrue(pidto2.getContrastAgentEnhancementIndicator().getValue().equals(pir2.getContrastAgentEnhancementIndicator().getValue()));
-        
-        //PerformedSubstanceAdministration
-        PerformedSubstanceAdministrationDto psadto = new PerformedSubstanceAdministrationDto();
-        psadto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));        
-        psadto.setDoseDescription(StConverter.convertToSt("Dose"));
-        psadto.setDoseRegimen(StConverter.convertToSt(">"));
-        Pq dose = new Pq();
-        dose.setUnit("unit");
-        dose.setValue(new BigDecimal(1));
-        psadto.setDose(dose);
-        psadto.setDoseFormCode(CdConverter.convertStringToCd("TABLET"));
-        psadto.setDoseFrequencyCode(CdConverter.convertStringToCd("BID"));
-        psadto.setRouteOfAdministrationCode(CdConverter.convertStringToCd("ORAL"));
-        PerformedSubstanceAdministrationDto psar = bean.createPerformedSubstanceAdministration(psadto);
-        assertNotNull(psar);
-        assertNotNull(psar.getIdentifier().getExtension());
-        
-        try {
-            bean.createPerformedSubstanceAdministration(psar);
-        } catch(RemoteException e){
-            //expected
-        }        
-        
-        PerformedSubstanceAdministrationDto psadto2 = bean.getPerformedSubstanceAdministration(IiConverter.convertToIi(TestSchema.performedSubstanceAdministrations.get(0).getId()));
-        psadto2.setDoseDescription(StConverter.convertToSt("Dose Changed"));
-        PerformedSubstanceAdministrationDto psar2 = bean.updatePerformedSubstanceAdministration(psadto2);
-        assertTrue(psadto2.getDoseDescription().getValue().equals(psar2.getDoseDescription().getValue()));
-        
-        //PerformedRadiationAdministration
-        PerformedRadiationAdministrationDto pradto = new PerformedRadiationAdministrationDto();
-        pradto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId())); 
-        Pq doseTotal = new Pq();
-        doseTotal.setUnit("unit");
-        doseTotal.setValue(new BigDecimal(1));
-        pradto.setDoseTotal(doseTotal);
-        pradto.setMachineTypeCode(CdConverter.convertStringToCd("machineTypeCode"));
-        PerformedRadiationAdministrationDto prar = bean.createPerformedRadiationAdministration(pradto);
-        assertNotNull(prar);
-        assertNotNull(prar.getIdentifier().getExtension());
-        
-        try {
-            bean.createPerformedRadiationAdministration(prar);
-        } catch(RemoteException e){
-            //expected
-        }        
-        
-        PerformedRadiationAdministrationDto pradto2 = bean.getPerformedRadiationAdministration(IiConverter.convertToIi(TestSchema.performedRadiationAdministrations.get(0).getId()));
-        pradto2.setMachineTypeCode(CdConverter.convertToCd(RadiationMachineTypeCode.CONVENTIONAL));
-        PerformedRadiationAdministrationDto prar2 = bean.updatePerformedRadiationAdministration(pradto2);
-        assertTrue(pradto2.getMachineTypeCode().getCode().equals(prar2.getMachineTypeCode().getCode()));
-        
-        //PerformedProcedure
-        PerformedProcedureDto ppdto = new PerformedProcedureDto();
-        ppdto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));        
-        ppdto.setTextDescription(StConverter.convertToSt("PerformedProcedure"));
-        ppdto.setCategoryCode(CdConverter.convertStringToCd("PerformedProcedure"));
-        PerformedProcedureDto ppr = bean.createPerformedProcedure(ppdto);
-        assertNotNull(ppr);
-        assertNotNull(ppr.getIdentifier().getExtension());
-        
-        try {
-            bean.createPerformedProcedure(ppr);
-        } catch(RemoteException e){
-            //expected
-        }        
-        
-        PerformedProcedureDto ppdto2 = bean.getPerformedProcedure(IiConverter.convertToIi(TestSchema.performedProcedures.get(0).getId()));
-        ppdto2.setTextDescription(StConverter.convertToSt("Text Changed"));
-        PerformedProcedureDto ppr2 = bean.updatePerformedProcedure(ppdto2);
-        assertTrue(ppdto2.getTextDescription().getValue().equals(ppr2.getTextDescription().getValue()));
-    }
-    @Test
-    public void getByStudySubject() throws Exception {
-        List<PerformedSubjectMilestoneDto> rList1 = bean.getPerformedSubjectMilestoneByStudySubject(IiConverter.convertToIi(TestSchema.performedSubjectMilestones.get(0).getStudySubject().getId()));
-        assertTrue(0 < rList1.size());
-        try{
-            bean.getPerformedSubjectMilestoneByStudySubject(null);
-        } catch(RemoteException e) {
-            //expected
-        }
-        List<PerformedObservationDto> rList2 = bean.getPerformedObservationByStudySubject(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getStudySubject().getId()));
-        assertTrue(0 < rList2.size());
-        try {
-            bean.getPerformedObservationByStudySubject(null);
-        } catch(RemoteException e) {
-            //expected
-        }
-        List<PerformedImagingDto> rList3 = bean.getPerformedImagingByStudySubject(IiConverter.convertToIi(TestSchema.performedImagings.get(0).getStudySubject().getId()));
-        assertTrue(0 < rList3.size());
-        try{
-            bean.getPerformedImagingByStudySubject(null);
-        } catch(RemoteException e) {
-            //expected
-        }
-        List<PerformedSubstanceAdministrationDto> rList4 = bean.getPerformedSubstanceAdministrationByStudySubject(IiConverter.convertToIi(TestSchema.performedSubstanceAdministrations.get(0).getStudySubject().getId()));
-        assertTrue(0 < rList4.size());
-        try{
-            bean.getPerformedSubstanceAdministrationByStudySubject(null);
-        } catch(RemoteException e) {
-            //expected
-        }
-        List<PerformedRadiationAdministrationDto> rList5 = bean.getPerformedRadiationAdministrationByStudySubject(IiConverter.convertToIi(TestSchema.performedRadiationAdministrations.get(0).getStudySubject().getId()));
-        assertTrue(0 < rList5.size());
-        try{
-            bean.getPerformedRadiationAdministrationByStudySubject(null);
-        } catch(RemoteException e) {
-            //expected
-        }
-        List<PerformedProcedureDto> rList6 = bean.getPerformedProcedureByStudySubject(IiConverter.convertToIi(TestSchema.performedProcedures.get(0).getStudySubject().getId()));
-        assertTrue(0 < rList6.size());
-        try {
-            bean.getPerformedProcedureByStudySubject(null);
-        } catch(RemoteException e) {
-            //expected
-        }
     }
     
     @Test
     public void subjectMilestoneExceptions() throws Exception {
-        try {
-            bean.getByStudySubject(null);
-            fail();
-        } catch (RemoteException ex) {
-            // expected
-        }
-        
-        Ii ii = IiConverter.convertToIi("test ii");
-        
-        try {
-            bean.getByStudySubject(ii);
-            fail();
-        } catch (Exception ex) {
-            // expected
-        }
-        
-        ii = IiConverter.convertToIi(TestSchema.studySubjects.get(0).getId());
+        Ii ii = IiConverter.convertToIi(TestSchema.studySubjects.get(0).getId());
         
         List<PerformedSubjectMilestoneDto> dto = bean.getPerformedSubjectMilestoneByStudySubject(ii);
         assertNotNull(dto);

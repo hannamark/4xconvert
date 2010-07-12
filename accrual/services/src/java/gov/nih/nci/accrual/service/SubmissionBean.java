@@ -96,9 +96,8 @@ import org.jboss.annotation.security.SecurityDomain;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SecurityDomain("accrual-outcomes")
-@RolesAllowed({"client" , "Abstractor" , "Submitter" , "Outcomes" })
-public class SubmissionBean
-        extends SubmissionBeanLocal implements SubmissionService {
+@SecurityDomain("accrual")
+@RolesAllowed({"client" , "Abstractor" , "Submitter" })
+public class SubmissionBean extends SubmissionBeanLocal implements SubmissionService {
     
 }

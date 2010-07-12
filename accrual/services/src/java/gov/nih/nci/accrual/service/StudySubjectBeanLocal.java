@@ -83,10 +83,8 @@ import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -119,50 +117,6 @@ public class StudySubjectBeanLocal
 
     @EJB
     SearchTrialService searchTrialSvc;
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public List<StudySubjectDto> getOutcomes(St outcomesLoginName) throws RemoteException {
-        getLogger().info("Entering getOutcomesParticipants().");
-        validateLoginName(outcomesLoginName);
-        Session session = null;
-        List<StudySubject> queryList = new ArrayList<StudySubject>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = "select ssub "
-                       + "from StudySubject ssub "
-                       + "where ssub.outcomesLoginName = :oln "
-                       + "order by ssub.id ";
-            getLogger().info("query StudySubject = " + hql + ".");
-            query = session.createQuery(hql);
-            query.setParameter("oln", StConverter.convertToString(outcomesLoginName));
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in getByStudyProtocol().", hbe);
-        }
-        ArrayList<StudySubjectDto> resultList = new ArrayList<StudySubjectDto>();
-        for (StudySubject bo : queryList) {
-            try {
-                resultList.add(convertFromDomainToDto(bo));
-            } catch (DataFormatException e) {
-                throw new RemoteException("Iso conversion exception in getByStudyProtocol().", e);
-            }
-        }
-        getLogger().info("Leaving getByStudySite(), returning " + resultList.size() + " object(s).");
-        return resultList;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectDto createOutcomes(StudySubjectDto dto) throws RemoteException {
-        validateLoginName(dto.getOutcomesLoginName());
-        dto.setStudyProtocolIdentifier(searchTrialSvc.getOutcomesStudyProtocolIi());
-        return super.create(dto);
-    }
 
     /**
      * {@inheritDoc}

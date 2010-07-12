@@ -91,8 +91,8 @@ import java.util.zip.DataFormatException;
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
-public class PerformedSubjectMilestoneConverter extends AbstractConverter
- <PerformedSubjectMilestoneDto, PerformedSubjectMilestone> {
+public class PerformedSubjectMilestoneConverter 
+    extends AbstractConverter<PerformedSubjectMilestoneDto, PerformedSubjectMilestone> {
 
     /**
      * Convert from domain to dto.
@@ -100,8 +100,9 @@ public class PerformedSubjectMilestoneConverter extends AbstractConverter
      * @return the performed subject milestone dto
      * @throws DataFormatException the data format exception
      */
-    public PerformedSubjectMilestoneDto convertFromDomainToDto(PerformedSubjectMilestone bo)
-            throws DataFormatException {
+    @Override
+    public PerformedSubjectMilestoneDto convertFromDomainToDto(PerformedSubjectMilestone bo) 
+        throws DataFormatException {
         PerformedSubjectMilestoneDto dto = (PerformedSubjectMilestoneDto)
         PerformedActivityConverter.convertFromDomainToDTO(bo, new PerformedSubjectMilestoneDto());
         dto.setInformedConsentDate(TsConverter.convertToTs(bo.getInformedConsentDate()));
@@ -116,8 +117,9 @@ public class PerformedSubjectMilestoneConverter extends AbstractConverter
      * @return the performed subject milestone
      * @throws DataFormatException the data format exception
      */
-    public PerformedSubjectMilestone convertFromDtoToDomain(PerformedSubjectMilestoneDto dto)
-            throws DataFormatException {
+    @Override
+    public PerformedSubjectMilestone convertFromDtoToDomain(PerformedSubjectMilestoneDto dto) 
+        throws DataFormatException {
         PerformedSubjectMilestone bo = (PerformedSubjectMilestone)
         PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedSubjectMilestone());      
         bo.setInformedConsentDate(TsConverter.convertToTimestamp(dto.getInformedConsentDate()));

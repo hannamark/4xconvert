@@ -303,7 +303,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
       <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
       <var name="file.list"
-        value="accrual-services-jar/jndi.properties,accrual-services-jar/pa.jndi.properties,accrual-services-jar/po.jndi.properties,accrual-services-jar/outcomes.properties,accrual-ear/META-INF/security-config.xml"/>
+        value="accrual-services-jar/jndi.properties,accrual-services-jar/pa.jndi.properties,accrual-services-jar/po.jndi.properties,accrual-ear/META-INF/security-config.xml"/>
 
       <for list="${file.list}" param="file.relative.name">
         <sequential>
@@ -334,8 +334,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 <filter token="accrual.jnp.url" value="jnp://${jboss.server.hostname}:${jboss.server.jndi.port}" />
                 <filter token="po.port.number" value="${po.port.number}" />
                 <filter token="jboss.server.hostname" value="${jboss.server.hostname}" />
-                <filter token="gridServicePrincipal" value="${outcomes-grid.jndi.principal}"/>
-                <filter token="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrypted}"/>
+                <filter token="gridServicePrincipal" value="${grid.security.jndi.principal}"/>
+                <filter token="gridServiceCredential" value="${grid.security.jndi.credentials}"/>
                 <filter token="po.username" value="${po.username}"/>
                 <filter token="po.pass" value="${po.pass}"/>
                 <filter token="po.server.name" value="${po.server.name}"/>
@@ -345,12 +345,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 <filter token="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
                 <filter token="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
                 <filter token="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
-                <filter token="outcomes.url" value="${outcomes.url}"/>
-                <filter token="outcomes.cds.url" value="${outcomes.cds.url}"/>
-                <filter token="outcomes.phr.system.id" value="${outcomes.phr.system.id}"/>
-                <filter token="outcomes.auth.service.url" value="${outcomes.auth.service.url}"/>
-                <filter token="outcomes.issued.credential.lifetime" value="${outcomes.issued.credential.lifetime}"/>
-                <filter token="outcomes.delegation.lifetime" value="${outcomes.delegation.lifetime}"/>
             </filterset>
           </copy>
           <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
@@ -387,16 +381,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           <fileset dir="${pa-container-jar.dist.dir}">
               <exclude name="servlet-2.2.jar"/>
           </fileset>
-      </copy>
-      <!-- deploy jars to server lib but remove old ones first -->
-        <delete file="${jboss.home}/server/${jboss.server.name}/lib/commons-httpclient.jar"/>
-        <delete file="${jboss.home}/server/${jboss.server.name}/lib/commons-httpclient-3.0.jar"/>
-        <copy todir="${jboss.home}/server/${jboss.server.name}/lib/">
-            <fileset dir="${pa-ear.dir.dist}/runtime">
-                <include name="*.jar"/>
-                <exclude name="servlet-2.2.jar"/>
-            </fileset>
-        </copy>
+      </copy>   
   </target>
 
   <target name="install:pa-ear-jboss:configure" unless="exclude.pa-ear">

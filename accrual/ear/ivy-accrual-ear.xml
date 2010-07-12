@@ -8,69 +8,12 @@
 
   <dependencies>
     <!-- runtime -->
-    <dependency org="ncicb"                  name="pa-commons"              rev="3.3m1-alpha1"    force="true"   conf="runtime->master"/>
-    <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.2.0-rc2"    force="true"   conf="runtime->master"/>
+    <dependency org="ncicb"                  name="pa-commons"              rev="3.3m1-alpha1"      force="true"   conf="runtime->master"/>
+    <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.3-m1"            force="true"   conf="runtime->master"/>
     <dependency org="jakarta"                name="commons-collections"     rev="3.2.1"             force="true"   conf="runtime->master"/>
     <dependency org="jakarta"                name="commons-fileupload"      rev="1.2.1"             force="true"   conf="runtime->master"/>
     <dependency org="jakarta"                name="commons-io"              rev="1.4"               force="true"   conf="runtime->master"/>
     <dependency org="jakarta"                name="commons-lang"            rev="2.4"               force="true"   conf="runtime->master"/>
-
-    <!-- To integrate with PHR Connector and use Credential Delegation Client; ESD-219 -->
-        <dependency org="caGrid" name="cds" rev="1.3" force="true" conf="runtime->service">
-            <exclude module="core"/>
-            <exclude module="metadata"/>
-            <exclude module="service-security-provider"/>
-            <exclude module="advertisement"/>
-            <exclude module="introduce-servicetools"/>
-            <exclude module="metadata-validator"/>
-            <exclude module="introduce-buildtools"/>
-            <exclude module="service-tools"/>
-            <exclude module="gaards-core"/>
-            <exclude module="gridgrouper"/>
-            <exclude module="jdom"/>
-        </dependency>
-        <dependency org="caGrid" name="dorian" rev="1.3" force="true" conf="runtime->service">
-            <exclude module="core"/>
-            <exclude module="metadata"/>
-            <exclude module="service-security-provider"/>
-            <exclude module="advertisement"/>
-            <exclude module="introduce-servicetools"/>
-            <exclude module="metadata-validator"/>
-            <exclude module="introduce-buildtools"/>
-            <exclude module="service-tools"/>
-            <exclude module="gaards-core"/>
-            <exclude module="gridgrouper"/>
-            <exclude module="jdom"/>
-            <exclude module="dorian-deprecated"/>
-            <exclude module="commons-lang"/>
-            <exclude module="protecttoolkit-j"/>
-            <exclude module="opensaml"/>
-            <exclude module="gts"/>
-            <exclude module="authentication-service"/>
-            <exclude module="metadatautils"/>
-        </dependency>
-        <dependency org="globus" name="ws-core-client" rev="4.0.3" force="true" conf="runtime->runtime">
-            <exclude module="xerces"/>
-            <exclude module="commons-collection"/>
-            <exclude module="jcogfx"/>
-            <exclude module="jcog"/>
-            <exclude module="wss4j"/>
-            <exclude module="axis"/>
-            <exclude module="ws-addressing"/>
-            <exclude module="commons-beanutils"/>
-            <exclude module="commons-digester"/>
-        </dependency>
-        <dependency org="apache" name="commons-codec" rev="1.3" force="true" conf="runtime->default"/>
-        <dependency org="apache" name="xerces2-j" rev="2.7.1" force="true" conf="runtime->default"/>
-        <dependency org="apache" name="xmlsec" rev="1.2.1" force="true" conf="runtime->master"/>
-        <dependency org="jakarta" name="commons-httpclient" rev="3.1" force="true" conf="runtime->runtime"/>
-        <dependency org="internet2" name="grouper" rev="1.1" force="true" conf="runtime->minimal"/>
-        <dependency org="internet2" name="subject" rev="0.2.1" force="true" conf="runtime->default"/>
-        <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.0.1" transitive="false" force="true"
-            conf="runtime->default"/>
-        <dependency org="saic" name="phr-connector-ws-client" rev="2010-05-06" transitive="false" force="true"
-            conf="runtime->master"/>
-
   </dependencies>
 
 </ivy-module>
