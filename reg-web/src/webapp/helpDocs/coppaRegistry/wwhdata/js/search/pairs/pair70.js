@@ -1,5 +1,6 @@
 function FileData_Pairs(x)
 {
+x.t("amendingregistered","trials");
 x.t("trials","reviewing");
 x.t("keep","records");
 x.t("instructions","reviewing");
@@ -16,9 +17,8 @@ x.t("trial","information");
 x.t("trial","facilitate");
 x.t("trial","reviewing");
 x.t("amendment","order");
-x.t("updating","amending");
+x.t("updating","amendingregistered");
 x.t("records","review");
-x.t("registered","trials");
 x.t("review","trial");
 x.t("review","amendment");
 x.t("review","amended");
@@ -45,6 +45,5 @@ x.t("print","copy");
 x.t("copy","amended/updated");
 x.t("order","access");
 x.t("bottom","review");
-x.t("amending","registered");
 x.t("updated","trial");
 }

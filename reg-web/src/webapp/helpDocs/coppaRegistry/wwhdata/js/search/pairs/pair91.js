@@ -1,7 +1,7 @@
 function FileData_Pairs(x)
 {
 x.t("email","please");
-x.t("email","submitting");
+x.t("email","ncictrp@mail.nih.gov");
 x.t("below","email");
 x.t("contact","information");
 x.t("contact","ctrp");
@@ -12,10 +12,12 @@ x.t("questions","comments");
 x.t("support","questions");
 x.t("support","requests");
 x.t("support","application");
+x.t("mailto:ncictrp@mail.nih.gov","submitting");
 x.t("please","contact");
 x.t("please","include");
 x.t("text","error");
 x.t("document","ctrp");
+x.t("ncictrp@mail.nih.gov","mailto:ncictrp@mail.nih.gov");
 x.t("web-based","application");
 x.t("url","web-based");
 x.t("via","email");

@@ -40,7 +40,6 @@
   <DocumentInfo>
     <Document title="Protocol Abstraction Online Help" href="Welcome.1.1.html" />
     <Document title="Using the Online Help" href="Welcome.1.2.html" />
-    <Document title="Using Navigation Tools" href="Welcome.1.3.html" />
     <Document title="Getting Started" href="GettingStarted.2.1.html" />
     <Document title="Overview of Protocol Abstraction" href="GettingStarted.2.2.html" />
     <Document title="Logging In to Protocol Abstraction" href="GettingStarted.2.3.html" />
@@ -61,18 +60,19 @@
     <Document title="Reviewing Trial Overview Details" href="validate.4.5.html" />
     <Document title="Validating Trial Documents" href="validate.4.6.html" />
     <Document title="Accessing Trial Summary Reports" href="validate.4.7.html" />
-    <Document title="Validating Participating Sites" href="validate.4.8.html" />
+    <Document title="Validating Participating Sites for Proprietary Trials" href="validate.4.8.html" />
     <Document title="Validating Trial Status Details" href="validate.4.9.html" />
     <Document title="Validating Funding Details" href="validate.4.10.html" />
     <Document title="Validating IND/IDE Details" href="validate.4.11.html" />
-    <Document title="Validating Trial Details" href="validate.4.12.html" />
-    <Document title="Validating the Trial Identifiers Section" href="validate.4.13.html" />
-    <Document title="Validating the Other Identifiers Section" href="validate.4.14.html" />
-    <Document title="Validating the Lead Organization/Principal Investigator Section" href="validate.4.15.html" />
-    <Document title="Validating the Sponsor/Responsible Party Section" href="validate.4.16.html" />
-    <Document title="Validating the Summary 4 Information Section" href="validate.4.17.html" />
-    <Document title="Validating Amended Trial Submissions" href="validate.4.18.html" />
-    <Document title="Accepting and Rejecting Trials" href="validate.4.19.html" />
+    <Document title="Validating Regulatory Information" href="validate.4.12.html" />
+    <Document title="Validating Trial Details" href="validate.4.13.html" />
+    <Document title="Validating the Trial Identifiers Section" href="validate.4.14.html" />
+    <Document title="Validating the Other Identifiers Section" href="validate.4.15.html" />
+    <Document title="Validating the Lead Organization/Principal Investigator Section" href="validate.4.16.html" />
+    <Document title="Validating the Sponsor/Responsible Party Section" href="validate.4.17.html" />
+    <Document title="Validating the Summary 4 Information Section" href="validate.4.18.html" />
+    <Document title="Validating Amended Trial Submissions" href="validate.4.19.html" />
+    <Document title="Accepting and Rejecting Trials" href="validate.4.20.html" />
     <Document title="Abstracting Trial Overview Data" href="overviewData.5.1.html" />
     <Document title="About Trial Overview Data" href="overviewData.5.2.html" />
     <Document title="Abstracting Trial History Information" href="overviewData.5.3.html" />
@@ -98,18 +98,19 @@
     <Document title="Abstracting Trial Status Information" href="Admin.6.13.html" />
     <Document title="Abstracting Trial Funding Information" href="Admin.6.14.html" />
     <Document title="Abstracting Participating Site Information" href="Admin.6.15.html" />
-    <Document title="Linking Organizations to a Trial" href="Admin.6.16.html" />
-    <Document title="Linking Investigators to a Trial" href="Admin.6.17.html" />
-    <Document title="Linking Contacts to a Trial" href="Admin.6.18.html" />
-    <Document title="Deleting Participating Sites From a Trial" href="Admin.6.19.html" />
-    <Document title="Editing Participating Site Information" href="Admin.6.20.html" />
-    <Document title="Abstracting Collaborator Information" href="Admin.6.21.html" />
-    <Document title="Deleting Collaborators From a Trial" href="Admin.6.22.html" />
-    <Document title="Editing Collaborator Roles" href="Admin.6.23.html" />
-    <Document title="Abstracting Trial-Related Documents" href="Admin.6.24.html" />
-    <Document title="Adding Trial-Related Documents" href="Admin.6.25.html" />
-    <Document title="Deleting Trial-Related Documents" href="Admin.6.26.html" />
-    <Document title="Editing and Replacing Documents" href="Admin.6.27.html" />
+    <Document title="Linking Organizations to Non-Proprietary Trials" href="Admin.6.16.html" />
+    <Document title="Linking Organizations to Proprietary Trials" href="Admin.6.17.html" />
+    <Document title="Linking Investigators to a Trial" href="Admin.6.18.html" />
+    <Document title="Linking Contacts to a Trial" href="Admin.6.19.html" />
+    <Document title="Deleting Participating Sites From a Trial" href="Admin.6.20.html" />
+    <Document title="Editing Participating Site Information" href="Admin.6.21.html" />
+    <Document title="Abstracting Collaborator Information" href="Admin.6.22.html" />
+    <Document title="Deleting Collaborators From a Trial" href="Admin.6.23.html" />
+    <Document title="Editing Collaborator Roles" href="Admin.6.24.html" />
+    <Document title="Abstracting Trial-Related Documents" href="Admin.6.25.html" />
+    <Document title="Adding Trial-Related Documents" href="Admin.6.26.html" />
+    <Document title="Deleting Trial-Related Documents" href="Admin.6.27.html" />
+    <Document title="Editing and Replacing Documents" href="Admin.6.28.html" />
     <Document title="Abstracting Scientific Data" href="science.7.1.html" />
     <Document title="Abstracting Trial Descriptions" href="science.7.2.html" />
     <Document title="Abstracting Trial Design" href="science.7.3.html" />
@@ -174,13 +175,14 @@
     <Topic name="review_status" href="validate.4.9.html#1106481" />
     <Topic name="review_funding" href="validate.4.10.html#1078543" />
     <Topic name="review_ind" href="validate.4.11.html#1078634" />
-    <Topic name="tooltip_phases" href="validate.4.13.html#1100709" />
-    <Topic name="tooltip_lead_org" href="validate.4.15.html#1105290" />
-    <Topic name="tooltip_principal_invest" href="validate.4.15.html#1100655" />
-    <Topic name="tooltip_sponsor" href="validate.4.16.html#1100942" />
-    <Topic name="tooltip_responsible__party" href="validate.4.16.html#1100947" />
-    <Topic name="tooltip_summary_4" href="validate.4.17.html#1101120" />
-    <Topic name="tooltip_summary_4_fund" href="validate.4.17.html#1101167" />
+    <Topic name="review_regulatory" href="validate.4.12.html#1119312" />
+    <Topic name="tooltip_phases" href="validate.4.14.html#1100709" />
+    <Topic name="tooltip_lead_org" href="validate.4.16.html#1105290" />
+    <Topic name="tooltip_principal_invest" href="validate.4.16.html#1100655" />
+    <Topic name="tooltip_sponsor" href="validate.4.17.html#1100942" />
+    <Topic name="tooltip_responsible__party" href="validate.4.17.html#1100947" />
+    <Topic name="tooltip_summary_4" href="validate.4.18.html#1101120" />
+    <Topic name="tooltip_summary_4_fund" href="validate.4.18.html#1101167" />
     <Topic name="trial_history" href="overviewData.5.3.html#1078061" />
     <Topic name="trial_milestones" href="overviewData.5.4.html#1078170" />
     <Topic name="trial_onhold" href="overviewData.5.8.html#1081764" />
@@ -192,8 +194,8 @@
     <Topic name="abstract_status" href="Admin.6.13.html#1114725" />
     <Topic name="abstract_funding" href="Admin.6.14.html#1079589" />
     <Topic name="abstract_site" href="Admin.6.15.html#1079925" />
-    <Topic name="abstract_collaborator" href="Admin.6.21.html#1080352" />
-    <Topic name="abstract_docs" href="Admin.6.24.html#1115464" />
+    <Topic name="abstract_collaborator" href="Admin.6.22.html#1080352" />
+    <Topic name="abstract_docs" href="Admin.6.25.html#1115464" />
     <Topic name="abstract_description" href="science.7.2.html#1127870" />
     <Topic name="abstract_design" href="science.7.3.html#1127880" />
     <Topic name="abstract_design_interventional" href="science.7.4.html#1078075" />

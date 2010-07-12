@@ -1,6 +1,5 @@
 function FileData_Pairs(x)
 {
-x.t("list.to","delete");
 x.t("trials","validating");
 x.t("registries","nih");
 x.t("action","column");
@@ -19,6 +18,7 @@ x.t("trial","changes");
 x.t("trial","identifier");
 x.t("trial","data");
 x.t("able","modify");
+x.t("list","delete");
 x.t("incorrect","delete");
 x.t("incorrect","identifier");
 x.t("add","identifier");
@@ -45,10 +45,10 @@ x.t("section","validating");
 x.t("changes","necessary");
 x.t("assigned","review");
 x.t("added","displayed");
-x.t("identifier","list.to");
 x.t("identifier","action");
 x.t("identifier","field");
 x.t("identifier","trial");
+x.t("identifier","list");
 x.t("identifier","added");
 x.t("identifier","click");
 x.t("identifier","repeat");

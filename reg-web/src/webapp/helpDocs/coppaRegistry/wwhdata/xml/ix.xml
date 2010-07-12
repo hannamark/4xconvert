@@ -6,29 +6,30 @@
         <j l="6#1122691" />
       </i>
       <i t="managing">
-        <j l="72#1089511" />
+        <j l="73#1089511" />
       </i>
     </i>
     <i t="action column">
-      <j l="18#1119408" />
+      <j l="18#1126955" />
     </i>
     <i t="amend">
       <i t="defined">
-        <j l="18#1078333" />
+        <j l="18#1128153" />
       </i>
     </i>
     <i t="amending">
       <i t="IND/IDE information">
         <j l="66#1078370" />
+        <j l="67#1105147" />
       </i>
       <i t="lead organization information">
-        <j l="62#1078230" />
+        <j l="62#1107811" />
       </i>
       <i t="NIH grant information">
         <j l="64#1078303" />
       </i>
       <i t="principal investigator information">
-        <j l="62#1078230" />
+        <j l="62#1107811" />
       </i>
       <i t="Summary 4 information">
         <j l="63#1078263" />
@@ -43,16 +44,16 @@
     </i>
     <i t="amendments">
       <i t="editing">
-        <j l="69" />
+        <j l="70" />
       </i>
       <i t="life cycle of">
         <j l="59#1078033" />
       </i>
       <i t="printing">
-        <j l="70#1078525" />
+        <j l="71#1078525" />
       </i>
       <i t="reviewing">
-        <j l="68#1078451" />
+        <j l="69#1078451" />
       </i>
     </i>
     <i t="application number, as grant identification number">
@@ -68,24 +69,24 @@
   <g t="B" o="002">
     <i t="batch of files">
       <i t="ownership of">
-        <j l="84#1087029" />
+        <j l="85#1087029" />
       </i>
       <i t="preparing">
-        <j l="81#1077961" />
+        <j l="82#1077961" />
       </i>
       <i t="preparing, proprietary trials">
-        <j l="84#1086762" />
+        <j l="85#1086762" />
       </i>
     </i>
     <i t="batch of trials">
       <i t="directory structure for">
-        <j l="82#1086500" />
+        <j l="83#1086500" />
       </i>
       <i t="registering">
         <j l="53#1079645" />
       </i>
       <i t="rules for proprietary data">
-        <j l="85#1086878" />
+        <j l="86#1086878" />
       </i>
       <i t="uploading">
         <j l="53#1079668" />
@@ -93,10 +94,10 @@
     </i>
     <i t="batch upload">
       <i t="directory structure for">
-        <j l="82#1086500" />
+        <j l="83#1086500" />
       </i>
       <i t="preparing documents for">
-        <j l="82#1086407" />
+        <j l="83#1086407" />
       </i>
       <i t="required data for">
         <j l="54#1079687" />
@@ -105,10 +106,10 @@
         <j l="54#1079688" />
       </i>
       <i t="trial data preparation">
-        <j l="81#1077961" />
+        <j l="82#1077961" />
       </i>
       <i t="trial data preparation, proprietary trials">
-        <j l="84#1086762" />
+        <j l="85#1086762" />
       </i>
     </i>
     <i t="Becoming a registered user">
@@ -123,8 +124,29 @@
     <i t="complete, defined">
       <j l="18#1119526" />
     </i>
+    <i t="contact information, correcting">
+      <j l="32#1082752" />
+    </i>
+    <i t="correcting">
+      <i t="contact information">
+        <j l="32#1082752" />
+      </i>
+    </i>
     <i t="creating accounts">
       <j l="6#1122691" />
+    </i>
+    <i t="CTRO">
+      <i t="contact email address">
+        <j l="80#1090465" />
+      </i>
+    </i>
+    <i t="CTRP">
+      <i t="glossary">
+        <j l="16#1100498" />
+      </i>
+      <i t="web site">
+        <j l="16#1100498" />
+      </i>
     </i>
     <i t="CTRP Registration Site">
       <i t="introduction to">
@@ -150,7 +172,7 @@
     </i>
     <i t="current trial status">
       <i t="categories">
-        <j l="35#1170330" />
+        <j l="35#1228349" />
       </i>
       <i t="defined">
         <j l="18#1122710" />
@@ -159,20 +181,20 @@
   </g>
   <g t="D" o="002">
     <i t="data specification for non-proprietary trials">
-      <j l="83#1091614" />
+      <j l="84#1091614" />
     </i>
     <i t="directory structure for batch upload">
-      <j l="82#1086500" />
+      <j l="83#1086500" />
     </i>
     <i t="division/program codes">
       <j l="34#1078695" />
     </i>
     <i t="documents">
       <i t="downloading">
-        <j l="22" />
+        <j l="21" />
       </i>
       <i t="preparing, for batch upload">
-        <j l="82#1086407" />
+        <j l="83#1086407" />
       </i>
       <i t="required">
         <j l="40#1193056" />
@@ -188,13 +210,13 @@
         <j l="46#1099601" />
       </i>
       <i t="supported file formats, batch upload">
-        <j l="82#1086083" />
+        <j l="83#1086083" />
       </i>
       <i t="uploading, amendment-specific">
-        <j l="67#1078402" />
+        <j l="68#1078402" />
       </i>
       <i t="viewing">
-        <j l="22" />
+        <j l="21" />
       </i>
     </i>
     <i t="downloading">
@@ -205,7 +227,18 @@
         <j l="12#1092683" />
       </i>
       <i t="trial-related documents">
-        <j l="22" />
+        <j l="21" />
+      </i>
+    </i>
+    <i t="drafts">
+      <i t="completing">
+        <j l="27" />
+      </i>
+      <i t="deleting">
+        <j l="27" />
+      </i>
+      <i t="saving">
+        <j l="25#1190771" />
       </i>
     </i>
   </g>
@@ -219,13 +252,24 @@
   </g>
   <g t="F" o="002">
     <i t="file formats for batch upload">
-      <j l="82#1086083" />
+      <j l="83#1086083" />
     </i>
     <i t="funding mechanism, grant codes">
       <j l="34#1078603" />
     </i>
   </g>
   <g t="G" o="002">
+    <i t="generic contact">
+      <i t="adding">
+        <j l="32#1082292" />
+      </i>
+    </i>
+    <i t="generic contacts">
+      <j l="32#1082223" />
+    </i>
+    <i t="glossary, CTRP">
+      <j l="16#1100498" />
+    </i>
     <i t="grant">
       <j l="34#1078567" />
       <i t="codes, funding mechanism">
@@ -263,6 +307,7 @@
       </i>
       <i t="section, amending">
         <j l="66#1078370" />
+        <j l="67#1105147" />
       </i>
       <i t="section, completing">
         <j l="36#1079024" />
@@ -275,10 +320,13 @@
   <g t="L" o="002">
     <i t="lead organization">
       <i t="amending">
-        <j l="62#1078230" />
+        <j l="62#1107811" />
       </i>
       <i t="defined">
         <j l="18#1122712" />
+      </i>
+      <i t="registering">
+        <j l="31" />
       </i>
       <i t="section, completing">
         <j l="31#1078304" />
@@ -293,7 +341,7 @@
     </i>
     <i t="login">
       <i t="account management">
-        <j l="72#1089511" />
+        <j l="73#1089511" />
       </i>
     </i>
   </g>
@@ -325,13 +373,10 @@
     </i>
     <i t="Online help">
       <i t="locating topics of interest">
-        <j l="1#1078094" />
+        <j l="1#1078819" />
       </i>
       <i t="printing">
-        <j l="1#1078555" />
-      </i>
-      <i t="using navigation tools">
-        <j l="2" />
+        <j l="1#1078839" />
       </i>
     </i>
     <i t="Online help, using">
@@ -353,15 +398,15 @@
     <i t="participating site document">
       <i t="rules for">
         <j l="14#1085952" />
-        <j l="87#1077958" />
+        <j l="88#1084741" />
       </i>
       <i t="specifications for">
-        <j l="88#1077987" />
+        <j l="89#1077987" />
       </i>
     </i>
     <i t="participating sites">
       <i t="document rules">
-        <j l="87#1077958" />
+        <j l="88#1084741" />
       </i>
       <i t="template for">
         <j l="14" />
@@ -369,11 +414,11 @@
     </i>
     <i t="passwords">
       <i t="changing">
-        <j l="73#1089064" />
+        <j l="74#1089064" />
       </i>
       <i t="resetting">
         <j l="10#1118106" />
-        <j l="74#1088333" />
+        <j l="75#1088333" />
       </i>
     </i>
     <i t="persons">
@@ -385,7 +430,7 @@
       </i>
     </i>
     <i t="phases">
-      <i t="trial">
+      <i t="of trials">
         <j l="30#1078110" />
       </i>
     </i>
@@ -394,12 +439,15 @@
         <j l="52#1079597" />
       </i>
       <i t="amending">
-        <j l="62#1078230" />
+        <j l="62#1107811" />
       </i>
       <i t="defined">
         <j l="18#1121023" />
+        <j l="32#1167751" />
+        <j l="32#1187351" />
       </i>
       <i t="registering">
+        <j l="31" />
         <j l="50#1079502" />
       </i>
       <i t="registering new">
@@ -415,24 +463,24 @@
     </i>
     <i t="private trials">
       <i t="data displayed in">
-        <j l="21#1078441" />
+        <j l="20#1078441" />
       </i>
     </i>
     <i t="processing statuses defined">
       <j l="18#1120903" />
     </i>
     <i t="profile management">
-      <j l="72#1089511" />
+      <j l="73#1089511" />
     </i>
     <i t="proprietary trial">
       <i t="batch upload specification">
-        <j l="84#1086762" />
+        <j l="85#1086762" />
       </i>
       <i t="documents required for">
         <j l="40#1079283" />
       </i>
       <i t="preparing for batch upload">
-        <j l="84#1086762" />
+        <j l="85#1086762" />
       </i>
       <i t="registering">
         <j l="41#1148210" />
@@ -446,17 +494,17 @@
         <j l="60" />
       </i>
       <i t="specifications for batch uploads">
-        <j l="83" />
-        <j l="85" />
+        <j l="84" />
+        <j l="86" />
       </i>
       <i t="submitting">
-        <j l="25#1147668" />
+        <j l="24#1254135" />
         <j l="41#1148210" />
       </i>
     </i>
     <i t="PRS organization name, in .xml file">
       <j l="7#1110477" />
-      <j l="72#1082761" />
+      <j l="73#1082761" />
     </i>
     <i t="purpose">
       <i t="valid values for">
@@ -477,10 +525,10 @@
     </i>
     <i t="registering">
       <i t="batches of trial amendments">
-        <j l="81#1077961" />
+        <j l="82#1077961" />
       </i>
       <i t="batches of trials">
-        <j l="81#1077961" />
+        <j l="82#1077961" />
       </i>
       <i t="new users">
         <j l="7" />
@@ -488,7 +536,7 @@
         <j l="9#1114112" />
       </i>
       <i t="trials">
-        <j l="26#1078019" />
+        <j l="25#1078019" />
       </i>
       <i t="trials, proprietary">
         <j l="41#1149971" />
@@ -514,7 +562,13 @@
       </i>
     </i>
     <i t="responsible party">
-      <i t="section, completing">
+      <i t="defined">
+        <j l="32#1167748" />
+      </i>
+      <i t="generic contact">
+        <j l="32#1082223" />
+      </i>
+      <i t="registering">
         <j l="32" />
       </i>
     </i>
@@ -526,13 +580,13 @@
         <j l="54#1079688" />
       </i>
       <i t="for participating sites documents">
-        <j l="87#1077958" />
+        <j l="88#1084741" />
       </i>
       <i t="for submitting proprietary trial data">
-        <j l="85#1086878" />
+        <j l="86#1086878" />
       </i>
       <i t="for trial status dates">
-        <j l="35#1078836" />
+        <j l="35#1235773" />
       </i>
     </i>
   </g>
@@ -548,20 +602,33 @@
         <j l="19" />
       </i>
     </i>
-    <i t="search results table">
-      <i t="datails dislplayed in, by processing status">
-        <j l="18#1121634" />
-      </i>
-    </i>
     <i t="Search Results table">
-      <i t="datails dislplayed in">
+      <i t="details  displayed in Search My Trials">
+        <j l="18#1121691" />
+      </i>
+      <i t="details displayed in">
         <j l="18#1121499" />
       </i>
-      <i t="datails dislplayed in Search All Trials">
+      <i t="details displayed in Search All Trials">
         <j l="18#1121691" />
       </i>
-      <i t="datails dislplayed in Search My Trials">
-        <j l="18#1121691" />
+      <i t="details displayed in, by processing status">
+        <j l="18#1128748" />
+      </i>
+    </i>
+    <i t="search tips">
+      <j l="17#1109177" />
+      <j l="17#1100162" />
+    </i>
+    <i t="sponsor">
+      <i t="defined">
+        <j l="32#1145030" />
+      </i>
+      <i t="generic contact">
+        <j l="32#1082223" />
+      </i>
+      <i t="registering">
+        <j l="32" />
       </i>
     </i>
     <i t="status/dates">
@@ -569,12 +636,12 @@
         <j l="65#1093444" />
       </i>
       <i t="section, completing">
-        <j l="35#1078836" />
+        <j l="35#1235773" />
         <j l="45#1123076" />
       </i>
     </i>
     <i t="submitting new trials">
-      <j l="26#1078019" />
+      <j l="25#1078019" />
     </i>
     <i t="Summary 4">
       <i t="section, amending">
@@ -620,10 +687,10 @@
         <j l="43#1097975" />
       </i>
       <i t="data required, for participating sites">
-        <j l="88#1077987" />
+        <j l="89#1077987" />
       </i>
       <i t="data specifications, non-proprietary trials">
-        <j l="83#1091614" />
+        <j l="84#1091614" />
       </i>
       <i t="details, editing">
         <j l="26#1080764" />
@@ -638,13 +705,13 @@
         <j l="18#1078212" />
       </i>
       <i t="ownership, of batch files">
-        <j l="84#1087029" />
+        <j l="85#1087029" />
       </i>
       <i t="phases of">
         <j l="30#1078110" />
       </i>
       <i t="status categories">
-        <j l="35#1170330" />
+        <j l="35#1228349" />
       </i>
       <i t="updates, introduction to">
         <j l="56#1102630" />
@@ -658,13 +725,36 @@
         <j l="18#1119498" />
       </i>
     </i>
-    <i t="trial status">
-      <i t="date rules for">
-        <j l="35#1078836" />
+    <i t="trial details">
+      <i t="listed by category and ownership">
+        <j l="20#1116351" />
+      </i>
+      <i t="registering">
+        <j l="30" />
       </i>
     </i>
-    <i t="Trial status definitions">
+    <i t="trial identifiers">
+      <i t="registering">
+        <j l="29" />
+      </i>
+    </i>
+    <i t="Trial processing status definitions">
       <j l="18#1120903" />
+    </i>
+    <i t="trial purpose">
+      <i t="registering">
+        <j l="30#1078175" />
+      </i>
+    </i>
+    <i t="trial status">
+      <i t="date rules for">
+        <j l="35#1235773" />
+      </i>
+    </i>
+    <i t="trial summary report">
+      <i t="requesting">
+        <j l="22#1121726" />
+      </i>
     </i>
     <i t="trial type">
       <i t="observational, defined">
@@ -673,7 +763,7 @@
     </i>
     <i t="trial-related documents">
       <i t="preparation for batch upload">
-        <j l="82#1086407" />
+        <j l="83#1086407" />
       </i>
       <i t="section, completing">
         <j l="40#1193056" />
@@ -722,18 +812,18 @@
   <g t="U" o="002">
     <i t="update">
       <i t="defined">
-        <j l="18#1109307" />
+        <j l="18#1128151" />
       </i>
     </i>
     <i t="updates">
       <i t="editing">
-        <j l="69" />
+        <j l="70" />
       </i>
       <i t="printing">
-        <j l="70#1078525" />
+        <j l="71#1078525" />
       </i>
       <i t="reviewing">
-        <j l="68#1078451" />
+        <j l="69#1078451" />
       </i>
     </i>
     <i t="updating trials">
@@ -741,7 +831,7 @@
     </i>
     <i t="uploading">
       <i t="amendment-specific documents">
-        <j l="67#1078402" />
+        <j l="68#1078402" />
       </i>
       <i t="batches">
         <j l="53#1079668" />
@@ -759,7 +849,7 @@
     </i>
     <i t="user account">
       <i t="managing">
-        <j l="72#1089511" />
+        <j l="73#1089511" />
       </i>
     </i>
     <i t="Using online help">
@@ -769,6 +859,21 @@
   <g t="V" o="002">
     <i t="validated trials">
       <j l="18#1078198" />
+    </i>
+  </g>
+  <g t="W" o="002">
+    <i t="wildcards, using">
+      <j l="17#1109177" />
+    </i>
+  </g>
+  <g t="X" o="002">
+    <i t="xml document">
+      <i t="purpose of">
+        <j l="24#1254142" />
+      </i>
+      <i t="requesting">
+        <j l="22#1121726" />
+      </i>
     </i>
   </g>
 </WebWorksHelpIX>

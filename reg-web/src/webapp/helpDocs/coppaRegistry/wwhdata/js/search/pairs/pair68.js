@@ -1,7 +1,9 @@
 function FileData_Pairs(x)
 {
+x.t("amendingregistered","trials");
 x.t("indicated","repeat");
 x.t("error-free","review");
+x.t("eviewing","submitting");
 x.t("trials","reviewing");
 x.t("amendment/update","error-free");
 x.t("submission","scroll");
@@ -19,10 +21,10 @@ x.t("missing","information");
 x.t("times","necessary");
 x.t("editing","amended");
 x.t("checks","errors");
+x.t("updates","eviewing");
 x.t("updates","complete");
 x.t("updates","updating");
 x.t("updates","completed");
-x.t("updates","reviewing");
 x.t("details","match");
 x.t("details","click");
 x.t("details","page");
@@ -44,14 +46,13 @@ x.t("complete","modifications");
 x.t("results","message");
 x.t("edit","details");
 x.t("edit","information");
+x.t("updating","amendingregistered");
 x.t("updating","trial");
-x.t("updating","amending");
 x.t("indicators","mark");
 x.t("completed","amending");
 x.t("records","review");
 x.t("fields","complete");
 x.t("recent","trial");
-x.t("registered","trials");
 x.t("review","trial");
 x.t("review","and/or");
 x.t("review","information");
@@ -96,7 +97,6 @@ x.t("order","submit");
 x.t("bottom","amendment");
 x.t("system","checks");
 x.t("amending","updating");
-x.t("amending","registered");
 x.t("update","trial");
 x.t("updated","details");
 }
