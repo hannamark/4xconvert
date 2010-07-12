@@ -112,36 +112,22 @@ public class ManageFileAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(ManageFileAction.class);
 
-    /** The page from. */
-    public String pageFrom;
-    /** The protocol doc. */
-    public File protocolDoc;
-    /** The protocol doc file name. */
-    public String protocolDocFileName;
-    /** The irb approval. */
-    public File irbApproval;
-    /** The irb approval file name. */
-    public String irbApprovalFileName;
-    /** The participating sites. */
-    public File participatingSites = null;
-    /** The participating sites file name. */
-    public String participatingSitesFileName = null;
-    /** The informed consent document. */
-    public File informedConsentDocument = null;
-    /** The informed consent document file name. */
-    public String informedConsentDocumentFileName = null;
-    /** The other document. */
-    public File otherDocument = null;
-    /** The other document file name. */
-    public String otherDocumentFileName = null;
-    /** The protocol highlight document. */
-    public File protocolHighlightDocument = null;
-    /** The protocol highlight document file name. */
-    public String protocolHighlightDocumentFileName = null;
-    /** The change memo doc. */
-    public File changeMemoDoc;
-    /** The change memo doc file name. */
-    public String changeMemoDocFileName = null;
+    private String pageFrom;
+    private File protocolDoc;
+    private String protocolDocFileName;
+    private File irbApproval;
+    private String irbApprovalFileName;
+    private File participatingSites;
+    private String participatingSitesFileName;
+    private File informedConsentDocument;
+    private String informedConsentDocumentFileName;
+    private File otherDocument;
+    private String otherDocumentFileName;
+    private File protocolHighlightDocument;
+    private String protocolHighlightDocumentFileName;
+    private File changeMemoDoc;
+    private String changeMemoDocFileName;
+
     private static final String PROTOCOLDOC = DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName();
     private static final String IRBAPPROVALDOC = DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getShortName();
     private static final String PARTICIPATINGSITESDOC = DocumentTypeCode.PARTICIPATING_SITES.getShortName();

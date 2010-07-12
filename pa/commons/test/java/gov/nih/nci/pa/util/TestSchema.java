@@ -202,8 +202,8 @@ public class TestSchema {
          */
         public static void reset() {
 //            HibernateUtil.getHibernateHelper().openTestSession();
-        	HibernateUtil.testHelper = testHelper;
-        	HibernateUtil.getCurrentSession().clear();
+            HibernateUtil.setTestHelper(testHelper);
+            HibernateUtil.getCurrentSession().clear();
 
         }
 
@@ -213,7 +213,7 @@ public class TestSchema {
         public static void reset1() {
             // clean up HQLDB schema
 //            Session session = HibernateUtil.getHibernateHelper().getSessionFactory().openSession();
-            HibernateUtil.testHelper = testHelper;
+            HibernateUtil.setTestHelper(testHelper);
             Session session = HibernateUtil.getCurrentSession();
             session.clear();
             try {
@@ -277,7 +277,7 @@ public class TestSchema {
                 //throw new RuntimeException(e);
             } finally {
 //                session.close();
-            	session.clear();
+                session.clear();
             }
 
             // start session

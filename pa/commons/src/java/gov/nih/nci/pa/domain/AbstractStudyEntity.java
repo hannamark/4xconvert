@@ -95,11 +95,9 @@ import org.hibernate.validator.NotNull;
 public class AbstractStudyEntity extends AbstractEntity {
     private static final long serialVersionUID = 1212567890L;
 
-    /** . */
-    protected StudyProtocol studyProtocol;
+    private StudyProtocol studyProtocol;
 
     /**
-     *
      * @return studyProtocol
      */
     @ManyToOne
@@ -110,7 +108,6 @@ public class AbstractStudyEntity extends AbstractEntity {
     }
 
     /**
-     *
      * @param studyProtocol studyProtocol
      */
     public void setStudyProtocol(StudyProtocol studyProtocol) {

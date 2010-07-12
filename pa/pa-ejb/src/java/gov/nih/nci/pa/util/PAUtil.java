@@ -224,10 +224,9 @@ public class PAUtil {
         boolean isNull = false;
         if (st == null || st.getValue() == null) {
             return true;
-        } else {
-            if (st.getValue().trim().length() == 0) {
-                isNull = true;
-            }
+        }
+        if (st.getValue().trim().length() == 0) {
+            isNull = true;
         }
         return isNull;
     }
@@ -337,9 +336,11 @@ public class PAUtil {
      * Private class used to decode and normalize date strings.
      */
     private static class ValidDateFormat {
-        String pattern;
+        // CHECKSTYLE:OFF private static class fields don't necessarily need to be private
+       String pattern;
         int endIndex;
         boolean lenient;
+        // CHECKSTYLE:ON
 
         public ValidDateFormat(String pattern) {
             this.pattern = pattern;

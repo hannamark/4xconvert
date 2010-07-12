@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -42,26 +42,25 @@ import org.hibernate.Session;
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 @Interceptors({HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudyOverallStatusBeanLocal 
- extends AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter>
- implements StudyOverallStatusServiceLocal {
- 
-  private static final Logger LOG  = Logger.getLogger(StudyOverallStatusBeanLocal.class);
-  /** Standard error message for empty methods to be overridden. */
-  protected static String errMsgMethodNotImplemented = "Method not yet implemented.";
-  @EJB
-    StudyProtocolServiceLocal studyProtocolService = null;
-  @EJB
-    DocumentWorkflowStatusServiceLocal dwsService = null;
-  
-  
-  /**
-   * @return log4j Logger
-   */
-  @Override
-   protected Logger getLogger() {
-     return LOG;
-   }
+public class StudyOverallStatusBeanLocal extends
+    AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter> implements
+    StudyOverallStatusServiceLocal {
+
+    private static final Logger LOG = Logger.getLogger(StudyOverallStatusBeanLocal.class);
+    /** Standard error message for empty methods to be overridden. */
+    private static final String ERR_MSG_METHOD_NOT_IMPLEMENTED = "Method not yet implemented.";
+    @EJB
+    private StudyProtocolServiceLocal studyProtocolService;
+    @EJB
+    private DocumentWorkflowStatusServiceLocal dwsService;
+
+    /**
+     * @return log4j Logger
+     */
+    @Override
+    protected Logger getLogger() {
+        return LOG;
+    }
 
   /**
    * Method used to update the StudyOverallStatus and StudyRecruitmentStatus.
@@ -87,9 +86,9 @@ public class StudyOverallStatusBeanLocal
      // enforce business rules
      StudyOverallStatusDTO oldStatus = getCurrentByStudyProtocol(dto.getStudyProtocolIdentifier());
      if (oldStatus != null && !isTrialStatusOrDateChanged(dto, dto.getStudyProtocolIdentifier())) {
-         //this means no change in update 
-         return oldStatus;   
-     } 
+         //this means no change in update
+         return oldStatus;
+     }
      StudyStatusCode oldCode = null;
      Timestamp oldDate = null;
 
@@ -182,10 +181,10 @@ public class StudyOverallStatusBeanLocal
   */
  @Override
  public void delete(Ii ii) throws PAException {
- throw new PAException(errMsgMethodNotImplemented);
+ throw new PAException(ERR_MSG_METHOD_NOT_IMPLEMENTED);
  }
  /**
-  * 
+  *
   * @param newStatusDto dto
   * @return s
   * @throws PAException e
@@ -196,30 +195,30 @@ public class StudyOverallStatusBeanLocal
      StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
      boolean statusOrDateChanged = true;
      //original submission
-     if (dwsDTO.getStatusCode().getCode() != null 
+     if (dwsDTO.getStatusCode().getCode() != null
              && DocumentWorkflowStatusCode.SUBMITTED.getCode().
-                 equalsIgnoreCase(dwsDTO.getStatusCode().getCode()) 
+                 equalsIgnoreCase(dwsDTO.getStatusCode().getCode())
              && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) {
          statusOrDateChanged = false;
      }
      StudyOverallStatusDTO  currentDBdto = getCurrentByStudyProtocol(studyProtocolIi);
      StudyStatusCode currentStatusCode = StudyStatusCode.getByCode(currentDBdto.getStatusCode().getCode());
      Timestamp currentStatusDate = TsConverter.convertToTimestamp(currentDBdto.getStatusDate());
-     
+
      StudyStatusCode newStatusCode =  StudyStatusCode.getByCode(newStatusDto.getStatusCode().getCode());
      Timestamp newStatusDate = TsConverter.convertToTimestamp(newStatusDto.getStatusDate());
      boolean codeChanged = (newStatusCode == null)
              ? (currentStatusCode != null) : !newStatusCode.equals(currentStatusCode);
-     boolean statusDateChanged = (currentStatusDate == null) 
+     boolean statusDateChanged = (currentStatusDate == null)
              ? (newStatusDate != null) : !currentStatusDate.equals(newStatusDate);
      if (!codeChanged && !statusDateChanged) {
          statusOrDateChanged = false;
      }
      return statusOrDateChanged;
  }
- 
+
  /**
-  * 
+  *
   * @param statusDto sDto
   * @param studyProtocolDTO protocolDto
   * @throws PAException e
@@ -227,7 +226,7 @@ public class StudyOverallStatusBeanLocal
  public void validate(StudyOverallStatusDTO statusDto,
          StudyProtocolDTO studyProtocolDTO) throws PAException {
      StringBuffer errorMsg = new StringBuffer();
-     if (!PAUtil.isIiNull(studyProtocolDTO.getIdentifier()) 
+     if (!PAUtil.isIiNull(studyProtocolDTO.getIdentifier())
              && isTrialStatusOrDateChanged(statusDto, studyProtocolDTO.getIdentifier())) {
          errorMsg.append(enforceBusniessRuleForUpdate(statusDto, studyProtocolDTO));
      }
@@ -242,7 +241,7 @@ public class StudyOverallStatusBeanLocal
   * @param studyProtocolDTO
   * @param addActionError
   * @throws PAException
-  * @return 
+  * @return
   */
  @SuppressWarnings({"PMD.ExcessiveMethodLength" })
  private StringBuffer  enforceBusniessRuleForUpdate(StudyOverallStatusDTO statusDto,
@@ -258,14 +257,14 @@ public class StudyOverallStatusBeanLocal
      String anticipatedString = "Anticipated";
      String newStartDateType = studyProtocolDTO.getStartDateTypeCode().getCode();
      String newCompletionDateType = studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode();
-     
+
      if (oldStatusCode != null && !oldStatusCode.canTransitionTo(newCode)) {
          errMsg.append("Illegal study status transition from '" + oldStatusCode.getCode()
                  + "' to '" + newCode.getCode() + "'.  ");
      }
-     if (!PAUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode()) 
+     if (!PAUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())
              && PAUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
-         
+
          if (StudyStatusCode.APPROVED.equals(oldStatusCode) && StudyStatusCode.ACTIVE.equals(newCode)) {
              if (newStartDate.equals(newStatusTimestamp)) {
                  errMsg.append("When transitioning from 'Approved' to 'Active' the trial start "
@@ -290,14 +289,14 @@ public class StudyOverallStatusBeanLocal
              StudyOverallStatusDTO oldStatusDto = getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
              if (newCompletionDateType.equals(anticipatedString)) {
                  errMsg.append("Primary Completion Date cannot be 'Anticipated' when "
-                 + "Current Trial Status is '"); 
+                 + "Current Trial Status is '");
                  errMsg.append(newCode.getCode());
                  errMsg.append("'.");
              }
              if (TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate())
                      .before(TsConverter.convertToTimestamp(oldStatusDto.getStatusDate()))) {
                  errMsg.append("Primary Completion Date must be the same or greater than Current Trial "
-                         + " Status Date when Current Trial Status is '"); 
+                         + " Status Date when Current Trial Status is '");
                  errMsg.append(newCode.getCode());
                  errMsg.append("'.");
              }
@@ -315,82 +314,95 @@ public class StudyOverallStatusBeanLocal
      StringBuffer errors = new StringBuffer();
      Timestamp statusDate = TsConverter.convertToTimestamp(statusDto.getStatusDate());
      String statusCode = CdConverter.convertCdToString(statusDto.getStatusCode());
-     
+
      Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
-     Timestamp trialStartDate = TsConverter.convertToTimestamp(dto.getStartDate()); 
-     Timestamp trialCompletionDate = TsConverter.convertToTimestamp(dto.getPrimaryCompletionDate()); 
+     Timestamp trialStartDate = TsConverter.convertToTimestamp(dto.getStartDate());
+     Timestamp trialCompletionDate = TsConverter.convertToTimestamp(dto.getPrimaryCompletionDate());
      String studyStartDateType = CdConverter.convertCdToString(dto.getStartDateTypeCode());
      String primaryCompletionDateType = CdConverter.convertCdToString(dto.getPrimaryCompletionDateTypeCode());
-     
+
      // Constraint/Rule: 22 Current Trial Status Date must be current or past.
      if (currentTimeStamp.before(statusDate)) {
-             errors.append("Current Trial Status Date cannot be in the future.\n");                
+             errors.append("Current Trial Status Date cannot be in the future.\n");
      }
-     // Constraint/Rule: 23 Trial Start Date must be current/past if 'actual' trial start date type 
-     // is selected and must be future if 'anticipated' trial start date type is selected. 
+     // Constraint/Rule: 23 Trial Start Date must be current/past if 'actual' trial start date type
+     // is selected and must be future if 'anticipated' trial start date type is selected.
      if (studyStartDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())
                  && currentTimeStamp.before(trialStartDate)) {
-         errors.append("Actual Trial Start Date must be current or in past. \n");                
+         errors.append("Actual Trial Start Date must be current or in past. \n");
      } else if (studyStartDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())
              && currentTimeStamp.after(trialStartDate)) {
-         errors.append("Anticipated Start Date must be in future. \n");                
-     }          
-     //Constraint/Rule:24 Primary Completion Date must be current/past if 'actual' primary completion date type  
-     //is selected and must be future if 'anticipated'trial primary completion date type is selected. 
+         errors.append("Anticipated Start Date must be in future. \n");
+     }
+     //Constraint/Rule:24 Primary Completion Date must be current/past if 'actual' primary completion date type
+     //is selected and must be future if 'anticipated'trial primary completion date type is selected.
      if (primaryCompletionDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())
              && currentTimeStamp.before(trialCompletionDate)) {
-         errors.append("Actual Primary Completion Date must be current or in past.\n");                
+         errors.append("Actual Primary Completion Date must be current or in past.\n");
      } else if (primaryCompletionDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())
              && currentTimeStamp.after(trialCompletionDate)) {
-         errors.append("Anticipated Primary Completion Date must be in future. \n");                
-     }          
-     // Constraint/Rule: 25 If Current Trial Status is 'Active', Trial Start Date must be the same as 
-     //Current Trial Status Date and have 'actual' type. New Rule added-01/15/09 if start date is smaller 
-     //than the Current Trial Status Date, replace Current Trial Status date with the actual Start Date.            
+         errors.append("Anticipated Primary Completion Date must be in future. \n");
+     }
+     // Constraint/Rule: 25 If Current Trial Status is 'Active', Trial Start Date must be the same as
+     //Current Trial Status Date and have 'actual' type. New Rule added-01/15/09 if start date is smaller
+     //than the Current Trial Status Date, replace Current Trial Status date with the actual Start Date.
      //pa2.0 as part of release removing the "replace Current Trial Status date with the actual Start Date."
-     if (StudyStatusCode.ACTIVE.getCode().equals(statusCode) && (trialStartDate.after(statusDate) 
+     if (StudyStatusCode.ACTIVE.getCode().equals(statusCode) && (trialStartDate.after(statusDate)
              || !studyStartDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode()))) {
              errors.append("If Current Trial Status is Active, Trial Start Date must be Actual "
                            + " and same as or smaller than Current Trial Status Date.\n");
      }
-     // Constraint/Rule: 26 If Current Trial Status is 'Approved', Trial Start Date must have 'anticipated' type. 
-     //Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'. 
+     // Constraint/Rule: 26 If Current Trial Status is 'Approved', Trial Start Date must have 'anticipated' type.
+     //Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'.
        if (StudyStatusCode.APPROVED.getCode().equals(statusCode)
                || StudyStatusCode.IN_REVIEW.getCode().equals(statusCode)
                || StudyStatusCode.WITHDRAWN.getCode().equals(statusCode)
                || StudyStatusCode.DISAPPROVED.getCode().equals(statusCode)) {
            if (!studyStartDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
              errors.append("If Current Trial Status is " + statusCode + ", Trial Start Date must be Anticipated.\n");
-           } 
+           }
        } else if (!studyStartDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
          errors.append("Trial Start Date must be Actual for any Current Trial Status besides Approved/In Review.\n");
        }
-       // Constraint/Rule: 27 If Current Trial Status is 'Completed', Primary Completion Date must be the 
+       // Constraint/Rule: 27 If Current Trial Status is 'Completed', Primary Completion Date must be the
        // same as Current Trial Status Date and have 'actual' type.
        if (StudyStatusCode.COMPLETE.getCode().equals(statusCode)
                && (!primaryCompletionDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode()))) {
                  errors.append("If Current Trial Status is Completed, Primary Completion Date must be Actual ");
-       }            
-       // Constraint/Rule: 28 If Current Trial Status is 'Completed' or 'Administratively Completed', 
-       // Primary Completion Date must have 'actual' type. Primary Completion Date must have 'anticipated' type 
+       }
+       // Constraint/Rule: 28 If Current Trial Status is 'Completed' or 'Administratively Completed',
+       // Primary Completion Date must have 'actual' type. Primary Completion Date must have 'anticipated' type
        // for any other Current Trial Status value besides 'Completed' or 'Administratively Completed'.
-       if (StudyStatusCode.COMPLETE.getCode().equals(statusCode) 
-           || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(statusCode)) { 
+       if (StudyStatusCode.COMPLETE.getCode().equals(statusCode)
+           || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(statusCode)) {
            if (!primaryCompletionDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
                  errors.append("If Current Trial Status is Complete or Administratively Complete, "
                          + " Primary Completion Date must be  Actual.\n");
            }
        } else if (!primaryCompletionDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
                      errors.append("Primary Completion Date  must be Anticipated for any other Current Trial"
-                         + " Status value besides Complete or Administratively Complete.\n");                  
-       }          
-       // Constraint/Rule:29 Trial Start Date must be same/smaller than Primary Completion Date. 
-       if (trialCompletionDate.before(trialStartDate)) {
-          errors.append("Trial Start Date must be same or earlier than Primary Completion Date.\n");                
+                         + " Status value besides Complete or Administratively Complete.\n");
        }
-        
+       // Constraint/Rule:29 Trial Start Date must be same/smaller than Primary Completion Date.
+       if (trialCompletionDate.before(trialStartDate)) {
+          errors.append("Trial Start Date must be same or earlier than Primary Completion Date.\n");
+       }
+
      return errors;
  }
 
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * @param dwsService the dwsService to set
+     */
+    public void setDwsService(DocumentWorkflowStatusServiceLocal dwsService) {
+        this.dwsService = dwsService;
+    }
 
 }

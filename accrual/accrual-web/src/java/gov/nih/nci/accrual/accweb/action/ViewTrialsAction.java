@@ -96,7 +96,7 @@ public class ViewTrialsAction extends AbstractListEditAccrualAction<SearchTrialR
     @Override
     public void loadDisplayList() {
         try {
-            setDisplayTagList(searchTrialSvc.search(criteria, getAuthorizedUser()));
+            setDisplayTagList(getSearchTrialSvc().search(criteria, getAuthorizedUser()));
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
         }

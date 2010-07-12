@@ -167,12 +167,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private StudySiteServiceLocal sPartService;
     private StudySiteAccrualStatusServiceLocal ssasService;
     private StudySiteContactServiceLocal sPartContactService;
-    OrganizationCorrelationServiceRemote oCService;
-    CorrelationUtilsRemote cUtils;
+    private OrganizationCorrelationServiceRemote orgCorrelationService;
+    private CorrelationUtilsRemote correlationUtils;
     private StudyProtocolServiceLocal studyProtocolService;
     private Ii spIi;
-    List<PaOrganizationDTO> organizationList = null;
-    private OrganizationDTO selectedOrgDTO = null;
+    private List<PaOrganizationDTO> organizationList;
+    private OrganizationDTO selectedOrgDTO;
     private Organization editOrg;
     private Long cbValue;
     private String recStatus;
@@ -213,8 +213,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         sPartService = PaRegistry.getStudySiteService();
         ssasService = PaRegistry.getStudySiteAccrualStatusService();
         sPartContactService = PaRegistry.getStudySiteContactService();
-        cUtils = new CorrelationUtils();
-        oCService = new OrganizationCorrelationServiceBean();
+        correlationUtils = new CorrelationUtils();
+        orgCorrelationService = new OrganizationCorrelationServiceBean();
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
@@ -335,7 +335,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             }
         } else {
             String poOrgId = tab.getFacilityOrganization().getIdentifier();
-            Long paHealthCareFacilityId = oCService.createHealthCareFacilityCorrelations(poOrgId);
+            Long paHealthCareFacilityId = orgCorrelationService.createHealthCareFacilityCorrelations(poOrgId);
             sp = new StudySiteDTO();
             sp.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
             sp.setHealthcareFacilityIi(IiConverter.convertToIi(paHealthCareFacilityId));
@@ -392,7 +392,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     public String edit() throws PAException {
         setCurrentAction("edit");
         StudySiteDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
-        editOrg = cUtils.getPAOrganizationByIi(spDto.getHealthcareFacilityIi());
+        editOrg = correlationUtils.getPAOrganizationByIi(spDto.getHealthcareFacilityIi());
         orgFromPO.setCity(editOrg.getCity());
         orgFromPO.setCountry(editOrg.getCountryName());
         orgFromPO.setName(editOrg.getName());
@@ -476,7 +476,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         for (StudySiteDTO sp : spList) {
             StudySiteAccrualStatusDTO ssas = ssasService
                     .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
-            Organization orgBo = cUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
+            Organization orgBo = correlationUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
             PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
             orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
             orgWebDTO.setName(orgBo.getName());
@@ -550,7 +550,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 }
                 if (siteConDto != null && !PAUtil.isIiNull(siteConDto.getOrganizationalContactIi())) {
                     try {
-                        PAContactDTO paDto = cUtils.getContactByPAOrganizationalContactId((
+                        PAContactDTO paDto = correlationUtils.getContactByPAOrganizationalContactId((
                             Long.valueOf(siteConDto.getOrganizationalContactIi().getExtension())));
                         if (paDto.getTitle() != null)  {
                             primContactList.append(stStartB + paDto.getTitle() + stDash
@@ -745,7 +745,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
            }
            if (siteConDto != null && !PAUtil.isIiNull(siteConDto.getOrganizationalContactIi())) {
 
-                   PAContactDTO paDto = cUtils.getContactByPAOrganizationalContactId((
+                   PAContactDTO paDto = correlationUtils.getContactByPAOrganizationalContactId((
                             Long.valueOf(siteConDto.getOrganizationalContactIi().getExtension())));
                    if (paDto.getTitle() != null)  {
                        personContactWebDTO = new PaPersonDTO();
@@ -1291,7 +1291,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             spDto = sPartService.get(IiConverter.convertToIi(cbValue));
             studySiteIdentifier = cbValue;
             editOrg = new Organization();
-            editOrg = cUtils.getPAOrganizationByIi(spDto.getHealthcareFacilityIi());
+            editOrg = correlationUtils.getPAOrganizationByIi(spDto.getHealthcareFacilityIi());
             orgFromPO = new PaOrganizationDTO();
             orgFromPO.setName(editOrg.getName());
 
@@ -1313,7 +1313,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                     crsIi = dto.getClinicalResearchStaffIi();
                 }
             }
-            Person per = cUtils.getPAPersonByIi(crsIi);
+            Person per = correlationUtils.getPAPersonByIi(crsIi);
             personContactWebDTO.setSelectedPersId(Long.valueOf(per.getIdentifier()));
             personContactWebDTO.setFullName(per.getFullName());
 
@@ -1474,7 +1474,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private void save() throws PAException {
         StudySiteDTO siteDTO = new StudySiteDTO();
         String poOrgId = editOrg.getIdentifier();
-        Long paHealthCareFacilityId = oCService.createHealthCareFacilityCorrelations(poOrgId);
+        Long paHealthCareFacilityId = orgCorrelationService.createHealthCareFacilityCorrelations(poOrgId);
         siteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
         siteDTO.setHealthcareFacilityIi(IiConverter.convertToIi(paHealthCareFacilityId));
         if (currentAction.equalsIgnoreCase("create")) {
@@ -1669,5 +1669,19 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      public void setProgramCode(String programCode) {
        this.programCode = programCode;
      }
+
+    /**
+     * @param orgCorrelationService the orgCorrelationService to set
+     */
+    public void setOrgCorrelationService(OrganizationCorrelationServiceRemote orgCorrelationService) {
+        this.orgCorrelationService = orgCorrelationService;
+    }
+
+    /**
+     * @param correlationUtils the correlationUtils to set
+     */
+    public void setCorrelationUtils(CorrelationUtilsRemote correlationUtils) {
+        this.correlationUtils = correlationUtils;
+    }
 
 }

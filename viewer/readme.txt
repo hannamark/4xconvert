@@ -11,11 +11,11 @@ To build and deploy pa applications using project ant tasks:
 2.  run viewer/ant package
 3.  in pa/build.properties make sure that "exclude.viewer=true"
         is commented out.
-4.  run pa/ant deploy-notest 
-        or 
+4.  run pa/ant deploy-notest
+        or
     pa/ant deploy
-    
-    
+
+
 To deploy only the viewer application:
 
 1.  complete above process
@@ -23,7 +23,7 @@ To deploy only the viewer application:
         or
     viewer/ant deploy
 
- 
+
 To set up Eclipse.
 
 1.  download Eclipse 3.5
@@ -36,7 +36,7 @@ To set up Eclipse.
         use blocks always
         use parenthesis only if necessary
         use this only if necessary
-        remove all unused and unnecessary  
+        remove all unused and unnecessary
 7.  create custom formatter based on eclipse built-in Preferences->Java->Code Style->Formatter
         Tab policy: spaces only
         Maximum line width: 120
@@ -55,6 +55,5 @@ To run in Eclipse.
 
 1.  run viewer/ant ivy-get
 2.  start eclipse and import project
-3.  create classpath variables CODE_PA (<coppa dir>/code/pa) and VIEWER_LIB (<coppa dir>/
+3.  create classpath variable VIEWER_LIB (<coppa dir>/
 4.  create java working set viewer_src comprised of the two src/java directories.
-    

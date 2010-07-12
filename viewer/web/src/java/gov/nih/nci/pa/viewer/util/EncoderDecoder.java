@@ -5,8 +5,10 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
+//CHECKSTYLE:OFF illegal import - PO-2388
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+//CHECKSTYLE:ON
 
 /**
  *

@@ -123,7 +123,7 @@ import org.hibernate.criterion.Expression;
 
 /**
  * Synchronization service bean for organization and its structural roles.
- * 
+ *
  * @author Naveen Amiruddin
  * @since 07/07/2007 copyright NCI 2007. All rights reserved. This code may not be used without the express written
  *        permission of the copyright holder, NCI.
@@ -141,7 +141,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
 
     private SessionContext ejbContext;
     @EJB
-    StudySiteServiceLocal spsLocal = null;
+    private StudySiteServiceLocal spsLocal;
 
     @Resource
     void setSessionContext(SessionContext ctx) {
@@ -149,7 +149,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     }
 
     /**
-     * 
+     *
      * @param orgIdentifer ii of organization
      * @throws PAException on error
      */
@@ -168,7 +168,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     }
 
     /***
-     * 
+     *
      * @param hcfIdentifer po HealthCareFacility identifier
      * @throws PAException on error
      */
@@ -187,7 +187,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     }
 
     /***
-     * 
+     *
      * @param oscIdentifer po OversightCommittee identifier
      * @throws PAException on error
      */
@@ -205,7 +205,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     }
 
     /***
-     * 
+     *
      * @param roIdentifier po ResearchOrganization identifier
      * @throws PAException on error
      */
@@ -234,7 +234,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             if (orgDto == null) {
                 // its nullified
                 paOrg.setStatusCode(EntityStatusCode.NULLIFIED);
-                
+
                 final Ii dupId = getDuplicateOrganization(ii);
                 if (dupId != null) {
                     paServiceUtil.getOrCreatePAOrganizationByIi(dupId);
@@ -266,7 +266,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
 
     private void updateRegistryUsers(Ii identifier, Ii dupId) throws NullifiedEntityException, PAException {
         OrganizationDTO poOrg = PoRegistry.getOrganizationEntityService().getOrganization(dupId);
-        
+
         Session session = HibernateUtil.getCurrentSession();
         Criteria crit = session.createCriteria(RegistryUser.class);
         crit.add(Expression.eq("affiliatedOrganizationId", Long.valueOf(identifier.getExtension())));
@@ -436,5 +436,12 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             }
             return null;
         }
+    }
+
+    /**
+     * @param spsLocal the spsLocal to set
+     */
+    public void setSpsLocal(StudySiteServiceLocal spsLocal) {
+        this.spsLocal = spsLocal;
     }
 }

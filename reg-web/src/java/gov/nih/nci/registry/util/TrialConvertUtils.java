@@ -170,10 +170,9 @@ public class TrialConvertUtils {
      * The Constant MAXF.
      **/
     protected static final int MAXF = 1024;
-    /**
-     * PAServiceUtils.
-     **/
-    protected final PAServiceUtils paServiceUtil = new PAServiceUtils();
+
+    private final PAServiceUtils paServiceUtil = new PAServiceUtils();
+
     /**
      * Convert to study protocol dto for amendment.
      * @param trialDTO dtotoConvert
@@ -1383,4 +1382,11 @@ public class TrialConvertUtils {
        return EnOnConverter.convertEnOnToString(
                orgDto.getName());
    }
+
+/**
+ * @return the paServiceUtil
+ */
+public PAServiceUtils getPaServiceUtil() {
+    return paServiceUtil;
+}
 }

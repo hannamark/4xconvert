@@ -120,7 +120,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     @Override
     public String create() throws PAException {
-        if (!spDTO.getDocumentWorkflowStatusCode().isEligibleForAccrual()) {
+        if (!getSpDTO().getDocumentWorkflowStatusCode().isEligibleForAccrual()) {
             addActionError("An abstraction must be verified before users can be authorized to submit accruals.");
             return super.execute();
         }
@@ -133,7 +133,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     @Override
     public String add() throws PAException {
         try {
-            accrualAccessSvc.create(access);
+            getAccrualAccessSvc().create(access);
         } catch (PAException e) {
             addActionError(e.getMessage());
             return AR_EDIT;
@@ -147,7 +147,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     @Override
     public String update() throws PAException {
         try {
-            accrualAccessSvc.update(access);
+            getAccrualAccessSvc().update(access);
         } catch (PAException e) {
             addActionError(e.getMessage());
             return AR_EDIT;
@@ -161,7 +161,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     @Override
     protected void loadEditForm() throws PAException {
         if (CA_EDIT.equals(getCurrentAction())) {
-            setAccess(accrualAccessSvc.get(Long.valueOf(getSelectedRowIdentifier())));
+            setAccess(getAccrualAccessSvc().get(Long.valueOf(getSelectedRowIdentifier())));
             setEmail(getAccess().getEmail());
             setPhone(getAccess().getPhone());
             setSiteRecruitmentStatus(getAccess().getSiteRecruitmentStatus());
@@ -175,7 +175,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     @Override
     protected void loadListForm() throws PAException {
-        setAccessList(accrualAccessSvc.getByStudyProtocol(spDTO.getStudyProtocolId()));
+        setAccessList(getAccrualAccessSvc().getByStudyProtocol(getSpDTO().getStudyProtocolId()));
     }
 
     /**
@@ -221,7 +221,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         } catch (NumberFormatException e) {
             studySiteId = null;
         }
-        StudySiteAccrualStatusDTO iso = accrualStatusSvc.getCurrentStudySiteAccrualStatusByStudySite(IiConverter
+        StudySiteAccrualStatusDTO iso = getAccrualStatusSvc().getCurrentStudySiteAccrualStatusByStudySite(IiConverter
                 .convertToStudySiteIi(studySiteId));
         setSiteRecruitmentStatus(iso == null ? null : CdConverter.convertCdToString(iso.getStatusCode()));
         return SUCCESS;
@@ -261,7 +261,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     public Map<Long, String> getSites() throws PAException {
         if (sites == null) {
-            sites = accrualAccessSvc.getTreatingSites(spDTO.getStudyProtocolId());
+            sites = getAccrualAccessSvc().getTreatingSites(getSpDTO().getStudyProtocolId());
         }
         return sites;
     }
@@ -291,7 +291,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      * @throws PAException
      */
     private List<LabelValueBean> getDisplayUsersList() throws PAException {
-        Set<User> uSet = accrualAccessSvc.getSubmitters();
+        Set<User> uSet = getAccrualAccessSvc().getSubmitters();
 
         List<LabelValueBean> lvBeanList = new ArrayList<LabelValueBean>();
         for (User u : uSet) {
@@ -314,7 +314,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
             return null;
         }
         try {
-            RegistryUser regUser = registryUserSvc.getUser(user.getLoginName());
+            RegistryUser regUser = getRegistryUserSvc().getUser(user.getLoginName());
             if (regUser == null) {
                 return null;
             }

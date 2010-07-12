@@ -179,7 +179,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setStudySiteId(Long.valueOf("01"));
         patient.setDiseaseIdentifier(Long.valueOf("1"));
         patient.setRegistrationDate("12/10/2009");
-        PatientAction.unitedStatesId = 1L;
+        PatientAction.setUnitedStatesId(1L);
         action.setPatient(patient);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
@@ -202,12 +202,12 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setStudySubjectId(1L);
         patient.setPatientId(1L);
         patient.setRegistrationDate("12/10/2009");
-        PatientAction.unitedStatesId = 1L;
+        PatientAction.setUnitedStatesId(1L);
         action.setPatient(patient);
         assertEquals("success", action.edit());
         assertNotNull(action.getPatient());
     }
-    
+
     @Test
     public void addExceptionTest() throws Exception {
         assertEquals(AccrualConstants.AR_DETAIL, action.edit());
@@ -225,7 +225,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setStudySubjectId(1L);
         patient.setZip("12345");
         patient.setPaymentMethodCode("paymentMethodCode");
-        PatientAction.unitedStatesId = 1L;
+        PatientAction.setUnitedStatesId(1L);
         action.setPatient(patient);
         assertEquals("detail", action.add());
     }
@@ -240,7 +240,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("diseaseId", "1");
         assertEquals(ActionSupport.SUCCESS, action.displayDisease());
     }
-    
+
     @Test
     public void criteriaTest() throws Exception {
         criteria.setAssignedIdentifier("PO PATIENT ID 01");

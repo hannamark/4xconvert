@@ -253,9 +253,6 @@ public class SearchTrialBean implements SearchTrialService {
         return outcomesSpIi;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @SuppressWarnings(UNCHECKED)
     private Set<Long> getAuthorizedTrials(St user) throws RemoteException {
         Set<Long> result = new HashSet<Long>();
@@ -288,7 +285,7 @@ public class SearchTrialBean implements SearchTrialService {
         try {
             hql.append("select distinct sp.id "
                             + "from StudyProtocol as sp "
-                            + "left outer join sp.studySites as sps " 
+                            + "left outer join sp.studySites as sps "
                             + "left outer join sp.otherIdentifiers as oi ");
             hql.append(generateWhereClause(criteria));
         } catch (Exception e) {

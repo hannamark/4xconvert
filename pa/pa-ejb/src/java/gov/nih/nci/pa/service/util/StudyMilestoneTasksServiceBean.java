@@ -104,6 +104,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -125,7 +126,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     private static final int PAST_7_DAYS = 7;
 
     @EJB
-    StudyMilestoneServicelocal smRemote;
+    private StudyMilestoneServicelocal smRemote;
 
     /**
      * Perform task.
@@ -142,9 +143,9 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         Calendar milestoneDate = Calendar.getInstance();
         try {
             List<StudyMilestoneDTO> studyMilestoneDTOList = smRemote.search(studyMilestoneDTO, limit);
-            LOG.debug("The Search results returned" + studyMilestoneDTOList.size());
 
-            if (studyMilestoneDTOList != null && !studyMilestoneDTOList.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(studyMilestoneDTOList)) {
+                LOG.debug("The Search results returned" + studyMilestoneDTOList.size());
                 for (StudyMilestoneDTO smdto : studyMilestoneDTOList) {
                     milestoneDate.setTime(smdto.getMilestoneDate().getValue());
                     if (isMoreThan5Businessdays(milestoneDate) && !checkMilestoneExists(smdto)) {
@@ -208,6 +209,12 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         }
         LOG.debug("milestoneExits-" + milestoneExits);
         return milestoneExits;
+    }
+    /**
+     * @param smRemote the smRemote to set
+     */
+    public void setSmRemote(StudyMilestoneServicelocal smRemote) {
+        this.smRemote = smRemote;
     }
 
   }

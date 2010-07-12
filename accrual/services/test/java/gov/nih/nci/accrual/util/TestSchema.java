@@ -202,11 +202,11 @@ public class TestSchema {
     public static void reset() throws Exception {
         /* just to exercise the getHibernateHelper with a null value */
         HibernateUtil ahu = new HibernateUtil();
-        HibernateUtil.testHelper = null;
+        HibernateUtil.setTestHelper(null);
         HibernateUtil.getHibernateHelper();
         /* end test */
 
-        HibernateUtil.testHelper = testHelper;
+        HibernateUtil.setTestHelper(testHelper);
         Session session = HibernateUtil.getHibernateHelper().getCurrentSession();
         session.flush();
         Connection connection = session.connection();
@@ -336,11 +336,11 @@ public class TestSchema {
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
-        
+
         Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
         Ii assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00001");
         studySecondaryIdentifiers.add(assignedId);
-        
+
         sp.setOtherIdentifiers(studySecondaryIdentifiers);
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
@@ -355,11 +355,11 @@ public class TestSchema {
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
-        
+
         studySecondaryIdentifiers =  new HashSet<Ii>();
         assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00001");
         studySecondaryIdentifiers.add(assignedId);
-        
+
         sp.setOtherIdentifiers(studySecondaryIdentifiers);
         sp.setStatusCode(ActStatusCode.INACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
@@ -374,11 +374,11 @@ public class TestSchema {
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
-        
+
         studySecondaryIdentifiers =  new HashSet<Ii>();
         assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00001");
         studySecondaryIdentifiers.add(assignedId);
-        
+
         sp.setOtherIdentifiers(studySecondaryIdentifiers);
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(2));
@@ -471,11 +471,11 @@ public class TestSchema {
         // Outcomes SP
         outcomesSpId = studyProtocols.size();
         sp = new StudyProtocol();
-        
+
         studySecondaryIdentifiers =  new HashSet<Ii>();
         assignedId = IiConverter.convertToAssignedIdentifierIi("Outcomes");
         studySecondaryIdentifiers.add(assignedId);
-        
+
         sp.setOtherIdentifiers(studySecondaryIdentifiers);
         sp.setSubmissionNumber(1);
         addUpdObject(sp);
@@ -856,7 +856,7 @@ public class TestSchema {
         tm.setDisplayName("Phospho-HER-2/neu");
         tm.setDescription("Phospho-HER-2/neu");
         addUpdObject(tm);
-        
+
         tm = new TumorMarker();
         tm.setCode("HER-2/neu");
         tm.setDisplayName("HER-2/neu");

@@ -60,11 +60,11 @@ import org.hibernate.criterion.Example;
 public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLocal {
     private static final Logger LOG  = Logger.getLogger(StudyProtocolStageBeanLocal.class);
     @EJB
-    MailManagerServiceLocal mailManagerSerivceLocal = null;
+    private MailManagerServiceLocal mailManagerSerivceLocal;
     @EJB
-    LookUpTableServiceRemote lookUpTableService = null;
+    private LookUpTableServiceRemote lookUpTableService;
     @EJB
-    RegistryUserServiceLocal registryUserServiceLocal = null;
+    private RegistryUserServiceLocal registryUserServiceLocal;
 
     /**
      * @param dto dto
@@ -129,6 +129,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
             session.load(StudyProtocolStage.class, Long.valueOf(ii.getExtension()));
         session.delete(tempSp);
     }
+
     /**
      * @param ii ii
      * @return Dto
@@ -151,8 +152,8 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         }
         LOG.debug("Leaving getStudyProtocol");
         return StudyProtocolStageConverter.convertFromDomainToDTO(studyProtocol);
-
     }
+
     /**
      *
      * @param studyProtocolStageIi ii
@@ -178,6 +179,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         }
         return resultList;
     }
+
     /**
      * @param studyProtocolStageIi ii
      * @return List
@@ -203,6 +205,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         }
         return resultList;
     }
+
     /**
      * @param ispDTO dto
      * @param fundDTOs dto
@@ -220,8 +223,8 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         return studyProtocolStageIi;
     }
 
-     /**
-     ** @param isoDTO  for spStage
+    /**
+     * @param isoDTO  for spStage
      *  @param fundDTOs for funding
      *  @param indDTOs for ind
      *  @return dto
@@ -238,11 +241,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         return get(spIi);
 
     }
-    /**
-     * @param isoDTO isoDto
-     * @return ii
-     * @throws PAException e
-     */
+
     private Ii createOrUpdateStudyProtocol(StudyProtocolStageDTO isoDTO, String operation)
             throws PAException {
         LOG.info("inside create...");
@@ -258,6 +257,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         }
         return IiConverter.convertToStudyProtocolIi(sp.getId());
     }
+
     private List<StudyProtocolStageDTO> convertFromDomainToDTO(List<StudyProtocolStage> studyProtocolList) {
         List<StudyProtocolStageDTO> studyProtocolDTOList = null;
         if (studyProtocolList != null) {
@@ -269,10 +269,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         }
         return studyProtocolDTOList;
     }
-    /**
-     * @param studyFundingStageDTO studyFundingStageDTO
-     * @throws PAException on error
-     */
+
     private void createGrants(List<StudyFundingStageDTO> studyFundingStageDTOs,
             Ii studyProtocolStageIi) throws PAException {
         if (CollectionUtils.isNotEmpty(studyFundingStageDTOs)) {
@@ -291,11 +288,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         }
 
     }
-    /**
-     *
-     * @param tempStudyProtocolIi ii to delete
-     * @throws PAException on error
-     */
+
     private void deleteGrants(Ii studyProtocolStageIi) throws PAException {
         if (PAUtil.isIiNull(studyProtocolStageIi)) {
             throw new PAException("Ii can not be null");
@@ -308,10 +301,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         LOG.info(" query  = " + sql);
         session.createSQLQuery(sql.toString()).executeUpdate();
     }
-    /**
-     * @param studyIndIdeStageDTO dto to create
-     * @throws PAException on err
-     */
+
     private void createIndIde(List<StudyIndIdeStageDTO> studyIndIdeStageDTOs, Ii studyProtocolStageIi)
             throws PAException {
         if (CollectionUtils.isNotEmpty(studyIndIdeStageDTOs)) {
@@ -329,10 +319,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
             }
         }
     }
-    /**
-     * @param studyProtocolStageIi ii
-     * @throws PAException on err
-     */
+
     private void deleteIndIdesForStudyProtocolStage(Ii studyProtocolStageIi)
             throws PAException {
         if (PAUtil.isIiNull(studyProtocolStageIi)) {

@@ -81,7 +81,6 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -94,7 +93,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -114,9 +112,6 @@ import org.hibernate.Session;
 public class StudySubjectBeanLocal
         extends AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter>
         implements StudySubjectService, StudySubjectServiceLocal {
-
-    @EJB
-    SearchTrialService searchTrialSvc;
 
     /**
      * {@inheritDoc}
@@ -167,4 +162,5 @@ public class StudySubjectBeanLocal
         }
         return super.create(dto);
     }
+
 }

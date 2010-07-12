@@ -1,9 +1,6 @@
 package gov.nih.nci.pa.service.correlation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.domain.Organization;
@@ -18,7 +15,6 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Criteria;
-import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.junit.Before;
@@ -33,20 +29,20 @@ public class OrganizationSynchronizationServiceBeanTest {
 
     Ii pid;
     Session session = null;
-    
+
     @Before
     public void setUp() throws Exception {
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
-        bean.spsLocal = spsService;
+        bean.setSpsLocal(spsService);
 //        TestSchema.reset();
         TestSchema.reset1();
 //        session = TestSchema.getSession();
         //TestSchema.reset1();
         TestSchema.primeData();
-        
+
         session  = HibernateUtil.getCurrentSession();
         createTestData();
-        
+
     }
 
     @Test
@@ -54,23 +50,23 @@ public class OrganizationSynchronizationServiceBeanTest {
         Ii hcfIi = IiConverter.convertToPoHealthCareFacilityIi("abc");
         bean.synchronizeHealthCareFacility(hcfIi);
     }
-    
-    
+
+
 //    @Test
     public void synchronizeHealthCareFacilityNullify() throws Exception {
         Ii hcfIi = IiConverter.convertToPoHealthCareFacilityIi("abc");
         hcfIi.setNullFlavor(NullFlavor.NA);
         bean.synchronizeHealthCareFacility(hcfIi);
-        
+
     }
-    
+
     @Test
     public void synchronizeResearchOrganizationActiveToPending() throws Exception {
         Ii roIi = IiConverter.convertToPoResearchOrganizationIi("abc");
         bean.synchronizeResearchOrganization(roIi);
 
     }
-    
+
     @Test
     public void synchronizeResearchOrganizationNullify() throws Exception {
         Ii roIi = IiConverter.convertToPoResearchOrganizationIi("abc");
@@ -84,20 +80,20 @@ public class OrganizationSynchronizationServiceBeanTest {
         bean.synchronizeOversightCommittee(roIi);
 
     }
-    
+
     @Test
     public void synchronizeOversightCommitteeNullify() throws Exception {
         Ii roIi = IiConverter.convertToPoOversightCommitteeIi("abc");
         roIi.setNullFlavor(NullFlavor.NA);
         bean.synchronizeOversightCommittee(roIi);
     }
-    
+
     @Test
     public void synchronizeOrganization()  throws Exception {
         Ii roIi = IiConverter.convertToPoOrganizationIi("abc");
         bean.synchronizeOrganization(roIi);
     }
-    
+
    @Test
     public void synchronizeOrganizationNullify()  throws Exception {
         Ii roIi = IiConverter.convertToPoOrganizationIi("abc");
@@ -110,14 +106,14 @@ public class OrganizationSynchronizationServiceBeanTest {
        Criteria criteria = session.createCriteria(Organization.class);
        criteria.add(Expression.eq("identifier", "22"));
        assertTrue("new pa org should not exist yet", criteria.list().size() == 0);
-       
+
        RegistryUser ru = new RegistryUser();
        ru.setAffiliatedOrganizationId(2L);
        ru.setAffiliateOrg("isNullified");
-       
+
        Long ruId = (Long)session.save(ru);
        session.flush();
-       
+
        Ii roIi = IiConverter.convertToPoOrganizationIi("2");
        bean.synchronizeOrganization(roIi);
 
@@ -127,11 +123,11 @@ public class OrganizationSynchronizationServiceBeanTest {
 
        assertTrue(dbRu.getAffiliatedOrganizationId().equals(22L));
        assertTrue("Org Name was not updated", dbRu.getAffiliateOrg().equals("OrgName"));
-   
+
        criteria = session.createCriteria(Organization.class);
        criteria.add(Expression.eq("identifier", "22"));
        assertTrue("new pa org should exist", criteria.list().size() == 1);
-              
+
    }
 
     private void createTestData() {
@@ -141,8 +137,8 @@ public class OrganizationSynchronizationServiceBeanTest {
         org.setName("Will be nullified Org");
         session.save(org);
         session.flush();
-        
-        
+
+
 //        Organization o  = OrganizationTest.createOrganizationObj();
 //        TestSchema.addUpdObject(o);
 //        assertNotNull(o.getId());
@@ -163,8 +159,5 @@ public class OrganizationSynchronizationServiceBeanTest {
 ////        StudySite saved = (StudySite) session.load(StudySite.class, create.getId());
 ////        createdSpsId = saved.getId();
     }
-
-    
-
 
 }

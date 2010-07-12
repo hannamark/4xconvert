@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service.util;
 
@@ -19,23 +19,24 @@ import org.junit.Test;
  */
 public class StudyMilestoneTasksServiceBeanTest {
 
-	Session sess;
-	StudyMilestoneServicelocal result = new StudyMilestoneBeanLocal();
-	StudyMilestoneTasksServiceBean taskBean = new StudyMilestoneTasksServiceBean();
-	@Before
+    Session sess;
+    StudyMilestoneServicelocal result = new StudyMilestoneBeanLocal();
+    StudyMilestoneTasksServiceBean taskBean = new StudyMilestoneTasksServiceBean();
+
+    @Before
     public void setUp() throws Exception {
-		 TestSchema.reset1();
-	     TestSchema.primeData();
-	     sess = HibernateUtil.getCurrentSession();   
-	     taskBean.smRemote = result;
+        TestSchema.reset1();
+        TestSchema.primeData();
+        sess = HibernateUtil.getCurrentSession();
+        taskBean.setSmRemote(result);
     }
-	
-	/**
-	 * Test method for {@link gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceBean#performTask()}.
-	 */
-	@Test
-	public void testPerformTask() throws PAException {
-		taskBean.performTask();
-	}
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceBean#performTask()}.
+     */
+    @Test
+    public void testPerformTask() throws PAException {
+        taskBean.performTask();
+    }
 
 }

@@ -134,7 +134,7 @@ public class CollaboratorsAction extends ActionSupport
 
     private StudySiteServiceLocal sPartService;
     private OrganizationCorrelationServiceBean ocService;
-    CorrelationUtilsRemote cUtils;
+    private CorrelationUtilsRemote correlationUtils;
     private List<CountryRegAuthorityDTO> countryRegDTO;
     private Ii spIi;
     private List<PaOrganizationDTO> organizationList = null;
@@ -167,7 +167,7 @@ public class CollaboratorsAction extends ActionSupport
     public void prepare() throws Exception {
         sPartService = PaRegistry.getStudySiteService();
         ocService = new OrganizationCorrelationServiceBean();
-        cUtils = new CorrelationUtils();
+        correlationUtils = new CorrelationUtils();
 
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
         .getRequest().getSession()
@@ -276,7 +276,7 @@ public class CollaboratorsAction extends ActionSupport
     public String edit() throws Exception {
         setCurrentAction(ACT_EDIT);
         StudySiteDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
-        Organization editOrg = cUtils.getPAOrganizationByIi(spDto.getResearchOrganizationIi());
+        Organization editOrg = correlationUtils.getPAOrganizationByIi(spDto.getResearchOrganizationIi());
         orgFromPO.setCity(editOrg.getCity());
         orgFromPO.setCountry(editOrg.getCountryName());
         orgFromPO.setName(editOrg.getName());
@@ -321,7 +321,7 @@ public class CollaboratorsAction extends ActionSupport
         organizationList = new ArrayList<PaOrganizationDTO>();
         List<StudySiteDTO> spList = sPartService.getByStudyProtocol(spIi, criteriaList);
         for (StudySiteDTO sp : spList) {
-            Organization orgBo = cUtils.getPAOrganizationByIi(sp.getResearchOrganizationIi());
+            Organization orgBo = correlationUtils.getPAOrganizationByIi(sp.getResearchOrganizationIi());
             PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
             orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
             orgWebDTO.setName(orgBo.getName());
@@ -463,6 +463,13 @@ public class CollaboratorsAction extends ActionSupport
      */
     public void setOrgFromPO(PaOrganizationDTO orgFromPO) {
         this.orgFromPO = orgFromPO;
+    }
+
+    /**
+     * @param correlationUtils the correlationUtils to set
+     */
+    public void setCorrelationUtils(CorrelationUtilsRemote correlationUtils) {
+        this.correlationUtils = correlationUtils;
     }
 
 }

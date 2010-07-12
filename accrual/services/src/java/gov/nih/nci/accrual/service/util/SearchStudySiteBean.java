@@ -151,9 +151,6 @@ public class SearchStudySiteBean implements SearchStudySiteService {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @SuppressWarnings("unchecked")
     private Set<Long> getAuthorizedSites(St user) throws RemoteException {
         Set<Long> result = new HashSet<Long>();

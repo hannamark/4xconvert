@@ -5,8 +5,10 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
+//CHECKSTYLE:OFF illegal import - PO-2388
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+//CHECKSTYLE:ON
 
 /**
  *
@@ -16,9 +18,9 @@ import sun.misc.BASE64Encoder;
 public class EncoderDecoder {
 
     private static final Logger LOG = Logger.getLogger(EncoderDecoder.class);
-    
+
     /**
-     * 
+     *
      * @param data data
      * @return encoded String
      */
@@ -30,14 +32,14 @@ public class EncoderDecoder {
 
 
     /**
-     * 
+     *
      * @param data data
      * @return decoded String
      */
     public String decodeString(String data)  {
         LOG.info("Entering EncoderDecoder.decodeString");
         BASE64Decoder b2 = new BASE64Decoder();
-     
+
         String decodeString = null;
         try {
             byte[] decode = b2.decodeBuffer(data);

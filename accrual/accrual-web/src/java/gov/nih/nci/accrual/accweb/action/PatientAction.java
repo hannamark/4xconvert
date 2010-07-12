@@ -128,7 +128,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         validStatusCodes.add(FunctionalRoleStatusCode.ACTIVE.getCode());
     }
     private static List<Country> listOfCountries = null;
-    static Long unitedStatesId = null;
+    private static Long unitedStatesId = null;
     private Long organizationId;
 
     private SearchPatientsCriteriaWebDto criteria;
@@ -217,12 +217,10 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      */
     @Override
     public String delete() throws RemoteException {
-        StudySubjectDto dto = studySubjectSvc.get(IiConverter
-                .convertToIi(getSelectedRowIdentifier()));
+        StudySubjectDto dto = getStudySubjectSvc().get(IiConverter.convertToIi(getSelectedRowIdentifier()));
         dto.setStatusCode(CdConverter.convertStringToCd(deletedStatusCode));
-        dto.getStatusDateRange().setHigh(
-                TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        studySubjectSvc.update(dto);
+        dto.getStatusDateRange().setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        getStudySubjectSvc().update(dto);
         return super.delete();
     }
 
@@ -244,13 +242,13 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         PerformedSubjectMilestoneDto psm = patient
                 .getPerformedStudySubjectMilestoneDto();
         try {
-            pat = patientSvc.create(pat);
+            pat = getPatientSvc().create(pat);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             return super.create();
         }
         ssub.setPatientIdentifier(pat.getIdentifier());
-        ssub = studySubjectSvc.create(ssub);
+        ssub = getStudySubjectSvc().create(ssub);
         psm.setStudySubjectIdentifier(ssub.getIdentifier());
         setRegistrationDate(psm);
         return super.add();
@@ -273,12 +271,12 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         PerformedSubjectMilestoneDto psm = patient
                 .getPerformedStudySubjectMilestoneDto();
         try {
-            pat = patientSvc.update(pat);
+            pat = getPatientSvc().update(pat);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             return super.update();
         }
-        ssub = studySubjectSvc.update(ssub);
+        ssub = getStudySubjectSvc().update(ssub);
         setRegistrationDate(psm);
         return super.edit();
     }
@@ -301,16 +299,17 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         setDisplayTagList(new ArrayList<PatientWebDto>());
         try {
             for (SearchStudySiteResultWebDto ss : getListOfStudySites()) {
-                List<StudySubjectDto> subList = studySubjectSvc.getByStudySite(IiConverter.convertToIi(ss.getSsIi()));
+                final Ii ssii = IiConverter.convertToIi(ss.getSsIi());
+                List<StudySubjectDto> subList = getStudySubjectSvc().getByStudySite(ssii);
                 for (StudySubjectDto sub : subList) {
                     String statusCode = CdConverter.convertCdToString(sub.getStatusCode());
                     if (!validStatusCodes.contains(statusCode)) {
                         continue;
                     }
-                    PatientDto pat = patientSvc.get(sub.getPatientIdentifier());
+                    PatientDto pat = getPatientSvc().get(sub.getPatientIdentifier());
                     DiseaseDTO dto;
                     try {
-                        dto = diseaseSvc.get(sub.getDiseaseIdentifier());
+                        dto = getDiseaseSvc().get(sub.getDiseaseIdentifier());
                     } catch (Exception e) {
                         dto = null;
                     }
@@ -333,12 +332,12 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     public String displayDisease() {
         DiseaseWebDTO webDTO = new DiseaseWebDTO();
         webDTO.setDiseaseIdentifier(ServletActionContext.getRequest().getParameter("diseaseId"));
-        if (webDTO == null || StringUtils.isEmpty(webDTO.getDiseaseIdentifier())) {
+        if (StringUtils.isEmpty(webDTO.getDiseaseIdentifier())) {
             webDTO = new DiseaseWebDTO();
         } else {
             Ii ii = IiConverter.convertToIi(webDTO.getDiseaseIdentifier());
             try {
-                DiseaseDTO dto = diseaseSvc.get(ii);
+                DiseaseDTO dto = getDiseaseSvc().get(ii);
                 webDTO.setPreferredName(StConverter.convertToString(dto.getPreferredName()));
                 webDTO.setDiseaseIdentifier(IiConverter.convertToString(dto.getIdentifier()));
             } catch (Exception e) {
@@ -391,7 +390,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         if (listOfCountries == null) {
             try {
                 if (listOfCountries == null) {
-                    listOfCountries = countrySvc.getCountries();
+                    listOfCountries = getCountrySvc().getCountries();
                     for (Country c : listOfCountries) {
                         if ("United States".equals(c.getName())) {
                             unitedStatesId = c.getId();
@@ -414,7 +413,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                 if (listOfStudySites == null) {
                     listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
                     List<SearchStudySiteResultDto> isoStudySiteList =
-                            searchStudySiteSvc.search(getSpIi(), getAuthorizedUser());
+                            getSearchStudySiteSvc().search(getSpIi(), getAuthorizedUser());
                     listOfStudySites = SearchStudySiteResultWebDto.getWebList(isoStudySiteList);
                 }
             } catch (RemoteException e) {
@@ -429,7 +428,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
             genderCriterion = EligibleGenderCode.BOTH;
             List<PlannedEligibilityCriterionDTO> pecList;
             try {
-                pecList = plannedActivitySvc.getPlannedEligibilityCriterionByStudyProtocol(getSpIi());
+                pecList = getPlannedActivitySvc().getPlannedEligibilityCriterionByStudyProtocol(getSpIi());
                 if (!pecList.isEmpty()) {
                 for (PlannedEligibilityCriterionDTO pec : pecList) {
                     if (PaServiceLocator.ELIG_CRITERION_NAME_GENDER.equals(
@@ -449,7 +448,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     private PerformedSubjectMilestoneDto getRegistrationDate(StudySubjectDto sub) {
         List<PerformedSubjectMilestoneDto> smList;
         try {
-            smList = performedActivitySvc.getPerformedSubjectMilestoneByStudySubject(sub.getIdentifier());
+            smList = getPerformedActivitySvc().getPerformedSubjectMilestoneByStudySubject(sub.getIdentifier());
         } catch (RemoteException e) {
             LOG.error("Error in PatientAction.getRegistrationDate().", e);
             return null;
@@ -467,13 +466,13 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         try {
             if (!PAUtil.isTsNull(dto.getRegistrationDate())) {
                 if (!PAUtil.isIiNull(dto.getIdentifier())) {
-                    performedActivitySvc.updatePerformedSubjectMilestone(dto);
+                    getPerformedActivitySvc().updatePerformedSubjectMilestone(dto);
                 } else {
-                    performedActivitySvc.createPerformedSubjectMilestone(dto);
+                    getPerformedActivitySvc().createPerformedSubjectMilestone(dto);
                 }
             } else {
                 if (!PAUtil.isIiNull(dto.getIdentifier())) {
-                    performedActivitySvc.delete(dto.getIdentifier());
+                    getPerformedActivitySvc().delete(dto.getIdentifier());
                 }
             }
         } catch (Exception e) {
@@ -507,7 +506,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     private void validateNoPatientDuplicates() {
         List<StudySubjectDto> allSss = null;
         try {
-            allSss = studySubjectSvc.getByStudyProtocol(getSpIi());
+            allSss = getStudySubjectSvc().getByStudyProtocol(getSpIi());
         } catch (RemoteException e) {
             LOG.error("Error in PatientAction.validateNoPatientDuplicates().", e);
             addActionError(e.getLocalizedMessage());
@@ -589,5 +588,12 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
 
     private String removeUnderTabs(String code) {
         return code.replace('_', ' ');
+    }
+
+    /**
+     * @param unitedStatesId the unitedStatesId to set
+     */
+    static void setUnitedStatesId(Long unitedStatesId) {
+        PatientAction.unitedStatesId = unitedStatesId;
     }
 }

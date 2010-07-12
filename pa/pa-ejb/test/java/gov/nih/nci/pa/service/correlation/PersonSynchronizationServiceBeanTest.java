@@ -30,115 +30,112 @@ public class PersonSynchronizationServiceBeanTest {
     StudyContactServiceLocal scService = new StudyContactBeanLocal();
 
     Ii pid;
-    //Session session = null;
+    // Session session = null;
     Long personId = Long.valueOf(1);
+
     @Before
     public void setUp() throws Exception {
 
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
-        bean.spcLocal = spcService;
-        bean.scLocal = scService;
+        bean.setSpcLocal(spcService);
+        bean.setScLocal(scService);
         TestSchema.reset1();
         TestSchema.reset();
-        //TestSchema.primeData();
+        // TestSchema.primeData();
 
         createTestData();
-        
-
     }
-    
+
     @Test
-    public void synchronizePersonUpdateTest()  throws Exception {
+    public void synchronizePersonUpdateTest() throws Exception {
         Ii roIi = IiConverter.convertToPoPersonIi("abc");
         remoteEjb.synchronizePerson(roIi);
-        Person np = null;
-        np = (Person) HibernateUtil.getCurrentSession().load(Person.class, personId);
+        Person np = (Person) HibernateUtil.getCurrentSession().load(Person.class, personId);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
-    }    
+    }
+
     @Test
-    public void synchronizePersonNullifiy()  throws Exception {
+    public void synchronizePersonNullifiy() throws Exception {
         Ii roIi = IiConverter.convertToPoPersonIi("abc");
         roIi.setNullFlavor(NullFlavor.NA);
         remoteEjb.synchronizePerson(roIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
-    }    
+    }
 
     @Test
-    public void synchronizeClinicalResearchStaffUpdateTest()  throws Exception {
+    public void synchronizeClinicalResearchStaffUpdateTest() throws Exception {
         Ii crsIi = IiConverter.convertToPoClinicalResearchStaffIi("abc");
         remoteEjb.synchronizeClinicalResearchStaff(crsIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
-    }     
+    }
 
-//    @Test
-    public void synchronizeClinicalResearchStaffNullifyTest()  throws Exception {
+    // @Test
+    public void synchronizeClinicalResearchStaffNullifyTest() throws Exception {
         Ii crsIi = IiConverter.convertToPoClinicalResearchStaffIi("abc");
         crsIi.setNullFlavor(NullFlavor.NA);
         remoteEjb.synchronizeClinicalResearchStaff(crsIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
-    }     
+    }
 
     @Test
-    public void synchronizeHealthCareProviderUpdateTest()  throws Exception {
+    public void synchronizeHealthCareProviderUpdateTest() throws Exception {
         Ii hcpIi = IiConverter.convertToPoHealtcareProviderIi("abc");
         remoteEjb.synchronizeHealthCareProvider(hcpIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
-    }     
+    }
 
     @Test
-    public void synchronizeHealthCareProviderNulllifyTest()  throws Exception {
+    public void synchronizeHealthCareProviderNulllifyTest() throws Exception {
         Ii hcpIi = IiConverter.convertToPoHealtcareProviderIi("abc");
         hcpIi.setNullFlavor(NullFlavor.NA);
         remoteEjb.synchronizeHealthCareProvider(hcpIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
-    }  
+    }
 
     @Test
-    public void synchronizeOrganizationalContactUpdateTest()  throws Exception {
+    public void synchronizeOrganizationalContactUpdateTest() throws Exception {
         Ii ocIi = IiConverter.convertToPoOrganizationalContactIi("abc");
         remoteEjb.synchronizeOrganizationalContact(ocIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
-    }     
+    }
 
     @Test
-    public void synchronizeOrganizationalContactNullifyTest()  throws Exception {
+    public void synchronizeOrganizationalContactNullifyTest() throws Exception {
         Ii ocIi = IiConverter.convertToPoOrganizationalContactIi("abc");
         ocIi.setNullFlavor(NullFlavor.NA);
         remoteEjb.synchronizeOrganizationalContact(ocIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
-    }     
-    
+    }
+
     private void createTestData() {
-        
-        Person p  = PersonTest.createPersonObj();
+
+        Person p = PersonTest.createPersonObj();
         TestSchema.addUpdObject(p);
         assertNotNull(p.getId());
         personId = p.getId();
-        Person np = null;
-        np = (Person) HibernateUtil.getCurrentSession().load(Person.class, personId);
-//        System.out.println("id = "+personId);
-//        System.out.println("id = "+np.getId());
-//        System.out.println("name id = "+np.getFirstMiddleLastName());
-//        System.out.println("name id = "+np.getStatusCode());
-//        System.out.println("---------------");
-        
-        Organization o  = OrganizationTest.createOrganizationObj();
+        Person np = (Person) HibernateUtil.getCurrentSession().load(Person.class, personId);
+        // System.out.println("id = "+personId);
+        // System.out.println("id = "+np.getId());
+        // System.out.println("name id = "+np.getFirstMiddleLastName());
+        // System.out.println("name id = "+np.getStatusCode());
+        // System.out.println("---------------");
+
+        Organization o = OrganizationTest.createOrganizationObj();
         TestSchema.addUpdObject(o);
-        assertNotNull(o.getId());        
-        
+        assertNotNull(o.getId());
+
         ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o, p);
         TestSchema.addUpdObject(crs);
-        assertNotNull(crs.getId());        
+        assertNotNull(crs.getId());
 
-    }    
+    }
 
-    
 }

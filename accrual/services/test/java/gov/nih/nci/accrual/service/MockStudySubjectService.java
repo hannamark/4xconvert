@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.service.util.SearchTrialService;
 
 /**
  * @author Hugh Reinhart
@@ -86,8 +85,5 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
  *
  */
 public class MockStudySubjectService extends StudySubjectBeanLocal {
-    public void setSearchTrialSvc (SearchTrialService svc) {
-        searchTrialSvc = svc;
-    }
 
 }

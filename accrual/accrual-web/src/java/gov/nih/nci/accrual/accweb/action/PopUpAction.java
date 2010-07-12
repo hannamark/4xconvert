@@ -133,7 +133,7 @@ public class PopUpAction extends AbstractAccrualAction {
 
         List<DiseaseDTO> diseaseList = null;
         try {
-            diseaseList = diseaseSvc.search(criteria);
+            diseaseList = getDiseaseSvc().search(criteria);
         } catch (Exception e) {
             error("Exception while loading disease results.", e);
             return;
@@ -162,7 +162,7 @@ public class PopUpAction extends AbstractAccrualAction {
         }
         List<DiseaseParentDTO> dpList;
         try {
-            dpList = diseaseParentSvc.getByChildDisease(iis);
+            dpList = getDiseaseParentSvc().getByChildDisease(iis);
         } catch (Exception e) {
             error("Exception thrown while getting disease parents.", e);
             return;
@@ -172,7 +172,7 @@ public class PopUpAction extends AbstractAccrualAction {
             String child = IiConverter.convertToString(dp.getIdentifier());
             DiseaseDTO parentDTO;
             try {
-                parentDTO = diseaseSvc.get(dp.getParentDiseaseIdentifier());
+                parentDTO = getDiseaseSvc().get(dp.getParentDiseaseIdentifier());
             } catch (Exception e) {
                 error("Exception throw while getting disease name for parent.", e);
                 return;

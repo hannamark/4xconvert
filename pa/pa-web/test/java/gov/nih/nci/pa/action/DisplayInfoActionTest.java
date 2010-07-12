@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.action;
 
@@ -27,19 +27,19 @@ public class DisplayInfoActionTest extends AbstractPaActionTest {
     public void prepare() throws Exception {
         action = new DisplayInfoAction();
         action.prepare();
-        action.cUtils = new MockCorrelationUtils();
+        action.setCorrelationUtils(new MockCorrelationUtils());
         StudyProtocolQueryDTO ts = new StudyProtocolQueryDTO();
         ts.setStudyProtocolId(1L);
         ts.setUserLastCreated("userName");
         HttpSession sess = new MockHttpSession();
         sess.setAttribute(Constants.TRIAL_SUMMARY, ts);
      }
-    @Test 
+    @Test
     public void testPersWebDTOProperty(){
         assertNotNull(action.getWebDTO());
         action.setWebDTO(null);
         assertNull(action.getWebDTO());
-        
+
     }
     @Test
     public void testQuery() {

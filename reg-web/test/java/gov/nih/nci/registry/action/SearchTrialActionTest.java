@@ -12,7 +12,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.service.MockCSMUserService;
-import gov.nih.nci.registry.test.util.MockPAServiceUtil;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,7 +27,7 @@ import com.mockrunner.mock.web.MockHttpSession;
  * @author Vrushali
  *
  */
-public class SearchTrialActionTest extends AbstractRegWebTest{
+public class SearchTrialActionTest extends AbstractRegWebTest {
     private SearchTrialAction action;
     //private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
     @Before
@@ -37,7 +36,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         Session session = HibernateUtil.getCurrentSession();
         session.clear();*/
         action = new SearchTrialAction();
-        action.paServiceUtils = new MockPAServiceUtil();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteUser("firstName");
         ServletActionContext.setRequest(request);

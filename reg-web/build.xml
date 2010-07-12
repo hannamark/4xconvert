@@ -9,12 +9,12 @@
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
     <property name="pa.ear.file" value="${software.dir}/pa/pa-ear/target/pa.ear"/>
-    
+
     <property file="${pa.dir}/build.properties"/>
     <property name="pa.resourceDir" value="${basedir}/resources"/>
 
     <property name="pa.pmd" value="${pa.resourceDir}/paRegPmd.xml"/>
-    <property name="pa.checkstyle" value="${pa.resourceDir}/paRegCheckstyle.xml"/>
+    <property name="pa.checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
 
     <property name="reg-web.build.finalName" value="reg-web"/>
     <property name="reg-web.build.dir" value="${software.dir}/reg-web/target"/>
@@ -29,7 +29,7 @@
     <property name="reg-web.reporting.outputDirectory" value="${pa.report.dir}/reg-web/site"/>
     <property name="reg-web.war" value="${reg-web.build.finalName}.war"/>
     <property name="reg-web.build.coberturaOutputDir" value="${reg-web.build.dir}/generated-classes"/>
-    
+
     <property name="reg-web.ear.dir" value="${reg-web.build.dir}/pa"/>
     <property name="reg-web.ear.file" value="${reg-web.ear.dir}.ear"/>
 
@@ -45,13 +45,13 @@
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
-    
-	<path id="common.package.classpath">
-			    <fileset dir="${pa.dir}/commons/target">
-			            <include name="*.jar"/>
-			      </fileset>
-	</path>  
-	
+
+    <path id="common.package.classpath">
+                <fileset dir="${pa.dir}/commons/target">
+                        <include name="*.jar"/>
+                  </fileset>
+    </path>
+
     <property name="compile.jar.dir" location="${lib.dir}/reg-web/compile" />
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}"/>
@@ -66,22 +66,22 @@
     <path id="test.classpath">
         <fileset dir="${test.jar.dir}"/>
     </path>
-    
+
     <property name="test-simian.jar.dir" location="${lib.dir}/reg-web/test-simian" />
     <path id="test-simian.classpath">
         <fileset dir="${test-simian.jar.dir}"/>
     </path>
-    
+
     <property name="test-junit.jar.dir" location="${lib.dir}/reg-web/test-junit" />
     <path id="test-junit.classpath">
         <fileset dir="${test-junit.jar.dir}"/>
     </path>
-    
+
     <property name="test-cobertura.jar.dir" location="${lib.dir}/reg-web/test-cobertura" />
     <path id="test-cobertura.classpath">
         <fileset dir="${test-cobertura.jar.dir}"/>
     </path>
-    
+
     <property name="test-checkstyle.jar.dir" location="${lib.dir}/reg-web/test-checkstyle" />
     <path id="test-checkstyle.classpath">
         <fileset dir="${test-checkstyle.jar.dir}"/>
@@ -98,16 +98,16 @@
             <include name="${ivy-core.file}" />
         </fileset>
     </path>
-    <path id="ejb.package.classpath">       
+    <path id="ejb.package.classpath">
          <fileset dir="${pa.dir}/pa-ejb/target">
             <include name="*.jar"/>
          </fileset>
-    </path> 
+    </path>
 
     <!-- ====================================================================== -->
     <!-- Task definitions                                                       -->
     <!-- ====================================================================== -->
-    
+
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${pa.report.dir}/reg-web"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
@@ -117,7 +117,7 @@
         </fileset>
     </path>
     <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
-    
+
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
@@ -136,22 +136,22 @@
     <target name="compile" description="Compile the code">
         <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <mkdir dir="${reg-web.build.outputDir}"/>
-        <javac destdir="${reg-web.build.outputDir}" 
-               nowarn="false" 
-               debug="true" 
-               optimize="false" 
-               deprecation="true" 
-               target="1.5" 
-               verbose="false" 
-               fork="false" 
+        <javac destdir="${reg-web.build.outputDir}"
+               nowarn="false"
+               debug="true"
+               optimize="false"
+               deprecation="true"
+               target="1.5"
+               verbose="false"
+               fork="false"
                source="1.5">
             <src>
                 <pathelement location="${reg-web.build.srcDir.0}"/>
             </src>
             <classpath>
-                <path refid="compile.classpath"/> 
-                <path refid="ejb.package.classpath"/>    
-            	<path refid="common.package.classpath"/>
+                <path refid="compile.classpath"/>
+                <path refid="ejb.package.classpath"/>
+                <path refid="common.package.classpath"/>
             </classpath>
         </javac>
         <copy todir="${reg-web.build.outputDir}">
@@ -161,60 +161,60 @@
             </filterset>
             <fileset dir="${reg-web.build.resourceDir.0}"/>
         </copy>
-    	<copy file="${pa.resourceDir}/csm.properties"
-    	      todir="${reg-web.build.outputDir}"
-    	      overwrite="true">
-    	      <filterset>
-    	         <filter token="jdbc.driver" value="${jdbc.driver}"/>
-    	         <filter token="jdbc.url" value="${jdbc.url}"/>
-    	         <filter token="db.username" value="${db.username}"/>
-    	         <filter token="db.password" value="${db.password}"/>
-    	         <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
-    	         <filter token="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
-    	         <filter token="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
-    	      </filterset>
-    	</copy>
+        <copy file="${pa.resourceDir}/csm.properties"
+              todir="${reg-web.build.outputDir}"
+              overwrite="true">
+              <filterset>
+                 <filter token="jdbc.driver" value="${jdbc.driver}"/>
+                 <filter token="jdbc.url" value="${jdbc.url}"/>
+                 <filter token="db.username" value="${db.username}"/>
+                 <filter token="db.password" value="${db.password}"/>
+                 <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
+                 <filter token="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
+                 <filter token="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
+              </filterset>
+        </copy>
     </target>
-	 <!-- ====================================================================== -->
-	    <!-- Configure test compilation target                                      -->
-	    <!-- ====================================================================== -->
+     <!-- ====================================================================== -->
+        <!-- Configure test compilation target                                      -->
+        <!-- ====================================================================== -->
 
-	   <!-- <target name="configure-tests">
-	        <copy file="${pa.resourceDir}/test.properties.reg-web" 
-	              tofile="${reg-web.build.testResourceDir.0}/test.properties"
-	              overwrite="true">
-	            <filterset>
-	                <filter token="test.schema.showsql" value="${test.schema.showsql}"/>
-	            </filterset>
-	        </copy>
-	    </target> -->
+       <!-- <target name="configure-tests">
+            <copy file="${pa.resourceDir}/test.properties.reg-web"
+                  tofile="${reg-web.build.testResourceDir.0}/test.properties"
+                  overwrite="true">
+                <filterset>
+                    <filter token="test.schema.showsql" value="${test.schema.showsql}"/>
+                </filterset>
+            </copy>
+        </target> -->
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests" 
-      depends="compile" 
-      description="Compile the test code"> 
+    <target name="compile-tests"
+      depends="compile"
+      description="Compile the test code">
         <mkdir dir="${reg-web.build.testOutputDir}"/>
-        <javac destdir="${reg-web.build.testOutputDir}" 
-               nowarn="false" 
-               debug="true" 
-               optimize="false" 
-               deprecation="true" 
-               target="1.5" 
-               verbose="false" 
-               fork="false" 
+        <javac destdir="${reg-web.build.testOutputDir}"
+               nowarn="false"
+               debug="true"
+               optimize="false"
+               deprecation="true"
+               target="1.5"
+               verbose="false"
+               fork="false"
                source="1.5">
             <src>
                 <pathelement location="${reg-web.build.testDir.0}"/>
             </src>
             <classpath>
                 <pathelement location="${reg-web.build.outputDir}"/>
-            	<path refid="common.package.classpath"/> 
+                <path refid="common.package.classpath"/>
                 <path refid="test.classpath"/>
                 <path refid="test-junit.classpath"/>
-                <path refid="compile.classpath"/>  
-                <path refid="ejb.package.classpath"/> 
+                <path refid="compile.classpath"/>
+                <path refid="ejb.package.classpath"/>
             </classpath>
         </javac>
         <copy todir="${reg-web.build.testOutputDir}">
@@ -227,14 +227,12 @@
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle">
-        <taskdef resource="checkstyletask.properties" 
-             classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
-             
-        <checkstyle config="${pa.checkstyle}" failOnViolation="true">
+        <taskdef resource="checkstyletask.properties" classpath="${test-checkstyle.jar.dir}/checkstyle-all-5.1.jar"/>
+        <checkstyle configurl="${pa.checkstyle.url}" failOnViolation="true">
             <classpath>
-                <path refid="ejb.package.classpath"/> 
+                <path refid="ejb.package.classpath"/>
                 <path refid="compile.classpath"/>
-            	<path refid="common.package.classpath"/>
+                <path refid="common.package.classpath"/>
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
@@ -248,11 +246,11 @@
     <!-- ====================================================================== -->
 
     <target name="test-pmd">
-        <taskdef name="pmd" 
+        <taskdef name="pmd"
              classpath="${test-pmd.jar.dir}/pmd-4.2.2.jar"
              classname="net.sourceforge.pmd.ant.PMDTask"/>
-             
-        <pmd shortFilenames="true" failOnRuleViolation="true" 
+
+        <pmd shortFilenames="true" failOnRuleViolation="true"
                                    rulesetfiles="${pa.pmd}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/reg-web/pmd.txt"/>
@@ -268,7 +266,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-simian">
-       <taskdef resource="simiantask.properties" 
+       <taskdef resource="simiantask.properties"
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
        <simian>
             <fileset dir="src" includes="**/*.java"/>
@@ -282,16 +280,16 @@
     <!-- Run all tests                                                          -->
     <!-- ====================================================================== -->
 
-    <target name="test-dynamic-analysis" 
-            depends="ivy-get,compile,compile-tests,test-cobertura" 
+    <target name="test-dynamic-analysis"
+            depends="ivy-get,compile,compile-tests,test-cobertura"
             description="Run dynamic analysis."/>
-    
-    <target name="test-static-analysis" 
-            depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian" 
+
+    <target name="test-static-analysis"
+            depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian"
             description="Run static analysis."/>
 
-    <target name="test-all" 
-            depends="test-static-analysis,test-dynamic-analysis" 
+    <target name="test-all"
+            depends="test-static-analysis,test-dynamic-analysis"
             description="Run all tests"/>
 
 
@@ -304,10 +302,10 @@
         <copy todir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib">
             <fileset dir="${runtime.jar.dir}"/>
         </copy>
-        
-        <war destfile="${reg-web.build.dir}/${reg-web.war}" 
-             compress="false" 
-             webxml="${software.dir}/reg-web/src/webapp/WEB-INF/web.xml">            
+
+        <war destfile="${reg-web.build.dir}/${reg-web.war}"
+             compress="false"
+             webxml="${software.dir}/reg-web/src/webapp/WEB-INF/web.xml">
             <lib dir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib"/>
             <classes dir="${reg-web.build.outputDir}"/>
             <webinf dir="${software.dir}/reg-web/src/webapp/WEB-INF" excludes="web.xml"/>
@@ -320,9 +318,9 @@
     <target name="package-notest" depends="ivy-get,compile,war"
             description="Package the application.  Do not run tests."/>
 
-    <target name="package" depends="clean,ivy-get,compile,test-all,war" 
+    <target name="package" depends="clean,ivy-get,compile,test-all,war"
             description="Package the application"/>
-    
+
     <!-- ====================================================================== -->
     <!-- Deploy target                                                          -->
     <!-- ====================================================================== -->
@@ -333,16 +331,16 @@
         <fail unless="pa.ear.present" message="File pa.ear not available(should be at ${pa.ear.file}).  Please build pa first before reg-web."/>
         <available file="${reg-web.build.dir}/${reg-web.war}" type="file" property="reg-web.war.present"/>
         <fail unless="reg-web.war.present" message="File reg-web.war not available."/>
-        
+
         <delete dir="${reg-web.ear.dir}" failonerror="false"/>
         <unjar src="${pa.ear.file}" dest="${reg-web.ear.dir}"/>
         <copy file="${reg-web.build.dir}/${reg-web.war}" todir="${reg-web.ear.dir}" overwrite="true"/>
-        <ear destfile="${reg-web.ear.file}" 
-             basedir="${reg-web.ear.dir}" 
-             compress="false" 
+        <ear destfile="${reg-web.ear.file}"
+             basedir="${reg-web.ear.dir}"
+             compress="false"
              appxml="${reg-web.ear.dir}/META-INF/application.xml"/>
     </target>
-    
+
     <target name="deploy-ear">
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
@@ -350,10 +348,10 @@
         <fail unless="reg-web.ear.present" message="Ear file not found."/>
         <copy todir="${jboss.deploy.directory}" file="${reg-web.ear.file}"/>
     </target>
-    
-    <target name="deploy" depends="package,ear,deploy-ear,fix-server-xml" 
+
+    <target name="deploy" depends="package,ear,deploy-ear,fix-server-xml"
             description="Build test and deploy."/>
-    <target name="deploy-notest" depends="package-notest-noivy,ear,deploy-ear,fix-server-xml" 
+    <target name="deploy-notest" depends="package-notest-noivy,ear,deploy-ear,fix-server-xml"
             description="Build and deploy without testing or getting dependencies."/>
 
 
@@ -364,14 +362,14 @@
     <target name="help">
         <echo message="Please run: $ant -projecthelp"/>
     </target>
-    
+
 
     <!-- ====================================================================== -->
     <!-- Run Cobertura and JUnit                                                -->
     <!-- ====================================================================== -->
 
     <target name="test-cobertura" depends="compile-tests">
-        
+
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
 
         <delete file="${reg-web.build.dir}/cobertura.ser" />
@@ -381,8 +379,8 @@
             <fileset dir="${reg-web.build.outputDir}">
                 <include name="**/*.class" />
             </fileset>
-        </cobertura-instrument>   
-        
+        </cobertura-instrument>
+
         <mkdir dir="${reg-web.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <sysproperty key="basedir" value="."/>
@@ -398,32 +396,32 @@
             <classpath refid="test-cobertura.classpath"/>
             <classpath refid="compile.classpath"/>
             <classpath refid="ejb.package.classpath"/>
-        	<classpath refid="common.package.classpath"/>
+            <classpath refid="common.package.classpath"/>
             <batchtest todir="${reg-web.test.reports}">
                 <fileset dir="${reg-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
-                    <exclude name="**/*Abstract*Test.java"/>                    
+                    <exclude name="**/*Abstract*Test.java"/>
                     <exclude name="**/*SeleniumTest.java"/>
                 </fileset>
             </batchtest>
         </junit>
-        
+
         <cobertura-report datafile="${reg-web.build.dir}/cobertura.ser"
-                          destdir="${reg-web.coverage.reports}" 
+                          destdir="${reg-web.coverage.reports}"
                           srcdir="${reg-web.build.srcDir.0}" />
-        
+
         <cobertura-report datafile="${reg-web.build.dir}/cobertura.ser"
-                          format="xml"        
-                          destdir="${reg-web.coverage.reports}" 
+                          format="xml"
+                          destdir="${reg-web.coverage.reports}"
                           srcdir="${reg-web.build.srcDir.0}" />
-        
+
         <cobertura-check datafile="${reg-web.build.dir}/cobertura.ser"
-                         totalbranchrate="70" 
+                         totalbranchrate="70"
                          totallinerate="80"
                          haltonfailure="false"/>
      </target>
-     
-     
+
+
     <!-- ====================================================================== -->
     <!-- Ivy Targets                                                            -->
     <!-- ====================================================================== -->
@@ -457,7 +455,7 @@
         <ivy:resolve refresh="true" conf="compile" />
         <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision].[ext]" conf="compile" />
     </target>
-    <target name="ivy-test" 
+    <target name="ivy-test"
             depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian">
             <ivy:resolve refresh="true" conf="test" />
             <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision].[ext]" conf="test" />
@@ -466,8 +464,8 @@
         <ivy:resolve refresh="true" conf="runtime" />
         <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
     </target>
-    <target name="ivy-get" 
-            depends="init:ivy,ivy-compile,ivy-test,ivy-runtime" 
+    <target name="ivy-get"
+            depends="init:ivy,ivy-compile,ivy-test,ivy-runtime"
             description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">
@@ -476,7 +474,7 @@
     <!-- ====================================================================== -->
     <!-- Copies JSP to the tmp folder                                           -->
     <!-- ====================================================================== -->
-        
+
     <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
             <for param="toDir">
               <path>
@@ -484,36 +482,36 @@
               </path>
               <sequential>
                   <copy todir="@{toDir}">
-                      <fileset dir="${basedir}/src/webapp">                         
+                      <fileset dir="${basedir}/src/webapp">
                             <include name="WEB-INF/jsp/*.jsp"/>
                             <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
                             <include name="WEB-INF/jsp/common/*.jsp"/>
-                            <include name="WEB-INF/tags/*.tag"/>    
+                            <include name="WEB-INF/tags/*.tag"/>
                             <include name="styles/*.css"/>
-                            <include name="scripts/js/*.js"/>     
-                            <include name="scripts/ajax/*.js"/>   
+                            <include name="scripts/js/*.js"/>
+                            <include name="scripts/ajax/*.js"/>
                       </fileset>
                   </copy>
               </sequential>
             </for>
       </target>
-	
-	<!--  ====================================================================== 
-	           The emptySessionPath must be false to avoid Session Fixation Appscan issues and be compatible with the
-	           security-config.xml login-module definitions. This is duplicated in the install.xml to support BDA
-	           remote deployments. This definition supports the developer local deployments.
-	           ====================================================================== --> 
-	           <target name="find-server-xml">
-	                <available file="${jboss.deploy.directory}/jbossweb-tomcat55.sar/server.xml" property="server-xml.present"/>
-	            </target>
-	            <target name="fix-server-xml" depends="find-server-xml" if="server-xml.present">
-	                <copy file="${jboss.deploy.directory}/jbossweb-tomcat55.sar/server.xml" todir="${reg-web.build.dir}" overwrite="true"/>
-	                <copy file="${reg-web.build.dir}/server.xml" todir="${jboss.deploy.directory}/jbossweb-tomcat55.sar" overwrite="true">
-	                    <filterchain>
-	                        <tokenfilter>
-	                            <replacestring from="emptySessionPath=&quot;true&quot;" to="emptySessionPath=&quot;false&quot;"/>
-	                        </tokenfilter>
-	                    </filterchain>
-	                </copy>
-	            </target>
+
+    <!--  ======================================================================
+               The emptySessionPath must be false to avoid Session Fixation Appscan issues and be compatible with the
+               security-config.xml login-module definitions. This is duplicated in the install.xml to support BDA
+               remote deployments. This definition supports the developer local deployments.
+               ====================================================================== -->
+               <target name="find-server-xml">
+                    <available file="${jboss.deploy.directory}/jbossweb-tomcat55.sar/server.xml" property="server-xml.present"/>
+                </target>
+                <target name="fix-server-xml" depends="find-server-xml" if="server-xml.present">
+                    <copy file="${jboss.deploy.directory}/jbossweb-tomcat55.sar/server.xml" todir="${reg-web.build.dir}" overwrite="true"/>
+                    <copy file="${reg-web.build.dir}/server.xml" todir="${jboss.deploy.directory}/jbossweb-tomcat55.sar" overwrite="true">
+                        <filterchain>
+                            <tokenfilter>
+                                <replacestring from="emptySessionPath=&quot;true&quot;" to="emptySessionPath=&quot;false&quot;"/>
+                            </tokenfilter>
+                        </filterchain>
+                    </copy>
+                </target>
 </project>

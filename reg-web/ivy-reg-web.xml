@@ -84,7 +84,7 @@ This is the definition of a virtual module called bda-download that has a depend
 
 
     <!-- other test targets -->
-    <dependency org="checkstyle"             name="checkstyle-all"          rev="4.4"             conf="test-checkstyle->runtime"/>
+    <dependency org="checkstyle"             name="checkstyle-all"          rev="5.1"             conf="test-checkstyle->runtime"/>
     <dependency org="cobertura"              name="cobertura"               rev="1.9"             conf="test-cobertura->runtime"/>
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test-junit->runtime"/>
     <dependency org="pmd"                    name="pmd"                     rev="4.2.2"           conf="test-pmd->compile,runtime"/>

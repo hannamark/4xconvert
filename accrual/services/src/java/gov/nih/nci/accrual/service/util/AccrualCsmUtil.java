@@ -96,7 +96,7 @@ import org.apache.log4j.Logger;
  */
 public class AccrualCsmUtil implements CsmUtil {
     private static final Logger LOG  = Logger.getLogger(AccrualCsmUtil.class);
-    static CsmUtil csmUtil = new AccrualCsmUtil();
+    private static CsmUtil csmUtil = new AccrualCsmUtil();
 
    /**
     * @return the instance
@@ -119,7 +119,7 @@ public class AccrualCsmUtil implements CsmUtil {
         }
         return csmUser;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -151,7 +151,7 @@ public class AccrualCsmUtil implements CsmUtil {
         upManager.assignUserToGroup(loginName, "Outcomes");
         upManager.assignUserToGroup(loginName, "gridClient");
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -185,5 +185,12 @@ public class AccrualCsmUtil implements CsmUtil {
         }
 
         return createdCSMUser;
+    }
+
+    /**
+     * @param csmUtil the csmUtil to set
+     */
+    static void setCsmUtil(CsmUtil csmUtil) {
+        AccrualCsmUtil.csmUtil = csmUtil;
     }
 }

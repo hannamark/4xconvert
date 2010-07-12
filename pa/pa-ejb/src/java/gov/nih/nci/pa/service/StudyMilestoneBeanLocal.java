@@ -56,24 +56,24 @@ import org.hibernate.criterion.Restrictions;
 @SuppressWarnings({"PMD" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudyMilestoneBeanLocal
- extends AbstractCurrentStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
- implements StudyMilestoneServicelocal {
-  private static final Logger LOG  = Logger.getLogger(StudyMilestoneBeanLocal.class);
-  DocumentWorkflowStatusServiceLocal documentWorkflowStatusService = null;
+public class StudyMilestoneBeanLocal extends
+        AbstractCurrentStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter> implements
+        StudyMilestoneServicelocal {
+    private static final Logger LOG = Logger.getLogger(StudyMilestoneBeanLocal.class);
+    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService;
 
-  @EJB
-  StudyOnholdServiceLocal studyOnholdService;
-  @EJB
-  AbstractionCompletionServiceRemote abstractionCompletionService;
-  @EJB
-  MailManagerServiceLocal mailManagerService;
-  @EJB
-  StudyProtocolServiceLocal studyProtocolService = null;
-  @EJB
-  StudyInboxServiceLocal studyInboxService = null;
-  /** For testing purposes only.  Set to false to bypass abstraction validations. */
-  boolean validateAbstractions = true;
+    @EJB
+    private StudyOnholdServiceLocal studyOnholdService;
+    @EJB
+    private AbstractionCompletionServiceRemote abstractionCompletionService;
+    @EJB
+    private MailManagerServiceLocal mailManagerService;
+    @EJB
+    private StudyProtocolServiceLocal studyProtocolService;
+    @EJB
+    private StudyInboxServiceLocal studyInboxService;
+    /** For testing purposes only. Set to false to bypass abstraction validations. */
+    private boolean validateAbstractions = true;
 
   /**
    * @param dto dto
@@ -566,7 +566,7 @@ public class StudyMilestoneBeanLocal
          LOG.error(" StudyMilestoneDTO should not be null ");
          throw new PAException(" StudyMilestoneDTO should not be null ");
      }
-     LOG.info("Entering search");
+     LOG.debug("Entering search");
      Session session = null;
      List<StudyMilestone> studyMilestoneList = null;
      session = HibernateUtil.getCurrentSession();
@@ -588,7 +588,7 @@ public class StudyMilestoneBeanLocal
          throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
      }
      List<StudyMilestoneDTO> studyMilestoneDTOList = convertFromDomainToDTO(studyMilestoneList);
-     LOG.info("Leaving search");
+     LOG.debug("Leaving search");
      return studyMilestoneDTOList;
    }
 
@@ -604,6 +604,7 @@ public class StudyMilestoneBeanLocal
      }
      return studyMilestoneDTOList;
    }
+
    private void sendLateRejectionEmail(StudyMilestoneDTO workDto) throws PAException {
        MilestoneCode milestoneCode = MilestoneCode.getByCode(
                            CdConverter.convertCdToString(workDto.getMilestoneCode()));
@@ -616,4 +617,53 @@ public class StudyMilestoneBeanLocal
            }
        }
     }
- }
+
+    /**
+     * @param documentWorkflowStatusService the documentWorkflowStatusService to set
+     */
+    public void setDocumentWorkflowStatusService(DocumentWorkflowStatusServiceLocal documentWorkflowStatusService) {
+        this.documentWorkflowStatusService = documentWorkflowStatusService;
+    }
+
+    /**
+     * @param studyOnholdService the studyOnholdService to set
+     */
+    public void setStudyOnholdService(StudyOnholdServiceLocal studyOnholdService) {
+        this.studyOnholdService = studyOnholdService;
+    }
+
+    /**
+     * @param abstractionCompletionService the abstractionCompletionService to set
+     */
+    public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
+        this.abstractionCompletionService = abstractionCompletionService;
+    }
+
+    /**
+     * @param mailManagerService the mailManagerService to set
+     */
+    public void setMailManagerService(MailManagerServiceLocal mailManagerService) {
+        this.mailManagerService = mailManagerService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * @param studyInboxService the studyInboxService to set
+     */
+    public void setStudyInboxService(StudyInboxServiceLocal studyInboxService) {
+        this.studyInboxService = studyInboxService;
+    }
+
+    /**
+     * @param validateAbstractions the validateAbstractions to set
+     */
+    public void setValidateAbstractions(boolean validateAbstractions) {
+        this.validateAbstractions = validateAbstractions;
+    }
+}

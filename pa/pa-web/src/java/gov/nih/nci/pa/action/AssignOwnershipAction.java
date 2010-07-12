@@ -8,8 +8,6 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.TrialOwner;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.correlation.CorrelationUtils;
-import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.util.AssignOwnershipSearchCriteria;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -22,20 +20,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.Preparable;
 
 
 /**
  * @author Vrushali
  *
  */
-public class AssignOwnershipAction extends ActionSupport implements Preparable {
-    /**
-     *
-     */
+public class AssignOwnershipAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private List<TrialOwner> users = null;
-    CorrelationUtilsRemote cUtils;
     private AssignOwnershipSearchCriteria criteria = new AssignOwnershipSearchCriteria();
 
     /**
@@ -117,13 +110,6 @@ public class AssignOwnershipAction extends ActionSupport implements Preparable {
      */
     public List<TrialOwner> getUsers() {
         return users;
-    }
-
-    /**
-     *
-     */
-    public void prepare() {
-        cUtils = new CorrelationUtils();
     }
 
     /**

@@ -129,7 +129,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DiseaseServiceLocal;
-import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
@@ -138,7 +137,6 @@ import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
-import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
@@ -211,54 +209,48 @@ import org.apache.log4j.Logger;
 public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceRemote {
 
     @EJB
-    StudyProtocolServiceLocal studyProtocolService = null;
+    private StudyProtocolServiceLocal studyProtocolService;
     @EJB
-    StudyOverallStatusServiceLocal studyOverallStatusService = null;
+    private StudyOverallStatusServiceLocal studyOverallStatusService;
     @EJB
-    StudyIndldeServiceLocal studyIndldeService = null;
+    private StudyIndldeServiceLocal studyIndldeService;
     @EJB
-    StudyDiseaseServiceLocal studyDiseaseService = null;
+    private StudyDiseaseServiceLocal studyDiseaseService;
     @EJB
-    ArmServiceLocal armService = null;
+    private ArmServiceLocal armService;
     @EJB
-    PlannedActivityServiceLocal plannedActivityService = null;
+    private PlannedActivityServiceLocal plannedActivityService;
     @EJB
-    StudySiteServiceLocal studySiteService = null;
+    private StudySiteServiceLocal studySiteService;
     @EJB
-    StudySiteContactServiceLocal studySiteContactService = null;
+    private StudySiteContactServiceLocal studySiteContactService;
     @EJB
-    StudyContactServiceLocal studyContactService = null;
+    private StudyContactServiceLocal studyContactService;
     @EJB
-    StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = null;
+    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     @EJB
-    StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = null;
+    private StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService;
     @EJB
-    StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = null;
+    private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService;
     @EJB
-    OrganizationCorrelationServiceRemote ocsr = null;
+    private OrganizationCorrelationServiceRemote ocsr;
     @EJB
-    DocumentWorkflowStatusServiceLocal documentWorkflowStatusService = null;
+    private RegulatoryInformationServiceRemote regulatoryInformationService;
     @EJB
-    RegulatoryInformationServiceRemote regulatoryInformationService = null;
+    private DiseaseServiceLocal diseaseService;
     @EJB
-    DiseaseServiceLocal diseaseService = null;
+    private InterventionServiceLocal interventionService;
     @EJB
-    InterventionServiceLocal interventionService = null;
+    private InterventionAlternateNameServiceRemote interventionAlternateNameService;
     @EJB
-    InterventionAlternateNameServiceRemote interventionAlternateNameService = null;
+    private StudyResourcingServiceLocal studyResourcingService;
     @EJB
-    StudyResourcingServiceLocal studyResourcingService = null;
+    private PAOrganizationServiceRemote paOrganizationService;
     @EJB
-    PAOrganizationServiceRemote paOrganizationService = null;
-    @EJB
-    StudyObjectiveServiceLocal studyObjectiveService = null;
-    @EJB
-    StratumGroupServiceLocal stratumGroupService = null;
+    private StratumGroupServiceLocal stratumGroupService;
 
-    /** The Constant LOG. */
     private static final Logger LOG = Logger.getLogger(TSRReportGeneratorServiceBean.class);
 
-    /** The correlation utils. */
     private final CorrelationUtils correlationUtils = new CorrelationUtils();
 
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
@@ -1131,6 +1123,146 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
     private String getValue(Int i, String defaultValue) {
         return (i != null && i.getValue() != null ? i.getValue().toString() : defaultValue);
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * @param studyOverallStatusService the studyOverallStatusService to set
+     */
+    public void setStudyOverallStatusService(StudyOverallStatusServiceLocal studyOverallStatusService) {
+        this.studyOverallStatusService = studyOverallStatusService;
+    }
+
+    /**
+     * @param studyIndldeService the studyIndldeService to set
+     */
+    public void setStudyIndldeService(StudyIndldeServiceLocal studyIndldeService) {
+        this.studyIndldeService = studyIndldeService;
+    }
+
+    /**
+     * @param studyDiseaseService the studyDiseaseService to set
+     */
+    public void setStudyDiseaseService(StudyDiseaseServiceLocal studyDiseaseService) {
+        this.studyDiseaseService = studyDiseaseService;
+    }
+
+    /**
+     * @param armService the armService to set
+     */
+    public void setArmService(ArmServiceLocal armService) {
+        this.armService = armService;
+    }
+
+    /**
+     * @param plannedActivityService the plannedActivityService to set
+     */
+    public void setPlannedActivityService(PlannedActivityServiceLocal plannedActivityService) {
+        this.plannedActivityService = plannedActivityService;
+    }
+
+    /**
+     * @param studySiteService the studySiteService to set
+     */
+    public void setStudySiteService(StudySiteServiceLocal studySiteService) {
+        this.studySiteService = studySiteService;
+    }
+
+    /**
+     * @param studySiteContactService the studySiteContactService to set
+     */
+    public void setStudySiteContactService(StudySiteContactServiceLocal studySiteContactService) {
+        this.studySiteContactService = studySiteContactService;
+    }
+
+    /**
+     * @param studyContactService the studyContactService to set
+     */
+    public void setStudyContactService(StudyContactServiceLocal studyContactService) {
+        this.studyContactService = studyContactService;
+    }
+
+    /**
+     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
+     */
+    public void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
+        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
+    }
+
+    /**
+     * @param studyOutcomeMeasureService the studyOutcomeMeasureService to set
+     */
+    public void setStudyOutcomeMeasureService(StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService) {
+        this.studyOutcomeMeasureService = studyOutcomeMeasureService;
+    }
+
+    /**
+     * @param studyRegulatoryAuthoritySvc the studyRegulatoryAuthorityService to set
+     */
+    public void setStudyRegulatoryAuthorityService(StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthoritySvc) {
+        this.studyRegulatoryAuthorityService = studyRegulatoryAuthoritySvc;
+    }
+
+    /**
+     * @param regulatoryInformationService the regulatoryInformationService to set
+     */
+    public void setRegulatoryInformationService(RegulatoryInformationServiceRemote regulatoryInformationService) {
+        this.regulatoryInformationService = regulatoryInformationService;
+    }
+
+    /**
+     * @param diseaseService the diseaseService to set
+     */
+    public void setDiseaseService(DiseaseServiceLocal diseaseService) {
+        this.diseaseService = diseaseService;
+    }
+
+    /**
+     * @param interventionService the interventionService to set
+     */
+    public void setInterventionService(InterventionServiceLocal interventionService) {
+        this.interventionService = interventionService;
+    }
+
+    /**
+     * @param interventionAltNameSvc the interventionAlternateNameService to set
+     */
+    public void setInterventionAlternateNameService(InterventionAlternateNameServiceRemote interventionAltNameSvc) {
+        this.interventionAlternateNameService = interventionAltNameSvc;
+    }
+
+    /**
+     * @param studyResourcingService the studyResourcingService to set
+     */
+    public void setStudyResourcingService(StudyResourcingServiceLocal studyResourcingService) {
+        this.studyResourcingService = studyResourcingService;
+    }
+
+    /**
+     * @param paOrganizationService the paOrganizationService to set
+     */
+    public void setPaOrganizationService(PAOrganizationServiceRemote paOrganizationService) {
+        this.paOrganizationService = paOrganizationService;
+    }
+
+    /**
+     * @param stratumGroupService the stratumGroupService to set
+     */
+    public void setStratumGroupService(StratumGroupServiceLocal stratumGroupService) {
+        this.stratumGroupService = stratumGroupService;
+    }
+
+    /**
+     * @param ocsr the ocsr to set
+     */
+    public void setOcsr(OrganizationCorrelationServiceRemote ocsr) {
+        this.ocsr = ocsr;
     }
 
 }

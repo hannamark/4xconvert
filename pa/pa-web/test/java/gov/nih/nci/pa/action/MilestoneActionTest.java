@@ -1,17 +1,16 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
-import java.util.ArrayList;
-
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +26,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         action = new MilestoneAction();
         action.prepare();
     }
-    
+
     @Test
     public void testMilestoneProperty(){
        assertNull(action.getMilestone());
@@ -47,7 +46,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     }
     @Test
     public void testLoadListForm() throws PAException{
-        action.spIi = IiConverter.convertToIi("1");
+        action.setSpIi(IiConverter.convertToIi("1"));
         action.loadListForm();
         assertNotNull(action.getMilestoneList());
     }
@@ -58,7 +57,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         webDTO.setDate("06/18/2009");
         webDTO.setMilestone(MilestoneCode.QC_START.getDisplayName());
         action.setMilestone(webDTO);
-        action.spIi = IiConverter.convertToIi("9");
+        action.setSpIi(IiConverter.convertToIi("9"));
         action.add();
     }
     @Test
@@ -68,7 +67,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         webDTO.setDate("06/19/2009");
         webDTO.setMilestone(MilestoneCode.QC_START.getDisplayName());
         action.setMilestone(webDTO);
-        action.spIi = IiConverter.convertToIi("1");
+        action.setSpIi(IiConverter.convertToIi("1"));
         action.add();
     }
 }

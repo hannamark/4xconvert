@@ -1,6 +1,6 @@
 <ivy-module version="1.0">
   <info organisation="cbiit" module="ctrp-viewer-services"/>
-        
+
   <configurations>
     <conf name="compile"/>
     <conf name="test" extends="compile"/>
@@ -9,7 +9,7 @@
     <conf name="test-checkstyle"/>
     <conf name="test-simian"/>
   </configurations>
-  
+
   <dependencies>
     <!-- compile -->
     <dependency org="aopalliance"            name="aopalliance"             rev="1.0"             conf="compile->master"/>
@@ -39,19 +39,19 @@
     <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
     <dependency org="springsource"           name="spring"                  rev="2.0.5"           conf="compile->master"/>
-    
+
     <!-- test -->
     <dependency org="dom4j"                  name="dom4j"                   rev="1.6.1"           conf="test->master"/>
-    <dependency org="hsqldb"                 name="hsqldb"                  rev="1.8.0.7"         conf="test->master"/>    
+    <dependency org="hsqldb"                 name="hsqldb"                  rev="1.8.0.7"         conf="test->master"/>
     <dependency org="jboss"                  name="cglib"                   rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="jboss"                  name="jbossall-client"         rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->runtime"/>
     <dependency org="jakarta"                name="commons-beanutils"       rev="1.8.0"           conf="test->master"/>
 
     <!-- other test targets -->
-    <dependency org="checkstyle"             name="checkstyle-all"          rev="4.4"             conf="test-checkstyle->runtime"/>
-    <dependency org="cobertura"              name="cobertura"               rev="1.9"             conf="test-cobertura->runtime"/>  
+    <dependency org="checkstyle"             name="checkstyle-all"          rev="5.1"             conf="test-checkstyle->runtime"/>
+    <dependency org="cobertura"              name="cobertura"               rev="1.9"             conf="test-cobertura->runtime"/>
     <dependency org="pmd"                    name="pmd"                     rev="4.2.2"           conf="test-pmd->compile,runtime"/>
-    <dependency org="redhillconsulting"      name="simian"                  rev="2.2.24"          conf="test-simian->runtime"/>  
+    <dependency org="redhillconsulting"      name="simian"                  rev="2.2.24"          conf="test-simian->runtime"/>
   </dependencies>
 </ivy-module>

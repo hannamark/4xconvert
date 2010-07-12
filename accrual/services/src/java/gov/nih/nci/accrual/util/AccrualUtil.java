@@ -98,8 +98,8 @@ public class AccrualUtil {
      * Private class used to decode and normalize date strings.
      */
     private static class ValidYearMonthFormat {
-        String pattern;
-        int endIndex;
+        private final String pattern;
+        private final int endIndex;
         public ValidYearMonthFormat(String pattern) {
             this.pattern = pattern;
             endIndex = pattern.length();
@@ -205,10 +205,10 @@ public class AccrualUtil {
     public static Timestamp yearMonthStringToTimestamp(String dateString) {
         return new Timestamp(yearMonthStringToDate(dateString).getTime());
     }
-    
+
     /**
      * Convert a Date to a standard display format.
-     * 
+     *
      * @param day the java.util.date
      * @return the string form mm/dd/yyyy
      */

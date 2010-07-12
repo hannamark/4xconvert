@@ -78,10 +78,6 @@
 */
 package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.POPatientService;
-
-import javax.ejb.SessionContext;
 
 /**
  * @author Hugh Reinhart
@@ -89,15 +85,5 @@ import javax.ejb.SessionContext;
  *
  */
 public class MockPatientService extends PatientBeanLocal {
-    public void setCountryService(CountryService svc) {
-        countryServ = svc;
-    }
-    public void setPatientCorrelationSvc(POPatientService svc) {
-        patientCorrelationSvc = svc;
-    }
-    @Override
-    public void setSessionContext(SessionContext ctx) {
-        ejbContext = ctx;
-    }
 
 }

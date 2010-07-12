@@ -94,8 +94,10 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
 /**
 * @author Hugh Reinhart
@@ -105,6 +107,7 @@ import org.hibernate.SQLQuery;
 @Interceptors(HibernateSessionInterceptor.class)
 public class TrialCountsReportBean extends AbstractStandardReportBean<StandardCriteriaDto, TrialCountsResultDto>
         implements TrialCountsLocal {
+    private static final Logger LOG = Logger.getLogger(TrialCountsReportBean.class);
 
     /**
      * {@inheritDoc}
@@ -114,7 +117,7 @@ public class TrialCountsReportBean extends AbstractStandardReportBean<StandardCr
         AbstractStandardCriteriaDto.validateDatesRequired(criteria);
         Map<String, Count> counts;
         try {
-            session = HibernateUtil.getCurrentSession();
+            Session session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer("SELECT organization, submission_number ");
             sql.append("FROM study_protocol AS sp "
@@ -130,7 +133,7 @@ public class TrialCountsReportBean extends AbstractStandardReportBean<StandardCr
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in " + this.getClass(), hbe);
         }
-        logger.info("Leaving get(TrialCountsCriteriaDto), returning " + counts.size() + " object(s).");
+        LOG.debug("Leaving get(TrialCountsCriteriaDto), returning " + counts.size() + " object(s).");
         return generateIsoResultList(counts);
     }
 
@@ -138,8 +141,8 @@ public class TrialCountsReportBean extends AbstractStandardReportBean<StandardCr
      * Used to store counts.
      */
     private class Count {
-        int initial = 0;
-        int amendment = 0;
+        private int initial = 0;
+        private int amendment = 0;
 
         void increment(Integer submissionNumber) {
             if (submissionNumber == null) { return; }

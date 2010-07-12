@@ -11,7 +11,7 @@
     <property file="${pa.dir}/build.properties"/>
     <property name="resourceDir" value="${basedir}/../resources"/>
     <property name="pmdFile" value="${resourceDir}/viewerPmd.xml"/>
-    <property name="checkstyleFile" value="${resourceDir}/viewerCheckstyle.xml"/>
+    <property name="checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
 
     <property name="lib.dir" value="${software.dir}/target/pa/lib/viewer/web"/>
     <property name="reportDir" value="${pa.report.dir}/viewer/web"/>
@@ -29,7 +29,7 @@
     <property name="viewer.reporting.outputDirectory" value="${reportDir}/site"/>
     <property name="viewer.war" value="${viewer.build.finalName}.war"/>
     <property name="viewer.build.coberturaOutputDir" value="${viewer.build.dir}/generated-classes"/>
-    
+
     <property name="ivy.lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar"/>
@@ -45,20 +45,20 @@
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
 
-	<path id="common.package.classpath">
-			  <fileset dir="${pa.dir}/commons/target">
-			            <include name="*.jar"/>
-			   </fileset>
-	</path>  
-	    
-	<path id="ejb.package.classpath">
+    <path id="common.package.classpath">
+              <fileset dir="${pa.dir}/commons/target">
+                        <include name="*.jar"/>
+               </fileset>
+    </path>
+
+    <path id="ejb.package.classpath">
         <fileset dir="${pa.dir}/pa-ejb/target">
            <include name="*.jar"/>
         </fileset>
         <fileset dir="${software.dir}/viewer/services/target">
            <include name="*.jar"/>
         </fileset>
-    </path> 
+    </path>
 
     <property name="compile.jar.dir" location="${lib.dir}/compile"/>
     <path id="compile.classpath">
@@ -101,7 +101,7 @@
     <!-- ====================================================================== -->
     <!-- Task definitions                                                       -->
     <!-- ====================================================================== -->
-    
+
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${reportDir}"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
@@ -112,7 +112,7 @@
     </path>
     <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
 
-    
+
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
@@ -130,22 +130,22 @@
     <target name="compile" description="Compiles the subproject">
         <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <mkdir dir="${viewer.build.outputDir}"/>
-        <javac destdir="${viewer.build.outputDir}" 
-               nowarn="false" 
-               debug="true" 
-               optimize="false" 
-               deprecation="true" 
-               target="1.5" 
-               verbose="false" 
-               fork="false" 
+        <javac destdir="${viewer.build.outputDir}"
+               nowarn="false"
+               debug="true"
+               optimize="false"
+               deprecation="true"
+               target="1.5"
+               verbose="false"
+               fork="false"
                source="1.5">
             <src>
                 <pathelement location="${viewer.build.srcDir.0}"/>
             </src>
             <classpath>
-                <path refid="compile.classpath"/> 
+                <path refid="compile.classpath"/>
                 <path refid="ejb.package.classpath"/>
-            	<path refid="common.package.classpath"/>
+                <path refid="common.package.classpath"/>
             </classpath>
         </javac>
         <copy todir="${viewer.build.outputDir}">
@@ -153,31 +153,31 @@
         </copy>
     </target>
 
-    
+
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests" 
-      depends="compile" 
-      description="Compile the test code"> 
+    <target name="compile-tests"
+      depends="compile"
+      description="Compile the test code">
         <mkdir dir="${viewer.build.testOutputDir}"/>
-        <javac destdir="${viewer.build.testOutputDir}" 
-               nowarn="false" 
-               debug="true" 
-               optimize="false" 
-               deprecation="true" 
-               target="1.5" 
-               verbose="false" 
-               fork="false" 
+        <javac destdir="${viewer.build.testOutputDir}"
+               nowarn="false"
+               debug="true"
+               optimize="false"
+               deprecation="true"
+               target="1.5"
+               verbose="false"
+               fork="false"
                source="1.5">
             <src>
                 <pathelement location="${viewer.build.testDir.0}"/>
             </src>
             <classpath>
-                <pathelement location="${viewer.build.outputDir}"/> 
+                <pathelement location="${viewer.build.outputDir}"/>
                 <path refid="ejb.package.classpath"/>
-            	<path refid="common.package.classpath"/>
+                <path refid="common.package.classpath"/>
                 <path refid="test.classpath"/>
             </classpath>
         </javac>
@@ -186,19 +186,17 @@
         </copy>
     </target>
 
-    
+
     <!-- ====================================================================== -->
     <!-- Run checkstyle                                                         -->
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle">
-        <taskdef resource="checkstyletask.properties" 
-             classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
-             
-        <checkstyle config="${checkstyleFile}" failOnViolation="true">
+        <taskdef resource="checkstyletask.properties" classpath="${test-checkstyle.jar.dir}/checkstyle-all-5.1.jar"/>
+        <checkstyle configurl="${checkstyle.url}" failOnViolation="true">
             <classpath>
                 <path refid="ejb.package.classpath"/>
-            	<path refid="common.package.classpath"/>
+                <path refid="common.package.classpath"/>
             </classpath>
             <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain"/>
@@ -207,17 +205,17 @@
         </checkstyle>
     </target>
 
-    
+
     <!-- ====================================================================== -->
     <!-- Run PMD                                                                -->
     <!-- ====================================================================== -->
 
     <target name="test-pmd">
-        <taskdef name="pmd" 
+        <taskdef name="pmd"
              classpath="${test-pmd.jar.dir}/pmd-4.2.2.jar"
              classname="net.sourceforge.pmd.ant.PMDTask"/>
-             
-        <pmd shortFilenames="true" failOnRuleViolation="true" 
+
+        <pmd shortFilenames="true" failOnRuleViolation="true"
                                    rulesetfiles="${pmdFile}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${reportDir}/pmd.txt"/>
@@ -228,13 +226,13 @@
          </pmd>
     </target>
 
-    
+
     <!-- ====================================================================== -->
     <!-- Run Simian                                                             -->
     <!-- ====================================================================== -->
 
     <target name="test-simian">
-       <taskdef resource="simiantask.properties" 
+       <taskdef resource="simiantask.properties"
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
        <simian>
             <fileset dir="src" includes="**/*.java"/>
@@ -272,9 +270,9 @@
         <copy todir="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF/lib">
             <fileset dir="${lib.dir}/runtime"/>
         </copy>
-        <war destfile="${viewer.build.dir}/${viewer.war}" 
-             compress="false" 
-             webxml="${basedir}/src/webapp/WEB-INF/web.xml">            
+        <war destfile="${viewer.build.dir}/${viewer.war}"
+             compress="false"
+             webxml="${basedir}/src/webapp/WEB-INF/web.xml">
             <lib dir="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF/lib"/>
             <classes dir="${viewer.build.outputDir}"/>
             <webinf dir="${basedir}/src/webapp/WEB-INF" excludes="web.xml"/>
@@ -295,7 +293,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-cobertura" depends="compile-tests">
-        
+
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties"/>
 
         <delete file="${viewer.build.dir}/cobertura.ser"/>
@@ -305,8 +303,8 @@
             <fileset dir="${viewer.build.outputDir}">
                 <include name="**/*.class"/>
             </fileset>
-        </cobertura-instrument>   
-        
+        </cobertura-instrument>
+
         <mkdir dir="${viewer.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <sysproperty key="basedir" value="."/>
@@ -318,7 +316,7 @@
             <classpath location="${viewer.build.outputDir}"/>
             <classpath location="${viewer.build.testOutputDir}"/>
             <classpath refid="ejb.package.classpath"/>
-        	<classpath refid="common.package.classpath"/>
+            <classpath refid="common.package.classpath"/>
             <classpath refid="test.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
             <batchtest todir="${viewer.test.reports}">
@@ -329,18 +327,18 @@
                 </fileset>
             </batchtest>
         </junit>
-        
+
         <cobertura-report datafile="${viewer.build.dir}/cobertura.ser"
-                          destdir="${viewer.coverage.reports}" 
+                          destdir="${viewer.coverage.reports}"
                           srcdir="${viewer.build.srcDir.0}"/>
-        
+
         <cobertura-report datafile="${viewer.build.dir}/cobertura.ser"
-                          format="xml"        
-                          destdir="${viewer.coverage.reports}" 
+                          format="xml"
+                          destdir="${viewer.coverage.reports}"
                           srcdir="${viewer.build.srcDir.0}"/>
-        
+
         <cobertura-check datafile="${viewer.build.dir}/cobertura.ser"
-                         totalbranchrate="10" 
+                         totalbranchrate="10"
                          totallinerate="10"
                          haltonfailure="false"/>
      </target>
@@ -389,7 +387,7 @@
     </target>
 
     <target name="ivy-test"
-            depends="ivy-test-cobertura,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian" 
+            depends="ivy-test-cobertura,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian"
             description="Resolves and retrieves the JARs needed to test the subproject">
         <ivy:resolve refresh="true" conf="test"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="test"/>
@@ -399,7 +397,7 @@
             depends="ivy-compile, ivy-runtime, ivy-test"
             description="Updates the local ivy repository">
     </target>
-    
+
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}"/>
     </target>
@@ -421,14 +419,14 @@
                             <include name="WEB-INF/jsp/*.jsp"/>
                             <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
                             <include name="WEB-INF/jsp/common/*.jsp"/>
-                            <include name="WEB-INF/tags/*.tag"/>    
+                            <include name="WEB-INF/tags/*.tag"/>
                             <include name="styles/*.css"/>
-                            <include name="scripts/js/*.js"/>     
-                            <include name="scripts/ajax/*.js"/>   
+                            <include name="scripts/js/*.js"/>
+                            <include name="scripts/ajax/*.js"/>
                       </fileset>
                   </copy>
               </sequential>
             </for>
-      </target> 
+      </target>
 
 </project>

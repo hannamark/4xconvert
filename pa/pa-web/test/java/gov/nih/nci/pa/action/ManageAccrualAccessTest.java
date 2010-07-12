@@ -152,7 +152,7 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         addAccrualAccess();
 
         // click Edit button
-        act.selectedRowIdentifier = String.valueOf(act.getAccessList().get(0).getId());
+        act.setSelectedRowIdentifier(String.valueOf(act.getAccessList().get(0).getId()));
         assertEquals(AbstractListEditAction.AR_EDIT, act.edit());
         assertFalse(act.hasActionErrors());
 

@@ -115,27 +115,17 @@ import com.opensymphony.xwork2.Preparable;
 public abstract class AbstractAccrualAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -5423491292515161915L;
 
-    /** SearchTrialService. */
-    protected SearchTrialService searchTrialSvc;
-    /** SearchStudySiteService. */
-    protected SearchStudySiteService searchStudySiteSvc;
-    /** SubmissionService. */
-    protected SubmissionService submissionSvc;
-    /** StudySubjectService. */
-    protected StudySubjectService studySubjectSvc;
-    /** PatientService. */
-    protected PatientService patientSvc;
-    /** PerformedActivityService. */
-    protected PerformedActivityService performedActivitySvc;
-    /** CountryService. */
-    protected CountryService countrySvc;
-    /** DiseaseService. */
-    protected DiseaseServiceRemote diseaseSvc;
-    /** PlannedActivityService. */
-    protected PlannedActivityServiceRemote plannedActivitySvc;
-    /** DiseaseService. */
-    protected DiseaseParentServiceRemote diseaseParentSvc;
-    
+    private SearchTrialService searchTrialSvc;
+    private SearchStudySiteService searchStudySiteSvc;
+    private SubmissionService submissionSvc;
+    private StudySubjectService studySubjectSvc;
+    private PatientService patientSvc;
+    private PerformedActivityService performedActivitySvc;
+    private CountryService countrySvc;
+    private DiseaseServiceRemote diseaseSvc;
+    private PlannedActivityServiceRemote plannedActivitySvc;
+    private DiseaseParentServiceRemote diseaseParentSvc;
+
     /**
      * {@inheritDoc}
      */
@@ -241,5 +231,75 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
                 addActionError(errorMsg);
             }
         }
+    }
+
+    /**
+     * @return the searchTrialSvc
+     */
+    public SearchTrialService getSearchTrialSvc() {
+        return searchTrialSvc;
+    }
+
+    /**
+     * @return the searchStudySiteSvc
+     */
+    public SearchStudySiteService getSearchStudySiteSvc() {
+        return searchStudySiteSvc;
+    }
+
+    /**
+     * @return the submissionSvc
+     */
+    public SubmissionService getSubmissionSvc() {
+        return submissionSvc;
+    }
+
+    /**
+     * @return the studySubjectSvc
+     */
+    public StudySubjectService getStudySubjectSvc() {
+        return studySubjectSvc;
+    }
+
+    /**
+     * @return the patientSvc
+     */
+    public PatientService getPatientSvc() {
+        return patientSvc;
+    }
+
+    /**
+     * @return the performedActivitySvc
+     */
+    public PerformedActivityService getPerformedActivitySvc() {
+        return performedActivitySvc;
+    }
+
+    /**
+     * @return the countrySvc
+     */
+    public CountryService getCountrySvc() {
+        return countrySvc;
+    }
+
+    /**
+     * @return the diseaseSvc
+     */
+    public DiseaseServiceRemote getDiseaseSvc() {
+        return diseaseSvc;
+    }
+
+    /**
+     * @return the plannedActivitySvc
+     */
+    public PlannedActivityServiceRemote getPlannedActivitySvc() {
+        return plannedActivitySvc;
+    }
+
+    /**
+     * @return the diseaseParentSvc
+     */
+    public DiseaseParentServiceRemote getDiseaseParentSvc() {
+        return diseaseParentSvc;
     }
 }

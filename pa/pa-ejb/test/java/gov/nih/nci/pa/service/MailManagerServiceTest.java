@@ -61,7 +61,7 @@ import org.junit.Test;
  */
 public class MailManagerServiceTest {
 
-	MailManagerBeanLocal bean = new MailManagerBeanLocal();
+    MailManagerBeanLocal bean = new MailManagerBeanLocal();
     ProtocolQueryServiceLocal protocolQrySrv = new ProtocolQueryServiceBean();
     RegistryUserServiceLocal registryUserSrv = new RegistryUserServiceBean();
     CTGovXmlGeneratorServiceRemote ctGovXmlSrv = new CTGovXmlGeneratorServiceBean ();
@@ -82,13 +82,13 @@ public class MailManagerServiceTest {
     public void setUp() throws Exception {
         TestSchema.reset();
 
-        bean.ctGovXmlGeneratorService = ctGovXmlSrv;
-        bean.protocolQueryService = protocolQrySrv;
-        bean.registryUserService = registryUserSrv;
-        bean.tsrReportGeneratorService = tsrReptSrv;
-        bean.lookUpTableService = lookUpTableSrv;
-        bean.docWrkflStatusSrv = docWrkStatSrv;
-        bean.studySiteService = studySiteService;
+        bean.setCtGovXmlGeneratorService(ctGovXmlSrv);
+        bean.setProtocolQueryService(protocolQrySrv);
+        bean.setRegistryUserService(registryUserSrv);
+        bean.setTsrReportGeneratorService(tsrReptSrv);
+        bean.setLookUpTableService(lookUpTableSrv);
+        bean.setDocWrkflStatusSrv(docWrkStatSrv);
+        bean.setStudySiteService(studySiteService);
 
         //setup owners for both prop/nonprop trials.
         RegistryUser owner1 = new RegistryUser();

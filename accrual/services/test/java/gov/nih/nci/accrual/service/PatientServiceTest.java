@@ -132,8 +132,8 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
     public void instantiateServiceBean() throws Exception {
         //bean = new PatientBean();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
-        bean.countryServ = cs;
-        bean.patientCorrelationSvc = psb;
+        bean.setCountryService(cs);
+        bean.setPatientCorrelationSvc(psb);
         countryIi =IiConverter.convertToIi(TestSchema.countries.get(0).getId());
     }
 

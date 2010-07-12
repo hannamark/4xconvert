@@ -212,26 +212,25 @@ public class TSRReportGeneratorServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        bean.studyProtocolService = studyProtocolService;
-        bean.armService = armService;
-        bean.documentWorkflowStatusService =documentWorkflowStatusService;
-        bean.ocsr = ocsr;
-        bean.plannedActivityService = plannedActivityService;
-        bean.studyContactService = studyContactService;
-        bean.studyDiseaseService = studyDiseaseService;
-        bean.studyIndldeService=studyIndldeService;
-        bean.studySiteService=studySiteService;
-        bean.studyOutcomeMeasureService=studyOutcomeMeasureService;
-        bean.studyOverallStatusService=studyOverallStatusService;
-        bean.studySiteContactService=studySiteContactService;
-        bean.studyRegulatoryAuthorityService=studyRegulatoryAuthorityService;
-        bean.studySiteAccrualStatusService=studySiteAccrualStatusService;
-        bean.regulatoryInformationService = regulatoryInformationService;
-        bean.diseaseService = diseaseService;
-        bean.interventionAlternateNameService = interventionAlternateNameService;
-        bean.interventionService = interventionService;
-        bean.studyResourcingService = studyResourcingService;
-        bean.paOrganizationService = paOrganizationService;
+        bean.setStudyProtocolService(studyProtocolService);
+        bean.setArmService(armService);
+        bean.setOcsr(ocsr);
+        bean.setPlannedActivityService(plannedActivityService);
+        bean.setStudyContactService(studyContactService);
+        bean.setStudyDiseaseService(studyDiseaseService);
+        bean.setStudyIndldeService(studyIndldeService);
+        bean.setStudySiteService(studySiteService);
+        bean.setStudyOutcomeMeasureService(studyOutcomeMeasureService);
+        bean.setStudyOverallStatusService(studyOverallStatusService);
+        bean.setStudySiteContactService(studySiteContactService);
+        bean.setStudyRegulatoryAuthorityService(studyRegulatoryAuthorityService);
+        bean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
+        bean.setRegulatoryInformationService(regulatoryInformationService);
+        bean.setDiseaseService(diseaseService);
+        bean.setInterventionAlternateNameService(interventionAlternateNameService);
+        bean.setInterventionService(interventionService);
+        bean.setStudyResourcingService(studyResourcingService);
+        bean.setPaOrganizationService(paOrganizationService);
 
         TestSchema.reset();
         TestSchema.primeData();
@@ -251,7 +250,6 @@ public class TSRReportGeneratorServiceTest {
         writeToFile(x, "./tsr_report.pdf");
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void generateProprietaryTsrReportToFile() throws Exception {
         // Setup the data.
@@ -263,7 +261,6 @@ public class TSRReportGeneratorServiceTest {
         writeToFile(pdfTsrReportGenerator.generateTsrReport(), "./Proprietary_Tsr_Report.pdf");
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void generateNonProprietaryTsrReportToFile() throws Exception {
         // Setup the data.
@@ -275,7 +272,6 @@ public class TSRReportGeneratorServiceTest {
         writeToFile(pdfTsrReportGenerator.generateTsrReport(), "./Non_Proprietary_Tsr_Report.pdf");
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void generateErrorReportToFile() throws Exception {
         // Setup the data.
@@ -305,7 +301,6 @@ public class TSRReportGeneratorServiceTest {
         trialIdentification.setDcpIdentifier("5678");
         trialIdentification.setCtepIdentifier("3442323");
         trialIdentification.setAmendmentNumber("7367632746");
-        List<String> oid = new ArrayList<String>();
         trialIdentification.getOtherIdentifiers().add("OID - 1");
         trialIdentification.getOtherIdentifiers().add("OID - 2");
         trialIdentification.getOtherIdentifiers().add("OID - 3");

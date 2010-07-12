@@ -118,7 +118,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
      */
     @Override
     public String edit() throws PAException {
-        StudyDiseaseDTO sd = studyDisesaeSvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        StudyDiseaseDTO sd = getStudyDisesaeSvc().get(IiConverter.convertToIi(getSelectedRowIdentifier()));
         disease = new DiseaseWebDTO();
         disease.setDiseaseIdentifier(IiConverter.convertToString(sd.getDiseaseIdentifier()));
         disease.setStudyDiseaseIdentifier(getSelectedRowIdentifier());
@@ -135,7 +135,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
      */
     @Override
     public String delete() throws PAException {
-        studyDisesaeSvc.delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        getStudyDisesaeSvc().delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
         return super.delete();
     }
 
@@ -158,9 +158,9 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
             blctGovXmlIndicator = BlConverter.convertToBl((getDisease().getCtGovXmlIndicator() != null)
                     && Boolean.valueOf(getDisease().getCtGovXmlIndicator()));
             sdDto.setCtGovXmlIndicator(blctGovXmlIndicator);
-            sdDto.setStudyProtocolIdentifier(spIi);
+            sdDto.setStudyProtocolIdentifier(getSpIi());
             try {
-                studyDisesaeSvc.create(sdDto);
+                getStudyDisesaeSvc().create(sdDto);
             } catch (PAException e) {
                 addActionError(e.getMessage());
             }
@@ -179,7 +179,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
     public String update() throws PAException {
         enforceBusinessRules();
         if (!hasActionErrors()) {
-            StudyDiseaseDTO pa = studyDisesaeSvc.get(IiConverter.convertToIi(disease.getStudyDiseaseIdentifier()));
+            StudyDiseaseDTO pa = getStudyDisesaeSvc().get(IiConverter.convertToIi(disease.getStudyDiseaseIdentifier()));
             Bl blLead = null;
             blLead = BlConverter.convertToBl((getDisease().getLead() != null)
                     && Boolean.valueOf(getDisease().getLead()));
@@ -189,7 +189,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
                     && Boolean.valueOf(getDisease().getCtGovXmlIndicator()));
             pa.setCtGovXmlIndicator(blctGovXmlIndicator);
             try {
-                studyDisesaeSvc.update(pa);
+                getStudyDisesaeSvc().update(pa);
             } catch (PAException e) {
                 addActionError(e.getMessage());
             }
@@ -217,7 +217,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
             addActionError("Please select a Disease/Condition to add to the trial.  ");
             return;
         }
-        DiseaseDTO dto = diseaseSvc.get(IiConverter.convertToIi(getDisease().getDiseaseIdentifier()));
+        DiseaseDTO dto = getDiseaseSvc().get(IiConverter.convertToIi(getDisease().getDiseaseIdentifier()));
         String menu = StConverter.convertToString(dto.getMenuDisplayName());
         if (StringUtils.isEmpty(menu)) {
             addActionError("Diseases without a menu display name are not suitable for reporting.  ");
@@ -225,13 +225,13 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
       }
 
     private String buildParentPreferredName(String diseaseId) throws PAException {
-        List<DiseaseParentDTO> parentList = diseaseParentSvc.getByChildDisease(IiConverter.convertToIi(diseaseId));
+        List<DiseaseParentDTO> parentList = getDiseaseParentSvc().getByChildDisease(IiConverter.convertToIi(diseaseId));
         StringBuffer ppBuff = new StringBuffer();
         for (DiseaseParentDTO parent : parentList) {
             if (parentList.get(0) !=  parent) {
                 ppBuff.append(", ");
             }
-            DiseaseDTO temp = diseaseSvc.get(parent.getParentDiseaseIdentifier());
+            DiseaseDTO temp = getDiseaseSvc().get(parent.getParentDiseaseIdentifier());
             ppBuff.append(StConverter.convertToString(temp.getPreferredName()));
         }
         return ppBuff.toString();
@@ -243,9 +243,9 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
     @Override
     protected void loadListForm() throws PAException {
         List<DiseaseWebDTO> nl = new ArrayList<DiseaseWebDTO>();
-        List<StudyDiseaseDTO> sdList = studyDisesaeSvc.getByStudyProtocol(spIi);
+        List<StudyDiseaseDTO> sdList = getStudyDisesaeSvc().getByStudyProtocol(getSpIi());
         for (StudyDiseaseDTO sd : sdList) {
-            DiseaseDTO d = diseaseSvc.get(sd.getDiseaseIdentifier());
+            DiseaseDTO d = getDiseaseSvc().get(sd.getDiseaseIdentifier());
             DiseaseWebDTO n = new DiseaseWebDTO();
             n.setStudyDiseaseIdentifier(IiConverter.convertToString(sd.getIdentifier()));
             n.setDiseaseIdentifier(IiConverter.convertToString(d.getIdentifier()));
@@ -283,7 +283,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
             disease = new DiseaseWebDTO();
         } else {
             Ii ii = IiConverter.convertToIi(disease.getDiseaseIdentifier());
-            DiseaseDTO dto = diseaseSvc.get(ii);
+            DiseaseDTO dto = getDiseaseSvc().get(ii);
             disease.setCode(StConverter.convertToString(dto.getDiseaseCode()));
             disease.setConceptId(StConverter.convertToString(dto.getNtTermIdentifier()));
             disease.setMenuDisplayName(StConverter.convertToString(dto.getMenuDisplayName()));

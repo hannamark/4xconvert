@@ -12,7 +12,7 @@
     <property name="pa.resourceDir" value="${software.dir}/pa/resources"/>
 
     <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
-    <property name="pa.checkstyle" value="${pa.resourceDir}/paCheckstyle.xml"/>
+    <property name="pa.checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
 
     <property name="pa-ejb.build.dir" value="${pa.dir}/pa-ejb/target"/>
 
@@ -38,17 +38,17 @@
     <property name="ivy.def.file" location="ivy-pa-web.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
-	<property name="jboss.server.jndi.port" value="1099" />
+    <property name="jboss.server.jndi.port" value="1099" />
 
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
 
-	<path id="common.package.classpath">
-		    <fileset dir="${pa.dir}/commons/target">
-		            <include name="pa-commons.jar"/>
-		      </fileset>
-	</path>
+    <path id="common.package.classpath">
+            <fileset dir="${pa.dir}/commons/target">
+                    <include name="pa-commons.jar"/>
+              </fileset>
+    </path>
 
     <property name="compile.jar.dir" location="${lib.dir}/pa-web/compile" />
     <path id="compile.classpath">
@@ -144,29 +144,29 @@
             <classpath>
                 <path refid="ejb.package.classpath"/>
                 <path refid="compile.classpath"/>
-            	<path refid="common.package.classpath"/>
+                <path refid="common.package.classpath"/>
             </classpath>
         </javac>
-    	<copy file="${pa.resourceDir}/quartz_jobs.xml"
-    	      todir="${pa-web.build.outputDir}"
-    	      overwrite="true">
-    	   <filterset>
-    	        <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-    	   </filterset>
-    	</copy>
-    	<copy file="${pa.resourceDir}/csm.properties"
-    	              todir="${pa-web.build.outputDir}"
-    	              overwrite="true">
-    	           <filterset>
-    	               <filter token="database.driver" value="${jdbc.driver}"/>
-    	               <filter token="database.url" value="${jdbc.url}"/>
-    	               <filter token="database.user" value="${db.username}"/>
-    	               <filter token="database.password" value="${db.password}"/>
-    	           	   <filter token="database.dialect" value="${hibernate.dialect}"/>
-    	           	   <filter token="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
-    	           	   <filter token="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
-    	           </filterset>
-    	        </copy>
+        <copy file="${pa.resourceDir}/quartz_jobs.xml"
+              todir="${pa-web.build.outputDir}"
+              overwrite="true">
+           <filterset>
+                <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+           </filterset>
+        </copy>
+        <copy file="${pa.resourceDir}/csm.properties"
+                      todir="${pa-web.build.outputDir}"
+                      overwrite="true">
+                   <filterset>
+                       <filter token="database.driver" value="${jdbc.driver}"/>
+                       <filter token="database.url" value="${jdbc.url}"/>
+                       <filter token="database.user" value="${db.username}"/>
+                       <filter token="database.password" value="${db.password}"/>
+                          <filter token="database.dialect" value="${hibernate.dialect}"/>
+                          <filter token="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
+                          <filter token="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
+                   </filterset>
+                </copy>
         <copy todir="${pa-web.build.outputDir}">
             <filterset>
                 <filter token="po.server.name" value="${po.server.name}"/>
@@ -237,7 +237,7 @@
                 <path refid="test-selenium.classpath"/>
                 <path refid="compile.classpath"/>
                 <path refid="ejb.package.classpath"/>
-            	<path refid="common.package.classpath"/>
+                <path refid="common.package.classpath"/>
             </classpath>
         </javac>
         <copy todir="${pa-web.build.testOutputDir}">
@@ -298,13 +298,12 @@
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle">
-        <taskdef resource="checkstyletask.properties"
-             classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
-        <checkstyle config="${pa.checkstyle}" failOnViolation="true">
+        <taskdef resource="checkstyletask.properties" classpath="${test-checkstyle.jar.dir}/checkstyle-all-5.1.jar"/>
+        <checkstyle configurl="${pa.checkstyle.url}" failOnViolation="true">
             <classpath>
                 <path refid="ejb.package.classpath"/>
                 <path refid="compile.classpath"/>
-            	<path refid="common.package.classpath"/>
+                <path refid="common.package.classpath"/>
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
@@ -460,7 +459,7 @@
             <classpath refid="test-cobertura.classpath"/>
             <classpath refid="compile.classpath"/>
             <classpath refid="ejb.package.classpath"/>
-        	<classpath refid="common.package.classpath"/>
+            <classpath refid="common.package.classpath"/>
             <batchtest todir="${pa-web.test.reports}">
                 <fileset dir="${pa-web.build.testDir.0}">
                     <include name="**/*Test.java"/>

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.action;
 
@@ -13,7 +13,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.service.MockCSMUserService;
-import gov.nih.nci.service.MockCorrelationUtils;
 
 import java.util.ArrayList;
 
@@ -30,7 +29,6 @@ public class AssignOwnershipActionTest extends AbstractPaActionTest {
     public void setup() {
         CSMUserService.getInstance();
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        action.cUtils = new MockCorrelationUtils();
     }
     @Test
     public void testcsmUsersNamesProperty() {
@@ -44,25 +42,25 @@ public class AssignOwnershipActionTest extends AbstractPaActionTest {
         Ii ii = IiConverter.convertToStudyProtocolIi(1L);
         getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,ii);
         assertEquals("success",action.view());
-        
+
     }
-    @Test 
+    @Test
     public void testSave() {
         Ii ii = IiConverter.convertToStudyProtocolIi(1L);
         getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,ii);
         assertEquals("success",action.save());
         assertTrue(action.getActionErrors().contains("Please select user to change ownership."));
-        
+
         getRequest().setupAddParameter("csmUserId", "user1@mail.nih.gov");
         ii = IiConverter.convertToStudyProtocolIi(1L);
         getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,ii);
         assertEquals("success",action.save());
         assertTrue(action.getActionErrors().contains("Please select user to change ownership."));
-        
+
         getRequest().setupAddParameter("csmUserId", "user3@mail.nih.gov");
         ii = IiConverter.convertToStudyProtocolIi(1L);
         getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,ii);
         assertEquals("success",action.save());
-        
+
     }
 }

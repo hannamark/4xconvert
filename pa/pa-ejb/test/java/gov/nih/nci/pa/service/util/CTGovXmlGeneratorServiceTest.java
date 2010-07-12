@@ -129,66 +129,66 @@ public class CTGovXmlGeneratorServiceTest {
     private CTGovXmlGeneratorServiceBean bean = new CTGovXmlGeneratorServiceBean();
     private final StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
     StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
-    
+
     StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeBeanLocal();
-    
+
     StudyDiseaseServiceLocal studyDiseaseService = new StudyDiseaseBeanLocal();
-    
+
     ArmServiceLocal armService = new ArmBeanLocal() ;
-    
+
     PlannedActivityServiceLocal plannedActivityService = new PlannedActivityBeanLocal();
-    
+
     StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
-    
+
     StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
-    
+
     StudyContactServiceLocal studyContactService = new StudyContactBeanLocal();
-    
+
     StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
-    
+
     StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
-    
+
     StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
-    
+
     OrganizationCorrelationServiceRemote ocsr = new OrganizationCorrelationServiceBean();
-    
+
     DocumentWorkflowStatusServiceLocal documentWorkflowStatusService = new DocumentWorkflowStatusBeanLocal();
-    
+
     RegulatoryInformationServiceRemote regulatoryInformationService = new RegulatoryInformationBean();
-    
+
     DiseaseServiceLocal diseaseService = new DiseaseBeanLocal();
-    
+
     InterventionServiceLocal interventionService = new InterventionBeanLocal();
-    
+
     InterventionAlternateNameServiceRemote interventionAlternateNameService = new InterventionAlternateNameServiceBean();
-    
-    
+
+
     @Before
-    public void setUp() throws Exception {   
-        bean.studyProtocolService = studyProtocolService;
-        bean.armService = armService;
-        bean.documentWorkflowStatusService =documentWorkflowStatusService;
-        bean.ocsr = ocsr;
-        bean.plannedActivityService = plannedActivityService;
-        bean.studyContactService = studyContactService;
-        bean.studyDiseaseService = studyDiseaseService;
-        bean.studyIndldeService=studyIndldeService;
-        bean.studySiteService=studySiteService;
-        bean.studyOutcomeMeasureService=studyOutcomeMeasureService;
-        bean.studyOverallStatusService=studyOverallStatusService;
-        bean.studySiteContactService=studySiteContactService;
-        bean.studyRegulatoryAuthorityService=studyRegulatoryAuthorityService;
-        bean.studySiteAccrualStatusService=studySiteAccrualStatusService;
-        bean.regulatoryInformationService = regulatoryInformationService;
-        bean.diseaseService = diseaseService;
-        bean.interventionAlternateNameService = interventionAlternateNameService;
-        bean.interventionService = interventionService; 
+    public void setUp() throws Exception {
+        bean.setStudyProtocolService(studyProtocolService);
+        bean.setArmService(armService);
+        bean.setDocumentWorkflowStatusService(documentWorkflowStatusService);
+        bean.setOrgCorrelationService(ocsr);
+        bean.setPlannedActivityService(plannedActivityService);
+        bean.setStudyContactService(studyContactService);
+        bean.setStudyDiseaseService(studyDiseaseService);
+        bean.setStudyIndldeService(studyIndldeService);
+        bean.setStudySiteService(studySiteService);
+        bean.setStudyOutcomeMeasureService(studyOutcomeMeasureService);
+        bean.setStudyOverallStatusService(studyOverallStatusService);
+        bean.setStudySiteContactService(studySiteContactService);
+        bean.setStudyRegulatoryAuthorityService(studyRegulatoryAuthorityService);
+        bean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
+        bean.setRegulatoryInformationService(regulatoryInformationService);
+        bean.setDiseaseService(diseaseService);
+        bean.setInterventionAlternateNameService(interventionAlternateNameService);
+        bean.setInterventionService(interventionService);
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         TestSchema.reset1();
         TestSchema.primeData();
         spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
      }
-    
+
     @Test(expected=PAException.class)
     public void nullParameter() throws Exception {
         bean.generateCTGovXml(null);
@@ -198,10 +198,10 @@ public class CTGovXmlGeneratorServiceTest {
         bean.documentWorkflowStatusService=null;
         String error = bean.generateCTGovXml(spIi);
         assertTrue(error.contains("<?xml version=\"1.0\" encoding=\"UTF-8\"?><error><error_description>Unable to generate the XML</error_description>"));
-        
-        
+
+
     }*/
-    
+
     @Test
     public void generateCTGovXmlTest() throws Exception {
         bean.generateCTGovXml(spIi);

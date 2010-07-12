@@ -7,7 +7,6 @@ import gov.nih.nci.pa.report.dto.criteria.AbstractCriteriaDto;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 
-import java.lang.reflect.ParameterizedType;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -25,25 +24,19 @@ import org.hibernate.Session;
  * @param <CRITERIA> criteria dto
  * @param <RESULT> result dto
  */
-public abstract class AbstractReportBean<CRITERIA extends AbstractCriteriaDto, RESULT>
-        implements ViewerReport<CRITERIA, RESULT> {
+public abstract class AbstractReportBean<CRITERIA extends AbstractCriteriaDto, RESULT> implements
+        ViewerReport<CRITERIA, RESULT> {
 
     /** Static spring to suppress conversion warnings. */
     protected static final String UNCHECKED = "unchecked";
 
-    /** Logger. */
-    @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
-    protected final Logger logger;
+    private static final Logger LOG = Logger.getLogger(AbstractReportBean.class);
 
-    /** Hibernate session. */
-    protected Session session;
-
-    /** Default constructor. */
-    @SuppressWarnings(UNCHECKED)
+    /**
+     * Default constructor.
+     */
     public AbstractReportBean() {
-        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-        Class<RESULT> resultType = (Class) parameterizedType.getActualTypeArguments()[1];
-        logger = Logger.getLogger(resultType);
+        // nothing to do here
     }
 
     /**
@@ -61,8 +54,36 @@ public abstract class AbstractReportBean<CRITERIA extends AbstractCriteriaDto, R
 
     /** Store data on lead organization. */
     protected class LeadOrgInfo {
-        String name;
-        String localSpIdentifier;
+        private String name;
+        private String localSpIdentifier;
+
+        /**
+         * @return the name
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * @param name the name to set
+         */
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        /**
+         * @return the localSpIdentifier
+         */
+        public String getLocalSpIdentifier() {
+            return localSpIdentifier;
+        }
+
+        /**
+         * @param localSpIdentifier the localSpIdentifier to set
+         */
+        public void setLocalSpIdentifier(String localSpIdentifier) {
+            this.localSpIdentifier = localSpIdentifier;
+        }
     };
 
     /**
@@ -71,13 +92,14 @@ public abstract class AbstractReportBean<CRITERIA extends AbstractCriteriaDto, R
      * @throws PAException exception
      */
     protected LeadOrgInfo getLeadOrganization(BigInteger studyProtocolIdentifier) throws PAException {
-        if (studyProtocolIdentifier == null) { return null; }
+        if (studyProtocolIdentifier == null) {
+            return null;
+        }
         LeadOrgInfo result = new LeadOrgInfo();
         try {
-            session = HibernateUtil.getCurrentSession();
+            Session session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
-            StringBuffer sql = new StringBuffer(
-                      "select org.name, spart.local_sp_indentifier "
+            StringBuffer sql = new StringBuffer("select org.name, spart.local_sp_indentifier "
                     + "from study_site AS spart "
                     + "  join research_organization AS ro ON (spart.research_organization_identifier = ro.identifier) "
                     + "  join organization AS org ON (ro.organization_identifier = org.identifier) "
@@ -95,7 +117,7 @@ public abstract class AbstractReportBean<CRITERIA extends AbstractCriteriaDto, R
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in " + this.getClass(), hbe);
         }
-        logger.info("Leaving getLeadOrganization(Long).");
+        LOG.debug("Leaving getLeadOrganization(Long).");
         return result;
     }
 }

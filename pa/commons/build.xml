@@ -12,7 +12,7 @@
     <property name="pa.resourceDir" value="${software.dir}/pa/resources"/>
 
     <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
-    <property name="pa.checkstyle" value="${pa.resourceDir}/paCheckstyle.xml"/>
+    <property name="pa.checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
 
     <property name="jboss.server.jndi.port" value="1099" />
 
@@ -274,9 +274,8 @@
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle">
-        <taskdef resource="checkstyletask.properties"
-             classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
-        <checkstyle config="${pa.checkstyle}" failOnViolation="true">
+        <taskdef resource="checkstyletask.properties" classpath="${test-checkstyle.jar.dir}/checkstyle-all-5.1.jar"/>
+        <checkstyle configurl="${pa.checkstyle.url}" failOnViolation="true">
             <classpath>
                 <pathelement location="${commons.build.outputDir}"/>
             	<path refid="compile.classpath"/>

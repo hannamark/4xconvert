@@ -10,7 +10,7 @@
     <property name="common.dir" value="${basedir}/../../build-pa/common"/>
     <property name="resource.dir" value="${basedir}/../resources"/>
     <property name="pmdFile" value="${resource.dir}/accrualPmd.xml"/>
-    <property name="checkstyleFile" value="${resource.dir}/accrualCheckstyle.xml"/>
+    <property name="checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
 
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="services.report.dir" value="${software.dir}/target/accrual/reports/services"/>
@@ -20,7 +20,7 @@
     <property name="services.build.domainDir" value="${services.build.srcDir}/gov/nih/nci/pa"/>
     <property name="services.build.resourceDir" value="${basedir}/src/resources"/>
     <property name="services.jar" value="accrual-services.jar"/>
-	<property name="services-client.jar" value="accrual-services-client.jar"/>
+    <property name="services-client.jar" value="accrual-services-client.jar"/>
     <property name="services.build.testSrcDir" value="${basedir}/test/java"/>
     <property name="services.build.testOutputDir" value="${services.build.dir}/test-classes"/>
     <property name="services.build.coberturaOutputDir" value="${services.build.dir}/generated-classes"/>
@@ -102,13 +102,13 @@
         <!-- <copy todir="${services.build.domainDir}/domain">
             <fileset dir="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/domain"/>
         </copy> -->
-    	<!-- <copy todir="${services.build.domainDir}/enums">
+        <!-- <copy todir="${services.build.domainDir}/enums">
             <fileset dir="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/enums"/>
         </copy> -->
-    	<!-- <copy todir="${services.build.domainDir}/iso/util">
-    	    <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/iso/util/EnOnConverter.java"/>
-    		<fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/iso/util/EnPnConverter.java"/>
-    	</copy> -->
+        <!-- <copy todir="${services.build.domainDir}/iso/util">
+            <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/iso/util/EnOnConverter.java"/>
+            <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/iso/util/EnPnConverter.java"/>
+        </copy> -->
         <copy todir="${services.build.domainDir}/service/util">
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/*Service.java"/>
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/*ServiceRemote.java"/>
@@ -123,9 +123,9 @@
         <copy todir="${services.build.domainDir}/service/correlation">
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/correlation/OrganizationCorrelationServiceRemote.java"/>
         </copy>
-    	<!-- <copy todir="${services.build.domainDir}/util">
-    	    <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/util/PAAttributeMaxLen.java"/>
-    	</copy> -->
+        <!-- <copy todir="${services.build.domainDir}/util">
+            <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/util/PAAttributeMaxLen.java"/>
+        </copy> -->
      </target>
 
 
@@ -165,10 +165,10 @@
                 <filter token="accrual.jnp.url" value="${accrual.jnp.url}"/>
                 <filter token="pa.jnp.url" value="${pa.jnp.url}"/>
                 <filter token="po.jnp.url" value="${po.jnp.url}"/>
-            	<filter token="po.port.number" value="${po.port.number}"/>
+                <filter token="po.port.number" value="${po.port.number}"/>
                 <filter token="jboss.server.hostname" value="${jboss.server.hostname}"/>
-            	<filter token="po.username" value="${po.username}"/>
-            	<filter token="po.pass" value="${po.pass}"/>
+                <filter token="po.username" value="${po.username}"/>
+                <filter token="po.pass" value="${po.pass}"/>
                 <filter token="po.server.name" value="${po.server.name}"/>
             </filterset>
             <fileset dir="${services.build.resourceDir}"/>
@@ -264,14 +264,12 @@
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle">
-        <taskdef resource="checkstyletask.properties"
-             classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
-
-        <checkstyle config="${checkstyleFile}" failOnViolation="true">
-        	<fileset dir="src">
-        	        <include name="**/accrual/**/*.java"/>
-        	</fileset>
-        	<classpath location="${services.build.dir}/classes"/>
+        <taskdef resource="checkstyletask.properties" classpath="${test-checkstyle.jar.dir}/checkstyle-all-5.1.jar"/>
+        <checkstyle configurl="${checkstyle.url}" failOnViolation="true">
+            <fileset dir="src">
+                    <include name="**/accrual/**/*.java"/>
+            </fileset>
+            <classpath location="${services.build.dir}/classes"/>
             <classpath refid="compile.classpath"/>
             <formatter type="plain"/>
             <formatter type="plain" toFile="${services.report.dir}/checkstyle.txt"/>
@@ -310,9 +308,9 @@
        <taskdef resource="simiantask.properties"
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
        <simian>
-       		<fileset dir="src">
-       	          <include name="**/accrual/**/*.java"/>
-       	    </fileset>
+               <fileset dir="src">
+                     <include name="**/accrual/**/*.java"/>
+               </fileset>
             <formatter type="plain" toFile="${services.report.dir}/simian.txt"/>
             <formatter type="xml" toFile="${services.report.dir}/simian.xml"/>
             <formatter type="plain"/>
@@ -352,28 +350,28 @@
              index="false"
              basedir="${services.build.outputDir}"/>
 
-    	<jar jarfile="${services.build.dir}/${services-client.jar}"
-    	             compress="true"
-    	             index="false"
-    	             basedir="${services.build.outputDir}"
-    	             includes="**/*.class"
-    	             excludes="**/pa/**/*.class
-            						**/convert/*
-									**/dto/util/PO*.class
-									**/dto/util/S*.class
-    								**/service/*Bean.class
-    		                        **/service/*BeanLocal.class
-    		                        **/service/Abstract*.class
-    		                        **/service/BaseLookUpService.class
-    							    **/service/util/A*.class
-								    **/service/util/C*.class
-								    **/service/util/S*.class
-								    **/service/util/PatientBean.class
-								    **/service/util/PatientServiceBean.class
-								    **/service/util/PatientServiceRemote.class
-    		                        **/svc/*Bean*.class
-    		                        **/svc/util/*.class
-    		"/>
+        <jar jarfile="${services.build.dir}/${services-client.jar}"
+                     compress="true"
+                     index="false"
+                     basedir="${services.build.outputDir}"
+                     includes="**/*.class"
+                     excludes="**/pa/**/*.class
+                                    **/convert/*
+                                    **/dto/util/PO*.class
+                                    **/dto/util/S*.class
+                                    **/service/*Bean.class
+                                    **/service/*BeanLocal.class
+                                    **/service/Abstract*.class
+                                    **/service/BaseLookUpService.class
+                                    **/service/util/A*.class
+                                    **/service/util/C*.class
+                                    **/service/util/S*.class
+                                    **/service/util/PatientBean.class
+                                    **/service/util/PatientServiceBean.class
+                                    **/service/util/PatientServiceRemote.class
+                                    **/svc/*Bean*.class
+                                    **/svc/util/*.class
+            "/>
     </target>
 
     <target name="jar" depends="ivy-get, create-jar, test-dynamic-analysis"

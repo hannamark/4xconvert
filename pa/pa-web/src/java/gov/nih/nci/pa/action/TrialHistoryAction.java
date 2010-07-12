@@ -234,20 +234,20 @@ ServletResponseAware {
         Ii studyProtocolIi =
                 (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
 
-        StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(studyProtocolIi);
+        StudyProtocolDTO spDTO = getStudyProtocolSvc().getStudyProtocol(studyProtocolIi);
         StudyProtocolDTO toSearchspDTO = new StudyProtocolDTO();
         toSearchspDTO.setSecondaryIdentifiers(DSetConverter.convertIiToDset(PAUtil.getAssignedIdentifier(spDTO)));
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
         toSearchspDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         List<StudyProtocolDTO> spList = new ArrayList<StudyProtocolDTO>();
         try {
-            List<StudyProtocolDTO> activeList = studyProtocolSvc.search(toSearchspDTO, limit);
+            List<StudyProtocolDTO> activeList = getStudyProtocolSvc().search(toSearchspDTO, limit);
             if (activeList != null && !activeList.isEmpty()) {
                 spList.addAll(activeList);
             }
 
             toSearchspDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
-            List<StudyProtocolDTO> inactiveList = studyProtocolSvc.search(toSearchspDTO, limit);
+            List<StudyProtocolDTO> inactiveList = getStudyProtocolSvc().search(toSearchspDTO, limit);
             if (inactiveList != null && !inactiveList.isEmpty()) {
                 spList.addAll(inactiveList);
             }
@@ -274,7 +274,7 @@ ServletResponseAware {
      */
     private String getDocuments(StudyProtocolDTO sp)throws PAException {
     StringBuffer documents = new StringBuffer();
-    List<DocumentDTO>documentDTO = documentSvc.getDocumentsByStudyProtocol(sp.getIdentifier());
+    List<DocumentDTO>documentDTO = getDocumentSvc().getDocumentsByStudyProtocol(sp.getIdentifier());
     for (DocumentDTO docDto : documentDTO) {
         String fileName = StConverter.convertToString(docDto.getFileName());
         documents.append("<a href='#' onclick=\"handlePopup('");
@@ -300,43 +300,41 @@ ServletResponseAware {
      * @throws PAException the PA exception
      */
     public String open() throws PAException {
-    try {
-          DocumentDTO  docDTO =
-                PaRegistry.getDocumentService().get(IiConverter.convertToIi(getDocii()));
+        try {
+            DocumentDTO docDTO = PaRegistry.getDocumentService().get(IiConverter.convertToIi(getDocii()));
 
-          StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(IiConverter.convertToIi(getStudyProtocolii()));
+            final Ii spIi = IiConverter.convertToIi(getStudyProtocolii());
+            StudyProtocolDTO spDTO = getStudyProtocolSvc().getStudyProtocol(spIi);
 
-          StringBuffer fileName = new StringBuffer();
-          fileName.append(PAUtil.getAssignedIdentifier(spDTO)).
-          append('-').append(docDTO.getFileName().getValue());
+            StringBuffer fileName = new StringBuffer();
+            fileName.append(PAUtil.getAssignedIdentifier(spDTO)).append('-').append(docDTO.getFileName().getValue());
 
-          ByteArrayInputStream bStream = new ByteArrayInputStream(docDTO.getText().getData());
+            ByteArrayInputStream bStream = new ByteArrayInputStream(docDTO.getText().getData());
 
-          servletResponse.setContentType("application/octet-stream");
-          servletResponse.setContentLength(docDTO.getText().getData().length);
-          servletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName.toString() + "\"");
-          servletResponse.setHeader("Pragma", "public");
-          servletResponse.setHeader("Cache-Control", "max-age=0");
+            servletResponse.setContentType("application/octet-stream");
+            servletResponse.setContentLength(docDTO.getText().getData().length);
+            servletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName.toString() + "\"");
+            servletResponse.setHeader("Pragma", "public");
+            servletResponse.setHeader("Cache-Control", "max-age=0");
 
-          int data;
-          ServletOutputStream out = servletResponse.getOutputStream();
-          while ((data = bStream.read()) != -1) {
-            out.write(data);
-          }
-          out.flush();
-          out.close();
-      } catch (FileNotFoundException err) {
-        LOG.error("TrialHistoryAction failed with FileNotFoundException: "
-                + err);
-        addActionError(err.getMessage());
-        return super.execute();
+            int data;
+            ServletOutputStream out = servletResponse.getOutputStream();
+            while ((data = bStream.read()) != -1) {
+                out.write(data);
+            }
+            out.flush();
+            out.close();
+        } catch (FileNotFoundException err) {
+            LOG.error("TrialHistoryAction failed with FileNotFoundException: " + err);
+            addActionError(err.getMessage());
+            return super.execute();
 
-    } catch (Exception e) {
-        addActionError(e.getMessage());
-        ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-        return super.execute();
-    }
-    return NONE;
+        } catch (Exception e) {
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            return super.execute();
+        }
+        return NONE;
     }
 
     /**
@@ -350,12 +348,12 @@ ServletResponseAware {
             enforceBusinessRules();
             if (hasFieldErrors()) {
                 return AR_EDIT;
-              }
-            StudyProtocolDTO sp = studyProtocolSvc.getStudyProtocol(
-                IiConverter.convertToIi(trialHistoryWbDto.getIdentifier()));
-           studyProtocolSvc.updateStudyProtocol(trialHistoryWbDto.getIsoDto(sp));
+            }
+            final Ii spIi = IiConverter.convertToIi(trialHistoryWbDto.getIdentifier());
+            StudyProtocolDTO sp = getStudyProtocolSvc().getStudyProtocol(spIi);
+            getStudyProtocolSvc().updateStudyProtocol(trialHistoryWbDto.getIsoDto(sp));
         } catch (PAFieldException e) {
-        addActionError(e.getMessage());
+            addActionError(e.getMessage());
             return AR_EDIT;
         } catch (PAException e) {
             addActionError(e.getMessage());
@@ -373,7 +371,7 @@ ServletResponseAware {
     protected void loadEditForm() throws PAException {
         if (CA_EDIT.equals(getCurrentAction())) {
          setTrialHistoryWbDto(new TrialHistoryWebDTO(
-           studyProtocolSvc.getStudyProtocol(IiConverter.convertToIi(getSelectedRowIdentifier()))));
+           getStudyProtocolSvc().getStudyProtocol(IiConverter.convertToIi(getSelectedRowIdentifier()))));
         } else {
         setTrialHistoryWbDto(new TrialHistoryWebDTO());
         }

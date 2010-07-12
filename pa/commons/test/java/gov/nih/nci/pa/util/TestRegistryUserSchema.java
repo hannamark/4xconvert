@@ -117,23 +117,23 @@ public class TestRegistryUserSchema {
         public static Long leadOrgUserId;
         public static Long trialOwnerUserId;
         public static Long randomUserId;
-        
+
         private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
-        
+
         /**
          *
          */
         public static void reset() {
-        	HibernateUtil.testHelper = testHelper;   
-        	HibernateUtil.getCurrentSession().clear();
+            HibernateUtil.setTestHelper(testHelper);
+            HibernateUtil.getCurrentSession().clear();
         }
 
         /**
          *
          */
         public static void reset1() {
-            // clean up HQLDB schema            
-            HibernateUtil.testHelper = testHelper;
+            // clean up HQLDB schema
+            HibernateUtil.setTestHelper(testHelper);
             Session session = HibernateUtil.getCurrentSession();
             session.clear();
             try {
@@ -195,10 +195,10 @@ public class TestRegistryUserSchema {
             } catch (SQLException e) {
                 //NOOP
             } finally {
-            	session.clear();
+                session.clear();
             }
         }
-        
+
         /**
          *
          * @param <T> t
@@ -226,42 +226,42 @@ public class TestRegistryUserSchema {
          *
          */
         public static void primeData() {
-                         
+
                 User csmUserRandom = new User();
                 csmUserRandom.setLoginName("randomUserTest");
                 csmUserRandom.setFirstName("testR");
                 csmUserRandom.setLastName("testR");
                 csmUserRandom.setUpdateDate(new Date());
                 addUpdObject(csmUserRandom);
-                
+
                 User csmUserLeadOrg = new User();
                 csmUserLeadOrg.setLoginName("leadOrgAdminTest");
                 csmUserLeadOrg.setFirstName("testL");
                 csmUserLeadOrg.setLastName("testL");
                 csmUserLeadOrg.setUpdateDate(new Date());
                 addUpdObject(csmUserLeadOrg);
-                
+
                 User csmUserTrialOwner = new User();
                 csmUserTrialOwner.setLoginName("trialOwnerTest");
                 csmUserTrialOwner.setFirstName("testO");
                 csmUserTrialOwner.setLastName("testO");
                 csmUserTrialOwner.setUpdateDate(new Date());
                 addUpdObject(csmUserTrialOwner);
-                
+
                 RegistryUser randomUser = new RegistryUser();
                 randomUser.setCsmUserId(csmUserRandom.getUserId());
                 randomUser.setLastName("random");
                 randomUser.setFirstName("random");
                 addUpdObject(randomUser);
                 randomUserId = randomUser.getId();
-                
+
                 RegistryUser trialOwner = new RegistryUser();
                 trialOwner.setCsmUserId(csmUserTrialOwner.getUserId());
                 trialOwner.setLastName("owner");
                 trialOwner.setFirstName("owner");
                 addUpdObject(trialOwner);
                 trialOwnerUserId = trialOwner.getId();
-                
+
                 StudyProtocol sp = new InterventionalStudyProtocol();
                 sp.setOfficialTitle("cacncer for THOLA");
                 sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
@@ -283,26 +283,26 @@ public class TestRegistryUserSchema {
                 addUpdObject(sp);
                 sp.setId(sp.getId());
                 studyProtocolId = sp.getId();
-                
+
                 Organization org = OrganizationTest.createOrganizationObj();
                 addUpdObject(org);
                 org.setIdentifier(String.valueOf(org.getId()));
-                
+
                 RegistryUser leadOrgAdmin = new RegistryUser();
                 leadOrgAdmin.setCsmUserId(csmUserLeadOrg.getUserId());
                 leadOrgAdmin.setLastName("lead");
                 leadOrgAdmin.setFirstName("lead");
                 leadOrgAdmin.setAffiliatedOrganizationId(org.getId());
-                leadOrgAdmin.setAffiliatedOrgUserType(UserOrgType.ADMIN); 
+                leadOrgAdmin.setAffiliatedOrgUserType(UserOrgType.ADMIN);
                 addUpdObject(leadOrgAdmin);
                 leadOrgUserId = leadOrgAdmin.getId();
-          
+
                 ResearchOrganization rOrg = new ResearchOrganization();
                 rOrg.setOrganization(org);
                 rOrg.setStatusCode(StructuralRoleStatusCode.ACTIVE);
                 rOrg.setIdentifier("abc");
                 addUpdObject(rOrg);
-           
+
                 StudySite sPart = new StudySite();
                 sPart.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
                 sPart.setLocalStudyProtocolIdentifier("Local SP ID 01");
@@ -311,8 +311,8 @@ public class TestRegistryUserSchema {
                 sPart.setStudyProtocol(sp);
                 sPart.setResearchOrganization(rOrg);
                 addUpdObject(sPart);
-             
+
                 HibernateUtil.getCurrentSession().clear();
-            
+
         }
 }

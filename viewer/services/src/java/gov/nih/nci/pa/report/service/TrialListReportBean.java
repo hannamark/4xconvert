@@ -105,8 +105,10 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
 /**
 * @author Hugh Reinhart
@@ -116,6 +118,8 @@ import org.hibernate.SQLQuery;
 @Interceptors(HibernateSessionInterceptor.class)
 public class TrialListReportBean extends AbstractStandardReportBean<AbstractStandardCriteriaDto, TrialListResultDto>
         implements TrialListLocal {
+
+    private static final Logger LOG = Logger.getLogger(TrialListReportBean.class);
 
     /** The value indicating results should not be filtered by organization. */
     public static final String ALL_ORGANIZATIONS_KEY = "1";
@@ -145,7 +149,7 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
         }
         List<TrialListResultDto> rList = null;
         try {
-            session = HibernateUtil.getCurrentSession();
+            Session session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer(
                     "SELECT oi.extension, sp.submission_number, cm.organization, sp.date_last_created "
@@ -156,8 +160,8 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
                     + "INNER JOIN document_workflow_status AS dws ON (sp.identifier = dws.study_protocol_identifier) "
                     + "INNER JOIN study_milestone AS sm ON (sp.identifier = sm.study_protocol_identifier) "
                     + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
-                    + "WHERE dws.identifier in ( select max(identifier) from document_workflow_status " 
-                    + " group by study_protocol_identifier )  AND sm.identifier in  ( select max(identifier)" 
+                    + "WHERE dws.identifier in ( select max(identifier) from document_workflow_status "
+                    + " group by study_protocol_identifier )  AND sm.identifier in  ( select max(identifier)"
                     + " from study_milestone group by study_protocol_identifier ) ");
             sql.append("  AND (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
                     + "   and oi.identifier_name = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "')");
@@ -176,7 +180,7 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in " + this.getClass(), hbe);
         }
-        logger.info("Leaving get(TrialListCriteriaDto), returning " + rList.size() + " object(s).");
+        LOG.debug("Leaving get(TrialListCriteriaDto), returning " + rList.size() + " object(s).");
         return rList;
     }
 
@@ -222,9 +226,8 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
         if (criteria instanceof StandardCriteriaDto
                 && BlConverter.covertToBool(((StandardCriteriaDto) criteria).getActiveOnly())) {
             return "AND sp.status_code = '" + ActStatusCode.ACTIVE.getName() + "' ";
-        } else {
-            return "";
         }
+        return "";
     }
 
     private List<TrialListResultDto> getResultList(List<Object[]> queryList) throws PAException {
@@ -236,8 +239,8 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
             rdto.setDws(CdConverter.convertStringToCd((String) q[DWS_IDX]));
             rdto.setDwsDate(TsConverter.convertToTs((Timestamp) q[DWS_DATE_IDX]));
             LeadOrgInfo loi = getLeadOrganization((BigInteger) q[SP_KEY_IDX]);
-            rdto.setLeadOrg(StConverter.convertToSt(loi.name));
-            rdto.setLeadOrgTrialIdentifier(StConverter.convertToSt(loi.localSpIdentifier));
+            rdto.setLeadOrg(StConverter.convertToSt(loi.getName()));
+            rdto.setLeadOrgTrialIdentifier(StConverter.convertToSt(loi.getLocalSpIdentifier()));
             rdto.setMilestone(CdConverter.convertStringToCd((String) q[MS_IDX]));
             rdto.setMilestoneDate(TsConverter.convertToTs((Timestamp) q[MS_DATE_IDX]));
             rdto.setSubmissionNumber(IntConverter.convertToInt((Integer) q[SUBMISSION_NUM_IDX]));

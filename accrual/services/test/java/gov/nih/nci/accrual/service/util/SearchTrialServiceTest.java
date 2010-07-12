@@ -111,7 +111,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
-        AccrualCsmUtil.csmUtil = new MockCsmUtil();
+        AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
         bean = new SearchTrialBean();
     }
 
@@ -166,7 +166,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
                 break;
             }
         }
-        
+
         crit.setAssignedIdentifier(StConverter.convertToSt(assignedId.getExtension()));
         assertEquals(goodCount, bean.search(crit, authUser).size());
         crit.setAssignedIdentifier(BST);
@@ -212,7 +212,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
             }
         }
     }
-    
+
     @Test
     public void searchTrialExceptions() throws Exception {
         try {
@@ -228,7 +228,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         } catch (Exception ex) {
             // expected
         }
-        
+
         try {
             Bl flag = bean.isAuthorized(null, null);
             assertNotNull(flag);

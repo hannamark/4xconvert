@@ -122,8 +122,8 @@ public class StudySiteAccrualAccessServiceTest {
     public void setUp() throws Exception {
         StudySiteAccrualAccessServiceBean bean = new StudySiteAccrualAccessServiceBean();
         statusBean = new StudySiteAccrualStatusServiceBean();
-        bean.studySiteAccrualStatusService = statusBean;
-        StudySiteAccrualAccessServiceBean.lastUpdate = new Timestamp(new Date().getTime());
+        bean.setStudySiteAccrualStatusService(statusBean);
+        StudySiteAccrualAccessServiceBean.setLastUpdate(new Timestamp(new Date().getTime()));
         User user = new User();
         user.setUserId(1L);
         user.setFirstName("John");
@@ -131,7 +131,7 @@ public class StudySiteAccrualAccessServiceTest {
         user.setLoginName("/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=john.doe");
         Set<User> users = new HashSet<User>();
         users.add(user);
-        StudySiteAccrualAccessServiceBean.submitterList = users;
+        StudySiteAccrualAccessServiceBean.setSubmitterList(users);
         this.bean = bean;
         TestSchema.reset1();
         TestSchema.primeData();

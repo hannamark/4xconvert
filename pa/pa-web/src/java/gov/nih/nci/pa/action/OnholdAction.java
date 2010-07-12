@@ -105,7 +105,7 @@ public class OnholdAction extends AbstractListEditAction {
     @Override
     public String add() throws PAException {
         try {
-            studyOnholdSvc.create(onhold.getIsoDto(spIi));
+            getStudyOnholdSvc().create(onhold.getIsoDto(getSpIi()));
         } catch (PAFieldException e) {
             addFieldError(e);
             return AR_EDIT;
@@ -123,7 +123,7 @@ public class OnholdAction extends AbstractListEditAction {
     @Override
     public String update() throws PAException {
         try {
-            studyOnholdSvc.update(onhold.getIsoDto(spIi));
+            getStudyOnholdSvc().update(onhold.getIsoDto(getSpIi()));
         } catch (PAFieldException e) {
             addFieldError(e);
             return AR_EDIT;
@@ -140,7 +140,7 @@ public class OnholdAction extends AbstractListEditAction {
     @Override
     protected void loadEditForm() throws PAException {
         if (CA_EDIT.equals(getCurrentAction())) {
-            setOnhold(new OnholdWebDTO(studyOnholdSvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()))));
+            setOnhold(new OnholdWebDTO(getStudyOnholdSvc().get(IiConverter.convertToIi(getSelectedRowIdentifier()))));
         } else {
             setOnhold(new OnholdWebDTO());
         }
@@ -151,7 +151,7 @@ public class OnholdAction extends AbstractListEditAction {
      */
     @Override
     protected void loadListForm() throws PAException {
-        List<StudyOnholdDTO> isoList = studyOnholdSvc.getByStudyProtocol(spIi);
+        List<StudyOnholdDTO> isoList = getStudyOnholdSvc().getByStudyProtocol(getSpIi());
         setOnholdList(new ArrayList<OnholdWebDTO>());
         for (StudyOnholdDTO iso : isoList) {
             getOnholdList().add(new OnholdWebDTO(iso));

@@ -137,14 +137,18 @@ import org.hibernate.Session;
 public class PatientBeanLocal implements PatientService, PatientServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(PatientBeanLocal.class);
-    SessionContext ejbContext;
+    private SessionContext ejbContext;
     @EJB
-    CountryService countryServ;
+    private CountryService countryService;
     @EJB
-    POPatientService patientCorrelationSvc;
+    private POPatientService patientCorrelationSvc;
 
+    /**
+     * Set the session context.
+     * @param ctx context to set
+     */
     @Resource
-    void setSessionContext(SessionContext ctx) {
+    public void setSessionContext(SessionContext ctx) {
         ejbContext = ctx;
     }
 
@@ -291,7 +295,7 @@ public class PatientBeanLocal implements PatientService, PatientServiceLocal {
         scoper.setReliability(IdentifierReliability.ISS);
         popDTO.setScoperIdentifier(scoper);
 
-        Country country = countryServ.getCountry(dto.getCountryIdentifier());
+        Country country = countryService.getCountry(dto.getCountryIdentifier());
         String zip = PAUtil.isStNull(dto.getZip()) ? "11111" : StConverter.convertToString(dto.getZip());
 
         Ad ad = AddressConverterUtil.create("Street", null, "City", "VA", zip, country.getAlpha3());
@@ -310,5 +314,19 @@ public class PatientBeanLocal implements PatientService, PatientServiceLocal {
             }
         dto.setAssignedIdentifier(popDTO.getIdentifier());
         dto.setPersonIdentifier(popDTO.getPlayerIdentifier());
+    }
+
+    /**
+     * @param countryService the countryService to set
+     */
+    public void setCountryService(CountryService countryService) {
+        this.countryService = countryService;
+    }
+
+    /**
+     * @param patientCorrelationSvc the patientCorrelationSvc to set
+     */
+    public void setPatientCorrelationSvc(POPatientService patientCorrelationSvc) {
+        this.patientCorrelationSvc = patientCorrelationSvc;
     }
 }

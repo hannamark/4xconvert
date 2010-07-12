@@ -97,7 +97,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -138,11 +137,11 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.TooManyMethods" ,
     "PMD.ExcessiveClassLength" })
 public class SearchTrialAction extends ActionSupport {
+    private static final long serialVersionUID = 1L;
     private List<StudyProtocolQueryDTO> records = null;
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
     private Long studyProtocolId = null;
-    PAServiceUtils paServiceUtils = new PAServiceUtils();
-    TrialUtil trialUtil = new TrialUtil();
+    private final TrialUtil trialUtil = new TrialUtil();
     private static final String TRUE = "true";
     private static final String SPID = "studyProtocolId";
 
@@ -682,4 +681,5 @@ public class SearchTrialAction extends ActionSupport {
          }
         return errorExist;
      }
+
 }

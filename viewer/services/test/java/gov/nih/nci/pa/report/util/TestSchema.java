@@ -133,7 +133,7 @@ public class TestSchema {
      *
      */
     public static void reset() {
-        HibernateUtil.testHelper = testHelper;
+        HibernateUtil.setTestHelper(testHelper);
         if (!dataLoaded) {
             primeData();
         }
@@ -223,7 +223,7 @@ public class TestSchema {
         Set<Ii> studyOtherIdentifiers =  new HashSet<Ii>();
         Ii assignedIdentifier = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00001");
         studyOtherIdentifiers.add(assignedIdentifier);
-        
+
         sp.setOtherIdentifiers(studyOtherIdentifiers);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setUserLastCreated(usr.getLoginName());

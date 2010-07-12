@@ -101,8 +101,10 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
 /**
 * @author Hugh Reinhart
@@ -110,9 +112,10 @@ import org.hibernate.SQLQuery;
 */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
-public class AverageMilestoneReportBean
-        extends AbstractStandardReportBean<SubmissionTypeCriteriaDto, AverageMilestoneResultDto>
-        implements AverageMilestoneLocal {
+public class AverageMilestoneReportBean extends
+        AbstractStandardReportBean<SubmissionTypeCriteriaDto, AverageMilestoneResultDto> implements
+        AverageMilestoneLocal {
+    private static final Logger LOG = Logger.getLogger(AverageMilestoneReportBean.class);
 
     private static final int DAY01_IDX = 0;
     private static final int DAY02_IDX = 1;
@@ -270,17 +273,17 @@ public class AverageMilestoneReportBean
 
     /** Inner class used to generate output. */
     private class Counts {
-        BigInteger spId;
-        Timestamp date;
-        MilestoneCode code;
-        Integer order;
-        Integer days;
+        private BigInteger spId;
+        private Timestamp date;
+        private MilestoneCode code;
+        private Integer order;
+        private Integer days;
     }
 
     private List<BigInteger> getTrialList(SubmissionTypeCriteriaDto criteria) throws PAException {
         List<BigInteger> rList = new ArrayList<BigInteger>();
         try {
-            session = HibernateUtil.getCurrentSession();
+            Session session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer(
                   "SELECT distinct sp.identifier "
@@ -296,7 +299,7 @@ public class AverageMilestoneReportBean
             }
             sql.append(dateRangeSql(criteria, "sm.milestone_date"));
             sql.append(ctepSql(criteria));
-            logger.info("query = " + sql);
+            LOG.debug("query = " + sql);
             query = session.createSQLQuery(sql.toString());
             setDateRangeParameters(criteria, query);
             query.setParameterList("REPORTING_MILESTONES", REPORTING_MILESTONES);
@@ -308,14 +311,14 @@ public class AverageMilestoneReportBean
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in " + this.getClass(), hbe);
         }
-        logger.info("Leaving AverageMilestoneReportBean.getTrialList().  Returning " + rList.size() + " trials.");
+        LOG.debug("Leaving AverageMilestoneReportBean.getTrialList().  Returning " + rList.size() + " trials.");
         return rList;
     }
 
     private List<Counts> getMilestoneList(List<BigInteger> trialList) throws PAException {
         List<Counts> rList = new ArrayList<Counts>();
         try {
-            session = HibernateUtil.getCurrentSession();
+            Session session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer(
                   "SELECT study_protocol_identifier, milestone_date, milestone_code "
@@ -323,7 +326,7 @@ public class AverageMilestoneReportBean
                 + "WHERE milestone_code IN (:REPORTING_MILESTONES) "
                 + "  AND study_protocol_identifier IN (:TRIAL_LIST) "
                 + "ORDER BY study_protocol_identifier, milestone_date, identifier ");
-            logger.info("query = " + sql);
+            LOG.debug("query = " + sql);
             query = session.createSQLQuery(sql.toString());
             query.setParameterList("REPORTING_MILESTONES", REPORTING_MILESTONES);
             query.setParameterList("TRIAL_LIST", trialList);
@@ -356,7 +359,7 @@ public class AverageMilestoneReportBean
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in " + this.getClass(), hbe);
         }
-        logger.info("Leaving AverageMilestoneReportBean.getMilestonList().  Returning "
+        LOG.debug("Leaving AverageMilestoneReportBean.getMilestonList().  Returning "
                 + rList.size() + " milestones.");
         return rList;
     }

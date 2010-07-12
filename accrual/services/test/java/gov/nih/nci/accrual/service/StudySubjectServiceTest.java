@@ -85,7 +85,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.accrual.service.util.SearchTrialBean;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -110,9 +109,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
-        StudySubjectBeanLocal local = new StudySubjectBean();
-        local.searchTrialSvc = new SearchTrialBean();
-        bean = local;
+        bean = new StudySubjectBean();
     }
 
     @Test
@@ -208,14 +205,14 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         } catch (RemoteException ex) {
             // expected
         }
-        
+
         try{
             dto.setOutcomesLoginName(StConverter.convertToSt("Test"));
             bean.create(dto);
         } catch (RemoteException ex) {
             // expected
         }
-        
+
         try {
             bean.delete(null);
             fail();

@@ -232,7 +232,7 @@ public class TrialUtil extends TrialConvertUtils {
      * @throws PAException ex
      */
     private void copyNctNummber(Ii studyProtocolIi, BaseTrialDTO trialDTO) throws PAException {
-        String nctNumber = paServiceUtil.getStudyIdentifier(studyProtocolIi, PAConstants.NCT_IDENTIFIER_TYPE);
+        String nctNumber = getPaServiceUtil().getStudyIdentifier(studyProtocolIi, PAConstants.NCT_IDENTIFIER_TYPE);
         if (nctNumber != null) {
             trialDTO.setNctIdentifier(nctNumber);
         }
@@ -598,7 +598,7 @@ public class TrialUtil extends TrialConvertUtils {
      * @throws PAException ex
      */
     private void copyDcpIdentifier(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
-        String dcpId = paServiceUtil.getStudyIdentifier(studyProtocolIi, PAConstants.DCP_IDENTIFIER_TYPE);
+        String dcpId = getPaServiceUtil().getStudyIdentifier(studyProtocolIi, PAConstants.DCP_IDENTIFIER_TYPE);
         if (StringUtils.isNotEmpty(dcpId)) {
             trialDTO.setDcpIdentifier(dcpId);
         }
@@ -610,7 +610,7 @@ public class TrialUtil extends TrialConvertUtils {
      * @throws PAException ex
      */
     private void copyCtepIdentifier(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
-        String ctepId = paServiceUtil.getStudyIdentifier(studyProtocolIi, PAConstants.CTEP_IDENTIFIER_TYPE);
+        String ctepId = getPaServiceUtil().getStudyIdentifier(studyProtocolIi, PAConstants.CTEP_IDENTIFIER_TYPE);
         if (StringUtils.isNotEmpty(ctepId)) {
             trialDTO.setCtepIdentifier(ctepId);
         }

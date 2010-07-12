@@ -140,7 +140,7 @@ public class MockPaServiceLocator implements ServiceLocator {
     MockPaRegistryUserServiceBean registryUserService = new MockPaRegistryUserServiceBean();
     MockPaLookupTableServiceBean lookupTableService = new MockPaLookupTableServiceBean();
     static {
-        AccrualCsmUtil.csmUtil = new MockCsmUtil();
+        AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
     }
 
     /**

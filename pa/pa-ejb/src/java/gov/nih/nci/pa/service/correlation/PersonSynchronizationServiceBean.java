@@ -142,21 +142,21 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PersonSynchronizationServiceBean implements PersonSynchronizationServiceRemote {
 
-    private static final Logger LOG  = Logger.getLogger(PersonSynchronizationServiceBean.class);
-    private static  CorrelationUtils cUtils = new CorrelationUtils();
+    private static final Logger LOG = Logger.getLogger(PersonSynchronizationServiceBean.class);
+    private static CorrelationUtils cUtils = new CorrelationUtils();
     private static final String STUDY_CONTACT = "STUDY_CONTACT";
     private static final String STUDY_SITE_CONTACT = "STUDY_SITE_CONTACT";
-    private static  PAServiceUtils paServiceUtil = new PAServiceUtils();
+    private static PAServiceUtils paServiceUtil = new PAServiceUtils();
     private CorrelationService correlationService = null;
     private SessionContext ejbContext;
     @EJB
-    StudyContactServiceLocal scLocal = null;
+    private StudyContactServiceLocal scLocal;
     @EJB
-    StudySiteContactServiceLocal spcLocal = null;
+    private StudySiteContactServiceLocal spcLocal;
 
     @Resource
     void setSessionContext(SessionContext ctx) {
-    this.ejbContext = ctx;
+        this.ejbContext = ctx;
     }
 
     /**
@@ -636,4 +636,18 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
        }
        return ocOut;
    }
+
+    /**
+     * @param scLocal the scLocal to set
+     */
+    public void setScLocal(StudyContactServiceLocal scLocal) {
+        this.scLocal = scLocal;
+    }
+
+    /**
+     * @param spcLocal the spcLocal to set
+     */
+    public void setSpcLocal(StudySiteContactServiceLocal spcLocal) {
+        this.spcLocal = spcLocal;
+    }
 }

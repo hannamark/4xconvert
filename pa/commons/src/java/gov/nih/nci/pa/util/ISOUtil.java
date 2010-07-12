@@ -95,13 +95,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
-* 
+*
 * @author Kalpana Guthikonda
 * @since 1/12/2010
 */
 @SuppressWarnings({  "PMD.TooManyMethods" })
 public class ISOUtil {
-    
+
     /**
      * checks if Ii is null.
      * @param ii ii
@@ -111,14 +111,13 @@ public class ISOUtil {
         boolean isNull = false;
         if (ii == null || ii.getExtension() == null) {
             return true;
-        } else {
-            if (ii.getExtension().trim().length() == 0) {
-                isNull = true;
-            }
+        }
+        if (ii.getExtension().trim().length() == 0) {
+            isNull = true;
         }
         return isNull;
     }
-    
+
     /**
      * checks if Cd is null.
      * @param cd cd
@@ -128,10 +127,9 @@ public class ISOUtil {
         boolean isNull = false;
         if (cd == null || cd.getCode() == null) {
             return true;
-        } else {
-            if (cd.getCode().trim().length() == 0) {
-                isNull = true;
-            }
+        }
+        if (cd.getCode().trim().length() == 0) {
+            isNull = true;
         }
         return isNull;
     }
@@ -145,10 +143,9 @@ public class ISOUtil {
         boolean isNull = false;
         if (st == null || st.getValue() == null) {
             return true;
-        } else {
-            if (st.getValue().trim().length() == 0) {
-                isNull = true;
-            }
+        }
+        if (st.getValue().trim().length() == 0) {
+            isNull = true;
         }
         return isNull;
     }
@@ -178,7 +175,7 @@ public class ISOUtil {
         }
         return isNull;
     }
-    
+
     /**
      * checks if Int is null.
      * @param in Int
@@ -254,14 +251,16 @@ public class ISOUtil {
         }
         return isNull;
     }
-    
+
     /**
      * Private class used to decode and normalize date strings.
      */
     private static class ValidDateFormat {
+        // CHECKSTYLE:OFF private static class fields don't necessarily need to be private
         String pattern;
         int endIndex;
         boolean lenient;
+        // CHECKSTYLE:ON
 
         public ValidDateFormat(String pattern) {
             this.pattern = pattern;
@@ -379,7 +378,7 @@ public class ISOUtil {
     public static boolean isNotEmpty(String aString) {
         return !isEmpty(aString);
     }
-   
+
     /**
      * @param javapq javapq
      * @return bd
@@ -391,7 +390,7 @@ public class ISOUtil {
         }
         return unit;
     }
-    
+
     /**
      * @param javapq javapq
      * @return bd
@@ -403,7 +402,7 @@ public class ISOUtil {
         }
         return bd;
     }
-    
+
     /**
      * @param javapq javapq
      * @return bd
@@ -415,6 +414,6 @@ public class ISOUtil {
         }
         return precision;
     }
-    
-   
+
+
 }

@@ -47,9 +47,9 @@
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->master"/>
 
     <!-- other test targets -->
-    <dependency org="checkstyle"             name="checkstyle-all"          rev="4.4"             conf="test-checkstyle->runtime"/>
-    <dependency org="cobertura"              name="cobertura"               rev="1.9"             conf="test-cobertura->runtime"/>  
+    <dependency org="checkstyle"             name="checkstyle-all"          rev="5.1"             conf="test-checkstyle->runtime"/>
+    <dependency org="cobertura"              name="cobertura"               rev="1.9"             conf="test-cobertura->runtime"/>
     <dependency org="pmd"                    name="pmd"                     rev="4.2.2"           conf="test-pmd->compile,runtime"/>
-    <dependency org="redhillconsulting"      name="simian"                  rev="2.2.24"          conf="test-simian->compile"/>    
+    <dependency org="redhillconsulting"      name="simian"                  rev="2.2.24"          conf="test-simian->compile"/>
   </dependencies>
 </ivy-module>

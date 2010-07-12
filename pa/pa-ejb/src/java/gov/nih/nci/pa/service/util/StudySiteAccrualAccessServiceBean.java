@@ -125,15 +125,15 @@ import org.hibernate.Session;
 public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccessServiceLocal {
 
     private static final long REFRESH_TIME = 1000 * 60 * 10;  // 10 minutes
-    static Set<User> submitterList = null;
-    static Timestamp lastUpdate = null;
+    private static Set<User> submitterList = null;
+    private static Timestamp lastUpdate = null;
 
     private SessionContext ejbContext;
 
     @EJB
-    StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
+    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     @EJB
-    RegistryUserServiceLocal registryUserService;
+    private RegistryUserServiceLocal registryUserService;
     @Resource
     void setSessionContext(SessionContext ctx) {
         ejbContext = ctx;
@@ -269,10 +269,7 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         List<StudySiteAccrualAccess> queryList = null;
         session = HibernateUtil.getCurrentSession();
         Query query = null;
-        String hql = "select ssaa "
-            + "from StudySite ss "
-            + "join ss.studySiteAccrualAccess ssaa "
-            + "where ss.id = :ssId "
+        String hql = "select ssaa from StudySite ss join ss.studySiteAccrualAccess ssaa where ss.id = :ssId "
             + "order by ss.id, ssaa.id ";
         query = session.createQuery(hql);
         query.setParameter("ssId", studySiteId);
@@ -364,6 +361,62 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
             fullName = user.getEmailAddress();
         }
         return fullName;
+    }
+
+    /**
+     * @return the studySiteAccrualStatusService
+     */
+    public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
+        return studySiteAccrualStatusService;
+    }
+
+    /**
+     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
+     */
+    public void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
+        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
+    }
+
+    /**
+     * @return the registryUserService
+     */
+    public RegistryUserServiceLocal getRegistryUserService() {
+        return registryUserService;
+    }
+
+    /**
+     * @param registryUserService the registryUserService to set
+     */
+    public void setRegistryUserService(RegistryUserServiceLocal registryUserService) {
+        this.registryUserService = registryUserService;
+    }
+
+    /**
+     * @return the submitterList
+     */
+    public static Set<User> getSubmitterList() {
+        return submitterList;
+    }
+
+    /**
+     * @param submitterList the submitterList to set
+     */
+    public static void setSubmitterList(Set<User> submitterList) {
+        StudySiteAccrualAccessServiceBean.submitterList = submitterList;
+    }
+
+    /**
+     * @return the lastUpdate
+     */
+    public static Timestamp getLastUpdate() {
+        return lastUpdate;
+    }
+
+    /**
+     * @param lastUpdate the lastUpdate to set
+     */
+    public static void setLastUpdate(Timestamp lastUpdate) {
+        StudySiteAccrualAccessServiceBean.lastUpdate = lastUpdate;
     }
 
 }

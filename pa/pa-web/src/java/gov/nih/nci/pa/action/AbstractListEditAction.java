@@ -123,44 +123,29 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     /** String value for currentAction property when doing an edit. */
     protected static final String CA_EDIT = "edit";
 
-    /** Bean to store current action. */
-    protected String currentAction;
+    private String currentAction;
     /** Bean to store row from displaytag table. */
-    protected String selectedRowIdentifier;
+    private String selectedRowIdentifier;
 
     /** Session bean for current trial.*/
-    protected StudyProtocolQueryDTO spDTO;
+    private StudyProtocolQueryDTO spDTO;
     /** Index of current StudyProtocol. */
-    protected Ii spIi;
+    private Ii spIi;
 
-    /** StudyDiseaseService. */
-    protected StudyDiseaseServiceLocal studyDisesaeSvc;
-    /** DiseaseService. */
-    protected DiseaseServiceLocal diseaseSvc;
-    /** DiseaseParentService. */
-    protected DiseaseParentServiceRemote diseaseParentSvc;
-    /** StudyMilestoneService. */
-    protected StudyMilestoneServicelocal studyMilestoneSvc;
-    /** ProtocolQueryService. */
-    protected ProtocolQueryServiceLocal protocolQuerySvc;
-    /** PlannedActivityService. */
-    protected PlannedActivityServiceLocal plannedActivitySvc;
-    /** InterventionService. */
-    protected InterventionServiceLocal interventionSvc;
-    /** InterventionAlternateNameService. */
-    protected InterventionAlternateNameServiceRemote interventionAlternateNameSvc;
-    /** StudyOnholdService. */
-    protected StudyOnholdServiceLocal studyOnholdSvc;
-    /** StudyOnholdService. */
-    protected StudyProtocolServiceLocal studyProtocolSvc;
-    /** DocumentService. */
-    protected DocumentServiceLocal documentSvc;
-    /** StudySiteAccrualAccessService. */
-    protected StudySiteAccrualAccessServiceLocal accrualAccessSvc;
-    /** StudySiteAccrualStatusService. */
-    protected StudySiteAccrualStatusServiceLocal accrualStatusSvc;
-    /** RegistryUserSvc. */
-    protected RegistryUserServiceRemote registryUserSvc;
+    private StudyDiseaseServiceLocal studyDisesaeSvc;
+    private DiseaseServiceLocal diseaseSvc;
+    private DiseaseParentServiceRemote diseaseParentSvc;
+    private StudyMilestoneServicelocal studyMilestoneSvc;
+    private ProtocolQueryServiceLocal protocolQuerySvc;
+    private PlannedActivityServiceLocal plannedActivitySvc;
+    private InterventionServiceLocal interventionSvc;
+    private InterventionAlternateNameServiceRemote interventionAlternateNameSvc;
+    private StudyOnholdServiceLocal studyOnholdSvc;
+    private StudyProtocolServiceLocal studyProtocolSvc;
+    private DocumentServiceLocal documentSvc;
+    private StudySiteAccrualAccessServiceLocal accrualAccessSvc;
+    private StudySiteAccrualStatusServiceLocal accrualStatusSvc;
+    private RegistryUserServiceRemote registryUserSvc;
 
     /**
      * @throws PAException exception
@@ -284,6 +269,230 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
      */
     public void setSelectedRowIdentifier(String selectedRowIdentifier) {
         this.selectedRowIdentifier = selectedRowIdentifier;
+    }
+
+    /**
+     * @return the spDTO
+     */
+    public StudyProtocolQueryDTO getSpDTO() {
+        return spDTO;
+    }
+
+    /**
+     * @param spDTO the spDTO to set
+     */
+    public void setSpDTO(StudyProtocolQueryDTO spDTO) {
+        this.spDTO = spDTO;
+    }
+
+    /**
+     * @return the spIi
+     */
+    public Ii getSpIi() {
+        return spIi;
+    }
+
+    /**
+     * @param spIi the spIi to set
+     */
+    public void setSpIi(Ii spIi) {
+        this.spIi = spIi;
+    }
+
+    /**
+     * @return the studyDisesaeSvc
+     */
+    public StudyDiseaseServiceLocal getStudyDisesaeSvc() {
+        return studyDisesaeSvc;
+    }
+
+    /**
+     * @param studyDisesaeSvc the studyDisesaeSvc to set
+     */
+    public void setStudyDisesaeSvc(StudyDiseaseServiceLocal studyDisesaeSvc) {
+        this.studyDisesaeSvc = studyDisesaeSvc;
+    }
+
+    /**
+     * @return the diseaseSvc
+     */
+    public DiseaseServiceLocal getDiseaseSvc() {
+        return diseaseSvc;
+    }
+
+    /**
+     * @param diseaseSvc the diseaseSvc to set
+     */
+    public void setDiseaseSvc(DiseaseServiceLocal diseaseSvc) {
+        this.diseaseSvc = diseaseSvc;
+    }
+
+    /**
+     * @return the diseaseParentSvc
+     */
+    public DiseaseParentServiceRemote getDiseaseParentSvc() {
+        return diseaseParentSvc;
+    }
+
+    /**
+     * @param diseaseParentSvc the diseaseParentSvc to set
+     */
+    public void setDiseaseParentSvc(DiseaseParentServiceRemote diseaseParentSvc) {
+        this.diseaseParentSvc = diseaseParentSvc;
+    }
+
+    /**
+     * @return the studyMilestoneSvc
+     */
+    public StudyMilestoneServicelocal getStudyMilestoneSvc() {
+        return studyMilestoneSvc;
+    }
+
+    /**
+     * @param studyMilestoneSvc the studyMilestoneSvc to set
+     */
+    public void setStudyMilestoneSvc(StudyMilestoneServicelocal studyMilestoneSvc) {
+        this.studyMilestoneSvc = studyMilestoneSvc;
+    }
+
+    /**
+     * @return the protocolQuerySvc
+     */
+    public ProtocolQueryServiceLocal getProtocolQuerySvc() {
+        return protocolQuerySvc;
+    }
+
+    /**
+     * @param protocolQuerySvc the protocolQuerySvc to set
+     */
+    public void setProtocolQuerySvc(ProtocolQueryServiceLocal protocolQuerySvc) {
+        this.protocolQuerySvc = protocolQuerySvc;
+    }
+
+    /**
+     * @return the plannedActivitySvc
+     */
+    public PlannedActivityServiceLocal getPlannedActivitySvc() {
+        return plannedActivitySvc;
+    }
+
+    /**
+     * @param plannedActivitySvc the plannedActivitySvc to set
+     */
+    public void setPlannedActivitySvc(PlannedActivityServiceLocal plannedActivitySvc) {
+        this.plannedActivitySvc = plannedActivitySvc;
+    }
+
+    /**
+     * @return the interventionSvc
+     */
+    public InterventionServiceLocal getInterventionSvc() {
+        return interventionSvc;
+    }
+
+    /**
+     * @param interventionSvc the interventionSvc to set
+     */
+    public void setInterventionSvc(InterventionServiceLocal interventionSvc) {
+        this.interventionSvc = interventionSvc;
+    }
+
+    /**
+     * @return the interventionAlternateNameSvc
+     */
+    public InterventionAlternateNameServiceRemote getInterventionAlternateNameSvc() {
+        return interventionAlternateNameSvc;
+    }
+
+    /**
+     * @param interventionAlternateNameSvc the interventionAlternateNameSvc to set
+     */
+    public void setInterventionAlternateNameSvc(InterventionAlternateNameServiceRemote interventionAlternateNameSvc) {
+        this.interventionAlternateNameSvc = interventionAlternateNameSvc;
+    }
+
+    /**
+     * @return the studyOnholdSvc
+     */
+    public StudyOnholdServiceLocal getStudyOnholdSvc() {
+        return studyOnholdSvc;
+    }
+
+    /**
+     * @param studyOnholdSvc the studyOnholdSvc to set
+     */
+    public void setStudyOnholdSvc(StudyOnholdServiceLocal studyOnholdSvc) {
+        this.studyOnholdSvc = studyOnholdSvc;
+    }
+
+    /**
+     * @return the studyProtocolSvc
+     */
+    public StudyProtocolServiceLocal getStudyProtocolSvc() {
+        return studyProtocolSvc;
+    }
+
+    /**
+     * @param studyProtocolSvc the studyProtocolSvc to set
+     */
+    public void setStudyProtocolSvc(StudyProtocolServiceLocal studyProtocolSvc) {
+        this.studyProtocolSvc = studyProtocolSvc;
+    }
+
+    /**
+     * @return the documentSvc
+     */
+    public DocumentServiceLocal getDocumentSvc() {
+        return documentSvc;
+    }
+
+    /**
+     * @param documentSvc the documentSvc to set
+     */
+    public void setDocumentSvc(DocumentServiceLocal documentSvc) {
+        this.documentSvc = documentSvc;
+    }
+
+    /**
+     * @return the accrualAccessSvc
+     */
+    public StudySiteAccrualAccessServiceLocal getAccrualAccessSvc() {
+        return accrualAccessSvc;
+    }
+
+    /**
+     * @param accrualAccessSvc the accrualAccessSvc to set
+     */
+    public void setAccrualAccessSvc(StudySiteAccrualAccessServiceLocal accrualAccessSvc) {
+        this.accrualAccessSvc = accrualAccessSvc;
+    }
+
+    /**
+     * @return the accrualStatusSvc
+     */
+    public StudySiteAccrualStatusServiceLocal getAccrualStatusSvc() {
+        return accrualStatusSvc;
+    }
+
+    /**
+     * @param accrualStatusSvc the accrualStatusSvc to set
+     */
+    public void setAccrualStatusSvc(StudySiteAccrualStatusServiceLocal accrualStatusSvc) {
+        this.accrualStatusSvc = accrualStatusSvc;
+    }
+
+    /**
+     * @return the registryUserSvc
+     */
+    public RegistryUserServiceRemote getRegistryUserSvc() {
+        return registryUserSvc;
+    }
+
+    /**
+     * @param registryUserSvc the registryUserSvc to set
+     */
+    public void setRegistryUserSvc(RegistryUserServiceRemote registryUserSvc) {
+        this.registryUserSvc = registryUserSvc;
     }
 
 }

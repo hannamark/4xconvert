@@ -126,7 +126,7 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
     @Override
     public void loadDisplayList() {
         try {
-            setDisplayTagList(submissionSvc.getByStudyProtocol(getSpIi()));
+            setDisplayTagList(getSubmissionSvc().getByStudyProtocol(getSpIi()));
         } catch (RemoteException e) {
             setDisplayTagList(null);
             addActionError(e.getLocalizedMessage());
@@ -141,7 +141,7 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
         try {
             if (selectedTrial != null) {
                 setSpIi(IiConverter.convertToStudyProtocolIi(Long.valueOf(selectedTrial)));
-                trialSummary = searchTrialSvc.getTrialSummaryByStudyProtocolIi(getSpIi());
+                trialSummary = getSearchTrialSvc().getTrialSummaryByStudyProtocolIi(getSpIi());
                 // put an entry in the session
                 ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
             }
@@ -163,7 +163,7 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
      */
     public String viewSubmissionDetails() {
         try {
-            submission = submissionSvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+            submission = getSubmissionSvc().get(IiConverter.convertToIi(getSelectedRowIdentifier()));
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
         }
@@ -176,23 +176,23 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
      */
     public String submit() throws RemoteException {
         try {
-            SubmissionDto dto = submissionSvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+            SubmissionDto dto = getSubmissionSvc().get(IiConverter.convertToIi(getSelectedRowIdentifier()));
             dto.setStatusCode(CdConverter.convertToCd(AccrualSubmissionStatusCode.SUBMITTED));
             Ivl<Ts> ivl = dto.getStatusDateRange();
             ivl.setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
             dto.setStatusDateRange(ivl);
             dto.setSubmitUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
                     getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
-            submissionSvc.update(dto);
+            getSubmissionSvc().update(dto);
 
-            List<StudySubjectDto> subList = studySubjectSvc.getByStudyProtocol(getSpIi());
+            List<StudySubjectDto> subList = getStudySubjectSvc().getByStudyProtocol(getSpIi());
             for (StudySubjectDto pat : subList) {
                 if (FunctionalRoleStatusCode.PENDING.getCode().equals(
                         CdConverter.convertCdToString(pat.getStatusCode()))) {
                     pat.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
                     pat.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
                             new Timestamp(new Date().getTime()), null));
-                    studySubjectSvc.update(pat);
+                    getStudySubjectSvc().update(pat);
                 }
             }
 
@@ -223,8 +223,8 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
                 addActionError("Please Enter Submission Cut off Date.");
                 return AR_NEW_SUBMISSION;
             }
-            
-            List<SubmissionDto> listOfSubmissions = submissionSvc.getByStudyProtocol(getSpIi());
+
+            List<SubmissionDto> listOfSubmissions = getSubmissionSvc().getByStudyProtocol(getSpIi());
             if (!listOfSubmissions.isEmpty()) {
                 List<String> testList = new ArrayList<String>();
                 for (SubmissionDto sDto : listOfSubmissions) {
@@ -244,7 +244,7 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
                     return AR_NEW_SUBMISSION;
                 }
             }
-            submissionSvc.create(submission);
+            getSubmissionSvc().create(submission);
             ServletActionContext.getRequest().getSession().
                     setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.TRUE);
             ServletActionContext.getRequest().getSession().setAttribute(

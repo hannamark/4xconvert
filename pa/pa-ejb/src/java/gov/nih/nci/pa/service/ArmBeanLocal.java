@@ -44,7 +44,7 @@ import org.hibernate.Session;
 public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConverter> implements ArmServiceLocal {
 
    @EJB
-    PlannedActivityServiceLocal plannedActivityService = null;
+   private PlannedActivityServiceLocal plannedActivityService;
 
   /**
    * @param ii index of planned activity
@@ -65,12 +65,8 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
     Query query = null;
 
     // step 1: form the hql
-    String hql = "select ar "
-        + "from Arm ar "
-        + "join ar.interventions pa "
-        + "where pa.id = :plannedActivityId "
-        + "order by ar.id ";
-    getLogger().info("query Arm = " + hql + ".  ");
+    String hql = "select ar from Arm ar join ar.interventions pa where pa.id = :plannedActivityId order by ar.id ";
+    getLogger().debug("query Arm = " + hql + ".  ");
 
     // step 2: construct query object
     query = session.createQuery(hql);

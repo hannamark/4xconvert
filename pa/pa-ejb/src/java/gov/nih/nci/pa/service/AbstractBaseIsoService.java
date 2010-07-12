@@ -199,7 +199,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
             if (bo == null) {
                 logger.error("Object not found using get() for id = "
                         + IiConverter.convertToString(ii) + ".");
-             return resultDto;  
+             return resultDto;
             }
             resultDto = convertFromDomainToDto(bo);
         } catch (HibernateException hbe) {
@@ -284,7 +284,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         }
         return createOrUpdate(dto);
     }
-    
+
     /**
      * A common validation method.
      * @param dto Dto object
@@ -304,14 +304,14 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         if (sb.length() > 0) {
             throw new PAException("Validation Exception " + sb.toString());
         }
-        
-    }    
+
+    }
     private String getUserLastUpdated() {
      String userUpdated = "not logged";
      if (ejbContext != null) {
       try {
         if (ejbContext.getCallerPrincipal() != null) {
-             userUpdated =  ejbContext.getCallerPrincipal().getName(); 
+             userUpdated =  ejbContext.getCallerPrincipal().getName();
         }
       } catch (IllegalStateException e) {
           return userUpdated;
@@ -322,7 +322,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
       return userUpdated;
     }
     /**
-     * 
+     *
      * @param boList boList
      * @return dtoList
      * @throws PAException on error

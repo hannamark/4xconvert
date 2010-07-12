@@ -54,7 +54,7 @@
     <dependency org="ncicb"                  name="pa-commons"              rev="3.3-m1"    conf="test->test"/>
 
     <!-- other test targets -->
-    <dependency org="checkstyle"             name="checkstyle-all"          rev="4.4"             conf="test-checkstyle->runtime"/>
+    <dependency org="checkstyle"             name="checkstyle-all"          rev="5.1"             conf="test-checkstyle->runtime"/>
     <dependency org="pmd"                    name="pmd"                     rev="4.2.2"           conf="test-pmd->compile,runtime"/>
     <dependency org="redhillconsulting"      name="simian"                  rev="2.2.24"          conf="test-simian->compile"/>
     <dependency org="cobertura"              name="cobertura"               rev="1.9"             conf="test-cobertura->runtime"/>

@@ -303,7 +303,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
 
     private void checkNctAndDoc(HttpSession session) {
         if (StringUtils.isEmpty(trialDTO.getNctIdentifier())
-                && StringUtils.isEmpty(protocolDocFileName)
+                && StringUtils.isEmpty(getProtocolDocFileName())
                 && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
             addFieldError("trialDTO.nctIdentifier", "Provide either NCT Number or Protocol Trial Template.\n");
             addFieldError("trialDTO.protocolDocFileName", "Provide either NCT Number or Protocol Trial Template.\n");

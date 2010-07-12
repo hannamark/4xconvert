@@ -90,9 +90,9 @@ import gov.nih.nci.iso21090.St;
 */
 public class DiseaseAlternameDTO extends BaseDTOWithStatusCode {
     private static final long serialVersionUID = 1090967890L;
-    
-    St alternateName;
-    Ii diseaseIdentifier;
+
+    private St alternateName;
+    private Ii diseaseIdentifier;
     /**
      * @return the alternateName
      */

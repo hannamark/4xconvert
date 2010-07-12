@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.action;
 
@@ -37,7 +37,7 @@ public class CollaboratorsActionTest extends AbstractPaActionTest {
     public void prepare() throws Exception {
         action = new CollaboratorsAction();
         action.prepare();
-        action.cUtils = new MockCorrelationUtils();
+        action.setCorrelationUtils(new MockCorrelationUtils());
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(2L));
      }
     @Test
@@ -46,7 +46,7 @@ public class CollaboratorsActionTest extends AbstractPaActionTest {
         action.setCountryRegDTO(new ArrayList<CountryRegAuthorityDTO>());
         assertNotNull(action.getCountryRegDTO());
     }
-    @Test 
+    @Test
     public void testOrganizationListProperty(){
         assertNull(action.getOrganizationList());
         action.setOrganizationList(new ArrayList<PaOrganizationDTO>());
@@ -163,7 +163,7 @@ public class CollaboratorsActionTest extends AbstractPaActionTest {
         tab.setFacilityOrganization(facilityOrg);
         sess.setAttribute("participatingOrganizationsTabs", tab);
         //action.setFunctionalCode(StudyParticipationFunctionalCode.TREATING_SITE.getCode());
-        
+
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("create", action.facilitySave());

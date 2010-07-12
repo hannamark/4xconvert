@@ -152,7 +152,6 @@ import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
-import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
@@ -225,47 +224,44 @@ import org.w3c.dom.Text;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRemote {
 
-
     @EJB
-    StudyProtocolServiceLocal studyProtocolService = null;
+    private StudyProtocolServiceLocal studyProtocolService;
     @EJB
-    StudyOverallStatusServiceLocal studyOverallStatusService = null;
+    private StudyOverallStatusServiceLocal studyOverallStatusService;
     @EJB
-    StudyIndldeServiceLocal studyIndldeService  = null;
+    private StudyIndldeServiceLocal studyIndldeService;
     @EJB
-    StudyDiseaseServiceLocal studyDiseaseService = null;
+    private StudyDiseaseServiceLocal studyDiseaseService;
     @EJB
-    ArmServiceLocal armService = null;
+    private ArmServiceLocal armService;
     @EJB
-    PlannedActivityServiceLocal plannedActivityService = null;
+    private PlannedActivityServiceLocal plannedActivityService;
     @EJB
-    StudySiteServiceLocal studySiteService = null;
+    private StudySiteServiceLocal studySiteService;
     @EJB
-    StudySiteContactServiceLocal studySiteContactService = null;
+    private StudySiteContactServiceLocal studySiteContactService;
     @EJB
-    StudyContactServiceLocal studyContactService = null;
+    private StudyContactServiceLocal studyContactService;
     @EJB
-    StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = null;
+    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     @EJB
-    StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = null;
+    private StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService;
     @EJB
-    StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = null;
+    private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService;
     @EJB
-    OrganizationCorrelationServiceRemote ocsr = null;
+    private OrganizationCorrelationServiceRemote orgCorrelationService;
     @EJB
-    DocumentWorkflowStatusServiceLocal documentWorkflowStatusService = null;
+    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService;
     @EJB
-    RegulatoryInformationServiceRemote regulatoryInformationService = null;
+    private RegulatoryInformationServiceRemote regulatoryInformationService;
     @EJB
-    DiseaseServiceLocal diseaseService = null;
+    private DiseaseServiceLocal diseaseService;
     @EJB
-    InterventionServiceLocal interventionService = null;
+    private InterventionServiceLocal interventionService;
     @EJB
-    InterventionAlternateNameServiceRemote interventionAlternateNameService = null;
+    private InterventionAlternateNameServiceRemote interventionAlternateNameService;
     @EJB
-    RegistryUserServiceRemote registryUserService = null;
-    @EJB
-    StudyObjectiveServiceLocal studyObjectiveService = null;
+    private RegistryUserServiceRemote registryUserService;
 
     private static final Logger LOG  = Logger.getLogger(CTGovXmlGeneratorServiceBean.class);
     private static final String TEXT_BLOCK = "textblock";
@@ -1084,7 +1080,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         return responsibleParty;
     }
     private Element createLeadSponsor(Ii studyProtocolIi , Document doc) throws PAException {
-        Organization sponsor = ocsr.getOrganizationByFunctionRole(
+        Organization sponsor = orgCorrelationService.getOrganizationByFunctionRole(
                 studyProtocolIi, CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
         Element lead = doc.createElement("lead_sponsor");
         appendElement(lead, createElement("agency" , sponsor.getName() , PAAttributeMaxLen.LEN_160, doc));
@@ -1242,7 +1238,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     }
 
     private static Element createElement(String elementName , String st , int maxLength , Document doc) {
-        if (st == null || elementName == null || st == null) {
+        if (st == null || elementName == null) {
             return null;
         }
         return createElement(elementName, StringUtils.left(st, maxLength) , doc);
@@ -1415,6 +1411,139 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         } else {
             return cd.getCode();
         }
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * @param studyOverallStatusService the studyOverallStatusService to set
+     */
+    public void setStudyOverallStatusService(StudyOverallStatusServiceLocal studyOverallStatusService) {
+        this.studyOverallStatusService = studyOverallStatusService;
+    }
+
+    /**
+     * @param studyIndldeService the studyIndldeService to set
+     */
+    public void setStudyIndldeService(StudyIndldeServiceLocal studyIndldeService) {
+        this.studyIndldeService = studyIndldeService;
+    }
+
+    /**
+     * @param studyDiseaseService the studyDiseaseService to set
+     */
+    public void setStudyDiseaseService(StudyDiseaseServiceLocal studyDiseaseService) {
+        this.studyDiseaseService = studyDiseaseService;
+    }
+
+    /**
+     * @param armService the armService to set
+     */
+    public void setArmService(ArmServiceLocal armService) {
+        this.armService = armService;
+    }
+
+    /**
+     * @param plannedActivityService the plannedActivityService to set
+     */
+    public void setPlannedActivityService(PlannedActivityServiceLocal plannedActivityService) {
+        this.plannedActivityService = plannedActivityService;
+    }
+
+    /**
+     * @param studySiteService the studySiteService to set
+     */
+    public void setStudySiteService(StudySiteServiceLocal studySiteService) {
+        this.studySiteService = studySiteService;
+    }
+
+    /**
+     * @param studySiteContactService the studySiteContactService to set
+     */
+    public void setStudySiteContactService(StudySiteContactServiceLocal studySiteContactService) {
+        this.studySiteContactService = studySiteContactService;
+    }
+
+    /**
+     * @param studyContactService the studyContactService to set
+     */
+    public void setStudyContactService(StudyContactServiceLocal studyContactService) {
+        this.studyContactService = studyContactService;
+    }
+
+    /**
+     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
+     */
+    public void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
+        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
+    }
+
+    /**
+     * @param studyOutcomeMeasureService the studyOutcomeMeasureService to set
+     */
+    public void setStudyOutcomeMeasureService(StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService) {
+        this.studyOutcomeMeasureService = studyOutcomeMeasureService;
+    }
+
+    /**
+     * @param studyRegulatoryAuthoritySvc the studyRegulatoryAuthorityService to set
+     */
+    public void setStudyRegulatoryAuthorityService(StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthoritySvc) {
+        this.studyRegulatoryAuthorityService = studyRegulatoryAuthoritySvc;
+    }
+
+    /**
+     * @param orgCorrelationService the orgCorrelationService to set
+     */
+    public void setOrgCorrelationService(OrganizationCorrelationServiceRemote orgCorrelationService) {
+        this.orgCorrelationService = orgCorrelationService;
+    }
+
+    /**
+     * @param documentWorkflowStatusService the documentWorkflowStatusService to set
+     */
+    public void setDocumentWorkflowStatusService(DocumentWorkflowStatusServiceLocal documentWorkflowStatusService) {
+        this.documentWorkflowStatusService = documentWorkflowStatusService;
+    }
+
+    /**
+     * @param regulatoryInformationService the regulatoryInformationService to set
+     */
+    public void setRegulatoryInformationService(RegulatoryInformationServiceRemote regulatoryInformationService) {
+        this.regulatoryInformationService = regulatoryInformationService;
+    }
+
+    /**
+     * @param diseaseService the diseaseService to set
+     */
+    public void setDiseaseService(DiseaseServiceLocal diseaseService) {
+        this.diseaseService = diseaseService;
+    }
+
+    /**
+     * @param interventionService the interventionService to set
+     */
+    public void setInterventionService(InterventionServiceLocal interventionService) {
+        this.interventionService = interventionService;
+    }
+
+    /**
+     * @param interventionAltNameSvc the interventionAlternateNameService to set
+     */
+    public void setInterventionAlternateNameService(InterventionAlternateNameServiceRemote interventionAltNameSvc) {
+        this.interventionAlternateNameService = interventionAltNameSvc;
+    }
+
+    /**
+     * @param registryUserService the registryUserService to set
+     */
+    public void setRegistryUserService(RegistryUserServiceRemote registryUserService) {
+        this.registryUserService = registryUserService;
     }
 
 }

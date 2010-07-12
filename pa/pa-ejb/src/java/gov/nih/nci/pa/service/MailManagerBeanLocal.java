@@ -79,37 +79,37 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(HibernateSessionInterceptor.class)
-@SuppressWarnings({"PMD.FinalFieldCouldBeStatic", "PMD.TooManyMethods",
-    "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength"  })
+@SuppressWarnings({"PMD.FinalFieldCouldBeStatic", "PMD.TooManyMethods", "PMD.CyclomaticComplexity",
+        "PMD.NPathComplexity", "PMD.ExcessiveClassLength" })
 public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
-  private static final Logger LOG = Logger.getLogger(MailManagerBeanLocal.class);
-  private static final int VAL = 65;
-  private static final String TSR = "TSR_";
-  private static final String EXTENSION_PDF = ".pdf";
-  private final String currentDate = "${CurrentDate}";
-  private final String nciTrialIdentifier = "${nciTrialIdentifier}";
-  private final String  ownerName = "${SubmitterName}";
-  private final String  leadOrgTrialIdentifier = "${leadOrgTrialIdentifier}";
-  private final String  receiptDate = "${receiptDate}";
-  private final String  trialTitle = "${trialTitle}";
-  private final String  amendmentNumber = "${amendmentNumber}";
-  private final String  amendmentDate = "${amendmentDate}";
+    private static final Logger LOG = Logger.getLogger(MailManagerBeanLocal.class);
+    private static final int VAL = 65;
+    private static final String TSR = "TSR_";
+    private static final String EXTENSION_PDF = ".pdf";
+    private final String currentDate = "${CurrentDate}";
+    private final String nciTrialIdentifier = "${nciTrialIdentifier}";
+    private final String ownerName = "${SubmitterName}";
+    private final String leadOrgTrialIdentifier = "${leadOrgTrialIdentifier}";
+    private final String receiptDate = "${receiptDate}";
+    private final String trialTitle = "${trialTitle}";
+    private final String amendmentNumber = "${amendmentNumber}";
+    private final String amendmentDate = "${amendmentDate}";
 
-  @EJB
-  ProtocolQueryServiceLocal protocolQueryService;
-  @EJB
-  RegistryUserServiceLocal registryUserService;
-  @EJB
-  CTGovXmlGeneratorServiceRemote ctGovXmlGeneratorService;
-  @EJB
-  TSRReportGeneratorServiceRemote tsrReportGeneratorService;
-  @EJB
-  LookUpTableServiceRemote lookUpTableService;
-  @EJB
-  DocumentWorkflowStatusServiceLocal docWrkflStatusSrv;
-  @EJB
-  StudySiteServiceLocal studySiteService;
+    @EJB
+    private ProtocolQueryServiceLocal protocolQueryService;
+    @EJB
+    private RegistryUserServiceLocal registryUserService;
+    @EJB
+    private CTGovXmlGeneratorServiceRemote ctGovXmlGeneratorService;
+    @EJB
+    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+    @EJB
+    private LookUpTableServiceRemote lookUpTableService;
+    @EJB
+    private DocumentWorkflowStatusServiceLocal docWrkflStatusSrv;
+    @EJB
+    private StudySiteServiceLocal studySiteService;
 
   /**
    * @param studyProtocolIi studyProtocolIi
@@ -661,17 +661,17 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       return studyOwners;
   }
 
-  /**
-   * @param userId userid
-   */
-  public void sendAdminAcceptanceEmail(Long userId) {
-      sendAdminAcceptanceRejectionEmail(userId, "trial.admin.accept.body");
-  }
+    /**
+     * @param userId userid
+     */
+    public void sendAdminAcceptanceEmail(Long userId) {
+        sendAdminAcceptanceRejectionEmail(userId, "trial.admin.accept.body");
+    }
 
-  /**
-   *@param userId id
-   *@param reason reason
-   */
+    /**
+     * @param userId id
+     * @param reason reason
+     */
     public void sendAdminRejectionEmail(Long userId, String reason) {
         sendAdminAcceptanceRejectionEmail(userId, "trial.admin.reject.body");
     }
@@ -687,5 +687,54 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         } catch (PAException e) {
             LOG.error("Error attempting to send email to ", e);
         }
+    }
+
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
+
+    /**
+     * @param registryUserService the registryUserService to set
+     */
+    public void setRegistryUserService(RegistryUserServiceLocal registryUserService) {
+        this.registryUserService = registryUserService;
+    }
+
+    /**
+     * @param ctGovXmlGeneratorService the ctGovXmlGeneratorService to set
+     */
+    public void setCtGovXmlGeneratorService(CTGovXmlGeneratorServiceRemote ctGovXmlGeneratorService) {
+        this.ctGovXmlGeneratorService = ctGovXmlGeneratorService;
+    }
+
+    /**
+     * @param tsrReportGeneratorService the tsrReportGeneratorService to set
+     */
+    public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
+        this.tsrReportGeneratorService = tsrReportGeneratorService;
+    }
+
+    /**
+     * @param lookUpTableService the lookUpTableService to set
+     */
+    public void setLookUpTableService(LookUpTableServiceRemote lookUpTableService) {
+        this.lookUpTableService = lookUpTableService;
+    }
+
+    /**
+     * @param docWrkflStatusSrv the docWrkflStatusSrv to set
+     */
+    public void setDocWrkflStatusSrv(DocumentWorkflowStatusServiceLocal docWrkflStatusSrv) {
+        this.docWrkflStatusSrv = docWrkflStatusSrv;
+    }
+
+    /**
+     * @param studySiteService the studySiteService to set
+     */
+    public void setStudySiteService(StudySiteServiceLocal studySiteService) {
+        this.studySiteService = studySiteService;
     }
 }

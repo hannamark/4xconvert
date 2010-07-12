@@ -109,7 +109,7 @@ public abstract class AbstractListEditAccrualAction<DTO> extends AbstractAccrual
     /** Bean to store row id selected from list view. */
     private String selectedRowIdentifier;
     /** List to be displayed in displaytag table. */
-    protected List<DTO> displayTagList;
+    private List<DTO> displayTagList;
 
     /**
      * Set request bean with list to be displayed using displaytag table.

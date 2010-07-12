@@ -99,8 +99,10 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
 /**
 * @author Hugh Reinhart
@@ -108,9 +110,10 @@ import org.hibernate.SQLQuery;
  */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
-public class TrialProcessingReportBean
-        extends AbstractReportBean<AssignedIdentifierCriteriaDto, TrialProcessingResultDto>
-        implements TrialProcessingLocal {
+public class TrialProcessingReportBean extends
+        AbstractReportBean<AssignedIdentifierCriteriaDto, TrialProcessingResultDto> implements TrialProcessingLocal {
+
+    private static final Logger LOG = Logger.getLogger(TrialProcessingReportBean.class);
 
     private static final int HDR_FIRST_NAME = 1;
     private static final int HDR_LAST_NAME = 2;
@@ -143,7 +146,7 @@ public class TrialProcessingReportBean
         AssignedIdentifierCriteriaDto.validate(criteria);
         TrialProcessingHeaderResultDto result = null;
         try {
-            session = HibernateUtil.getCurrentSession();
+            Session session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer(
                     "SELECT cm.organization, cm.first_name, cm.last_name, oi.extension "
@@ -153,7 +156,7 @@ public class TrialProcessingReportBean
                     + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
                     + "LEFT OUTER JOIN study_otheridentifiers as oi ON (sp.identifier = oi.study_protocol_id) "
                     + "WHERE dws.identifier in  ( SELECT MAX(identifier) FROM document_workflow_status "
-                    + "        GROUP BY study_protocol_identifier ) "                
+                    + "        GROUP BY study_protocol_identifier ) "
                     + "  AND oi.extension =  :ASSIGNED_IDENTIFIER  ");
             sql.append("  AND (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
                     + "   and oi.identifier_name = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "')");
@@ -169,7 +172,7 @@ public class TrialProcessingReportBean
                 result.setAssignedIdentifier(StConverter.convertToSt((String) sr[HDR_ASSIGNED_IDENTIFIER]));
                 result.setOfficialTitle(StConverter.convertToSt((String) sr[HDR_OFFICIAL_TITLE]));
                 result.setLeadOrganization(
-                        StConverter.convertToSt(getLeadOrganization((BigInteger) sr[HDR_SP_ID]).name));
+                        StConverter.convertToSt(getLeadOrganization((BigInteger) sr[HDR_SP_ID]).getName()));
                 result.setStatusCode(CdConverter.convertStringToCd((String) sr[HDR_STATUS_CODE]));
                 String name = (String) sr[HDR_FIRST_NAME];
                 if (name == null || name.length() == 0) {
@@ -181,7 +184,7 @@ public class TrialProcessingReportBean
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in " + this.getClass(), hbe);
         }
-        logger.info("Leaving getHeader(St).");
+        LOG.debug("Leaving getHeader(St).");
         return result;
     }
 
@@ -192,7 +195,7 @@ public class TrialProcessingReportBean
         AssignedIdentifierCriteriaDto.validate(criteria);
         List<TrialProcessingResultDto> rList = new ArrayList<TrialProcessingResultDto>();
         try {
-            session = HibernateUtil.getCurrentSession();
+            Session session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
             String sql = "SELECT sp.submission_number, sm.milestone_code, sm.milestone_date "
                     + "FROM study_milestone AS sm "
@@ -204,7 +207,7 @@ public class TrialProcessingReportBean
                     + "  AND (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
                     + "   and oi.identifier_name = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "')"
                     + " ORDER BY sp.submission_number, sm.milestone_date, sm.identifier ";
-            logger.info("query = " + sql);
+            LOG.debug("query = " + sql);
             query = session.createSQLQuery(sql);
             setStParameter(query, "ASSIGNED_IDENTIFIER", criteria.getAssignedIdentifier());
             query.setParameterList("REPORTING_MILESTONES", REPORTING_MILESTONES);
@@ -230,7 +233,7 @@ public class TrialProcessingReportBean
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in " + this.getClass(), hbe);
         }
-        logger.info("Leaving get(St), returning " + rList.size() + " object(s).");
+        LOG.debug("Leaving get(St), returning " + rList.size() + " object(s).");
         return rList;
     }
 

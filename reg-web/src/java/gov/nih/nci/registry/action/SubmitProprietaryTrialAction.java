@@ -156,7 +156,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
         }
 
         if (StringUtils.isEmpty(trialDTO.getNctIdentifier())
-                && StringUtils.isEmpty(protocolDocFileName)
+                && StringUtils.isEmpty(getProtocolDocFileName())
                 && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
             addFieldError("trialDTO.nctIdentifier", "Provide either NCT Number or Protocol Trial Template.\n");
             addFieldError("trialDTO.protocolDocFileName", "Provide either NCT Number or Protocol Trial Template.\n");
@@ -171,17 +171,17 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
         }
         TrialValidator validator = new TrialValidator();
         Map<String, String> errMap = new HashMap<String, String>();
-        if (StringUtils.isNotEmpty(protocolDocFileName)
+        if (StringUtils.isNotEmpty(getProtocolDocFileName())
                 && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
-            errMap = validator.validateDocument(protocolDocFileName, protocolDoc, "trialDTO.protocolDocFileName"
-                    , "");
+            errMap = validator.validateDocument(getProtocolDocFileName(), getProtocolDoc(),
+                                                "trialDTO.protocolDocFileName", "");
             addErrors(errMap);
         }
-        if (StringUtils.isNotEmpty(otherDocumentFileName)
+        if (StringUtils.isNotEmpty(getOtherDocumentFileName())
                 && session.getAttribute(DocumentTypeCode.OTHER.getShortName()) == null) {
             errMap = new HashMap<String, String>();
-            errMap = validator.validateDocument(otherDocumentFileName, otherDocument, "trialDTO.otherDocumentFileName"
-                    , "");
+            errMap = validator.validateDocument(getOtherDocumentFileName(), getOtherDocument(),
+                                                "trialDTO.otherDocumentFileName", "");
             addErrors(errMap);
         }
         PAServiceUtils paServiceUtils = new PAServiceUtils();
