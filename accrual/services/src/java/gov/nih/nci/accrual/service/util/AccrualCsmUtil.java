@@ -149,7 +149,6 @@ public class AccrualCsmUtil implements CsmUtil {
 
     private void assignUserToGroups(String loginName, UserProvisioningManager upManager) throws CSTransactionException {
         upManager.assignUserToGroup(loginName, "Outcomes");
-        upManager.assignUserToGroup(loginName, "gridClient");
     }
 
     /**

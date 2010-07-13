@@ -502,4 +502,8 @@
         <comment>PO-2334: Other ID's are not saved in draft mode.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2334.sql"/>
     </changeSet>
+    <changeSet id="PO-2304" author="aevansel">
+        <comment>Removing users from the gridClient group if they are also apart of the Outcomes group.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2304.sql"/>
+    </changeSet>
 </databaseChangeLog>
