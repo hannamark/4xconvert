@@ -9,9 +9,6 @@
 </head>
 
 <SCRIPT LANGUAGE="JavaScript">
-function bodyOnLoad() {
-    alert('hi');
-}
 function submitForm(btnSelected){
     if(btnSelected == 'accept') {
         document.forms[0].action = "disClaimerActionaccept.action";
@@ -24,7 +21,7 @@ function submitForm(btnSelected){
 }
 </SCRIPT>
 
-<body onload="bodyOnLoad()">
+<body>
 <s:form name="disclaimer" method="POST">
 <!-- main content begins-->
 <br>
