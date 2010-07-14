@@ -118,20 +118,32 @@ public class CtepFileUploadTest extends AbstractPoTest {
     private static final String PERSON_FILE_NAME = "testPersonIds.txt";
 
     /**
-     * test the upload action org file uploact.
+     * test the org upload.
      */
     @Test
     public void testUploadOrgs() throws Exception {
+        MockCtepImportService service = (MockCtepImportService) PoRegistry.getInstance().getServiceLocator()
+                                                                          .getCtepImportService();
+        assertEquals(0, service.getImportedOrgIds().size());
+
+        CtepImportAction action = new CtepImportAction();
+        assertEquals(Action.INPUT, action.uploadOrganizations());
+
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(ORG_FILE_NAME);
         File f = new File(fileUrl.toURI());
 
-        CtepImportAction action = new CtepImportAction();
         action.setFile(f);
+        action.setCtepId("NY123");
         assertEquals(Action.SUCCESS, action.uploadOrganizations());
 
-        MockCtepImportService service = (MockCtepImportService) PoRegistry.getInstance().
-            getServiceLocator().getCtepImportService();
+        // Only the 18 IDs in the file should be imported, ignoring the one specified by ctepId
         assertEquals(18, service.getImportedOrgIds().size());
+
+        action = new CtepImportAction();
+        assertEquals(Action.INPUT, action.uploadOrganizations());
+        action.setCtepId("NY123");
+        assertEquals(Action.SUCCESS, action.uploadOrganizations());
+        assertEquals(19, service.getImportedOrgIds().size());
     }
 
     /**
@@ -217,16 +229,29 @@ public class CtepFileUploadTest extends AbstractPoTest {
      */
     @Test
     public void testUploadPeople() throws Exception {
+        MockCtepImportService service = (MockCtepImportService) PoRegistry.getInstance().
+        getServiceLocator().getCtepImportService();
+        assertEquals(0, service.getImportedPersonIds().size());
+
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(PERSON_FILE_NAME);
         File f = new File(fileUrl.toURI());
 
         CtepImportAction action = new CtepImportAction();
+        assertEquals(Action.INPUT, action.uploadPeople());
+
         action.setFile(f);
+        action.setCtepId("54321");
         assertEquals(Action.SUCCESS, action.uploadPeople());
 
-        MockCtepImportService service = (MockCtepImportService) PoRegistry.getInstance().
-            getServiceLocator().getCtepImportService();
+        // Only the 18 IDs in the file should be imported, ignoring the one specified by ctepId
         assertEquals(18, service.getImportedPersonIds().size());
+
+        action = new CtepImportAction();
+        assertEquals(Action.INPUT, action.uploadPeople());
+        action.setCtepId("54321");
+        assertEquals(Action.SUCCESS, action.uploadPeople());
+        assertEquals(19, service.getImportedPersonIds().size());
+
     }
 
     /**

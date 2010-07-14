@@ -96,6 +96,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,7 +110,6 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 
 
 /**
@@ -121,6 +121,7 @@ public class CtepImportAction extends ActionSupport {
     private static final Logger LOG = Logger.getLogger(CtepImportAction.class);
     private static final long serialVersionUID = 1L;
     private File file;
+    private String ctepId;
 
     /**
      * Action to go to the page allowing file upload.
@@ -138,8 +139,7 @@ public class CtepImportAction extends ActionSupport {
      * @throws JMSException on error saving.
      */
     public String uploadOrganizations() throws IOException, JMSException {
-        new ImportHelper(getFile()).process(new OrgImporter());
-        return SUCCESS;
+        return upload(new OrgImporter());
     }
 
     /**
@@ -149,7 +149,19 @@ public class CtepImportAction extends ActionSupport {
      * @throws JMSException on error saving.
      */
     public String uploadPeople() throws IOException, JMSException {
-        new ImportHelper(getFile()).process(new PersonImporter());
+        return upload(new PersonImporter());
+    }
+
+    private String upload(Importer importer) throws IOException {
+        if (getFile() == null && StringUtils.isBlank(getCtepId())) {
+            addActionError("You must specify either a file or a CTEP ID to import.");
+            return INPUT;
+        }
+        if (getFile() != null) {
+            new ImportHelper(getFile()).process(importer);
+        } else {
+            new ImportHelper(getCtepId()).process(importer);
+        }
         return SUCCESS;
     }
 
@@ -238,16 +250,26 @@ public class CtepImportAction extends ActionSupport {
     }
 
     /**
-     * Generic implementation to import Organization or Person types.
+     * Generic implementation to import Organization or Person types.  Only one of importFile or ctepId should be set,
+     * depending on if you want to import multiple records or just one; whichever is set will be used for the import.
      */
     class ImportHelper {
         private final File importFile;
+        private final String ctepId;
 
         public ImportHelper(File file) {
             this.importFile = file;
+            this.ctepId = null;
         }
+
+        public ImportHelper(String ctepId) {
+            this.importFile = null;
+            // add the line terminator to be compatible with the BufferedReader used below
+            this.ctepId = ctepId + "\n";
+        }
+
         void process(Importer callback) throws IOException {
-            BufferedReader reader = getFileReader();
+            BufferedReader reader = getReader();
             String line = reader.readLine();
             List<String> passedRecords = new ArrayList<String>();
             List<String> skippedRecords = new ArrayList<String>();
@@ -286,9 +308,12 @@ public class CtepImportAction extends ActionSupport {
             }
         }
 
-        private BufferedReader getFileReader() throws FileNotFoundException {
-            FileReader fileReader = new FileReader(this.importFile);
-            return new BufferedReader(fileReader);
+        private BufferedReader getReader() throws FileNotFoundException {
+            if (importFile != null) {
+                FileReader fileReader = new FileReader(this.importFile);
+                return new BufferedReader(fileReader);
+            }
+            return new BufferedReader(new StringReader(ctepId));
         }
 
         private void addMessages(List<String> passed, List<String> skipped, List<String> failed) {
@@ -312,7 +337,6 @@ public class CtepImportAction extends ActionSupport {
     /**
      * @return the file
      */
-    @RequiredFieldValidator(key = "import.file.required", message = "Please select the file to import.")
     public File getFile() {
         return this.file;
     }
@@ -322,5 +346,19 @@ public class CtepImportAction extends ActionSupport {
      */
     public void setFile(File file) {
         this.file = file;
+    }
+
+    /**
+     * @param ctepId the ctepId to set
+     */
+    public void setCtepId(String ctepId) {
+        this.ctepId = ctepId;
+    }
+
+    /**
+     * @return the ctepId
+     */
+    public String getCtepId() {
+        return ctepId;
     }
 }

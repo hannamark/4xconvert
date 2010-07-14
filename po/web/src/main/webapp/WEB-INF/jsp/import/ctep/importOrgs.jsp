@@ -8,7 +8,7 @@ function upload() {
     $('uploadForm').submit();
 }
 </script>
-</head> 
+</head>
 <body>
 
 <po:successMessages/>
@@ -18,25 +18,26 @@ function upload() {
         <h2>CTEP Organization Import</h2>
         <div class="boxouter">
             <div class="box_white">
-                <s:actionerror /> 
+                <s:actionerror />
                 <div id="progress_div" style="display: none; margin: 3px 3px">
                     <img alt="Indicator" align="absmiddle" src="<c:url value="/images/loading.gif"/>" /> Uploading and importing...
                 </div>
-                <s:form action="import/ctep/org/uploadOrganizations" id="uploadForm" method="POST" 
+                <s:form action="import/ctep/org/uploadOrganizations" id="uploadForm" method="POST"
                         enctype="multipart/form-data" onsubmit="upload();">
                     <s:file name="file" label="File" />
-                    <input id="enableEnterSubmit" type="submit"/>              
+                    <s:textfield name="ctepId" label="CTEP ID"/>
+                    <input id="enableEnterSubmit" type="submit"/>
                 </s:form>
             </div>
         </div>
-    </div> 
+    </div>
 </div>
 <div style="clear:left;">
-</div>    
+</div>
     <div class="btnwrapper" style="margin-bottom:20px;">
     <po:buttonRow>
        <po:button id="save_button" href="javascript://noop/" onclick="upload();" style="save" text="Upload"/>
     </po:buttonRow>
     </div>
 </body>
-</html>    
+</html>
