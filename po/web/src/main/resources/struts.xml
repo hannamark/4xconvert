@@ -350,7 +350,7 @@
             <interceptor-ref name="poPerMethodValidationStack" />
             <exception-mapping result="curateError" exception="gov.nih.nci.po.service.CurateEntityValidationException"/>
             <result name="curate">/WEB-INF/jsp/curate/organization/curate.jsp</result>
-            <result name="curateError" type="redirectAction">organization/curate/curate/error?organization.id=${organization.id}&amp;duplicateOf.id=${duplicateOf.id}</result>
+            <result name="curateError" type="redirectAction">organization/curate/curate/error?organization.id=${organizationId}&amp;duplicateOf.id=${duplicateOfId}</result>
             <result name="input">/WEB-INF/jsp/curate/organization/{1}.jsp</result>
             <result name="success" type="redirectAction">
                 <param name="namespace">/protected</param>

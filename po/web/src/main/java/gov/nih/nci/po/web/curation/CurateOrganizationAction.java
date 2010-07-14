@@ -286,4 +286,25 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
         return this.organization.isUsOrCanadaAddress();
     }
 
+    /**
+     * Method for pulling this value in struts xml.
+     * @return the organization id as a string.
+     */
+    public String getOrganizationId() {
+        if (getOrganization() != null && getOrganization().getId() != null) {
+            return this.getOrganization().getId().toString();
+        }
+        return "";
+    }
+    
+    /**
+     * Method for pulling this value in struts xml.
+     * @return the duplicate id as a string.
+     */
+    public String getDuplicateOfId() {
+        if (getDuplicateOf() != null && getDuplicateOf().getId() != null) {
+            return this.getDuplicateOf().getId().toString();
+        }
+        return "";
+    }
 }

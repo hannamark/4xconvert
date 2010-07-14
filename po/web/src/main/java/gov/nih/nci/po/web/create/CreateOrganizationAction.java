@@ -58,15 +58,4 @@ public class CreateOrganizationAction extends CurateOrganizationAction implement
         return set;
     }
 
-    /**
-     * Method for pulling this value in struts xml.
-     * @return the person id as a string.
-     */
-    public String getOrganizationId() {
-        if (getOrganization() != null && getOrganization().getId() != null) {
-            return this.getOrganization().getId().toString();
-        }
-        return "";
-    }
-
 }

@@ -224,4 +224,30 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
         action.getOrganization().setPostalAddress(addr2);
         assertFalse(action.isUsOrCanadaFormat());
     }
+
+    @Test
+    public void getOrganizationIdPropertyOrgNull() {
+        action.setOrganization(null);
+        assertEquals("", action.getOrganizationId());
+    }
+
+    @Test
+    public void getOrganizationIdPropertyOrgWithId() {
+        action.setOrganization(new Organization());
+        action.getOrganization().setId(1L);
+        assertEquals("1", action.getOrganizationId());
+    }
+
+    @Test
+    public void getDuplicateOfIdPropertyOrgNull() {
+        action.setOrganization(null);
+        assertEquals("", action.getDuplicateOfId());
+    }
+
+    @Test
+    public void getDuplicateOfPropertyOrgWithId() {
+        action.setDuplicateOf(new Organization());
+        action.getDuplicateOf().setId(1L);
+        assertEquals("1", action.getDuplicateOfId());
+    }
 }
