@@ -123,17 +123,15 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     public String getAmend() {
         Long studyProtocolId = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyProtocolId();
         String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
-        String isProprietaryTrial =
-                  ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() != null
-                         ? ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() : "";
+        boolean isProprietaryTrial =
+                  ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial();
 
         DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO)
                 this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
         StudyStatusCode statusCode = ((StudyProtocolQueryDTO)
                 this.getCurrentRowObject()).getStudyStatusCode();
 
-        if (StringUtils.isNotEmpty(isProprietaryTrial)
-                && isProprietaryTrial.equalsIgnoreCase("true")) {
+        if (isProprietaryTrial) {
           return "";
         }
         if (dwfs == null) {
@@ -284,11 +282,10 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
      */
     public String getTrialCategory() {
         String trialCat = "";
-        String isProprietaryTrial =
-            ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() != null
-                   ? ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() : "";
-        if (StringUtils.isNotEmpty(isProprietaryTrial)
-                && isProprietaryTrial.equalsIgnoreCase("true")) {
+
+        boolean isProprietaryTrial =
+            ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial();
+        if (isProprietaryTrial) {
             trialCat = "Proprietary Trial";
         } else {
             trialCat = "Non Proprietary Trial";

@@ -135,7 +135,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String updatedComments;
     private Date updatedDate;
     private Long studyInboxId;
-    private String isProprietaryTrial;
+    private boolean isProprietaryTrial;
     private String studyCheckoutBy;
     private String studyCheckoutByUsername;
     private Long studyCheckoutId;
@@ -149,7 +149,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     * @return the trialCategory
     */
     public String getTrialCategory() {
-     if (this.isProprietaryTrial.equalsIgnoreCase("true")) {
+     if (this.isProprietaryTrial) {
          trialCategory = "Proprietary Trial";
          return trialCategory;
       } else {
@@ -161,13 +161,13 @@ public class StudyProtocolQueryDTO implements Serializable {
     /**
      * @return the isProprietaryTrial
      */
-    public String getIsProprietaryTrial() {
+    public boolean getIsProprietaryTrial() {
         return isProprietaryTrial;
     }
     /**
      * @param isProprietaryTrial the isProprietaryTrial to set
      */
-    public void setIsProprietaryTrial(String isProprietaryTrial) {
+    public void setIsProprietaryTrial(boolean isProprietaryTrial) {
         this.isProprietaryTrial = isProprietaryTrial;
     }
     /**

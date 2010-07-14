@@ -122,19 +122,19 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private Boolean excludeRejectProtocol;
     // for Registry trial search
     private Boolean myTrialsOnly;
-    private String searchOnHold;
+    private boolean searchOnHold;
     private String studyMilestone;
     private String submissionType;
     
     //for Inbox Processing
     private Boolean inBoxProcessing;
-    private String studyLockedBy;
+    private boolean studyLockedBy;
     private String trialCategory;
     private Long userId;
     /**
      * @return the inBoxProcessing
      */
-     public Boolean getInBoxProcessing() {
+     public Boolean isInBoxProcessing() {
        return inBoxProcessing;
      }
      /**
@@ -355,7 +355,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      *
      * @return excludeRejectProtocol excludeRejectProtocol
      */
-    public Boolean getExcludeRejectProtocol() {
+    public Boolean isExcludeRejectProtocol() {
         return excludeRejectProtocol;
     }
     /**
@@ -368,19 +368,19 @@ public class StudyProtocolQueryCriteria implements Serializable {
     /**
      * @return the myTrialsOnly
      */
-    public Boolean getMyTrialsOnly() {
+    public Boolean isMyTrialsOnly() {
         return myTrialsOnly;
     }
     /**
      * @param searchOnHold the searchOnHold to set
      */
-    public void setSearchOnHold(String searchOnHold) {
+    public void setSearchOnHold(boolean searchOnHold) {
         this.searchOnHold = searchOnHold;
     }
     /**
      * @return the searchOnHold
      */
-    public String getSearchOnHold() {
+    public boolean isSearchOnHold() {
         return searchOnHold;
     }
     /**
@@ -428,13 +428,13 @@ public class StudyProtocolQueryCriteria implements Serializable {
     /**
      * @return the getStudyLockedBy
      */
-    public String getStudyLockedBy() {
+    public boolean isStudyLockedBy() {
         return studyLockedBy;
     }
     /**
      * @param studyLockedBy the studyLockedBy to set
      */
-    public void setStudyLockedBy(String studyLockedBy) {
+    public void setStudyLockedBy(boolean studyLockedBy) {
         this.studyLockedBy = studyLockedBy;
     }
     /**

@@ -62,7 +62,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -133,8 +132,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
           } else {
               body = lookUpTableService.getPropertyValue("noxml.tsr.amend.body");
           }
-      } else if (StringUtils.isNotEmpty(spDTO.getIsProprietaryTrial())
-              && spDTO.getIsProprietaryTrial().equalsIgnoreCase("true")) {
+      } else if (spDTO.getIsProprietaryTrial()) {
           body = lookUpTableService.getPropertyValue("tsr.proprietary.body");
       } else {
           if (spDTO.getCtgovXmlRequiredIndicator().booleanValue()) {
@@ -150,8 +148,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       body = body.replace(nciTrialIdentifier, spDTO.getNciIdentifier().toString());
       body = body.replace("${fileName}", TSR
                                          + spDTO.getNciIdentifier().toString() + EXTENSION_PDF);
-      if (StringUtils.isEmpty(spDTO.getIsProprietaryTrial())
-              || spDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
+      if (!spDTO.getIsProprietaryTrial()) {
           body = body.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
       }
 
@@ -167,8 +164,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       String tsrFile = getTSRFile(studyProtocolIi, spDTO, sb2);
       String mailSubject = "";
 
-      if (StringUtils.isNotEmpty(spDTO.getIsProprietaryTrial())
-              && spDTO.getIsProprietaryTrial().equalsIgnoreCase("true")) {
+      if (spDTO.getIsProprietaryTrial()) {
           File[] attachments = {new File(tsrFile)};
 
           mailSubject = lookUpTableService.getPropertyValue("tsr.proprietary.subject");
@@ -225,8 +221,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       String xmlFile = new String(sb.append(File.separator).append(
               spDTO.getNciIdentifier().toString() + ".xml"));
       try {
-          if (StringUtils.isEmpty(spDTO.getIsProprietaryTrial())
-                  || spDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
+          if (!spDTO.getIsProprietaryTrial()) {
 
 
               //Format the xml only for non proprietary
@@ -350,14 +345,12 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
   * @throws PAException ex
   */
   public void sendNotificationMail(Ii studyProtocolIi) throws PAException  {
-    String  valueFalse = "false";
     StudyProtocolQueryDTO spDTO = protocolQueryService
         .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
 
     String submissionMailBody = "";
     String subOrgTrialIdentifier = "";
-    if (spDTO.getIsProprietaryTrial() == null
-            || spDTO.getIsProprietaryTrial().equalsIgnoreCase(valueFalse)) {
+    if (!spDTO.getIsProprietaryTrial()) {
         submissionMailBody = lookUpTableService.getPropertyValue("trial.register.body");
     } else {
         submissionMailBody = lookUpTableService.getPropertyValue("proprietarytrial.register.body");
@@ -380,8 +373,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     submissionMailBody = submissionMailBody.replace(trialTitle, spDTO.getOfficialTitle());
 
     String mailSubject = "";
-    if (spDTO.getIsProprietaryTrial() == null
-            || spDTO.getIsProprietaryTrial().equalsIgnoreCase(valueFalse)) {
+    if (!spDTO.getIsProprietaryTrial()) {
         mailSubject = lookUpTableService.getPropertyValue("trial.register.subject");
     } else {
         mailSubject = lookUpTableService.getPropertyValue("proprietarytrial.register.subject");

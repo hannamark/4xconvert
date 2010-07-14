@@ -32,7 +32,7 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
         spQueryDTO.setLeadOrganizationId(1L);
         spQueryDTO.setPiId(2L);
-        spQueryDTO.setIsProprietaryTrial("false");
+        spQueryDTO.setIsProprietaryTrial(false);
         spQueryDTO.setCtgovXmlRequiredIndicator(true);
         spQueryDTO.setUserLastCreated("TestUser@test.com");
         spQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
@@ -74,7 +74,7 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
                     && sp.getNciIdentifier().equalsIgnoreCase(sc.getNciIdentifier())) {
                 returnList.add(sp);
             }
-            if (sc.getMyTrialsOnly() != null && sc.getMyTrialsOnly()) {
+            if (sc.isMyTrialsOnly()) {
                 return list;
             }
         }

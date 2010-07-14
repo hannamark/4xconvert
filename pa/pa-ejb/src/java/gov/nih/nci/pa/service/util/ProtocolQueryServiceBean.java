@@ -295,9 +295,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     }
                    if (studyProtocol.getProprietaryTrialIndicator() != null) {
                        studyProtocolDto.setIsProprietaryTrial(
-                               studyProtocol.getProprietaryTrialIndicator().toString());
+                               studyProtocol.getProprietaryTrialIndicator());
                    } else {
-                       studyProtocolDto.setIsProprietaryTrial("false");
+                       studyProtocolDto.setIsProprietaryTrial(false);
                    }
                    studyProtocolDto.setRecordVerificationDate(studyProtocol.getRecordVerificationDate());
                    if (!(studyProtocol.getCtgovXmlRequiredIndicator() != null
@@ -624,7 +624,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
            }
            // required for Registry duplicate trial check
            // Rejected trial should be excluded from duplicate check
-           if (BooleanUtils.isTrue(studyProtocolQueryCriteria.getExcludeRejectProtocol()))  {
+           if (BooleanUtils.isTrue(studyProtocolQueryCriteria.isExcludeRejectProtocol()))  {
                where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
            }
            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getStudyMilestone())) {
@@ -640,8 +640,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                + " or sms.id is null ) ");
            }
            // sub-query for inbox processing to retrieve only the updated records for review
-           if (studyProtocolQueryCriteria.getInBoxProcessing() != null
-                   && studyProtocolQueryCriteria.getInBoxProcessing().booleanValue()) {
+           if (studyProtocolQueryCriteria.isInBoxProcessing() != null
+                   && studyProtocolQueryCriteria.isInBoxProcessing().booleanValue()) {
              where.append(" and sinbx.id in (select distinct id from StudyInbox as sinbx1 "
                    + " where sp.id = sinbx1.studyProtocol and"
                      + " sinbx1.closeDate is null)");
@@ -675,8 +675,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private void whereClauseForRegistrySearch(StudyProtocolQueryCriteria criteria, StringBuffer where) {
         // added for Registry Trial Search
-        if (criteria.getMyTrialsOnly() != null && StringUtils.isNotEmpty(criteria.getUserLastCreated())) {
-            if (criteria.getMyTrialsOnly().booleanValue()) {
+        if (criteria.isMyTrialsOnly() != null && StringUtils.isNotEmpty(criteria.getUserLastCreated())) {
+            if (criteria.isMyTrialsOnly().booleanValue()) {
                 where.append(" and ( sowner.id = ").append(criteria.getUserId());
                 where.append(" or ").append(criteria.getUserId());
                 where.append(" in (select id from RegistryUser where affiliatedOrgUserType = '");
@@ -688,7 +688,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 // add the subquery to pick the latest record
                 where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                         + "                where sp.id = dws1.studyProtocol )" + " or dws.id is null ) ");
-            } else if (!criteria.getMyTrialsOnly().booleanValue()) {
+            } else {
                 where.append(" and ((sowner.id ='").append(criteria.getUserId());
                 where.append("' and dws.statusCode <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
                 // add the subquery to pick the latest record
@@ -730,8 +730,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     + studyProtocolQueryCriteria.getParticipatingSiteId() + ")");
         }
         // sub-query for searching only on hold trials
-        if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getSearchOnHold())
-                && studyProtocolQueryCriteria.getSearchOnHold().equals("true")) {
+        if (studyProtocolQueryCriteria.isSearchOnHold()) {
             where.append(" and sp.id in(select distinct sp3.id from StudyProtocol as sp3 "
                     + " left outer join sp3.studyOnholds as spoh " + " where spoh.onholdDate is not null and "
                     + " spoh.offholdDate is null)");
@@ -747,8 +746,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             where.append(" and sp.submissionNumber = 1 and sp.amendmentNumber is null and "
                     + " sp.amendmentDate is null)");
         }
-        if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getStudyLockedBy())
-                && studyProtocolQueryCriteria.getStudyLockedBy().equals("true")) {
+        if (studyProtocolQueryCriteria.isStudyLockedBy()) {
             where.append(" and sp.id in(select sp3.id from StudyProtocol as sp3 "
                     + " left outer join sp3.studyCheckout as spco " + " where spco.userIdentifier='"
                     + studyProtocolQueryCriteria.getUserLastCreated() + "')");
@@ -768,16 +766,12 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 && StringUtils.isEmpty(criteria.getStudyMilestone())
                 && StringUtils.isEmpty(criteria.getOtherIdentifier())
                 && StringUtils.isEmpty(criteria.getNctNumber())
-                && ((StringUtils.isNotEmpty(criteria.getSearchOnHold())
-                        && StringUtils.equals(criteria.getSearchOnHold(), "false"))
-                        || StringUtils.isEmpty(criteria.getSearchOnHold()))
-                && ((StringUtils.isNotEmpty(criteria.getStudyLockedBy())
-                        && StringUtils.equals(criteria.getStudyLockedBy(), "false"))
-                        || StringUtils.isEmpty(criteria.getStudyLockedBy()))
+                && !criteria.isSearchOnHold()
+                && !criteria.isStudyLockedBy()
                 && StringUtils.isEmpty(criteria.getSubmissionType())
                 && StringUtils.isEmpty(criteria.getTrialCategory())
-                && (criteria.getMyTrialsOnly() != null && !criteria.getMyTrialsOnly()
-                        || criteria.getMyTrialsOnly() == null));
+                && (criteria.isMyTrialsOnly() != null && !criteria.isMyTrialsOnly()
+                        || criteria.isMyTrialsOnly() == null));
     }
 
 

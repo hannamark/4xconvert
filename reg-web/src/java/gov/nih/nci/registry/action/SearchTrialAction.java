@@ -142,7 +142,6 @@ public class SearchTrialAction extends ActionSupport {
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
     private Long studyProtocolId = null;
     private final TrialUtil trialUtil = new TrialUtil();
-    private static final String TRUE = "true";
     private static final String SPID = "studyProtocolId";
 
     /**
@@ -161,7 +160,7 @@ public class SearchTrialAction extends ActionSupport {
             String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
             ServletActionContext.getRequest().setAttribute(SPID, pId);
             studyProtocolId = Long.valueOf(pId);
-            getCriteria().setMyTrialsOnly("true");
+            getCriteria().setMyTrialsOnly(true);
             return view();
         }
         return SUCCESS;
@@ -191,7 +190,7 @@ public class SearchTrialAction extends ActionSupport {
             if (studyProtocolList != null) {
                 records = new ArrayList<StudyProtocolQueryDTO>();
                 // when selected search my trials
-                if (BooleanUtils.toBoolean(criteria.getMyTrialsOnly())) {
+                if (BooleanUtils.toBoolean(criteria.isMyTrialsOnly())) {
                     String loginName =  ServletActionContext.getRequest().getRemoteUser();
                     for (StudyProtocolQueryDTO queryDto : studyProtocolList) {
                         if (PaRegistry.getRegisterUserService().hasTrialAccess(loginName,
@@ -220,7 +219,7 @@ public class SearchTrialAction extends ActionSupport {
         if (records != null && !records.isEmpty()) {
             for (StudyProtocolQueryDTO queryDto : records) {
                 String dwfs = queryDto.getDocumentWorkflowStatusCode().getCode();
-                if (queryDto.getIsProprietaryTrial().equalsIgnoreCase("false")
+                if (!queryDto.getIsProprietaryTrial()
                         && (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
                         || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode()))
                         && queryDto.getCtgovXmlRequiredIndicator() && isOwner(queryDto.getStudyProtocolId(),
@@ -246,8 +245,7 @@ public class SearchTrialAction extends ActionSupport {
         loginUser =  ServletActionContext.getRequest().getRemoteUser();
         if (!records.isEmpty()) {
             for (StudyProtocolQueryDTO queryDto : records) {
-                String isProprietaryTrial =
-                    queryDto.getIsProprietaryTrial() != null ? queryDto.getIsProprietaryTrial() : "";
+           
                 DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
                 StudyStatusCode statusCode = queryDto.getStudyStatusCode();
                 if (dwfs == null) {
@@ -272,8 +270,7 @@ public class SearchTrialAction extends ActionSupport {
                     queryDto.setUpdate("");
                 }
 
-                if (StringUtils.isNotEmpty(isProprietaryTrial)
-                        && isProprietaryTrial.equalsIgnoreCase(TRUE)
+                if (queryDto.getIsProprietaryTrial()
                         && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
                         && isOwner(queryDto.getStudyProtocolId(), loginUser)) {
                         queryDto.setUpdate("Update");
@@ -316,8 +313,7 @@ public class SearchTrialAction extends ActionSupport {
             queryCriteria.setParticipatingSiteId(criteria.getParticipatingSiteId().toString());
         }
         queryCriteria.setOrganizationType(criteria.getOrganizationType());
-        if (StringUtils.isNotEmpty(criteria.getMyTrialsOnly())
-                && criteria.getMyTrialsOnly().equals(TRUE)) {
+        if (criteria.isMyTrialsOnly()) {
             queryCriteria.setMyTrialsOnly(Boolean.TRUE);
         } else {
             queryCriteria.setMyTrialsOnly(Boolean.FALSE);
@@ -636,9 +632,9 @@ public class SearchTrialAction extends ActionSupport {
             spQueryDTO.setUserLastCreated(StConverter.convertToString(studyProtocolStageDTO.getUserLastCreated()));
             if (!PAUtil.isBlNull(studyProtocolStageDTO.getProprietaryTrialIndicator())
                     && BlConverter.covertToBoolean(studyProtocolStageDTO.getProprietaryTrialIndicator())) {
-                spQueryDTO.setIsProprietaryTrial(TRUE);
+                spQueryDTO.setIsProprietaryTrial(true);
             } else {
-                spQueryDTO.setIsProprietaryTrial("");
+                spQueryDTO.setIsProprietaryTrial(false);
             }
             returnList.add(spQueryDTO);
         }

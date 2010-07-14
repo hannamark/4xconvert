@@ -35,7 +35,7 @@ public class TrialIndIdeDTO {
         this.indIdeId = IiConverter.convertToString(isoDto.getIdentifier());
         this.expandedAccessType = CdConverter.convertCdToString(isoDto.getExpandedAccessStatusCode());
         if (isoDto.getExpandedAccessIndicator().getValue() != null) {
-            if (isoDto.getExpandedAccessIndicator().getValue().toString().equalsIgnoreCase("true")) {
+            if (isoDto.getExpandedAccessIndicator().getValue()) {
               this.expandedAccess = "Yes";
             } else {
               this.expandedAccess = "No";

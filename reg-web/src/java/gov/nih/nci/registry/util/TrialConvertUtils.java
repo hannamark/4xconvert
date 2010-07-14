@@ -1267,7 +1267,7 @@ public class TrialConvertUtils {
        TrialIndIdeDTO webDto = new TrialIndIdeDTO();
        webDto.setExpandedAccessType(CdConverter.convertCdToString(isoDto.getExpandedAccessStatusCode()));
        if (isoDto.getExpandedAccessIndicator().getValue() != null) {
-           if (isoDto.getExpandedAccessIndicator().getValue().toString().equalsIgnoreCase("true")) {
+           if (isoDto.getExpandedAccessIndicator().getValue()) {
                webDto.setExpandedAccess("Yes");
            } else {
                webDto.setExpandedAccess("No");

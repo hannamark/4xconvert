@@ -112,7 +112,7 @@ public class StudyIndldeWebDTO {
           this.grantor = iso.getGrantorCode().getCode();
           
           if (iso.getExpandedAccessIndicator().getValue() != null) {
-            if (iso.getExpandedAccessIndicator().getValue().toString().equalsIgnoreCase("true")) {
+            if (iso.getExpandedAccessIndicator().getValue()) {
               this.expandedAccessIndicator = "Yes";
             } else {
               this.expandedAccessIndicator = "No";

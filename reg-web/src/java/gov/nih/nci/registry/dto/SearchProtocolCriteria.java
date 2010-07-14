@@ -18,7 +18,7 @@ public class SearchProtocolCriteria {
     private String phaseCode;
     private String primaryPurposeCode;
     private String organizationType;
-    private String myTrialsOnly;
+    private boolean myTrialsOnly;
     private String principalInvestigatorId;
     /**
      * @return the identifierType
@@ -120,13 +120,13 @@ public class SearchProtocolCriteria {
     /**
      * @return the myTrialsOnly
      */
-    public String getMyTrialsOnly() {
+    public boolean isMyTrialsOnly() {
         return myTrialsOnly;
     }
     /**
      * @param myTrialsOnly the myTrialsOnly to set
      */
-    public void setMyTrialsOnly(String myTrialsOnly) {
+    public void setMyTrialsOnly(boolean myTrialsOnly) {
         this.myTrialsOnly = myTrialsOnly;
     }
     /**

@@ -1,6 +1,5 @@
 package gov.nih.nci.pa.dto;
-
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 
@@ -68,16 +67,17 @@ public class DTOTest {
 	        Method writeMethod = descriptor.getWriteMethod();
 	        Method readMethod = descriptor.getReadMethod();
 	        Object arg = argument;
-
+	        
 	        if (arg == null) {
 	            Class<?> type = descriptor.getPropertyType();
 	            if (DEFAULT_ARGUMENTS.containsKey(type.getName())) {
 	                arg = DEFAULT_ARGUMENTS.get(type.getName());
 	            }
 	        }
+	       
    	        writeMethod.invoke(target, arg);
 	        Object propertyValue = readMethod.invoke(target);
-	        assertSame(property + " getter/setter test passed", arg, propertyValue);
+	        assertEquals(property + " getter/setter test passed", arg, propertyValue);
 
 	    }
 	    catch (IntrospectionException e) {
@@ -108,6 +108,7 @@ public class DTOTest {
 		DEFAULT_ARGUMENTS.put("java.lang.String", "test");
 		DEFAULT_ARGUMENTS.put("java.lang.Long", default_long);
 		DEFAULT_ARGUMENTS.put("java.lang.Boolean", default_bool);
+		DEFAULT_ARGUMENTS.put("boolean", default_bool.booleanValue());
 	}
 
 }

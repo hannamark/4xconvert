@@ -3,12 +3,12 @@
  */
 package gov.nih.nci.pa.dto;
 
-import java.util.UUID;
-
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+
+import java.util.UUID;
 
 /**
  * @author Vrushali
@@ -35,7 +35,7 @@ public class TrialIndIdeDTO {
         this.indIdeId = IiConverter.convertToString(isoDto.getIdentifier());
         this.expandedAccess = CdConverter.convertCdToString(isoDto.getExpandedAccessStatusCode());
         if (isoDto.getExpandedAccessIndicator().getValue() != null) {
-            if (isoDto.getExpandedAccessIndicator().getValue().toString().equalsIgnoreCase("true")) {
+            if (isoDto.getExpandedAccessIndicator().getValue()) {
               this.expandedAccessType = "Yes";
             } else {
               this.expandedAccessType = "No";

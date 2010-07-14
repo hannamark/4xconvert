@@ -259,7 +259,7 @@ public class BatchCreateProtocols {
             throw new PAException("mutliple trial or no trial found for given NCI Trial Identifier.\n");
         }
         StudyProtocolQueryDTO querydto = listofDto.get(0);
-        if (querydto.getIsProprietaryTrial() != null && querydto.getIsProprietaryTrial().equalsIgnoreCase("true")) {
+        if (querydto.getIsProprietaryTrial()) {
             throw new PAException("Proprietary trials Update not supported. ");
         }
         studyProtocolIi = IiConverter.convertToIi(listofDto.get(0).getStudyProtocolId());

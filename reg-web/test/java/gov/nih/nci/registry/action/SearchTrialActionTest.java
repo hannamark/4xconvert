@@ -73,7 +73,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("abc");
         criteria.setIdentifierType("");
-        criteria.setMyTrialsOnly("");
         criteria.setOfficialTitle("");
         criteria.setOrganizationType("avs");
         action.setCriteria(criteria );
@@ -85,7 +84,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("");
         criteria.setIdentifierType("");
-        criteria.setMyTrialsOnly("");
         criteria.setOfficialTitle("");
         criteria.setOrganizationType("");
         action.setCriteria(criteria );
@@ -97,7 +95,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("");
         criteria.setIdentifierType("");
-        criteria.setMyTrialsOnly("");
         criteria.setOfficialTitle("ThrowException");
         criteria.setOrganizationType("");
         action.setCriteria(criteria );
@@ -109,7 +106,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("a");
         criteria.setIdentifierType("NCI");
-        criteria.setMyTrialsOnly("");
         criteria.setOfficialTitle("");
         criteria.setOrganizationType("");
         criteria.setOrganizationId("");
@@ -123,7 +119,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("nct");
         criteria.setIdentifierType("NCT");
-        criteria.setMyTrialsOnly("");
         criteria.setOfficialTitle("");
         criteria.setOrganizationType("organizationType");
         criteria.setOrganizationId("1");
@@ -137,7 +132,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("lead");
         criteria.setIdentifierType("Lead Organization");
-        criteria.setMyTrialsOnly("");
         criteria.setOfficialTitle("");
         criteria.setOrganizationType("organizationType");
         criteria.setOrganizationId("1");
@@ -327,7 +321,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("");
         criteria.setIdentifierType("");
-        criteria.setMyTrialsOnly("true");
+        criteria.setMyTrialsOnly(true);
         criteria.setOfficialTitle("");
         criteria.setOrganizationType("");
         action.setCriteria(criteria );
