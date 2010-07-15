@@ -115,6 +115,8 @@
      <s:hidden name="gtdDTO.nonOtherIdentifiers.extension" id="gtdDTO.nonOtherIdentifiers.extension"/>
      <s:hidden name="gtdDTO.nonOtherIdentifiers.root" id="gtdDTO.nonOtherIdentifiers.root"/>
      <s:hidden name="gtdDTO.nonOtherIdentifiers.identifierName" id="gtdDTO.nonOtherIdentifiers.identifierName"/>
+     <s:hidden name="gtdDTO.ctepIdentifier"  id="gtdDTO.ctepIdentifier"/>
+     <s:hidden name="gtdDTO.dcpIdentifier" id ="gtdDTO.dcpIdentifier"/>
      <h2>Trial Details</h2>
     <table class="form">
           <tr>
