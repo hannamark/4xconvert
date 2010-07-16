@@ -1211,7 +1211,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             remoteSshHost="${ssh.server.hostname}"
             remoteSshPort="${ssh.port}"
             remoteSshKeyfile="${ssh.key.file}"
-            remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true upgrade-dac:pa-grid-3.1-jboss" />
+            remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${override.properties.string} upgrade-dac:pa-grid-3.1-jboss" />
     </target>
     <target name="remote:upgrade:pa-grid-3.0" unless="exclude.pa-grid-3.0">
       <!-- upgrade pa-grid-3.0 only-->
