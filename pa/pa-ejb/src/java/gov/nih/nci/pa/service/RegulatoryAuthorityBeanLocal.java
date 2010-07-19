@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -7,7 +7,6 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
-import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.iso.convert.RegulatoryAuthorityConverter;
 import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
@@ -27,16 +26,16 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Example;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * @author asharma
  *
  */
-public class RegulatoryAuthorityBeanLocal 
+public class RegulatoryAuthorityBeanLocal
 extends AbstractBaseIsoService<RegulatoryAuthorityDTO, RegulatoryAuthority, RegulatoryAuthorityConverter>
 implements RegulatoryAuthorityServiceLocal {
-  
+
   private static final Logger LOG  = Logger.getLogger(RegulatoryAuthorityBeanLocal.class);
   private static String errMsgMethodNotImplemented = "Method not yet implemented.";
 
@@ -47,7 +46,7 @@ implements RegulatoryAuthorityServiceLocal {
   * @return RegulatoryAuthorityDTO
   * @throws PAException PAException
   */
-  @Override 
+  @Override
   public RegulatoryAuthorityDTO update(RegulatoryAuthorityDTO dto) throws PAException {
    LOG.error(errMsgMethodNotImplemented);
    throw new PAException(errMsgMethodNotImplemented);
@@ -59,7 +58,7 @@ implements RegulatoryAuthorityServiceLocal {
   * @return RegulatoryAuthorityDTO
   * @throws PAException PAException
   */
-  @Override 
+  @Override
   public RegulatoryAuthorityDTO create(RegulatoryAuthorityDTO dto) throws PAException {
    LOG.error(errMsgMethodNotImplemented);
    throw new PAException(errMsgMethodNotImplemented);
@@ -69,21 +68,21 @@ implements RegulatoryAuthorityServiceLocal {
   * @param ii Ii
   * @throws PAException PAException
   */
- @Override 
+ @Override
  public void delete(Ii ii) throws PAException {
   LOG.error(errMsgMethodNotImplemented);
   throw new PAException(errMsgMethodNotImplemented);
  }
  /**
-  * 
+  *
   * @param dto dto
   * @param pagingParams parms
-  * @return list 
+  * @return list
   * @throws PAException on error
   * @throws TooManyResultsException on error
   */
  @TransactionAttribute(TransactionAttributeType.SUPPORTS)
- public List<RegulatoryAuthorityDTO> search(RegulatoryAuthorityDTO dto, LimitOffset pagingParams) 
+ public List<RegulatoryAuthorityDTO> search(RegulatoryAuthorityDTO dto, LimitOffset pagingParams)
       throws PAException, TooManyResultsException {
      List<RegulatoryAuthorityDTO> returnList = new ArrayList<RegulatoryAuthorityDTO>();
      if (dto == null) {
@@ -93,23 +92,22 @@ implements RegulatoryAuthorityServiceLocal {
      LOG.debug("Entering search");
      Session session = null;
      session = HibernateUtil.getCurrentSession();
-     
-     RegulatoryAuthority exampleDO = new RegulatoryAuthority();
+     Criteria criteria = session.createCriteria(RegulatoryAuthority.class, "regAuth");
      if (!PAUtil.isStNull(dto.getAuthorityName())) {
-         exampleDO.setAuthorityName(StConverter.convertToString(dto.getAuthorityName()));
+         criteria.add(Restrictions.ilike("regAuth.authorityName", StConverter.convertToString(
+                 dto.getAuthorityName()) + "%"));
      }
      if (PAUtil.isIiNotNull(dto.getCountryIdentifier())) {
-         Country country = new Country();
-         country.setId(IiConverter.convertToLong(dto.getCountryIdentifier()));
-         exampleDO.setCountry(country);
+         criteria.add(Restrictions.eq("regAuth.country.id", IiConverter.convertToLong(dto.getCountryIdentifier())));
      }
-     Example example = Example.create(exampleDO);
-     example.ignoreCase();
-     Criteria criteria = session.createCriteria(RegulatoryAuthority.class, "regAuth").add(example); 
+     if (PAUtil.isIiNotNull(dto.getIdentifier())) {
+         criteria.add(Restrictions.eq("regAuth.id", IiConverter.convertToLong(dto.getIdentifier())));
+     }
      int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
      criteria.setMaxResults(maxLimit);
      criteria.setFirstResult(pagingParams.getOffset());
      List<RegulatoryAuthority> regulatoryList = new ArrayList<RegulatoryAuthority>();
+     LOG.debug("Search criteria" + criteria.toString());
      regulatoryList = criteria.list();
      if (regulatoryList.size() > PAConstants.MAX_SEARCH_RESULTS) {
          throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
@@ -121,7 +119,7 @@ implements RegulatoryAuthorityServiceLocal {
  }
  /**
   * gets the Id.
-  * 
+  *
   * @param authorityName
   *            orgName
   * @param countryName
@@ -151,5 +149,4 @@ implements RegulatoryAuthorityServiceLocal {
      LOG.debug("Leaving  getRegulatoryAuthorityId" + retRegAuthId);
      return IiConverter.convertToIi(retRegAuthId);
  }
-
 }
