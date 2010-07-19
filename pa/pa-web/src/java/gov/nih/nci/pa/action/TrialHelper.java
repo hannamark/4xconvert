@@ -617,8 +617,8 @@ public class TrialHelper {
               try {
                 parb.createSponsorAsPrimaryContactRelations(contactDto);
               } catch (PAException pae) {
-                if (PAExceptionConstants.NULLIFIED_PERSON.equals(pae.getMessage())) {
-                    throw new PAException(PAServiceUtils.SPONSOR_NULLIFIED , pae);
+                if (pae.getMessage().contains(PAExceptionConstants.NULLIFIED_PERSON)) {
+                    throw new PAException(PAServiceUtils.SPONSOR + pae.getMessage(), pae);
                 } else {
                     throw pae;
                 }

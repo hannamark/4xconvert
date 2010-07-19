@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAExceptionConstants;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
@@ -119,6 +120,7 @@ import org.hibernate.Session;
 public class HealthCareProviderCorrelationBean {
 
     private static final Logger LOG  = Logger.getLogger(HealthCareProviderCorrelationBean.class);
+    private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     /**
      * This method assumes Organization and Person record exists in PO.
      * @param orgPoIdentifier po primary org id
@@ -145,9 +147,8 @@ public class HealthCareProviderCorrelationBean {
             poOrg = PoRegistry.getOrganizationEntityService().
                 getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
-//            Map m = e.getNullifiedEntities();
-           LOG.error(PAExceptionConstants.NULLIFIED_ORG , e);
-           throw new PAException(PAExceptionConstants.NULLIFIED_ORG , e);
+           String message = this.paServiceUtils.handleNullifiedOrganization(e);
+           throw new PAException(message, e);
         }
         
         // Step 2 : get the PO Person
@@ -156,9 +157,8 @@ public class HealthCareProviderCorrelationBean {
             poPer = PoRegistry.getPersonEntityService().
                 getPerson(IiConverter.convertToPoPersonIi(personPoIdentifer));
         } catch (NullifiedEntityException e) {
-//            Map m = e.getNullifiedEntities();
-            LOG.error(PAExceptionConstants.NULLIFIED_PERSON , e);
-            throw new PAException(PAExceptionConstants.NULLIFIED_PERSON , e);
+            String message = this.paServiceUtils.handleNullifiedPerson(e);
+            throw new PAException(message, e);
          }
         
         

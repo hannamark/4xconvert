@@ -31,36 +31,25 @@ Development Environment
 Build tool - Ant 1.7.0
     1.  After install add ant-contrib-1.0b3.jar to the lib direcory.
 
-Database - Postgres 8.3
+Database - Postgres 8.4
+	With Postgres 8.4, you'll have to set max_prepared_transactions to 5 in postgresql.conf (on a Mac, that file is located in /Library/PostgreSQL/8.4/data/);
+    you'll need to restart Postgres after changing the value.
 
-App Server - JBoss 4.0.5 w/ ejb3:
-    1. Download the JBoss 4.0.5 JEMS Installer (1.2.0)
-        http://sourceforge.net/project/downloading.php?group_id=22866&filename=jems-installer-1.2.0.GA.jar&70038359
-    2. Run jems-installer-1.2.0.GA.jar as an executable Java JAR.
-    2.1 Double click the jar file, it will open an excutable window, if it doesn't popup a window execute this command in
-        the directory of the jems-installer-1.2.0.jar (java -jar jems-installer-1.2.0.GA.jar)
-    3. Specify C:/dev/app_servers/jboss-4.0.5.GA as the installation location.
-    4. Choose "ejb3" as the installation profile type, click Next.
-    5. Leave the "default packs" selected, click Next.
-    6. Choose "Standard" installation, click Next.
-    7. Add a system environment variable called JBOSS_HOME and set it to /dev/app_servers/jboss-4.0.5.GA (Windows)
-        or /Applications/jboss-4.0.5.GA (Mac).
+App Server - Install JBoss
+    Installation of JBoss is handled by build-pa.
+    Please read build-pa/readme.txt for setup instructions. 
+    From build-pa, run: ant deploy:local:install
+    Note location of jboss install. If it is not the default location used in build-pa/install.properties
+    set location as the jboss.home property in your pa/local.properties file. 
+    Add a system environment variable called JBOSS_HOME and set it to the location created if you wish to
+    stop/start the jboss instance manually in the future.
 
 IDE - Eclipse
     1. Install plugins:
-        * Subclipse - http://subclipse.tigris.org/update_1.4.x
+        * Subclipse - http://subclipse.tigris.org/update_1.6.x
         * PMD - http://pmd.sourceforge.net/eclipse
         * Checkstyle - http://eclipse-cs.sourceforge.net/update
-    2. Configure Plugins:
-        * Subclipse - in pa project pop-up menu select Team > Share project...
-        * PMD - in pa project pop-up menu select Properties
-                select PMD > Select a working set.. and configure a working set of only the src/java folders
-                Click "Use the ruleset configured in a project file" checkbox
-                Enter "resources/paPmd.xml" or browse to file
-                Click "Enable PMD" checkbox
-        * Checkstyle - none needed (.checkstyle file is in svn)
-
-    3. Disable tabs:
+    2. Disable tabs:
         Select Windows > General > Editor > Text Editor >
             Displayed tab width = 4
             check insert spaces for tab
@@ -81,21 +70,32 @@ Setting up the Eclipse IDE
     PA_LIB - Enter the path of <coppa>\code\target\pa\lib
 
 
-Build/Deployment Steps
+Manual/testing purposes build and deployment steps (unnecessary when using build-pa)
 ----------------------
 
 Setup database:
-    Download
-    1. download & install from http://wwwmaster.postgresql.org/download/mirrors-ftp?file=%2Fbinary%2Fv8.3.0%2Fwin32%2Fpostgresql-8.3.0-1.zip
-    1.  Create database (any name can be used, must match build.properties file).
-    2.  Create corresponding superuser account (any password can be used, must match build.properties file).
-    3.  Run the following scripts
+    The build-pa install will handle the creation of a db. You may create a different db for use by unit tests, selenium tests,
+    etc. The db settings in build.properties set by default can be overwritten in your local.properties. These
+    setting include: 
+    db.username
+	db.password
+	jdbc.driver
+	jdbc.url
+    
+    1.  download & install 8.4+
+    2.  Create database (any name can be used, must match build.properties file).
+    3.  Create corresponding superuser account (any password can be used, must match build.properties file).
+    4.  Run the following scripts
         - dbscripts/db-install/postgresql/csmCreateSchema.sql
         - dbscripts/db-install/postgresql/csmBootstrapData.sql
         - dbscripts/db-install/postgresql/PG_CTODS_PA.sql
         - dbscripts/db-install/postgresql/PG_CTODS_PA_INSERT.sql
 
 Build and deploy applications:
+	Note: If building w/out build-pa, reg-web, viewer, and accrual pust be build before pa. 
+	But, you cannot run "ant deploy" in pa before building reg-web, and you cannot run "any deploy" in reg-web,
+	before building pa. Therefore you must simpy run "ant" in reg-web, viewer, and accrual, and then run "ant deploy"
+	in pa.
     1.  copy build.properties using build.properties.example as a template.
     2.  Run command "ant deploy" (or deploy-notest to skip tests and dependency checking) to build and deploy applications
     3.  Copy the generated application policy from
@@ -103,11 +103,9 @@ Build and deploy applications:
         into the JBoss server's login-config.xml file.
     4.  Start JBoss
     5.  Run command "ant test-integration" to test that ejb's are running
-    6.  Point browser at http://localhost:8080/pa to test web application (userid/password = curator/pass)
-
-
-
-
+    6.  Point browser at http://localhost:39480/pa to test web application (userid/password = curator/pass)
+   
+    
 To run selenium tests:
 ----------------------
 Change the jboss port number in the build.properties
@@ -118,33 +116,19 @@ use ant clean run-selenium
     - The jboss will start
     - Selenium server will start
     - Browser window(s) open (Wait for the tests to execute)
+    
+    
+Logging into applications:
+--------------------------
+	Username/passwords use grid based authentication. Users must have a grid account to access any app.
+	For Registry, a user must create a registry account by either linking their current grid acount or
+	creating a new grid account through the registry app. 
+	For PA a grid user must be in the Abstractor group to get access.
+	Default users to try are:
+	abstractor/Coppa#12345
+	SuAbstractor/Coppa#12345
+	superabstractor/Coppa#12345
 
-
-
-Setting the CSM to enable Login:
----------------------------------
- 1) Download CSM from:
-    https://gforge.nci.nih.gov/frs/?group_id=12
-    Package: CSM_API_4_0_Source.zip
- 2) Add the following entries to your build.properties:
- test.java.security.login.config= "location of pa on local file system" + /pa/pa-web/src/test/resources/login.config
-
- In order to deploy csm-upt:
- ----------------------------
- 1) Download UPT package from:
-    https://gforge.nci.nih.gov/frs/?group_id=12
-    Package: CSM_UPT_4_0_Source.zip
-
- 2) Copy the generated application policy from
-         <project root>/pa-ear/target/login-config.upt
-    into the JBoss servers login-config.xml file.
-
- 3) The default dialect in upt.war is set to MYSQL so in order to make in work on PostgreSQL database
-    change the file: csmupt.csm.new.hibernate.cfg.xml (in upt.war)  With the following line:
-    <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
- 4) In order to execute the JUnit test for login we need to:
-    Set the build.property file with the following entry:
-    test.java.security.login.config=/location of top resource folder/login.config
 
 
 Continuous Integration

@@ -91,11 +91,11 @@ public class PAExceptionConstants {
     /**
      * NULLIFIED_PERSON.
      */
-    public static final String NULLIFIED_PERSON = "This Person is no longer available instead use ";
+    public static final String NULLIFIED_PERSON = "This Person is no longer available";
     /**
      * NULLIFIED_ORG.
      */
-    public static final String NULLIFIED_ORG = "This Organizstion is no longer available instead use ";
+    public static final String NULLIFIED_ORG = "This Organization is no longer available";
     /**
      * NULL_II_PERSON.
      */

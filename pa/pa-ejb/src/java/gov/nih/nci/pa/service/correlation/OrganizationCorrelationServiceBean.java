@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -136,6 +137,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 
     private static final Logger LOG  = Logger.getLogger(OrganizationCorrelationServiceBean.class);
     private static final String IRB_CODE = "Institutional Review Board (IRB)";
+    private final PAServiceUtils paServiceUtils = new PAServiceUtils();
 
     /**
      *
@@ -229,8 +231,10 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             poOrg = PoRegistry.getOrganizationEntityService().
                 getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
-           LOG.error("This Organization is no longer available instead use ");
-           throw new PAException("This Organization is no longer available instead use ", e);
+           String message = paServiceUtils.handleNullifiedOrganization(e);
+           LOG.error(message);
+           throw new PAException(message, e);
+           
         }
         if (poOrg == null) {
             throw new PAException("PO and PA databases out of synchronization.  Error getting "

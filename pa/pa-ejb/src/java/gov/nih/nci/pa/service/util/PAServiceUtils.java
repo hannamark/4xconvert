@@ -143,6 +143,7 @@ import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -167,6 +168,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
 /**
@@ -187,15 +189,20 @@ public class PAServiceUtils {
     /**
      * PRINCIPAL_INVESTIGATOR_NULLIFIED.
      */
-    public static final String PRINCIPAL_INVESTIGATOR_NULLIFIED = "The Principal Investigator has been nullified";
+    public static final String PRINCIPAL_INVESTIGATOR = "Principal Investigator: ";
     /**
      * SPONSOR_NULLIFIED.
      */
-    public static final String SPONSOR_NULLIFIED = "The Sponsor has been nullified";
+    public static final String SPONSOR = "Sponsor: ";
+    /**
+     * SPONSOR_NULLIFIED.
+     */
+    public static final String RESP_PARTY = "Responsible Party: ";
     /**
      * LEAD_ORGANIZATION_NULLIFIED.
      */
     public static final String LEAD_ORGANIZATION_NULLIFIED = "The Lead Organization has been nullified";
+    private static final Logger LOG  = Logger.getLogger(PAServiceUtils.class);
 
     /**
      * Executes an sql.
@@ -526,7 +533,16 @@ public class PAServiceUtils {
         if (studyProtocolIi == null) {
             throw new PAException("Protocol Identifier is Null");
         }
-        Long roId = ocsr.createResearchOrganizationCorrelations(orgPoIdentifier);
+        Long roId = null;
+        try {
+            roId = ocsr.createResearchOrganizationCorrelations(orgPoIdentifier);
+        }  catch (PAException pae) {
+            if (pae.getMessage().contains(PAExceptionConstants.NULLIFIED_ORG)) {
+                throw new PAException(SPONSOR + pae.getMessage(), pae);
+            } else {
+                throw pae;
+            }
+        }
         StudySiteDTO ssCriteriaDTO = new StudySiteDTO();
         ssCriteriaDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
         ssCriteriaDTO.setStudyProtocolIdentifier(studyProtocolIi);
@@ -545,8 +561,8 @@ public class PAServiceUtils {
         try {
             createOrUpdate(studySiteDtos, IiConverter.convertToStudySiteIi(null), studyProtocolIi);
         }  catch (PAException pae) {
-            if (PAExceptionConstants.NULLIFIED_PERSON.equals(pae.getMessage())) {
-                throw new PAException(SPONSOR_NULLIFIED , pae);
+            if (pae.getMessage().contains(PAExceptionConstants.NULLIFIED_PERSON)) {
+                throw new PAException(RESP_PARTY + pae.getMessage(), pae);
             } else {
                 throw pae;
             }
@@ -591,9 +607,9 @@ public class PAServiceUtils {
                 hcpId = hcp.createHealthCareProviderCorrelationBeans(orgPoIdentifier, personPoIdentifer);
             }
         } catch (PAException pae) {
-            if (PAExceptionConstants.NULLIFIED_PERSON.equals(pae.getMessage())) {
-                throw new PAException(PRINCIPAL_INVESTIGATOR_NULLIFIED , pae);
-            } else if (PAExceptionConstants.NULLIFIED_ORG.equals(pae.getMessage())) {
+            if (pae.getMessage().contains(PAExceptionConstants.NULLIFIED_PERSON)) {
+                throw new PAException(PRINCIPAL_INVESTIGATOR + pae.getMessage(), pae);
+            } else if (pae.getMessage().contains(PAExceptionConstants.NULLIFIED_ORG)) {
                 throw new PAException(LEAD_ORGANIZATION_NULLIFIED , pae);
             } else {
                 throw pae;
@@ -1583,6 +1599,52 @@ public class PAServiceUtils {
           }
           return EnOnConverter.convertEnOnToString(
                   orgDto.getName());
+      }
+      
+      /**
+       * Handle error message when nullified org exception happens.
+       * @param e nullified entity exception.
+       * @return string message.
+       */
+      public String handleNullifiedOrganization(NullifiedEntityException e) {
+          StringBuilder message = new StringBuilder();
+          message.append(PAExceptionConstants.NULLIFIED_ORG);
+          OrganizationDTO poOrg = null;
+          try {
+              if (e.getNullifiedEntities() != null 
+                      && !e.getNullifiedEntities().values().isEmpty()) {
+                  poOrg = PoRegistry.getOrganizationEntityService().
+                  getOrganization((e.getNullifiedEntities().values().iterator().next()));
+                  message.append(" , instead use ");
+                  message.append(EnOnConverter.convertEnOnToString(poOrg.getName()));
+              }
+          } catch (Exception anyE) {
+              LOG.info("handleNullifiedOrganization failed to find a PO org or no org was supplied.");
+          } 
+          return message.toString();
+      }
+      
+      /**
+       * Handle error message when nullified org exception happens.
+       * @param e nullified entity exception.
+       * @return string message.
+       */
+      public String handleNullifiedPerson(NullifiedEntityException e) {
+          StringBuilder message = new StringBuilder();
+          message.append(PAExceptionConstants.NULLIFIED_PERSON);
+          PersonDTO poPer = null;
+          try {
+              if (e.getNullifiedEntities() != null 
+                      && !e.getNullifiedEntities().values().isEmpty()) {
+                  poPer = PoRegistry.getPersonEntityService().
+                  getPerson((e.getNullifiedEntities().values().iterator().next()));
+                  message.append(" , instead use ");
+                  message.append(PADomainUtils.convertToPaPersonDTO(poPer).getFullName());
+              }
+          } catch (Exception anyE) {
+            LOG.info("handleNullifiedPerson failed to find a PO person or no person was supplied.");      
+          } 
+          return message.toString();
       }
 
 }

@@ -38,20 +38,44 @@
     you'll need to restart Postgres after changing the value.
 
   * Install JBoss
-    Download JEMS installer
-    Install this version of JBoss to C:\dev\app_servers\jboss-4.0.5.GA  (If you choose another location your profiles.xml file will need to be modified)
-    Copy the postgres jar in to C:\dev\app_servers\jboss-4.0.5.GA\server\default\lib
-    Edit C:\dev\app_servers\jboss-4.0.5.GA\server\default\deploy\jbossweb-tomcat55.sar\server.xml to set emptySessionPath="false" in the
-        both occurrences of that setting (the connector on port 8080 and the connector on port 8009)
-
-Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.jboss.org/jemsinstaller/downloads/)
-
+    Installation of JBoss is handled by build-po.
+    Please read build-po/readme.txt for setup instructions. 
+    From build-po, run: ant deploy:local:install
+    Note location of jboss install. If the jboss location in build-po has been changed from the default,
+    set the jboss.home property in profiles.xml files to match. 
+    
   * Eclipse
 
     Install Eclipse maven plugin: http://m2eclipse.sonatype.org/update/
-    Need to add other plugins here as well
-
+    Install plugins:
+        * Subclipse - http://subclipse.tigris.org/update_1.6.x
+        * PMD - http://pmd.sourceforge.net/eclipse
+        * Checkstyle - http://eclipse-cs.sourceforge.net/update
   * Initial DB setup
+    
+    The build-po install will handle the creation of a db. You may create a different db for use by unit tests, selenium tests,
+    etc. The db settings set by default can be overwritten in your profiles.xml. For example you may set up a db profile such as:
+    <profile>
+        <!--
+            Use to run integration-tests against a poear server instance running from build-po build process
+            (easily populates instance with data for testing of grid service instances)
+        -->
+        <id>buildpo</id>
+        <activation>
+            <activeByDefault>false</activeByDefault>
+        </activation>
+        <properties>
+            <database.name>podb</database.name>
+            <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
+            <jdbc.username>pouser</jdbc.username>
+            <jdbc.password>pouser</jdbc.password>
+            <jboss.configuration>poear</jboss.configuration>
+            <jboss.port>39080</jboss.port>
+            <jboss.naming.port>31099</jboss.naming.port>
+            <maven.surefire.debug>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8787 -Xnoagent -Djava.compiler=NONE</maven.surefire.debug>
+        </properties>
+    </profile>
+    
 
     From the services/ directory, run:
         mvn -Plocal,init-db sql:execute
@@ -105,8 +129,13 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
     mvn -Pci-nostart-nodeploy integration-test -Dtest=gov.nih.nci.coppa.test.integration.test.AllSeleniumTests
 
 1.6 Peer Review
-    We are using ReviewBoard for peer reviews.  Follow the directions on the wiki for setup and use instructions.
-    The ReviewBoard group for all po developers is (no quotes) 'po-all'.
+    We are using Fisheye/Crucible for peer reviews.  Follow the directions on the wiki for setup and use instructions.
+    http://fisheye.5amsolutions.com
 
 1.7 Pre-commit check
     Verify everything is working properly by running 'mvn -Plocal,nuke-db sql:execute && mvn -Plocal clean install sql:execute && mvn -Pci,local integration-test'
+
+1.8 Logging into applications:
+	Username/passwords use grid based authentication. Users must have a grid account to access any app.
+	For testing default account it: curator/Coppa#12345
+    
