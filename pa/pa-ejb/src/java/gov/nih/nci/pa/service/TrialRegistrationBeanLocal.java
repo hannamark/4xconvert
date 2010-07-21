@@ -518,6 +518,10 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                 studyProtocolDTO.getDataMonitoringCommitteeAppointedIndicator());
         dbStudyProtocolDTO.setProgramCodeText(studyProtocolDTO.getProgramCodeText());
         dbStudyProtocolDTO.setSecondaryIdentifiers(studyProtocolDTO.getSecondaryIdentifiers());
+        // Even though we are setting UserLastCreated value which came from DB, the value will not be updated in DB.
+        // UserLastCreated is used as a place holder to determine the currently logged in user and/or the person submitting the update.
+        // Also, to determine the owner of the trial. Remove this line when the ejbContext.callerPrincipal will give the userLogged in value.
+        dbStudyProtocolDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
         updateStudyProtocolObjs(
                 dbStudyProtocolDTO ,
                 overallStatusDTO ,
