@@ -106,7 +106,6 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -235,7 +234,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                 // its nullified
                 paOrg.setStatusCode(EntityStatusCode.NULLIFIED);
 
-                final Ii dupId = getDuplicateOrganization(ii);
+                final Ii dupId = paServiceUtil.getDuplicateOrganizationIi(ii);
                 if (dupId != null) {
                     paServiceUtil.getOrCreatePAOrganizationByIi(dupId);
                     try {
@@ -421,22 +420,6 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
         LOG.debug("total records got update in STUDY_SITE IS " + i);
     }
 
-    private Ii getDuplicateOrganization(Ii poOrgId) throws PAException {
-        try {
-            PoRegistry.getOrganizationEntityService().getOrganization(poOrgId);
-            // we get here if the org is NOT nullified
-            return null;
-        } catch (NullifiedEntityException e) {
-            // we get in here if the org WAS nullified.
-            Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
-            for (Map.Entry<Ii, Ii> entry : nullifiedEntities.entrySet()) {
-                if (entry.getKey().getExtension().equals(poOrgId.getExtension())) {
-                    return entry.getValue();
-                }
-            }
-            return null;
-        }
-    }
 
     /**
      * @param spsLocal the spsLocal to set

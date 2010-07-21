@@ -86,6 +86,7 @@ import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
@@ -171,6 +172,10 @@ import org.apache.commons.lang.StringUtils;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceRemote {
 
+    /**
+     *
+     */
+    private static CorrelationUtils correlationUtils = new CorrelationUtils();
     @EJB
     private StudyProtocolServiceLocal studyProtocolService;
     @EJB
@@ -294,6 +299,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             enforceArmInterventional(studyProtocolIi, abstractionList);
             enforceEligibility(studyProtocolIi, abstractionList);
             enforceCollaborator(studyProtocolIi, abstractionList);
+            enforceSummary4OrgNullfication(studyProtocolIi, abstractionWarnList);
         }
         abstractionList.addAll(abstractionWarnList);
         return abstractionList;
@@ -312,6 +318,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         enforceStudySiteContactNullification(studyProtocolIi, abstractionWarnList, abstractionList);
         enforceTrialFunding(studyProtocolIi, abstractionList);
         enforceDisease(studyProtocolDTO, abstractionList);
+        enforceSummary4OrgNullfication(studyProtocolIi, abstractionWarnList);
         // check duplicate for IND
         /*
          * List<StudyIndldeDTO> siList = studyIndldeService.getByStudyProtocol(studyProtocolIi); if
@@ -967,7 +974,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
      * @throws PAException
      */
     private Organization getPoOrg(StudySiteDTO spartDto) throws PAException {
-        return new CorrelationUtils().getPAOrganizationByIi(spartDto.getHealthcareFacilityIi());
+        return correlationUtils.getPAOrganizationByIi(spartDto.getHealthcareFacilityIi());
     }
 
     private List<String> getPIForTreatingSite(List<StudySiteContactDTO> spContactDtos) {
@@ -1442,4 +1449,27 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     public void setInterventionSvc(InterventionServiceLocal interventionSvc) {
         this.interventionSvc = interventionSvc;
     }
+    /**
+     * @param studyProtocolIi
+     * @param abstractionWarnList
+     * @throws PAException on err
+     */
+    private void enforceSummary4OrgNullfication(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList)
+        throws PAException  {
+        StudyResourcingDTO studyResourcingDTO = studyResourcingService.getsummary4ReportedResource(
+                studyProtocolIi);
+        if (studyResourcingDTO != null && PAUtil.isIiNotNull(studyResourcingDTO.getOrganizationIdentifier())) {
+            Long paOrgId = IiConverter.convertToLong(studyResourcingDTO.getOrganizationIdentifier());
+            Organization org = correlationUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(
+                    paOrgId));
+            if (org != null && EntityStatusCode.NULLIFIED.getCode().equals(org.getStatusCode().getCode())) {
+                abstractionWarnList.add(createError("Warning",
+                        "Select NCI Specific Information from Administrative Data menu.",
+                        " Summary 4 Funding Sponsor  status has been set to nullified, "
+                                + "Please select another Summary 4 Funding Sponsor"));
+            }
+        }
+    }
+
+
 }

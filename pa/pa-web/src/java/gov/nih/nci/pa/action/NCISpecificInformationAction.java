@@ -84,6 +84,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -94,6 +95,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -142,20 +144,55 @@ public class NCISpecificInformationAction extends ActionSupport {
                     studyProtocolIi);
             nciSpecificInformationWebDTO = setNCISpecificDTO(studyProtocolDTO, studyResourcingDTO);
             if (studyResourcingDTO != null && studyResourcingDTO.getOrganizationIdentifier() != null) {
-                // get the name of the organization using primary id
-                Organization o = new Organization();
-                o.setId(Long.valueOf(studyResourcingDTO.getOrganizationIdentifier().getExtension()));
-                Organization org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(o);
-                // set the name
-                nciSpecificInformationWebDTO.setOrganizationName(org.getName());
-                // set the organization identifer
-                nciSpecificInformationWebDTO.setOrganizationIi(org.getIdentifier());
+                    Organization org = getPAOrganizationById(studyResourcingDTO.getOrganizationIdentifier());
+                    // set the name
+                    nciSpecificInformationWebDTO.setOrganizationName(org.getName());
+                    // set the organization identifer
+                    nciSpecificInformationWebDTO.setOrganizationIi(org.getIdentifier());
             }
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
         }
+    }
+
+    /**
+     * @param paOrgId
+     * @throws PAException
+     */
+    private Organization getPAOrganizationById(Ii paOrgId) throws PAException {
+        // get the name of the organization using primary id
+        Organization o = new Organization();
+        o.setId(Long.valueOf(paOrgId.getExtension()));
+        Organization org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(o);
+        //if the entity status if nullified check if there is dup of it
+        if (EntityStatusCode.NULLIFIED.equals(org.getStatusCode())) {
+            Organization dupOrg = getOrCreateDuplicateOrgInPA(org.getIdentifier());
+            if (dupOrg != null) {
+                org = dupOrg;
+                Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                        Constants.STUDY_PROTOCOL_II);
+                updateSummary4DTO(studyProtocolIi, dupOrg.getId());
+            }
+        }
+        return org;
+    }
+
+    /**
+     * @param org
+     * @return
+     * @throws PAException
+     */
+    private Organization getOrCreateDuplicateOrgInPA(String poId)
+            throws PAException {
+        PAServiceUtils paServiceUtil = new PAServiceUtils();
+        Organization dupOrg = null;
+        Ii dupId = paServiceUtil.getDuplicateOrganizationIi(IiConverter.convertToPoOrganizationIi(poId));
+        if (PAUtil.isIiNotNull(dupId)) {
+            dupOrg = paServiceUtil.getOrCreatePAOrganizationByIi(dupId);
+        }
+        return dupOrg;
     }
 
     /**
@@ -215,26 +252,7 @@ public class NCISpecificInformationAction extends ActionSupport {
                     orgId = org.getId();
                 }
             }
-            // Step4 : find out if summary 4 records already exists
-            StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService().getsummary4ReportedResource(
-                    studyProtocolIi);
-            if (summary4ResoureDTO == null) {
-                // summary 4 record does not exist,so create a new one
-                summary4ResoureDTO = new StudyResourcingDTO();
-                summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
-                summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
-                summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
-                        .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
-                summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(orgId));
-                PaRegistry.getStudyResourcingService().createStudyResourcing(summary4ResoureDTO);
-            } else {
-                // summary 4 record does exist,so so do an update
-                summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
-                summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
-                        .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
-                summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(orgId));
-                PaRegistry.getStudyResourcingService().updateStudyResourcing(summary4ResoureDTO);
-            }
+            updateSummary4DTO(studyProtocolIi, orgId);
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Update succeeded.");
         } catch (Exception e) {
             addActionError(e.getMessage());
@@ -244,6 +262,35 @@ public class NCISpecificInformationAction extends ActionSupport {
         // nciSpecificInformationWebDTO = setNCISpecificDTO(spDTO , srDTO);
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         return SUCCESS;
+    }
+
+    /**
+     * @param studyProtocolIi ii
+     * @param orgId paOrgId
+     * @throws PAException on error
+     */
+    private void updateSummary4DTO(Ii studyProtocolIi, Long orgId)
+            throws PAException {
+        // Step4 : find out if summary 4 records already exists
+        StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService().getsummary4ReportedResource(
+                studyProtocolIi);
+        if (summary4ResoureDTO == null) {
+            // summary 4 record does not exist,so create a new one
+            summary4ResoureDTO = new StudyResourcingDTO();
+            summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
+            summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
+                    .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
+            summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(orgId));
+            PaRegistry.getStudyResourcingService().createStudyResourcing(summary4ResoureDTO);
+        } else {
+            // summary 4 record does exist,so so do an update
+            summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
+                    .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
+            summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(orgId));
+            PaRegistry.getStudyResourcingService().updateStudyResourcing(summary4ResoureDTO);
+        }
     }
 
     /**

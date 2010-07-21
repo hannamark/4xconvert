@@ -1600,7 +1600,7 @@ public class PAServiceUtils {
           return EnOnConverter.convertEnOnToString(
                   orgDto.getName());
       }
-      
+
       /**
        * Handle error message when nullified org exception happens.
        * @param e nullified entity exception.
@@ -1611,7 +1611,7 @@ public class PAServiceUtils {
           message.append(PAExceptionConstants.NULLIFIED_ORG);
           OrganizationDTO poOrg = null;
           try {
-              if (e.getNullifiedEntities() != null 
+              if (e.getNullifiedEntities() != null
                       && !e.getNullifiedEntities().values().isEmpty()) {
                   poOrg = PoRegistry.getOrganizationEntityService().
                   getOrganization((e.getNullifiedEntities().values().iterator().next()));
@@ -1620,10 +1620,10 @@ public class PAServiceUtils {
               }
           } catch (Exception anyE) {
               LOG.info("handleNullifiedOrganization failed to find a PO org or no org was supplied.");
-          } 
+          }
           return message.toString();
       }
-      
+
       /**
        * Handle error message when nullified org exception happens.
        * @param e nullified entity exception.
@@ -1634,7 +1634,7 @@ public class PAServiceUtils {
           message.append(PAExceptionConstants.NULLIFIED_PERSON);
           PersonDTO poPer = null;
           try {
-              if (e.getNullifiedEntities() != null 
+              if (e.getNullifiedEntities() != null
                       && !e.getNullifiedEntities().values().isEmpty()) {
                   poPer = PoRegistry.getPersonEntityService().
                   getPerson((e.getNullifiedEntities().values().iterator().next()));
@@ -1642,9 +1642,31 @@ public class PAServiceUtils {
                   message.append(PADomainUtils.convertToPaPersonDTO(poPer).getFullName());
               }
           } catch (Exception anyE) {
-            LOG.info("handleNullifiedPerson failed to find a PO person or no person was supplied.");      
-          } 
+            LOG.info("handleNullifiedPerson failed to find a PO person or no person was supplied.");
+          }
           return message.toString();
       }
+      /**
+       *
+       * @param poOrgId orgId
+       * @return ii
+       * @throws PAException on error
+       */
+      public Ii getDuplicateOrganizationIi(Ii poOrgId) throws PAException {
+          try {
+              PoRegistry.getOrganizationEntityService().getOrganization(poOrgId);
+              // we get here if the org is NOT nullified
+          } catch (NullifiedEntityException e) {
+              // we get in here if the org WAS nullified.
+              Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+              for (Map.Entry<Ii, Ii> entry : nullifiedEntities.entrySet()) {
+                  if (entry.getKey().getExtension().equals(poOrgId.getExtension())) {
+                      return entry.getValue();
+                  }
+              }
+          }
+          return null;
+      }
+
 
 }
