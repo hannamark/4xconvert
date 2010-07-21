@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC   
+<!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,16 +12,16 @@
 
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
-// this function is called from body onload in main.jsp (decorator) 
+// this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
-    // leave this function to prevent 'error on page' 
+    // leave this function to prevent 'error on page'
 }
 
 function handleEdit(studyResourcingId){
     document.collaboratorsForm.cbValue.value = studyResourcingId;
     document.collaboratorsForm.action="collaboratorsedit.action";
-    document.collaboratorsForm.submit(); 
+    document.collaboratorsForm.submit();
 }
 function handleDelete(studyResourcingId){
     input_box=confirm("Click OK to delete the the organization as a collaborator in the study.  Cancel to abort.");
@@ -33,7 +33,7 @@ function handleDelete(studyResourcingId){
 }
 function handleCreate(){
     document.collaboratorsForm.action="collaboratorscreate.action";
-    document.collaboratorsForm.submit(); 
+    document.collaboratorsForm.submit();
 }
 </SCRIPT>
 
@@ -50,21 +50,21 @@ function handleCreate(){
 	<table class="form">
 		<%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
 		<tr>
-			<td colspan="2"><s:hidden name="cbValue" /> 
+			<td colspan="2"><s:hidden name="cbValue" />
 			<s:set name="organizationList" value="organizationList" scope="request"/>
 			<display:table
 				name="organizationList" id="row" class="data" pagesize="200">
-				<display:column property="nciNumber"
+				<display:column escapeXml="true" property="nciNumber"
                     titleKey="participatingOrganizations.nciNumber" class="sortable" />
-				<display:column property="name"
+				<display:column escapeXml="true" property="name"
 					titleKey="participatingOrganizations.name" class="sortable" />
-				<display:column property="status"
-                    titleKey="participatingOrganizations.status" class="sortable" />	
-			    <display:column property="functionalRole"
+				<display:column escapeXml="true" property="status"
+                    titleKey="participatingOrganizations.status" class="sortable" />
+			    <display:column escapeXml="true" property="functionalRole"
 					titleKey="participatingOrganizations.functionalRole"
 					class="sortable" />
 				<c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-										|| (sessionScope.role == 'SuAbstractor')}">	
+										|| (sessionScope.role == 'SuAbstractor')}">
 				<display:column titleKey="participatingOrganizations.edit"
 					headerClass="centered" class="action">
 					<s:a href="#" onclick="handleEdit(%{#attr.row.id})">
@@ -90,8 +90,8 @@ function handleCreate(){
 							|| (sessionScope.role == 'SuAbstractor')}">
 		<li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
 			class="btn_img"><span class="add">Add </span></span></a></li>
-	</c:if>			
-	<!-- 
+	</c:if>
+	<!--
 		<li><a href="participatingOrganizations.action" class="btn"
 			onclick="this.blur();"><span class="btn_img"><span
 			class="back">Back</span></span></a></li>

@@ -15,11 +15,11 @@
 
     // this function is called from body onload in main.jsp (decorator)
     function callOnloadFunctions(){
-        setFocusToFirstControl();        
+        setFocusToFirstControl();
     }
     function armAdd(){
         document.armForm.action="trialArmsadd.action";
-        document.armForm.submit();     
+        document.armForm.submit();
     }
     function armUpdate(){
         input_box=confirm("Click OK to save changes.  Cancel to Abort.");
@@ -58,7 +58,7 @@
 </h2>
 
 <table class="form">
-    <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>   
+    <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr>
         <s:form name="armForm">
         <s:hidden name="checkBoxEntry"/>
@@ -69,7 +69,7 @@
                 <tr>
                     <td class="label"><s:label for="armName">Label:</s:label><span class="required">*</span></td>
                     <td class="value">
-                        <s:textfield name="armName" maxlength="62" size="62" cssStyle="width:280px;float:left"/> 
+                        <s:textfield name="armName" maxlength="62" size="62" cssStyle="width:280px;float:left"/>
                     </td>
                 </tr>
                 <s:if test="%{(currentAction == 'editArm')||(currentAction == 'editNewArm')}">
@@ -79,10 +79,10 @@
                         <td class="value">
                         <s:select onchange="statusChange()" headerKey=""
                             headerValue="--Select--" name="armType" list="#armTypeValues" />
-                            <span class="formErrorMsg"> 
+                            <span class="formErrorMsg">
                                 <s:fielderror>
                                 <s:param>armType</s:param>
-                               </s:fielderror>                            
+                               </s:fielderror>
                          </span>
                         </td>
                     </tr>
@@ -91,10 +91,10 @@
                     <td class="label"><s:label for="armDescription">Arm Description:</s:label></td>
                     <td class="value">
                         <s:textarea name="armDescription" rows="3" cssStyle="width:280px;float:left"/>
-                        <span class="formErrorMsg"> 
+                        <span class="formErrorMsg">
                                 <s:fielderror>
                                 <s:param>armDescription</s:param>
-                               </s:fielderror>                            
+                               </s:fielderror>
                          </span>
                     </td>
                 </tr>
@@ -105,12 +105,11 @@
             <display:table name="intList" id="row" class="data">
                 <display:column titleKey="arms.intervention.assignment" headerClass="centered" style="text-align: center">
                     <s:a href="#" onclick="interventionCheckboxClick(%{#attr.row.identifier})">
-                        <s:checkbox onclick="radio(this)" name="userid" fieldValue="%{#attr.row.armAssignment}" 
-                                value="%{#attr.row.armAssignment}"/>
+                        <s:checkbox onclick="radio(this)" name="userid" fieldValue="%{#attr.row.armAssignment}" value="%{#attr.row.armAssignment}"/>
                     </s:a>
                 </display:column>
-                <display:column property="name" titleKey="interventions.name"/>
-                <display:column property="description" titleKey="interventions.description"/>
+                <display:column escapeXml="true" property="name" titleKey="interventions.name"/>
+                <display:column escapeXml="true" property="description" titleKey="interventions.description"/>
             </display:table>
         </td>
         </s:form>
@@ -124,7 +123,7 @@
                 <s:a href="#" cssClass="btn" onclick="armUpdate();">
                     <span class="btn_img"> <span class="save">Save</span></span>
                 </s:a>
-            </s:if> 
+            </s:if>
             <s:elseif test="%{(currentAction == 'editNewArm')||(currentAction == 'editNewGroup')}">
                 <s:a href="#" cssClass="btn" onclick="armAdd();">
                     <span class="btn_img"> <span class="save">Save</span></span>

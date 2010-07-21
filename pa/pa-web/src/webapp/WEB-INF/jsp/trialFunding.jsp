@@ -1,8 +1,8 @@
-<!DOCTYPE html PUBLIC 
+<!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
+
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<title><fmt:message key="trialFunding.title"/></title>
@@ -10,23 +10,23 @@
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 
-// this function is called from body onload in main.jsp (decorator) 
+// this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
-    // leave this function to prevent 'error on page' 
+    // leave this function to prevent 'error on page'
 }
 
-function handleAction(studyResourcingId){   
+function handleAction(studyResourcingId){
 	document.forms[0].cbValue.value = studyResourcingId;
     document.forms[0].page.value = "Edit";
     document.forms[0].action="trialFundingedit.action";
-    document.forms[0].submit();  
+    document.forms[0].submit();
 }
 function handleDelete(studyResourcingId){
 	document.forms[0].cbValue.value = studyResourcingId;
  	document.forms[0].page.value = "Delete";
  	document.forms[0].action="trialFundingdelete.action";
-    document.forms[0].submit(); 
+    document.forms[0].submit();
 }
 
 </SCRIPT>
@@ -40,7 +40,7 @@ function handleDelete(studyResourcingId){
 </c:if>
  <h1><fmt:message key="trialFunding.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
-  <div class="box">  
+  <div class="box">
   <pa:sucessMessage/>
     <s:form><s:actionerror/>
     <h2><fmt:message key="trialFunding.subtitle" /></h2>
@@ -48,11 +48,11 @@ function handleDelete(studyResourcingId){
     <s:hidden name="page" />
     <s:hidden name="cbValue" />
 	<s:set name="trialFundingList" value="trialFundingList" scope="request"/>
-	<display:table name="trialFundingList" id="row" class="data" sort="list"  pagesize="200" requestURI="trialFundingquery.action" export="false">    
-	    <display:column titleKey="trialFunding.funding.mechanism" property="fundingMechanismCode" sortable="true" headerClass="sortable" />
-	    <display:column titleKey="trialFunding.institution.code" property="nihInstitutionCode" sortable="true" headerClass="sortable" />
-	    <display:column titleKey="trialFunding.serial.number" property="serialNumber"  sortable="true" headerClass="sortable" />
-	    <display:column titleKey="studyProtocol.monitorCode" property="nciDivisionProgramCode" sortable="true" headerClass="sortable" />
+	<display:table name="trialFundingList" id="row" class="data" sort="list"  pagesize="200" requestURI="trialFundingquery.action" export="false">
+	    <display:column escapeXml="true" titleKey="trialFunding.funding.mechanism" property="fundingMechanismCode" sortable="true" headerClass="sortable" />
+	    <display:column escapeXml="true" titleKey="trialFunding.institution.code" property="nihInstitutionCode" sortable="true" headerClass="sortable" />
+	    <display:column escapeXml="true" titleKey="trialFunding.serial.number" property="serialNumber"  sortable="true" headerClass="sortable" />
+	    <display:column escapeXml="true" titleKey="studyProtocol.monitorCode" property="nciDivisionProgramCode" sortable="true" headerClass="sortable" />
 	    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
 	    					|| (sessionScope.role == 'SuAbstractor')}">
 	    <display:column title="Edit" class="action">
@@ -63,7 +63,7 @@ function handleDelete(studyResourcingId){
     	</display:column>
     	</c:if>
 	</display:table>
-  </s:if> 
+  </s:if>
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
@@ -71,22 +71,9 @@ function handleDelete(studyResourcingId){
 										|| (sessionScope.role == 'SuAbstractor')}">
 					<li><s:a href="trialFunding.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
 					</c:if>
-					<!-- 
-					<c:choose>
-                    <c:when test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
-						<li><a href="studyOverallStatus.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-						<li><a href="trialIndidequery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-					</c:when>
-					<c:otherwise>
-						<li><a href="studyOverallStatus.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-						<li><a href="participatingOrganizations.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-					</c:otherwise>
-					</c:choose>
-					 -->
-				</ul>	
+				</ul>
 			</del>
 		</div>
-		           
   	</s:form>
    </div>
  </body>

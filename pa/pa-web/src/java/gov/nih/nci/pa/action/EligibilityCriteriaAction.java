@@ -121,7 +121,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
@@ -604,8 +603,8 @@ private void populateList() throws PAException {
      } else if (StringUtils.isNotEmpty(webDTO.getValueText())) {
          generatedName.append(SP).append(webDTO.getValueText());
      }
-     webDTO.setTextDescription(StringEscapeUtils.unescapeHtml(generatedName.toString()));
-     webDTO.setOperator(StringEscapeUtils.unescapeHtml(webDTO.getOperator()));
+     webDTO.setTextDescription(generatedName.toString());
+     webDTO.setOperator(webDTO.getOperator());
      return ELIGIBILITYADD;
   }
 
@@ -770,10 +769,10 @@ private void populateList() throws PAException {
         webdto.setId(dto.getIdentifier().getExtension());
       }
       if (dto.getOperator() != null) {
-        webdto.setOperator(StringEscapeUtils.unescapeHtml(dto.getOperator().getValue()));
+        webdto.setOperator(dto.getOperator().getValue());
       }
       if (dto.getTextDescription() != null) {
-        webdto.setTextDescription(StringEscapeUtils.unescapeHtml(dto.getTextDescription().getValue()));
+        webdto.setTextDescription(dto.getTextDescription().getValue());
       }
       if (dto.getValue().getLow().getValue() != null) {
         webdto.setValueIntegerMin(dto.getValue().getLow().getValue().toString());

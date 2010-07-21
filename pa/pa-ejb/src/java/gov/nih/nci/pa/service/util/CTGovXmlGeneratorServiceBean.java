@@ -201,7 +201,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -1197,17 +1196,40 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     }
 
     private static void createCdataBlock(final String elementName ,  final St data , int maxLen ,
-            Document doc , Element root)
-    throws PAException {
-    if (data == null || StringUtils.isEmpty(data.getValue())) {
-        return;
+            Document doc , Element root) throws PAException {
+        Element element = createElement(elementName, StringUtils.left(data.getValue(), maxLen), doc);
+        if (element != null) {
+            root.appendChild(element);
+        }
     }
-    Element elementTxt = doc.createElement(TEXT_BLOCK);
-    Element elementTag = doc.createElement(elementName);
-    Text text = doc.createCDATASection(StringEscapeUtils.unescapeHtml(StringUtils.left(data.getValue(), maxLen)));
-    elementTxt.appendChild(text);
-    elementTag.appendChild(elementTxt);
-    root.appendChild(elementTag);
+
+    private static Element createElement(String elementName , String data , Document doc) {
+        if (StringUtils.isEmpty(elementName) || StringUtils.isEmpty(data)) {
+            return null;
+        }
+
+        Element element = null;
+        if (containsXmlChars(data)) {
+            Element elementTxt = doc.createElement(TEXT_BLOCK);
+            element = doc.createElement(elementName);
+            Text text = doc.createCDATASection(data);
+            elementTxt.appendChild(text);
+            element.appendChild(elementTxt);
+        } else {
+            element = doc.createElement(elementName);
+            Text text = doc.createTextNode(data);
+            element.appendChild(text);
+        }
+
+        return element;
+    }
+
+    private static boolean containsXmlChars(String data) {
+        boolean retVal = false;
+        if (StringUtils.isNotEmpty(data)) {
+            retVal = data.contains("<") || data.contains(">") || data.contains("&");
+        }
+        return retVal;
     }
 
     private static void createTextBlock(final String elementName ,  final St data , int maxLen ,
@@ -1225,16 +1247,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             throw new PAException("Element name is null");
         }
         return doc.createElement(elementName);
-    }
-
-    private static Element createElement(String elementName , String data , Document doc) {
-        if (data == null || elementName == null) {
-            return null;
-        }
-        Element element = doc.createElement(elementName);
-        Text text = doc.createTextNode(data);
-        element.appendChild(text);
-        return element;
     }
 
     private static Element createElement(String elementName , String st , int maxLength , Document doc) {

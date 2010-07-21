@@ -87,9 +87,9 @@ function assignOwner(userId) {
             <s:hidden name="currentAction"/>
             <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" pagesize="10" id="row"
                  name="users" requestURI="assignOwnershipsearch.action" export="false">
-                <display:column titleKey="pending.userFirstName" property="regUser.firstName" sortable="true" headerClass="sortable"/>
-                <display:column titleKey="pending.userLastName" property="regUser.lastName" sortable="true" headerClass="sortable"/>
-                <display:column titleKey="pending.emailAddress" property="regUser.emailAddress" sortable="true" headerClass="sortable"/>
+                <display:column escapeXml="true" titleKey="pending.userFirstName" property="regUser.firstName" sortable="true" headerClass="sortable"/>
+                <display:column escapeXml="true" titleKey="pending.userLastName" property="regUser.lastName" sortable="true" headerClass="sortable"/>
+                <display:column escapeXml="true" titleKey="pending.emailAddress" property="regUser.emailAddress" sortable="true" headerClass="sortable"/>
                 <display:column class="title" titleKey="studyProtocol.action">
                     <c:choose>
                         <c:when test="${row.owner == true}">Trial Owner</c:when>

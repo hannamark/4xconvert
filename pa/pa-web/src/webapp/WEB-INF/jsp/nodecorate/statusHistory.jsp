@@ -22,9 +22,9 @@
         <s:set name="overallStatusList" value="overallStatusList" scope="request"/>
         <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" uid="row" 
                 name="overallStatusList" export="false">
-            <display:column property="statusCode" titleKey="studyOverallStatus.statusCode" sortable="false"/>
-            <display:column property="statusDate" titleKey="studyOverallStatus.statusDate" sortable="false"/>
-            <display:column property="reason" titleKey = "studyOverallStatus.reason" sortable="false"/>
+            <display:column escapeXml="true" property="statusCode" titleKey="studyOverallStatus.statusCode" sortable="false"/>
+            <display:column escapeXml="true" property="statusDate" titleKey="studyOverallStatus.statusDate" sortable="false"/>
+            <display:column escapeXml="true" property="reason" titleKey = "studyOverallStatus.reason" sortable="false"/>
         </display:table>
         </td></tr>
       </table>

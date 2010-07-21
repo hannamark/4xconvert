@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC   
+<!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -14,20 +14,20 @@
 <script type="text/javascript">
             var siteRecruitmentStatusDate = new CalendarPopup();
 </script>
-     
+
 </head>
 <SCRIPT LANGUAGE="JavaScript">
-// this function is called from body onload in main.jsp (decorator) 
+// this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
-    // leave this function to prevent 'error on page' 
+    // leave this function to prevent 'error on page'
 }
 
 function handleEdit(studyResourcingId){
-	
+
     document.partOrgs.cbValue.value = studyResourcingId;
     document.partOrgs.action="participatingOrganizationsedit.action";
-    document.partOrgs.submit(); 
+    document.partOrgs.submit();
 }
 function handleDelete(studyResourcingId){
     input_box=confirm("Click OK to delete the organization as a participant in the study.  Cancel to abort.");
@@ -35,7 +35,7 @@ function handleDelete(studyResourcingId){
         document.partOrgs.cbValue.value = studyResourcingId;
         document.partOrgs.action="participatingOrganizationsdelete.action";
         document.partOrgs.submit();
-    } 
+    }
 }
 </SCRIPT>
 
@@ -56,21 +56,21 @@ function handleDelete(studyResourcingId){
     <tr><td colspan="2">
     <s:hidden name="cbValue" />
     <s:set name="organizationList" value="organizationList" scope="request"/>
-    <display:table name="organizationList" id="row" class="data" pagesize="200">  
-        <display:column property="nciNumber" titleKey="participatingOrganizations.nciNumber" class="sortable" />
-        <display:column property="name" titleKey="participatingOrganizations.name" class="sortable" />
-        <display:column property="status" titleKey="participatingOrganizations.status" class="sortable" />
-        <display:column property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" class="sortable" />
-        <display:column property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" class="sortable" />
-        <display:column property="investigator" titleKey="participatingOrganizations.investigators"/>
-        <display:column property="primarycontact" titleKey="participatingOrganizations.primarycontacts"/>
+    <display:table name="organizationList" id="row" class="data" pagesize="200">
+        <display:column escapeXml="true" property="nciNumber" titleKey="participatingOrganizations.nciNumber" class="sortable" />
+        <display:column escapeXml="true" property="name" titleKey="participatingOrganizations.name" class="sortable" />
+        <display:column escapeXml="true" property="status" titleKey="participatingOrganizations.status" class="sortable" />
+        <display:column escapeXml="true" property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" class="sortable" />
+        <display:column escapeXml="true" property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" class="sortable" />
+        <display:column escapeXml="true" property="investigator" titleKey="participatingOrganizations.investigators"/>
+        <display:column escapeXml="true" property="primarycontact" titleKey="participatingOrganizations.primarycontacts"/>
         <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
         					|| (sessionScope.role == 'SuAbstractor')}">
         <display:column titleKey="participatingOrganizations.edit" headerClass="centered" class="action">
-        <s:a href="#" onclick="handleEdit(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
+            <s:a href="#" onclick="handleEdit(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
         </display:column>
         <display:column titleKey="participatingOrganizations.unlink" headerClass="centered" class="action" >
-        <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Un-link" width="16" height="16"/></s:a>
+            <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Un-link" width="16" height="16"/></s:a>
         </display:column>
         </c:if>
     </display:table>
@@ -81,16 +81,10 @@ function handleDelete(studyResourcingId){
         <ul class="btnrow">
             <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
             					|| (sessionScope.role == 'SuAbstractor')}">
-            <li><a href="participatingOrganizationscreate.action"                
+            <li><a href="participatingOrganizationscreate.action"
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Add </span></span></a></li>
             </c:if>
-            <!--         
-            <li><a href="trialFundingquery.action"                
-                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-            <li><a href="collaborators.action" 
-                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-            -->
-        </ul>   
+        </ul>
     </del>
 </div>
 </s:form>

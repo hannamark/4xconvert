@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC   
+<!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,20 +10,20 @@
 
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
-// this function is called from body onload in main.jsp (decorator) 
+// this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
-    // leave this function to prevent 'error on page' 
+    // leave this function to prevent 'error on page'
 }
 function handleEditArm(rowId){
     document.armForm.selectedArmIdentifier.value = rowId;
     document.armForm.action="trialArmsedit.action";
-    document.armForm.submit(); 
+    document.armForm.submit();
 }
 function handleEditGroup(rowId){
     document.armForm.selectedArmIdentifier.value = rowId;
     document.armForm.action="trialArmseditGroup.action";
-    document.armForm.submit(); 
+    document.armForm.submit();
 }
 function handleDelete(rowId){
     input_box=confirm("Click OK to remove the arm from the study.  Cancel to abort.");
@@ -35,11 +35,11 @@ function handleDelete(rowId){
 }
 function handleCreateArm(){
     document.armForm.action="trialArmscreate.action";
-    document.armForm.submit(); 
+    document.armForm.submit();
 }
 function handleCreateGroup(){
     document.armForm.action="trialArmscreateGroup.action";
-    document.armForm.submit(); 
+    document.armForm.submit();
 }
 </SCRIPT>
 
@@ -51,7 +51,7 @@ function handleCreateGroup(){
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
 </s:if> <s:form name="armForm"><s:hidden name="selectedArmIdentifier"/>
-                               <s:hidden name="currentAction"/> 
+                               <s:hidden name="currentAction"/>
     <h2>
     <s:if test="%{currentAction == 'listArm'}">
         <fmt:message key="arms.details.title" /></s:if>
@@ -61,18 +61,13 @@ function handleCreateGroup(){
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
-            <td colspan="2"><s:hidden name="cbValue" /> 
+            <td colspan="2"><s:hidden name="cbValue" />
             <s:set name="armList" value="armList" scope="request"/>
             <display:table name="armList" id="row" class="data" sort="list" pagesize="200" requestURI="trialArms.action">
-                <display:column property="name" sortable="true"
-                    titleKey="arms.name" 
-                    headerClass="sortable"  />
-                <s:if test="%{currentAction == 'listArm'}"><display:column property="type" sortable="true"
-                    titleKey="arms.type" headerClass="sortable"/></s:if>
-                <display:column property="description" sortable="true"
-                    titleKey="arms.description"
-                    headerClass="sortable" />
-                <display:column property="interventions" titleKey="arms.interventions"/>
+                <display:column escapeXml="true" property="name" sortable="true" titleKey="arms.name" headerClass="sortable"  />
+                <s:if test="%{currentAction == 'listArm'}"><display:column escapeXml="true" property="type" sortable="true" titleKey="arms.type" headerClass="sortable"/></s:if>
+                <display:column escapeXml="true" property="description" sortable="true" titleKey="arms.description" headerClass="sortable" />
+                <display:column escapeXml="true" property="interventions" titleKey="arms.interventions"/>
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                 					|| (sessionScope.role == 'SuAbstractor')}">
                 <display:column titleKey="arms.edit" headerClass="centered" class="action">
@@ -97,8 +92,8 @@ function handleCreateGroup(){
                 </display:column>
                 </c:if>
             </display:table>
-            
-            
+
+
             </td>
         </tr>
     </table>
@@ -113,8 +108,8 @@ function handleCreateGroup(){
             <li><a href="#" class="btn" onclick="this.blur();handleCreateGroup();"><span
                 class="btn_img"><span class="add">Add </span></span></a></li>
         </s:elseif>
-     </c:if>   
-     <!-- 
+     </c:if>
+     <!--
         <li><a href="trialInterventions.action" class="btn"
             onclick="this.blur();"><span class="btn_img"><span
             class="back">Back</span></span></a></li>

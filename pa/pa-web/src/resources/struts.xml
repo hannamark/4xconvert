@@ -13,7 +13,10 @@
             <interceptor name="servletConfig"
                class="org.apache.struts2.interceptor.ServletConfigInterceptor"/>
             <interceptor name="maliciousInput"
-               class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor" />
+               class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor">
+               <param name="filterSymbols">false</param>
+               <param name="filterControlChars">true</param>
+            </interceptor>
 
             <interceptor-stack name="paDefaultInterceptor">
                 <interceptor-ref name="exception"/>

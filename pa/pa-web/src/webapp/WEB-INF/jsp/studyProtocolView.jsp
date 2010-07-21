@@ -1,22 +1,22 @@
-<!DOCTYPE html PUBLIC 
+<!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
+
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title><fmt:message key="studyProtocol.view.title"/></title>
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
-    <script type="text/javascript"> 
+    <script type="text/javascript">
     // this function is called from body onload in main.jsp (decorator)
     function callOnloadFunctions(){
-        setFocusToFirstControl();        
+        setFocusToFirstControl();
     }
     function tooltip() {
 		BubbleTips.activateTipOn("acronym");
-		BubbleTips.activateTipOn("dfn"); 
+		BubbleTips.activateTipOn("dfn");
 	}
 	function handleAction(){
 	var studyProtocolId;
@@ -24,9 +24,9 @@
 	input_box=confirm("Click OK to save changes or Cancel to Abort.");
 	if (input_box==true){
 	 		document.forms[0].action="studyProtocolcheckout.action?studyProtocolId="+studyProtocolId;
-	 		document.forms[0].submit(); 
+	 		document.forms[0].submit();
 	 }
-} 
+}
 	</SCRIPT>
 </head>
 
@@ -47,23 +47,23 @@
         <table class="form">
             <tr>
             <td scope="row" class="label">
-                <label for="nciAccessionNumber">                
+                <label for="nciAccessionNumber">
                     <fmt:message key="studyProtocol.nciIdentifier"/>
                 </label>
             </td>
             <td class="value">
-                <c:out value="${sessionScope.trialSummary.nciIdentifier }"/> 
+                <c:out value="${sessionScope.trialSummary.nciIdentifier }"/>
             </td>
             </tr>
             <tr>
             <td scope="row" class="label">
-                <label for="localProtocolIdentifer"> 
+                <label for="localProtocolIdentifer">
                     <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>
                 </label>
             </td>
             <td class="value">
              <c:out value="${sessionScope.trialSummary.localStudyProtocolIdentifier }"/>
-             <span class="formErrorMsg"> <s:fielderror><s:param>localTrialIdentifier</s:param></s:fielderror></span>  
+             <span class="formErrorMsg"> <s:fielderror><s:param>localTrialIdentifier</s:param></s:fielderror></span>
             </td>
             </tr>
             <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
@@ -72,62 +72,60 @@
                         <label for="secondaryIdentifiers">Other Trial Identifiers</label>
                     </td>
                     <td class="value">
-                        <c:forEach items="${sessionScope.trialSummary.otherIdentifiers}" var="extension" varStatus="status"> 
-                            <c:choose>
-                                <c:when test="${status.last}">${extension}</c:when>
-                                <c:otherwise>${extension},&nbsp;</c:otherwise>
-                            </c:choose>
+                        <c:forEach items="${sessionScope.trialSummary.otherIdentifiers}" var="extension" varStatus="status">
+                            <c:out value="${extension}"/>
+                            <c:if test="${not status.last}">,&nbsp;</c:if>
                         </c:forEach>
                     </td>
-                </tr> 
-            </c:if> 
+                </tr>
+            </c:if>
             <tr>
                 <td scope="row" class="label"> <label for="nciIdentifier"> NCT Number </label></td>
                 <td class="value">
-                <c:out value="${sessionScope.nctIdentifier }"/> 
+                <c:out value="${sessionScope.nctIdentifier }"/>
             </td>
             </tr>
             <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
             <tr>
                 <td scope="row" class="label"> <label for="ctepIdentifier"> CTEP Trial Identifier</label></td>
                 <td class="value">
-                <c:out value="${sessionScope.ctepIdentifier }"/> 
+                <c:out value="${sessionScope.ctepIdentifier }"/>
             </td>
             </tr>
             <tr>
                 <td scope="row" class="label"> <label for="dcpIdentifier"> DCP Trial Identifier</label></td>
                 <td class="value">
-                <c:out value="${sessionScope.dcpIdentifier }"/> 
+                <c:out value="${sessionScope.dcpIdentifier }"/>
             </td>
             </tr>
             <tr>
                 <td scope="row" class="label"> <label for="ctGovXml"> ClinicalTrials.gov XML required?</label></td>
                 <td class="value">
-                <c:out value="${sessionScope.trialSummary.ctgovXmlRequiredIndicator }"/> 
+                <c:out value="${sessionScope.trialSummary.ctgovXmlRequiredIndicator }"/>
             </td>
             </tr>
             </c:if>
             <tr>
             <td scope="row" class="label">
-                <label for="leadOrg"> 
+                <label for="leadOrg">
                     <fmt:message key="studyProtocol.proprietaryTrial"/>
                 </label>
             </td>
             <td class="value">
-                <c:out value="${sessionScope.trialSummary.isProprietaryTrial }"/> 
+                <c:out value="${sessionScope.trialSummary.isProprietaryTrial }"/>
             </td>
-            </tr> 
-            <tr>     
+            </tr>
+            <tr>
             <td scope="row" class="label">
                 <label for="officialTitle">
                     <fmt:message key="studyProtocol.officialTitle"/>
                 </label>
             </td>
             <td class="value">
-                 <c:out value="${sessionScope.trialSummary.officialTitle }"/> 
+                 <c:out value="${sessionScope.trialSummary.officialTitle }"/>
             </td>
-            </tr> 
-             <tr>     
+            </tr>
+             <tr>
             <td scope="row" class="label">
                 <label for="checkOutStatus">
                     <fmt:message key="studyProtocol.checkOutStatus"/>
@@ -144,20 +142,20 @@
                  		<b><c:out value="${sessionScope.trialSummary.studyCheckoutByUsername}"/> </b>
                  </c:if>
             </td>
-            </tr>     
-            </table>  
-        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy == null) 
+            </tr>
+            </table>
+        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy == null)
         					|| (sessionScope.trialSummary.studyCheckoutBy == sessionScope.loggedUserName)
         					|| (sessionScope.role == 'SuAbstractor')}">
  <div class="actionsrow">
 	<del class="btnwrapper">
 		<ul class="btnrow">
 			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
-		</ul>	
+		</ul>
 	</del>
 </div>
 </c:if>
-                  
+
     </s:form>
    </div>
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC   
+<!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,16 +12,16 @@
 
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
-// this function is called from body onload in main.jsp (decorator) 
+// this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
-    // leave this function to prevent 'error on page' 
+    // leave this function to prevent 'error on page'
 }
 function handleEdit(rowId, type){
     document.interventionForm.selectedRowIdentifier.value = rowId;
     document.interventionForm.selectedType.value = type;
     document.interventionForm.action="trialInterventionsedit.action";
-    document.interventionForm.submit(); 
+    document.interventionForm.submit();
 }
 function handleDelete(rowId){
     input_box=confirm("Click OK to remove the intervention from the study.  Cancel to abort.");
@@ -33,7 +33,7 @@ function handleDelete(rowId){
 }
 function handleCreate(){
     document.interventionForm.action="trialInterventionscreate.action";
-    document.interventionForm.submit(); 
+    document.interventionForm.submit();
 }
 </SCRIPT>
 
@@ -44,27 +44,21 @@ function handleCreate(){
 <div class="box"><pa:sucessMessage /> <s:if
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
-</s:if> <s:form name="interventionForm"><s:hidden name="selectedRowIdentifier"/> 
+</s:if> <s:form name="interventionForm"><s:hidden name="selectedRowIdentifier"/>
 <s:hidden name="selectedType"/>
     <h2><fmt:message
         key="interventions.details.title" /></h2>
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
-            <td colspan="2"><s:hidden name="cbValue" /> 
+            <td colspan="2"><s:hidden name="cbValue" />
             <s:set name="interventionsList" value="interventionsList" scope="request"/>
-            <display:table name="interventionsList" id="row" class="data" sort="list" pagesize="200" 
+            <display:table name="interventionsList" id="row" class="data" sort="list" pagesize="200"
                     requestURI="trialInterventions.action" export="false">
-                <display:column property="name" sortable="true"
-                    titleKey="interventions.name" headerClass="sortable"  />
-                <display:column property="otherNames" sortable="true"
-                    titleKey="interventions.otherNames" headerClass="sortable" />
-                <display:column property="description" sortable="true"
-                    titleKey="interventions.description"
-                    headerClass="sortable" />
-                <display:column property="type" sortable="true"
-                    titleKey="interventions.type"
-                    headerClass="sortable"  />
+                <display:column escapeXml="true" property="name" sortable="true" titleKey="interventions.name" headerClass="sortable"  />
+                <display:column escapeXml="true" property="otherNames" sortable="true" titleKey="interventions.otherNames" headerClass="sortable" />
+                <display:column escapeXml="true" property="description" sortable="true" titleKey="interventions.description" headerClass="sortable" />
+                <display:column escapeXml="true" property="type" sortable="true" titleKey="interventions.type" headerClass="sortable"  />
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                 					|| (sessionScope.role == 'SuAbstractor')}">
                 <display:column titleKey="interventions.edit" headerClass="centered" class="action">
@@ -91,19 +85,6 @@ function handleCreate(){
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
             class="btn_img"><span class="add">Add </span></span></a></li>
         </c:if>
-        <!--     
-        <li><a href="disease.action" class="btn"
-            onclick="this.blur();"><span class="btn_img"><span
-            class="back">Back</span></span></a></li>
-		<c:choose>
-        <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
-           <li><a href="trialArms.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-        </c:when>
-       <c:otherwise>
-          <li><a href="trialArmsobservational.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-        </c:otherwise>
-        </c:choose> 
-         -->        
     </ul>
     </del></div>
 </s:form></div>

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC   
+<!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -16,10 +16,10 @@
 <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
-// this function is called from body onload in main.jsp (decorator) 
+// this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
-    // leave this function to prevent 'error on page' 
+    // leave this function to prevent 'error on page'
 }
 function handleView(diseaseId){
     var url = '/pa/protected/popupDiseaseDetails.action?diseaseId='+diseaseId;
@@ -28,7 +28,7 @@ function handleView(diseaseId){
 function handleEdit(rowId){
     document.diseaseForm.selectedRowIdentifier.value = rowId;
     document.diseaseForm.action="diseaseedit.action";
-    document.diseaseForm.submit(); 
+    document.diseaseForm.submit();
 }
 function handleDelete(rowId){
     input_box=confirm("Click OK to remove the disease from the study.  Cancel to abort.");
@@ -40,7 +40,7 @@ function handleDelete(rowId){
 }
 function handleCreate(){
     document.diseaseForm.action="diseasecreate.action";
-    document.diseaseForm.submit(); 
+    document.diseaseForm.submit();
 }
 </SCRIPT>
 </head>
@@ -49,11 +49,11 @@ function handleCreate(){
 <c:set var="topic" scope="request" value="abstract_disease"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
-    <pa:sucessMessage /> 
+    <pa:sucessMessage />
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
-    
+
     <s:form name="diseaseForm">
-        <s:hidden name="selectedRowIdentifier"/> 
+        <s:hidden name="selectedRowIdentifier"/>
     <h2>
         <fmt:message key="disease.details.title"/>
     </h2>
@@ -63,7 +63,7 @@ function handleCreate(){
             <td colspan="2">
             <s:set name="diseaseList" value="diseaseList" scope="request"/>
             <display:table name="diseaseList" id="row" class="data" sort="list" pagesize="200" requestURI="disease.action">
-                <display:column property="preferredName" sortable="true"
+                <display:column escapeXml="true" property="preferredName" sortable="true"
                     titleKey="disease.preferredName" headerClass="sortable"/>
                 <display:column titleKey="disease.view" headerClass="centered" class="action">
                     <s:a href="#" onclick="handleView(%{#attr.row.diseaseIdentifier})">
@@ -71,17 +71,17 @@ function handleCreate(){
                             alt="View" width="16" height="16" />
                     </s:a>
                 </display:column>
-                <display:column property="code" sortable="true"
+                <display:column escapeXml="true" property="code" sortable="true"
                     titleKey="disease.code" headerClass="sortable" />
-                <display:column property="conceptId" sortable="true"
+                <display:column escapeXml="true" property="conceptId" sortable="true"
                     titleKey="disease.conceptId" headerClass="sortable" />
-                <display:column property="menuDisplayName" sortable="true"
+                <display:column escapeXml="true" property="menuDisplayName" sortable="true"
                     titleKey="disease.menuDisplayName" headerClass="sortable" />
-                <display:column property="parentPreferredName" sortable="true"
+                <display:column escapeXml="true" property="parentPreferredName" sortable="true"
                     titleKey="disease.parentPreferredName" headerClass="sortable" />
-                <display:column property="lead" sortable="true"
+                <display:column escapeXml="true" property="lead" sortable="true"
                     titleKey="disease.lead" headerClass="sortable" />
-                <display:column property="ctGovXmlIndicator" sortable="true" titleKey="disease.includeInXML" headerClass="sortable"/>    
+                <display:column escapeXml="true" property="ctGovXmlIndicator" sortable="true" titleKey="disease.includeInXML" headerClass="sortable"/>
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                 						|| (sessionScope.role == 'SuAbstractor')}">
                 <display:column titleKey="disease.edit" headerClass="centered" class="action">
@@ -96,7 +96,7 @@ function handleCreate(){
                             alt="Delete" width="16" height="16" />
                     </s:a>
                 </display:column>
-                </c:if> 
+                </c:if>
             </display:table>
         </td>
         </tr>
@@ -108,7 +108,7 @@ function handleCreate(){
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
                 class="btn_img"><span class="add">Add </span></span></a></li>
         </c:if>
-        <!--        
+        <!--
         <li>
             <a href="eligibilityCriteriaquery.action" class="btn" onclick="this.blur();"><span class="btn_img">
                 <span class="back">Back</span></span></a>
@@ -116,7 +116,7 @@ function handleCreate(){
         <li>
             <a href="trialInterventions.action" class="btn" onclick="this.blur();">
                 <span class="btn_img"><span class="next">Next</span></span></a>
-        </li> --> 
+        </li> -->
     </ul>
     </del></div>
 </s:form></div>

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC   
+<!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -9,14 +9,14 @@
 <s:head />
 
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
-// this function is called from body onload in main.jsp (decorator) 
+// this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
-    // leave this function to prevent 'error on page' 
+    // leave this function to prevent 'error on page'
 }
 function handleCreate(){
     document.milestoneForm.action="milestonecreate.action";
-    document.milestoneForm.submit(); 
+    document.milestoneForm.submit();
 }
 </SCRIPT>
 </head>
@@ -25,11 +25,11 @@ function handleCreate(){
 <c:set var="topic" scope="request" value="trial_milestones"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
-    <pa:sucessMessage /> 
+    <pa:sucessMessage />
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
-    
+
     <s:form name="milestoneForm">
-        <s:hidden name="selectedRowIdentifier"/> 
+        <s:hidden name="selectedRowIdentifier"/>
     <h2>
         <fmt:message key="milestone.details.title"/>
     </h2>
@@ -39,12 +39,9 @@ function handleCreate(){
             <td colspan="2">
             <s:set name="milestoneList" value="milestoneList" scope="request"/>
             <display:table name="milestoneList" id="row" class="data" sort="list" pagesize="200" requestURI="milestone.action">
-                <display:column property="milestone" sortable="false"
-                    titleKey="milestone.milestone" />
-                <display:column property="date" sortable="false"
-                    titleKey="milestone.date" />
-                <display:column property="comment" sortable="false"
-                    titleKey="milestone.comment" />
+                <display:column escapeXml="true" property="milestone" sortable="false" titleKey="milestone.milestone" />
+                <display:column escapeXml="true" property="date" sortable="false" titleKey="milestone.date" />
+                <display:column escapeXml="true" property="comment" sortable="false" titleKey="milestone.comment" />
             </display:table>
               </td>
         </tr>
@@ -55,7 +52,7 @@ function handleCreate(){
         					|| (sessionScope.role == 'SuAbstractor')}">
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
         </c:if>
-        <!-- 
+        <!--
         <li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
         <li><a href="onhold.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
          -->
