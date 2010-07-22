@@ -270,6 +270,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                      match="^(java.naming.provider.url)=.*"
                      replace="# modified by installer ${line.separator}\1=jnp://${jboss.server.hostname}:${jboss.server.jndi.port}"/>
 
+      <replaceregexp file="${temp.dir}/pa-ejb-jar/jndi.properties" byline="true"
+                     match="^(java.naming.security.principal)=.*"
+                     replace="# modified by installer ${line.separator}\1=${po.username}"/>
+
+      <replaceregexp file="${temp.dir}/pa-ejb-jar/jndi.properties" byline="true"
+                     match="^(java.naming.security.credential)=.*"
+                     replace="# modified by installer ${line.separator}\1=${po.pass}"/>
+
       <move file="${pa-ear.dir.dist}/${pa-ear.ear.file}" tofile="${pa-ear.dir.dist}/${pa-ear.ear.file}.orig"/>
       <move file="${temp.dir}/pa-ear/pa-ejb.jar" tofile="${temp.dir}/pa-ejb.jar.orig"/>
       <move file="${temp.dir}/pa-ear/pa-web.war" tofile="${temp.dir}/pa-web.war.orig"/>
