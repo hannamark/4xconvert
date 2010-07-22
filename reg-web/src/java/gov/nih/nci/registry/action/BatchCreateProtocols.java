@@ -638,7 +638,6 @@ public class BatchCreateProtocols {
                     }
                 }
             }
-
             StudyProtocolDTO sPDTO = null;
             sPDTO =
                     PaRegistry.getStudyProtocolService().getStudyProtocol(
@@ -646,13 +645,13 @@ public class BatchCreateProtocols {
             if (sPDTO.getSecondaryIdentifiers() != null && sPDTO.getSecondaryIdentifiers().getItem() != null) {
                 List<Ii> listIi = new ArrayList<Ii>();
                 for (Ii ii : sPDTO.getSecondaryIdentifiers().getItem()) {
-                    if (!IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+                    if (!IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())
+                          && !isOtherIdDuplicate(trialDTO.getSecondaryIdentifierAddList(), ii.getExtension())) {
                         listIi.add(ii);
                     }
                 }
                 trialDTO.setSecondaryIdentifierList(listIi);
             }
-
             studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
             studyProtocolIi =
@@ -665,6 +664,19 @@ public class BatchCreateProtocols {
         }
         return studyProtocolIi;
     }
+
+   /**
+     * @param listofDto
+     */
+    private boolean isOtherIdDuplicate(List<Ii> listOfOtherId, String newOtherId) {
+          //ignore duplicate other ids
+          for (Ii orgOId : listOfOtherId) {
+              if (orgOId.getExtension().equals(newOtherId)) {
+                 return true;
+              }
+          }
+          return false;
+     }
 
     /*
      * this method first look if title is there if not create new
