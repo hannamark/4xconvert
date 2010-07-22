@@ -37,24 +37,15 @@
           sort="list" pagesize="10" id="row" name="displayTagList" requestURI="accrualSubmissions.action" export="false">
 
          <display:column titleKey="accrual.list.submissions.label" headerClass="centered" sortProperty="label" sortable="true" class="action">
-             <s:a href="#" onclick="viewDetails(%{#attr.row.identifier.extension})">
-                    ${row.label.value}
-             </s:a>
+             <s:a href="#" onclick="viewDetails(%{#attr.row.identifier.extension})"><c:out value="${row.label.value}"/></s:a>
         </display:column>
-       <display:column titleKey="accrual.list.submissions.description" property="description" sortable="true"
-         headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.submissions.cutOffDate" property="cutOffDate" sortable="true"
-         sortProperty="dateCutOff" headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.submissions.createdDate" property="createdDate" sortable="true"
-         sortProperty="dateStatusDateRangeLow"  headerClass="sortable" headerScope="col"/>
-         <display:column titleKey="accrual.list.submissions.createUser" property="createUser" sortable="true"
-         headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.submissions.submittedDate" property="submittedDate" sortable="true"
-         sortProperty="dateStatusDateRangeHigh"  headerClass="sortable" headerScope="col"/>
-         <display:column titleKey="accrual.list.submissions.submitUser" property="submitUser" sortable="true"
-         headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.submissions.status" property="status" sortable="true"
-         headerClass="sortable" headerScope="col"/>
+       <display:column escapeXml="true" titleKey="accrual.list.submissions.description" property="description" sortable="true" headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.cutOffDate" property="cutOffDate" sortable="true" sortProperty="dateCutOff" headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.createdDate" property="createdDate" sortable="true" sortProperty="dateStatusDateRangeLow"  headerClass="sortable" headerScope="col"/>
+         <display:column titleKey="accrual.list.submissions.createUser" property="createUser" sortable="true" headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.submittedDate" property="submittedDate" sortable="true" sortProperty="dateStatusDateRangeHigh"  headerClass="sortable" headerScope="col"/>
+         <display:column titleKey="accrual.list.submissions.submitUser" property="submitUser" sortable="true" headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.status" property="status" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.submissions.submit" headerClass="centered" class="action">
                   <s:if test="%{#attr.row.statusCode.code=='Opened'}">
                       <s:a href="#" onclick="accessAdd(%{#attr.row.identifier.extension})">

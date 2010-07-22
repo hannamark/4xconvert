@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE struts PUBLIC 
+<!DOCTYPE struts PUBLIC
     "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 
@@ -8,10 +8,13 @@
  <constant name="struts.devMode" value="true" />
     <package name="default" extends="struts-default">
         <interceptors>
-            <interceptor name="parameterTrim" 
+            <interceptor name="parameterTrim"
                class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
             <interceptor name="maliciousInput"
-               class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor" />
+               class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor">
+               <param name="filterSymbols">false</param>
+               <param name="filterControlChars">true</param>
+            </interceptor>
             <interceptor-stack name="methodValidationStack">
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
@@ -50,7 +53,7 @@
                 <param name="actionName">logout</param>
             </result>
             <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
-        </global-results> 
+        </global-results>
         <action name="login">
            <result>/WEB-INF/jsp/login.jsp</result>
         </action>
@@ -62,7 +65,7 @@
         </action>
          <action name="contact">
            <result>/WEB-INF/jsp/accrualContact.jsp</result>
-        </action> 
+        </action>
     </package>
 
     <package name="protected" namespace="/protected" extends="default">
@@ -89,14 +92,14 @@
             <result>/WEB-INF/jsp/searchPatients.jsp</result>
             <result name="detail">/WEB-INF/jsp/searchPatientsDetail.jsp</result>
         </action>
-        
+
         <action name="ajaxpatients*" class="gov.nih.nci.accrual.accweb.action.PatientAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
         </action>
-        
+
         <action name="popup*" class="gov.nih.nci.accrual.accweb.action.PopUpAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
         </action>
-        
+
     </package>
 </struts>
