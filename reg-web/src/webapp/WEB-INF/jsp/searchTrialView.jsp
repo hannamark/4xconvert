@@ -370,7 +370,7 @@
 	     		<td colspan="2" class="space">&nbsp;</td>
 	       </tr>
        </c:if>
-       
+
        <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null
                 && requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'
                 && requestScope.summaryFourOrgName != null}">
@@ -425,7 +425,7 @@
                 </td>
            </tr>
        </c:if>
-       
+
       <c:if test="${requestScope.trialSummary.programCodeText.value != null}">
        <c:if test="${requestScope.trialDTO.summaryFourOrgName == null}">
            <tr>
@@ -447,18 +447,18 @@
         <tr>
                 <th colspan="2">Participating sites</th>
          </tr>
-         
+
          <display:table class="data" sort="list"  uid="row"  name="${requestScope.participatingSitesList}" >
-             <display:column title="Organization Name" property="name"  headerClass="sortable"/>
-             <display:column title="Site Principal Investigator" property="investigator"  headerClass="sortable"/>
-             <display:column title="Local Trial<br/> Identifier" property="siteLocalTrialIdentifier"  headerClass="sortable"/>
-             <display:column title="Program Code" property="programCode"  headerClass="sortable"/>
+             <display:column escapeXml="true" title="Organization Name" property="name"  headerClass="sortable"/>
+             <display:column escapeXml="true" title="Site Principal Investigator" property="investigator"  headerClass="sortable"/>
+             <display:column escapeXml="true" title="Local Trial<br/> Identifier" property="siteLocalTrialIdentifier"  headerClass="sortable"/>
+             <display:column escapeXml="true" title="Program Code" property="programCode"  headerClass="sortable"/>
              <display:column title="Current Site<br/> Recruitment Status" property="recruitmentStatus"  headerClass="sortable"/>
              <display:column title="Current Site<br/> Recruitment Status Date" property="recruitmentStatusDate"  headerClass="sortable"/>
              <display:column title="Date Opened <br/>for Accrual" property="dateOpenedforAccrual"  headerClass="sortable"/>
              <display:column title="Date Closed <br/>for Accrual" property="dateClosedforAccrual"  headerClass="sortable"/>
          </display:table>
-       </div>  
+       </div>
       </c:if>
       <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
         || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
@@ -533,8 +533,8 @@
     			<jsp:include page="/WEB-INF/jsp/searchTrialViewGrants.jsp"/>
 			</div>
 		</c:if>
-		<c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
-        || fn:trim(requestScope.trialSummary.proprietaryTrialIndicator.value) == 'false' 
+		<c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
+        || fn:trim(requestScope.trialSummary.proprietaryTrialIndicator.value) == 'false'
         && requestScope.trialDTO.xmlRequired == true}">
         <table class="form">
         <tr>
@@ -553,8 +553,8 @@
          <td scope="row" class="label">
            <fmt:message key="regulatory.oversight.auth.name"/></td>
                 <td class="value"> <c:out value="${requestScope.trialDTO.trialOversgtAuthOrgName }"/> </td>
-         </tr>   
-    
+         </tr>
+
  <!--   FDA Regulated Intervention Indicator-->
      <tr>
          <td scope="row"  class="label">
@@ -566,16 +566,16 @@
          <td scope="row" class="label"><fmt:message key="regulatory.section801.ind"/></td>
          <td class="value"><c:out value="${requestScope.trialDTO.section801Indicator}" /> </td>
      </tr>
-     
+
      <!--   Delayed Posting Indicator-->
      <tr id="delpostindrow">
          <td scope="row" class="label"><fmt:message key="regulatory.delayed.posting.ind"/></td>
-         <td class="value"><c:out value="${requestScope.trialDTO.delayedPostingIndicator}" /></td>       
+         <td class="value"><c:out value="${requestScope.trialDTO.delayedPostingIndicator}" /></td>
      </tr>
      <!--   Data Monitoring Committee Appointed Indicator -->
      <tr id="datamonrow">
          <td scope="row" class="label"><fmt:message key="regulatory.data.monitoring.committee.ind"/></td>
-         <td class="value"><c:out value="${requestScope.trialDTO.dataMonitoringCommitteeAppointedIndicator}" /></td>       
+         <td class="value"><c:out value="${requestScope.trialDTO.dataMonitoringCommitteeAppointedIndicator}" /></td>
      </tr>
       </table>
       </c:if>

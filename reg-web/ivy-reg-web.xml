@@ -27,7 +27,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="apache"                 name="taglibs-standard"        rev="1.1.2"           conf="runtime->master"/>
     <dependency org="displaytag"             name="displaytag"              rev="1.1"             conf="runtime->master"/>
     <dependency org="freemarker"             name="freemarker"              rev="2.3.13"          conf="runtime->default"/>
-    <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.2.10"          conf="runtime->default"/>
+    <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.2.13"          conf="runtime->default"/>
     <dependency org="ognl"                   name="ognl"                    rev="2.6.11"          conf="runtime->default"/>
     <dependency org="opensymphony"           name="sitemesh"                rev="2.3"             conf="runtime->default"/>
     <dependency org="opensymphony"           name="xwork"                   rev="2.1.2"           conf="runtime->default"/>

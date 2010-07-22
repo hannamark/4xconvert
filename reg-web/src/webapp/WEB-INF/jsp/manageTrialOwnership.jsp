@@ -66,9 +66,9 @@ function updateTrial(trialId) {
                     <display:table class="data" summary="This table contains your search results." style="width:40%"
                                 decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="regUserRow"
                                   name="orgMembers" requestURI="manageTrialOwnershipview.action" export="false">
-                        <display:column titleKey="managetrialownership.users.firstname" property="registryUser.firstName" sortable="true" headerClass="sortable" headerScope="col"/>
-                        <display:column titleKey="managetrialownership.users.lastname" property="registryUser.lastName" sortable="true" headerClass="sortable" headerScope="col"/>
-                        <display:column titleKey="managetrialownership.users.email" property="registryUser.emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
+                        <display:column escapeXml="true" titleKey="managetrialownership.users.firstname" property="registryUser.firstName" sortable="true" headerClass="sortable" headerScope="col"/>
+                        <display:column escapeXml="true" titleKey="managetrialownership.users.lastname" property="registryUser.lastName" sortable="true" headerClass="sortable" headerScope="col"/>
+                        <display:column escapeXml="true" titleKey="managetrialownership.users.email" property="registryUser.emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
                         <display:column titleKey="managetrialownership.users.allow" sortable="true" headerClass="sortable">
                             <c:set var="chkRegUserId" value="chk${regUserRow.registryUser.id}" />
                             <c:choose>

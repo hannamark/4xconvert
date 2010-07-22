@@ -81,9 +81,9 @@ function resetSearch() {
         <display:table class="data" summary="This table contains your search results."
                      sort="list" pagesize="10" id="row"
                       name="records" requestURI="displayTrialOwnershipview.action" export="false">
-            <display:column titleKey="displaytrialownership.results.firstname" property="firstName" maxLength= "200" sortable="true" headerClass="sortable" headerScope="col"/>
-            <display:column titleKey="displaytrialownership.results.lastname" property="lastName" sortable="true" headerClass="sortable" headerScope="col"/>
-            <display:column titleKey="displaytrialownership.results.email" property="emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
+            <display:column escapeXml="true" titleKey="displaytrialownership.results.firstname" property="firstName" maxLength= "200" sortable="true" headerClass="sortable" headerScope="col"/>
+            <display:column escapeXml="true" titleKey="displaytrialownership.results.lastname" property="lastName" sortable="true" headerClass="sortable" headerScope="col"/>
+            <display:column escapeXml="true" titleKey="displaytrialownership.results.email" property="emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.nciidentifier" property="nciIdentifier"  sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.action">
                 <c:url var="removeUrl" value="displayTrialOwnershipremoveOwnership.action">
