@@ -4,7 +4,7 @@
     <parent>
         <groupId>gov.nih.nci.coppa.po</groupId>
         <artifactId>po</artifactId>
-        <version>3.2-SNAPSHOT</version>
+        <version>3.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>po-ear</artifactId>
@@ -181,61 +181,61 @@
                             <contextRoot>/po-web</contextRoot>
                             <bundleFileName>po-web.war</bundleFileName>
                         </webModule>
-                        
-                        
+
+
                         <!--  Start of jars needed for grid grouper sync. -->
-                        <jarModule> 
-                             <groupId>org.cagrid.gaards.csm</groupId> 
-                             <artifactId>caGrid-csm-common</artifactId> 
-                             <includeInApplicationXml>true</includeInApplicationXml> 
-                        </jarModule> 
-                        <jarModule> 
-                            <groupId>org.cagrid.gaards.csm</groupId> 
-                            <artifactId>caGrid-csm-stubs</artifactId> 
-                            <includeInApplicationXml>true</includeInApplicationXml> 
-                        </jarModule> 
-                        <jarModule> 
-                            <groupId>org.cagrid.gaards.csm</groupId> 
-                            <artifactId>caGrid-csm-client</artifactId> 
-                            <includeInApplicationXml>true</includeInApplicationXml> 
-                        </jarModule> 
-                        <jarModule> 
-                            <groupId>org.cagrid.gaards.csm</groupId> 
-                            <artifactId>caGrid-csm-service</artifactId> 
-                            <includeInApplicationXml>true</includeInApplicationXml> 
-                        </jarModule> 
-                        <jarModule> 
-                            <groupId>gov.nih.nci.cagrid</groupId> 
-                            <artifactId>caGrid-gridgrouper-common</artifactId> 
-                            <includeInApplicationXml>true</includeInApplicationXml> 
-                        </jarModule> 
-                        <jarModule> 
-                            <groupId>gov.nih.nci.cagrid</groupId> 
-                            <artifactId>caGrid-gridgrouper-stubs</artifactId> 
-                            <includeInApplicationXml>true</includeInApplicationXml> 
-                        </jarModule> 
-                        <jarModule> 
-                            <groupId>gov.nih.nci.cagrid</groupId> 
-                            <artifactId>caGrid-gridgrouper-client</artifactId> 
-                            <includeInApplicationXml>true</includeInApplicationXml> 
-                        </jarModule> 
-                        <jarModule> 
-                            <groupId>gov.nih.nci.cagrid</groupId> 
-                            <artifactId>gridgrouper</artifactId> 
-                            <includeInApplicationXml>true</includeInApplicationXml> 
-                        </jarModule> 
-                         <jarModule> 
-                            <groupId>gov.nih.nci.cagrid</groupId> 
-                            <artifactId>caGrid-ServiceSecurityProvider-common</artifactId> 
-                            <includeInApplicationXml>true</includeInApplicationXml> 
-                        </jarModule> 
-                         <jarModule> 
-                            <groupId>gov.nih.nci.cagrid</groupId> 
-                            <artifactId>caGrid-ServiceSecurityProvider-client</artifactId> 
-                            <includeInApplicationXml>true</includeInApplicationXml> 
+                        <jarModule>
+                             <groupId>org.cagrid.gaards.csm</groupId>
+                             <artifactId>caGrid-csm-common</artifactId>
+                             <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>org.cagrid.gaards.csm</groupId>
+                            <artifactId>caGrid-csm-stubs</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>org.cagrid.gaards.csm</groupId>
+                            <artifactId>caGrid-csm-client</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>org.cagrid.gaards.csm</groupId>
+                            <artifactId>caGrid-csm-service</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>gov.nih.nci.cagrid</groupId>
+                            <artifactId>caGrid-gridgrouper-common</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>gov.nih.nci.cagrid</groupId>
+                            <artifactId>caGrid-gridgrouper-stubs</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>gov.nih.nci.cagrid</groupId>
+                            <artifactId>caGrid-gridgrouper-client</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>gov.nih.nci.cagrid</groupId>
+                            <artifactId>gridgrouper</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                         <jarModule>
+                            <groupId>gov.nih.nci.cagrid</groupId>
+                            <artifactId>caGrid-ServiceSecurityProvider-common</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                         <jarModule>
+                            <groupId>gov.nih.nci.cagrid</groupId>
+                            <artifactId>caGrid-ServiceSecurityProvider-client</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
                         </jarModule>
                         <!--  End of jars needed for grid grouper sync. -->
-                        
+
                         <jarModule>
                             <groupId>net.sf.ehcache</groupId>
                             <artifactId>ehcache</artifactId>
