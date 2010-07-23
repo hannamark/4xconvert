@@ -6,6 +6,7 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAInvalidPasswordException;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -265,7 +266,7 @@ public class RegisterUserAction extends ActionSupport {
             redirectPage = Constants.REDIRECT_TO_LOGIN;
             try {
                 GridAccountServiceRemote gridService = PaRegistry.getGridAccountService();
-                CSMUserService csmUserService = CSMUserService.getInstance();
+                CSMUserUtil csmUserService = CSMUserService.getInstance();
                 //First create the grid account if one doesn't already
                 if (!registryUserWebDTO.isHasExistingGridAccount()) {
                     String results = gridService.createGridAccount(registryUser, registryUserWebDTO.getUsername(),

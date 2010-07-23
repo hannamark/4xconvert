@@ -284,7 +284,7 @@ public class TestRegistryUserSchema {
                 sp.setId(sp.getId());
                 studyProtocolId = sp.getId();
 
-                Organization org = OrganizationTest.createOrganizationObj();
+                Organization org = OrganizationTest.createOrganizationObj(createUser());
                 addUpdObject(org);
                 org.setIdentifier(String.valueOf(org.getId()));
 
@@ -314,5 +314,15 @@ public class TestRegistryUserSchema {
 
                 HibernateUtil.getCurrentSession().clear();
 
+        }
+
+        public static User createUser() {
+            User user = new User();
+            user.setLoginName("Abstractor: " + new Date());
+            user.setFirstName("Joe");
+            user.setLastName("Smith");
+            user.setUpdateDate(new Date());
+            addUpdObject(user);
+            return user;
         }
 }

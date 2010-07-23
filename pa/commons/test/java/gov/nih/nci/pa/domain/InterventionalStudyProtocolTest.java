@@ -89,9 +89,7 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
@@ -178,7 +176,7 @@ public class InterventionalStudyProtocolTest {
         isp.setStartDate(now);
         isp.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         isp.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-        isp.setUserLastUpdated("Abstractor");
+        isp.setUserLastUpdated(TestSchema.createUser());
         isp.setFdaRegulatedIndicator(Boolean.FALSE);
         isp.setAllocationCode(AllocationCode.NA);
         isp.setDelayedpostingIndicator(Boolean.FALSE);

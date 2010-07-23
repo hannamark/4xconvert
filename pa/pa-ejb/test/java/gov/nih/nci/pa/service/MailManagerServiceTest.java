@@ -177,7 +177,7 @@ public class MailManagerServiceTest {
         RegistryUser registryUser = new RegistryUser();
         registryUser.setFirstName("firstName");
         registryUser.setLastName("lastName");
-        registryUser.setUserLastCreated("Abstractor");
+        registryUser.setUserLastCreated(TestSchema.createUser());
         TestSchema.addUpdObject(registryUser);
 
         // properties
@@ -389,9 +389,9 @@ public class MailManagerServiceTest {
         sp.setStartDate(now);
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-        sp.setUserLastUpdated("Abstractor");
+        sp.setUserLastUpdated(TestSchema.createUser());
         sp.setDateLastCreated(now);
-        sp.setUserLastCreated("Abstractor");
+        sp.setUserLastCreated(TestSchema.createUser());
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setAmendmentReasonCode(AmendmentReasonCode.BOTH);
         sp.setStatusDate(now);

@@ -138,7 +138,7 @@ public class StudyRelationshipTest  {
      */
     public static StudyRelationship createStudyRelationshipObj(StudyProtocol sp) {
     	StudyRelationship create = new StudyRelationship();
-        create.setUserLastUpdated("abstractor");
+        create.setUserLastUpdated(TestSchema.createUser());
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setDateLastUpdated(now);
         create.setCommentText("comments");

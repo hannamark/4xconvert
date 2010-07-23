@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusBeanLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceBean;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -146,12 +147,13 @@ public class StudySiteAccrualAccessServiceTest {
         dto.setStudySiteId(ssId);
         dto.setStatusCode(ActiveInactiveCode.ACTIVE);
         assertNull(dto.getId());
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
         StudySiteAccrualAccessDTO r = bean.create(dto);
         assertNotNull(r.getId());
         assertEquals(CSM_USER_ID, r.getCsmUserId());
         assertEquals(REQUEST_DETAILS, r.getRequestDetails());
         assertEquals(ssId, r.getStudySiteId());
-        assertNotNull(r.getUserLastCreated());
+        assertNull("User created should be null since user is retrieved from EJB context.",r.getUserLastCreated());
         assertNotNull(r.getDateLastCreated());
         assertNull(r.getUserLastUpdated());
         assertNull(r.getDateLastUpdated());
@@ -188,7 +190,7 @@ public class StudySiteAccrualAccessServiceTest {
         bo.setRequestDetails(updatedRequestDetails);
         StudySiteAccrualAccessDTO r = bean.update(bo);
         assertTrue(r.getRequestDetails().equals(updatedRequestDetails));
-        assertNotNull(r.getUserLastUpdated());
+        assertNull("User updated should be null since user is retrieved from EJB context",r.getUserLastUpdated());
         assertNotNull(r.getDateLastUpdated());
     }
 

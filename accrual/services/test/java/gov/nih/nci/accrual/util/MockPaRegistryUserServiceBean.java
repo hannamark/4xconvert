@@ -42,8 +42,8 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote 
                 regUser.setPostalCode("postAdd");
                 regUser.setPrsOrgName("prsOrg");
                 regUser.setId(1L);
-                regUser.setUserLastCreated("userLastCreated");
-                regUser.setUserLastUpdated("userLastUpdated");
+                regUser.setUserLastCreated(TestSchema.createUser());
+                regUser.setUserLastUpdated(TestSchema.createUser());
             }
         }
         return regUser;
@@ -64,8 +64,8 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote 
                 regUser.setCountry("USA");
                 regUser.setState("Texas");
                 regUser.setCsmUserId(user.getUserId());
-                regUser.setUserLastCreated("userLastCreated");
-                regUser.setUserLastUpdated("userLastUpdated");
+                regUser.setUserLastCreated(TestSchema.createUser());
+                regUser.setUserLastUpdated(TestSchema.createUser());
             }
         }
         return regUser;
@@ -94,8 +94,8 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote 
                 regUser.setPostalCode("postAdd");
                 regUser.setPrsOrgName("prsOrg");
                 regUser.setId(1L);
-                regUser.setUserLastCreated("userLastCreated");
-                regUser.setUserLastUpdated("userLastUpdated");
+                regUser.setUserLastCreated(TestSchema.createUser());
+                regUser.setUserLastUpdated(TestSchema.createUser());
             }
         }
         return regUser;

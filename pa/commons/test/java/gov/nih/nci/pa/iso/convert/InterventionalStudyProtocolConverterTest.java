@@ -88,6 +88,7 @@ import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -149,6 +150,8 @@ public class InterventionalStudyProtocolConverterTest   {
         //TestSchema.addUpdObject(sp);
         assertNotNull(isp.getId());
         InterventionalStudyProtocolDTO ispDTO = InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+
+        InterventionalStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
         isp = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
         assertInterventionalStudyProtocol(isp , ispDTO);
     }

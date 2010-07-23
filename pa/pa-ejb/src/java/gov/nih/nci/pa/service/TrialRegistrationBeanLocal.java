@@ -1340,7 +1340,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     String loginName = "";
     if (!PAUtil.isStNull(studyProtocolDTO.getUserLastCreated())) {
         loginName = studyProtocolDTO.getUserLastCreated().getValue();
-        CSMUserService userService = new CSMUserService();
+        CSMUserUtil userService = CSMUserService.getInstance();
         User user = userService.getCSMUser(loginName);
         if (user == null) {
            errorMsg.append("Submitter " + loginName + " does not exist. Please do self register in CTRP.");
@@ -1797,7 +1797,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
   String loginName = "";
   if (!PAUtil.isStNull(studyProtocolDTO.getUserLastCreated())) {
       loginName = studyProtocolDTO.getUserLastCreated().getValue();
-     CSMUserService userService = new CSMUserService();
+     CSMUserUtil userService = CSMUserService.getInstance();
      User user = userService.getCSMUser(loginName);
      if (user == null) {
          errorMsg.append("Submitter " + loginName + " does not exist. Please do self register in CTRP.");

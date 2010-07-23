@@ -171,9 +171,9 @@ public class DiseaseParentTest {
         create.setParentDiseaseCode("parentDiseaseCode");
         create.setStatusCode(ActiveInactiveCode.ACTIVE);
         create.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
-        create.setUserLastCreated("userLastCreated");
+        create.setUserLastCreated(TestSchema.createUser());
         create.setDateLastCreated(new Timestamp(new Date().getTime()));
-        create.setUserLastUpdated("userLastUpdated");
+        create.setUserLastUpdated(TestSchema.createUser());
         create.setDateLastUpdated(new Timestamp(new Date().getTime()));
         return create;
     }

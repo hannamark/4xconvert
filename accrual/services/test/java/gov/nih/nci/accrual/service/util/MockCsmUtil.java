@@ -86,6 +86,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.SessionContext;
+
 /**
  * @author Hugh Reinhart
  * @since Sep 11, 2009
@@ -129,5 +131,9 @@ public class MockCsmUtil implements CsmUtil {
             }
         }
         return null;
+    }
+
+    public User lookupUser(SessionContext ejbContext) {
+        return users.get(0);
     }
 }

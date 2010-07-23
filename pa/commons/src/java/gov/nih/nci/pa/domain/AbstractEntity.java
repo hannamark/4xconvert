@@ -76,6 +76,8 @@
  */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.security.authorization.domainobjects.User;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -83,6 +85,8 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -99,9 +103,9 @@ public class AbstractEntity implements Serializable, Auditable {
 
     private Long id;
     private Date dateLastCreated;
-    private String userLastCreated;
+    private User userLastCreated;
     private Date dateLastUpdated;
-    private String userLastUpdated;
+    private User userLastUpdated;
 
     /**
      * set id.
@@ -143,8 +147,9 @@ public class AbstractEntity implements Serializable, Auditable {
      *
      * @return userLastUpdated
      */
-    @Column(name = "USER_LAST_UPDATED")
-    public String getUserLastUpdated() {
+    @ManyToOne 
+    @JoinColumn(name = "USER_LAST_UPDATED_ID")
+    public User getUserLastUpdated() {
         return userLastUpdated;
     }
 
@@ -152,7 +157,7 @@ public class AbstractEntity implements Serializable, Auditable {
      *
      * @param userLastUpdated userLastUpdated
      */
-    public void setUserLastUpdated(String userLastUpdated) {
+    public void setUserLastUpdated(User userLastUpdated) {
         this.userLastUpdated = userLastUpdated;
     }
 
@@ -178,8 +183,9 @@ public class AbstractEntity implements Serializable, Auditable {
      *
      * @return userLastCreated
      */
-    @Column(name = "USER_LAST_CREATED", updatable = false)
-    public String getUserLastCreated() {
+    @ManyToOne 
+    @JoinColumn(name = "USER_LAST_CREATED_ID", updatable = false)
+    public User getUserLastCreated() {
         return userLastCreated;
     }
 
@@ -187,7 +193,7 @@ public class AbstractEntity implements Serializable, Auditable {
      *
      * @param userLastCreated userLastCreated
      */
-    public void setUserLastCreated(String userLastCreated) {
+    public void setUserLastCreated(User userLastCreated) {
         this.userLastCreated = userLastCreated;
     }
 

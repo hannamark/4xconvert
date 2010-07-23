@@ -209,7 +209,7 @@ public class StudySiteTest  {
         StudySite create = new StudySite();
         create.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
         create.setLocalStudyProtocolIdentifier("Ecog1");
-        create.setUserLastUpdated("abstractor");
+        create.setUserLastUpdated(TestSchema.createUser());
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setDateLastUpdated(now);
         create.setStatusCode(FunctionalRoleStatusCode.ACTIVE);

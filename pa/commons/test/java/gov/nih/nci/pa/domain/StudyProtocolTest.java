@@ -103,7 +103,6 @@ import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -274,9 +273,9 @@ public class StudyProtocolTest  {
         sp.setStartDate(now);
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-        sp.setUserLastUpdated("Abstractor");
+        sp.setUserLastUpdated(TestSchema.createUser());
         sp.setDateLastCreated(now);
-        sp.setUserLastCreated("Abstractor");
+        sp.setUserLastUpdated(TestSchema.createUser());
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setAmendmentReasonCode(AmendmentReasonCode.BOTH);
         sp.setStatusDate(now);

@@ -88,6 +88,7 @@ import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -156,8 +157,8 @@ public class ObservationalStudyProtocolConverterTest   {
         //TestSchema.addUpdObject(osp);
         assertNotNull(osp.getId());
         ObservationalStudyProtocolDTO ospDTO = ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
+        ObservationalStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
         osp = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
-
         assertObservationalStudyProtocol(osp , ospDTO);
     }
     

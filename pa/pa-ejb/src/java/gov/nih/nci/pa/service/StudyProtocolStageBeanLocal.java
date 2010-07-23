@@ -21,6 +21,7 @@ import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -97,7 +98,13 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
             exampleDO.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(dto.getPrimaryPurposeCode().getCode()));
         }
         if (!PAUtil.isStNull(dto.getUserLastCreated())) {
-            exampleDO.setUserLastCreated(StConverter.convertToString(dto.getUserLastCreated()));
+            String userName = dto.getUserLastCreated().getValue();
+            try {
+                exampleDO.setUserLastCreated(CSMUserService.getInstance().getCSMUser(userName));
+            } catch (PAException e) {
+                LOG.info("Exception in setting userLastCreated for Study Protocol Stage: "
+                        + dto.getIdentifier() + ", for username" + userName, e);
+            }
         }
         Example example = Example.create(exampleDO);
         example.enableLike();

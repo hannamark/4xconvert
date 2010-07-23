@@ -55,7 +55,7 @@ public class StudyCheckoutTest {
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setStudyProtocol(sp);
         create.setUserIdentifier("Abstractor");
-        create.setUserLastUpdated("Abstractor");
+        create.setUserLastUpdated(TestSchema.createUser());
         create.setDateLastUpdated(now);
         return create;
     }

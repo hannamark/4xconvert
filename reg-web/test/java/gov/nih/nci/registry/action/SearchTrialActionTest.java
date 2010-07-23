@@ -10,8 +10,8 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
-import gov.nih.nci.registry.service.MockCSMUserService;
 
 import javax.servlet.http.HttpServletResponse;
 

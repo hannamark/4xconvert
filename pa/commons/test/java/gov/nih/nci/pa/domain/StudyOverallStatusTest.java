@@ -150,7 +150,7 @@ public class StudyOverallStatusTest  {
         create.setStudyProtocol(sp);
         create.setStatusCode(StudyStatusCode.ACTIVE);
         create.setStatusDate(now);
-        create.setUserLastUpdated("Abstractor");
+        create.setUserLastUpdated(TestSchema.createUser());
         create.setDateLastUpdated(now);
         return create;
 

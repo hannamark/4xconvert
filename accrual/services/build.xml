@@ -110,7 +110,10 @@
             <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/iso/util/EnPnConverter.java"/>
         </copy> -->
         <copy todir="${services.build.domainDir}/service/util">
-            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/*Service.java"/>
+            <fileset dir="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/">
+                <include name="*Service.java"/>
+                <exclude name="CSMUserService.java"/>                
+            </fileset>
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/*ServiceRemote.java"/>
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/*ServiceLocal.java"/>
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/PAPersonServiceBean.java"/>

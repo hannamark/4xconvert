@@ -134,8 +134,8 @@ public class PatientTest {
         p.setPersonIdentifier("po person identifier");
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         p.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
-        p.setUserLastCreated("user");
-        p.setUserLastUpdated("user");
+        p.setUserLastCreated(TestSchema.createUser());
+        p.setUserLastUpdated(TestSchema.createUser());
         return p;
     }
 

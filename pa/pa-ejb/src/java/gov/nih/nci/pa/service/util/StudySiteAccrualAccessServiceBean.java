@@ -329,12 +329,12 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         checkNull(bo.getStatusCode(), "Access Status must be set.");
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         if (bo.getId() == null) {
-            bo.setUserLastCreated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
+            bo.setUserLastCreated(CSMUserService.lookupUser(ejbContext));
             bo.setDateLastCreated(new Date());
             bo.setUserLastUpdated(null);
             bo.setDateLastUpdated(null);
         } else {
-            bo.setUserLastUpdated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
+            bo.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
             bo.setDateLastUpdated(new Date());
         }
     }

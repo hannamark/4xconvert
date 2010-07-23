@@ -10,9 +10,7 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.TrialOwner;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.service.MockCSMUserService;
 
 import java.util.ArrayList;
 
@@ -25,11 +23,7 @@ import org.junit.Test;
  */
 public class AssignOwnershipActionTest extends AbstractPaActionTest {
     private AssignOwnershipAction action = new AssignOwnershipAction();
-    @Before
-    public void setup() {
-        CSMUserService.getInstance();
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
-    }
+        
     @Test
     public void testcsmUsersNamesProperty() {
         assertNull(action.getUsers());

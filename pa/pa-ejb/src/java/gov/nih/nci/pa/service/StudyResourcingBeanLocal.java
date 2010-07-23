@@ -15,6 +15,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PADomainUtils;
@@ -147,9 +148,7 @@ public class StudyResourcingBeanLocal
    studyResourcing.setOrganizationIdentifier(IiConverter.convertToString(
            studyResourcingDTO.getOrganizationIdentifier()));
    studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-   if (ejbContext != null) {
-        studyResourcing.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-   }
+   studyResourcing.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
    studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
             studyResourcingDTO.getFundingMechanismCode()));
    studyResourcing.setNciDivisionProgramCode(NciDivisionProgramCode.getByCode(
@@ -183,9 +182,7 @@ public class StudyResourcingBeanLocal
     StudyResourcing studyResourcing = src.convertFromDtoToDomain(studyResourcingDTO);
     java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
     studyResourcing.setDateLastCreated(now);
-    if (ejbContext != null) {
-        studyResourcing.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
-    }
+    studyResourcing.setUserLastCreated(CSMUserService.lookupUser(ejbContext));
     // create Protocol Obj
     StudyProtocol studyProtocol = new StudyProtocol();
     studyProtocol.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIdentifier()));
@@ -284,9 +281,8 @@ public class StudyResourcingBeanLocal
     studyResourcing.setInactiveCommentText(StConverter.convertToString(
             studyResourcingDTO.getInactiveCommentText()));
     studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-    if (ejbContext != null) {
-        studyResourcing.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-    }
+    studyResourcing.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
+    
     session.update(studyResourcing);
     result = true;
     LOG.debug("Leaving deleteStudyResourceByID ");

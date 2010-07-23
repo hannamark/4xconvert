@@ -83,6 +83,7 @@ import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.Serializable;
 
@@ -138,10 +139,18 @@ public class OrganizationTest   {
      * @return Organization
      */
     public static Organization createOrganizationObj() {
+        return createOrganizationObj(TestSchema.createUser());
+    }
+
+    /**
+     * 
+     * @return Organization
+     */
+    public static Organization createOrganizationObj(User user) {
         Organization create = new Organization();
         create.setName("Mayo University");
         create.setIdentifier("P001");
-        create.setUserLastUpdated("abstractor");
+        create.setUserLastUpdated(user);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setDateLastUpdated(now);
         create.setIdentifier("abc");

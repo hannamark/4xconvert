@@ -86,6 +86,7 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.Date;
 import java.util.List;
@@ -116,7 +117,7 @@ public class ArmTest {
         PlannedActivity pa = new PlannedActivity();
         pa.setId(TestSchema.plannedActivityIds.get(0));
         Date now = new Date();
-        String user = "Joe";
+        User user = TestSchema.createUser();
         
         a.setName("name");
         a.setTypeCode(ArmTypeCode.EXPERIMENTAL);
@@ -148,7 +149,7 @@ public class ArmTest {
         Long armId = TestSchema.armIds.get(0);
         Arm arm = (Arm) sess.get(Arm.class, armId);
         String oldName = arm.getName();
-        String newUser = "new user";
+        User newUser = TestSchema.createUser();
         assertNotNull(oldName);
         assertFalse(newUser.equals(arm.getUserLastUpdated()));
         sess.clear();

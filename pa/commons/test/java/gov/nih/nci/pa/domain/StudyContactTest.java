@@ -234,24 +234,6 @@ public class StudyContactTest   {
         assertNotNull(sp2.getId());
         StudyProtocol savedsp2 = (StudyProtocol) session.load(StudyProtocol.class, sp2.getId());
         assertEquals("Study Protocol does not match " , sp2.getId(), savedsp2.getId());
-
-//        StudyContact create2 = createStudyContactObj(sp2 , c , hc2 , crs);
-//        TestSchema.addUpdObject(create2);
-//        StudyContact saved2 = (StudyContact) session.load(StudyContact.class, create2.getId());
-
-        
-//        List<Person> persons = null;
-//        StringBuffer hql = new StringBuffer();
-//        hql.append(" select distinct p from Person  p " 
-//        + " join p.healthCareProviders as hc "
-//        + " join hc.studyContacts as sc" 
-//        + " join sc.studyProtocol as sp" 
-//        + " where sc.studyContactRoleCode = '" 
-//        + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
-//        session = HibernateUtil.getCurrentSession();
-//        persons = session.createQuery(hql.toString()).list();
-//        
-//        assertEquals("Person count does not match " , persons.size() , 2);      
     }
     /**
      * 
@@ -266,7 +248,7 @@ public class StudyContactTest   {
         sc.setCity("herndon");
         sc.setCountry(c);
         sc.setPostalCode("20111");
-        sc.setUserLastUpdated("abstractor");
+        sc.setUserLastUpdated(TestSchema.createUser());
         sc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         sc.setDateLastUpdated(now);

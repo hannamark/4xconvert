@@ -97,8 +97,11 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.service.CSMUserUtil;
+import gov.nih.nci.pa.service.PAException;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Convert StudyProtocol domain to DTO.
@@ -111,6 +114,23 @@ import gov.nih.nci.pa.util.ISOUtil;
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength"  })
 public class StudyProtocolConverter {
+
+    private static final Logger LOG  = Logger.getLogger(StudyProtocolConverter.class);
+    private static CSMUserUtil csmUserUtil = null;
+    
+    /**
+     * @return the csmUserUtil
+     */
+    public static CSMUserUtil getCsmUserUtil() {
+        return csmUserUtil;
+    }
+
+    /**
+     * @param csmUserUtil the csmUserUtil to set
+     */
+    public static void setCsmUserUtil(CSMUserUtil csmUserUtil) {
+        StudyProtocolConverter.csmUserUtil = csmUserUtil;
+    }
 
     /**
      *
@@ -197,7 +217,10 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setAmendmentReasonCode(CdConverter.convertToCd(studyProtocol.getAmendmentReasonCode()));
         studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(studyProtocol.getAmendmentDate()));
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(studyProtocol.getSubmissionNumber()));
-        studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(studyProtocol.getUserLastCreated()));
+        if (studyProtocol.getUserLastCreated() != null) {
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(studyProtocol.getUserLastCreated()
+                    .getLoginName()));
+        }
         studyProtocolDTO.setProgramCodeText(StConverter.convertToSt(studyProtocol.getProgramCodeText()));
         studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(
                 studyProtocol.getProprietaryTrialIndicator()));
@@ -316,12 +339,20 @@ public class StudyProtocolConverter {
        }
        studyProtocol.setProprietaryTrialIndicator(BlConverter.covertToBoolean(
                studyProtocolDTO.getProprietaryTrialIndicator()));
-     //this for change of ownership
+       //this for change of ownership
        String isoStUserLastCreated = StConverter.convertToString(studyProtocolDTO.getUserLastCreated());
-       if (ISOUtil.isNotEmpty(isoStUserLastCreated) && ISOUtil.isNotEmpty(studyProtocol.getUserLastCreated())
-               && !isoStUserLastCreated.equals(studyProtocol.getUserLastCreated())) {
-           studyProtocol.setUserLastCreated(isoStUserLastCreated);
+       if (StringUtils.isNotEmpty(isoStUserLastCreated) 
+               && studyProtocol.getUserLastCreated() != null
+               && StringUtils.isNotEmpty(studyProtocol.getUserLastCreated().getLoginName())
+               && !isoStUserLastCreated.equals(studyProtocol.getUserLastCreated().getLoginName())) {
+           try {
+               studyProtocol.setUserLastCreated(getCsmUserUtil().getCSMUser(isoStUserLastCreated));
+           } catch (PAException e) {
+               LOG.info("Exception in setting userLastCreated for Study Protocol: "
+                       + studyProtocolDTO.getIdentifier() + ", for username: " + isoStUserLastCreated, e);
+           }
        }
+       
        studyProtocol.setCtgovXmlRequiredIndicator(BlConverter.covertToBoolean(
                          studyProtocolDTO.getCtgovXmlRequiredIndicator()));
        return studyProtocol;

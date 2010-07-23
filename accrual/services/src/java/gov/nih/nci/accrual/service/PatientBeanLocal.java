@@ -82,6 +82,7 @@ import gov.nih.nci.accrual.convert.Converters;
 import gov.nih.nci.accrual.convert.PatientConverter;
 import gov.nih.nci.accrual.dto.util.POPatientDTO;
 import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.util.PoRegistry;
@@ -221,6 +222,46 @@ public class PatientBeanLocal implements PatientService, PatientServiceLocal {
 
     private PatientDto createOrUpdate(PatientDto dto) throws RemoteException {
         enforceBusinessRules(dto);
+        Patient bo = convertDtoToDomain(dto);
+        bo = setDomainAuditFields(dto, bo);
+        return convertDomainToDTO(bo);
+    }
+
+    private PatientDto convertDomainToDTO(Patient bo) throws RemoteException {
+        PatientDto resultDto = null;
+        try {
+            resultDto = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
+        } catch (DataFormatException e) {
+            throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
+        }
+        return resultDto;
+    }
+
+    private Patient setDomainAuditFields(PatientDto dto, Patient bo) throws RemoteException {
+        Session session = null;
+        Patient returnBo = null;
+        try {
+            session = HibernateUtil.getCurrentSession();
+            bo.setUserLastUpdated(AccrualCsmUtil.getInstance().lookupUser(ejbContext));
+            bo.setDateLastUpdated(new Date());
+            if (PAUtil.isIiNull(dto.getIdentifier())) {
+                bo.setUserLastCreated(bo.getUserLastUpdated());
+                bo.setDateLastCreated(bo.getDateLastUpdated());
+            } else {
+                Patient oldBo = (Patient) session.get(Patient.class, IiConverter.convertToLong(dto.getIdentifier()));
+                bo.setDateLastCreated(oldBo.getDateLastCreated());
+                bo.setUserLastCreated(oldBo.getUserLastCreated());
+                session.evict(oldBo);
+            }
+            returnBo = (Patient) session.merge(bo);
+            session.flush();
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in createOrUpdate().", hbe);
+        }
+        return returnBo;
+    }
+
+    private Patient convertDtoToDomain(PatientDto dto) throws RemoteException {
         Patient bo = null;
         try {
             updatePOPatientCorrelation(dto);
@@ -234,32 +275,7 @@ public class PatientBeanLocal implements PatientService, PatientServiceLocal {
         } catch (DataFormatException e) {
             throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
         }
-        PatientDto resultDto = null;
-        Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            bo.setUserLastUpdated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
-            bo.setDateLastUpdated(new Date());
-            if (PAUtil.isIiNull(dto.getIdentifier())) {
-                bo.setUserLastCreated(bo.getUserLastUpdated());
-                bo.setDateLastCreated(bo.getDateLastUpdated());
-            } else {
-                Patient oldBo = (Patient) session.get(Patient.class, IiConverter.convertToLong(dto.getIdentifier()));
-                bo.setDateLastCreated(oldBo.getDateLastCreated());
-                bo.setUserLastCreated(oldBo.getUserLastCreated());
-                session.evict(oldBo);
-            }
-            bo = (Patient) session.merge(bo);
-            session.flush();
-        } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in createOrUpdate().", hbe);
-        }
-        try {
-            resultDto = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
-        } catch (DataFormatException e) {
-            throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
-        }
-        return resultDto;
+        return bo;
     }
 
     private void updatePOPatientDetails(PatientDto dto) throws RemoteException {

@@ -94,6 +94,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -254,9 +255,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
 
             }
             person.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-            if (ejbContext != null) {
-                person.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-            }
+            person.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
             session.update(person);
             session.flush();
         }

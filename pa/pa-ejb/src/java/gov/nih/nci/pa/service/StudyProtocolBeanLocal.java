@@ -99,12 +99,14 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -422,47 +424,6 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     public void deleteStudyProtocol(Ii ii) throws PAException {
 
      throw new PAException(" Method Not Yey Implemented ");
-      /*  if (PAUtil.isIiNull(ii)) {
-            LOG.error(" Ii should not be null ");
-            throw new PAException(" Ii should not be null ");
-        }
-        LOG.debug("Entering getStudyProtocol");
-        Session session = null;
-        StudyProtocol studyProtocol = null;
-        Ii targetSpIi = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            studyProtocol = (StudyProtocol)
-                session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
-            StudyRelationshipDTO srDto = new StudyRelationshipDTO();
-            srDto.setSourceStudyProtocolIdentifier(IiConverter.convertToIi(studyProtocol.getId()));
-            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
-            List<StudyRelationshipDTO> dtos = studyRelationshipService.search(srDto, limit);
-
-            for (StudyRelationshipDTO dto : dtos) {
-                targetSpIi = dto.getTargetStudyProtocolIdentifier();
-                break;
-            }
-            session.delete(studyProtocol);
-            if (targetSpIi != null) {
-                StudyProtocol spTarget = (StudyProtocol)
-                session.load(StudyProtocol.class, Long.valueOf(targetSpIi.getExtension()));
-                spTarget.setStatusCode(ActStatusCode.ACTIVE);
-                spTarget.setStatusDate(new Timestamp(spTarget.getDateLastCreated().getTime()));
-                session.update(spTarget);
-                //remove the TSR from the document
-                List<DocumentDTO> resultList = new ArrayList<DocumentDTO>();
-                resultList = docService.getDocumentsByStudyProtocol(targetSpIi);
-                for (DocumentDTO docDTO : resultList) {
-                    if (docDTO.getTypeCode().getCode().equals(DocumentTypeCode.TSR.getCode())) {
-                        docService.delete(docDTO.getIdentifier());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            ejbContext.setRollbackOnly();
-            throw new PAException(e);
-        }*/
     }
 
     /**
@@ -598,9 +559,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         if (sp.getStatusDate() == null) {
             sp.setStatusDate(new Timestamp((new Date()).getTime()));
         }
-//        if (CREATE.equals(operation) && ActStatusCode.ACTIVE.equals(sp.getStatusCode())) {
-//          sp.setSubmissionNumber(generateSubmissionNumber(sp.getIdentifier(), session));
-//        }
+
         //check if the assigned identifier exists
         //if no - generate the nci identifier and set it in the sp.
         if (!PADomainUtils.checkAssignedIdentifier(sp)) {
@@ -613,9 +572,16 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             sp.setOtherIdentifiers(secondaryIds);
           }
         }
-        if (ejbContext != null && CREATE.equals(operation)) {
-            sp.setUserLastCreated(spDTO.getUserLastCreated() != null ? spDTO.getUserLastCreated().getValue()
-                                                                     : ejbContext.getCallerPrincipal().getName());
+        if (CREATE.equals(operation)) {
+            User user = null;
+            try {
+                user = spDTO.getUserLastCreated() != null 
+                        ? CSMUserService.getInstance().getCSMUser(spDTO.getUserLastCreated().getValue())
+                        : CSMUserService.lookupUser(ejbContext);
+            } catch (PAException e) {
+                LOG.info("Unable to set User for auditing", e);
+            }
+            sp.setUserLastCreated(user);
             sp.setDateLastCreated(new Timestamp((new Date()).getTime()));
         }
 
@@ -719,7 +685,8 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         StudyProtocol prevStudyProtocol = (StudyProtocol) session.load(StudyProtocol.class,
                 Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
         String newUserLastCreated = StConverter.convertToString(studyProtocolDTO.getUserLastCreated());
-        String prevUserLastCreated = prevStudyProtocol.getUserLastCreated();
+        User prevUserLastCreatedObj = prevStudyProtocol.getUserLastCreated();
+        String prevUserLastCreated = prevUserLastCreatedObj != null ? prevUserLastCreatedObj.getLoginName() : null;
         if (StringUtils.isNotEmpty(newUserLastCreated) && StringUtils.isNotEmpty(prevUserLastCreated)
                 && !prevUserLastCreated.equals(newUserLastCreated)) {
             session = HibernateUtil.getCurrentSession();

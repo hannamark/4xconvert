@@ -147,7 +147,7 @@ public class StudyRecruitmentStatusTest {
         create.setStudyProtocol(sp);
         create.setStatusCode(StudyRecruitmentStatusCode.RECRUITING_ACTIVE);
         create.setStatusDate(now);
-        create.setUserLastUpdated("Abstractor");
+        create.setUserLastUpdated(TestSchema.createUser());
         create.setDateLastUpdated(now);
         return create;
     }    

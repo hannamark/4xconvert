@@ -85,6 +85,7 @@ import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -151,6 +152,7 @@ public class StudyProtocolConverterTest  {
         assertNotNull(create.getId());
         //convert to DTO
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(create);
+        StudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
         StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO);
         assertStudyProtocol(sp , spDTO);
         
@@ -165,7 +167,8 @@ public class StudyProtocolConverterTest  {
         assertNotNull(create.getId());
         //convert to DTO
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(create);
-        StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO , new StudyProtocol());
+        StudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
+        StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO, new StudyProtocol());
         assertStudyProtocol(sp , spDTO);
         
     }

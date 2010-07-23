@@ -141,6 +141,7 @@ import gov.nih.nci.pa.util.CtrpHibernateHelper;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestHibernateHelper;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -803,16 +804,9 @@ public class TestSchema {
         inv.setStatusCode(ActiveInactivePendingCode.ACTIVE);
         inv.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
         inv.setTypeCode(InterventionTypeCode.DIETARY_SUPPLEMENT);
-        inv.setUserLastUpdated("Joe");
+        inv.setUserLastUpdated(createUser());
         addUpdObject(inv);
         interventionIds.add(inv.getId());
-
-       /* ActivityRelationship ar = new ActivityRelationship();
-        ar.setTypeCode("ActivityRelationship");
-        ar.setSourcePerformedActivity(performedActivities.get(0));
-        ar.setTargetPerformedActivity(performedActivities.get(0));
-        addUpdObject(ar);
-        activityRelationships.add(ar);*/
 
         DoseFrequency df = new DoseFrequency();
         df.setCode("QIS");
@@ -881,5 +875,19 @@ public class TestSchema {
         at.setDescription("2-D Echocardiogram");
         addUpdObject(at);
     }
+    
+    public static User createUser() {
+        User user = null;
+        Session session  = HibernateUtil.getCurrentSession();
+        Transaction t = session.beginTransaction();
+        user = new User();
+        user.setLoginName("Abstractor: " + new Date());
+        user.setFirstName("Joe");
+        user.setLastName("Smith");
+        user.setLoginName("curator");
+        user.setUpdateDate(new Date());
 
+        TestSchema.addUpdObject(user);
+        return user;
+    }
 }

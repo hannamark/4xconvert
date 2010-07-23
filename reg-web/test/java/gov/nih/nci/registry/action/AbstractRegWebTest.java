@@ -30,6 +30,7 @@ import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.test.util.MockPoServiceLocator;
 import gov.nih.nci.registry.test.util.RegistrationMockServiceLocator;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -407,7 +408,9 @@ public abstract class AbstractRegWebTest {
        Organization org = new Organization();
        org.setName("Mayo University");
        org.setIdentifier("1");
-       org.setUserLastUpdated("abstractor");
+       User abstractor = new User();
+       abstractor.setLoginName("abstractor");
+       org.setUserLastUpdated(abstractor);
        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
        org.setDateLastUpdated(now);
        org.setStatusCode(EntityStatusCode.PENDING);

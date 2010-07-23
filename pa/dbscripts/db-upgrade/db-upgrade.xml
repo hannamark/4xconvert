@@ -506,4 +506,8 @@
         <comment>Removing users from the gridClient group if they are also apart of the Outcomes group.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2304.sql"/>
     </changeSet>
+    <changeSet id="PO-2263" author="moweis">
+        <comment>PO-2263: Create FK for study_protocol user_last_created and user_last_updated to csm_user</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/PO-2263.sql"/>
+    </changeSet>
 </databaseChangeLog>

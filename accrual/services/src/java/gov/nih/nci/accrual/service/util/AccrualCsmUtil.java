@@ -88,6 +88,8 @@ import gov.nih.nci.security.exceptions.CSTransactionException;
 
 import java.rmi.RemoteException;
 
+import javax.ejb.SessionContext;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -163,7 +165,6 @@ public class AccrualCsmUtil implements CsmUtil {
             getUserProvisioningManager("pa");
             csmUser = upManager.getUser(loginName);
 
-            //upManager.getGroups(csmUser.getUserId().toString());
             // get values from Registry User object and set in CSM User object
             csmUser.setUserId(user.getCsmUserId());
             csmUser.setLoginName(loginName);
@@ -186,6 +187,28 @@ public class AccrualCsmUtil implements CsmUtil {
         return createdCSMUser;
     }
 
+    /**
+     * Using the principal of a {@link SessionContext} will return the corresponding {@link User}, 
+     * or null if none exist.
+     * @param ejbContext SessionContext
+     * @return User 
+     */
+    public User lookupUser(SessionContext ejbContext) {
+        User user = null;
+        if (ejbContext != null && ejbContext.getCallerPrincipal() != null) {
+            String userName = ejbContext.getCallerPrincipal().getName();
+            try {
+                user = AccrualCsmUtil.getInstance().getCSMUser(userName);
+                if (user == null) {
+                    LOG.info("User not found for login name: " + userName);
+                }
+            } catch (RemoteException e) {
+                LOG.warn("Exception in looking up user: " + userName, e);
+            }
+        }
+        return user;
+    }
+    
     /**
      * @param csmUtil the csmUtil to set
      */

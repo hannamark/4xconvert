@@ -140,7 +140,7 @@ public class StudyOutcomeMeasureTest {
         create.setName("StudyOutcomeMeasure");
         create.setStudyProtocol(sp);
         create.setPrimaryIndicator(Boolean.TRUE);
-        create.setUserLastUpdated("Abstractor");
+        create.setUserLastUpdated(TestSchema.createUser());
         create.setDateLastUpdated(now);
         return create;
     }

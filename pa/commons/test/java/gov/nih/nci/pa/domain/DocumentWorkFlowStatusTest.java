@@ -151,7 +151,7 @@ public class DocumentWorkFlowStatusTest {
         create.setStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
         create.setStatusDateRangeLow(now);
         create.setCommentText("Common Text");
-        create.setUserLastUpdated("Abstractor");
+        create.setUserLastUpdated(TestSchema.createUser());
         create.setDateLastUpdated(now);
         return create;
     }

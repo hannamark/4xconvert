@@ -115,11 +115,11 @@ public class StudyRegulatoryAuthorityTest  {
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
-        //
+        
         Country c = CountryTest.createCountryObj();
         TestSchema.addUpdObject(c);
         assertNotNull(c.getId());
-        //
+        
         RegulatoryAuthority ra = RegulatoryAuthorityTest.createRegulatoryObj(c);
         TestSchema.addUpdObject(ra);
         assertNotNull(ra.getId());
@@ -129,7 +129,7 @@ public class StudyRegulatoryAuthorityTest  {
         assertNotNull(create.getId());
         StudyRegulatoryAuthority saved = 
             (StudyRegulatoryAuthority) session.load(StudyRegulatoryAuthority.class , create.getId());
-        //
+
         assertEquals(" Id does not match " , create.getId(), saved.getId());
         assertEquals(" Study Protocol Id does not match " , create.getStudyProtocol().getId() , 
                     saved.getStudyProtocol().getId());
@@ -143,9 +143,7 @@ public class StudyRegulatoryAuthorityTest  {
         StudyRegulatoryAuthority sra = new StudyRegulatoryAuthority();
         sra.setRegulatoryAuthority(ra);
         sra.setStudyProtocol(sp);
-        //sra.setRegulatoryAuthorityID(ra.getId());
-        //sra.setStudyProtocolID(sp.getId());
-        sra.setUserLastUpdated("abstractor");
+        sra.setUserLastUpdated(TestSchema.createUser());
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         sra.setDateLastUpdated(now);
         return sra;

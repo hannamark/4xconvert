@@ -64,7 +64,7 @@ public class StudyInboxTest {
         create.setComments("idName");
         create.setOpenDate(now);
         create.setCloseDate(now);
-        create.setUserLastUpdated("Abstractor");
+        create.setUserLastUpdated(TestSchema.createUser());
         create.setDateLastUpdated(now);
         return create;
     }

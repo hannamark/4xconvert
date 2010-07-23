@@ -150,7 +150,7 @@ public class StudyObjectiveTest  {
         create.setStudyProtocol(sp);
         create.setStudyObjectiveTypeCode(StudyObjectiveTypeCode.PRIMARY);
         create.setDescription("the primary study objective is");
-        create.setUserLastUpdated("Abstractor");
+        create.setUserLastUpdated(TestSchema.createUser());
         create.setDateLastUpdated(now);
         return create;
 

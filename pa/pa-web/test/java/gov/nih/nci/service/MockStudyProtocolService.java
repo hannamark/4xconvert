@@ -105,6 +105,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -128,7 +129,9 @@ public class MockStudyProtocolService    implements StudyProtocolServiceLocal {
         sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
-        sp.setUserLastCreated("user2@mail.nih.gov");
+        User userLastCreated = new User();
+        userLastCreated.setLoginName("user2@mail.nih.gov");
+        sp.setUserLastCreated(userLastCreated);
         list.add(sp);
         isplist = new ArrayList<InterventionalStudyProtocol>();
         InterventionalStudyProtocol isp = new InterventionalStudyProtocol();
@@ -138,7 +141,9 @@ public class MockStudyProtocolService    implements StudyProtocolServiceLocal {
         isp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         isp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
         isp.setOfficialTitle("officialTitle");
-        sp.setUserLastCreated("user1@mail.nih.gov");
+        User userLastCreated2 = new User();
+        userLastCreated.setLoginName("user1@mail.nih.gov");
+        isp.setUserLastCreated(userLastCreated2);
         isplist.add(isp);
     }
     public List<StudyProtocolDTO> search(StudyProtocolDTO spDTO) throws PAException{

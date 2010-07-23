@@ -91,6 +91,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -254,9 +255,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                 paOrg.setStatusCode(newOrg.getStatusCode());
             }
             paOrg.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-            if (ejbContext != null) {
-                paOrg.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-            }
+            paOrg.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
             session.update(paOrg);
             session.flush();
         }

@@ -143,7 +143,7 @@ public class StudyCoordinatingCenterTest  {
      */
     public static StudyCoordinatingCenter createStudyCoordinatingCenterObj(StudyProtocol sp , Organization o) {
         StudyCoordinatingCenter create = new StudyCoordinatingCenter();
-        create.setUserLastUpdated("abstractor");
+        create.setUserLastUpdated(TestSchema.createUser());
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setDateLastUpdated(now);
         create.setOrganization(o);

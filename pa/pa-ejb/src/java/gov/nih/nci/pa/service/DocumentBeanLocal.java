@@ -92,6 +92,7 @@ import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -187,17 +188,8 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         Document doc = new DocumentConverter().convertFromDtoToDomain(docDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         doc.setDateLastCreated(now);
-        doc.setDateLastUpdated(now);
-        if (ejbContext != null) {
-            doc.setUserLastCreated(ejbContext.getCallerPrincipal().getName());
-        }
-        // create Protocol Obj
-        /*
-         * StudyProtocol studyProtocol = new StudyProtocol();
-         * studyProtocol.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIi()));
-         *
-         * doc.setStudyProtocol(studyProtocol);
-         */
+        doc.setUserLastCreated(CSMUserService.lookupUser(ejbContext));
+        
         doc.setActiveIndicator(true);
         session = HibernateUtil.getCurrentSession();
         session.save(doc);
@@ -349,9 +341,8 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         doc.setActiveIndicator(false);
         doc.setInactiveCommentText(StConverter.convertToString(docDTO.getInactiveCommentText()));
         doc.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-        if (ejbContext != null) {
-            doc.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-        }
+        doc.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
+        
         session.update(doc);
         session.flush();
     }

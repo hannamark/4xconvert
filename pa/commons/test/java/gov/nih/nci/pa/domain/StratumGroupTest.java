@@ -141,7 +141,7 @@ public class StratumGroupTest {
         create.setStudyProtocol(sp);
         create.setDescription("Description");
         create.setGroupNumberText("Code");
-        create.setUserLastUpdated("Abstractor");
+        create.setUserLastUpdated(TestSchema.createUser());
         create.setDateLastUpdated(now);
         return create;
     }

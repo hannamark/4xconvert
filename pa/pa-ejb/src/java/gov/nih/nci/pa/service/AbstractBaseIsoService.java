@@ -85,6 +85,7 @@ import gov.nih.nci.pa.iso.convert.AbstractConverter;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -240,8 +241,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         try {
             session = HibernateUtil.getCurrentSession();
             bo = convertFromDtoToDomain(dto);
-            String userLastUpdated = getUserLastUpdated();
-            bo.setUserLastUpdated(userLastUpdated);
+            bo.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
             bo.setDateLastUpdated(new Date());
             if (PAUtil.isIiNull(dto.getIdentifier())) {
                 bo.setUserLastCreated(bo.getUserLastUpdated());
@@ -306,21 +306,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         }
 
     }
-    private String getUserLastUpdated() {
-     String userUpdated = "not logged";
-     if (ejbContext != null) {
-      try {
-        if (ejbContext.getCallerPrincipal() != null) {
-             userUpdated =  ejbContext.getCallerPrincipal().getName();
-        }
-      } catch (IllegalStateException e) {
-          return userUpdated;
-      } catch (Exception e) {
-          return userUpdated;
-      }
-     }
-      return userUpdated;
-    }
+
     /**
      *
      * @param boList boList

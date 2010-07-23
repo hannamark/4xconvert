@@ -161,7 +161,8 @@ public class StudyIndldeTest {
         create.setExpandedAccessIndicator(Boolean.TRUE);
         create.setHolderTypeCode(HolderTypeCode.NIH);
         create.setNihInstHolderCode(NihInstituteCode.NCMHD);
-        create.setUserLastUpdated("Abstractor");
+        create.setUserLastUpdated(TestSchema.createUser());
+
         create.setDateLastUpdated(now);
         return create;
     }

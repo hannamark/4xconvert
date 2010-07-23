@@ -12,7 +12,7 @@ import java.util.List;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
-import gov.nih.nci.registry.service.MockCSMUserService;
+import gov.nih.nci.pa.util.MockCSMUserService;
 
 import javax.servlet.http.HttpSession;
 

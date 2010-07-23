@@ -84,6 +84,8 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.rmi.RemoteException;
 
+import javax.ejb.SessionContext;
+
 /**
  * @author Hugh Reinhart
  * @since Sep 11, 2009
@@ -111,4 +113,13 @@ public interface CsmUtil {
      * @throws RemoteException exception
      */
     User updateCSMUser(RegistryUser user, String loginName) throws RemoteException;
+    
+    /**
+     * Using the principal of a {@link SessionContext} will return the corresponding {@link User}, 
+     * or null if none exist.
+     * @param ejbContext SessionContext
+     * @return User 
+     */
+    User lookupUser(SessionContext ejbContext);
+    
 }

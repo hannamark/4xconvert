@@ -14,8 +14,12 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.CSMUserUtil;
+import gov.nih.nci.pa.service.PAException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 /**
  *
  * @author Vrushali
@@ -23,6 +27,24 @@ import org.apache.commons.collections.CollectionUtils;
  */
 @SuppressWarnings ({"PMD.ExcessiveMethodLength" })
 public class StudyProtocolStageConverter {
+    
+    private static final Logger LOG  = Logger.getLogger(StudyProtocolStageConverter.class);
+    private static CSMUserUtil csmUserUtil = null;
+    
+    /**
+     * @return the csmUserUtil
+     */
+    public static CSMUserUtil getCsmUserUtil() {
+        return csmUserUtil;
+    }
+
+    /**
+     * @param csmUserUtil the csmUserUtil to set
+     */
+    public static void setCsmUserUtil(CSMUserUtil csmUserUtil) {
+        StudyProtocolStageConverter.csmUserUtil = csmUserUtil;
+    }
+
     /**
      *
      * @param studyProtocolStage sp
@@ -94,8 +116,10 @@ public class StudyProtocolStageConverter {
                 studyProtocolStage.getProprietaryTrialIndicator()));
         studyProtocolStageDTO.setNciDesignatedCancerCenterIndicator(BlConverter.convertToBl(
                 studyProtocolStage.getNciDesignatedCancerCenterIndicator()));
-        studyProtocolStageDTO.setUserLastCreated(StConverter.convertToSt(
-                studyProtocolStage.getUserLastCreated()));
+        if (studyProtocolStage.getUserLastCreated() != null) {
+            studyProtocolStageDTO.setUserLastCreated(StConverter.convertToSt(
+                studyProtocolStage.getUserLastCreated().getLoginName()));
+        }
         studyProtocolStageDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(
                 studyProtocolStage.getCtgovXmlRequiredIndicator()));
         studyProtocolStageDTO.setSubmitterOrganizationIdentifier(IiConverter.convertToIi(
@@ -135,16 +159,17 @@ public class StudyProtocolStageConverter {
      * @return domain
      */
     public static StudyProtocolStage convertFromDTOToDomain(StudyProtocolStageDTO studyProtocolStageDTO) {
-        return convertFromDTOToDomain(studyProtocolStageDTO , new StudyProtocolStage());
+        return convertFromDTOToDomain(studyProtocolStageDTO, new StudyProtocolStage());
     }
+
     /**
      *
      * @param studyProtocolStageDTO isoDTO
      * @param studyProtocolStage domain
      * @return domain
      */
-    public static StudyProtocolStage convertFromDTOToDomain(
-            StudyProtocolStageDTO studyProtocolStageDTO, StudyProtocolStage studyProtocolStage) {
+    public static StudyProtocolStage convertFromDTOToDomain(StudyProtocolStageDTO studyProtocolStageDTO,
+            StudyProtocolStage studyProtocolStage) {
         studyProtocolStage.setId(IiConverter.convertToLong(studyProtocolStageDTO.getIdentifier()));
         studyProtocolStage.setNctIdentifier(StConverter.convertToString(studyProtocolStageDTO.getNctIdentifier()));
         studyProtocolStage.setOfficialTitle(StConverter.convertToString(studyProtocolStageDTO.getOfficialTitle()));
@@ -202,8 +227,17 @@ public class StudyProtocolStageConverter {
                 studyProtocolStageDTO.getProprietaryTrialIndicator()));
         studyProtocolStage.setNciDesignatedCancerCenterIndicator(BlConverter.covertToBool(
                 studyProtocolStageDTO.getNciDesignatedCancerCenterIndicator()));
-        studyProtocolStage.setUserLastCreated(StConverter.convertToString(
-                studyProtocolStageDTO.getUserLastCreated()));
+        
+        String isoStUserLastCreated = StConverter.convertToString(studyProtocolStageDTO.getUserLastCreated());
+        if (StringUtils.isNotEmpty(isoStUserLastCreated)) {
+            try {
+                studyProtocolStage.setUserLastCreated(getCsmUserUtil().getCSMUser(isoStUserLastCreated));
+            } catch (PAException e) {
+                LOG.info("Exception in setting userLastCreated for Study Protocol Stage: "
+                        + studyProtocolStageDTO.getIdentifier() + ", for username: " + isoStUserLastCreated, e);
+            }
+        }
+            
         studyProtocolStage.setCtgovXmlRequiredIndicator(BlConverter.covertToBoolean(
                 studyProtocolStageDTO.getCtgovXmlRequiredIndicator()));
         studyProtocolStage.setSubmitterOrganizationIdentifier(IiConverter.convertToString(

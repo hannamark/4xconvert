@@ -9,7 +9,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.registry.service.MockCSMUserService;
+import gov.nih.nci.pa.util.MockCSMUserService;
 
 import java.util.List;
 

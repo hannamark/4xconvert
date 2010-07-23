@@ -135,7 +135,7 @@ public class PlannedActivityTest {
         pa.setLeadProductIndicator(true);
         pa.setStudyProtocol(sp);
         pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode());
-        pa.setUserLastUpdated("Joe");
+        pa.setUserLastUpdated(TestSchema.createUser());
         sess.saveOrUpdate(pa);
         sess.flush();
         sess.clear();

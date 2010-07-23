@@ -79,6 +79,9 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
+import gov.nih.nci.pa.iso.convert.StudyProtocolStageConverter;
+import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.security.SecurityServiceProvider;
@@ -92,6 +95,8 @@ import gov.nih.nci.security.exceptions.CSException;
 import java.util.List;
 import java.util.Set;
 
+import javax.ejb.SessionContext;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -101,10 +106,14 @@ import org.apache.log4j.Logger;
  */
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
     "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
-public class CSMUserService {
+public class CSMUserService implements CSMUserUtil {
 
-    private static final Logger LOG  = Logger.getLogger(PAPersonServiceBean.class);
-    private static CSMUserService registryUserService = new CSMUserService();
+    private static final Logger LOG  = Logger.getLogger(CSMUserService.class);
+    private static CSMUserUtil registryUserService = null;
+    
+    static {
+        setRegistryUserService(new CSMUserService());
+    }
 
     /**
      * Create a new CSM user.
@@ -168,7 +177,6 @@ public class CSMUserService {
             getUserProvisioningManager("pa");
             csmUser  = upManager.getUser(loginName);
 
-            //upManager.getGroups(csmUser.getUserId().toString());
             // get values from Registry User object and set in CSM User object
             csmUser.setUserId(user.getCsmUserId());
             csmUser.setLoginName(loginName);
@@ -209,6 +217,9 @@ public class CSMUserService {
             UserProvisioningManager upManager = SecurityServiceProvider.
                                                    getUserProvisioningManager("pa");
             csmUser = upManager.getUser(loginName);
+            if (csmUser == null) {
+                LOG.info("Unable to look up CSM user for login name: " + loginName);
+            }
         } catch (CSConfigurationException csce) {
             LOG.error(" CSM Exception while retrieving CSM user : "
                                         + loginName, csce);
@@ -292,24 +303,48 @@ public class CSMUserService {
     }
 
     /**
+     * Using the principal of a {@link SessionContext} will return the corresponding {@link User}, 
+     * or null if none exist.
+     * @param ejbContext SessionContext
+     * @return User 
+     */
+    public static User lookupUser(SessionContext ejbContext) {
+        User user = null;
+        if (ejbContext != null && ejbContext.getCallerPrincipal() != null) {
+            String userName = ejbContext.getCallerPrincipal().getName();
+            try {
+                user = CSMUserService.getInstance().getCSMUser(userName);
+                if (user == null) {
+                    LOG.info("User not found for userName: " + userName);
+                }
+            } catch (PAException e) {
+                LOG.warn("Exception in looking up user: " + userName, e);
+            }
+        }
+        return user;
+    }
+    
+    /**
      *
      * @return RegistryUserService
      */
-    public static CSMUserService getInstance() {
+    public static CSMUserUtil getInstance() {
         return  getRegistryUserService();
     }
 
     /**
      * @param registryUserService the registryUserService to set
      */
-    public static void setRegistryUserService(CSMUserService registryUserService) {
+    public static void setRegistryUserService(CSMUserUtil registryUserService) {
         CSMUserService.registryUserService = registryUserService;
+        StudyProtocolConverter.setCsmUserUtil(CSMUserService.registryUserService);
+        StudyProtocolStageConverter.setCsmUserUtil(CSMUserService.registryUserService);
     }
 
     /**
      * @return the registryUserService
      */
-    public static CSMUserService getRegistryUserService() {
+    public static CSMUserUtil getRegistryUserService() {
         return registryUserService;
     }
 

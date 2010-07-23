@@ -137,9 +137,9 @@ public class DiseaseTest {
         create.setPreferredName(preferredName);
         create.setStatusCode(ActiveInactivePendingCode.ACTIVE);
         create.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
-        create.setUserLastCreated("userLastCreated");
+        create.setUserLastCreated(TestSchema.createUser());
         create.setDateLastCreated(new Timestamp(new Date().getTime()));
-        create.setUserLastUpdated("userLastUpdated");
+        create.setUserLastUpdated(TestSchema.createUser());
         create.setDateLastUpdated(new Timestamp(new Date().getTime()));
         return create;
     }

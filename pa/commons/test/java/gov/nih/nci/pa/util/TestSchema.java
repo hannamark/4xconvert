@@ -155,6 +155,7 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -328,6 +329,9 @@ public class TestSchema {
             personIds = new ArrayList<Long>();
             countries = new ArrayList<Country>();
 
+            User curator = createUser();
+            addUpdObject(curator);
+            
             StudyProtocol sp = new InterventionalStudyProtocol();
             sp.setOfficialTitle("cacncer for THOLA");
             sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
@@ -451,13 +455,13 @@ public class TestSchema {
             sg.setStudyProtocol(sp);
             sg.setDescription("Description1");
             sg.setGroupNumberText("Code1");
-            sg.setUserLastUpdated("curator");
+            sg.setUserLastUpdated(curator);
             addUpdObject(sg);
             sg = new StratumGroup();
             sg.setStudyProtocol(sp);
             sg.setDescription("Description2");
             sg.setGroupNumberText("Code2");
-            sg.setUserLastUpdated("curator");
+            sg.setUserLastUpdated(curator);
             addUpdObject(sg);
 
             Intervention inv = new Intervention();
@@ -467,7 +471,7 @@ public class TestSchema {
             inv.setStatusCode(ActiveInactivePendingCode.ACTIVE);
             inv.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/1/2000"));
             inv.setTypeCode(InterventionTypeCode.DIETARY_SUPPLEMENT);
-            inv.setUserLastUpdated("Joe");
+            inv.setUserLastUpdated(curator);
             addUpdObject(inv);
             interventionIds.add(inv.getId());
 
@@ -477,7 +481,7 @@ public class TestSchema {
             invo.setName("Hershey");
             invo.setStatusCode(ActiveInactiveCode.ACTIVE);
             invo.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/1/2000"));
-            invo.setUserLastUpdated("Joe");
+            invo.setUserLastUpdated(curator);
             invo.setNameTypeCode("synonym");
             addUpdObject(invo);
             invo = new InterventionAlternateName();
@@ -486,7 +490,7 @@ public class TestSchema {
             invo.setName("Nestle");
             invo.setStatusCode(ActiveInactiveCode.ACTIVE);
             invo.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/1/2000"));
-            invo.setUserLastUpdated("Joe");
+            invo.setUserLastUpdated(curator);
             invo.setNameTypeCode("synonym");
             addUpdObject(invo);
 
@@ -497,7 +501,7 @@ public class TestSchema {
             pa.setLeadProductIndicator(true);
             pa.setStudyProtocol(sp);
             pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode());
-            pa.setUserLastUpdated("Joe");
+            pa.setUserLastUpdated(curator);
             addUpdObject(pa);
             plannedActivityIds.add(pa.getId());
 
@@ -505,7 +509,7 @@ public class TestSchema {
             som.setName("StudyOutcomeMeasure");
             som.setStudyProtocol(sp);
             som.setPrimaryIndicator(Boolean.TRUE);
-            som.setUserLastUpdated("curator");
+            som.setUserLastUpdated(curator);
             addUpdObject(som);
             outcomeIds.add(som.getId());
 
@@ -525,8 +529,8 @@ public class TestSchema {
             arm.setName("ARM 01");
             arm.setTypeCode(ArmTypeCode.EXPERIMENTAL);
             arm.setDescriptionText("arm description");
-            arm.setUserLastCreated("old user");
-            arm.setUserLastUpdated("old user");
+            arm.setUserLastCreated(curator);
+            arm.setUserLastUpdated(curator);
             arm.getInterventions().add(pa);
             addUpdObject(arm);
             armIds.add(arm.getId());
@@ -535,7 +539,7 @@ public class TestSchema {
             dws.setStudyProtocol(sp);
             dws.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
             dws.setCommentText("Comment Text1");
-            dws.setUserLastUpdated("curator");
+            dws.setUserLastUpdated(curator);
             addUpdObject(dws);
 
             RegulatoryAuthority ra = new RegulatoryAuthority();
@@ -739,5 +743,14 @@ public class TestSchema {
                 sp.setId(sp.getId());
                 return IiConverter.convertToStudyProtocolIi(sp.getId());
             }
-
+        
+        public static User createUser() {
+            User user = new User();
+            user.setLoginName("Abstractor: " + new Date());
+            user.setFirstName("Joe");
+            user.setLastName("Smith");
+            user.setUpdateDate(new Date());
+            TestSchema.addUpdObject(user);
+            return user;
+        }
 }

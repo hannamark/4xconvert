@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.AbstractConverter;
 import gov.nih.nci.accrual.convert.Converters;
+import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.AbstractEntity;
@@ -284,10 +285,11 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     /**
      * Sets the audit values.
      * 
+     * @throws RemoteException on error
      * @param bo the new audit values
      */
-    protected void setAuditValues(AbstractEntity bo) {
-        bo.setUserLastUpdated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
+    protected void setAuditValues(AbstractEntity bo) throws RemoteException {
+        bo.setUserLastUpdated(AccrualCsmUtil.getInstance().lookupUser(ejbContext));
         bo.setDateLastUpdated(new Date());    
         if (bo.getId() == null) {
             bo.setUserLastCreated(bo.getUserLastUpdated());

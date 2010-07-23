@@ -84,6 +84,7 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -140,7 +141,8 @@ public class StudyMilestoneTest {
         PlannedActivity pa = new PlannedActivity();
         pa.setId(TestSchema.plannedActivityIds.get(0));
         Date now = new Date();
-        String user = "Joe";
+        User user1 = TestSchema.createUser();
+        User user2 = TestSchema.createUser();
         
         m.setCommentText("12345");
         m.setMilestoneCode(MilestoneCode.INITIAL_ABSTRACTION_VERIFY);
@@ -148,8 +150,8 @@ public class StudyMilestoneTest {
         m.setDateLastCreated(now);
         m.setDateLastUpdated(now);
         m.setStudyProtocol(sp);
-        m.setUserLastCreated(user);
-        m.setUserLastUpdated(user);
+        m.setUserLastCreated(user1);
+        m.setUserLastUpdated(user2);
         m = (StudyMilestone) sess.merge(m);
         sess.flush();
         
@@ -161,8 +163,8 @@ public class StudyMilestoneTest {
         StudyProtocol spOut = (StudyProtocol) sess.get(StudyProtocol.class, sp.getId());
         List<StudyMilestone> armsOut = spOut.getStudyMilestones();
         assertTrue(armsOut.contains(armOut));
-        assertEquals(user, armOut.getUserLastCreated());
-        assertEquals(user, armOut.getUserLastUpdated());
+        assertEquals(user1, armOut.getUserLastCreated());
+        assertEquals(user2, armOut.getUserLastUpdated());
         assertEquals(now, armOut.getDateLastCreated());
         assertEquals(now, armOut.getDateLastUpdated());
     }
