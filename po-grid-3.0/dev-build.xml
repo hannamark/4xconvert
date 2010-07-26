@@ -29,6 +29,12 @@
     <property name="java.naming.security.principal" value="ejbclient" />
     <property name="java.naming.security.credentials" value="pass" />
     <property name="cobertura.dir" value="tools/cobertura" />
+    
+    <property name="jboss.serverinstance.name" value="pogrid-3.0"/>
+    <property name="jboss.dir" value="${user.home}/apps/po/${jboss.serverinstance.name}/jboss-4.0.5.GA-jems-ejb3"/>
+    
+    
+    
 
     <path id="cobertura.classpath">
         <fileset dir="${cobertura.dir}">

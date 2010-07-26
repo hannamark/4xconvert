@@ -30,6 +30,9 @@
     <property name="java.naming.security.principal" value="Gr1DU5er" />
     <property name="java.naming.security.credentials" value="Pa44Wurd" />
     <property name="cobertura.dir" value="tools/cobertura" />
+    
+    <property name="jboss.serverinstance.name" value="pagrid-3.2"/>
+    <property name="jboss.dir" value="${user.home}/apps/pa/${jboss.serverinstance.name}/jboss-4.0.5.GA-jems-ejb3"/>
 
     <path id="cobertura.classpath">
         <fileset dir="${cobertura.dir}">

@@ -18,7 +18,7 @@
     <property file="local.properties" />
     <property name="service.protocol" value="https" />
     <property name="service.hostname" value="localhost" />
-    <property name="service.port" value="39543" />
+    <property name="service.port" value="39243" />
     <property name="build.dir" location="build" />
     <property name="test.build.lib.dir" value="${build.dir}/test/lib" />
 
@@ -30,6 +30,9 @@
     <property name="java.naming.security.principal" value="Gr1DU5er" />
     <property name="java.naming.security.credentials" value="Pa44Wurd" />
     <property name="cobertura.dir" value="tools/cobertura" />
+    
+    <property name="jboss.serverinstance.name" value="pogrid-3.1"/>
+    <property name="jboss.dir" value="${user.home}/apps/po/${jboss.serverinstance.name}/jboss-4.0.5.GA-jems-ejb3"/>
 
     <path id="cobertura.classpath">
         <fileset dir="${cobertura.dir}">
