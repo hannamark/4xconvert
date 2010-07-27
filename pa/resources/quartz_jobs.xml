@@ -45,4 +45,47 @@ xsi:schemaLocation="http://www.quartzscheduler.org/ns/quartz http://www.quartzsc
         </cron>  
     </trigger>  
 </job>
+<job>
+<job-detail>
+    <name>resetNciIdSeqJob</name>
+    <group>DEFAULT</group>
+    <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+    <volatility>false</volatility>  
+    <durability>false</durability>  
+    <recover>false</recover>  
+    <job-data-map allows-transient-data="true">
+        <entry>
+            <key>ejb</key>
+            <value>pa/ResetNciIdSeqTasksServiceBean/local</value>
+        </entry>
+        <entry>
+            <key>interfaceName</key>
+            <value>gov.nih.nci.pa.service.util.ResetNciIdSeqTasksServiceLocal</value>
+        </entry>
+        <entry>
+            <key>method</key>
+            <value>performTask</value>
+        </entry>
+        <entry>
+            <key>java.naming.factory.initial</key>
+            <value>org.jnp.interfaces.NamingContextFactory</value>
+        </entry>        
+        <entry>
+        	<key>java.naming.provider.url</key>
+            <value>jnp://localhost:@jboss.server.jndi.port@</value>
+        </entry>
+    </job-data-map>
+</job-detail>  
+<trigger>  
+    <cron>  
+        <name>nciIdsTrigger</name>  
+        <group>DailyTriggerGroup</group>  
+        <description>Yearly Nci Ids Trigger</description> 
+        <job-name>resetNciIdSeqJob</job-name>  
+        <job-group>DEFAULT</job-group>  
+        <start-time>2009-08-04T11:15:00</start-time> 
+        <cron-expression>0 0 0 1 1 ? *</cron-expression> 
+    </cron>  
+</trigger>  
+</job>
 </quartz> 

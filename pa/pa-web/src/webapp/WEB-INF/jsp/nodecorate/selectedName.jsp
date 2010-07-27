@@ -36,7 +36,7 @@
     <td><s:textfield label="Responsible Party Name" name="personContactWebDTO.title" id="personContactWebDTO.title" size="30"  
         readonly="true" cssClass="readonly" cssStyle="width:200px"/>
     </td>
-    <td class="value">
+    <td>
         <ul style="margin-top:-5px;">              
             <li style="padding-left:0">
             <a href="#" class="btn" id="lookupbtn4RP" onclick="lookup4genericcontact();" title="Opens a popup form to select Site Contact"/><span class="btn_img">

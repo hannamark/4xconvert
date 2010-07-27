@@ -6,5 +6,5 @@
     <ejb-local-ref>
         <ejb-ref-name>pa/StudyMilestoneTasksServiceBean/local</ejb-ref-name>
         <local-jndi-name>pa/StudyMilestoneTasksServiceBean/localHome</local-jndi-name>
-    </ejb-local-ref> 
+    </ejb-local-ref>
 </jboss-web> 

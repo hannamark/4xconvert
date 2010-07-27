@@ -120,7 +120,7 @@ import org.junit.Test;
 public class StudyProtocolServiceBeanTest {
 
 
-    private StudyProtocolBeanLocal bean = new StudyProtocolBeanLocal();
+    private StudyProtocolBeanLocal bean = new MockStudyProtocolService();
     private StudyProtocolServiceLocal remoteEjb = bean;
     @Before
     public void setUp() throws Exception {

@@ -4,7 +4,7 @@
 <tr>
 <td><s:textfield label="Responsible Party Generic Contact" name="gtdDTO.responsibleGenericContactName" id="gtdDTO.responsibleGenericContactName" size="30"  readonly="true" cssClass="readonly" cssStyle="width:200px"/>
 </td>
-<td class="value">
+<td>
     <ul style="margin-top:-5px;">              
         <li style="padding-left:0">
          <a href="#" class="btn" id="lookupbtn4RP" onclick="lookup4loadresponsiblepartygenericcontact();" title="Opens a popup form to select Responsible Party Generic Contact"/>

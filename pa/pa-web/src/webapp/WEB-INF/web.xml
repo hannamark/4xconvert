@@ -182,5 +182,4 @@
     <local>gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal</local>
     <ejb-link>pa/StudyMilestoneTasksServiceBean/local</ejb-link>
   </ejb-local-ref>
-
-   </web-app>
+ </web-app>

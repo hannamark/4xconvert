@@ -506,6 +506,10 @@
         <comment>Removing users from the gridClient group if they are also apart of the Outcomes group.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2304.sql"/>
     </changeSet>
+    <changeSet id="PO-2340" author="mshestopalov">
+        <comment>Add sequence nci_identifiers_seq.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2340.sql"/>
+    </changeSet>
     <changeSet id="PO-2263-pre" author="aevansel">
         <comment>Deleting old accrual audit triggers if they exist.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/deleteAccrualAuditTriggers.sql"/>

@@ -126,7 +126,7 @@ public class StudyMilestoneServiceTest {
     private final StudyMilestoneServicelocal remote = bean;
     private final DocumentWorkflowStatusBeanLocal dws = new DocumentWorkflowStatusBeanLocal();
     private final StudyOnholdServiceLocal ohs = new StudyOnholdServiceBean();
-    private final StudyProtocolServiceLocal sps = new StudyProtocolBeanLocal();
+    private final StudyProtocolServiceLocal sps = new MockStudyProtocolService();
     private final StudyInboxServiceLocal sis = new StudyInboxServiceBean();
     private final MailManagerBeanLocal mailSrc = new MailManagerBeanLocal();
     private final AbstractionCompletionServiceBean abstractionCompletionSerivce = new AbstractionCompletionServiceBean();
