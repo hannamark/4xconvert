@@ -670,14 +670,14 @@ public class PlannedActivityBeanLocal extends
 
         }
         // only one lead drug per study
-        if (BlConverter.covertToBoolean(dto.getLeadProductIndicator())) {
+        if (BlConverter.convertToBoolean(dto.getLeadProductIndicator())) {
             Long dtoId = IiConverter.convertToLong(dto.getIdentifier());
             boolean dtoIsNew = (dtoId == null);
             final Ii spii = dto.getStudyProtocolIdentifier();
             List<PlannedSubstanceAdministrationDTO> paList = getPlannedSubstanceAdministrationByStudyProtocol(spii);
             for (PlannedSubstanceAdministrationDTO pa : paList) {
-                boolean paIsLead = (null == BlConverter.covertToBoolean(pa.getLeadProductIndicator())) ? false
-                    : BlConverter.covertToBoolean(pa.getLeadProductIndicator());
+                boolean paIsLead = (null == BlConverter.convertToBoolean(pa.getLeadProductIndicator())) ? false
+                    : BlConverter.convertToBoolean(pa.getLeadProductIndicator());
                 if ((!PAUtil.isIiNull(pa.getInterventionIdentifier()))
                     && (dtoIsNew || !dtoId.equals(IiConverter.convertToLong(pa.getIdentifier()))) && paIsLead) {
                     getLogger().warn("It should throw error");

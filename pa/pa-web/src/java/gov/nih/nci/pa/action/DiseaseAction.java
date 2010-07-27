@@ -123,9 +123,9 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
         disease.setDiseaseIdentifier(IiConverter.convertToString(sd.getDiseaseIdentifier()));
         disease.setStudyDiseaseIdentifier(getSelectedRowIdentifier());
         disease.setLead(PAUtil.isBlNull(sd.getLeadDiseaseIndicator()) ? null
-                : BlConverter.covertToBoolean(sd.getLeadDiseaseIndicator()).toString());
+                : BlConverter.convertToBoolean(sd.getLeadDiseaseIndicator()).toString());
         disease.setCtGovXmlIndicator(PAUtil.isBlNull(sd.getCtGovXmlIndicator()) ? null
-                : BlConverter.covertToBoolean(sd.getCtGovXmlIndicator()).toString());
+                : BlConverter.convertToBoolean(sd.getCtGovXmlIndicator()).toString());
         return super.edit();
     }
 
@@ -252,13 +252,13 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
             n.setCode(StConverter.convertToString(d.getDiseaseCode()));
             n.setConceptId(StConverter.convertToString(d.getNtTermIdentifier()));
             if (!PAUtil.isBlNull(sd.getLeadDiseaseIndicator())
-                    && BlConverter.covertToBoolean(sd.getLeadDiseaseIndicator())) {
+                    && BlConverter.convertToBoolean(sd.getLeadDiseaseIndicator())) {
                 n.setLead("Yes");
             } else {
                 n.setLead("No");
             }
             if (!PAUtil.isBlNull(sd.getCtGovXmlIndicator())
-                    && BlConverter.covertToBoolean(sd.getCtGovXmlIndicator())) {
+                    && BlConverter.convertToBoolean(sd.getCtGovXmlIndicator())) {
                 n.setCtGovXmlIndicator("Yes");
             } else {
                 n.setCtGovXmlIndicator("No");

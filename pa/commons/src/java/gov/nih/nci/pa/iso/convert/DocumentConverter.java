@@ -127,7 +127,7 @@ public class DocumentConverter extends AbstractConverter<DocumentDTO, Document> 
         Document doc = new Document();
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIdentifier()));
-        doc.setActiveIndicator(BlConverter.covertToBoolean(docDTO.getActiveIndicator()));
+        doc.setActiveIndicator(BlConverter.convertToBoolean(docDTO.getActiveIndicator()));
         doc.setDateLastUpdated(new Date());
         doc.setStudyProtocol(spBo);
         if (docDTO.getTypeCode() != null) {

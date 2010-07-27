@@ -107,7 +107,7 @@ import javax.interceptor.Interceptors;
           errorMsg.append("All IND/IDE values are required.\n");
         } else {
         if (!PAUtil.isBlNull(studyIndldeDTO.getExpandedAccessIndicator())  
-            && BlConverter.covertToBool(studyIndldeDTO.getExpandedAccessIndicator()) 
+            && BlConverter.convertToBool(studyIndldeDTO.getExpandedAccessIndicator()) 
             && PAUtil.isCdNull(studyIndldeDTO.getExpandedAccessStatusCode())) { 
            errorMsg.append("Expanded Access Status value is required.\n");
         }

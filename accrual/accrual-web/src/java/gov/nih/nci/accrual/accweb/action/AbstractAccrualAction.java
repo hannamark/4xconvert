@@ -196,7 +196,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         if (PAUtil.isIiNull(spIi)) {
             ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, null);
         } else {
-            if (BlConverter.covertToBool(searchTrialSvc.isAuthorized(spIi, getAuthorizedUser()))) {
+            if (BlConverter.convertToBool(searchTrialSvc.isAuthorized(spIi, getAuthorizedUser()))) {
                 ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, spIi);
 
                 List<SubmissionDto> listOfSubmissions = submissionSvc.getByStudyProtocol(spIi);

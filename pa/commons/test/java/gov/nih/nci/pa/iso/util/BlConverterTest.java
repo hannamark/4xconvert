@@ -21,8 +21,8 @@ public class BlConverterTest {
 	public void testConvertToBl() {
 		Boolean bool =true;
 		Bl bl =BlConverter.convertToBl(bool);
-		assertEquals(BlConverter.covertToBoolean(bl),bool);
-		assertEquals(BlConverter.covertToBool(bl),bool.booleanValue());
+		assertEquals(BlConverter.convertToBoolean(bl),bool);
+		assertEquals(BlConverter.convertToBool(bl),bool.booleanValue());
 		assertEquals(BlConverter.convertToString(bl),bool.toString());
 	}
 }

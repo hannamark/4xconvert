@@ -1025,7 +1025,7 @@ public class TrialConvertUtils {
        throws NullifiedRoleException, PAException {
        BaseTrialDTO trialDto = new BaseTrialDTO();
        if (!PAUtil.isBlNull(spStageDTO.getProprietaryTrialIndicator())
-               && BlConverter.covertToBoolean(spStageDTO.getProprietaryTrialIndicator())) {
+               && BlConverter.convertToBoolean(spStageDTO.getProprietaryTrialIndicator())) {
            trialDto = convertToPropTrialDTO(spStageDTO);
        } else {
            trialDto = convertToNonPropTrialDTO(spStageDTO);
@@ -1125,7 +1125,7 @@ public class TrialConvertUtils {
        trialDto.setLst(IiConverter.convertToString(spStageDTO.getOversightAuthorityCountryId()));
        trialDto.setSelectedRegAuth(IiConverter.convertToString(spStageDTO.getOversightAuthorityOrgId()));
 
-       Boolean fdaRegIndicator  = BlConverter.covertToBoolean(spStageDTO.getFdaRegulatedIndicator());
+       Boolean fdaRegIndicator  = BlConverter.convertToBoolean(spStageDTO.getFdaRegulatedIndicator());
        if (fdaRegIndicator == null) {
            trialDto.setFdaRegulatoryInformationIndicator("");
        } else if (fdaRegIndicator) {
@@ -1133,7 +1133,7 @@ public class TrialConvertUtils {
        } else {
            trialDto.setFdaRegulatoryInformationIndicator(CommonsConstant.NO);
        }
-       Boolean sec801Indicator = BlConverter.covertToBoolean(spStageDTO.getSection801Indicator());
+       Boolean sec801Indicator = BlConverter.convertToBoolean(spStageDTO.getSection801Indicator());
        if (sec801Indicator == null) {
            trialDto.setSection801Indicator("");
        } else if (sec801Indicator) {
@@ -1141,7 +1141,7 @@ public class TrialConvertUtils {
        } else {
            trialDto.setSection801Indicator(CommonsConstant.NO);
        }
-       Boolean delayedPostIndicator  = BlConverter.covertToBoolean(spStageDTO.getDelayedpostingIndicator());
+       Boolean delayedPostIndicator  = BlConverter.convertToBoolean(spStageDTO.getDelayedpostingIndicator());
        if (delayedPostIndicator == null) {
            trialDto.setDelayedPostingIndicator("");
        } else if (delayedPostIndicator) {
@@ -1149,7 +1149,7 @@ public class TrialConvertUtils {
        } else {
            trialDto.setDelayedPostingIndicator(CommonsConstant.NO);
        }
-       Boolean dataMonitoringIndicator = BlConverter.covertToBoolean(
+       Boolean dataMonitoringIndicator = BlConverter.convertToBoolean(
                spStageDTO.getDataMonitoringCommitteeAppointedIndicator());
        if (dataMonitoringIndicator == null) {
            trialDto.setDataMonitoringCommitteeAppointedIndicator("");

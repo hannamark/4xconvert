@@ -394,7 +394,7 @@ public class SearchTrialAction extends ActionSupport {
             StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     studyProtocolIi);
             if (!PAUtil.isBlNull(protocolDTO.getProprietaryTrialIndicator())
-                    && BlConverter.covertToBoolean(protocolDTO.getProprietaryTrialIndicator())) {
+                    && BlConverter.convertToBoolean(protocolDTO.getProprietaryTrialIndicator())) {
                 // prop trial
                 ProprietaryTrialDTO trialDTO = new ProprietaryTrialDTO();
                 trialUtil.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
@@ -631,7 +631,7 @@ public class SearchTrialAction extends ActionSupport {
             spQueryDTO.setStudyStatusDate(TsConverter.convertToTimestamp(studyProtocolStageDTO.getTrialStatusDate()));
             spQueryDTO.setUserLastCreated(StConverter.convertToString(studyProtocolStageDTO.getUserLastCreated()));
             if (!PAUtil.isBlNull(studyProtocolStageDTO.getProprietaryTrialIndicator())
-                    && BlConverter.covertToBoolean(studyProtocolStageDTO.getProprietaryTrialIndicator())) {
+                    && BlConverter.convertToBoolean(studyProtocolStageDTO.getProprietaryTrialIndicator())) {
                 spQueryDTO.setIsProprietaryTrial(true);
             } else {
                 spQueryDTO.setIsProprietaryTrial(false);

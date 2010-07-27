@@ -300,7 +300,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             studyProtocolDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
             studyProtocolDtoIdentifier = studyProtocolDto.getIdentifier();
             isProprietaryTrial = !PAUtil.isBlNull(studyProtocolDto.getProprietaryTrialIndicator())
-                    && BlConverter.covertToBoolean(studyProtocolDto.getProprietaryTrialIndicator());
+                    && BlConverter.convertToBoolean(studyProtocolDto.getProprietaryTrialIndicator());
 
             TSRReport tsrReport = new TSRReport(REPORT_TITLE, PAUtil.today(),
                     PAUtil.convertTsToFormattedDate(studyProtocolDto.getRecordVerificationDate()));
@@ -605,7 +605,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private void setHumanSubjectSafety() throws PAException {
         TSRReportHumanSubjectSafety hss = new TSRReportHumanSubjectSafety();
 
-        Boolean b = BlConverter.covertToBoolean(studyProtocolDto.getReviewBoardApprovalRequiredIndicator());
+        Boolean b = BlConverter.convertToBoolean(studyProtocolDto.getReviewBoardApprovalRequiredIndicator());
         if (b != null && b) {
             List<StudySiteDTO> partList = studySiteService.getByStudyProtocol(studyProtocolDtoIdentifier);
             for (StudySiteDTO part : partList) {

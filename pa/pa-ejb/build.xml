@@ -275,18 +275,14 @@
     </target>
 
     <target name="test-cobertura" depends="compile-tests">
-
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
-
         <delete file="${pa-ejb.build.dir}/cobertura.ser" />
-
         <cobertura-instrument datafile="${pa-ejb.build.dir}/cobertura.ser"
                               toDir="${pa-ejb.build.coberturaOutputDir}">
             <fileset dir="${pa-ejb.build.outputDir}">
                 <include name="**/*.class" />
             </fileset>
         </cobertura-instrument>
-
         <mkdir dir="${pa-ejb.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no">
             <sysproperty key="basedir" value="."/>
@@ -301,14 +297,14 @@
             <classpath refid="common.package.classpath"/>
             <classpath refid="test-junit.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
-            <batchtest todir="${pa-ejb.test.reports}">
+            <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
+            <batchtest todir="${pa-ejb.test.reports}" unless="test">
                 <fileset dir="${pa-ejb.build.testDir.0}">
                     <include name="**/*Test.java"/>
                     <exclude name="**/*Abstract*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>
-
         <cobertura-report datafile="${pa-ejb.build.dir}/cobertura.ser"
                           destdir="${pa-ejb.coverage.reports}"
                           srcdir="${pa-ejb.build.srcDir.0}" />
@@ -317,7 +313,6 @@
                           format="xml"
                           destdir="${pa-ejb.coverage.reports}"
                           srcdir="${pa-ejb.build.srcDir.0}" />
-
         <cobertura-check datafile="${pa-ejb.build.dir}/cobertura.ser"
                          totalbranchrate="70"
                          totallinerate="70"

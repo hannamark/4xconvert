@@ -117,7 +117,7 @@ public class StudyProtocolConverter {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolConverter.class);
     private static CSMUserUtil csmUserUtil = null;
-    
+
     /**
      * @return the csmUserUtil
      */
@@ -250,15 +250,15 @@ public class StudyProtocolConverter {
                    AccrualReportingMethodCode.getByCode(studyProtocolDTO.getAccrualReportingMethodCode().getCode()));
        }
        studyProtocol.setDataMonitoringCommitteeAppointedIndicator(
-               BlConverter.covertToBoolean(studyProtocolDTO.getDataMonitoringCommitteeAppointedIndicator()));
+               BlConverter.convertToBoolean(studyProtocolDTO.getDataMonitoringCommitteeAppointedIndicator()));
        studyProtocol.setDelayedpostingIndicator(
-               BlConverter.covertToBoolean(studyProtocolDTO.getDelayedpostingIndicator()));
+               BlConverter.convertToBoolean(studyProtocolDTO.getDelayedpostingIndicator()));
        studyProtocol.setExpandedAccessIndicator(
-               BlConverter.covertToBoolean(studyProtocolDTO.getExpandedAccessIndicator()));
+               BlConverter.convertToBoolean(studyProtocolDTO.getExpandedAccessIndicator()));
        studyProtocol.setFdaRegulatedIndicator(
-               BlConverter.covertToBoolean(studyProtocolDTO.getFdaRegulatedIndicator()));
+               BlConverter.convertToBoolean(studyProtocolDTO.getFdaRegulatedIndicator()));
        studyProtocol.setReviewBoardApprovalRequiredIndicator(
-               BlConverter.covertToBoolean(studyProtocolDTO.getReviewBoardApprovalRequiredIndicator()));
+               BlConverter.convertToBoolean(studyProtocolDTO.getReviewBoardApprovalRequiredIndicator()));
        studyProtocol.setMaximumTargetAccrualNumber(null);
        if (studyProtocolDTO.getTargetAccrualNumber() != null) {
        studyProtocol.setMinimumTargetAccrualNumber(
@@ -292,7 +292,7 @@ public class StudyProtocolConverter {
                    TsConverter.convertToTimestamp(studyProtocolDTO.getRecordVerificationDate()));
        }
 
-       studyProtocol.setSection801Indicator(BlConverter.covertToBoolean(studyProtocolDTO.getSection801Indicator()));
+       studyProtocol.setSection801Indicator(BlConverter.convertToBoolean(studyProtocolDTO.getSection801Indicator()));
 
        studyProtocol.setScientificDescription(StConverter.convertToString(
                studyProtocolDTO.getScientificDescription()));
@@ -308,7 +308,7 @@ public class StudyProtocolConverter {
        if (studyProtocolDTO.getKeywordText() != null) {
        studyProtocol.setKeywordText(studyProtocolDTO.getKeywordText().getValue());
        }
-       studyProtocol.setAcceptHealthyVolunteersIndicator(BlConverter.covertToBoolean(
+       studyProtocol.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBoolean(
                studyProtocolDTO.getAcceptHealthyVolunteersIndicator()));
 
        if (studyProtocolDTO.getStatusCode() != null) {
@@ -337,11 +337,11 @@ public class StudyProtocolConverter {
            studyProtocol.setProgramCodeText(
                    StConverter.convertToString(studyProtocolDTO.getProgramCodeText()));
        }
-       studyProtocol.setProprietaryTrialIndicator(BlConverter.covertToBoolean(
+       studyProtocol.setProprietaryTrialIndicator(BlConverter.convertToBoolean(
                studyProtocolDTO.getProprietaryTrialIndicator()));
        //this for change of ownership
        String isoStUserLastCreated = StConverter.convertToString(studyProtocolDTO.getUserLastCreated());
-       if (StringUtils.isNotEmpty(isoStUserLastCreated) 
+       if (StringUtils.isNotEmpty(isoStUserLastCreated)
                && studyProtocol.getUserLastCreated() != null
                && StringUtils.isNotEmpty(studyProtocol.getUserLastCreated().getLoginName())
                && !isoStUserLastCreated.equals(studyProtocol.getUserLastCreated().getLoginName())) {
@@ -352,8 +352,7 @@ public class StudyProtocolConverter {
                        + studyProtocolDTO.getIdentifier() + ", for username: " + isoStUserLastCreated, e);
            }
        }
-       
-       studyProtocol.setCtgovXmlRequiredIndicator(BlConverter.covertToBoolean(
+       studyProtocol.setCtgovXmlRequiredIndicator(BlConverter.convertToBoolean(
                          studyProtocolDTO.getCtgovXmlRequiredIndicator()));
        return studyProtocol;
    }

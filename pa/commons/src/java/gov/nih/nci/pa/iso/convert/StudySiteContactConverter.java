@@ -189,7 +189,7 @@ public class StudySiteContactConverter extends
             StudySiteContactDTO dto , StudySiteContact bo) throws PAException {
         
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        bo.setPrimaryIndicator(BlConverter.covertToBoolean(dto.getPrimaryIndicator()));
+        bo.setPrimaryIndicator(BlConverter.convertToBoolean(dto.getPrimaryIndicator()));
        // bo.setRoleCode(StudySiteContactRoleCode.getByCode(dto.getRoleCode().getCode()));
         bo.setRoleCode(gov.nih.nci.pa.enums.StudySiteContactRoleCode.getByCode(
                 dto.getRoleCode().getCode()));        

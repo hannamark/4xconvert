@@ -761,7 +761,7 @@ private void populateList() throws PAException {
         webdto.setCriterionName(dto.getCriterionName().getValue());
       }
       if (dto.getInclusionIndicator().getValue() != null) {
-        if (BlConverter.covertToBool(dto.getInclusionIndicator())) {
+        if (BlConverter.convertToBool(dto.getInclusionIndicator())) {
           webdto.setInclusionIndicator(("Inclusion"));
         } else {
           webdto.setInclusionIndicator("Exclusion");
@@ -792,7 +792,7 @@ private void populateList() throws PAException {
           webdto.setValueText(StConverter.convertToString(dto.getTextValue()));
       }
       if (dto.getStructuredIndicator().getValue() != null) {
-          if (BlConverter.covertToBool(dto.getStructuredIndicator())) {
+          if (BlConverter.convertToBool(dto.getStructuredIndicator())) {
             webdto.setStructuredType(STRUCTURED);
           } else {
             webdto.setStructuredType("Unstructured");

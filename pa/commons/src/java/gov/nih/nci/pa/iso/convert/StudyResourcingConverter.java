@@ -167,7 +167,7 @@ public class StudyResourcingConverter  extends AbstractConverter<StudyResourcing
         if (studyResourcingDTO.getSerialNumber() != null) {
             studyResourcing.setSerialNumber(studyResourcingDTO.getSerialNumber().getValue());
         }
-        studyResourcing.setActiveIndicator(BlConverter.covertToBoolean(studyResourcingDTO.getActiveIndicator()));
+        studyResourcing.setActiveIndicator(BlConverter.convertToBoolean(studyResourcingDTO.getActiveIndicator()));
         if (ISOUtil.isBlNull(studyResourcingDTO.getActiveIndicator())) {
             studyResourcing.setActiveIndicator(Boolean.TRUE);
         }

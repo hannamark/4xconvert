@@ -746,7 +746,7 @@ public class PAServiceUtils {
                     }
                 }
             }
-            if (!BlConverter.covertToBool(studyProtocolDTO.getFdaRegulatedIndicator())) {
+            if (!BlConverter.convertToBool(studyProtocolDTO.getFdaRegulatedIndicator())) {
                 errorMsg.append("FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.");
             }
             if (errorMsg.length() > 1) {

@@ -442,7 +442,7 @@ public class IrbAction extends ActionSupport implements Preparable {
 
     private void loadForm() throws PAException, NullifiedEntityException  {
         StudyProtocolDTO study = sProtService.getStudyProtocol(spIdIi);
-        Boolean b = BlConverter.covertToBoolean(study.getReviewBoardApprovalRequiredIndicator());
+        Boolean b = BlConverter.convertToBoolean(study.getReviewBoardApprovalRequiredIndicator());
         if (b == null || !b) {
             setApprovalStatus((b == null) ? null : ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED.getCode());
             setApprovalNumber(null);

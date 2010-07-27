@@ -229,7 +229,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
         StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
         if (!PAUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator())
-                && BlConverter.covertToBoolean(studyProtocolDTO.getProprietaryTrialIndicator())) {
+                && BlConverter.convertToBoolean(studyProtocolDTO.getProprietaryTrialIndicator())) {
             abstractionCompletionRuleForProprietary(studyProtocolDTO, abstractionList, abstractionWarnList);
         } else {
             enforceIdentifierLength(studyProtocolDTO, abstractionList);
@@ -606,9 +606,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         // not a proprietary trial and the studyprotocol is set to ctgov = true
         // and there are no diseases with xml inclusion indicator set to true
         if ((PAUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator()) || !BlConverter
-                .covertToBoolean(studyProtocolDTO.getProprietaryTrialIndicator()))
+                .convertToBoolean(studyProtocolDTO.getProprietaryTrialIndicator()))
                 && (!PAUtil.isBlNull(studyProtocolDTO.getCtgovXmlRequiredIndicator()) && BlConverter
-                        .covertToBoolean(studyProtocolDTO.getCtgovXmlRequiredIndicator())) && !ctgovxmlIndicator) {
+                        .convertToBoolean(studyProtocolDTO.getCtgovXmlRequiredIndicator())) && !ctgovxmlIndicator) {
             abstractionList.add(createError("Error", "Select Disease/Condition from Scientific Data Menu",
                     "Abstraction cannot be valid if trial has no diseases with ctgov xml indicator = 'yes'"));
         }
@@ -1044,7 +1044,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         List<StudyOutcomeMeasureDTO> somList = studyOutcomeMeasureService.getByStudyProtocol(studyProtocolIi);
         boolean isPrimayFound = false;
         for (StudyOutcomeMeasureDTO somDto : somList) {
-            if (BlConverter.covertToBool(somDto.getPrimaryIndicator())) {
+            if (BlConverter.convertToBool(somDto.getPrimaryIndicator())) {
                 isPrimayFound = true;
                 break;
             }

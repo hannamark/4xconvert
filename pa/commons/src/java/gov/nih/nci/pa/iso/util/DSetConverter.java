@@ -103,11 +103,16 @@ import java.util.Set;
  *
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-
 public class DSetConverter {
 
     /** The base ii root value. */
     public static final String BASE_ROOT = "2.16.840.1.113883.3.26.4";
+
+    /** Phone Type. */
+    public static final String TYPE_PHONE = "PHONE";
+
+    /** Email Type. */
+    public static final String TYPE_EMAIL = "EMAIL";
 
     /**
      * @param dsetList list of DSets
@@ -299,9 +304,9 @@ public class DSetConverter {
 
     /**
      * Convert ii set to dset.
-     * 
+     *
      * @param identifierList the identifier list
-     * 
+     *
      * @return the d set< ii>
      */
     public static DSet<Ii> convertIiSetToDset(Set<Ii> identifierList) {
@@ -309,17 +314,17 @@ public class DSetConverter {
         DSet<Ii> dSet = null;
         if (identifierList != null) {
             dSet = new DSet<Ii>();
-            dSet.setItem(identifierList);        
-              
+            dSet.setItem(identifierList);
+
         }
         return dSet;
     }
-    
+
     /**
      * Convert dset to ii set.
-     * 
+     *
      * @param identifierList the identifier list
-     * 
+     *
      * @return the set< ii>
      */
     public static Set<Ii> convertDsetToIiSet(DSet<Ii> identifierList) {
@@ -327,7 +332,7 @@ public class DSetConverter {
         Set<Ii> iiset = null;
         if (identifierList != null && identifierList.getItem() != null) {
             iiset = new HashSet<Ii>();
-            iiset.addAll(identifierList.getItem());               
+            iiset.addAll(identifierList.getItem());
         }
         return iiset;
     }

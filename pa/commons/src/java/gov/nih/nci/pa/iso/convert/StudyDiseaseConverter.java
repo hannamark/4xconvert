@@ -127,9 +127,9 @@ public class StudyDiseaseConverter extends AbstractConverter<StudyDiseaseDTO, St
         StudyDisease bo = new StudyDisease();
         bo.setDisease(dBo);
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        bo.setLeadDiseaseIndicator(BlConverter.covertToBoolean(dto.getLeadDiseaseIndicator()));
+        bo.setLeadDiseaseIndicator(BlConverter.convertToBoolean(dto.getLeadDiseaseIndicator()));
         bo.setStudyProtocol(spBo);
-        bo.setCtGovXmlIndicator(BlConverter.covertToBoolean(dto.getCtGovXmlIndicator()));
+        bo.setCtGovXmlIndicator(BlConverter.convertToBoolean(dto.getCtGovXmlIndicator()));
         return bo;
     }
 

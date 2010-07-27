@@ -211,21 +211,21 @@ public class StudyProtocolStageConverter {
         studyProtocolStage.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(CdConverter.convertCdToString(
                 studyProtocolStageDTO.getStartDateTypeCode())));
         studyProtocolStage.setTrialType(StConverter.convertToString(studyProtocolStageDTO.getTrialType()));
-        studyProtocolStage.setFdaRegulatedIndicator(BlConverter.covertToBoolean(
+        studyProtocolStage.setFdaRegulatedIndicator(BlConverter.convertToBoolean(
                 studyProtocolStageDTO.getFdaRegulatedIndicator()));
-        studyProtocolStage.setSection801Indicator(BlConverter.covertToBoolean(
+        studyProtocolStage.setSection801Indicator(BlConverter.convertToBoolean(
                 studyProtocolStageDTO.getSection801Indicator()));
-        studyProtocolStage.setDelayedpostingIndicator(BlConverter.covertToBoolean(
+        studyProtocolStage.setDelayedpostingIndicator(BlConverter.convertToBoolean(
                 studyProtocolStageDTO.getDelayedpostingIndicator()));
         studyProtocolStage.setDataMonitoringCommitteeAppointedIndicator(
-                BlConverter.covertToBoolean(studyProtocolStageDTO.getDataMonitoringCommitteeAppointedIndicator()));
+                BlConverter.convertToBoolean(studyProtocolStageDTO.getDataMonitoringCommitteeAppointedIndicator()));
         studyProtocolStage.setOversightAuthorityCountryId(IiConverter.convertToString(
                 studyProtocolStageDTO.getOversightAuthorityCountryId()));
         studyProtocolStage.setOversightAuthorityOrgId(IiConverter.convertToString(
                 studyProtocolStageDTO.getOversightAuthorityOrgId()));
-        studyProtocolStage.setProprietaryTrialIndicator(BlConverter.covertToBoolean(
+        studyProtocolStage.setProprietaryTrialIndicator(BlConverter.convertToBoolean(
                 studyProtocolStageDTO.getProprietaryTrialIndicator()));
-        studyProtocolStage.setNciDesignatedCancerCenterIndicator(BlConverter.covertToBool(
+        studyProtocolStage.setNciDesignatedCancerCenterIndicator(BlConverter.convertToBool(
                 studyProtocolStageDTO.getNciDesignatedCancerCenterIndicator()));
         
         String isoStUserLastCreated = StConverter.convertToString(studyProtocolStageDTO.getUserLastCreated());
@@ -238,7 +238,7 @@ public class StudyProtocolStageConverter {
             }
         }
             
-        studyProtocolStage.setCtgovXmlRequiredIndicator(BlConverter.covertToBoolean(
+        studyProtocolStage.setCtgovXmlRequiredIndicator(BlConverter.convertToBoolean(
                 studyProtocolStageDTO.getCtgovXmlRequiredIndicator()));
         studyProtocolStage.setSubmitterOrganizationIdentifier(IiConverter.convertToString(
                 studyProtocolStageDTO.getSubmitterOrganizationIdentifier()));
@@ -262,9 +262,9 @@ public class StudyProtocolStageConverter {
                 studyProtocolStageDTO.getOpendedForAccrualDate()));
         studyProtocolStage.setClosedForAccrualDate(TsConverter.convertToTimestamp(
                 studyProtocolStageDTO.getClosedForAccrualDate()));
-        studyProtocolStage.setPiInitiatedIndicator(BlConverter.covertToBoolean(
+        studyProtocolStage.setPiInitiatedIndicator(BlConverter.convertToBoolean(
                 studyProtocolStageDTO.getPiInitiatedIndicator()));
-        studyProtocolStage.setSiteNciDesignatedCancerCenterIndicator(BlConverter.covertToBoolean(
+        studyProtocolStage.setSiteNciDesignatedCancerCenterIndicator(BlConverter.convertToBoolean(
                 studyProtocolStageDTO.getSiteNciDesignatedCancerCenterIndicator()));
         if (CollectionUtils.isNotEmpty(studyProtocolStageDTO.getSecondaryIdentifierList())) {
             studyProtocolStage.getOtherIdentifiers().addAll(studyProtocolStageDTO.getSecondaryIdentifierList());

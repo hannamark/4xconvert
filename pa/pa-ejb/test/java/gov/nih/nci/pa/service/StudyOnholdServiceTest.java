@@ -260,18 +260,18 @@ public class StudyOnholdServiceTest {
     @Test
     public void isOnholdTest() throws Exception {
         // put on-hold
-        assertFalse(BlConverter.covertToBool(remote.isOnhold(spIi)));
+        assertFalse(BlConverter.convertToBool(remote.isOnhold(spIi)));
         StudyOnholdDTO x = new StudyOnholdDTO();
         x.setOnholdReasonCode(CdConverter.convertToCd(reasonCode));
         x.setOnholdReasonText(StConverter.convertToSt(reasonText));
         x.setOnholdDate(IvlConverter.convertTs().convertToIvl(time1, null));
         x.setStudyProtocolIdentifier(spIi);
         x = remote.create(x);
-        assertTrue(BlConverter.covertToBool(remote.isOnhold(spIi)));
+        assertTrue(BlConverter.convertToBool(remote.isOnhold(spIi)));
         
         // take off-hold
         x.setOnholdDate(IvlConverter.convertTs().convertToIvl(time1, PAUtil.today()));
         remote.update(x);
-        assertFalse(BlConverter.covertToBool(remote.isOnhold(spIi)));
+        assertFalse(BlConverter.convertToBool(remote.isOnhold(spIi)));
     }
 }

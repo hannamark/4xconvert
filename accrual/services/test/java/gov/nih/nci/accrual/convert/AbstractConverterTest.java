@@ -128,7 +128,7 @@ public abstract class AbstractConverterTest {
     }
 
     protected boolean blTest(Bl bl) {
-        return BlConverter.covertToBoolean(bl).equals(true);
+        return BlConverter.convertToBoolean(bl).equals(true);
     }
 
     protected boolean cdTest(Cd cd) {

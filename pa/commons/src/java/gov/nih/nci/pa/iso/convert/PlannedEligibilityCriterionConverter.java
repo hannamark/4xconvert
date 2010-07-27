@@ -135,13 +135,13 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
        PlannedEligibilityCriterion pec =  (PlannedEligibilityCriterion) PlannedActivityConverter.convertFromDTOToDomain(
                    pecDTO , new PlannedEligibilityCriterion());
        pec.setCriterionName(StConverter.convertToString(pecDTO.getCriterionName()));
-       pec.setInclusionIndicator(BlConverter.covertToBoolean(pecDTO.getInclusionIndicator()));
+       pec.setInclusionIndicator(BlConverter.convertToBoolean(pecDTO.getInclusionIndicator()));
        pec.setOperator(StConverter.convertToString(pecDTO.getOperator()));
        pec.setEligibleGenderCode(EligibleGenderCode.getByCode(
                CdConverter.convertCdToString(pecDTO.getEligibleGenderCode())));
        pec.setDisplayOrder(IntConverter.convertToInteger(pecDTO.getDisplayOrder()));
        pec.setTextValue(StConverter.convertToString(pecDTO.getTextValue()));
-       pec.setStructuredIndicator(BlConverter.covertToBoolean(pecDTO.getStructuredIndicator()));
+       pec.setStructuredIndicator(BlConverter.convertToBoolean(pecDTO.getStructuredIndicator()));
        pec.setCdePublicIdentifier(IiConverter.convertToLong(pecDTO.getCdePublicIdentifier()));
        pec.setCdeVersionNumber(StConverter.convertToString(pecDTO.getCdeVersionNumber()));
        if (pecDTO.getValue() != null) {

@@ -134,7 +134,7 @@ public abstract class AbstractStandardReportBean<CRITERIA extends AbstractStanda
      * @return sql to include or exclude ctep trials as appropriate
      */
     protected String ctepSql(AbstractStandardCriteriaDto criteria) {
-        if (BlConverter.covertToBool(criteria.getCtep())) {
+        if (BlConverter.convertToBool(criteria.getCtep())) {
             return "";
         }
         return "AND (sp.user_last_created NOT IN ('brownph2@mail.nih.gov', 'pb8593@yahoo.com') "

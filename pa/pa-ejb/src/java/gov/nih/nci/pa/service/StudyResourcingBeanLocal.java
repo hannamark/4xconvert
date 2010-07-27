@@ -350,7 +350,7 @@ public class StudyResourcingBeanLocal
      throw new PAException(" The summary4ReportedResourceIndicator is not set ");
     }
     if (!PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())
-          && BlConverter.covertToBoolean(dto.getSummary4ReportedResourceIndicator())
+          && BlConverter.convertToBoolean(dto.getSummary4ReportedResourceIndicator())
                   .equals(Boolean.FALSE)) {
      return createStudyResourcing(dto);
     } else {
@@ -369,7 +369,7 @@ public class StudyResourcingBeanLocal
        throw new PAException(" The summary4ReportedResourceIndicator is not set");
      }
      if (!PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())
-           && BlConverter.covertToBoolean(dto.getSummary4ReportedResourceIndicator())
+           && BlConverter.convertToBoolean(dto.getSummary4ReportedResourceIndicator())
                   .equals(Boolean.FALSE)) {
         return updateStudyResourcing(dto);
      } else {
@@ -384,7 +384,7 @@ public class StudyResourcingBeanLocal
    final int serialNumMin = 5;
    final int serialNumMax = 6;
    if (!PAUtil.isBlNull(studyResourcingDTO.getSummary4ReportedResourceIndicator())
-       && BlConverter.covertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator())
+       && BlConverter.convertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator())
                .equals(Boolean.FALSE)) {      
           //check if nih institute code exists
           if (!PAUtil.isCdNull(studyResourcingDTO.getNihInstitutionCode())) {

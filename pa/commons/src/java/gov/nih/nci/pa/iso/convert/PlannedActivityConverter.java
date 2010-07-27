@@ -166,7 +166,7 @@ public PlannedActivityDTO convertFromDomainToDto(PlannedActivity pa) {
         bo.setCategoryCode(ActivityCategoryCode.getByCode(CdConverter.convertCdToString(dto.getCategoryCode())));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setIntervention(invBo);
-        bo.setLeadProductIndicator(BlConverter.covertToBoolean(dto.getLeadProductIndicator()));
+        bo.setLeadProductIndicator(BlConverter.convertToBoolean(dto.getLeadProductIndicator()));
         bo.setStudyProtocol(spBo);
         bo.setSubcategoryCode(CdConverter.convertCdToString(dto.getSubcategoryCode()));
         bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));

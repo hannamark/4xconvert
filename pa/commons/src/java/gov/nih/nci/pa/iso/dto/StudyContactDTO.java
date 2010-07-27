@@ -89,12 +89,11 @@ import gov.nih.nci.iso21090.Tel;
 /**
  * @author Bala Nair
  * @since 10/23/2008
- 
+
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 public class StudyContactDTO extends PersonFunctionalRoleDTO {
-    
 
     private static final long serialVersionUID = 3439458093846665017L;
     private Bl primaryIndicator;

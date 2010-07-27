@@ -1017,7 +1017,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
   */
   private void sendMail(String operation, Bl isBatchMode, Ii studyProtocolIi)
         throws PAException {
-    if (PAUtil.isBlNull(isBatchMode) || !BlConverter.covertToBool(isBatchMode)) {
+    if (PAUtil.isBlNull(isBatchMode) || !BlConverter.convertToBool(isBatchMode)) {
           if (AMENDMENT.equalsIgnoreCase(operation)) {
               mailManagerSerivceLocal.sendAmendNotificationMail(studyProtocolIi);
           } else if (UPDAT.equalsIgnoreCase(operation)) {
@@ -1073,7 +1073,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     Ii studyProtocolIi = null;
     StudyTypeCode studyTypeCode = null;
     if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()
-        && !BlConverter.covertToBool(studyProtocolDTO.getFdaRegulatedIndicator())
+        && !BlConverter.convertToBool(studyProtocolDTO.getFdaRegulatedIndicator())
             && (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty())) {
            studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
            studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));

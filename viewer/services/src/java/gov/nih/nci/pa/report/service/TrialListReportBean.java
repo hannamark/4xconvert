@@ -224,7 +224,7 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
 
     private static String statusSql(AbstractStandardCriteriaDto criteria) {
         if (criteria instanceof StandardCriteriaDto
-                && BlConverter.covertToBool(((StandardCriteriaDto) criteria).getActiveOnly())) {
+                && BlConverter.convertToBool(((StandardCriteriaDto) criteria).getActiveOnly())) {
             return "AND sp.status_code = '" + ActStatusCode.ACTIVE.getName() + "' ";
         }
         return "";

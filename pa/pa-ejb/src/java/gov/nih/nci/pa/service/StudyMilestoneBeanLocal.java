@@ -160,7 +160,7 @@ public class StudyMilestoneBeanLocal extends
 
      // onhold rules
      if (!newCode.isAllowedIfOnhold()
-             && BlConverter.covertToBool(studyOnholdService.isOnhold(dto.getStudyProtocolIdentifier()))) {
+             && BlConverter.convertToBool(studyOnholdService.isOnhold(dto.getStudyProtocolIdentifier()))) {
          throw new PAException("The milestone '" + newCode.getCode()
                  + "' cannot be recorded if there is an active on-hold record.");
      }
