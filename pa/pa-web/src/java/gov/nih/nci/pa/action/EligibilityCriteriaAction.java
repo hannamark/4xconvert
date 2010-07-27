@@ -282,8 +282,10 @@ public class EligibilityCriteriaAction extends ActionSupport {
         try {
             ApplicationService appService = ApplicationServiceProvider.getApplicationService();
             DetachedCriteria criteria = DetachedCriteria.forClass(DataElement.class, "de");
-            criteria.add(Expression.ilike("longName", "%" + deName + "%"));
             criteria.add(Expression.eq("workflowStatusName", "RELEASED"));
+            criteria.createAlias("referenceDocumentCollection", "refDoc")
+            .add(Expression.eq("refDoc.type", "Preferred Question Text"))
+            .add(Expression.ilike("refDoc.doctext", "%" + deName + "%"));
             DetachedCriteria csCsiCriteria = criteria.createCriteria("administeredComponentClassSchemeItemCollection")
             .createCriteria("classSchemeClassSchemeItem");
 
