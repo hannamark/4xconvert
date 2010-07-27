@@ -456,11 +456,11 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         nciIdentifier.append('-');
 
         Query queryObject = session.createSQLQuery(query);
-        String maxValue = (String) queryObject.list().get(0);       
+        String maxValue = (String) queryObject.list().get(0);
         String maxNumber = maxValue.substring(maxValue.lastIndexOf('-') + 1 , maxValue.length());
-        String nextNumber = String.valueOf(Integer.parseInt(maxNumber) + 1);            
+        String nextNumber = String.valueOf(Integer.parseInt(maxNumber) + 1);
         nciIdentifier.append(StringUtils.leftPad(nextNumber, NCI_ID_SIZE, "0"));
-        
+
         return nciIdentifier.toString();
     }
 

@@ -94,7 +94,6 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -102,7 +101,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.Preparable;
 
 /**
  * This action class manages the Organization Geenric contact(s).
@@ -110,22 +108,13 @@ import com.opensymphony.xwork2.Preparable;
  * @author Anupama Sharma
  *
  */
-@SuppressWarnings("PMD")
-public class OrganizationGenericContactAction extends ActionSupport implements Preparable {
-    /**
-     *
-     */
+public class OrganizationGenericContactAction extends ActionSupport {
+    private static final String FAILURE_MESSAGE = "failureMessage";
     private static final long serialVersionUID = 1L;
     private List<PAOrganizationalContactDTO> orgContactList = new ArrayList<PAOrganizationalContactDTO>();
     private String title;
     private String orgContactId;
 
-    /**
-     * @throws Exception on error
-     */
-    public void prepare() throws Exception {
-
-    }
     /**
      *
      * @return res
@@ -141,21 +130,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
     public String displayTitleList() {
         orgContactId = ServletActionContext.getRequest().getParameter("orgGenericContactIdentifier");
         title = ServletActionContext.getRequest().getParameter("title");
-        if ((orgContactId != null && (orgContactId.equals("undefined") || orgContactId.equals("")))) {
-            orgContactList = null;
-            addActionError("Please select a Sponsor.");
-        }
-        if (title == null || title.equals("")) {
-            orgContactList = null;
-            addActionError("Please enter at least one search criteria");
-        }
-        if (hasActionErrors()) {
-            StringBuffer message = new StringBuffer();
-            Iterator<String> i = getActionErrors().iterator();
-            while (i.hasNext()) {
-                message.append(" - " + i.next().toString());
-            }
-            ServletActionContext.getRequest().setAttribute("failureMessage", message);
+        if (handleErrors()) {
             return SUCCESS;
         }
 
@@ -165,18 +140,42 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             contactDTO.setTitle(StConverter.convertToSt(title));
             contactDTO.setTypeCode(CdConverter.convertStringToCd("Responsible Party"));
             List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
-            isoDtoList = PoRegistry.getOrganizationalContactCorrelationService()
-                    .search(contactDTO);
+            isoDtoList = PoRegistry.getOrganizationalContactCorrelationService().search(contactDTO);
             convertFromISO(isoDtoList);
         } catch (Exception e) {
-            LOG.error("Exception occured while getting organization contact : " + e);
+            LOG.error("Exception occured while getting organization contact", e);
             addActionError("Exception occured while getting organization contact : " + e.getMessage());
-            ServletActionContext.getRequest().setAttribute("failureMessage",
+            ServletActionContext.getRequest().setAttribute(FAILURE_MESSAGE,
                     "Exception occured while getting organization contact : " + e.getMessage());
             return SUCCESS;
         }
         return SUCCESS;
     }
+
+    private boolean handleErrors() {
+        if (isMissingSponsor()) {
+            orgContactList = null;
+            addActionError("Please select a Sponsor.");
+        }
+        if (StringUtils.isBlank(title)) {
+            orgContactList = null;
+            addActionError("Please enter at least one search criteria");
+        }
+        if (hasActionErrors()) {
+            StringBuffer message = new StringBuffer();
+            for (String error : getActionErrors()) {
+                message.append(" - ").append(error.toString());
+            }
+            ServletActionContext.getRequest().setAttribute(FAILURE_MESSAGE, message);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isMissingSponsor() {
+        return orgContactId != null && (orgContactId.equals("undefined") || orgContactId.equals(""));
+    }
+
     /**
      *
      * @return s
@@ -187,6 +186,48 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
         title = ServletActionContext.getRequest().getParameter("title");
         orgContactId = ServletActionContext.getRequest().getParameter("orgGenericContactIdentifier");
 
+        validateForCreate(email, phone);
+        if (hasActionErrors()) {
+            StringBuffer errMsg = new StringBuffer();
+            for (String error : getActionErrors()) {
+                errMsg.append(" - ").append(error.toString());
+            }
+            ServletActionContext.getRequest().setAttribute(FAILURE_MESSAGE, errMsg.toString());
+            return "create_org_contact_response";
+        }
+        try {
+            OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
+            contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgContactId));
+            contactDTO.setTitle(StConverter.convertToSt(title));
+            DSet<Tel> list = new DSet<Tel>();
+            list.setItem(new HashSet<Tel>());
+
+            Tel t = new Tel();
+            t.setValue(new URI("tel", phone, null));
+            list.getItem().add(t);
+
+            TelEmail telemail = new TelEmail();
+            telemail.setValue(new URI("mailto:" + email));
+            list.getItem().add(telemail);
+
+            contactDTO.setTelecomAddress(list);
+            contactDTO.setTypeCode(CdConverter.convertStringToCd("Responsible Party"));
+            PoRegistry.getOrganizationalContactCorrelationService().createCorrelation(contactDTO);
+            List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
+            isoDtoList = PoRegistry.getOrganizationalContactCorrelationService().search(contactDTO);
+            convertFromISO(isoDtoList);
+        } catch (Exception e) {
+            LOG.error("Exception occured while creating organization contact", e);
+            String errMsg = getErrorMessage(e);
+            addActionError("Exception occured while creating organization contact: " + errMsg);
+            ServletActionContext.getRequest().setAttribute(FAILURE_MESSAGE,
+                    "Exception occured while creating organization contact: " + errMsg);
+            return "create_org_contact_response";
+        }
+        return "create_org_contact_response";
+    }
+
+    private void validateForCreate(String email, String phone) {
         if (StringUtils.isEmpty(orgContactId)) {
             addActionError("Sponsor is a required field");
         }
@@ -201,55 +242,18 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
         if (StringUtils.isEmpty(phone)) {
             addActionError("Phone is a required field");
         }
-        if (hasActionErrors()) {
-            StringBuffer errMsg = new StringBuffer();
-            Iterator<String> i = getActionErrors().iterator();
-            while (i.hasNext()) {
-                errMsg.append(" - " + i.next().toString());
-            }
-            ServletActionContext.getRequest().setAttribute("failureMessage", errMsg.toString());
-            return "create_org_contact_response";
-        }
-        try {
-            OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
-            contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgContactId));
-            contactDTO.setTitle(StConverter.convertToSt(title));
-            DSet<Tel> list = new DSet<Tel>();
-            list.setItem(new HashSet<Tel>());
-
-             Tel t = new Tel();
-             t.setValue(new URI("tel", phone, null));
-             list.getItem().add(t);
-
-             TelEmail telemail = new TelEmail();
-             telemail.setValue(new URI("mailto:" + email));
-             list.getItem().add(telemail);
-
-            contactDTO.setTelecomAddress(list);
-            contactDTO.setTypeCode(CdConverter.convertStringToCd("Responsible Party"));
-            PoRegistry.getOrganizationalContactCorrelationService()
-                    .createCorrelation(contactDTO);
-            List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
-            isoDtoList = PoRegistry.getOrganizationalContactCorrelationService()
-                .search(contactDTO);
-            convertFromISO(isoDtoList);
-        } catch (Exception e) {
-            LOG.error("Exception occured while creating organization contact : " + e);
-            String errMsg = "";
-            if (e instanceof EntityValidationException) {
-                Map<String, String[]> errMap = ((EntityValidationException) e).getErrors();
-                errMsg = PAUtil.getErrorMsg(errMap);
-            } else {
-                errMsg = e.getMessage();
-            }
-            addActionError("Exception occured while creating organization contact : " + errMsg);
-            ServletActionContext.getRequest().setAttribute("failureMessage",
-                    "Exception occured while creating organization contact : " + errMsg);
-            return "create_org_contact_response";
-        }
-        return "create_org_contact_response";
     }
 
+    private String getErrorMessage(Exception e) {
+        String errMsg;
+        if (e instanceof EntityValidationException) {
+            Map<String, String[]> errMap = ((EntityValidationException) e).getErrors();
+            errMsg = PAUtil.getErrorMsg(errMap);
+        } else {
+            errMsg = e.getMessage();
+        }
+        return errMsg;
+    }
 
     /**
      * @param isoDtoList
@@ -266,8 +270,6 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             orgContactList.add(dto);
         }
     }
-
-
 
     /**
      * @return the orgContact
@@ -310,6 +312,5 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
     public void setOrgContactId(String orgContactId) {
         this.orgContactId = orgContactId;
     }
-
 
 }

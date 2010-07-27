@@ -121,7 +121,7 @@ public class TrialCountsReportBean extends AbstractStandardReportBean<StandardCr
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer("SELECT organization, submission_number ");
             sql.append("FROM study_protocol AS sp "
-                     + "LEFT OUTER JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
+                     + "LEFT OUTER JOIN csm_user AS u ON sp.user_last_created_id = u.user_id "
                      + "WHERE 1=1 ");
             sql.append(ctepSql(criteria));
             sql.append(dateRangeSql(criteria, "sp.date_last_created"));

@@ -118,10 +118,9 @@ public class SubmitterOrganizationReportBean implements SubmitterOrganizationLoc
             try {
                 Session session = HibernateUtil.getCurrentSession();
                 SQLQuery query = null;
-                String sql = "SELECT DISTINCT cm.organization "
-                           + "FROM study_protocol AS sp "
-                           + "  JOIN csm_user AS cm ON (sp.user_last_created = cm.login_name) "
-                           + "ORDER BY cm.organization ";
+                String sql = "SELECT DISTINCT u.organization"
+                        + " FROM study_protocol AS sp JOIN csm_user AS u ON sp.user_last_created_id = u.user_id"
+                        + " ORDER BY u.organization ";
                 query = session.createSQLQuery(sql);
                 @SuppressWarnings("unchecked")
                 List<String> queryList = query.list();
