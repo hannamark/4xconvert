@@ -459,7 +459,15 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailSubject = lookUpTableService.getPropertyValue("proprietarytrial.register.subject");
         mailSubject = mailSubject.replace("${subOrgTrialIdentifier}", subOrgTrialIdentifier);
     }
-    sendEmail(spDTO, submissionMailBody, null, mailSubject);
+    //for registration, assumption made is submitter gets email as transaction is not complete won't get owners
+    submissionMailBody = submissionMailBody.replace(leadOrgTrialIdentifier, spDTO.getLocalStudyProtocolIdentifier());
+    submissionMailBody = submissionMailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
+    RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
+    if (user != null) {
+        sendMailWithAttachment(user.getEmailAddress(), mailSubject, submissionMailBody, null);
+    } else {
+        LOG.error("Registry User does not exist: " + spDTO.getUserLastCreated());
+    }
   }
  /**
   * Sends an email to submitter when Amendment to trial is rejected by CTRO staff.

@@ -402,7 +402,7 @@ public class MailManagerServiceTest {
         bean.sendAmendRejectEmail(nonProprietaryTrialIi, "rejectReason");
     }
 
-    @Test
+    @Test (expected=PAException.class)
     public void testSendNotificationMail() throws PAException {
         PAProperties prop = new PAProperties();
         prop.setName("trial.register.body");
@@ -452,7 +452,7 @@ public class MailManagerServiceTest {
         bean.sendUpdateNotificationMail(nonProprietaryTrialIi);
     }
 
-    @Test
+    @Test (expected=PAException.class)
     public void testSendNotificationMailProprietary() throws PAException {
         PAProperties prop = new PAProperties();
         prop.setName("proprietarytrial.register.body");
