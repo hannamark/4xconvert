@@ -52,7 +52,7 @@
     <dependency org="jboss"                  name="cglib"                   rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="jboss"                  name="jboss-jaxrpc"            rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->runtime"/>
-    <dependency org="ncicb"                  name="pa-commons"              rev="3.3-alpha6"    conf="test->test"/>
+    <dependency org="ncicb"                  name="pa-commons"              rev="3.3-alpha7"    conf="test->test"/>
     <dependency org="org.antlr"              name="antlr"                   rev="2.7.6"           conf="test->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.2"           conf="test->master"/>
 

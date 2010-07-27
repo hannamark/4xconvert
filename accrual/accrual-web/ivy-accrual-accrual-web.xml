@@ -46,12 +46,12 @@
     <dependency org="ncicb"                  name="security"                rev="4.2"           conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
     <dependency org="sun"                    name="jstl"                    rev="1.1.2"           conf="compile->master"/>
-    <dependency org="ncicb"                  name="pa-commons"              rev="3.3-alpha5"    conf="compile->test"/>
+    <dependency org="ncicb"                  name="pa-commons"              rev="3.3-alpha7"    conf="compile->test"/>
 
     <!-- test -->
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->master"/>
     <dependency org="mockrunner"             name="mockrunner"              rev="0.4.1"           conf="test->master"/>
-    <dependency org="ncicb"                  name="pa-commons"              rev="3.3-alpha5"    conf="test->test"/>
+    <dependency org="ncicb"                  name="pa-commons"              rev="3.3-alpha7"    conf="test->test"/>
 
     <!-- other test targets -->
     <dependency org="checkstyle"             name="checkstyle-all"          rev="5.1"             conf="test-checkstyle->runtime"/>
