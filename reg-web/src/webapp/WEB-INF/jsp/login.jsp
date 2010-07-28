@@ -14,6 +14,7 @@
 <body><h1>Login</h1>
 <c:set var="topic" scope="request" value="login"/>
 <div class="box">
+
  <c:choose>
      <c:when test="${param.userAction == 'create'}">
 		<div class="confirm_msg">
@@ -32,6 +33,11 @@
      </c:when>
      <c:when test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) > 1}">
         <p><fmt:message key="login.instructions"/></p>
+     </c:when>
+     <c:when test="${param.failureMessage == 'noUser'}">
+        <div class="error_msg">
+             <strong>Please <a title="To Create an Account" href="/registry/registerUser.action">create an account</a> before logging in.</strong>
+        </div> 
      </c:when>
      <c:otherwise>
            <p style="margin:0; padding:0">Please log in to search, view and register clinical trial details.

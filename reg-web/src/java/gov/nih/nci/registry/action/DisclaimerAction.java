@@ -97,6 +97,7 @@ public class DisclaimerAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(DisclaimerAction.class);
     private String actionName;
+    private String failureMessage;
 
     /**
      *
@@ -105,10 +106,19 @@ public class DisclaimerAction extends ActionSupport {
     @Override
     public String execute() {
         actionName = ServletActionContext.getRequest().getParameter("actionName");
+        String returnString = "show_Disclaimer_Page";
         String loginName = ServletActionContext.getRequest().getRemoteUser();
         RegistryUserWebDTO regUserWebDto = RegistryUtil.getRegistryUserWebDto(loginName);
-        ServletActionContext.getRequest().getSession().setAttribute("regUserWebDto", regUserWebDto);
-        return "show_Disclaimer_Page";
+        if (regUserWebDto == null) {
+             ServletActionContext.getRequest().getSession().invalidate();
+             actionName = "home.action";
+             returnString = "redirect_to";
+             failureMessage = "noUser";
+             ServletActionContext.getRequest().setAttribute("failureMessage", failureMessage);
+        } else {
+             ServletActionContext.getRequest().getSession().setAttribute("regUserWebDto", regUserWebDto);
+        }
+        return returnString;
     }
 
     /**
@@ -140,5 +150,19 @@ public class DisclaimerAction extends ActionSupport {
      */
     public void setActionName(String actionName) {
         this.actionName = actionName;
+    }
+
+    /**
+     * @param failureMessage the failureMessage to set
+     */
+    public void setFailureMessage(String failureMessage) {
+         this.failureMessage = failureMessage;
+    }
+
+    /**
+     * @return the failureMessage
+     */
+    public String getFailureMessage() {
+        return failureMessage;
     }
 }
