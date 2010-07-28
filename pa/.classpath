@@ -101,7 +101,6 @@
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/caGrid-ServiceSecurityProvider-client-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/commons-beanutils-1.8.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/commons/test/antlr-2.7.6.jar"/>
-	<classpathentry kind="lib" path="PA_LIB/pa-ejb/test/mockito-all-1.8.4.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/mockito-all-1.8.4.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
