@@ -368,19 +368,39 @@
     <!-- Run Cobertura and JUnit                                                -->
     <!-- ====================================================================== -->
 
+    <target name="runTest" description="Runs the test you specify on the command line with -Dtest=" depends="compile-tests">
+        <mkdir dir="${reg-web.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no">
+            <sysproperty key="basedir" value="."/>
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath location="${reg-web.build.outputDir}"/>
+            <classpath location="${reg-web.build.testOutputDir}"/>
+            <classpath refid="test.classpath"/>
+            <classpath refid="test-junit.classpath"/>
+            <classpath refid="test-cobertura.classpath"/>
+            <classpath refid="compile.classpath"/>
+            <classpath refid="ejb.package.classpath"/>
+            <classpath refid="common.package.classpath"/>
+            <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
+            <batchtest todir="${reg-web.test.reports}" fork="yes" unless="test">
+                <fileset dir="${reg-web.build.testDir.0}">
+                    <include name="**/*Test.java"/>
+                    <exclude name="**/*Abstract*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+    
     <target name="test-cobertura" depends="compile-tests">
-
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
-
         <delete file="${reg-web.build.dir}/cobertura.ser" />
-
         <cobertura-instrument datafile="${reg-web.build.dir}/cobertura.ser"
                               toDir="${reg-web.build.coberturaOutputDir}">
             <fileset dir="${reg-web.build.outputDir}">
                 <include name="**/*.class" />
             </fileset>
         </cobertura-instrument>
-
         <mkdir dir="${reg-web.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <sysproperty key="basedir" value="."/>
@@ -397,7 +417,8 @@
             <classpath refid="compile.classpath"/>
             <classpath refid="ejb.package.classpath"/>
             <classpath refid="common.package.classpath"/>
-            <batchtest todir="${reg-web.test.reports}">
+            <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
+            <batchtest todir="${reg-web.test.reports}" unless="test">
                 <fileset dir="${reg-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
                     <exclude name="**/*Abstract*Test.java"/>

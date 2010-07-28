@@ -5,12 +5,15 @@ package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.registry.util.SiteAdministrationCriteria;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -50,6 +53,12 @@ public class SiteAdministrationActionTest extends AbstractRegWebTest {
         List<RegistryUser> lst = (List<RegistryUser>) sess.getAttribute("regUsersList");
         assertNotNull(lst);
         assertEquals(3, lst.size());
+        try {
+            action.save();
+        } catch (PAException e) {
+            // expected
+        }
+
     }
 
     @Test
@@ -89,6 +98,18 @@ public class SiteAdministrationActionTest extends AbstractRegWebTest {
             }
         }
 
+    }
+
+    @Test
+    public void testActionProperties() {
+        action = new SiteAdministrationAction();
+        action.setCriteria(new SiteAdministrationCriteria());
+        assertNotNull(action.getCriteria());
+        assertNotNull(action.getAffiliatedOrgAdmins());
+        action.setAffiliatedOrgAdmins(null);
+        assertNull(action.getAffiliatedOrgAdmins());
+        action.setRegistryUsers(new ArrayList<RegistryUser>());
+        assertNotNull(action.getCriteria());
     }
 
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.action;
 
@@ -83,12 +83,12 @@ public abstract class AbstractRegWebTest {
         ActionContext.setContext(new ActionContext(stack.getContext()));
 
         assertNotNull(ActionContext.getContext());
-        
+
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         ServletActionContext.setRequest(request);
     }
-    
+
     protected TrialDTO getMockTrialDTO() {
         TrialDTO trialDTO = new TrialDTO();
         trialDTO.setAmendmentDate("01/20/2009");
@@ -109,11 +109,11 @@ public abstract class AbstractRegWebTest {
         trialDTO.setStatusDate("01/20/2008");
         trialDTO.setStatusCode("Active");
         trialDTO.setCompletionDateType("Anticipated");
-        
+
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         String futureDate = dateFormat.format(date.getTime() + MILLIS_IN_DAY);
-        
+
         trialDTO.setCompletionDate(futureDate);
         trialDTO.setStartDateType("Actual");
         trialDTO.setStartDate("01/20/2008");
@@ -165,7 +165,7 @@ public abstract class AbstractRegWebTest {
         indDto.setRowId("1");
         indDto.setIndIdeId("1");
         indDtos.add(indDto);
-        
+
         indDto = new TrialIndIdeDTO();
         indDto.setIndIde("IDE");
         indDto.setNumber("Ide no");
@@ -177,7 +177,7 @@ public abstract class AbstractRegWebTest {
         indDto.setRowId("1");
         indDto.setIndIdeId("1");
         indDtos.add(indDto);
-        
+
         indDto = new TrialIndIdeDTO();
         indDto.setIndIde("IDE");
         indDto.setNumber("Ide no");
@@ -206,8 +206,9 @@ public abstract class AbstractRegWebTest {
             }
             if (currentFolder.getName().startsWith("orgName")) { // name match
                 System.out.println("removing " + currentFolder.getPath());
-                if (!deleteDir(currentFolder))
+                if (!deleteDir(currentFolder)) {
                     System.err.println("Couldn't remove " + currentFolder.getPath());
+                }
                 }
             }
     }
@@ -227,7 +228,7 @@ public abstract class AbstractRegWebTest {
         }
         // The directory is now empty so delete it
         return dir.delete();
-    } 
+    }
     protected ProprietaryTrialDTO getMockProprietaryTrialDTO() {
         ProprietaryTrialDTO trialDTO = new ProprietaryTrialDTO();
         trialDTO.setAssignedIdentifier("assignedIdentifier");
@@ -253,7 +254,7 @@ public abstract class AbstractRegWebTest {
         return trialDTO;
     }
     /**
-     * 
+     *
      * @return StudyProtocolBatchDTO
      */
     protected StudyProtocolBatchDTO getBatchDto() {
@@ -420,8 +421,8 @@ public abstract class AbstractRegWebTest {
        hfc.setIdentifier("1");
        hfc.setStatusCode(StructuralRoleStatusCode.PENDING);
        addUpdObject(hfc);
-       
-       
+
+
        ResearchOrganization rOrg = new ResearchOrganization();
        rOrg.setOrganization(org);
        rOrg.setStatusCode(StructuralRoleStatusCode.ACTIVE);
@@ -432,7 +433,7 @@ public abstract class AbstractRegWebTest {
        orgContact.setOrganization(org);
        orgContact.setStatusCode(StructuralRoleStatusCode.ACTIVE);
        addUpdObject(orgContact);
-       
+
        Person per = new Person();
        per.setFirstName("firstName");
        per.setLastName("lastName");
@@ -454,19 +455,19 @@ public abstract class AbstractRegWebTest {
        addUpdObject(country);
        HibernateUtil.getCurrentSession().clear();
    }
-   
+
    protected String getTomorrowDate() {
-    
+
        // get a calendar instance, which defaults to "now"
        Calendar calendar = Calendar.getInstance();
-       
+
        // get a date to represent "today"
        Date today = calendar.getTime();
        System.out.println("today:    " + today);
-    
+
        // add one day to the date/calendar
        calendar.add(Calendar.DAY_OF_YEAR, 1);
-       
+
        // now get "tomorrow"
        Date tomorrow = calendar.getTime();
        return PAUtil.normalizeDateString(tomorrow.toString());

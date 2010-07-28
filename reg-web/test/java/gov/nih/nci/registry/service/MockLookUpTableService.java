@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.service;
 
@@ -27,6 +27,10 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
         map.put("allowed.uploadfile.types", "doc");
         map.put("user.account.subject", "Junit user account subject");
         map.put("user.account.body", "Junit user account body url");
+        map.put("trial.batchUpload.bodyHeader", "Junit ${SubmitterName}  ${CurrentDate}");
+        map.put("trial.batchUpload.body", "Junit ${totalCount}  ${successCount} ${failedCount}");
+        map.put("trial.batchUpload.errorMsg", "Junit ${ReleaseNumber} error");
+        map.put("current.release.no", "Junit test");
     }
 
     /**
