@@ -39,9 +39,9 @@ function loadDiv(url, divId, showLoadingIcon, customOnComplete) {
         asynchronous: true,
         method: 'get',
         evalScripts: true,
-        onComplete: function(transport) { 
-            if(customOnComplete != null) { 
-                customOnComplete() 
+        onComplete: function(transport) {
+            if(customOnComplete != null) {
+                customOnComplete()
             }
         }
     });
@@ -108,9 +108,32 @@ function copyValueToTextField(value, textFieldId) {
     }
 }
 
+function checkForValidFundingMech(crFundingMechValue, selectFormFundingMech, selectFormROType, crFundingMech) {
+    var found = false;
+    if ($(selectFormFundingMech)) {
+        for ( var i = 0; i <= $(selectFormFundingMech).length - 1; i = i + 1) {
+            var fundingMechId = $(selectFormFundingMech).options[i].value;
+            if (fundingMechId == crFundingMechValue) {
+                found = true;
+                break;
+            }
+        }
+    }
+
+    if (!found) {
+        var selectedIndex = $(selectFormROType).selectedIndex;
+        var selectedFormROTypeCodeValue = $(selectFormROType).options[$(selectFormROType).selectedIndex].value;
+        var selectedFormROType = $(selectFormROType).options[$(selectFormROType).selectedIndex].text;
+        alert("Funding Mechanism '" + crFundingMech + "' is not valid for Research Organization Type '" + selectedFormROType + "'.");
+        return false;
+    }
+
+    return true;
+}
+
 function selectValueInSelectField(value, selectBoxId, firefoxEvent, ieEvent) {
     var found = false;
-    if ($(selectBoxId) && $(selectBoxId).type == 'select-one') { 
+    if ($(selectBoxId) && $(selectBoxId).type == 'select-one') {
         for ( var i = 0; i <= $(selectBoxId).length - 1; i = i + 1) {
             var selectedText = $(selectBoxId).options[i].value;
             if (selectedText == value) {
@@ -181,42 +204,42 @@ function showPopup(url, callbackFunc) {
 }
 
 function assembleAndSubmitPhoneNumber(type, url, divId) {
-        
+
     $(type + 'Entry_value').value = $(type + 'Entry_part1').value + '-' + $(type + 'Entry_part2').value + '-' + $(type + 'Entry_part3').value;
-    
+
     if ($(type + 'Entry_value').value.length < 12) {
         alert('The entire ' + type + ' number must be provided.');
         return false;
     }
-    
+
     var myRe = new RegExp ("\\d{3}-\\d{3}-\\d{4}");
-    var OK = myRe.exec($(type + 'Entry_value').value); 
+    var OK = myRe.exec($(type + 'Entry_value').value);
     if (!OK) {
         alert($(type + 'Entry_value').value + ' must match ###-###-####.');
         return false;
     }
-    
+
     if ($(type + 'Entry_part4').value.length > 0) {
         myRe = new RegExp ("^\\d{0,}$");
-        OK = myRe.exec($(type + 'Entry_part4').value); 
+        OK = myRe.exec($(type + 'Entry_part4').value);
         if (!OK) {
             alert('Ext ' + $(type + 'Entry_part4').value + ' must match digits only.');
             return false;
         }
         $(type + 'Entry_value').value = $(type + 'Entry_value').value + 'x' + $(type + 'Entry_part4').value;
     }
-    
-    
-    
+
+
+
     submitDivAsForm(url, divId);
-    
+
     return false;
 }
 
 /*
 Auto tabbing script- By JavaScriptKit.com
 http://www.javascriptkit.com
-*/ 
+*/
 function autotab(original,destination) {
     if (original.getAttribute && original.value.length == original.getAttribute("maxlength")) {
         destination.focus();
@@ -224,13 +247,13 @@ function autotab(original,destination) {
 }
 
 function switchContactNumberFormats(country) {
-    
+
     var countryField = $(country);
     if (!countryField) {
         return;
     }
     var countryName = countryField.options[countryField.selectedIndex].text;
-   
+
     if ($('no_format_phone')) {
         if (countryName == 'United States' || countryName == 'Canada') {
             $('no_format_phone').hide();
