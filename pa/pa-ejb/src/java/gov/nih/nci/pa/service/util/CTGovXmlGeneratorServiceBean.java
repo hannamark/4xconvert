@@ -565,7 +565,7 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
             data = country.getName() + " : " + ra.getAuthorityName();
         } else if (country != null) {
             data = country.getName();
-        } else if (ra != null){
+        } else if (ra != null) {
             data = ra.getAuthorityName();
         }
         return createElement("regulatory_authority", data, doc);
