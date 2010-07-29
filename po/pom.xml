@@ -76,12 +76,12 @@
 
     <issueManagement>
         <system>Jira</system>
-        <url>https://jira.5amsolutions.com/browse/PO</url>
+        <url>https://tracker.nci.nih.gov/browse/PO</url>
     </issueManagement>
 
     <ciManagement>
         <system>Hudson</system>
-        <url>http://cbvapp-c1005.nci.nih.gov:48080/hudson/</url>
+        <url>http://ncias-c475-v.nci.nih.gov:48080/hudson/</url>
         <notifiers>
             <notifier>
                 <type>mail</type>
@@ -92,7 +92,7 @@
 
     <mailingLists>
         <mailingList>
-            <name>Po Dev Team List</name>
+            <name>PO Dev Team List</name>
             <post>team-po@5amsolutions.com</post>
         </mailingList>
     </mailingLists>
