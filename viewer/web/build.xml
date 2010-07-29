@@ -211,12 +211,8 @@
     <!-- ====================================================================== -->
 
     <target name="test-pmd">
-        <taskdef name="pmd"
-             classpath="${test-pmd.jar.dir}/pmd-4.2.2.jar"
-             classname="net.sourceforge.pmd.ant.PMDTask"/>
-
-        <pmd shortFilenames="true" failOnRuleViolation="true"
-                                   rulesetfiles="${pmdFile}">
+        <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pmdFile}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${reportDir}/pmd.txt"/>
             <formatter type="xml"  toFile="${reportDir}/pmd.xml"/>

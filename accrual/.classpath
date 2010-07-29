@@ -14,18 +14,15 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/commons-lang-2.4.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/log4j-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/test/junit-4.4.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/test/mockrunner-0.4.1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/runtime/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/po-services-client-3.2.0-m10.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/hibernate3-4.0.5.GA.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/hibernate-annotations-3.2.0.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/persistence-api-1.0.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/test/dom4j-1.6.1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/commons-logging-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/services/test/hsqldb-1.8.0.7.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/services/test/hsqldb-1.8.0.10.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/test/cglib-4.0.5.GA.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jta-1.0.1B.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/test/antlr-2.7.6.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jboss-ejb3x-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/displaytag-1.2.jar"/>
@@ -36,17 +33,14 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/commons-logging-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/ehcache-1.2.4.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/freemarker-2.3.13.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/hibernate-annotations-3.2.0.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/hibernate3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/iso-datatypes-2.0.0-alpha1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/jboss-annotations-ejb3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/jstl-1.1.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/log4j-4.0.5.GA.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/nci-commons-struts2-1.2.13.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/persistence-api-1.0.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/postgresql-jdbc3-8.3-603.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/security-4.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/sitemesh-2.3.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/standard-1.1.2.jar"/>
@@ -55,7 +49,6 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jboss-j2ee-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/coppa-commons-1.3.0-alpha1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/jbosssx-4.0.5.GA.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/services/test/junit-4.4.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/aopalliance-1.0.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/asm-3.1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/asm-attrs-1.5.3.jar"/>
@@ -107,16 +100,21 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/hibernate-validator-3.0.0.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/itext-2.0.6.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jasciidammit-1.1.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jdom-0.9.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jdom-1.0.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jericho-html-2.4.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jprov-jce-1.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/kmu-jce-1.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/mysql-connector-java-3.0.16-ga-bin.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/postgresql-jdbc3-8.3-603.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/postgresql-8.3-603.jdbc3.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/servlet-2.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/spring-2.0.5.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/spring-beans-1.2.8.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/spring-core-1.2.8.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/hibernate-annotations-3.2.0.ga.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/postgresql-8.3-603.jdbc3.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/test/mockrunner-0.4.1.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/hibernate-annotations-3.2.0.ga.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jdom-1.1.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jta-1.1.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
