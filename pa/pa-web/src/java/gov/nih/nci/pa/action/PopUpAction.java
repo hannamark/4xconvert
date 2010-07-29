@@ -98,6 +98,8 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -108,7 +110,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Harsha
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
+@SuppressWarnings("PMD.TooManyMethods")
 public class PopUpAction extends ActionSupport {
     private static final long serialVersionUID = 4960297232842560635L;
     private List<Country> countryList = new ArrayList<Country>();
@@ -278,17 +280,18 @@ public class PopUpAction extends ActionSupport {
     private String processDisplayOrganizations(String retvalue) {
         try {
             getCountriesList();
-            String orgName = ServletActionContext.getRequest().getParameter("orgName");
+            final HttpServletRequest request = ServletActionContext.getRequest();
+            String orgName = request.getParameter("orgName");
             // String nciOrgName = ServletActionContext.getRequest().getParameter("nciNumber");
-            String countryName = ServletActionContext.getRequest().getParameter("countryName");
-            String cityName = ServletActionContext.getRequest().getParameter("cityName");
-            String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
-            String stateName = ServletActionContext.getRequest().getParameter("stateName");
-            if ("".equals(orgName) && ("aaa").equals(countryName) && "".equals(cityName) && "".equals(zipCode)) {
+            String countryName = request.getParameter("countryName");
+            String cityName = request.getParameter("cityName");
+            String zipCode = request.getParameter("zipCode");
+            String stateName = request.getParameter("stateName");
+            if (checkOrgSearchCriteria(orgName, countryName, cityName, zipCode)) {
                 String message = "Please enter at least one search criteria";
                 orgs = null;
                 addActionError(message);
-                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
+                request.setAttribute(Constants.FAILURE_MESSAGE, message);
                 return retvalue;
             }
             // Set the values; so paging will retain them
@@ -303,7 +306,7 @@ public class PopUpAction extends ActionSupport {
             criteria.setPostalAddress(AddressConverterUtil.create(null, null, cityName,
                                                                             stateName, zipCode, countryName));
             LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-            List<OrganizationDTO> personsList = new ArrayList<OrganizationDTO>();            
+            List<OrganizationDTO> personsList = new ArrayList<OrganizationDTO>();
             personsList = PoRegistry.getOrganizationEntityService().search(criteria, limit);
             for (OrganizationDTO dto : personsList) {
                 orgs.add(PADomainUtils.convertPoOrganizationDTO(dto, countryList));
@@ -314,24 +317,25 @@ public class PopUpAction extends ActionSupport {
         }
     }
 
+    private boolean checkOrgSearchCriteria(String orgName, String countryName, String cityName, String zipCode) {
+        return "".equals(orgName) && ("aaa").equals(countryName) && "".equals(cityName) && "".equals(zipCode);
+    }
+
     private String processDisplayPersons(String retvalue) {
-        String firstName = ServletActionContext.getRequest().getParameter("firstName");
-        String lastName = ServletActionContext.getRequest().getParameter("lastName");
-        //Also search by address
-        // String nciOrgName = ServletActionContext.getRequest().getParameter("nciNumber");
-        String countryName = ServletActionContext.getRequest().getParameter("countryName");
-        String cityName = ServletActionContext.getRequest().getParameter("cityName");
-        String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
-        String stateName = ServletActionContext.getRequest().getParameter("stateName");
-        //
-        if ("".equals(firstName) && "".equals(lastName) && "".equals(countryName)
-                && "".equals(cityName) && "".equals(zipCode) && "".equals(stateName)) {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        if (checkPersonSearchCriteria(request)) {
             String message = "Please enter at least one search criteria";
             persons = null;
             addActionError(message);
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
+            request.setAttribute(Constants.FAILURE_MESSAGE, message);
             return retvalue;
         }
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String countryName = request.getParameter("countryName");
+        String cityName = request.getParameter("cityName");
+        String zipCode = request.getParameter("zipCode");
+        String stateName = request.getParameter("stateName");
         // Set the values; so paging will retain them
         perSearchCriteria.setFirstName(firstName);
         perSearchCriteria.setLastName(lastName);
@@ -352,19 +356,30 @@ public class PopUpAction extends ActionSupport {
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            request.setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return retvalue;
         } catch (TooManyResultsException e) {
             addActionError(e.getMessage());
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            request.setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return retvalue;
         }
         return retvalue;
     }
 
+    private boolean checkPersonSearchCriteria(HttpServletRequest request) {
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String countryName = request.getParameter("countryName");
+        String cityName = request.getParameter("cityName");
+        String zipCode = request.getParameter("zipCode");
+        String stateName = request.getParameter("stateName");
+        return "".equals(firstName) && "".equals(lastName) && "".equals(countryName) && "".equals(cityName)
+                && "".equals(zipCode) && "".equals(stateName);
+    }
+
     @SuppressWarnings("unchecked")
     private void getCountriesList() throws PAException {
-        countryList = (List) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
+        countryList = (List<Country>) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
         if (countryList == null) {
             countryList = PaRegistry.getLookUpTableService().getCountries();
             ServletActionContext.getRequest().getSession().setAttribute("countrylist", countryList);

@@ -106,14 +106,17 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -125,19 +128,24 @@ import com.opensymphony.xwork2.Preparable;
  * @author Harsha
  *
  */
-@SuppressWarnings("PMD")
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity",
+    "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.ExcessiveMethodLength" })
 public class PopupAction extends ActionSupport implements Preparable {
-    private List countryList = new ArrayList();
+    private static final String FAILURE_MSG_ATTR = "failureMessage";
+    private static final String ORGS_RESULT = "orgs";
+    private List<Country> countryList = new ArrayList<Country>();
     private List<SearchOrgResultDisplay> orgs = new ArrayList<SearchOrgResultDisplay>();
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
     private OrgSearchCriteria orgSearchCriteria = new OrgSearchCriteria();
     private OrgSearchCriteria createOrg = new OrgSearchCriteria();
     private PaPersonDTO personDTO = new PaPersonDTO();
     private static final String PERS_CREATE_RESPONSE = "create_pers_response";
-    private final int ausStateCodeLen = 3;
+    private static final int AUS_STATE_CODE_LEN = 3;
+
     /**
-     * @throws Exception on error
+     * {@inheritDoc}
      */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() throws Exception {
         populateCountryList();
     }
@@ -163,7 +171,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             addActionError(e.getLocalizedMessage());
             return ERROR;
         }
-        return "orgs";
+        return ORGS_RESULT;
     }
 
     /**
@@ -173,8 +181,9 @@ public class PopupAction extends ActionSupport implements Preparable {
     public String displayOrgList() {
         return populateOrgs(false);
     }
+
     /**
-    * @throws PAException on error
+     * @throws PAException on error
      * @return res
      */
     public String displayPersonsListDisplayTag() throws PAException {
@@ -183,51 +192,50 @@ public class PopupAction extends ActionSupport implements Preparable {
 
     /**
      * @throws PAException on error
-      * @return res
-      */
-     public String displayPersonsList() throws PAException {
-         return populatePersons(false);
-     }
+     * @return res
+     */
+    public String displayPersonsList() throws PAException {
+        return populatePersons(false);
+    }
 
-     /**
-      * @return results
-      */
-     public String displayPasswordReset() {
-         return "displayPasswordReset";
-     }
-
+    /**
+     * @return results
+     */
+    public String displayPasswordReset() {
+        return "displayPasswordReset";
+    }
 
     private String populatePersons(boolean pagination) throws PAException {
         try {
-            String firstName = ServletActionContext.getRequest().getParameter("firstName");
-            String lastName = ServletActionContext.getRequest().getParameter("lastName");
-            String email = ServletActionContext.getRequest().getParameter("email");
+            final HttpServletRequest request = ServletActionContext.getRequest();
+            String firstName = request.getParameter("firstName");
+            String lastName = request.getParameter("lastName");
+            String email = request.getParameter("email");
             //
-            String country = ServletActionContext.getRequest().getParameter("country");
-            String city = ServletActionContext.getRequest().getParameter("city");
-            String zip = ServletActionContext.getRequest().getParameter("zip");
-            String state = ServletActionContext.getRequest().getParameter("state");
+            String country = request.getParameter("country");
+            String city = request.getParameter("city");
+            String zip = request.getParameter("zip");
+            String state = request.getParameter("state");
             //
-            String ctep = ServletActionContext.getRequest().getParameter("ctepId");
+            String ctep = request.getParameter("ctepId");
             if ((firstName != null) && (firstName.equals("")) && (lastName != null) && (lastName.equals(""))
-                    && (email.equals("")) && ctep != null && !(ctep.length() > 0)
-                    && (city != null) && (city.equals(""))
-                    && (zip != null) && (zip.equals("")) && (state != null) && (state.equals(""))
+                    && (email.equals("")) && ctep != null && !(ctep.length() > 0) && (city != null)
+                    && (city.equals("")) && (zip != null) && (zip.equals("")) && (state != null) && (state.equals(""))
                     && country.equals("")) {
                 String message = "Please enter at least one search criteria";
                 persons = null;
                 addActionError(message);
-                ServletActionContext.getRequest().setAttribute("failureMessage", message);
+                request.setAttribute(FAILURE_MSG_ATTR, message);
                 return SUCCESS;
             }
-            //set the values in the DTO
+            // set the values in the DTO
             personDTO.setFirstName(firstName);
             personDTO.setLastName(lastName);
             personDTO.setEmail(email);
             personDTO.setCountry(country);
             personDTO.setCity(city);
             personDTO.setState(state);
-            gov.nih.nci.services.person.PersonDTO p = new gov.nih.nci.services.person.PersonDTO();
+            PersonDTO p = new PersonDTO();
             //
             if (email != null && email.length() > 0) {
                 DSet<Tel> list = new DSet<Tel>();
@@ -239,14 +247,13 @@ public class PopupAction extends ActionSupport implements Preparable {
             }
             p.setPostalAddress(AddressConverterUtil.create(null, null, city, state, zip, country));
             //
-            List<gov.nih.nci.services.person.PersonDTO> poPersonList =
-                                                        new ArrayList<gov.nih.nci.services.person.PersonDTO>();
+            List<PersonDTO> poPersonList = new ArrayList<PersonDTO>();
             if (ctep != null && ctep.length() > 0) {
                 IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
                 identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi(ctep));
-                List<IdentifiedPersonDTO> retResultList =
-                                  PoRegistry.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
-                if (retResultList != null && retResultList.size() > 0) {
+                List<IdentifiedPersonDTO> retResultList = PoRegistry.getIdentifiedPersonEntityService()
+                                                                    .search(identifiedPersonDTO);
+                if (CollectionUtils.isNotEmpty(retResultList)) {
                     p.setIdentifier(retResultList.get(0).getPlayerIdentifier());
                 }
             } else {
@@ -260,12 +267,11 @@ public class PopupAction extends ActionSupport implements Preparable {
                     throw new PAException(e);
                 }
             }
-            for (gov.nih.nci.services.person.PersonDTO poPersonDTO : poPersonList) {
+            for (PersonDTO poPersonDTO : poPersonList) {
                 persons.add(PADomainUtils.convertToPaPersonDTO(poPersonDTO));
             }
         } catch (Exception e) {
             persons = null;
-            //ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             LOG.error("Error occured while searching PO Persons " + e.getMessage(), e);
             return pagination ? "persons" : SUCCESS;
         }
@@ -294,15 +300,15 @@ public class PopupAction extends ActionSupport implements Preparable {
                 String message = "Please enter at least one search criteria";
                 orgs = null;
                 addActionError(message);
-                ServletActionContext.getRequest().setAttribute("failureMessage", message);
-                return pagination ? "orgs" : SUCCESS;
+                ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, message);
+                return pagination ? ORGS_RESULT : SUCCESS;
             }
             if (countryName.equals("") && ctepId != null && !(ctepId.length() > 0)) {
                 String message = "Please select a country";
                 orgs = null;
                 addActionError(message);
-                ServletActionContext.getRequest().setAttribute("failureMessage", message);
-                return pagination ? "orgs" : SUCCESS;
+                ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, message);
+                return pagination ? ORGS_RESULT : SUCCESS;
             }
             if (pagination) {
                 orgSearchCriteria.setOrgName(orgName);
@@ -317,7 +323,7 @@ public class PopupAction extends ActionSupport implements Preparable {
                 identifiedOrganizationDTO.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(ctepId));
                 List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
                         .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
-                if (identifiedOrgs != null && identifiedOrgs.size() > 0) {
+                if (CollectionUtils.isNotEmpty(identifiedOrgs)) {
                     criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
                 }
             } else {
@@ -333,19 +339,16 @@ public class PopupAction extends ActionSupport implements Preparable {
                 callConvert = PoRegistry.getOrganizationEntityService().search(criteria, limit);
             }
             convertPoOrganizationDTO(callConvert);
-            return pagination ? "orgs" : SUCCESS;
+            return pagination ? ORGS_RESULT : SUCCESS;
         } catch (Exception e) {
             orgs = null;
-            //addActionError(e.getMessage());
-            //ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             LOG.error("Error occured while searching PO Organizations " + e.getMessage(), e);
-            return pagination ? "orgs" : SUCCESS;
+            return pagination ? ORGS_RESULT : SUCCESS;
         }
     }
 
     private String getCountryNameUsingCode(String code) {
-        for (int i = 0; i < countryList.size(); i++) {
-            gov.nih.nci.pa.domain.Country country = (gov.nih.nci.pa.domain.Country) countryList.get(i);
+        for (Country country : countryList) {
             if (country.getAlpha3().toString().equals(code)) {
                 return country.getName();
             }
@@ -353,8 +356,9 @@ public class PopupAction extends ActionSupport implements Preparable {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private void populateCountryList() throws PAException {
-        countryList = (List) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
+        countryList = (List<Country>) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
         if (countryList == null) {
             countryList = PaRegistry.getLookUpTableService().getCountries();
             ServletActionContext.getRequest().getSession().setAttribute("countrylist", countryList);
@@ -388,16 +392,13 @@ public class PopupAction extends ActionSupport implements Preparable {
             addActionError("Zip is a required field");
         }
         String stateName = ServletActionContext.getRequest().getParameter("stateName");
-        if (countryName != null && (countryName.equalsIgnoreCase("USA")
-                                || countryName.equalsIgnoreCase("CAN"))) {
-            if (StringUtils.isEmpty(stateName) || stateName.trim().length() > 2) {
-                addActionError("2-letter State/Province Code required for USA/Canada");
-            }
+        if (countryName != null && (countryName.equalsIgnoreCase("USA") || countryName.equalsIgnoreCase("CAN"))
+                && (StringUtils.isEmpty(stateName) || stateName.trim().length() > 2)) {
+            addActionError("2-letter State/Province Code required for USA/Canada");
         }
-        if (countryName != null && countryName.equalsIgnoreCase("AUS")) {
-            if (StringUtils.isEmpty(stateName) || stateName.trim().length() > ausStateCodeLen) {
-                addActionError("2/3-letter State/Province Code required for Australia");
-            }
+        if (countryName != null && countryName.equalsIgnoreCase("AUS")
+                && (StringUtils.isEmpty(stateName) || stateName.trim().length() > AUS_STATE_CODE_LEN)) {
+            addActionError("2/3-letter State/Province Code required for Australia");
         }
 
         String email = ServletActionContext.getRequest().getParameter("email");
@@ -412,11 +413,10 @@ public class PopupAction extends ActionSupport implements Preparable {
         String url = ServletActionContext.getRequest().getParameter("url");
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
-            Iterator<String> i = getActionErrors().iterator();
-            while (i.hasNext()) {
-                sb.append(" - " + i.next().toString());
+            for (String actionErr : getActionErrors()) {
+                sb.append(" - ").append(actionErr);
             }
-            ServletActionContext.getRequest().setAttribute("failureMessage", sb.toString());
+            ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, sb.toString());
             return "create_org_response";
         }
         orgDto.setName(EnOnConverter.convertToEnOn(orgName));
@@ -473,7 +473,7 @@ public class PopupAction extends ActionSupport implements Preparable {
 
     private String handleError(String message) {
         addActionError(message);
-        ServletActionContext.getRequest().setAttribute("failureMessage", message);
+        ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, message);
         return "create_org_response";
     }
 
@@ -482,73 +482,70 @@ public class PopupAction extends ActionSupport implements Preparable {
      * @return String rest
      */
     public String createPerson() {
-        String firstName = ServletActionContext.getRequest().getParameter("firstName");
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        String firstName = request.getParameter("firstName");
         if (StringUtils.isEmpty(firstName)) {
             addActionError("First Name is a required field");
         }
-        String lastName = ServletActionContext.getRequest().getParameter("lastName");
+        String lastName = request.getParameter("lastName");
         if (StringUtils.isEmpty(lastName)) {
             addActionError("Last Name is a required field");
         }
-        String email = ServletActionContext.getRequest().getParameter("email");
+        String email = request.getParameter("email");
         if (StringUtils.isEmpty(email)) {
             addActionError("Email is a required field");
         } else if (!PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
         }
-        String streetAddr = ServletActionContext.getRequest().getParameter("streetAddr");
+        String streetAddr = request.getParameter("streetAddr");
         if (StringUtils.isEmpty(streetAddr)) {
             addActionError("Street address is a required field");
         }
-        String city = ServletActionContext.getRequest().getParameter("city");
+        String city = request.getParameter("city");
         if (StringUtils.isEmpty(city)) {
             addActionError("City is a required field");
         }
-        String zip = ServletActionContext.getRequest().getParameter("zip");
+        String zip = request.getParameter("zip");
         if (StringUtils.isEmpty(zip)) {
             addActionError("Zip is a required field");
         }
-        String country = ServletActionContext.getRequest().getParameter("country");
+        String country = request.getParameter("country");
         if (country != null && country.equals("aaa")) {
             addActionError("Country is a required field");
         }
-        String state = ServletActionContext.getRequest().getParameter("state");
-        if (country != null && (country.equalsIgnoreCase("USA")
-                            || country.equalsIgnoreCase("CAN"))) {
-            if (StringUtils.isEmpty(state) || state.trim().length() > 2) {
-                addActionError("2-letter State/Province Code required for USA/Canada");
-            }
+        String state = request.getParameter("state");
+        if (country != null && (country.equalsIgnoreCase("USA") || country.equalsIgnoreCase("CAN"))
+                && (StringUtils.isEmpty(state) || state.trim().length() > 2)) {
+            addActionError("2-letter State/Province Code required for USA/Canada");
         }
-        if (country != null && country.equalsIgnoreCase("AUS")) {
-            if (StringUtils.isEmpty(state) || state.trim().length() > ausStateCodeLen) {
-                addActionError("2/3-letter State/Province Code required for Australia");
-            }
+        if (country != null && country.equalsIgnoreCase("AUS")
+                && (StringUtils.isEmpty(state) || state.trim().length() > AUS_STATE_CODE_LEN)) {
+            addActionError("2/3-letter State/Province Code required for Australia");
         }
 
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
-            Iterator<String> i = getActionErrors().iterator();
-            while (i.hasNext()) {
-                sb.append(" - " + i.next().toString());
+            for (String actionErr : getActionErrors()) {
+                sb.append(" - ").append(actionErr);
             }
-            ServletActionContext.getRequest().setAttribute("failureMessage", sb.toString());
+            request.setAttribute(FAILURE_MSG_ATTR, sb.toString());
             return PERS_CREATE_RESPONSE;
         }
 
-        String preFix = ServletActionContext.getRequest().getParameter("preFix");
-        String midName = ServletActionContext.getRequest().getParameter("midName");
-        String phone = ServletActionContext.getRequest().getParameter("phone");
-        String tty = ServletActionContext.getRequest().getParameter("tty");
-        String fax = ServletActionContext.getRequest().getParameter("fax");
-        String url = ServletActionContext.getRequest().getParameter("url");
-        String suffix = ServletActionContext.getRequest().getParameter("suffix");
+        String preFix = request.getParameter("preFix");
+        String midName = request.getParameter("midName");
+        String phone = request.getParameter("phone");
+        String tty = request.getParameter("tty");
+        String fax = request.getParameter("fax");
+        String url = request.getParameter("url");
+        String suffix = request.getParameter("suffix");
         //
-        gov.nih.nci.services.person.PersonDTO dto = new gov.nih.nci.services.person.PersonDTO();
+        PersonDTO dto = new PersonDTO();
         dto.setName(new EnPn());
         Enxp part = new Enxp(EntityNamePartType.GIV);
         part.setValue(firstName);
         dto.getName().getPart().add(part);
-        // if middel name exists stick it in here!
+        // if middle name exists stick it in here!
         if (StringUtils.isNotEmpty(midName)) {
             Enxp partMid = new Enxp(EntityNamePartType.GIV);
             partMid.setValue(midName);
@@ -602,15 +599,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
             Ii id = PoRegistry.getPersonEntityService().createPerson(dto);
             persons.add(PADomainUtils.convertToPaPersonDTO(PoRegistry.getPersonEntityService().getPerson(id)));
-        } catch (NullifiedEntityException e) {
-            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
-        } catch (EntityValidationException e) {
-            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
-        } catch (PAException e) {
-            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
-        } catch (URISyntaxException e) {
-            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
-        } catch (CurationException e) {
+        } catch (Exception e) {
             handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
         }
         return PERS_CREATE_RESPONSE;
@@ -618,7 +607,7 @@ public class PopupAction extends ActionSupport implements Preparable {
 
     private String handleExceptions(String message, String returnString) {
         addActionError(message);
-        ServletActionContext.getRequest().setAttribute("failureMessage", message);
+        ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, message);
         return returnString;
     }
 

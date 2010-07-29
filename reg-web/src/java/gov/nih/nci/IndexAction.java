@@ -24,23 +24,23 @@ import com.opensymphony.xwork2.conversion.annotations.Conversion;
 import com.opensymphony.xwork2.conversion.annotations.TypeConversion;
 
 /**
- * 
+ *
  */
 @Conversion()
 public class IndexAction extends ActionSupport {
-    
+
     private Date now = new Date(System.currentTimeMillis());
-    
+
     /**
      * @return now
      */
     @TypeConversion(converter = "com.fdar.apress.s2.DateConverter")
     public Date getDateNow() { return now; }
-    
+
     /**
-     * @see com.opensymphony.xwork2.ActionSupport#execute()
-     * @return action result
+     * {@inheritDoc}
      */
+    @Override
     public String execute() {
         now = new Date(System.currentTimeMillis());
         return SUCCESS;

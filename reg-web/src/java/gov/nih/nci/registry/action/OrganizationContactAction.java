@@ -1,5 +1,6 @@
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -26,7 +27,7 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
     private static final long serialVersionUID = 1L;
     private static final String DISPLAY_ORG_CONTACTS = "display_org_contacts";
     private List<PersonDTO> persons = new ArrayList<PersonDTO>();
-    private List countryList = new ArrayList();
+    private List<Country> countryList = new ArrayList<Country>();
     private String personName;
 
     /**
@@ -88,20 +89,20 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
     /**
      * @return the countryList
      */
-    public List getCountryList() {
+    public List<Country> getCountryList() {
         return countryList;
     }
 
     /**
      * @param countryList the countryList to set
      */
-    public void setCountryList(List countryList) {
+    public void setCountryList(List<Country> countryList) {
         this.countryList = countryList;
     }
 
     @SuppressWarnings("unchecked")
     private void populateCountryList() throws PAException {
-        countryList = (List) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
+        countryList = (List<Country>) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
         if (countryList == null) {
             countryList = PaRegistry.getLookUpTableService().getCountries();
             ServletActionContext.getRequest().getSession().setAttribute("countrylist", countryList);

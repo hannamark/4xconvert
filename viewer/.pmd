@@ -2,7 +2,7 @@
 <pmd>
     <workingSet>viewer_src</workingSet>
     <useProjectRuleSet>true</useProjectRuleSet>
-    <ruleSetFile>resources\viewerPmd.xml</ruleSetFile>
+    <ruleSetFile>resources/viewerPmd.xml</ruleSetFile>
     <includeDerivedFiles>false</includeDerivedFiles>
     <violationsAsErrors>true</violationsAsErrors>
 </pmd>

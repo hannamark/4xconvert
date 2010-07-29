@@ -84,23 +84,20 @@ import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 /**
-* @author Hugh Reinhart
-* @since 11/31/2008
-* copyright NCI 2008.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
-*/
-@SuppressWarnings("PMD.CyclomaticComplexity")
+ * @author Hugh Reinhart
+ */
 public class PopUpAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 8987838321L;
 
@@ -111,7 +108,6 @@ public class PopUpAction extends AbstractAccrualAction {
     private String includeSynonym;
     private String exactMatch;
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
-
 
     private void loadResultList() {
         disWebList.clear();
@@ -167,26 +163,31 @@ public class PopUpAction extends AbstractAccrualAction {
             error("Exception thrown while getting disease parents.", e);
             return;
         }
+        try {
+            Map<String, String> childParent = processChildParent(dpList);
+            for (DiseaseWebDTO dto : disWebList) {
+                dto.setParentPreferredName(childParent.get(dto.getDiseaseIdentifier()));
+            }
+        } catch (PAException e) {
+            error("Exception throw while getting disease name for parent.", e);
+            return;
+        }
+    }
+
+    private Map<String, String> processChildParent(List<DiseaseParentDTO> dpList) throws PAException {
         HashMap<String, String> childParent = new HashMap<String, String>();
         for (DiseaseParentDTO dp : dpList) {
             String child = IiConverter.convertToString(dp.getIdentifier());
-            DiseaseDTO parentDTO;
-            try {
-                parentDTO = getDiseaseSvc().get(dp.getParentDiseaseIdentifier());
-            } catch (Exception e) {
-                error("Exception throw while getting disease name for parent.", e);
-                return;
-            }
+            DiseaseDTO parentDTO = getDiseaseSvc().get(dp.getParentDiseaseIdentifier());
             if (childParent.containsKey(child)) {
-                childParent.put(child, childParent.get(child) + ", "
-                        + StConverter.convertToString(parentDTO.getPreferredName()));
+                childParent.put(child,
+                                childParent.get(child) + ", "
+                                        + StConverter.convertToString(parentDTO.getPreferredName()));
             } else {
                 childParent.put(child, StConverter.convertToString(parentDTO.getPreferredName()));
             }
         }
-        for (DiseaseWebDTO dto : disWebList) {
-            dto.setParentPreferredName(childParent.get(dto.getDiseaseIdentifier()));
-        }
+        return childParent;
     }
 
     private void error(String errMsg, Throwable t) {
@@ -207,24 +208,28 @@ public class PopUpAction extends AbstractAccrualAction {
         ServletActionContext.getRequest().setAttribute("disWebList", disWebList);
         return SUCCESS;
     }
+
     /**
      * @return the searchName
      */
     public String getSearchName() {
         return searchName;
     }
+
     /**
      * @param searchName the searchName to set
      */
     public void setSearchName(String searchName) {
         this.searchName = searchName;
     }
+
     /**
      * @return the disWebList
      */
     public List<DiseaseWebDTO> getDisWebList() {
         return disWebList;
     }
+
     /**
      * @param disWebList the disWebList to set
      */
