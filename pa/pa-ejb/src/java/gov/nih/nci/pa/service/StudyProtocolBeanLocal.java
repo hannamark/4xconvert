@@ -96,13 +96,13 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
@@ -118,12 +118,14 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -149,6 +151,8 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     private static final String CREATE = "Create";
     private static final String UPDATE = "Update";
     private SessionContext ejbContext;
+    @EJB
+    private StudyIndldeServiceLocal studyIndldeService;
 
     @Resource
     void setSessionContext(SessionContext ctx) {
@@ -495,20 +499,26 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         if (dateRulesApply) {
             enForceDateRules(studyProtocolDTO);
         }
-
-        //
-        if ((studyProtocolDTO.getIdentifier() != null && studyProtocolDTO.getFdaRegulatedIndicator() != null)
-                && (studyProtocolDTO.getFdaRegulatedIndicator().getValue() != null)
-                && (!Boolean.valueOf(studyProtocolDTO.getFdaRegulatedIndicator().getValue()))) {
-            StudyIndldeServiceLocal local = (StudyIndldeServiceLocal)
-                                JNDIUtil.lookup("pa/StudyIndldeBeanLocal/local");
-            List<StudyIndldeDTO> list = local.getByStudyProtocol(studyProtocolDTO.getIdentifier());
+        if (isCorrelationRuleRequired(studyProtocolDTO)) {
+            List<StudyIndldeDTO> list = getStudyIndldeService().getByStudyProtocol(studyProtocolDTO.getIdentifier());
             if (!list.isEmpty()) {
                 throw new PAException("Unable to set FDARegulatedIndicator to 'No', "
                         + " Please remove IND/IDEs and try again");
             }
         }
 
+    }
+
+    /**
+     * @param studyProtocolDTO
+     * @return
+     */
+    private boolean isCorrelationRuleRequired(StudyProtocolDTO studyProtocolDTO) {
+        Boolean ctGovIndicator = BlConverter.convertToBoolean(studyProtocolDTO.getCtgovXmlRequiredIndicator());
+        return BooleanUtils.isTrue(ctGovIndicator) && (studyProtocolDTO.getIdentifier() != null
+                && studyProtocolDTO.getFdaRegulatedIndicator() != null)
+                && (studyProtocolDTO.getFdaRegulatedIndicator().getValue() != null)
+                && (!Boolean.valueOf(studyProtocolDTO.getFdaRegulatedIndicator().getValue()));
     }
 
     private void enForceDateRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
@@ -577,7 +587,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         if (CREATE.equals(operation)) {
             User user = null;
             try {
-                user = spDTO.getUserLastCreated() != null 
+                user = spDTO.getUserLastCreated() != null
                         ? CSMUserService.getInstance().getCSMUser(spDTO.getUserLastCreated().getValue())
                         : CSMUserService.lookupUser(ejbContext);
             } catch (PAException e) {
@@ -717,5 +727,19 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             .append(criteriaValue).append("')");
         }
         return retVal.toString();
+    }
+
+    /**
+     * @param studyIndldeService the studyIndldeService to set
+     */
+    public void setStudyIndldeService(StudyIndldeServiceLocal studyIndldeService) {
+        this.studyIndldeService = studyIndldeService;
+    }
+
+    /**
+     * @return the studyIndldeService
+     */
+    public StudyIndldeServiceLocal getStudyIndldeService() {
+        return studyIndldeService;
     }
 }

@@ -683,7 +683,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private void enforceTrialINDIDE(StudyProtocolDTO studyProtocolDto, List<AbstractionCompletionDTO> abstractionList)
             throws PAException {
         List<StudyIndldeDTO> siList = studyIndldeService.getByStudyProtocol(studyProtocolDto.getIdentifier());
-        if (!(siList.isEmpty())) {
+        Boolean ctGovIndicator = BlConverter.convertToBoolean(studyProtocolDto.getCtgovXmlRequiredIndicator());
+        if (!(siList.isEmpty()) &&  BooleanUtils.isTrue(ctGovIndicator)) {
             checkDuplicateINDIDE(siList, abstractionList);
             /*
              * if (!BlConverter.covertToBool(studyProtocolDto.getFdaRegulatedIndicator())) {

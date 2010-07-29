@@ -82,6 +82,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
@@ -95,7 +98,9 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTOTest;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTOTest;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
@@ -106,6 +111,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -120,8 +126,8 @@ import org.junit.Test;
 public class StudyProtocolServiceBeanTest {
 
 
-    private StudyProtocolBeanLocal bean = new MockStudyProtocolService();
-    private StudyProtocolServiceLocal remoteEjb = bean;
+    private final StudyProtocolBeanLocal bean = new MockStudyProtocolService();
+    private final StudyProtocolServiceLocal remoteEjb = bean;
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
@@ -239,6 +245,32 @@ public class StudyProtocolServiceBeanTest {
         		"")));
         ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
+    }
+    @Test
+    public void businessRulesExceptionForUpdate() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        InterventionalStudyProtocolDTO saved =  remoteEjb.getInterventionalStudyProtocol(ii);
+        saved.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        saved.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        remoteEjb.updateInterventionalStudyProtocol(saved);
+        saved =  remoteEjb.getInterventionalStudyProtocol(ii);
+        saved.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        StudyIndldeDTO sIndDto = new StudyIndldeDTO();
+        sIndDto.setExpandedAccessIndicator(BlConverter.convertToBl(true));
+        List<StudyIndldeDTO> sIndDtoList = new ArrayList<StudyIndldeDTO>();
+        sIndDtoList.add(sIndDto);
+        StudyIndldeServiceLocal sIndSvc = mock(StudyIndldeServiceLocal.class);
+        when(sIndSvc.getByStudyProtocol(any(Ii.class))).thenReturn(sIndDtoList);
+        bean.setStudyIndldeService(sIndSvc);
+        try {
+        remoteEjb.updateInterventionalStudyProtocol(saved);
+        fail("Unable to set FDARegulatedIndicator to 'No', Please remove IND/IDEs and try again");
+        } catch (PAException e) {
+            assertEquals("Unable to set FDARegulatedIndicator to 'No',  Please remove IND/IDEs and try again",
+                    e.getMessage());
+        }
     }
 
     @Test
