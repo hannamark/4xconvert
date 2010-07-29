@@ -1281,11 +1281,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         depends="
         clean,
         init,
-        test:pa-commons,
+    	test:pa-commons,
         test:pa-ejb,
         test:pa-web,
         test:reg-web,
-        test:accrual
+        test:accrual,
+    	test:viewer
         "/>
 
     <target name="test:pa-web" depends="init">
@@ -1368,6 +1369,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <property name="po.server.name" value="${po.server.name}"/>
         </ant>
     </target>
+	<target name="test:viewer" depends="init" unless="exclude.viewer">
+	        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
+	            target="test-dynamic-analysis"
+	            dir="${viewer-services.base.dir}" >
+	        	 <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+	        	 <property name="hibernate.dialect" value="${database.dialect}"/>
+	        	 <property name="db.username" value="${database.user}"/>
+	        	 <property name="db.password" value="${database.password}"/>
+	        	 <property name="jdbc.driver" value="${database.dirver}"/>
+	        	 <property name="jdbc.url" value="${database.url}"/>
+	        </ant>
+	</target>
 
     <!-- Wrapper test target, call appropriate test for sub-projects -->
     <target name="static-analysis:all" description="Runs static-analysis target for all sub-projects"
@@ -1377,7 +1390,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         static-analysis:pa-commons,
         static-analysis:pa-ejb,
         static-analysis:pa-web,
-        static-analysis:reg-web
+        static-analysis:reg-web,
+    	static-analysis:viewer
         "/>
 
     <target name="static-analysis:pa-web" depends="init">
@@ -1411,6 +1425,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
         </ant>
     </target>
+	
+	<target name="static-analysis:viewer" depends="init">
+	        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
+	            target="test-static-analysis"
+	            dir="${viewer-services.base.dir}" >
+	            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+	        </ant>
+	</target>
 
     <target name="continuous-integration" description="calls wrapper targets for continuous integration build"
         depends="
