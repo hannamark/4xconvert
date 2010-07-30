@@ -44,7 +44,7 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
             Bl isOnhold = studyOnholdService.isOnhold(iiDto);
             BL result = new BL();
-            result.setValue(BlConverter.covertToBoolean(isOnhold));
+            result.setValue(BlConverter.convertToBoolean(isOnhold));
             return result;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

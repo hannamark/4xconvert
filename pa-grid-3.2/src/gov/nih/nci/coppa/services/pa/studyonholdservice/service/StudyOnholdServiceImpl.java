@@ -43,7 +43,7 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
             gov.nih.nci.iso21090.Bl isOnhold = studyOnholdService.isOnhold(iiDto);
             Bl result = new Bl();
-            result.setValue(BlConverter.covertToBoolean(isOnhold));
+            result.setValue(BlConverter.convertToBoolean(isOnhold));
             return result;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
