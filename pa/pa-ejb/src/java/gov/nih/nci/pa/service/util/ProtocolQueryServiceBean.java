@@ -691,18 +691,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                         + "                where sp.id = dws1.studyProtocol )" + " or dws.id is null ) ");
             } else {
-                where.append(" and ((sowner.id ='").append(criteria.getUserId());
-                where.append("' and dws.statusCode <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
-                // add the subquery to pick the latest record
                 where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                        + "                where sp.id = dws1.studyProtocol )" + " or dws.id is null )) ");
-                where.append(" or (sowner.id <> '").append(criteria.getUserId());
-                where.append("' and dws.statusCode not in('" + DocumentWorkflowStatusCode.REJECTED + "',"
-                        + "'" + DocumentWorkflowStatusCode.SUBMITTED + "', '"
-                        + DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED + "')");
-                // add the subquery to pick the latest record
-                where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                        + "                where sp.id = dws1.studyProtocol )" + " or dws.id is null ))) ");
+                        + " where sp.id = dws1.studyProtocol )" + " or dws.id is null ) ");
+                where.append(" and sowner.id ='").append(criteria.getUserId());
+                where.append("' or (sowner.id <> '").append(criteria.getUserId());
+                where.append("' and dws.statusCode not in('" + DocumentWorkflowStatusCode.SUBMITTED + "'))");
             }
         } else {
             // add the subquery to pick the latest record

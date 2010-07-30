@@ -522,4 +522,8 @@
         <comment>Recreating accrual audit triggers for patients and study_sites.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/createAccrualAuditTriggers.sql"/>
     </changeSet>
+    <changeSet id="PO-2383" author="vrushali">
+        <comment>PO-2383 adding indexes to improve search</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2383.sql"/>
+    </changeSet>
 </databaseChangeLog>
