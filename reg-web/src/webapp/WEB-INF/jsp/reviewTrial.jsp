@@ -144,26 +144,8 @@ var winprint=window.open("","",sOption);
                     </td>
                </tr>
            </c:if>
-           <tr><td class="value" colspan="2"> 
-            <c:choose>
-                <c:when test="${not empty trialDTO.assignedIdentifier}">
-	                <c:if test="${fn:length(trialDTO.secondaryIdentifierAddList) > 0}">
-	                    <div class="box"><h3>Secondary Identifiers </h3>   
-	                        <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiersForUpdate.jsp" %>
-	                    </div>
-	                </c:if>
-                </c:when>
-                <c:when test="${empty trialDTO.assignedIdentifier }">  
-                   <c:if test="${fn:length(trialDTO.secondaryIdentifierList) > 0}">
-                    <div class="box"><h3>Secondary Identifiers </h3>   
-                      <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp" %>
-                    </div>
-               </c:if>
-             </c:when>
-            </c:choose>
-            </td>
-          </tr>
-          <c:if test="${trialDTO.assignedIdentifier !=null && trialDTO.assignedIdentifier!= ''}">
+           <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIds.jsp" %>
+           <c:if test="${trialDTO.assignedIdentifier !=null && trialDTO.assignedIdentifier!= ''}">
           <tr>
             <th colspan="2"><fmt:message key="trial.amendDetails"/></th>
           </tr>

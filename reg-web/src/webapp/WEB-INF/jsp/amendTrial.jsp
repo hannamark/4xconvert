@@ -419,37 +419,7 @@ function toggledisplayDivs(val) {
                 </td>                
           </tr>
           </c:if>
-           <tr>
-                <th colspan="2"><fmt:message key="submit.trial.otherIdentifiers"/></th>
-          </tr>
-          <c:set var="rootConstant" value="<%=Constants.STUDY_PROTOCOL_ROOT%>"/>
-           <s:iterator id="trialDTO.secondaryIdentifierList" value="trialDTO.secondaryIdentifierList" status="sstats">
-             <tr>
-              <s:if test="root != rootConstant" >
-                <td scope="row" class="label">
-                     <label for="updateTrial_protocolWebDTO_otherIdentifiers"> <fmt:message key="submit.trial.otherIdentifier"/></label>
-                 </td>
-                  <td>
-                    <s:textfield  name="trialDTO.secondaryIdentifierList[%{#sstats.index}].extension" value="%{extension}" size="100"  cssStyle="width:200px"/>
-                 </td>
-             </s:if>     
-               </tr>
-          </s:iterator >
-          <tr>
-                <td scope="row" class="label">
-                     <label for="updateTrial_protocolWebDTO_otherIdentifiers"> <fmt:message key="submit.trial.otherIdentifier"/></label>
-                </td>
-                <td>
-                  <input type="text" name="otherIdentifierOrg" id="otherIdentifierOrg" value=""/>&nbsp; <input type="button" id="otherIdbtnid" value="Add Other Identifier" onclick="addOtherIdentifier();" />
-               </td>           
-          </tr> 
-           <tr>
-                <td colspan="2" class="space">  
-                <div id="otherIdentifierdiv">
-                    <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiersForUpdate.jsp" %>
-                </div>
-                </td>
-          </tr>      
+          <%@ include file="/WEB-INF/jsp/nodecorate/showOtherIds.jsp" %>
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
           <tr>
                 <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>
