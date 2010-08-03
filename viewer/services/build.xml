@@ -32,8 +32,7 @@
 
     <property name="ivy.lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
-    <property name="ivy.file" value="ivy-2.0.0-beta2.jar"/>
-    <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar"/>
+    <property name="ivy.file" value="ivy-2.0.0.jar"/>
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml"/>
     <property name="ivy.def.file" location="ivy-viewer-services.xml"/>
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo"/>
@@ -89,7 +88,6 @@
     <path id="ivy.classpath">
         <fileset dir="${ivy.lib.dir}">
             <include name="${ivy.file}"/>
-            <include name="${ivy-core.file}"/>
         </fileset>
     </path>
 

@@ -26,8 +26,7 @@
     <property name="services.build.coberturaOutputDir" value="${services.build.dir}/generated-classes"/>
     <property name="services.test.reports" value="${services.report.dir}/test-reports"/>
 
-    <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
-    <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
+    <property name="ivy.file" value="ivy-2.0.0.jar" />
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
     <property name="ivy.def.file" location="ivy-accrual-services.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
@@ -71,7 +70,6 @@
     <path id="ivy.classpath">
         <fileset dir="${lib.dir}">
             <include name="${ivy.file}"/>
-            <include name="${ivy-core.file}"/>
         </fileset>
     </path>
 
@@ -99,16 +97,6 @@
 
     <target name="get-domain">
         <delete dir="${services.build.domainDir}"/>
-        <!-- <copy todir="${services.build.domainDir}/domain">
-            <fileset dir="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/domain"/>
-        </copy> -->
-        <!-- <copy todir="${services.build.domainDir}/enums">
-            <fileset dir="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/enums"/>
-        </copy> -->
-        <!-- <copy todir="${services.build.domainDir}/iso/util">
-            <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/iso/util/EnOnConverter.java"/>
-            <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/iso/util/EnPnConverter.java"/>
-        </copy> -->
         <copy todir="${services.build.domainDir}/service/util">
             <fileset dir="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/">
                 <include name="*Service.java"/>
@@ -126,9 +114,6 @@
         <copy todir="${services.build.domainDir}/service/correlation">
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/correlation/OrganizationCorrelationServiceRemote.java"/>
         </copy>
-        <!-- <copy todir="${services.build.domainDir}/util">
-            <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/util/PAAttributeMaxLen.java"/>
-        </copy> -->
      </target>
 
 
