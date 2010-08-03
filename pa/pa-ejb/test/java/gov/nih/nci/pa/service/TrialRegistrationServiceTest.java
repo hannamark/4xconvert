@@ -118,20 +118,20 @@ public class TrialRegistrationServiceTest {
     private Ii spIi;
     @Before
     public void setUp() throws Exception {
-        bean.studyProtocolService = studyProtocolService;
-        bean.studyOverallStatusService = studyOverallStatusService;
-        bean.studyIndldeService = studyIndldeService;
-        bean.studyResourcingService = studyResourcingService;
-        bean.documentService  = documentService;
-        bean.studyDiseaseService = studyDiseaseService;
-        bean.armService = armService;
-        bean.plannedActivityService = plannedActivityService;
-        bean.subGroupsService = subGroupsService;
-        bean.studySiteService = studySiteService;
-        bean.studySiteContactService = studySiteContactService;
-        bean.studySiteAccrualStatusService = studySiteAccrualStatusService;
-        bean.studyOutcomeMeasureService = studyOutcomeMeasureService;
-        bean.studyRegulatoryAuthorityService = studyRegulatoryAuthorityService;
+        bean.setStudyProtocolService(studyProtocolService);
+        bean.setStudyOverallStatusService(studyOverallStatusService);
+        bean.setStudyIndldeService(studyIndldeService);
+        bean.setStudyResourcingService(studyResourcingService);
+        bean.setDocumentService(documentService);
+        bean.setStudyDiseaseService(studyDiseaseService);
+        bean.setArmService(armService);
+        bean.setPlannedActivityService(plannedActivityService);
+        bean.setSubGroupsService(subGroupsService);
+        bean.setStudySiteService(studySiteService);
+        bean.setStudySiteContactService(studySiteContactService);
+        bean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
+        bean.setStudyOutcomeMeasureService(studyOutcomeMeasureService);
+        bean.setStudyRegulatoryAuthorityService(studyRegulatoryAuthorityService);
         TestSchema.reset1();
         TestSchema.primeData();
         spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
