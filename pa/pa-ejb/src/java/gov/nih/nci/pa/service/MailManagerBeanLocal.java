@@ -458,7 +458,12 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     submissionMailBody = submissionMailBody.replace(leadOrgTrialIdentifier, spDTO.getLocalStudyProtocolIdentifier());
     submissionMailBody = submissionMailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
     RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
+    mailSubject = mailSubject.replace(leadOrgTrialIdentifier, spDTO.getLocalStudyProtocolIdentifier());
+    mailSubject = mailSubject.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
+
     if (user != null) {
+        String regUserName = user.getFirstName() + " " + user.getLastName();
+        submissionMailBody = submissionMailBody.replace(ownerName, regUserName);
         sendMailWithAttachment(user.getEmailAddress(), mailSubject, submissionMailBody, null);
     } else {
         LOG.error("Registry User does not exist: " + spDTO.getUserLastCreated());
