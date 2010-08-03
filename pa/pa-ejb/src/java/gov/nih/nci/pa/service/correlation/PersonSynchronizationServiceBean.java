@@ -169,7 +169,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
     public void synchronizePerson(final Ii perIdentifier) throws PAException {
 
         PersonDTO personDto = null;
-        LOG.debug("Entering synchronizePerson");
         try {
             personDto = PoRegistry.getPersonEntityService().getPerson(perIdentifier);
             updatePerson(perIdentifier, personDto);
@@ -177,7 +176,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
            LOG.info("This Person is nullified " + perIdentifier.getExtension());
            updatePerson(perIdentifier, null);
         }
-        LOG.debug("Leaving synchronizePerson");
     }
 
     /***
@@ -186,7 +184,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
      */
     public void synchronizeClinicalResearchStaff(final Ii crsIdentifier) throws PAException {
         ClinicalResearchStaffDTO crsDto = null;
-        LOG.debug("Entering synchronizeClinicalResearchStaff");
         try {
             crsDto = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(crsIdentifier);
             updateClinicalResearchStaff(crsIdentifier , crsDto);
@@ -194,7 +191,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
            LOG.info("This ClinicalResearchStaff is nullified " + crsIdentifier.getExtension());
            updateClinicalResearchStaff(crsIdentifier , null);
         }
-        LOG.debug("Leaving synchronizeClinicalResearchStaff");
     }
 
     /***
@@ -203,7 +199,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
      */
     public void synchronizeHealthCareProvider(final Ii hcpIdentifier) throws PAException {
         HealthCareProviderDTO hcpDto = null;
-        LOG.debug("Entering synchronizeHealthCareProvider");
         try {
             hcpDto = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(hcpIdentifier);
             updateHealthCareProvider(hcpIdentifier , hcpDto);
@@ -212,7 +207,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
            updateHealthCareProvider(hcpIdentifier , null);
 
         }
-        LOG.debug("Leaving synchronizeHealthCareProvider");
     }
 
     /***
@@ -222,7 +216,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
      */
     public  void synchronizeOrganizationalContact(final Ii ocIdentifier) throws PAException {
         OrganizationalContactDTO ocDto = null;
-        LOG.debug("Entering synchronizeOrganizationalContact");
         try {
             ocDto = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(ocIdentifier);
             updateOrganizationalContact(ocIdentifier , ocDto);
@@ -230,11 +223,9 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
            LOG.info("This OrganizationalContact is nullified " + ocIdentifier.getExtension());
            updateOrganizationalContact(ocIdentifier , null);
         }
-        LOG.debug("Leaving synchronizeOrganizationalContact");
     }
 
     private void updatePerson(final Ii ii , final PersonDTO perDto) throws PAException {
-        LOG.debug("Entering updatePerson");
         Person paPer = cUtils.getPAPersonByIi(ii);
 
         if (paPer != null) {
@@ -259,7 +250,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             session.update(person);
             session.flush();
         }
-        LOG.debug("Leaving updatePerson");
     }
 
     private void updateClinicalResearchStaff(final Ii crsIdentifier

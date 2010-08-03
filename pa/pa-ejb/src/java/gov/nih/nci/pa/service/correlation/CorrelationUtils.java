@@ -404,12 +404,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             LOG.error(" domain should not be null ");
             throw new PAException(" domaon should not be null ");
         }
-        LOG.debug("Entering createPA Domain ");
         Session session = null;
         session = HibernateUtil.getCurrentSession();
         session.save(ae);
         session.flush();
-        LOG.debug("Leaving create PA Domain ");
         return ae;
     }
 
@@ -474,7 +472,6 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             LOG.error(" organization should not be null ");
             throw new PAException(" organization should not be null ");
         }
-        LOG.debug("Entering createOrganization ");
         Session session = null;
         session = HibernateUtil.getCurrentSession();
         Query query = session.createQuery("select org from Organization org  where org.identifier = :poOrg");
@@ -483,7 +480,6 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             session.saveOrUpdate(organization);
         }
         session.flush();
-        LOG.debug("Leaving createStudyResourcing ");
         return organization;
     }
 
@@ -499,7 +495,6 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             LOG.error(" Person should not be null ");
             throw new PAException(" Person should not be null ");
         }
-        LOG.debug("Entering createPerson ");
         Session session = null;
         session = HibernateUtil.getCurrentSession();
         Query query = session.createQuery("select per from Person per where per.identifier = :poId ");
@@ -508,7 +503,6 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             session.saveOrUpdate(person);
         }
         session.flush();
-        LOG.debug("Leaving create Person ");
         return person;
     }
 

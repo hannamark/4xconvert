@@ -156,7 +156,6 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     public void synchronizeOrganization(final Ii orgIdentifer) throws PAException {
 
         OrganizationDTO orgDto = null;
-        LOG.debug("Entering synchronizeOrganization");
         try {
             orgDto = PoRegistry.getOrganizationEntityService().getOrganization(orgIdentifer);
             updateOrganization(orgIdentifer, orgDto);
@@ -164,7 +163,6 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             LOG.info("This organization is nullified " + orgIdentifer.getExtension());
             updateOrganization(orgIdentifer, null);
         }
-        LOG.debug("Leaving synchronizeOrganization");
     }
 
     /***
@@ -175,7 +173,6 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     public void synchronizeHealthCareFacility(final Ii hcfIdentifer) throws PAException {
 
         HealthCareFacilityDTO hcfDto = null;
-        LOG.debug("Entering synchronizeHealthCareFacility");
         try {
             hcfDto = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(hcfIdentifer);
             updateHealthCareFacility(hcfIdentifer, hcfDto);
@@ -183,7 +180,6 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             LOG.info("This HealthCareFacility is nullified " + hcfIdentifer.getExtension());
             updateHealthCareFacility(hcfIdentifer, null);
         }
-        LOG.debug("Leaving synchronizeOrganization");
     }
 
     /***
@@ -193,7 +189,6 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
      */
     public void synchronizeOversightCommittee(final Ii oscIdentifer) throws PAException {
         OversightCommitteeDTO oscDto = null;
-        LOG.debug("Entering synchronizeOversightCommittee");
         try {
             oscDto = PoRegistry.getOversightCommitteeCorrelationService().getCorrelation(oscIdentifer);
             updateOversightCommittee(oscIdentifer, oscDto);
@@ -201,7 +196,6 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             LOG.info("This OversightCommittee is nullified " + oscIdentifer.getExtension());
             updateOversightCommittee(oscIdentifer, null);
         }
-        LOG.debug("Leaving synchronizeOversightCommittee");
     }
 
     /***
@@ -211,7 +205,6 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
      */
     public void synchronizeResearchOrganization(final Ii roIdentifier) throws PAException {
         ResearchOrganizationDTO roDto = null;
-        LOG.debug("Entering synchronizeResearchOrganization");
         try {
             roDto = PoRegistry.getResearchOrganizationCorrelationService().getCorrelation(roIdentifier);
             updateResearchOrganization(roIdentifier, roDto);
@@ -220,11 +213,9 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             updateResearchOrganization(roIdentifier, null);
 
         }
-        LOG.debug("Leaving synchronizeResearchOrganization");
     }
 
     private void updateOrganization(final Ii ii, final OrganizationDTO orgDto) throws PAException {
-        LOG.debug("Entering updateOrganization");
         Organization paOrg = cUtils.getPAOrganizationByIi(ii);
 
         if (paOrg != null) {
@@ -259,7 +250,6 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             session.update(paOrg);
             session.flush();
         }
-        LOG.debug("Leaving updateOrganization");
     }
 
     private void updateRegistryUsers(Ii identifier, Ii dupId) throws NullifiedEntityException, PAException {

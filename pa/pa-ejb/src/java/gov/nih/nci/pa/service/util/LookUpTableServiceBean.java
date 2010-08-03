@@ -95,7 +95,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -116,7 +115,6 @@ import org.hibernate.criterion.Restrictions;
 public class LookUpTableServiceBean implements LookUpTableServiceRemote {
 
     private static final String UNCHECKED = "unchecked";
-    private static final Logger LOG  = Logger.getLogger(LookUpTableServiceBean.class);
 
     /**
      *
@@ -126,7 +124,6 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<FundingMechanism> getFundingMechanisms() throws PAException {
-        LOG.debug("Entering getFundingMechanisms");
         Session session = null;
         List<FundingMechanism> fmList = new ArrayList<FundingMechanism>();
         session = HibernateUtil.getCurrentSession();
@@ -145,7 +142,6 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<NIHinstitute> getNihInstitutes() throws PAException {
-        LOG.debug("Entering getFundingMechanisms");
         Session session = null;
         List<NIHinstitute> nihList = new ArrayList<NIHinstitute>();
         session = HibernateUtil.getCurrentSession();
@@ -164,13 +160,11 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<Country> getCountries() throws PAException {
-        LOG.debug("Entering getCountries");
         Session session = null;
         List<Country> countries = new ArrayList<Country>();
         session = HibernateUtil.getCurrentSession();
         Query query = session.createQuery("select c from Country c order by name");
         countries = query.list();
-        LOG.debug("Leaving getCountries");
         return countries;
     }
 
@@ -179,13 +173,10 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Country getCountryByName(String name) throws PAException {
-        LOG.debug("Entering getCountryByName");
         Session session = HibernateUtil.getCurrentSession();
         Query query = session.createQuery("select c from Country c where c.name = :name");
         query.setParameter("name", name);
-        Country country =  (Country) query.uniqueResult();
-        LOG.debug("Leaving getCountries");
-        return country;
+        return (Country) query.uniqueResult();
     }
     
     /**
@@ -196,7 +187,6 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String getPropertyValue(String name) throws PAException {
-        LOG.debug("Entering getPropertyValue");
         Session session = null;
         String value = "";
         List<PAProperties> paProperties = new ArrayList<PAProperties>();
@@ -207,7 +197,6 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
             throw new PAException(" PA_PROPERTIES does not have entry for  " + name);
         }
         value = paProperties.get(0).getValue();
-        LOG.debug("Leaving getPropertyValue");
         return value;
     }
     /**
@@ -215,7 +204,6 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<Country> searchCountry(Country country) throws PAException {
-        LOG.debug("Entering search");
         if (country == null) {
             throw new PAException("country connot be null");
         }

@@ -127,8 +127,6 @@ public class ClinicalResearchStaffCorrelationServiceBean {
     public Long createClinicalResearchStaffCorrelations(String orgPoIdentifier, 
                                            String personPoIdentifer) 
     throws PAException {
-        LOG.debug("Entering createClinicalResearchStaffCorrelation");
-        
         CorrelationUtils corrUtils = new CorrelationUtils();
         if (orgPoIdentifier == null && !("").equals(orgPoIdentifier)) {
             throw new PAException(PAExceptionConstants.NULL_II_ORG);
@@ -204,7 +202,6 @@ public class ClinicalResearchStaffCorrelationServiceBean {
             crs.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(crsDTO.getStatus()));
             createPAClinicalResearchStaff(crs);
         }
-        LOG.debug("Leaving createClinicalResearchStaffCorrelation");
         return crs.getId();
     }
 
@@ -220,12 +217,10 @@ public class ClinicalResearchStaffCorrelationServiceBean {
             LOG.error(" ClinicalResearchStaff should not be null ");
             throw new PAException(" ClinicalResearchStaff should not be null ");
         }     
-        LOG.debug("Entering createClinicalResearchStaff ");
         Session session = null;
         session = HibernateUtil.getCurrentSession();
         session.save(crs);
         session.flush();
-        LOG.debug("Leaving create ClinicalResearchStaff ");
         return crs;
     }
     

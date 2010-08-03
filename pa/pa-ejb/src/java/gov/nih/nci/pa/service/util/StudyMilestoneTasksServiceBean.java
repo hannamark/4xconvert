@@ -134,7 +134,6 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
      */
     @SuppressWarnings ({"PMD.PreserveStackTrace" })
     public void performTask() throws PAException {
-        LOG.debug("Entering Perform Task");
         // create the criteria search object
         StudyMilestoneDTO studyMilestoneDTO = new StudyMilestoneDTO();
         studyMilestoneDTO.setMilestoneCode(
@@ -168,7 +167,6 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                    }
                 }
               }
-              LOG.debug("Done with the task.");
            } catch (TooManyResultsException e) {
              LOG.error("Too Many Results Exception" + e.getLocalizedMessage());
              throw new PAException("ToomanyReusltsException occured");
@@ -181,13 +179,11 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
      */
     private static boolean isMoreThan5Businessdays(Calendar milestoneDate) {
         boolean ret = false;
-        LOG.debug("milestoneDate :- " + milestoneDate.getTime());
         Calendar today = Calendar.getInstance();
         today.add(Calendar.DAY_OF_MONTH, -PAST_7_DAYS);
         if (milestoneDate.before(today)) {
             ret = true;
         }
-        LOG.debug("isMoreThan5Businessdays :- " + ret);
       return ret;
     }
     /**
@@ -207,7 +203,6 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                 milestoneExits = true;
             }
         }
-        LOG.debug("milestoneExits-" + milestoneExits);
         return milestoneExits;
     }
     /**

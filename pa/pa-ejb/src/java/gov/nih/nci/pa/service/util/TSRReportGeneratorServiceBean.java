@@ -192,7 +192,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * service bean for generating TSR.
@@ -249,8 +248,6 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     @EJB
     private StratumGroupServiceLocal stratumGroupService;
 
-    private static final Logger LOG = Logger.getLogger(TSRReportGeneratorServiceBean.class);
-
     private final CorrelationUtils correlationUtils = new CorrelationUtils();
 
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
@@ -288,8 +285,6 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public ByteArrayOutputStream generateTsrReport(Ii studyProtIi) throws PAException {
-        LOG.debug("Entering generateTsrReport - PDF Generation.");
-
         ByteArrayOutputStream outputByteStream = null;
         studyProtocolIi = studyProtIi;
         if (studyProtocolIi == null) {

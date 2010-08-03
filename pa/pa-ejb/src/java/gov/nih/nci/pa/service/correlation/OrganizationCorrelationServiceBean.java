@@ -146,8 +146,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @throws PAException pe
      */
     public Long createHealthCareFacilityCorrelations(String orgPoIdentifier) throws PAException {
-        LOG.debug("Entering createHealthCareFacilityCorrelations");
-
         CorrelationUtils corrUtils = new CorrelationUtils();
         if (orgPoIdentifier == null) {
             throw new PAException(" Organization PO Identifier is null");
@@ -207,7 +205,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             hcf.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(hcfDTO.getStatus()));
             corrUtils.createPADomain(hcf);
         }
-        LOG.debug("Leaving createClinicalResearchStaffCorrelation");
         return hcf.getId();
 
     }
@@ -219,8 +216,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @throws PAException pe
      */
     public Long createResearchOrganizationCorrelations(String orgPoIdentifier) throws PAException {
-        LOG.debug("Entering createResearchOrganizationCorrelations");
-
         CorrelationUtils corrUtils = new CorrelationUtils();
         if (orgPoIdentifier == null) {
             throw new PAException(" Organization PO Identifier is null");
@@ -282,7 +277,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             ro.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(roDTO.getStatus()));
             corrUtils.createPADomain(ro);
         }
-        LOG.debug("Leaving createResearchOrganizationCorrelation");
         return ro.getId();
 
     }
@@ -292,8 +286,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @throws PAException pe
      */
     public Long createOversightCommitteeCorrelations(String orgPoIdentifier) throws PAException {
-        LOG.debug("Entering createOversightCommitteeCorrelations().  ");
-
         CorrelationUtils corrUtils = new CorrelationUtils();
         if (orgPoIdentifier == null) {
             throw new PAException(" Organization PO Identifier is null");
@@ -354,7 +346,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             oc.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(ocDTO.getStatus()));
             corrUtils.createPADomain(oc);
         }
-        LOG.debug("Leaving createOversightCommitteeCorrelations().  ");
         return oc.getId();
     }
 

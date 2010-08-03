@@ -128,12 +128,7 @@ public class PAOrganizationServiceBean implements
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol(String organizationType)
     throws PAException {
-        LOG.debug("Entering getOrganizationsAssociatedWithStudyProtocol");
-        List<Organization> organizations = generateDistinctOrganizationQuery(organizationType);
-        List<PaOrganizationDTO> organizationDTOs = createOrganizationDTO(organizations);
-        LOG.debug("Leaving getOrganizationsAssociatedWithStudyProtocol");
-        return organizationDTOs;
-
+        return createOrganizationDTO(generateDistinctOrganizationQuery(organizationType));
     }
 
     /**
@@ -151,7 +146,6 @@ public class PAOrganizationServiceBean implements
             LOG.error(" Id or poIdentifer should not be null ");
             throw new PAException(" Id or poIdentifer should not be null ");
         }
-        LOG.info("Entering getOrganizationByIndetifers");
         Session session = null;
         List<Organization> queryList = new ArrayList<Organization>();
         session = HibernateUtil.getCurrentSession();
@@ -185,7 +179,6 @@ public class PAOrganizationServiceBean implements
         if (!queryList.isEmpty()) {
             org = queryList.get(0);
         }
-        LOG.info("Leaving getOrganizationByIndetifers");
         return org;
     }
 
@@ -194,8 +187,6 @@ public class PAOrganizationServiceBean implements
     @SuppressWarnings({ "PMD.ConsecutiveLiteralAppends", "unchecked" })
     private List<Organization> generateDistinctOrganizationQuery(String organizationType)
     throws PAException {
-        LOG.debug("Entering generateDistinctOrganizationQuery ");
-
         Session session = null;
         List<Organization> organizations = null;
         List<Organization> sortedOrganizations = new ArrayList<Organization>();
@@ -232,8 +223,6 @@ public class PAOrganizationServiceBean implements
     }
 
     private List<PaOrganizationDTO> createOrganizationDTO(List<Organization> organizations) {
-        LOG.debug("Entereing createOrganizationDTO");
-
         List<PaOrganizationDTO> organizationDTOs = new ArrayList<PaOrganizationDTO>();
         PaOrganizationDTO oganizationDTO = null;
         for (int i = 0; i < organizations.size(); i++) {
@@ -242,7 +231,6 @@ public class PAOrganizationServiceBean implements
             oganizationDTO.setName((organizations.get(i)).getName());
             organizationDTOs.add(oganizationDTO);
         }
-        LOG.debug("Leaving createOrganizationDTO");
         return organizationDTOs;
     }
 }

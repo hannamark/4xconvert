@@ -161,7 +161,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(StudyProtocolQueryCriteria spsc) throws PAException {
-        LOG.debug("Entering getStudyProtocolByCriteria ");
         if (isCriteriaEmpty(spsc)) {
             throw new PAException("At least one criteria is required.");
         }
@@ -171,7 +170,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         if (pdtos != null && !pdtos.isEmpty()) {
             pdtos = appendOnHold(pdtos);
         }
-        LOG.debug("Leaving getStudyProtocolByCriteria ");
         return pdtos;
     }
 
@@ -185,7 +183,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(Long studyProtocolId) throws PAException {
-        LOG.debug("Entering getTrialSummaryByStudyProtocolId ");
         if (studyProtocolId == null) {
             LOG.error(" studyProtocol Identifier cannot be null ");
             throw new PAException(" studyProtocol Identifier cannot be null ");
@@ -207,10 +204,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             LOG.error(" Could not be converted to DTO for id " + studyProtocolId);
             throw new PAException(" Could not be converted to DTO for id " + studyProtocolId);
         }
-        StudyProtocolQueryDTO trialSummary = trialSummarys.get(0);
-        LOG.debug("Leaving getTrialSummaryByStudyProtocolId ");
-        return trialSummary;
-
+        return trialSummarys.get(0);
     }
 
     /**
@@ -223,7 +217,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
 
     private List<StudyProtocolQueryDTO> convertToStudyProtocolDTO(
             List<Object> protocolQueryResult) throws PAException {
-        LOG.debug("Entering convertToStudyProtocolDTO ");
         List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO studyProtocolDto = null;
         StudyProtocol studyProtocol = null;
@@ -351,8 +344,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             LOG.error("General error in while converting to DTO", e);
             throw new PAException("General error in while converting to DTO2",
                     e);
-        } finally {
-            LOG.debug("Leaving convertToStudyProtocolDTO ");
         }
         return studyProtocolDtos;
     }
@@ -447,7 +438,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
     private List<Object> getStudyProtocolQueryResults(
             StudyProtocolQueryCriteria studyProtocolQueryCriteria)
             throws PAException {
-        LOG.debug("Entering getStudyProtocolByCriteria ");
         List<Object> queryList = new ArrayList<Object>();
         Session session = null;
         session = HibernateUtil.getCurrentSession();
@@ -463,7 +453,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         if (queryList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new PAException("Results exceed more than 500, Please redefine the seacrh criteria");
         }
-        LOG.debug("Leaving getStudyProtocolByCriteria ");
         return queryList;
     }
 
@@ -501,7 +490,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
     private String generateStudyProtocolQuery(
             StudyProtocolQueryCriteria studyProtocolQueryCriteria)
             throws PAException {
-        LOG.debug("Entering generateStudyProtocolQuery ");
         StringBuffer hql = new StringBuffer();
         try {
             hql
@@ -536,8 +524,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     e);
             throw new PAException(
                     "General error in while executing Study Query protocol", e);
-        } finally {
-            LOG.debug("Leaving generateStudyProtocolQuery ");
         }
         return hql.toString();
 
@@ -557,7 +543,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
     private String generateWhereClause(
             StudyProtocolQueryCriteria studyProtocolQueryCriteria)
             throws PAException {
-        LOG.debug("Entering generateWhereClause ");
         StringBuffer where = new StringBuffer();
         try {
             where.append("where 1 = 1 ");
@@ -668,8 +653,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         } catch (Exception e) {
             LOG.error("General error in while create where cluase", e);
             throw new PAException("General error in while create where cluase", e);
-        } finally {
-            LOG.debug("Leaving generateWhereClause ");
         }
         return where.toString();
     }
@@ -776,12 +759,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
      * @throws PAException on error
      */
     public List<StudyProtocol> getStudyProtocolByOrgIdentifier(Long orgIdentifier) throws PAException {
-        LOG.debug("Entering getStudyProtocolByOrgIdentifier ");
         if (orgIdentifier == null) {
             throw new PAException("Organization Identifier is null.");
         }
-        List<StudyProtocol> pdtos = getStudyProtocolQueryResults(orgIdentifier);
-        LOG.debug("Leaving getStudyProtocolByOrgIdentifier ");
-        return pdtos;
+        return getStudyProtocolQueryResults(orgIdentifier);
     }
 }

@@ -95,7 +95,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
 /**
@@ -109,8 +108,6 @@ import org.hibernate.Session;
 @Interceptors(HibernateSessionInterceptor.class)
 public class PAPersonServiceBean implements PAPersonServiceRemote {
 
-    private static final Logger LOG  = Logger.getLogger(PAPersonServiceBean.class);
-
     /**
      * returns a list of PI name who have been associated with study protocol.
      * @return list PersonDTO
@@ -118,9 +115,7 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PaPersonDTO> getAllPrincipalInvestigators() throws PAException {
-       LOG.info("Entering getAllPrincipalInvestigators");
        List<Person> persons = generateDistinctPersonResults();
-       LOG.info("Leaving getAllPrincipalInvestigators");
        return createPersonDTO(persons);
     }
 
@@ -128,8 +123,6 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
     @SuppressWarnings({ "PMD.ConsecutiveLiteralAppends", "unchecked" })
     private List<Person> generateDistinctPersonResults()
     throws PAException {
-        LOG.debug("Entering generateDistinctPersonResults ");
-
         Session session = null;
         List<Person> sortedPersons = new ArrayList<Person>();
         Set<Long> perSet = new  HashSet<Long>();
@@ -156,8 +149,6 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
     }
 
     private List<PaPersonDTO> createPersonDTO(List<Person> persons) {
-        LOG.debug("Entereing persons");
-
         List<PaPersonDTO> personDTOs = new ArrayList<PaPersonDTO>();
         PaPersonDTO personDTO = null;
         for (int i = 0; i < persons.size(); i++) {
@@ -168,10 +159,6 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
             personDTO.setMiddleName((persons.get(i)).getMiddleName());
             personDTOs.add(personDTO);
         }
-        LOG.debug("Leaving persons");
         return personDTOs;
     }
-
-
-
 }

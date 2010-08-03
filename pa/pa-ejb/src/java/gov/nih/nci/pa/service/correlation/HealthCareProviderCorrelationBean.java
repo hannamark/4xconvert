@@ -131,8 +131,6 @@ public class HealthCareProviderCorrelationBean {
     public Long createHealthCareProviderCorrelationBeans(String orgPoIdentifier, 
                                            String personPoIdentifer) 
     throws PAException {
-        LOG.debug("Entering createHealthCareProviderCorrelationBean");
-        
         CorrelationUtils corrUtils = new CorrelationUtils();
         if (orgPoIdentifier == null) {
             throw new PAException(PAExceptionConstants.NULL_II_ORG);
@@ -210,7 +208,6 @@ public class HealthCareProviderCorrelationBean {
             hcp.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(hcpDTO.getStatus()));
             createPAHealthCareProvider(hcp);
         }
-        LOG.debug("Leaving createClinicalResearchStaffCorrelation");
         return hcp.getId();
     }
 
@@ -226,13 +223,11 @@ public class HealthCareProviderCorrelationBean {
             LOG.error(" HealthCareProvider should not be null ");
             throw new PAException(" HealthCareProvider should not be null ");
         }     
-        LOG.debug("Entering HealthCareProvider ");
         Session session = null;
 
         session = HibernateUtil.getCurrentSession();
         session.save(hcp);
         session.flush();
-        LOG.debug("Leaving create HealthCareProvider ");
         return hcp;
     }
     

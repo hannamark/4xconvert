@@ -94,7 +94,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -109,9 +108,7 @@ import org.hibernate.Session;
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemote {
-    private static final Logger LOG = Logger.getLogger(PAHealthCareProviderServiceBean.class);
     private static final int THREE = 3;
-
 
     /**
      *
@@ -123,7 +120,6 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PaPersonDTO> getPersonsByStudySiteId(Long id, String roleCd) throws PAException {
-        LOG.debug("Entering  getPersonsByStudyParticpationId");
         Session session = null;
         session = HibernateUtil.getCurrentSession();
         List<Object> queryList = new ArrayList<Object>();
@@ -133,7 +129,6 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             + " join hcp.person as p " + " where sp.id = " + id + " and spc.roleCode = '" + roleCd + "'";
         query = session.createQuery(queryStr);
         queryList = query.list();
-        LOG.debug("Leaving  getPersonsByStudyParticpationId");
         return createPersonWebDTO(queryList);
     }
 
@@ -172,7 +167,6 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public PaPersonDTO getIdentifierBySPCId(Long id) throws PAException {
-        LOG.debug("Entering  getIdentifierBySPCId");
         Session session = null;
         //HealthCareProvider
         ClinicalResearchStaff careProvider = null;
@@ -200,7 +194,6 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             personWebDTO.setPaPersonId(careProvider.getPerson().getId());
             break;
         }
-        LOG.debug("Leaving  getIdentifierBySPCId");
         return personWebDTO;
     }
 
