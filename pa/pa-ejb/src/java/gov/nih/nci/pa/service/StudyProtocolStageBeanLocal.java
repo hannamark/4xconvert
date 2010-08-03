@@ -82,7 +82,6 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
             LOG.error(" StudyProtocolDTO should not be null ");
             throw new PAException(" StudyProtocolDTO should not be null ");
         }
-        LOG.debug("Entering search");
         Session session = null;
         List<StudyProtocolStage> studyProtocolList = null;
         session = HibernateUtil.getCurrentSession();
@@ -117,9 +116,7 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         if (studyProtocolList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }
-        List<StudyProtocolStageDTO> studyProtocolDTOList = convertFromDomainToDTO(studyProtocolList);
-        LOG.debug("Leaving search");
-        return studyProtocolDTOList;
+        return convertFromDomainToDTO(studyProtocolList);
     }
 
     /**
@@ -148,7 +145,6 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
-        LOG.debug("Entering getStudyProtocol");
         Session session = null;
         StudyProtocolStage studyProtocol = null;
         session = HibernateUtil.getCurrentSession();
@@ -157,7 +153,6 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         if (studyProtocol == null) {
             throw new PAException("Ii could not be found.");
         }
-        LOG.debug("Leaving getStudyProtocol");
         return StudyProtocolStageConverter.convertFromDomainToDTO(studyProtocol);
     }
 

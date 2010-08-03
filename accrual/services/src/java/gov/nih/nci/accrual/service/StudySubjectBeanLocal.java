@@ -121,7 +121,6 @@ public class StudySubjectBeanLocal
         if (PAUtil.isIiNull(ii)) {
             throw new RemoteException("Called getByStudySite() with Ii == null.");
         }
-        getLogger().info("Entering getByStudySite().  ");
 
         Session session = null;
         List<StudySubject> queryList = new ArrayList<StudySubject>();
@@ -148,7 +147,6 @@ public class StudySubjectBeanLocal
                 throw new RemoteException("Iso conversion exception in getByStudyProtocol().", e);
             }
         }
-        getLogger().info("Leaving getByStudySite(), returning " + resultList.size() + " object(s).");
         return resultList;
     }
 

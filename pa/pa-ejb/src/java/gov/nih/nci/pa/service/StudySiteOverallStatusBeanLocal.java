@@ -123,8 +123,6 @@ public class StudySiteOverallStatusBeanLocal implements StudySiteOverallStatusSe
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
-        LOG.info("Entering getStudySiteOverallStatusByStudySite");
-
         Session session = null;
         List<StudySiteOverallStatus> queryList = new ArrayList<StudySiteOverallStatus>();
         session = HibernateUtil.getCurrentSession();
@@ -148,9 +146,6 @@ public class StudySiteOverallStatusBeanLocal implements StudySiteOverallStatusSe
         for (StudySiteOverallStatus bo : queryList) {
             resultList.add(new StudySiteOverallStatusConverter().convertFromDomainToDto(bo));
         }
-
-        LOG.info("Leaving getStudySiteOverallStatusByStudySite, returning "
-                + resultList.size() + " object(s).");
         return resultList;
     }
     private boolean isTrialStatusOrDateChanged(StudySiteOverallStatusDTO newStatusDto,

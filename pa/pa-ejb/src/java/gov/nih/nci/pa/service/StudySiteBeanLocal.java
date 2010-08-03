@@ -300,9 +300,6 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
                 }
             }
         }
-
-        getLogger().info("Leaving enforceNoDuplicateTrial..");
-
     }
 
     private String getIdentifierName(StudySite sp) {
@@ -330,7 +327,6 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
             getLogger().error(" StudySiteDTO should not be null ");
             throw new PAException(" StudySiteDTO should not be null ");
         }
-        getLogger().info("Entering search");
         Session session = null;
         List<StudySite> studySiteList = null;
         session = HibernateUtil.getCurrentSession();
@@ -419,9 +415,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         if (studySiteList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }
-        List<StudySiteDTO> studySiteDTOList = convertFromDomainToDTO(studySiteList);
-        getLogger().info("Leaving search");
-        return studySiteDTOList;
+        return convertFromDomainToDTO(studySiteList);
     }
 
     private List<StudySiteDTO> convertFromDomainToDTO(List<StudySite> studySiteList) throws PAException {

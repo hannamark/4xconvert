@@ -57,7 +57,6 @@ implements StudyContactServiceLocal {
             getLogger().error(" StudyContactDTO should not be null ");
             throw new PAException(" StudyContactDTO should not be null ");
         }
-        getLogger().info("Entering search");
         Session session = null;
         List<StudyContact> studyContactList = null;
         session = HibernateUtil.getCurrentSession();
@@ -128,9 +127,7 @@ implements StudyContactServiceLocal {
         if (studyContactList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }
-        List<StudyContactDTO> studyContactDTOList = convertFromDomainToDTO(studyContactList);
-        getLogger().info("Leaving search");
-        return studyContactDTOList;
+        return convertFromDomainToDTO(studyContactList);
     }
     
     private List<StudyContactDTO> convertFromDomainToDTO(List<StudyContact> studyContactList) throws PAException {

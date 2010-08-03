@@ -91,7 +91,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -105,7 +104,6 @@ import com.opensymphony.xwork2.ActionSupport;
 public class SubGroupsAction extends ActionSupport {
 
     private static final long serialVersionUID = -8004079339636348299L;
-    private static final Logger LOG  = Logger.getLogger(SubGroupsAction.class);
     private List<SubGroupsWebDTO> subGroupsList;
     private SubGroupsWebDTO subGroupsWebDTO = new SubGroupsWebDTO();
     private Long id = null;
@@ -114,7 +112,6 @@ public class SubGroupsAction extends ActionSupport {
      * @return result
      */
     public String query()  {
-        LOG.info("Entering query from SubGroupsAction");
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
@@ -149,7 +146,6 @@ public class SubGroupsAction extends ActionSupport {
       * @return result
       */
      public String create() {
-         LOG.info("Entering create from SubGroupsAction");
          enforceBusinessRules();
          if (hasFieldErrors()) {
              return INPUT;
@@ -176,7 +172,6 @@ public class SubGroupsAction extends ActionSupport {
       * @return result
       */
      public String edit() {
-         LOG.info("Entering edit from SubGroupsAction");
          try {
              StratumGroupDTO  sgDTO =
                  PaRegistry.getStratumGroupService().get(IiConverter.convertToIi(id));
@@ -192,7 +187,6 @@ public class SubGroupsAction extends ActionSupport {
       * @return result
       */
      public String update() {
-         LOG.info("Entering update from SubGroupsAction");
          enforceBusinessRules();
          if (hasFieldErrors()) {
              return INPUT;
@@ -220,8 +214,6 @@ public class SubGroupsAction extends ActionSupport {
       * @return result
       */
      public String delete()  {
-
-         LOG.info("Entering delete from SubGroupsAction");
          try {
              PaRegistry.getStratumGroupService().delete(IiConverter.convertToIi(id));
              query();

@@ -151,7 +151,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
             LOG.error(" studyProtocol Identifer should not be null ");
             throw new PAException(" studyProtocol Identifer should not be null ");
         }
-        LOG.debug("Entering getDocumentsByStudyProtocol");
         Session session = null;
         List<Document> queryList = new ArrayList<Document>();
         session = HibernateUtil.getCurrentSession();
@@ -170,7 +169,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         for (Document bo : queryList) {
             resultList.add(new DocumentConverter().convertFromDomainToDto(bo));
         }
-        LOG.debug("Leaving getDocumentsByStudyProtocol");
         return resultList;
     }
 
@@ -181,7 +179,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      */
     @Override
     public DocumentDTO create(DocumentDTO docDTO) throws PAException {
-        LOG.debug("Entering createTrialDocument ");
         validate(docDTO);
         enforceDuplicateDocument(docDTO);
         Session session = null;
@@ -196,7 +193,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         session.flush();
         docDTO.setIdentifier(IiConverter.convertToDocumentIi(doc.getId()));
         saveFile(docDTO);
-        LOG.debug("Leaving createStudyResourcing ");
         return docDTO;
     }
 
@@ -209,7 +205,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @Override
     public DocumentDTO get(Ii id) throws PAException {
-        LOG.debug("Entering getTrialDocumentById");
         Session session = null;
         DocumentDTO docDTO = null;
         Document doc = null;
@@ -247,7 +242,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
             }
 
         }
-        LOG.debug("Leaving getTrialDocumentById");
         return docDTO;
     }
 
@@ -266,7 +260,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         docDTO.setInactiveCommentText(null);
         updateObjectToInActive(docDTO);
         docRetDTO = create(docDTO);
-        LOG.debug("Leaving updateTrialDocument ");
         return docRetDTO;
     }
 
@@ -282,9 +275,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         }
         DocumentDTO docDTO = get(documentIi);
         checkTypeCodesForDelete(docDTO);
-        LOG.debug("Entering deleteTrialDocumentByID ");
         updateObjectToInActive(docDTO);
-        LOG.debug("Leaving deleteTrialDocumentByID ");
     }
 
     /**

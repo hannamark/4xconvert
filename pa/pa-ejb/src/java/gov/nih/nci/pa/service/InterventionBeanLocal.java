@@ -53,7 +53,6 @@ implements InterventionServiceLocal, InterventionServiceRemote {
     if (searchCriteria.getName() == null) {
         throw new PAException("Must pass in a name when calling search().");
     }
-    getLogger().info("Entering search().  ");
     List<Intervention> queryList = new ArrayList<Intervention>();
     Session session = HibernateUtil.getCurrentSession();
     StringBuffer hql = new StringBuffer();
@@ -85,7 +84,6 @@ implements InterventionServiceLocal, InterventionServiceRemote {
     for (Intervention bo : queryList) {
         resultList.add(convertFromDomainToDto(bo));
     }
-    getLogger().info("Leaving search(), returning " + resultList.size() + " object(s).");
     return resultList;
  }
 
@@ -101,7 +99,6 @@ implements InterventionServiceLocal, InterventionServiceRemote {
   */
   @SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
   private String generateWhereClause(InterventionDTO searchCriteria)throws PAException {
-    LOG.debug("Entering generateWhereClause ");
     StringBuffer where = new StringBuffer();
     try {
         where.append("where 1 = 1 ");
@@ -156,8 +153,6 @@ implements InterventionServiceLocal, InterventionServiceRemote {
     } catch (Exception e) {
         LOG.error("General error in while create where cluase", e);
         throw new PAException("General error in while create where cluase", e);
-    } finally {
-        LOG.debug("Leaving generateWhereClause ");
     }
     return where.toString();
  }

@@ -65,7 +65,6 @@ public class StudySiteContactBeanLocal extends
      if ((studySiteIi == null) || PAUtil.isIiNull(studySiteIi)) {
          throw new PAException(" Ii should not be null ");
      }
-     LOG.info("Entering getByStudySite");
      Session session = null;
      List<StudySiteContact> queryList = new ArrayList<StudySiteContact>();
      session = HibernateUtil.getCurrentSession();
@@ -83,7 +82,6 @@ public class StudySiteContactBeanLocal extends
      for (StudySiteContact sp : queryList) {
          resultList.add(Converters.get(StudySiteContactConverter.class).convertFromDomainToDto(sp));
      }
-     LOG.info("Leaving getByStudySite");
      return resultList;
  }
  /**

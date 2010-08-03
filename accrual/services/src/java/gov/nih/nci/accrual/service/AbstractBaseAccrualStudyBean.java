@@ -116,7 +116,6 @@ public abstract class AbstractBaseAccrualStudyBean<DTO extends BaseDTO, BO exten
         if (PAUtil.isIiNull(ii)) {
             throw new RemoteException("Called getByStudyProtocol() with Ii == null.");
         }
-        getLogger().info("Entering getByStudyProtocol().  ");
 
         Session session = null;
         List<BO> queryList = new ArrayList<BO>();
@@ -149,7 +148,6 @@ public abstract class AbstractBaseAccrualStudyBean<DTO extends BaseDTO, BO exten
                 throw new RemoteException("Iso conversion exception in getByStudyProtocol().", e);
             }
         }
-        getLogger().info("Leaving getByStudyProtocol, returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
 }

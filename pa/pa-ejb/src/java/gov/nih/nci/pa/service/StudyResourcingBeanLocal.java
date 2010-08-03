@@ -71,7 +71,6 @@ public class StudyResourcingBeanLocal
         LOG.error(" studyProtocol Identifer should not be null ");
         throw new PAException(" studyProtocol Identifer should not be null ");
     }
-    LOG.info("Entering getsummary4ReportedResource");
     StudyResourcingDTO studyResourcingDTO = null;
     Session session = null;
     StudyResourcing studyResourcing = null;
@@ -104,7 +103,6 @@ public class StudyResourcingBeanLocal
         studyResourcingDTO = src.convertFromDomainToDto(studyResourcing);
 
     }
-    LOG.info("Leaving getsummary4ReportedResource");
     return studyResourcingDTO;
  }
 
@@ -122,8 +120,6 @@ public class StudyResourcingBeanLocal
         throw new PAException(" studyResourcingDTO should not be null ");
     }
     enforceValidation(studyResourcingDTO);
-    
-    LOG.debug("Entering updateStudyResourcing ");
     
     Session session = null;
     StudyResourcing studyResourcing = null;
@@ -157,8 +153,6 @@ public class StudyResourcingBeanLocal
    studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
    session.update(studyResourcing);
    studyResourcingRetDTO = src.convertFromDomainToDto(studyResourcing);
-
-   LOG.debug("Leaving updateStudyResourcing ");
    return studyResourcingRetDTO;
  }
 
@@ -177,7 +171,6 @@ public class StudyResourcingBeanLocal
     }
     enforceValidation(studyResourcingDTO);
 
-    LOG.debug("Entering createStudyResourcing ");
     Session session = null;
     StudyResourcing studyResourcing = src.convertFromDtoToDomain(studyResourcingDTO);
     java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
@@ -191,7 +184,6 @@ public class StudyResourcingBeanLocal
     session = HibernateUtil.getCurrentSession();
     session.save(studyResourcing);
     session.flush();
-    LOG.debug("Leaving createStudyResourcing ");
     return src.convertFromDomainToDto(studyResourcing);
   }
 
@@ -208,7 +200,6 @@ public class StudyResourcingBeanLocal
         LOG.error(" studyProtocol Identifer should not be null ");
         throw new PAException(" studyProtocol Identifer should not be null ");
     }
-    LOG.info("Entering getstudyResourceByStudyProtocol");
     Session session = null;
     List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
     session = HibernateUtil.getCurrentSession();
@@ -233,7 +224,6 @@ public class StudyResourcingBeanLocal
     for (StudyResourcing bo : queryList) {
         resultList.add(src.convertFromDomainToDto(bo));
     }
-    LOG.info("Leaving getstudyResourceByStudyProtocol");
     return resultList;
   }
   /**
@@ -259,7 +249,6 @@ public class StudyResourcingBeanLocal
         LOG.error(" studyResourcingDTO should not be null ");
         throw new PAException(" studyResourcingDTO should not be null ");
      }
-     LOG.debug("Entering deleteStudyResourceByID ");
      Boolean result = false;
      Session session = null;
      StudyResourcing studyResourcing = null;
@@ -285,7 +274,6 @@ public class StudyResourcingBeanLocal
     
     session.update(studyResourcing);
     result = true;
-    LOG.debug("Leaving deleteStudyResourceByID ");
     return result;
  }
 

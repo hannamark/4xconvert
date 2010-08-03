@@ -45,7 +45,6 @@ implements DiseaseAlternameServiceLocal , DiseaseAlternameServiceRemote {
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.  ");
         }
-        getLogger().info("Entering getByDisease.  ");
 
         Session session = null;
         List<DiseaseAltername> queryList = new ArrayList<DiseaseAltername>();
@@ -70,7 +69,6 @@ implements DiseaseAlternameServiceLocal , DiseaseAlternameServiceRemote {
         for (DiseaseAltername bo : queryList) {
             resultList.add(convertFromDomainToDto(bo));
         }
-        getLogger().info("Leaving getByDisease, returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
 

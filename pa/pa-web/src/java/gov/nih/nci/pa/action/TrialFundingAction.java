@@ -95,7 +95,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -109,7 +108,6 @@ public class TrialFundingAction extends ActionSupport {
   private static final long serialVersionUID = 4865176377748106852L;
 private static final String QUERY_RESULT = "query";
   private static final String DELETE_RESULT = "delete";
-  private static final Logger LOG  = Logger.getLogger(TrialFundingAction.class);
   private TrialFundingWebDTO trialFundingWebDTO = new TrialFundingWebDTO();
   private List<TrialFundingWebDTO> trialFundingList;
   private Long cbValue;
@@ -126,7 +124,6 @@ private static final String QUERY_RESULT = "query";
    * @return result
    */
   public String query()  {
-    LOG.info("Entering query");
     try {
       Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
       getAttribute(Constants.STUDY_PROTOCOL_II);
@@ -153,8 +150,6 @@ private static final String QUERY_RESULT = "query";
    * @return result
    */
   public String create()  {
-
-    LOG.info("Entering create");
     enforceBusinessRules();
     if (hasFieldErrors()) {
       return ERROR;
@@ -189,8 +184,6 @@ private static final String QUERY_RESULT = "query";
    * @return result
    */
   public String update()  {
-
-    LOG.info("Entering update");
     enforceBusinessRules();
     if (hasFieldErrors()) {
       return ERROR;
@@ -226,8 +219,6 @@ private static final String QUERY_RESULT = "query";
    * @return result
    */
   public String delete()  {
-
-    LOG.info("Entering delete");
     if (StringUtils.isEmpty(trialFundingWebDTO.getInactiveCommentText())) {
       addFieldError("trialFundingWebDTO.inactiveCommentText",
           getText("error.trialFunding.delete.reason"));
@@ -257,7 +248,6 @@ private static final String QUERY_RESULT = "query";
    * @return result
    */
   public String edit()  {
-    LOG.info("Entering editValues");
     try {
       StudyResourcingDTO studyR = PaRegistry.getStudyResourcingService().getStudyResourceByID(
           IiConverter.convertToIi(cbValue));

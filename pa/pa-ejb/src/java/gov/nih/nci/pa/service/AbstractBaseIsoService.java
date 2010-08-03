@@ -218,7 +218,6 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         if ((ii == null) || PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.");
         }
-        getLogger().info("Entering delete().  ");
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
@@ -230,7 +229,6 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
             throw new PAException("Hibernate exception while deleting ii = "
                 + IiConverter.convertToString(ii) + ".", hbe);
         }
-        getLogger().info("Leaving delete().  ");
     }
 
     @SuppressWarnings(UNCHECKED)

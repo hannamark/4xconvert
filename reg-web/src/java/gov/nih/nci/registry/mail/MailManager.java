@@ -128,7 +128,6 @@ public class MailManager {
      */
     public void sendMailWithAattchement(String mailTo, String mailCC,
             String mailBody, String subject, String attachFileName) {
-        LOG.info("Entering sendEmail");
         try {
 
             // get system properties
@@ -172,6 +171,5 @@ public class MailManager {
         } catch (Exception e) {
             LOG.error(e.getLocalizedMessage());
         }
-        LOG.info("Leaving sendEmail");
       }
 }

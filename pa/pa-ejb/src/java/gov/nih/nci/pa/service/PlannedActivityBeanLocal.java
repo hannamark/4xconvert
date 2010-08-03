@@ -87,7 +87,6 @@ public class PlannedActivityBeanLocal extends
         if (PAUtil.isIiNull(ii)) {
             return null;
         }
-        getLogger().info("Entering getByArm.  ");
 
         Session session = null;
         List<PlannedActivity> queryList = new ArrayList<PlannedActivity>();
@@ -109,7 +108,6 @@ public class PlannedActivityBeanLocal extends
         for (PlannedActivity bo : queryList) {
             resultList.add(Converters.get(PlannedActivityConverter.class).convertFromDomainToDto(bo));
         }
-        getLogger().info("Leaving getByArm, returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
 

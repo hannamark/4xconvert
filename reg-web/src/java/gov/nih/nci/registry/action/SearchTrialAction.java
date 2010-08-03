@@ -455,7 +455,6 @@ public class SearchTrialAction extends ActionSupport {
      * @return result
      */
     public String viewDoc() {
-        LOG.info("Entering viewProtocolDoc");
         try {
             String docId = ServletActionContext.getRequest().getParameter("identifier");
             //spidfromviewresults

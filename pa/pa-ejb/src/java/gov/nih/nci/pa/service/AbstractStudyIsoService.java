@@ -124,7 +124,6 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.  ");
         }
-        getLogger().info("Entering getByStudyProtocol.  ");
 
         Session session = null;
         List<BO> queryList = new ArrayList<BO>();
@@ -149,7 +148,6 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
         for (BO bo : queryList) {
             resultList.add(convertFromDomainToDto(bo));
         }
-        getLogger().info("Leaving getByStudyProtocol, returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
     

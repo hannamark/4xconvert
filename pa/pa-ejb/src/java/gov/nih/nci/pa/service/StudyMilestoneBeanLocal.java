@@ -566,7 +566,6 @@ public class StudyMilestoneBeanLocal extends
          LOG.error(" StudyMilestoneDTO should not be null ");
          throw new PAException(" StudyMilestoneDTO should not be null ");
      }
-     LOG.debug("Entering search");
      Session session = null;
      List<StudyMilestone> studyMilestoneList = null;
      session = HibernateUtil.getCurrentSession();
@@ -588,7 +587,6 @@ public class StudyMilestoneBeanLocal extends
          throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
      }
      List<StudyMilestoneDTO> studyMilestoneDTOList = convertFromDomainToDTO(studyMilestoneList);
-     LOG.debug("Leaving search");
      return studyMilestoneDTOList;
    }
 

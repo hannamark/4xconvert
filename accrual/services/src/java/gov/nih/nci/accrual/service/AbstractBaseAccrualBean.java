@@ -224,7 +224,6 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         if (PAUtil.isIiNull(ii)) {
             throw new RemoteException("Called delete() with Ii == null.");
         }
-        getLogger().info("Entering delete().  ");
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
@@ -235,7 +234,6 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
             throw new RemoteException("Hibernate exception while deleting ii = "
                     + IiConverter.convertToString(ii) + ".", hbe);
         }
-        getLogger().info("Leaving delete().  ");
     }
 
     /**

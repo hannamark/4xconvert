@@ -95,7 +95,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -109,7 +108,6 @@ public class TrialIndideAction extends ActionSupport {
     private static final long serialVersionUID = -9192130934354005933L;
     private static final String QUERY_RESULT = "query";
     private static final String EDIT_RESULT = "edit";
-    private static final Logger LOG  = Logger.getLogger(TrialIndideAction.class);
     private StudyIndldeWebDTO studyIndldeWebDTO = new StudyIndldeWebDTO();
     private List<StudyIndldeWebDTO> studyIndideList;
     private Long cbValue;
@@ -126,7 +124,6 @@ public class TrialIndideAction extends ActionSupport {
      * @return result
      */
     public String query()  {
-        LOG.info("Entering query");
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
@@ -152,8 +149,6 @@ public class TrialIndideAction extends ActionSupport {
      * @return result
      */
     public String create()  {
-
-        LOG.info("Entering create");
         enforceBusinessRules();
         if (hasFieldErrors()) {
             return "add";
@@ -192,8 +187,6 @@ public class TrialIndideAction extends ActionSupport {
      * @return result
      */
     public String update()  {
-
-        LOG.info("Entering update");
         enforceBusinessRules();
         if (hasFieldErrors()) {
             return EDIT_RESULT;
@@ -241,8 +234,6 @@ public class TrialIndideAction extends ActionSupport {
      * @return result
      */
     public String delete()  {
-
-        LOG.info("Entering delete from SubGroupsAction");
         try {
             PaRegistry.getStudyIndldeService().delete(IiConverter.convertToIi(cbValue));
             query();
@@ -259,7 +250,6 @@ public class TrialIndideAction extends ActionSupport {
      * @return result
      */
     public String edit()  {
-        LOG.info("Entering editValues");
         try {
             StudyIndldeDTO studyIndlde = PaRegistry.getStudyIndldeService().get(IiConverter.convertToIi(cbValue));
             studyIndldeWebDTO = new StudyIndldeWebDTO(studyIndlde);

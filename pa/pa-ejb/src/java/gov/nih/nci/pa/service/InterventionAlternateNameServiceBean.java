@@ -124,7 +124,6 @@ public class InterventionAlternateNameServiceBean
         if (PAUtil.isIiNull(interventionIi)) {
             throw new PAException(" Ii should not be null ");
         }
-        getLogger().info("Entering getByIntervention.  ");
 
         Session session = null;
         List<InterventionAlternateName> queryList = new ArrayList<InterventionAlternateName>();
@@ -149,7 +148,6 @@ public class InterventionAlternateNameServiceBean
         for (InterventionAlternateName bo : queryList) {
             resultList.add(convertFromDomainToDto(bo));
         }
-        getLogger().info("Leaving getByIntervention, returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
     /**

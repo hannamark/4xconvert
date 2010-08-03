@@ -160,7 +160,6 @@ public class Interpret {
                 LOG.debug("Invalid file.  "+ " term "+term);
             }
         }
-        LOG.debug("term = " + term + "  semantic = " + semanticList + "  pn = " + preferredName);
         return result;
     }
 }

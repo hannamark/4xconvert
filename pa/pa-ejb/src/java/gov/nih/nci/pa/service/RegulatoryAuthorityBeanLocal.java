@@ -89,7 +89,6 @@ implements RegulatoryAuthorityServiceLocal {
          LOG.error(" RegulatoryAuthorityDTO should not be null ");
          throw new PAException(" RegulatoryAuthorityDTO should not be null ");
      }
-     LOG.debug("Entering search");
      Session session = null;
      session = HibernateUtil.getCurrentSession();
      Criteria criteria = session.createCriteria(RegulatoryAuthority.class, "regAuth");
@@ -113,7 +112,6 @@ implements RegulatoryAuthorityServiceLocal {
          throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
      }
      returnList = convertFromDomainToDTOs(regulatoryList);
-     LOG.debug("Leaving search");
 
      return returnList;
  }
@@ -131,7 +129,6 @@ implements RegulatoryAuthorityServiceLocal {
  @TransactionAttribute(TransactionAttributeType.SUPPORTS)
  public Ii getRegulatoryAuthorityId(St authorityName,
          St countryName) throws PAException {
-     LOG.debug("Entering  getRegulatoryAuthorityId");
      String stAuthorityName = StConverter.convertToString(authorityName);
      String stCountryName = StConverter.convertToString(countryName);
      Session session = null;
@@ -146,7 +143,6 @@ implements RegulatoryAuthorityServiceLocal {
      if (results != null && !results.isEmpty()) {
        retRegAuthId = (Long) results.get(0);
      }
-     LOG.debug("Leaving  getRegulatoryAuthorityId" + retRegAuthId);
      return IiConverter.convertToIi(retRegAuthId);
  }
 }

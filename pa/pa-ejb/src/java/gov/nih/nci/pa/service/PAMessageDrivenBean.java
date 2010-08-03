@@ -125,7 +125,6 @@ public class PAMessageDrivenBean implements MessageListener {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void onMessage(final Message message) {
-        LOG.info("Entering PAMessageDrivenBean onMessage()");
         ObjectMessage msg = null;
         Long msgId = null;
         HibernateUtil.getHibernateHelper().openAndBindSession();
@@ -177,7 +176,6 @@ public class PAMessageDrivenBean implements MessageListener {
                     updateExceptionAuditMessageLog(msgId, "Failed", " Generic exception -" + e.getMessage(), false);
                 }
             }
-            LOG.info("Leaving PAMessageDrivenBean onMessage()");
         } catch (JMSException e) {
             LOG.error("PAMessageDrivenBean onMessage() method threw an JMSException ", e);
             updateExceptionAuditMessageLog(msgId, "Failed", " JMSException-" + e.getMessage(), false);

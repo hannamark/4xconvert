@@ -117,7 +117,6 @@ public class DiseaseParentServiceBean
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.  ");
         }
-        getLogger().info("Entering getByDisease for " + assoc + ".  ");
 
         Session session = null;
         List<DiseaseParent> queryList = new ArrayList<DiseaseParent>();
@@ -143,7 +142,6 @@ public class DiseaseParentServiceBean
         for (DiseaseParent bo : queryList) {
             resultList.add(convertFromDomainToDto(bo));
         }
-        getLogger().info("Leaving getByDisease, returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
     /**

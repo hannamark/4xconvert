@@ -316,7 +316,6 @@ public class BatchUploadAction extends ActionSupport implements ServletResponseA
      */
     private void saveFile(String folderPath, String fileName, File file) throws PAException {
         // create the file
-        LOG.debug("fileName" + fileName);
         try {
             File outFile = new File(folderPath + File.separator + fileName);
             FileOutputStream fos = new FileOutputStream(outFile);

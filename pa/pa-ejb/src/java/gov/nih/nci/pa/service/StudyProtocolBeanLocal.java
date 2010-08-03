@@ -171,7 +171,6 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
-        LOG.debug("Entering getStudyProtocol");
         Session session = null;
         StudyProtocol studyProtocol = null;
         session = HibernateUtil.getCurrentSession();
@@ -187,7 +186,6 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         StudyProtocolDTO studyProtocolDTO =
             StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
 
-        LOG.debug("Leaving getStudyProtocol");
         return studyProtocolDTO;
     }
     /**
@@ -235,7 +233,6 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
-        LOG.debug("Entering getInterventionalStudyProtocol");
         Session session = null;
 
         InterventionalStudyProtocol isp = null;
@@ -245,7 +242,6 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         InterventionalStudyProtocolDTO ispDTO =
             InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
 
-        LOG.debug("Leaving getInterventionalStudyProtocol");
         return ispDTO;
     }
 
@@ -320,13 +316,11 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
 
         }
         enForceBusinessRules(ispDTO);
-        LOG.debug("Entering createInterventionalStudyProtocol");
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.
                 convertFromDTOToDomain(ispDTO);
         Session session = HibernateUtil.getCurrentSession();
         setDefaultValues(isp , ispDTO , session , CREATE);
         session.save(isp);
-        LOG.debug("Creating isp for id = " + isp.getId());
         return IiConverter.convertToStudyProtocolIi(isp.getId());
 
     }
@@ -346,7 +340,6 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
-        LOG.debug("Entering getObservationalStudyProtocol");
         Session session = null;
 
         ObservationalStudyProtocol osp = null;
@@ -356,7 +349,6 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         ObservationalStudyProtocolDTO ospDTO =
             ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
 
-        LOG.debug("Leaving getObservationalStudyProtocol");
         return ospDTO;
 
     }
@@ -409,18 +401,13 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
 
         }
         enForceBusinessRules(ospDTO);
-        LOG.debug("Entering createObservationalStudyProtocol");
         ObservationalStudyProtocol osp = ObservationalStudyProtocolConverter.
         convertFromDTOToDomain(ospDTO);
         Session session = null;
         session = HibernateUtil.getCurrentSession();
         setDefaultValues(osp, ospDTO, session , CREATE);
         session.save(osp);
-        LOG.debug("Creating osp for id = " + osp.getId());
-        //createDocumentWorkFlowStatus(osp);
-        LOG.debug("Leaving createInterventionalStudyProtocol");
         return IiConverter.convertToStudyProtocolIi(osp.getId());
-
     }
 
     /**
@@ -610,7 +597,6 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             LOG.error(" StudyProtocolDTO should not be null ");
             throw new PAException(" StudyProtocolDTO should not be null ");
         }
-        LOG.debug("Entering search");
         Session session = null;
         List<StudyProtocol> studyProtocolList = null;
         StringBuffer hql = new StringBuffer();
@@ -665,9 +651,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         if (studyProtocolList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }
-        List<StudyProtocolDTO> studyProtocolDTOList = convertFromDomainToDTO(studyProtocolList);
-        LOG.debug("Leaving search");
-        return studyProtocolDTOList;
+        return convertFromDomainToDTO(studyProtocolList);
     }
 
     private List<StudyProtocolDTO> convertFromDomainToDTO(List<StudyProtocol> studyProtocolList) {

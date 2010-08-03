@@ -117,7 +117,6 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
     * @return result
     */
     public String query() {
-        LOG.debug("Entering query");
         try {
             Ii studyProtocolIi =
                 (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
@@ -128,7 +127,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
-    return SUCCESS;
+        return SUCCESS;
     }
 
      /**

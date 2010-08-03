@@ -196,7 +196,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
    */
   @SuppressWarnings({ "PMD.StringInstantiation", "PMD.ExcessiveMethodLength" })
   public void sendTSREmail(Ii studyProtocolIi) throws PAException {
-    LOG.debug("Entering sendTSREmail");
     try {
       StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
                                       IiConverter.convertToLong(studyProtocolIi));
@@ -278,8 +277,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     } catch (Exception e) {
         throw new PAException("Exception occured while sending TSR Report to submitter", e);
     }
-    LOG.debug("Leaving sendTSREmail");
-
 }
 
   private String getTSRFile(Ii studyProtocolIi, StudyProtocolQueryDTO spDTO,
@@ -399,7 +396,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
   * @throws PAException ex
   */
   public void sendAmendAcceptEmail(Ii studyProtocolIi) throws PAException {
-    LOG.debug("Entering send Amend Accept Email");
     StudyProtocolQueryDTO spDTO = protocolQueryService
                   .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
     String mailBody = lookUpTableService.getPropertyValue("trial.amend.accept.body");
@@ -416,7 +412,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
     String mailSubject = lookUpTableService.getPropertyValue("trial.amend.accept.subject");
     sendEmail(spDTO, mailBody, null, mailSubject);
-    LOG.debug("Leaving sendAmendAcceptEmail");
   }
 
  /**
@@ -476,7 +471,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
   * @throws PAException ex
   */
   public void sendAmendRejectEmail(Ii studyProtocolIi, String rejectReason) throws PAException {
-    LOG.debug("Entering send Amend reject Email");
     StudyProtocolQueryDTO spDTO = protocolQueryService
                   .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
     String mailBody = lookUpTableService.getPropertyValue("trial.amend.reject.body");
@@ -495,7 +489,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
     String mailSubject = lookUpTableService.getPropertyValue("trial.amend.reject.subject");
     sendEmail(spDTO, mailBody, null, mailSubject);
-    LOG.debug("Leaving sendAmendRejectEmail");
   }
 
  /**
@@ -545,7 +538,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
   * @throws PAException ex
   */
   public void sendAcceptEmail(Ii studyProtocolIi) throws PAException {
-    LOG.debug("Entering send Accept Email");
     StudyProtocolQueryDTO spDTO = protocolQueryService
                   .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
     String mailBody = lookUpTableService.getPropertyValue("trial.accept.body");
@@ -556,7 +548,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
     String mailSubject = lookUpTableService.getPropertyValue("trial.accept.subject");
     sendEmail(spDTO, mailBody, null, mailSubject);
-    LOG.debug("Leaving send AcceptEmail");
   }
 
  /**
@@ -669,7 +660,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * {@inheritDoc}
      */
   public void sendXMLAndTSREmail(String fullName, String mailTo, Ii studyProtocolIi) throws PAException {
-      LOG.debug("Entering sendXMLAndTSREmail");
       try {
           StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
                   IiConverter.convertToLong(studyProtocolIi));
@@ -700,7 +690,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       } catch (Exception e) {
           throw new PAException("Exception occured while sending XML and TSR Report to submitter", e);
       }
-      LOG.debug("Leaving sendXMLAndTSREmail");
   }
 
 

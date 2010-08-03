@@ -103,7 +103,6 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -117,7 +116,6 @@ import com.opensymphony.xwork2.ActionSupport;
 public class NCISpecificInformationAction extends ActionSupport {
     private static final long serialVersionUID = -5560377425534113809L;
     private static final String DISPLAY_ORG_FLD = "displayOrgFld";
-    private static final Logger LOG = Logger.getLogger(NCISpecificInformationAction.class);
     private NCISpecificInformationWebDTO nciSpecificInformationWebDTO = new NCISpecificInformationWebDTO();
     private String chosenOrg;
 
@@ -133,7 +131,6 @@ public class NCISpecificInformationAction extends ActionSupport {
      * @return result
      */
     public String query() {
-        LOG.info("Entering query");
         try {
             // Step 1 : get from StudyProtocol
             StudyProtocolDTO studyProtocolDTO = getStudyProtocol();

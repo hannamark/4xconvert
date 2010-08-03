@@ -57,7 +57,6 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
     if (PAUtil.isIiNull(ii)) {
         throw new PAException("Check the Ii value; null found.  ");
     }
-    getLogger().info("Entering getByPlannedActivity.  ");
 
     Session session = null;
     List<Arm> queryList = new ArrayList<Arm>();
@@ -78,7 +77,6 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
     for (Arm bo : queryList) {
         resultList.add(convertFromDomainToDto(bo));
     }
-    getLogger().info("Leaving getByArm, returning " + resultList.size() + " object(s).  ");
     return resultList;
  }
 

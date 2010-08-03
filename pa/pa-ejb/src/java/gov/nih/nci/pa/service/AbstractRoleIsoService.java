@@ -134,7 +134,6 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
         if ((studyProtocolIi == null) || PAUtil.isIiNull(studyProtocolIi)) {
             throw new PAException("Ii is null ");
         }
-        getLogger().info("Entering getByStudyProtocol(Ii, List<DTO>).  ");
         StringBuffer criteria = new StringBuffer();
         Session session = null;
         List<BO> queryList = new ArrayList<BO>();
@@ -187,8 +186,6 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
         for (BO sc : queryList) {
             resultList.add(convertFromDomainToDto(sc));
         }
-        getLogger().info("Leaving getByStudyProtocol() for (" + criteria + ").  ");
-        getLogger().info("Returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
 

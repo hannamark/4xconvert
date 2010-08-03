@@ -173,7 +173,6 @@ public class BatchCreateProtocols {
             map.put("Success Trial Count", String.valueOf(sucessCount));
             return map;
         }
-        LOG.info("Entering into createProtocols...having size of dtolist" + dtoList.size());
         Iterator<StudyProtocolBatchDTO> iterator = dtoList.iterator();
         StringBuffer result = new StringBuffer();
         TrialBatchDataValidator validator = null;
@@ -194,7 +193,6 @@ public class BatchCreateProtocols {
                 map.put(batchDto.getUniqueTrialId(), result.toString());
             }
         }
-        LOG.info("leaving from createProtocols... failed count = " + failedCount + " success count = " + sucessCount);
         map.put("Failed Trial Count", String.valueOf(failedCount));
         map.put("Success Trial Count", String.valueOf(sucessCount));
         return map;
@@ -834,7 +832,6 @@ public class BatchCreateProtocols {
      */
     private Ii lookUpOrgs(OrganizationBatchDTO batchDto) throws PAException, NullifiedEntityException,
             URISyntaxException, EntityValidationException, CurationException {
-        LOG.debug("Entering lookup Org ...");
         Ii orgId = null;
 
         String orgName = batchDto.getName();
@@ -870,7 +867,6 @@ public class BatchCreateProtocols {
             orgId = poOrgDtos.get(0).getIdentifier();
             LOG.debug(" lookUpOrgs search returned orgId " + orgId.getExtension().toString());
         }
-        LOG.debug("leaving lookup Org with OrgId " + orgId.getExtension());
         return orgId;
     }
 
@@ -888,7 +884,6 @@ public class BatchCreateProtocols {
      */
     private Ii createOrganization(OrganizationBatchDTO batchDto) throws PAException, URISyntaxException,
             EntityValidationException, NullifiedEntityException, CurationException {
-        LOG.debug("Entering Create Org ..");
         OrganizationDTO orgDto = new OrganizationDTO();
         Ii orgId = null;
         String orgName = batchDto.getName();
@@ -918,7 +913,6 @@ public class BatchCreateProtocols {
         callConvert.add(PoRegistry.getOrganizationEntityService().getOrganization(id));
         orgId = callConvert.get(0).getIdentifier();
 
-        LOG.debug("leaving Create Org with OrgId " + orgId.getExtension());
         return orgId;
     }
 
@@ -973,7 +967,6 @@ public class BatchCreateProtocols {
      */
     private Ii lookUpPersons(PersonBatchDTO batchDto) throws PAException, URISyntaxException,
             EntityValidationException, CurationException {
-        LOG.debug("Entering Look up person...");
         Ii personId = null;
         String firstName = batchDto.getFirstName();
         String lastName = batchDto.getLastName();
@@ -1013,7 +1006,6 @@ public class BatchCreateProtocols {
         } else {
             personId = poPersonList.get(0).getIdentifier();
         }
-        LOG.debug("leaving Look up person  with personId" + personId);
         return personId;
     }
 
@@ -1028,7 +1020,6 @@ public class BatchCreateProtocols {
      */
     private Ii createPerson(PersonBatchDTO batchDto) throws PAException, URISyntaxException, EntityValidationException,
             CurationException {
-        LOG.info("Entering created person  ...");
         Ii personId = null;
         String firstName = batchDto.getFirstName();
         String lastName = batchDto.getLastName();
@@ -1071,7 +1062,6 @@ public class BatchCreateProtocols {
         dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
         personId = PoRegistry.getPersonEntityService().createPerson(dto);
 
-        LOG.info("leaving created person  with personId" + personId);
         return personId;
     }
 

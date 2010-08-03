@@ -117,7 +117,6 @@ throws PAException {
         LOG.error(" Ii should not be null ");
         throw new PAException(" Ii should not be null ");
     }
-    LOG.info("Entering getStudySiteAccrualStatusByStudySite");
 
     Session session = null;
     List<StudySiteAccrualStatus> queryList = new ArrayList<StudySiteAccrualStatus>();
@@ -142,9 +141,6 @@ throws PAException {
     for (StudySiteAccrualStatus bo : queryList) {
         resultList.add(StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo));
     }
-
-    LOG.info("Leaving getStudySiteAccrualStatusByStudySite, returning "
-            + resultList.size() + " object(s).");
     return resultList;
 }
 

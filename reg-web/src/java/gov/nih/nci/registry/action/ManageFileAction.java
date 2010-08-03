@@ -95,7 +95,6 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -109,7 +108,6 @@ import com.opensymphony.xwork2.ActionSupport;
 public class ManageFileAction extends ActionSupport {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOG = Logger.getLogger(ManageFileAction.class);
 
     private String pageFrom;
     private File protocolDoc;
@@ -141,11 +139,9 @@ public class ManageFileAction extends ActionSupport {
      * @return the string
      */
     public String deleteDocument() {
-        LOG.debug("Entering deleteDocument()");
         String typeCode = ServletActionContext.getRequest().getParameter("typeCode");
         ServletActionContext.getRequest().getSession()
                             .removeAttribute(DocumentTypeCode.getByCode(typeCode).getShortName());
-        LOG.debug("Leaving deleteDocument()");
         return SUCCESS;
     }
 

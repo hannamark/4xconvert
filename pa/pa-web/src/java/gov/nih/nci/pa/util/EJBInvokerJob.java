@@ -101,7 +101,6 @@ public class EJBInvokerJob implements Job {
     @SuppressWarnings({"PMD" })
     public void execute(JobExecutionContext context) throws JobExecutionException {
 
-        LOG.info("Entering the EJBInvoker - execute method");
         JobDataMap dataMap = context.getMergedJobDataMap();
         
         String ejbJNDIName = dataMap.getString(EJB_JNDI_NAME_KEY);
@@ -210,7 +209,6 @@ public class EJBInvokerJob implements Job {
      */
     @SuppressWarnings({"PMD" })
     private InitialContext getInitialContext(JobDataMap jobDataMap) throws NamingException {
-        LOG.info("Getting Initial Context");
         Hashtable<String, String> params = new Hashtable<String, String>();
 
         String initialContextFactory = jobDataMap.getString(INITIAL_CONTEXT_FACTORY);

@@ -37,16 +37,14 @@ public class EncoderDecoder {
      * @return decoded String
      */
     public String decodeString(String data)  {
-        LOG.info("Entering EncoderDecoder.decodeString");
         BASE64Decoder b2 = new BASE64Decoder();
 
         String decodeString = null;
         try {
             byte[] decode = b2.decodeBuffer(data);
             decodeString = new String(decode);
-            LOG.info("decoded String " + decodeString);
         } catch (IOException e) {
-            LOG.error("Leaving EncoderDecoder.decodeString");
+            LOG.error("Exception in decoding String: " + data, e);
         }
         return decodeString;
     }

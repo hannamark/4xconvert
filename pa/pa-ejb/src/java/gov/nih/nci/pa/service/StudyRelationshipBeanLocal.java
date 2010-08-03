@@ -22,7 +22,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
@@ -42,7 +41,6 @@ import org.hibernate.criterion.Expression;
   AbstractBaseIsoService <StudyRelationshipDTO, StudyRelationship, StudyRelationshipConverter>
   implements StudyRelationshipServiceLocal {
   
-   private static final Logger LOG  = Logger.getLogger(StudyRelationshipBeanLocal.class);
   
    /**
     * {@inheritDoc}
@@ -53,7 +51,6 @@ import org.hibernate.criterion.Expression;
        if (dto == null) {
           throw new PAException(" StudyRelationshipDTO should not be null ");
        }
-       LOG.debug("Entering search");
        Session session = null;
        List <StudyRelationship> studyRelationshipList = null;
        session = HibernateUtil.getCurrentSession();
@@ -80,9 +77,7 @@ import org.hibernate.criterion.Expression;
       if (studyRelationshipList.size() > PAConstants.MAX_SEARCH_RESULTS) {
        throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
       }
-      List<StudyRelationshipDTO> studyRelationshipDTOList = convertFromDomainToDTO(studyRelationshipList);
-      LOG.debug("Leaving search");
-      return studyRelationshipDTOList;
+      return convertFromDomainToDTO(studyRelationshipList);
      }
 
      private List<StudyRelationshipDTO> convertFromDomainToDTO(List<StudyRelationship> studyProtocolList) {

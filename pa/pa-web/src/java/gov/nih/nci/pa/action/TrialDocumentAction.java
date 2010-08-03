@@ -138,7 +138,6 @@ ServletResponseAware {
      * @return result
      */
     public String query()  {
-        LOG.info("Entering query");
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
@@ -173,7 +172,6 @@ ServletResponseAware {
       * @return result
       */
      public String create() {
-         LOG.info("Entering create");
          if (StringUtils.isEmpty(trialDocumentWebDTO.getTypeCode())) {
              addFieldError("trialDocumentWebDTO.typeCode",
                      getText("error.trialDocument.typeCode"));
@@ -208,7 +206,6 @@ ServletResponseAware {
       * @return result
       */
      public String saveFile() {
-         LOG.info("Entering saveFile");
          try {
              DocumentDTO  docDTO =
                  PaRegistry.getDocumentService().get(IiConverter.convertToIi(id));
@@ -252,7 +249,6 @@ ServletResponseAware {
       * @return result
       */
      public String edit() {
-         LOG.info("Entering edit");
          try {
              DocumentDTO  docDTO =
                  PaRegistry.getDocumentService().get(IiConverter.convertToIi(id));
@@ -268,7 +264,6 @@ ServletResponseAware {
       * @return result
       */
      public String update() {
-         LOG.info("Entering update");
          if (StringUtils.isEmpty(trialDocumentWebDTO.getTypeCode())) {
              addFieldError("trialDocumentWebDTO.typeCode", getText("error.trialDocument.typeCode"));
          }
@@ -303,8 +298,6 @@ ServletResponseAware {
       * @return result
       */
      public String delete()  {
-
-         LOG.info("Entering delete");
          if (StringUtils.isEmpty(trialDocumentWebDTO.getInactiveCommentText())) {
              addFieldError("trialDocumentWebDTO.inactiveCommentText", getText("error.trialDocument.delete.reason"));
          }

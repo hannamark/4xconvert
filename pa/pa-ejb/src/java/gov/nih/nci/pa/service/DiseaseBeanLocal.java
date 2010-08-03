@@ -54,7 +54,6 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
     if (searchCriteria.getPreferredName() == null) {
         throw new PAException("Must pass in a name when calling search().");
     }
-    getLogger().info("Entering search().  ");
     List<Disease> queryList = new ArrayList<Disease>();
     Session session = HibernateUtil.getCurrentSession();
     StringBuffer hql = new StringBuffer();
@@ -86,7 +85,6 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
     for (Disease bo : queryList) {
         resultList.add(convertFromDomainToDto(bo));
     }
-    getLogger().info("Leaving search(), returning " + resultList.size() + " object(s).");
     return resultList;
 }
 
@@ -101,7 +99,6 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
   */
   @SuppressWarnings({"PMD" })
   private String generateWhereClause(DiseaseDTO searchCriteria)throws PAException {
-    LOG.debug("Entering generateWhereClause ");
     StringBuffer where = new StringBuffer();
     try {
         where.append("where 1 = 1 ");
@@ -158,8 +155,6 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
     } catch (Exception e) {
         LOG.error("General error in while create where cluase", e);
         throw new PAException("General error in while create where cluase", e);
-    } finally {
-        LOG.debug("Leaving generateWhereClause ");
     }
     return where.toString();
  }

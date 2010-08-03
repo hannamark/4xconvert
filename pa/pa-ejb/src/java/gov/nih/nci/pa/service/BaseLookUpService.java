@@ -9,7 +9,6 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
@@ -26,8 +25,6 @@ public class BaseLookUpService <BO extends AbstractLookUpEntity> {
     private static final String UNCHECKED = "unchecked";
     private final Class<BO> typeArgument;
     
-    private static final Logger LOG = Logger.getLogger(BaseLookUpService.class);
-   
     /**
      * 
      * @param typeArgument BO
@@ -48,15 +45,11 @@ public class BaseLookUpService <BO extends AbstractLookUpEntity> {
        */
       @SuppressWarnings(UNCHECKED)
       public List<BO> search(BO bo) throws PAException {
-          LOG.info("Entering search");
           Session session = null;
-          List<BO> bos = new ArrayList<BO>();
           session = HibernateUtil.getCurrentSession();
           Example example = Example.create(bo).enableLike(MatchMode.ANYWHERE).ignoreCase();
           Criteria criteria = session.createCriteria(getTypeArgument()).add(example);
-          bos = criteria.list();
-          LOG.info("Leaving search");
-          return bos;
+          return criteria.list();
       }
       
       /**
@@ -70,12 +63,9 @@ public class BaseLookUpService <BO extends AbstractLookUpEntity> {
        */
       @SuppressWarnings(UNCHECKED)
       public BO getById(Long boId) throws PAException {
-          LOG.info("Entering getById ");
           Session session = null;
           session = HibernateUtil.getCurrentSession();
-          BO bo = (BO) session.get(getTypeArgument(), boId);
-          LOG.info("Leaving getById");
-          return bo;
+          return (BO) session.get(getTypeArgument(), boId);
       }
       /**
        * Gets By Code.
@@ -88,14 +78,12 @@ public class BaseLookUpService <BO extends AbstractLookUpEntity> {
        */
       @SuppressWarnings(UNCHECKED)
       public BO getByCode(BO bo) throws PAException {
-          LOG.info("Entering getByCode ");
           Session session = null;
           List<BO> bos = new ArrayList<BO>();
           session = HibernateUtil.getCurrentSession();
           Example example = Example.create(bo);
           Criteria criteria = session.createCriteria(getTypeArgument()).add(example);
           bos = criteria.list();
-          LOG.info("Leaving getByCode");
           return bos.get(0);
       }
       
