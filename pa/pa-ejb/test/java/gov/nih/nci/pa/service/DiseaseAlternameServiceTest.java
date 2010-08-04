@@ -89,6 +89,8 @@ import gov.nih.nci.pa.domain.DiseaseAltername;
 import gov.nih.nci.pa.domain.DiseaseAlternameTest;
 import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -108,6 +110,7 @@ public class DiseaseAlternameServiceTest {
     
     @Before
     public void setUp() throws Exception {
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
         TestSchema.reset1();
         TestSchema.primeData();
         dIi = IiConverter.convertToIi(TestSchema.diseaseIds.get(0));

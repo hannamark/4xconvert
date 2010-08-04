@@ -86,6 +86,8 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.junit.Before;
@@ -105,6 +107,7 @@ public class StudyObjectiveServiceTest {
     
     @Before
     public void setUp() throws Exception {
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
         TestSchema.reset1();
         TestSchema.primeData();
         spId = TestSchema.studyProtocolIds.get(0);

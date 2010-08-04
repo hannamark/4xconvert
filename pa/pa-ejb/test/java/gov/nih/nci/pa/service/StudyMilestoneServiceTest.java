@@ -100,12 +100,14 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceBean;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -136,6 +138,7 @@ public class StudyMilestoneServiceTest {
 
     @Before
     public void setUp() throws Exception {
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
         bean.setDocumentWorkflowStatusService(dws);
         bean.setStudyOnholdService(ohs);
         bean.setStudyProtocolService(sps);

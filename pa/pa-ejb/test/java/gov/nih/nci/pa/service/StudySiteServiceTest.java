@@ -97,6 +97,8 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -126,6 +128,7 @@ public class StudySiteServiceTest {
 
     @Before
     public void setUp() throws Exception {
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
         TestSchema.reset1();
         TestSchema.primeData();
         studyId = TestSchema.studyProtocolIds.get(0);

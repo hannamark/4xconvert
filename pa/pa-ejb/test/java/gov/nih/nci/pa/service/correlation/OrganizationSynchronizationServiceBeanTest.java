@@ -9,7 +9,9 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.StudySiteBeanLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
@@ -32,6 +34,7 @@ public class OrganizationSynchronizationServiceBeanTest {
 
     @Before
     public void setUp() throws Exception {
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         bean.setSpsLocal(spsService);
 //        TestSchema.reset();

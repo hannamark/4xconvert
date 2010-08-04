@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -51,12 +49,6 @@ public class StudyResourcingBeanLocal
 
   private static final Logger LOG  = Logger.getLogger(StudyResourcingBeanLocal.class);
   private static StudyResourcingConverter  src = new StudyResourcingConverter();
-  private SessionContext ejbContext;
-
-  @Resource
-  void setSessionContext(SessionContext ctx) {
-     this.ejbContext = ctx;
-  }
 
   /**
    * @param studyProtocolIi Ii
@@ -144,7 +136,7 @@ public class StudyResourcingBeanLocal
    studyResourcing.setOrganizationIdentifier(IiConverter.convertToString(
            studyResourcingDTO.getOrganizationIdentifier()));
    studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-   studyResourcing.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
+   studyResourcing.setUserLastUpdated(CSMUserService.getInstance().lookupUser());
    studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
             studyResourcingDTO.getFundingMechanismCode()));
    studyResourcing.setNciDivisionProgramCode(NciDivisionProgramCode.getByCode(
@@ -175,7 +167,7 @@ public class StudyResourcingBeanLocal
     StudyResourcing studyResourcing = src.convertFromDtoToDomain(studyResourcingDTO);
     java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
     studyResourcing.setDateLastCreated(now);
-    studyResourcing.setUserLastCreated(CSMUserService.lookupUser(ejbContext));
+    studyResourcing.setUserLastCreated(CSMUserService.getInstance().lookupUser());
     // create Protocol Obj
     StudyProtocol studyProtocol = new StudyProtocol();
     studyProtocol.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIdentifier()));
@@ -270,7 +262,7 @@ public class StudyResourcingBeanLocal
     studyResourcing.setInactiveCommentText(StConverter.convertToString(
             studyResourcingDTO.getInactiveCommentText()));
     studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-    studyResourcing.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
+    studyResourcing.setUserLastUpdated(CSMUserService.getInstance().lookupUser());
     
     session.update(studyResourcing);
     result = true;

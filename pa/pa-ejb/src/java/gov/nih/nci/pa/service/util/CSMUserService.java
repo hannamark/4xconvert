@@ -95,6 +95,7 @@ import gov.nih.nci.security.exceptions.CSException;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 
 import org.apache.log4j.Logger;
@@ -115,13 +116,15 @@ public class CSMUserService implements CSMUserUtil {
         setRegistryUserService(new CSMUserService());
     }
 
+    private SessionContext ejbContext;
+    
+    @Resource
+    void setSessionContext(SessionContext ctx) {
+        this.ejbContext = ctx;
+    }
+    
     /**
-     * Create a new CSM user.
-     * @param user user
-     * @param loginName loginName
-     * @param password  password
-     * @return user
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     public User createCSMUser(RegistryUser user, String loginName,
                                 String password) throws PAException {
@@ -159,12 +162,7 @@ public class CSMUserService implements CSMUserUtil {
     }
 
     /**
-     * Update an existing CSM user.
-     * @param user user
-     * @param loginName loginName
-     * @param password  password
-     * @return user
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     public User updateCSMUser(RegistryUser user, String loginName,
                                     String password) throws PAException {
@@ -205,10 +203,7 @@ public class CSMUserService implements CSMUserUtil {
     }
 
     /**
-     * Retrieve an existing CSM user.
-     * @param loginName loginName
-     * @return user
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     public User getCSMUser(String loginName)
                                     throws PAException {
@@ -237,10 +232,7 @@ public class CSMUserService implements CSMUserUtil {
     }
     
     /**
-     * Retrieves an existing CSM user by id.
-     * @param id the id of the CSM user to retrieve
-     * @return The CSM user with the give id
-     * @throws PAException on error
+     * {@inheritDoc}
      */
     public User getCSMUserById(Long id) throws PAException {
         User csmUser = null;
@@ -256,8 +248,7 @@ public class CSMUserService implements CSMUserUtil {
     }
 
     /**
-     * @return list of submitters
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
     public Set<User> getCSMUsers() throws PAException {
@@ -288,10 +279,7 @@ public class CSMUserService implements CSMUserUtil {
     
     
     /**
-     * Assigns the given user to the given group.
-     * @param loginName the user to add to the group
-     * @param groupName the group to add the user to
-     * @throws PAException on error
+     * {@inheritDoc}
      */
     public void assignUserToGroup(String loginName, String groupName) throws PAException {
         try {
@@ -303,23 +291,17 @@ public class CSMUserService implements CSMUserUtil {
     }
 
     /**
-     * Using the principal of a {@link SessionContext} will return the corresponding {@link User}, 
-     * or null if none exist.
-     * @param ejbContext SessionContext
-     * @return User 
+     * {@inheritDoc}
      */
-    public static User lookupUser(SessionContext ejbContext) {
+    public User lookupUser() throws PAException {
         User user = null;
-        if (ejbContext != null && ejbContext.getCallerPrincipal() != null) {
-            String userName = ejbContext.getCallerPrincipal().getName();
-            try {
-                user = CSMUserService.getInstance().getCSMUser(userName);
-                if (user == null) {
-                    LOG.info("User not found for userName: " + userName);
-                }
-            } catch (PAException e) {
-                LOG.warn("Exception in looking up user: " + userName, e);
-            }
+        String userName = null;
+        if (this.ejbContext != null && this.ejbContext.getCallerPrincipal() != null) {
+            userName = ejbContext.getCallerPrincipal().getName();
+            user = CSMUserService.getInstance().getCSMUser(userName);
+        }
+        if (user == null) {
+            throw new PAException("Unable to lookup user in EJBContext: " + ejbContext + " for username: " + userName);
         }
         return user;
     }

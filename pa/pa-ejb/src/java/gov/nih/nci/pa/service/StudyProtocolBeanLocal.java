@@ -117,9 +117,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -150,14 +148,8 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     protected static final int NCI_ID_SIZE = 5;
     private static final String CREATE = "Create";
     private static final String UPDATE = "Update";
-    private SessionContext ejbContext;
     @EJB
     private StudyIndldeServiceLocal studyIndldeService;
-
-    @Resource
-    void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
 
      /**
      *
@@ -576,7 +568,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             try {
                 user = spDTO.getUserLastCreated() != null
                         ? CSMUserService.getInstance().getCSMUser(spDTO.getUserLastCreated().getValue())
-                        : CSMUserService.lookupUser(ejbContext);
+                        : CSMUserService.getInstance().lookupUser();
             } catch (PAException e) {
                 LOG.info("Unable to set User for auditing", e);
             }

@@ -109,8 +109,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -130,14 +128,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         DocumentServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(DocumentBeanLocal.class);
-
-    private SessionContext ejbContext;
-
-    @Override
-    @Resource
-    void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
 
     /**
      * @param studyProtocolIi Ii
@@ -185,7 +175,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         Document doc = new DocumentConverter().convertFromDtoToDomain(docDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         doc.setDateLastCreated(now);
-        doc.setUserLastCreated(CSMUserService.lookupUser(ejbContext));
+        doc.setUserLastCreated(CSMUserService.getInstance().lookupUser());
         
         doc.setActiveIndicator(true);
         session = HibernateUtil.getCurrentSession();
@@ -332,7 +322,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         doc.setActiveIndicator(false);
         doc.setInactiveCommentText(StConverter.convertToString(docDTO.getInactiveCommentText()));
         doc.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-        doc.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
+        doc.setUserLastUpdated(CSMUserService.getInstance().lookupUser());
         
         session.update(doc);
         session.flush();

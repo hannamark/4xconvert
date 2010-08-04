@@ -103,9 +103,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -128,16 +126,10 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
     private static Set<User> submitterList = null;
     private static Timestamp lastUpdate = null;
 
-    private SessionContext ejbContext;
-
     @EJB
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     @EJB
     private RegistryUserServiceLocal registryUserService;
-    @Resource
-    void setSessionContext(SessionContext ctx) {
-        ejbContext = ctx;
-    }
 
     /**
      * {@inheritDoc}
@@ -329,12 +321,12 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         checkNull(bo.getStatusCode(), "Access Status must be set.");
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         if (bo.getId() == null) {
-            bo.setUserLastCreated(CSMUserService.lookupUser(ejbContext));
+            bo.setUserLastCreated(CSMUserService.getInstance().lookupUser());
             bo.setDateLastCreated(new Date());
             bo.setUserLastUpdated(null);
             bo.setDateLastUpdated(null);
         } else {
-            bo.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
+            bo.setUserLastUpdated(CSMUserService.getInstance().lookupUser());
             bo.setDateLastUpdated(new Date());
         }
     }

@@ -115,9 +115,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -149,16 +147,10 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
     private static final String STUDY_SITE_CONTACT = "STUDY_SITE_CONTACT";
     private static PAServiceUtils paServiceUtil = new PAServiceUtils();
     private CorrelationService correlationService = null;
-    private SessionContext ejbContext;
     @EJB
     private StudyContactServiceLocal scLocal;
     @EJB
     private StudySiteContactServiceLocal spcLocal;
-
-    @Resource
-    void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
 
     /**
      *
@@ -246,7 +238,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
 
             }
             person.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-            person.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
+            person.setUserLastUpdated(CSMUserService.getInstance().lookupUser());
             session.update(person);
             session.flush();
         }

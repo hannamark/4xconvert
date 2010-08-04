@@ -14,7 +14,9 @@ import gov.nih.nci.pa.service.StudyContactBeanLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactBeanLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
@@ -35,7 +37,7 @@ public class PersonSynchronizationServiceBeanTest {
 
     @Before
     public void setUp() throws Exception {
-
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         bean.setSpcLocal(spcService);
         bean.setScLocal(scService);

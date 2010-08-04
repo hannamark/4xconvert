@@ -108,9 +108,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -139,14 +137,8 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     private static CorrelationUtils cUtils = new CorrelationUtils();
     private static PAServiceUtils paServiceUtil = new PAServiceUtils();
 
-    private SessionContext ejbContext;
     @EJB
     private StudySiteServiceLocal spsLocal;
-
-    @Resource
-    void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
 
     /**
      *
@@ -246,7 +238,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                 paOrg.setStatusCode(newOrg.getStatusCode());
             }
             paOrg.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-            paOrg.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
+            paOrg.setUserLastUpdated(CSMUserService.getInstance().lookupUser());
             session.update(paOrg);
             session.flush();
         }

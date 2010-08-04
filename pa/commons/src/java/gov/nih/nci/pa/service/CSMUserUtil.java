@@ -148,4 +148,11 @@ public interface CSMUserUtil {
      */
     void assignUserToGroup(String loginName, String groupName) throws PAException;
 
+    /**
+     * Will return the current {@link User} object, 
+     * or throw {@link PAException} if none exist.
+     * @return User
+     * @throws PAException on error
+     */
+    User lookupUser() throws PAException;
 }

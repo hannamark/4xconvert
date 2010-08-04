@@ -95,9 +95,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
-
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -120,25 +117,18 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
     private final Class<CONVERTER> converterArgument;
     @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
     private final Logger logger;
-    private SessionContext ejbContext;
-
-    @Resource
-    void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
     /**
      * default constructor.
      */
     @SuppressWarnings(UNCHECKED)
     public AbstractBaseIsoService() {
-//        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-                Class clss = getClass();
-                Type type = clss.getGenericSuperclass();
-                while (!(type instanceof ParameterizedType)) {
-                    clss = clss.getSuperclass();
-                    type = clss.getGenericSuperclass();
-                }
-                ParameterizedType parameterizedType = (ParameterizedType) type;
+        Class clss = getClass();
+        Type type = clss.getGenericSuperclass();
+        while (!(type instanceof ParameterizedType)) {
+            clss = clss.getSuperclass();
+            type = clss.getGenericSuperclass();
+        }
+        ParameterizedType parameterizedType = (ParameterizedType) type;
 
         typeArgument = (Class) parameterizedType.getActualTypeArguments()[1];
         converterArgument = (Class) parameterizedType.getActualTypeArguments()[2];
@@ -239,7 +229,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         try {
             session = HibernateUtil.getCurrentSession();
             bo = convertFromDtoToDomain(dto);
-            bo.setUserLastUpdated(CSMUserService.lookupUser(ejbContext));
+            bo.setUserLastUpdated(CSMUserService.getInstance().lookupUser());
             bo.setDateLastUpdated(new Date());
             if (PAUtil.isIiNull(dto.getIdentifier())) {
                 bo.setUserLastCreated(bo.getUserLastUpdated());

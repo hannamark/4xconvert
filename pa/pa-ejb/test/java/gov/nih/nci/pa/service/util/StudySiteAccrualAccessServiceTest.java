@@ -153,7 +153,7 @@ public class StudySiteAccrualAccessServiceTest {
         assertEquals(CSM_USER_ID, r.getCsmUserId());
         assertEquals(REQUEST_DETAILS, r.getRequestDetails());
         assertEquals(ssId, r.getStudySiteId());
-        assertNull("User created should be null since user is retrieved from EJB context.",r.getUserLastCreated());
+        assertNotNull(r.getUserLastCreated());
         assertNotNull(r.getDateLastCreated());
         assertNull(r.getUserLastUpdated());
         assertNull(r.getDateLastUpdated());
@@ -190,7 +190,7 @@ public class StudySiteAccrualAccessServiceTest {
         bo.setRequestDetails(updatedRequestDetails);
         StudySiteAccrualAccessDTO r = bean.update(bo);
         assertTrue(r.getRequestDetails().equals(updatedRequestDetails));
-        assertNull("User updated should be null since user is retrieved from EJB context",r.getUserLastUpdated());
+        assertNotNull(r.getUserLastUpdated());
         assertNotNull(r.getDateLastUpdated());
     }
 
