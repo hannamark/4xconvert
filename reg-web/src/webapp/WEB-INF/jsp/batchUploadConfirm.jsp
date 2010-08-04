@@ -17,7 +17,7 @@
     <h2><fmt:message key="batch.upload.confirm"/></h2>
     <div class="box" id="filters">
       <p>The batch trial data you submitted is being processed. You will receive an e-mail notification after the processing is complete. </p>
-
+      Please <a href="<%=request.getContextPath()%>/admin/batchUploadprocess.action">click here</a> to submit another file. 
  </div>
    
 </body>
