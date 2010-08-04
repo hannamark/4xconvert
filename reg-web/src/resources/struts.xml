@@ -191,6 +191,7 @@
                 _,d-\d+?-[sop]
             </param>
         </interceptor-ref>
+        <interceptor-ref name="methodValidationStack" />
         <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
         <result name="orgs">/WEB-INF/jsp/nodecorate/lookuporgs.jsp</result>
         <result name="persons">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>

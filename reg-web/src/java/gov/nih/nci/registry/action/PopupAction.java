@@ -129,7 +129,7 @@ import com.opensymphony.xwork2.Preparable;
  *
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity",
-    "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.ExcessiveMethodLength" })
+    "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.ExcessiveMethodLength", "PMD.TooManyFields" })
 public class PopupAction extends ActionSupport implements Preparable {
     private static final String FAILURE_MSG_ATTR = "failureMessage";
     private static final String ORGS_RESULT = "orgs";
@@ -141,6 +141,37 @@ public class PopupAction extends ActionSupport implements Preparable {
     private PaPersonDTO personDTO = new PaPersonDTO();
     private static final String PERS_CREATE_RESPONSE = "create_pers_response";
     private static final int AUS_STATE_CODE_LEN = 3;
+
+
+    //Person attributes
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String country;
+    private String city;
+    private String state;
+    private String zip;
+    private String ctepId;
+    private String streetAddr;
+    private String preFix;
+    private String suffix;
+    private String midName;
+    private String phone;
+
+
+    //Organization attribute;
+    private String orgName;
+    private String orgStAddress;
+    private String countryName;
+    private String cityName;
+    private String stateName;
+    private String zipCode;
+    private String ctepid;
+
+    private String phoneNumber;
+    private String tty;
+    private String fax;
+    private String url;
 
     /**
      * {@inheritDoc}
@@ -206,21 +237,13 @@ public class PopupAction extends ActionSupport implements Preparable {
     }
 
     private String populatePersons(boolean pagination) throws PAException {
+        final HttpServletRequest request = ServletActionContext.getRequest();
         try {
-            final HttpServletRequest request = ServletActionContext.getRequest();
-            String firstName = request.getParameter("firstName");
-            String lastName = request.getParameter("lastName");
-            String email = request.getParameter("email");
-            //
-            String country = request.getParameter("country");
-            String city = request.getParameter("city");
-            String zip = request.getParameter("zip");
-            String state = request.getParameter("state");
-            //
-            String ctep = request.getParameter("ctepId");
             if ((firstName != null) && (firstName.equals("")) && (lastName != null) && (lastName.equals(""))
-                    && (email.equals("")) && ctep != null && !(ctep.length() > 0) && (city != null)
-                    && (city.equals("")) && (zip != null) && (zip.equals("")) && (state != null) && (state.equals(""))
+                    && (email.equals("")) && ctepId != null && !(ctepId.length() > 0)
+                    && (city != null) && (city.equals(""))
+                    && (zip != null) && (zip.equals("")) && (state != null) && (state.equals(""))
+
                     && country.equals("")) {
                 String message = "Please enter at least one search criteria";
                 persons = null;
@@ -248,9 +271,10 @@ public class PopupAction extends ActionSupport implements Preparable {
             p.setPostalAddress(AddressConverterUtil.create(null, null, city, state, zip, country));
             //
             List<PersonDTO> poPersonList = new ArrayList<PersonDTO>();
-            if (ctep != null && ctep.length() > 0) {
+
+            if (ctepId != null && ctepId.length() > 0) {
                 IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
-                identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi(ctep));
+                identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi(ctepId));
                 List<IdentifiedPersonDTO> retResultList = PoRegistry.getIdentifiedPersonEntityService()
                                                                     .search(identifiedPersonDTO);
                 if (CollectionUtils.isNotEmpty(retResultList)) {
@@ -288,22 +312,15 @@ public class PopupAction extends ActionSupport implements Preparable {
 
     private String populateOrgs(boolean pagination) {
         try {
-            String orgName = ServletActionContext.getRequest().getParameter("orgName");
-            String countryName = ServletActionContext.getRequest().getParameter("countryName");
-            String cityName = ServletActionContext.getRequest().getParameter("cityName");
-            String stateName = ServletActionContext.getRequest().getParameter("stateName");
-            String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
-            String ctepId = ServletActionContext.getRequest().getParameter("ctepid");
-
             if (orgName.equals("") && countryName.equals("") && cityName.equals("") && zipCode.equals("")
-                    && ctepId != null && !(ctepId.length() > 0)) {
+                    && ctepid != null && !(ctepid.length() > 0)) {
                 String message = "Please enter at least one search criteria";
                 orgs = null;
                 addActionError(message);
                 ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, message);
                 return pagination ? ORGS_RESULT : SUCCESS;
             }
-            if (countryName.equals("") && ctepId != null && !(ctepId.length() > 0)) {
+            if (countryName.equals("") && ctepid != null && !(ctepid.length() > 0)) {
                 String message = "Please select a country";
                 orgs = null;
                 addActionError(message);
@@ -318,9 +335,9 @@ public class PopupAction extends ActionSupport implements Preparable {
                 orgSearchCriteria.setOrgState(stateName);
             }
             OrganizationDTO criteria = new OrganizationDTO();
-            if (ctepId != null && ctepId.length() > 0) {
+            if (ctepid != null && ctepid.length() > 0) {
                 IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
-                identifiedOrganizationDTO.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(ctepId));
+                identifiedOrganizationDTO.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(ctepid));
                 List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
                         .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
                 if (CollectionUtils.isNotEmpty(identifiedOrgs)) {
@@ -348,9 +365,9 @@ public class PopupAction extends ActionSupport implements Preparable {
     }
 
     private String getCountryNameUsingCode(String code) {
-        for (Country country : countryList) {
-            if (country.getAlpha3().toString().equals(code)) {
-                return country.getName();
+        for (Country c : countryList) {
+            if (c.getAlpha3().toString().equals(code)) {
+                return c.getName();
             }
         }
         return null;
@@ -371,46 +388,44 @@ public class PopupAction extends ActionSupport implements Preparable {
      */
     public String createOrganization() throws PAException {
         OrganizationDTO orgDto = new OrganizationDTO();
-        String orgName = ServletActionContext.getRequest().getParameter("orgName");
         if (StringUtils.isEmpty(orgName)) {
             addActionError("Organization is a required field");
         }
-        String orgStAddress = ServletActionContext.getRequest().getParameter("orgStAddress");
+
         if (StringUtils.isEmpty(orgStAddress)) {
             addActionError("Street address is a required field");
         }
-        String countryName = ServletActionContext.getRequest().getParameter("countryName");
+
         if (countryName != null && countryName.equals("aaa")) {
             addActionError("Country is a required field");
         }
-        String cityName = ServletActionContext.getRequest().getParameter("cityName");
+
         if (StringUtils.isEmpty(cityName)) {
             addActionError("City is a required field");
         }
-        String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
+
         if (StringUtils.isEmpty(zipCode)) {
             addActionError("Zip is a required field");
         }
-        String stateName = ServletActionContext.getRequest().getParameter("stateName");
+
         if (countryName != null && (countryName.equalsIgnoreCase("USA") || countryName.equalsIgnoreCase("CAN"))
                 && (StringUtils.isEmpty(stateName) || stateName.trim().length() > 2)) {
             addActionError("2-letter State/Province Code required for USA/Canada");
         }
+
         if (countryName != null && countryName.equalsIgnoreCase("AUS")
                 && (StringUtils.isEmpty(stateName) || stateName.trim().length() > AUS_STATE_CODE_LEN)) {
             addActionError("2/3-letter State/Province Code required for Australia");
         }
 
-        String email = ServletActionContext.getRequest().getParameter("email");
         if (StringUtils.isEmpty(email)) {
             addActionError("Email is a required field");
         } else if (!PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
         }
-        String phoneNumer = ServletActionContext.getRequest().getParameter("phoneNumber");
-        String faxNumber = ServletActionContext.getRequest().getParameter("fax");
-        String ttyNumber = ServletActionContext.getRequest().getParameter("tty");
-        String url = ServletActionContext.getRequest().getParameter("url");
+        String phoneNumer = getPhoneNumber();
+        String faxNumber = getFax();
+        String ttyNumber = getTty();
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             for (String actionErr : getActionErrors()) {
@@ -435,14 +450,14 @@ public class PopupAction extends ActionSupport implements Preparable {
                 telco.getItem().add(t);
             }
             if (faxNumber != null && faxNumber.length() > 0) {
-                Tel fax = new Tel();
-                fax.setValue(new URI("x-text-fax", faxNumber, null));
-                telco.getItem().add(fax);
+                Tel f = new Tel();
+                f.setValue(new URI("x-text-fax", faxNumber, null));
+                telco.getItem().add(f);
             }
             if (ttyNumber != null && ttyNumber.length() > 0) {
-                Tel tty = new Tel();
-                tty.setValue(new URI("x-text-tel", ttyNumber, null));
-                telco.getItem().add(tty);
+                Tel tt = new Tel();
+                tt.setValue(new URI("x-text-tel", ttyNumber, null));
+                telco.getItem().add(tt);
             }
             if (url != null && url.length() > 0) {
                 TelUrl telurl = new TelUrl();
@@ -483,37 +498,36 @@ public class PopupAction extends ActionSupport implements Preparable {
      */
     public String createPerson() {
         final HttpServletRequest request = ServletActionContext.getRequest();
-        String firstName = request.getParameter("firstName");
         if (StringUtils.isEmpty(firstName)) {
             addActionError("First Name is a required field");
         }
-        String lastName = request.getParameter("lastName");
+
         if (StringUtils.isEmpty(lastName)) {
             addActionError("Last Name is a required field");
         }
-        String email = request.getParameter("email");
+
         if (StringUtils.isEmpty(email)) {
             addActionError("Email is a required field");
         } else if (!PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
         }
-        String streetAddr = request.getParameter("streetAddr");
+
         if (StringUtils.isEmpty(streetAddr)) {
             addActionError("Street address is a required field");
         }
-        String city = request.getParameter("city");
+
         if (StringUtils.isEmpty(city)) {
             addActionError("City is a required field");
         }
-        String zip = request.getParameter("zip");
+
         if (StringUtils.isEmpty(zip)) {
             addActionError("Zip is a required field");
         }
-        String country = request.getParameter("country");
+
         if (country != null && country.equals("aaa")) {
             addActionError("Country is a required field");
         }
-        String state = request.getParameter("state");
+
         if (country != null && (country.equalsIgnoreCase("USA") || country.equalsIgnoreCase("CAN"))
                 && (StringUtils.isEmpty(state) || state.trim().length() > 2)) {
             addActionError("2-letter State/Province Code required for USA/Canada");
@@ -532,13 +546,6 @@ public class PopupAction extends ActionSupport implements Preparable {
             return PERS_CREATE_RESPONSE;
         }
 
-        String preFix = request.getParameter("preFix");
-        String midName = request.getParameter("midName");
-        String phone = request.getParameter("phone");
-        String tty = request.getParameter("tty");
-        String fax = request.getParameter("fax");
-        String url = request.getParameter("url");
-        String suffix = request.getParameter("suffix");
         //
         PersonDTO dto = new PersonDTO();
         dto.setName(new EnPn());
@@ -721,5 +728,342 @@ public class PopupAction extends ActionSupport implements Preparable {
      */
     public void setOrgs(List<SearchOrgResultDisplay> orgs) {
         this.orgs = orgs;
+    }
+
+    /**
+     * @return lastName
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * @param lastName the last name
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    /**
+     * @return the first name
+     */
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * @param firstName the first name
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return the country
+     */
+    public String getCountry() {
+        return country;
+    }
+
+    /**
+     * @param country the country
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    /**
+     * @return the city
+     */
+    public String getCity() {
+        return city;
+    }
+
+    /**
+     * @param city the city
+     */
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    /**
+     * @return the state
+     */
+    public String getState() {
+        return state;
+    }
+
+    /**
+     * @param state the state
+     */
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    /**
+     * @return the zip
+     */
+    public String getZip() {
+        return zip;
+    }
+
+    /**
+     * @param zip the zip
+     */
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    /**
+     * @return the ctepId
+     */
+    public String getCtepId() {
+        return ctepId;
+    }
+
+    /**
+     *
+     * @param ctepId the ctepId
+     */
+    public void setCtepId(String ctepId) {
+        this.ctepId = ctepId;
+    }
+
+    /**
+     * @return the org name
+     */
+    public String getOrgName() {
+        return orgName;
+    }
+
+    /**
+     * @param orgName the org name
+     */
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    /**
+     * @return the country name
+     */
+    public String getCountryName() {
+        return countryName;
+    }
+
+    /**
+     * @param countryName the country name
+     */
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+
+    /**
+     * @return cityName the city name
+     */
+    public String getCityName() {
+        return cityName;
+    }
+
+    /**
+     * @param cityName the city
+     */
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    /**
+     * @return state name
+     */
+    public String getStateName() {
+        return stateName;
+    }
+
+    /**
+     * @param stateName the state name
+     */
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
+
+    /**
+     * @return zip code
+     */
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    /**
+     * @param zipCode the zip code
+     */
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    /**
+     * @return ctrpid
+     */
+    public String getCtepid() {
+        return ctepid;
+    }
+
+    /**
+     * @param ctepid the ctrep id
+     */
+    public void setCtepid(String ctepid) {
+        this.ctepid = ctepid;
+    }
+
+    /**
+     * @return org street address
+     */
+    public String getOrgStAddress() {
+        return orgStAddress;
+    }
+
+    /**
+     * @param orgStAddress the org street name
+     */
+    public void setOrgStAddress(String orgStAddress) {
+        this.orgStAddress = orgStAddress;
+    }
+
+    /**
+     * @return the phone number
+     */
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    /**
+     * @param phoneNumber the phone number
+     */
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    /**
+     * @return tty
+     */
+    public String getTty() {
+        return tty;
+    }
+
+    /**
+     * @param tty the tty
+     */
+    public void setTty(String tty) {
+        this.tty = tty;
+    }
+
+    /**
+     * @return the fax
+     */
+    public String getFax() {
+        return fax;
+    }
+
+    /**
+     * @param fax the fax
+     */
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
+
+    /**
+     * @return the url
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * @param url the url
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    /**
+     * @return the street address
+     */
+    public String getStreetAddr() {
+        return streetAddr;
+    }
+
+    /**
+     * @param streetAddr the street address
+     */
+    public void setStreetAddr(String streetAddr) {
+        this.streetAddr = streetAddr;
+    }
+
+    /**
+     * @return the prefix
+     */
+    public String getPreFix() {
+        return preFix;
+    }
+
+    /**
+     * @param preFix the prefix
+     */
+    public void setPreFix(String preFix) {
+        this.preFix = preFix;
+    }
+
+    /**
+     * @return the suffix
+     */
+    public String getSuffix() {
+        return suffix;
+    }
+
+    /**
+     * @param suffix the suffix
+     */
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    /**
+     * @return midName the middle name
+     */
+    public String getMidName() {
+        return midName;
+    }
+
+    /**
+     * @param midName the middle name
+     */
+    public void setMidName(String midName) {
+        this.midName = midName;
+    }
+
+    /**
+     * @return phone the phone
+     */
+    public String getPhone() {
+        return phone;
+    }
+
+    /**
+     * @param phone the phone
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
