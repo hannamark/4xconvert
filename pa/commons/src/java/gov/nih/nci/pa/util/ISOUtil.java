@@ -92,7 +92,9 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
 *
@@ -253,35 +255,64 @@ public class ISOUtil {
     }
 
     /**
-     * Private class used to decode and normalize date strings.
+     * Public class used to decode and normalize date strings.
      */
-    private static class ValidDateFormat {
-        // CHECKSTYLE:OFF private static class fields don't necessarily need to be private
-        String pattern;
-        int endIndex;
-        boolean lenient;
-        // CHECKSTYLE:ON
+    public static class ValidDateFormat {
+        private final String pattern;
+        private final int endIndex;
+        private final boolean lenient;
+        /**
+         * Static ordered list of valid date format patterns.
+         */
+        private static ValidDateFormat[] dateFormats;
 
+        static {
+            dateFormats = new ValidDateFormat[] {
+                    new ValidDateFormat("MM/dd/yyyy"),
+                    new ValidDateFormat("yyyy-MM-dd HH:mm:ss"),
+                    new ValidDateFormat("yyyy-MM-dd"),
+                    new ValidDateFormat("yyyy/MM/dd"),
+                    new ValidDateFormat("MM-dd-yyyy HH:mm:ss")
+            };
+        }
+
+        /**
+         * Public constructor.
+         * @param pattern Pattern 
+         */
         public ValidDateFormat(String pattern) {
             this.pattern = pattern;
             this.endIndex = pattern.length();
             this.lenient = false;
         }
 
-    }
+        /**
+         * @return the dateFormats
+         */
+        public static List<ValidDateFormat> getDateFormats() {
+            return Arrays.asList(dateFormats);
+        }
 
-    /**
-     * Static ordered list of valid date format patterns.
-     */
-    private static ValidDateFormat[] dateFormats;
-    static {
-        dateFormats = new ValidDateFormat[] {
-                new ValidDateFormat("MM/dd/yyyy"),
-                new ValidDateFormat("yyyy-MM-dd HH:mm:ss"),
-                new ValidDateFormat("yyyy-MM-dd"),
-                new ValidDateFormat("yyyy/MM/dd"),
-                new ValidDateFormat("MM-dd-yyyy HH:mm:ss")
-        };
+        /**
+         * @return the pattern
+         */
+        public String getPattern() {
+            return pattern;
+        }
+
+        /**
+         * @return the endIndex
+         */
+        public int getEndIndex() {
+            return endIndex;
+        }
+
+        /**
+         * @return the lenient
+         */
+        public boolean isLenient() {
+            return lenient;
+        }
     }
 
     /**
@@ -297,14 +328,14 @@ public class ISOUtil {
 
         Date outDate = null;
         SimpleDateFormat sdf = new SimpleDateFormat();
-        for (ValidDateFormat fm : dateFormats) {
+        for (ValidDateFormat fm : ValidDateFormat.getDateFormats()) {
             if (outDate != null) {
                 break;
             }
-            sdf.applyPattern(fm.pattern);
-            sdf.setLenient(fm.lenient);
+            sdf.applyPattern(fm.getPattern());
+            sdf.setLenient(fm.isLenient());
             try {
-                int endIndex = (inDate.trim().length() < fm.endIndex) ? inDate.trim().length() : fm.endIndex;
+                int endIndex = (inDate.trim().length() < fm.getEndIndex()) ? inDate.trim().length() : fm.getEndIndex();
                 outDate = sdf.parse(inDate.trim().substring(0, endIndex));
             } catch (ParseException e) {
                 // BUGBUG: outDate can only be null here - this method does nothing!
@@ -328,7 +359,7 @@ public class ISOUtil {
             return null;
         }
         SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern(dateFormats[0].pattern);
+        sdf.applyPattern(ValidDateFormat.getDateFormats().get(0).getPattern());
         return sdf.format(outDate);
     }
 

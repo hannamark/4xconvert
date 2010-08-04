@@ -103,6 +103,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil.ValidDateFormat;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -332,37 +333,6 @@ public class PAUtil {
         }
         return isNull;
     }
-    /**
-     * Private class used to decode and normalize date strings.
-     */
-    private static class ValidDateFormat {
-        // CHECKSTYLE:OFF private static class fields don't necessarily need to be private
-       String pattern;
-        int endIndex;
-        boolean lenient;
-        // CHECKSTYLE:ON
-
-        public ValidDateFormat(String pattern) {
-            this.pattern = pattern;
-            this.endIndex = pattern.length();
-            this.lenient = false;
-        }
-
-    }
-
-    /**
-     * Static ordered list of valid date format patterns.
-     */
-    private static ValidDateFormat[] dateFormats;
-    static {
-        dateFormats = new ValidDateFormat[] {
-                new ValidDateFormat("MM/dd/yyyy"),
-                new ValidDateFormat("yyyy-MM-dd HH:mm:ss"),
-                new ValidDateFormat("yyyy-MM-dd"),
-                new ValidDateFormat("yyyy/MM/dd"),
-                new ValidDateFormat("MM-dd-yyyy HH:mm:ss")
-        };
-    }
 
     /**
      * Convert an input string to a Date.
@@ -377,14 +347,14 @@ public class PAUtil {
 
         Date outDate = null;
         SimpleDateFormat sdf = new SimpleDateFormat();
-        for (ValidDateFormat fm : dateFormats) {
+        for (ValidDateFormat fm : ValidDateFormat.getDateFormats()) {
             if (outDate != null) {
                 break;
             }
-            sdf.applyPattern(fm.pattern);
-            sdf.setLenient(fm.lenient);
+            sdf.applyPattern(fm.getPattern());
+            sdf.setLenient(fm.isLenient());
             try {
-                int endIndex = (inDate.trim().length() < fm.endIndex) ? inDate.trim().length() : fm.endIndex;
+                int endIndex = (inDate.trim().length() < fm.getEndIndex()) ? inDate.trim().length() : fm.getEndIndex();
                 outDate = sdf.parse(inDate.trim().substring(0, endIndex));
             } catch (ParseException e) {
                 // BUGBUG: outDate can only be null here - this method does nothing!
@@ -405,11 +375,11 @@ public class PAUtil {
         }
         Date outDate = null;
         SimpleDateFormat sdf = new SimpleDateFormat();
-        for (ValidDateFormat fm : dateFormats) {
-            sdf.applyPattern(fm.pattern);
+        for (ValidDateFormat fm : ValidDateFormat.getDateFormats()) {
+            sdf.applyPattern(fm.getPattern());
             sdf.setLenient(false);
             try {
-                int endIndex = (inDate.trim().length() < fm.endIndex) ? inDate.trim().length() : fm.endIndex;
+                int endIndex = (inDate.trim().length() < fm.getEndIndex()) ? inDate.trim().length() : fm.getEndIndex();
                 String dateToParse = inDate.trim().substring(0, endIndex);
                 outDate = sdf.parse(dateToParse);
                 break;
@@ -443,7 +413,7 @@ public class PAUtil {
     * @return String
     */
    public static String convertTsToFormattedDate(Ts isoTs) {
-       return convertTsToFormarttedDate(isoTs, dateFormats[0].pattern);
+       return convertTsToFormarttedDate(isoTs, ValidDateFormat.getDateFormats().get(0).getPattern());
    }
 
     /**
@@ -460,7 +430,7 @@ public class PAUtil {
             return null;
         }
         SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern(dateFormats[0].pattern);
+        sdf.applyPattern(ValidDateFormat.getDateFormats().get(0).getPattern());
         return sdf.format(outDate);
     }
     /**
@@ -477,7 +447,7 @@ public class PAUtil {
             return null;
         }
         SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern(dateFormats[1].pattern);
+        sdf.applyPattern(ValidDateFormat.getDateFormats().get(1).getPattern());
         return sdf.format(outDate);
     }
 
