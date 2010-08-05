@@ -526,4 +526,8 @@
         <comment>PO-2383 adding indexes to improve search</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2383.sql"/>
     </changeSet>
+    <changeSet id="PO-2339" author="aevansel">
+        <comment>PO-2339: Updating CSM table structures to mirror those found in the PO database.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2339.sql"/>
+    </changeSet>
 </databaseChangeLog>

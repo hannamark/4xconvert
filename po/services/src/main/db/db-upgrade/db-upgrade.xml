@@ -128,4 +128,8 @@
        <comment>Setting csm_applications settings for po to null.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-1696.sql"/>
     </changeSet>
+    <changeSet id="PO-2339" author="aevansel">
+       <comment>PO-2339: Updating CSM table structures to mirror those found in the PA database.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.3/PO-2339.sql"/>
+    </changeSet>
 </databaseChangeLog>
