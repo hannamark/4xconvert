@@ -84,25 +84,13 @@ public class PopupActionTest extends AbstractRegWebTest {
     @Test
     public void testDisplayOrgListException(){
         popUpAction = new PopupAction();
-        popUpAction.setOrgName("");
         popUpAction.setOrgStAddress("orgStAddress");
-        popUpAction.setCountryName("");
-        popUpAction.setCityName("");
-        popUpAction.setStateName("");
-        popUpAction.setZipCode("");
-        popUpAction.setCtepid("");
         assertEquals("success", popUpAction.displayOrgList());
     }
 
     @Test
     public void testDisplayOrgListWithAllEmptyParam(){
         popUpAction = new PopupAction();
-        popUpAction.setOrgName("");
-        popUpAction.setCountryName("");
-        popUpAction.setCityName("");
-        popUpAction.setStateName("");
-        popUpAction.setZipCode("");
-        popUpAction.setCtepid("");
         assertEquals("success", popUpAction.displayOrgList());
         assertTrue(popUpAction.getActionErrors().contains("Please enter at least one search criteria"));
     }
@@ -111,11 +99,9 @@ public class PopupActionTest extends AbstractRegWebTest {
     public void testDisplayOrgListWithCountryEmpty(){
         popUpAction = new PopupAction();
         popUpAction.setOrgName("OrgName");
-        popUpAction.setCountryName("");
         popUpAction.setCityName("rock");
         popUpAction.setStateName("md");
         popUpAction.setZipCode("342");
-        popUpAction.setCtepid("");
         assertEquals("success", popUpAction.displayOrgList());
         assertEquals(1,popUpAction.getActionErrors().size());
         assertTrue(popUpAction.getActionErrors().contains("Please select a country"));
@@ -180,12 +166,7 @@ public class PopupActionTest extends AbstractRegWebTest {
     @Test
     public void testCreateOrgWithEmpty() throws PAException{
         popUpAction = new PopupAction();
-        popUpAction.setOrgName("");
         popUpAction.setCountryName("aaa");
-        popUpAction.setCityName("");
-        popUpAction.setStateName("");
-        popUpAction.setZipCode("");
-        popUpAction.setEmail("");
         assertEquals("create_org_response", popUpAction.createOrganization());
         assertTrue(popUpAction.getActionErrors().contains("Organization is a required field"));
     }
@@ -193,12 +174,8 @@ public class PopupActionTest extends AbstractRegWebTest {
     @Test
     public void testCreateOrgWithCountryAsUSAWith3LetterStateCode() throws PAException{
         popUpAction = new PopupAction();
-        popUpAction.setOrgName("");
         popUpAction.setCountryName("USA");
-        popUpAction.setCityName("");
         popUpAction.setStateName("abs");
-        popUpAction.setZipCode("");
-        popUpAction.setEmail("");
         assertEquals("create_org_response", popUpAction.createOrganization());
         assertTrue(popUpAction.getActionErrors().contains("2-letter State/Province Code required for USA/Canada"));
     }
@@ -206,11 +183,8 @@ public class PopupActionTest extends AbstractRegWebTest {
     @Test
     public void testCreateOrgWithCountryAsCANWith3LetterStateCode() throws PAException{
         popUpAction = new PopupAction();
-        popUpAction.setOrgName("");
         popUpAction.setCountryName("CAN");
-        popUpAction.setCityName("");
         popUpAction.setStateName("abs");
-        popUpAction.setZipCode("");
         popUpAction.setEmail("email");
         assertEquals("create_org_response", popUpAction.createOrganization());
         assertTrue(popUpAction.getActionErrors().contains("2-letter State/Province Code required for USA/Canada"));
@@ -219,12 +193,8 @@ public class PopupActionTest extends AbstractRegWebTest {
     @Test
     public void testCreateOrgWithCountryAsAUSWith4LetterState() throws PAException{
         popUpAction = new PopupAction();
-        popUpAction.setOrgName("");
         popUpAction.setCountryName("AUS");
-        popUpAction.setCityName("");
         popUpAction.setStateName("ASDAD");
-        popUpAction.setZipCode("");
-        popUpAction.setEmail("");
         assertEquals("create_org_response", popUpAction.createOrganization());
         assertTrue(popUpAction.getActionErrors().contains("2/3-letter State/Province Code required for Australia"));
     }
@@ -284,22 +254,12 @@ public class PopupActionTest extends AbstractRegWebTest {
     @Test
     public void testDisplayPersonsListException() throws PAException{
         popUpAction = new PopupAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        ServletActionContext.setRequest(request);
         assertEquals("success", popUpAction.displayPersonsList());
     }
 
     @Test
     public void testDisplayPersonsListAllParamNull() throws PAException{
         popUpAction = new PopupAction();
-        popUpAction.setFirstName("");
-        popUpAction.setLastName("");
-        popUpAction.setEmail("");
-        popUpAction.setCountry("");
-        popUpAction.setCity("");
-        popUpAction.setState("");
-        popUpAction.setZip("");
-        popUpAction.setCtepId("");
         assertEquals("success", popUpAction.displayPersonsList());
         assertTrue(popUpAction.getActionErrors().contains("Please enter at least one search criteria"));
     }
@@ -311,10 +271,6 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setLastName("lastName");
         popUpAction.setEmail("em@mail.com");
         popUpAction.setCountry("USA");
-        popUpAction.setCity("");
-        popUpAction.setState("");
-        popUpAction.setZip("");
-        popUpAction.setCtepId("");
         assertEquals("success", popUpAction.displayPersonsList());
      }
 
@@ -325,24 +281,13 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setLastName("lastName");
         popUpAction.setEmail("em@mail.com");
         popUpAction.setCountry("USA");
-        popUpAction.setCity("");
-        popUpAction.setState("");
-        popUpAction.setZip("");
-        popUpAction.setCtepId("");
         assertEquals("persons", popUpAction.displayPersonsListDisplayTag());
      }
 
     @Test
     public void testCreatePersonWithEmpty() throws PAException{
         popUpAction = new PopupAction();
-        popUpAction.setFirstName("");
-        popUpAction.setLastName("");
-        popUpAction.setEmail("");
         popUpAction.setCountry("aaa");
-        popUpAction.setCity("");
-        popUpAction.setState("");
-        popUpAction.setZip("");
-        popUpAction.setCtepId("");
         assertEquals("create_pers_response", popUpAction.createPerson());
         assertTrue(popUpAction.getActionErrors().contains("First Name is a required field"));
     }
@@ -352,9 +297,7 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction = new PopupAction();
         popUpAction.setFirstName("firstName");
         popUpAction.setLastName("lastName");
-        popUpAction.setEmail("");
         popUpAction.setCountry("USA");
-        popUpAction.setCity("");
         popUpAction.setState("abs");
         popUpAction.setZip("MAS");
         assertEquals("create_pers_response", popUpAction.createPerson());
@@ -368,9 +311,7 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setLastName("lastName");
         popUpAction.setEmail("email");
         popUpAction.setCountry("CAN");
-        popUpAction.setCity("");
         popUpAction.setState("abs");
-        popUpAction.setZip("");
         assertEquals("create_pers_response", popUpAction.createPerson());
         assertTrue(popUpAction.getActionErrors().contains("2-letter State/Province Code required for USA/Canada"));
     }
@@ -380,11 +321,8 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction = new PopupAction();
         popUpAction.setFirstName("FirstName");
         popUpAction.setLastName("lastName");
-        popUpAction.setEmail("");
         popUpAction.setCountry("AUS");
-        popUpAction.setCity("");
         popUpAction.setState("ASDAD");
-        popUpAction.setZip("");
         assertEquals("create_pers_response", popUpAction.createPerson());
         assertTrue(popUpAction.getActionErrors().contains("2/3-letter State/Province Code required for Australia"));
     }
@@ -455,9 +393,6 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setFirstName("firstName");
         popUpAction.setLastName("lastName");
         popUpAction.setCountry("USA");
-        popUpAction.setCity("");
-        popUpAction.setState("");
-        popUpAction.setZip("");
         popUpAction.setEmail("em@mail.com");
         popUpAction.setCtepId("1");
         assertEquals("persons", popUpAction.displayPersonsListDisplayTag());
@@ -468,9 +403,6 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction = new PopupAction();
         popUpAction.setOrgName("OrgName");
         popUpAction.setCountryName("USA");
-        popUpAction.setCityName("");
-        popUpAction.setStateName("");
-        popUpAction.setZipCode("");
         popUpAction.setEmail("em@mail.com");
         popUpAction.setCtepid("1");
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
@@ -483,9 +415,6 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setLastName("lastName");
         popUpAction.setEmail("em@mail.com");
         popUpAction.setCountry("USA");
-        popUpAction.setCity("");
-        popUpAction.setState("");
-        popUpAction.setZip("");
         popUpAction.setCtepId("2");
         assertEquals("persons", popUpAction.displayPersonsListDisplayTag());
      }
@@ -496,9 +425,6 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setOrgName("OrgName");
         popUpAction.setEmail("em@mail.com");
         popUpAction.setCountryName("USA");
-        popUpAction.setCityName("");
-        popUpAction.setStateName("");
-        popUpAction.setZipCode("");
         popUpAction.setCtepid("2");
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
      }

@@ -239,12 +239,9 @@ public class PopupAction extends ActionSupport implements Preparable {
     private String populatePersons(boolean pagination) throws PAException {
         final HttpServletRequest request = ServletActionContext.getRequest();
         try {
-            if ((firstName != null) && (firstName.equals("")) && (lastName != null) && (lastName.equals(""))
-                    && (email.equals("")) && ctepId != null && !(ctepId.length() > 0)
-                    && (city != null) && (city.equals(""))
-                    && (zip != null) && (zip.equals("")) && (state != null) && (state.equals(""))
-
-                    && country.equals("")) {
+            if (StringUtils.isEmpty(firstName)  && StringUtils.isEmpty(lastName)  && StringUtils.isEmpty(email)
+                    && StringUtils.isEmpty(ctepId) && StringUtils.isEmpty(city) && StringUtils.isEmpty(zip)
+                    && StringUtils.isEmpty(state) && StringUtils.isEmpty(country)) {
                 String message = "Please enter at least one search criteria";
                 persons = null;
                 addActionError(message);
@@ -312,15 +309,16 @@ public class PopupAction extends ActionSupport implements Preparable {
 
     private String populateOrgs(boolean pagination) {
         try {
-            if (orgName.equals("") && countryName.equals("") && cityName.equals("") && zipCode.equals("")
-                    && ctepid != null && !(ctepid.length() > 0)) {
+            if (StringUtils.isEmpty(orgName) && StringUtils.isEmpty(countryName) && StringUtils.isEmpty(cityName)
+                    && StringUtils.isEmpty(zipCode)  && StringUtils.isEmpty(ctepid)) {
                 String message = "Please enter at least one search criteria";
                 orgs = null;
                 addActionError(message);
                 ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, message);
                 return pagination ? ORGS_RESULT : SUCCESS;
             }
-            if (countryName.equals("") && ctepid != null && !(ctepid.length() > 0)) {
+
+            if (StringUtils.isEmpty(countryName) && StringUtils.isEmpty(ctepid)) {
                 String message = "Please select a country";
                 orgs = null;
                 addActionError(message);
@@ -396,7 +394,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             addActionError("Street address is a required field");
         }
 
-        if (countryName != null && countryName.equals("aaa")) {
+        if (StringUtils.isEmpty(countryName)) {
             addActionError("Country is a required field");
         }
 
@@ -420,7 +418,7 @@ public class PopupAction extends ActionSupport implements Preparable {
 
         if (StringUtils.isEmpty(email)) {
             addActionError("Email is a required field");
-        } else if (!PAUtil.isValidEmail(email)) {
+        } else if (StringUtils.isNotEmpty(email) && !PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
         }
         String phoneNumer = getPhoneNumber();
@@ -508,7 +506,7 @@ public class PopupAction extends ActionSupport implements Preparable {
 
         if (StringUtils.isEmpty(email)) {
             addActionError("Email is a required field");
-        } else if (!PAUtil.isValidEmail(email)) {
+        } else if (StringUtils.isNotEmpty(email) && !PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
         }
 
@@ -524,7 +522,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             addActionError("Zip is a required field");
         }
 
-        if (country != null && country.equals("aaa")) {
+        if (StringUtils.isEmpty(country)) {
             addActionError("Country is a required field");
         }
 
