@@ -95,7 +95,6 @@ import gov.nih.nci.security.exceptions.CSException;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 
 import org.apache.log4j.Logger;
@@ -116,13 +115,6 @@ public class CSMUserService implements CSMUserUtil {
         setRegistryUserService(new CSMUserService());
     }
 
-    private SessionContext ejbContext;
-    
-    @Resource
-    void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
-    
     /**
      * {@inheritDoc}
      */
@@ -293,15 +285,15 @@ public class CSMUserService implements CSMUserUtil {
     /**
      * {@inheritDoc}
      */
-    public User lookupUser() throws PAException {
+    public User lookupUser(SessionContext ejbContext) throws PAException {
         User user = null;
         String userName = null;
-        if (this.ejbContext != null && this.ejbContext.getCallerPrincipal() != null) {
+        if (ejbContext != null && ejbContext.getCallerPrincipal() != null) {
             userName = ejbContext.getCallerPrincipal().getName();
             user = CSMUserService.getInstance().getCSMUser(userName);
         }
         if (user == null) {
-            throw new PAException("Unable to lookup user in EJBContext: " + ejbContext + " for username: " + userName);
+            throw new PAException("Unable to lookup user for: " + userName + " in SessionContext: " + ejbContext);
         }
         return user;
     }

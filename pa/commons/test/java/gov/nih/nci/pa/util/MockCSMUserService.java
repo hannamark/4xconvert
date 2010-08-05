@@ -85,16 +85,14 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.security.SecurityServiceProvider;
-import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.security.exceptions.CSConfigurationException;
-import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.ejb.SessionContext;
 
 import org.apache.commons.lang.NotImplementedException;
 
@@ -157,7 +155,7 @@ public class MockCSMUserService implements CSMUserUtil {
         return users.get(0);
     }
 
-    public User lookupUser() throws PAException {
+    public User lookupUser(SessionContext sessionContext) throws PAException {
         return users.get(0);
     }
 }

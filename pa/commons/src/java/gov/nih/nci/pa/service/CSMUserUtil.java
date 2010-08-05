@@ -87,6 +87,8 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.Set;
 
+import javax.ejb.SessionContext;
+
 /**
  * Defines method signatures for CSM User CRUD operations.
  * @author oweisms
@@ -149,10 +151,11 @@ public interface CSMUserUtil {
     void assignUserToGroup(String loginName, String groupName) throws PAException;
 
     /**
-     * Will return the current {@link User} object, 
+     * Will lookup the {@link User} object for the given EJB Context, 
      * or throw {@link PAException} if none exist.
+     * @param ejbContext SessionContext to get Principal
      * @return User
      * @throws PAException on error
      */
-    User lookupUser() throws PAException;
+    User lookupUser(SessionContext ejbContext) throws PAException;
 }
