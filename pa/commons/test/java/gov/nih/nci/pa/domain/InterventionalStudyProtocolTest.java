@@ -176,7 +176,7 @@ public class InterventionalStudyProtocolTest {
         isp.setStartDate(now);
         isp.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         isp.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-        isp.setUserLastUpdated(TestSchema.createUser());
+        isp.setUserLastUpdated(TestSchema.getUser());
         isp.setFdaRegulatedIndicator(Boolean.FALSE);
         isp.setAllocationCode(AllocationCode.NA);
         isp.setDelayedpostingIndicator(Boolean.FALSE);

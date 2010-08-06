@@ -129,7 +129,7 @@ public class RegulatoryAuthorityTest {
         RegulatoryAuthority ra = new RegulatoryAuthority();
         ra.setAuthorityName("BWI reg body");
         ra.setCountry(c);
-        ra.setUserLastUpdated(TestSchema.createUser());
+        ra.setUserLastUpdated(TestSchema.getUser());
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         ra.setDateLastUpdated(now);
         

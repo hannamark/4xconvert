@@ -173,7 +173,7 @@ public class StudyResourcingTest {
         sr.setStudyProtocol(sp);
         sr.setSummary4ReportedResourceIndicator(Boolean.TRUE);
         sr.setTypeCode(SummaryFourFundingCategoryCode.INDUSTRIAL);
-        sr.setUserLastUpdated(TestSchema.createUser());
+        sr.setUserLastUpdated(TestSchema.getUser());
 
         return sr;
     }

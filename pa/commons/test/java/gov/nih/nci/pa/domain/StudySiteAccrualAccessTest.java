@@ -118,9 +118,9 @@ public class StudySiteAccrualAccessTest {
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         ssaa.setStudySite(ss);
-        ssaa.setUserLastCreated(TestSchema.createUser());
+        ssaa.setUserLastCreated(TestSchema.getUser());
         ssaa.setDateLastCreated(new Timestamp(new Date().getTime()));
-        ssaa.setUserLastUpdated(TestSchema.createUser());
+        ssaa.setUserLastUpdated(TestSchema.getUser());
         ssaa.setDateLastUpdated(new Timestamp(new Date().getTime()));
         return ssaa;
     }

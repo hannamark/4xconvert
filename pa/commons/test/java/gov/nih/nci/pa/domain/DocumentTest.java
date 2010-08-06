@@ -144,7 +144,7 @@ public class DocumentTest {
         create.setTypeCode(DocumentTypeCode.PROTOCOL_DOCUMENT);
         create.setActiveIndicator(true);
         create.setFileName("Protocol_Document.doc");
-        create.setUserLastUpdated(TestSchema.createUser());
+        create.setUserLastUpdated(TestSchema.getUser());
         create.setDateLastUpdated(now);
         return create;
     }

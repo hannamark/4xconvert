@@ -273,9 +273,9 @@ public class StudyProtocolTest  {
         sp.setStartDate(now);
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-        sp.setUserLastUpdated(TestSchema.createUser());
+        sp.setUserLastUpdated(TestSchema.getUser());
         sp.setDateLastCreated(now);
-        sp.setUserLastUpdated(TestSchema.createUser());
+        sp.setUserLastUpdated(TestSchema.getUser());
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setAmendmentReasonCode(AmendmentReasonCode.BOTH);
         sp.setStatusDate(now);

@@ -157,7 +157,7 @@ public class StudyCoordinatingCenterRoleTest  {
         StudyCoordinatingCenterRole create = new StudyCoordinatingCenterRole();
         create.setStudyCoordinatingCenter(scc);
         create.setResponsibilityCode(rrc);
-        create.setUserLastUpdated(TestSchema.createUser());
+        create.setUserLastUpdated(TestSchema.getUser());
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setDateLastUpdated(now);
 

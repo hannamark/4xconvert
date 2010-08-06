@@ -198,6 +198,7 @@ public class TestSchema {
 
         private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
+        private static User user;
         /**
          *
          */
@@ -329,7 +330,7 @@ public class TestSchema {
             personIds = new ArrayList<Long>();
             countries = new ArrayList<Country>();
 
-            User curator = createUser();
+            User curator = getUser();
             addUpdObject(curator);
             
             StudyProtocol sp = new InterventionalStudyProtocol();
@@ -744,13 +745,19 @@ public class TestSchema {
                 return IiConverter.convertToStudyProtocolIi(sp.getId());
             }
         
-        public static User createUser() {
-            User user = new User();
-            user.setLoginName("Abstractor: " + new Date());
-            user.setFirstName("Joe");
-            user.setLastName("Smith");
-            user.setUpdateDate(new Date());
-            TestSchema.addUpdObject(user);
+        public static User getUser() {
+            return getUser(false);
+        }
+        
+        public static User getUser(Boolean createNew) {
+            if ( user == null || createNew ) {
+                user = new User();
+                user.setLoginName("Abstractor: " + new Date());
+                user.setFirstName("Joe");
+                user.setLastName("Smith");
+                user.setUpdateDate(new Date());
+                TestSchema.addUpdObject(user);
+            }
             return user;
         }
 }

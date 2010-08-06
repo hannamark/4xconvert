@@ -141,8 +141,8 @@ public class StudyMilestoneTest {
         PlannedActivity pa = new PlannedActivity();
         pa.setId(TestSchema.plannedActivityIds.get(0));
         Date now = new Date();
-        User user1 = TestSchema.createUser();
-        User user2 = TestSchema.createUser();
+        User user1 = TestSchema.getUser();
+        User user2 = TestSchema.getUser();
         
         m.setCommentText("12345");
         m.setMilestoneCode(MilestoneCode.INITIAL_ABSTRACTION_VERIFY);

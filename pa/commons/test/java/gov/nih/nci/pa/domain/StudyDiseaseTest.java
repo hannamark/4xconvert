@@ -152,9 +152,9 @@ public class StudyDiseaseTest {
         create.setStudyProtocol(studyProtocol);
         create.setDisease(disease);
         create.setLeadDiseaseIndicator(false);
-        create.setUserLastCreated(TestSchema.createUser());
+        create.setUserLastCreated(TestSchema.getUser());
         create.setDateLastCreated(new Timestamp(new Date().getTime()));
-        create.setUserLastUpdated(TestSchema.createUser());
+        create.setUserLastUpdated(TestSchema.getUser());
         create.setDateLastUpdated(new Timestamp(new Date().getTime()));
         return create;
     }

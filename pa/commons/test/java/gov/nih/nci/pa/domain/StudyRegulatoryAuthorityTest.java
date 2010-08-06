@@ -143,7 +143,7 @@ public class StudyRegulatoryAuthorityTest  {
         StudyRegulatoryAuthority sra = new StudyRegulatoryAuthority();
         sra.setRegulatoryAuthority(ra);
         sra.setStudyProtocol(sp);
-        sra.setUserLastUpdated(TestSchema.createUser());
+        sra.setUserLastUpdated(TestSchema.getUser());
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         sra.setDateLastUpdated(now);
         return sra;

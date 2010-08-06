@@ -62,7 +62,7 @@ public class MappingIdentifierTest {
         create.setIdentifierName("idName");
         create.setFromIdentifier(1L);
         create.setToIdentifier(2L);
-        create.setUserLastUpdated(TestSchema.createUser());
+        create.setUserLastUpdated(TestSchema.getUser());
         create.setDateLastUpdated(now);
         return create;
     }

@@ -148,7 +148,7 @@ public class ObservationalStudyProtocolTest {
         osp.setStartDate(ISOUtil.dateStringToTimestamp("12/31/2010"));
         osp.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         osp.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-        osp.setUserLastUpdated(TestSchema.createUser());
+        osp.setUserLastUpdated(TestSchema.getUser());
         osp.setProprietaryTrialIndicator(Boolean.FALSE);
         osp.setSubmissionNumber(1);
         return osp;

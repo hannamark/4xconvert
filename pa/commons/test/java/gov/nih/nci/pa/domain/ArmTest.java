@@ -117,7 +117,7 @@ public class ArmTest {
         PlannedActivity pa = new PlannedActivity();
         pa.setId(TestSchema.plannedActivityIds.get(0));
         Date now = new Date();
-        User user = TestSchema.createUser();
+        User user = TestSchema.getUser();
         
         a.setName("name");
         a.setTypeCode(ArmTypeCode.EXPERIMENTAL);
@@ -149,7 +149,7 @@ public class ArmTest {
         Long armId = TestSchema.armIds.get(0);
         Arm arm = (Arm) sess.get(Arm.class, armId);
         String oldName = arm.getName();
-        User newUser = TestSchema.createUser();
+        User newUser = TestSchema.getUser(true);
         assertNotNull(oldName);
         assertFalse(newUser.equals(arm.getUserLastUpdated()));
         sess.clear();

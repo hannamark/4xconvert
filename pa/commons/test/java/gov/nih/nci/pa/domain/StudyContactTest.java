@@ -248,7 +248,7 @@ public class StudyContactTest   {
         sc.setCity("herndon");
         sc.setCountry(c);
         sc.setPostalCode("20111");
-        sc.setUserLastUpdated(TestSchema.createUser());
+        sc.setUserLastUpdated(TestSchema.getUser());
         sc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         sc.setDateLastUpdated(now);

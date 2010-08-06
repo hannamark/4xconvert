@@ -131,7 +131,7 @@ public class PerformedActivityTest {
         pa.setDateLastUpdated(new Date());
         pa.setStudyProtocol(sp);
         pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode());
-        pa.setUserLastUpdated(TestSchema.createUser());
+        pa.setUserLastUpdated(TestSchema.getUser());
         sess.saveOrUpdate(pa);
         sess.flush();
         sess.clear();

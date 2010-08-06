@@ -139,7 +139,7 @@ public class OrganizationTest   {
      * @return Organization
      */
     public static Organization createOrganizationObj() {
-        return createOrganizationObj(TestSchema.createUser());
+        return createOrganizationObj(TestSchema.getUser());
     }
 
     /**

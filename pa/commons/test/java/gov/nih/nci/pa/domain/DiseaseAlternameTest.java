@@ -147,9 +147,9 @@ public class DiseaseAlternameTest {
         create.setDisease(disease);
         create.setStatusCode(ActiveInactiveCode.ACTIVE);
         create.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
-        create.setUserLastCreated(TestSchema.createUser());
+        create.setUserLastCreated(TestSchema.getUser());
         create.setDateLastCreated(new Timestamp(new Date().getTime()));
-        create.setUserLastUpdated(TestSchema.createUser());
+        create.setUserLastUpdated(TestSchema.getUser());
         create.setDateLastUpdated(new Timestamp(new Date().getTime()));
         return create;
     }
