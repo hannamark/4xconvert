@@ -28,7 +28,6 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/clm-4.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/dom4j-1.6.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/hsqldb-1.8.0.10.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/test/mockrunner-0.4.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/postgresql-8.3-603.jdbc3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/security-4.2.jar"/>
@@ -53,5 +52,6 @@
 	<classpathentry kind="var" path="PA_LIB"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/commons-beanutils-1.8.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/cgmmapi-0.7.0.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/test/mockrunner-0.4.1.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

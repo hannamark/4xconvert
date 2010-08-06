@@ -86,22 +86,26 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         criteria.setIdentifierType("");
         criteria.setOfficialTitle("");
         criteria.setOrganizationType("");
-        action.setCriteria(criteria );
-        assertEquals("success",action.query());
+        criteria.setPhaseCode("");
+        criteria.setPrimaryPurposeCode("");
+        action.setCriteria(criteria);
+        assertEquals("success", action.query());
     }
+
     @Test
-    public void testQueryWithException(){
+    public void testQueryWithException() {
         action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("");
         criteria.setIdentifierType("");
         criteria.setOfficialTitle("ThrowException");
         criteria.setOrganizationType("");
-        action.setCriteria(criteria );
-        assertEquals("error",action.query());
+        action.setCriteria(criteria);
+        assertEquals("error", action.query());
     }
+
     @Test
-    public void testQueryNCIType(){
+    public void testQueryNCIType() {
         action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("a");
@@ -110,11 +114,12 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         criteria.setOrganizationType("");
         criteria.setOrganizationId("");
         criteria.setParticipatingSiteId("1");
-        action.setCriteria(criteria );
-        assertEquals("success",action.query());
+        action.setCriteria(criteria);
+        assertEquals("success", action.query());
     }
+
     @Test
-    public void testQueryNCTType(){
+    public void testQueryNCTType() {
         action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("nct");
@@ -123,11 +128,12 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         criteria.setOrganizationType("organizationType");
         criteria.setOrganizationId("1");
         criteria.setParticipatingSiteId("1");
-        action.setCriteria(criteria );
-        assertEquals("success",action.query());
+        action.setCriteria(criteria);
+        assertEquals("success", action.query());
     }
+
     @Test
-    public void testQueryLeadOrgType(){
+    public void testQueryLeadOrgType() {
         action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("lead");
@@ -136,19 +142,21 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         criteria.setOrganizationType("organizationType");
         criteria.setOrganizationId("1");
         criteria.setParticipatingSiteId("1");
-        action.setCriteria(criteria );
-        assertEquals("success",action.query());
+        action.setCriteria(criteria);
+        assertEquals("success", action.query());
     }
+
     @Test
-    public void testQueryPI(){
+    public void testQueryPI() {
         action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setPrincipalInvestigatorId("1");
-        action.setCriteria(criteria );
-        assertEquals("success",action.query());
+        action.setCriteria(criteria);
+        assertEquals("success", action.query());
     }
+
     @Test
-    public void testExecute(){
+    public void testExecute() {
         action = new SearchTrialAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
@@ -159,20 +167,20 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         session.setAttribute("disclaimer", "noaccept");
         request.setSession(session);
         ServletActionContext.setRequest(request);
-        assertEquals("show_Disclaimer_Page",action.execute());
+        assertEquals("show_Disclaimer_Page", action.execute());
         action = new SearchTrialAction();
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         session.setAttribute("protocolId", "1");
         request.setSession(session);
         ServletActionContext.setRequest(request);
-        assertEquals("show_Disclaimer_Page",action.execute());
+        assertEquals("show_Disclaimer_Page", action.execute());
         session.setAttribute("protocolId", "1");
         session.setAttribute("disclaimer", "accept");
         request.setSession(session);
         request.setupAddParameter("trialAction", "submit");
         ServletActionContext.setRequest(request);
-        //primeData();
+        // primeData();
         try {
             action.execute();
         } catch (Exception e) {
@@ -186,7 +194,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         request.setSession(session);
         ServletActionContext.setRequest(request);
         try {
-        action.execute();
+            action.execute();
         } catch (Exception e) {
 
         }
@@ -198,7 +206,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         request.setSession(session);
         ServletActionContext.setRequest(request);
         try {
-        action.execute();
+            action.execute();
         } catch (Exception e) {
 
         }
@@ -216,8 +224,9 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
 
         }
     }
+
     @Test
-    public void testView(){
+    public void testView() {
         action = new SearchTrialAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
@@ -230,8 +239,9 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
 
         }
     }
+
     @Test
-    public void testViewUsercreated (){
+    public void testViewUsercreated() {
         action = new SearchTrialAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
@@ -245,6 +255,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
 
         }
     }
+
     @Test
     public void testViewDoc() {
         action = new SearchTrialAction();
@@ -258,31 +269,33 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         ServletActionContext.setResponse(response);
         action.viewDoc();
     }
+
     @Test
     public void testGetMyPartiallySavedTrial() {
         action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setOfficialTitle("officialTitle");
-        action.setCriteria(criteria );
+        action.setCriteria(criteria);
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         request.setupAddParameter("usercreated", "1");
         request.setSession(session);
         ServletActionContext.setRequest(request);
-        assertEquals("success",action.getMyPartiallySavedTrial());
+        assertEquals("success", action.getMyPartiallySavedTrial());
 
         action = new SearchTrialAction();
         criteria = new SearchProtocolCriteria();
         criteria.setOfficialTitle("ThrowException");
-        action.setCriteria(criteria );
+        action.setCriteria(criteria);
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         request.setupAddParameter("usercreated", "1");
         request.setSession(session);
         ServletActionContext.setRequest(request);
-        assertEquals("success",action.getMyPartiallySavedTrial());
+        assertEquals("success", action.getMyPartiallySavedTrial());
         assertNotNull(action.getActionErrors());
     }
+
     @Test
     public void testPartiallySubmittedView() {
         action = new SearchTrialAction();
@@ -291,17 +304,18 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         request.setupAddParameter("studyProtocolId", "1");
         request.setSession(session);
         ServletActionContext.setRequest(request);
-        assertEquals("partialView",action.partiallySubmittedView());
+        assertEquals("partialView", action.partiallySubmittedView());
 
         action = new SearchTrialAction();
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         request.setSession(session);
         ServletActionContext.setRequest(request);
-        assertEquals("error",action.partiallySubmittedView());
+        assertEquals("error", action.partiallySubmittedView());
     }
+
     @Test
-    public void testSendXmlEmail(){
+    public void testSendXmlEmail() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         action = new SearchTrialAction();
@@ -313,10 +327,11 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         request.setSession(session);
         request.setRemoteUser("firstName");
         ServletActionContext.setRequest(request);
-        assertEquals("success",action.sendXml());
+        assertEquals("success", action.sendXml());
     }
+
     @Test
-    public void testMyTrialsOnly(){
+    public void testMyTrialsOnly() {
         action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("");
@@ -324,11 +339,11 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         criteria.setMyTrialsOnly(true);
         criteria.setOfficialTitle("");
         criteria.setOrganizationType("");
-        action.setCriteria(criteria );
+        action.setCriteria(criteria);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteUser("userLastCreated");
         ServletActionContext.setRequest(request);
-        assertEquals("success",action.query());
-        assertTrue(action.getRecords().size() >=1);
+        assertEquals("success", action.query());
+        assertTrue(action.getRecords().size() >= 1);
     }
 }

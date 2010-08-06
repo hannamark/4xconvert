@@ -21,12 +21,14 @@ import com.mockrunner.mock.web.MockHttpSession;
  *
  */
 public class DisclaimerActionTest extends AbstractRegWebTest {
+
     private final DisclaimerAction action = new DisclaimerAction();
     @Before
     public void setup() {
         CSMUserService.getInstance();
         CSMUserService.setRegistryUserService(new MockCSMUserService());
     }
+
     @Test
     public void testActionNameProperty() {
         assertNull(action.getActionName());
@@ -72,4 +74,17 @@ public class DisclaimerActionTest extends AbstractRegWebTest {
         assertEquals("accept", ServletActionContext.getRequest().getSession().getAttribute("disclaimer"));
         assertEquals("submitTrial.action", action.getActionName());
     }
+
+    @Test
+    public void testAccept2() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("actionName", "Test");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        action.accept();
+        assertEquals("accept", ServletActionContext.getRequest().getSession().getAttribute("disclaimer"));
+        assertEquals("Test", action.getActionName());
+    }
+
 }

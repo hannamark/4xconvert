@@ -3,17 +3,21 @@
  */
 package gov.nih.nci.registry.service;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Vrushali
@@ -39,6 +43,7 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         list.add(spQueryDTO);
         spQueryDTO = new StudyProtocolQueryDTO();
         spQueryDTO.setStudyProtocolId(2L);
+        spQueryDTO.setLeadOrganizationId(2L);
         spQueryDTO.setNciIdentifier("NCI-2009-00002");
         spQueryDTO.setLocalStudyProtocolIdentifier("DupTestinglocalStudyProtocolId");
         spQueryDTO.setOfficialTitle("officialTitle");
@@ -47,6 +52,7 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         spQueryDTO.setCtgovXmlRequiredIndicator(true);
         list.add(spQueryDTO);
         spQueryDTO = new StudyProtocolQueryDTO();
+        spQueryDTO.setLeadOrganizationId(3L);
         spQueryDTO.setStudyProtocolId(3L);
         spQueryDTO.setNciIdentifier("NCI-2009-00003");
         spQueryDTO.setLocalStudyProtocolIdentifier("localStudyProtocolIdentifier3");
@@ -99,8 +105,23 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
      * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByOrgIdentifier(java.lang.Long)
      */
     public List<StudyProtocol> getStudyProtocolByOrgIdentifier(Long orgIdentifier) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        List<StudyProtocol> returnList = new ArrayList<StudyProtocol>();
+        for (StudyProtocolQueryDTO spDto : list) {
+            if (spDto.getLeadOrganizationId().equals(orgIdentifier)) {
+                StudyProtocol sp = new StudyProtocol();
+                sp.setId(spDto.getStudyProtocolId());
+                Set<Ii> others = new HashSet<Ii>();
+                Ii nciid = IiConverter.convertToAssignedIdentifierIi(spDto.getNciIdentifier());
+                others.add(nciid);
+                sp.setOtherIdentifiers(others);
+                sp.setOfficialTitle(spDto.getOfficialTitle());
+                sp.setProprietaryTrialIndicator(Boolean.valueOf(spDto.getIsProprietaryTrial()));
+                sp.setCtgovXmlRequiredIndicator(spDto.getCtgovXmlRequiredIndicator());
+                sp.setUserLastCreated(null);
+                returnList.add(sp);
+            }
+        }
+        return returnList;
     }
 
 }

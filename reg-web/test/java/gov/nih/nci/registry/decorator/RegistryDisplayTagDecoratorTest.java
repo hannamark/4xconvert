@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.decorator;
 
@@ -39,7 +39,7 @@ public class RegistryDisplayTagDecoratorTest {
     private static final int currentListIndex = 1;
     private static final int currentViewIndex = 1;
     RegistryDisplayTagDecorator decorator  ;
-    @Before 
+    @Before
     public void setup() {
         decorator= new RegistryDisplayTagDecorator();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -69,7 +69,7 @@ public class RegistryDisplayTagDecoratorTest {
         dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("Amend",decorator.getAmend());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
         dto.setIsProprietaryTrial(true);
@@ -77,22 +77,22 @@ public class RegistryDisplayTagDecoratorTest {
         dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("",decorator.getAmend());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("muserLastCreated");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
         dto.setStudyStatusCode(StudyStatusCode.APPROVED);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("",decorator.getAmend());
-        
-        
+
+
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
         dto.setStudyStatusCode(StudyStatusCode.DISAPPROVED);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("",decorator.getAmend());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
@@ -106,7 +106,7 @@ public class RegistryDisplayTagDecoratorTest {
         dto.setStudyStatusCode(StudyStatusCode.COMPLETE);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("",decorator.getAmend());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
@@ -132,20 +132,20 @@ public class RegistryDisplayTagDecoratorTest {
         dto.setUserLastCreated(null);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertNull(decorator.getDocumentWorkflowStatusCode());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
         dto.setUserLastCreated("mismatchUser");
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertNull(decorator.getDocumentWorkflowStatusCode());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
         dto.setUserLastCreated("userLastCreated");
         dto.setStudyProtocolId(1L);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals(DocumentWorkflowStatusCode.ABSTRACTED,decorator.getDocumentWorkflowStatusCode());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
         dto.setUserLastCreated("userLastCreated");
@@ -204,7 +204,7 @@ public class RegistryDisplayTagDecoratorTest {
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertNull(decorator.getInstProgramCode());
     }
-    @Test 
+    @Test
     public void testGetProprietaryTypeCode() {
         TrialDocumentWebDTO dto = new TrialDocumentWebDTO();
         dto.setTypeCode("Protocol Document");
@@ -224,14 +224,14 @@ public class RegistryDisplayTagDecoratorTest {
         dto.setNciIdentifier("");
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("Complete",decorator.getCompletePartialSubmission());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("muserLastCreated");
         //dto.setIsProprietaryTrial("");
         dto.setNciIdentifier("");
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("",decorator.getCompletePartialSubmission());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("muserLastCreated");
         //dto.setIsProprietaryTrial("");
@@ -248,14 +248,14 @@ public class RegistryDisplayTagDecoratorTest {
         dto.setStudyProtocolId(1L);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("Delete",decorator.getDeletePartialSubmission());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("muserLastCreated");
         //dto.setIsProprietaryTrial("");
         dto.setNciIdentifier("");
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("",decorator.getDeletePartialSubmission());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("muserLastCreated");
         //dto.setIsProprietaryTrial("");
@@ -263,4 +263,23 @@ public class RegistryDisplayTagDecoratorTest {
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("",decorator.getDeletePartialSubmission());
     }
+
+    @Test
+    public void testGetTrialCategory() {
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setUserLastCreated("userLastCreated");
+        dto.setIsProprietaryTrial(true);
+        dto.setNciIdentifier("");
+        dto.setStudyProtocolId(1L);
+        decorator.initRow(dto, currentViewIndex, currentListIndex);
+        assertEquals("Proprietary Trial", decorator.getTrialCategory());
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setUserLastCreated("muserLastCreated");
+        dto.setIsProprietaryTrial(false);
+        dto.setNciIdentifier("");
+        decorator.initRow(dto, currentViewIndex, currentListIndex);
+        assertEquals("Non Proprietary Trial", decorator.getTrialCategory());
+    }
+
 }

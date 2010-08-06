@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.action;
 
@@ -52,7 +52,18 @@ public class BatchHelperTest {
         f = new File(fileUrl.toURI());
         assertNotNull(helper.processExcel(f.getAbsolutePath()));
         } catch (Exception e) {
-            
+
         }
     }
+
+    @Test
+    public void testrun() {
+        helper = new BatchHelper("uploadLoc", "dataFileName", "unzipLoc", "userName", "");
+        try {
+            helper.run();
+        } catch (Exception e) {
+
+        }
+    }
+
 }
