@@ -1,7 +1,7 @@
 <ivysettings>
     <property name="nci.ivy.repo" value="https://ncisvn.nci.nih.gov/svn/cbiit-ivy-repo/trunk" />
     <property name="nci.cagrid.ivy.repo" value="https://ncisvn.nci.nih.gov/svn/cagrid-repo-copy/trunk" />
-    <property name="ivy.resolve.default.type.filter" value="jar" />
+    <property name="ivy.resolve.default.type.filter" value="jar,xsd" />
     <settings defaultResolver="nci-chain" />
     <caches defaultCacheDir="${user.home}/.ivy2-${ant.project.name}" useOrigin="true"/>
     <resolvers>
@@ -21,12 +21,8 @@
                 <artifact pattern="${nci.cagrid.ivy.repo}/repository-1.3/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
                 <artifact pattern="${nci.cagrid.ivy.repo}/repository-1.3/[organisation]/[module]/[revision]/[artifact].[ext]" />
             </url>
-            <!--  The below should be removed once our older libraries have been migrated to the new repo by Steve Saksa. -->
-            <url name="cbiit-ivy-repo-old">
-                <!-- remote enterprise repository -->
-                <artifact pattern="http://gforge.nci.nih.gov/svnroot/commonlibrary/trunk/ivy-repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
-                <ivy pattern="http://gforge.nci.nih.gov/svnroot/commonlibrary/trunk/ivy-repo/[organisation]/[module]/[revision]/ivy.xml" />
-            </url>
+            <!-- As a last resort, use the jboss maven repo. It contains some jars that aren't in our mirror, namely the lastest version of mockrunner. -->
+            <ibiblio name="jboss-maven-repo" m2compatible="true" root=" http://repository.jboss.org/maven2/" changingPattern=".*SNAPSHOT" />
         </chain>
     </resolvers>
 </ivysettings>

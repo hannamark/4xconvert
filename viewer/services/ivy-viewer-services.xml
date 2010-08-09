@@ -28,7 +28,7 @@
     <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="net.htmlparser.jericho" name="jericho-html"            rev="2.4"             conf="compile->master"/>
     <dependency org="gov.nih.nci.security"   name="clm"                     rev="4.0"             conf="compile->master"/>
-    <dependency org="ncicb"                  name="iso-datatypes"           rev="2.0.0-alpha1"    conf="compile->master"/>
+    <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"           rev="2.0.0-alpha1"    conf="compile->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.2"             conf="compile->master"/>
     <dependency org="asm"                    name="asm"                     rev="3.1"             conf="compile->master"/>
     <dependency org="asm"                    name="asm-attrs"               rev="1.5.3"           conf="compile->master"/>
@@ -49,9 +49,9 @@
     <dependency org="commons-beanutils"      name="commons-beanutils"       rev="1.8.0"           conf="test->master"/>
 
     <!-- other test targets -->
-    <dependency org="checkstyle"                name="checkstyle-all"          rev="5.1"             conf="test-checkstyle->runtime"/>
+    <dependency org="checkstyle"                name="checkstyle"              rev="5.0"             conf="test-checkstyle->master,runtime"/>
     <dependency org="net.sourceforge.cobertura" name="cobertura"               rev="1.9"             conf="test-cobertura->master,runtime"/>
     <dependency org="pmd"                       name="pmd"                     rev="4.2.2"           conf="test-pmd->master,runtime"/>
-    <dependency org="redhillconsulting"         name="simian"                  rev="2.2.24"          conf="test-simian->runtime"/>
+    <dependency org="redhill"                   name="simian"                  rev="2.2.4"           conf="test-simian->master,runtime"/>
   </dependencies>
 </ivy-module>

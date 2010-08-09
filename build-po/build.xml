@@ -187,21 +187,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <os family="windows" />
     </condition>
 
-    <property name="bda-download.file" value="bda-ivy-build.xml" />
+    <property name="bda-download.file" value="bda-ivy-2.0.0-build.xml" />
     <!-- retrive ivy files then retrieve bda files and librarires
-  <mkdir dir="${bda-download.dir}" />
-  <property name="bda-download.src.url" value="http://gforge.nci.nih.gov/svnroot/automation/trunk/software/bda-download/${bda-download.file}"/>
-  <get src="${bda-download.src.url}" dest="${bda-download.dir}/${bda-download.file}"/>
-  -->
-    <ant inheritAll="false" inheritRefs="false" antfile="bda-ivy-build.xml" target="retrieve-bda" dir="${bda-download.dir}">
+        <mkdir dir="${bda-download.dir}" />
+        <property name="bda-download.src.url" value="http://gforge.nci.nih.gov/svnroot/automation/trunk/software/bda-download/${bda-download.file}"/>
+        <get src="${bda-download.src.url}" dest="${bda-download.dir}/${bda-download.file}"/>
+    -->
+    <ant inheritAll="false" inheritRefs="false" antfile="bda-ivy-2.0.0-build.xml" target="retrieve-bda" dir="${bda-download.dir}">
         <property name="bda.version" value="${bda.version}" />
         <property name="bda-utils.dir" location="${bda-utils.dir}" />
         <property name="lib.dir" location="${lib.dir}" />
         <property name="software.dir" location="${software.dir}" />
         <property name="commonlibrary.dir" location="${commonlibrary.dir}" />
-        <!-- Use below for old ivy repo -->
-        <!--<property name="ivy.settings.file" value="ivy-bda-settings.xml"/>-->
-        <!-- Use below for new ivy repo -->
         <property name="ivy.settings.file" value="cbiit-ivy-bda-settings.xml" />
         <property name="target.dir" location="${target.dir}" />
         <property name="local.cbiit-ivy-repo.dir" value="${local.cbiit-ivy-repo.dir}" />
@@ -308,7 +305,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="ivy:clean" description="Clean">
         <ivy:settings file="${bda-download.dir}/${ivy.bda.settings.file}" />
         <ivy:cleancache />
-        <ant inheritAll="false" inheritRefs="false" antfile="bda-ivy-build.xml" target="ivy-cleancache" dir="${bda-download.dir}">
+        <ant inheritAll="false" inheritRefs="false" antfile="bda-ivy-2.0.0-build.xml" target="ivy-cleancache" dir="${bda-download.dir}">
             <property name="bda-utils.dir" location="${bda-utils.dir}" />
             <property name="lib.dir" location="${lib.dir}" />
             <property name="software.dir" location="${software.dir}" />
@@ -983,8 +980,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <target name="init:ivy">
         <mkdir dir="${local.repo.dir}" />
-        <property name="ivy.dep.file" value="${bda-download.dir}/ivy-bda.xml" />
-        <ivy:settings file="${bda-download.dir}/ivy-bda-settings.xml" />
+        <property name="ivy.dep.file" value="${bda-download.dir}/ivy-bda-2.0.0.xml" />
+        <ivy:settings file="${bda-download.dir}/cbiit-ivy-bda-settings.xml" />
     </target>
 
     <target name="ivy-test-selenium" depends="init:ivy" description="Updates the local ivy repository">

@@ -6,7 +6,7 @@ $HeadURL$
 
 This ant build file downloads the bda project from the official NCICB Ivy Repository.  It also downloads files required to complete the operation if they do not exist.  This script aslo includes some sample publish tasks.  It can be called from other build scripts to download the bda project and it's supporting libraries.  Below is what you might add to your build.xml to use this script.
 
-<ant inheritAll="false" inheritRefs="false" antfile="bda-ivy-build.xml"
+<ant inheritAll="false" inheritRefs="false" antfile="bda-ivy-2.0.0-build.xml"
 	target="retrieve-bda">
 	<property name="bda-utils.dir" value="${bda-utils.dir}"/>
 	<property name="lib.dir" value="${lib.dir}"/>
@@ -24,10 +24,11 @@ This ant build file downloads the bda project from the official NCICB Ivy Reposi
 	<property name="bda.version" value="1.5.18" />
 
 	<property name="ivy.jar.file" value="ivy-2.0.0.jar" />
-	<property name="ivy.settings.file" value="ivy-bda-settings.xml" />
+	<property name="ivy.settings.file" value="cbiit-ivy-bda-settings.xml" />
 	<property name="ivy.bda.file" value="ivy-bda-2.0.0.xml" />
-
-	<property name="ivy.src.url" value="http://gforge.nci.nih.gov/svnroot/commonlibrary/trunk/ivy-repo/apache/ivy/2.0.0/${ivy.jar.file}" />
+    
+    <property name="ivy.repo.url" value="https://ncisvn.nci.nih.gov/svn/cbiit-ivy-repo/trunk" />
+	<property name="ivy.src.url" value="https://ncisvn.nci.nih.gov/svn/maven-mirror/trunk/org/apache/ivy/ivy/2.0.0/${ivy.jar.file}" />
 	<property name="ivy-bda.src.url.base" value="http://gforge.nci.nih.gov/svnroot/automation/trunk/software/bda-download" />
 
 	<property name="ivy.dest.file" value="${lib.dir}/${ivy.jar.file}" />
@@ -114,7 +115,6 @@ This ant build file downloads the bda project from the official NCICB Ivy Reposi
 	<!-- This is an example target demonstrating publishing modules to the local ivy repository.  It is currently not working because of cache naming patterns -->
 	<target name="ivy-publish">
 		<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath" />
-		<property name="ivy.repo.url" value="http://gforge.nci.nih.gov/svnroot/commonlibrary/trunk" />
 		<property name="ivy.sample.path" value="ivy-repo/jakarta/commons-logging/1.0.4" />
 		<property name="ivy.sample.file" value="commons-logging-1.0.4.jar" />
 		<property name="ivy.sample.ivy.jar.file" value="ivy.xml" />

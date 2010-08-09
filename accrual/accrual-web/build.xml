@@ -221,7 +221,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle">
-        <taskdef resource="checkstyletask.properties" classpath="${test-checkstyle.jar.dir}/checkstyle-all-5.1.jar"/>
+        <taskdef resource="checkstyletask.properties" classpathref="test-checkstyle.classpath"/>
         <checkstyle configurl="${checkstyle.url}" failOnViolation="true">
             <!-- Checkstyle sometimes has a problem finding custom exceptions without explicitly providing a classpath
                containing those exceptions - see http://jira.codehaus.org/secure/ViewIssue.jspa?key=MPCHECKSTYLE-20 -->
@@ -256,8 +256,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-simian">
-       <taskdef resource="simiantask.properties"
-             classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
+       <taskdef resource="simiantask.properties" classpathref="test-simian.classpath"/>
        <simian>
             <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain" toFile="${web.report.dir}/simian.txt"/>

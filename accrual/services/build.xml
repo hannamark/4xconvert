@@ -252,7 +252,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle">
-        <taskdef resource="checkstyletask.properties" classpath="${test-checkstyle.jar.dir}/checkstyle-all-5.1.jar"/>
+        <taskdef resource="checkstyletask.properties" classpathref="test-checkstyle.classpath"/>
         <checkstyle configurl="${checkstyle.url}" failOnViolation="true">
             <fileset dir="src">
                     <include name="**/accrual/**/*.java"/>
@@ -289,8 +289,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-simian">
-       <taskdef resource="simiantask.properties"
-             classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
+       <taskdef resource="simiantask.properties" classpathref="test-simian.classpath"/>
        <simian>
                <fileset dir="src">
                      <include name="**/accrual/**/*.java"/>
