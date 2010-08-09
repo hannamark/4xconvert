@@ -91,7 +91,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
  * @author hreinhart
  *
  */
-@SuppressWarnings("PMD.TooManyFields")
 public class AverageMilestoneResultDto {
 
     private Cd milestoneCode = CdConverter.convertToCd(null);

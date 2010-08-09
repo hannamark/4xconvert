@@ -119,8 +119,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     private static final String GRID_CONTEXT_NAME = "Gr1DU5er";
     private final Class<BO> typeArgument;
     private final Class<CONVERTER> converterArgument;
-    @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
-    private final Logger logger;
+    private static final Logger LOG = Logger.getLogger(AbstractBaseAccrualBean.class);
     private SessionContext ejbContext;
 
     /**
@@ -129,12 +128,12 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     protected SessionContext getEjbContext() {
         return ejbContext;
     }
-    
+
     @Resource
     void setSessionContext(SessionContext ctx) {
         this.ejbContext = ctx;
     }
-    
+
     /**
      * default constructor.
      */
@@ -148,16 +147,8 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         ParameterizedType parameterizedType = (ParameterizedType) type;
         typeArgument = (Class) parameterizedType.getActualTypeArguments()[1];
         converterArgument = (Class) parameterizedType.getActualTypeArguments()[2];
-        logger = Logger.getLogger(typeArgument);
     }
-    
-    /**
-     * @return log4j Logger
-     */
-    protected  Logger getLogger() {
-        return logger;
-    }
-    
+
     /**
      * @param bo domain object
      * @return DTO iso transfer object
@@ -166,7 +157,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     protected DTO convertFromDomainToDto(BO bo) throws DataFormatException {
         return Converters.get(getConverterArgument()).convertFromDomainToDto(bo);
     }
-    
+
     /**
      * Get class of the implementation.
      *
@@ -175,7 +166,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     protected Class<BO> getTypeArgument() {
         return typeArgument;
     }
-    
+
     /**
      * Get class of the implementation.
      *
@@ -184,7 +175,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     protected Class<CONVERTER> getConverterArgument() {
         return converterArgument;
     }
-    
+
     /**
      * @param ii index of object
      * @return null
@@ -201,7 +192,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
             session = HibernateUtil.getCurrentSession();
             bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(ii));
             if (bo == null) {
-                logger.error("Object not found using get() for id = "
+                LOG.error("Object not found using get() for id = "
                         + IiConverter.convertToString(ii) + ".");
                 return resultDto;
             }
@@ -273,42 +264,42 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         try {
             String contextName = getEjbContext().getCallerPrincipal().getName();
             if (!lName.equals(contextName) && !contextName.startsWith(GRID_CONTEXT_NAME)) {
-                logger.info("LoginName does not match context.");
+                LOG.info("LoginName does not match context.");
             }
         } catch (Exception e) {
-            logger.info("Context not found.");
+            LOG.info("Context not found.");
         }
     }
-    
+
     /**
      * Sets the audit values.
-     * 
+     *
      * @throws RemoteException on error
      * @param bo the new audit values
      */
     protected void setAuditValues(AbstractEntity bo) throws RemoteException {
         bo.setUserLastUpdated(AccrualCsmUtil.getInstance().lookupUser(ejbContext));
-        bo.setDateLastUpdated(new Date());    
+        bo.setDateLastUpdated(new Date());
         if (bo.getId() == null) {
             bo.setUserLastCreated(bo.getUserLastUpdated());
             bo.setDateLastCreated(bo.getDateLastUpdated());
-        } 
+        }
     }
-    
+
     /**
      * Creates the or update new.
-     * 
+     *
      * @param dto the dto
      * @param conv the converter
      * @param <DTO2> iso dto
      * @param <BO2> domain object
      * @param <CONVERTER2> converter
      * @return the dTO
-     * 
+     *
      * @throws RemoteException the remote exception
      */
-    protected <DTO2 extends BaseDTO, BO2 extends AbstractEntity, 
-    CONVERTER2 extends AbstractConverter<DTO2, BO2>> DTO2 
+    protected <DTO2 extends BaseDTO, BO2 extends AbstractEntity,
+    CONVERTER2 extends AbstractConverter<DTO2, BO2>> DTO2
     createOrUpdateNew(DTO2 dto, AbstractConverter<DTO2, BO2> conv) throws RemoteException {
         BO2 bo = null;
         try {

@@ -150,8 +150,6 @@ import org.apache.struts2.ServletActionContext;
  * @author mshestopalov
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods",
-    "PMD.ExcessiveClassLength", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class TrialConvertUtils {
 
     /**
@@ -212,7 +210,6 @@ public class TrialConvertUtils {
      *
      * @return the study protocol dto
      */
-    @SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
     public StudyProtocolDTO convertToStudyProtocolDTO(BaseTrialDTO trialDTO,
             StudyProtocolDTO isoDto) {
         if (StringUtils.isNotEmpty(trialDTO.getOfficialTitle())) {
@@ -296,7 +293,7 @@ public class TrialConvertUtils {
         } else {
             isoDto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.FALSE));
         }
-        if  (trialDTO.getXmlRequired()) {
+        if  (trialDTO.isXmlRequired()) {
             isoDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
         } else {
             isoDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.FALSE));
@@ -1011,7 +1008,7 @@ public class TrialConvertUtils {
        spStageDTO.setOversightAuthorityOrgId(IiConverter.convertToIi(trialDto.getSelectedRegAuth()));
        spStageDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
        trialDto.setPropritaryTrialIndicator(CommonsConstant.NO);
-       spStageDTO.setCtgovXmlRequiredIndicator(trialDto.getXmlRequired()
+       spStageDTO.setCtgovXmlRequiredIndicator(trialDto.isXmlRequired()
                ? BlConverter.convertToBl(Boolean.TRUE) : BlConverter.convertToBl(Boolean.FALSE));
        spStageDTO.getSecondaryIdentifierList().addAll(trialDto.getSecondaryIdentifierList());
    }
@@ -1293,22 +1290,22 @@ public class TrialConvertUtils {
     * @return isoDto
     * @throws PAException on error
     */
-   public InterventionalStudyProtocolDTO convertToInterventionalStudyProtocolDTO(BaseTrialDTO trialDTO)
-       throws PAException {
-       InterventionalStudyProtocolDTO isoDto =  new InterventionalStudyProtocolDTO();
-       isoDto = (InterventionalStudyProtocolDTO) convertToStudyProtocolDTO(trialDTO, isoDto);
-       return isoDto;
-   }
+    public InterventionalStudyProtocolDTO convertToInterventionalStudyProtocolDTO(BaseTrialDTO trialDTO)
+            throws PAException {
+        InterventionalStudyProtocolDTO isoDto = new InterventionalStudyProtocolDTO();
+        isoDto = (InterventionalStudyProtocolDTO) convertToStudyProtocolDTO(trialDTO, isoDto);
+        return isoDto;
+    }
 
-   /**
-    * Convert to iso document list.
-    * @param docList the doc list
-    * @param studyProtocolIi the study protocol ii
-    * @return the list< document dto>
-    * @throws PAException the PA exception
-    */
-   public List<DocumentDTO> convertToISODocumentList(List<TrialDocumentWebDTO> docList, Ii studyProtocolIi)
-   throws PAException {
+    /**
+     * Convert to iso document list.
+     * @param docList the doc list
+     * @param studyProtocolIi the study protocol ii
+     * @return the list< document dto>
+     * @throws PAException the PA exception
+     */
+    public List<DocumentDTO> convertToISODocumentList(List<TrialDocumentWebDTO> docList, Ii studyProtocolIi)
+            throws PAException {
        List<DocumentDTO> docs = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(studyProtocolIi);
        DocumentDTO protocolDocToUpdate = null;
        DocumentDTO otherDocToUpdate = null;

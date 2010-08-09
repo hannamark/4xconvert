@@ -85,6 +85,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -93,7 +97,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Vrushali
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "unchecked" })
+@SuppressWarnings("unchecked")
 public class ManageIndIdeAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private String studyProtocolId;
@@ -104,42 +108,52 @@ public class ManageIndIdeAction extends ActionSupport {
      * @return result
      */
     public String addIdeIndIndicator() {
-        String number = ServletActionContext.getRequest().getParameter("number");
-        String grantor = ServletActionContext.getRequest().getParameter("grantor");
-        String programCode = ServletActionContext.getRequest().getParameter("programcode");
-        String expandedAccess = ServletActionContext.getRequest().getParameter("expandedaccess");
-        String expandedAccessType = ServletActionContext.getRequest().getParameter("expandedaccesstype");
-        String holderType = ServletActionContext.getRequest().getParameter("holdertype");
-        String indIde = ServletActionContext.getRequest().getParameter("indIde");
-        if (number != null && number.equals("") && grantor != null && grantor.equals("")
-                && programCode != null && programCode.equals("")
-                && expandedAccess != null && expandedAccess.equals("No")
-                && expandedAccessType != null && expandedAccessType.equals("")
-                && holderType != null && holderType.equals("")
-                && indIde != null && indIde.equals("undefined")) {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        if (isNoParamSet(request)) {
             return SUCCESS;
         }
+        String number = request.getParameter("number");
+        String grantor = request.getParameter("grantor");
+        String programCode = request.getParameter("programcode");
+        String expandedAccess = request.getParameter("expandedaccess");
+        String expandedAccessType = request.getParameter("expandedaccesstype");
+        String holderType = request.getParameter("holdertype");
+        String indIde = request.getParameter("indIde");
+
         TrialIndIdeDTO indIdeHolder = new TrialIndIdeDTO();
-        String emptyString = "";
-        indIdeHolder.setExpandedAccess(expandedAccess.equals(emptyString) ? "-" : expandedAccess);
-        indIdeHolder.setExpandedAccessType(expandedAccessType.equals(emptyString) ? "-" : expandedAccessType);
-        indIdeHolder.setGrantor(grantor.equals(emptyString) ? "-" : grantor);
-        indIdeHolder.setHolderType(holderType.equals(emptyString) ? "-" : holderType);
-        indIdeHolder.setNumber(number.equals(emptyString) ? "-" : number);
-        indIdeHolder.setProgramCode(programCode.equals(emptyString) ? "-" : programCode);
-        indIdeHolder.setIndIde(indIde.equals(emptyString) ? "-" : indIde);
+        indIdeHolder.setExpandedAccess(StringUtils.defaultIfEmpty(expandedAccess, "-"));
+        indIdeHolder.setExpandedAccessType(StringUtils.defaultIfEmpty(expandedAccessType, "-"));
+        indIdeHolder.setGrantor(StringUtils.defaultIfEmpty(grantor, "-"));
+        indIdeHolder.setHolderType(StringUtils.defaultIfEmpty(holderType, "-"));
+        indIdeHolder.setNumber(StringUtils.defaultIfEmpty(number, "-"));
+        indIdeHolder.setProgramCode(StringUtils.defaultIfEmpty(programCode, "-"));
+        indIdeHolder.setIndIde(StringUtils.defaultIfEmpty(indIde, "-"));
         indIdeHolder.setRowId(UUID.randomUUID().toString());
-        List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
-                .getAttribute(Constants.INDIDE_LIST);
+        final HttpSession session = request.getSession();
+        List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) session.getAttribute(Constants.INDIDE_LIST);
         if (sessionList != null) {
             sessionList.add(indIdeHolder);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST, sessionList);
+            session.setAttribute(Constants.INDIDE_LIST, sessionList);
         } else {
             List<TrialIndIdeDTO> tempList = new ArrayList<TrialIndIdeDTO>();
             tempList.add(indIdeHolder);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST, tempList);
+            session.setAttribute(Constants.INDIDE_LIST, tempList);
         }
         return "display_ideind";
+    }
+
+    private boolean isNoParamSet(HttpServletRequest request) {
+        String number = request.getParameter("number");
+        String grantor = request.getParameter("grantor");
+        String programCode = request.getParameter("programcode");
+        String expandedAccess = request.getParameter("expandedaccess");
+        String expandedAccessType = request.getParameter("expandedaccesstype");
+        String holderType = request.getParameter("holdertype");
+        String indIde = request.getParameter("indIde");
+
+        return StringUtils.isBlank(number) && StringUtils.isBlank(grantor) && StringUtils.isBlank(programCode)
+                && StringUtils.equals("No", expandedAccess) && StringUtils.isBlank(expandedAccessType)
+                && StringUtils.isBlank(holderType) && StringUtils.equals("undefined", indIde);
     }
 
     /**
@@ -148,42 +162,38 @@ public class ManageIndIdeAction extends ActionSupport {
      * @return result
      */
     public String addIdeIndIndicatorForUpdate() {
-        String number = ServletActionContext.getRequest().getParameter("number");
-        String grantor = ServletActionContext.getRequest().getParameter("grantor");
-        String programCode = ServletActionContext.getRequest().getParameter("programcode");
-        String expandedAccess = ServletActionContext.getRequest().getParameter("expandedaccess");
-        String expandedAccessType = ServletActionContext.getRequest().getParameter("expandedaccesstype");
-        String holderType = ServletActionContext.getRequest().getParameter("holdertype");
-        String indIde = ServletActionContext.getRequest().getParameter("indIde");
-        String studyid = ServletActionContext.getRequest().getParameter("studyid");
-        if (number != null && number.equals("") && grantor != null && grantor.equals("")
-                && programCode != null && programCode.equals("")
-                && expandedAccess != null && expandedAccess.equals("No")
-                && expandedAccessType != null && expandedAccessType.equals("")
-                && holderType != null && holderType.equals("")
-                && indIde != null && indIde.equals("undefined")) {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        if (isNoParamSet(request)) {
             return SUCCESS;
         }
+        String number = request.getParameter("number");
+        String grantor = request.getParameter("grantor");
+        String programCode = request.getParameter("programcode");
+        String expandedAccess = request.getParameter("expandedaccess");
+        String expandedAccessType = request.getParameter("expandedaccesstype");
+        String holderType = request.getParameter("holdertype");
+        String indIde = request.getParameter("indIde");
+
         TrialIndIdeDTO indIdeHolder = new TrialIndIdeDTO();
-        String emptyString = "";
-        indIdeHolder.setExpandedAccess(expandedAccess.equals(emptyString) ? "-" : expandedAccess);
-        indIdeHolder.setExpandedAccessType(expandedAccessType.equals(emptyString) ? "-" : expandedAccessType);
-        indIdeHolder.setGrantor(grantor.equals(emptyString) ? "-" : grantor);
-        indIdeHolder.setHolderType(holderType.equals(emptyString) ? "-" : holderType);
-        indIdeHolder.setNumber(number.equals(emptyString) ? "-" : number);
-        indIdeHolder.setProgramCode(programCode.equals(emptyString) ? "-" : programCode);
-        indIdeHolder.setIndIde(indIde.equals(emptyString) ? "-" : indIde);
+        indIdeHolder.setExpandedAccess(StringUtils.defaultIfEmpty(expandedAccess, "-"));
+        indIdeHolder.setExpandedAccessType(StringUtils.defaultIfEmpty(expandedAccessType, "-"));
+        indIdeHolder.setGrantor(StringUtils.defaultIfEmpty(grantor, "-"));
+        indIdeHolder.setHolderType(StringUtils.defaultIfEmpty(holderType, "-"));
+        indIdeHolder.setNumber(StringUtils.defaultIfEmpty(number, "-"));
+        indIdeHolder.setProgramCode(StringUtils.defaultIfEmpty(programCode, "-"));
+        indIdeHolder.setIndIde(StringUtils.defaultIfEmpty(indIde, "-"));
         indIdeHolder.setRowId(UUID.randomUUID().toString());
+        String studyid = request.getParameter("studyid");
         setStudyProtocolId(studyid);
-        List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
-                .getAttribute(Constants.INDIDE_ADD_LIST);
+        final HttpSession session = request.getSession();
+        List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) session.getAttribute(Constants.INDIDE_ADD_LIST);
         if (sessionList != null) {
             sessionList.add(indIdeHolder);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_ADD_LIST, sessionList);
+            session.setAttribute(Constants.INDIDE_ADD_LIST, sessionList);
         } else {
             List<TrialIndIdeDTO> tempList = new ArrayList<TrialIndIdeDTO>();
             tempList.add(indIdeHolder);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_ADD_LIST, tempList);
+            session.setAttribute(Constants.INDIDE_ADD_LIST, tempList);
         }
          return "display_ideindadd";
     }

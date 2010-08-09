@@ -49,8 +49,7 @@ import org.hibernate.validator.InvalidValue;
  * @author Vrushali
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength",
-    "PMD.TooManyMethods", "unchecked"  })
+@SuppressWarnings("unchecked")
 public class SubmitProprietaryTrialAction extends ManageFileAction implements
         ServletResponseAware {
     private static final String SESSION_TRIAL_DTO = "trialDTO";

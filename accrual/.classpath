@@ -88,7 +88,6 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/commons-io-1.4.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/commons-pool-1.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/coppa-commons-1.3.0-alpha1.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/database-conf-1.3.xsd"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/dwr-2.0.1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/ehcache-1.2.4.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/gctadmin-jce-1.2.jar"/>

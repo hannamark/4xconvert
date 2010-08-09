@@ -115,12 +115,10 @@ import org.apache.struts2.ServletActionContext;
  * @author Hugh Reinhart
  * @since Sep 21, 2009
  */
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.CyclomaticComplexity" })
 public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> {
 
     private static final long serialVersionUID = -6820189447703204634L;
-    private static String deletedStatusCode = FunctionalRoleStatusCode.TERMINATED
-            .getCode();
+    private static String deletedStatusCode = FunctionalRoleStatusCode.TERMINATED.getCode();
     private static List<String> validStatusCodes;
     static {
         validStatusCodes = new ArrayList<String>();
@@ -502,7 +500,6 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         }
     }
 
-    @SuppressWarnings("PMD.CyclomaticComplexity")
     private void validateNoPatientDuplicates() {
         List<StudySubjectDto> allSss = null;
         try {
@@ -512,14 +509,18 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
             addActionError(e.getLocalizedMessage());
         }
         for (StudySubjectDto ss : allSss) {
-            if (StConverter.convertToString(ss.getAssignedIdentifier()).equals(patient.getAssignedIdentifier())
-                    && (patient.getStudySubjectId() == null
-                        || !patient.getStudySubjectId().equals(IiConverter.convertToLong(ss.getIdentifier())))
-                    && !deletedStatusCode.equals(CdConverter.convertCdToString(ss.getStatusCode()))) {
+            if (isDuplicatePatient(ss)) {
                 addActionError("This Study Subject Id (" + patient.getAssignedIdentifier()
                         + ") has already been added to this study.");
             }
         }
+    }
+
+    private boolean isDuplicatePatient(StudySubjectDto ss) {
+        return StConverter.convertToString(ss.getAssignedIdentifier()).equals(patient.getAssignedIdentifier())
+                && (patient.getStudySubjectId() == null
+                    || !patient.getStudySubjectId().equals(IiConverter.convertToLong(ss.getIdentifier())))
+                && !deletedStatusCode.equals(CdConverter.convertCdToString(ss.getStatusCode()));
     }
 
     private void validateUnitedStatesRules() {

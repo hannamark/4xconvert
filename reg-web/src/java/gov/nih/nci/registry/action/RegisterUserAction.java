@@ -2,7 +2,7 @@
  *
  */
 package gov.nih.nci.registry.action;
- 
+
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -42,7 +42,6 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Bala Nair
  *
  */
-@SuppressWarnings({ "PMD" })
 public class RegisterUserAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG  = Logger.getLogger(RegisterUserAction.class);
@@ -254,7 +253,7 @@ public class RegisterUserAction extends ActionSupport {
                 PaRegistry.getRegisterUserService().updateUser(registryUser);
             } catch (PAInvalidPasswordException e) {
                 addFieldError("registryUserWebDTO.oldPassword", getText("error.register.invalidPassword"));
-                return Constants.MY_ACCOUNT_ERROR;                    
+                return Constants.MY_ACCOUNT_ERROR;
             } catch (Exception e) {
                 LOG.error("error while updating user info", e);
                 return Constants.APPLICATION_ERROR;

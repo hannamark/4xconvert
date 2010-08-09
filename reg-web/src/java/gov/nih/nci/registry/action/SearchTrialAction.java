@@ -134,8 +134,6 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Bala Nair
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.TooManyMethods" ,
-    "PMD.ExcessiveClassLength" })
 public class SearchTrialAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private List<StudyProtocolQueryDTO> records = null;
@@ -245,7 +243,7 @@ public class SearchTrialAction extends ActionSupport {
         loginUser =  ServletActionContext.getRequest().getRemoteUser();
         if (!records.isEmpty()) {
             for (StudyProtocolQueryDTO queryDto : records) {
-           
+
                 DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
                 StudyStatusCode statusCode = queryDto.getStudyStatusCode();
                 if (dwfs == null) {
@@ -374,7 +372,6 @@ public class SearchTrialAction extends ActionSupport {
     /**
      * @return res
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String view() {
         boolean maskFields = false;
         try {

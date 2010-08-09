@@ -102,7 +102,6 @@ import org.displaytag.decorator.TableDecorator;
  * @author Bala Nair
  *
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public class RegistryDisplayTagDecorator extends TableDecorator {
 
     /**
@@ -119,7 +118,6 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     /**
      * @return link
      */
-    @SuppressWarnings("PMD.NPathComplexity")
     public String getAmend() {
         Long studyProtocolId = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyProtocolId();
         String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
@@ -131,13 +129,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         StudyStatusCode statusCode = ((StudyProtocolQueryDTO)
                 this.getCurrentRowObject()).getStudyStatusCode();
 
-        if (isProprietaryTrial) {
-          return "";
-        }
-        if (dwfs == null) {
-            return "";
-        }
-        if (statusCode == null) {
+        if (isProprietaryTrial || dwfs == null || statusCode == null) {
             return "";
         }
         if ((dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
@@ -215,10 +207,8 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
      * @return NIH Institute/NCI Div Program code
      */
     public String getInstProgramCode() {
-
         String instProgramCode = null;
-        Cd holderTypeCode = ((StudyIndldeDTO) this.getCurrentRowObject()).
-                                       getHolderTypeCode();
+        Cd holderTypeCode = ((StudyIndldeDTO) this.getCurrentRowObject()).getHolderTypeCode();
 
         if (holderTypeCode != null && holderTypeCode.getCode().equals("NIH")) {
             Cd nihInstCode = ((StudyIndldeDTO) this.getCurrentRowObject()).getNihInstHolderCode();

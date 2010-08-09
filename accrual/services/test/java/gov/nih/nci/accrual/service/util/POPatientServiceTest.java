@@ -225,24 +225,4 @@ public class POPatientServiceTest extends AbstractServiceTest<POPatientBean>{
         }
     }
 
-   /* @SuppressWarnings("unused")
-    @Test
-    public void remoteCheck() throws Exception {
-        PoJndiServiceLocator psl = new PoJndiServiceLocator();
-        try {
-            PatientCorrelationServiceRemote obj = psl.getPatientCorrelationService();
-        } catch (Exception ex) {
-            // expected, ignore it
-        } catch (Error ex) {
-            // expected, ignore it
-        }
-
-        try {
-            Object obj = JNDIUtil.lookup("jndi");
-        } catch (Exception ex) {
-            // expected, ignore it
-        } catch (Error ex) {
-            // expected, ignore it
-        }
-    }*/
 }

@@ -92,7 +92,6 @@ import org.apache.log4j.Logger;
  *        holder, NCI.
  *
  */
-@SuppressWarnings("PMD")
 public class PoPropertyReader {
     private static final Logger LOG = Logger.getLogger(PoPropertyReader.class);
     private static final String RESOURCE_NAME = "po.jndi.properties";

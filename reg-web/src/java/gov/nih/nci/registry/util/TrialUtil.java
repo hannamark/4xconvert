@@ -61,8 +61,6 @@ import org.apache.struts2.ServletActionContext;
  *
  * @author vrushali
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods",
-    "PMD.ExcessiveClassLength", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class TrialUtil extends TrialConvertUtils {
 
     /**
@@ -328,7 +326,6 @@ public class TrialUtil extends TrialConvertUtils {
     * @throws PAException ex
     * @throws NullifiedRoleException e
     */
-   @SuppressWarnings({"PMD.ExcessiveMethodLength" })
    public void getTrialDTOFromDb(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException, NullifiedRoleException {
        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
        StudyProtocolQueryDTO spqDto = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(

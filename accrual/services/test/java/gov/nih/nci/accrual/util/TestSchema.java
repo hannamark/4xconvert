@@ -875,7 +875,7 @@ public class TestSchema {
         at.setDescription("2-D Echocardiogram");
         addUpdObject(at);
     }
-    
+
     public static User createUser() {
         User user = null;
         Session session  = HibernateUtil.getCurrentSession();

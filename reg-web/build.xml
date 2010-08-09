@@ -245,7 +245,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxRuleViolations="251">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/reg-web/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/reg-web/pmd.xml"/>
@@ -384,12 +384,11 @@
             </batchtest>
         </junit>
     </target>
-    
+
     <target name="test-cobertura" depends="compile-tests">
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
         <delete file="${reg-web.build.dir}/cobertura.ser" />
-        <cobertura-instrument datafile="${reg-web.build.dir}/cobertura.ser"
-                              toDir="${reg-web.build.coberturaOutputDir}">
+        <cobertura-instrument datafile="${reg-web.build.dir}/cobertura.ser" toDir="${reg-web.build.coberturaOutputDir}">
             <fileset dir="${reg-web.build.outputDir}">
                 <include name="**/*.class" />
             </fileset>
@@ -397,8 +396,7 @@
         <mkdir dir="${reg-web.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <sysproperty key="basedir" value="."/>
-            <sysproperty key="net.sourceforge.cobertura.datafile"
-                    file="${reg-web.build.dir}/cobertura.ser" />
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${reg-web.build.dir}/cobertura.ser" />
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
             <classpath location="${reg-web.build.coberturaOutputDir}"/>

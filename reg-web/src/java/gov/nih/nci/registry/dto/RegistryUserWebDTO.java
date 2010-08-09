@@ -13,7 +13,6 @@ import org.hibernate.validator.NotEmpty;
  * @author Bala Nair
  *
  */
-@SuppressWarnings({"PMD.TooManyFields" })
 public class RegistryUserWebDTO {
     private Long id;
     private String firstName;

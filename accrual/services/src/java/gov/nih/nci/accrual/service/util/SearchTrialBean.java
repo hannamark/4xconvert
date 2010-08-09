@@ -121,7 +121,6 @@ import org.hibernate.Session;
 
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public class SearchTrialBean implements SearchTrialService {
 
     private static final int SP_IDENTIFIER_IDX = 0;

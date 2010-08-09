@@ -74,7 +74,6 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
-*
 */
 
 package gov.nih.nci.accrual.service;
@@ -92,6 +91,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -107,6 +107,7 @@ public abstract class AbstractBaseAccrualStudyBean<DTO extends BaseDTO, BO exten
             CONVERTER extends AbstractConverter<DTO, BO>>
         extends AbstractBaseAccrualBean<DTO, BO, CONVERTER>
         implements BaseAccrualStudyService<DTO> {
+    private static final Logger LOG = Logger.getLogger(AbstractBaseAccrualStudyBean.class);
 
     /**
      * {@inheritDoc}
@@ -129,7 +130,7 @@ public abstract class AbstractBaseAccrualStudyBean<DTO extends BaseDTO, BO exten
                        + "join alias.studyProtocol sp "
                        + "where sp.id = :studyProtocolId "
                        + "order by alias.id ";
-            getLogger().info("query " +  getTypeArgument().getName() + " = " + hql + ".");
+            LOG.debug("query " +  getTypeArgument().getName() + " = " + hql + ".");
 
             // step 2: construct query object
             query = session.createQuery(hql);
@@ -148,6 +149,7 @@ public abstract class AbstractBaseAccrualStudyBean<DTO extends BaseDTO, BO exten
                 throw new RemoteException("Iso conversion exception in getByStudyProtocol().", e);
             }
         }
+        LOG.debug("Leaving getByStudyProtocol, returning " + resultList.size() + " object(s).");
         return resultList;
     }
 }

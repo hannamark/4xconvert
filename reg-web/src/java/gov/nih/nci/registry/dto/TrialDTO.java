@@ -17,7 +17,6 @@ import org.hibernate.validator.NotEmpty;
  * @author Vrushali
  *
  */
-@SuppressWarnings({"PMD.ExcessiveClassLength", "PMD.TooManyFields", "PMD.BooleanGetMethodName" })
 public class TrialDTO extends BaseTrialDTO {
     private String accrualReportingMethodCode;
     private String piIdentifier;
@@ -662,7 +661,7 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the xml required
      */
-    public boolean getXmlRequired() {
+    public boolean isXmlRequired() {
         return xmlRequired;
     }
 

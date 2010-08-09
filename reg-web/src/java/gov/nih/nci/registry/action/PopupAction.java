@@ -124,12 +124,8 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
 /**
- *
  * @author Harsha
- *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity",
-    "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.ExcessiveMethodLength", "PMD.TooManyFields" })
 public class PopupAction extends ActionSupport implements Preparable {
     private static final String FAILURE_MSG_ATTR = "failureMessage";
     private static final String ORGS_RESULT = "orgs";

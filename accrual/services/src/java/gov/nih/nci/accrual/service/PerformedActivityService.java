@@ -93,9 +93,8 @@ import javax.ejb.Remote;
  * @since Aug 13, 2009
  */
 @Remote
-@SuppressWarnings({"PMD.TooManyMethods" })
 public interface PerformedActivityService extends BaseAccrualStudyService<PerformedActivityDto> {
-    
+
     /**
      * Gets the performed subject milestone by study protocol.
      * @param ii the ii
@@ -103,24 +102,24 @@ public interface PerformedActivityService extends BaseAccrualStudyService<Perfor
      * @throws RemoteException the remote exception
      */
     List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(Ii ii) throws RemoteException;
-    
+
     /**
      * Creates the performed subject milestone.
      * @param dto the dto
      * @return the performed subject milestone dto
      * @throws RemoteException the remote exception
-     * @throws DataFormatException the Data Format Exception 
+     * @throws DataFormatException the Data Format Exception
      */
-    PerformedSubjectMilestoneDto createPerformedSubjectMilestone(PerformedSubjectMilestoneDto dto) 
-        throws RemoteException, DataFormatException;
-    
+    PerformedSubjectMilestoneDto createPerformedSubjectMilestone(PerformedSubjectMilestoneDto dto)
+            throws RemoteException, DataFormatException;
+
     /**
      * Update performed subject milestone.
      * @param dto the dto
      * @return the performed subject milestone dto
      * @throws RemoteException the remote exception
-     * @throws DataFormatException the Data Format Exception  
+     * @throws DataFormatException the Data Format Exception
      */
-    PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(PerformedSubjectMilestoneDto dto) 
-        throws RemoteException, DataFormatException;   
+    PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(PerformedSubjectMilestoneDto dto)
+            throws RemoteException, DataFormatException;
 }

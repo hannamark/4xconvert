@@ -59,83 +59,53 @@ import com.opensymphony.xwork2.util.Element;
  *
  * @author Vrushali
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" , "PMD.ExcessiveParameterList" , "unchecked",
-    "PMD.ExcessiveClassLength" , "PMD.TooManyMethods" , "PMD.ExcessiveMethodLength" , "PMD.TooManyFields" })
-
+@SuppressWarnings("unchecked")
 public class UpdateTrialAction extends ManageFileAction implements ServletResponseAware {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    /** The servlet response. */
     private HttpServletResponse servletResponse;
 
-    /** The Constant LOG. */
     private static final Logger LOG = Logger.getLogger(UpdateTrialAction.class);
 
-    /** The trial dto. */
     private TrialDTO trialDTO = new TrialDTO();
-
-    /** The trial action. */
     private String trialAction = null;
-
-    /** The study protocol id. */
     private String studyProtocolId = null;
-
-    /** The session trial dto. */
     private static String sessionTrialDTO = "trialDTO";
 
     private final TrialUtil trialUtil = new TrialUtil();
 
     //for update
-    /** The collaborators. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.pa.dto.PaOrganizationDTO.class)
     private List<PaOrganizationDTO> collaborators = new ArrayList<PaOrganizationDTO>();
 
-    /** The participating sites. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.pa.dto.PaOrganizationDTO.class)
     private List<PaOrganizationDTO> participatingSitesList = new ArrayList<PaOrganizationDTO>();
 
-    /** The ind ide update dtos. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.registry.dto.StudyIndldeWebDTO.class)
     private List <StudyIndldeWebDTO> indIdeUpdateDtos = new ArrayList<StudyIndldeWebDTO>();
 
-    /** The funding add dtos. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
     private List<TrialFundingWebDTO> fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
 
-    /** The ind ide add dtos. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.registry.dto.TrialIndIdeDTO.class)
     private List <TrialIndIdeDTO> indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
 
-    /** The funding dtos. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
     private List<TrialFundingWebDTO> fundingDtos = new ArrayList<TrialFundingWebDTO>();
 
-   /** The programcodenihselectedvalue. */
     private String programcodenihselectedvalue;
-
-    /** The programcodenciselectedvalue. */
     private String programcodenciselectedvalue;
-
-    /** The pa organization dto. */
     private PaOrganizationDTO paOrganizationDTO;
-
-    /** The study indlde web dto. */
     private StudyIndldeWebDTO studyIndldeWebDTO;
-
-    /** The trial funding dto. */
     private TrialFundingWebDTO trialFundingDTO;
-
-    /** The trial ind ide dto. */
     private TrialIndIdeDTO trialIndIdeDTO;
-
     private int indIdeUpdateDtosLen = 0;
 
     /**
@@ -510,8 +480,6 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
      *
      * @return s
      */
-
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String reviewUpdate() {
         try {
             clearErrorsAndMessages();
@@ -551,7 +519,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                trialDTO.setFundingAddDtos(grantAddList);
                setFundingAddDtos(grantAddList);
            }
-           if (trialDTO.getXmlRequired()) {
+           if (trialDTO.isXmlRequired()) {
               trialUtil.setOversgtInfo(trialDTO);
            }
            List<Ii> otherIdsList =
@@ -598,7 +566,6 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
      *
      * @return s
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String update() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
         if (trialDTO == null) {

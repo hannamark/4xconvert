@@ -5,11 +5,12 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+
+import org.apache.commons.lang.ArrayUtils;
 /**
- * 
+ *
  * @author Bala Nair
  */
-@SuppressWarnings({"PMD.MethodReturnsInternalArray" })
 public class TrialDocumentWebDTO {
 
     private String typeCode;
@@ -18,7 +19,7 @@ public class TrialDocumentWebDTO {
     private String inactiveCommentText;
     private byte[] text;
     private String studyProtocolId;
-    
+
     /**
      * @param iso DocumentDTO object
      */
@@ -30,7 +31,7 @@ public class TrialDocumentWebDTO {
         this.inactiveCommentText = StConverter.convertToString(iso.getInactiveCommentText());
         this.text = EdConverter.convertToByte(iso.getText());
     }
-    
+
     /** .
      *  Default Constructor
      */
@@ -65,7 +66,7 @@ public class TrialDocumentWebDTO {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-    
+
     /**
      * @return id
      */
@@ -98,7 +99,7 @@ public class TrialDocumentWebDTO {
      * @return the text
      */
     public byte[] getText() {
-        return text;
+        return ArrayUtils.clone(text);
     }
 
     /**
@@ -123,5 +124,5 @@ public class TrialDocumentWebDTO {
     public void setStudyProtocolId(String studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
     }
-    
+
 }

@@ -205,7 +205,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pmdFile}">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pmdFile}" maxruleviolations="1">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${reportDir}/pmd.txt"/>
             <formatter type="xml"  toFile="${reportDir}/pmd.xml"/>
@@ -379,21 +379,21 @@
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}"/>
     </target>
-	
-	<!-- ====================================================================== -->
+
+    <!-- ====================================================================== -->
     <!-- Run all tests                                                          -->
     <!-- ====================================================================== -->
 
     <target name="test-dynamic-analysis"
-		depends="ivy-get,compile,compile-tests,test-cobertura"
-		description="Run dynamic analysis."/>
-	
-	<target name="test-static-analysis"
-		depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian"
-		description="Run static analysis."/>
-	
+        depends="ivy-get,compile,compile-tests,test-cobertura"
+        description="Run dynamic analysis."/>
+
+    <target name="test-static-analysis"
+        depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian"
+        description="Run static analysis."/>
+
     <target name="test-all"
-		depends="test-static-analysis,test-dynamic-analysis"
-		description="Run all tests"/>
+        depends="test-static-analysis,test-dynamic-analysis"
+        description="Run all tests"/>
 
 </project>

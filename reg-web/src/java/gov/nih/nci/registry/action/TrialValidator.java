@@ -119,7 +119,6 @@ import org.hibernate.validator.InvalidValue;
  * @author Vrushali
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class TrialValidator {
     private static String actualString = "Actual";
     private static String anticipatedString = "Anticipated";
@@ -159,7 +158,6 @@ public class TrialValidator {
      * @param trialDto dto
      * @return map
      */
-    @SuppressWarnings({"PMD", "PMD.AvoidDeeplyNestedIfStmts" })
     public Map<String, String> validateTrialDTO(TrialDTO trialDto) {
         Map<String, String> addFieldError = new HashMap<String, String>();
         InvalidValue[] invalidValues = null;
@@ -210,7 +208,7 @@ public class TrialValidator {
                 && RegistryUtil.isValidDate(trialDto.getStartDate())) {
             addFieldError.putAll(validateTrialDates(trialDto));
         }
-        if (trialDto.getXmlRequired()) {
+        if (trialDto.isXmlRequired()) {
             if (StringUtils.isEmpty(trialDto.getResponsiblePartyType())) {
                 addFieldError.put("ResponsiblePartyNotSelected", getText("error.submit.ResponsibleParty"));
             }
@@ -280,7 +278,6 @@ public class TrialValidator {
      * @return b
      * @throws PAException ex
      */
-    @SuppressWarnings({"PMD.AvoidDeeplyNestedIfStmts", "PMD.ExcessiveMethodLength" })
     public Collection<String> enforceBusinessRulesForDates(TrialDTO trialDto) throws PAException {
         Collection<String> addActionError = new HashSet<String>();
         StudyStatusCode newCode = StudyStatusCode.getByCode(trialDto.getStatusCode());
@@ -291,7 +288,7 @@ public class TrialValidator {
             addActionError.add("Illegal study status transition from '" + oldStatusCode.getCode()
                     + "' to '" + newCode.getCode() + "'.  ");
         }
-        if ((trialDto.getStartDateType() != null) && (trialDto.getCompletionDateType() != null)) {
+        if (trialDto.getStartDateType() != null && trialDto.getCompletionDateType() != null) {
             if (StudyStatusCode.APPROVED.equals(oldStatusCode) && StudyStatusCode.ACTIVE.equals(newCode)) {
                 if (!PAUtil.dateStringToTimestamp(trialDto.getStartDate()).equals(newStatusTimestamp)) {
                     addActionError.add("When transitioning from 'Approved' to 'Active' the trial start "
@@ -428,7 +425,6 @@ public class TrialValidator {
      *
      * @param tDTO dto
      */
-    @SuppressWarnings("PMD")
     public static void addSessionAttributesForUpdate(TrialDTO tDTO) {
         if (tDTO == null) {
             return;
@@ -487,7 +483,6 @@ public class TrialValidator {
      * validate the submit trial dates.
      * @param trialDto dto
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     private Map<String, String> validateTrialDates(TrialDTO trialDto) {
         Map<String, String> addFieldError = new HashMap<String, String>();
         String startDateFieldName = "trialDTO.startDate";

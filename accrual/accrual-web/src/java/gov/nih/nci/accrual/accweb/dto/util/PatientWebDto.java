@@ -112,7 +112,6 @@ import org.apache.commons.lang.StringUtils;
  * @author Hugh Reinhart
  * @since Sep 22, 2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyFields" })
 public class PatientWebDto {
     // from PatientDto
     private Long patientId;
@@ -199,7 +198,6 @@ public class PatientWebDto {
      * @param listOfCountries country list
      * @param dIsoDto disease iso dto
      */
-    @SuppressWarnings({"PMD.ExcessiveParameterList" })
     public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName,
     PerformedSubjectMilestoneDto psm, List<Country> listOfCountries, DiseaseDTO dIsoDto) {
         if (pIsoDto != null) {

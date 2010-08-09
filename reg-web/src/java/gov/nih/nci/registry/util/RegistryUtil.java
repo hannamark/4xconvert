@@ -31,7 +31,6 @@ import org.apache.struts2.ServletActionContext;
  * @author Bala Nair
  *
  */
-@SuppressWarnings("PMD")
 public class RegistryUtil {
     private static final Logger LOG = Logger.getLogger(RegistryUtil.class);
 
@@ -47,7 +46,7 @@ public class RegistryUtil {
                             .getLookUpTableService().getPropertyValue(
                                             "allowed.uploadfile.types");
             if (allowedUploadFileTypes != null) {
-                int pos = fileName.lastIndexOf(".");
+                int pos = fileName.lastIndexOf('.');
                 String uploadedFileType = fileName.substring(pos + 1, fileName
                         .length());
                 StringTokenizer st = new StringTokenizer(
@@ -131,7 +130,7 @@ public class RegistryUtil {
     */
    public static boolean isValidFileType(String fileName, String allowedFileType) {
        boolean isValidFileType = false;
-       int pos = fileName.lastIndexOf(".");
+       int pos = fileName.lastIndexOf('.');
        String uploadedFileType = fileName.substring(pos + 1, fileName.length());
        if (uploadedFileType != null
                && allowedFileType.equalsIgnoreCase(uploadedFileType)) {
@@ -152,13 +151,8 @@ public class RegistryUtil {
     * @param attachFileName the attach file name
     * @param errorMessage the error message
     */
-   public static void generateMail(String action,
-                                   String userName,
-                                   String successCount,
-                                   String failedCount,
-                                   String totalCount,
-                                   String attachFileName,
-                                   String errorMessage) {
+    public static void generateMail(String action, String userName, String successCount, String failedCount,
+            String totalCount, String attachFileName, String errorMessage) {
       final MailManager mailManager = new MailManager();
       try {
           StringBuffer submissionMailBody = new StringBuffer();
@@ -192,9 +186,9 @@ public class RegistryUtil {
 
             String submissionMailReportBody = PaRegistry.getLookUpTableService().
             getPropertyValue("trial.batchUpload.reportMsg");
-            submissionMailBody.append("\n").append(submissionMailReportBody);
+            submissionMailBody.append('\n').append(submissionMailReportBody);
          } else {
-            submissionMailBody.append("Error: ").append(errorMessage).append("\n");
+            submissionMailBody.append("Error: ").append(errorMessage).append('\n');
             String submissionMailErrorBody = PaRegistry.getLookUpTableService().
                getPropertyValue("trial.batchUpload.errorMsg");
             String currentReleaseNumber = PaRegistry.getLookUpTableService().

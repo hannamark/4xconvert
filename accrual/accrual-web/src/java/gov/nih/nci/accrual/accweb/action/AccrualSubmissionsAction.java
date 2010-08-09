@@ -108,7 +108,6 @@ import org.apache.struts2.ServletActionContext;
  * @author Rajani Kumar
  * @since  Aug 31, 2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<SubmissionDto> {
 
     private static final long serialVersionUID = -6859130106987908815L;

@@ -45,8 +45,6 @@ import org.hibernate.validator.InvalidValue;
  * @author Vrushali
  * This class is used to validate the spread sheet data.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity",
-    "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.ExcessiveMethodLength" })
 public class TrialBatchDataValidator {
     private static final int IND_FIELD_COUNT = 5;
     private static final Logger LOG = Logger.getLogger(TrialBatchDataValidator.class);
@@ -437,42 +435,36 @@ public class TrialBatchDataValidator {
         }
         return fieldErr;
     }
-    @SuppressWarnings({"PMD.CollapsibleIfStatements" })
+
     private StringBuffer validateSponsorContactInfo(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         if (StringUtils.isNotEmpty(batchDto.getResponsibleParty())
-                && batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")) {
-            //check Sponsor contact info is provided or not
-            //find if its Generic/Personal
-            if (StringUtils.isNotEmpty(batchDto.getSponsorContactType())) {
-                if (batchDto.getSponsorContactType().equalsIgnoreCase("Personal")) {
-                    PersonBatchDTO sponsorContact = buildSponsorContact(batchDto);
-                    if (StringUtils.isEmpty(sponsorContact.getPoIdentifier())) {
-                        fieldErr.append(validate(sponsorContact, "Sponsor Contact's "));
-                        fieldErr.append(validateCountryAndStateInfo(sponsorContact.getCountry(),
-                                sponsorContact.getState(), "Sponsor Contact's "));
-                    }
+                && batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")
+                && StringUtils.isNotEmpty(batchDto.getSponsorContactType())) {
+            if (batchDto.getSponsorContactType().equalsIgnoreCase("Personal")) {
+                PersonBatchDTO sponsorContact = buildSponsorContact(batchDto);
+                if (StringUtils.isEmpty(sponsorContact.getPoIdentifier())) {
+                    fieldErr.append(validate(sponsorContact, "Sponsor Contact's "));
+                    fieldErr.append(validateCountryAndStateInfo(sponsorContact.getCountry(), sponsorContact.getState(),
+                                                                "Sponsor Contact's "));
                 }
-                if (batchDto.getSponsorContactType().equalsIgnoreCase("Generic")) {
-                  if (StringUtils.isEmpty(batchDto.getResponsibleGenericContactName())) {
-                      fieldErr.append("Title is required when Sponsor Contact Type is Generic .\n");
-                  }
-                  if (StringUtils.isEmpty(batchDto.getSponsorContactEmail())) {
-                      fieldErr.append("Sponsor Contact Email is required.\n");
-                  } else if (!PAUtil.isValidEmail(batchDto.getSponsorContactEmail())) {
-                      fieldErr.append("Sponsor Contact Email is not well formatted.\n");
-                  }
-                  if (StringUtils.isEmpty(batchDto.getSponsorContactPhone())) {
-                      fieldErr.append("Sponsor Contact Phone is required.\n");
-                  }
+            }
+            if (batchDto.getSponsorContactType().equalsIgnoreCase("Generic")) {
+                if (StringUtils.isEmpty(batchDto.getResponsibleGenericContactName())) {
+                    fieldErr.append("Title is required when Sponsor Contact Type is Generic .\n");
+                }
+                if (StringUtils.isEmpty(batchDto.getSponsorContactEmail())) {
+                    fieldErr.append("Sponsor Contact Email is required.\n");
+                } else if (!PAUtil.isValidEmail(batchDto.getSponsorContactEmail())) {
+                    fieldErr.append("Sponsor Contact Email is not well formatted.\n");
+                }
+                if (StringUtils.isEmpty(batchDto.getSponsorContactPhone())) {
+                    fieldErr.append("Sponsor Contact Phone is required.\n");
                 }
             }
         }
         return fieldErr;
     }
-    /**
-     * validate the submit trial dates.
-     */
 
     /**
      *

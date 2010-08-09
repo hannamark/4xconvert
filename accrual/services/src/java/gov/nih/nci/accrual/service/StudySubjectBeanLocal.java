@@ -98,6 +98,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -112,6 +113,8 @@ import org.hibernate.Session;
 public class StudySubjectBeanLocal
         extends AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter>
         implements StudySubjectService, StudySubjectServiceLocal {
+
+    private static final Logger LOG = Logger.getLogger(StudySubjectBeanLocal.class);
 
     /**
      * {@inheritDoc}
@@ -132,7 +135,7 @@ public class StudySubjectBeanLocal
                        + "join ssub.studySite ssite "
                        + "where ssite.id = :studySiteId "
                        + "order by ssub.id ";
-            getLogger().info("query StudySubject = " + hql + ".");
+            LOG.debug("query StudySubject = " + hql + ".");
             query = session.createQuery(hql);
             query.setParameter("studySiteId", IiConverter.convertToLong(ii));
             queryList = query.list();
@@ -147,6 +150,7 @@ public class StudySubjectBeanLocal
                 throw new RemoteException("Iso conversion exception in getByStudyProtocol().", e);
             }
         }
+        LOG.debug("Leaving getByStudySite(), returning " + resultList.size() + " object(s).");
         return resultList;
     }
 

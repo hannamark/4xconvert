@@ -4,7 +4,7 @@ import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.Pattern;
 
 /**
- * 
+ *
  * @author Vrushali
  *
  */
@@ -13,7 +13,7 @@ public class PersonBatchDTO extends AddressDTO {
     private String middleName;
     private String lastName;
     private String poIdentifier;
-    
+
     /**
      * @return the firstName
      */
@@ -70,7 +70,7 @@ public class PersonBatchDTO extends AddressDTO {
     @Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$" , message = "(fieldName) Phone is required.\n")
     @NotEmpty (message = "")
     @Override
-    @SuppressWarnings({"PMD.UselessOverridingMethod" })
+    @SuppressWarnings("PMD.UselessOverridingMethod")
     public String getPhone() {
         return super.getPhone();
     }

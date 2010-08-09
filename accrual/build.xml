@@ -94,11 +94,14 @@
             description="Build test and deploy."/>
 
     <target name="test-dynamic-analysis" description="Runs tests and static analysis">
-        <ant inheritAll="false" inheritRefs="false" antfile="${services.build.file}"
-            dir="${services.dir}" >
+        <ant inheritAll="false" inheritRefs="false" antfile="${services.build.file}" dir="${services.dir}" >
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
             <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
-
+            <target name="test-dynamic-analysis"/>
+        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-web.build.file}" dir="${accrual-web.dir}" >
+            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
             <target name="test-dynamic-analysis"/>
         </ant>
     </target>
@@ -175,7 +178,7 @@
             <property name="accrual.jnp.url" value="${accrual.jnp.url}" />
             <property name="pa.jnp.url" value="${pa.jnp.url}" />
             <property name="po.jnp.url" value="${po.jnp.url}" />
-            
+
             <target name="${services.build.target}${notask}"/>
         </ant>
     </target>
@@ -215,13 +218,13 @@
     <!-- ====================================================================== -->
     <!-- Clean the ear, services and web subprojects                            -->
     <!-- ====================================================================== -->
-	
-	<target name="accrual-web-clean">
-	        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-web.build.file}"
-	            dir="${accrual-web.dir}" >
-	            <target name="${accrual-web.clean.target}"/>
-	        </ant>
-	    </target>
+
+    <target name="accrual-web-clean">
+            <ant inheritAll="false" inheritRefs="false" antfile="${accrual-web.build.file}"
+                dir="${accrual-web.dir}" >
+                <target name="${accrual-web.clean.target}"/>
+            </ant>
+        </target>
 
     <target name="accrual-services-clean">
         <ant inheritAll="false" inheritRefs="false" antfile="${services.build.file}"

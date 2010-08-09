@@ -125,8 +125,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
  * @author Harsha
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength",
-    "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.ExcessiveMethodLength", "unchecked"  })
+@SuppressWarnings("unchecked")
 public class SubmitTrialAction extends ManageFileAction implements ServletResponseAware {
     private static final Logger LOG = Logger.getLogger(SubmitTrialAction.class);
     private Long cbValue;
@@ -169,7 +168,6 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      *
      * @return String
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String create() {
         try {
             trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);

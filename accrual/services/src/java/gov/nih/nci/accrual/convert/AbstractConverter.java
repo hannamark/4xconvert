@@ -97,7 +97,6 @@ import java.util.zip.DataFormatException;
  * @param <DTO> iso dto
  * @param <BO> domain object
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public abstract class AbstractConverter <DTO extends BaseDTO, BO extends AbstractEntity> {
     /**
      * @param dto iso dto

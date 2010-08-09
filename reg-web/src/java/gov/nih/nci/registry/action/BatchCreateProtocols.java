@@ -150,8 +150,6 @@ import org.apache.log4j.Logger;
  * @author Vrushali
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.ExcessiveMethodLength",
-        "PMD.TooManyMethods", "PMD.NPathComplexity" })
 public class BatchCreateProtocols {
     private static final Logger LOG = Logger.getLogger(BatchCreateProtocols.class);
     private int sucessCount = 0;
@@ -564,7 +562,7 @@ public class BatchCreateProtocols {
         Ii responsiblePartyContactIi = null;
         OrganizationDTO sponsorOrgDTO = null;
         StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
-        if (trialDTO.getXmlRequired()) {
+        if (trialDTO.isXmlRequired()) {
             sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
             if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
                 studyContactDTO = util.convertToStudyContactDTO(trialDTO);

@@ -88,7 +88,6 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since 06/08/2009
  */
-@SuppressWarnings("PMD.TooManyFields")
 public final class AverageMilestoneResultWebDto {
 
     private String milestoneCode;

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.dto;
 
@@ -13,9 +13,8 @@ import org.hibernate.validator.Pattern;
 
 /**
  * @author Vrushali
- * 
+ *
  */
-@SuppressWarnings({"PMD.ExcessiveClassLength", "PMD.TooManyFields", "PMD.AvoidDuplicateLiterals" })
 public class StudyProtocolBatchDTO {
     private String uniqueTrialId;
     private String localProtocolIdentifier;
@@ -26,7 +25,7 @@ public class StudyProtocolBatchDTO {
     private String primaryPurposeOtherValueSp;
     private String phase;
     private String phaseOtherValueSp;
-    //Sponsor 
+    //Sponsor
     private String sponsorPOId;
     private String sponsorOrgName;
     private String sponsorStreetAddress;
@@ -39,7 +38,7 @@ public class StudyProtocolBatchDTO {
     private String sponsorTTY;
     private String sponsorFax;
     private String sponsorURL;
-    
+
     private String responsibleParty;
     private String sponsorContactPOId;
     private String sponsorContactFName;
@@ -58,7 +57,7 @@ public class StudyProtocolBatchDTO {
     //generic contact
     private String responsibleGenericContactName;
     private String sponsorContactType;
-    
+
     //lead org
     private String leadOrgPOId;
     private String leadOrgName;
@@ -73,7 +72,7 @@ public class StudyProtocolBatchDTO {
     private String leadOrgFax;
     private String leadOrgUrl;
     private String leadOrgType;
-    
+
     //PI
     private String piPOId;
     private String piFirstName;
@@ -104,7 +103,7 @@ public class StudyProtocolBatchDTO {
     private String summ4Fax;
     private String summ4Url;
     private String programCodeText;
-    
+
     private String nihGrantFundingMechanism;
     private String nihGrantInstituteCode;
     private String nihGrantSrNumber;
@@ -116,7 +115,7 @@ public class StudyProtocolBatchDTO {
     private String studyStartDateType;
     private String primaryCompletionDate;
     private String primaryCompletionDateType;
-    
+
     private String indType;
     private String indNumber;
     private String indGrantor;
@@ -125,20 +124,20 @@ public class StudyProtocolBatchDTO {
     private String indNCIDivision;
     private String indHasExpandedAccess;
     private String indExpandedAccessStatus;
-    
+
     private String protcolDocumentFileName;
     private String irbApprovalDocumentFileName;
     private String participatinSiteDocumentFileName;
     private String informedConsentDocumentFileName;
     private String otherTrialRelDocumentFileName;
-    
+
     private String submissionType;
     private String nciTrialIdentifier;
     private String amendmentNumber;
     private String amendmentDate;
     private String changeRequestDocFileName;
     private String protocolHighlightDocFileName;
-    
+
     private String oversightAuthorityCountry;
     private String oversightOrgName;
     private String fdaRegulatoryInformationIndicator;
@@ -151,7 +150,7 @@ public class StudyProtocolBatchDTO {
     private String dcpIdentifier;
     private boolean ctGovXmlIndicator = true;
     private List<Ii> otherTrialIdentifiers;
-    
+
     /**
      * @return the otherTrialIdentifiers
      */
@@ -176,7 +175,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the currentTrialStatus
      */
-    @NotEmpty(message = "Current Trial Status is required.\n")    
+    @NotEmpty(message = "Current Trial Status is required.\n")
     public String getCurrentTrialStatus() {
         return currentTrialStatus;
     }
@@ -204,7 +203,7 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * 
+     *
      * @return lead organization PO Id
      */
     public String getLeadOrgPOId() {
@@ -212,7 +211,7 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * 
+     *
      * @param leadOrgPOId Org PO Id
      */
     public void setLeadOrgPOId(String leadOrgPOId) {
@@ -278,7 +277,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the leadOrgName
      */
-    @org.hibernate.validator.Length(message = "Lead Organization's Name must be 160 characters max.\n", 
+    @org.hibernate.validator.Length(message = "Lead Organization's Name must be 160 characters max.\n",
             max = ORG_NAME_MAX_LENGTH)
     public String getLeadOrgName() {
         return leadOrgName;
@@ -602,7 +601,7 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * 
+     *
      * @return PI person ID
      */
     public String getPiPOId() {
@@ -610,7 +609,7 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * 
+     *
      * @param piPOId PI person ID
      */
     public void setPiPOId(String piPOId) {
@@ -768,7 +767,7 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * 
+     *
      * @return sponsor contact po id
      */
     public String getSponsorContactPOId() {
@@ -776,7 +775,7 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * 
+     *
      * @param sponsorContactPOId sponsor contact po id
      */
     public void setSponsorContactPOId(String sponsorContactPOId) {
@@ -1002,7 +1001,7 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * 
+     *
      * @return sponsor PO ID
      */
     public String getSponsorPOId() {
@@ -1010,7 +1009,7 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * 
+     *
      * @param sponsorPOId sponsor PO ID
      */
     public void setSponsorPOId(String sponsorPOId) {
@@ -1244,14 +1243,14 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * 
+     *
      * @return summary 4 PO ID
      */
     public String getSumm4OrgPOId() {
         return summ4OrgPOId;
     }
     /**
-     * 
+     *
      * @param summ4OrgPOId summary 4 PO ID
      */
     public void setSumm4OrgPOId(String summ4OrgPOId) {
@@ -1398,7 +1397,7 @@ public class StudyProtocolBatchDTO {
     public void setUniqueTrialId(String uniqueTrialId) {
         this.uniqueTrialId = uniqueTrialId;
     }
-    
+
 
     /**
      * @return the indExpandedAccessStatus
@@ -1634,7 +1633,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the nciTrialIdentifier
      */
-    @Pattern(regex = "^[N][C][I][-][0-9]{4}[-][0-9]{5}$", 
+    @Pattern(regex = "^[N][C][I][-][0-9]{4}[-][0-9]{5}$",
             message = "NCI Trial Indentifier is not well formatted. It should follow the pattern NCI-2009-00001 \n.")
     public String getNciTrialIdentifier() {
         return nciTrialIdentifier;
@@ -1861,6 +1860,6 @@ public class StudyProtocolBatchDTO {
      public void setCtGovXmlIndicator(boolean ctGovXmlIndicator) {
        this.ctGovXmlIndicator = ctGovXmlIndicator;
      }
-    
+
 
 }

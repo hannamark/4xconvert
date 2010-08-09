@@ -108,7 +108,6 @@ import org.hibernate.Session;
  */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public class SearchStudySiteBean implements SearchStudySiteService {
 
     /**

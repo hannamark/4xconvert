@@ -125,7 +125,6 @@ import org.apache.struts2.interceptor.ServletResponseAware;
  *
  * @author Vrushali
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public class AmendmentTrialAction extends ManageFileAction implements ServletResponseAware {
     private static final long serialVersionUID = 1L;
     private HttpServletResponse servletResponse;
@@ -221,7 +220,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
             // get the document and put in list add the IndIde,FundingList
             populateIndIdes();
             populateGrantList();
-            if (trialDTO.getXmlRequired()) {
+            if (trialDTO.isXmlRequired()) {
                 trialUtil.setOversgtInfo(trialDTO);
             }
             List<Ii> otherIdsList =
@@ -297,7 +296,6 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
      *
      * @return s
      */
-    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public String amend() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
         if (trialDTO == null) {
@@ -306,7 +304,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         TrialUtil util = new TrialUtil();
         Ii amendId = null;
         try {
-            if (!trialDTO.getXmlRequired()) {
+            if (!trialDTO.isXmlRequired()) {
                 trialDTO.setFdaRegulatoryInformationIndicator(null);
                 trialDTO.setDataMonitoringCommitteeAppointedIndicator(null);
                 trialDTO.setDelayedPostingIndicator(null);
