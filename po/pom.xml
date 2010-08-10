@@ -454,6 +454,12 @@
     </pluginRepositories>
 
     <dependencies>
+ 	<dependency>
+ 	    <groupId>net.sourceforge.cobertura</groupId>
+ 	    <artifactId>cobertura</artifactId>
+ 	    <version>1.9</version>
+ 	    <optional>true</optional>
+ 	</dependency>
         <!-- Testing only jars -->
         <dependency>
             <groupId>junit</groupId>
