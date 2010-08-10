@@ -76,7 +76,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <!-- Ivy Related props -->
     <property name="ivy.bda.definition.file" value="ivy-bda-2.0.0.xml" />
-    <property name="ivy.bda.settings.file" value="ivy-bda-settings.xml" />
+    <property name="ivy.bda.settings.file" value="cbiit-ivy-bda-settings.xml" />
 
     <!-- Used by dist:*:prep to determin list of files to use for incremental build process.
         Directory and files must be in svn to work.
@@ -229,7 +229,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <!-- Use below for old ivy repo -->
         <!--<property name="ivy.settings.file" value="ivy-bda-settings.xml"/>-->
         <!-- Use below for new ivy repo -->
-        <property name="ivy.settings.file" value="ivy-bda-settings.xml"/>
+        <property name="ivy.settings.file" value="cbiit-ivy-bda-settings.xml"/>
         <property name="target.dir" location="${target.dir}"/>
         <property name="local.cbiit-ivy-repo.dir" value="${local.cbiit-ivy-repo.dir}"/>
     </ant>
@@ -1445,7 +1445,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="init:ivy">
         <mkdir dir="${local.repo.dir}"/>
         <property name="ivy.dep.file" value="${bda-download.dir}/ivy-bda-2.0.0.xml"/>
-        <ivy:settings file="${bda-download.dir}/ivy-bda-settings.xml" />
+        <ivy:settings file="${bda-download.dir}/cbiit-ivy-bda-settings.xml" />
     </target>
 
     <target name="ivy-test-selenium" depends="init:ivy" description="Updates the local ivy repository">
