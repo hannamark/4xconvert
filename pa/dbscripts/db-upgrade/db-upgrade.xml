@@ -532,5 +532,6 @@
     </changeSet>
     <changeSet id="PO-2222" author="vrushali">
         <comment>PO-2222 Modify phase recording and reporting</comment>
-    <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2222.sql"/>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2222.sql"/>
+    </changeSet>
 </databaseChangeLog>
