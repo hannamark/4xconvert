@@ -112,6 +112,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String participatingSiteId;
     private String leadOrganizationTrialIdentifier;
     private String phaseCode;
+    private String phaseAdditionalQualifierCode;
     private String studyStatusCode;
     private String documentWorkflowStatusCode;
     private String principalInvestigatorId;
@@ -125,7 +126,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private boolean searchOnHold;
     private String studyMilestone;
     private String submissionType;
-    
+
     //for Inbox Processing
     private Boolean inBoxProcessing;
     private boolean studyLockedBy;
@@ -185,7 +186,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setOfficialTitle(String officialTitle) {
         this.officialTitle = officialTitle;
     }
- 
+
     /**
      *
      * @return leadOrganizationId
@@ -215,7 +216,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setOtherIdentifier(String otherId) {
         this.otherIdentifier = otherId;
     }
-    
+
     /**
      *
      * @return leadOrganizationTrialIdentifier
@@ -461,5 +462,18 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public Long getUserId() {
         return userId;
     }
-    
+    /**
+     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
+     */
+    public void setPhaseAdditionalQualifierCode(
+            String phaseAdditionalQualifierCode) {
+        this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
+    }
+    /**
+     * @return the phaseAdditionalQualifierCode
+     */
+    public String getPhaseAdditionalQualifierCode() {
+        return phaseAdditionalQualifierCode;
+    }
+
 }

@@ -216,7 +216,7 @@
                     <c:out value="${requestScope.trialSummary.phaseCode.code }"/>
                 </td>
           </tr>
-          <c:if test="${requestScope.trialSummary.phaseOtherText.value != null}">
+          <c:if test="${requestScope.trialDTO.phaseAdditonalQualifier != null }">
 	          <tr>
 	                <td scope="row" class="label">
 	                    <label for="Other Phase Text">
@@ -224,7 +224,7 @@
 	                        </label>
 	                </td>
 	                <td class="value">
-	                    <c:out value="${requestScope.trialSummary.phaseOtherText.value }"/>
+	                    <c:out value="${requestScope.trialDTO.phaseAdditonalQualifier }"/>
 	                </td>
 	          </tr>
           </c:if>

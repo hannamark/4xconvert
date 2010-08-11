@@ -113,6 +113,7 @@ import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
@@ -495,7 +496,7 @@ public class MailManagerServiceTest {
         sp.setKeywordText("keywordText");
         sp.setOfficialTitle("Cancer for kids");
         sp.setPhaseCode(PhaseCode.I);
-        sp.setPhaseOtherText("phaseOtherText");
+        sp.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setPrimaryPurposeOtherText("primaryPurposeOtherText");
         sp.setPrimaryCompletionDate(now);

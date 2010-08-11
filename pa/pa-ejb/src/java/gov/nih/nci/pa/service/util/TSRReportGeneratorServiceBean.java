@@ -417,7 +417,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             gtd.setPrimaryPurpose(getValue(studyProtocolDto.getPrimaryPurposeCode(), INFORMATION_NOT_PROVIDED));
             gtd.setPrimaryPurposeComment(getValue(studyProtocolDto.getPrimaryPurposeOtherText(), null));
             gtd.setPhase(getValue(studyProtocolDto.getPhaseCode(), INFORMATION_NOT_PROVIDED));
-            gtd.setPhaseComment(getValue(studyProtocolDto.getPhaseOtherText(), null));
+            gtd.setPhaseAdditonalQualifier(getValue(studyProtocolDto.getPhaseAdditionalQualifierCode(), null));
             InterventionalStudyProtocolDTO ispDTO = studyProtocolService
                     .getInterventionalStudyProtocol(studyProtocolDtoIdentifier);
             boolean interventionalType = ispDTO != null ? true : false;
@@ -783,7 +783,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             trialDesign
                     .setPrimaryPurposeComment(getValue(ispDTO.getPrimaryPurposeOtherText(), INFORMATION_NOT_PROVIDED));
             trialDesign.setPhase(getValue(ispDTO.getPhaseCode(), INFORMATION_NOT_PROVIDED));
-            trialDesign.setPhaseComment(getValue(ispDTO.getPhaseCode(), INFORMATION_NOT_PROVIDED));
+            trialDesign.setPhaseAdditonalQualifier(getValue(ispDTO.getPhaseAdditionalQualifierCode(),
+                    INFORMATION_NOT_PROVIDED));
             trialDesign.setInterventionModel(getValue(ispDTO.getDesignConfigurationCode(), INFORMATION_NOT_PROVIDED));
             trialDesign.setNumberOfArms(getValue(ispDTO.getNumberOfInterventionGroups(), INFORMATION_NOT_PROVIDED));
             trialDesign.setMasking(getValue(ispDTO.getBlindingSchemaCode()));

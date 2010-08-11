@@ -449,7 +449,7 @@ public class TSRReportLabelText {
     /**
      * Trial Design Phase comment.
      */
-    public static final String TD_PHASE_COMMENT = "Phase Comment";
+    public static final String TD_PHASE_ADDITIONAL_QUALIFIER = "Phase Additional Qualifier";
     /**
      * Trial Design Intervention Model.
      */

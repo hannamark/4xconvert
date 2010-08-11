@@ -155,13 +155,11 @@ function tooltip() {
     </tr>
     <tr>
 		<td   scope="row" class="label"><label>
-	 		Required if Phase equals 'Other' </label></td>
+	 		Phase Additionl Qualiefier Code </label></td>
 		<td>
-			<s:textarea name="webDTO.phaseOtherText" rows="3" cssStyle="width:350px" />(Max 200 chars)
-			<span class="formErrorMsg"> 
-             <s:fielderror>
-               <s:param>webDTO.phaseOtherText</s:param>
-             </s:fielderror>                            
+		<s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
+        <s:select headerKey="" headerValue="" name="webDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
+                value="webDTO.phaseAdditionalQualifierCode" cssStyle="width:120px" />
 		</td>
 	</tr>	
     <tr>

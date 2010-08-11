@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.action;
 
@@ -35,11 +35,11 @@ import com.mockrunner.mock.web.MockHttpSession;
  *
  */
 public class AmendmentTrialActionTest extends AbstractRegWebTest {
-    
+
     private AmendmentTrialAction trialAction;
     private static final String FILE_NAME = "ProtocolDoc.doc";
     //private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
-    @Before 
+    @Before
     public void setup(){
         //HibernateUtil.testHelper = testHelper;
         //Session session = HibernateUtil.getCurrentSession();
@@ -84,14 +84,14 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setProtocolDoc(f);
         trialAction.setIrbApproval(f);
         trialAction.setChangeMemoDoc(f);
-        
+
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
         trialAction.setPageFrom("amendTrial");
         assertEquals("review", trialAction.review());
-       
-        
+
+
     }
     @Test
     public void testReviewWithAllDoc() throws Exception{
@@ -105,7 +105,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setInformedConsentDocument(f);
         trialAction.setParticipatingSites(f);
         trialAction.setProtocolHighlightDocument(f);
-        
+
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
@@ -154,7 +154,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setProtocolDoc(f);
         trialAction.setIrbApproval(f);
         trialAction.setChangeMemoDoc(f);
-        
+
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
@@ -171,7 +171,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setProtocolDoc(f);
         trialAction.setIrbApproval(f);
         trialAction.setChangeMemoDoc(f);
-        
+
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
@@ -195,7 +195,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setProtocolDoc(f);
         trialAction.setIrbApproval(f);
         trialAction.setChangeMemoDoc(f);
-        
+
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
@@ -207,14 +207,14 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
     public void testReviewWithGrants() throws Exception{
         trialAction = new AmendmentTrialAction();
         trialAction.setTrialDTO(getMockTrialDTO());
-        
+
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
         File f = new File(fileUrl.toURI());
 
         trialAction.setProtocolDoc(f);
         trialAction.setIrbApproval(f);
         trialAction.setChangeMemoDoc(f);
-        
+
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
@@ -237,7 +237,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setProtocolDoc(f);
         trialAction.setIrbApproval(f);
         trialAction.setChangeMemoDoc(f);
-        
+
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
@@ -249,7 +249,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("review", trialAction.review());
-        
+
     }
     @Test
     public void testReviewWhenRespPartyIsSponsor() throws URISyntaxException{
@@ -265,7 +265,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setProtocolDoc(f);
         trialAction.setIrbApproval(f);
         trialAction.setChangeMemoDoc(f);
-        
+
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
@@ -282,13 +282,13 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         dto.setFundingDtos(getfundingDtos());
         dto.setIndIdeDtos(getIndDtos());
         trialAction.setTrialDTO(dto);
-        
+
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
         File f = new File(fileUrl.toURI());
 
         trialAction.setProtocolDoc(f);
         trialAction.setIrbApproval(f);
-        
+
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
 
@@ -299,7 +299,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         ServletActionContext.setRequest(request);
         assertEquals("error", trialAction.review());
     }
-    @Test 
+    @Test
     public void testCancle() {
         trialAction = new AmendmentTrialAction();
         assertEquals("redirect_to_search", trialAction.cancel());
@@ -373,7 +373,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         HttpSession sess = new MockHttpSession();
         TrialDTO dto = getMockTrialDTO();
         dto.setPhaseCode("Other");
-        dto.setPhaseOtherText("phaseOtherText");
+        dto.setPhaseAdditonalQualifier("phaseOtherText");
         dto.setPrimaryPurposeCode("Other");
         dto.setPrimaryPurposeOtherText("primaryPurposeOtherText");
         sess.setAttribute("trialDTO", dto);
@@ -388,7 +388,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         HttpSession sess = new MockHttpSession();
         TrialDTO dto = getMockTrialDTO();
         dto.setPhaseCode("Other");
-        dto.setPhaseOtherText("phaseOtherText");
+        dto.setPhaseAdditonalQualifier("phaseOtherText");
         dto.setPrimaryPurposeCode("Other");
         dto.setPrimaryPurposeOtherText("primaryPurposeOtherText");
         dto.setOfficialTitle("testthrowException");
@@ -401,7 +401,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
     @Test
     public void testAmendWhenNoDTO(){
         trialAction = new AmendmentTrialAction();
-        assertEquals("error", trialAction.amend());     
+        assertEquals("error", trialAction.amend());
     }
     @Test
     public void testTrialDTOProperty(){
@@ -575,7 +575,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setProtocolDoc(f);
         trialAction.setIrbApproval(f);
         trialAction.setChangeMemoDoc(f);
-        
+
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
@@ -595,7 +595,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setProtocolDoc(f);
         trialAction.setIrbApproval(f);
         trialAction.setChangeMemoDoc(f);
-        
+
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
@@ -617,11 +617,11 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setProtocolDoc(f);
         trialAction.setIrbApproval(f);
         trialAction.setChangeMemoDoc(f);
-        
+
         trialAction.setProtocolDocFileName(FILE_NAME);
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
         assertEquals("error", trialAction.review());
     }
-    
+
 }

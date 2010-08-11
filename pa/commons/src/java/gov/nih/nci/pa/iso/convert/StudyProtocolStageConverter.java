@@ -2,6 +2,7 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -27,10 +28,10 @@ import org.apache.log4j.Logger;
  */
 @SuppressWarnings ({"PMD.ExcessiveMethodLength" })
 public class StudyProtocolStageConverter {
-    
+
     private static final Logger LOG  = Logger.getLogger(StudyProtocolStageConverter.class);
     private static CSMUserUtil csmUserUtil = null;
-    
+
     /**
      * @return the csmUserUtil
      */
@@ -66,7 +67,8 @@ public class StudyProtocolStageConverter {
         studyProtocolStageDTO.setOfficialTitle(StConverter.convertToSt(studyProtocolStage.getOfficialTitle()));
         studyProtocolStageDTO.setPhaseCode(CdConverter.convertToCd(
                 studyProtocolStage.getPhaseCode()));
-        studyProtocolStageDTO.setPhaseOtherText(StConverter.convertToSt(studyProtocolStage.getPhaseOtherText()));
+        studyProtocolStageDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(
+                studyProtocolStage.getPhaseAdditionalQualifierCode()));
         studyProtocolStageDTO.setPrimaryPurposeCode(CdConverter.convertToCd(
                 studyProtocolStage.getPrimaryPurposeCode()));
         studyProtocolStageDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(
@@ -175,7 +177,8 @@ public class StudyProtocolStageConverter {
         studyProtocolStage.setOfficialTitle(StConverter.convertToString(studyProtocolStageDTO.getOfficialTitle()));
         studyProtocolStage.setPhaseCode(PhaseCode.getByCode(CdConverter.convertCdToString(
                 studyProtocolStageDTO.getPhaseCode())));
-        studyProtocolStage.setPhaseOtherText(StConverter.convertToString(studyProtocolStageDTO.getPhaseOtherText()));
+        studyProtocolStage.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.getByCode(
+                CdConverter.convertCdToString(studyProtocolStageDTO.getPhaseAdditionalQualifierCode())));
         studyProtocolStage.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(
                 studyProtocolStageDTO.getPrimaryPurposeCode())));
         studyProtocolStage.setPrimaryPurposeOtherText(StConverter.convertToString(
@@ -227,7 +230,7 @@ public class StudyProtocolStageConverter {
                 studyProtocolStageDTO.getProprietaryTrialIndicator()));
         studyProtocolStage.setNciDesignatedCancerCenterIndicator(BlConverter.convertToBool(
                 studyProtocolStageDTO.getNciDesignatedCancerCenterIndicator()));
-        
+
         String isoStUserLastCreated = StConverter.convertToString(studyProtocolStageDTO.getUserLastCreated());
         if (StringUtils.isNotEmpty(isoStUserLastCreated)) {
             try {
@@ -237,7 +240,7 @@ public class StudyProtocolStageConverter {
                         + studyProtocolStageDTO.getIdentifier() + ", for username: " + isoStUserLastCreated, e);
             }
         }
-            
+
         studyProtocolStage.setCtgovXmlRequiredIndicator(BlConverter.convertToBoolean(
                 studyProtocolStageDTO.getCtgovXmlRequiredIndicator()));
         studyProtocolStage.setSubmitterOrganizationIdentifier(IiConverter.convertToString(

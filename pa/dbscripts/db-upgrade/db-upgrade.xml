@@ -530,4 +530,7 @@
         <comment>PO-2339: Updating CSM table structures to mirror those found in the PO database.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2339.sql"/>
     </changeSet>
+    <changeSet id="PO-2222" author="vrushali">
+        <comment>PO-2222 Modify phase recording and reporting</comment>
+    <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2222.sql"/>
 </databaseChangeLog>

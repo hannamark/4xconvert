@@ -11,6 +11,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyFundingStage;
 import gov.nih.nci.pa.domain.StudyIndIdeStage;
 import gov.nih.nci.pa.domain.StudyProtocolStage;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.convert.StudyFundingStageConverter;
@@ -88,6 +89,10 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
         StudyProtocolStage exampleDO = new StudyProtocolStage();
         if (dto.getPhaseCode() != null) {
             exampleDO.setPhaseCode(PhaseCode.getByCode(dto.getPhaseCode().getCode()));
+        }
+        if (dto.getPhaseAdditionalQualifierCode() != null) {
+            exampleDO.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.getByCode(
+                    dto.getPhaseAdditionalQualifierCode().getCode()));
         }
         if (!PAUtil.isStNull(dto.getOfficialTitle())) {
             String title = "%" + StConverter.convertToString(dto.getOfficialTitle()) + "%";

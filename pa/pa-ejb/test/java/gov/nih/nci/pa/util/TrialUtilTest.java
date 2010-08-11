@@ -13,6 +13,7 @@ import gov.nih.nci.pa.dto.TrialDocumentDTO;
 import gov.nih.nci.pa.dto.TrialFundingDTO;
 import gov.nih.nci.pa.dto.TrialIndIdeDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -43,13 +44,13 @@ public class TrialUtilTest {
 	TrialUtil trialUtil = new TrialUtil();
 	StudyProtocolDTO spDTO = new StudyProtocolDTO();
 	TrialDTO trialDTO = new TrialDTO();
-	
+
 	@Test
 	public void testCopyStudyProtocolDTOTrialDTO() {
 		spDTO.setOfficialTitle(StConverter.convertToSt("test"));
 		spDTO.setSecondaryIdentifiers(DSetConverter.convertIiToDset(IiConverter.convertToIi("1")));
 		spDTO.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.O.getCode()));
-		spDTO.setPhaseOtherText(StConverter.convertToSt("test"));
+		spDTO.setPhaseAdditionalQualifierCode(CdConverter.convertStringToCd(PhaseAdditionalQualifierCode.PILOT.getCode()));
 		spDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(PrimaryPurposeCode.OBSERVATIONAL.getCode()));
 		spDTO.setPrimaryPurposeOtherText(StConverter.convertToSt("other text"));
 		spDTO.setStartDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
@@ -57,8 +58,8 @@ public class TrialUtilTest {
 		spDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ANTICIPATED.getCode()));
 		spDTO.setStudyProtocolType(StConverter.convertToSt("InterventionalStudyProtocol"));
 		spDTO.setIdentifier(IiConverter.convertToIi("1"));
-        spDTO.setStartDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));  
-		
+        spDTO.setStartDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+
 		trialUtil.copy(spDTO, trialDTO);
 		assertEquals(trialDTO.getOfficialTitle(), "test");
 	}
@@ -125,7 +126,7 @@ public class TrialUtilTest {
 	@Test
 	public void testCopySummaryFour() throws PAException{
 		StudyResourcingDTO srDTO = null;
-		trialUtil.copySummaryFour(srDTO, trialDTO);		
+		trialUtil.copySummaryFour(srDTO, trialDTO);
 	}
 	@Test
 	public void testCopyINDIDEList() throws PAException {
@@ -226,7 +227,7 @@ public class TrialUtilTest {
 	@Test(expected=IOException.class)
 	public void testConvertToDocumentList() throws IOException{
 		trialUtil.convertToDocumentList("IRB","c:\text.doc", new File("c:\text.doc"));
-		
+
 	}
 
 	@Test

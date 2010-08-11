@@ -24,7 +24,7 @@ public class StudyProtocolStageDTO extends BaseDTO {
     private St nctIdentifier;
     private St officialTitle;
     private Cd phaseCode;
-    private St phaseOtherText;
+    private Cd phaseAdditionalQualifierCode;
     private St trialType;
     private Cd primaryPurposeCode;
     private St primaryPurposeOtherText;
@@ -127,16 +127,16 @@ public class StudyProtocolStageDTO extends BaseDTO {
         this.phaseCode = phaseCode;
     }
     /**
-     * @return the phaseOtherText
+     * @return the phaseAdditionalQualifierCode
      */
-    public St getPhaseOtherText() {
-        return phaseOtherText;
+    public Cd getPhaseAdditionalQualifierCode() {
+        return phaseAdditionalQualifierCode;
     }
     /**
-     * @param phaseOtherText the phaseOtherText to set
+     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
      */
-    public void setPhaseOtherText(St phaseOtherText) {
-        this.phaseOtherText = phaseOtherText;
+    public void setPhaseAdditionalQualifierCode(Cd phaseAdditionalQualifierCode) {
+        this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
     }
     /**
      * @return the trialType

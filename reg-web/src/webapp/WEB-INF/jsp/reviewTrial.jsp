@@ -194,7 +194,7 @@ var winprint=window.open("","",sOption);
                     <c:out value="${trialDTO.phaseCode}"/> 
                 </td>
           </tr>
-          <c:if test="${trialDTO.phaseOtherText!= ''}">
+          <c:if test="${trialDTO.phaseAdditonalQualifier!= ''}">
               <tr>     
                     <td scope="row" class="label">
                         <label for="Other Phase Text">
@@ -202,7 +202,7 @@ var winprint=window.open("","",sOption);
                             </label>
                     </td>
                     <td class="value">
-                        <c:out value="${trialDTO.phaseOtherText}"/> 
+                        <c:out value="${trialDTO.phaseAdditonalQualifier}"/> 
                     </td>
               </tr>
           </c:if> 

@@ -80,6 +80,7 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -116,6 +117,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String localStudyProtocolIdentifier;
     private StudyTypeCode studyTypeCode;
     private PhaseCode phaseCode;
+    private PhaseAdditionalQualifierCode phaseAdditionalQualifier;
     private String studyProtocolType;
     private String amend;
     private String update;
@@ -688,6 +690,20 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public String getStudyCheckoutByUsername() {
         return studyCheckoutByUsername;
+    }
+
+    /**
+     * @param phaseAdditionalQualifier the phaseAdditionalQualifier to set
+     */
+    public void setPhaseAdditionalQualifier(PhaseAdditionalQualifierCode phaseAdditionalQualifier) {
+        this.phaseAdditionalQualifier = phaseAdditionalQualifier;
+    }
+
+    /**
+     * @return the phaseAdditionalQualifier
+     */
+    public PhaseAdditionalQualifierCode getPhaseAdditionalQualifier() {
+        return phaseAdditionalQualifier;
     }
 
 }

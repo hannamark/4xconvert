@@ -108,7 +108,7 @@ public class TSRReportGeneralTrialDetails {
     private String primaryPurpose;
     private String primaryPurposeComment;
     private String phase;
-    private String phaseComment;
+    private String phaseAdditonalQualifier;
 
     /**
      * Default Constructor.
@@ -357,17 +357,17 @@ public class TSRReportGeneralTrialDetails {
     }
 
     /**
-     * @return the phaseComment
+     * @return the phaseAdditonalQualifier
      */
-    public String getPhaseComment() {
-        return phaseComment;
+    public String getPhaseAdditonalQualifier() {
+        return phaseAdditonalQualifier;
     }
 
     /**
-     * @param phaseComment the phaseComment to set
+     * @param phaseAdditonalQualifier the phaseAdditonalQualifier to set
      */
-    public void setPhaseComment(String phaseComment) {
-        this.phaseComment = phaseComment;
+    public void setPhaseAdditonalQualifier(String phaseAdditonalQualifier) {
+        this.phaseAdditonalQualifier = phaseAdditonalQualifier;
     }
 
 }

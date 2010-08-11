@@ -5,6 +5,7 @@ package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -54,7 +55,7 @@ public class StudyProtocolStage extends AbstractEntity {
     private String nctIdentifier;
     private String officialTitle;
     private PhaseCode phaseCode;
-    private String phaseOtherText;
+    private PhaseAdditionalQualifierCode phaseAdditionalQualifierCode;
     private String trialType;
     private PrimaryPurposeCode primaryPurposeCode;
     private String primaryPurposeOtherText;
@@ -156,18 +157,22 @@ public class StudyProtocolStage extends AbstractEntity {
         this.phaseCode = phaseCode;
     }
     /**
-     * @return the phaseOtherText
+     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
      */
-    @Column(name = "PHASE_OTHER_TEXT")
-    public String getPhaseOtherText() {
-        return phaseOtherText;
+    public void setPhaseAdditionalQualifierCode(
+            PhaseAdditionalQualifierCode phaseAdditionalQualifierCode) {
+        this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
     }
+
     /**
-     * @param phaseOtherText the phaseOtherText to set
+     * @return the phaseAdditionalQualifierCode
      */
-    public void setPhaseOtherText(String phaseOtherText) {
-        this.phaseOtherText = phaseOtherText;
+    @Column (name = "PHASE_ADDITIONAL_QUALIFIER_CODE")
+    @Enumerated(EnumType.STRING)
+    public PhaseAdditionalQualifierCode getPhaseAdditionalQualifierCode() {
+        return phaseAdditionalQualifierCode;
     }
+
     /**
      * @return the trialType
      */

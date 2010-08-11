@@ -171,7 +171,7 @@ import org.hibernate.Session;
 
 /**
  * @author asharma
- * 
+ *
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
@@ -1120,7 +1120,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     private void enforceBusinessRules(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO) 
+            StudySiteContactDTO studySiteContactDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO)
     throws PAException {
         // CHECKSTYLE:ON
         StringBuffer sb = new StringBuffer();
@@ -1138,22 +1138,22 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         sb.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
         sb.append(PAUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode()) ? "Trial Start Date Type cannot be null , "
                 : "");
-        sb.append(PAUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode()) 
+        sb.append(PAUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())
                 ? "Primary Completion Date Type cannot be null , " : "");
         sb.append(PAUtil.isTsNull(studyProtocolDTO.getStartDate()) ? "Trial Start Date cannot be null , " : "");
-        sb.append(PAUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate()) 
+        sb.append(PAUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())
                 ? "Primary Completion Datecannot be null , " : "");
         sb.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
         if (leadOrganizationSiteIdentifierDTO != null) {
-            sb.append(PAUtil.isStNull(leadOrganizationSiteIdentifierDTO.getLocalStudyProtocolIdentifier()) 
+            sb.append(PAUtil.isStNull(leadOrganizationSiteIdentifierDTO.getLocalStudyProtocolIdentifier())
                     ? "Local StudyProtocol Identifier cannot be null , " : "");
         }
-        sb.append(PAUtil.isIiNull(leadOrganizationDTO.getIdentifier()) 
+        sb.append(PAUtil.isIiNull(leadOrganizationDTO.getIdentifier())
                 ? "Lead Organization Identifier cannot be null , " : "");
-        sb.append(PAUtil.isIiNull(principalInvestigatorDTO.getIdentifier()) 
+        sb.append(PAUtil.isIiNull(principalInvestigatorDTO.getIdentifier())
                 ? "Principal Investigator  Identifier cannot be null , " : "");
         if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            sb.append(PAUtil.isIiNull(sponsorOrganizationDTO.getIdentifier()) 
+            sb.append(PAUtil.isIiNull(sponsorOrganizationDTO.getIdentifier())
                     ? "Sponsor Organization  Identifier cannot be null , " : "");
         }
         if (overallStatusDTO != null) {
@@ -1185,7 +1185,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         errorMsg.append(studySiteInvestigatorDTO == null ? "Principal Investigator DTO cannot be null , " : "");
         errorMsg.append(studySiteOrganizationDTO == null ? "Study Site Organization DTO cannot be null , " : "");
 
-        errorMsg.append(leadOrganizationStudySiteDTO == null ? "Lead Organization Study SiteDTO cannot be null , " 
+        errorMsg.append(leadOrganizationStudySiteDTO == null ? "Lead Organization Study SiteDTO cannot be null , "
                 : "");
         errorMsg.append(studySiteDTO == null ? "Study Site DTO cannot be null , " : "");
 
@@ -1232,11 +1232,11 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                     : "");
         }
         if (studySiteDTO != null) {
-            errorMsg.append(PAUtil.isStNull(studySiteDTO.getLocalStudyProtocolIdentifier()) 
+            errorMsg.append(PAUtil.isStNull(studySiteDTO.getLocalStudyProtocolIdentifier())
                     ? "Submitting Organization Local Trial Identifier cannot be null, " : "");
         }
         if (leadOrganizationStudySiteDTO != null) {
-            errorMsg.append(PAUtil.isStNull(leadOrganizationStudySiteDTO.getLocalStudyProtocolIdentifier()) 
+            errorMsg.append(PAUtil.isStNull(leadOrganizationStudySiteDTO.getLocalStudyProtocolIdentifier())
                     ? "Lead Organization Trial Identifier cannot be null, " : "");
         }
         errorMsg.append(paServiceUtils.validateRecuritmentStatusDateRule(studySiteAccrualStatusDTO, studySiteDTO));
@@ -1294,10 +1294,10 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         // validates for attributes
         sb.append(PAUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode()) ? "Trial Start Date Type cannot be null , "
                 : "");
-        sb.append(PAUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode()) 
+        sb.append(PAUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())
                 ? "Primary Completion Date Type cannot be null , " : "");
         sb.append(PAUtil.isTsNull(studyProtocolDTO.getStartDate()) ? "Trial Start Date cannot be null , " : "");
-        sb.append(PAUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate()) 
+        sb.append(PAUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())
                 ? "Primary Completion Datecannot be null , " : "");
         sb.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
 
@@ -1356,7 +1356,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         }
         createStudyProtocolDTO.setOfficialTitle(studyProtocolDTO.getOfficialTitle());
         createStudyProtocolDTO.setPhaseCode(studyProtocolDTO.getPhaseCode());
-        createStudyProtocolDTO.setPhaseOtherText(studyProtocolDTO.getPhaseOtherText());
+        createStudyProtocolDTO.setPhaseAdditionalQualifierCode(studyProtocolDTO.getPhaseAdditionalQualifierCode());
         createStudyProtocolDTO.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
         createStudyProtocolDTO.setPrimaryPurposeOtherText(studyProtocolDTO.getPrimaryPurposeOtherText());
         createStudyProtocolDTO.setStartDate(studyProtocolDTO.getStartDate());

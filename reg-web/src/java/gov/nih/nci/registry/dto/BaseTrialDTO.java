@@ -16,7 +16,7 @@ public class BaseTrialDTO {
     private String assignedIdentifier; // used to store nci-accession number
     private String officialTitle;
     private String phaseCode;
-    private String phaseOtherText;
+    private String phaseAdditonalQualifier;
     private String primaryPurposeCode;
     private String primaryPurposeOtherText;
     private String leadOrgTrialIdentifier;
@@ -84,17 +84,18 @@ public class BaseTrialDTO {
     public void setPhaseCode(String phaseCode) {
         this.phaseCode = phaseCode;
     }
+
     /**
-     * @return the phaseOtherText
+     * @return the phaseAdditonalQualifier
      */
-    public String getPhaseOtherText() {
-        return phaseOtherText;
+    public String getPhaseAdditonalQualifier() {
+        return phaseAdditonalQualifier;
     }
     /**
-     * @param phaseOtherText the phaseOtherText to set
+     * @param phaseAdditonalQualifier the phaseAdditonalQualifier to set
      */
-    public void setPhaseOtherText(String phaseOtherText) {
-        this.phaseOtherText = phaseOtherText;
+    public void setPhaseAdditonalQualifier(String phaseAdditonalQualifier) {
+        this.phaseAdditonalQualifier = phaseAdditonalQualifier;
     }
     /**
      * @return the primaryPurposeCode

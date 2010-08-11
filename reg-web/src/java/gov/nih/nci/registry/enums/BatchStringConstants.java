@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.enums;
 
@@ -31,7 +31,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      NCT_NUMBER("NCT", "setNctNumber"),
     /** */
-     OTHER_TRIAL_IDENTIFIER("Other Trial Identifier", "setOtherTrialIdentifiers"),    
+     OTHER_TRIAL_IDENTIFIER("Other Trial Identifier", "setOtherTrialIdentifiers"),
     /** */
      TITLE("Title", "setTitle"),
     /** */
@@ -43,7 +43,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      PHASE("Phase", "setPhase"),
     /** */
-     PHASE_OTHER_VALUE_SP("Phase 'Other' value specification", "setPhaseOtherValueSp"),
+     PHASE_ADDITIONAL_QUALIFIER("[Phase] Additional Qualifier", "setPhaseOtherValueSp"),
     /** */
      SPONSOR_ORG_NAME("[Sponsor] Organization Name", "setSponsorOrgName"),
     /** */
@@ -184,7 +184,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
      S4_FUND_URL("[Summary 4 Funding Sponsor/Source ] URL", "setSumm4Url"),
     /** */
      S4_PRG_CODE_TEXT("Program Code", "setProgramCodeText"),
-    /** */    
+    /** */
      NIH_GRANT_FUND_MC("[NIH Grant] Funding Mechanism", "setNihGrantFundingMechanism"),
     /** */
      NIH_GRANT_INSTITUTE_CODE("[NIH Grant] Institute Code", "setNihGrantInstituteCode"),
@@ -227,7 +227,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      OVERSIGHT_AUTHORITY_ORG_NAME("Oversight Authority Organization Name", "setOversightOrgName"),
     /** */
-     FDA_REGULATORY_INFORMATION_INDICATOR("FDA Regulatory Information Indicator", 
+     FDA_REGULATORY_INFORMATION_INDICATOR("FDA Regulatory Information Indicator",
       "setFdaRegulatoryInformationIndicator"),
     /** */
      SECTION_801_INDICATOR("Section 801 Indicator", "setSection801Indicator"),
@@ -247,11 +247,11 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      OTHER_TRIAL_DOC_FILE_NAME("Other Trial Related Document File Name", "setOtherTrialRelDocumentFileName"),
     /** */
-     CHANGE_MEMO_DOC_FILE_NAME("Change Memo Document Name", "setChangeRequestDocFileName"),    
+     CHANGE_MEMO_DOC_FILE_NAME("Change Memo Document Name", "setChangeRequestDocFileName"),
     /** */
     PROTOCOL_HIGHLIGHTED_DOC_FILE_NAME("Protocol Highlight Document Name", "setProtocolHighlightDocFileName");
-     
-     
+
+
     private String code;
     private String methodName;
 
@@ -272,7 +272,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
     public String getCode() {
         return code;
     }
-    
+
     /**
      * @return methodName coded value of enum
      */

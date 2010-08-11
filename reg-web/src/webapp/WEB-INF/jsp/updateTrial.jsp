@@ -325,7 +325,7 @@ function toggledisplay2 (it) {
     <s:hidden name="trialDTO.identifier" id="trialDTO.identifier"/>
     <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
     <s:hidden name="trialDTO.leadOrgTrialIdentifier" id="trialDTO.leadOrgTrialIdentifier"/>
-    <s:hidden name="trialDTO.phaseOtherText" id="trialDTO.phaseOtherText" />    
+    <s:hidden name="trialDTO.phaseAdditonalQualifier" id="trialDTO.phaseAdditonalQualifier" />    
     <s:hidden name="trialDTO.xmlRequired" id="trialDTO.xmlRequired" />    
         <s:hidden name="page" />
         <s:hidden name="uuidhidden"/>  

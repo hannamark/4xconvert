@@ -90,6 +90,7 @@ import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.SamplingMethodCode;
@@ -260,7 +261,7 @@ public class StudyProtocolTest  {
         sp.setKeywordText("keywordText");
         sp.setOfficialTitle("Cancer for kids");
         sp.setPhaseCode(PhaseCode.I);
-        sp.setPhaseOtherText("phaseOtherText");
+        sp.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setPrimaryPurposeOtherText("primaryPurposeOtherText");
         sp.setPrimaryCompletionDate(now);
@@ -376,7 +377,7 @@ public class StudyProtocolTest  {
         assertEquals(create.getKeywordText(), saved.getKeywordText());
         assertEquals(create.getOfficialTitle(), saved.getOfficialTitle());
         assertEquals("Phase code does not match " , create.getPhaseCode(), saved.getPhaseCode());
-        assertEquals(create.getPhaseOtherText() , saved.getPhaseOtherText());
+        assertEquals(create.getPhaseAdditionalQualifierCode() , saved.getPhaseAdditionalQualifierCode());
         assertEquals("PrimaryCompletionDate  does not match " ,
                 create.getPrimaryCompletionDate(), saved.getPrimaryCompletionDate());
         assertEquals("PrimaryCompletionDateTypeCode  does not match " ,

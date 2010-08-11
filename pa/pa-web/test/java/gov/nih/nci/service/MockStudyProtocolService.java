@@ -78,9 +78,9 @@
 */
 package gov.nih.nci.service;
 
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
@@ -213,9 +213,9 @@ public class MockStudyProtocolService    implements StudyProtocolServiceLocal {
      */
     public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
             InterventionalStudyProtocolDTO ispDTO) throws PAException {
-        if (ispDTO.getPhaseOtherText() != null && ispDTO.getPhaseOtherText().getValue().equals("ex")) {
+        /*if (ispDTO.getPhaseOtherText() != null && ispDTO.getPhaseOtherText().getValue().equals("ex")) {
             throw new PAException("test");
-        }
+        }*/
         return null;
     }
 
@@ -238,7 +238,7 @@ public class MockStudyProtocolService    implements StudyProtocolServiceLocal {
             ospDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));
             ospDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
             ospDTO.setSubmissionNumber(IntConverter.convertToInt(Integer.valueOf(1)));
-            return ospDTO;        
+            return ospDTO;
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyProtocolService#updateInterventionalStudyProtocol(gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO)
@@ -278,12 +278,12 @@ public class MockStudyProtocolService    implements StudyProtocolServiceLocal {
 
     public void validate(StudyProtocolDTO studyProtocolDTO) throws PAException {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void changeOwnership(StudyProtocolDTO studyProtocolDTO)
             throws PAException {
         // TODO Auto-generated method stub
-        
+
     }
 }

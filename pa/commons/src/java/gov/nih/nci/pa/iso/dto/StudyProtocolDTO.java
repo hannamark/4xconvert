@@ -92,17 +92,17 @@ import gov.nih.nci.iso21090.Ts;
  * StudyProtocolDTO for transferring Study Protocol object .
  * @author Naveen Amiruddin
  * @since 08/22/2008
- 
+
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class StudyProtocolDTO extends BaseDTO {
-    
+
     private static final long serialVersionUID = 7235772554482606133L;
     private St acronym;
     private Cd accrualReportingMethodCode;
-    private DSet<Ii> secondaryIdentifiers; 
+    private DSet<Ii> secondaryIdentifiers;
     private Bl dataMonitoringCommitteeAppointedIndicator;
     private Bl delayedpostingIndicator;
     private Bl expandedAccessIndicator;
@@ -110,7 +110,7 @@ public class StudyProtocolDTO extends BaseDTO {
     private Bl reviewBoardApprovalRequiredIndicator;
     private St officialTitle;
     private Cd phaseCode;
-    private St phaseOtherText;
+    private Cd phaseAdditionalQualifierCode;
     private Ts primaryCompletionDate;
     private Cd primaryCompletionDateTypeCode;
     private Cd primaryPurposeCode;
@@ -136,9 +136,9 @@ public class StudyProtocolDTO extends BaseDTO {
     private Ivl<Int> targetAccrualNumber;
     private Bl proprietaryTrialIndicator;
     private Bl ctgovXmlRequiredIndicator;
-    
+
     /**
-     * 
+     *
      * @return acronym
      */
     public St getAcronym() {
@@ -146,7 +146,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param acronym acronym
      */
     public void setAcronym(St acronym) {
@@ -155,7 +155,7 @@ public class StudyProtocolDTO extends BaseDTO {
 
 
     /**
-     * 
+     *
      * @return accrualReportingMethodCode
      */
     public Cd getAccrualReportingMethodCode() {
@@ -163,7 +163,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param accrualReportingMethodCode accrualReportingMethodCode
      */
     public void setAccrualReportingMethodCode(Cd accrualReportingMethodCode) {
@@ -171,7 +171,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return dataMonitoringCommitteeAppointedIndicator dataMonitoringCommitteeAppointedIndicator
      */
     public Bl getDataMonitoringCommitteeAppointedIndicator() {
@@ -179,7 +179,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param dataMonitoringCommitteeAppointedIndicator dataMonitoringCommitteeAppointedIndicator;
      */
     public void setDataMonitoringCommitteeAppointedIndicator(
@@ -188,7 +188,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return delayedpostingIndicator
      */
     public Bl getDelayedpostingIndicator() {
@@ -196,7 +196,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param delayedpostingIndicator delayedpostingIndicator
      */
     public void setDelayedpostingIndicator(Bl delayedpostingIndicator) {
@@ -204,7 +204,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return expandedAccessIndicator
      */
     public Bl getExpandedAccessIndicator() {
@@ -212,7 +212,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param expandedAccessIndicator expandedAccessIndicator
      */
     public void setExpandedAccessIndicator(Bl expandedAccessIndicator) {
@@ -221,7 +221,7 @@ public class StudyProtocolDTO extends BaseDTO {
 
 
     /**
-     * 
+     *
      * @return fdaRegulatedIndicator
      */
     public Bl getFdaRegulatedIndicator() {
@@ -229,14 +229,14 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param fdaRegulatedIndicator fdaRegulatedIndicator
      */
     public void setFdaRegulatedIndicator(Bl fdaRegulatedIndicator) {
         this.fdaRegulatedIndicator = fdaRegulatedIndicator;
     }
 
-    
+
     /**
      * @return the reviewBoardApprovalRequiredIndicator
      */
@@ -253,7 +253,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return officialTitle
      */
     public St getOfficialTitle() {
@@ -261,7 +261,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param officialTitle officialTitle
      */
     public void setOfficialTitle(St officialTitle) {
@@ -269,7 +269,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return phaseCode
      */
     public Cd getPhaseCode() {
@@ -277,7 +277,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param phaseCode phaseCode
      */
     public void setPhaseCode(Cd phaseCode) {
@@ -285,21 +285,21 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * @return phaseOtherText
+     * @return the phaseAdditionalQualifierCode
      */
-    public St getPhaseOtherText() {
-        return phaseOtherText;
+    public Cd getPhaseAdditionalQualifierCode() {
+        return phaseAdditionalQualifierCode;
     }
 
     /**
-     * @param phaseOtherText phaseOtherText
+     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
      */
-    public void setPhaseOtherText(St phaseOtherText) {
-        this.phaseOtherText = phaseOtherText;
+    public void setPhaseAdditionalQualifierCode(Cd phaseAdditionalQualifierCode) {
+        this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
     }
-    
+
     /**
-     * 
+     *
      * @return primaryCompletionDate
      */
     public Ts getPrimaryCompletionDate() {
@@ -307,7 +307,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param primaryCompletionDate primaryCompletionDate
      */
     public void setPrimaryCompletionDate(Ts primaryCompletionDate) {
@@ -315,7 +315,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return primaryCompletionDateTypeCode
      */
     public Cd getPrimaryCompletionDateTypeCode() {
@@ -323,7 +323,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param primaryCompletionDateTypeCode primaryCompletionDateTypeCode
      */
     public void setPrimaryCompletionDateTypeCode(Cd primaryCompletionDateTypeCode) {
@@ -343,7 +343,7 @@ public class StudyProtocolDTO extends BaseDTO {
     public void setPrimaryPurposeCode(Cd primaryPurposeCode) {
         this.primaryPurposeCode = primaryPurposeCode;
     }
-    
+
     /**
      * @return primaryPurposeOtherText
      */
@@ -359,7 +359,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return publicDescription
      */
     public St getPublicDescription() {
@@ -367,7 +367,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param publicDescription publicDescription
      */
     public void setPublicDescription(St publicDescription) {
@@ -375,7 +375,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return publicTitle
      */
     public St getPublicTitle() {
@@ -383,7 +383,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param publicTitle publicTitle
      */
     public void setPublicTitle(St publicTitle) {
@@ -391,7 +391,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return recordVerificationDate
      */
     public Ts getRecordVerificationDate() {
@@ -399,7 +399,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param recordVerificationDate recordVerificationDate
      */
     public void setRecordVerificationDate(Ts recordVerificationDate) {
@@ -407,7 +407,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return scientificDescription
      */
     public St getScientificDescription() {
@@ -415,7 +415,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param scientificDescription scientificDescription
      */
     public void setScientificDescription(St scientificDescription) {
@@ -423,7 +423,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return section801Indicator
      */
     public Bl getSection801Indicator() {
@@ -431,7 +431,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param section801Indicator section801Indicator
      */
     public void setSection801Indicator(Bl section801Indicator) {
@@ -439,7 +439,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return startDate
      */
     public Ts getStartDate() {
@@ -447,7 +447,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param startDate startDate
      */
     public void setStartDate(Ts startDate) {
@@ -455,7 +455,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return startDateTypeCode
      */
     public Cd getStartDateTypeCode() {
@@ -463,7 +463,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param startDateTypeCode startDateTypeCode
      */
     public void setStartDateTypeCode(Cd startDateTypeCode) {
@@ -499,7 +499,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return studyProtocolType
      */
     public St getStudyProtocolType() {
@@ -507,7 +507,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param studyProtocolType studyProtocolType
      */
     public void setStudyProtocolType(St studyProtocolType) {
@@ -515,7 +515,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @return userLastCreated
      */
     public St getUserLastCreated() {
@@ -523,7 +523,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     * 
+     *
      * @param userLastCreated userLastCreated
      */
     public void setUserLastCreated(St userLastCreated) {
@@ -681,7 +681,7 @@ public DSet<Ii> getSecondaryIdentifiers() {
 public void setSecondaryIdentifiers(DSet<Ii> secondaryIdentifiers) {
    this.secondaryIdentifiers = secondaryIdentifiers;
 }
-    
-    
+
+
 }
 

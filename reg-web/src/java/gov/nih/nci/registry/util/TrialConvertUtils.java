@@ -88,6 +88,7 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -216,13 +217,8 @@ public class TrialConvertUtils {
             isoDto.setOfficialTitle(StConverter.convertToSt(trialDTO.getOfficialTitle()));
         }
         isoDto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDTO.getPhaseCode())));
-        if (StringUtils.isNotEmpty(trialDTO.getPhaseCode())
-             && PhaseCode.OTHER.getCode().equals(trialDTO.getPhaseCode())
-             && StringUtils.isNotEmpty(trialDTO.getPhaseOtherText())) {
-                isoDto.setPhaseOtherText(StConverter.convertToSt(trialDTO.getPhaseOtherText()));
-        } else {
-            isoDto.setPhaseOtherText(StConverter.convertToSt(null));
-        }
+        isoDto.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(PhaseAdditionalQualifierCode.getByCode(
+                 trialDTO.getPhaseAdditonalQualifier())));
         isoDto.setPrimaryPurposeCode(CdConverter.convertToCd(
                 PrimaryPurposeCode.getByCode(trialDTO.getPrimaryPurposeCode())));
 
@@ -915,7 +911,8 @@ public class TrialConvertUtils {
        spStageDTO.setNctIdentifier(StConverter.convertToSt(trialDto.getNctIdentifier()));
        spStageDTO.setOfficialTitle(StConverter.convertToSt(trialDto.getOfficialTitle()));
        spStageDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDto.getPhaseCode())));
-       spStageDTO.setPhaseOtherText(StConverter.convertToSt(trialDto.getPhaseOtherText()));
+       spStageDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(PhaseAdditionalQualifierCode.getByCode(
+              trialDto.getPhaseAdditonalQualifier())));
        spStageDTO.setPrimaryPurposeCode(CdConverter.convertToCd(
                PrimaryPurposeCode.getByCode(trialDto.getPrimaryPurposeCode())));
        spStageDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(trialDto.getPrimaryPurposeOtherText()));
@@ -1034,7 +1031,10 @@ public class TrialConvertUtils {
            trialDto.setPhaseCode(PhaseCode.getByCode(
                    CdConverter.convertCdToString(spStageDTO.getPhaseCode())).getCode());
        }
-       trialDto.setPhaseOtherText(StConverter.convertToString(spStageDTO.getPhaseOtherText()));
+       if (!PAUtil.isCdNull(spStageDTO.getPhaseAdditionalQualifierCode())) {
+            trialDto.setPhaseAdditonalQualifier(PhaseAdditionalQualifierCode.getByCode(
+                            CdConverter.convertCdToString(spStageDTO.getPhaseAdditionalQualifierCode())).getCode());
+       }
        if (!PAUtil.isCdNull(spStageDTO.getPrimaryPurposeCode())) {
            trialDto.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(
                spStageDTO.getPrimaryPurposeCode())).getCode());

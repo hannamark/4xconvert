@@ -104,9 +104,8 @@ public class TrialBatchDataValidator {
         //Summary 4 Info validation
         fieldErr.append(validateSummary4SponsorInfo(batchDto));
 
-        if (StringUtils.isNotEmpty(batchDto.getPhase()) && PhaseCode.OTHER.getCode().equals(batchDto.getPhase())
-                && StringUtils.isEmpty(batchDto.getPhaseOtherValueSp())) {
-                fieldErr.append("Comment for Phase is required.\n");
+        if (StringUtils.isEmpty(batchDto.getPhase())) {
+                fieldErr.append("Phase is required.\n");
         }
         if (StringUtils.isNotEmpty(batchDto.getPrimaryPurpose())
                 && PrimaryPurposeCode.OTHER.getCode().equals(batchDto.getPrimaryPurpose())
@@ -370,6 +369,10 @@ public class TrialBatchDataValidator {
         //check the trial type it shld be either Interventional or Observational
         if (null == StudyTypeCode.getByCode(batchDto.getTrialType())) {
             fieldErr.append("Please enter valid value for Trial Type.");
+        }
+        //check phase
+        if (null ==  PhaseCode.getByCode(batchDto.getPhase())) {
+            fieldErr.append("Please enter valid value for Phase Code.");
         }
         //check Primary Purpose
         if (null == PrimaryPurposeCode.getByCode(batchDto.getPrimaryPurpose())) {

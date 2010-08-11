@@ -337,9 +337,8 @@ public class TrialValidationAction extends ActionSupport {
                 addFieldError("gtdDTO.primaryPurposeOtherText",
                         getText("Primary Purpose Other other text must be entered"));
             }
-            if (StringUtils.isNotEmpty(gtdDTO.getPhaseCode()) && gtdDTO.getPhaseCode().equalsIgnoreCase("other")
-                    && StringUtils.isEmpty(gtdDTO.getPhaseOtherText())) {
-                addFieldError("gtdDTO.phaseOtherText", getText("Phase Code other text must be entered"));
+            if (StringUtils.isEmpty(gtdDTO.getPhaseCode())) {
+                addFieldError("gtdDTO.phaseCode", getText("error.phase"));
             }
             if (StringUtils.isNotEmpty(gtdDTO.getPrimaryPurposeOtherText())
                     && gtdDTO.getPrimaryPurposeOtherText().length() > MAXIMUM_CHAR) {

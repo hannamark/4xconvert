@@ -287,6 +287,7 @@ public class SearchTrialAction extends ActionSupport {
         queryCriteria.setOfficialTitle(criteria.getOfficialTitle());
         queryCriteria.setPhaseCode(criteria.getPhaseCode());
         queryCriteria.setPrimaryPurposeCode(criteria.getPrimaryPurposeCode());
+        queryCriteria.setPhaseAdditionalQualifierCode(criteria.getPhaseAdditionalQualifierCode());
         if (StringUtils.isNotEmpty(criteria.getIdentifierType())
                  && StringUtils.isNotEmpty(criteria.getIdentifier())) {
             if (criteria.getIdentifierType().equals(Constants.IDENTIFIER_TYPE_NCI)) {
@@ -546,6 +547,8 @@ public class SearchTrialAction extends ActionSupport {
         criteriaSpDTO.setOfficialTitle(StConverter.convertToSt(criteria.getOfficialTitle()));
         criteriaSpDTO.setPhaseCode(CdConverter.convertStringToCd(criteria.getPhaseCode()));
         criteriaSpDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(criteria.getPrimaryPurposeCode()));
+        criteriaSpDTO.setPhaseAdditionalQualifierCode(CdConverter.convertStringToCd(
+                criteria.getPhaseAdditionalQualifierCode()));
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
         try {
             List<StudyProtocolStageDTO> spStageDTOs =  PaRegistry.getStudyProtocolStageService()

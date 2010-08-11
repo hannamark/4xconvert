@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.dto;
 
@@ -9,7 +9,7 @@ package gov.nih.nci.registry.dto;
  *
  */
 public class SearchProtocolCriteria {
-    
+
     private String identifierType;
     private String identifier;
     private String officialTitle;
@@ -20,6 +20,7 @@ public class SearchProtocolCriteria {
     private String organizationType;
     private boolean myTrialsOnly;
     private String principalInvestigatorId;
+    private String phaseAdditionalQualifierCode;
     /**
      * @return the identifierType
      */
@@ -141,6 +142,17 @@ public class SearchProtocolCriteria {
     public void setPrincipalInvestigatorId(String principalInvestigatorId) {
         this.principalInvestigatorId = principalInvestigatorId;
     }
-
+    /**
+     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
+     */
+    public void setPhaseAdditionalQualifierCode(String phaseAdditionalQualifierCode) {
+        this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
+    }
+    /**
+     * @return the phaseAdditionalQualifierCode
+     */
+    public String getPhaseAdditionalQualifierCode() {
+        return phaseAdditionalQualifierCode;
+    }
 
 }

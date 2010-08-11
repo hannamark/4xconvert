@@ -21,6 +21,7 @@ function resetValues(){
     document.getElementById("typeCodeValues").value="";
     document.getElementById("organizationId").value="";
     document.getElementById("participatingSiteId").value="";
+    document.getElementById("phaseAdditionalQualifierCode").value="";
 }
 function handleAction(){
      var input = "criteria.myTrialsOnly";
@@ -108,6 +109,18 @@ function getMyPartialTrial() {
 					<s:select id="typeCodeValues" headerKey="" headerValue="--Select--" name="criteria.primaryPurposeCode" list="#typeCodeValues"  value="criteria.primaryPurposeCode" cssStyle="width:206px" />
 				</td>
 			</tr>
+			<tr>
+                <td scope="row" class="label">
+                    <label for="searchTrial_criteria_phaseAdditionalQualifierCode"> 
+                    <fmt:message key="search.trial.phaseAdditionalQualifier"/></label>
+                </td>
+                  <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
+                <td>
+                  <s:select id="phaseAdditionalQualifierCode" headerKey="" headerValue="--Select--" name="criteria.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
+                    value="criteria.phaseAdditionalQualifierCode" cssStyle="width:206px" />
+                </td>
+                <td> </td>
+                </tr>
 			<tr>
 				<td scope="row" class="label">
 					<label for="searchTrial_criteria_identifierType"> <fmt:message key="search.trial.identifierType"/></label>

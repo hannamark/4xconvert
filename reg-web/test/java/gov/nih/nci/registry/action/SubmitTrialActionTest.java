@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.action;
 
@@ -66,7 +66,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         ServletActionContext.setRequest(request);
         assertEquals("show_Disclaimer_Page",submitAction .execute());
     }
-    @Test 
+    @Test
     public void testCancle() {
         submitAction = new SubmitTrialAction();
         assertEquals("redirect_to_search", submitAction.cancel());
@@ -130,7 +130,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testReviewWithGrants() throws Exception{
         submitAction = new SubmitTrialAction();
         submitAction.setTrialDTO(getMockTrialDTO());
-        
+
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
         File f = new File(fileUrl.toURI());
         submitAction.setProtocolDoc(f);
@@ -194,7 +194,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     @Test
     public void testCreateWithNoDTO(){
         submitAction = new SubmitTrialAction();
-        assertEquals("error", submitAction.create());      
+        assertEquals("error", submitAction.create());
     }
     //@Test
     public void testCreateWithDupTrial(){
@@ -206,7 +206,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        assertEquals("error", submitAction.create());     
+        assertEquals("error", submitAction.create());
     }
     @Test
     public void testCreateWithDupliTrial(){
@@ -219,7 +219,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        assertEquals("redirect_to_search", submitAction.create());     
+        assertEquals("redirect_to_search", submitAction.create());
     }
     @Test
     public void testCreateWithRespPartyAsPi(){
@@ -230,7 +230,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        assertEquals("redirect_to_search", submitAction.create());     
+        assertEquals("redirect_to_search", submitAction.create());
     }
     @Test
     public void testCreateWithRespPartyAsSponsor(){
@@ -243,7 +243,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        assertEquals("redirect_to_search", submitAction.create());     
+        assertEquals("redirect_to_search", submitAction.create());
     }
     @Test
     public void testCreateWithException(){
@@ -251,7 +251,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         HttpSession sess = new MockHttpSession();
         TrialDTO dto = getMockTrialDTO();
         dto.setPhaseCode("Other");
-        dto.setPhaseOtherText("phaseOtherText");
+        dto.setPhaseAdditonalQualifier("phaseOtherText");
         dto.setPrimaryPurposeCode("Other");
         dto.setPrimaryPurposeOtherText("primaryPurposeOtherText");
         dto.setOfficialTitle("testthrowException");
@@ -310,7 +310,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         submitAction = new SubmitTrialAction();
         assertNull(submitAction.getProtocolDoc());
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
-        File f = new File(fileUrl.toURI());     
+        File f = new File(fileUrl.toURI());
         submitAction.setProtocolDoc(f);
         assertNotNull(submitAction.getProtocolDoc());
     }
@@ -565,7 +565,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("error", submitAction.partialSave());
-        
+
         submitAction = new SubmitTrialAction();
         TrialDTO  trialDto = getMockTrialDTO();
         trialDto.setLeadOrganizationIdentifier("");
@@ -575,7 +575,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("error", submitAction.partialSave());
-        
+
         submitAction = new SubmitTrialAction();
         submitAction.setTrialDTO(getMockTrialDTO());
         request = new MockHttpServletRequest();
@@ -583,7 +583,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("review", submitAction.partialSave());
-        
+
         submitAction = new SubmitTrialAction();
         trialDto = getMockTrialDTO();
         trialDto.setStudyProtocolId("1");
@@ -597,7 +597,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("review", submitAction.partialSave());
-        
+
         submitAction = new SubmitTrialAction();
         trialDto = getMockTrialDTO();
         trialDto.setStudyProtocolId("1");
@@ -612,7 +612,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("review", submitAction.partialSave());
-        
+
         submitAction = new SubmitTrialAction();
         trialDto = getMockTrialDTO();
         trialDto.setStudyProtocolId("1");
@@ -628,7 +628,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         ServletActionContext.setRequest(request);
         assertEquals("review", submitAction.partialSave());
     }
-    @Test 
+    @Test
     public void testComplete() {
         submitAction = new SubmitTrialAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -636,7 +636,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("error", submitAction.completePartialSubmission());
-        
+
         submitAction = new SubmitTrialAction();
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
@@ -659,7 +659,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         ServletActionContext.setRequest(request);
         assertEquals("success", submitAction.completePartialSubmission());
     }
-    @Test 
+    @Test
     public void testDelete() {
         submitAction = new SubmitTrialAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -667,7 +667,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("error", submitAction.deletePartialSubmission());
-        
+
         submitAction = new SubmitTrialAction();
         request = new MockHttpServletRequest();
         session = new MockHttpSession();

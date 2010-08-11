@@ -85,6 +85,7 @@ import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
@@ -176,8 +177,8 @@ public class InterventionalStudyDesignAction extends ActionSupport {
                     CdConverter.convertToCd(AllocationCode.getByCode(webDTO.getAllocationCode())));
             ispDTO.setPrimaryPurposeOtherText(
                     StConverter.convertToSt(webDTO.getPrimaryPurposeOtherText()));
-            ispDTO.setPhaseOtherText(
-                    StConverter.convertToSt(webDTO.getPhaseOtherText()));
+            ispDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(
+                    PhaseAdditionalQualifierCode.getByCode(webDTO.getPhaseAdditionalQualifierCode())));
           //  ispDTO.setMaximumTargetAccrualNumber(
             //        IntConverter.convertToInt(webDTO.getMaximumTargetAccrualNumber()));
             ispDTO.setTargetAccrualNumber(
@@ -229,15 +230,6 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         if (StringUtils.isEmpty(webDTO.getPhaseCode())) {
             addFieldError("webDTO.phaseCode", getText("error.phase"));
         }
-        if (webDTO.getPhaseCode() != null && webDTO.getPhaseCode().equalsIgnoreCase("Other")
-                && StringUtils.isEmpty(webDTO.getPhaseOtherText())) {
-            addFieldError("webDTO.phaseOtherText", getText("error.comment"));
-        }
-        if (StringUtils.isNotEmpty(webDTO.getPhaseOtherText())
-                && webDTO.getPhaseOtherText().length() > MAXIMUM_CHAR) {
-              addFieldError("webDTO.phaseOtherText", getText("error.spType.other.maximumChar"));
-        }
-
         if (StringUtils.isEmpty(webDTO.getDesignConfigurationCode())) {
             addFieldError("webDTO.designConfigurationCode", getText("error.intervention"));
         }
@@ -299,8 +291,8 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             if (ispDTO.getNumberOfInterventionGroups().getValue() != null) {
                 dto.setNumberOfInterventionGroups(ispDTO.getNumberOfInterventionGroups().getValue().toString());
             }
-            if (ispDTO.getPhaseOtherText() != null) {
-                dto.setPhaseOtherText(ispDTO.getPhaseOtherText().getValue());
+            if (ispDTO.getPhaseAdditionalQualifierCode() != null) {
+                dto.setPhaseAdditionalQualifierCode(ispDTO.getPhaseAdditionalQualifierCode().getCode());
             }
             if (ispDTO.getPrimaryPurposeOtherText() != null) {
                 dto.setPrimaryPurposeOtherText(ispDTO.getPrimaryPurposeOtherText().getValue());

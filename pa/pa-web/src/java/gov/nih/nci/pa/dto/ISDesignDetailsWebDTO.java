@@ -97,7 +97,7 @@ public class ISDesignDetailsWebDTO {
     private String blindingSchemaCode;
     private String allocationCode;
     private String primaryPurposeOtherText;
-    private String phaseOtherText;
+    private String phaseAdditionalQualifierCode;
     private String blindingRoleCode;
     private String minimumTargetAccrualNumber;
     private String studyClassificationCode;
@@ -254,20 +254,24 @@ public class ISDesignDetailsWebDTO {
     /**
      * @return phaseOtherText
      */
-    public String getPhaseOtherText() {
-        return phaseOtherText;
-    }
-    /**
-     * @param phaseOtherText phaseOtherText
-     */
-    public void setPhaseOtherText(String phaseOtherText) {
-        this.phaseOtherText = phaseOtherText;
-    }
+
     /**
      * @return blindingRoleCode
      */
     public String getBlindingRoleCode() {
         return blindingRoleCode;
+    }
+    /**
+     * @return the phaseAdditionalQualifierCode
+     */
+    public String getPhaseAdditionalQualifierCode() {
+        return phaseAdditionalQualifierCode;
+    }
+    /**
+     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
+     */
+    public void setPhaseAdditionalQualifierCode(String phaseAdditionalQualifierCode) {
+        this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
     }
     /**
      * @param blindingRoleCode blindingRoleCode

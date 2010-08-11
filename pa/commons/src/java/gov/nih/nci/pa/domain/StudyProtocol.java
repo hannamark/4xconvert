@@ -84,6 +84,7 @@ import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.util.NotEmptyIiExtension;
@@ -152,7 +153,7 @@ public class StudyProtocol extends AbstractEntity {
     private Integer minimumTargetAccrualNumber;
     private String officialTitle;
     private PhaseCode phaseCode;
-    private String phaseOtherText;
+    private PhaseAdditionalQualifierCode phaseAdditionalQualifierCode;
     private Timestamp primaryCompletionDate;
     private ActualAnticipatedTypeCode primaryCompletionDateTypeCode;
     private PrimaryPurposeCode primaryPurposeCode;
@@ -406,20 +407,20 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     *
-     * @return phaseOtherText
+     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
      */
-    @Column(name = "PHASE_OTHER_TEXT")
-    public String getPhaseOtherText() {
-        return phaseOtherText;
+    public void setPhaseAdditionalQualifierCode(
+            PhaseAdditionalQualifierCode phaseAdditionalQualifierCode) {
+        this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
     }
 
     /**
-     * @param phaseOtherText
-     *            phaseOtherText
+     * @return the phaseAdditionalQualifierCode
      */
-    public void setPhaseOtherText(String phaseOtherText) {
-        this.phaseOtherText = phaseOtherText;
+    @Column (name = "PHASE_ADDITIONAL_QUALIFIER_CODE")
+    @Enumerated(EnumType.STRING)
+    public PhaseAdditionalQualifierCode getPhaseAdditionalQualifierCode() {
+        return phaseAdditionalQualifierCode;
     }
 
     /**
@@ -1060,10 +1061,10 @@ public class StudyProtocol extends AbstractEntity {
     public void setStudyOwners(Set<RegistryUser> studyOwners) {
         this.studyOwners = studyOwners;
     }
-    
+
     /**
      * Gets the other identifiers.
-     * 
+     *
      * @return the other identifiers
      */
     @CollectionOfElements(fetch = FetchType.EAGER)
@@ -1096,6 +1097,8 @@ public class StudyProtocol extends AbstractEntity {
      public void setOtherIdentifiers(Set<Ii> otherIdentifiers) {
         this.otherIdentifiers = otherIdentifiers;
      }
-    
+
+
+
 
 }

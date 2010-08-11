@@ -389,7 +389,8 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
                 addTableRow(table, TSRReportLabelText.GTD_PRIMARY_PURPOSE_COMMENT, getGeneralTrialDetails()
                         .getPrimaryPurposeComment());
                 addTableRow(table, TSRReportLabelText.GTD_PHASE, getGeneralTrialDetails().getPhase());
-                addTableRow(table, TSRReportLabelText.GTD_PHASE_COMMENT, getGeneralTrialDetails().getPhaseComment());
+                addTableRow(table, TSRReportLabelText.GTD_PHASE_COMMENT,
+                        getGeneralTrialDetails().getPhaseAdditonalQualifier());
             }
             pdfDoc.add(table);
             pdfDoc.add(getLineBreak());
@@ -527,6 +528,8 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
             addTableRow(table, TSRReportLabelText.TYPE, getTrialDesign().getType());
             addTableRow(table, TSRReportLabelText.TD_PRIMARY_PURPOSE, getTrialDesign().getPrimaryPurpose());
             addTableRow(table, TSRReportLabelText.TD_PHASE, getTrialDesign().getPhase());
+            addTableRow(table, TSRReportLabelText.TD_PHASE_ADDITIONAL_QUALIFIER,
+                    getTrialDesign().getPhaseAdditonalQualifier());
             addTableRow(table, TSRReportLabelText.TD_INTERVENTION_MODEL, getTrialDesign().getInterventionModel());
             addTableRow(table, TSRReportLabelText.TD_NUM_OF_ARMS, getTrialDesign().getNumberOfArms());
             addTableRow(table, TSRReportLabelText.TD_MASKING, getTrialDesign().getMasking());

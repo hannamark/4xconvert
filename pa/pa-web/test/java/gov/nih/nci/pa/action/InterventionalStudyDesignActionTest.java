@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.ISDesignDetailsWebDTO;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -89,16 +90,16 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
     @Test
     public void testDetailsQuery(){
      getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
-     assertEquals("details",action.detailsQuery());   
+     assertEquals("details",action.detailsQuery());
     }
     @Test
     public void testOutcomeinput(){
-     assertEquals("outcomeAdd", action.outcomeinput());   
+     assertEquals("outcomeAdd", action.outcomeinput());
     }
     @Test
     public void testOutcomeQueryWithResult(){
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
-        assertEquals("outcome", action.outcomeQuery());   
+        assertEquals("outcome", action.outcomeQuery());
     }
     @Test
     public void testOutcomeQueryNoResult(){
@@ -212,11 +213,11 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
 
     @Test
     public void testOutcomedelete(){
-     assertEquals("outcome", action.outcomedelete());   
+     assertEquals("outcome", action.outcomedelete());
     }
     @Test
     public void testOutcomeupdateErr(){
-       assertEquals("outcomeAdd", action.outcomeupdate()); 
+       assertEquals("outcomeAdd", action.outcomeupdate());
     }
     @Test
     public void testDetailsQueryException(){
@@ -230,7 +231,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setPrimaryIndicator("yes");
         webDTO.setPrimaryPurposeCode(PrimaryPurposeCode.TREATMENT.getDisplayName());
         webDTO.setPhaseCode(PhaseCode.I.getDisplayName());
-        webDTO.setPhaseOtherText("ex");
+        webDTO.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT.getDisplayName());
         webDTO.setDesignConfigurationCode("designConfigurationCode");
         webDTO.setNumberOfInterventionGroups("1");
         webDTO.setBlindingSchemaCode("blindingSchemaCode");

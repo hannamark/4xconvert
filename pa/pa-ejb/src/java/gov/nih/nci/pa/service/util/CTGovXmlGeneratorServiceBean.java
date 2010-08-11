@@ -105,7 +105,6 @@ import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
-import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
@@ -1356,8 +1355,6 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
         nvMap.put(StudyClassificationCode.PHARMACOKINETICS_OR_DYNAMICS.getCode(), "Pharmacokinetics/dynamics Study");
         nvMap.put(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode(), "Principal Investigator");
         nvMap.put(AllocationCode.NA.getCode(), NA);
-        nvMap.put(PhaseCode.OTHER.getCode(), NA);
-        nvMap.put(PhaseCode.PILOT.getCode(), NA);
         String other = "Other";
         nvMap.put(PrimaryPurposeCode.EARLY_DETECTION.getCode(), other);
         nvMap.put(PrimaryPurposeCode.EPIDEMIOLOGIC.getCode(), other);

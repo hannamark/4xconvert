@@ -80,7 +80,6 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
-import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -168,12 +167,6 @@ public class TrialValidator {
                             getText(invalidValues[i].getMessage().trim()));
         }
         //validate Phase and Purpose when Selected value is OTHER
-        if (StringUtils.isNotEmpty(trialDto.getPhaseCode())
-                && (PhaseCode.OTHER.getCode().equals(trialDto.getPhaseCode())
-                        && StringUtils.isEmpty(trialDto.getPhaseOtherText()))) {
-                addFieldError.put("trialDTO.phaseOtherText",
-                        getText("error.submit.otherPhaseText"));
-        }
         if (StringUtils.isNotEmpty(trialDto.getPrimaryPurposeCode())
                 && (PrimaryPurposeCode.OTHER.getCode().equals(trialDto.getPrimaryPurposeCode())
                         && StringUtils.isEmpty(trialDto.getPrimaryPurposeOtherText()))) {

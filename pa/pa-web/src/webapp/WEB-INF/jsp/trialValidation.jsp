@@ -216,12 +216,9 @@
     <tr>
         <td   scope="row" class="label"><label><fmt:message key="isdesign.details.phase.comment"/></label></td>
         <td>
-            <s:textarea name="gtdDTO.phaseOtherText" rows="2" cssStyle="width:300px" />
-             <span class="formErrorMsg"> 
-             <s:fielderror>
-               <s:param>gtdDTO.phaseOtherText</s:param>
-             </s:fielderror>                            
-            </span>
+        <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
+        <s:select headerKey="" headerValue="" name="gtdDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
+                value="gtdDTO.phaseAdditionalQualifierCode" cssStyle="width:120px" />
         </td>
     </tr>
     </c:if>    

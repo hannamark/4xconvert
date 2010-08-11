@@ -86,6 +86,7 @@ import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -184,7 +185,8 @@ public class StudyProtocolConverter {
                         studyProtocol.getMaximumTargetAccrualNumber()));
         studyProtocolDTO.setIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocol.getId()));
         studyProtocolDTO.setPhaseCode(CdConverter.convertToCd(studyProtocol.getPhaseCode()));
-        studyProtocolDTO.setPhaseOtherText(StConverter.convertToSt(studyProtocol.getPhaseOtherText()));
+        studyProtocolDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(
+                studyProtocol.getPhaseAdditionalQualifierCode()));
         studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(studyProtocol.getPrimaryCompletionDate()));
         studyProtocolDTO.setPrimaryCompletionDateTypeCode(
                 CdConverter.convertToCd(studyProtocol.getPrimaryCompletionDateTypeCode()));
@@ -270,7 +272,10 @@ public class StudyProtocolConverter {
        if (studyProtocolDTO.getPhaseCode() != null) {
            studyProtocol.setPhaseCode(PhaseCode.getByCode(studyProtocolDTO.getPhaseCode().getCode()));
        }
-       studyProtocol.setPhaseOtherText(StConverter.convertToString(studyProtocolDTO.getPhaseOtherText()));
+       if (studyProtocolDTO.getPhaseAdditionalQualifierCode() != null) {
+           studyProtocol.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.getByCode(
+                   studyProtocolDTO.getPhaseAdditionalQualifierCode().getCode()));
+       }
        if (studyProtocolDTO.getPrimaryCompletionDate() != null) {
            studyProtocol.setPrimaryCompletionDate(
                    TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate()));

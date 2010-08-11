@@ -95,6 +95,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -275,6 +276,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     studyProtocolDto.setOtherIdentifiers(PADomainUtils.getOtherIdentifierExtensions(studyProtocol));
                     studyProtocolDto.setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
                     studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
+                    studyProtocolDto.setPhaseAdditionalQualifier(studyProtocol.getPhaseAdditionalQualifierCode());
                     if (studyProtocol.getUserLastCreated() != null) {
                         studyProtocolDto.setUserLastCreated(studyProtocol.getUserLastCreated().getLoginName());
                     }
@@ -557,6 +559,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getPhaseCode())) {
                 where.append(" and sp.phaseCode  = '"
                         + PhaseCode.getByCode(studyProtocolQueryCriteria.getPhaseCode()) + "'");
+            }
+            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getPhaseAdditionalQualifierCode())) {
+                where.append(" and sp.phaseAdditionalQualifierCode  = '"
+                        + PhaseAdditionalQualifierCode.getByCode(
+                                studyProtocolQueryCriteria.getPhaseAdditionalQualifierCode()) + "'");
             }
             if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())) {
                 where.append(" and sp_oids.extension like '%"

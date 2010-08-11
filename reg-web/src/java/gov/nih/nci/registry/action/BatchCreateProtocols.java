@@ -91,7 +91,6 @@ import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
-import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -372,14 +371,9 @@ public class BatchCreateProtocols {
         if (StringUtils.isEmpty(batchDto.getPrimaryPurposeOtherValueSp())) {
             trialDTO.setPrimaryPurposeOtherText(batchDto.getPrimaryPurposeOtherValueSp());
         }
-        if (null == PhaseCode.getByCode(batchDto.getPhase())) {
-            trialDTO.setPhaseCode(PhaseCode.OTHER.getCode());
-            trialDTO.setPhaseOtherText(batchDto.getPhase());
-        } else {
-            trialDTO.setPhaseCode(batchDto.getPhase());
-            if (StringUtils.isNotEmpty(batchDto.getPhaseOtherValueSp())) {
-                trialDTO.setPhaseOtherText(batchDto.getPhaseOtherValueSp());
-            }
+        trialDTO.setPhaseCode(batchDto.getPhase());
+        if (StringUtils.isNotEmpty(batchDto.getPhaseOtherValueSp())) {
+             trialDTO.setPhaseAdditonalQualifier(batchDto.getPhaseOtherValueSp());
         }
 
         trialDTO.setReason(batchDto.getReasonForStudyStopped());
@@ -707,7 +701,7 @@ public class BatchCreateProtocols {
         trialDTO.setNctIdentifier(batchDTO.getNctNumber());
         trialDTO.setOfficialTitle(batchDTO.getTitle());
         trialDTO.setPhaseCode(batchDTO.getPhase());
-        trialDTO.setPhaseOtherText(batchDTO.getPhaseOtherValueSp());
+        trialDTO.setPhaseAdditonalQualifier(batchDTO.getPhaseOtherValueSp());
         trialDTO.setPrimaryPurposeCode(batchDTO.getPrimaryPurpose());
         trialDTO.setPrimaryPurposeOtherText(batchDTO.getPrimaryPurposeOtherValueSp());
         trialDTO.setReason(batchDTO.getReasonForStudyStopped());
@@ -722,14 +716,9 @@ public class BatchCreateProtocols {
 
         // if the Phase's value is not in allowed LOV then save phase as Other
         // and comments as the value of current phase
-        if (null == PhaseCode.getByCode(batchDTO.getPhase())) {
-            trialDTO.setPhaseCode(PhaseCode.OTHER.getCode());
-            trialDTO.setPhaseOtherText(batchDTO.getPhase());
-        } else {
-            trialDTO.setPhaseCode(batchDTO.getPhase());
-            if (StringUtils.isNotEmpty(batchDTO.getPhaseOtherValueSp())) {
-                trialDTO.setPhaseOtherText(batchDTO.getPhaseOtherValueSp());
-            }
+        trialDTO.setPhaseCode(batchDTO.getPhase());
+        if (StringUtils.isNotEmpty(batchDTO.getPhaseOtherValueSp())) {
+                trialDTO.setPhaseAdditonalQualifier(batchDTO.getPhaseOtherValueSp());
         }
         trialDTO.setProgramCodeText(batchDTO.getProgramCodeText());
         if (batchDTO.getSubmissionType().equalsIgnoreCase("A")) {
