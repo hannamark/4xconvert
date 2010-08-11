@@ -170,6 +170,11 @@
                             <groupId>oracle.aqapi</groupId>
                             <includeInApplicationXml>true</includeInApplicationXml>
                         </jarModule>
+                        <jarModule>
+                            <groupId>net.sf.ehcache</groupId>
+                            <artifactId>ehcache</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
 
                         <ejbModule>
                             <groupId>${pom.parent.groupId}</groupId>
@@ -236,11 +241,6 @@
                         </jarModule>
                         <!--  End of jars needed for grid grouper sync. -->
 
-                        <jarModule>
-                            <groupId>net.sf.ehcache</groupId>
-                            <artifactId>ehcache</artifactId>
-                            <excluded>true</excluded>
-                        </jarModule>
                         <jarModule>
                             <groupId>commons-logging</groupId>
                             <artifactId>commons-logging</artifactId>

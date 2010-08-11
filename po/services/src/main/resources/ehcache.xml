@@ -1,0 +1,316 @@
+<ehcache>
+
+    <!--
+        This because we say overflowToDisk = true. Although by default, it would create it there anyway so this setting
+        is default
+    -->
+    <diskStore path="java.io.tmpdir" />
+    
+    <defaultCache 
+        maxElementsInMemory="10000" 
+        eternal="false" 
+        timeToIdleSeconds="120" 
+        timeToLiveSeconds="120"
+        overflowToDisk="true" 
+        diskPersistent="false" 
+        diskExpiryThreadIntervalSeconds="120"
+        memoryStoreEvictionPolicy="LRU" 
+        />
+        
+    <!-- Hibernate Query Cache Regions --> 
+    <cache 
+        name="org.hibernate.cache.StandardQueryCache"
+        maxElementsInMemory="10"
+        eternal="false"
+        timeToLiveSeconds="120"
+        overflowToDisk="true"
+    /> 
+ 
+    <cache 
+        name="org.hibernate.cache.UpdateTimestampsCache"
+        maxElementsInMemory="5000"
+        eternal="true"
+        overflowToDisk="true"
+    /> 
+
+    <!-- Object cache regions. -->
+    <cache 
+        name="com.fiveamsolutions.nci.commons.audit.AuditLogRecord" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="com.fiveamsolutions.nci.commons.audit.AuditLogDetail" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.Address" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+    
+    <cache 
+        name="gov.nih.nci.po.data.bo.ClinicalResearchStaff" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.ClinicalResearchStaffCR" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />  
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.Country" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.Country.states" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.Email" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.FundingMechanism" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.HealthCareProvider" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.HealthCareProviderCR" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.HealthCareFacility" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.HealthCareFacilityCR" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.IdentifiedOrganization" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+
+    <cache 
+        name="gov.nih.nci.po.data.bo.IdentifiedOrganizationCR" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.IdentifiedPerson" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.IdentifiedPersonCR" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.Organization" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.OrganizationCR" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.OrganizationalContactType" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.OrganizationalContact" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.OrganizationalContactCR" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+
+    <cache 
+        name="gov.nih.nci.po.data.bo.OversightCommittee" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+
+    <cache 
+        name="gov.nih.nci.po.data.bo.OversightCommitteeCR" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.OversightCommitteeType" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+
+    <cache 
+        name="gov.nih.nci.po.data.bo.Patient" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+
+    <cache 
+        name="gov.nih.nci.po.data.bo.Person" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.PersonCR" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+
+    <cache 
+        name="gov.nih.nci.po.data.bo.PhoneNumber" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.ResearchOrganization" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.ResearchOrganizationCR" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.ResearchOrganizationType" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+    
+    <cache 
+        name="gov.nih.nci.po.data.bo.ResearchOrganizationType.fundingMechanisms" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+
+    <cache 
+        name="gov.nih.nci.po.data.bo.State" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.po.data.bo.URL" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+</ehcache> 
