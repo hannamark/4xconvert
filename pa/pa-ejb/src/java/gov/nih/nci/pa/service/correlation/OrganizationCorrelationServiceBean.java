@@ -138,7 +138,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     private static final Logger LOG  = Logger.getLogger(OrganizationCorrelationServiceBean.class);
     private static final String IRB_CODE = "Institutional Review Board (IRB)";
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
-
+    private CorrelationUtils corrUtils = new CorrelationUtils();
     /**
      *
      * @param orgPoIdentifier org id
@@ -146,7 +146,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @throws PAException pe
      */
     public Long createHealthCareFacilityCorrelations(String orgPoIdentifier) throws PAException {
-        CorrelationUtils corrUtils = new CorrelationUtils();
         if (orgPoIdentifier == null) {
             throw new PAException(" Organization PO Identifier is null");
         }
@@ -190,20 +189,22 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 
 
         // Step 3 : check for pa org, if not create one
-        Organization paOrg = corrUtils.getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+        Organization paOrg = getCorrUtils().getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(
+                orgPoIdentifier));
         if (paOrg == null) {
-            paOrg = corrUtils.createPAOrganization(poOrg);
+            paOrg = getCorrUtils().createPAOrganization(poOrg);
         }
 
         // Step 4 : Check of PA has hcf , if not create one
-        HealthCareFacility hcf = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(hcfDTO.getIdentifier()));
+        HealthCareFacility hcf = getCorrUtils().getStructuralRoleByIi(DSetConverter.convertToIi(
+                hcfDTO.getIdentifier()));
         if (hcf == null) {
             // create a new crs
             hcf = new HealthCareFacility();
             hcf.setOrganization(paOrg);
             hcf.setIdentifier(DSetConverter.convertToIi(hcfDTO.getIdentifier()).getExtension());
-            hcf.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(hcfDTO.getStatus()));
-            corrUtils.createPADomain(hcf);
+            hcf.setStatusCode(getCorrUtils().convertPORoleStatusToPARoleStatus(hcfDTO.getStatus()));
+            getCorrUtils().createPADomain(hcf);
         }
         return hcf.getId();
 
@@ -216,7 +217,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @throws PAException pe
      */
     public Long createResearchOrganizationCorrelations(String orgPoIdentifier) throws PAException {
-        CorrelationUtils corrUtils = new CorrelationUtils();
         if (orgPoIdentifier == null) {
             throw new PAException(" Organization PO Identifier is null");
         }
@@ -229,7 +229,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
            String message = paServiceUtils.handleNullifiedOrganization(e);
            LOG.error(message);
            throw new PAException(message, e);
-           
+
         }
         if (poOrg == null) {
             throw new PAException("PO and PA databases out of synchronization.  Error getting "
@@ -261,21 +261,23 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 
 
         // Step 3 : check for pa org, if not create one
-        Organization paOrg = corrUtils.getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+        Organization paOrg = getCorrUtils().getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(
+                orgPoIdentifier));
         if (paOrg == null) {
-            paOrg = corrUtils.createPAOrganization(poOrg);
+            paOrg = getCorrUtils().createPAOrganization(poOrg);
         }
 
 
         // Step 4 : Check of PA has hcf , if not create one
-        ResearchOrganization ro = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(roDTO.getIdentifier()));
+        ResearchOrganization ro = getCorrUtils().getStructuralRoleByIi(DSetConverter.convertToIi(
+                roDTO.getIdentifier()));
         if (ro == null) {
             // create a new crs
             ro = new ResearchOrganization();
             ro.setOrganization(paOrg);
             ro.setIdentifier(DSetConverter.convertToIi(roDTO.getIdentifier()).getExtension());
-            ro.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(roDTO.getStatus()));
-            corrUtils.createPADomain(ro);
+            ro.setStatusCode(getCorrUtils().convertPORoleStatusToPARoleStatus(roDTO.getStatus()));
+            getCorrUtils().createPADomain(ro);
         }
         return ro.getId();
 
@@ -286,7 +288,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @throws PAException pe
      */
     public Long createOversightCommitteeCorrelations(String orgPoIdentifier) throws PAException {
-        CorrelationUtils corrUtils = new CorrelationUtils();
         if (orgPoIdentifier == null) {
             throw new PAException(" Organization PO Identifier is null");
         }
@@ -331,20 +332,21 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 
 
         // Step 3 : check for pa org, if not create one
-        Organization paOrg = corrUtils.getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+        Organization paOrg = getCorrUtils().getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(
+                orgPoIdentifier));
         if (paOrg == null) {
-            paOrg = corrUtils.createPAOrganization(poOrg);
+            paOrg = getCorrUtils().createPAOrganization(poOrg);
         }
 
         // Step 4 : Check of PA has oc , if not create one
-        OversightCommittee oc = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(ocDTO.getIdentifier()));
+        OversightCommittee oc = getCorrUtils().getStructuralRoleByIi(DSetConverter.convertToIi(ocDTO.getIdentifier()));
         if (oc == null) {
             // create a new oversight committee
             oc = new OversightCommittee();
             oc.setOrganization(paOrg);
             oc.setIdentifier(DSetConverter.convertToIi(ocDTO.getIdentifier()).getExtension());
-            oc.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(ocDTO.getStatus()));
-            corrUtils.createPADomain(oc);
+            oc.setStatusCode(getCorrUtils().convertPORoleStatusToPARoleStatus(ocDTO.getStatus()));
+            getCorrUtils().createPADomain(oc);
         }
         return oc.getId();
     }
@@ -403,7 +405,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @throws PAException pe
      */
     public Organization createPAOrganizationUsingPO(OrganizationDTO poOrg) throws PAException {
-        return new CorrelationUtils().createPAOrganization(poOrg);
+        return getCorrUtils().createPAOrganization(poOrg);
     }
 
     /**
@@ -422,7 +424,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         Organization o = null;
         if (spDtos != null && !spDtos.isEmpty()) {
             spart = spDtos.get(0);
-            o = new CorrelationUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
+            o = getCorrUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
         }
         return o;
     }
@@ -490,4 +492,22 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
         return poROIi;
     }
+
+
+    /**
+     * @param corrUtils the corrUtils to set
+     */
+    public void setCorrUtils(CorrelationUtils corrUtils) {
+        this.corrUtils = corrUtils;
+    }
+
+
+    /**
+     * @return the corrUtils
+     */
+    public CorrelationUtils getCorrUtils() {
+        return corrUtils;
+    }
+
+
 }

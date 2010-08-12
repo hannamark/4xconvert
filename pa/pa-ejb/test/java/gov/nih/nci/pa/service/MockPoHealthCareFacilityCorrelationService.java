@@ -1,10 +1,11 @@
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.IdentifierReliability;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -48,9 +49,11 @@ public class MockPoHealthCareFacilityCorrelationService implements HealthCareFac
     public List<HealthCareFacilityDTO> search(HealthCareFacilityDTO hcfDto) {
         List<HealthCareFacilityDTO> ar = new ArrayList<HealthCareFacilityDTO>();
         HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
-        hcf.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealthCareFacilityIi("1")));
+        Ii hcfIi = IiConverter.convertToPoHealthCareFacilityIi("1");
+        hcfIi.setReliability(IdentifierReliability.ISS);
+        hcf.setIdentifier(DSetConverter.convertIiToDset(hcfIi));
         hcf.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-        hcf.setStatus(CdConverter.convertStringToCd("ACTIVE"));       
+        hcf.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         ar.add(hcf);
         return ar;
     }
@@ -58,13 +61,13 @@ public class MockPoHealthCareFacilityCorrelationService implements HealthCareFac
     public void updateCorrelation(HealthCareFacilityDTO arg0)
             throws EntityValidationException {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void updateCorrelationStatus(Ii arg0, Cd arg1)
             throws EntityValidationException {
         // TODO Auto-generated method stub
-        
+
     }
 
     public Map<String, String[]> validate(HealthCareFacilityDTO arg0) {

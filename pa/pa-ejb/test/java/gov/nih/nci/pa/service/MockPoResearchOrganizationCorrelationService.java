@@ -1,9 +1,10 @@
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.IdentifierReliability;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -20,8 +21,9 @@ public class MockPoResearchOrganizationCorrelationService implements ResearchOrg
 
     public Ii createCorrelation(ResearchOrganizationDTO arg0)
             throws EntityValidationException {
-        // TODO Auto-generated method stub
-        return null;
+        Ii ii = IiConverter.convertToPoResearchOrganizationIi("2");
+        ii.setReliability(IdentifierReliability.ISS);
+        return ii;
     }
 
     public ResearchOrganizationDTO getCorrelation(Ii ii)
@@ -51,13 +53,13 @@ public class MockPoResearchOrganizationCorrelationService implements ResearchOrg
     public void updateCorrelation(ResearchOrganizationDTO arg0)
             throws EntityValidationException {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void updateCorrelationStatus(Ii arg0, Cd arg1)
             throws EntityValidationException {
         // TODO Auto-generated method stub
-        
+
     }
 
     public Map<String, String[]> validate(ResearchOrganizationDTO arg0) {
@@ -76,6 +78,6 @@ public class MockPoResearchOrganizationCorrelationService implements ResearchOrg
         // TODO Auto-generated method stub
         return null;
     }
-    
+
 
 }
