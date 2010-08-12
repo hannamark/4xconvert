@@ -82,11 +82,7 @@ package gov.nih.nci.pa.domain;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
-import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.util.NotEmptyIiExtension;
 import gov.nih.nci.pa.util.NotEmptyIiRoot;
 import gov.nih.nci.pa.util.ValidIi;
@@ -135,36 +131,22 @@ import org.hibernate.validator.NotNull;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "Study_Protocol_type", discriminatorType = DiscriminatorType.STRING)
-@SuppressWarnings({ "PMD.TooManyFields", "PMD.AvoidDuplicateLiterals",
-        "PMD.ExcessiveClassLength" })
+@SuppressWarnings({ "PMD.TooManyFields", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength" })
 @Table(name = "STUDY_PROTOCOL")
-public class StudyProtocol extends AbstractEntity {
+public class StudyProtocol extends AbstractStudyProtocol {
     private static final long serialVersionUID = 1234567890L;
 
     private AccrualReportingMethodCode accrualReportingMethodCode;
     private String acronym;
-    private Boolean dataMonitoringCommitteeAppointedIndicator;
-    private Boolean delayedpostingIndicator;
     private Boolean expandedAccessIndicator;
-    private Boolean fdaRegulatedIndicator;
     private Boolean reviewBoardApprovalRequiredIndicator;
     private String keywordText;
     private Integer maximumTargetAccrualNumber;
     private Integer minimumTargetAccrualNumber;
-    private String officialTitle;
-    private PhaseCode phaseCode;
-    private PhaseAdditionalQualifierCode phaseAdditionalQualifierCode;
-    private Timestamp primaryCompletionDate;
-    private ActualAnticipatedTypeCode primaryCompletionDateTypeCode;
-    private PrimaryPurposeCode primaryPurposeCode;
-    private String primaryPurposeOtherText;
     private String publicDescription;
     private String publicTitle;
     private Timestamp recordVerificationDate;
     private String scientificDescription;
-    private Boolean section801Indicator;
-    private Timestamp startDate;
-    private ActualAnticipatedTypeCode startDateTypeCode;
     private Boolean acceptHealthyVolunteersIndicator;
     private ActStatusCode statusCode;
     private Timestamp statusDate;
@@ -172,8 +154,6 @@ public class StudyProtocol extends AbstractEntity {
     private Timestamp amendmentDate;
     private AmendmentReasonCode amendmentReasonCode;
     private Integer submissionNumber;
-    private String programCodeText;
-    private Boolean proprietaryTrialIndicator;
 
     private List<StudyOverallStatus> studyOverallStatuses = new ArrayList<StudyOverallStatus>();
     private List<DocumentWorkflowStatus> documentWorkflowStatuses = new ArrayList<DocumentWorkflowStatus>();
@@ -190,10 +170,8 @@ public class StudyProtocol extends AbstractEntity {
     private List<Submission> submissions = new ArrayList<Submission>();
     private List<StudyInbox> studyInbox = new ArrayList<StudyInbox>();
     private List<StudyCheckout> studyCheckout = new ArrayList<StudyCheckout>();
-    private Boolean ctgovXmlRequiredIndicator;
 
     private Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
-    private Set<Ii> otherIdentifiers = new HashSet<Ii>();
     /**
      * @return accrualReportingMethodCode
      */
@@ -229,43 +207,6 @@ public class StudyProtocol extends AbstractEntity {
 
     /**
      *
-     * @return dataMonitoringCommitteeAppointedIndicator
-     */
-    @Column(name = "DATA_MONTY_COMTY_APPTN_INDICATOR")
-    public Boolean getDataMonitoringCommitteeAppointedIndicator() {
-        return dataMonitoringCommitteeAppointedIndicator;
-    }
-
-    /**
-     *
-     * @param dataMonitoringCommitteeAppointedIndicator
-     *            ind
-     */
-    public void setDataMonitoringCommitteeAppointedIndicator(
-            Boolean dataMonitoringCommitteeAppointedIndicator) {
-        this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
-    }
-
-    /**
-     *
-     * @return delayedpostingIndicator
-     */
-    @Column(name = "DELAYED_POSTING_INDICATOR")
-    public Boolean getDelayedpostingIndicator() {
-        return delayedpostingIndicator;
-    }
-
-    /**
-     *
-     * @param delayedpostingIndicator
-     *            delayedposting Indicator
-     */
-    public void setDelayedpostingIndicator(Boolean delayedpostingIndicator) {
-        this.delayedpostingIndicator = delayedpostingIndicator;
-    }
-
-    /**
-     *
      * @return expandedAccessIndicator expandedAccessIndicator
      */
     @Column(name = "EXPD_ACCESS_INDIDICATOR")
@@ -280,24 +221,6 @@ public class StudyProtocol extends AbstractEntity {
      */
     public void setExpandedAccessIndicator(Boolean expandedAccessIndicator) {
         this.expandedAccessIndicator = expandedAccessIndicator;
-    }
-
-    /**
-     *
-     * @return fdaRegulatedIndicator
-     */
-    @Column(name = "FDA_REGULATED_INDICATOR")
-    public Boolean getFdaRegulatedIndicator() {
-        return fdaRegulatedIndicator;
-    }
-
-    /**
-     *
-     * @param fdaRegulatedIndicator
-     *            fdaRegulatedIndicator
-     */
-    public void setFdaRegulatedIndicator(Boolean fdaRegulatedIndicator) {
-        this.fdaRegulatedIndicator = fdaRegulatedIndicator;
     }
 
     /**
@@ -371,171 +294,6 @@ public class StudyProtocol extends AbstractEntity {
 
     /**
      *
-     * @return officialTitle
-     */
-    @Column(name = "OFFICIAL_TITLE")
-    public String getOfficialTitle() {
-        return officialTitle;
-    }
-
-    /**
-     *
-     * @param officialTitle
-     *            officialTitle
-     */
-    public void setOfficialTitle(String officialTitle) {
-        this.officialTitle = officialTitle;
-    }
-
-    /**
-     *
-     * @return phaseCode
-     */
-    @Column(name = "PHASE_CODE")
-    @Enumerated(EnumType.STRING)
-    public PhaseCode getPhaseCode() {
-        return phaseCode;
-    }
-
-    /**
-     *
-     * @param phaseCode
-     *            phaseCode
-     */
-    public void setPhaseCode(PhaseCode phaseCode) {
-        this.phaseCode = phaseCode;
-    }
-
-    /**
-     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
-     */
-    public void setPhaseAdditionalQualifierCode(
-            PhaseAdditionalQualifierCode phaseAdditionalQualifierCode) {
-        this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
-    }
-
-    /**
-     * @return the phaseAdditionalQualifierCode
-     */
-    @Column (name = "PHASE_ADDITIONAL_QUALIFIER_CODE")
-    @Enumerated(EnumType.STRING)
-    public PhaseAdditionalQualifierCode getPhaseAdditionalQualifierCode() {
-        return phaseAdditionalQualifierCode;
-    }
-
-    /**
-     *
-     * @return primaryCompletionDate
-     */
-    @Column(name = "PRI_COMPL_DATE")
-    public Timestamp getPrimaryCompletionDate() {
-        return primaryCompletionDate;
-    }
-
-    /**
-     *
-     * @param primaryCompletionDate
-     *            primaryCompletionDate
-     */
-    public void setPrimaryCompletionDate(Timestamp primaryCompletionDate) {
-        this.primaryCompletionDate = primaryCompletionDate;
-    }
-
-    /**
-     *
-     * @return primaryCompletionDateTypeCode
-     */
-    @Column(name = "PRI_COMPL_DATE_TYPE_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActualAnticipatedTypeCode getPrimaryCompletionDateTypeCode() {
-        return primaryCompletionDateTypeCode;
-    }
-
-    /**
-     *
-     * @param primaryCompletionDateTypeCode
-     *            primaryCompletionDateTypeCode
-     */
-    public void setPrimaryCompletionDateTypeCode(
-            ActualAnticipatedTypeCode primaryCompletionDateTypeCode) {
-        this.primaryCompletionDateTypeCode = primaryCompletionDateTypeCode;
-    }
-
-    /**
-     *
-     * @return startDate
-     */
-    @Column(name = "START_DATE")
-    public Timestamp getStartDate() {
-        return startDate;
-    }
-
-    /**
-     *
-     * @param startDate
-     *            start Date
-     */
-    public void setStartDate(Timestamp startDate) {
-        this.startDate = startDate;
-    }
-
-    /**
-     *
-     * @return startDateTypeCode
-     */
-    @Column(name = "START_DATE_TYPE_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActualAnticipatedTypeCode getStartDateTypeCode() {
-        return startDateTypeCode;
-    }
-
-    /**
-     *
-     * @param startDateTypeCode
-     *            startDateTypeCode
-     */
-    public void setStartDateTypeCode(ActualAnticipatedTypeCode startDateTypeCode) {
-        this.startDateTypeCode = startDateTypeCode;
-    }
-
-    /**
-     *
-     * @return primaryPurposeCode
-     */
-    @Column(name = "PRIMARY_PURPOSE_CODE")
-    @Enumerated(EnumType.STRING)
-    public PrimaryPurposeCode getPrimaryPurposeCode() {
-        return primaryPurposeCode;
-    }
-
-    /**
-     *
-     * @param primaryPurposeCode
-     *            primaryPurposeCode
-     */
-    public void setPrimaryPurposeCode(PrimaryPurposeCode primaryPurposeCode) {
-        this.primaryPurposeCode = primaryPurposeCode;
-    }
-
-    /**
-     *
-     * @return primaryPurposeOtherText
-     */
-    @Column(name = "PRIMARY_PURPOSE_OTHER_TEXT")
-    public String getPrimaryPurposeOtherText() {
-        return primaryPurposeOtherText;
-    }
-
-    /**
-     * @param primaryPurposeOtherText
-     *            primaryPurposeOtherText
-     */
-    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
-        this.primaryPurposeOtherText = primaryPurposeOtherText;
-    }
-
-    /**
-     *
      * @return publicDescription
      */
     @Column(name = "PUBLIC_DESCRIPTION")
@@ -568,24 +326,6 @@ public class StudyProtocol extends AbstractEntity {
      */
     public void setPublicTitle(String publicTitle) {
         this.publicTitle = publicTitle;
-    }
-
-    /**
-     *
-     * @return section801Indicator
-     */
-    @Column(name = "SECTION801_INDICATOR")
-    public Boolean getSection801Indicator() {
-        return section801Indicator;
-    }
-
-    /**
-     *
-     * @param section801Indicator
-     *            section801Indicator
-     */
-    public void setSection801Indicator(Boolean section801Indicator) {
-        this.section801Indicator = section801Indicator;
     }
 
     /**
@@ -935,22 +675,6 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * @return the programCodeText
-     */
-    @Column(name = "PROGRAM_CODE_TEXT")
-    public String getProgramCodeText() {
-        return programCodeText;
-    }
-
-    /**
-     * @param programCodeText
-     *            the programCodeText to set
-     */
-    public void setProgramCodeText(String programCodeText) {
-        this.programCodeText = programCodeText;
-    }
-
-    /**
      * @return the performedActivities
      */
     @OneToMany(mappedBy = "studyProtocol")
@@ -986,22 +710,6 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * @return the proprietaryTrialIndicator
-     */
-    @Column(name = "PROPRIETARY_TRIAL_INDICATOR" , updatable = false)
-    public Boolean getProprietaryTrialIndicator() {
-        return proprietaryTrialIndicator;
-    }
-
-    /**
-     * @param proprietaryTrialIndicator
-     *            the proprietaryTrialIndicator to set
-     */
-    public void setProprietaryTrialIndicator(Boolean proprietaryTrialIndicator) {
-        this.proprietaryTrialIndicator = proprietaryTrialIndicator;
-    }
-
-    /**
      * @return the studyInbox
      */
     @OneToMany(mappedBy = "studyProtocol")
@@ -1033,21 +741,6 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * @param ctgovXmlRequiredIndicator the ctgovXmlRequiredIndicator to set
-     */
-    public void setCtgovXmlRequiredIndicator(Boolean ctgovXmlRequiredIndicator) {
-        this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
-    }
-
-    /**
-     * @return the ctgovXmlRequiredIndicator
-     */
-    @Column(name = "CTGOV_XML_REQUIRED_INDICATOR")
-    public Boolean getCtgovXmlRequiredIndicator() {
-        return ctgovXmlRequiredIndicator;
-    }
-
-    /**
      * @return the studyOwners
      */
      @ManyToMany(mappedBy = "studyProtocols")
@@ -1063,9 +756,7 @@ public class StudyProtocol extends AbstractEntity {
     }
 
     /**
-     * Gets the other identifiers.
-     *
-     * @return the other identifiers
+     * {@inheritDoc}
      */
     @CollectionOfElements(fetch = FetchType.EAGER)
     @Fetch (FetchMode.SELECT)
@@ -1087,18 +778,10 @@ public class StudyProtocol extends AbstractEntity {
     @ValidIi
     @NotEmptyIiExtension
     @NotEmptyIiRoot
+    @Override
+    @SuppressWarnings("PMD.UselessOverridingMethod")
     public Set<Ii> getOtherIdentifiers() {
-        return otherIdentifiers;
+        return super.getOtherIdentifiers();
     }
-
-    /**
-     * @param otherIdentifiers the otherIdentifiers to set
-     */
-     public void setOtherIdentifiers(Set<Ii> otherIdentifiers) {
-        this.otherIdentifiers = otherIdentifiers;
-     }
-
-
-
 
 }

@@ -4,10 +4,6 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -16,7 +12,6 @@ import gov.nih.nci.pa.util.NotEmptyIiRoot;
 import gov.nih.nci.pa.util.ValidIi;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -38,27 +33,18 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Type;
 
 /**
+ * A draft StudyProtocol.
  * @author Vrushali
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@SuppressWarnings({ "PMD.TooManyFields", "PMD.AvoidDuplicateLiterals",
-        "PMD.ExcessiveClassLength" })
+@SuppressWarnings({ "PMD.TooManyFields" })
 @Table(name = "STUDY_PROTOCOL_STAGE")
-public class StudyProtocolStage extends AbstractEntity {
-    /**
-     *
-     */
+public class StudyProtocolStage extends AbstractStudyProtocol {
     private static final long serialVersionUID = 1L;
     private String localProtocolIdentifier;
     private String nctIdentifier;
-    private String officialTitle;
-    private PhaseCode phaseCode;
-    private PhaseAdditionalQualifierCode phaseAdditionalQualifierCode;
     private String trialType;
-    private PrimaryPurposeCode primaryPurposeCode;
-    private String primaryPurposeOtherText;
     private String leadOrganizationIdentifier;
     private String piIdentifier;
     private String sponsorIdentifier;
@@ -69,25 +55,14 @@ public class StudyProtocolStage extends AbstractEntity {
 
     private String summaryFourOrgIdentifier;
     private SummaryFourFundingCategoryCode summaryFourFundingCategoryCode;
-    private String programCodeText;
 
     private StudyStatusCode  trialStatusCode;
     private Timestamp trialStatusDate;
     private String reason;
-    private Timestamp startDate;
-    private ActualAnticipatedTypeCode startDateTypeCode;
-    private Timestamp primaryCompletionDate;
-    private ActualAnticipatedTypeCode primaryCompletionDateTypeCode;
 
-    private Boolean dataMonitoringCommitteeAppointedIndicator;
-    private Boolean delayedpostingIndicator;
-    private Boolean fdaRegulatedIndicator;
-    private Boolean section801Indicator;
-    private Boolean proprietaryTrialIndicator;
     private Boolean nciDesignatedCancerCenterIndicator;
     private String oversightAuthorityCountryId;
     private String oversightAuthorityOrgId;
-    private Boolean ctgovXmlRequiredIndicator;
     private String submitterOrganizationIdentifier;
     private String siteProtocolIdentifier;
     private String sitePiIdentifier;
@@ -101,7 +76,6 @@ public class StudyProtocolStage extends AbstractEntity {
     private Timestamp closedForAccrualDate;
     private Boolean piInitiatedIndicator;
     private Boolean siteNciDesignatedCancerCenterIndicator;
-    private Set<Ii> otherIdentifiers = new HashSet<Ii>();
 
     /**
      * @return the localProtocolIdentifier
@@ -130,50 +104,6 @@ public class StudyProtocolStage extends AbstractEntity {
         this.nctIdentifier = nctIdentifier;
     }
     /**
-     * @return the officialTitle
-     */
-    @Column(name = "OFFICIAL_TITLE")
-    public String getOfficialTitle() {
-        return officialTitle;
-    }
-    /**
-     * @param officialTitle the officialTitle to set
-     */
-    public void setOfficialTitle(String officialTitle) {
-        this.officialTitle = officialTitle;
-    }
-    /**
-     * @return the phaseCode
-     */
-    @Column(name = "PHASE_CODE")
-    @Enumerated(EnumType.STRING)
-    public PhaseCode getPhaseCode() {
-        return phaseCode;
-    }
-    /**
-     * @param phaseCode the phaseCode to set
-     */
-    public void setPhaseCode(PhaseCode phaseCode) {
-        this.phaseCode = phaseCode;
-    }
-    /**
-     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
-     */
-    public void setPhaseAdditionalQualifierCode(
-            PhaseAdditionalQualifierCode phaseAdditionalQualifierCode) {
-        this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
-    }
-
-    /**
-     * @return the phaseAdditionalQualifierCode
-     */
-    @Column (name = "PHASE_ADDITIONAL_QUALIFIER_CODE")
-    @Enumerated(EnumType.STRING)
-    public PhaseAdditionalQualifierCode getPhaseAdditionalQualifierCode() {
-        return phaseAdditionalQualifierCode;
-    }
-
-    /**
      * @return the trialType
      */
     @Column (name = "STUDY_PROTOCOL_TYPE")
@@ -185,33 +115,6 @@ public class StudyProtocolStage extends AbstractEntity {
      */
     public void setTrialType(String trialType) {
         this.trialType = trialType;
-    }
-    /**
-     * @return the primaryPurposeCode
-     */
-    @Column (name = "PRIMARY_PURPOSE_CODE")
-    @Enumerated(EnumType.STRING)
-    public PrimaryPurposeCode getPrimaryPurposeCode() {
-        return primaryPurposeCode;
-    }
-    /**
-     * @param primaryPurposeCode the primaryPurposeCode to set
-     */
-    public void setPrimaryPurposeCode(PrimaryPurposeCode primaryPurposeCode) {
-        this.primaryPurposeCode = primaryPurposeCode;
-    }
-    /**
-     * @return the primaryPurposeOtherText
-     */
-    @Column (name = "PRIMARY_PURPOSE_OTHER_TEXT")
-    public String getPrimaryPurposeOtherText() {
-        return primaryPurposeOtherText;
-    }
-    /**
-     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
-     */
-    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
-        this.primaryPurposeOtherText = primaryPurposeOtherText;
     }
     /**
      * @return the leadOrganizationIdentifier
@@ -333,19 +236,6 @@ public class StudyProtocolStage extends AbstractEntity {
         this.summaryFourFundingCategoryCode = summaryFourFundingCategoryCode;
     }
     /**
-     * @return the programCodeText
-     */
-    @Column (name = "PROGRAM_CODE_TEXT")
-    public String getProgramCodeText() {
-        return programCodeText;
-    }
-    /**
-     * @param programCodeText the programCodeText to set
-     */
-    public void setProgramCodeText(String programCodeText) {
-        this.programCodeText = programCodeText;
-    }
-    /**
      * @return the statusCode
      */
     @Column (name = "TRIAL_STATUS_CODE")
@@ -384,127 +274,6 @@ public class StudyProtocolStage extends AbstractEntity {
      */
     public void setReason(String reason) {
         this.reason = reason;
-    }
-    /**
-     * @return the startDate
-     */
-    @Column (name = "START_DATE")
-    public Timestamp getStartDate() {
-        return startDate;
-    }
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(Timestamp startDate) {
-        this.startDate = startDate;
-    }
-    /**
-     * @return the startDateTypeCode
-     */
-    @Column (name = "START_DATE_TYPE_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActualAnticipatedTypeCode getStartDateTypeCode() {
-        return startDateTypeCode;
-    }
-    /**
-     * @param startDateTypeCode the startDateTypeCode to set
-     */
-    public void setStartDateTypeCode(ActualAnticipatedTypeCode startDateTypeCode) {
-        this.startDateTypeCode = startDateTypeCode;
-    }
-    /**
-     * @return the primaryCompletionDate
-     */
-    @Column (name = "PRI_COMPL_DATE")
-    public Timestamp getPrimaryCompletionDate() {
-        return primaryCompletionDate;
-    }
-    /**
-     * @param primaryCompletionDate the primaryCompletionDate to set
-     */
-    public void setPrimaryCompletionDate(Timestamp primaryCompletionDate) {
-        this.primaryCompletionDate = primaryCompletionDate;
-    }
-    /**
-     * @return the primaryCompletionDateTypeCode
-     */
-    @Column (name = "PRI_COMPL_DATE_TYPE_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActualAnticipatedTypeCode getPrimaryCompletionDateTypeCode() {
-        return primaryCompletionDateTypeCode;
-    }
-    /**
-     * @param primaryCompletionDateTypeCode the primaryCompletionDateTypeCode to set
-     */
-    public void setPrimaryCompletionDateTypeCode(
-            ActualAnticipatedTypeCode primaryCompletionDateTypeCode) {
-        this.primaryCompletionDateTypeCode = primaryCompletionDateTypeCode;
-    }
-    /**
-     * @return the dataMonitoringCommitteeAppointedIndicator
-     */
-    @Column(name = "DATA_MONTY_COMTY_APPTN_INDICATOR")
-    public Boolean getDataMonitoringCommitteeAppointedIndicator() {
-        return dataMonitoringCommitteeAppointedIndicator;
-    }
-    /**
-     * @param dataMonitoringCommitteeAppointedIndicator the dataMonitoringCommitteeAppointedIndicator to set
-     */
-    public void setDataMonitoringCommitteeAppointedIndicator(
-            Boolean dataMonitoringCommitteeAppointedIndicator) {
-        this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
-    }
-    /**
-     * @return the delayedpostingIndicator
-     */
-    @Column(name = "DELAYED_POSTING_INDICATOR")
-    public Boolean getDelayedpostingIndicator() {
-        return delayedpostingIndicator;
-    }
-    /**
-     * @param delayedpostingIndicator the delayedpostingIndicator to set
-     */
-    public void setDelayedpostingIndicator(Boolean delayedpostingIndicator) {
-        this.delayedpostingIndicator = delayedpostingIndicator;
-    }
-    /**
-     * @return the fdaRegulatedIndicator
-     */
-    @Column(name = "FDA_REGULATED_INDICATOR")
-    public Boolean getFdaRegulatedIndicator() {
-        return fdaRegulatedIndicator;
-    }
-    /**
-     * @param fdaRegulatedIndicator the fdaRegulatedIndicator to set
-     */
-    public void setFdaRegulatedIndicator(Boolean fdaRegulatedIndicator) {
-        this.fdaRegulatedIndicator = fdaRegulatedIndicator;
-    }
-    /**
-     * @return the section801Indicator
-     */
-    @Column (name = "SECTION801_INDICATOR")
-    public Boolean getSection801Indicator() {
-        return section801Indicator;
-    }
-    /**
-     * @param section801Indicator the section801Indicator to set
-     */
-    public void setSection801Indicator(Boolean section801Indicator) {
-        this.section801Indicator = section801Indicator;
-    }
-    /**
-     * @return the proprietaryTrialIndicator
-     */
-    @Column (name = "PROPRIETARY_TRIAL_INDICATOR")
-    public Boolean getProprietaryTrialIndicator() {
-        return proprietaryTrialIndicator;
-    }
-    /**
-     * @param proprietaryTrialIndicator the proprietaryTrialIndicator to set
-     */
-    public void setProprietaryTrialIndicator(Boolean proprietaryTrialIndicator) {
-        this.proprietaryTrialIndicator = proprietaryTrialIndicator;
     }
     /**
      * @return the nciDesignatedCancerCenterIndicator
@@ -546,19 +315,6 @@ public class StudyProtocolStage extends AbstractEntity {
     @Column (name = "OVERSIGHT_AUTHORITY_ORG_ID")
     public String getOversightAuthorityOrgId() {
         return oversightAuthorityOrgId;
-    }
-    /**
-     * @return the ctgovXmlRequiredIndicator
-     */
-    @Column (name = "CTGOV_XML_REQUIRED_INDICATOR")
-    public Boolean getCtgovXmlRequiredIndicator() {
-        return ctgovXmlRequiredIndicator;
-    }
-    /**
-     * @param ctgovXmlRequiredIndicator the ctgovXmlRequiredIndicator to set
-     */
-    public void setCtgovXmlRequiredIndicator(Boolean ctgovXmlRequiredIndicator) {
-        this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
     }
     /**
      * @return the submitterOrganizationIdentifier
@@ -736,9 +492,7 @@ public class StudyProtocolStage extends AbstractEntity {
     }
 
     /**
-     * Gets the other identifiers.
-     *
-     * @return the other identifiers
+     * {@inheritDoc}
      */
     @CollectionOfElements(fetch = FetchType.EAGER)
     @Fetch (FetchMode.SELECT)
@@ -760,14 +514,9 @@ public class StudyProtocolStage extends AbstractEntity {
     @ValidIi
     @NotEmptyIiExtension
     @NotEmptyIiRoot
+    @Override
+    @SuppressWarnings("PMD.UselessOverridingMethod")
     public Set<Ii> getOtherIdentifiers() {
-        return otherIdentifiers;
+        return super.getOtherIdentifiers();
     }
-
-    /**
-     * @param otherIdentifiers the otherIdentifiers to set
-     */
-     public void setOtherIdentifiers(Set<Ii> otherIdentifiers) {
-        this.otherIdentifiers = otherIdentifiers;
-     }
 }

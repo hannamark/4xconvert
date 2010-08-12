@@ -157,7 +157,7 @@ public class ObservationalStudyProtocolConverterTest   {
         //TestSchema.addUpdObject(osp);
         assertNotNull(osp.getId());
         ObservationalStudyProtocolDTO ospDTO = ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
-        ObservationalStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
+        AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
         osp = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
         assertObservationalStudyProtocol(osp , ospDTO);
     }

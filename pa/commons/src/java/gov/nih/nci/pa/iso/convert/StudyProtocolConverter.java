@@ -84,11 +84,7 @@ import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
-import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -98,11 +94,6 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.CSMUserUtil;
-import gov.nih.nci.pa.service.PAException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * Convert StudyProtocol domain to DTO.
@@ -113,25 +104,7 @@ import org.apache.log4j.Logger;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength"  })
 public class StudyProtocolConverter {
-
-    private static final Logger LOG  = Logger.getLogger(StudyProtocolConverter.class);
-    private static CSMUserUtil csmUserUtil = null;
-
-    /**
-     * @return the csmUserUtil
-     */
-    public static CSMUserUtil getCsmUserUtil() {
-        return csmUserUtil;
-    }
-
-    /**
-     * @param csmUserUtil the csmUserUtil to set
-     */
-    public static void setCsmUserUtil(CSMUserUtil csmUserUtil) {
-        StudyProtocolConverter.csmUserUtil = csmUserUtil;
-    }
 
     /**
      *
@@ -160,58 +133,35 @@ public class StudyProtocolConverter {
      */
     public static StudyProtocolDTO convertFromDomainToDTO(
             StudyProtocol studyProtocol , StudyProtocolDTO studyProtocolDTO) {
+        AbstractStudyProtocolConverter.convertFromDomainToDTO(studyProtocol, studyProtocolDTO);
         studyProtocolDTO.setAcronym(StConverter.convertToSt(studyProtocol.getAcronym()));
         studyProtocolDTO.setAccrualReportingMethodCode(
                 CdConverter.convertToCd(studyProtocol.getAccrualReportingMethodCode()));
+        //TODO - as part of PO-2434 this should be moved to the AbstractStudyProtocolConverter 
+        //once the AbstractStudyProtocolDTO owns the SecondaryIdentifiers.
         if (studyProtocol.getOtherIdentifiers() != null) {
           studyProtocolDTO.setSecondaryIdentifiers(
             DSetConverter.convertIiSetToDset(studyProtocol.getOtherIdentifiers()));
         }
-        studyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(
-                BlConverter.convertToBl(studyProtocol.getDataMonitoringCommitteeAppointedIndicator()));
-        studyProtocolDTO.setDelayedpostingIndicator(
-                BlConverter.convertToBl(studyProtocol.getDelayedpostingIndicator()));
 
         studyProtocolDTO.setExpandedAccessIndicator(
                 BlConverter.convertToBl(studyProtocol.getExpandedAccessIndicator()));
-        studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(studyProtocol.getFdaRegulatedIndicator()));
         studyProtocolDTO.setReviewBoardApprovalRequiredIndicator(
                 BlConverter.convertToBl(studyProtocol.getReviewBoardApprovalRequiredIndicator()));
-        studyProtocolDTO.setOfficialTitle(StConverter.convertToSt(studyProtocol.getOfficialTitle()));
-        /*studyProtocolDTO.setMaximumTargetAccrualNumber(
-                IntConverter.convertToInt(studyProtocol.getMaximumTargetAccrualNumber()));*/
         studyProtocolDTO.setTargetAccrualNumber(
                 IvlConverter.convertInt().convertToIvl(studyProtocol.getMinimumTargetAccrualNumber(),
                         studyProtocol.getMaximumTargetAccrualNumber()));
         studyProtocolDTO.setIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocol.getId()));
-        studyProtocolDTO.setPhaseCode(CdConverter.convertToCd(studyProtocol.getPhaseCode()));
-        studyProtocolDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(
-                studyProtocol.getPhaseAdditionalQualifierCode()));
-        studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(studyProtocol.getPrimaryCompletionDate()));
-        studyProtocolDTO.setPrimaryCompletionDateTypeCode(
-                CdConverter.convertToCd(studyProtocol.getPrimaryCompletionDateTypeCode()));
-        studyProtocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(studyProtocol.getPrimaryPurposeCode()));
-        studyProtocolDTO.setPrimaryPurposeOtherText(
-                StConverter.convertToSt(studyProtocol.getPrimaryPurposeOtherText()));
         studyProtocolDTO.setPublicDescription(
                 StConverter.convertToSt(studyProtocol.getPublicDescription()));
         studyProtocolDTO.setPublicTitle(
                 StConverter.convertToSt(studyProtocol.getPublicTitle()));
         studyProtocolDTO.setRecordVerificationDate(TsConverter.convertToTs(studyProtocol.getRecordVerificationDate()));
         studyProtocolDTO.setScientificDescription(StConverter.convertToSt(studyProtocol.getScientificDescription()));
-        studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(studyProtocol.getSection801Indicator()));
-        studyProtocolDTO.setStartDate(TsConverter.convertToTs(studyProtocol.getStartDate()));
-        studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd(studyProtocol.getStartDateTypeCode()));
         studyProtocolDTO.setKeywordText(StConverter.convertToSt(studyProtocol.getKeywordText()));
         studyProtocolDTO.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBl(
                 studyProtocol.getAcceptHealthyVolunteersIndicator()));
-        if (studyProtocol instanceof ObservationalStudyProtocol) {
-            studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt("ObservationalStudyProtocol"));
-        } else if (studyProtocol instanceof InterventionalStudyProtocol) {
-            studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt("InterventionalStudyProtocol"));
-        } else {
-            studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt(studyProtocol.getClass().getName()));
-        }
+        setStudyProtocolType(studyProtocol, studyProtocolDTO);
         studyProtocolDTO.setStatusCode(CdConverter.convertToCd(studyProtocol.getStatusCode()));
         studyProtocolDTO.setStatusDate(TsConverter.convertToTs(studyProtocol.getStatusDate()));
         studyProtocolDTO.setAmendmentNumber(
@@ -219,16 +169,17 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setAmendmentReasonCode(CdConverter.convertToCd(studyProtocol.getAmendmentReasonCode()));
         studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(studyProtocol.getAmendmentDate()));
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(studyProtocol.getSubmissionNumber()));
-        if (studyProtocol.getUserLastCreated() != null) {
-            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(studyProtocol.getUserLastCreated()
-                    .getLoginName()));
-        }
-        studyProtocolDTO.setProgramCodeText(StConverter.convertToSt(studyProtocol.getProgramCodeText()));
-        studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(
-                studyProtocol.getProprietaryTrialIndicator()));
-        studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(
-                                studyProtocol.getCtgovXmlRequiredIndicator()));
         return studyProtocolDTO;
+    }
+
+    private static void setStudyProtocolType(StudyProtocol studyProtocol, StudyProtocolDTO studyProtocolDTO) {
+        if (studyProtocol instanceof ObservationalStudyProtocol) {
+            studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt("ObservationalStudyProtocol"));
+        } else if (studyProtocol instanceof InterventionalStudyProtocol) {
+            studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt("InterventionalStudyProtocol"));
+        } else {
+            studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt(studyProtocol.getClass().getName()));
+        }
     }
 
     /**
@@ -240,56 +191,25 @@ public class StudyProtocolConverter {
    public static StudyProtocol convertFromDTOToDomain(StudyProtocolDTO studyProtocolDTO ,
            StudyProtocol studyProtocol) {
 
+       AbstractStudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, studyProtocol);
        studyProtocol.setId(IiConverter.convertToLong(studyProtocolDTO.getIdentifier()));
        studyProtocol.setAcronym(StConverter.convertToString(studyProtocolDTO.getAcronym()));
-       if (studyProtocolDTO.getSecondaryIdentifiers() != null
-           && studyProtocolDTO.getSecondaryIdentifiers().getItem() != null) {
-           studyProtocol.setOtherIdentifiers(
-             DSetConverter.convertDsetToIiSet(studyProtocolDTO.getSecondaryIdentifiers()));
-       }
+       setSecondaryIdentifiers(studyProtocolDTO, studyProtocol);
        if (studyProtocolDTO.getAccrualReportingMethodCode() != null) {
            studyProtocol.setAccrualReportingMethodCode(
                    AccrualReportingMethodCode.getByCode(studyProtocolDTO.getAccrualReportingMethodCode().getCode()));
        }
-       studyProtocol.setDataMonitoringCommitteeAppointedIndicator(
-               BlConverter.convertToBoolean(studyProtocolDTO.getDataMonitoringCommitteeAppointedIndicator()));
-       studyProtocol.setDelayedpostingIndicator(
-               BlConverter.convertToBoolean(studyProtocolDTO.getDelayedpostingIndicator()));
        studyProtocol.setExpandedAccessIndicator(
                BlConverter.convertToBoolean(studyProtocolDTO.getExpandedAccessIndicator()));
-       studyProtocol.setFdaRegulatedIndicator(
-               BlConverter.convertToBoolean(studyProtocolDTO.getFdaRegulatedIndicator()));
        studyProtocol.setReviewBoardApprovalRequiredIndicator(
                BlConverter.convertToBoolean(studyProtocolDTO.getReviewBoardApprovalRequiredIndicator()));
        studyProtocol.setMaximumTargetAccrualNumber(null);
        if (studyProtocolDTO.getTargetAccrualNumber() != null) {
-       studyProtocol.setMinimumTargetAccrualNumber(
-               IvlConverter.convertInt().convertLow(studyProtocolDTO.getTargetAccrualNumber()));
-       studyProtocol.setMaximumTargetAccrualNumber(
-               IvlConverter.convertInt().convertHigh(studyProtocolDTO.getTargetAccrualNumber()));
+            studyProtocol.setMinimumTargetAccrualNumber(IvlConverter.convertInt().convertLow(
+                    studyProtocolDTO.getTargetAccrualNumber()));
+            studyProtocol.setMaximumTargetAccrualNumber(IvlConverter.convertInt().convertHigh(
+                    studyProtocolDTO.getTargetAccrualNumber()));
        }
-       studyProtocol.setOfficialTitle(StConverter.convertToString(studyProtocolDTO.getOfficialTitle()));
-       if (studyProtocolDTO.getPhaseCode() != null) {
-           studyProtocol.setPhaseCode(PhaseCode.getByCode(studyProtocolDTO.getPhaseCode().getCode()));
-       }
-       if (studyProtocolDTO.getPhaseAdditionalQualifierCode() != null) {
-           studyProtocol.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.getByCode(
-                   studyProtocolDTO.getPhaseAdditionalQualifierCode().getCode()));
-       }
-       if (studyProtocolDTO.getPrimaryCompletionDate() != null) {
-           studyProtocol.setPrimaryCompletionDate(
-                   TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate()));
-       }
-       if (studyProtocolDTO.getPrimaryCompletionDateTypeCode() != null) {
-           studyProtocol.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.getByCode(
-                   studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode()));
-       }
-       if (studyProtocolDTO.getPrimaryPurposeCode() != null) {
-           studyProtocol.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(
-                   studyProtocolDTO.getPrimaryPurposeCode().getCode()));
-       }
-       studyProtocol.setPrimaryPurposeOtherText(StConverter.convertToString(
-               studyProtocolDTO.getPrimaryPurposeOtherText()));
        studyProtocol.setPublicDescription(StConverter.convertToString(studyProtocolDTO.getPublicDescription()));
        studyProtocol.setPublicTitle(StConverter.convertToString(studyProtocolDTO.getPublicTitle()));
        if (studyProtocolDTO.getRecordVerificationDate() != null) {
@@ -297,69 +217,54 @@ public class StudyProtocolConverter {
                    TsConverter.convertToTimestamp(studyProtocolDTO.getRecordVerificationDate()));
        }
 
-       studyProtocol.setSection801Indicator(BlConverter.convertToBoolean(studyProtocolDTO.getSection801Indicator()));
-
        studyProtocol.setScientificDescription(StConverter.convertToString(
                studyProtocolDTO.getScientificDescription()));
-       if (studyProtocolDTO.getStartDate() != null) {
-           studyProtocol.setStartDate(
-                   TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate()));
-       }
-       if (studyProtocolDTO.getStartDateTypeCode() != null) {
-           studyProtocol.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(
-                   studyProtocolDTO.getStartDateTypeCode().getCode()));
-
-       }
        if (studyProtocolDTO.getKeywordText() != null) {
-       studyProtocol.setKeywordText(studyProtocolDTO.getKeywordText().getValue());
+            studyProtocol.setKeywordText(studyProtocolDTO.getKeywordText().getValue());
        }
        studyProtocol.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBoolean(
                studyProtocolDTO.getAcceptHealthyVolunteersIndicator()));
 
-       if (studyProtocolDTO.getStatusCode() != null) {
-           studyProtocol.setStatusCode(ActStatusCode.getByCode(studyProtocolDTO.getStatusCode().getCode()));
-       }
-       if (studyProtocolDTO.getStatusDate() != null) {
-           studyProtocol.setStatusDate(
-                   TsConverter.convertToTimestamp(studyProtocolDTO.getStatusDate()));
-       }
-       if (studyProtocolDTO.getAmendmentNumber() != null) {
-           studyProtocol.setAmendmentNumber(StConverter.convertToString(studyProtocolDTO.getAmendmentNumber()));
-       }
-       if (studyProtocolDTO.getAmendmentReasonCode() != null) {
-           studyProtocol.setAmendmentReasonCode(AmendmentReasonCode.getByCode(
-                   studyProtocolDTO.getAmendmentReasonCode().getCode()));
-       }
-
-       if (studyProtocolDTO.getAmendmentDate() != null) {
-           studyProtocol.setAmendmentDate(TsConverter.convertToTimestamp(studyProtocolDTO.getAmendmentDate()));
-       }
+       setStatusFields(studyProtocolDTO, studyProtocol);
+       setAmendmentFields(studyProtocolDTO, studyProtocol);
        if (studyProtocolDTO.getSubmissionNumber() != null) {
            studyProtocol.setSubmissionNumber(
                IntConverter.convertToInteger(studyProtocolDTO.getSubmissionNumber()));
        }
-       if (studyProtocolDTO.getProgramCodeText() != null) {
-           studyProtocol.setProgramCodeText(
-                   StConverter.convertToString(studyProtocolDTO.getProgramCodeText()));
-       }
-       studyProtocol.setProprietaryTrialIndicator(BlConverter.convertToBoolean(
-               studyProtocolDTO.getProprietaryTrialIndicator()));
-       //this for change of ownership
-       String isoStUserLastCreated = StConverter.convertToString(studyProtocolDTO.getUserLastCreated());
-       if (StringUtils.isNotEmpty(isoStUserLastCreated)
-               && studyProtocol.getUserLastCreated() != null
-               && StringUtils.isNotEmpty(studyProtocol.getUserLastCreated().getLoginName())
-               && !isoStUserLastCreated.equals(studyProtocol.getUserLastCreated().getLoginName())) {
-           try {
-               studyProtocol.setUserLastCreated(getCsmUserUtil().getCSMUser(isoStUserLastCreated));
-           } catch (PAException e) {
-               LOG.info("Exception in setting userLastCreated for Study Protocol: "
-                       + studyProtocolDTO.getIdentifier() + ", for username: " + isoStUserLastCreated, e);
-           }
-       }
-       studyProtocol.setCtgovXmlRequiredIndicator(BlConverter.convertToBoolean(
-                         studyProtocolDTO.getCtgovXmlRequiredIndicator()));
        return studyProtocol;
    }
+
+    private static void setSecondaryIdentifiers(StudyProtocolDTO studyProtocolDTO, StudyProtocol studyProtocol) {
+        // TODO - as part of PO-2434 this should be moved to the AbstractStudyProtocolConverter
+        // once the AbstractStudyProtocolDTO owns the SecondaryIdentifiers.
+        if (studyProtocolDTO.getSecondaryIdentifiers() != null
+                && studyProtocolDTO.getSecondaryIdentifiers().getItem() != null) {
+            studyProtocol.setOtherIdentifiers(DSetConverter.convertDsetToIiSet(studyProtocolDTO
+                    .getSecondaryIdentifiers()));
+        }
+    }
+
+    private static void setStatusFields(StudyProtocolDTO studyProtocolDTO, StudyProtocol studyProtocol) {
+        if (studyProtocolDTO.getStatusCode() != null) {
+            studyProtocol.setStatusCode(ActStatusCode.getByCode(studyProtocolDTO.getStatusCode().getCode()));
+        }
+        if (studyProtocolDTO.getStatusDate() != null) {
+            studyProtocol.setStatusDate(TsConverter.convertToTimestamp(studyProtocolDTO.getStatusDate()));
+        }
+    }
+
+    private static void setAmendmentFields(StudyProtocolDTO studyProtocolDTO, StudyProtocol studyProtocol) {
+        if (studyProtocolDTO.getAmendmentNumber() != null) {
+            studyProtocol.setAmendmentNumber(StConverter.convertToString(studyProtocolDTO.getAmendmentNumber()));
+        }
+        if (studyProtocolDTO.getAmendmentReasonCode() != null) {
+            studyProtocol.setAmendmentReasonCode(AmendmentReasonCode.getByCode(studyProtocolDTO
+                    .getAmendmentReasonCode().getCode()));
+        }
+
+        if (studyProtocolDTO.getAmendmentDate() != null) {
+            studyProtocol.setAmendmentDate(TsConverter.convertToTimestamp(studyProtocolDTO.getAmendmentDate()));
+        }
+    }
 
 }

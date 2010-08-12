@@ -151,7 +151,7 @@ public class InterventionalStudyProtocolConverterTest   {
         assertNotNull(isp.getId());
         InterventionalStudyProtocolDTO ispDTO = InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
 
-        InterventionalStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
+        AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
         isp = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
         assertInterventionalStudyProtocol(isp , ispDTO);
     }

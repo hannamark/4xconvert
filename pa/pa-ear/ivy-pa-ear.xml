@@ -49,7 +49,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="objectweb"              name="asm"                     rev="3.1"             conf="compile->master"/>
     <dependency org="objectweb"              name="asm-attrs"               rev="1.5.3"           conf="compile->master"/>
     <dependency org="ognl"                   name="ognl"                    rev="2.6.11"          conf="compile->default"/>
-    <dependency org="opensymphony"           name="quartz"                   rev="1.6.5"          conf="compile->default"/>
+    <dependency org="opensymphony"           name="quartz"                   rev="1.6.3"          conf="compile->default"/>
     <dependency org="opensymphony"           name="sitemesh"                rev="2.2.1"           conf="compile->master"/>
     <dependency org="com.opensymphony"       name="xwork"                   rev="2.0.7"           conf="compile->default">
         <exclude module="commons-logging"/>

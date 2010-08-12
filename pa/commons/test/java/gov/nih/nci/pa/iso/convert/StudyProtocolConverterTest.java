@@ -152,7 +152,7 @@ public class StudyProtocolConverterTest  {
         assertNotNull(create.getId());
         //convert to DTO
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(create);
-        StudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
+        AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
         StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO);
         assertStudyProtocol(sp , spDTO);
 
@@ -167,7 +167,7 @@ public class StudyProtocolConverterTest  {
         assertNotNull(create.getId());
         //convert to DTO
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(create);
-        StudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
+        AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
         StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO, new StudyProtocol());
         assertStudyProtocol(sp , spDTO);
 

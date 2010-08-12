@@ -79,8 +79,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
-import gov.nih.nci.pa.iso.convert.StudyProtocolStageConverter;
+import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -311,8 +310,7 @@ public class CSMUserService implements CSMUserUtil {
      */
     public static void setRegistryUserService(CSMUserUtil registryUserService) {
         CSMUserService.registryUserService = registryUserService;
-        StudyProtocolConverter.setCsmUserUtil(CSMUserService.registryUserService);
-        StudyProtocolStageConverter.setCsmUserUtil(CSMUserService.registryUserService);
+        AbstractStudyProtocolConverter.setCsmUserUtil(CSMUserService.registryUserService);
     }
 
     /**

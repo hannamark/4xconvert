@@ -18,16 +18,12 @@ import java.util.List;
  *
  */
 @SuppressWarnings({ "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
-public class StudyProtocolStageDTO extends BaseDTO {
+public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
+
     private static final long serialVersionUID = 7235772554482606139L;
     private St localProtocolIdentifier;
     private St nctIdentifier;
-    private St officialTitle;
-    private Cd phaseCode;
-    private Cd phaseAdditionalQualifierCode;
     private St trialType;
-    private Cd primaryPurposeCode;
-    private St primaryPurposeOtherText;
 
     private Ii leadOrganizationIdentifier;
     private Ii piIdentifier;
@@ -40,29 +36,13 @@ public class StudyProtocolStageDTO extends BaseDTO {
 
     private Ii summaryFourOrgIdentifier;
     private Cd summaryFourFundingCategoryCode;
-    private St programCodeText;
     private Cd trialStatusCode;
     private Ts trialStatusDate;
     private St statusReason;
 
-    private Ts startDate;
-    private Cd startDateTypeCode;
-    private Ts primaryCompletionDate;
-    private Cd primaryCompletionDateTypeCode;
-
-    private St studyProtocolType;
-
-    private Bl dataMonitoringCommitteeAppointedIndicator;
-    private Bl fdaRegulatedIndicator;
-    private Bl section801Indicator;
-    private Bl delayedpostingIndicator;
-
-    private St userLastCreated;
     private Bl nciDesignatedCancerCenterIndicator;
-    private Bl proprietaryTrialIndicator;
     private Ii oversightAuthorityCountryId;
     private Ii oversightAuthorityOrgId;
-    private Bl ctgovXmlRequiredIndicator;
     private Ii submitterOrganizationIdentifier;
     private Ii siteProtocolIdentifier;
     private Ii sitePiIdentifier;
@@ -76,6 +56,8 @@ public class StudyProtocolStageDTO extends BaseDTO {
     private Ts closedForAccrualDate;
     private Bl piInitiatedIndicator;
     private Bl siteNciDesignatedCancerCenterIndicator;
+    //TODO - as part of PO-2434 this should be moved to the AbstractStudyProtocolDTO
+    //once the AbstractStudyProtocolDTO owns the SecondaryIdentifiers.
     private List<Ii> secondaryIdentifierList = new ArrayList<Ii>();
 
     /**
@@ -103,42 +85,6 @@ public class StudyProtocolStageDTO extends BaseDTO {
         this.nctIdentifier = nctIdentifier;
     }
     /**
-     * @return the officialTitle
-     */
-    public St getOfficialTitle() {
-        return officialTitle;
-    }
-    /**
-     * @param officialTitle the officialTitle to set
-     */
-    public void setOfficialTitle(St officialTitle) {
-        this.officialTitle = officialTitle;
-    }
-    /**
-     * @return the phaseCode
-     */
-    public Cd getPhaseCode() {
-        return phaseCode;
-    }
-    /**
-     * @param phaseCode the phaseCode to set
-     */
-    public void setPhaseCode(Cd phaseCode) {
-        this.phaseCode = phaseCode;
-    }
-    /**
-     * @return the phaseAdditionalQualifierCode
-     */
-    public Cd getPhaseAdditionalQualifierCode() {
-        return phaseAdditionalQualifierCode;
-    }
-    /**
-     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
-     */
-    public void setPhaseAdditionalQualifierCode(Cd phaseAdditionalQualifierCode) {
-        this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
-    }
-    /**
      * @return the trialType
      */
     public St getTrialType() {
@@ -149,30 +95,6 @@ public class StudyProtocolStageDTO extends BaseDTO {
      */
     public void setTrialType(St trialType) {
         this.trialType = trialType;
-    }
-    /**
-     * @return the primaryPurposeCode
-     */
-    public Cd getPrimaryPurposeCode() {
-        return primaryPurposeCode;
-    }
-    /**
-     * @param primaryPurposeCode the primaryPurposeCode to set
-     */
-    public void setPrimaryPurposeCode(Cd primaryPurposeCode) {
-        this.primaryPurposeCode = primaryPurposeCode;
-    }
-    /**
-     * @return the primaryPurposeOtherText
-     */
-    public St getPrimaryPurposeOtherText() {
-        return primaryPurposeOtherText;
-    }
-    /**
-     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
-     */
-    public void setPrimaryPurposeOtherText(St primaryPurposeOtherText) {
-        this.primaryPurposeOtherText = primaryPurposeOtherText;
     }
     /**
      * @return the leadOrganizationIdentifier
@@ -283,18 +205,6 @@ public class StudyProtocolStageDTO extends BaseDTO {
         this.summaryFourFundingCategoryCode = summaryFourFundingCategoryCode;
     }
     /**
-     * @return the programCodeText
-     */
-    public St getProgramCodeText() {
-        return programCodeText;
-    }
-    /**
-     * @param programCodeText the programCodeText to set
-     */
-    public void setProgramCodeText(St programCodeText) {
-        this.programCodeText = programCodeText;
-    }
-    /**
      * @return the statusCode
      */
     public Cd getTrialStatusCode() {
@@ -331,127 +241,6 @@ public class StudyProtocolStageDTO extends BaseDTO {
         this.statusReason = statusReason;
     }
     /**
-     * @return the startDate
-     */
-    public Ts getStartDate() {
-        return startDate;
-    }
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(Ts startDate) {
-        this.startDate = startDate;
-    }
-    /**
-     * @return the startDateTypeCode
-     */
-    public Cd getStartDateTypeCode() {
-        return startDateTypeCode;
-    }
-    /**
-     * @param startDateTypeCode the startDateTypeCode to set
-     */
-    public void setStartDateTypeCode(Cd startDateTypeCode) {
-        this.startDateTypeCode = startDateTypeCode;
-    }
-    /**
-     * @return the primaryCompletionDate
-     */
-    public Ts getPrimaryCompletionDate() {
-        return primaryCompletionDate;
-    }
-    /**
-     * @param primaryCompletionDate the primaryCompletionDate to set
-     */
-    public void setPrimaryCompletionDate(Ts primaryCompletionDate) {
-        this.primaryCompletionDate = primaryCompletionDate;
-    }
-    /**
-     * @return the primaryCompletionDateTypeCode
-     */
-    public Cd getPrimaryCompletionDateTypeCode() {
-        return primaryCompletionDateTypeCode;
-    }
-    /**
-     * @param primaryCompletionDateTypeCode the primaryCompletionDateTypeCode to set
-     */
-    public void setPrimaryCompletionDateTypeCode(Cd primaryCompletionDateTypeCode) {
-        this.primaryCompletionDateTypeCode = primaryCompletionDateTypeCode;
-    }
-    /**
-     * @return the studyProtocolType
-     */
-    public St getStudyProtocolType() {
-        return studyProtocolType;
-    }
-    /**
-     * @param studyProtocolType the studyProtocolType to set
-     */
-    public void setStudyProtocolType(St studyProtocolType) {
-        this.studyProtocolType = studyProtocolType;
-    }
-    /**
-     * @return the dataMonitoringCommitteeAppointedIndicator
-     */
-    public Bl getDataMonitoringCommitteeAppointedIndicator() {
-        return dataMonitoringCommitteeAppointedIndicator;
-    }
-    /**
-     * @param dataMonitoringCommitteeAppointedIndicator the dataMonitoringCommitteeAppointedIndicator to set
-     */
-    public void setDataMonitoringCommitteeAppointedIndicator(
-            Bl dataMonitoringCommitteeAppointedIndicator) {
-        this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
-    }
-    /**
-     * @return the fdaRegulatedIndicator
-     */
-    public Bl getFdaRegulatedIndicator() {
-        return fdaRegulatedIndicator;
-    }
-    /**
-     * @param fdaRegulatedIndicator the fdaRegulatedIndicator to set
-     */
-    public void setFdaRegulatedIndicator(Bl fdaRegulatedIndicator) {
-        this.fdaRegulatedIndicator = fdaRegulatedIndicator;
-    }
-    /**
-     * @return the section801Indicator
-     */
-    public Bl getSection801Indicator() {
-        return section801Indicator;
-    }
-    /**
-     * @param section801Indicator the section801Indicator to set
-     */
-    public void setSection801Indicator(Bl section801Indicator) {
-        this.section801Indicator = section801Indicator;
-    }
-    /**
-     * @return the delayedpostingIndicator
-     */
-    public Bl getDelayedpostingIndicator() {
-        return delayedpostingIndicator;
-    }
-    /**
-     * @param delayedpostingIndicator the delayedpostingIndicator to set
-     */
-    public void setDelayedpostingIndicator(Bl delayedpostingIndicator) {
-        this.delayedpostingIndicator = delayedpostingIndicator;
-    }
-    /**
-     * @return the userLastCreated
-     */
-    public St getUserLastCreated() {
-        return userLastCreated;
-    }
-    /**
-     * @param userLastCreated the userLastCreated to set
-     */
-    public void setUserLastCreated(St userLastCreated) {
-        this.userLastCreated = userLastCreated;
-    }
-    /**
      * @return the nciDesignatedCancerCenterIndicator
      */
     public Bl getNciDesignatedCancerCenterIndicator() {
@@ -463,18 +252,6 @@ public class StudyProtocolStageDTO extends BaseDTO {
     public void setNciDesignatedCancerCenterIndicator(
             Bl nciDesignatedCancerCenterIndicator) {
         this.nciDesignatedCancerCenterIndicator = nciDesignatedCancerCenterIndicator;
-    }
-    /**
-     * @return the proprietaryTrialIndicator
-     */
-    public Bl getProprietaryTrialIndicator() {
-        return proprietaryTrialIndicator;
-    }
-    /**
-     * @param proprietaryTrialIndicator the proprietaryTrialIndicator to set
-     */
-    public void setProprietaryTrialIndicator(Bl proprietaryTrialIndicator) {
-        this.proprietaryTrialIndicator = proprietaryTrialIndicator;
     }
     /**
      * @return the oversightAuthorityCountryId
@@ -499,18 +276,6 @@ public class StudyProtocolStageDTO extends BaseDTO {
      */
     public void setOversightAuthorityOrgId(Ii oversightAuthorityOrgId) {
         this.oversightAuthorityOrgId = oversightAuthorityOrgId;
-    }
-    /**
-     * @return the ctgovXmlRequiredIndicator
-     */
-    public Bl getCtgovXmlRequiredIndicator() {
-        return ctgovXmlRequiredIndicator;
-    }
-    /**
-     * @param ctgovXmlRequiredIndicator the ctgovXmlRequiredIndicator to set
-     */
-    public void setCtgovXmlRequiredIndicator(Bl ctgovXmlRequiredIndicator) {
-        this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
     }
     /**
      * @return the submitterOrganizationIdentifier

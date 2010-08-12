@@ -92,53 +92,37 @@ import gov.nih.nci.iso21090.Ts;
  * StudyProtocolDTO for transferring Study Protocol object .
  * @author Naveen Amiruddin
  * @since 08/22/2008
-
+ 
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength" })
-public class StudyProtocolDTO extends BaseDTO {
-
+public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
+    
     private static final long serialVersionUID = 7235772554482606133L;
     private St acronym;
     private Cd accrualReportingMethodCode;
-    private DSet<Ii> secondaryIdentifiers;
-    private Bl dataMonitoringCommitteeAppointedIndicator;
-    private Bl delayedpostingIndicator;
+    //TODO - as part of PO-2434 this should be moved to the AbstractStudyProtocolDTO
+    //once the AbstractStudyProtocolDTO owns the SecondaryIdentifiers.
+    private DSet<Ii> secondaryIdentifiers; 
     private Bl expandedAccessIndicator;
-    private Bl fdaRegulatedIndicator;
     private Bl reviewBoardApprovalRequiredIndicator;
-    private St officialTitle;
-    private Cd phaseCode;
-    private Cd phaseAdditionalQualifierCode;
-    private Ts primaryCompletionDate;
-    private Cd primaryCompletionDateTypeCode;
-    private Cd primaryPurposeCode;
-    private St primaryPurposeOtherText;
     private St publicDescription;
     private St publicTitle;
     private Ts recordVerificationDate;
     private St scientificDescription;
-    private Bl section801Indicator;
-    private Ts startDate;
-    private Cd startDateTypeCode;
     private St keywordText;
     private Bl acceptHealthyVolunteersIndicator;
-    private St studyProtocolType;
-    private St userLastCreated;
     private Cd statusCode;
     private Ts statusDate;
     private St amendmentNumber;
     private Ts amendmentDate;
     private Cd amendmentReasonCode;
     private Int submissionNumber;
-    private St programCodeText;
     private Ivl<Int> targetAccrualNumber;
-    private Bl proprietaryTrialIndicator;
-    private Bl ctgovXmlRequiredIndicator;
-
+    
     /**
-     *
+     * 
      * @return acronym
      */
     public St getAcronym() {
@@ -146,7 +130,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     *
+     * 
      * @param acronym acronym
      */
     public void setAcronym(St acronym) {
@@ -155,7 +139,7 @@ public class StudyProtocolDTO extends BaseDTO {
 
 
     /**
-     *
+     * 
      * @return accrualReportingMethodCode
      */
     public Cd getAccrualReportingMethodCode() {
@@ -163,7 +147,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     *
+     * 
      * @param accrualReportingMethodCode accrualReportingMethodCode
      */
     public void setAccrualReportingMethodCode(Cd accrualReportingMethodCode) {
@@ -171,40 +155,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     *
-     * @return dataMonitoringCommitteeAppointedIndicator dataMonitoringCommitteeAppointedIndicator
-     */
-    public Bl getDataMonitoringCommitteeAppointedIndicator() {
-        return dataMonitoringCommitteeAppointedIndicator;
-    }
-
-    /**
-     *
-     * @param dataMonitoringCommitteeAppointedIndicator dataMonitoringCommitteeAppointedIndicator;
-     */
-    public void setDataMonitoringCommitteeAppointedIndicator(
-            Bl dataMonitoringCommitteeAppointedIndicator) {
-        this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
-    }
-
-    /**
-     *
-     * @return delayedpostingIndicator
-     */
-    public Bl getDelayedpostingIndicator() {
-        return delayedpostingIndicator;
-    }
-
-    /**
-     *
-     * @param delayedpostingIndicator delayedpostingIndicator
-     */
-    public void setDelayedpostingIndicator(Bl delayedpostingIndicator) {
-        this.delayedpostingIndicator = delayedpostingIndicator;
-    }
-
-    /**
-     *
+     * 
      * @return expandedAccessIndicator
      */
     public Bl getExpandedAccessIndicator() {
@@ -212,28 +163,11 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     *
+     * 
      * @param expandedAccessIndicator expandedAccessIndicator
      */
     public void setExpandedAccessIndicator(Bl expandedAccessIndicator) {
         this.expandedAccessIndicator = expandedAccessIndicator;
-    }
-
-
-    /**
-     *
-     * @return fdaRegulatedIndicator
-     */
-    public Bl getFdaRegulatedIndicator() {
-        return fdaRegulatedIndicator;
-    }
-
-    /**
-     *
-     * @param fdaRegulatedIndicator fdaRegulatedIndicator
-     */
-    public void setFdaRegulatedIndicator(Bl fdaRegulatedIndicator) {
-        this.fdaRegulatedIndicator = fdaRegulatedIndicator;
     }
 
 
@@ -253,113 +187,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     *
-     * @return officialTitle
-     */
-    public St getOfficialTitle() {
-        return officialTitle;
-    }
-
-    /**
-     *
-     * @param officialTitle officialTitle
-     */
-    public void setOfficialTitle(St officialTitle) {
-        this.officialTitle = officialTitle;
-    }
-
-    /**
-     *
-     * @return phaseCode
-     */
-    public Cd getPhaseCode() {
-        return phaseCode;
-    }
-
-    /**
-     *
-     * @param phaseCode phaseCode
-     */
-    public void setPhaseCode(Cd phaseCode) {
-        this.phaseCode = phaseCode;
-    }
-
-    /**
-     * @return the phaseAdditionalQualifierCode
-     */
-    public Cd getPhaseAdditionalQualifierCode() {
-        return phaseAdditionalQualifierCode;
-    }
-
-    /**
-     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
-     */
-    public void setPhaseAdditionalQualifierCode(Cd phaseAdditionalQualifierCode) {
-        this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
-    }
-
-    /**
-     *
-     * @return primaryCompletionDate
-     */
-    public Ts getPrimaryCompletionDate() {
-        return primaryCompletionDate;
-    }
-
-    /**
-     *
-     * @param primaryCompletionDate primaryCompletionDate
-     */
-    public void setPrimaryCompletionDate(Ts primaryCompletionDate) {
-        this.primaryCompletionDate = primaryCompletionDate;
-    }
-
-    /**
-     *
-     * @return primaryCompletionDateTypeCode
-     */
-    public Cd getPrimaryCompletionDateTypeCode() {
-        return primaryCompletionDateTypeCode;
-    }
-
-    /**
-     *
-     * @param primaryCompletionDateTypeCode primaryCompletionDateTypeCode
-     */
-    public void setPrimaryCompletionDateTypeCode(Cd primaryCompletionDateTypeCode) {
-        this.primaryCompletionDateTypeCode = primaryCompletionDateTypeCode;
-    }
-
-    /**
-     * @return primaryPurposeCode
-     */
-    public Cd getPrimaryPurposeCode() {
-        return primaryPurposeCode;
-    }
-
-    /**
-     * @param primaryPurposeCode primaryPurposeCode
-     */
-    public void setPrimaryPurposeCode(Cd primaryPurposeCode) {
-        this.primaryPurposeCode = primaryPurposeCode;
-    }
-
-    /**
-     * @return primaryPurposeOtherText
-     */
-    public St getPrimaryPurposeOtherText() {
-        return primaryPurposeOtherText;
-    }
-
-    /**
-     * @param primaryPurposeOtherText primaryPurposeOtherText
-     */
-    public void setPrimaryPurposeOtherText(St primaryPurposeOtherText) {
-        this.primaryPurposeOtherText = primaryPurposeOtherText;
-    }
-
-    /**
-     *
+     * 
      * @return publicDescription
      */
     public St getPublicDescription() {
@@ -367,7 +195,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     *
+     * 
      * @param publicDescription publicDescription
      */
     public void setPublicDescription(St publicDescription) {
@@ -375,7 +203,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     *
+     * 
      * @return publicTitle
      */
     public St getPublicTitle() {
@@ -383,7 +211,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     *
+     * 
      * @param publicTitle publicTitle
      */
     public void setPublicTitle(St publicTitle) {
@@ -391,7 +219,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     *
+     * 
      * @return recordVerificationDate
      */
     public Ts getRecordVerificationDate() {
@@ -399,7 +227,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     *
+     * 
      * @param recordVerificationDate recordVerificationDate
      */
     public void setRecordVerificationDate(Ts recordVerificationDate) {
@@ -407,7 +235,7 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     *
+     * 
      * @return scientificDescription
      */
     public St getScientificDescription() {
@@ -415,59 +243,11 @@ public class StudyProtocolDTO extends BaseDTO {
     }
 
     /**
-     *
+     * 
      * @param scientificDescription scientificDescription
      */
     public void setScientificDescription(St scientificDescription) {
         this.scientificDescription = scientificDescription;
-    }
-
-    /**
-     *
-     * @return section801Indicator
-     */
-    public Bl getSection801Indicator() {
-        return section801Indicator;
-    }
-
-    /**
-     *
-     * @param section801Indicator section801Indicator
-     */
-    public void setSection801Indicator(Bl section801Indicator) {
-        this.section801Indicator = section801Indicator;
-    }
-
-    /**
-     *
-     * @return startDate
-     */
-    public Ts getStartDate() {
-        return startDate;
-    }
-
-    /**
-     *
-     * @param startDate startDate
-     */
-    public void setStartDate(Ts startDate) {
-        this.startDate = startDate;
-    }
-
-    /**
-     *
-     * @return startDateTypeCode
-     */
-    public Cd getStartDateTypeCode() {
-        return startDateTypeCode;
-    }
-
-    /**
-     *
-     * @param startDateTypeCode startDateTypeCode
-     */
-    public void setStartDateTypeCode(Cd startDateTypeCode) {
-        this.startDateTypeCode = startDateTypeCode;
     }
 
     /**
@@ -498,37 +278,6 @@ public class StudyProtocolDTO extends BaseDTO {
         this.acceptHealthyVolunteersIndicator = acceptHealthyVolunteersIndicator;
     }
 
-    /**
-     *
-     * @return studyProtocolType
-     */
-    public St getStudyProtocolType() {
-        return studyProtocolType;
-    }
-
-    /**
-     *
-     * @param studyProtocolType studyProtocolType
-     */
-    public void setStudyProtocolType(St studyProtocolType) {
-        this.studyProtocolType = studyProtocolType;
-    }
-
-    /**
-     *
-     * @return userLastCreated
-     */
-    public St getUserLastCreated() {
-        return userLastCreated;
-    }
-
-    /**
-     *
-     * @param userLastCreated userLastCreated
-     */
-    public void setUserLastCreated(St userLastCreated) {
-        this.userLastCreated = userLastCreated;
-    }
 /**
  * @return the statusCode
  */
@@ -612,19 +361,6 @@ return submissionNumber;
 public void setSubmissionNumber(Int submissionNumber) {
 this.submissionNumber = submissionNumber;
 }
-/**
- * @return the programCodeText
- */
-public St getProgramCodeText() {
-    return programCodeText;
-}
-
-/**
- * @param programCodeText the programCodeText to set
- */
-public void setProgramCodeText(St programCodeText) {
-    this.programCodeText = programCodeText;
-}
 
 /**
  * @return the targetAccrualNumber
@@ -641,34 +377,6 @@ public void setTargetAccrualNumber(Ivl<Int> targetAccrualNumber) {
 }
 
 /**
- * @return the proprietaryTrialIndicator
- */
-public Bl getProprietaryTrialIndicator() {
-    return proprietaryTrialIndicator;
-}
-
-/**
- * @param proprietaryTrialIndicator the proprietaryTrialIndicator to set
- */
-public void setProprietaryTrialIndicator(Bl proprietaryTrialIndicator) {
-    this.proprietaryTrialIndicator = proprietaryTrialIndicator;
-}
-
-/**
- * @param ctgovXmlRequiredIndicator the ctgovXmlRequiredIndicator to set
- */
-public void setCtgovXmlRequiredIndicator(Bl ctgovXmlRequiredIndicator) {
-    this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
-}
-
-/**
- * @return the ctgovXmlRequiredIndicator
- */
-public Bl getCtgovXmlRequiredIndicator() {
-    return ctgovXmlRequiredIndicator;
-}
-
-/**
  * @return the secondaryIdentifiers
  */
 public DSet<Ii> getSecondaryIdentifiers() {
@@ -681,7 +389,7 @@ public DSet<Ii> getSecondaryIdentifiers() {
 public void setSecondaryIdentifiers(DSet<Ii> secondaryIdentifiers) {
    this.secondaryIdentifiers = secondaryIdentifiers;
 }
-
-
+    
+    
 }
 
