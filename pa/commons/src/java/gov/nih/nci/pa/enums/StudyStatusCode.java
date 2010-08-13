@@ -229,6 +229,7 @@ public enum StudyStatusCode implements CodedEnum<String> {
          tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
          tmpSet.add(ADMINISTRATIVELY_COMPLETE);
          tmpSet.add(CLOSED_TO_ACCRUAL);
+         tmpSet.add(CLOSED_TO_ACCRUAL_AND_INTERVENTION);
          tmp.put(ACTIVE, Collections.unmodifiableSet(tmpSet));
 
          tmpSet = new HashSet<StudyStatusCode>();

@@ -83,9 +83,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.DocumentWorkFlowStatusTest;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.StudyOverallStatus;
+import gov.nih.nci.pa.domain.StudyOverallStatusTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.convert.Converters;
+import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -158,6 +165,63 @@ public class StudyOverallStatusServiceTest {
         assertEquals(IiConverter.convertToLong(pid), IiConverter.convertToLong(result.getStudyProtocolIdentifier()));
 
     }
+
+
+
+    /**
+     * Tests the creation of the intermediate study overall status when moving from In Review to Active
+     * and Active to Closed to Accrual and Intervention
+     * @throws Exception
+     */
+    @Test
+    public void testIntermediateStudyOverallStatusCreation() throws Exception {
+        StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
+        InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
+        sp = (InterventionalStudyProtocol) StudyProtocolTest.createStudyProtocolObj(sp);
+        sp = StudyProtocolTest.createInterventionalStudyProtocolObj(sp);
+        TestSchema.addUpdObject(sp);
+        Ii spId = IiConverter.convertToStudyProtocolIi(sp.getId());
+
+        DocumentWorkflowStatus docWorkflow = DocumentWorkFlowStatusTest.createDocumentWorkflowStatus(sp);
+        TestSchema.addUpdObject(docWorkflow);
+
+        StudyOverallStatus inReview = StudyOverallStatusTest.createStudyOverallStatusobj(sp);
+        inReview.setStatusCode(StudyStatusCode.IN_REVIEW);
+        remoteEjb.create(statusConverter.convertFromDomainToDto(inReview));
+        assertEquals(remoteEjb.getByStudyProtocol(spId).size(), 1);
+
+        StudyOverallStatus active = StudyOverallStatusTest.createStudyOverallStatusobj(sp);
+        active.setStatusCode(StudyStatusCode.ACTIVE);
+        remoteEjb.create(statusConverter.convertFromDomainToDto(active));
+
+        StudyOverallStatusDTO approved = null;
+        for (StudyOverallStatusDTO dto : remoteEjb.getByStudyProtocol(spId)) {
+            if (StringUtils.equals(dto.getStatusCode().getCode(), StudyStatusCode.APPROVED.getCode())) {
+                approved = dto;
+                break;
+            }
+        }
+        assertNotNull("Approved intermediate status not found.", approved);
+        assertEquals("Approved and In Review should have the same status date", active.getStatusDate(),
+                TsConverter.convertToTimestamp(approved.getStatusDate()));
+
+        StudyOverallStatus closedToAccrualAndIntervention = StudyOverallStatusTest.createStudyOverallStatusobj(sp);
+        closedToAccrualAndIntervention.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+        remoteEjb.create(statusConverter.convertFromDomainToDto(closedToAccrualAndIntervention));
+
+        StudyOverallStatusDTO closedToAccrual = null;
+        for (StudyOverallStatusDTO dto : remoteEjb.getByStudyProtocol(spId)) {
+            if (StringUtils.equals(dto.getStatusCode().getCode(), StudyStatusCode.CLOSED_TO_ACCRUAL.getCode())) {
+                closedToAccrual = dto;
+                break;
+            }
+        }
+        assertNotNull("Closed to Accrual intermediate status not found.", closedToAccrual);
+        assertEquals("Closed to Accrual and Closed to Accrual and Intervention should have the same status date",
+                    closedToAccrualAndIntervention.getStatusDate(),
+                    TsConverter.convertToTimestamp(closedToAccrual.getStatusDate()));
+    }
+
 
     @Test
     public void getByProtocolTest() throws Exception {
