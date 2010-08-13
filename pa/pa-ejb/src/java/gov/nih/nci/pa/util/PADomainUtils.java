@@ -119,7 +119,6 @@ import org.hibernate.Session;
  *
  * @author Abraham J. Evans-EL
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class PADomainUtils {
     private static final Logger LOG = Logger.getLogger(PADomainUtils.class);
     private static final int EMAIL_IDX = 7;
@@ -208,7 +207,7 @@ public class PADomainUtils {
      * @throws PAException on error
      */
     public static PaOrganizationDTO convertPoOrganizationDTO(OrganizationDTO poOrgDto, List<Country> countryList)
-    throws PAException {
+            throws PAException {
         PaOrganizationDTO displayElement = null;
         displayElement = new PaOrganizationDTO();
         displayElement.setId(poOrgDto.getIdentifier().getExtension().toString());

@@ -103,13 +103,12 @@ import org.apache.log4j.Logger;
  * @author Bala Nair
  *
  */
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
-    "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
 public class CSMUserService implements CSMUserUtil {
 
+    private static final String CSM_LOOKUP_ERR_MSG = "CSM exception while retrieving CSM user: ";
     private static final Logger LOG  = Logger.getLogger(CSMUserService.class);
     private static CSMUserUtil registryUserService = null;
-    
+
     static {
         setRegistryUserService(new CSMUserService());
     }
@@ -117,9 +116,7 @@ public class CSMUserService implements CSMUserUtil {
     /**
      * {@inheritDoc}
      */
-    public User createCSMUser(RegistryUser user, String loginName,
-                                String password) throws PAException {
-
+    public User createCSMUser(RegistryUser user, String loginName, String password) throws PAException {
         User createdCSMUser = null;
         try {
             // create the csm user
@@ -142,10 +139,7 @@ public class CSMUserService implements CSMUserUtil {
             createdCSMUser = upManager.getUser(loginName);
 
         } catch (CSException cse) {
-            LOG.error(" CSM Exception while creating CSM user : "
-                                     + loginName, cse);
-            throw new PAException(" CSM exception while "
-                    + "creating CSM user :" + loginName, cse);
+            throw new PAException("CSM exception while creating CSM user: " + loginName, cse);
         }
 
         return createdCSMUser;
@@ -155,9 +149,7 @@ public class CSMUserService implements CSMUserUtil {
     /**
      * {@inheritDoc}
      */
-    public User updateCSMUser(RegistryUser user, String loginName,
-                                    String password) throws PAException {
-
+    public User updateCSMUser(RegistryUser user, String loginName, String password) throws PAException {
         User createdCSMUser = null;
         try {
             // create the csm user
@@ -181,12 +173,8 @@ public class CSMUserService implements CSMUserUtil {
             String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
             upManager.assignUserToGroup(loginName, submitterGroup);
             createdCSMUser = upManager.getUser(loginName);
-
         } catch (CSException cse) {
-            LOG.error(" CSM Exception while updating CSM user : "
-                                    + loginName, cse);
-            throw new PAException(" CSM exception while "
-                    + "updating CSM user :" + loginName, cse);
+            throw new PAException("CSM exception while updating CSM user: " + loginName, cse);
         }
 
         return createdCSMUser;
@@ -196,32 +184,24 @@ public class CSMUserService implements CSMUserUtil {
     /**
      * {@inheritDoc}
      */
-    public User getCSMUser(String loginName)
-                                    throws PAException {
+    public User getCSMUser(String loginName) throws PAException {
         User csmUser = null;
         try {
-            UserProvisioningManager upManager = SecurityServiceProvider.
-                                                   getUserProvisioningManager("pa");
+            UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
             csmUser = upManager.getUser(loginName);
             if (csmUser == null) {
                 LOG.info("Unable to look up CSM user for login name: " + loginName);
             }
         } catch (CSConfigurationException csce) {
-            LOG.error(" CSM Exception while retrieving CSM user : "
-                                        + loginName, csce);
-            throw new PAException(" CSM exception while "
-                                        + "retrieving CSM user :" + loginName, csce);
+            throw new PAException(CSM_LOOKUP_ERR_MSG + loginName, csce);
         } catch (CSException cse) {
-            LOG.error(" CSM Exception while retrieving CSM user : "
-                                                + loginName, cse);
-            throw new PAException(" CSM exception while "
-                    + "retrieving CSM user :" + loginName, cse);
+            throw new PAException(CSM_LOOKUP_ERR_MSG + loginName, cse);
         }
 
         return csmUser;
 
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -231,9 +211,9 @@ public class CSMUserService implements CSMUserUtil {
             UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
             csmUser = upManager.getUserById(id.toString());
         } catch (CSConfigurationException csce) {
-            throw new PAException(" CSM exception while retrieving CSM user :" + id, csce);
+            throw new PAException(CSM_LOOKUP_ERR_MSG + id, csce);
         } catch (CSException cse) {
-            throw new PAException(" CSM exception while retrieving CSM user :" + id, cse);
+            throw new PAException(CSM_LOOKUP_ERR_MSG + id, cse);
         }
         return csmUser;
     }
@@ -261,14 +241,14 @@ public class CSMUserService implements CSMUserUtil {
             }
             csmUsers = upManager.getUsers(String.valueOf(submitterGroupId));
         } catch (CSConfigurationException csce) {
-            throw new PAException(" CSM exception while retrieving CSM users.", csce);
+            throw new PAException("CSM exception while retrieving CSM users", csce);
         } catch (CSException cse) {
-            throw new PAException(" CSM exception while retrieving CSM users,", cse);
+            throw new PAException("CSM exception while retrieving CSM users", cse);
         }
         return csmUsers;
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
@@ -296,7 +276,7 @@ public class CSMUserService implements CSMUserUtil {
         }
         return user;
     }
-    
+
     /**
      *
      * @return RegistryUserService

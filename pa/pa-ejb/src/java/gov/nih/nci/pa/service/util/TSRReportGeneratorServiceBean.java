@@ -201,8 +201,6 @@ import org.apache.commons.lang.StringUtils;
  * @since 01/21/2009
  */
 @Stateless
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.TooManyMethods",
-        "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength", "PMD.TooManyFields", "PMD.NPathComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceRemote {

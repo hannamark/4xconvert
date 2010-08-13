@@ -129,7 +129,6 @@ import org.apache.commons.lang.StringUtils;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(HibernateSessionInterceptor.class)
-@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialManagementServiceLocal {
 
     private static final String VALIDATION_EXCEPTION = "Validation Exception ";
@@ -174,8 +173,7 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveParameterList",
-            "PMD.ExcessiveMethodLength" })
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     // CHECKSTYLE:OFF More than 7 Parameters
     public void update(StudyProtocolDTO studyProtocolDTO, OrganizationDTO leadOrganizationDTO,
             OrganizationDTO summary4OrganizationDTO, St leadOrganizationIdentifier, St nctIdentifier,

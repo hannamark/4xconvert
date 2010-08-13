@@ -136,8 +136,6 @@ import org.hibernate.Session;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
-        "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength"  })
 public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(ProtocolQueryServiceBean.class);
@@ -215,9 +213,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
      * @throws PAException
      *             paException
      */
-
-    private List<StudyProtocolQueryDTO> convertToStudyProtocolDTO(
-            List<Object> protocolQueryResult) throws PAException {
+    private List<StudyProtocolQueryDTO> convertToStudyProtocolDTO(List<Object> protocolQueryResult) throws PAException {
         List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO studyProtocolDto = null;
         StudyProtocol studyProtocol = null;
@@ -343,7 +339,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 studyProtocolDtos.add(studyProtocolDto);
             } // for loop
         } catch (Exception e) {
-            LOG.error("General error in while converting to DTO", e);
             throw new PAException("General error in while converting to DTO2",
                     e);
         }
@@ -488,14 +483,11 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
      * @throws PAException
      *             paException
      */
-    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
-    private String generateStudyProtocolQuery(
-            StudyProtocolQueryCriteria studyProtocolQueryCriteria)
+    private String generateStudyProtocolQuery(StudyProtocolQueryCriteria studyProtocolQueryCriteria)
             throws PAException {
         StringBuffer hql = new StringBuffer();
         try {
-            hql
-                 .append(" select distinct sp , dws , sms , sos  , per , org , sps , sc, sinbx, "
+            hql.append(" select distinct sp , dws , sms , sos  , per , org , sps , sc, sinbx, "
                             + "scheckout from StudyProtocol as sp  "
                             + "left outer join sp.documentWorkflowStatuses as dws  "
                             + "left outer join sp.studyMilestones as sms  "
@@ -522,10 +514,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             hql.append(generateWhereClause(studyProtocolQueryCriteria));
             hql.append(" order by dws.statusDateRangeLow asc");
         } catch (Exception e) {
-            LOG.error("General error in while executing Study Query protocol",
-                    e);
-            throw new PAException(
-                    "General error in while executing Study Query protocol", e);
+            throw new PAException("General error in while executing Study Query protocol", e);
         }
         return hql.toString();
 
@@ -539,12 +528,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
      * @throws PAException
      *             paException
      */
-    @SuppressWarnings({"PMD.InefficientStringBuffering",
-            "PMD.ConsecutiveLiteralAppends", "PMD.ExcessiveMethodLength",
-            "NPathComplexity" })
-    private String generateWhereClause(
-            StudyProtocolQueryCriteria studyProtocolQueryCriteria)
-            throws PAException {
+    private String generateWhereClause(StudyProtocolQueryCriteria studyProtocolQueryCriteria) throws PAException {
         StringBuffer where = new StringBuffer();
         try {
             where.append("where 1 = 1 ");
@@ -664,7 +648,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         return where.toString();
     }
 
-    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private void whereClauseForRegistrySearch(StudyProtocolQueryCriteria criteria, StringBuffer where) {
         // added for Registry Trial Search
         if (criteria.isMyTrialsOnly() != null && StringUtils.isNotEmpty(criteria.getUserLastCreated())) {
@@ -704,7 +687,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
      * @param studyProtocolQueryCriteria
      * @param where
      */
-    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private void addSubQueries(StudyProtocolQueryCriteria studyProtocolQueryCriteria, StringBuffer where) {
         // sub-query for searching trials by Participating site
         if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getOrganizationType())

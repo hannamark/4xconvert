@@ -90,7 +90,6 @@ import java.io.File;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.TooManyMethods" })
 public interface MailManagerService {
 
     /**
@@ -161,8 +160,7 @@ public interface MailManagerService {
      * @param mailBody body
      * @param attachments attach
      */
-    void sendMailWithAttachment(String mailTo, String subject,
-            String mailBody, File [] attachments);
+    void sendMailWithAttachment(String mailTo, String subject, String mailBody, File[] attachments);
 
     /**
      * Send xml and tsr email.

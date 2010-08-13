@@ -138,9 +138,6 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
-    "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity", "PMD.TooManyMethods" })
-
 public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolBeanLocal.class);
@@ -171,8 +168,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            LOG.error(" Ii should not be null ");
-            throw new PAException(" Ii should not be null ");
+            throw new PAException("Ii should not be null");
         }
         Session session = null;
         StudyProtocol studyProtocol = null;
@@ -197,13 +193,10 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
      * @return StudyProtocolDTO
      * @throws PAException PAException
      */
-    @SuppressWarnings("PMD.NPathComplexity")
     public StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException {
         // enforce business rules
         if (studyProtocolDTO == null) {
-            LOG.error(" studyProtocolDTO should not be null ");
             throw new PAException(" studyProtocolDTO should not be null ");
-
         }
 
         enForceBusinessRules(studyProtocolDTO);
@@ -233,8 +226,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            LOG.error(" Ii should not be null ");
-            throw new PAException(" Ii should not be null ");
+            throw new PAException("Ii should not be null");
         }
         Session session = null;
 
@@ -260,8 +252,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         // enforce business rules
         int totBlindCodes = 0;
         if (ispDTO == null) {
-            LOG.error(" InterventionalstudyProtocolDTO should not be null ");
-            throw new PAException(" InterventionalstudyProtocolDTO should not be null ");
+            throw new PAException("InterventionalstudyProtocolDTO should not be null");
 
         }
         enForceBusinessRules(ispDTO);
@@ -271,19 +262,19 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         if (ispDTO.getBlindingSchemaCode() != null) {
             if (BlindingSchemaCode.OPEN.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes > 0) {
-                throw new PAException(" Open Blinding Schema code cannot have any Blinded codes ");
+                throw new PAException("Open Blinding Schema code cannot have any Blinded codes ");
             }
             if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes > 1) {
-               throw new PAException(" Only one masking role must be specified for 'Single Blind' masking. ");
+               throw new PAException("Only one masking role must be specified for 'Single Blind' masking. ");
             }
             if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                            && totBlindCodes < 1) {
-              throw new PAException(" Single Blinding Schema code must have 1 Blinded code ");
+              throw new PAException("Single Blinding Schema code must have 1 Blinded code ");
             }
             if (BlindingSchemaCode.DOUBLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes < 2) {
-                throw new PAException(" At least two masking roles must to be specified for ‘Double Blind’ masking. ");
+                throw new PAException("At least two masking roles must to be specified for ‘Double Blind’ masking. ");
             }
 
         }
@@ -309,13 +300,11 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     public Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO)
     throws PAException {
         if (ispDTO == null) {
-            LOG.error(" studyProtocolDTO should not be null ");
-            throw new PAException(" studyProtocolDTO should not be null ");
+            throw new PAException("studyProtocolDTO should not be null ");
 
         }
         if (ispDTO.getIdentifier() != null && ispDTO.getIdentifier().getExtension() != null) {
-            LOG.error(" Extension should be null = " + ispDTO.getIdentifier().getExtension());
-            throw new PAException("  Extension should be null, but got  = " + ispDTO.getIdentifier().getExtension());
+            throw new PAException("Extension should be null, but got  = " + ispDTO.getIdentifier().getExtension());
 
         }
         enForceBusinessRules(ispDTO);
@@ -340,8 +329,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            LOG.error(" Ii should not be null ");
-            throw new PAException(" Ii should not be null ");
+            throw new PAException("Ii should not be null ");
         }
         Session session = null;
 
@@ -366,8 +354,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             ObservationalStudyProtocolDTO ospDTO) throws PAException {
         // enforce business rules
         if (ospDTO == null) {
-            LOG.error(" studyProtocolDTO should not be null ");
-            throw new PAException(" studyProtocolDTO should not be null ");
+            throw new PAException("studyProtocolDTO should not be null ");
 
         }
         //enForceBusinessRules(ospDTO);
@@ -394,13 +381,11 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     public Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO ospDTO)
     throws PAException {
         if (ospDTO == null) {
-            LOG.error(" Observational studyProtocolDTO should not be null ");
-            throw new PAException(" studyProtocolDTO should not be null ");
+            throw new PAException("studyProtocolDTO should not be null ");
 
         }
         if (ospDTO.getIdentifier() != null && ospDTO.getIdentifier().getExtension() != null) {
-            LOG.error(" Extension should be null = " + ospDTO.getIdentifier().getExtension());
-            throw new PAException("  Extension should be null, but got  = " + ospDTO.getIdentifier().getExtension());
+            throw new PAException("Extension should be null, but got  = " + ospDTO.getIdentifier().getExtension());
 
         }
         enForceBusinessRules(ospDTO);
@@ -419,8 +404,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
      * @throws PAException on any error
      */
     public void deleteStudyProtocol(Ii ii) throws PAException {
-
-     throw new PAException(" Method Not Yey Implemented ");
+        throw new PAException("Method Not Yey Implemented ");
     }
 
     /**
@@ -430,9 +414,8 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
      */
     public void validate(StudyProtocolDTO studyProtocolDTO) throws PAException {
         StringBuffer sb = new StringBuffer();
-        sb.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null , " : "");
-        sb.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null , " : "");
-
+        sb.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null, " : "");
+        sb.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null, " : "");
     }
 
     /**
@@ -595,10 +578,9 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) throws PAException,
-    TooManyResultsException {
+            TooManyResultsException {
         if (dto == null) {
-            LOG.error(" StudyProtocolDTO should not be null ");
-            throw new PAException(" StudyProtocolDTO should not be null ");
+            throw new PAException("StudyProtocolDTO should not be null");
         }
         Session session = null;
         List<StudyProtocol> studyProtocolList = null;

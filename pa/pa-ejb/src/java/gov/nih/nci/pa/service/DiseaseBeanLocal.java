@@ -22,6 +22,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -33,13 +34,11 @@ import org.hibernate.Session;
  */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
-@SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.NPathComplexity" })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class DiseaseBeanLocal extends AbstractBaseIsoService<DiseaseDTO, Disease, DiseaseConverter>
-implements DiseaseServiceLocal , DiseaseServiceRemote {
+public class DiseaseBeanLocal extends AbstractBaseIsoService<DiseaseDTO, Disease, DiseaseConverter> implements
+        DiseaseServiceLocal, DiseaseServiceRemote {
 
   private static final Logger LOG = Logger.getLogger(DiseaseBeanLocal.class);
-  private static final String TRUE = "true";
 /**
  * @param searchCriteria search string
  * @return all diseases with preferred names or alternate names matching search string
@@ -60,7 +59,7 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
     Query query = null;
 
     // step 1: form the hql
-    if (!StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)) {
+    if (!BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getIncludeSynonym()))) {
         hql.append("select distinct dis "
                 + "from Disease dis ");
 
@@ -71,7 +70,7 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
     }
     hql.append(generateWhereClause(searchCriteria));
     hql.append("order by dis.preferredName asc");
-    getLogger().info("query Disease = " + hql.toString());
+    LOG.info("query Disease = " + hql.toString());
 
     // step 2: construct query object
     query = session.createQuery(hql.toString());
@@ -97,7 +96,6 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
   *
   * @throws PAException the PA exception
   */
-  @SuppressWarnings({"PMD" })
   private String generateWhereClause(DiseaseDTO searchCriteria)throws PAException {
     StringBuffer where = new StringBuffer();
     try {
@@ -108,8 +106,8 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
            where.append(" and (dis.statusCode = 'ACTIVE')");
 
            //Case1:include synonym is checked and exact match is unchecked
-           if (StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)
-                 && !StConverter.convertToString(searchCriteria.getExactMatch()).equals(TRUE)) {
+           if (BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getIncludeSynonym()))
+                 && !BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getExactMatch()))) {
 
               String term = PAUtil.wildcardCriteria(
                       StConverter.convertToString(searchCriteria.getPreferredName()))
@@ -119,8 +117,8 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
 
            }
            //Case2:include synonym is unchecked and exact match is checked
-           if (!StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)
-                 && StConverter.convertToString(searchCriteria.getExactMatch()).equals(TRUE)) {
+           if (!BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getIncludeSynonym()))
+                 && BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getExactMatch()))) {
 
                String exactString = stringToSearch(StConverter.convertToString(
                        searchCriteria.getPreferredName()).toUpperCase().trim().replaceAll("'", "''"));
@@ -128,8 +126,8 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
 
            }
            //Case3:include synonym and exact match are both checked
-           if (StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)
-                 && StConverter.convertToString(searchCriteria.getExactMatch()).equals(TRUE)) {
+           if (BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getIncludeSynonym()))
+                 && BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getExactMatch()))) {
 
 
                String exactString = stringToSearch(StConverter.convertToString(
@@ -139,8 +137,8 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
                     + "or ((upper(alt.alternateName) like upper('" + exactString + "')) "
                     + "and (alt.statusCode = 'ACTIVE'))) ");
 
-           } else if (!StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)
-                   && !StConverter.convertToString(searchCriteria.getExactMatch()).equals(TRUE)) {
+           } else if (!BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getIncludeSynonym()))
+                   && !BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getExactMatch()))) {
                //Case4: both include Synonym and exact match are unchecked
                    where.append(" and upper(dis.preferredName)  like '%"
                            + PAUtil.wildcardCriteria(StConverter.

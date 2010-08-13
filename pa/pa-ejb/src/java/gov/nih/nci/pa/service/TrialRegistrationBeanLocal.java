@@ -175,8 +175,6 @@ import org.hibernate.Session;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveParameterList",
-        "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.ExcessiveMethodLength", "PMD.TooManyFields" })
 @Interceptors(HibernateSessionInterceptor.class)
 public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal {
     @EJB private StudyProtocolServiceLocal studyProtocolService = null;
@@ -658,7 +656,6 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         }
     }
 
-    @SuppressWarnings("PMD")
     private void createInboxProcessingComments(List<DocumentDTO> documentDTOs, StudyProtocolDTO studyProtocolDTO)
             throws PAException {
         StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
@@ -699,8 +696,8 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             if (!errorList.isEmpty()) {
                 stringBuffer.append("<b>Type :</b>  <b>Description :</b> <b>Comments :</b><br>");
                 for (AbstractionCompletionDTO abDTO : errorList) {
-                    stringBuffer.append(abDTO.getErrorType()).append(":").append(abDTO.getErrorDescription()).append(
-                            ":").append(abDTO.getComment()).append("<br>");
+                    stringBuffer.append(abDTO.getErrorType()).append(':').append(abDTO.getErrorDescription()).append(
+                            ':').append(abDTO.getComment()).append("<br>");
                 }
                 studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
                 trialUpdateForReview = true;
@@ -791,7 +788,6 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
      */
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    @SuppressWarnings("PMD.PreserveStackTrace")
     public Ii createProprietaryInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
@@ -867,7 +863,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             sendMail(CREATE, isBatchMode, studyProtocolIi);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
-            throw new PAException(e.getMessage());
+            throw new PAException(e);
         }
         return studyProtocolIi;
     }
@@ -1054,7 +1050,6 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         return studySiteContactIi;
     }
 
-    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     private List<String> deleteAndReplace(Ii sourceIi, Ii targetIi) {
         String sqlUpd = targetIi.getExtension() + " WHERE STUDY_PROTOCOL_IDENTIFIER = " + sourceIi.getExtension();
         List<String> sqls = new ArrayList<String>();
@@ -1116,7 +1111,6 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     }
 
     // CHECKSTYLE:OFF More than 7 Parameters
-    @SuppressWarnings("PMD")
     private void enforceBusinessRules(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudyContactDTO studyContactDTO,
@@ -1255,7 +1249,6 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         return errorMsg.toString();
     }
 
-    @SuppressWarnings("PMD")
     private void enforceBusinessRulesForStudyContact(StudyProtocolDTO studyProtocolDTO,
             StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO) throws PAException {
         StringBuffer sb = new StringBuffer();
@@ -1394,7 +1387,6 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    @SuppressWarnings("PMD.NcssMethodCount")
     public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
         try {
             StudyProtocolDTO studyProtocolDto = studyProtocolService.getInterventionalStudyProtocol(studyProtocolIi);
@@ -1587,7 +1579,6 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
      * @throws PAException on error
      */
     // CHECKSTYLE:OFF More than 7 Parameters
-    @SuppressWarnings("PMD.ExcessiveMethodLength")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<StudySiteDTO> studyIdentifierDTOs, List<StudyIndldeDTO> studyIndldeDTOs,
@@ -1674,7 +1665,6 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     }
 
     // CHECKSTYLE:OFF More than 7 Parameters
-    @SuppressWarnings("PMD.ExcessiveMethodLength")
     private void updateStudyProtocolObjs(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             StudySiteDTO leadOrganizationSiteIdentifierDTO, List<StudySiteDTO> studyIdentifierDTOs,
             List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,

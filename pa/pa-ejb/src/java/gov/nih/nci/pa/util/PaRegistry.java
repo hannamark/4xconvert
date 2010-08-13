@@ -131,7 +131,6 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
  * @author Harsha
  *
  */
-@SuppressWarnings("PMD")
 public final class PaRegistry {
     /**
      * Number of records to display by default in display tag controlled tables.

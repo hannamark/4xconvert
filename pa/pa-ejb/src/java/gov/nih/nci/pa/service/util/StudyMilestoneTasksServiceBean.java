@@ -110,14 +110,10 @@ import org.apache.log4j.Logger;
 /**
  * @author Anupama Sharma
  * @since 07/29/2009
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
 @Stateless
-@Interceptors({ HibernateSessionInterceptor.class })
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 @Local(StudyMilestoneTasksServiceLocal.class)
 @LocalHome(StudyMilestoneTasksServiceLocalHome.class)
 public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServiceLocal {
@@ -132,7 +128,6 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
      * Perform task.
      * @throws PAException exception
      */
-    @SuppressWarnings ({"PMD.PreserveStackTrace" })
     public void performTask() throws PAException {
         // create the criteria search object
         StudyMilestoneDTO studyMilestoneDTO = new StudyMilestoneDTO();
@@ -167,11 +162,11 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                    }
                 }
               }
-           } catch (TooManyResultsException e) {
-             LOG.error("Too Many Results Exception" + e.getLocalizedMessage());
-             throw new PAException("ToomanyReusltsException occured");
-           }
+        } catch (TooManyResultsException e) {
+            throw new PAException("ToomanyReusltsException occured", e);
+        }
     }
+
     /**
      *
      * @param milestoneDate milestoneDate
@@ -184,8 +179,9 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         if (milestoneDate.before(today)) {
             ret = true;
         }
-      return ret;
+        return ret;
     }
+
     /**
      * Check milestone exists.
      *
@@ -205,6 +201,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         }
         return milestoneExits;
     }
+
     /**
      * @param smRemote the smRemote to set
      */
@@ -212,4 +209,4 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         this.smRemote = smRemote;
     }
 
-  }
+}

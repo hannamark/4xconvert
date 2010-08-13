@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -23,61 +23,60 @@ import javax.interceptor.Interceptors;
  *
  */
 @Stateless
-@SuppressWarnings("PMD.CyclomaticComplexity")
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudyDiseaseBeanLocal 
- extends AbstractStudyIsoService<StudyDiseaseDTO, StudyDisease, StudyDiseaseConverter>
- implements StudyDiseaseServiceLocal { 
-    
-     private StudyDiseaseDTO businessRules(StudyDiseaseDTO dto) throws PAException {
-     boolean isNew = PAUtil.isIiNull(dto.getIdentifier());
-     // only one lead disease per study
-     if (!PAUtil.isBlNull(dto.getLeadDiseaseIndicator())
-             && BlConverter.convertToBoolean(dto.getLeadDiseaseIndicator())) {
-         List<StudyDiseaseDTO> sdList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
-         for (StudyDiseaseDTO sd : sdList) {
-             if ((isNew || !IiConverter.convertToLong(dto.getIdentifier()).equals(
-                     IiConverter.convertToLong(sd.getIdentifier())))
-                 && !PAUtil.isBlNull(sd.getLeadDiseaseIndicator())
-                 && BlConverter.convertToBoolean(sd.getLeadDiseaseIndicator())) {
-                     throw new PAException("Only one disease may be marked as lead for a given study.  ");
-                 }
-         }
-     }
-     // no duplicate diseases in a study
-     if (isNew) {
-         long newDiseaseId = IiConverter.convertToLong(dto.getDiseaseIdentifier());
-         List<StudyDiseaseDTO> sdList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
-         for (StudyDiseaseDTO sd : sdList) {
-             if (newDiseaseId == IiConverter.convertToLong(sd.getDiseaseIdentifier())) {
-                 throw new PAException("Redundancy error:  this trial already includes the selected disease.  ");
-             }
-         }
-     }
-     return dto;
- }
+public class StudyDiseaseBeanLocal extends
+        AbstractStudyIsoService<StudyDiseaseDTO, StudyDisease, StudyDiseaseConverter> implements
+        StudyDiseaseServiceLocal {
 
- /**
-  * @param dto new study disease
-  * @return created study disease
-  * @throws PAException exception
-  */
- @Override
- public StudyDiseaseDTO create(StudyDiseaseDTO dto) throws PAException {
-     StudyDiseaseDTO createDto = businessRules(dto);
-     return super.create(createDto);
- }
+    private StudyDiseaseDTO businessRules(StudyDiseaseDTO dto) throws PAException {
+        boolean isNew = PAUtil.isIiNull(dto.getIdentifier());
+        // only one lead disease per study
+        if (!PAUtil.isBlNull(dto.getLeadDiseaseIndicator())
+                && BlConverter.convertToBoolean(dto.getLeadDiseaseIndicator())) {
+            List<StudyDiseaseDTO> sdList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+            for (StudyDiseaseDTO sd : sdList) {
+                if ((isNew || !IiConverter.convertToLong(dto.getIdentifier()).equals(IiConverter.convertToLong(sd
+                                                                                         .getIdentifier())))
+                        && !PAUtil.isBlNull(sd.getLeadDiseaseIndicator())
+                        && BlConverter.convertToBoolean(sd.getLeadDiseaseIndicator())) {
+                    throw new PAException("Only one disease may be marked as lead for a given study.  ");
+                }
+            }
+        }
+        // no duplicate diseases in a study
+        if (isNew) {
+            long newDiseaseId = IiConverter.convertToLong(dto.getDiseaseIdentifier());
+            List<StudyDiseaseDTO> sdList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+            for (StudyDiseaseDTO sd : sdList) {
+                if (newDiseaseId == IiConverter.convertToLong(sd.getDiseaseIdentifier())) {
+                    throw new PAException("Redundancy error:  this trial already includes the selected disease.  ");
+                }
+            }
+        }
+        return dto;
+    }
 
- /**
-  * @param dto changed study disease
-  * @return updated study disease
-  * @throws PAException exception
-  */
- @Override
- public StudyDiseaseDTO update(StudyDiseaseDTO dto) throws PAException {
-     StudyDiseaseDTO updateDto =  businessRules(dto);
-     return super.update(updateDto);
- }
+    /**
+     * @param dto new study disease
+     * @return created study disease
+     * @throws PAException exception
+     */
+    @Override
+    public StudyDiseaseDTO create(StudyDiseaseDTO dto) throws PAException {
+        StudyDiseaseDTO createDto = businessRules(dto);
+        return super.create(createDto);
+    }
+
+    /**
+     * @param dto changed study disease
+     * @return updated study disease
+     * @throws PAException exception
+     */
+    @Override
+    public StudyDiseaseDTO update(StudyDiseaseDTO dto) throws PAException {
+        StudyDiseaseDTO updateDto = businessRules(dto);
+        return super.update(updateDto);
+    }
 
 }

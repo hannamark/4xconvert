@@ -47,6 +47,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -58,11 +59,12 @@ import org.hibernate.criterion.Expression;
  *
  */
 @Stateless
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, StudySite, StudySiteConverter> implements
-    StudySiteServiceLocal {
+        StudySiteServiceLocal {
+
+    private static final Logger LOG = Logger.getLogger(ArmBeanLocal.class);
 
     @EJB
     private StudySiteContactServiceLocal studySiteContactService;
@@ -150,7 +152,6 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         return map;
     }
 
-    @SuppressWarnings("PMD.NPathComplexity")
     private StudySiteDTO businessRules(StudySiteDTO dto) throws PAException {
         if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi())
             && PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
@@ -261,7 +262,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
             + ActStatusCode.ACTIVE + "'" + " and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
             + "  where dws.studyProtocol = dws1.studyProtocol ) or dws.id is null ) " + " and ro.id = :orgIdentifier";
 
-        getLogger().info("query study_Site = " + hql + ".  ");
+        LOG.info("query study_Site = " + hql + ".  ");
         // step 2: construct query object
         query = session.createQuery(hql);
         query.setParameter("localStudyProtocolIdentifier",
@@ -324,8 +325,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
     public List<StudySiteDTO> search(StudySiteDTO dto, LimitOffset pagingParams) throws PAException,
         TooManyResultsException {
         if (dto == null) {
-            getLogger().error(" StudySiteDTO should not be null ");
-            throw new PAException(" StudySiteDTO should not be null ");
+            throw new PAException("StudySiteDTO should not be null");
         }
         Session session = null;
         List<StudySite> studySiteList = null;

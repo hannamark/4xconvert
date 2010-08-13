@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -32,13 +32,11 @@ import javax.interceptor.Interceptors;
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
-
- public class StudyIndldeBeanLocal extends
-  AbstractStudyIsoService<StudyIndldeDTO, StudyIndlde, StudyIndldeConverter> implements StudyIndldeServiceLocal {
+public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO, StudyIndlde, StudyIndldeConverter>
+        implements StudyIndldeServiceLocal {
    private static final int IND_FIELD_COUNT = 5;
    private static final String VALIDATION_EXCEPTION = "Validation Exception ";
-   
+
    /**
     * @param dto StudyIndldeDTO
     * @return StudyIndldeDTO
@@ -62,7 +60,6 @@ import javax.interceptor.Interceptors;
     }
 
 
-    @SuppressWarnings({"PMD" })
     private void enforceNoDuplicate(StudyIndldeDTO dto) throws PAException {
       String newType = dto.getIndldeTypeCode().getCode();
       String newNumber = dto.getIndldeNumber().getValue();
@@ -80,19 +77,20 @@ import javax.interceptor.Interceptors;
           }
        }
     }
-    
+
      /**
       * @param studyIndldeDTO dto
       * @throws PAException e
       */
-      public void validate(StudyIndldeDTO studyIndldeDTO) throws PAException {
+      @Override
+    public void validate(StudyIndldeDTO studyIndldeDTO) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
         errorMsg.append(validateIndIdeObject(studyIndldeDTO));
         if (errorMsg.length() > 0) {
           throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
         }
         if (PAUtil.isIiNotNull(studyIndldeDTO.getStudyProtocolIdentifier())) {
-          enforceNoDuplicate(studyIndldeDTO);    
+          enforceNoDuplicate(studyIndldeDTO);
         }
       }
 
@@ -100,68 +98,67 @@ import javax.interceptor.Interceptors;
       * @param studyIndldeDTO
       * @return errorMsg
       */
-      @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
       private String validateIndIdeObject(StudyIndldeDTO studyIndldeDTO) {
         StringBuffer errorMsg = new StringBuffer();
         if (!isIndIdeContainsAllInfo(studyIndldeDTO)) {
           errorMsg.append("All IND/IDE values are required.\n");
         } else {
-        if (!PAUtil.isBlNull(studyIndldeDTO.getExpandedAccessIndicator())  
-            && BlConverter.convertToBool(studyIndldeDTO.getExpandedAccessIndicator()) 
-            && PAUtil.isCdNull(studyIndldeDTO.getExpandedAccessStatusCode())) { 
+        if (!PAUtil.isBlNull(studyIndldeDTO.getExpandedAccessIndicator())
+            && BlConverter.convertToBool(studyIndldeDTO.getExpandedAccessIndicator())
+            && PAUtil.isCdNull(studyIndldeDTO.getExpandedAccessStatusCode())) {
            errorMsg.append("Expanded Access Status value is required.\n");
         }
-        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode()) 
+        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
             && HolderTypeCode.NIH.getCode().equalsIgnoreCase(studyIndldeDTO.getHolderTypeCode().getCode())
             && PAUtil.isCdNull(studyIndldeDTO.getNihInstHolderCode())) {
              errorMsg.append("NIH Institution value is required.\n");
         }
-        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode()) 
+        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
             && HolderTypeCode.NCI.getCode().equalsIgnoreCase(studyIndldeDTO.getHolderTypeCode().getCode())
             && PAUtil.isCdNull(studyIndldeDTO.getNciDivProgHolderCode())) {
              errorMsg.append("NCI Division/Program Code value is required.\n");
-        }         
+        }
        }
         //Validate List of values
-        if (!PAUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode()) 
+        if (!PAUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())
             && null == IndldeTypeCode.getByCode(studyIndldeDTO.getIndldeTypeCode().getCode())) {
               errorMsg.append("Please enter valid value for IND/IDE.\n");
         }
-        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode()) 
+        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
             && null == HolderTypeCode.getByCode(studyIndldeDTO.getHolderTypeCode().getCode())) {
               errorMsg.append("Please enter valid value for IND/IDE Holder Type.\n");
         }
-        if (!PAUtil.isCdNull(studyIndldeDTO.getGrantorCode()) 
+        if (!PAUtil.isCdNull(studyIndldeDTO.getGrantorCode())
              && null == GrantorCode.getByCode(studyIndldeDTO.getGrantorCode().getCode())) {
              errorMsg.append("Please enter valid value for IND/IDE Grantor.\n");
         }
-        if (!PAUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode()) 
+        if (!PAUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())
             && IndldeTypeCode.IDE.getCode().equals(studyIndldeDTO.getIndldeTypeCode().getCode())
-            && !PAUtil.isCdNull(studyIndldeDTO.getGrantorCode()) 
+            && !PAUtil.isCdNull(studyIndldeDTO.getGrantorCode())
             && !GrantorCode.CDRH.getCode().equals(studyIndldeDTO.getGrantorCode().getCode())) {
               errorMsg.append("IDE Grantor can have only CDRH value.\n");
         }
-        if (!PAUtil.isCdNull(studyIndldeDTO.getExpandedAccessStatusCode()) 
+        if (!PAUtil.isCdNull(studyIndldeDTO.getExpandedAccessStatusCode())
             && null == ExpandedAccessStatusCode.getByCode(studyIndldeDTO.getExpandedAccessStatusCode().getCode())) {
               errorMsg.append("Please enter valid value for IND/IDE Expanded Access Status.\n");
         }
         //validate NIH Institution values
-        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode()) 
+        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
             && studyIndldeDTO.getHolderTypeCode().getCode().equalsIgnoreCase(HolderTypeCode.NIH.getCode())
-            && !PAUtil.isCdNull(studyIndldeDTO.getNihInstHolderCode()) 
+            && !PAUtil.isCdNull(studyIndldeDTO.getNihInstHolderCode())
             && null == NihInstituteCode.getByCode(studyIndldeDTO.getNihInstHolderCode().getCode())) {
              errorMsg.append("Please enter valid value for IND/IDE NIH Institution.\n");
         }
         //validate NCI Division values
-        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode()) 
+        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
             && studyIndldeDTO.getHolderTypeCode().getCode().equalsIgnoreCase(HolderTypeCode.NCI.getCode())
-            && !PAUtil.isCdNull(studyIndldeDTO.getNciDivProgHolderCode()) 
+            && !PAUtil.isCdNull(studyIndldeDTO.getNciDivProgHolderCode())
             && null == NciDivisionProgramCode.getByCode(studyIndldeDTO.getNciDivProgHolderCode().getCode())) {
              errorMsg.append("Please enter valid value for IND/IDE NCI Division /Program.\n");
         }
          return errorMsg.toString();
       }
-      
+
       private boolean isIndIdeContainsAllInfo(StudyIndldeDTO dto) {
         int nullCount = 0;
         if (PAUtil.isCdNull(dto.getIndldeTypeCode())) {
@@ -179,10 +176,7 @@ import javax.interceptor.Interceptors;
         if (PAUtil.isBlNull(dto.getExpandedAccessIndicator())) {
           nullCount += 1;
         }
-        if (nullCount == 0) {
-          return true;
-        }
-        if (nullCount == IND_FIELD_COUNT) {
+        if (nullCount == 0 || nullCount == IND_FIELD_COUNT) {
           return true;
         }
         return false;

@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.logging.api.util.StringUtils;
+
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 
@@ -19,9 +21,9 @@ import org.quartz.JobExecutionException;
  * A <code>Job</code> that invokes a method on an EJB3 EJB. Based on the EJBInvokerJob.
  * </p>
  * <p>
- * 
+ *
  * Expects the properties corresponding to the following keys to be in the <code>JobDataMap</code> when it executes:
- * 
+ *
  * <ul>
  * <li><code>EJB_JNDI_NAME_KEY</code>- the JNDI name (location) of the EJB</li>
  * <li><code>EJB_INTERFACE_NAME_KEY</code>- the name of the EJB's business interface</li>
@@ -31,7 +33,7 @@ import org.quartz.JobExecutionException;
  * <li><code>EJB_ARG_TYPES_KEY</code>- a Class[] of the types of the args to pass to the method
  * (optional, if left out, the types will be derived by calling getClass() on each of the arguments).</li>
  * </ul>
- * 
+ *
  * <br/>
  * The following keys can also be used at need:
  * <ul>
@@ -44,42 +46,41 @@ import org.quartz.JobExecutionException;
  * The result of the EJB method invocation will be available to <code>Job/TriggerListener</code>s via
  * <code>{@link org.quartz.JobExecutionContext#getResult()}</code>.
  * </p>
- * 
+ *
  * @author Adrian Brennan
  * @author Andrew Collins
  * @author James House
  * @author Joel Shellman
  * @author <a href="mailto:bonhamcm@thirdeyeconsulting.com">Chris Bonham</a>
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods",
-    "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength", "PMD.TooManyFields", "PMD.NPathComplexity" })
+@SuppressWarnings("rawtypes")
 public class EJBInvokerJob implements Job {
 
-    private static final Logger LOG  = Logger.getLogger(EJBInvokerJob.class); 
+    private static final Logger LOG  = Logger.getLogger(EJBInvokerJob.class);
     /** The Constant EJB_JNDI_NAME_KEY. */
     public static final String EJB_JNDI_NAME_KEY = "ejb";
-    
+
     /** The Constant EJB_INTERFACE_NAME_KEY. */
     public static final String EJB_INTERFACE_NAME_KEY = "interfaceName";
-    
+
     /** The Constant EJB_METHOD_KEY. */
     public static final String EJB_METHOD_KEY = "method";
 
     /** The Constant EJB_ARG_TYPES_KEY. */
     public static final String EJB_ARG_TYPES_KEY = "argTypes";
-    
+
     /** The Constant EJB_ARGS_KEY. */
     public static final String EJB_ARGS_KEY = "args";
 
     /** The Constant INITIAL_CONTEXT_FACTORY. */
     public static final String INITIAL_CONTEXT_FACTORY = "java.naming.factory.initial";
-    
+
     /** The Constant PROVIDER_URL. */
     public static final String PROVIDER_URL = "java.naming.provider.url";
-    
+
     /** The Constant PRINCIPAL. */
     public static final String PRINCIPAL = "java.naming.security.principal";
-    
+
     /** The Constant CREDENTIALS. */
     public static final String CREDENTIALS = "java.naming.security.credentials";
 
@@ -94,20 +95,18 @@ public class EJBInvokerJob implements Job {
         // do nothing
     }
 
-    /** execute. 
+    /** execute.
      * @param context JobExecutionContext
      * @throws JobExecutionException exception
      */
-    @SuppressWarnings({"PMD" })
     public void execute(JobExecutionContext context) throws JobExecutionException {
-
         JobDataMap dataMap = context.getMergedJobDataMap();
-        
+
         String ejbJNDIName = dataMap.getString(EJB_JNDI_NAME_KEY);
         String methodName = dataMap.getString(EJB_METHOD_KEY);
         Object[] arguments = (Object[]) dataMap.get(EJB_ARGS_KEY);
 
-        if (null == ejbJNDIName || ejbJNDIName.length() == 0) {
+        if (StringUtils.isBlank(ejbJNDIName)) {
             throw new JobExecutionException("must specify ejb JNDI name");
         }
 
@@ -116,15 +115,8 @@ public class EJBInvokerJob implements Job {
         }
 
         Object ejb = locateEjb(dataMap);
-        
-        Class[] argTypes = (Class[]) dataMap.get(EJB_ARG_TYPES_KEY);
 
-        if (argTypes == null) {
-            argTypes = new Class[arguments.length];
-            for (int i = 0; i < arguments.length; i++) {
-                argTypes[i] = arguments[i].getClass();
-            }
-        }
+        Class[] argTypes = initailizeArgTypes(arguments, dataMap);
 
         try {
             Method methodToExecute = ejb.getClass().getDeclaredMethod(methodName, argTypes);
@@ -135,33 +127,42 @@ public class EJBInvokerJob implements Job {
             LOG.info(e.getLocalizedMessage());
             throw new JobExecutionException(e);
         } finally {
-
             // Don't close jndiContext until after method execution because
             // WebLogic requires context to be open to keep the user credentials
             // available. See JIRA Issue: QUARTZ-401
-
             if (initialContext != null) {
                 try {
                     initialContext.close();
                 } catch (NamingException e) {
-
                    LOG.error(e);
                 }
             }
         }
     }
+
+    private Class[] initailizeArgTypes(Object[] arguments, JobDataMap dataMap) {
+        Class[] argTypes = (Class[]) dataMap.get(EJB_ARG_TYPES_KEY);
+        if (argTypes == null) {
+            argTypes = new Class[arguments.length];
+            for (int i = 0; i < arguments.length; i++) {
+                argTypes[i] = arguments[i].getClass();
+            }
+        }
+        return argTypes;
+    }
+
     /**
      * Locate ejb.
-     * 
+     *
      * @param dataMap the data map
-     * 
+     *
      * @return the t
-     * 
+     *
      * @throws JobExecutionException the job execution exception
      */
     @SuppressWarnings("unchecked")
     private <T> T locateEjb(JobDataMap dataMap) throws JobExecutionException {
-        
+
         String ejbJNDIName = dataMap.getString(EJB_JNDI_NAME_KEY);
 
         Object object = null;
@@ -177,18 +178,18 @@ public class EJBInvokerJob implements Job {
         } catch (NamingException e) {
             throw new JobExecutionException(e);
         }
-        
+
         String ejbInterfaceName = dataMap.getString(EJB_INTERFACE_NAME_KEY);
-        
+
         Class ejbInterface = null;
-        
+
         try {
             ejbInterface = Class.forName(ejbInterfaceName);
         } catch (ClassNotFoundException e) {
             LOG.error("Exception occured performing class.forname on" + EJB_INTERFACE_NAME_KEY);
             throw new JobExecutionException(e);
         }
-        
+
         if (!ejbInterface.isAssignableFrom(object.getClass())) {
             object = PortableRemoteObject.narrow(object, ejbInterface);
         }
@@ -200,14 +201,14 @@ public class EJBInvokerJob implements Job {
 
     /**
      * Gets the initial context.
-     * 
+     *
      * @param jobDataMap the job data map
-     * 
+     *
      * @return the initial context
-     * 
+     *
      * @throws NamingException the naming exception
      */
-    @SuppressWarnings({"PMD" })
+    @SuppressWarnings("PMD.ReplaceHashtableWithMap") // hashtable is needed here for external dependency
     private InitialContext getInitialContext(JobDataMap jobDataMap) throws NamingException {
         Hashtable<String, String> params = new Hashtable<String, String>();
 

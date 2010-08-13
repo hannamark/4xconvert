@@ -97,6 +97,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
+import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -111,11 +112,9 @@ import org.hibernate.Session;
 * copyright holder, NCI.
 */
 @Stateless
-@SuppressWarnings({  "PMD.CyclomaticComplexity" , "PMD.ExcessiveMethodLength" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PAOrganizationServiceBean implements
-    PAOrganizationServiceRemote {
+public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
 
     private static final Logger LOG  = Logger.getLogger(PAOrganizationServiceRemote.class);
 
@@ -137,22 +136,13 @@ public class PAOrganizationServiceBean implements
      * @return Organization
      * @throws PAException PAException
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Organization getOrganizationByIndetifers(Organization organization) throws PAException {
-        Organization org = null;
-
         if (organization.getId() == null && organization.getIdentifier() == null) {
-            LOG.error(" Id or poIdentifer should not be null ");
-            throw new PAException(" Id or poIdentifer should not be null ");
+            throw new PAException("Id or poIdentifer should not be null");
         }
-        Session session = null;
-        List<Organization> queryList = new ArrayList<Organization>();
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
 
-        Query query = null;
-
-        // step 1: form the hql
         StringBuffer hql = new StringBuffer();
         hql.append(" select org from Organization org  where 1 = 1 ");
         if (organization.getId() != null) {
@@ -164,56 +154,34 @@ public class PAOrganizationServiceBean implements
 
         LOG.info(" query getOrganizationByPoIndetifer = " + hql);
 
-        // step 2: construct query object
-        query = session.createQuery(hql.toString());
-        queryList = query.list();
-
-        if (queryList.size() > 1) {
-            LOG.error(" Organization  should not be more than 1 record for a Po Indetifer = "
-                    + organization.getIdentifier());
-            throw new PAException(" Organization  should not be more than 1 "
-                    + "record for a Po Indetifer = " + organization.getIdentifier());
-
+        Query query = session.createQuery(hql.toString());
+        try {
+            return (Organization) query.uniqueResult();
+        } catch (NonUniqueResultException e) {
+            throw new PAException("Organization should not be more than 1 record for a Po Indetifer = "
+                    + organization.getIdentifier(), e);
         }
-
-        if (!queryList.isEmpty()) {
-            org = queryList.get(0);
-        }
-        return org;
     }
 
-
-
-    @SuppressWarnings({ "PMD.ConsecutiveLiteralAppends", "unchecked" })
-    private List<Organization> generateDistinctOrganizationQuery(String organizationType)
-    throws PAException {
-        Session session = null;
-        List<Organization> organizations = null;
+    @SuppressWarnings("unchecked")
+    private List<Organization> generateDistinctOrganizationQuery(String organizationType) throws PAException {
         List<Organization> sortedOrganizations = new ArrayList<Organization>();
-        Set<Long> orgSet = new  HashSet<Long>();
+        Set<Long> orgSet = new HashSet<Long>();
 
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         StringBuffer hql = new StringBuffer();
         if (organizationType.equalsIgnoreCase(PAConstants.LEAD_ORGANIZATION)) {
-            hql.append(
-                    " Select o from Organization o  "
-                    + " join o.researchOrganizations as ros "
-                    + " join ros.studySites as sps "
-                    + " join sps.studyProtocol as sp "
-                    + "  where sps.functionalCode = '"
-                    +   StudySiteFunctionalCode.LEAD_ORGANIZATION  + "'"
-                    +  " order by o.name");
+            hql.append("select o from Organization o join o.researchOrganizations as ros join ros.studySites as sps"
+                    + " join sps.studyProtocol as sp where sps.functionalCode = '");
+            hql.append(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+            hql.append("' order by o.name");
         } else if (organizationType.equalsIgnoreCase(PAConstants.PARTICIPATING_SITE)) {
-            hql.append(
-                    " Select o from Organization o  "
-                    + " join o.healthCareFacilities as hcf "
-                    + " join hcf.studySites as sps "
-                    + " join sps.studyProtocol as sp "
-                    + "  where sps.functionalCode = '"
-                    +   StudySiteFunctionalCode.TREATING_SITE  + "'"
-                    +  " order by o.name");
+            hql.append("select o from Organization o join o.healthCareFacilities as hcf join hcf.studySites as sps "
+                    + " join sps.studyProtocol as sp where sps.functionalCode = '");
+            hql.append(StudySiteFunctionalCode.TREATING_SITE);
+            hql.append("' order by o.name");
         }
-        organizations =  session.createQuery(hql.toString()).list();
+        List<Organization> organizations = session.createQuery(hql.toString()).list();
         for (Organization o : organizations) {
             if (orgSet.add(o.getId())) {
                 sortedOrganizations.add(o);

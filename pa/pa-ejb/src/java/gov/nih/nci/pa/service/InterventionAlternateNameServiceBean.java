@@ -95,6 +95,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -111,6 +112,8 @@ public class InterventionAlternateNameServiceBean
         extends AbstractBaseIsoService
                 <InterventionAlternateNameDTO, InterventionAlternateName, InterventionAlternateNameConverter>
         implements InterventionAlternateNameServiceRemote {
+
+    private static final Logger LOG = Logger.getLogger(InterventionAlternateNameServiceBean.class);
 
     /**
      * @param interventionIi Primary key assigned to an Intervention.
@@ -136,7 +139,7 @@ public class InterventionAlternateNameServiceBean
             + "join ian.intervention int "
             + "where int.id = :interventionId "
             + "order by ian.id ";
-        getLogger().info("query InterventionAlternateName = " + hql + "  ");
+        LOG.info("query InterventionAlternateName = " + hql + "  ");
 
         // step 2: construct query object
         query = session.createQuery(hql);

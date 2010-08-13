@@ -57,8 +57,6 @@ import org.hibernate.criterion.Example;
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals",
-    "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.TooManyMethods" })
 public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLocal {
     private static final Logger LOG  = Logger.getLogger(StudyProtocolStageBeanLocal.class);
     @EJB
@@ -80,7 +78,6 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
             LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
         if (dto == null) {
-            LOG.error(" StudyProtocolDTO should not be null ");
             throw new PAException(" StudyProtocolDTO should not be null ");
         }
         Session session = null;

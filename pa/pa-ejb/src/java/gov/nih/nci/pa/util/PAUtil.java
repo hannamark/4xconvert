@@ -626,6 +626,7 @@ public class PAUtil {
      * @param list list of objects
      * @return <TYPE> any base object extending BaseDTO
      */
+    @SuppressWarnings("unchecked")
     public static <TYPE extends BaseDTO> TYPE getFirstObj(List<? extends BaseDTO> list) {
         TYPE type = null;
         if (list != null && !list.isEmpty()) {
@@ -721,13 +722,12 @@ public class PAUtil {
      * @param dateString dateString
      * @return boolean
      */
-    @SuppressWarnings({"PMD" })
     public static boolean isValidDate(String dateString) {
         if (StringUtils.isEmpty(dateString)) {
             return false;
         }
         //set the format to use as a constructor argument
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
         if (dateString.trim().length() != dateFormat.toPattern().length())  {
             return false;
         }

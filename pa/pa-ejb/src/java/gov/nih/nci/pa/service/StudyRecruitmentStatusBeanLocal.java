@@ -16,8 +16,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
-
 /**
  * @author asharma
  *
@@ -29,17 +27,7 @@ public class StudyRecruitmentStatusBeanLocal extends
     AbstractCurrentStudyIsoService<StudyRecruitmentStatusDTO, StudyRecruitmentStatus, StudyRecruitmentStatusConverter>
     implements StudyRecruitmentStatusServiceLocal {
 
-    private static final Logger LOG = Logger.getLogger(StudyRecruitmentStatusBeanLocal.class);
-
     private static final String ERR_MSG_METHOD_NOT_IMPLEMENTED = "Method not yet implemented.";
-
-    /**
-     * @return log4j Logger
-     */
-    @Override
-    protected Logger getLogger() {
-        return LOG;
-    }
 
     /**
      * Protected static create method for auto-generating a recruitment status domain object to be used in other

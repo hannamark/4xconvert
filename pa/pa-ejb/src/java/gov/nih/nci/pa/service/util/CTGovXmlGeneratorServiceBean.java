@@ -216,8 +216,6 @@ import org.w3c.dom.Text;
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
 */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength" ,
-    "PMD.ExcessiveMethodLength" , "PMD.TooManyMethods" , "PMD.TooManyFields" , "PMD.NPathComplexity"  })
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -287,9 +285,7 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
     }
 
     /**
-     * @param studyProtocolIi ii of studyprotocol
-     * @return String xml output
-     * @throws PAException on error
+     * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String generateCTGovXml(Ii studyProtocolIi) throws PAException {
@@ -412,7 +408,7 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
             Transformer transformer = tf.newTransformer();
             transformer.transform(domSource, result);
         } catch (Exception e1) {
-            LOG.error("Error while generating CT.GOV.xml ", e1);
+            LOG.error("Error while generating CT.GOV.xml", e1);
         }
         return writer.toString();
     }
@@ -1280,8 +1276,7 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
     }
 
     private String convertToAddress(Ad ad) {
-
-        if (ad == null || ad.getPart() == null || ad.getPart().isEmpty()) {
+        if (ad == null || CollectionUtils.isEmpty(ad.getPart())) {
             return null;
         }
         List<Adxp> adxpList = ad.getPart();
@@ -1371,9 +1366,8 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
         }
         if (nv.containsKey(cd.getCode())) {
             return nv.get(cd.getCode());
-        } else {
-            return cd.getCode();
         }
+        return cd.getCode();
     }
 
     /**

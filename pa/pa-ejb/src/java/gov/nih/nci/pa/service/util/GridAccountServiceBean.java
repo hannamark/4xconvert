@@ -130,7 +130,6 @@ import org.globus.gsi.GlobusCredential;
  * @author aevansel
  */
 @Stateless
-@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class GridAccountServiceBean implements GridAccountServiceRemote {
     private static final int CERTIFICATE_LIFETIME = 12;
     private static final Logger LOG = Logger.getLogger(GridAccountServiceBean.class);

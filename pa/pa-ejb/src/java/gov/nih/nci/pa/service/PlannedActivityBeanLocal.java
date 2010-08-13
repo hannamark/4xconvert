@@ -34,6 +34,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -42,12 +43,13 @@ import org.hibernate.Session;
  *
  */
 @Stateless
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.TooManyFields" })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
 public class PlannedActivityBeanLocal extends
-    AbstractStudyIsoService<PlannedActivityDTO, PlannedActivity, PlannedActivityConverter> implements
-    PlannedActivityServiceLocal, PlannedActivityServiceRemote {
+        AbstractStudyIsoService<PlannedActivityDTO, PlannedActivity, PlannedActivityConverter> implements
+        PlannedActivityServiceLocal, PlannedActivityServiceRemote {
+
+    private static final Logger LOG = Logger.getLogger(PlannedActivityBeanLocal.class);
 
     private static final String II_NOTFOUND = "Check the Ii value; found null.";
 
@@ -81,7 +83,6 @@ public class PlannedActivityBeanLocal extends
      * @return list of planned activities associated w/arm
      * @throws PAException exception
      */
-    @SuppressWarnings({"PMD" })
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedActivityDTO> getByArm(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
@@ -94,9 +95,8 @@ public class PlannedActivityBeanLocal extends
         Query query = null;
 
         // step 1: form the hql
-        String hql = "select pa " + "from PlannedActivity pa " + "join pa.arms a " + "where a.id = :armId "
-            + "order by pa.id ";
-        getLogger().info("query PlannedActivity = " + hql + ".  ");
+        String hql = "select pa from PlannedActivity pa join pa.arms a where a.id = :armId order by pa.id ";
+        LOG.info("query PlannedActivity = " + hql + ".  ");
 
         // step 2: construct query object
         query = session.createQuery(hql);
@@ -116,7 +116,6 @@ public class PlannedActivityBeanLocal extends
      * @return list of PlannedEligibilityCriterion
      * @throws PAException exception
      */
-    @SuppressWarnings({"PMD" })
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii ii)
         throws PAException {
@@ -260,7 +259,6 @@ public class PlannedActivityBeanLocal extends
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings({"PMD" })
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(Ii ii)
         throws PAException {
@@ -342,7 +340,6 @@ public class PlannedActivityBeanLocal extends
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings({"PMD" })
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedProcedureDTO> getPlannedProcedureByStudyProtocol(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
@@ -410,7 +407,6 @@ public class PlannedActivityBeanLocal extends
      *
      * @throws PAException the PA exception
      */
-    @SuppressWarnings({"PMD" })
     private void checkIfValuesExist(PlannedSubstanceAdministrationDTO dto) throws PAException {
         StringBuffer errorBuffer = new StringBuffer();
         if (!PAUtil.isCdNull(dto.getDoseFormCode())) {
@@ -653,17 +649,16 @@ public class PlannedActivityBeanLocal extends
         return duplicate;
     }
 
-    @SuppressWarnings({"PMD" })
     private void drugBusinessRules(PlannedSubstanceAdministrationDTO dto) throws PAException {
         boolean isDrug = ActivitySubcategoryCode.DRUG.getCode()
                                                      .equals(CdConverter.convertCdToString(dto.getSubcategoryCode()));
 
         if (!isDrug && (dto.getLeadProductIndicator() != null)) {
-            getLogger().info("Setting lead product indicator to null for non-drug PlannedActivity.");
+            LOG.info("Setting lead product indicator to null for non-drug PlannedActivity.");
             dto.setLeadProductIndicator(null);
         }
         if (dto.getLeadProductIndicator() == null || PAUtil.isBlNull(dto.getLeadProductIndicator())) {
-            getLogger().info("Generating Bl (false) for non-drug PlannedActivity.");
+            LOG.info("Generating Bl (false) for non-drug PlannedActivity.");
             dto.setLeadProductIndicator(BlConverter.convertToBl(false));
 
         }
@@ -678,7 +673,6 @@ public class PlannedActivityBeanLocal extends
                     : BlConverter.convertToBoolean(pa.getLeadProductIndicator());
                 if ((!PAUtil.isIiNull(pa.getInterventionIdentifier()))
                     && (dtoIsNew || !dtoId.equals(IiConverter.convertToLong(pa.getIdentifier()))) && paIsLead) {
-                    getLogger().warn("It should throw error");
                     throw new PAException("Only one drug may be marked as lead for a given study.");
                 }
             }

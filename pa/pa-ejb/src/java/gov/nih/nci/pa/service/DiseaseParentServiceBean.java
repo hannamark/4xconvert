@@ -95,6 +95,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -111,6 +112,7 @@ import org.hibernate.Session;
 public class DiseaseParentServiceBean
         extends AbstractBaseIsoService<DiseaseParentDTO, DiseaseParent, DiseaseParentConverter>
         implements DiseaseParentServiceRemote {
+    private static final Logger LOG = Logger.getLogger(DiseaseParentServiceBean.class);
 
     @SuppressWarnings("unchecked")
     private List<DiseaseParentDTO> getByDisease(Ii ii, String assoc) throws PAException {
@@ -130,7 +132,7 @@ public class DiseaseParentServiceBean
             + "where dis.id = :diseaseId "
             + "  and dis.statusCode = 'ACTIVE' "
             + "order by dp.id ";
-        getLogger().info("query DiseaseParent = " + hql + ".  ");
+        LOG.info("query DiseaseParent = " + hql + ".  ");
 
         // step 2: construct query object
         query = session.createQuery(hql);

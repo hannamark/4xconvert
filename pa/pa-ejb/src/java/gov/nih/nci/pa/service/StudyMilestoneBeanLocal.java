@@ -53,7 +53,6 @@ import org.hibernate.criterion.Restrictions;
  *
  */
 @Stateless
-@SuppressWarnings({"PMD" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyMilestoneBeanLocal extends
@@ -127,7 +126,6 @@ public class StudyMilestoneBeanLocal extends
              : DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dw.getStatusCode()));
    }
 
-   @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
    private StudyMilestoneDTO businessRules(StudyMilestoneDTO dto) throws PAException {
      Timestamp newDate = TsConverter.convertToTimestamp(dto.getMilestoneDate());
      MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
@@ -156,7 +154,6 @@ public class StudyMilestoneBeanLocal extends
              throw new PAException("Late Rejection Date is applicable to Original Submission.");
          }
      }
-
 
      // onhold rules
      if (!newCode.isAllowedIfOnhold()
@@ -257,10 +254,8 @@ public class StudyMilestoneBeanLocal extends
      return dto;
    }
 
-   @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
-   private void newValidations(MilestoneCode newCode,  List<StudyMilestoneDTO> existingDtoList) throws PAException
-   {
-     //check if the administrative and sceintific processing is completed.
+    private void newValidations(MilestoneCode newCode, List<StudyMilestoneDTO> existingDtoList) throws PAException {
+     //check if the administrative and scientific processing is completed.
      if (newCode.equals(MilestoneCode.READY_FOR_QC)) {
         List<String> mileStones = getExistingMilestones(existingDtoList);
          if (!(mileStones.contains(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE.getCode())
@@ -414,7 +409,6 @@ public class StudyMilestoneBeanLocal extends
      return false;
   }
 
-  @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
   private void createDocumentWorkflowStatuses(StudyMilestoneDTO dto) throws PAException {
      MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
      DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
@@ -558,7 +552,6 @@ public class StudyMilestoneBeanLocal extends
   /**
    * {@inheritDoc}
    */
-   @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
    public List<StudyMilestoneDTO> search(StudyMilestoneDTO dto, LimitOffset pagingParams) throws PAException,
    TooManyResultsException {

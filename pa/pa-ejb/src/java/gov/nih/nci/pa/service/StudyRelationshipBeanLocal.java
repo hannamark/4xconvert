@@ -1,10 +1,7 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
@@ -16,6 +13,9 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -34,14 +34,10 @@ import org.hibernate.criterion.Expression;
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength",
-    "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity", "PMD.TooManyMethods" })
+public class StudyRelationshipBeanLocal extends
+        AbstractBaseIsoService<StudyRelationshipDTO, StudyRelationship, StudyRelationshipConverter> implements
+        StudyRelationshipServiceLocal {
 
- public class StudyRelationshipBeanLocal extends 
-  AbstractBaseIsoService <StudyRelationshipDTO, StudyRelationship, StudyRelationshipConverter>
-  implements StudyRelationshipServiceLocal {
-  
-  
    /**
     * {@inheritDoc}
     */

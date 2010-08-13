@@ -118,9 +118,9 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
     private static final String UNCHECKED = "unchecked";
     private final Class<BO> typeArgument;
     private final Class<CONVERTER> converterArgument;
-    @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
-    private final Logger logger;
+    private static final Logger LOG = Logger.getLogger(AbstractBaseIsoService.class);
     private SessionContext ejbContext;
+
     /**
      * Set the invocation context.
      * @param ctx EJB context
@@ -145,14 +145,8 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
 
         typeArgument = (Class) parameterizedType.getActualTypeArguments()[1];
         converterArgument = (Class) parameterizedType.getActualTypeArguments()[2];
-        logger = Logger.getLogger(typeArgument);
     }
-    /**
-     * @return log4j Logger
-     */
-    protected  Logger getLogger() {
-        return logger;
-    }
+
     /**
      * @param bo domain ojbect
      * @return DTO iso transfer object
@@ -201,8 +195,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
             session = HibernateUtil.getCurrentSession();
             BO bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(ii));
             if (bo == null) {
-                logger.error("Object not found using get() for id = "
-                        + IiConverter.convertToString(ii) + ".");
+                LOG.error("Object not found using get() for id = " + IiConverter.convertToString(ii));
              return resultDto;
             }
             resultDto = convertFromDomainToDto(bo);

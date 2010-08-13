@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -44,22 +44,23 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({  "PMD.ExcessiveMethodLength" , "PMD.AvoidDuplicateLiterals", "PMD.CyclomaticComplexity" })
-public class StudyResourcingBeanLocal 
- extends AbstractStudyIsoService <StudyResourcingDTO, StudyResourcing, StudyResourcingConverter> 
- implements StudyResourcingServiceLocal { 
+public class StudyResourcingBeanLocal extends
+        AbstractStudyIsoService<StudyResourcingDTO, StudyResourcing, StudyResourcingConverter> implements
+        StudyResourcingServiceLocal {
 
-  private static final Logger LOG  = Logger.getLogger(StudyResourcingBeanLocal.class);
-  private static StudyResourcingConverter  src = new StudyResourcingConverter();
-  private SessionContext ejbContext;
-  /**
-   * Set the invocation context.
-   * @param ctx EJB context
-   */
-  @Resource
-  public void setSessionContext(SessionContext ctx) {
-      this.ejbContext = ctx;
-  }
+    private static final Logger LOG = Logger.getLogger(StudyResourcingBeanLocal.class);
+    private static StudyResourcingConverter src = new StudyResourcingConverter();
+    private SessionContext ejbContext;
+
+    /**
+     * Set the invocation context.
+     * @param ctx EJB context
+     */
+    @Override
+    @Resource
+    public void setSessionContext(SessionContext ctx) {
+        this.ejbContext = ctx;
+    }
 
   /**
    * @param studyProtocolIi Ii
@@ -71,8 +72,7 @@ public class StudyResourcingBeanLocal
    public StudyResourcingDTO getsummary4ReportedResource(Ii studyProtocolIi) throws PAException {
 
     if (PAUtil.isIiNull(studyProtocolIi)) {
-        LOG.error(" studyProtocol Identifer should not be null ");
-        throw new PAException(" studyProtocol Identifer should not be null ");
+        throw new PAException("studyProtocol Identifer should not be null");
     }
     StudyResourcingDTO studyResourcingDTO = null;
     Session session = null;
@@ -83,9 +83,7 @@ public class StudyResourcingBeanLocal
     Query query = null;
 
     // step 1: form the hql
-    String hql = " select sr "
-        + " from StudyResourcing sr "
-        + " join sr.studyProtocol sp "
+    String hql = " select sr from StudyResourcing sr join sr.studyProtocol sp "
         + " where sp.id = " + IiConverter.convertToLong(studyProtocolIi)
         + " and sr.summary4ReportedResourceIndicator =  '" + Boolean.TRUE + "'";
 
@@ -115,15 +113,13 @@ public class StudyResourcingBeanLocal
   * @return StudyProtocolDTO
   * @throws PAException PAException
   */
-  @SuppressWarnings("PMD.NPathComplexity")
   public StudyResourcingDTO updateStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
-    
+
     if (studyResourcingDTO == null) {
-        LOG.error(" studyResourcingDTO should not be null ");
-        throw new PAException(" studyResourcingDTO should not be null ");
+        throw new PAException("studyResourcingDTO should not be null");
     }
     enforceValidation(studyResourcingDTO);
-    
+
     Session session = null;
     StudyResourcing studyResourcing = null;
     StudyResourcingDTO studyResourcingRetDTO = null;
@@ -165,12 +161,10 @@ public class StudyResourcingBeanLocal
   * @return StudyProtocolDTO
   * @throws PAException PAException
   */
-  @SuppressWarnings("PMD.NPathComplexity")
   public StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
 
     if (studyResourcingDTO == null) {
-        LOG.error(" studyResourcingDTO should not be null ");
-        throw new PAException(" studyResourcingDTO should not be null ");
+        throw new PAException("studyResourcingDTO should not be null");
     }
     enforceValidation(studyResourcingDTO);
 
@@ -274,14 +268,13 @@ public class StudyResourcingBeanLocal
             studyResourcingDTO.getInactiveCommentText()));
     studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
     studyResourcing.setUserLastUpdated(CSMUserService.getInstance().lookupUser(ejbContext));
-    
+
     session.update(studyResourcing);
     result = true;
     return result;
  }
 
 
-    @SuppressWarnings({"PMD" })
     private boolean enforceNoDuplicate(StudyResourcingDTO dto) throws PAException {
       String newSerialNumber = dto.getSerialNumber().getValue();
       String newFundingMech = dto.getFundingMechanismCode().getCode();
@@ -294,7 +287,7 @@ public class StudyResourcingBeanLocal
           boolean sameFundingMech = newFundingMech.equals(sp.getFundingMechanismCode().getCode());
           boolean sameNciDivCode = newNciDivCode.equals(sp.getNciDivisionProgramCode().getCode());
           boolean sameNihInstCode = newNihInstCode.equals(sp.getNihInstitutionCode().getCode());
-          
+
           if (sameSerialNumber && sameFundingMech && sameNciDivCode && sameNihInstCode) {
               if (dto.getIdentifier() == null
                   || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension()))) {
@@ -306,80 +299,74 @@ public class StudyResourcingBeanLocal
       return duplicateExists;
   }
 
-  @SuppressWarnings({"PMD" })
-  private boolean isNumeric(String number) {
-    boolean isValid = false;   
-    //Initialize reg ex for numeric data.
-    String expression = "^[0-9]*[0-9]+$";
-    CharSequence inputStr = number;
-    Pattern pattern = Pattern.compile(expression);
-    Matcher matcher = pattern.matcher(inputStr);
-    if (matcher.matches()) {
-        isValid = true;
+    private boolean isNumeric(String number) {
+        boolean isValid = false;
+        // Initialize reg ex for numeric data.
+        String expression = "^[0-9]*[0-9]+$";
+        CharSequence inputStr = number;
+        Pattern pattern = Pattern.compile(expression);
+        Matcher matcher = pattern.matcher(inputStr);
+        if (matcher.matches()) {
+            isValid = true;
+        }
+        return isValid;
     }
-    return isValid;
-  }
- 
-  /**
-   * @param studyResourcingDTO dto
-   * @return 
-   * @throws PAException e
-   */
-   public void validate(StudyResourcingDTO studyResourcingDTO)
-   throws PAException {
-     enforceValidation(studyResourcingDTO);
-   }
 
-  /**
-   * @param dto StudyResourcingDTO to create
-   * @return the created StudyResourcingDTO
-   * @throws PAException exception.
-   */
-   public StudyResourcingDTO create(StudyResourcingDTO dto) throws PAException {
-    if (PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())) {
-     LOG.error(" The summary4ReportedResourceIndicator is not set");
-     throw new PAException(" The summary4ReportedResourceIndicator is not set ");
+    /**
+     * @param studyResourcingDTO dto
+     * @return
+     * @throws PAException e
+     */
+    @Override
+    public void validate(StudyResourcingDTO studyResourcingDTO) throws PAException {
+        enforceValidation(studyResourcingDTO);
     }
-    if (!PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())
-          && BlConverter.convertToBoolean(dto.getSummary4ReportedResourceIndicator())
-                  .equals(Boolean.FALSE)) {
-     return createStudyResourcing(dto);
-    } else {
-      return super.create(dto);
-   }
-  }
 
-  /**
-   * @param dto StudyResourcingDTO to update
-   * @return the updated StudyResourcingDTO
-   * @throws PAException exception.
-   */
-   public StudyResourcingDTO update(StudyResourcingDTO dto) throws PAException {
-     if (PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())) {
-       LOG.error(" The summary4ReportedResourceIndicator is not set");
-       throw new PAException(" The summary4ReportedResourceIndicator is not set");
-     }
-     if (!PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())
-           && BlConverter.convertToBoolean(dto.getSummary4ReportedResourceIndicator())
-                  .equals(Boolean.FALSE)) {
-        return updateStudyResourcing(dto);
-     } else {
+    /**
+     * @param dto StudyResourcingDTO to create
+     * @return the created StudyResourcingDTO
+     * @throws PAException exception.
+     */
+    @Override
+    public StudyResourcingDTO create(StudyResourcingDTO dto) throws PAException {
+        if (PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())) {
+            throw new PAException("The summary4ReportedResourceIndicator is not set");
+        }
+        if (!PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())
+                && BlConverter.convertToBoolean(dto.getSummary4ReportedResourceIndicator()).equals(Boolean.FALSE)) {
+            return createStudyResourcing(dto);
+        }
+        return super.create(dto);
+    }
+
+    /**
+     * @param dto StudyResourcingDTO to update
+     * @return the updated StudyResourcingDTO
+     * @throws PAException exception.
+     */
+    @Override
+    public StudyResourcingDTO update(StudyResourcingDTO dto) throws PAException {
+        if (PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())) {
+            throw new PAException("The summary4ReportedResourceIndicator is not set");
+        }
+        if (!PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())
+                && BlConverter.convertToBoolean(dto.getSummary4ReportedResourceIndicator()).equals(Boolean.FALSE)) {
+            return updateStudyResourcing(dto);
+        }
         return super.update(dto);
-     }
-    
-  }
 
-  @SuppressWarnings("PMD.NPathComplexity")
+    }
+
   private void enforceValidation(StudyResourcingDTO studyResourcingDTO) throws PAException {
    StringBuffer errorBuffer =  new StringBuffer();
    final int serialNumMin = 5;
    final int serialNumMax = 6;
    if (!PAUtil.isBlNull(studyResourcingDTO.getSummary4ReportedResourceIndicator())
        && BlConverter.convertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator())
-               .equals(Boolean.FALSE)) {      
+               .equals(Boolean.FALSE)) {
           //check if nih institute code exists
           if (!PAUtil.isCdNull(studyResourcingDTO.getNihInstitutionCode())) {
-            boolean nihExists = 
+            boolean nihExists =
                 PADomainUtils.checkIfValueExists(studyResourcingDTO.getNihInstitutionCode().getCode(),
                                   "NIH_INSTITUTE", "nih_institute_code");
               if (!nihExists) {
@@ -389,16 +376,16 @@ public class StudyResourcingBeanLocal
               }
           }
           if (!PAUtil.isCdNull(studyResourcingDTO.getFundingMechanismCode())) {
-             //check if Funding mechanism code exists 
+             //check if Funding mechanism code exists
              boolean fmExists = PADomainUtils.checkIfValueExists(studyResourcingDTO.getFundingMechanismCode().getCode(),
                  "FUNDING_MECHANISM", "funding_mechanism_code");
-           
+
              if (!fmExists) {
                 errorBuffer.append("Error while checking for value ")
                            .append(studyResourcingDTO.getFundingMechanismCode().getCode())
                            .append(" from table FUNDING_MECHANISM\n");
              }
-          }  
+          }
           if (studyResourcingDTO.getSerialNumber() != null
                 && studyResourcingDTO.getSerialNumber().getValue() != null) {
               String snValue = studyResourcingDTO.getSerialNumber().getValue().toString();
@@ -420,5 +407,5 @@ public class StudyResourcingBeanLocal
    if (errorBuffer.length() > 0) {
        throw new PADuplicateException("Validation Exception " + errorBuffer.toString());
    }
-  }        
+  }
  }

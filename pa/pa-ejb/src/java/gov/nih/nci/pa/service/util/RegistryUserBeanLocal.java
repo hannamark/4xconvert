@@ -120,9 +120,8 @@ import org.hibernate.criterion.Restrictions;
  * @author aevansel@5amsolutions.com
  */
 @Stateless
-@Interceptors({ HibernateSessionInterceptor.class })
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final Logger LOG = Logger.getLogger(RegistryUserBeanLocal.class);
     private static final int INDEX_USER_ID = 0;

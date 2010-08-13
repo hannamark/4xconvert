@@ -30,6 +30,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -40,8 +41,9 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConverter> implements ArmServiceLocal {
+
+    private static final Logger LOG = Logger.getLogger(ArmBeanLocal.class);
 
    @EJB
    private PlannedActivityServiceLocal plannedActivityService;
@@ -65,7 +67,7 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
 
     // step 1: form the hql
     String hql = "select ar from Arm ar join ar.interventions pa where pa.id = :plannedActivityId order by ar.id ";
-    getLogger().debug("query Arm = " + hql + ".  ");
+    LOG.debug("query Arm = " + hql + ".  ");
 
     // step 2: construct query object
     query = session.createQuery(hql);

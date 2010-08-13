@@ -112,16 +112,14 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
+@SuppressWarnings("unchecked")
 public class LookUpTableServiceBean implements LookUpTableServiceRemote {
-
-    private static final String UNCHECKED = "unchecked";
 
     /**
      *
      * @return fmList  FundingMechanism
      * @throws PAException PAException
      */
-    @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<FundingMechanism> getFundingMechanisms() throws PAException {
         Session session = null;
@@ -139,7 +137,6 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      * @return nihList  FundingMechanism
      * @throws PAException PAException
      */
-    @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<NIHinstitute> getNihInstitutes() throws PAException {
         Session session = null;
@@ -157,7 +154,6 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      * @return country  Country
      * @throws PAException PAException
      */
-    @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<Country> getCountries() throws PAException {
         Session session = null;
@@ -178,13 +174,12 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         query.setParameter("name", name);
         return (Country) query.uniqueResult();
     }
-    
+
     /**
      * @param name name
      * @return value  val
      * @throws PAException PAException
      */
-    @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String getPropertyValue(String name) throws PAException {
         Session session = null;

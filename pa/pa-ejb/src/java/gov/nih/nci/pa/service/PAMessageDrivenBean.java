@@ -116,7 +116,6 @@ import org.hibernate.Session;
         @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "AUTO_ACKNOWLEDGE"),
         @ActivationConfigProperty(propertyName = "maxSession", propertyValue = "1"),
         @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = "PAApp") })
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class PAMessageDrivenBean implements MessageListener {
     private static final Logger LOG = Logger.getLogger(PAMessageDrivenBean.class);
 

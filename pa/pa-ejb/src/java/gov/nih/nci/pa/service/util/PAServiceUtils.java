@@ -176,16 +176,13 @@ import org.hibernate.Session;
  * @author Naveen Amiruddin
  * @since 10/26/2009
  */
-
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength",
-    "PMD.TooManyMethods" , "PMD.ExcessiveParameterList" , "PMD.ExcessiveMethodLength" })
+@SuppressWarnings("unchecked")
 public class PAServiceUtils {
 
     /**
      * ORGANIZATION_IDENTIFIER_IS_NULL.
      */
     public static final String ORGANIZATION_IDENTIFIER_IS_NULL = "Organization Identifier is null";
-    private static final String UNCHECKED = "unchecked";
     /**
      * PRINCIPAL_INVESTIGATOR_NULLIFIED.
      */
@@ -260,7 +257,6 @@ public class PAServiceUtils {
 
     }
 
-    @SuppressWarnings(UNCHECKED)
     private void executeCopy(StudyPaService sp , Ii from , Ii to) throws PAException {
         sp.copy(from, to);
 
@@ -296,7 +292,6 @@ public class PAServiceUtils {
      * @return any type extending StudyPaService
      * @throws PAException on error
      */
-    @SuppressWarnings(UNCHECKED)
     public <TYPE extends StudyPaService>  TYPE getRemoteService(Ii isoIi) throws PAException {
         if (IiConverter.STUDY_MILESTONE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
             return (TYPE) PaRegistry.getStudyMilestoneService();
@@ -415,10 +410,8 @@ public class PAServiceUtils {
     }
 
 
-    private void createPIAsResponsibleParty(Ii studyProtocolIi ,
-            OrganizationDTO leadOrganizationDto ,
-            PersonDTO principalInvestigatorDto ,
-            StudyContactDTO studyContactDTO) throws PAException {
+    private void createPIAsResponsibleParty(Ii studyProtocolIi, OrganizationDTO leadOrganizationDto,
+            PersonDTO principalInvestigatorDto, StudyContactDTO studyContactDTO) throws PAException {
 
         DSet<Tel> dset = studyContactDTO.getTelecomAddresses();
 
@@ -523,8 +516,7 @@ public class PAServiceUtils {
      * @param sponsorDto Lead Organization Dto
      * @throws PAException on error
      */
-    public void manageSponsor(Ii studyProtocolIi , OrganizationDTO sponsorDto)
-    throws PAException {
+    public void manageSponsor(Ii studyProtocolIi, OrganizationDTO sponsorDto) throws PAException {
         OrganizationCorrelationServiceBean ocsr = new OrganizationCorrelationServiceBean();
         String orgPoIdentifier = sponsorDto.getIdentifier().getExtension();
         if (orgPoIdentifier  == null) {
@@ -539,9 +531,8 @@ public class PAServiceUtils {
         }  catch (PAException pae) {
             if (pae.getMessage().contains(PAExceptionConstants.NULLIFIED_ORG)) {
                 throw new PAException(SPONSOR + pae.getMessage(), pae);
-            } else {
-                throw pae;
             }
+            throw pae;
         }
         StudySiteDTO ssCriteriaDTO = new StudySiteDTO();
         ssCriteriaDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
@@ -563,9 +554,8 @@ public class PAServiceUtils {
         }  catch (PAException pae) {
             if (pae.getMessage().contains(PAExceptionConstants.NULLIFIED_PERSON)) {
                 throw new PAException(RESP_PARTY + pae.getMessage(), pae);
-            } else {
-                throw pae;
             }
+            throw pae;
         }
 
     }
@@ -578,10 +568,8 @@ public class PAServiceUtils {
      * @param studyTypeCode study type code
      * @throws PAException on error
      */
-    public void managePrincipalInvestigator(Ii studyProtocolIi ,
-            OrganizationDTO leadOrganizationDto ,
-            PersonDTO principalInvestigatorDto ,
-            StudyTypeCode studyTypeCode) throws PAException {
+    public void managePrincipalInvestigator(Ii studyProtocolIi, OrganizationDTO leadOrganizationDto,
+            PersonDTO principalInvestigatorDto, StudyTypeCode studyTypeCode) throws PAException {
         String orgPoIdentifier = leadOrganizationDto.getIdentifier().getExtension();
         String personPoIdentifer = principalInvestigatorDto.getIdentifier().getExtension();
         if (orgPoIdentifier == null) {
@@ -664,9 +652,7 @@ public class PAServiceUtils {
      * @return list of StudySiteDtos
      * @throws PAException on error
      */
-    @SuppressWarnings({"PMD" })
-    public List<StudySiteDTO> getStudySite(StudySiteDTO spDto, boolean isUnique)
-    throws PAException {
+    public List<StudySiteDTO> getStudySite(StudySiteDTO spDto, boolean isUnique) throws PAException {
         if (PAUtil.isIiNull(spDto.getStudyProtocolIdentifier())) {
             throw new PAException(" StudyProtocol Ii is null");
         }
@@ -675,7 +661,7 @@ public class PAServiceUtils {
         try {
             spDtos = PaRegistry.getStudySiteService().search(spDto, pagingParams);
         } catch (TooManyResultsException e) {
-            throw new PAException(" Found more than 1 record for a protocol id = "
+            throw new PAException("Found more than 1 record for a protocol id = "
                     + spDto.getStudyProtocolIdentifier().getExtension() + " for a given status "
                     + spDto.getFunctionalCode().getCode());
         }
@@ -727,7 +713,7 @@ public class PAServiceUtils {
      * @throws PAException on error
      */
     public void enforceNoDuplicateIndIde(List<StudyIndldeDTO> studyIndldeDTOs, StudyProtocolDTO studyProtocolDTO)
-    throws PAException {
+            throws PAException {
         StringBuffer errorMsg = new StringBuffer();
         if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
             for (int i = 0; i < studyIndldeDTOs.size(); i++) {
@@ -814,7 +800,6 @@ public class PAServiceUtils {
      *
      * @throws PAException the PA exception
      */
-    @SuppressWarnings({"PMD" })
     public void enforceRecruitmentStatus(StudyProtocolDTO studyProtocolDTO,
                                          List<StudySiteAccrualStatusDTO> participatingSites,
                                          StudyRecruitmentStatusDTO recruitmentStatusDto) throws PAException {
@@ -1052,7 +1037,6 @@ public class PAServiceUtils {
      * @throws PAException e
      *
      */
-    @SuppressWarnings({"PMD.PreserveStackTrace" })
     public void createPoObject(List<? extends PoDto> listOfObject) throws PAException {
       for (PoDto poDto : listOfObject) {
          try {
@@ -1063,10 +1047,11 @@ public class PAServiceUtils {
                  PoRegistry.getPersonEntityService().createPerson((PersonDTO) poDto);
              }
          } catch (Exception e) {
-            throw new PAException(e.getMessage());
+            throw new PAException(e);
          }
       }
     }
+
     /**
      *
      * @param <Entity> Person or Organization class
@@ -1075,46 +1060,48 @@ public class PAServiceUtils {
      * @throws PAException on error
      *
      */
-     public <Entity extends PoDto> Entity createEntity(Entity entity) throws PAException {
-         Ii entityIi = null;
-         try {
-             if (entity instanceof OrganizationDTO) {
-                 entityIi = PoRegistry.getOrganizationEntityService().createOrganization((OrganizationDTO) entity);
-                 return (Entity) PoRegistry.getOrganizationEntityService().getOrganization(entityIi);
-             }  else if (entity instanceof PersonDTO) {
-                 entityIi = PoRegistry.getPersonEntityService().createPerson((PersonDTO) entity);
-                 return (Entity) PoRegistry.getPersonEntityService().getPerson(entityIi);
-             } else {
-                 throw new PAException("createEntity Should be called only for Entity/Person");
-             }
-         } catch (Exception e) {
+    public <Entity extends PoDto> Entity createEntity(Entity entity) throws PAException {
+        Ii entityIi = null;
+        try {
+            if (entity instanceof OrganizationDTO) {
+                entityIi = PoRegistry.getOrganizationEntityService().createOrganization((OrganizationDTO) entity);
+                return (Entity) PoRegistry.getOrganizationEntityService().getOrganization(entityIi);
+            } else if (entity instanceof PersonDTO) {
+                entityIi = PoRegistry.getPersonEntityService().createPerson((PersonDTO) entity);
+                return (Entity) PoRegistry.getPersonEntityService().getPerson(entityIi);
+            } else {
+                throw new PAException("createEntity Should be called only for Entity/Person");
+            }
+        } catch (Exception e) {
             throw new PAException(e);
-         }
+        }
 
     }
-     /**
-      * @param <Entity> Person or Organization
-      * @param entityIi Organization of Person Ii
-      * @return PoDto Organization of Person entity
-      * @throws PAException e
-      *
-      */
-      public <Entity extends PoDto> Entity getEntityByIi(Ii entityIi) throws PAException {
-          Entity retEntity = null;
-          try {
-              if (IiConverter.ORG_ROOT.equals(entityIi.getRoot())) {
-                  retEntity = (Entity) PoRegistry.getOrganizationEntityService().getOrganization(entityIi);
-              } else if (IiConverter.PERSON_ROOT.equals(entityIi.getRoot())) {
-                  retEntity = (Entity) PoRegistry.getPersonEntityService().getPerson(entityIi);
-              } else {
-                  throw new PAException("getEntityByIi Should be called only for Entity/Person");
-              }
 
-          } catch (Exception e) {
-             throw new PAException(e);
-          }
-          return retEntity;
-     }
+    /**
+     * @param <Entity> Person or Organization
+     * @param entityIi Organization of Person Ii
+     * @return PoDto Organization of Person entity
+     * @throws PAException e
+     *
+     */
+    public <Entity extends PoDto> Entity getEntityByIi(Ii entityIi) throws PAException {
+        Entity retEntity = null;
+        try {
+            if (IiConverter.ORG_ROOT.equals(entityIi.getRoot())) {
+                retEntity = (Entity) PoRegistry.getOrganizationEntityService().getOrganization(entityIi);
+            } else if (IiConverter.PERSON_ROOT.equals(entityIi.getRoot())) {
+                retEntity = (Entity) PoRegistry.getPersonEntityService().getPerson(entityIi);
+            } else {
+                throw new PAException("getEntityByIi Should be called only for Entity/Person");
+            }
+
+        } catch (Exception e) {
+            throw new PAException(e);
+        }
+        return retEntity;
+    }
+
     /**
      *
      * @param <Entity> Person or Organization
@@ -1144,13 +1131,13 @@ public class PAServiceUtils {
         Entity retEntity = null;
         try {
             if (entity instanceof OrganizationDTO) {
-                entities = (List<Entity>) PoRegistry.getOrganizationEntityService()
-                                .search((OrganizationDTO) entity, limit);
+                entities = (List<Entity>) PoRegistry.getOrganizationEntityService().search((OrganizationDTO) entity,
+                                                                                           limit);
             } else if (entity instanceof OrganizationDTO) {
                 entities = (List<Entity>) PoRegistry.getPersonEntityService().search((PersonDTO) entity, limit);
             }
             if (!entities.isEmpty()) {
-                retEntity =  entities.get(0);
+                retEntity = entities.get(0);
             }
         } catch (Exception e) {
             throw new PAException(e);
@@ -1220,168 +1207,170 @@ public class PAServiceUtils {
           }
         return errorMsg.toString();
       }
-      /**
-       *
-       * @param <TYPE> type
-       * @param correlationIi ii
-       * @return service
-       * @throws PAException e
-       */
-      public <TYPE extends CorrelationService> TYPE getPoService(Ii correlationIi) throws PAException {
-          if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
-              return (TYPE) PoRegistry.getHealthCareFacilityCorrelationService();
-          }
-          if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
-              return (TYPE) PoRegistry.getResearchOrganizationCorrelationService();
-          }
-          if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
-              return (TYPE) PoRegistry.getOversightCommitteeCorrelationService();
-          }
-          if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
-              return (TYPE) PoRegistry.getClinicalResearchStaffCorrelationService();
-          }
-          if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
-              return (TYPE) PoRegistry.getHealthCareProviderCorrelationService();
-          }
-          if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
-              return (TYPE) PoRegistry.getOrganizationalContactCorrelationService();
-          }
-          throw new PAException(" Unknown identifier for " + correlationIi.getIdentifierName());
-      }
-      /**
-       *
-       * @param <T> any class extends {@link StructuralRole}
-       * @param isoIi iso identitifier
-       * @return StucturalRole class for an correspondong iso ii
-       * @throws PAException on error
-       */
 
-      public <T extends StructuralRole> T getStructuralRole(Ii isoIi) throws PAException {
+    /**
+     *
+     * @param <TYPE> type
+     * @param correlationIi ii
+     * @return service
+     * @throws PAException e
+     */
+    public <TYPE extends CorrelationService> TYPE getPoService(Ii correlationIi) throws PAException {
+        if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
+            return (TYPE) PoRegistry.getHealthCareFacilityCorrelationService();
+        }
+        if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
+            return (TYPE) PoRegistry.getResearchOrganizationCorrelationService();
+        }
+        if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
+            return (TYPE) PoRegistry.getOversightCommitteeCorrelationService();
+        }
+        if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
+            return (TYPE) PoRegistry.getClinicalResearchStaffCorrelationService();
+        }
+        if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
+            return (TYPE) PoRegistry.getHealthCareProviderCorrelationService();
+        }
+        if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
+            return (TYPE) PoRegistry.getOrganizationalContactCorrelationService();
+        }
+        throw new PAException(" Unknown identifier for " + correlationIi.getIdentifierName());
+    }
 
-          StringBuffer hql = new StringBuffer("select role from ");
-          if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-              hql.append("HealthCareFacility role where role.id = '" + isoIi.getExtension() + "'");
-          } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-              hql.append("ResearchOrganization role where role.id = '" + isoIi.getExtension() + "'");
-          } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-              hql.append("OversightCommittee role where role.id = '" + isoIi.getExtension() + "'");
-          } else if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-              hql.append("ClinicalResearchStaff role where role.id = '" + isoIi.getExtension() + "'");
-          } else if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-              hql.append("HealthCareProvider role where role.id = '" + isoIi.getExtension() + "'");
-          } else if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-              hql.append("OrganizationalContact role where role.id  = '" + isoIi.getExtension() + "'");
-          } else {
-              throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
-          }
-          List<T> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
-          T sr = null;
+    /**
+     * @param <T> any class extends {@link StructuralRole}
+     * @param isoIi iso identitifier
+     * @return StucturalRole class for an correspondong iso ii
+     * @throws PAException on error
+     */
+    public <T extends StructuralRole> T getStructuralRole(Ii isoIi) throws PAException {
 
-          if (!queryList.isEmpty()) {
-              sr = queryList.get(0);
-          }
+        StringBuffer hql = new StringBuffer("select role from ");
+        if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("HealthCareFacility role where role.id = '" + isoIi.getExtension() + "'");
+        } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("ResearchOrganization role where role.id = '" + isoIi.getExtension() + "'");
+        } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("OversightCommittee role where role.id = '" + isoIi.getExtension() + "'");
+        } else if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("ClinicalResearchStaff role where role.id = '" + isoIi.getExtension() + "'");
+        } else if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("HealthCareProvider role where role.id = '" + isoIi.getExtension() + "'");
+        } else if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+            hql.append("OrganizationalContact role where role.id  = '" + isoIi.getExtension() + "'");
+        } else {
+            throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
+        }
+        List<T> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
+        T sr = null;
 
-          return sr;
-      }
-      /**
-       *
-       * @param correlationIi Ii
-       * @return poDto
-       * @throws PAException e
-       */
-      @SuppressWarnings({"PMD.PreserveStackTrace" })
-      public PoDto getCorrelationByIi(Ii correlationIi) throws PAException {
-          PoDto poCorrelationDto = null;
-          CorrelationService corrService = getPoService(correlationIi);
-          try {
-              poCorrelationDto = corrService.getCorrelation(correlationIi);
-          } catch (NullifiedRoleException e1) {
-              Ii nullfiedIi = null;
-              Map<Ii, Ii> nullifiedEntities = e1.getNullifiedEntities();
-              for (Ii tmp : nullifiedEntities.keySet()) {
-                  if (tmp.getExtension().equals(correlationIi.getExtension())) {
-                      nullfiedIi = tmp;
-                  }
-              }
-              Ii dupCorrelationIi = null;
-              if (nullfiedIi != null) {
-                  dupCorrelationIi = nullifiedEntities.get(nullfiedIi);
-              }
-              if (PAUtil.isIiNotNull(dupCorrelationIi)) {
-                  try {
-                      poCorrelationDto = corrService.getCorrelation(dupCorrelationIi);
-                  } catch (NullifiedRoleException e2) {
-                      throw new PAException("This scenario is currrently not handled .... "
-                      + "Duplicate Ii of nullified is also nullified" , e2);
-                  }
-              }
-          }
-          return poCorrelationDto;
-      }
-      /**
-       *
-       * @param isoIi iso Identifier
-       * @return Organization
-       * @throws PAException on error
-       */
-      public Organization getOrCreatePAOrganizationByIi(Ii isoIi) throws PAException {
-          Organization org = null;
-          CorrelationUtils cUtils = new CorrelationUtils();
-          org = cUtils.getPAOrganizationByIi(isoIi);
-          if (org == null) {
-              OrganizationDTO poOrg = null;
-              try {
-                  poOrg = PoRegistry.getOrganizationEntityService().
-                      getOrganization(isoIi);
-              } catch (NullifiedEntityException e) {
-                 throw new PAException("This Organization is no longer available instead use ", e);
-              }
-              org = cUtils.createPAOrganization(poOrg);
-          }
-          return org;
-      }
-      /**
-       *
-       * @param <T> type
-       * @param isoIi ii
-       * @return sr
-       * @throws PAException e
-       */
-      public <T extends OrganizationalStructuralRole> T getOrCreateOrganizationalStructuralRoleInPA(Ii isoIi)
-          throws PAException {
-          CorrelationUtils cUtils =  new CorrelationUtils();
-          CorrelationDto poDto = (CorrelationDto) getCorrelationByIi(isoIi);
-          // Step 1 : Check of PA has structural role , if not create one
-          OrganizationalStructuralRole dupSR = cUtils.getStructuralRoleByIi(DSetConverter.convertToIi(
-                  poDto.getIdentifier()));
-      if (dupSR == null) {
-          // create a new structural role
-          if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-              dupSR =  new HealthCareFacility();
-          } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-              dupSR =  new ResearchOrganization();
-          } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-              dupSR =  new OversightCommittee();
-          }
-          dupSR.setOrganization(getOrCreatePAOrganizationByIi(((AbstractEnhancedOrganizationRoleDTO) poDto)
-                  .getPlayerIdentifier()));
-          dupSR.setIdentifier(DSetConverter.convertToIi(poDto.getIdentifier()).getExtension());
-          dupSR.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(poDto.getStatus()));
-          return (T) cUtils.createPADomain(dupSR);
-      }
-       return (T) dupSR;
-      }
-      /**
-       * @param nullifiedIi ii
-       * @return ii
-       * @throws PAException e
-       */
-      public Ii getDuplicateIiOfNullifiedSR(Ii nullifiedIi) throws PAException {
-          Ii dupSRIi = null;
-          try {
-             CorrelationService<PoDto> correlationService = getPoService(nullifiedIi);
-              correlationService.getCorrelation(nullifiedIi);
-          } catch (NullifiedRoleException e) {
+        if (!queryList.isEmpty()) {
+            sr = queryList.get(0);
+        }
+
+        return sr;
+    }
+
+    /**
+     *
+     * @param correlationIi Ii
+     * @return poDto
+     * @throws PAException e
+     */
+    public PoDto getCorrelationByIi(Ii correlationIi) throws PAException {
+        PoDto poCorrelationDto = null;
+        CorrelationService corrService = getPoService(correlationIi);
+        try {
+            poCorrelationDto = corrService.getCorrelation(correlationIi);
+        } catch (NullifiedRoleException e1) {
+            Ii nullfiedIi = null;
+            Map<Ii, Ii> nullifiedEntities = e1.getNullifiedEntities();
+            for (Ii tmp : nullifiedEntities.keySet()) {
+                if (tmp.getExtension().equals(correlationIi.getExtension())) {
+                    nullfiedIi = tmp;
+                }
+            }
+            Ii dupCorrelationIi = null;
+            if (nullfiedIi != null) {
+                dupCorrelationIi = nullifiedEntities.get(nullfiedIi);
+            }
+            if (PAUtil.isIiNotNull(dupCorrelationIi)) {
+                try {
+                    poCorrelationDto = corrService.getCorrelation(dupCorrelationIi);
+                } catch (NullifiedRoleException e2) {
+                    throw new PAException("This scenario is currrently not handled .... "
+                            + "Duplicate Ii of nullified is also nullified", e2);
+                }
+            }
+        }
+        return poCorrelationDto;
+    }
+
+    /**
+     *
+     * @param isoIi iso Identifier
+     * @return Organization
+     * @throws PAException on error
+     */
+    public Organization getOrCreatePAOrganizationByIi(Ii isoIi) throws PAException {
+        Organization org = null;
+        CorrelationUtils cUtils = new CorrelationUtils();
+        org = cUtils.getPAOrganizationByIi(isoIi);
+        if (org == null) {
+            OrganizationDTO poOrg = null;
+            try {
+                poOrg = PoRegistry.getOrganizationEntityService().getOrganization(isoIi);
+            } catch (NullifiedEntityException e) {
+                throw new PAException("This Organization is no longer available instead use ", e);
+            }
+            org = cUtils.createPAOrganization(poOrg);
+        }
+        return org;
+    }
+
+    /**
+     *
+     * @param <T> type
+     * @param isoIi ii
+     * @return sr
+     * @throws PAException e
+     */
+    public <T extends OrganizationalStructuralRole> T getOrCreateOrganizationalStructuralRoleInPA(Ii isoIi)
+            throws PAException {
+        CorrelationUtils cUtils = new CorrelationUtils();
+        CorrelationDto poDto = (CorrelationDto) getCorrelationByIi(isoIi);
+        // Step 1 : Check of PA has structural role , if not create one
+        OrganizationalStructuralRole dupSR =
+            cUtils.getStructuralRoleByIi(DSetConverter.convertToIi(poDto.getIdentifier()));
+        if (dupSR == null) {
+            // create a new structural role
+            if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+                dupSR = new HealthCareFacility();
+            } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+                dupSR = new ResearchOrganization();
+            } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+                dupSR = new OversightCommittee();
+            }
+            dupSR.setOrganization(getOrCreatePAOrganizationByIi(((AbstractEnhancedOrganizationRoleDTO) poDto)
+                                                                .getPlayerIdentifier()));
+            dupSR.setIdentifier(DSetConverter.convertToIi(poDto.getIdentifier()).getExtension());
+            dupSR.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(poDto.getStatus()));
+            return (T) cUtils.createPADomain(dupSR);
+        }
+        return (T) dupSR;
+    }
+
+    /**
+     * @param nullifiedIi ii
+     * @return ii
+     * @throws PAException e
+     */
+    public Ii getDuplicateIiOfNullifiedSR(Ii nullifiedIi) throws PAException {
+        Ii dupSRIi = null;
+        try {
+            CorrelationService<PoDto> correlationService = getPoService(nullifiedIi);
+            correlationService.getCorrelation(nullifiedIi);
+        } catch (NullifiedRoleException e) {
             // SR is nullified, find out if it has any duplicates
             Ii nullfiedIi = null;
             Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
@@ -1391,66 +1380,66 @@ public class PAServiceUtils {
                 }
             }
             if (nullfiedIi != null) {
-                //this scenario is sr nullification with duplicate
+                // this scenario is sr nullification with duplicate
                 dupSRIi = nullifiedEntities.get(nullfiedIi);
             }
-          }
-          return dupSRIi;
-      }
-      /**
-       *
-       * @param <T> type
-       * @param poIi poIi
-       * @param srDTO srdto
-       * @return srdto
-       * @throws PAException e
-       */
-      public <T extends OrganizationalStructuralRole> T updateScoper(Ii poIi, T srDTO) throws PAException {
-          String poOrgIi = poIi.getExtension();
-          String paOrgAssignedId = srDTO.getOrganization().getIdentifier();
-          if (StringUtils.isNotEmpty(poOrgIi) && StringUtils.isNotEmpty(paOrgAssignedId)
-                  && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
-              //this means scoper is changed. check if exist in PA if not create and update the SR
-              Organization paOrg = getOrCreatePAOrganizationByIi(poIi);
-              srDTO.setOrganization(paOrg);
-          }
-          return srDTO;
-      }
+        }
+        return dupSRIi;
+    }
 
-     /**
-       *
-       * @param studyProtocolIi ii
-       * @param identifierType type
-       * @return str
-       * @throws PAException e
-       */
-      public String getStudyIdentifier(Ii studyProtocolIi, String identifierType) throws PAException {
-          String retIdentifier = "";
-          StudySiteDTO identifierDto = new StudySiteDTO();
-          identifierDto.setStudyProtocolIdentifier(studyProtocolIi);
-          if (identifierType.equalsIgnoreCase(PAConstants.LEAD_IDENTIFER_TYPE)) {
-              identifierDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-          } else {
-              identifierDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-              String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
-                      identifierType);
-              identifierDto.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
-                      getPoResearchOrganizationByEntityIdentifier(
-                      IiConverter.convertToPoOrganizationIi(poOrgId)));
-          }
-         StudySiteDTO spDto = PAUtil.getFirstObj(getStudySite(identifierDto, true));
-         if (spDto != null && !PAUtil.isStNull(spDto.getLocalStudyProtocolIdentifier())) {
-             retIdentifier = StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier());
-         }
-         return retIdentifier;
-      }
+    /**
+     *
+     * @param <T> type
+     * @param poIi poIi
+     * @param srDTO srdto
+     * @return srdto
+     * @throws PAException e
+     */
+    public <T extends OrganizationalStructuralRole> T updateScoper(Ii poIi, T srDTO) throws PAException {
+        String poOrgIi = poIi.getExtension();
+        String paOrgAssignedId = srDTO.getOrganization().getIdentifier();
+        if (StringUtils.isNotEmpty(poOrgIi) && StringUtils.isNotEmpty(paOrgAssignedId)
+                && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
+            // this means scoper is changed. check if exist in PA if not create and update the SR
+            Organization paOrg = getOrCreatePAOrganizationByIi(poIi);
+            srDTO.setOrganization(paOrg);
+        }
+        return srDTO;
+    }
+
+    /**
+     *
+     * @param studyProtocolIi ii
+     * @param identifierType type
+     * @return str
+     * @throws PAException e
+     */
+    public String getStudyIdentifier(Ii studyProtocolIi, String identifierType) throws PAException {
+        String retIdentifier = "";
+        StudySiteDTO identifierDto = new StudySiteDTO();
+        identifierDto.setStudyProtocolIdentifier(studyProtocolIi);
+        if (identifierType.equalsIgnoreCase(PAConstants.LEAD_IDENTIFER_TYPE)) {
+            identifierDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        } else {
+            identifierDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+            String poOrgId = PaRegistry.getOrganizationCorrelationService()
+                                       .getPOOrgIdentifierByIdentifierType(identifierType);
+            final Ii poOrgIi = IiConverter.convertToPoOrganizationIi(poOrgId);
+            identifierDto.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService()
+                                                              .getPoResearchOrganizationByEntityIdentifier(poOrgIi));
+        }
+        StudySiteDTO spDto = PAUtil.getFirstObj(getStudySite(identifierDto, true));
+        if (spDto != null && !PAUtil.isStNull(spDto.getLocalStudyProtocolIdentifier())) {
+            retIdentifier = StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier());
+        }
+        return retIdentifier;
+    }
 
       /**
        * Create or update of Identifiers.
        * @param identifierDTO study site identifier
        * @throws PAException on error
        */
-      @SuppressWarnings({"PMD" })
       public void manageStudyIdentifiers(StudySiteDTO identifierDTO) throws PAException {
           if (identifierDTO == null) {
               throw new PAException("Identifier DTO cannot be null");
@@ -1464,7 +1453,7 @@ public class PAServiceUtils {
           if (PAUtil.isCdNull(identifierDTO.getFunctionalCode())) {
               throw new PAException("Functional Code cannot be null");
           }
-          if (identifierDTO != null && PAUtil.isIiNotNull(identifierDTO.getResearchOrganizationIi())) {
+          if (PAUtil.isIiNotNull(identifierDTO.getResearchOrganizationIi())) {
               StructuralRole srRO = new CorrelationUtils().getStructuralRoleByIi(
                       identifierDTO.getResearchOrganizationIi());
               if (srRO == null) {
@@ -1497,7 +1486,7 @@ public class PAServiceUtils {
           } catch (TooManyResultsException e) {
               throw new PAException(" Found more than 1 record for a protocol id = "
                       + identifierDTO.getStudyProtocolIdentifier().getExtension() + " for a given status "
-                      + identifierDTO.getFunctionalCode().getCode());
+                      + identifierDTO.getFunctionalCode().getCode(), e);
           }
           StudySiteDTO studySiteDB = PAUtil.getFirstObj(spDtos);
           if (studySiteDB != null && PAUtil.isIiNotNull(studySiteDB.getIdentifier())) {
@@ -1508,32 +1497,30 @@ public class PAServiceUtils {
           createOrUpdate(newSiteDTOS, IiConverter.convertToStudySiteIi(null),
                       identifierDTO.getStudyProtocolIdentifier());
       }
-      /**
-       *
-       * @param entityIi ii
-       * @return s
-       */
 
-      public boolean isEntityCountryUSAOrCanada(Ii entityIi) {
-          boolean countryUsaOrCan = false;
-          if (PAUtil.isIiNull(entityIi)) {
-              return countryUsaOrCan;
-          }
-          String countryName = "";
-          if (IiConverter.ORG_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
-              OrganizationDTO orgDTO = getPOOrganizationEntity(entityIi);
-              countryName = getCountryName(orgDTO.getPostalAddress());
-          }
-          if (IiConverter.PERSON_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
-              PersonDTO perDTO = getPoPersonEntity(entityIi);
-              countryName = getCountryName(perDTO.getPostalAddress());
-          }
-          if (PAConstants.USA.equalsIgnoreCase(countryName)
-                  || PAConstants.CANADA.equalsIgnoreCase(countryName)) {
-              countryUsaOrCan = true;
-          }
-          return countryUsaOrCan;
-      }
+    /**
+     * @param entityIi ii
+     * @return s
+     */
+    public boolean isEntityCountryUSAOrCanada(Ii entityIi) {
+        boolean countryUsaOrCan = false;
+        if (PAUtil.isIiNull(entityIi)) {
+            return countryUsaOrCan;
+        }
+        String countryName = "";
+        if (IiConverter.ORG_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
+            OrganizationDTO orgDTO = getPOOrganizationEntity(entityIi);
+            countryName = getCountryName(orgDTO.getPostalAddress());
+        }
+        if (IiConverter.PERSON_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
+            PersonDTO perDTO = getPoPersonEntity(entityIi);
+            countryName = getCountryName(perDTO.getPostalAddress());
+        }
+        if (PAConstants.USA.equalsIgnoreCase(countryName) || PAConstants.CANADA.equalsIgnoreCase(countryName)) {
+            countryUsaOrCan = true;
+        }
+        return countryUsaOrCan;
+    }
 
     /**
      * @param orgDTO
@@ -1541,65 +1528,66 @@ public class PAServiceUtils {
     private String getCountryName(Ad postalAddress) {
         int partSize = postalAddress.getPart().size();
         String countryName = "";
-          AddressPartType type = null;
-          for (int k = 0; k < partSize; k++) {
-              type = postalAddress.getPart().get(k).getType();
-              if (type.name().equals("CNT")) {
-                  countryName = postalAddress.getPart()
-                          .get(k).getCode();
-              }
-          }
-          return countryName;
+        AddressPartType type = null;
+        for (int k = 0; k < partSize; k++) {
+            type = postalAddress.getPart().get(k).getType();
+            if (type.name().equals("CNT")) {
+                countryName = postalAddress.getPart().get(k).getCode();
+            }
+        }
+        return countryName;
     }
-      /**
-       *
-       * @param entityIi Ii
-       * @return poEntity
-       */
-      public OrganizationDTO getPOOrganizationEntity(Ii entityIi) {
-          OrganizationDTO poOrg = null;
-          try {
-              poOrg = PoRegistry.getOrganizationEntityService().
-                  getOrganization(IiConverter.convertToPoOrganizationIi(entityIi.getExtension()));
 
-          } catch (NullifiedEntityException e) {
-              poOrg = null;
-          } catch (PAException e) {
-              poOrg = null;
-          }
-          return poOrg;
-      }
-      /**
-       *
-       * @param entityIi Ii
-       * @return personDto
-       */
-      public PersonDTO getPoPersonEntity(Ii entityIi) {
-          PersonDTO poPerson = null;
-          try {
-              poPerson = PoRegistry.getPersonEntityService().getPerson(IiConverter.
-                         convertToPoPersonIi(entityIi.getExtension()));
+    /**
+     *
+     * @param entityIi Ii
+     * @return poEntity
+     */
+    public OrganizationDTO getPOOrganizationEntity(Ii entityIi) {
+        OrganizationDTO poOrg = null;
+        try {
+            poOrg = PoRegistry.getOrganizationEntityService()
+                              .getOrganization(IiConverter.convertToPoOrganizationIi(entityIi.getExtension()));
 
-              } catch (NullifiedEntityException e) {
-                  poPerson = null;
-              } catch (PAException e) {
-                  poPerson = null;
-              }
-          return poPerson;
-      }
-      /**
-       *
-       * @param entityIi ii
-       * @return name
-       */
-      public String getOrgName(Ii entityIi) {
-          OrganizationDTO orgDto = getPOOrganizationEntity(entityIi);
-          if (orgDto == null) {
-              return "No Org Found";
-          }
-          return EnOnConverter.convertEnOnToString(
-                  orgDto.getName());
-      }
+        } catch (NullifiedEntityException e) {
+            poOrg = null;
+        } catch (PAException e) {
+            poOrg = null;
+        }
+        return poOrg;
+    }
+
+    /**
+     *
+     * @param entityIi Ii
+     * @return personDto
+     */
+    public PersonDTO getPoPersonEntity(Ii entityIi) {
+        PersonDTO poPerson = null;
+        try {
+            poPerson = PoRegistry.getPersonEntityService()
+                                 .getPerson(IiConverter.convertToPoPersonIi(entityIi.getExtension()));
+
+        } catch (NullifiedEntityException e) {
+            poPerson = null;
+        } catch (PAException e) {
+            poPerson = null;
+        }
+        return poPerson;
+    }
+
+    /**
+     *
+     * @param entityIi ii
+     * @return name
+     */
+    public String getOrgName(Ii entityIi) {
+        OrganizationDTO orgDto = getPOOrganizationEntity(entityIi);
+        if (orgDto == null) {
+            return "No Org Found";
+        }
+        return EnOnConverter.convertEnOnToString(orgDto.getName());
+    }
 
       /**
        * Handle error message when nullified org exception happens.
@@ -1611,8 +1599,7 @@ public class PAServiceUtils {
           message.append(PAExceptionConstants.NULLIFIED_ORG);
           OrganizationDTO poOrg = null;
           try {
-              if (e.getNullifiedEntities() != null
-                      && !e.getNullifiedEntities().values().isEmpty()) {
+            if (e.getNullifiedEntities() != null && !e.getNullifiedEntities().values().isEmpty()) {
                   poOrg = PoRegistry.getOrganizationEntityService().
                   getOrganization((e.getNullifiedEntities().values().iterator().next()));
                   message.append(" , instead use ");
@@ -1667,6 +1654,5 @@ public class PAServiceUtils {
           }
           return null;
       }
-
 
 }

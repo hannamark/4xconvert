@@ -1,10 +1,7 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DiseaseAltername;
@@ -15,11 +12,15 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -28,12 +29,14 @@ import org.hibernate.Session;
  *
  */
 @Stateless
-@SuppressWarnings({"PMD.CyclomaticComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DiseaseAlternameBeanLocal
 extends AbstractBaseIsoService<DiseaseAlternameDTO, DiseaseAltername, DiseaseAlternameConverter>
 implements DiseaseAlternameServiceLocal , DiseaseAlternameServiceRemote {
+
+    private static final Logger LOG = Logger.getLogger(DiseaseAlternameBeanLocal.class);
+
     /**
      * @param ii index of the disease
      * @return list of alternate names for disease
@@ -57,7 +60,7 @@ implements DiseaseAlternameServiceLocal , DiseaseAlternameServiceRemote {
             + "join alt.disease dis "
             + "where dis.id = :diseaseId "
             + "order by alt.id ";
-        getLogger().info("query DiseaseAltername = " + hql + ".  ");
+        LOG.info("query DiseaseAltername = " + hql + ".  ");
 
         // step 2: construct query object
         query = session.createQuery(hql);

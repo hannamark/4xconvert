@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -32,133 +32,124 @@ import org.hibernate.Session;
  *
  */
 @Stateless
-@SuppressWarnings("PMD.CyclomaticComplexity")
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudySiteAccrualStatusBeanLocal implements StudySiteAccrualStatusServiceLocal {
- 
- private static final Logger LOG  = Logger.getLogger(StudySiteAccrualStatusBeanLocal.class);
- private static String errMsgMethodNotImplemented = "Method not yet implemented.";
 
-// Standard methods
-/**
- * @param ii index
- * @return StudySiteAccrualStatusDTO
- * @throws PAException PAException
- */
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-public StudySiteAccrualStatusDTO getStudySiteAccrualStatus(Ii ii) throws PAException {
-    LOG.error(errMsgMethodNotImplemented);
-    throw new PAException(errMsgMethodNotImplemented);
-}
+    private static final Logger LOG = Logger.getLogger(StudySiteAccrualStatusBeanLocal.class);
+    private static String errMsgMethodNotImplemented = "Method not yet implemented.";
 
-/**
- * @param dto StudySiteAccrualStatusDTO
- * @return StudySiteAccrualStatusDTO
- * @throws PAException PAException
- */
-public StudySiteAccrualStatusDTO createStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
-    if (!PAUtil.isIiNull(dto.getIdentifier())) {
-        String errMsg = " Existing StudySiteAccrualStatus objects cannot be modified.  Append new object instead. ";
-        LOG.error(errMsg);
-        throw new PAException(errMsg);
-    }
-    StudySiteAccrualStatusDTO resultDto = null;
-    Session session = null;
-    session = HibernateUtil.getCurrentSession();
-    StudySiteAccrualStatusDTO current = getCurrentStudySiteAccrualStatusByStudySite(dto.getStudySiteIi());
-    RecruitmentStatusCode oldCode = null;
-    Timestamp oldDate = null;
-    if (current != null) {
-        oldCode = RecruitmentStatusCode.getByCode(current.getStatusCode().getCode());
-        oldDate = TsConverter.convertToTimestamp(current.getStatusDate());
+    // Standard methods
+    /**
+     * @param ii index
+     * @return StudySiteAccrualStatusDTO
+     * @throws PAException PAException
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public StudySiteAccrualStatusDTO getStudySiteAccrualStatus(Ii ii) throws PAException {
+        LOG.error(errMsgMethodNotImplemented);
+        throw new PAException(errMsgMethodNotImplemented);
     }
 
-    RecruitmentStatusCode newCode = RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode());
-    Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
+    /**
+     * @param dto StudySiteAccrualStatusDTO
+     * @return StudySiteAccrualStatusDTO
+     * @throws PAException PAException
+     */
+    public StudySiteAccrualStatusDTO createStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
+        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+            String errMsg = " Existing StudySiteAccrualStatus objects cannot be modified.  Append new object instead. ";
+            LOG.error(errMsg);
+            throw new PAException(errMsg);
+        }
+        StudySiteAccrualStatusDTO resultDto = null;
+        Session session = null;
+        session = HibernateUtil.getCurrentSession();
+        StudySiteAccrualStatusDTO current = getCurrentStudySiteAccrualStatusByStudySite(dto.getStudySiteIi());
+        RecruitmentStatusCode oldCode = null;
+        Timestamp oldDate = null;
+        if (current != null) {
+            oldCode = RecruitmentStatusCode.getByCode(current.getStatusCode().getCode());
+            oldDate = TsConverter.convertToTimestamp(current.getStatusDate());
+        }
 
-    if (newCode == null) {
-        throw new PAException(" Study site accrual status must be set ");
-    }
-    if (newDate == null) {
-        throw new PAException(" Study site accrual status date must be set ");
-    }
-    if (!newCode.equals(oldCode) || !newDate.equals(oldDate)) {
-        StudySiteAccrualStatus bo = StudySiteAccrualStatusConverter.convertFromDtoToDomain(dto);
-        session.saveOrUpdate(bo);
-        resultDto = StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo);
-    }
-    return resultDto;
-}
+        RecruitmentStatusCode newCode = RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode());
+        Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
 
-/**
- * @param dto StudySiteAccrualStatusDTO
- * @return StudySiteAccrualStatusDTO
- * @throws PAException PAException
- */
-public StudySiteAccrualStatusDTO updateStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
-    LOG.error(errMsgMethodNotImplemented);
-    throw new PAException(errMsgMethodNotImplemented);
-}
-
-
-
-// Custom methods
-/**
- * @param studySiteIi id of Site
- * @return list StudySiteAccrualStatusDTO
- * @throws PAException on error
- */
-@SuppressWarnings("unchecked")
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi)
-throws PAException {
-    if (PAUtil.isIiNull(studySiteIi)) {
-        LOG.error(" Ii should not be null ");
-        throw new PAException(" Ii should not be null ");
+        if (newCode == null) {
+            throw new PAException(" Study site accrual status must be set ");
+        }
+        if (newDate == null) {
+            throw new PAException(" Study site accrual status date must be set ");
+        }
+        if (!newCode.equals(oldCode) || !newDate.equals(oldDate)) {
+            StudySiteAccrualStatus bo = StudySiteAccrualStatusConverter.convertFromDtoToDomain(dto);
+            session.saveOrUpdate(bo);
+            resultDto = StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo);
+        }
+        return resultDto;
     }
 
-    Session session = null;
-    List<StudySiteAccrualStatus> queryList = new ArrayList<StudySiteAccrualStatus>();
-    session = HibernateUtil.getCurrentSession();
-    Query query = null;
-
-    // step 1: form the hql
-    String hql = "select ssas "
-        + "from StudySiteAccrualStatus ssas "
-        + "join ssas.studySite sp "
-        + "where sp.id = :studySiteId "
-        + "order by ssas.id ";
-    LOG.info(" query StudySiteAccrualStatus = " + hql);
-
-    // step 2: construct query object
-    query = session.createQuery(hql);
-    query.setParameter("studySiteId", IiConverter.convertToLong(studySiteIi));
-
-    // step 3: query the result
-    queryList = query.list();
-    ArrayList<StudySiteAccrualStatusDTO> resultList = new ArrayList<StudySiteAccrualStatusDTO>();
-    for (StudySiteAccrualStatus bo : queryList) {
-        resultList.add(StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo));
+    /**
+     * @param dto StudySiteAccrualStatusDTO
+     * @return StudySiteAccrualStatusDTO
+     * @throws PAException PAException
+     */
+    public StudySiteAccrualStatusDTO updateStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
+        LOG.error(errMsgMethodNotImplemented);
+        throw new PAException(errMsgMethodNotImplemented);
     }
-    return resultList;
-}
 
-/**
- * @param studySiteIi Primary key assigned to a StudyProtocl.
- * @return StudySiteAccrualStatusDTO Current status.
- * @throws PAException Exception.
- */
-@TransactionAttribute(TransactionAttributeType.SUPPORTS) 
-public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(
-        Ii studySiteIi) throws PAException {
-    List<StudySiteAccrualStatusDTO> ssasList =
-            this.getStudySiteAccrualStatusByStudySite(studySiteIi);
-    StudySiteAccrualStatusDTO result = null;
-    if (!ssasList.isEmpty()) {
-        result = ssasList.get(ssasList.size() - 1);
+    // Custom methods
+    /**
+     * @param studySiteIi id of Site
+     * @return list StudySiteAccrualStatusDTO
+     * @throws PAException on error
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException {
+        if (PAUtil.isIiNull(studySiteIi)) {
+            LOG.error(" Ii should not be null ");
+            throw new PAException(" Ii should not be null ");
+        }
+
+        Session session = null;
+        List<StudySiteAccrualStatus> queryList = new ArrayList<StudySiteAccrualStatus>();
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
+
+        // step 1: form the hql
+        String hql = "select ssas " + "from StudySiteAccrualStatus ssas " + "join ssas.studySite sp "
+                + "where sp.id = :studySiteId " + "order by ssas.id ";
+        LOG.info(" query StudySiteAccrualStatus = " + hql);
+
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        query.setParameter("studySiteId", IiConverter.convertToLong(studySiteIi));
+
+        // step 3: query the result
+        queryList = query.list();
+        ArrayList<StudySiteAccrualStatusDTO> resultList = new ArrayList<StudySiteAccrualStatusDTO>();
+        for (StudySiteAccrualStatus bo : queryList) {
+            resultList.add(StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo));
+        }
+        return resultList;
     }
-    return result;
-}
+
+    /**
+     * @param studySiteIi Primary key assigned to a StudyProtocl.
+     * @return StudySiteAccrualStatusDTO Current status.
+     * @throws PAException Exception.
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException {
+        List<StudySiteAccrualStatusDTO> ssasList = this.getStudySiteAccrualStatusByStudySite(studySiteIi);
+        StudySiteAccrualStatusDTO result = null;
+        if (!ssasList.isEmpty()) {
+            result = ssasList.get(ssasList.size() - 1);
+        }
+        return result;
+    }
 
 }
