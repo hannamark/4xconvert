@@ -110,7 +110,6 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Harsha
  *
  */
-@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
 public class InboxProcessingAction extends ActionSupport implements ServletResponseAware {
     private static final long serialVersionUID = -2308994602660261367L;
     private List<StudyProtocolQueryDTO> records = null;

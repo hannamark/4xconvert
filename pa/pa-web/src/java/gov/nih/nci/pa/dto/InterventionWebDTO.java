@@ -83,7 +83,6 @@ package gov.nih.nci.pa.dto;
  * @author Hugh Reinhart
  * @since 11/01/2008
  */
-@SuppressWarnings({"PMD" })
 public class InterventionWebDTO {
     private String identifier;
     private String plannedActivityIdentifier;
@@ -94,9 +93,9 @@ public class InterventionWebDTO {
     private String type;
     private Boolean armAssignment;
     private String ctGovType;
-    
-  //DRUG & RADIATION Attribures
-    
+
+    //DRUG & RADIATION Attributes
+
     private String minDoseValue;
     private String maxDoseValue;
     private String doseUOM;
@@ -110,16 +109,16 @@ public class InterventionWebDTO {
     private String doseForm;
     private String doseFrequency;
     private String doseFrequencyCode;
-    
+
     private String approachSite;
     private String targetSite;
-    
-    
+
+
     //PLANNED PROCEDURE Attributes
     private String procedureName;
-    
-    
-    
+
+
+
     /**
      * @return the identifier
      */
@@ -230,7 +229,7 @@ public class InterventionWebDTO {
     }
     /**
      * @return the minDoseValue
-     */ 
+     */
     public String getMinDoseValue() {
       return minDoseValue;
     }
@@ -265,7 +264,7 @@ public class InterventionWebDTO {
       this.doseUOM = doseUOM;
      }
      /**
-      * @return the doseDurationValue 
+      * @return the doseDurationValue
       */
      public String getDoseDurationValue() {
        return doseDurationValue;
@@ -420,5 +419,5 @@ public class InterventionWebDTO {
      public void setDoseFrequencyCode(String doseFrequencyCode) {
        this.doseFrequencyCode = doseFrequencyCode;
      }
-    
+
 }

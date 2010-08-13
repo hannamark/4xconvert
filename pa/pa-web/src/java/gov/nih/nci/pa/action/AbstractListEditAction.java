@@ -110,7 +110,6 @@ import com.opensymphony.xwork2.Preparable;
  * @author Hugh Reinhart
  * @since 12/6/2008
  */
-@SuppressWarnings("PMD.TooManyFields")
 public abstract class AbstractListEditAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1234573645L;
 

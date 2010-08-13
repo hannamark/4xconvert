@@ -94,7 +94,6 @@ import java.util.List;
  *
  * @author kkanchinadam
  */
-@SuppressWarnings("PMD.TooManyFields")
 public abstract class AbstractTsrReportGenerator {
     private ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     private boolean proprietaryTrial;
@@ -138,9 +137,6 @@ public abstract class AbstractTsrReportGenerator {
         this.tsrErrorReport = tsrErrorReport;
     }
 
-    /**
-     *
-     */
     @SuppressWarnings("unused")
     private AbstractTsrReportGenerator() {
         super();

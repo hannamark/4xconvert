@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.dto;
 
@@ -10,7 +10,6 @@ import java.util.List;
  * @author Vrushali
  *
  */
-@SuppressWarnings({ "PMD.TooManyFields" })
 public class TrialDTO {
     private String accrualReportingMethodCode;
     private String assignedIdentifier; // used to store nci-accession number
@@ -51,7 +50,7 @@ public class TrialDTO {
     private List<TrialDocumentDTO> docDtos;
 
     /**
-     * 
+     *
      */
     public TrialDTO() {
         super();
@@ -502,5 +501,5 @@ public class TrialDTO {
      */
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
-    }       
+    }
 }

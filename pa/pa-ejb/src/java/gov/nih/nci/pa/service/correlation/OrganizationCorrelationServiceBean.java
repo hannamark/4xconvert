@@ -128,8 +128,6 @@ import org.hibernate.Session;
  * @author NAmiruddin
  *
  */
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", "PMD.CyclomaticComplexity",
-    "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(HibernateSessionInterceptor.class)
@@ -359,9 +357,9 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @return List org
      * @throws PAException e
      */
-    @SuppressWarnings({ "PMD.ConsecutiveLiteralAppends", "unchecked" })
-    public List<Organization> getOrganizationByStudySite(Long studyProtocolId ,
-            StudySiteFunctionalCode functionalCode) throws PAException {
+    @SuppressWarnings("unchecked")
+    public List<Organization> getOrganizationByStudySite(Long studyProtocolId, StudySiteFunctionalCode functionalCode)
+            throws PAException {
 
         Session session  = HibernateUtil.getCurrentSession();
         StringBuffer sb = new StringBuffer();
@@ -374,17 +372,14 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             sb.append(" join org.healthCareFacilities as orgRole  ");
         }
 
-        sb.append(" join org.researchOrganizations as orgRole  "
-                + " join orgRole.studySites as sps "
-                + " join sps.studyProtocol as sp "
-                + " where 1 = 1 and sp.id = " + studyProtocolId);
+        sb.append(" join org.researchOrganizations as orgRole join orgRole.studySites as sps "
+                + "join sps.studyProtocol as sp where 1 = 1 and sp.id = ");
+        sb.append(studyProtocolId);
         if (StudySiteFunctionalCode.TREATING_SITE.equals(functionalCode)) {
             sb.append(" and sps.functionalCode in ('" + StudySiteFunctionalCode.TREATING_SITE + "')");
         } else if (StudySiteFunctionalCode.COLLABORATORS.equals(functionalCode)) {
-            sb.append(" and sps.functionalCode in ("
-                    + "'" + StudySiteFunctionalCode.FUNDING_SOURCE + "',"
-                    + "'" + StudySiteFunctionalCode.LABORATORY + "',"
-                    + "'" + StudySiteFunctionalCode.AGENT_SOURCE + "')");
+            sb.append(" and sps.functionalCode in ('" + StudySiteFunctionalCode.FUNDING_SOURCE + "', '"
+                    + StudySiteFunctionalCode.LABORATORY + "', '" + StudySiteFunctionalCode.AGENT_SOURCE + "')");
         } else if (StudySiteFunctionalCode.LEAD_ORGANIZATION.equals(functionalCode)) {
             sb.append(" and sps.functionalCode in ('"
                     + StudySiteFunctionalCode.LEAD_ORGANIZATION + "')");
@@ -392,7 +387,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         List<Organization> queryList = new ArrayList<Organization>();
         Query query = null;
         query = session.createQuery(sb.toString());
-        //query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
         queryList = query.list();
         return queryList;
 

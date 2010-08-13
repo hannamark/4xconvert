@@ -105,8 +105,6 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author NAmiruddin
  *
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength" ,
-    "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class GeneralTrialDesignAction extends ActionSupport {
 
     private static final long serialVersionUID = -541776965053776382L;
@@ -203,7 +201,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
 
       return RESULT;
     }
-    @SuppressWarnings({"PMD.AvoidDeeplyNestedIfStmts" })
+
     private void enforceBusinessRules() {
       if (StringUtils.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
         addFieldError("gtdDTO.localProtocolIdentifier", getText("Organization Trial ID must be Entered"));

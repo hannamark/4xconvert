@@ -99,9 +99,9 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil.ValidDateFormat;
 
@@ -143,8 +143,6 @@ import org.apache.commons.lang.math.NumberUtils;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({  "PMD.TooManyMethods" , "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity",
-    "PMD.NPathComplexity" })
 public class PAUtil {
     private static final int MAXF = 1024;
     private static final String EXTN = "extn";

@@ -105,15 +105,12 @@ import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
  * @author Anupama Sharma
  *
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class TrialDescriptionAction extends ActionSupport {
 
     private static final long serialVersionUID = -263739685830642951L;
     private static final int PUBLIC_TITLE = 300;
     private static final int PUBLIC_DESCRIPTION = 5000;
     private static final String RESULT = "edit";
-
-
 
     private static final String MAX_LEN = "2000";
     private static final String MAX_LEN_OUTLINE = "32000";

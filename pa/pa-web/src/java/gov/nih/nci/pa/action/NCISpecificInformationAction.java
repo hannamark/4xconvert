@@ -112,7 +112,6 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author gnaveh
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
 public class NCISpecificInformationAction extends ActionSupport {
     private static final long serialVersionUID = -5560377425534113809L;
     private static final String DISPLAY_ORG_FLD = "displayOrgFld";

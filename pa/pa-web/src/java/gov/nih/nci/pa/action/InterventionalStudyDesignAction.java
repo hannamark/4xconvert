@@ -112,12 +112,7 @@ import com.opensymphony.xwork2.ActionSupport;
 /**
  * @author Kalpana Guthikonda
  * @since 10/20/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength",
-    "PMD.NPathComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class InterventionalStudyDesignAction extends ActionSupport {
 
     private static final long serialVersionUID = -8139821069851279621L;
@@ -268,9 +263,7 @@ public class InterventionalStudyDesignAction extends ActionSupport {
      * @param ispDTO InterventionalStudyProtocolDTO
      * @return DesignDetailsWebDTO
      */
-    @SuppressWarnings({"PMD.AvoidDeeplyNestedIfStmts" })
-    private ISDesignDetailsWebDTO setDesignDetailsDTO(
-            InterventionalStudyProtocolDTO ispDTO) {
+    private ISDesignDetailsWebDTO setDesignDetailsDTO(InterventionalStudyProtocolDTO ispDTO) {
         ISDesignDetailsWebDTO dto = new ISDesignDetailsWebDTO();
         if (ispDTO != null) {
             if (ispDTO.getPhaseCode() != null) {
@@ -432,46 +425,38 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         }
         return OUTCOME;
     }
-    @SuppressWarnings({"PMD" })
+
     private void updateBooleanValues() {
-      if (webDTO.getPrimaryIndicator().equalsIgnoreCase("Yes")) {
-        webDTO.setPrimaryIndicator("true");
-      } else {
-        webDTO.setPrimaryIndicator(FALSE);
-      }
-      if (webDTO.getSafetyIndicator().equalsIgnoreCase("Yes")) {
-        webDTO.setSafetyIndicator("true");
-      } else {
-        webDTO.setSafetyIndicator(FALSE);
-      }
+        if (webDTO.getPrimaryIndicator().equalsIgnoreCase("Yes")) {
+            webDTO.setPrimaryIndicator("true");
+        } else {
+            webDTO.setPrimaryIndicator(FALSE);
+        }
+        if (webDTO.getSafetyIndicator().equalsIgnoreCase("Yes")) {
+            webDTO.setSafetyIndicator("true");
+        } else {
+            webDTO.setSafetyIndicator(FALSE);
+        }
     }
 
     private void enforceOutcomeBusinessRules() {
         if (StringUtils.isEmpty(webDTO.getPrimaryIndicator())) {
-            addFieldError("webDTO.primaryIndicator",
-                    getText("error.outcome.primary"));
+            addFieldError("webDTO.primaryIndicator", getText("error.outcome.primary"));
         }
         if (StringUtils.isEmpty(webDTO.getName())) {
-            addFieldError("webDTO.name",
-                    getText("error.outcome.description"));
+            addFieldError("webDTO.name", getText("error.outcome.description"));
         }
-        if (StringUtils.isNotEmpty(webDTO.getName())
-            && webDTO.getName().length() > MAXIMUM_CHAR_OUTCOME) {
-          addFieldError("webDTO.name",
-              getText("error.outcome.maximumChar"));
+        if (StringUtils.isNotEmpty(webDTO.getName()) && webDTO.getName().length() > MAXIMUM_CHAR_OUTCOME) {
+            addFieldError("webDTO.name", getText("error.outcome.maximumChar"));
         }
         if (StringUtils.isEmpty(webDTO.getTimeFrame())) {
-            addFieldError("webDTO.timeFrame",
-                    getText("error.outcome.timeFrame"));
+            addFieldError("webDTO.timeFrame", getText("error.outcome.timeFrame"));
         }
-        if (StringUtils.isNotEmpty(webDTO.getTimeFrame())
-            && webDTO.getTimeFrame().length() > MAXIMUM_CHAR_OUTCOME) {
-          addFieldError("webDTO.timeFrame",
-              getText("error.outcome.maximumChar"));
+        if (StringUtils.isNotEmpty(webDTO.getTimeFrame()) && webDTO.getTimeFrame().length() > MAXIMUM_CHAR_OUTCOME) {
+            addFieldError("webDTO.timeFrame", getText("error.outcome.maximumChar"));
         }
         if (StringUtils.isEmpty(webDTO.getSafetyIndicator())) {
-            addFieldError("webDTO.safetyIndicator",
-                    getText("error.outcome.safety"));
+            addFieldError("webDTO.safetyIndicator", getText("error.outcome.safety"));
         }
     }
 
@@ -479,7 +464,6 @@ public class InterventionalStudyDesignAction extends ActionSupport {
      * @return result
      */
     public String outcomedelete()  {
-
         try {
             PaRegistry.getStudyOutcomeMeasurService().delete(IiConverter.convertToIi(id));
             outcomeQuery();
@@ -489,9 +473,8 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         }
         return OUTCOME;
     }
-    @SuppressWarnings({"PMD" })
-    private ISDesignDetailsWebDTO setOutcomeMeasureDTO(
-            StudyOutcomeMeasureDTO dto) {
+
+    private ISDesignDetailsWebDTO setOutcomeMeasureDTO(StudyOutcomeMeasureDTO dto) {
         ISDesignDetailsWebDTO webdto = new ISDesignDetailsWebDTO();
         if (dto != null) {
             if (dto.getPrimaryIndicator().getValue() != null) {

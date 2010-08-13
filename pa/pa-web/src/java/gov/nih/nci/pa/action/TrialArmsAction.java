@@ -114,11 +114,7 @@ import com.opensymphony.xwork2.Preparable;
 /**
 * @author Hugh Reinhart
 * @since 10/31/2008
-* copyright NCI 2008.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
 */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class TrialArmsAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1884666890L;
 

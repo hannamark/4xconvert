@@ -91,11 +91,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 *
 * @author Kalpana Guthikonda
 * @since 10/23/2008
-* copyright NCI 2008.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
 */
-@SuppressWarnings({"PMD.NPathComplexity" , "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
 public class ObservationalStudyProtocolConverter extends StudyProtocolConverter {
 
     /**

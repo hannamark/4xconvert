@@ -102,11 +102,7 @@ import com.opensymphony.xwork2.ActionSupport;
 /**
 * @author Hugh Reinhart
 * @since 12/06/2008
-* copyright NCI 2008.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
 */
-@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class PopUpDiseaseDetailsAction  extends ActionSupport {
     private static final long serialVersionUID = 8117838321L;
 
@@ -119,6 +115,7 @@ public class PopUpDiseaseDetailsAction  extends ActionSupport {
      * @throws Exception exception
      */
     @Override
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public String execute() throws Exception {
         String diseaseIdentifier = ServletActionContext.getRequest().getParameter("diseaseId");
         Ii diseaseIi = IiConverter.convertToIi(diseaseIdentifier);

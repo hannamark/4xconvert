@@ -89,11 +89,7 @@ import java.util.List;
  * this class holds the general information of protocol.
  * @author Naveen Amiruddin
  * @since 10/20/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.BooleanGetMethodName" })
 public class GeneralTrialDesignWebDTO {
 
     private String acronym;

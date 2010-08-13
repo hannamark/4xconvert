@@ -82,17 +82,18 @@ package gov.nih.nci.pa.iso.util;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.pa.enums.CodedEnum;
-import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author lhebel
  *
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public class DSetEnumConverter {
+
     /**
      * @param <T> the target enum type
      * @param ctype the CSV enum type
@@ -101,22 +102,14 @@ public class DSetEnumConverter {
      */
     public static <T extends Enum<T> & CodedEnum<?>> DSet<Cd> convertCsvToDSet(Class<T> ctype, String csv) {
         DSet<Cd> dset = new DSet<Cd>();
-        if (!ISOUtil.isEmpty(csv)) {
+        if (StringUtils.isNotBlank(csv)) {
             Set<Cd> tSet = new HashSet<Cd>();
             String[] tokens = csv.split("[,]");
             for (String token : tokens) {
-
-                // Commas with nothing between them
-                if (token == null) {
+                if (StringUtils.isBlank(token)) {
                     continue;
                 }
-                
-                // Strip leading and trailing spaces to see if anything is left
                 String txt = token.trim();
-                if (txt == null || txt.length() == 0) {
-                    continue;
-                }
-
                 // Find the Enum value and if it's not in the list, skip it and go on
                 T value = null;
                 try {

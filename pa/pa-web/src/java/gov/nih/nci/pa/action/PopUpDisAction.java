@@ -101,11 +101,7 @@ import com.opensymphony.xwork2.ActionSupport;
 /**
 * @author Hugh Reinhart
 * @since 11/31/2008
-* copyright NCI 2008.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
 */
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public class PopUpDisAction extends ActionSupport {
     private static final long serialVersionUID = 8987838321L;
 

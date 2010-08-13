@@ -82,43 +82,40 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 
 /**
- * 
  * @author Anupama sharma
  * @since 07/29/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class RegulatoryAuthorityDTO extends BaseDTO {
     private static final long serialVersionUID = 6820293873809276285L;
-    private St authorityName; 
+    private St authorityName;
     private Ii countryIdentifier;
+
     /**
      * @return the authorityName
      */
     public St getAuthorityName() {
         return authorityName;
     }
+
     /**
      * @param authorityName the authorityName to set
      */
     public void setAuthorityName(St authorityName) {
         this.authorityName = authorityName;
     }
+
     /**
      * @return the countryIdentifier
      */
     public Ii getCountryIdentifier() {
         return countryIdentifier;
     }
+
     /**
      * @param countryIdentifier the countryIdentifier to set
      */
     public void setCountryIdentifier(Ii countryIdentifier) {
         this.countryIdentifier = countryIdentifier;
     }
-        
-    
 
 }

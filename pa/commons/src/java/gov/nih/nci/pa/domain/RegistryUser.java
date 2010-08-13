@@ -98,9 +98,8 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name =  "REGISTRY_USER")
-@SuppressWarnings({"PMD.TooManyFields" })
-public class RegistryUser extends  AbstractEntity {
+@Table(name = "REGISTRY_USER")
+public class RegistryUser extends AbstractEntity {
     private static final long serialVersionUID = -6519568778371398209L;
     private String firstName;
     private String lastName;
@@ -128,6 +127,7 @@ public class RegistryUser extends  AbstractEntity {
     public Long getCsmUserId() {
         return csmUserId;
     }
+
     /**
      * @param csmUserId the csmUserId to set
      */
@@ -142,12 +142,14 @@ public class RegistryUser extends  AbstractEntity {
     public String getFirstName() {
         return firstName;
     }
+
     /**
      * @param firstName the firstName to set
      */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+
     /**
      * @return the lastName
      */
@@ -155,12 +157,14 @@ public class RegistryUser extends  AbstractEntity {
     public String getLastName() {
         return lastName;
     }
+
     /**
      * @param lastName the lastName to set
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
     /**
      * @return the middleName
      */
@@ -168,12 +172,14 @@ public class RegistryUser extends  AbstractEntity {
     public String getMiddleName() {
         return middleName;
     }
+
     /**
      * @param middleName the middleName to set
      */
     public void setMiddleName(String middleName) {
         this.middleName = middleName;
     }
+
     /**
      * @return the addressLine
      */
@@ -181,12 +187,14 @@ public class RegistryUser extends  AbstractEntity {
     public String getAddressLine() {
         return addressLine;
     }
+
     /**
      * @param addressLine the addressLine to set
      */
     public void setAddressLine(String addressLine) {
         this.addressLine = addressLine;
     }
+
     /**
      * @return the city
      */
@@ -194,12 +202,14 @@ public class RegistryUser extends  AbstractEntity {
     public String getCity() {
         return city;
     }
+
     /**
      * @param city the city to set
      */
     public void setCity(String city) {
         this.city = city;
     }
+
     /**
      * @return the state
      */
@@ -207,12 +217,14 @@ public class RegistryUser extends  AbstractEntity {
     public String getState() {
         return state;
     }
+
     /**
      * @param state the state to set
      */
     public void setState(String state) {
         this.state = state;
     }
+
     /**
      * @return the postalCode
      */
@@ -220,12 +232,14 @@ public class RegistryUser extends  AbstractEntity {
     public String getPostalCode() {
         return postalCode;
     }
+
     /**
      * @param postalCode the postalCode to set
      */
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
     }
+
     /**
      * @return the country
      */
@@ -233,12 +247,14 @@ public class RegistryUser extends  AbstractEntity {
     public String getCountry() {
         return country;
     }
+
     /**
      * @param country the country to set
      */
     public void setCountry(String country) {
         this.country = country;
     }
+
     /**
      * @return the phone
      */
@@ -246,12 +262,14 @@ public class RegistryUser extends  AbstractEntity {
     public String getPhone() {
         return phone;
     }
+
     /**
      * @param phone the phone to set
      */
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
     /**
      * @return the affiliateOrg
      */
@@ -259,12 +277,14 @@ public class RegistryUser extends  AbstractEntity {
     public String getAffiliateOrg() {
         return affiliateOrg;
     }
+
     /**
      * @param affiliateOrg the affiliateOrg to set
      */
     public void setAffiliateOrg(String affiliateOrg) {
         this.affiliateOrg = affiliateOrg;
     }
+
     /**
      * @return the prsOrgName
      */
@@ -272,12 +292,14 @@ public class RegistryUser extends  AbstractEntity {
     public String getPrsOrgName() {
         return prsOrgName;
     }
+
     /**
      * @param prsOrgName the prsOrgName to set
      */
     public void setPrsOrgName(String prsOrgName) {
         this.prsOrgName = prsOrgName;
     }
+
     /**
      * @return the poOrganizationId
      */
@@ -285,12 +307,14 @@ public class RegistryUser extends  AbstractEntity {
     public Long getPoOrganizationId() {
         return poOrganizationId;
     }
+
     /**
      * @param poOrganizationId the poOrganizationId to set
      */
     public void setPoOrganizationId(Long poOrganizationId) {
         this.poOrganizationId = poOrganizationId;
     }
+
     /**
      * @return the poPersonId
      */
@@ -298,6 +322,7 @@ public class RegistryUser extends  AbstractEntity {
     public Long getPoPersonId() {
         return poPersonId;
     }
+
     /**
      * @param poPersonId the poPersonId to set
      */
@@ -324,9 +349,8 @@ public class RegistryUser extends  AbstractEntity {
      * @return the studyProtocols
      */
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "STUDY_OWNER",
-               joinColumns = @JoinColumn(name = "USER_ID"),
-               inverseJoinColumns = @JoinColumn(name = "STUDY_ID"))
+    @JoinTable(name = "STUDY_OWNER", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(
+            name = "STUDY_ID"))
     public Set<StudyProtocol> getStudyProtocols() {
         return studyProtocols;
     }

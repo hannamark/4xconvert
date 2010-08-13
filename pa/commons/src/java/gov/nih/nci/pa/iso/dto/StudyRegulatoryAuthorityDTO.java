@@ -81,24 +81,21 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.iso21090.Ii;
 
 /**
- * 
+ *
  * @author Harsha
  * @since 08/05/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class StudyRegulatoryAuthorityDTO extends StudyDTO {
     private static final long serialVersionUID = 6820293873809276285L;
     private Ii regulatoryAuthorityIdentifier;
-        
+
     /**
      * @return the regulatoryAuthorityIdentifier
      */
     public Ii getRegulatoryAuthorityIdentifier() {
         return regulatoryAuthorityIdentifier;
     }
+
     /**
      * @param regulatoryAuthorityIdentifier the regulatoryAuthorityId to set
      */

@@ -99,7 +99,6 @@ import java.io.Serializable;
  * @author Hugh Reinhart
  * @author Naveen Amiruddin
  */
-@SuppressWarnings({ "PMD.TooManyFields" })
 public class StudyProtocolQueryCriteria implements Serializable {
     static final long serialVersionUID = 252345L;
 

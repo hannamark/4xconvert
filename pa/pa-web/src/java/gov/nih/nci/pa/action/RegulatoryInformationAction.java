@@ -106,16 +106,12 @@ import com.opensymphony.xwork2.ActionSupport;
  *        holder, NCI.
  *
  */
-@SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.CyclomaticComplexity" })
 public class RegulatoryInformationAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
-    // private static final String VIEW_PAGE = "view_page";
-   // private StudyProtocolDTO ispDTO = new StudyProtocolDTO();
+
     private List<CountryRegAuthorityDTO> countryList = new ArrayList<CountryRegAuthorityDTO>();
     private String lst = null;
-    //private String selectedAuthOrg = null;
     private RegulatoryAuthorityWebDTO webDTO = new RegulatoryAuthorityWebDTO();
-    //
     private List<RegulatoryAuthOrgDTO> regIdAuthOrgList = new ArrayList<RegulatoryAuthOrgDTO>();
     private String selectedRegAuth = null;
 
@@ -167,7 +163,7 @@ public class RegulatoryInformationAction extends ActionSupport {
             PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
             // Update StudyRegulatoryAuthority
                 StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService()
-                            .getCurrentByStudyProtocol(studyProtocolIi); 
+                            .getCurrentByStudyProtocol(studyProtocolIi);
                 StudyRegulatoryAuthorityDTO sraDTO = new StudyRegulatoryAuthorityDTO();
                 sraDTO.setStudyProtocolIdentifier(studyProtocolIi);
                 sraDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(selectedRegAuth));
@@ -177,7 +173,7 @@ public class RegulatoryInformationAction extends ActionSupport {
                     sraFromDatabaseDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(selectedRegAuth));
                     PaRegistry.getStudyRegulatoryAuthorityService().update(sraFromDatabaseDTO);
                 }
-             
+
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             return query();
         } catch (PAException e) {
@@ -194,7 +190,7 @@ public class RegulatoryInformationAction extends ActionSupport {
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
-            StudyRegulatoryAuthorityDTO authorityDTO = 
+            StudyRegulatoryAuthorityDTO authorityDTO =
                             PaRegistry.getStudyRegulatoryAuthorityService().getCurrentByStudyProtocol(studyProtocolIi);
             //on error page if country and reg auth are chosen
             if (getSelectedRegAuth() != null) {
@@ -204,7 +200,7 @@ public class RegulatoryInformationAction extends ActionSupport {
             }
             countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
                 if (authorityDTO != null) { // load values from database
-                   
+
                     StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
                     if (spDTO.getSection801Indicator().getValue() != null) {
                         webDTO.setSection801Indicator(BlConverter.convertToString(spDTO.getSection801Indicator()));
@@ -221,7 +217,7 @@ public class RegulatoryInformationAction extends ActionSupport {
                         webDTO.setDataMonitoringIndicator((BlConverter.convertToString(spDTO
                             .getDataMonitoringCommitteeAppointedIndicator())));
                     }
-                   StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = 
+                   StudyRegulatoryAuthorityDTO sraFromDatabaseDTO =
                         PaRegistry.getStudyRegulatoryAuthorityService().getCurrentByStudyProtocol(studyProtocolIi);
                   if (sraFromDatabaseDTO != null) {
                     Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityIdentifier().getExtension());
@@ -231,9 +227,9 @@ public class RegulatoryInformationAction extends ActionSupport {
                     regIdAuthOrgList = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityNameId(
                                         Long.valueOf(regInfo.get(1).toString()));
                     setSelectedRegAuth(regInfo.get(0).toString());
-                } 
+                }
              }
-           
+
         } catch (PAException e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -306,8 +302,6 @@ public class RegulatoryInformationAction extends ActionSupport {
     public void setLst(String lst) {
         this.lst = lst;
     }
-
-
 
     /**
      * @return the webDTO

@@ -152,11 +152,8 @@ import com.opensymphony.xwork2.Preparable;
  * Action class for viewing and editing the participating organizations.
  *
  * @author Hugh Reinhart, Harsha
- * @since 08/20/2008 copyright NCI 2007. All rights reserved. This code may not be used without the express written
- *        permission of the copyright holder, NCI.
+ * @since 08/20/2008
  */
-@SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity",
-        "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.NPathComplexity", "PMD.InefficientStringBuffering" })
 public class ParticipatingOrganizationsAction extends ActionSupport implements Preparable {
     private static final String REC_STATUS_DATE = "recStatusDate";
     private static final long serialVersionUID = 123412653L;
@@ -194,7 +191,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private Long studySiteIdentifier;
     private String programCode;
 
-    //
     private static final String DISPLAY_SP_CONTACTS = "display_StudyPartipants_Contacts";
     private static final String DISPLAY_PRIM_CONTACTS = "display_primContacts";
     private static final String DISPLAY_SPART_CONTACTS = "display_spContacts";
@@ -535,7 +531,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 for (PaPersonDTO per : primInvresults) {
                     String fullName = per.getFullName() != null ? per.getFullName() : "";
                     String status = per.getStatusCode() != null ? per.getStatusCode().getCode() : "";
-                    primContactList.append(stStartB + fullName + stDash + status + " ]");
+                    primContactList.append(stStartB).append(fullName).append(stDash).append(status).append(" ]");
                 }
             }
             //check if primary contact is title
@@ -548,13 +544,16 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                         siteConDto = cDto;
                     }
                 }
-                if (siteConDto != null && !PAUtil.isIiNull(siteConDto.getOrganizationalContactIi())) {
+                if (!PAUtil.isIiNull(siteConDto.getOrganizationalContactIi())) {
                     try {
                         PAContactDTO paDto = correlationUtils.getContactByPAOrganizationalContactId((
                             Long.valueOf(siteConDto.getOrganizationalContactIi().getExtension())));
                         if (paDto.getTitle() != null)  {
-                            primContactList.append(stStartB + paDto.getTitle() + stDash
-                                    + StConverter.convertToString(siteConDto.getStatusCode().getDisplayName()) + " ]");
+                            primContactList.append(stStartB).append(paDto.getTitle()).append(stDash);
+                            String statusCodeDispName =
+                                StConverter.convertToString(siteConDto.getStatusCode().getDisplayName());
+                            primContactList.append(statusCodeDispName);
+                            primContactList.append(" ]");
                         }
                     } catch (NullifiedRoleException e) {
                         LOG.error("NullifiedRoleException while getting site contact Info" + e.getMessage());

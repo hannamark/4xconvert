@@ -316,7 +316,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="208">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/pa-web/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/pa-web/pmd.xml"/>

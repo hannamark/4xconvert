@@ -88,7 +88,6 @@ import javax.persistence.MappedSuperclass;
  * @since 05/22/2008
  */
 @MappedSuperclass
-@SuppressWarnings("PMD")
 public abstract class PersonFunctionalRole extends FunctionalRole {
 
     private static final long serialVersionUID = 7343588759906574065L;
@@ -104,6 +103,7 @@ public abstract class PersonFunctionalRole extends FunctionalRole {
     public ClinicalResearchStaff getClinicalResearchStaff() {
         return clinicalResearchStaff;
     }
+
     /**
      *
      * @param clinicalResearchStaff ClinicalResearchStaff

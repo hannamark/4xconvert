@@ -106,16 +106,12 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
 /**
- * This action class manages the Organization Geenric contact(s).
+ * This action class manages the Organization Generic contact(s).
  *
  * @author Anupama Sharma
  *
  */
-@SuppressWarnings({ "PMD.NPathComplexity", "PMD.CyclomaticComplexity" })
 public class OrganizationGenericContactAction extends ActionSupport implements Preparable {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
     private List<PAOrganizationalContactDTO> orgContactList = new ArrayList<PAOrganizationalContactDTO>();
     private String title;
@@ -183,11 +179,10 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
         }
         return SUCCESS;
     }
+
     /**
-     *
      * @return s
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String create() {
         String email = ServletActionContext.getRequest().getParameter("email");
         String phone = ServletActionContext.getRequest().getParameter("phone");

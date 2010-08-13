@@ -92,19 +92,15 @@ import gov.nih.nci.iso21090.Ts;
  * StudyProtocolDTO for transferring Study Protocol object .
  * @author Naveen Amiruddin
  * @since 08/22/2008
- 
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
-    
+
     private static final long serialVersionUID = 7235772554482606133L;
     private St acronym;
     private Cd accrualReportingMethodCode;
     //TODO - as part of PO-2434 this should be moved to the AbstractStudyProtocolDTO
     //once the AbstractStudyProtocolDTO owns the SecondaryIdentifiers.
-    private DSet<Ii> secondaryIdentifiers; 
+    private DSet<Ii> secondaryIdentifiers;
     private Bl expandedAccessIndicator;
     private Bl reviewBoardApprovalRequiredIndicator;
     private St publicDescription;
@@ -120,9 +116,9 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Cd amendmentReasonCode;
     private Int submissionNumber;
     private Ivl<Int> targetAccrualNumber;
-    
+
     /**
-     * 
+     *
      * @return acronym
      */
     public St getAcronym() {
@@ -130,7 +126,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     }
 
     /**
-     * 
+     *
      * @param acronym acronym
      */
     public void setAcronym(St acronym) {
@@ -139,7 +135,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
 
 
     /**
-     * 
+     *
      * @return accrualReportingMethodCode
      */
     public Cd getAccrualReportingMethodCode() {
@@ -147,7 +143,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     }
 
     /**
-     * 
+     *
      * @param accrualReportingMethodCode accrualReportingMethodCode
      */
     public void setAccrualReportingMethodCode(Cd accrualReportingMethodCode) {
@@ -155,7 +151,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     }
 
     /**
-     * 
+     *
      * @return expandedAccessIndicator
      */
     public Bl getExpandedAccessIndicator() {
@@ -163,7 +159,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     }
 
     /**
-     * 
+     *
      * @param expandedAccessIndicator expandedAccessIndicator
      */
     public void setExpandedAccessIndicator(Bl expandedAccessIndicator) {
@@ -181,13 +177,12 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     /**
      * @param reviewBoardApprovalRequiredIndicator the reviewBoardApprovalRequiredIndicator to set
      */
-    public void setReviewBoardApprovalRequiredIndicator(
-            Bl reviewBoardApprovalRequiredIndicator) {
+    public void setReviewBoardApprovalRequiredIndicator(Bl reviewBoardApprovalRequiredIndicator) {
         this.reviewBoardApprovalRequiredIndicator = reviewBoardApprovalRequiredIndicator;
     }
 
     /**
-     * 
+     *
      * @return publicDescription
      */
     public St getPublicDescription() {
@@ -195,7 +190,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     }
 
     /**
-     * 
+     *
      * @param publicDescription publicDescription
      */
     public void setPublicDescription(St publicDescription) {
@@ -203,7 +198,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     }
 
     /**
-     * 
+     *
      * @return publicTitle
      */
     public St getPublicTitle() {
@@ -211,7 +206,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     }
 
     /**
-     * 
+     *
      * @param publicTitle publicTitle
      */
     public void setPublicTitle(St publicTitle) {
@@ -219,7 +214,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     }
 
     /**
-     * 
+     *
      * @return recordVerificationDate
      */
     public Ts getRecordVerificationDate() {
@@ -227,7 +222,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     }
 
     /**
-     * 
+     *
      * @param recordVerificationDate recordVerificationDate
      */
     public void setRecordVerificationDate(Ts recordVerificationDate) {
@@ -235,7 +230,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     }
 
     /**
-     * 
+     *
      * @return scientificDescription
      */
     public St getScientificDescription() {
@@ -243,7 +238,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     }
 
     /**
-     * 
+     *
      * @param scientificDescription scientificDescription
      */
     public void setScientificDescription(St scientificDescription) {
@@ -278,118 +273,116 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
         this.acceptHealthyVolunteersIndicator = acceptHealthyVolunteersIndicator;
     }
 
-/**
- * @return the statusCode
- */
-public Cd getStatusCode() {
-return statusCode;
-}
+    /**
+     * @return the statusCode
+     */
+    public Cd getStatusCode() {
+        return statusCode;
+    }
 
-/**
- * @param statusCode the statusCode to set
- */
-public void setStatusCode(Cd statusCode) {
-this.statusCode = statusCode;
-}
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(Cd statusCode) {
+        this.statusCode = statusCode;
+    }
 
-/**
- * @return the statusDate
- */
-public Ts getStatusDate() {
-return statusDate;
-}
+    /**
+     * @return the statusDate
+     */
+    public Ts getStatusDate() {
+        return statusDate;
+    }
 
-/**
- * @param statusDate the statusDate to set
- */
-public void setStatusDate(Ts statusDate) {
-this.statusDate = statusDate;
-}
+    /**
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(Ts statusDate) {
+        this.statusDate = statusDate;
+    }
 
-/**
- * @return the amendmentNumber
- */
-public St getAmendmentNumber() {
-return amendmentNumber;
-}
+    /**
+     * @return the amendmentNumber
+     */
+    public St getAmendmentNumber() {
+        return amendmentNumber;
+    }
 
-/**
- * @param amendmentNumber the amendmentNumber to set
- */
-public void setAmendmentNumber(St amendmentNumber) {
-this.amendmentNumber = amendmentNumber;
-}
+    /**
+     * @param amendmentNumber the amendmentNumber to set
+     */
+    public void setAmendmentNumber(St amendmentNumber) {
+        this.amendmentNumber = amendmentNumber;
+    }
 
-/**
- * @return the amendmentDate
- */
-public Ts getAmendmentDate() {
-return amendmentDate;
-}
+    /**
+     * @return the amendmentDate
+     */
+    public Ts getAmendmentDate() {
+        return amendmentDate;
+    }
 
-/**
- * @param amendmentDate the amendmentDate to set
- */
-public void setAmendmentDate(Ts amendmentDate) {
-this.amendmentDate = amendmentDate;
-}
+    /**
+     * @param amendmentDate the amendmentDate to set
+     */
+    public void setAmendmentDate(Ts amendmentDate) {
+        this.amendmentDate = amendmentDate;
+    }
 
-/**
- * @return the amendmentReasonCode
- */
-public Cd getAmendmentReasonCode() {
-return amendmentReasonCode;
-}
+    /**
+     * @return the amendmentReasonCode
+     */
+    public Cd getAmendmentReasonCode() {
+        return amendmentReasonCode;
+    }
 
-/**
- * @param amendmentReasonCode the amendmentReasonCode to set
- */
-public void setAmendmentReasonCode(Cd amendmentReasonCode) {
-this.amendmentReasonCode = amendmentReasonCode;
-}
+    /**
+     * @param amendmentReasonCode the amendmentReasonCode to set
+     */
+    public void setAmendmentReasonCode(Cd amendmentReasonCode) {
+        this.amendmentReasonCode = amendmentReasonCode;
+    }
 
-/**
- * @return the submissionNumber
- */
-public Int getSubmissionNumber() {
-return submissionNumber;
-}
+    /**
+     * @return the submissionNumber
+     */
+    public Int getSubmissionNumber() {
+        return submissionNumber;
+    }
 
-/**
- * @param submissionNumber the submissionNumber to set
- */
-public void setSubmissionNumber(Int submissionNumber) {
-this.submissionNumber = submissionNumber;
-}
+    /**
+     * @param submissionNumber the submissionNumber to set
+     */
+    public void setSubmissionNumber(Int submissionNumber) {
+        this.submissionNumber = submissionNumber;
+    }
 
-/**
- * @return the targetAccrualNumber
- */
-public Ivl<Int> getTargetAccrualNumber() {
-    return targetAccrualNumber;
-}
+    /**
+     * @return the targetAccrualNumber
+     */
+    public Ivl<Int> getTargetAccrualNumber() {
+        return targetAccrualNumber;
+    }
 
-/**
- * @param targetAccrualNumber the targetAccrualNumber to set
- */
-public void setTargetAccrualNumber(Ivl<Int> targetAccrualNumber) {
-    this.targetAccrualNumber = targetAccrualNumber;
-}
+    /**
+     * @param targetAccrualNumber the targetAccrualNumber to set
+     */
+    public void setTargetAccrualNumber(Ivl<Int> targetAccrualNumber) {
+        this.targetAccrualNumber = targetAccrualNumber;
+    }
 
-/**
- * @return the secondaryIdentifiers
- */
-public DSet<Ii> getSecondaryIdentifiers() {
-    return secondaryIdentifiers;
-}
+    /**
+     * @return the secondaryIdentifiers
+     */
+    public DSet<Ii> getSecondaryIdentifiers() {
+        return secondaryIdentifiers;
+    }
 
-/**
- * @param secondaryIdentifiers the secondaryIdentifiers to set
- */
-public void setSecondaryIdentifiers(DSet<Ii> secondaryIdentifiers) {
-   this.secondaryIdentifiers = secondaryIdentifiers;
-}
-    
-    
-}
+    /**
+     * @param secondaryIdentifiers the secondaryIdentifiers to set
+     */
+    public void setSecondaryIdentifiers(DSet<Ii> secondaryIdentifiers) {
+        this.secondaryIdentifiers = secondaryIdentifiers;
+    }
 
+}

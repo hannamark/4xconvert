@@ -103,9 +103,7 @@ import java.util.List;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.NPathComplexity" , "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
-public class InterventionalStudyProtocolConverter extends
-        StudyProtocolConverter {
+public class InterventionalStudyProtocolConverter extends StudyProtocolConverter {
 
     /**
      *
@@ -114,8 +112,7 @@ public class InterventionalStudyProtocolConverter extends
      */
     public static InterventionalStudyProtocolDTO convertFromDomainToDTO(InterventionalStudyProtocol isp) {
         InterventionalStudyProtocolDTO ispDTO = (InterventionalStudyProtocolDTO)
-                StudyProtocolConverter.convertFromDomainToDTO(
-                        isp, new InterventionalStudyProtocolDTO());
+                StudyProtocolConverter.convertFromDomainToDTO(isp, new InterventionalStudyProtocolDTO());
         ispDTO.setAllocationCode(CdConverter.convertToCd(isp.getAllocationCode()));
         ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(isp.getBlindingSchemaCode()));
         ispDTO.setDesignConfigurationCode(CdConverter.convertToCd(isp.getDesignConfigurationCode()));
@@ -160,25 +157,7 @@ public class InterventionalStudyProtocolConverter extends
         isp.setNumberOfInterventionGroups(IntConverter.convertToInteger(ispDTO.getNumberOfInterventionGroups()));
         List<Cd> cds =  DSetConverter.convertDsetToCdList(ispDTO.getBlindedRoleCode());
         if (cds != null) {
-            for (Cd cd : cds) {
-                if (BlindingRoleCode.CAREGIVER.getCode().equals(cd.getCode())) {
-                   isp.setBlindingRoleCodeCaregiver(BlindingRoleCode.CAREGIVER);
-                   continue;
-                }
-                if (BlindingRoleCode.INVESTIGATOR.getCode().equals(cd.getCode())) {
-                    isp.setBlindingRoleCodeInvestigator(BlindingRoleCode.INVESTIGATOR);
-                    continue;
-                }
-                if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(cd.getCode())) {
-                    isp.setBlindingRoleCodeOutcome(BlindingRoleCode.OUTCOMES_ASSESSOR);
-                    continue;
-                }
-                if (BlindingRoleCode.SUBJECT.getCode().equals(cd.getCode())) {
-                    isp.setBlindingRoleCodeSubject(BlindingRoleCode.SUBJECT);
-                    continue;
-                }
-
-            }
+            updateBlindingRoleCodes(isp, cds);
         }
         if (ispDTO.getStudyClassificationCode() != null) {
             isp.setStudyClassificationCode(
@@ -188,5 +167,26 @@ public class InterventionalStudyProtocolConverter extends
         return isp;
     }
 
+    private static void updateBlindingRoleCodes(InterventionalStudyProtocol isp, List<Cd> cds) {
+        for (Cd cd : cds) {
+            if (BlindingRoleCode.CAREGIVER.getCode().equals(cd.getCode())) {
+               isp.setBlindingRoleCodeCaregiver(BlindingRoleCode.CAREGIVER);
+               continue;
+            }
+            if (BlindingRoleCode.INVESTIGATOR.getCode().equals(cd.getCode())) {
+                isp.setBlindingRoleCodeInvestigator(BlindingRoleCode.INVESTIGATOR);
+                continue;
+            }
+            if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(cd.getCode())) {
+                isp.setBlindingRoleCodeOutcome(BlindingRoleCode.OUTCOMES_ASSESSOR);
+                continue;
+            }
+            if (BlindingRoleCode.SUBJECT.getCode().equals(cd.getCode())) {
+                isp.setBlindingRoleCodeSubject(BlindingRoleCode.SUBJECT);
+                continue;
+            }
+
+        }
+    }
 
 }

@@ -102,8 +102,6 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Hong Gao
  * @author Kalpana Guthikonda
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.ExcessiveMethodLength",
-  "PMD.NPathComplexity" })
 public class TrialIndideAction extends ActionSupport {
     private static final long serialVersionUID = -9192130934354005933L;
     private static final String QUERY_RESULT = "query";

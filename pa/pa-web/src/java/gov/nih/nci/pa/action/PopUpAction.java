@@ -110,7 +110,6 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Harsha
  *
  */
-@SuppressWarnings("PMD.TooManyMethods")
 public class PopUpAction extends ActionSupport {
     private static final long serialVersionUID = 4960297232842560635L;
     private List<Country> countryList = new ArrayList<Country>();

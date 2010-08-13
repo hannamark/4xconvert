@@ -128,14 +128,13 @@ public class HibernateSessionInterceptor {
      * @return true if we are, false otherwise.
      */
     private boolean isManagedSession() {
-        return "managed".equals(getHelper().getConfiguration()
-                .getProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS));
+        return "managed".equals(getHelper().getConfiguration().getProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS));
     }
 
     /**
      * get the hibernate helper to use.
      * @return the hibernate helper.
-     */    
+     */
     private CtrpHibernateHelper getHelper() {
         return HibernateUtil.getHibernateHelper();
     }

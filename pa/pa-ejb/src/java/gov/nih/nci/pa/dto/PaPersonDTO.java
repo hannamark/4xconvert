@@ -88,7 +88,6 @@ import java.util.List;
  * @author Naveen Amiruddin, Harsha
  * @since 7/28/2008
  */
-@SuppressWarnings("PMD")
 public class PaPersonDTO {
     private Long id;
     private String firstName;
@@ -109,7 +108,7 @@ public class PaPersonDTO {
     private String url;
     private List<String> emailList;
     private String title;
-    
+
     /*
      * This field is used to further identify this person whether he is primary contact or not
      */
@@ -120,9 +119,9 @@ public class PaPersonDTO {
      */
     private Long selectedPersId;
     private Long paPersonId;
-    
+
     /*
-     * For displaying the status code 
+     * For displaying the status code
      */
     private FunctionalRoleStatusCode statusCode;
 
@@ -432,6 +431,7 @@ public class PaPersonDTO {
      * @param address the address to set
      */
     public void setAddress(String address) {
+        // unneeded
     }
 
     /**
@@ -476,6 +476,6 @@ public class PaPersonDTO {
         this.title = title;
     }
 
-    
-   
+
+
 }

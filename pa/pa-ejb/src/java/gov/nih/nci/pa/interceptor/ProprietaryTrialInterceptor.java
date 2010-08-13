@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.interceptor;
 
@@ -20,17 +20,15 @@ import org.hibernate.Session;
  * @author Vrushali
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class ProprietaryTrialInterceptor {
     private static final Logger LOG  = Logger.getLogger(ProprietaryTrialInterceptor.class);
     /**
-     * 
+     *
      * @param ctx ctx
      * @return ob
      * @throws Exception e
      */
     @AroundInvoke
-    @SuppressWarnings ({"PMD" })
     public Object checkIsProprietaryTrial(InvocationContext ctx) throws Exception {
         Object[] objs = ctx.getParameters();
         Ii ii = null;
@@ -49,7 +47,7 @@ public class ProprietaryTrialInterceptor {
             session = HibernateUtil.getCurrentSession();
             studyProtocol = (StudyProtocol)
             session.get(StudyProtocol.class, Long.valueOf(ii.getExtension()));
-            if (studyProtocol != null && studyProtocol.getProprietaryTrialIndicator() != null 
+            if (studyProtocol != null && studyProtocol.getProprietaryTrialIndicator() != null
                     && studyProtocol.getProprietaryTrialIndicator()) {
                 LOG.info(ctx.getMethod().getName() + "for Proprietary trial is not allowed");
                 throw new PAException(ctx.getMethod().getName() + " for Proprietary trial is not allowed");

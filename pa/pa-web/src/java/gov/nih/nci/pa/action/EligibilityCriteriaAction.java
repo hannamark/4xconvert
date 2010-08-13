@@ -120,6 +120,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -132,13 +134,8 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author Kalpana Guthikonda
- * @since 11/12/2008 copyright NCI 2008. All rights reserved. This code may not
- *        be used without the express written permission of the copyright
- *        holder, NCI.
+ * @since 11/12/2008
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength",
-  "PMD.NPathComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.TooManyFields" ,
-      "PMD.AvoidDeeplyNestedIfStmts" })
 public class EligibilityCriteriaAction extends ActionSupport {
 
     private static final String STRUCTURED = "Structured";
@@ -418,10 +415,9 @@ public class EligibilityCriteriaAction extends ActionSupport {
         if (err.length() > 0) {
            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, err.toString());
            return requestToCreateCDE();
-        } else {
-          PaRegistry.getMailManagerService().sendCDERequestMail(fromEmail, emailMessage);
-          ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "CDE Request sent successfully");
         }
+        PaRegistry.getMailManagerService().sendCDERequestMail(fromEmail, emailMessage);
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "CDE Request sent successfully");
     } catch (PAException e) {
        ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
     }
@@ -498,19 +494,14 @@ public class EligibilityCriteriaAction extends ActionSupport {
     return ELIGIBILITY;
   }
 
-  @SuppressWarnings({"PMD" })
-  private Ivl<Pq> convertToIvlPq(String minUom, String minValue, String maxUom, String maxValue) {
-   if (minUom == null && minValue == null && maxValue == null && maxUom == null) {
-     return null;
-   }
-   IvlConverter.JavaPq low  = new IvlConverter.JavaPq(minUom ,
-      PAUtil.convertStringToDecimal(minValue), null);
-   IvlConverter.JavaPq high  = new IvlConverter.JavaPq(maxUom ,
-      PAUtil.convertStringToDecimal(maxValue), null);
-   Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);
-   return ivl;
-  }
-
+    private Ivl<Pq> convertToIvlPq(String minUom, String minValue, String maxUom, String maxValue) {
+        if (minUom == null && minValue == null && maxValue == null && maxUom == null) {
+            return null;
+        }
+        IvlConverter.JavaPq low = new IvlConverter.JavaPq(minUom, PAUtil.convertStringToDecimal(minValue), null);
+        IvlConverter.JavaPq high = new IvlConverter.JavaPq(maxUom, PAUtil.convertStringToDecimal(maxValue), null);
+        return IvlConverter.convertPq().convertToIvl(low, high);
+    }
 
   /**
    * @return result
@@ -687,7 +678,6 @@ private void populateList() throws PAException {
    *
    * @throws PAException the PA exception
    */
-  @SuppressWarnings({"PMD" })
   public String displaySelectedType() throws PAException {
       String uomid = ServletActionContext.getRequest().getParameter("id");
       String className =  ServletActionContext.getRequest().getParameter("className");
@@ -941,312 +931,302 @@ private void enforceEligibilityBusinessRules() throws PAException {
     }
       return err.toString();
   }
-  @SuppressWarnings({"PMD" })
-  private String checkDisplayOrderExists(String displayOrder, Long dtoId, HashMap<String, String> orderList,
-    HashSet<String> order)
-  throws PAException {
-    boolean exists = false;
 
-     if (orderList != null && !orderList.isEmpty()) {
-       if (doesContainInList(displayOrder, dtoId, orderList)) {
-             order.add(displayOrder);
-             exists = true;
-          }
-     }
-     if (exists) {
-       return order.toString();
-     } else {
-      return "";
-     }
-   }
-  @SuppressWarnings({"PMD" })
-  private boolean doesContainInList(String displayOrder, Long dtoId, HashMap<String, String> dList) {
-    boolean containsInList = false;
-    ArrayList<String> valueList = new ArrayList<String>();
-     if (dList != null && !dList.isEmpty()) {
-        Iterator iterator = dList.keySet().iterator();
-        while (iterator.hasNext()) {
-         String keyId = (String) iterator.next();
-          if (dtoId == null || !dtoId.toString().equals(keyId)) {
-            valueList.add(dList.get(keyId));
-          }
-        }
-     }
-     if (!valueList.isEmpty() && valueList.contains(displayOrder)) {
-       containsInList = true;
-     }
+    private String checkDisplayOrderExists(String displayOrder, Long dtoId, Map<String, String> orderList,
+            Set<String> order) throws PAException {
+        boolean exists = false;
 
-     return containsInList;
-  }
-  @SuppressWarnings({"PMD" })
-  private HashMap<String, String> buildDisplayOrderDBList() throws PAException {
-    HashMap<String, String> orderListDB = new HashMap<String, String>();
-    Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
-    List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
-      .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
-    if (pecList != null && !pecList.isEmpty()) {
-     for (PlannedEligibilityCriterionDTO dto : pecList) {
-      if (dto.getCategoryCode() != null
-          && dto.getCategoryCode().getCode().equals(ActivityCategoryCode.OTHER.getCode())) {
-           orderListDB
-            .put(dto.getIdentifier().getExtension(), Integer.toString(dto.getDisplayOrder().getValue().intValue()));
-         }
-      }
-     }
-    return orderListDB;
-  }
-  @SuppressWarnings({"PMD" })
-  private HashMap<String, String> buildDisplayOrderUIList() throws PAException {
-    HashMap<String, String> orderListUI = new HashMap<String, String>();
-    if (getEligibilityList() != null && !getEligibilityList().isEmpty()) {
-     for (ISDesignDetailsWebDTO dto : getEligibilityList()) {
-       if (dto.getDisplayOrder() != null) {
-         orderListUI.put(dto.getId(), dto.getDisplayOrder());
+        if (orderList != null && !orderList.isEmpty()) {
+            if (doesContainInList(displayOrder, dtoId, orderList)) {
+                order.add(displayOrder);
+                exists = true;
+            }
         }
-       }
-      }
-      return orderListUI;
+        if (exists) {
+            return order.toString();
+        }
+        return "";
     }
-  /**
-   * @return webDTO
-   */
-  public ISDesignDetailsWebDTO getWebDTO() {
-    return webDTO;
-  }
 
-  /**
-   * @param webDTO
-   *            webDTO
-   */
-  public void setWebDTO(ISDesignDetailsWebDTO webDTO) {
-    this.webDTO = webDTO;
-  }
+    private boolean doesContainInList(String displayOrder, Long dtoId, Map<String, String> dList) {
+        boolean containsInList = false;
+        ArrayList<String> valueList = new ArrayList<String>();
+        if (dList != null && !dList.isEmpty()) {
+            Iterator iterator = dList.keySet().iterator();
+            while (iterator.hasNext()) {
+                String keyId = (String) iterator.next();
+                if (dtoId == null || !dtoId.toString().equals(keyId)) {
+                    valueList.add(dList.get(keyId));
+                }
+            }
+        }
+        if (!valueList.isEmpty() && valueList.contains(displayOrder)) {
+            containsInList = true;
+        }
 
-  /**
-   * @return id
-   */
-  public Long getId() {
-    return id;
-  }
+        return containsInList;
+    }
 
-  /**
-   * @param id
-   *            id
-   */
-  public void setId(Long id) {
-    this.id = id;
-  }
+    private Map<String, String> buildDisplayOrderDBList() throws PAException {
+        Map<String, String> orderListDB = new HashMap<String, String>();
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+                                                      .getAttribute(Constants.STUDY_PROTOCOL_II);
+        List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
+                                                        .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
+        if (pecList != null && !pecList.isEmpty()) {
+            for (PlannedEligibilityCriterionDTO dto : pecList) {
+                if (dto.getCategoryCode() != null
+                        && dto.getCategoryCode().getCode().equals(ActivityCategoryCode.OTHER.getCode())) {
+                    orderListDB.put(dto.getIdentifier().getExtension(),
+                                    Integer.toString(dto.getDisplayOrder().getValue().intValue()));
+                }
+            }
+        }
+        return orderListDB;
+    }
 
-  /**
-   * @return page
-   */
-  public String getPage() {
-    return page;
-  }
+    private Map<String, String> buildDisplayOrderUIList() throws PAException {
+        Map<String, String> orderListUI = new HashMap<String, String>();
+        if (getEligibilityList() != null && !getEligibilityList().isEmpty()) {
+            for (ISDesignDetailsWebDTO dto : getEligibilityList()) {
+                if (dto.getDisplayOrder() != null) {
+                    orderListUI.put(dto.getId(), dto.getDisplayOrder());
+                }
+            }
+        }
+        return orderListUI;
+    }
 
-  /**
-   * @param page
-   *            page
-   */
-  public void setPage(String page) {
-    this.page = page;
-  }
+    /**
+     * @return webDTO
+     */
+    public ISDesignDetailsWebDTO getWebDTO() {
+        return webDTO;
+    }
 
-  /**
-   * @return eligibleGenderCode
-   */
-  public String getEligibleGenderCode() {
-    return eligibleGenderCode;
-  }
+    /**
+     * @param webDTO webDTO
+     */
+    public void setWebDTO(ISDesignDetailsWebDTO webDTO) {
+        this.webDTO = webDTO;
+    }
 
-  /**
-   * @param eligibleGenderCode
-   *            eligibleGenderCode
-   */
-  public void setEligibleGenderCode(String eligibleGenderCode) {
-    this.eligibleGenderCode = eligibleGenderCode;
-  }
+    /**
+     * @return id
+     */
+    public Long getId() {
+        return id;
+    }
 
-  /**
-   * @return maximumValue
-   */
-  public String getMaximumValue() {
-    return maximumValue;
-  }
+    /**
+     * @param id id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  /**
-   * @param maximumValue
-   *            maximumValue
-   */
-  public void setMaximumValue(String maximumValue) {
-    this.maximumValue = maximumValue;
-  }
+    /**
+     * @return page
+     */
+    public String getPage() {
+        return page;
+    }
 
-  /**
-   * @return minimumValue
-   */
-  public String getMinimumValue() {
-    return minimumValue;
-  }
+    /**
+     * @param page page
+     */
+    public void setPage(String page) {
+        this.page = page;
+    }
 
-  /**
-   * @param minimumValue
-   *            minimumValue
-   */
-  public void setMinimumValue(String minimumValue) {
-    this.minimumValue = minimumValue;
-  }
+    /**
+     * @return eligibleGenderCode
+     */
+    public String getEligibleGenderCode() {
+        return eligibleGenderCode;
+    }
 
-  /**
-   * @return eligibleGenderCodeId
-   */
-  public String getEligibleGenderCodeId() {
-    return eligibleGenderCodeId;
-  }
+    /**
+     * @param eligibleGenderCode eligibleGenderCode
+     */
+    public void setEligibleGenderCode(String eligibleGenderCode) {
+        this.eligibleGenderCode = eligibleGenderCode;
+    }
 
-  /**
-   * @param eligibleGenderCodeId
-   *            eligibleGenderCodeId
-   */
-  public void setEligibleGenderCodeId(String eligibleGenderCodeId) {
-    this.eligibleGenderCodeId = eligibleGenderCodeId;
-  }
+    /**
+     * @return maximumValue
+     */
+    public String getMaximumValue() {
+        return maximumValue;
+    }
 
-  /**
-   * @return acceptHealthyVolunteersIndicator
-   */
-  public String getAcceptHealthyVolunteersIndicator() {
-    return acceptHealthyVolunteersIndicator;
-  }
+    /**
+     * @param maximumValue maximumValue
+     */
+    public void setMaximumValue(String maximumValue) {
+        this.maximumValue = maximumValue;
+    }
 
-  /**
-   * @param acceptHealthyVolunteersIndicator
-   *            acceptHealthyVolunteersIndicator
-   */
-  public void setAcceptHealthyVolunteersIndicator(
-      String acceptHealthyVolunteersIndicator) {
-    this.acceptHealthyVolunteersIndicator = acceptHealthyVolunteersIndicator;
-  }
+    /**
+     * @return minimumValue
+     */
+    public String getMinimumValue() {
+        return minimumValue;
+    }
 
-  /**
-   * @return eligibilityList
-   */
-  public List<ISDesignDetailsWebDTO> getEligibilityList() {
-    return eligibilityList;
-  }
+    /**
+     * @param minimumValue minimumValue
+     */
+    public void setMinimumValue(String minimumValue) {
+        this.minimumValue = minimumValue;
+    }
 
-  /**
-   * @param eligibilityList
-   *            eligibilityList
-   */
-  public void setEligibilityList(List<ISDesignDetailsWebDTO> eligibilityList) {
-    this.eligibilityList = eligibilityList;
-  }
+    /**
+     * @return eligibleGenderCodeId
+     */
+    public String getEligibleGenderCodeId() {
+        return eligibleGenderCodeId;
+    }
 
-  /**
-   * @return studyPopulationDescription
-   */
-  public String getStudyPopulationDescription() {
-    return studyPopulationDescription;
-  }
+    /**
+     * @param eligibleGenderCodeId eligibleGenderCodeId
+     */
+    public void setEligibleGenderCodeId(String eligibleGenderCodeId) {
+        this.eligibleGenderCodeId = eligibleGenderCodeId;
+    }
 
-  /**
-   * @param studyPopulationDescription
-   *            studyPopulationDescription
-   */
-  public void setStudyPopulationDescription(String studyPopulationDescription) {
-    this.studyPopulationDescription = studyPopulationDescription;
-  }
+    /**
+     * @return acceptHealthyVolunteersIndicator
+     */
+    public String getAcceptHealthyVolunteersIndicator() {
+        return acceptHealthyVolunteersIndicator;
+    }
 
-  /**
-   * @return samplingMethodCode
-   */
-  public String getSamplingMethodCode() {
-    return samplingMethodCode;
-  }
+    /**
+     * @param acceptHealthyVolunteersIndicator acceptHealthyVolunteersIndicator
+     */
+    public void setAcceptHealthyVolunteersIndicator(String acceptHealthyVolunteersIndicator) {
+        this.acceptHealthyVolunteersIndicator = acceptHealthyVolunteersIndicator;
+    }
 
-  /**
-   * @param samplingMethodCode
-   *            samplingMethodCode
-   */
-  public void setSamplingMethodCode(String samplingMethodCode) {
-    this.samplingMethodCode = samplingMethodCode;
-  }
+    /**
+     * @return eligibilityList
+     */
+    public List<ISDesignDetailsWebDTO> getEligibilityList() {
+        return eligibilityList;
+    }
 
-  /**
-   * @return list
-   */
-  public List<ISDesignDetailsWebDTO> getList() {
-    return list;
-  }
+    /**
+     * @param eligibilityList eligibilityList
+     */
+    public void setEligibilityList(List<ISDesignDetailsWebDTO> eligibilityList) {
+        this.eligibilityList = eligibilityList;
+    }
 
-  /**
-   * @param list list
-   */
-  public void setList(List<ISDesignDetailsWebDTO> list) {
-    this.list = list;
-  }
+    /**
+     * @return studyPopulationDescription
+     */
+    public String getStudyPopulationDescription() {
+        return studyPopulationDescription;
+    }
 
-  /**
-   * @return the valueUnit
-   */
-   public String getValueUnit() {
-    return valueUnit;
-   }
+    /**
+     * @param studyPopulationDescription studyPopulationDescription
+     */
+    public void setStudyPopulationDescription(String studyPopulationDescription) {
+        this.studyPopulationDescription = studyPopulationDescription;
+    }
 
-  /**
-   * @param valueUnit the valueUnit to set
-   */
-  public void setValueUnit(String valueUnit) {
-   this.valueUnit = valueUnit;
-  }
+    /**
+     * @return samplingMethodCode
+     */
+    public String getSamplingMethodCode() {
+        return samplingMethodCode;
+    }
 
-  /**
-   * @return the valueId
-   */
-  public String getValueId() {
-   return valueId;
-  }
+    /**
+     * @param samplingMethodCode samplingMethodCode
+     */
+    public void setSamplingMethodCode(String samplingMethodCode) {
+        this.samplingMethodCode = samplingMethodCode;
+    }
 
-  /**
-   * @param valueId the valueId to set
-   */
-  public void setValueId(String valueId) {
-    this.valueId = valueId;
-  }
+    /**
+     * @return list
+     */
+    public List<ISDesignDetailsWebDTO> getList() {
+        return list;
+    }
 
-  /**
-   *
-   * @return cadsrResult
-   */
-  public List<CaDSRWebDTO> getCadsrResult() {
-      return cadsrResult;
-  }
-  /**
-   *
-   * @param result CaDSRWebDTO
-   */
-  public void setCadsrResult(List<CaDSRWebDTO> result) {
-      this.cadsrResult = result;
-  }
+    /**
+     * @param list list
+     */
+    public void setList(List<ISDesignDetailsWebDTO> list) {
+        this.list = list;
+    }
 
-  /**
-   *
-   * @return csisResult
-   */
-  public List<ClassificationSchemeItem> getCsisResult() {
-      return csisResult;
-  }
+    /**
+     * @return the valueUnit
+     */
+    public String getValueUnit() {
+        return valueUnit;
+    }
 
-  private void retrieveFromPaProperties() throws PAException {
-     cadsrCsId = Long.parseLong(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_ID"));
-     cadsrCsVersion = Float.parseFloat(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_VERSION"));
-     cdeRequestToEmail = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL");
-     cdeRequestSubject = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT");
-     cdeRequestText = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_TEXT");
+    /**
+     * @param valueUnit the valueUnit to set
+     */
+    public void setValueUnit(String valueUnit) {
+        this.valueUnit = valueUnit;
+    }
 
-  }
-     /**
+    /**
+     * @return the valueId
+     */
+    public String getValueId() {
+        return valueId;
+    }
+
+    /**
+     * @param valueId the valueId to set
+     */
+    public void setValueId(String valueId) {
+        this.valueId = valueId;
+    }
+
+    /**
+     *
+     * @return cadsrResult
+     */
+    public List<CaDSRWebDTO> getCadsrResult() {
+        return cadsrResult;
+    }
+
+    /**
+     *
+     * @param result CaDSRWebDTO
+     */
+    public void setCadsrResult(List<CaDSRWebDTO> result) {
+        this.cadsrResult = result;
+    }
+
+    /**
+     *
+     * @return csisResult
+     */
+    public List<ClassificationSchemeItem> getCsisResult() {
+        return csisResult;
+    }
+
+    private void retrieveFromPaProperties() throws PAException {
+        cadsrCsId = Long.parseLong(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_ID"));
+        cadsrCsVersion = Float.parseFloat(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_VERSION"));
+        cdeRequestToEmail = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL");
+        cdeRequestSubject = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT");
+        cdeRequestText = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_TEXT");
+
+    }
+
+    /**
      *
      * @return cdeResult
      */
@@ -1270,18 +1250,18 @@ private void enforceEligibilityBusinessRules() throws PAException {
         return cdeDatatype;
     }
 
-   /**
-    * @return the cdeCategoryCode
-    */
+    /**
+     * @return the cdeCategoryCode
+     */
     public String getCdeCategoryCode() {
-      return cdeCategoryCode;
+        return cdeCategoryCode;
     }
 
-   /**
-    * @param cdeCategoryCode the cdeCategoryCode to set
-    */
+    /**
+     * @param cdeCategoryCode the cdeCategoryCode to set
+     */
     public void setCdeCategoryCode(String cdeCategoryCode) {
-      this.cdeCategoryCode = cdeCategoryCode;
+        this.cdeCategoryCode = cdeCategoryCode;
     }
 
     /**

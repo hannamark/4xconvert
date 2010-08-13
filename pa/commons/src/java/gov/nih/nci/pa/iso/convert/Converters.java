@@ -84,13 +84,7 @@ import gov.nih.nci.pa.service.PAException;
  * Class contains exclusively a static method used to return converters for iso dto's.
  * @author Hugh Reinhart
  * @since 11/06/2008
- *
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength",
-"PMD.TooManyFields" })
 public class Converters {
     private static ArmConverter arm = new ArmConverter();
     private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
@@ -122,21 +116,23 @@ public class Converters {
         new RegulatoryAuthorityConverter();
     private static DocumentConverter documentConverter =   new DocumentConverter();
     private static StudyResourcingConverter studyResourcingConverter =   new StudyResourcingConverter();
-    private static StudySiteOverallStatusConverter studySiteOverallStatusConverter = 
+    private static StudySiteOverallStatusConverter studySiteOverallStatusConverter =
             new StudySiteOverallStatusConverter();
     private static StudyInboxConverter studyInboxConverter = new StudyInboxConverter();
     private static StudyCheckoutConverter studyCheckoutConverter = new StudyCheckoutConverter();
     private static PlannedSubstanceAdministrationConverter psaConverter = new PlannedSubstanceAdministrationConverter();
     private static PlannedProcedureConverter plannedProcedureConverter = new PlannedProcedureConverter();
-    
+
 /**
      * @param clazz class
      * @param <TYPE> the converter type to get
      * @return converter
      * @throws PAException exception
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes" })
     public static <TYPE extends AbstractConverter> TYPE get(Class<TYPE> clazz)  throws PAException {
+        // TODO - replace this lookup tree with a Map
+
         if (clazz.equals(ArmConverter.class)) {
             return (TYPE) arm;
         }
@@ -175,7 +171,7 @@ public class Converters {
         }
         if (clazz.equals(StudyOnholdConverter.class)) {
           return (TYPE) studyOnholdConverter;
-      }
+        }
         if (clazz.equals(StudyOutcomeMeasureConverter.class)) {
             return (TYPE) studyOutcomeMeasureConverter;
         }
@@ -217,7 +213,7 @@ public class Converters {
         }
         if (clazz.equals(StudyInboxConverter.class)) {
             return (TYPE) studyInboxConverter;
-        }   
+        }
         if (clazz.equals(StudyCheckoutConverter.class)) {
             return (TYPE) studyCheckoutConverter;
         }

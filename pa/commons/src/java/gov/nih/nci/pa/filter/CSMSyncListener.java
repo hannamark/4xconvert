@@ -16,22 +16,22 @@ import org.cagrid.gaards.csm.service.RemoteGroupManager;
  * Handles kicking off the CSM sync thread.
  * @author aevansel
  */
-@SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
 public class CSMSyncListener implements ServletContextListener {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(CSMSyncListener.class);
     private static Properties properties = new Properties();
-    
+
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     public void contextInitialized(ServletContextEvent context) {
         try {
             properties.load(getClass().getResourceAsStream("/WEB-INF/classes/csm.properties"));
         } catch (Exception e) {
             throw new RuntimeException("ERROR LOADING CSM PROPERTIES FILE!", e);
         }
-        
+
         DatabaseProperties dbProps = new DatabaseProperties();
         dbProps.setConnectionURL(properties.getProperty("csm.db.connection.url"));
         dbProps.setDriver(properties.getProperty("csm.db.driver"));
@@ -45,7 +45,7 @@ public class CSMSyncListener implements ServletContextListener {
                 Long.parseLong(properties.getProperty("csm.remote.group.sync.seconds")));
         props.setDatabaseProperties(dbProps);
         try {
-            RemoteGroupManager groupManager = new RemoteGroupManager(new AuthorizationManagerFactory(props), props, 
+            RemoteGroupManager groupManager = new RemoteGroupManager(new AuthorizationManagerFactory(props), props,
                     new GridGrouperRemoteGroupSynchronizer());
             Thread t = new Thread(groupManager);
             t.setDaemon(true);

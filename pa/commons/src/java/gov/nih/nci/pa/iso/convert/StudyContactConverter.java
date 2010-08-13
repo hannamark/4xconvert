@@ -110,18 +110,15 @@ import java.util.List;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-
 public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractConverter<StudyContactDTO, StudyContact> {
+
     /**
-     *
      * @param bo StudyContact domain object
      * @return dto
      * @throws PAException PAException
      */
     @Override
-    public StudyContactDTO convertFromDomainToDto(
-                                StudyContact bo) throws PAException {
+    public StudyContactDTO convertFromDomainToDto(StudyContact bo) throws PAException {
 
         StudyContactDTO dto = new StudyContactDTO();
 
@@ -145,7 +142,7 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         dto.setStatusDateRange(
                 IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(), bo.getStatusDateRangeHigh()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
-        // handle phone and email
+
         DSet<Tel> telAddresses = new DSet<Tel>();
         ArrayList<String> emailList = new ArrayList<String>();
         emailList.add(bo.getEmail());
@@ -158,15 +155,11 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
     }
 
     /**
-     * Create a new domain object from a given DTO.
-     * @param dto StudyContactDTO
-     * @return StudyContact StudyContact
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
-    public StudyContact convertFromDtoToDomain(
-            StudyContactDTO dto) throws PAException {
-        return convertFromDtoToDomain(dto , new StudyContact());
+    public StudyContact convertFromDtoToDomain(StudyContactDTO dto) throws PAException {
+        return convertFromDtoToDomain(dto, new StudyContact());
     }
 
     /**
@@ -187,7 +180,6 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         }
         if (!ISOUtil.isIiNull(dto.getHealthCareProviderIi())) {
             hfBo = new HealthCareProvider();
-//            hfBo.setId(IiConverter.convertToLong(dto.getHealthCareProviderIi()));
             hfBo.setId(getPaIdentifier(dto.getHealthCareProviderIi()));
             bo.setHealthCareProvider(hfBo);
         }
@@ -222,7 +214,7 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
 
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         bo.setStatusDateRangeHigh(null);
-        
+
         return bo;
     }
 

@@ -102,11 +102,9 @@ import org.hibernate.annotations.OnDeleteAction;
  */
 @Entity
 @Table(name = "STUDY_SITE")
-@SuppressWarnings({"PMD.TooManyFields" })
 public class StudySite extends OrganizationFunctionalRole {
     private static final long serialVersionUID = 1234567890L;
     private static final String MAPPED_BY_SS = "studySite";
-
 
     private String localStudyProtocolIdentifier;
     private String reviewBoardApprovalNumber;
@@ -132,12 +130,14 @@ public class StudySite extends OrganizationFunctionalRole {
     public String getProgramCodeText() {
         return programCodeText;
     }
+
     /**
      * @param programCode the programCode to set
      */
     public void setProgramCodeText(String programCode) {
         programCodeText = programCode;
     }
+
     /**
      *
      * @return localStudyProtocolIdentifier
@@ -146,6 +146,7 @@ public class StudySite extends OrganizationFunctionalRole {
     public String getLocalStudyProtocolIdentifier() {
         return localStudyProtocolIdentifier;
     }
+
     /**
      *
      * @param localStudyProtocolIdentifier localStudyProtocolIdentifier
@@ -153,6 +154,7 @@ public class StudySite extends OrganizationFunctionalRole {
     public void setLocalStudyProtocolIdentifier(String localStudyProtocolIdentifier) {
         this.localStudyProtocolIdentifier = localStudyProtocolIdentifier;
     }
+
     /**
      * @return the reviewBoardApprovalNumber
      */
@@ -160,12 +162,14 @@ public class StudySite extends OrganizationFunctionalRole {
     public String getReviewBoardApprovalNumber() {
         return reviewBoardApprovalNumber;
     }
+
     /**
      * @param reviewBoardApprovalNumber the reviewBoardApprovalNumber to set
      */
     public void setReviewBoardApprovalNumber(String reviewBoardApprovalNumber) {
         this.reviewBoardApprovalNumber = reviewBoardApprovalNumber;
     }
+
     /**
      * @return the reviewBoardApprovalDate
      */
@@ -174,12 +178,14 @@ public class StudySite extends OrganizationFunctionalRole {
     public Timestamp getReviewBoardApprovalDate() {
         return reviewBoardApprovalDate;
     }
+
     /**
      * @param reviewBoardApprovalDate the reviewBoardApprovalDate to set
      */
     public void setReviewBoardApprovalDate(Timestamp reviewBoardApprovalDate) {
         this.reviewBoardApprovalDate = reviewBoardApprovalDate;
     }
+
     /**
      * @return the reviewBoardApprovalStatusCode
      */
@@ -188,13 +194,14 @@ public class StudySite extends OrganizationFunctionalRole {
     public ReviewBoardApprovalStatusCode getReviewBoardApprovalStatusCode() {
         return reviewBoardApprovalStatusCode;
     }
+
     /**
      * @param reviewBoardApprovalStatusCode the reviewBoardApprovalStatusCode to set
      */
-    public void setReviewBoardApprovalStatusCode(
-            ReviewBoardApprovalStatusCode reviewBoardApprovalStatusCode) {
+    public void setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode reviewBoardApprovalStatusCode) {
         this.reviewBoardApprovalStatusCode = reviewBoardApprovalStatusCode;
     }
+
     /**
      * @return the targetAccrualNumber
      */
@@ -202,12 +209,14 @@ public class StudySite extends OrganizationFunctionalRole {
     public Integer getTargetAccrualNumber() {
         return targetAccrualNumber;
     }
+
     /**
      * @param targetAccrualNumber the targetAccrualNumber to set
      */
     public void setTargetAccrualNumber(Integer targetAccrualNumber) {
         this.targetAccrualNumber = targetAccrualNumber;
     }
+
     /**
      *
      * @return healthCareFacility
@@ -217,6 +226,7 @@ public class StudySite extends OrganizationFunctionalRole {
     public HealthCareFacility getHealthCareFacility() {
         return healthCareFacility;
     }
+
     /**
      *
      * @param healthCareFacility healthCareFacility
@@ -224,6 +234,7 @@ public class StudySite extends OrganizationFunctionalRole {
     public void setHealthCareFacility(HealthCareFacility healthCareFacility) {
         this.healthCareFacility = healthCareFacility;
     }
+
     /**
      *
      * @return researchOrganization
@@ -233,6 +244,7 @@ public class StudySite extends OrganizationFunctionalRole {
     public ResearchOrganization getResearchOrganization() {
         return researchOrganization;
     }
+
     /**
      *
      * @param researchOrganization ResearchOrganization
@@ -240,6 +252,7 @@ public class StudySite extends OrganizationFunctionalRole {
     public void setResearchOrganization(ResearchOrganization researchOrganization) {
         this.researchOrganization = researchOrganization;
     }
+
     /**
      * @return the oversightCommittee
      */
@@ -248,12 +261,14 @@ public class StudySite extends OrganizationFunctionalRole {
     public OversightCommittee getOversightCommittee() {
         return oversightCommittee;
     }
+
     /**
      * @param oversightCommittee the oversightCommittee to set
      */
     public void setOversightCommittee(OversightCommittee oversightCommittee) {
         this.oversightCommittee = oversightCommittee;
     }
+
     /**
      * @return the studySiteAccrualStatuses
      */
@@ -262,13 +277,14 @@ public class StudySite extends OrganizationFunctionalRole {
     public List<StudySiteAccrualStatus> getStudySiteAccrualStatuses() {
         return studySiteAccrualStatuses;
     }
+
     /**
      * @param studySiteAccrualStatuses the studySiteAccrualStatuses to set
      */
-    public void setStudySiteAccrualStatuses(
-            List<StudySiteAccrualStatus> studySiteAccrualStatuses) {
+    public void setStudySiteAccrualStatuses(List<StudySiteAccrualStatus> studySiteAccrualStatuses) {
         this.studySiteAccrualStatuses = studySiteAccrualStatuses;
     }
+
     /**
      * @return the studySiteAccrualAccess
      */
@@ -277,12 +293,14 @@ public class StudySite extends OrganizationFunctionalRole {
     public List<StudySiteAccrualAccess> getStudySiteAccrualAccess() {
         return studySiteAccrualAccess;
     }
+
     /**
      * @param studySiteAccrualAccess the studySiteAccrualAccess to set
      */
     public void setStudySiteAccrualAccess(List<StudySiteAccrualAccess> studySiteAccrualAccess) {
         this.studySiteAccrualAccess = studySiteAccrualAccess;
     }
+
     /**
      * @return the studySubjects
      */
@@ -290,12 +308,14 @@ public class StudySite extends OrganizationFunctionalRole {
     public List<StudySubject> getStudySubjects() {
         return studySubjects;
     }
+
     /**
      * @param studySubjects the studySubjects to set
      */
     public void setStudySubjects(List<StudySubject> studySubjects) {
         this.studySubjects = studySubjects;
     }
+
     /**
      * @return the studySiteContacts
      */
@@ -304,13 +324,14 @@ public class StudySite extends OrganizationFunctionalRole {
     public List<StudySiteContact> getStudySiteContacts() {
         return studySiteContacts;
     }
+
     /**
      * @param studySiteContacts the studySiteContacts to set
      */
-    public void setStudySiteContacts(
-            List<StudySiteContact> studySiteContacts) {
+    public void setStudySiteContacts(List<StudySiteContact> studySiteContacts) {
         this.studySiteContacts = studySiteContacts;
     }
+
     /**
      * @return the reviewBoardOrganizationalAffiliation
      */
@@ -318,13 +339,14 @@ public class StudySite extends OrganizationFunctionalRole {
     public String getReviewBoardOrganizationalAffiliation() {
         return reviewBoardOrganizationalAffiliation;
     }
+
     /**
      * @param reviewBoardOrganizationalAffiliation the reviewBoardOrganizationalAffiliation to set
      */
-    public void setReviewBoardOrganizationalAffiliation(
-            String reviewBoardOrganizationalAffiliation) {
+    public void setReviewBoardOrganizationalAffiliation(String reviewBoardOrganizationalAffiliation) {
         this.reviewBoardOrganizationalAffiliation = reviewBoardOrganizationalAffiliation;
     }
+
     /**
      * @return the accrualDateRangeHigh closed date
      */
@@ -332,12 +354,14 @@ public class StudySite extends OrganizationFunctionalRole {
     public Timestamp getAccrualDateRangeHigh() {
         return accrualDateRangeHigh;
     }
+
     /**
      * @param accrualDateRangeHigh the accrualDateRangeHigh to set
      */
     public void setAccrualDateRangeHigh(Timestamp accrualDateRangeHigh) {
         this.accrualDateRangeHigh = accrualDateRangeHigh;
     }
+
     /**
      * @return the accrualDateRangeLow opened date
      */
@@ -345,11 +369,12 @@ public class StudySite extends OrganizationFunctionalRole {
     public Timestamp getAccrualDateRangeLow() {
         return accrualDateRangeLow;
     }
+
     /**
      * @param accrualDateRangeLow the accrualDateRangeLow to set
      */
     public void setAccrualDateRangeLow(Timestamp accrualDateRangeLow) {
         this.accrualDateRangeLow = accrualDateRangeLow;
     }
-    
+
 }

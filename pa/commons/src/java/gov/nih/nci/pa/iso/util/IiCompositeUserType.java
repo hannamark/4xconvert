@@ -102,7 +102,6 @@ import org.hibernate.usertype.CompositeUserType;
 /**
  * Hibernate user type to directly persist Ii to the db with full query capability.
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" }) // switch statements, implements.
 public class IiCompositeUserType implements CompositeUserType {
 
     // Constants for the position of the attribute in the composite type

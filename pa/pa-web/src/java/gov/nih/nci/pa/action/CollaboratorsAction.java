@@ -115,13 +115,9 @@ import com.opensymphony.xwork2.Preparable;
  * Action class for viewing and editing the collaborating organizations.
  *
  * @author Hugh Reinhart
- * @since 08/20/2008 copyright NCI 2007. All rights reserved. This code may not
- *        be used without the express written permission of the copyright
- *        holder, NCI.
+ * @since 08/20/2008
  */
-@SuppressWarnings({ "PMD.SignatureDeclareThrowsException", "PMD.CyclomaticComplexity" })
-public class CollaboratorsAction extends ActionSupport
-        implements Preparable {
+public class CollaboratorsAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = 123412653L;
     private static final int AD_CITY_IDX = 1;
@@ -161,8 +157,7 @@ public class CollaboratorsAction extends ActionSupport
     }
 
     /**
-     * @see com.opensymphony.xwork2.Preparable#prepare()
-     * @throws Exception e
+     * {@inheritDoc}
      */
     public void prepare() throws Exception {
         sPartService = PaRegistry.getStudySiteService();
@@ -178,29 +173,27 @@ public class CollaboratorsAction extends ActionSupport
 
     /**
      * @return Action result.
-     * @throws Exception exception.
+     * @throws PAException exception.
      */
     @Override
-    public String execute() throws Exception {
+    public String execute() throws PAException {
         loadForm();
         return SUCCESS;
     }
 
     /**
      * @return result
-     * @throws Exception exception
      */
-    public String create() throws Exception {
+    public String create() {
         setCurrentAction(ACT_CREATE);
         return ACT_CREATE;
     }
 
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    @SuppressWarnings("PMD.ExcessiveMethodLength")
-    public String facilitySave() throws Exception {
+    public String facilitySave() throws PAException {
         clearErrorsAndMessages();
 
         ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO)
@@ -239,9 +232,9 @@ public class CollaboratorsAction extends ActionSupport
 
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String facilityUpdate() throws Exception {
+    public String facilityUpdate() throws PAException {
         clearErrorsAndMessages();
 
         ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
@@ -271,9 +264,9 @@ public class CollaboratorsAction extends ActionSupport
 
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String edit() throws Exception {
+    public String edit() throws PAException {
         setCurrentAction(ACT_EDIT);
         StudySiteDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
         Organization editOrg = correlationUtils.getPAOrganizationByIi(spDto.getResearchOrganizationIi());
@@ -309,7 +302,7 @@ public class CollaboratorsAction extends ActionSupport
         return ACT_DELETE;
     }
 
-    private void loadForm() throws Exception {
+    private void loadForm() throws PAException {
         ArrayList<StudySiteDTO> criteriaList = new ArrayList<StudySiteDTO>();
         for (StudySiteFunctionalCode cd : StudySiteFunctionalCode.values()) {
             if (cd.isCollaboratorCode()) {

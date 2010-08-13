@@ -117,29 +117,15 @@ import org.apache.struts2.interceptor.ServletResponseAware;
  * @author Anupama Sharma
  * @since 04/16/2009
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public final class TrialHistoryAction extends AbstractListEditAction  implements
-ServletResponseAware {
+public final class TrialHistoryAction extends AbstractListEditAction implements ServletResponseAware {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1876567890L;
 
-    /** The trial history web dto. */
     private List<TrialHistoryWebDTO> trialHistoryWebDTO;
-
-    /** The trial history wb dto. */
     private TrialHistoryWebDTO trialHistoryWbDto;
-
-    /** The study protocolii. */
     private String studyProtocolii;
-
-    /** The docii. */
     private String docii;
-
-    /** The doc file name. */
     private String docFileName;
-
-    /** The servlet response. */
     private HttpServletResponse servletResponse;
 
     /**
@@ -229,7 +215,6 @@ ServletResponseAware {
      * @throws PAException exception
      */
     @Override
-    @SuppressWarnings({"PMD" })
     protected void loadListForm() throws PAException {
         Ii studyProtocolIi =
                 (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
@@ -253,7 +238,7 @@ ServletResponseAware {
             }
 
         } catch (TooManyResultsException e) {
-             throw new PAException(e.getMessage());
+            throw new PAException(e);
         }
         List<TrialHistoryWebDTO> trialHistoryWebdtos = new ArrayList<TrialHistoryWebDTO>();
         if (!spList.isEmpty()) {
@@ -272,24 +257,24 @@ ServletResponseAware {
      * @return the documents
      * @throws PAException the PA exception
      */
-    private String getDocuments(StudyProtocolDTO sp)throws PAException {
-    StringBuffer documents = new StringBuffer();
-    List<DocumentDTO>documentDTO = getDocumentSvc().getDocumentsByStudyProtocol(sp.getIdentifier());
-    for (DocumentDTO docDto : documentDTO) {
-        String fileName = StConverter.convertToString(docDto.getFileName());
-        documents.append("<a href='#' onclick=\"handlePopup('");
-        documents.append(docDto.getStudyProtocolIdentifier().getExtension());
-        documents.append("','");
-        documents.append(docDto.getIdentifier().getExtension());
-        documents.append("','");
-        documents.append(docDto.getFileName().getValue());
-        documents.append("')\">");
-        documents.append(CdConverter.convertCdToString(docDto.getTypeCode()));
-        documents.append("&nbsp;- <B>");
-        documents.append(fileName);
-        documents.append("</B></a><br>");
-      }
-      return documents.toString();
+    private String getDocuments(StudyProtocolDTO sp) throws PAException {
+        StringBuffer documents = new StringBuffer();
+        List<DocumentDTO> documentDTO = getDocumentSvc().getDocumentsByStudyProtocol(sp.getIdentifier());
+        for (DocumentDTO docDto : documentDTO) {
+            String fileName = StConverter.convertToString(docDto.getFileName());
+            documents.append("<a href='#' onclick=\"handlePopup('");
+            documents.append(docDto.getStudyProtocolIdentifier().getExtension());
+            documents.append("','");
+            documents.append(docDto.getIdentifier().getExtension());
+            documents.append("','");
+            documents.append(docDto.getFileName().getValue());
+            documents.append("')\">");
+            documents.append(CdConverter.convertCdToString(docDto.getTypeCode()));
+            documents.append("&nbsp;- <B>");
+            documents.append(fileName);
+            documents.append("</B></a><br>");
+        }
+        return documents.toString();
     }
 
     /**

@@ -115,7 +115,6 @@ import com.opensymphony.xwork2.ActionSupport;
 * @author Naveen AMiruddin
 *
 */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class TrialValidationAction extends ActionSupport {
     private static final String FALSE = "FALSE";
     private static final long serialVersionUID = -6587531774808791496L;
@@ -248,11 +247,12 @@ public class TrialValidationAction extends ActionSupport {
                 ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PROTOCOL_II);
                 ServletActionContext.getRequest().getSession().removeAttribute(Constants.DOC_WFS_MENU);
                 return "amend_reject";
-            } else {
-                createMilestones(MilestoneCode.SUBMISSION_REJECTED);
-                ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
-                    helper.setMenuLinks(DocumentWorkflowStatusCode.REJECTED));
             }
+            createMilestones(MilestoneCode.SUBMISSION_REJECTED);
+            ServletActionContext.getRequest()
+                                .getSession()
+                                .setAttribute(Constants.DOC_WFS_MENU,
+                                              helper.setMenuLinks(DocumentWorkflowStatusCode.REJECTED));
             PaRegistry.getMailManagerService().sendRejectionEmail(studyProtocolIi);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
@@ -302,7 +302,7 @@ public class TrialValidationAction extends ActionSupport {
                     helper.setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
             query();
     }
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
+
     private void enforceBusinessRules(String operation) {
         if (StringUtils.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
             addFieldError("gtdDTO.LocalProtocolIdentifier", getText("Organization Trial ID must be Entered"));

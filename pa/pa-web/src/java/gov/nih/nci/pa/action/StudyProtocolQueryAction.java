@@ -111,7 +111,6 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Harsha
  *
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
 public class StudyProtocolQueryAction extends ActionSupport implements ServletResponseAware {
     private static final long serialVersionUID = -2308994602660261367L;
     private List<StudyProtocolQueryDTO> records = null;
@@ -220,7 +219,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      * @return res
      * @throws PAException exception
      */
-    @SuppressWarnings({ "PMD.CyclomaticComplexity" })
     public String view() throws PAException {
         if (!userRoleInSession()) {
             return showCriteria();
@@ -316,7 +314,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      * @return res
      * @throws PAException exception
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String checkout() throws PAException {
         try {
             StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry

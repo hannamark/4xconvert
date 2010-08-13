@@ -31,31 +31,29 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
- * 
+ *
  * @author NAmiruddin
  *
  * @param <BO> domain object
  * @param <PODTO> dto
  * @param <PADTO> dtoPa
- * @param <CONVERTER> 
+ * @param <CONVERTER>
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "unchecked" , "PMD.ExcessiveMethodLength" })
-public class PABaseCorrelation < PADTO extends PACorrelationDTO , 
-    PODTO extends CorrelationDto,  
-    BO extends StructuralRole , 
-    CONVERTER extends AbstractPoConverter<PADTO, PODTO , BO>> 
+@SuppressWarnings("unchecked")
+public class PABaseCorrelation <PADTO extends PACorrelationDTO,
+    PODTO extends CorrelationDto,
+    BO extends StructuralRole,
+    CONVERTER extends AbstractPoConverter<PADTO, PODTO, BO>>
     implements PABaseCorrelationService<PADTO> {
-    
+
     private  final Class<PADTO> typeArgument;
     private final Class<BO> srArgument;
     private final Class<CONVERTER> converterArgument;
-    private static final String UNCHECKED = "unchecked";
     private static final int THREE = 3;
     private static final int TWO = 2;
     /**
      * default constructor.
      */
-    @SuppressWarnings(UNCHECKED)
     public PABaseCorrelation() {
         Type myType = getClass(); // get the parameterized type, recursively resolving type parameters
         ParameterizedType parameterizedType = (ParameterizedType) myType;
@@ -63,9 +61,9 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
         srArgument = (Class) parameterizedType.getActualTypeArguments()[TWO];
         converterArgument = (Class) parameterizedType.getActualTypeArguments()[THREE];
     }
-    
+
     /**
-     * 
+     *
      * @param typeArgument padto
      * @param srArgument bo
      * @param converterArgument converter
@@ -78,13 +76,12 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
         this.converterArgument = converterArgument;
     }
 
-
     /**
      * @param dto dto
      * @return dto
      * @throws PAException on error
      */
-    public Long create(PADTO dto) throws PAException {   
+    public Long create(PADTO dto) throws PAException {
         CorrelationUtils corrUtils = new CorrelationUtils();
         if (dto.isPersonMandatory() && PAUtil.isIiNull(dto.getPersonIdentifier())) {
             throw new PAException(PAExceptionConstants.NULL_II_PERSON);
@@ -99,9 +96,9 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
         } catch (NullifiedEntityException e) {
            throw new PAException(PAExceptionConstants.NULLIFIED_ORG, e);
         }
-        
+
         //check if Ii is of Person or SR
-        
+
         // Step 2 : get the PO Person
         PersonDTO poPer = null;
         if (dto.getPersonIdentifier() != null) {
@@ -118,18 +115,18 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
         List<PODTO> poDtos = corrService.search(cDto);
         if (poDtos != null && poDtos.size() > 1 && dto.isUnique()) {
             throw new PAException("PO Correlation should not have more than 1  ");
-        }   
+        }
         if (poDtos == null || poDtos.isEmpty()) {
             try {
                 srPoIi = corrService.createCorrelation(cDto);
             } catch (EntityValidationException e) {
                 throw new PAException("Validation exception during  structural role creation" , e);
             } catch (CurationException e) {
-                throw new PAException("Curation exception during  structural role creation" , e);            
-            } 
+                throw new PAException("Curation exception during  structural role creation" , e);
+            }
         } else {
             srPoIi = DSetConverter.convertToIi(poDtos.get(0).getIdentifier());
-        }         
+        }
         // Step 3 : check for pa org, if not create one
         Organization paOrg = corrUtils.getPAOrganizationByIi(dto.getOrganizationIdentifier());
         if (paOrg == null) {
@@ -154,11 +151,9 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
             session.flush();
             srPaIdentifier = sr.getId();
         }
-        return srPaIdentifier; 
+        return srPaIdentifier;
     }
-    
 
-    
     /**
      * Get class of the implementation.
      *
@@ -166,7 +161,7 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
      */
     protected Class<PADTO> getTypeArgument() {
         return typeArgument;
-    }    
+    }
 
     /**
      * Get class of the implementation.
@@ -175,7 +170,7 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
      */
     protected Class<BO> getSrArgument() {
         return srArgument;
-    }    
+    }
     /**
      * Get class of the implementation.
      *
@@ -183,18 +178,18 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
      */
     protected Class<CONVERTER> getConverterArgument() {
         return converterArgument;
-    }    
-   
+    }
+
     private StructuralRole convertToDomain(PADTO dto , Organization org, Person per) throws PAException {
        return POConverter.get(getConverterArgument()).convertToDomain(dto, org, per);
-    }    
-     
+    }
+
     private CorrelationDto convertFromPADtoToPODto(PADTO dto) throws PAException {
         return POConverter.get(getConverterArgument()).convertFromPADtoToPoDto(dto);
-     }    
+     }
 
     /**
-     * 
+     *
      * @param <TYPE> the converter type to get
      * @param clazz class
      * @return service
@@ -206,7 +201,7 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
          }
          throw new PAException(" Unknown dto type for " + clazz.getName());
      }
-     
+
      private Long getStructuralRole(String poIdentifier) throws PAException {
          Session session = null;
          List<BO> queryList = new ArrayList<BO>();
@@ -225,7 +220,7 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
          // step 3: query the result
          queryList = query.list();
          if (queryList.size() > 1) {
-             throw new PAException(" More than one Structural role found in " + srArgument.getName() 
+             throw new PAException(" More than one Structural role found in " + srArgument.getName()
                      + " for identifier " + poIdentifier);
          } else if (!queryList.isEmpty()) {
              paIdentifier = queryList.get(0).getId();

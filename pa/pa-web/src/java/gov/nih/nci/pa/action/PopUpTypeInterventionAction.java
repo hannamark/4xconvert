@@ -102,14 +102,13 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Anupama Sharma
  *
  */
-@SuppressWarnings({"PMD" })
 public class PopUpTypeInterventionAction extends ActionSupport {
     private static final long serialVersionUID = 4960297232842560635L;
-    
+
     private List<LookUpWebDTO> lookupDtos = new ArrayList<LookUpWebDTO>();
-    
+
     private LookUpWebDTO lookupSearchCriteria = new LookUpWebDTO();
-    
+
     /**
     *
     * @return String success or failure
@@ -118,10 +117,10 @@ public class PopUpTypeInterventionAction extends ActionSupport {
        try {
          String className = ServletActionContext.getRequest().getParameter("className");
          String div = ServletActionContext.getRequest().getParameter("divName");
-         
+
          lookupSearchCriteria.setType(className);
          lookupSearchCriteria.setDivName(div);
-         
+
          lookupDtos = null;
        } catch (Exception e) {
            addActionError(e.getLocalizedMessage());
@@ -144,7 +143,7 @@ public class PopUpTypeInterventionAction extends ActionSupport {
   public String displayLookUpListDisplayTag() {
       return processDisplayLookUp("lookUp");
   }
-  
+
    private String processDisplayLookUp(String retvalue) {
        try {
            String code = ServletActionContext.getRequest().getParameter("code");
@@ -164,23 +163,23 @@ public class PopUpTypeInterventionAction extends ActionSupport {
            lookupSearchCriteria.setDisplayName(displayName);
            lookupSearchCriteria.setDivName(div);
            lookupSearchCriteria.setType(className);
-                      
-           lookupDtos.addAll(getTypeList(className, lookupSearchCriteria));           
+
+           lookupDtos.addAll(getTypeList(className, lookupSearchCriteria));
            return retvalue;
        } catch (Exception e) {
            return retvalue;
        }
    }
-   
-   
+
+
    private List<LookUpWebDTO> getTypeList(String className, LookUpWebDTO lookupCriteria) throws PAException {
- 
+
        List<LookUpWebDTO> lookUpList = new ArrayList<LookUpWebDTO>();
        if ("DoseForm".equalsIgnoreCase(className)) {
           DoseForm criteria = new DoseForm();
           lookUpList = generateWebDTO(criteria, lookupCriteria);
        } else if ("DoseFrequency".equalsIgnoreCase(className)) {
-          DoseFrequency criteria = new DoseFrequency(); 
+          DoseFrequency criteria = new DoseFrequency();
           lookUpList = generateWebDTO(criteria, lookupCriteria);
        } else if ("RouteOfAdministration".equalsIgnoreCase(className)) {
            RouteOfAdministration criteria = new RouteOfAdministration();
@@ -194,10 +193,10 @@ public class PopUpTypeInterventionAction extends ActionSupport {
        } else if ("TargetSite".equalsIgnoreCase(className)) {
            TargetSite criteria = new TargetSite();
            lookUpList = generateWebDTO(criteria, lookupCriteria);
-       } 
-       return lookUpList;       
+       }
+       return lookUpList;
    }
-   
+
    private List<LookUpWebDTO> generateWebDTO(DoseForm criteria, LookUpWebDTO lookupCriteria) throws PAException {
      List<LookUpWebDTO> lookUpList = new ArrayList<LookUpWebDTO>();
      if (!"".equals(lookupCriteria.getCode())) {
@@ -208,19 +207,19 @@ public class PopUpTypeInterventionAction extends ActionSupport {
      }
      if (!"".equals(lookupCriteria.getDescription())) {
         criteria.setDescription(lookupCriteria.getDescription());
-     } 
+     }
      if (!"".equals(lookupCriteria.getDisplayName())) {
        criteria.setDisplayName(lookupCriteria.getDisplayName());
      }
      List<DoseForm> doseFormsList = new ArrayList<DoseForm>();
-     BaseLookUpService<DoseForm> lookUpService = 
+     BaseLookUpService<DoseForm> lookUpService =
          new BaseLookUpService<DoseForm>(DoseForm.class);
      doseFormsList.addAll(lookUpService.search(criteria));
      for (DoseForm df :  doseFormsList) {
         LookUpWebDTO lookupdto = new LookUpWebDTO();
         lookupdto.setCode(df.getCode());
         lookupdto.setDescription(df.getDescription());
-        lookupdto.setDisplayName(df.getDisplayName());    
+        lookupdto.setDisplayName(df.getDisplayName());
         lookupdto.setId(df.getId().toString());
         lookupdto.setPublicId(df.getPublicId());
         lookupdto.setDivName(lookupCriteria.getDivName());
@@ -229,23 +228,23 @@ public class PopUpTypeInterventionAction extends ActionSupport {
     }
     return lookUpList;
   }
-   
+
    private List<LookUpWebDTO> generateWebDTO(DoseFrequency criteria, LookUpWebDTO lookupCriteria) throws PAException {
      List<LookUpWebDTO> lookUpList = new ArrayList<LookUpWebDTO>();
      if (!"".equals(lookupCriteria.getCode())) {
        criteria.setCode(lookupCriteria.getCode());
-     } 
+     }
      if (!"".equals(lookupCriteria.getPublicId())) {
        criteria.setPublicId(lookupCriteria.getPublicId());
      }
      if (!"".equals(lookupCriteria.getDescription())) {
        criteria.setDescription(lookupCriteria.getDescription());
-     } 
+     }
      if (!"".equals(lookupCriteria.getDisplayName())) {
        criteria.setDisplayName(lookupCriteria.getDisplayName());
      }
      List<DoseFrequency> doseFreqsList = new ArrayList<DoseFrequency>();
-     BaseLookUpService<DoseFrequency> lookUpService = 
+     BaseLookUpService<DoseFrequency> lookUpService =
           new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
      doseFreqsList.addAll(lookUpService.search(criteria));
      for (DoseFrequency df :  doseFreqsList) {
@@ -309,7 +308,7 @@ public class PopUpTypeInterventionAction extends ActionSupport {
         criteria.setDisplayName(lookupCriteria.getDisplayName());
       }
       List<RouteOfAdministration> roaList = new ArrayList<RouteOfAdministration>();
-      BaseLookUpService<RouteOfAdministration> lookUpService = 
+      BaseLookUpService<RouteOfAdministration> lookUpService =
           new BaseLookUpService<RouteOfAdministration>(RouteOfAdministration.class);
       roaList.addAll(lookUpService.search(criteria));
       for (RouteOfAdministration df :  roaList) {
@@ -340,7 +339,7 @@ public class PopUpTypeInterventionAction extends ActionSupport {
         criteria.setDisplayName(lookupCriteria.getDisplayName());
       }
       List<TargetSite> targetSiteList = new ArrayList<TargetSite>();
-      BaseLookUpService<TargetSite> lookUpService = 
+      BaseLookUpService<TargetSite> lookUpService =
           new BaseLookUpService<TargetSite>(TargetSite.class);
       targetSiteList.addAll(lookUpService.search(criteria));
       for (TargetSite df :  targetSiteList) {
@@ -369,14 +368,14 @@ public class PopUpTypeInterventionAction extends ActionSupport {
       }
       if (!"".equals(lookupCriteria.getDisplayName())) {
        criteria.setDisplayName(lookupCriteria.getDisplayName());
-      } 
+      }
       List<MethodCode> methodCodeList = new ArrayList<MethodCode>();
-      BaseLookUpService<MethodCode> lookUpService = 
+      BaseLookUpService<MethodCode> lookUpService =
         new BaseLookUpService<MethodCode>(MethodCode.class);
       methodCodeList.addAll(lookUpService.search(criteria));
       for (MethodCode df :  methodCodeList) {
         LookUpWebDTO lookupdto = new LookUpWebDTO();
-        lookupdto.setCode(df.getCode()); 
+        lookupdto.setCode(df.getCode());
         lookupdto.setDescription(df.getDescription());
         lookupdto.setDisplayName(df.getDisplayName());
         lookupdto.setId(df.getId().toString());
@@ -387,10 +386,10 @@ public class PopUpTypeInterventionAction extends ActionSupport {
      }
      return lookUpList;
    }
-   
+
    private boolean searchCriteriaEmpty(String code, String publicId, String description, String displayName) {
-     boolean criteriaEmpty = false;   
-     if ("".equals(code) && "".equals(publicId) 
+     boolean criteriaEmpty = false;
+     if ("".equals(code) && "".equals(publicId)
          && "".equals(description) && "".equals(displayName)) {
          String message = "Please enter at least one search criteria";
          addActionError(message);
@@ -399,7 +398,7 @@ public class PopUpTypeInterventionAction extends ActionSupport {
      }
      return criteriaEmpty;
    }
-   
+
   /**
    * @return the lookupDtos
    */
@@ -424,5 +423,5 @@ public class PopUpTypeInterventionAction extends ActionSupport {
    public void setLookupSearchCriteria(LookUpWebDTO lookupSearchCriteria) {
      this.lookupSearchCriteria = lookupSearchCriteria;
    }
-      
+
 }

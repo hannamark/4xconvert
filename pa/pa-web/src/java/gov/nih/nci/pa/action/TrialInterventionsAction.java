@@ -118,8 +118,6 @@ import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
 * @author Hugh Reinhart
 * @since 10/31/2008
 */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.TooManyFields",
-  "PMD.ExcessiveMethodLength" })
 public final class TrialInterventionsAction extends AbstractListEditAction {
     private static final long serialVersionUID = 1876567890L;
     static final String SPACE = " ";
@@ -139,7 +137,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     private String selectedType;
 
 
-   //DRUG & RADIATION Attribures
+   //DRUG & RADIATION Attributes
 
     private String minDoseValue;
     private String maxDoseValue;
@@ -698,7 +696,6 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
       }
         return AR_EDIT;
      }
-     @SuppressWarnings({"PMD" })
      private String convertInterventionToCSV(InterventionWebDTO interDto) {
          StringBuffer sbuf = new StringBuffer();
 
@@ -763,140 +760,133 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
              sbuf.append(interDto.getProcedureName());
          }
          return sbuf.toString();
-     }
-     private boolean isSubstance() {
+    }
+
+    private boolean isSubstance() {
         boolean isSubstanceType = false;
         if (getInterventionType().equals(ActivitySubcategoryCode.DRUG.getCode())
-           || getInterventionType().equals(ActivitySubcategoryCode.RADIATION.getCode())) {
-          isSubstanceType = true;
+                || getInterventionType().equals(ActivitySubcategoryCode.RADIATION.getCode())) {
+            isSubstanceType = true;
         }
         return isSubstanceType;
-     }
-     private boolean isProcedure() {
-         boolean isProcedureType = false;
-         if (getInterventionType().equals(ActivitySubcategoryCode.PROCEDURE_SURGERY.getCode())) {
-           isProcedureType = true;
-         }
-         return isProcedureType;
-      }
-     @SuppressWarnings({"PMD" })
-     private void enforceBusinessRules() throws PAException {
-         StringBuffer sbuf = new StringBuffer();
-         if (getInterventionType() == null) {
+    }
+
+    private boolean isProcedure() {
+        boolean isProcedureType = false;
+        if (getInterventionType().equals(ActivitySubcategoryCode.PROCEDURE_SURGERY.getCode())) {
+            isProcedureType = true;
+        }
+        return isProcedureType;
+    }
+
+    private void enforceBusinessRules() throws PAException {
+        StringBuffer sbuf = new StringBuffer();
+        if (getInterventionType() == null) {
             sbuf.append("Intervention type must be set.\n");
-         }
-         if (StringUtils.isEmpty(getInterventionIdentifier())) {
-             sbuf.append("An Intervention must be selected.");
-         }
-         if (getInterventionType() != null && isSubstance()) {
+        }
+        if (StringUtils.isEmpty(getInterventionIdentifier())) {
+            sbuf.append("An Intervention must be selected.");
+        }
+        if (getInterventionType() != null && isSubstance()) {
 
-          if (getMinDoseValue() != null && !NumberUtils.isNumber(getMinDoseValue())) {
-            sbuf.append("Please enter Numeric Min Dose Value.\n");
-          }
-          if (getMaxDoseValue() != null && !NumberUtils.isNumber(getMaxDoseValue())) {
-              sbuf.append("Please enter Numeric Max Dose Value.\n");
-           }
-          if (getMaxDoseValue() != null && getMinDoseValue() == null) {
-             sbuf.append("Please enter Min and Max Dose Value.\n");
-          }
-          if (getMaxDoseTotalValue() != null && getMinDoseTotalValue() == null) {
-             sbuf.append("Please enter Min and Max Dose Total Value.\n");
-          }
-          if (getMaxDoseTotalValue() != null && !NumberUtils.isNumber(getMaxDoseTotalValue())) {
-              sbuf.append("Please enter Numeric Max Dose Total Value.\n");
-          }
-          if (getMinDoseTotalValue() != null && !NumberUtils.isNumber(getMinDoseTotalValue())) {
-              sbuf.append("Please enter Numeric Min Dose Total Value.\n");
+            if (getMinDoseValue() != null && !NumberUtils.isNumber(getMinDoseValue())) {
+                sbuf.append("Please enter Numeric Min Dose Value.\n");
             }
-          if (getDoseUOM() != null) {
-             if (getMinDoseValue() == null) {
-                 sbuf.append("Please enter Min Dose Value for the UOM.\n");
-             }
-          }
-          if (getDoseUOM() == null && getMinDoseValue() != null) {
-             sbuf.append("Please enter Dose UOM.\n");
-          }
-          if (getDoseTotalUOM() != null) {
-             if (getMinDoseTotalValue() == null) {
-                 sbuf.append("Please enter Min Dose Total Value for the UOM.\n");
-             }
+            if (getMaxDoseValue() != null && !NumberUtils.isNumber(getMaxDoseValue())) {
+                sbuf.append("Please enter Numeric Max Dose Value.\n");
+            }
+            if (getMaxDoseValue() != null && getMinDoseValue() == null) {
+                sbuf.append("Please enter Min and Max Dose Value.\n");
+            }
+            if (getMaxDoseTotalValue() != null && getMinDoseTotalValue() == null) {
+                sbuf.append("Please enter Min and Max Dose Total Value.\n");
+            }
+            if (getMaxDoseTotalValue() != null && !NumberUtils.isNumber(getMaxDoseTotalValue())) {
+                sbuf.append("Please enter Numeric Max Dose Total Value.\n");
+            }
+            if (getMinDoseTotalValue() != null && !NumberUtils.isNumber(getMinDoseTotalValue())) {
+                sbuf.append("Please enter Numeric Min Dose Total Value.\n");
+            }
+            if (getDoseUOM() != null && getMinDoseValue() == null) {
+                sbuf.append("Please enter Min Dose Value for the UOM.\n");
+            }
+            if (getDoseUOM() == null && getMinDoseValue() != null) {
+                sbuf.append("Please enter Dose UOM.\n");
+            }
+            if (getDoseTotalUOM() != null && getMinDoseTotalValue() == null) {
+                sbuf.append("Please enter Min Dose Total Value for the UOM.\n");
+            }
+            if (getDoseTotalUOM() == null && getMinDoseTotalValue() != null) {
+                sbuf.append("Please enter Dose Total UOM.\n");
+            }
+            if (getDoseDurationUOM() != null && getDoseDurationValue() == null) {
+                sbuf.append("Please enter Dose Duration Value for the UOM.\n");
+            }
+            if (getDoseDurationUOM() == null && getDoseDurationValue() != null) {
+                sbuf.append("Please enter Dose Duration UOM.\n");
+            }
+        }
+        if (sbuf.toString().length() > 0) {
+            throw new PAException(sbuf.toString());
+        }
 
-          }
-          if (getDoseTotalUOM() == null && getMinDoseTotalValue() != null) {
-              sbuf.append("Please enter Dose Total UOM.\n");
-           }
-          if (getDoseDurationUOM() != null) {
-             if (getDoseDurationValue() == null) {
-                 sbuf.append("Please enter Dose Duration Value for the UOM.\n");
-             }
-           }
-          if (getDoseDurationUOM() == null && getDoseDurationValue() != null) {
-              sbuf.append("Please enter Dose Duration UOM.\n");
-           }
-         }
-         if (sbuf.toString().length() > 0) {
-           throw new PAException(sbuf.toString());
-         }
+    }
 
-     }
-     private PlannedActivityDTO generateIsoDto() {
-         PlannedActivityDTO paDto = new PlannedActivityDTO();
-         paDto.setIdentifier(null);
-         paDto.setStudyProtocolIdentifier(getSpIi());
-         paDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
-         paDto.setInterventionIdentifier(IiConverter.convertToIi(getInterventionIdentifier()));
-         paDto.setTextDescription(StConverter.convertToSt(getInterventionDescription()));
-         paDto.setSubcategoryCode(CdConverter.convertStringToCd(getInterventionType()));
-         return paDto;
-     }
+    private PlannedActivityDTO generateIsoDto() {
+        PlannedActivityDTO paDto = new PlannedActivityDTO();
+        paDto.setIdentifier(null);
+        paDto.setStudyProtocolIdentifier(getSpIi());
+        paDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
+        paDto.setInterventionIdentifier(IiConverter.convertToIi(getInterventionIdentifier()));
+        paDto.setTextDescription(StConverter.convertToSt(getInterventionDescription()));
+        paDto.setSubcategoryCode(CdConverter.convertStringToCd(getInterventionType()));
+        return paDto;
+    }
 
-     private PlannedSubstanceAdministrationDTO generateSubstanceIsoDto() {
-         PlannedSubstanceAdministrationDTO paDto = new PlannedSubstanceAdministrationDTO();
-         paDto.setIdentifier(null);
-         paDto.setStudyProtocolIdentifier(getSpIi());
-         paDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION));
-         paDto.setInterventionIdentifier(IiConverter.convertToIi(getInterventionIdentifier()));
-         paDto.setTextDescription(StConverter.convertToSt(getInterventionDescription()));
-         paDto.setSubcategoryCode(CdConverter.convertStringToCd(getInterventionType()));
-         paDto.setDose(convertToIvlPq(getDoseUOM(), getMinDoseValue(), getMaxDoseValue()));
-         paDto.setDoseDescription(StConverter.convertToSt(getInterventionDescription()));
-         paDto.setDoseDuration(convertToPq(getDoseDurationUOM(), getDoseDurationValue()));
-         paDto.setDoseFormCode(CdConverter.convertStringToCd(getDoseForm()));
-         paDto.setDoseFrequencyCode(CdConverter.convertStringToCd(getDoseFrequencyCode()));
-         paDto.setDoseRegimen(StConverter.convertToSt(getDoseRegimen()));
-         if (getInterventionType().equals(ActivitySubcategoryCode.DRUG.getCode())) {
-          paDto.setRouteOfAdministrationCode(CdConverter.convertStringToCd(getRouteOfAdministration()));
-         }
-         paDto.setDoseTotal(convertToIvlPq(getDoseTotalUOM(), getMinDoseTotalValue(), getMaxDoseTotalValue()));
-         if (getInterventionType().equals(ActivitySubcategoryCode.RADIATION.getCode())) {
-           //add the target and approach site
-           paDto.setApproachSiteCode(CdConverter.convertStringToCd(getApproachSite()));
-           paDto.setTargetSiteCode(CdConverter.convertStringToCd(getTargetSite()));
-         }
-         return paDto;
-     }
-     @SuppressWarnings({"PMD" })
-     private Ivl<Pq> convertToIvlPq(String uom, String minValue, String maxValue) {
-      if (uom == null && minValue == null && maxValue == null) {
-        return null;
-      }
-      IvlConverter.JavaPq low  = new IvlConverter.JavaPq(uom ,
-         PAUtil.convertStringToDecimal(minValue), null);
-      IvlConverter.JavaPq high  = new IvlConverter.JavaPq(uom ,
-         PAUtil.convertStringToDecimal(maxValue), null);
-      Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);
-      return ivl;
-     }
+    private PlannedSubstanceAdministrationDTO generateSubstanceIsoDto() {
+        PlannedSubstanceAdministrationDTO paDto = new PlannedSubstanceAdministrationDTO();
+        paDto.setIdentifier(null);
+        paDto.setStudyProtocolIdentifier(getSpIi());
+        paDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION));
+        paDto.setInterventionIdentifier(IiConverter.convertToIi(getInterventionIdentifier()));
+        paDto.setTextDescription(StConverter.convertToSt(getInterventionDescription()));
+        paDto.setSubcategoryCode(CdConverter.convertStringToCd(getInterventionType()));
+        paDto.setDose(convertToIvlPq(getDoseUOM(), getMinDoseValue(), getMaxDoseValue()));
+        paDto.setDoseDescription(StConverter.convertToSt(getInterventionDescription()));
+        paDto.setDoseDuration(convertToPq(getDoseDurationUOM(), getDoseDurationValue()));
+        paDto.setDoseFormCode(CdConverter.convertStringToCd(getDoseForm()));
+        paDto.setDoseFrequencyCode(CdConverter.convertStringToCd(getDoseFrequencyCode()));
+        paDto.setDoseRegimen(StConverter.convertToSt(getDoseRegimen()));
+        if (getInterventionType().equals(ActivitySubcategoryCode.DRUG.getCode())) {
+            paDto.setRouteOfAdministrationCode(CdConverter.convertStringToCd(getRouteOfAdministration()));
+        }
+        paDto.setDoseTotal(convertToIvlPq(getDoseTotalUOM(), getMinDoseTotalValue(), getMaxDoseTotalValue()));
+        if (getInterventionType().equals(ActivitySubcategoryCode.RADIATION.getCode())) {
+            // add the target and approach site
+            paDto.setApproachSiteCode(CdConverter.convertStringToCd(getApproachSite()));
+            paDto.setTargetSiteCode(CdConverter.convertStringToCd(getTargetSite()));
+        }
+        return paDto;
+    }
 
-     private Pq convertToPq(String uom, String value) {
-       if (uom == null && value == null) {
-         return null;
-       }
-       Pq pq = new Pq();
-       pq.setValue(PAUtil.convertStringToDecimal(value));
-       pq.setUnit(uom);
-       return pq;
-     }
+    private Ivl<Pq> convertToIvlPq(String uom, String minValue, String maxValue) {
+        if (uom == null && minValue == null && maxValue == null) {
+            return null;
+        }
+        IvlConverter.JavaPq low = new IvlConverter.JavaPq(uom, PAUtil.convertStringToDecimal(minValue), null);
+        IvlConverter.JavaPq high = new IvlConverter.JavaPq(uom, PAUtil.convertStringToDecimal(maxValue), null);
+        return IvlConverter.convertPq().convertToIvl(low, high);
+    }
+
+    private Pq convertToPq(String uom, String value) {
+        if (uom == null && value == null) {
+            return null;
+        }
+        Pq pq = new Pq();
+        pq.setValue(PAUtil.convertStringToDecimal(value));
+        pq.setUnit(uom);
+        return pq;
+    }
 
      private PlannedProcedureDTO generateProcedureIsoDto() {
          PlannedProcedureDTO paDto = new PlannedProcedureDTO();
@@ -938,7 +928,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          webDto.setTargetSite(!PAUtil.isCdNull(pa.getTargetSiteCode()) ? pa.getTargetSiteCode().getCode() : "");
          return webDto;
      }
-     @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+
      private InterventionWebDTO generateWebDto(PlannedSubstanceAdministrationDTO pa) throws PAException {
          InterventionWebDTO webDto = new InterventionWebDTO();
          if (pa != null && pa.getInterventionIdentifier() != null) {

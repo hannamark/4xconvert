@@ -98,7 +98,6 @@ import gov.nih.nci.pa.util.ISOUtil;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({  "PMD.NPathComplexity" , "PMD.CyclomaticComplexity" })
 public class StudyResourcingConverter  extends AbstractConverter<StudyResourcingDTO, StudyResourcing> {
 
     /**

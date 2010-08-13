@@ -131,9 +131,13 @@ import org.hibernate.validator.NotNull;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "Study_Protocol_type", discriminatorType = DiscriminatorType.STRING)
-@SuppressWarnings({ "PMD.TooManyFields", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength" })
 @Table(name = "STUDY_PROTOCOL")
 public class StudyProtocol extends AbstractStudyProtocol {
+    /**
+     *
+     */
+    private static final String STUDY_PROTOCOL_MAPPING = "studyProtocol";
+
     private static final long serialVersionUID = 1234567890L;
 
     private AccrualReportingMethodCode accrualReportingMethodCode;
@@ -368,7 +372,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      *
      * @return studyOverallStatuses
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     public List<StudyOverallStatus> getStudyOverallStatuses() {
         return studyOverallStatuses;
     }
@@ -387,7 +391,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      *
      * @return documentWorkflowStatuses
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     public List<DocumentWorkflowStatus> getDocumentWorkflowStatuses() {
         return documentWorkflowStatuses;
     }
@@ -406,7 +410,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      *
      * @return studySites
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     public List<StudySite> getStudySites() {
         return studySites;
     }
@@ -424,7 +428,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      *
      * @return studyContacts
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     public List<StudyContact> getStudyContacts() {
         return studyContacts;
     }
@@ -442,7 +446,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      *
      * @return studyResourcings
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     public List<StudyResourcing> getStudyResourcings() {
         return studyResourcings;
     }
@@ -459,7 +463,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     /**
      * @return the plannedActivities
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<PlannedActivity> getPlannedActivities() {
         return plannedActivities;
@@ -476,7 +480,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     /**
      * @return the arms
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<Arm> getArms() {
         return arms;
@@ -510,7 +514,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     /**
      * @return the studyDiseases
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<StudyDisease> getStudyDiseases() {
         return studyDiseases;
@@ -527,7 +531,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     /**
      * @return the studyMilestones
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<StudyMilestone> getStudyMilestones() {
         return studyMilestones;
@@ -544,7 +548,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     /**
      * @return the studyOnholds
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<StudyOnhold> getStudyOnholds() {
         return studyOnholds;
@@ -561,7 +565,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     /**
      * @return the studySubjects
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<StudySubject> getStudySubjects() {
         return studySubjects;
@@ -677,7 +681,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     /**
      * @return the performedActivities
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<PerformedActivity> getPerformedActivities() {
         return performedActivities;
@@ -695,7 +699,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     /**
      * @return the submissions
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<Submission> getSubmissions() {
         return submissions;
@@ -712,7 +716,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     /**
      * @return the studyInbox
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<StudyInbox> getStudyInbox() {
         return studyInbox;
@@ -727,7 +731,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     /**
      * @return the studyCheckout
      */
-    @OneToMany(mappedBy = "studyProtocol")
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public List<StudyCheckout> getStudyCheckout() {
         return studyCheckout;

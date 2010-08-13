@@ -89,7 +89,6 @@ package gov.nih.nci.pa.service.util.report;
  *
  * @author kkanchinadam
  */
-@SuppressWarnings("PMD.TooManyFields")
 public class TSRReportGeneralTrialDetails {
     private String officialTitle;
     private String type;
@@ -115,7 +114,6 @@ public class TSRReportGeneralTrialDetails {
      */
     public TSRReportGeneralTrialDetails() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**

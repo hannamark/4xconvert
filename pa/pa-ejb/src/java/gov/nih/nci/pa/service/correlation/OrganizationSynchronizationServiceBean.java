@@ -125,12 +125,9 @@ import org.hibernate.criterion.Expression;
  * Synchronization service bean for organization and its structural roles.
  *
  * @author Naveen Amiruddin
- * @since 07/07/2007 copyright NCI 2007. All rights reserved. This code may not be used without the express written
- *        permission of the copyright holder, NCI.
+ * @since 07/07/2007
  */
 @Stateless
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.PreserveStackTrace",
-        "PMD.ExcessiveMethodLength" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class OrganizationSynchronizationServiceBean implements OrganizationSynchronizationServiceRemote {

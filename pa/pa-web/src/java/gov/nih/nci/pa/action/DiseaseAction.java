@@ -105,7 +105,6 @@ import com.opensymphony.xwork2.Preparable;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public final class DiseaseAction extends AbstractListEditAction implements Preparable {
     private static final long serialVersionUID = 1234584746L;
 
@@ -211,7 +210,6 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
         return super.create();
     }
 
-    @SuppressWarnings("PMD.NPathComplexity")
     private void enforceBusinessRules() throws PAException {
         if (StringUtils.isEmpty(disease.getDiseaseIdentifier())) {
             addActionError("Please select a Disease/Condition to add to the trial.  ");

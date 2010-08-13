@@ -162,19 +162,13 @@ import org.apache.commons.lang.StringUtils;
  * service bean for validating the Abstraction.
  *
  * @author Kalpana Guthikonda
- * @since 11/27/2008 copyright NCI 2007. All rights reserved. This code may not be used without the express written
- *        permission of the copyright holder, NCI.
+ * @since 11/27/2008
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.TooManyMethods",
-        "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength", "PMD.NPathComplexity", "PMD.TooManyFields" })
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceRemote {
 
-    /**
-     *
-     */
     private static CorrelationUtils correlationUtils = new CorrelationUtils();
     @EJB
     private StudyProtocolServiceLocal studyProtocolService;
@@ -1163,7 +1157,6 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
     }
 
-//    @SuppressWarnings({"PMD"})
     private void enforceInterventional(InterventionalStudyProtocolDTO ispDTO,
             List<AbstractionCompletionDTO> abstractionList) {
         if (ispDTO.getPrimaryPurposeCode().getCode() == null) {

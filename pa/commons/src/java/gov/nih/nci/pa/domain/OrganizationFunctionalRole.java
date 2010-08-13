@@ -1,4 +1,4 @@
-/**
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -91,28 +91,28 @@ import javax.persistence.MappedSuperclass;
  * @since 05/22/2008
  */
 @MappedSuperclass
-@SuppressWarnings("PMD")
 public abstract class OrganizationFunctionalRole extends FunctionalRole {
 
     private static final long serialVersionUID = -8121622197892901456L;
-    
+
     private StudySiteFunctionalCode functionalCode;
 
     /**
-    *
-    * @return functionalCode
-    */
-   @Column(name = "FUNCTIONAL_CODE")
-   @Enumerated(EnumType.STRING)
-   public StudySiteFunctionalCode getFunctionalCode() {
-       return functionalCode;
-   }
-   /**
-    *
-    * @param functionalCode functionalCode
-    */
-   public void setFunctionalCode(StudySiteFunctionalCode functionalCode) {
-       this.functionalCode = functionalCode;
-   }
-    
+     *
+     * @return functionalCode
+     */
+    @Column(name = "FUNCTIONAL_CODE")
+    @Enumerated(EnumType.STRING)
+    public StudySiteFunctionalCode getFunctionalCode() {
+        return functionalCode;
+    }
+
+    /**
+     *
+     * @param functionalCode functionalCode
+     */
+    public void setFunctionalCode(StudySiteFunctionalCode functionalCode) {
+        this.functionalCode = functionalCode;
+    }
+
 }

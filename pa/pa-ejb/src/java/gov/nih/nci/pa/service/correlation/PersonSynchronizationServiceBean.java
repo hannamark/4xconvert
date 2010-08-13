@@ -137,8 +137,6 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@SuppressWarnings({ "PMD.TooManyMethods" , "PMD.PreserveStackTrace" , "PMD.ExcessiveMethodLength",
-   "PMD.CyclomaticComplexity",  "PMD.NPathComplexity", "PMD.ExcessiveClassLength" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PersonSynchronizationServiceBean implements PersonSynchronizationServiceRemote {
@@ -255,8 +253,8 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         }
     }
 
-    private void updateClinicalResearchStaff(final Ii crsIdentifier
-            , final ClinicalResearchStaffDTO crsDto) throws PAException {
+    private void updateClinicalResearchStaff(final Ii crsIdentifier, final ClinicalResearchStaffDTO crsDto)
+            throws PAException {
         ClinicalResearchStaff crs = cUtils.getStructuralRoleByIi(crsIdentifier);
         Session session = null;
         StructuralRoleStatusCode newRoleCode = null;
@@ -324,8 +322,8 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         } //if (crsDto == null)
     }
 
-    private void updateHealthCareProvider(final Ii hcpIdentifier ,
-            final HealthCareProviderDTO hcpDto) throws PAException {
+    private void updateHealthCareProvider(final Ii hcpIdentifier, final HealthCareProviderDTO hcpDto)
+            throws PAException {
         HealthCareProvider hcp = cUtils.getStructuralRoleByIi(hcpIdentifier);
         Session session = null;
         StructuralRoleStatusCode newRoleCode = null;
@@ -391,8 +389,8 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         }
     }
 
-    private void updateOrganizationalContact(final Ii ocIdentifier ,
-            final OrganizationalContactDTO ocDto) throws PAException {
+    private void updateOrganizationalContact(final Ii ocIdentifier, final OrganizationalContactDTO ocDto)
+            throws PAException {
         OrganizationalContact oc = getPAOrganizationalContact(ocIdentifier.getExtension());
         Session session = null;
         StructuralRoleStatusCode newRoleCode = null;

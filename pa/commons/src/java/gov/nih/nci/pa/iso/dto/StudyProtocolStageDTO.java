@@ -15,9 +15,7 @@ import java.util.List;
 
 /**
  * @author Vrushali
- *
  */
-@SuppressWarnings({ "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
 
     private static final long serialVersionUID = 7235772554482606139L;

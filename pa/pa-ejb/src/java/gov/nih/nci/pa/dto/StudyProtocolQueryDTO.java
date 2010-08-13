@@ -99,7 +99,6 @@ import java.util.List;
  * @since 07/22/2007
  */
 
-@SuppressWarnings({ "PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.BooleanGetMethodName" })
 public class StudyProtocolQueryDTO implements Serializable {
     static final long serialVersionUID = 283476876L;
 
@@ -147,17 +146,16 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Boolean showSendXml = false;
     private List<String> otherIdentifiers = new ArrayList<String>();
 
-   /**
-    * @return the trialCategory
-    */
+    /**
+     * @return the trialCategory
+     */
     public String getTrialCategory() {
-     if (this.isProprietaryTrial) {
-         trialCategory = "Proprietary Trial";
-         return trialCategory;
-      } else {
+        if (this.isProprietaryTrial) {
+            trialCategory = "Proprietary Trial";
+            return trialCategory;
+        }
         trialCategory = "Non Proprietary Trial";
         return trialCategory;
-      }
     }
 
     /**

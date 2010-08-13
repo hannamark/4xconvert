@@ -119,11 +119,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Hugh Reinhart
  * @since 08/20/2008
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyFields", "PMD.SignatureDeclareThrowsException",
-    "PMD.ExcessiveClassLength" })
-
-public class StudyOverallStatusAction extends ActionSupport implements
-        Preparable {
+public class StudyOverallStatusAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1L;
     private static final String ACTION_HISTORY = "historypopup";
     private static String actualString = "Actual";
@@ -144,9 +140,9 @@ public class StudyOverallStatusAction extends ActionSupport implements
     private List<StudyOverallStatusWebDTO> overallStatusList;
 
     /**
-     * @see com.opensymphony.xwork2.Preparable#prepare()
-     * @throws Exception e
+     * {@inheritDoc}
      */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() throws Exception {
         dateTypeList = new HashMap<String, String>();
         dateTypeList.put(actualString, actualString);
@@ -213,9 +209,9 @@ public class StudyOverallStatusAction extends ActionSupport implements
 
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException exception
      */
-    public String historypopup() throws Exception {
+    public String historypopup() throws PAException {
         overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();
         List<StudyOverallStatusDTO> isoList = sosService.getByStudyProtocol(spIdIi);
         for (StudyOverallStatusDTO iso : isoList) {

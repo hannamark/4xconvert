@@ -100,7 +100,6 @@ import org.hibernate.Session;
  * @param <BO> domain object
  * @param <DTO> dto
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public abstract class AbstractConverter<DTO extends BaseDTO, BO extends AbstractEntity> {
     /**
      * @param dto dto
@@ -140,8 +139,8 @@ public abstract class AbstractConverter<DTO extends BaseDTO, BO extends Abstract
     /**
      *
      * @param <T> any class extends {@link StructuralRole}
-     * @param isoIi iso identitifier
-     * @return StucturalRole class for an correspondong iso ii
+     * @param isoIi ISO identifier
+     * @return StucturalRole class for an corresponding ISO ii
      * @throws PAException on error
      */
 

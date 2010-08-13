@@ -38,7 +38,6 @@ import org.hibernate.annotations.Type;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@SuppressWarnings({ "PMD.TooManyFields" })
 @Table(name = "STUDY_PROTOCOL_STAGE")
 public class StudyProtocolStage extends AbstractStudyProtocol {
     private static final long serialVersionUID = 1L;

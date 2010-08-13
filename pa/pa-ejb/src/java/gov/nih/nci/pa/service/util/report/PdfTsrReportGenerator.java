@@ -110,7 +110,6 @@ import com.lowagie.text.pdf.PdfWriter;
  *
  * @author kkanchinadam
  */
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
     private static final int INT_2 = 2;
     private static final int INT_3 = 3;
@@ -241,7 +240,6 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
         }
     }
 
-    @SuppressWarnings("MagicNumber")
     private void addTitleToPdfDoc(String title) throws DocumentException {
         Font headerFont = FontFactory.getFont(FontFactory.HELVETICA, INT_20, Font.BOLD,
                 new Color(INT_0X66, INT_0X66, INT_0X99));

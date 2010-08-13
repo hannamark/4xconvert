@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.dto;
 
@@ -13,7 +13,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
  * @author Vrushali
  *
  */
-@SuppressWarnings({"PMD.MethodReturnsInternalArray" })
 public class TrialDocumentDTO {
     private String typeCode;
     private String fileName;
@@ -21,11 +20,11 @@ public class TrialDocumentDTO {
     private String inactiveCommentText;
     private byte[] text;
     /**
-     * 
+     *
      * @param isoDto dto
      */
     public TrialDocumentDTO(DocumentDTO isoDto) {
-       super(); 
+       super();
        this.typeCode = CdConverter.convertCdToString(isoDto.getTypeCode());
        this.fileName = StConverter.convertToString(isoDto.getFileName());
        this.id = IiConverter.convertToString(isoDto.getIdentifier());
@@ -33,12 +32,12 @@ public class TrialDocumentDTO {
        this.text = EdConverter.convertToByte(isoDto.getText());
     }
     /**
-     * 
+     *
      */
     public TrialDocumentDTO() {
         super();
     }
-    
+
     /**
      * @return the typeCode
      */
@@ -100,5 +99,5 @@ public class TrialDocumentDTO {
         byte[] temp = text;
         this.text = temp;
     }
-    
+
 }

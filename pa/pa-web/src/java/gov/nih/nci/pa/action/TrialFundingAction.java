@@ -103,15 +103,14 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Kalpana Guthikonda
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.ExcessiveMethodLength" })
 public class TrialFundingAction extends ActionSupport {
-  private static final long serialVersionUID = 4865176377748106852L;
-private static final String QUERY_RESULT = "query";
-  private static final String DELETE_RESULT = "delete";
-  private TrialFundingWebDTO trialFundingWebDTO = new TrialFundingWebDTO();
-  private List<TrialFundingWebDTO> trialFundingList;
-  private Long cbValue;
-  private String page;
+    private static final long serialVersionUID = 4865176377748106852L;
+    private static final String QUERY_RESULT = "query";
+    private static final String DELETE_RESULT = "delete";
+    private TrialFundingWebDTO trialFundingWebDTO = new TrialFundingWebDTO();
+    private List<TrialFundingWebDTO> trialFundingList;
+    private Long cbValue;
+    private String page;
 
   /**
    * @return result

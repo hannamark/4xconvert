@@ -88,7 +88,6 @@ package gov.nih.nci.pa.service.util.report;
  *
  * @author kkanchinadam
  */
-@SuppressWarnings("PMD.ExcessiveClassLength")
 public class TSRReportLabelText {
     /**
      * Information not provided.
@@ -357,7 +356,7 @@ public class TSRReportLabelText {
      */
     public static final String IND_IDE_HOLDER = "Holder";
     /**
-     *  Expanded Access.
+     * Expanded Access.
      */
     public static final String IND_IDE_EXPANDED_ACCESS = "Expanded Access";
     /**
@@ -611,7 +610,7 @@ public class TSRReportLabelText {
      */
     public static final String PS_CONTACT = "Contact";
     /**
-     *  Recruitment Status and Dates.
+     * Recruitment Status and Dates.
      */
     public static final String PS_RECRUITMENT_STATUS_AND_DATES = "Recruitment Status & Date(s)";
     /**
@@ -635,23 +634,3 @@ public class TSRReportLabelText {
      */
     public static final String PS_SUMMARY4_SPONSOR = "Summary 4 Sponsor/Source";
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

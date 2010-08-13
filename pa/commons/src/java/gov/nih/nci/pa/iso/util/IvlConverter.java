@@ -94,8 +94,6 @@ import java.sql.Timestamp;
  * @param <Iso> iso type which is aggregated in Ivl
  * @param <T> standard java class corresponding to aggregated iso type
  */
-
-@SuppressWarnings({ "unchecked", "PMD.CyclomaticComplexity" })
 public class IvlConverter<Iso extends Qty, T> {
     private static IvlConverter<Ts, Timestamp> tsInstance = new IvlConverter<Ts, Timestamp>(Ts.class);
     private static IvlConverter<Int, Integer> intInstance = new IvlConverter<Int, Integer>(Int.class);
@@ -174,6 +172,7 @@ public class IvlConverter<Iso extends Qty, T> {
      * @param high the high value
      * @return the resulting Ivl
      */
+    @SuppressWarnings("unchecked")
     public Ivl<Iso> convertToIvl(Object low, Object high) {
         Ivl<Iso> result = null;
         if (aggregatedType.equals(Ts.class)) {
@@ -197,11 +196,11 @@ public class IvlConverter<Iso extends Qty, T> {
         } else if (aggregatedType.equals(Pq.class)) {
             Ivl<Pq> wrk = new Ivl<Pq>();
             if (low instanceof IvlConverter.JavaPq) {
-                wrk.setLow(PqConverter.convertToPq((ISOUtil.convertPqToDecimal((JavaPq) low)) , 
+                wrk.setLow(PqConverter.convertToPq((ISOUtil.convertPqToDecimal((JavaPq) low)) ,
                         ISOUtil.convertPqToPrecision((JavaPq) low), ISOUtil.convertPqToUnit((JavaPq) low)));
             }
             if (high instanceof IvlConverter.JavaPq) {
-                wrk.setHigh(PqConverter.convertToPq((ISOUtil.convertPqToDecimal((JavaPq) high)) , 
+                wrk.setHigh(PqConverter.convertToPq((ISOUtil.convertPqToDecimal((JavaPq) high)) ,
                         ISOUtil.convertPqToPrecision((JavaPq) high), ISOUtil.convertPqToUnit((JavaPq) high)));
             }
             result = (Ivl<Iso>) wrk;
@@ -213,6 +212,7 @@ public class IvlConverter<Iso extends Qty, T> {
      * @param ivl the Ivl
      * @return the low value
      */
+    @SuppressWarnings("unchecked")
     public T convertLow(Ivl ivl) {
         if (ivl == null) {
             return null;
@@ -233,6 +233,7 @@ public class IvlConverter<Iso extends Qty, T> {
      * @param ivl the Ivl
      * @return the high value
      */
+    @SuppressWarnings("unchecked")
     public T convertHigh(Ivl ivl) {
         if (ivl == null) {
             return null;

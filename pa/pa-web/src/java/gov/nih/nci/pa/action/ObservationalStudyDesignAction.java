@@ -101,7 +101,6 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Kalpana Guthikonda
  * @since 10/27/2008
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
 public class ObservationalStudyDesignAction extends ActionSupport {
 
     private static final long serialVersionUID = -3532986378452861444L;

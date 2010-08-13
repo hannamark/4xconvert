@@ -127,8 +127,7 @@ import org.hibernate.criterion.Example;
  *        holder, NCI.
  */
 @Interceptors(HibernateSessionInterceptor.class)
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength", "PMD.CyclomaticComplexity",
-        "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
+@SuppressWarnings("unchecked")
 public class CorrelationUtils implements CorrelationUtilsRemote {
     private static final Logger LOG = Logger.getLogger(CorrelationUtils.class);
 
@@ -139,7 +138,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @throws NullifiedRoleException ex
      */
     public PAContactDTO getContactByPAOrganizationalContactId(Long poOrganizationalContactId) throws PAException,
-    NullifiedRoleException {
+            NullifiedRoleException {
         if (poOrganizationalContactId == null) {
             LOG.error("Po Organization Identifier is null ");
             throw new PAException("Po Organization Identifier is null  ");
@@ -374,24 +373,18 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      */
     Person convertPOToPAPerson(PersonDTO poPerson) throws PAException {
         if (poPerson == null) {
-            throw new PAException(" PO Person cannot be null");
+            throw new PAException("PO Person cannot be null");
         }
         Person per = new Person();
         try {
             per = PADomainUtils.convertToPaPerson(poPerson);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            LOG.error("Error while converting Person ISO " , e);
+            LOG.error("Error while converting Person ISO", e);
         }
         per.setStatusCode(convertPOEntifyStatusToPAEntityStatus(poPerson.getStatusCode()));
         per.setIdentifier(poPerson.getIdentifier().getExtension());
         return per;
     }
-
-
-
-
-
 
     /**
      *
