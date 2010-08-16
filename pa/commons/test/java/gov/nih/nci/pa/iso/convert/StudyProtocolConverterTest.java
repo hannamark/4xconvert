@@ -195,7 +195,8 @@ public class StudyProtocolConverterTest  {
         assertEquals(sp.getPrimaryCompletionDateTypeCode().getCode(),
                 spDTO.getPrimaryCompletionDateTypeCode().getCode());
         assertEquals(sp.getPrimaryPurposeCode().getCode(), spDTO.getPrimaryPurposeCode().getCode());
-        assertEquals(sp.getPrimaryPurposeOtherText(), spDTO.getPrimaryPurposeOtherText().getValue());
+        assertEquals(sp.getPrimaryPurposeAdditionalQualifierCode().getCode(),
+                spDTO.getPrimaryPurposeAdditionalQualifierCode().getCode());
         assertEquals(sp.getPublicDescription(), spDTO.getPublicDescription().getValue());
         assertEquals(sp.getPublicTitle(), spDTO.getPublicTitle().getValue());
         assertEquals(sp.getRecordVerificationDate() ,

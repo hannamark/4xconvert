@@ -368,12 +368,12 @@ public class BatchCreateProtocols {
         util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
         // update the trial DTO with new values
         trialDTO.setPrimaryPurposeCode(batchDto.getPrimaryPurpose());
-        if (StringUtils.isEmpty(batchDto.getPrimaryPurposeOtherValueSp())) {
-            trialDTO.setPrimaryPurposeOtherText(batchDto.getPrimaryPurposeOtherValueSp());
+        if (StringUtils.isEmpty(batchDto.getPrimaryPurposeAdditionalQualifierCode())) {
+            trialDTO.setPrimaryPurposeAdditionalQualifierCode(batchDto.getPrimaryPurposeAdditionalQualifierCode());
         }
         trialDTO.setPhaseCode(batchDto.getPhase());
-        if (StringUtils.isNotEmpty(batchDto.getPhaseOtherValueSp())) {
-             trialDTO.setPhaseAdditonalQualifier(batchDto.getPhaseOtherValueSp());
+        if (StringUtils.isNotEmpty(batchDto.getPhaseAdditionalQualifierCode())) {
+             trialDTO.setPhaseAdditionalQualifier(batchDto.getPhaseAdditionalQualifierCode());
         }
 
         trialDTO.setReason(batchDto.getReasonForStudyStopped());
@@ -701,9 +701,9 @@ public class BatchCreateProtocols {
         trialDTO.setNctIdentifier(batchDTO.getNctNumber());
         trialDTO.setOfficialTitle(batchDTO.getTitle());
         trialDTO.setPhaseCode(batchDTO.getPhase());
-        trialDTO.setPhaseAdditonalQualifier(batchDTO.getPhaseOtherValueSp());
+        trialDTO.setPhaseAdditionalQualifier(batchDTO.getPhaseAdditionalQualifierCode());
         trialDTO.setPrimaryPurposeCode(batchDTO.getPrimaryPurpose());
-        trialDTO.setPrimaryPurposeOtherText(batchDTO.getPrimaryPurposeOtherValueSp());
+        trialDTO.setPrimaryPurposeAdditionalQualifierCode(batchDTO.getPrimaryPurposeAdditionalQualifierCode());
         trialDTO.setReason(batchDTO.getReasonForStudyStopped());
         trialDTO.setStartDate(batchDTO.getStudyStartDate());
         trialDTO.setStartDateType(batchDTO.getStudyStartDateType());
@@ -717,8 +717,8 @@ public class BatchCreateProtocols {
         // if the Phase's value is not in allowed LOV then save phase as Other
         // and comments as the value of current phase
         trialDTO.setPhaseCode(batchDTO.getPhase());
-        if (StringUtils.isNotEmpty(batchDTO.getPhaseOtherValueSp())) {
-                trialDTO.setPhaseAdditonalQualifier(batchDTO.getPhaseOtherValueSp());
+        if (StringUtils.isNotEmpty(batchDTO.getPhaseAdditionalQualifierCode())) {
+                trialDTO.setPhaseAdditionalQualifier(batchDTO.getPhaseAdditionalQualifierCode());
         }
         trialDTO.setProgramCodeText(batchDTO.getProgramCodeText());
         if (batchDTO.getSubmissionType().equalsIgnoreCase("A")) {

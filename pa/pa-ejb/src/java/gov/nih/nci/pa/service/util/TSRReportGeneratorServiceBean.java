@@ -413,7 +413,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
         if (isProprietaryTrial) {
             gtd.setPrimaryPurpose(getValue(studyProtocolDto.getPrimaryPurposeCode(), INFORMATION_NOT_PROVIDED));
-            gtd.setPrimaryPurposeComment(getValue(studyProtocolDto.getPrimaryPurposeOtherText(), null));
+            gtd.setPrimaryPurposeAdditonalQualifier(getValue(studyProtocolDto.getPrimaryPurposeAdditionalQualifierCode()
+                    , null));
             gtd.setPhase(getValue(studyProtocolDto.getPhaseCode(), INFORMATION_NOT_PROVIDED));
             gtd.setPhaseAdditonalQualifier(getValue(studyProtocolDto.getPhaseAdditionalQualifierCode(), null));
             InterventionalStudyProtocolDTO ispDTO = studyProtocolService
@@ -778,8 +779,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         trialDesign.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_OBSERVATIONAL);
         if (ispDTO != null) {
             trialDesign.setPrimaryPurpose(getValue(ispDTO.getPrimaryPurposeCode(), INFORMATION_NOT_PROVIDED));
-            trialDesign
-                    .setPrimaryPurposeComment(getValue(ispDTO.getPrimaryPurposeOtherText(), INFORMATION_NOT_PROVIDED));
+            trialDesign.setPrimaryPurposeAdditonalQualifier(getValue(
+                    ispDTO.getPrimaryPurposeAdditionalQualifierCode(), INFORMATION_NOT_PROVIDED));
             trialDesign.setPhase(getValue(ispDTO.getPhaseCode(), INFORMATION_NOT_PROVIDED));
             trialDesign.setPhaseAdditonalQualifier(getValue(ispDTO.getPhaseAdditionalQualifierCode(),
                     INFORMATION_NOT_PROVIDED));

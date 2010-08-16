@@ -15,6 +15,7 @@ import gov.nih.nci.pa.dto.TrialIndIdeDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -51,8 +52,9 @@ public class TrialUtilTest {
 		spDTO.setSecondaryIdentifiers(DSetConverter.convertIiToDset(IiConverter.convertToIi("1")));
 		spDTO.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.O.getCode()));
 		spDTO.setPhaseAdditionalQualifierCode(CdConverter.convertStringToCd(PhaseAdditionalQualifierCode.PILOT.getCode()));
-		spDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(PrimaryPurposeCode.OBSERVATIONAL.getCode()));
-		spDTO.setPrimaryPurposeOtherText(StConverter.convertToSt("other text"));
+		spDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(PrimaryPurposeCode.TREATMENT.getCode()));
+		spDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertStringToCd(
+		        PrimaryPurposeAdditionalQualifierCode.OBSERVATIONAL.getCode()));
 		spDTO.setStartDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
 		spDTO.setPrimaryCompletionDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
 		spDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ANTICIPATED.getCode()));

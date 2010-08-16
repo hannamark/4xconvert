@@ -105,7 +105,7 @@ public class TSRReportGeneralTrialDetails {
     private String responsibleParty;
     private String overallOfficial;
     private String primaryPurpose;
-    private String primaryPurposeComment;
+    private String primaryPurposeAdditonalQualifier;
     private String phase;
     private String phaseAdditonalQualifier;
 
@@ -327,17 +327,18 @@ public class TSRReportGeneralTrialDetails {
     }
 
     /**
-     * @return the primaryPurposeComment
+     * @return the primaryPurposeAdditonalQualifier
      */
-    public String getPrimaryPurposeComment() {
-        return primaryPurposeComment;
+    public String getPrimaryPurposeAdditonalQualifier() {
+        return primaryPurposeAdditonalQualifier;
     }
 
     /**
-     * @param primaryPurposeComment the primaryPurposeComment to set
+     * @param primaryPurposeAdditonalQualifier the primaryPurposeAdditonalQualifier to set
      */
-    public void setPrimaryPurposeComment(String primaryPurposeComment) {
-        this.primaryPurposeComment = primaryPurposeComment;
+    public void setPrimaryPurposeAdditonalQualifier(
+            String primaryPurposeAdditonalQualifier) {
+        this.primaryPurposeAdditonalQualifier = primaryPurposeAdditonalQualifier;
     }
 
     /**

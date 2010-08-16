@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.action;
 
@@ -14,7 +14,7 @@ import org.junit.Test;
  *
  */
 public class TrialBatchDataValidatorTest extends AbstractRegWebTest {
-    private TrialBatchDataValidator validator = new TrialBatchDataValidator();
+    private final TrialBatchDataValidator validator = new TrialBatchDataValidator();
     private StudyProtocolBatchDTO  dto = new StudyProtocolBatchDTO ();
     @Test
     public void testValidateBatchForObservational() {
@@ -27,7 +27,7 @@ public class TrialBatchDataValidatorTest extends AbstractRegWebTest {
     public void testValidateBatchDTOForOrginalSubmission() {
         //without summ4
         dto = getBatchDto();
-        
+
         assertEquals("" ,validator.validateBatchDTO(dto));
         //withSumm4
         dto = getBatchDto();
@@ -36,7 +36,7 @@ public class TrialBatchDataValidatorTest extends AbstractRegWebTest {
     }
     @Test
     public void testValidateBatchDTOForOrginalSubmissionWithGrants() {
-         //with grants 
+         //with grants
         dto = getBatchDto();
         getBatchGrants(dto);
         assertNotNull(validator.validateBatchDTO(dto));
@@ -44,7 +44,7 @@ public class TrialBatchDataValidatorTest extends AbstractRegWebTest {
         getBatchMultipleGrants(dto);
         assertNotNull(validator.validateBatchDTO(dto));
     }
-    @Test 
+    @Test
     public void testValidateBatchDTOForOrginalSubmissionWithIndIde() {
         dto = getBatchDto();
         getBatchIndIde(dto);
@@ -55,7 +55,7 @@ public class TrialBatchDataValidatorTest extends AbstractRegWebTest {
         assertNotNull(validator.validateBatchDTO(dto));
 
     }
-    @Test 
+    @Test
     public void testValidateBatchDTOForUpdateSubmission() {
         StudyProtocolBatchDTO  dto = new StudyProtocolBatchDTO ();
         //update
@@ -76,7 +76,7 @@ public class TrialBatchDataValidatorTest extends AbstractRegWebTest {
         dto.setAmendmentNumber("amendmentNumber");
         assertNotNull(validator.validateBatchDTO(dto));
     }
-    @ Test 
+    @ Test
     public void testInvalidDoctype() {
         //test all err like invalid doc type
         dto = getBatchDto();
@@ -117,9 +117,9 @@ public class TrialBatchDataValidatorTest extends AbstractRegWebTest {
         dto.setPrimaryCompletionDateType("primaryCompletionDateType");
         dto.setStudyStartDateType("studyStartDateType");
         dto.setPhase("Other");
-        dto.setPhaseOtherValueSp("");
+        dto.setPhaseAdditionalQualifierCode("");
         dto.setPrimaryPurpose("Other");
-        dto.setPrimaryPurposeOtherValueSp("");
+        dto.setPrimaryPurposeAdditionalQualifierCode("");
         dto.setTitle("");
         assertNotNull(validator.validateBatchDTO(dto));
     }
@@ -148,7 +148,7 @@ public class TrialBatchDataValidatorTest extends AbstractRegWebTest {
         dto.setIndNIHInstitution(";value");
         assertNotNull(validator.validateBatchDTO(dto));
     }
-    @Test 
+    @Test
     public void testMissingAmendmentFeilds(){
         dto = getBatchDto();
         dto.setSubmissionType("A");
@@ -156,7 +156,7 @@ public class TrialBatchDataValidatorTest extends AbstractRegWebTest {
         dto.setCurrentTrialStatus("In Review");
         assertNotNull(validator.validateBatchDTO(dto));
     }
-    @Test 
+    @Test
     public void testMissingUpdateFeilds(){
         dto = getBatchDto();
         dto.setSubmissionType("U");

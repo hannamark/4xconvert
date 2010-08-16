@@ -129,14 +129,11 @@ function tooltip() {
     </tr>
     <tr >
 		<td   scope="row" class="label"><label>
-	 		Required if Primary Purpose equals 'Other' </label></td>
+	 		Primary Purpose Additionl Qualiefier Code </label></td>
 		<td>
-			<s:textarea name="webDTO.primaryPurposeOtherText" cssStyle="width:350px" rows="3" />(Max 200 chars)
-			<span class="formErrorMsg"> 
-             <s:fielderror>
-               <s:param>webDTO.primaryPurposeOtherText</s:param>
-             </s:fielderror>                            
-          </span>
+            <s:set name="primaryPurposeAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode@getDisplayNames()" />
+            <s:select headerKey="" headerValue="" name="webDTO.primaryPurposeAdditionalQualifierCode" list="#primaryPurposeAdditionlQualiefierCodeValues" 
+                value="webDTO.primaryPurposeAdditionalQualifierCode" cssStyle="width:120px" />
 		</td>
 	</tr>
     <tr>

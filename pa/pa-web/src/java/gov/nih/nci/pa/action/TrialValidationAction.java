@@ -122,7 +122,6 @@ public class TrialValidationAction extends ActionSupport {
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
     private OrganizationDTO selectedLeadOrg = null;
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
-    private static final int MAXIMUM_CHAR = 200;
     private static final String SPONSOR = "sponsor";
     private static final String UNDEFINED = "undefined";
     private static final String REJECT_OPERATION = "Reject";
@@ -331,18 +330,11 @@ public class TrialValidationAction extends ActionSupport {
         }
         if (gtdDTO.getProprietarytrialindicator() == null
                 || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
-            if (StringUtils.isNotEmpty(gtdDTO.getPrimaryPurposeCode())
-                    && gtdDTO.getPrimaryPurposeCode().equalsIgnoreCase("other")
-                    && StringUtils.isEmpty(gtdDTO.getPrimaryPurposeOtherText())) {
-                addFieldError("gtdDTO.primaryPurposeOtherText",
-                        getText("Primary Purpose Other other text must be entered"));
+            if (StringUtils.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
+                addFieldError("gtdDTO.primaryPurpose", getText("error.primary"));
             }
             if (StringUtils.isEmpty(gtdDTO.getPhaseCode())) {
                 addFieldError("gtdDTO.phaseCode", getText("error.phase"));
-            }
-            if (StringUtils.isNotEmpty(gtdDTO.getPrimaryPurposeOtherText())
-                    && gtdDTO.getPrimaryPurposeOtherText().length() > MAXIMUM_CHAR) {
-                addFieldError("gtdDTO.primaryPurposeOtherText", getText("error.spType.other.maximumChar"));
             }
             if (gtdDTO.getCtGovXmlRequired()) {
               if (StringUtils.isEmpty(gtdDTO.getSponsorIdentifier())) {

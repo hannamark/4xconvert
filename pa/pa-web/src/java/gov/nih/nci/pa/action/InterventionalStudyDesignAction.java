@@ -87,6 +87,7 @@ import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -119,7 +120,6 @@ public class InterventionalStudyDesignAction extends ActionSupport {
     private static final String OUTCOME = "outcome";
     private static final String FALSE = "false";
     private static final String OUTCOMEADD = "outcomeAdd";
-    private static final int MAXIMUM_CHAR = 200;
     private static final int MAXIMUM_CHAR_OUTCOME = 254;
     private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
     private String subject;
@@ -170,8 +170,8 @@ public class InterventionalStudyDesignAction extends ActionSupport {
                     IntConverter.convertToInt(webDTO.getNumberOfInterventionGroups()));
             ispDTO.setAllocationCode(
                     CdConverter.convertToCd(AllocationCode.getByCode(webDTO.getAllocationCode())));
-            ispDTO.setPrimaryPurposeOtherText(
-                    StConverter.convertToSt(webDTO.getPrimaryPurposeOtherText()));
+            ispDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
+                  PrimaryPurposeAdditionalQualifierCode.getByCode(webDTO.getPrimaryPurposeAdditionalQualifierCode())));
             ispDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(
                     PhaseAdditionalQualifierCode.getByCode(webDTO.getPhaseAdditionalQualifierCode())));
           //  ispDTO.setMaximumTargetAccrualNumber(
@@ -211,17 +211,6 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         if (StringUtils.isEmpty(webDTO.getPrimaryPurposeCode())) {
             addFieldError("webDTO.primaryPurposeCode", getText("error.primary"));
         }
-
-        if (webDTO.getPrimaryPurposeCode() != null && webDTO.getPrimaryPurposeCode().equalsIgnoreCase("Other")
-                && StringUtils.isEmpty(webDTO.getPrimaryPurposeOtherText())) {
-            addFieldError("webDTO.primaryPurposeOtherText", getText("error.comment"));
-        }
-
-        if (StringUtils.isNotEmpty(webDTO.getPrimaryPurposeOtherText())
-            && webDTO.getPrimaryPurposeOtherText().length() > MAXIMUM_CHAR) {
-          addFieldError("webDTO.primaryPurposeOtherText", getText("error.spType.other.maximumChar"));
-        }
-
         if (StringUtils.isEmpty(webDTO.getPhaseCode())) {
             addFieldError("webDTO.phaseCode", getText("error.phase"));
         }
@@ -287,8 +276,9 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             if (ispDTO.getPhaseAdditionalQualifierCode() != null) {
                 dto.setPhaseAdditionalQualifierCode(ispDTO.getPhaseAdditionalQualifierCode().getCode());
             }
-            if (ispDTO.getPrimaryPurposeOtherText() != null) {
-                dto.setPrimaryPurposeOtherText(ispDTO.getPrimaryPurposeOtherText().getValue());
+            if (ispDTO.getPrimaryPurposeAdditionalQualifierCode() != null) {
+                dto.setPrimaryPurposeAdditionalQualifierCode(ispDTO.getPrimaryPurposeAdditionalQualifierCode()
+                        .getCode());
             }
             if (ispDTO.getBlindedRoleCode() != null) {
                 List<Cd> cds =  DSetConverter.convertDsetToCdList(ispDTO.getBlindedRoleCode());

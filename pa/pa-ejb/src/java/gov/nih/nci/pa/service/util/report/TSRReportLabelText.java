@@ -250,7 +250,7 @@ public class TSRReportLabelText {
     /**
      * primary purpose comment.
      */
-    public static final String GTD_PRIMARY_PURPOSE_COMMENT = "Primary Purpose Comment";
+    public static final String GTD_PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER = "Primary Purpose Additonal Qualifier";
     /**
      * phase.
      */
@@ -258,7 +258,7 @@ public class TSRReportLabelText {
     /**
      * phase comment.
      */
-    public static final String GTD_PHASE_COMMENT = "Phase Comment";
+    public static final String GTD_PHASE_ADDITIONAL_QUALIFIER = "Phase Additonal Qualifier";
 
     // Status Dates
     /**
@@ -440,7 +440,7 @@ public class TSRReportLabelText {
     /**
      * Trial Design primary purpose comment.
      */
-    public static final String TD_PRIMARY_PURPOSE_COMMENT = "Primary Purpose Comment";
+    public static final String TD_PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER = "Primary Purpose Additional Qualifier";
     /**
      * Trial Design phase.
      */

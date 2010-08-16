@@ -16,9 +16,9 @@ public class BaseTrialDTO {
     private String assignedIdentifier; // used to store nci-accession number
     private String officialTitle;
     private String phaseCode;
-    private String phaseAdditonalQualifier;
+    private String phaseAdditionalQualifier;
     private String primaryPurposeCode;
-    private String primaryPurposeOtherText;
+    private String primaryPurposeAdditionalQualifierCode;
     private String leadOrgTrialIdentifier;
     private String leadOrganizationIdentifier;
     private String leadOrganizationName;
@@ -88,14 +88,14 @@ public class BaseTrialDTO {
     /**
      * @return the phaseAdditonalQualifier
      */
-    public String getPhaseAdditonalQualifier() {
-        return phaseAdditonalQualifier;
+    public String getPhaseAdditionalQualifier() {
+        return phaseAdditionalQualifier;
     }
     /**
-     * @param phaseAdditonalQualifier the phaseAdditonalQualifier to set
+     * @param phaseAdditionalQualifier the phaseAdditonalQualifier to set
      */
-    public void setPhaseAdditonalQualifier(String phaseAdditonalQualifier) {
-        this.phaseAdditonalQualifier = phaseAdditonalQualifier;
+    public void setPhaseAdditionalQualifier(String phaseAdditionalQualifier) {
+        this.phaseAdditionalQualifier = phaseAdditionalQualifier;
     }
     /**
      * @return the primaryPurposeCode
@@ -110,17 +110,18 @@ public class BaseTrialDTO {
     public void setPrimaryPurposeCode(String primaryPurposeCode) {
         this.primaryPurposeCode = primaryPurposeCode;
     }
+
     /**
-     * @return the primaryPurposeOtherText
+     * @return the primaryPurposeAdditonalQualifierCode
      */
-    public String getPrimaryPurposeOtherText() {
-        return primaryPurposeOtherText;
+    public String getPrimaryPurposeAdditionalQualifierCode() {
+        return primaryPurposeAdditionalQualifierCode;
     }
     /**
-     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
+     * @param primaryPurposeAdditionalQualifierCode the primaryPurposeAdditionalQualifierCode to set
      */
-    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
-        this.primaryPurposeOtherText = primaryPurposeOtherText;
+    public void setPrimaryPurposeAdditionalQualifierCode(String primaryPurposeAdditionalQualifierCode) {
+         this.primaryPurposeAdditionalQualifierCode = primaryPurposeAdditionalQualifierCode;
     }
     /**
      * @return the leadOrgTrialIdentifier

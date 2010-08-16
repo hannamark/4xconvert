@@ -90,6 +90,7 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -218,19 +219,12 @@ public class TrialConvertUtils {
         }
         isoDto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDTO.getPhaseCode())));
         isoDto.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(PhaseAdditionalQualifierCode.getByCode(
-                 trialDTO.getPhaseAdditonalQualifier())));
+                 trialDTO.getPhaseAdditionalQualifier())));
         isoDto.setPrimaryPurposeCode(CdConverter.convertToCd(
                 PrimaryPurposeCode.getByCode(trialDTO.getPrimaryPurposeCode())));
+        isoDto.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
+             PrimaryPurposeAdditionalQualifierCode.getByCode(trialDTO.getPrimaryPurposeAdditionalQualifierCode())));
 
-        if (StringUtils.isNotEmpty(trialDTO.getPrimaryPurposeCode())
-                && PrimaryPurposeCode.OTHER.getCode().equals(trialDTO.getPrimaryPurposeCode())
-                && StringUtils.isNotEmpty(trialDTO.getPrimaryPurposeOtherText())) {
-            isoDto.setPrimaryPurposeOtherText(
-                    StConverter.convertToSt(trialDTO.getPrimaryPurposeOtherText()));
-        } else {
-            isoDto.setPrimaryPurposeOtherText(
-                    StConverter.convertToSt(null));
-        }
         if (trialDTO.getPropritaryTrialIndicator() == null) {
             isoDto.setProprietaryTrialIndicator(BlConverter.convertToBl(null));
         } else if  (CommonsConstant.YES.equalsIgnoreCase(trialDTO.getPropritaryTrialIndicator())) {
@@ -296,7 +290,8 @@ public class TrialConvertUtils {
         }
         isoDto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.getByCode(
                 trialDTO.getPrimaryPurposeCode())));
-        isoDto.setPrimaryPurposeOtherText(StConverter.convertToSt(trialDTO.getPrimaryPurposeOtherText()));
+        isoDto.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
+            PrimaryPurposeAdditionalQualifierCode.getByCode(trialDTO.getPrimaryPurposeAdditionalQualifierCode())));
         if (trialDTO.getSecondaryIdentifierList() != null && !trialDTO.getSecondaryIdentifierList().isEmpty()) {
            List<Ii> iis = new ArrayList<Ii>();
            for (Ii sps : trialDTO.getSecondaryIdentifierList()) {
@@ -912,10 +907,11 @@ public class TrialConvertUtils {
        spStageDTO.setOfficialTitle(StConverter.convertToSt(trialDto.getOfficialTitle()));
        spStageDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDto.getPhaseCode())));
        spStageDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(PhaseAdditionalQualifierCode.getByCode(
-              trialDto.getPhaseAdditonalQualifier())));
+              trialDto.getPhaseAdditionalQualifier())));
        spStageDTO.setPrimaryPurposeCode(CdConverter.convertToCd(
                PrimaryPurposeCode.getByCode(trialDto.getPrimaryPurposeCode())));
-       spStageDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(trialDto.getPrimaryPurposeOtherText()));
+       spStageDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
+             PrimaryPurposeAdditionalQualifierCode.getByCode(trialDto.getPrimaryPurposeAdditionalQualifierCode())));
        spStageDTO.setLocalProtocolIdentifier(StConverter.convertToSt(trialDto.getLeadOrgTrialIdentifier()));
        spStageDTO.setLeadOrganizationIdentifier(IiConverter.convertToIi(trialDto.getLeadOrganizationIdentifier()));
        spStageDTO.setSummaryFourOrgIdentifier(IiConverter.convertToIi(trialDto.getSummaryFourOrgIdentifier()));
@@ -1032,14 +1028,17 @@ public class TrialConvertUtils {
                    CdConverter.convertCdToString(spStageDTO.getPhaseCode())).getCode());
        }
        if (!PAUtil.isCdNull(spStageDTO.getPhaseAdditionalQualifierCode())) {
-            trialDto.setPhaseAdditonalQualifier(PhaseAdditionalQualifierCode.getByCode(
+            trialDto.setPhaseAdditionalQualifier(PhaseAdditionalQualifierCode.getByCode(
                             CdConverter.convertCdToString(spStageDTO.getPhaseAdditionalQualifierCode())).getCode());
        }
        if (!PAUtil.isCdNull(spStageDTO.getPrimaryPurposeCode())) {
            trialDto.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(
                spStageDTO.getPrimaryPurposeCode())).getCode());
        }
-       trialDto.setPrimaryPurposeOtherText(StConverter.convertToString(spStageDTO.getPrimaryPurposeOtherText()));
+       if (!PAUtil.isCdNull(spStageDTO.getPrimaryPurposeAdditionalQualifierCode())) {
+            trialDto.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.getByCode(
+             CdConverter.convertCdToString(spStageDTO.getPrimaryPurposeAdditionalQualifierCode())).getCode());
+       }
        trialDto.setLeadOrgTrialIdentifier(StConverter.convertToString(spStageDTO.getLocalProtocolIdentifier()));
        trialDto.setLeadOrganizationIdentifier(IiConverter.convertToString(spStageDTO.getLeadOrganizationIdentifier()));
        if (PAUtil.isIiNotNull(spStageDTO.getLeadOrganizationIdentifier())) {

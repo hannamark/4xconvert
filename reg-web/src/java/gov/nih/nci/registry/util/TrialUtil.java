@@ -79,9 +79,9 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
         trialDTO.setAssignedIdentifier(PAUtil.getAssignedIdentifierExtension(spDTO));
         trialDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
-        trialDTO.setPhaseAdditonalQualifier(spDTO.getPhaseAdditionalQualifierCode().getCode());
+        trialDTO.setPhaseAdditionalQualifier(spDTO.getPhaseAdditionalQualifierCode().getCode());
         trialDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
-        trialDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
+        trialDTO.setPrimaryPurposeAdditionalQualifierCode(spDTO.getPrimaryPurposeAdditionalQualifierCode().getCode());
         trialDTO.setStartDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(spDTO.getStartDate()).
                 toString()));
         trialDTO.setStartDateType(spDTO.getStartDateTypeCode().getCode());
@@ -740,9 +740,9 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
         trialDTO.setAssignedIdentifier(PAUtil.getAssignedIdentifierExtension(spDTO));
         trialDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
-        trialDTO.setPhaseAdditonalQualifier(spDTO.getPhaseAdditionalQualifierCode().getCode());
+        trialDTO.setPhaseAdditionalQualifier(spDTO.getPhaseAdditionalQualifierCode().getCode());
         trialDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
-        trialDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
+        trialDTO.setPrimaryPurposeAdditionalQualifierCode(spDTO.getPrimaryPurposeAdditionalQualifierCode().getCode());
         trialDTO.setTrialType(spDTO.getStudyProtocolType().getValue());
         trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
         trialDTO.setStudyProtocolId(spqDto.getStudyProtocolId().toString());

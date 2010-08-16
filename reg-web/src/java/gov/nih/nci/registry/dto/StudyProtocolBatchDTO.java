@@ -22,9 +22,9 @@ public class StudyProtocolBatchDTO {
     private String title;
     private String trialType;
     private String primaryPurpose;
-    private String primaryPurposeOtherValueSp;
+    private String primaryPurposeAdditionalQualifierCode;
     private String phase;
-    private String phaseOtherValueSp;
+    private String phaseAdditionalQualifierCode;
     //Sponsor
     private String sponsorPOId;
     private String sponsorOrgName;
@@ -489,17 +489,17 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * @return the phaseOtherValueSp
+     * @return the phaseAdditionalQualifierCode
      */
-    public String getPhaseOtherValueSp() {
-        return phaseOtherValueSp;
+    public String getPhaseAdditionalQualifierCode() {
+        return phaseAdditionalQualifierCode;
     }
 
     /**
-     * @param phaseOtherValueSp the phaseOtherValueSp to set
+     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
      */
-    public void setPhaseOtherValueSp(String phaseOtherValueSp) {
-        this.phaseOtherValueSp = phaseOtherValueSp;
+    public void setPhaseAdditionalQualifierCode(String phaseAdditionalQualifierCode) {
+         this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
     }
 
     /**
@@ -746,17 +746,17 @@ public class StudyProtocolBatchDTO {
     }
 
     /**
-     * @return the primaryPurposeOtherValueSp
+     * @return the primaryPurposeAdditionalQualifierCode
      */
-    public String getPrimaryPurposeOtherValueSp() {
-        return primaryPurposeOtherValueSp;
+    public String getPrimaryPurposeAdditionalQualifierCode() {
+         return primaryPurposeAdditionalQualifierCode;
     }
 
     /**
-     * @param primaryPurposeOtherValueSp the primaryPurposeOtherValueSp to set
+     * @param primaryPurposeAdditionalQualifierCode the primaryPurposeAdditionalQualifierCode to set
      */
-    public void setPrimaryPurposeOtherValueSp(String primaryPurposeOtherValueSp) {
-        this.primaryPurposeOtherValueSp = primaryPurposeOtherValueSp;
+    public void setPrimaryPurposeAdditionalQualifierCode(String primaryPurposeAdditionalQualifierCode) {
+        this.primaryPurposeAdditionalQualifierCode = primaryPurposeAdditionalQualifierCode;
     }
 
     /**

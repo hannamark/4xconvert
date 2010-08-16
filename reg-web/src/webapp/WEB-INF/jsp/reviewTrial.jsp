@@ -194,7 +194,7 @@ var winprint=window.open("","",sOption);
                     <c:out value="${trialDTO.phaseCode}"/> 
                 </td>
           </tr>
-          <c:if test="${trialDTO.phaseAdditonalQualifier!= ''}">
+          <c:if test="${trialDTO.phaseAdditionalQualifier!= ''}">
               <tr>     
                     <td scope="row" class="label">
                         <label for="Other Phase Text">
@@ -202,7 +202,7 @@ var winprint=window.open("","",sOption);
                             </label>
                     </td>
                     <td class="value">
-                        <c:out value="${trialDTO.phaseAdditonalQualifier}"/> 
+                        <c:out value="${trialDTO.phaseAdditionalQualifier}"/> 
                     </td>
               </tr>
           </c:if> 
@@ -226,7 +226,7 @@ var winprint=window.open("","",sOption);
                     <c:out value="${trialDTO.primaryPurposeCode}"/>
                 </td>
           </tr>
-          <c:if test="${trialDTO.primaryPurposeOtherText != ''}">
+          <c:if test="${trialDTO.primaryPurposeAdditionalQualifierCode != ''}">
               <tr>     
                     <td scope="row" class="label">
                         <label for="Other Purpose Text">
@@ -234,7 +234,7 @@ var winprint=window.open("","",sOption);
                         </label>
                     </td>
                     <td class="value">
-                        <c:out value="${trialDTO.primaryPurposeOtherText}"/>
+                        <c:out value="${trialDTO.primaryPurposeAdditionalQualifierCode}"/>
                     </td>
               </tr>
           </c:if>

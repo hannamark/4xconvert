@@ -104,14 +104,6 @@ public class TrialBatchDataValidator {
         //Summary 4 Info validation
         fieldErr.append(validateSummary4SponsorInfo(batchDto));
 
-        if (StringUtils.isEmpty(batchDto.getPhase())) {
-                fieldErr.append("Phase is required.\n");
-        }
-        if (StringUtils.isNotEmpty(batchDto.getPrimaryPurpose())
-                && PrimaryPurposeCode.OTHER.getCode().equals(batchDto.getPrimaryPurpose())
-                && StringUtils.isEmpty(batchDto.getPrimaryPurposeOtherValueSp())) {
-                fieldErr.append("comment for Purpose is required.\n");
-        }
         //validate grant
         fieldErr.append(validateGrantInfo(batchDto));
         //validate the IND/IDE

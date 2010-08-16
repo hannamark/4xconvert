@@ -610,8 +610,8 @@ public class SearchTrialAction extends ActionSupport {
                 studyProtocolStageDTO.getPhaseCode())));
             spQueryDTO.setPrimaryPurpose(CdConverter.convertCdToString(
                 studyProtocolStageDTO.getPrimaryPurposeCode()));
-            spQueryDTO.setPrimaryPurposeOtherText(StConverter.convertToString(
-                studyProtocolStageDTO.getPrimaryPurposeOtherText()));
+            spQueryDTO.setPrimaryPurposeOtherText(CdConverter.convertCdToString(
+                studyProtocolStageDTO.getPrimaryPurposeAdditionalQualifierCode()));
             spQueryDTO.setLocalStudyProtocolIdentifier(StConverter.convertToString(
                 studyProtocolStageDTO.getLocalProtocolIdentifier()));
 

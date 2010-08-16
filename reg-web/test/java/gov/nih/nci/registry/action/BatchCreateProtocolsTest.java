@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.action;
 
@@ -21,11 +21,11 @@ import org.junit.Test;
  *
  */
 public class BatchCreateProtocolsTest extends AbstractRegWebTest {
-      private BatchCreateProtocols trial = new BatchCreateProtocols();
+      private final BatchCreateProtocols trial = new BatchCreateProtocols();
       @Test
-      public void testCreateProtocolsForOriginal() throws URISyntaxException { 
+      public void testCreateProtocolsForOriginal() throws URISyntaxException {
           URL fileUrl = ClassLoader.getSystemClassLoader().getResource("batchUploadTest.xls");
-          File f = new File(fileUrl.toURI());    
+          File f = new File(fileUrl.toURI());
           List<StudyProtocolBatchDTO> dtoList = new ArrayList<StudyProtocolBatchDTO>();
           StudyProtocolBatchDTO dto=  getBatchDto();
           dto.setProtcolDocumentFileName("ProtocolDoc.doc");
@@ -77,10 +77,10 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           assertNotNull(trial.createProtocols(null, null, "testUserName"));
           assertNotNull(trial.createProtocols(new ArrayList<StudyProtocolBatchDTO>(), null, "testUserName"));
           assertNotNull(trial.createProtocols(dtoList, null, "testUserName"));
-          
+
       }
       @Test
-      public void testCreateProtocolsForAmendment() throws URISyntaxException { 
+      public void testCreateProtocolsForAmendment() throws URISyntaxException {
           URL fileUrl = ClassLoader.getSystemClassLoader().getResource("batchUploadTest.xls");
           File f = new File(fileUrl.toURI());
           List<StudyProtocolBatchDTO> dtoList = new ArrayList<StudyProtocolBatchDTO>();
@@ -97,13 +97,13 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           dto.setProtocolHighlightDocFileName("ProtocolDoc.doc");
           dto.setChangeRequestDocFileName("ProtocolDoc.doc");
           dto.setPhase("Other");
-          dto.setPhaseOtherValueSp("phaseOtherValueSp");
+          dto.setPhaseAdditionalQualifierCode("phaseOtherValueSp");
           getBatchIndIde(dto);
           getBatchGrants(dto);
           dto.setNihGrantNCIDivisionCode("CCR");
           dto.setLeadOrgName("OrgName");
           dtoList.add(dto);
-          
+
           dto =  getBatchDto();
           dto.setSubmissionType("A");
           dto.setNciTrialIdentifier("NCI-2009-00001");
@@ -128,7 +128,7 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           dto.setPiFirstName("firstName");
           dto.setPiLastName("lastName");
           dtoList.add(dto);
-          
+
           dto =  getBatchDto();
           dto.setSubmissionType("A");
           dto.setNciTrialIdentifier("NCI-2009-00001");
@@ -147,7 +147,7 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           dto.setPiMiddleName("piMiddleName");
           getBatchSumm4Info(dto);
           dtoList.add(dto);
-          
+
           dto =  getBatchDto();
           dto.setSubmissionType("A");
           dto.setNciTrialIdentifier("NCI-2009-00004");
@@ -170,7 +170,7 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           URL fileUrl = ClassLoader.getSystemClassLoader().getResource("batchUploadTest.xls");
           File f = new File(fileUrl.toURI());
           List<StudyProtocolBatchDTO> dtoList = new ArrayList<StudyProtocolBatchDTO>();
-          StudyProtocolBatchDTO 
+          StudyProtocolBatchDTO
           dto = getBatchDto();
           dto.setSubmissionType("U");
           dto.setNciTrialIdentifier("NCI-2009-00001");

@@ -80,7 +80,6 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -165,13 +164,6 @@ public class TrialValidator {
                 for (int i = 0; i < invalidValues.length; i++) {
                     addFieldError.put("trialDTO." + invalidValues[i].getPropertyName(),
                             getText(invalidValues[i].getMessage().trim()));
-        }
-        //validate Phase and Purpose when Selected value is OTHER
-        if (StringUtils.isNotEmpty(trialDto.getPrimaryPurposeCode())
-                && (PrimaryPurposeCode.OTHER.getCode().equals(trialDto.getPrimaryPurposeCode())
-                        && StringUtils.isEmpty(trialDto.getPrimaryPurposeOtherText()))) {
-                addFieldError.put("trialDTO.primaryPurposeOtherText",
-                        getText("error.submit.otherPurposeText"));
         }
         String err = "error.submit.invalidDate";      // validate date and its format
         if (!RegistryUtil.isValidDate(trialDto.getStatusDate())) {

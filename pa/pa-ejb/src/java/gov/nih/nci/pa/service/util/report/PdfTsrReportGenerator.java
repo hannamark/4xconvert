@@ -384,10 +384,10 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
                 addTableRow(table, TSRReportLabelText.TYPE, getGeneralTrialDetails().getType());
                 addTableRow(table, TSRReportLabelText.GTD_PRIMARY_PURPOSE,
                         getGeneralTrialDetails().getPrimaryPurpose());
-                addTableRow(table, TSRReportLabelText.GTD_PRIMARY_PURPOSE_COMMENT, getGeneralTrialDetails()
-                        .getPrimaryPurposeComment());
+                addTableRow(table, TSRReportLabelText.GTD_PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER, getGeneralTrialDetails()
+                        .getPrimaryPurposeAdditonalQualifier());
                 addTableRow(table, TSRReportLabelText.GTD_PHASE, getGeneralTrialDetails().getPhase());
-                addTableRow(table, TSRReportLabelText.GTD_PHASE_COMMENT,
+                addTableRow(table, TSRReportLabelText.GTD_PHASE_ADDITIONAL_QUALIFIER,
                         getGeneralTrialDetails().getPhaseAdditonalQualifier());
             }
             pdfDoc.add(table);
@@ -525,6 +525,8 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
             PdfPTable table = getOuterTable(TSRReportLabelText.TABLE_TRIAL_DESIGN);
             addTableRow(table, TSRReportLabelText.TYPE, getTrialDesign().getType());
             addTableRow(table, TSRReportLabelText.TD_PRIMARY_PURPOSE, getTrialDesign().getPrimaryPurpose());
+            addTableRow(table, TSRReportLabelText.TD_PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER,
+                    getTrialDesign().getPrimaryPurposeAdditonalQualifier());
             addTableRow(table, TSRReportLabelText.TD_PHASE, getTrialDesign().getPhase());
             addTableRow(table, TSRReportLabelText.TD_PHASE_ADDITIONAL_QUALIFIER,
                     getTrialDesign().getPhaseAdditonalQualifier());

@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
 
@@ -373,9 +374,9 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         HttpSession sess = new MockHttpSession();
         TrialDTO dto = getMockTrialDTO();
         dto.setPhaseCode("Other");
-        dto.setPhaseAdditonalQualifier("phaseOtherText");
+        dto.setPhaseAdditionalQualifier("phaseOtherText");
         dto.setPrimaryPurposeCode("Other");
-        dto.setPrimaryPurposeOtherText("primaryPurposeOtherText");
+        dto.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.ANCILLARY.getCode());
         sess.setAttribute("trialDTO", dto);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(sess);
@@ -388,9 +389,9 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         HttpSession sess = new MockHttpSession();
         TrialDTO dto = getMockTrialDTO();
         dto.setPhaseCode("Other");
-        dto.setPhaseAdditonalQualifier("phaseOtherText");
+        dto.setPhaseAdditionalQualifier("phaseOtherText");
         dto.setPrimaryPurposeCode("Other");
-        dto.setPrimaryPurposeOtherText("primaryPurposeOtherText");
+        dto.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.CORRELATIVE.getCode());
         dto.setOfficialTitle("testthrowException");
         sess.setAttribute("trialDTO", dto);
         MockHttpServletRequest request = new MockHttpServletRequest();

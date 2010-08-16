@@ -1163,12 +1163,6 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             abstractionList.add(createError("Error", "Select Design Details from "
                     + "Interventional Trial Design under Scientific Data menu.", "Primary Purpose must be Entered"));
         }
-        if (ispDTO.getPrimaryPurposeCode().getCode() != null
-                && ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Other")
-                && ispDTO.getPrimaryPurposeOtherText() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Interventional Trial Design under Scientific Data menu.", "Provide comment if Other"));
-        }
         /*
          * if (ispDTO.getPrimaryPurposeCode().getCode() != null) { if
          * (ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Early Detection") ||

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.util;
 
@@ -26,19 +26,19 @@ import org.junit.Test;
 public class ExcelReaderTest {
 
 	 private static final String FILE_NAME = "batchUploadTest.xls";
-	 private String orgName= "Test";
+	 private final String orgName= "Test";
 	 private ExcelReader  excelReader;
 	 private HSSFWorkbook wb;
 	 private InputStream is;
-	 
-	 @Before 
+
+	 @Before
 	    public void setup()throws Exception {
 		  URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
 	      File f = new File(fileUrl.toURI());
 		  is = new FileInputStream(f);
-	      excelReader = new ExcelReader();	     	        	          
+	      excelReader = new ExcelReader();
 	 }
-	
+
 	 /**
    	  * Test method for {@link gov.nih.nci.registry.util.ExcelReader#parseExcel(java.io.InputStream)}.
 	  */
@@ -56,7 +56,7 @@ public class ExcelReaderTest {
 	public void testConvertToDTOFromExcelWorkbook() throws Exception {
 		List<StudyProtocolBatchDTO> list = null;
 		testParseExcel();
-		list = excelReader.convertToDTOFromExcelWorkbook(wb, orgName);  
+		list = excelReader.convertToDTOFromExcelWorkbook(wb, orgName);
 		assertNotNull(list);
 		assertNotNull(list.get(0).getUniqueTrialId());
 		assertNotNull(list.get(0).getSubmissionType());
@@ -67,16 +67,16 @@ public class ExcelReaderTest {
 		if(list.get(0).getSubmissionType().equalsIgnoreCase("A")) {
 		  assertNotNull(list.get(0).getAmendmentNumber());
 		  assertNotNull(list.get(0).getAmendmentDate());
-		}  
+		}
 		assertNotNull(list.get(0).getLocalProtocolIdentifier());
 		assertNotNull(list.get(0).getNctNumber());
 		assertNull(list.get(0).getOtherTrialIdentifiers());
 		assertNotNull(list.get(0).getTitle());
 		assertNotNull(list.get(0).getTrialType());
 		assertNotNull(list.get(0).getPrimaryPurpose());
-		assertNull(list.get(0).getPrimaryPurposeOtherValueSp());
+		assertNull(list.get(0).getPrimaryPurposeAdditionalQualifierCode());
 		assertNotNull(list.get(0).getPhase());
-		assertNull(list.get(0).getPhaseOtherValueSp());
+		assertNull(list.get(0).getPhaseAdditionalQualifierCode());
 		assertNotNull(list.get(0).getSponsorOrgName());
 		assertNull(list.get(0).getSponsorPOId());
 		assertNotNull(list.get(0).getSponsorStreetAddress());
@@ -112,7 +112,7 @@ public class ExcelReaderTest {
 		assertNotNull(list.get(0).getLeadOrgZip());
 		assertNotNull(list.get(0).getLeadOrgCountry());
 		assertNotNull(list.get(0).getLeadOrgEmail());
-		assertNotNull(list.get(0).getLeadOrgPhone());						
+		assertNotNull(list.get(0).getLeadOrgPhone());
 		assertNull(list.get(0).getLeadOrgTTY());
 		assertNull(list.get(0).getLeadOrgUrl());
 		assertNull(list.get(0).getLeadOrgType());
@@ -130,7 +130,7 @@ public class ExcelReaderTest {
 		assertNull(list.get(0).getPiTTY());
 		assertNull(list.get(0).getPiFax());
 		assertNull(list.get(0).getPiUrl());
-		
+
 		assertNull(list.get(0).getSumm4FundingCat());
 		assertNull(list.get(0).getSumm4OrgName());
 		assertNull(list.get(0).getSumm4OrgPOId());

@@ -241,12 +241,9 @@
         <td   scope="row" class="label"><label>
             <fmt:message key="isdesign.details.primary.purpose.other"/></label></td>
         <td>
-            <s:textarea name="gtdDTO.primaryPurposeOtherText" cssStyle="width:300px" rows="2"/>
-            <span class="formErrorMsg"> 
-             <s:fielderror>
-               <s:param>gtdDTO.primaryPurposeOtherText</s:param>
-             </s:fielderror>                            
-          </span>
+            <s:set name="primaryPurposeAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode@getDisplayNames()" />
+            <s:select headerKey="" headerValue="" name="gtdDTO.primaryPurposeAdditionalQualifierCode" list="#primaryPurposeAdditionlQualiefierCodeValues" 
+                value="gtdDTO.primaryPurposeAdditionalQualifierCode" cssStyle="width:120px" />
         </td>
     </tr>
     </c:if>

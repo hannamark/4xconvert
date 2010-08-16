@@ -312,7 +312,7 @@ public abstract class AbstractRegWebTest {
         dto.setPrimaryCompletionDateType("Anticipated");
         dto.setPhase("II");
         dto.setPrimaryPurpose("Other");
-        dto.setPrimaryPurposeOtherValueSp("primaryPurposeOtherValueSp");
+        dto.setPrimaryPurposeAdditionalQualifierCode("primaryPurposeOtherValueSp");
         dto.setDataMonitoringCommitteeAppointedIndicator("No");
         dto.setFdaRegulatoryInformationIndicator("Yes");
         dto.setSection801Indicator("YES");

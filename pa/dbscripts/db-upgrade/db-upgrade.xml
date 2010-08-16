@@ -534,4 +534,16 @@
         <comment>PO-2222 Modify phase recording and reporting</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2222.sql"/>
     </changeSet>
+    <changeSet id="PO-2223" author="vrushali">
+        <comment>PO-2223 Modify purpose recording and reporting</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2223.sql"/>
+    </changeSet>
+	<changeSet id="PO-2222-1" author="vrushali">
+        <comment>Data re-assignment for Phase.</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/PO-2222-1.sql"/>
+    </changeSet>
+	<changeSet id="PO-2223-1" author="vrushali">
+        <comment>Data re-assignment for Primary Purpose.</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/PO-2223-1.sql"/>
+    </changeSet>
 </databaseChangeLog>

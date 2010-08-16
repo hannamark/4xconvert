@@ -92,6 +92,7 @@ import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.SamplingMethodCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
@@ -263,7 +264,7 @@ public class StudyProtocolTest  {
         sp.setPhaseCode(PhaseCode.I);
         sp.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
-        sp.setPrimaryPurposeOtherText("primaryPurposeOtherText");
+        sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.ANCILLARY);
         sp.setPrimaryCompletionDate(now);
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         sp.setPublicDescription("publicDescription");
@@ -384,7 +385,8 @@ public class StudyProtocolTest  {
                 create.getPrimaryCompletionDateTypeCode().getCode(),
                 saved.getPrimaryCompletionDateTypeCode().getCode());
         assertEquals(create.getPrimaryPurposeCode() , saved.getPrimaryPurposeCode());
-        assertEquals(create.getPrimaryPurposeOtherText() , saved.getPrimaryPurposeOtherText());
+        assertEquals(create.getPrimaryPurposeAdditionalQualifierCode() ,
+                saved.getPrimaryPurposeAdditionalQualifierCode());
         assertEquals("StartDate Does not match ", create.getStartDate() , saved.getStartDate());
         assertEquals("StartDate Type code Does not match ", create.getStartDateTypeCode() ,
                 saved.getStartDateTypeCode());

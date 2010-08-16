@@ -39,11 +39,12 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
      PRIMARY_PURPOSE("Primary Purpose", "setPrimaryPurpose"),
     /** */
-     PRIMARY_PURPOSE_OTHER_VALUE_SP("Primary Purpose  'Other' value specification", "setPrimaryPurposeOtherValueSp"),
+     PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER("[Primary Purpose] Additional Qualifier",
+             "setPrimaryPurposeAdditionalQualifierCode"),
     /** */
      PHASE("Phase", "setPhase"),
     /** */
-     PHASE_ADDITIONAL_QUALIFIER("[Phase] Additional Qualifier", "setPhaseOtherValueSp"),
+     PHASE_ADDITIONAL_QUALIFIER("[Phase] Additional Qualifier", "setPhaseAdditionalQualifierCode"),
     /** */
      SPONSOR_ORG_NAME("[Sponsor] Organization Name", "setSponsorOrgName"),
     /** */

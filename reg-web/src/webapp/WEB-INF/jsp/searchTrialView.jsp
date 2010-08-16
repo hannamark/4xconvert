@@ -216,7 +216,7 @@
                     <c:out value="${requestScope.trialSummary.phaseCode.code }"/>
                 </td>
           </tr>
-          <c:if test="${requestScope.trialDTO.phaseAdditonalQualifier != null }">
+          <c:if test="${requestScope.trialDTO.phaseAdditionalQualifier != null }">
 	          <tr>
 	                <td scope="row" class="label">
 	                    <label for="Other Phase Text">
@@ -224,7 +224,7 @@
 	                        </label>
 	                </td>
 	                <td class="value">
-	                    <c:out value="${requestScope.trialDTO.phaseAdditonalQualifier }"/>
+	                    <c:out value="${requestScope.trialDTO.phaseAdditionalQualifier }"/>
 	                </td>
 	          </tr>
           </c:if>
@@ -250,7 +250,7 @@
           			<c:out value="${requestScope.trialSummary.primaryPurposeCode.code }"/>
           		</td>
           </tr>
-          <c:if test="${requestScope.trialSummary.primaryPurposeOtherText.value != null}">
+          <c:if test="${requestScope.trialDTO.primaryPurposeAdditionalQualifierCode  != null}">
 	          <tr>
 	                <td scope="row" class="label">
 	                    <label for="Other Purpose Text">
@@ -258,7 +258,7 @@
 	                    </label>
 	                </td>
 	                <td class="value">
-	                    <c:out value="${requestScope.trialSummary.primaryPurposeOtherText.value }"/>
+	                    <c:out value="${requestScope.trialDTO.primaryPurposeAdditionalQualifierCode }"/>
 	                </td>
 	          </tr>
           </c:if>

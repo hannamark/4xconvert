@@ -95,7 +95,7 @@ public class ISDesignDetailsWebDTO {
     private String numberOfInterventionGroups;
     private String blindingSchemaCode;
     private String allocationCode;
-    private String primaryPurposeOtherText;
+    private String primaryPurposeAdditionalQualifierCode;
     private String phaseAdditionalQualifierCode;
     private String blindingRoleCode;
     private String minimumTargetAccrualNumber;
@@ -238,22 +238,24 @@ public class ISDesignDetailsWebDTO {
     public void setAllocationCode(String allocationCode) {
         this.allocationCode = allocationCode;
     }
-    /**
-     * @return primaryPurposeOtherText
-     */
-    public String getPrimaryPurposeOtherText() {
-        return primaryPurposeOtherText;
-    }
-    /**
-     * @param primaryPurposeOtherText primaryPurposeOtherText
-     */
-    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
-        this.primaryPurposeOtherText = primaryPurposeOtherText;
-    }
+
     /**
      * @return phaseOtherText
      */
 
+    /**
+     * @return the primaryPurposeAdditionalQualifierCode
+     */
+    public String getPrimaryPurposeAdditionalQualifierCode() {
+        return primaryPurposeAdditionalQualifierCode;
+    }
+    /**
+     * @param primaryPurposeAdditionalQualifierCode the primaryPurposeAdditionalQualifierCode to set
+     */
+    public void setPrimaryPurposeAdditionalQualifierCode(
+            String primaryPurposeAdditionalQualifierCode) {
+        this.primaryPurposeAdditionalQualifierCode = primaryPurposeAdditionalQualifierCode;
+    }
     /**
      * @return blindingRoleCode
      */

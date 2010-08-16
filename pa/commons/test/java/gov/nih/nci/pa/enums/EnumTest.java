@@ -54,290 +54,302 @@ public class EnumTest {
 		testMethods(USStateCode.class);
 		testMethods(StudyRelationshipTypeCode.class);
 		testMethods(StudyObjectiveTypeCode.class);
+		testMethods(PhaseAdditionalQualifierCode.class);
+		testMethods(PrimaryPurposeAdditionalQualifierCode.class);
 	}
-	
-	
+
+
 	 public <C, T extends CodedEnum<C>> void testMethods(Class<T> clazz){
-		
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.AccrualReportingMethodCode")){			
+
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.AccrualReportingMethodCode")){
 			 String[] x = AccrualReportingMethodCode.getDisplayNames();
 			 assertEquals(AccrualReportingMethodCode.values().length, x.length);
 			 assertEquals("ABBREVIATED", AccrualReportingMethodCode.ABBREVIATED.getName());
-			 assertEquals("Abbreviated",AccrualReportingMethodCode.ABBREVIATED.getCode()); 
-					 
-			
+			 assertEquals("Abbreviated",AccrualReportingMethodCode.ABBREVIATED.getCode());
+
+
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ActiveInactiveCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ActiveInactiveCode")){
 			 String[] x = ActiveInactiveCode.getDisplayNames();
 		     assertEquals(ActiveInactiveCode.values().length, x.length);
 		     assertEquals("ACTIVE", ActiveInactiveCode.ACTIVE.getName());
 		     assertEquals("Active", ActiveInactiveCode.ACTIVE.getCode());
-			
+
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ActiveInactivePendingCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ActiveInactivePendingCode")){
 			 String[] x = ActiveInactivePendingCode.getDisplayNames();
 		        assertEquals(ActiveInactivePendingCode.values().length, x.length);
 		        assertEquals("ACTIVE", ActiveInactivePendingCode.ACTIVE.getName());
 		        assertEquals("Active", ActiveInactivePendingCode.ACTIVE.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ActivityCategoryCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ActivityCategoryCode")){
 			 String[] x = ActivityCategoryCode.getDisplayNames();
 		        assertEquals(ActivityCategoryCode.values().length, x.length);
 		        assertEquals("OTHER", ActivityCategoryCode.OTHER.getName());
 		        assertEquals("Other", ActivityCategoryCode.OTHER.getCode());
-			
+
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ActivitySubcategoryCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ActivitySubcategoryCode")){
 			 String[] x = ActivitySubcategoryCode.getDisplayNames();
 		        assertEquals(ActivitySubcategoryCode.values().length, x.length);
 		        assertEquals("OTHER", ActivitySubcategoryCode.OTHER.getName());
 		        assertEquals("Other", ActivitySubcategoryCode.OTHER.getCode());
-			
+
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ActualAnticipatedTypeCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ActualAnticipatedTypeCode")){
 			 String[] x = ActualAnticipatedTypeCode.getDisplayNames();
 		        assertEquals(ActualAnticipatedTypeCode.values().length, x.length);
 		        assertEquals("ACTUAL", ActualAnticipatedTypeCode.ACTUAL.getName());
 		        assertEquals("Actual", ActualAnticipatedTypeCode.ACTUAL.getCode());
-			
+
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.AllocationCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.AllocationCode")){
 			 String[] x = AllocationCode.getDisplayNames();
 		      assertEquals(AllocationCode.values().length, x.length);
 		      assertEquals("RANDOMIZED_CONTROLLED_TRIAL", AllocationCode.RANDOMIZED_CONTROLLED_TRIAL.getName());
 		      assertEquals("Randomized Controlled Trial", AllocationCode.RANDOMIZED_CONTROLLED_TRIAL.getCode());
-			
+
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ArmTypeCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ArmTypeCode")){
 			 String[] x = ArmTypeCode.getDisplayNames();
 		        assertEquals(ArmTypeCode.values().length, x.length);
 		        assertEquals("EXPERIMENTAL", ArmTypeCode.EXPERIMENTAL.getName());
 		        assertEquals("Experimental", ArmTypeCode.EXPERIMENTAL.getCode());
-			
+
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.BiospecimenRetentionCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.BiospecimenRetentionCode")){
 			 String[] x = BiospecimenRetentionCode.getDisplayNames();
 		        assertEquals(BiospecimenRetentionCode.values().length, x.length);
 		        assertEquals("NONE", BiospecimenRetentionCode.NONE.getName());
 		        assertEquals("None", BiospecimenRetentionCode.NONE.getCode());
-			
+
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.BlindingRoleCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.BlindingRoleCode")){
 			 String[] x = BlindingRoleCode.getDisplayNames();
 		        assertEquals(BlindingRoleCode.values().length, x.length);
 		        assertEquals("INVESTIGATOR", BlindingRoleCode.INVESTIGATOR.getName());
 		        assertEquals("Investigator", BlindingRoleCode.INVESTIGATOR.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.BlindingSchemaCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.BlindingSchemaCode")){
 			 String[] x = BlindingSchemaCode.getDisplayNames();
 		        assertEquals(BlindingSchemaCode.values().length, x.length);
 		        assertEquals("OPEN", BlindingSchemaCode.OPEN.getName());
 		        assertEquals("Open", BlindingSchemaCode.OPEN.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.DesignConfigurationCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.DesignConfigurationCode")){
 			 String[] x = DesignConfigurationCode.getDisplayNames();
 		        assertEquals(DesignConfigurationCode.values().length, x.length);
 		        assertEquals("CROSSOVER", DesignConfigurationCode.CROSSOVER.getName());
 		        assertEquals("Cross-over", DesignConfigurationCode.CROSSOVER.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.DocumentTypeCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.DocumentTypeCode")){
 			 String[] x = DocumentTypeCode.getDisplayNames();
 		        assertEquals(DocumentTypeCode.values().length, x.length);
 		        assertEquals("OTHER", DocumentTypeCode.OTHER.getName());
 		        assertEquals("Other", DocumentTypeCode.OTHER.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.DocumentWorkflowStatusCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.DocumentWorkflowStatusCode")){
 			 String[] x = DocumentWorkflowStatusCode.getDisplayNames();
 		        assertEquals(DocumentWorkflowStatusCode.values().length, x.length);
 		        assertEquals("ACCEPTED", DocumentWorkflowStatusCode.ACCEPTED.getName());
 		        assertEquals("Accepted", DocumentWorkflowStatusCode.ACCEPTED.getCode());
-		}  
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.EligibleGenderCode")){			
+		}
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.EligibleGenderCode")){
 			 String[] x = EligibleGenderCode.getDisplayNames();
 		        assertEquals(EligibleGenderCode.values().length, x.length);
 		        assertEquals("BOTH", EligibleGenderCode.BOTH.getName());
 		        assertEquals("Both", EligibleGenderCode.BOTH.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ExpandedAccessStatusCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ExpandedAccessStatusCode")){
 			 String[] x = ExpandedAccessStatusCode.getDisplayNames();
 		        assertEquals(ExpandedAccessStatusCode.values().length, x.length);
 		        assertEquals("AVAILABLE", ExpandedAccessStatusCode.AVAILABLE.getName());
 		        assertEquals("Available", ExpandedAccessStatusCode.AVAILABLE.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.GrantorCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.GrantorCode")){
 			 String[] x = GrantorCode.getDisplayNames();
 		        assertEquals(GrantorCode.values().length, x.length);
 		        assertEquals("CBER", GrantorCode.CBER.getName());
 		        assertEquals("CBER", GrantorCode.CBER.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.HolderTypeCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.HolderTypeCode")){
 			 String[] x = HolderTypeCode.getDisplayNames();
 		        assertEquals(HolderTypeCode.values().length, x.length);
 		        assertEquals("NIH", HolderTypeCode.NIH.getName());
 		        assertEquals("NIH", HolderTypeCode.NIH.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.IndldeTypeCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.IndldeTypeCode")){
 			 String[] x = IndldeTypeCode.getDisplayNames();
 		        assertEquals(IndldeTypeCode.values().length, x.length);
 		        assertEquals("IND", IndldeTypeCode.IND.getName());
 		        assertEquals("IND", IndldeTypeCode.IND.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.InterventionTypeCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.InterventionTypeCode")){
 			 String[] x = InterventionTypeCode.getDisplayNames();
 		        assertEquals(InterventionTypeCode.values().length, x.length);
 		        assertEquals("DRUG", InterventionTypeCode.DRUG.getName());
 		        assertEquals("Drug", InterventionTypeCode.DRUG.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.MilestoneCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.MilestoneCode")){
 			 String[] x = MilestoneCode.getDisplayNames();
 		        assertEquals(MilestoneCode.values().length, x.length);
 		        assertEquals("QC_START", MilestoneCode.QC_START.getName());
 		        assertEquals("QC Start Date", MilestoneCode.QC_START.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.NciDivisionProgramCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.NciDivisionProgramCode")){
 			 String[] x = NciDivisionProgramCode.getDisplayNames();
 		        assertEquals(NciDivisionProgramCode.values().length, x.length);
 		        assertEquals("CTEP", NciDivisionProgramCode.CTEP.getName());
 		        assertEquals("CTEP", NciDivisionProgramCode.CTEP.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.NihInstHolderCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.NihInstHolderCode")){
 			 String[] x = NihInstHolderCode.getDisplayNames();
 		        assertEquals(NihInstHolderCode.values().length, x.length);
 		        assertEquals("CIT", NihInstHolderCode.CIT.getName());
 		        assertEquals("CIT-Center for Information Technology", NihInstHolderCode.CIT.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.NihInstituteCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.NihInstituteCode")){
 			 String[] x = NihInstituteCode.getDisplayNames();
 		        assertEquals(NihInstituteCode.values().length, x.length);
 		        assertEquals("CIT", NihInstituteCode.CIT.getName());
 		        assertEquals("CIT-Center for Information Technology", NihInstituteCode.CIT.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.PhaseCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.PhaseCode")){
 			 String[] x = PhaseCode.getDisplayNames();
 		        assertEquals(PhaseCode.values().length, x.length);
 		        assertEquals("I", PhaseCode.I.getName());
 		        assertEquals("I", PhaseCode.I.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.PrimaryPurposeCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.PrimaryPurposeCode")){
 			 String[] x = PrimaryPurposeCode.getDisplayNames();
 		        assertEquals(PrimaryPurposeCode.values().length, x.length);
 		        assertEquals("OTHER", PrimaryPurposeCode.OTHER.getName());
 		        assertEquals("Other", PrimaryPurposeCode.OTHER.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.RecruitmentStatusCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.RecruitmentStatusCode")){
 			 String[] x = RecruitmentStatusCode.getDisplayNames();
 		        assertEquals(RecruitmentStatusCode.values().length, x.length);
 		        assertEquals("COMPLETED", RecruitmentStatusCode.COMPLETED.getName());
 		        assertEquals("Completed", RecruitmentStatusCode.COMPLETED.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ResponsibilityCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ResponsibilityCode")){
 			 String[] x = ResponsibilityCode.getDisplayNames();
 		        assertEquals(ResponsibilityCode.values().length, x.length);
 		        assertEquals("DATA_MANAGEMENT", ResponsibilityCode.DATA_MANAGEMENT.getName());
 		        assertEquals("Data Management", ResponsibilityCode.DATA_MANAGEMENT.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode")){
 			 String[] x = ReviewBoardApprovalStatusCode.getDisplayNames();
 		        assertEquals(ReviewBoardApprovalStatusCode.values().length, x.length);
 		        assertEquals("SUBMITTED_EXEMPT", ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getName());
 		        assertEquals("Submitted, exempt", ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.EntityStatusCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.EntityStatusCode")){
 			 String[] x = EntityStatusCode.getDisplayNames();
 		        assertEquals(EntityStatusCode.values().length, x.length);
 		        assertEquals("ACTIVE", EntityStatusCode.ACTIVE.getName());
 		        assertEquals("Active", EntityStatusCode.ACTIVE.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StructuralRoleStatusCode")){           
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StructuralRoleStatusCode")){
              String[] x = StructuralRoleStatusCode.getDisplayNames();
                 assertEquals(StructuralRoleStatusCode.values().length, x.length);
                 assertEquals("ACTIVE", StructuralRoleStatusCode.ACTIVE.getName());
                 assertEquals("Active", StructuralRoleStatusCode.ACTIVE.getCode());
         }
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.FunctionalRoleStatusCode")){           
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.FunctionalRoleStatusCode")){
              String[] x = FunctionalRoleStatusCode.getDisplayNames();
                 assertEquals(FunctionalRoleStatusCode.values().length, x.length);
                 assertEquals("ACTIVE", FunctionalRoleStatusCode.ACTIVE.getName());
                 assertEquals("Active", FunctionalRoleStatusCode.ACTIVE.getCode());
         }
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.SamplingMethodCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.SamplingMethodCode")){
 			 String[] x = SamplingMethodCode.getDisplayNames();
 		        assertEquals(SamplingMethodCode.values().length, x.length);
 		        assertEquals("CLUSTER_SAMPLING", SamplingMethodCode.CLUSTER_SAMPLING.getName());
 		        assertEquals("Cluster sampling", SamplingMethodCode.CLUSTER_SAMPLING.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyClassificationCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyClassificationCode")){
 			 String[] x = StudyClassificationCode.getDisplayNames();
 		        assertEquals(StudyClassificationCode.values().length, x.length);
 		        assertEquals("SAFETY", StudyClassificationCode.SAFETY.getName());
 		        assertEquals("Safety", StudyClassificationCode.SAFETY.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyContactRoleCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyContactRoleCode")){
 			 String[] x = StudyContactRoleCode.getDisplayNames();
 		        assertEquals(StudyContactRoleCode.values().length, x.length);
 		        assertEquals("SUBMITTER", StudyContactRoleCode.SUBMITTER.getName());
 		        assertEquals("Submitter", StudyContactRoleCode.SUBMITTER.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyModelCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyModelCode")){
 			 String[] x = StudyModelCode.getDisplayNames();
 		        assertEquals(StudyModelCode.values().length, x.length);
 		        assertEquals("OTHER", StudyModelCode.OTHER.getName());
 		        assertEquals("Other", StudyModelCode.OTHER.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudySiteContactRoleCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudySiteContactRoleCode")){
 			 String[] x = StudySiteContactRoleCode.getDisplayNames();
 		        assertEquals(StudySiteContactRoleCode.values().length, x.length);
 		        assertEquals("SUBMITTER", StudySiteContactRoleCode.SUBMITTER.getName());
 		        assertEquals("Submitter", StudySiteContactRoleCode.SUBMITTER.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudySiteFunctionalCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudySiteFunctionalCode")){
 			 String[] x = StudySiteFunctionalCode.getDisplayNames();
 		        assertEquals(StudySiteFunctionalCode.values().length, x.length);
 		        assertEquals("SPONSOR", StudySiteFunctionalCode.SPONSOR.getName());
 		        assertEquals("Sponsor", StudySiteFunctionalCode.SPONSOR.getCode());
 		}
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyTypeCode")){			
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyTypeCode")){
 			 String[] x = StudyTypeCode.getDisplayNames();
 		        assertEquals(StudyTypeCode.values().length, x.length);
 		        assertEquals("INTERVENTIONAL", StudyTypeCode.INTERVENTIONAL.getName());
 		        assertEquals("Interventional", StudyTypeCode.INTERVENTIONAL.getCode());
-		} 
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode")){			
+		}
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode")){
 			 String[] x = SummaryFourFundingCategoryCode.getDisplayNames();
 		        assertEquals(SummaryFourFundingCategoryCode.values().length, x.length);
 		        assertEquals("NATIONAL", SummaryFourFundingCategoryCode.NATIONAL.getName());
 		        assertEquals("National", SummaryFourFundingCategoryCode.NATIONAL.getCode());
-		} 
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.TimePerspectiveCode")){			
+		}
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.TimePerspectiveCode")){
 			 String[] x = TimePerspectiveCode.getDisplayNames();
 		        assertEquals(TimePerspectiveCode.values().length, x.length);
 		        assertEquals("OTHER", TimePerspectiveCode.OTHER.getName());
 		        assertEquals("Other", TimePerspectiveCode.OTHER.getCode());
-		} 
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.UnitsCode")){			
+		}
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.UnitsCode")){
 			 String[] x = UnitsCode.getDisplayNames();
 		        assertEquals(UnitsCode.values().length, x.length);
 		        assertEquals("DAYS", UnitsCode.DAYS.getName());
 		        assertEquals("Days", UnitsCode.DAYS.getCode());
-		} 
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.USStateCode")){			
+		}
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.USStateCode")){
 			 String[] x = USStateCode.getDisplayNames();
 		        assertEquals(USStateCode.values().length, x.length);
 		        assertEquals("AK", USStateCode.AK.getName());
 		        assertEquals("Alaska", USStateCode.AK.getCode());
-		} 
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyRelationshipTypeCode")){			
+		}
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyRelationshipTypeCode")){
 			 String[] x = StudyRelationshipTypeCode.getDisplayNames();
 		        assertEquals(StudyRelationshipTypeCode.values().length, x.length);
 		        assertEquals("MOD", StudyRelationshipTypeCode.MOD.getName());
 		        assertEquals("Modified", StudyRelationshipTypeCode.MOD.getCode());
-		} 
-		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyObjectiveTypeCode")){           
+		}
+		 if (clazz.getName().equals("gov.nih.nci.pa.enums.StudyObjectiveTypeCode")){
              String[] x = StudyObjectiveTypeCode.getDisplayNames();
                 assertEquals(StudyObjectiveTypeCode.values().length, x.length);
                 assertEquals("PRIMARY", StudyObjectiveTypeCode.PRIMARY.getName());
-                
-        }  
-		 
+
+        }
+        if (clazz.getName().equals("gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode")) {
+             String[] x = PhaseAdditionalQualifierCode.getDisplayNames();
+             assertEquals(PhaseAdditionalQualifierCode.values().length, x.length);
+             assertEquals("PILOT", PhaseAdditionalQualifierCode.PILOT.getName());
+        }
+        if (clazz.getName().equals("gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode")) {
+            String[] x = PrimaryPurposeAdditionalQualifierCode.getDisplayNames();
+            assertEquals(PrimaryPurposeAdditionalQualifierCode.values().length, x.length);
+            assertEquals("EPIDEMIOLOGIC", PrimaryPurposeAdditionalQualifierCode.EPIDEMIOLOGIC.getName());
+       }
+
 	}
 }

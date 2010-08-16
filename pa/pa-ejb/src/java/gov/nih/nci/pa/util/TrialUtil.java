@@ -94,6 +94,7 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
@@ -157,7 +158,7 @@ public class TrialUtil {
         trialDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
         trialDTO.setPhaseOtherText(spDTO.getPhaseAdditionalQualifierCode().getCode());
         trialDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
-        trialDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
+        trialDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeAdditionalQualifierCode().getCode());
         trialDTO.setStartDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(spDTO.getStartDate())
             .toString()));
         trialDTO.setStartDateType(spDTO.getStartDateTypeCode().getCode());
@@ -407,7 +408,8 @@ public class TrialUtil {
             .getPrimaryPurposeCode())));
 
         if (StringUtils.isNotEmpty(trialDTO.getPrimaryPurposeOtherText())) {
-            isoDto.setPrimaryPurposeOtherText(StConverter.convertToSt(trialDTO.getPrimaryPurposeOtherText()));
+            isoDto.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
+                PrimaryPurposeAdditionalQualifierCode.getByCode(trialDTO.getPrimaryPurposeOtherText())));
         }
         isoDto.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDTO.getStartDate())));
         isoDto.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.getByCode(trialDTO

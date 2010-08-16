@@ -20,8 +20,8 @@
                 </td>
                 <td>
                     <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
-                    <s:select headerKey="" headerValue="" name="trialDTO.phaseAdditonalQualifier" list="#phaseAdditionlQualiefierCodeValues" 
-                    value="trialDTO.phaseAdditonalQualifier" cssStyle="width:120px" />
+                    <s:select headerKey="" headerValue="" name="trialDTO.phaseAdditionalQualifier" list="#phaseAdditionlQualiefierCodeValues" 
+                    value="trialDTO.phaseAdditionalQualifier" cssStyle="width:120px" />
                 </td>                
           </tr>
                     <tr>
@@ -58,13 +58,9 @@
 
                 </td>
                 <td>
-                    <s:textarea name="trialDTO.primaryPurposeOtherText"  cols="50" rows="2" />
-                    <span class="info">Required if Purpose equals &#39;Other&#39;</span>
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                        <s:param>trialDTO.primaryPurposeOtherText</s:param>
-                       </s:fielderror>                            
-                     </span>
+                    <s:set name="primaryPurposeAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode@getDisplayNames()" />
+                    <s:select headerKey="" headerValue="" name="trialDTO.primaryPurposeAdditionalQualifierCode" list="#primaryPurposeAdditionlQualiefierCodeValues" 
+                    value="trialDTO.primaryPurposeAdditionalQualifierCode" cssStyle="width:120px" />
                 </td>                
           </tr>          
           

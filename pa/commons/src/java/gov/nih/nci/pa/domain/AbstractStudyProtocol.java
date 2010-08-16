@@ -86,6 +86,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 
 import java.sql.Timestamp;
@@ -120,7 +121,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     private PhaseAdditionalQualifierCode phaseAdditionalQualifierCode;
     private Timestamp primaryCompletionDate;
     private PrimaryPurposeCode primaryPurposeCode;
-    private String primaryPurposeOtherText;
+    private PrimaryPurposeAdditionalQualifierCode primaryPurposeAdditionalQualifierCode;
     private String officialTitle;
     private String programCodeText;
     private Set<Ii> otherIdentifiers = new HashSet<Ii>();
@@ -327,20 +328,21 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     }
 
     /**
-     * @return the primaryPurposeOtherText
+     * @return the primaryPurposeAdditionalQualifierCode
      */
-    @Column(name = "PRIMARY_PURPOSE_OTHER_TEXT")
-    public String getPrimaryPurposeOtherText() {
-        return primaryPurposeOtherText;
+    @Column(name = "PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER_CODE")
+    @Enumerated(EnumType.STRING)
+    public PrimaryPurposeAdditionalQualifierCode getPrimaryPurposeAdditionalQualifierCode() {
+        return primaryPurposeAdditionalQualifierCode;
     }
 
     /**
-     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
+     * @param primaryPurposeAdditionalQualifierCode the primaryPurposeAdditionalQualifierCode to set
      */
-    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
-        this.primaryPurposeOtherText = primaryPurposeOtherText;
+    public void setPrimaryPurposeAdditionalQualifierCode(
+            PrimaryPurposeAdditionalQualifierCode primaryPurposeAdditionalQualifierCode) {
+        this.primaryPurposeAdditionalQualifierCode = primaryPurposeAdditionalQualifierCode;
     }
-
     /**
      * @return the officialTitle
      */

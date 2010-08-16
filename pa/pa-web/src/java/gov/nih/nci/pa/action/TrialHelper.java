@@ -238,7 +238,7 @@ public class TrialHelper {
         gtdDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
         gtdDTO.setPhaseAdditionalQualifierCode(spDTO.getPhaseAdditionalQualifierCode().getCode());
         gtdDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
-        gtdDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
+        gtdDTO.setPrimaryPurposeAdditionalQualifierCode(spDTO.getPrimaryPurposeAdditionalQualifierCode().getCode());
         if (!PAUtil.isBlNull(spDTO.getProprietaryTrialIndicator())) {
             gtdDTO.setProprietarytrialindicator(BlConverter.convertToString(spDTO.getProprietaryTrialIndicator()));
         }

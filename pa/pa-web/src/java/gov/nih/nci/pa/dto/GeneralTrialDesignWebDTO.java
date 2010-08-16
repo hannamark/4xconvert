@@ -100,7 +100,7 @@ public class GeneralTrialDesignWebDTO {
     private String phaseCode;
     private String phaseAdditionalQualifierCode;
     private String primaryPurposeCode;
-    private String primaryPurposeOtherText;
+    private String primaryPurposeAdditionalQualifierCode;
     private String publicTitle;
     private String publicDescription;
     private String scientificDescription;
@@ -257,18 +257,17 @@ public class GeneralTrialDesignWebDTO {
         this.primaryPurposeCode = primaryPurposeCode;
     }
     /**
-     *
-     * @return primaryPurposeOtherText
+     * @return the primaryPurposeAdditonalQualifierCode
      */
-    public String getPrimaryPurposeOtherText() {
-        return primaryPurposeOtherText;
+    public String getPrimaryPurposeAdditionalQualifierCode() {
+        return primaryPurposeAdditionalQualifierCode;
     }
     /**
-     *
-     * @param primaryPurposeOtherText primaryPurposeOtherText
+     * @param primaryPurposeAdditionalQualifierCode the primaryPurposeAdditionalQualifierCode to set
      */
-    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
-        this.primaryPurposeOtherText = primaryPurposeOtherText;
+    public void setPrimaryPurposeAdditionalQualifierCode(
+            String primaryPurposeAdditionalQualifierCode) {
+        this.primaryPurposeAdditionalQualifierCode = primaryPurposeAdditionalQualifierCode;
     }
     /**
      * @return publicTitle

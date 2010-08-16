@@ -1351,7 +1351,8 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         createStudyProtocolDTO.setPhaseCode(studyProtocolDTO.getPhaseCode());
         createStudyProtocolDTO.setPhaseAdditionalQualifierCode(studyProtocolDTO.getPhaseAdditionalQualifierCode());
         createStudyProtocolDTO.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
-        createStudyProtocolDTO.setPrimaryPurposeOtherText(studyProtocolDTO.getPrimaryPurposeOtherText());
+        createStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(
+                studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode());
         createStudyProtocolDTO.setStartDate(studyProtocolDTO.getStartDate());
         createStudyProtocolDTO.setStartDateTypeCode(studyProtocolDTO.getStartDateTypeCode());
         createStudyProtocolDTO.setPrimaryCompletionDate(studyProtocolDTO.getPrimaryCompletionDate());
@@ -1620,7 +1621,8 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             InterventionalStudyProtocolDTO dbStudyProtocolDTO = studyProtocolService
                     .getInterventionalStudyProtocol(studyProtocolDTO.getIdentifier());
             dbStudyProtocolDTO.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
-            dbStudyProtocolDTO.setPrimaryPurposeOtherText(studyProtocolDTO.getPrimaryPurposeOtherText());
+            dbStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(
+                    studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode());
             dbStudyProtocolDTO.setStartDate(studyProtocolDTO.getStartDate());
             dbStudyProtocolDTO.setStartDateTypeCode(studyProtocolDTO.getStartDateTypeCode());
             dbStudyProtocolDTO.setPrimaryCompletionDate(studyProtocolDTO.getPrimaryCompletionDate());

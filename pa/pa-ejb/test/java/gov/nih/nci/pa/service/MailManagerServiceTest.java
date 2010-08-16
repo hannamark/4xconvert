@@ -115,6 +115,7 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -498,7 +499,7 @@ public class MailManagerServiceTest {
         sp.setPhaseCode(PhaseCode.I);
         sp.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
-        sp.setPrimaryPurposeOtherText("primaryPurposeOtherText");
+        sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.CORRELATIVE);
         sp.setPrimaryCompletionDate(now);
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         sp.setPublicDescription("publicDescription");

@@ -107,7 +107,7 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
     private Cd primaryPurposeCode;
     private Cd startDateTypeCode;
     private St officialTitle;
-    private St primaryPurposeOtherText;
+    private Cd primaryPurposeAdditionalQualifierCode;
     private St programCodeText;
     private St studyProtocolType;
     private St userLastCreated;
@@ -166,16 +166,17 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
         this.primaryPurposeCode = primaryPurposeCode;
     }
     /**
-     * @return the primaryPurposeOtherText
+     * @return the primaryPurposeAdditionalQualifierCode
      */
-    public St getPrimaryPurposeOtherText() {
-        return primaryPurposeOtherText;
+    public Cd getPrimaryPurposeAdditionalQualifierCode() {
+        return primaryPurposeAdditionalQualifierCode;
     }
     /**
-     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
+     * @param primaryPurposeAdditionalQualifierCode the primaryPurposeAdditionalQualifierCode to set
      */
-    public void setPrimaryPurposeOtherText(St primaryPurposeOtherText) {
-        this.primaryPurposeOtherText = primaryPurposeOtherText;
+    public void setPrimaryPurposeAdditionalQualifierCode(
+            Cd primaryPurposeAdditionalQualifierCode) {
+        this.primaryPurposeAdditionalQualifierCode = primaryPurposeAdditionalQualifierCode;
     }
     /**
      * @return the programCodeText

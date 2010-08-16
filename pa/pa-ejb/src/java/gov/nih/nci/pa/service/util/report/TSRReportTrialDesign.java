@@ -93,7 +93,7 @@ package gov.nih.nci.pa.service.util.report;
 public class TSRReportTrialDesign {
     private String type;
     private String primaryPurpose;
-    private String primaryPurposeComment;
+    private String primaryPurposeAdditonalQualifier;
     private String phase;
     private String phaseAdditonalQualifier;
     private String interventionModel;
@@ -133,17 +133,18 @@ public class TSRReportTrialDesign {
     }
 
     /**
-     * @return the primaryPurposeComment
+     * @return the primaryPurposeAdditonalQualifier
      */
-    public String getPrimaryPurposeComment() {
-        return primaryPurposeComment;
+    public String getPrimaryPurposeAdditonalQualifier() {
+        return primaryPurposeAdditonalQualifier;
     }
 
     /**
-     * @param primaryPurposeComment the primaryPurposeComment to set
+     * @param primaryPurposeAdditonalQualifier the primaryPurposeAdditonalQualifier to set
      */
-    public void setPrimaryPurposeComment(String primaryPurposeComment) {
-        this.primaryPurposeComment = primaryPurposeComment;
+    public void setPrimaryPurposeAdditonalQualifier(
+            String primaryPurposeAdditonalQualifier) {
+        this.primaryPurposeAdditonalQualifier = primaryPurposeAdditonalQualifier;
     }
 
     /**
