@@ -395,13 +395,9 @@ function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,e
 
                 </td>
                 <td>
-                    <s:textarea name="trialDTO.primaryPurposeOtherText"  cols="50" rows="2" />
-                    <span class="info">Required if Purpose equals &#39;Other&#39;</span>
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                        <s:param>trialDTO.primaryPurposeOtherText</s:param>
-                       </s:fielderror>                            
-                     </span>
+                    <s:select headerKey="" headerValue="" name="trialDTO.primaryPurposeAdditionalQualifierCode" 
+                    list="@gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode@getDisplayNames()" 
+                    value="trialDTO.primaryPurposeAdditionalQualifierCode" cssStyle="width:120px" />
                 </td>                
           </tr>          
           </table></td></tr>

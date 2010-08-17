@@ -100,7 +100,7 @@ var winprint=window.open("","",sOption);
                     <c:out value="${trialDTO.primaryPurposeCode}"/>
                 </td>
           </tr>
-          <c:if test="${trialDTO.primaryPurposeOtherText != ''}">
+          <c:if test="${trialDTO.primaryPurposeAdditionalQualifierCode != ''}">
               <tr>
                     <td scope="row" class="label">
                         <label for="Other Purpose Text">
@@ -108,7 +108,7 @@ var winprint=window.open("","",sOption);
                         </label>
                     </td>
                     <td class="value">
-                        <c:out value="${trialDTO.primaryPurposeOtherText}"/>
+                        <c:out value="${trialDTO.primaryPurposeAdditionalQualifierCode}"/>
                     </td>
               </tr>
           </c:if>
