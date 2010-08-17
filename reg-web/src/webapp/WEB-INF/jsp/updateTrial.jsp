@@ -15,6 +15,7 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/showhide.js'/>"></script>
 <!-- /po integration -->
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
@@ -281,23 +282,16 @@ function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,e
       }
     }
     function deleteOtherIdentifierRow(rowid){ 
-    var  url = '/registry/protected/ajaxManageOtherIdentifiersActiondeleteOtherIdentifierUpdate.action?uuid='+rowid;
-    var div = document.getElementById('otherIdentifierdiv');
-    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
-    callAjax(url, div);             
-   }
+        var  url = '/registry/protected/ajaxManageOtherIdentifiersActiondeleteOtherIdentifierUpdate.action?uuid='+rowid;
+        var div = document.getElementById('otherIdentifierdiv');
+        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+        callAjax(url, div);             
+    }
+    
+    document.observe("dom:loaded", function() {
+        displayTrialStatusDefinition('updateTrial_trialDTO_statusCode');
+        });
 </SCRIPT>
-<script language="javascript">
-function toggledisplay (it, box) {
-  var vis = (box.checked) ? "block" : "none";
-  document.getElementById(it).style.display = vis;
-}
-function toggledisplay2 (it) {
-  var vis = document.getElementById(it).style.display
-  if (vis == "block") { document.getElementById(it).style.display = "none"; }
-                 else { document.getElementById(it).style.display = "block"; }
-}
-</script>   
 
 <body>
 
@@ -590,13 +584,18 @@ function toggledisplay2 (it) {
                 </td>
                     <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNamesForAmend()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="--Select--" name="trialDTO.statusCode" list="#statusCodeValues"  value="trialDTO.statusCode" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="--Select--" name="trialDTO.statusCode" list="#statusCodeValues"  
+                        value="trialDTO.statusCode" cssStyle="width:206px" onchange="displayTrialStatusDefinition('updateTrial_trialDTO_statusCode');" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>trialDTO.statusCode</s:param>
                         </s:fielderror>                            
                     </span>
                 </td>
+          </tr>
+          <tr>
+              <td>&nbsp;</td>
+              <td class="info"><%@ include file="/WEB-INF/jsp/nodecorate/trialStatusDefinitions.jsp" %></td> 
           </tr>
         <tr>
             <td scope="row" class="label">

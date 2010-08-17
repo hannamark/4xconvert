@@ -15,6 +15,7 @@
 <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
 <c:url value="/protected/studyOverallStatushistorypopup.action" var="lookupUrl" />
 
 <script type="text/javascript">
@@ -50,7 +51,17 @@
             document.forms[0].action="studyOverallStatusupdate.action";
             document.forms[0].submit();
         }
-    }    
+    }
+    
+    function displayTrialStatusDefinition(selectBoxId) {
+        $('allTrialStatusDefinitions').childElements().invoke('hide');
+        var selectedValue = $(selectBoxId).value;
+        $(selectedValue).show();
+    }
+    
+    document.observe("dom:loaded", function() {
+        displayTrialStatusDefinition('currentTrialStatus');
+        });
 </script>
      
 </head>
@@ -77,14 +88,20 @@
                 key="trialStatus.current.trial.status" /></s:label><span class="required">*</span></td>
             <s:set name="currentTrialStatusValues"
                 value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
-            <td class="value"><s:select onchange="statusChange()" onfocus="statusChange()"
-                id="currentTrialStatus" name="currentTrialStatus"
-                list="#currentTrialStatusValues" /></td>
+            <td class="value">
+                <s:select onchange="statusChange();displayTrialStatusDefinition('currentTrialStatus');" 
+                    onfocus="statusChange()" id="currentTrialStatus" name="currentTrialStatus" list="#currentTrialStatusValues" />
+            </td>
             <td>
             	<ul class="btnrow">			
 					<li style="padding-left:0"><a href="#" class="btn" onclick="lookup()"><span class="btn_img"><span class="history">History</span></span></a></li>
 				</ul>
             </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td class="info"><%@ include file="/WEB-INF/jsp/nodecorate/trialStatusDefinitions.jsp" %></td>
+            <td>&nbsp;</td>
         </tr>
         <tr>
             <td class="label"><s:label for="statusDate"><fmt:message
