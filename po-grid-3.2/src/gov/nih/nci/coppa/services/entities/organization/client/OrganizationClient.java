@@ -96,7 +96,8 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
         ClientUtils.print(result);
     }
     
-    @GridTestMethod
+//  Uncomment the GridTestMethod annotation to be able to run this test
+//  @GridTestMethod
     private static void createOrganization(OrganizationClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(ORG_ROOT);
@@ -110,7 +111,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
             orgDTO = OrganizationTransformer.INSTANCE.toDto(result);
        //     URI sss = new URI("mailto:aaaaaaaaaaa");
            
-            URI sss = new URI("tel:301-977-05605");
+            URI sss = new URI("tel:301-977-0560");
             TelPhone tf = new TelPhone();
             tf.setValue(sss);
             orgDTO.getTelecomAddress().getItem().add(tf);
