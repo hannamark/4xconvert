@@ -313,7 +313,7 @@
      </tr>
     <tr >
         <td scope="row" class="label" >
-            <label for="nciIdentifier"> Central Contact </label>
+            <label for="nciIdentifier"> Personal Contact </label>
         </td>
         <td class="value">
             <div id="loadCentralContactDiv">
