@@ -170,23 +170,21 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Ii should not be null");
         }
-        Session session = null;
-        StudyProtocol studyProtocol = null;
-        session = HibernateUtil.getCurrentSession();
-        studyProtocol = (InterventionalStudyProtocol)
-        session.get(InterventionalStudyProtocol.class, Long.valueOf(ii.getExtension()));
+        Session session = HibernateUtil.getCurrentSession();
+        StudyProtocol studyProtocol = (InterventionalStudyProtocol) session.get(InterventionalStudyProtocol.class,
+                                                                                Long.valueOf(ii.getExtension()));
         if (studyProtocol == null) {
-            studyProtocol = (ObservationalStudyProtocol)
-            session.get(ObservationalStudyProtocol.class, Long.valueOf(ii.getExtension()));
+            studyProtocol = (ObservationalStudyProtocol) session.get(ObservationalStudyProtocol.class,
+                                                                     Long.valueOf(ii.getExtension()));
         }
         if (studyProtocol == null) {
-            throw new PAException("Ii could not be found.");
+            throw new PAException("No matching study protocol for Ii.extension " + ii.getExtension());
         }
-        StudyProtocolDTO studyProtocolDTO =
-            StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
+        StudyProtocolDTO studyProtocolDTO = StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
 
         return studyProtocolDTO;
     }
+
     /**
      *
      * @param studyProtocolDTO studyProtocolDTO
