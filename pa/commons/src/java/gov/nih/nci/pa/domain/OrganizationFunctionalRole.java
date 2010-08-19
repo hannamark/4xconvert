@@ -85,6 +85,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * Abstract class for managing Oranization Functional Role .
  * @author Naveen Amiruddin
@@ -103,6 +105,7 @@ public abstract class OrganizationFunctionalRole extends FunctionalRole {
      */
     @Column(name = "FUNCTIONAL_CODE")
     @Enumerated(EnumType.STRING)
+    @Searchable
     public StudySiteFunctionalCode getFunctionalCode() {
         return functionalCode;
     }

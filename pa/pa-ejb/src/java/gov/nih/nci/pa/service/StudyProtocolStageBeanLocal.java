@@ -20,8 +20,11 @@ import gov.nih.nci.pa.iso.convert.StudyProtocolStageConverter;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.StudyProtocolStageSortCriterion;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -45,10 +48,11 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Example;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 
 /**
  * @author Vrushali
@@ -57,7 +61,8 @@ import org.hibernate.criterion.Example;
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLocal {
+public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyProtocolStage>
+    implements StudyProtocolStageServiceLocal {
     private static final Logger LOG  = Logger.getLogger(StudyProtocolStageBeanLocal.class);
     @EJB
     private MailManagerServiceLocal mailManagerSerivceLocal;
@@ -74,47 +79,36 @@ public class StudyProtocolStageBeanLocal implements StudyProtocolStageServiceLoc
      * @throws TooManyResultsException on err
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudyProtocolStageDTO> search(StudyProtocolStageDTO dto,
-            LimitOffset pagingParams) throws PAException,
+    public List<StudyProtocolStageDTO> search(StudyProtocolStageDTO dto, LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
         if (dto == null) {
             throw new PAException(" StudyProtocolDTO should not be null ");
         }
-        Session session = null;
-        List<StudyProtocolStage> studyProtocolList = null;
-        session = HibernateUtil.getCurrentSession();
-        StudyProtocolStage exampleDO = new StudyProtocolStage();
-        if (dto.getPhaseCode() != null) {
-            exampleDO.setPhaseCode(PhaseCode.getByCode(dto.getPhaseCode().getCode()));
-        }
-        if (dto.getPhaseAdditionalQualifierCode() != null) {
-            exampleDO.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.getByCode(
-                    dto.getPhaseAdditionalQualifierCode().getCode()));
-        }
+        StudyProtocolStage criteria = new StudyProtocolStage();
+        criteria.setPhaseCode(PhaseCode.getByCode(CdConverter.convertCdToString(dto.getPhaseCode())));
+        criteria.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.getByCode(
+                CdConverter.convertCdToString(dto.getPhaseAdditionalQualifierCode())));
+        criteria.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(
+                CdConverter.convertCdToString(dto.getPrimaryPurposeCode())));
         if (!PAUtil.isStNull(dto.getOfficialTitle())) {
-            String title = "%" + StConverter.convertToString(dto.getOfficialTitle()) + "%";
-            exampleDO.setOfficialTitle(title);
+            criteria.setOfficialTitle(StConverter.convertToString(dto.getOfficialTitle()));
         }
-        if (dto.getPrimaryPurposeCode() != null) {
-            exampleDO.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(dto.getPrimaryPurposeCode().getCode()));
-        }
+
         if (!PAUtil.isStNull(dto.getUserLastCreated())) {
             String userName = dto.getUserLastCreated().getValue();
             try {
-                exampleDO.setUserLastCreated(CSMUserService.getInstance().getCSMUser(userName));
+                criteria.setUserLastCreated(CSMUserService.getInstance().getCSMUser(userName));
             } catch (PAException e) {
                 LOG.info("Exception in setting userLastCreated for Study Protocol Stage: "
                         + dto.getIdentifier() + ", for username" + userName, e);
             }
         }
-        Example example = Example.create(exampleDO);
-        example.enableLike();
 
-        Criteria criteria = session.createCriteria(StudyProtocolStage.class, "sp").add(example);
         int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
-        criteria.setMaxResults(maxLimit);
-        criteria.setFirstResult(pagingParams.getOffset());
-        studyProtocolList = criteria.list();
+        PageSortParams<StudyProtocolStage> params = new PageSortParams<StudyProtocolStage>(maxLimit,
+                pagingParams.getOffset(), StudyProtocolStageSortCriterion.STUDY_PROTOCOL_STAGE_ID, false);
+        List<StudyProtocolStage> studyProtocolList =
+            search(new AnnotatedBeanSearchCriteria<StudyProtocolStage>(criteria), params);
         if (studyProtocolList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }

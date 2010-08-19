@@ -82,6 +82,8 @@ package gov.nih.nci.pa.domain;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * Base class for all domain classes.
  * @author Naveen Amiruddin
@@ -99,16 +101,17 @@ public abstract class AbstractLookUpEntity extends AbstractEntity {
     private String publicId;
     private String codingSystem;
     private String codingSystemName;
-    
+
     /**
      * Gets the code.
      * @return the code
      */
     @Column(name = "CODE")
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getCode() {
         return code;
     }
-    
+
     /**
      * Sets the code.
      * @param code the new code
@@ -116,16 +119,17 @@ public abstract class AbstractLookUpEntity extends AbstractEntity {
     public void setCode(String code) {
         this.code = code;
     }
-    
+
     /**
      * Gets the display name.
      * @return the display name
      */
     @Column(name = "DISPLAY_NAME")
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getDisplayName() {
         return displayName;
     }
-    
+
     /**
      * Sets the display name.
      * @param displayName the new display name
@@ -133,16 +137,17 @@ public abstract class AbstractLookUpEntity extends AbstractEntity {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-    
+
     /**
      * Gets the description.
      * @return the description
      */
     @Column(name = "DESCRIPTION")
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getDescription() {
         return description;
     }
-    
+
     /**
      * Sets the description.
      * @param description the new description
@@ -150,7 +155,7 @@ public abstract class AbstractLookUpEntity extends AbstractEntity {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     /**
      * Gets the concept id.
      * @return the concept id
@@ -159,7 +164,7 @@ public abstract class AbstractLookUpEntity extends AbstractEntity {
     public String getConceptId() {
         return conceptId;
     }
-    
+
     /**
      * Sets the concept id.
      * @param conceptId the new concept id
@@ -167,16 +172,17 @@ public abstract class AbstractLookUpEntity extends AbstractEntity {
     public void setConceptId(String conceptId) {
         this.conceptId = conceptId;
     }
-    
+
     /**
      * Gets the public id.
      * @return the public id
      */
     @Column(name = "PUBLIC_ID")
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getPublicId() {
         return publicId;
     }
-    
+
     /**
      * Sets the public id.
      * @param publicId the new public id
@@ -184,7 +190,7 @@ public abstract class AbstractLookUpEntity extends AbstractEntity {
     public void setPublicId(String publicId) {
         this.publicId = publicId;
     }
-    
+
     /**
      * Gets the coding system.
      * @return the coding system
@@ -193,7 +199,7 @@ public abstract class AbstractLookUpEntity extends AbstractEntity {
     public String getCodingSystem() {
         return codingSystem;
     }
-    
+
     /**
      * Sets the coding system.
      * @param codingSystem the new coding system
@@ -201,7 +207,7 @@ public abstract class AbstractLookUpEntity extends AbstractEntity {
     public void setCodingSystem(String codingSystem) {
         this.codingSystem = codingSystem;
     }
-    
+
     /**
      * Gets the coding system name.
      * @return the coding system name
@@ -210,14 +216,14 @@ public abstract class AbstractLookUpEntity extends AbstractEntity {
     public String getCodingSystemName() {
         return codingSystemName;
     }
-    
+
     /**
      * Sets the coding system name.
      * @param codingSystemName the new coding system name
      */
     public void setCodingSystemName(String codingSystemName) {
         this.codingSystemName = codingSystemName;
-    }      
+    }
 }
 
 

@@ -89,6 +89,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 
 
 /**
@@ -119,6 +121,7 @@ public class StudyContact extends PersonFunctionalRole {
      * @return the phone
      */
     @Column(name = "telephone")
+    @Searchable
     public String getPhone() {
         return phone;
     }
@@ -132,6 +135,7 @@ public class StudyContact extends PersonFunctionalRole {
      * @return the email
      */
     @Column(name = "email")
+    @Searchable
     public String getEmail() {
         return email;
     }
@@ -266,6 +270,7 @@ public class StudyContact extends PersonFunctionalRole {
      */
     @Column(name = "ROLE_CODE")
     @Enumerated(EnumType.STRING)
+    @Searchable
     public StudyContactRoleCode getRoleCode() {
         return roleCode;
     }
@@ -281,6 +286,7 @@ public class StudyContact extends PersonFunctionalRole {
      */
     @ManyToOne
     @JoinColumn(name = "ORGANIZATIONAL_CONTACT_IDENTIFIER")
+    @Searchable(nested = true)
     public OrganizationalContact getOrganizationalContact() {
         return organizationalContact;
     }

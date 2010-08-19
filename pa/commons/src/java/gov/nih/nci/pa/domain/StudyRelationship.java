@@ -90,9 +90,11 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * Describes the comprehensive state of the study.
- * 
+ *
  * @author Anupama Sharma
  * @since 04/10/2009
  */
@@ -105,102 +107,102 @@ public class StudyRelationship extends AbstractEntity {
 
     /** The type code. */
     private StudyRelationshipTypeCode typeCode;
-    
+
     /** The description text. */
     private String descriptionText;
-    
+
     /** The comment text. */
     private String commentText;
-    
+
     /** The sequence number. */
     private Integer sequenceNumber;
-    
+
     /** The source study protocol id. (toStudyProtocolIdentifier studyProtocolIdentifier (new)*/
     private StudyProtocol sourceStudyProtocol;
-    
+
     /** The target study protocol id. parent identifier from (old)*/
     private StudyProtocol targetStudyProtocol;
-    
-        
-    
+
+
+
     /**
      * Gets the type code.
-     * 
+     *
      * @return the type code
      */
-    @Column(name = "TYPE_CODE") 
+    @Column(name = "TYPE_CODE")
     @Enumerated(EnumType.STRING)
     public StudyRelationshipTypeCode getTypeCode() {
     return typeCode;
     }
-    
+
     /**
      * Sets the type code.
-     * 
+     *
      * @param typeCode the new type code
      */
     public void setTypeCode(StudyRelationshipTypeCode typeCode) {
     this.typeCode = typeCode;
     }
-    
+
     /**
      * Gets the description text.
-     * 
+     *
      * @return the description text
      */
     @Column(name = "DESCRIPTION_TEXT")
     public String getDescriptionText() {
     return descriptionText;
     }
-    
+
     /**
      * Sets the description text.
-     * 
+     *
      * @param descriptionText the new description text
      */
     public void setDescriptionText(String descriptionText) {
     this.descriptionText = descriptionText;
     }
-    
+
     /**
      * Gets the comment text.
-     * 
+     *
      * @return the comment text
      */
     @Column(name = "COMMENT_TEXT")
     public String getCommentText() {
     return commentText;
     }
-    
+
     /**
      * Sets the comment text.
-     * 
+     *
      * @param commentText the new comment text
      */
     public void setCommentText(String commentText) {
     this.commentText = commentText;
     }
-    
+
     /**
      * Gets the sequence number.
-     * 
+     *
      * @return the sequence number
      */
     @Column(name = "SEQUENCE_NUMBER")
     public Integer getSequenceNumber() {
     return sequenceNumber;
     }
-    
+
     /**
      * Sets the sequence number.
-     * 
+     *
      * @param sequenceNumber the new sequence number
      */
     public void setSequenceNumber(Integer sequenceNumber) {
     this.sequenceNumber = sequenceNumber;
     }
-    
-  
+
+
     /**
     *
     * @return studyProtocol
@@ -208,38 +210,40 @@ public class StudyRelationship extends AbstractEntity {
    @OneToOne
    @JoinColumn(name = "SOURCE_STUDY_PROTOCOL_IDENTIFIER")
    @NotNull
+   @Searchable(nested = true)
    public StudyProtocol getSourceStudyProtocol() {
        return sourceStudyProtocol;
    }
-    
+
     /**
      * Sets the source study protocol id.
-     * 
+     *
      * @param sourceStudyProtocol the new source study protocol id
      */
     public void setSourceStudyProtocol(StudyProtocol sourceStudyProtocol) {
     this.sourceStudyProtocol = sourceStudyProtocol;
     }
-    
+
     /**
      * Gets the target study protocol id.
-     * 
+     *
      * @return the target study protocol id
      */
     @OneToOne
     @JoinColumn(name = "TARGET_STUDY_PROTOCOL_IDENTIFIER")
     @NotNull
+    @Searchable(nested = true)
     public StudyProtocol getTargetStudyProtocol() {
         return targetStudyProtocol;
     }
-    
+
     /**
      * Sets the target study protocol id.
-     * 
+     *
      * @param targetStudyProtocol the new target study protocol id
      */
     public void setTargetStudyProtocol(StudyProtocol targetStudyProtocol) {
         this.targetStudyProtocol = targetStudyProtocol;
     }
-  
+
 }

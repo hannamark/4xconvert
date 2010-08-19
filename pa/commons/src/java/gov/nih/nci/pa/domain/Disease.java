@@ -122,26 +122,31 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
     public String getDiseaseCode() {
         return diseaseCode;
     }
+
     /**
      * @param diseaseCode the diseaseCode to set
      */
     public void setDiseaseCode(String diseaseCode) {
         this.diseaseCode = diseaseCode;
     }
+
     /**
      * @return the ntTermIdentifier
      */
     @Column(name = "NT_TERM_IDENTIFIER")
     @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
     public String getNtTermIdentifier() {
+
         return ntTermIdentifier;
     }
+
     /**
      * @param ntTermIdentifier the ntTermIdentifier to set
      */
     public void setNtTermIdentifier(String ntTermIdentifier) {
         this.ntTermIdentifier = ntTermIdentifier;
     }
+
     /**
      * @return the preferredName
      */
@@ -150,12 +155,14 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
     public String getPreferredName() {
         return preferredName;
     }
+
     /**
      * @param preferredName the preferredName to set
      */
     public void setPreferredName(String preferredName) {
         this.preferredName = preferredName;
     }
+
     /**
      * @return the menuDisplayName
      */
@@ -164,12 +171,14 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
     public String getMenuDisplayName() {
         return menuDisplayName;
     }
+
     /**
      * @param menuDisplayName the menuDisplayName to set
      */
     public void setMenuDisplayName(String menuDisplayName) {
         this.menuDisplayName = menuDisplayName;
     }
+
     /**
      * @return the studyDiseases
      */
@@ -178,12 +187,14 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
     public List<StudyDisease> getStudyDiseases() {
         return studyDiseases;
     }
+
     /**
      * @param studyDiseases the studyDiseases to set
      */
     public void setStudyDiseases(List<StudyDisease> studyDiseases) {
         this.studyDiseases = studyDiseases;
     }
+
     /**
      * @return the studySubjects
      */
@@ -191,12 +202,14 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
     public List<StudySubject> getStudySubjects() {
         return studySubjects;
     }
+
     /**
      * @param studySubjects the studySubjects to set
      */
     public void setStudySubjects(List<StudySubject> studySubjects) {
         this.studySubjects = studySubjects;
     }
+
     /**
      * @return the diseaseAlternames
      */
@@ -205,12 +218,14 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
     public List<DiseaseAltername> getDiseaseAlternames() {
         return diseaseAlternames;
     }
+
     /**
      * @param diseaseAlternames the diseaseAlternames to set
      */
     public void setDiseaseAlternames(List<DiseaseAltername> diseaseAlternames) {
         this.diseaseAlternames = diseaseAlternames;
     }
+
     /**
      * @return the diseaseParents
      */
@@ -219,12 +234,14 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
     public List<DiseaseParent> getDiseaseParents() {
         return diseaseParents;
     }
+
     /**
      * @param diseaseParents the diseaseParents to set
      */
     public void setDiseaseParents(List<DiseaseParent> diseaseParents) {
         this.diseaseParents = diseaseParents;
     }
+
     /**
      * @return the diseaseChildren
      */
@@ -233,6 +250,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
     public List<DiseaseParent> getDiseaseChildren() {
         return diseaseChildren;
     }
+
     /**
      * @param diseaseChildren the diseaseChildren to set
      */

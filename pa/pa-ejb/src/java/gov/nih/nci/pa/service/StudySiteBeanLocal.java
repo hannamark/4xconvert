@@ -14,6 +14,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteAccrualStatusConverter;
 import gov.nih.nci.pa.iso.convert.StudySiteContactConverter;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
@@ -22,12 +23,11 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.StudySiteSortCriterion;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.AssignedIdentifierEnum;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -48,11 +48,10 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Example;
-import org.hibernate.criterion.Expression;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
  * @author asharma
@@ -320,97 +319,19 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteDTO> search(StudySiteDTO dto, LimitOffset pagingParams) throws PAException,
         TooManyResultsException {
         if (dto == null) {
             throw new PAException("StudySiteDTO should not be null");
         }
-        Session session = null;
-        List<StudySite> studySiteList = null;
-        session = HibernateUtil.getCurrentSession();
-        StudySite exampleDO = new StudySite();
-        Criteria criteria = session.createCriteria(StudySite.class);
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
-            exampleDO.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        }
-        if (!PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
-            criteria.createAlias("studyProtocol", "sp")
-                    .add(Expression.eq("sp.id", IiConverter.convertToLong(dto.getStudyProtocolIdentifier())));
-        }
-        if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi())) {
-            if (PAConstants.PA_INTERNAL.equals(dto.getHealthcareFacilityIi().getIdentifierName())) {
-                criteria.createAlias("healthCareFacility", "hcf")
-                        .add(Expression.eq("hcf.id", IiConverter.convertToLong(dto.getHealthcareFacilityIi())));
-            } else {
-                final String hcfIi = IiConverter.convertToString(dto.getHealthcareFacilityIi());
-                criteria.createAlias("healthCareFacility", "hcf").add(Expression.eq("hcf.identifier", hcfIi));
-            }
-        }
 
-        if (!PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
-            if (PAConstants.PA_INTERNAL.equals(dto.getResearchOrganizationIi().getIdentifierName())) {
-                criteria.createAlias("researchOrganization", "ro")
-                        .add(Expression.eq("ro.id", IiConverter.convertToLong(dto.getResearchOrganizationIi())));
-            } else {
-                criteria.createAlias("researchOrganization", "ro")
-                        .add(Expression.eq("ro.identifier",
-                                           IiConverter.convertToString(dto.getResearchOrganizationIi())));
-            }
+        StudySite criteria = Converters.get(StudySiteConverter.class).convertFromDtoToDomain(dto);
 
-        }
-
-        if (!PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
-            if (PAConstants.PA_INTERNAL.equals(dto.getOversightCommitteeIi().getIdentifierName())) {
-                criteria.createAlias("oversightCommittee", "oc")
-                        .add(Expression.eq("oc.id", IiConverter.convertToLong(dto.getOversightCommitteeIi())));
-            } else {
-                final String ocIi = IiConverter.convertToString(dto.getOversightCommitteeIi());
-                criteria.createAlias("oversightCommittee", "oc").add(Expression.eq("oc.identifier", ocIi));
-            }
-        }
-
-        if (dto.getFunctionalCode() != null) {
-            exampleDO.setFunctionalCode(StudySiteFunctionalCode.getByCode(dto.getFunctionalCode().getCode()));
-        }
-        if (dto.getLocalStudyProtocolIdentifier() != null) {
-            final String lspi = StConverter.convertToString(dto.getLocalStudyProtocolIdentifier());
-            exampleDO.setLocalStudyProtocolIdentifier(lspi);
-        }
-        if (dto.getStatusCode() != null) {
-            exampleDO.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
-        }
-        if (dto.getReviewBoardApprovalDate() != null) {
-            exampleDO.setReviewBoardApprovalDate(TsConverter.convertToTimestamp(dto.getReviewBoardApprovalDate()));
-        }
-        if (dto.getReviewBoardApprovalNumber() != null) {
-            exampleDO.setReviewBoardApprovalNumber(StConverter.convertToString(dto.getReviewBoardApprovalNumber()));
-        }
-        if (dto.getTargetAccrualNumber() != null) {
-            exampleDO.setTargetAccrualNumber(IntConverter.convertToInteger(dto.getTargetAccrualNumber()));
-        }
-        if (dto.getReviewBoardOrganizationalAffiliation() != null) {
-            final String reviewBoardOrgAff = StConverter.convertToString(dto.getReviewBoardOrganizationalAffiliation());
-            exampleDO.setReviewBoardOrganizationalAffiliation(reviewBoardOrgAff);
-        }
-        if (dto.getReviewBoardApprovalStatusCode() != null) {
-            exampleDO.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode
-                                                       .getByCode(dto.getReviewBoardApprovalStatusCode().getCode()));
-        }
-        if (dto.getProgramCodeText() != null) {
-            exampleDO.setProgramCodeText(StConverter.convertToString(dto.getProgramCodeText()));
-        }
-        if (dto.getAccrualDateRange() != null) {
-            exampleDO.setAccrualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getAccrualDateRange()));
-            exampleDO.setAccrualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getAccrualDateRange()));
-        }
-        Example example = Example.create(exampleDO);
-        criteria.add(example);
         int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
-        criteria.setMaxResults(maxLimit);
-        criteria.setFirstResult(pagingParams.getOffset());
-        studySiteList = criteria.list();
+        PageSortParams<StudySite> params = new PageSortParams<StudySite>(maxLimit, pagingParams.getOffset(),
+                StudySiteSortCriterion.STUDY_SITE_ID, false);
+        List<StudySite> studySiteList = search(new AnnotatedBeanSearchCriteria<StudySite>(criteria), params);
 
         if (studySiteList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);

@@ -82,6 +82,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * Abstract class for managing Person Functional Role .
  * @author Naveen Amiruddin
@@ -100,6 +102,7 @@ public abstract class PersonFunctionalRole extends FunctionalRole {
      */
     @ManyToOne
     @JoinColumn(name = "CLINICAL_RESEARCH_STAFF_IDENTIFIER")
+    @Searchable(nested = true)
     public ClinicalResearchStaff getClinicalResearchStaff() {
         return clinicalResearchStaff;
     }
@@ -118,6 +121,7 @@ public abstract class PersonFunctionalRole extends FunctionalRole {
      */
     @ManyToOne
     @JoinColumn(name = "HEALTHCARE_PROVIDER_IDENTIFIER")
+    @Searchable(nested = true)
     public HealthCareProvider getHealthCareProvider() {
         return healthCareProvider;
     }

@@ -95,6 +95,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * StudySite bean for managing StudySite.
  * @author Naveen Amiruddin
@@ -127,6 +129,7 @@ public class StudySite extends OrganizationFunctionalRole {
      * @return the programCode
      */
     @Column(name = "PROGRAM_CODE_TEXT")
+    @Searchable
     public String getProgramCodeText() {
         return programCodeText;
     }
@@ -143,6 +146,7 @@ public class StudySite extends OrganizationFunctionalRole {
      * @return localStudyProtocolIdentifier
      */
     @Column(name = "LOCAL_SP_INDENTIFIER")
+    @Searchable
     public String getLocalStudyProtocolIdentifier() {
         return localStudyProtocolIdentifier;
     }
@@ -159,6 +163,7 @@ public class StudySite extends OrganizationFunctionalRole {
      * @return the reviewBoardApprovalNumber
      */
     @Column(name = "REVIEW_BOARD_APPROVAL_NUMBER")
+    @Searchable
     public String getReviewBoardApprovalNumber() {
         return reviewBoardApprovalNumber;
     }
@@ -175,6 +180,7 @@ public class StudySite extends OrganizationFunctionalRole {
      */
     @Column(name = "REVIEW_BOARD_APPROVAL_DATE")
     @Enumerated(EnumType.STRING)
+    @Searchable
     public Timestamp getReviewBoardApprovalDate() {
         return reviewBoardApprovalDate;
     }
@@ -191,6 +197,7 @@ public class StudySite extends OrganizationFunctionalRole {
      */
     @Column(name = "REVIEW_BOARD_APPROVAL_STATUS_CODE")
     @Enumerated(EnumType.STRING)
+    @Searchable
     public ReviewBoardApprovalStatusCode getReviewBoardApprovalStatusCode() {
         return reviewBoardApprovalStatusCode;
     }
@@ -206,6 +213,7 @@ public class StudySite extends OrganizationFunctionalRole {
      * @return the targetAccrualNumber
      */
     @Column(name = "TARGET_ACCRUAL_NUMBER")
+    @Searchable
     public Integer getTargetAccrualNumber() {
         return targetAccrualNumber;
     }
@@ -336,6 +344,7 @@ public class StudySite extends OrganizationFunctionalRole {
      * @return the reviewBoardOrganizationalAffiliation
      */
     @Column(name = "REVIEW_BOARD_ORGANIZATIONAL_AFFILIATION")
+    @Searchable
     public String getReviewBoardOrganizationalAffiliation() {
         return reviewBoardOrganizationalAffiliation;
     }
@@ -351,6 +360,7 @@ public class StudySite extends OrganizationFunctionalRole {
      * @return the accrualDateRangeHigh closed date
      */
     @Column(name = "ACCRUAL_DATE_RANGE_HIGH")
+    @Searchable
     public Timestamp getAccrualDateRangeHigh() {
         return accrualDateRangeHigh;
     }
@@ -366,6 +376,7 @@ public class StudySite extends OrganizationFunctionalRole {
      * @return the accrualDateRangeLow opened date
      */
     @Column(name = "ACCRUAL_DATE_RANGE_LOW")
+    @Searchable
     public Timestamp getAccrualDateRangeLow() {
         return accrualDateRangeLow;
     }

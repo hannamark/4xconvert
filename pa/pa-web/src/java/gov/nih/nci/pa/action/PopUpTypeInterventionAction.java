@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.domain.AbstractLookUpEntity;
 import gov.nih.nci.pa.domain.DoseForm;
 import gov.nih.nci.pa.domain.DoseFrequency;
 import gov.nih.nci.pa.domain.MethodCode;
@@ -87,11 +88,13 @@ import gov.nih.nci.pa.domain.UnitOfMeasurement;
 import gov.nih.nci.pa.dto.LookUpWebDTO;
 import gov.nih.nci.pa.service.BaseLookUpService;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -100,13 +103,10 @@ import com.opensymphony.xwork2.ActionSupport;
  * Common module to call the Intervention type related Search.
  *
  * @author Anupama Sharma
- *
  */
 public class PopUpTypeInterventionAction extends ActionSupport {
     private static final long serialVersionUID = 4960297232842560635L;
-
     private List<LookUpWebDTO> lookupDtos = new ArrayList<LookUpWebDTO>();
-
     private LookUpWebDTO lookupSearchCriteria = new LookUpWebDTO();
 
     /**
@@ -128,21 +128,20 @@ public class PopUpTypeInterventionAction extends ActionSupport {
        }
        return "lookUp";
    }
-      /**
-   *
-   * @return result
-   */
-  public String displayLookUpList() {
-      return processDisplayLookUp(SUCCESS);
-  }
 
-  /**
-   *
-   * @return result
-   */
-  public String displayLookUpListDisplayTag() {
-      return processDisplayLookUp("lookUp");
-  }
+   /**
+    * @return result
+    */
+   public String displayLookUpList() {
+       return processDisplayLookUp(SUCCESS);
+   }
+
+   /**
+    * @return result
+    */
+   public String displayLookUpListDisplayTag() {
+       return processDisplayLookUp("lookUp");
+   }
 
    private String processDisplayLookUp(String retvalue) {
        try {
@@ -171,220 +170,65 @@ public class PopUpTypeInterventionAction extends ActionSupport {
        }
    }
 
-
    private List<LookUpWebDTO> getTypeList(String className, LookUpWebDTO lookupCriteria) throws PAException {
-
        List<LookUpWebDTO> lookUpList = new ArrayList<LookUpWebDTO>();
        if ("DoseForm".equalsIgnoreCase(className)) {
-          DoseForm criteria = new DoseForm();
-          lookUpList = generateWebDTO(criteria, lookupCriteria);
+           DoseForm criteria = new DoseForm();
+           lookUpList = generateWebDTO(new BaseLookUpService<DoseForm>(DoseForm.class), criteria, lookupCriteria);
        } else if ("DoseFrequency".equalsIgnoreCase(className)) {
-          DoseFrequency criteria = new DoseFrequency();
-          lookUpList = generateWebDTO(criteria, lookupCriteria);
+           DoseFrequency criteria = new DoseFrequency();
+           lookUpList = generateWebDTO(new BaseLookUpService<DoseFrequency>(DoseFrequency.class), criteria,
+                       lookupCriteria);
        } else if ("RouteOfAdministration".equalsIgnoreCase(className)) {
            RouteOfAdministration criteria = new RouteOfAdministration();
-           lookUpList = generateWebDTO(criteria, lookupCriteria);
+           lookUpList = generateWebDTO(new BaseLookUpService<RouteOfAdministration>(RouteOfAdministration.class),
+                       criteria, lookupCriteria);
        } else if ("MethodCode".equalsIgnoreCase(className)) {
            MethodCode criteria = new MethodCode();
-           lookUpList = generateWebDTO(criteria, lookupCriteria);
+           lookUpList = generateWebDTO(new BaseLookUpService<MethodCode>(MethodCode.class), criteria, lookupCriteria);
        } else if ("UnitOfMeasurement".equalsIgnoreCase(className)) {
-          UnitOfMeasurement criteria = new UnitOfMeasurement();
-          lookUpList = generateWebDTO(criteria, lookupCriteria);
+           UnitOfMeasurement criteria = new UnitOfMeasurement();
+           lookUpList = generateWebDTO(new BaseLookUpService<UnitOfMeasurement>(UnitOfMeasurement.class), criteria,
+                       lookupCriteria);
        } else if ("TargetSite".equalsIgnoreCase(className)) {
            TargetSite criteria = new TargetSite();
-           lookUpList = generateWebDTO(criteria, lookupCriteria);
+           lookUpList = generateWebDTO(new BaseLookUpService<TargetSite>(TargetSite.class), criteria, lookupCriteria);
        }
        return lookUpList;
    }
 
-   private List<LookUpWebDTO> generateWebDTO(DoseForm criteria, LookUpWebDTO lookupCriteria) throws PAException {
-     List<LookUpWebDTO> lookUpList = new ArrayList<LookUpWebDTO>();
-     if (!"".equals(lookupCriteria.getCode())) {
-       criteria.setCode(lookupCriteria.getCode());
-     }
-     if (!"".equals(lookupCriteria.getPublicId())) {
-       criteria.setPublicId(lookupCriteria.getPublicId());
-     }
-     if (!"".equals(lookupCriteria.getDescription())) {
-        criteria.setDescription(lookupCriteria.getDescription());
-     }
-     if (!"".equals(lookupCriteria.getDisplayName())) {
-       criteria.setDisplayName(lookupCriteria.getDisplayName());
-     }
-     List<DoseForm> doseFormsList = new ArrayList<DoseForm>();
-     BaseLookUpService<DoseForm> lookUpService =
-         new BaseLookUpService<DoseForm>(DoseForm.class);
-     doseFormsList.addAll(lookUpService.search(criteria));
-     for (DoseForm df :  doseFormsList) {
-        LookUpWebDTO lookupdto = new LookUpWebDTO();
-        lookupdto.setCode(df.getCode());
-        lookupdto.setDescription(df.getDescription());
-        lookupdto.setDisplayName(df.getDisplayName());
-        lookupdto.setId(df.getId().toString());
-        lookupdto.setPublicId(df.getPublicId());
-        lookupdto.setDivName(lookupCriteria.getDivName());
-        lookupdto.setType(lookupCriteria.getType());
-        lookUpList.add(lookupdto);
-    }
-    return lookUpList;
-  }
+   private <T extends AbstractLookUpEntity> List<LookUpWebDTO> generateWebDTO(BaseLookUpService<T> service, T criteria,
+           LookUpWebDTO lookupCriteria) throws PAException {
+       if (StringUtils.isNotEmpty(lookupCriteria.getCode())) {
+           criteria.setCode(lookupCriteria.getCode());
+       }
 
-   private List<LookUpWebDTO> generateWebDTO(DoseFrequency criteria, LookUpWebDTO lookupCriteria) throws PAException {
-     List<LookUpWebDTO> lookUpList = new ArrayList<LookUpWebDTO>();
-     if (!"".equals(lookupCriteria.getCode())) {
-       criteria.setCode(lookupCriteria.getCode());
-     }
-     if (!"".equals(lookupCriteria.getPublicId())) {
-       criteria.setPublicId(lookupCriteria.getPublicId());
-     }
-     if (!"".equals(lookupCriteria.getDescription())) {
-       criteria.setDescription(lookupCriteria.getDescription());
-     }
-     if (!"".equals(lookupCriteria.getDisplayName())) {
-       criteria.setDisplayName(lookupCriteria.getDisplayName());
-     }
-     List<DoseFrequency> doseFreqsList = new ArrayList<DoseFrequency>();
-     BaseLookUpService<DoseFrequency> lookUpService =
-          new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
-     doseFreqsList.addAll(lookUpService.search(criteria));
-     for (DoseFrequency df :  doseFreqsList) {
-       LookUpWebDTO lookupdto = new LookUpWebDTO();
-       lookupdto.setCode(df.getCode());
-       lookupdto.setDescription(df.getDescription());
-       lookupdto.setDisplayName(df.getDisplayName());
-       lookupdto.setId(df.getId().toString());
-       lookupdto.setPublicId(df.getPublicId());
-       lookupdto.setDivName(lookupCriteria.getDivName());
-       lookupdto.setType(lookupCriteria.getType());
-       lookUpList.add(lookupdto);
-     }
-    return lookUpList;
-   }
-   private List<LookUpWebDTO> generateWebDTO(UnitOfMeasurement criteria,
-            LookUpWebDTO lookupCriteria) throws PAException {
-     List<LookUpWebDTO> lookUpList = new ArrayList<LookUpWebDTO>();
-     if (!"".equals(lookupCriteria.getCode())) {
-       criteria.setCode(lookupCriteria.getCode());
-     }
-     if (!"".equals(lookupCriteria.getPublicId())) {
-      criteria.setPublicId(lookupCriteria.getPublicId());
-     }
-     if (!"".equals(lookupCriteria.getDescription())) {
-       criteria.setDescription(lookupCriteria.getDescription());
-     }
-     if (!"".equals(lookupCriteria.getDisplayName())) {
-       criteria.setDisplayName(lookupCriteria.getDisplayName());
-     }
-     List<UnitOfMeasurement> uomList = new ArrayList<UnitOfMeasurement>();
-     BaseLookUpService<UnitOfMeasurement> lookUpService = new BaseLookUpService<UnitOfMeasurement>(
-        UnitOfMeasurement.class);
-     uomList.addAll(lookUpService.search(criteria));
-     for (UnitOfMeasurement df : uomList) {
-       LookUpWebDTO lookupdto = new LookUpWebDTO();
-       lookupdto.setCode(df.getCode());
-       lookupdto.setDescription(df.getDescription());
-       lookupdto.setDisplayName(df.getDisplayName());
-       lookupdto.setId(df.getId().toString());
-       lookupdto.setPublicId(df.getPublicId());
-       lookupdto.setDivName(lookupCriteria.getDivName());
-       lookupdto.setType(lookupCriteria.getType());
-       lookUpList.add(lookupdto);
-    }
-     return lookUpList;
-  }
-   private List<LookUpWebDTO> generateWebDTO(RouteOfAdministration criteria, LookUpWebDTO lookupCriteria)
-   throws PAException {
-      List<LookUpWebDTO> lookUpList = new ArrayList<LookUpWebDTO>();
-      if (!"".equals(lookupCriteria.getCode())) {
-        criteria.setCode(lookupCriteria.getCode());
-      }
-      if (!"".equals(lookupCriteria.getPublicId())) {
-        criteria.setPublicId(lookupCriteria.getPublicId());
-      }
-      if (!"".equals(lookupCriteria.getDescription())) {
-        criteria.setDescription(lookupCriteria.getDescription());
-      }
-      if (!"".equals(lookupCriteria.getDisplayName())) {
-        criteria.setDisplayName(lookupCriteria.getDisplayName());
-      }
-      List<RouteOfAdministration> roaList = new ArrayList<RouteOfAdministration>();
-      BaseLookUpService<RouteOfAdministration> lookUpService =
-          new BaseLookUpService<RouteOfAdministration>(RouteOfAdministration.class);
-      roaList.addAll(lookUpService.search(criteria));
-      for (RouteOfAdministration df :  roaList) {
-        LookUpWebDTO lookupdto = new LookUpWebDTO();
-        lookupdto.setCode(df.getCode());
-        lookupdto.setDescription(df.getDescription());
-        lookupdto.setDisplayName(df.getDisplayName());
-        lookupdto.setId(df.getId().toString());
-        lookupdto.setPublicId(df.getPublicId());
-        lookupdto.setDivName(lookupCriteria.getDivName());
-        lookupdto.setType(lookupCriteria.getType());
-        lookUpList.add(lookupdto);
-      }
-      return lookUpList;
-   }
-   private List<LookUpWebDTO> generateWebDTO(TargetSite criteria, LookUpWebDTO lookupCriteria) throws PAException {
-      List<LookUpWebDTO> lookUpList = new ArrayList<LookUpWebDTO>();
-      if (!"".equals(lookupCriteria.getCode())) {
-       criteria.setCode(lookupCriteria.getCode());
-      }
-      if (!"".equals(lookupCriteria.getPublicId())) {
-        criteria.setPublicId(lookupCriteria.getPublicId());
-      }
-      if (!"".equals(lookupCriteria.getDescription())) {
-        criteria.setDescription(lookupCriteria.getDescription());
-      }
-      if (!"".equals(lookupCriteria.getDisplayName())) {
-        criteria.setDisplayName(lookupCriteria.getDisplayName());
-      }
-      List<TargetSite> targetSiteList = new ArrayList<TargetSite>();
-      BaseLookUpService<TargetSite> lookUpService =
-          new BaseLookUpService<TargetSite>(TargetSite.class);
-      targetSiteList.addAll(lookUpService.search(criteria));
-      for (TargetSite df :  targetSiteList) {
-        LookUpWebDTO lookupdto = new LookUpWebDTO();
-        lookupdto.setCode(df.getCode());
-        lookupdto.setDescription(df.getDescription());
-        lookupdto.setDisplayName(df.getDisplayName());
-        lookupdto.setId(df.getId().toString());
-        lookupdto.setPublicId(df.getPublicId());
-        lookupdto.setDivName(lookupCriteria.getDivName());
-        lookupdto.setType(lookupCriteria.getType());
-        lookUpList.add(lookupdto);
-     }
-    return lookUpList;
-   }
-   private List<LookUpWebDTO> generateWebDTO(MethodCode criteria, LookUpWebDTO lookupCriteria) throws PAException {
-      List<LookUpWebDTO> lookUpList = new ArrayList<LookUpWebDTO>();
-      if (!"".equals(lookupCriteria.getCode())) {
-        criteria.setCode(lookupCriteria.getCode());
-      }
-      if (!"".equals(lookupCriteria.getPublicId())) {
-        criteria.setPublicId(lookupCriteria.getPublicId());
-      }
-      if (!"".equals(lookupCriteria.getDescription())) {
-       criteria.setDescription(lookupCriteria.getDescription());
-      }
-      if (!"".equals(lookupCriteria.getDisplayName())) {
-       criteria.setDisplayName(lookupCriteria.getDisplayName());
-      }
-      List<MethodCode> methodCodeList = new ArrayList<MethodCode>();
-      BaseLookUpService<MethodCode> lookUpService =
-        new BaseLookUpService<MethodCode>(MethodCode.class);
-      methodCodeList.addAll(lookUpService.search(criteria));
-      for (MethodCode df :  methodCodeList) {
-        LookUpWebDTO lookupdto = new LookUpWebDTO();
-        lookupdto.setCode(df.getCode());
-        lookupdto.setDescription(df.getDescription());
-        lookupdto.setDisplayName(df.getDisplayName());
-        lookupdto.setId(df.getId().toString());
-        lookupdto.setPublicId(df.getPublicId());
-        lookupdto.setDivName(lookupCriteria.getDivName());
-        lookupdto.setType(lookupCriteria.getType());
-        lookUpList.add(lookupdto);
-     }
-     return lookUpList;
+       if (StringUtils.isNotEmpty(lookupCriteria.getPublicId())) {
+           criteria.setPublicId(lookupCriteria.getPublicId());
+       }
+
+       if (StringUtils.isNotEmpty(lookupCriteria.getDescription())) {
+           criteria.setDescription(lookupCriteria.getDescription());
+       }
+
+       if (StringUtils.isNotEmpty(lookupCriteria.getDisplayName())) {
+           criteria.setDisplayName(lookupCriteria.getDisplayName());
+       }
+
+       List<T> results = service.search(new AnnotatedBeanSearchCriteria<T>(criteria));
+       List<LookUpWebDTO> lookUpList = new ArrayList<LookUpWebDTO>();
+       for (T df :  results) {
+           LookUpWebDTO lookupdto = new LookUpWebDTO();
+           lookupdto.setCode(df.getCode());
+           lookupdto.setDescription(df.getDescription());
+           lookupdto.setDisplayName(df.getDisplayName());
+           lookupdto.setId(df.getId().toString());
+           lookupdto.setPublicId(df.getPublicId());
+           lookupdto.setDivName(lookupCriteria.getDivName());
+           lookupdto.setType(lookupCriteria.getType());
+           lookUpList.add(lookupdto);
+       }
+       return lookUpList;
    }
 
    private boolean searchCriteriaEmpty(String code, String publicId, String description, String displayName) {
@@ -399,29 +243,29 @@ public class PopUpTypeInterventionAction extends ActionSupport {
      return criteriaEmpty;
    }
 
-  /**
-   * @return the lookupDtos
-   */
+   /**
+    * @return the lookupDtos
+    */
    public List<LookUpWebDTO> getLookupDtos() {
-    return lookupDtos;
+       return lookupDtos;
    }
    /**
     * @param lookupDtos the lookupDtos to set
     */
-    public void setLookupDtos(List<LookUpWebDTO> lookupDtos) {
-     this.lookupDtos = lookupDtos;
-    }
-  /**
-   * @return the lookupSearchCriteria
-   */
+   public void setLookupDtos(List<LookUpWebDTO> lookupDtos) {
+       this.lookupDtos = lookupDtos;
+   }
+   /**
+    * @return the lookupSearchCriteria
+    */
    public LookUpWebDTO getLookupSearchCriteria() {
-    return lookupSearchCriteria;
+       return lookupSearchCriteria;
    }
    /**
     * @param lookupSearchCriteria the lookupSearchCriteria to set
     */
    public void setLookupSearchCriteria(LookUpWebDTO lookupSearchCriteria) {
-     this.lookupSearchCriteria = lookupSearchCriteria;
+       this.lookupSearchCriteria = lookupSearchCriteria;
    }
 
 }

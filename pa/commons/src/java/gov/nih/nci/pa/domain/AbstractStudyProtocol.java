@@ -99,6 +99,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * Defines common fields of a Study Protocol.
  * @author oweisms
@@ -269,6 +271,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
      */
     @Column(name = "PHASE_CODE")
     @Enumerated(EnumType.STRING)
+    @Searchable
     public PhaseCode getPhaseCode() {
         return phaseCode;
     }
@@ -285,6 +288,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
      */
     @Column (name = "PHASE_ADDITIONAL_QUALIFIER_CODE")
     @Enumerated(EnumType.STRING)
+    @Searchable
     public PhaseAdditionalQualifierCode getPhaseAdditionalQualifierCode() {
         return phaseAdditionalQualifierCode;
     }
@@ -316,6 +320,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
      */
     @Column(name = "PRIMARY_PURPOSE_CODE")
     @Enumerated(EnumType.STRING)
+    @Searchable
     public PrimaryPurposeCode getPrimaryPurposeCode() {
         return primaryPurposeCode;
     }
@@ -347,6 +352,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
      * @return the officialTitle
      */
     @Column(name = "OFFICIAL_TITLE")
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getOfficialTitle() {
         return officialTitle;
     }

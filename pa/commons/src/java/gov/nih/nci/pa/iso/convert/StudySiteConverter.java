@@ -172,13 +172,13 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
 
         StudySite bo = new StudySite();
         bo.setDateLastUpdated(new Timestamp(new Date().getTime()));
-        bo.setFunctionalCode(StudySiteFunctionalCode.getByCode(dto.getFunctionalCode().getCode()));
+        bo.setFunctionalCode(StudySiteFunctionalCode.getByCode(CdConverter.convertCdToString(dto.getFunctionalCode())));
         bo.setHealthCareFacility(hfBo);
         bo.setResearchOrganization(roBo);
         bo.setOversightCommittee(ocBo);
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setLocalStudyProtocolIdentifier(StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
-        bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
+        bo.setStatusCode(FunctionalRoleStatusCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         bo.setStatusDateRangeHigh(null);
         bo.setStudyProtocol(spBo);
@@ -187,10 +187,8 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
         bo.setTargetAccrualNumber(IntConverter.convertToInteger(dto.getTargetAccrualNumber()));
         bo.setReviewBoardOrganizationalAffiliation(
                 StConverter.convertToString(dto.getReviewBoardOrganizationalAffiliation()));
-        if (dto.getReviewBoardApprovalStatusCode() != null) {
-            bo.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.getByCode(
-                    dto.getReviewBoardApprovalStatusCode().getCode()));
-        }
+        bo.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.getByCode(
+                    CdConverter.convertCdToString(dto.getReviewBoardApprovalStatusCode())));
         bo.setProgramCodeText(StConverter.convertToString(dto.getProgramCodeText()));
         if (dto.getAccrualDateRange() != null) {
             bo.setAccrualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getAccrualDateRange()));

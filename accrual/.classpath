@@ -115,5 +115,6 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/hibernate-annotations-3.2.0.ga.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jdom-1.1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jta-1.1.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/nci-commons-core-1.2.14.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

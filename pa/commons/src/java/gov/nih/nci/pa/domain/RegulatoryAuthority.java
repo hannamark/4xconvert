@@ -88,6 +88,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * Governmental bodies that have the power to pass and enforce laws.
  * For example, the Medicines and Healthcare Products Regulatory Agency
@@ -109,6 +111,7 @@ public class RegulatoryAuthority extends AbstractEntity {
      * @return the authorityName
      */
     @Column(name = "AUTHORITY_NAME")
+    @Searchable(matchMode = Searchable.MATCH_MODE_START)
     public String getAuthorityName() {
             return authorityName;
     }
@@ -123,6 +126,7 @@ public class RegulatoryAuthority extends AbstractEntity {
      */
     @ManyToOne
     @JoinColumn(name = "COUNTRY_IDENTIFIER", nullable = false)
+    @Searchable(nested = true)
     public Country getCountry() {
             return country;
     }

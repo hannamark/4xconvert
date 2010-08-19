@@ -172,24 +172,23 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
     public StudyContact convertFromDtoToDomain(StudyContactDTO dto , StudyContact bo) throws PAException {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-        HealthCareProvider hfBo = null;
-        ClinicalResearchStaff crs = null;
-        OrganizationalContact orgContact = null;
+        bo.setStudyProtocol(spBo);
+
         if (dto.getIdentifier() != null) {
-        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+            bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         }
         if (!ISOUtil.isIiNull(dto.getHealthCareProviderIi())) {
-            hfBo = new HealthCareProvider();
+            HealthCareProvider hfBo = new HealthCareProvider();
             hfBo.setId(getPaIdentifier(dto.getHealthCareProviderIi()));
             bo.setHealthCareProvider(hfBo);
         }
         if (!ISOUtil.isIiNull(dto.getClinicalResearchStaffIi())) {
-            crs = new ClinicalResearchStaff();
+            ClinicalResearchStaff crs = new ClinicalResearchStaff();
             crs.setId(getPaIdentifier(dto.getClinicalResearchStaffIi()));
             bo.setClinicalResearchStaff(crs);
         }
         if (!ISOUtil.isIiNull(dto.getOrganizationalContactIi())) {
-            orgContact = new OrganizationalContact();
+            OrganizationalContact orgContact = new OrganizationalContact();
             orgContact.setId(getPaIdentifier(dto.getOrganizationalContactIi()));
             bo.setOrganizationalContact(orgContact);
         }
@@ -198,8 +197,8 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         } else {
             bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
         }
-        bo.setRoleCode(StudyContactRoleCode.getByCode(dto.getRoleCode().getCode()));
-        bo.setStudyProtocol(spBo);
+        bo.setRoleCode(StudyContactRoleCode.getByCode(CdConverter.convertCdToString(dto.getRoleCode())));
+
         List<String> retList = null;
         if (dto.getTelecomAddresses() != null) {
             retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "EMAIL");
@@ -211,10 +210,8 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
                 bo.setPhone(retList.get(0).toString());
             }
         }
-
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         bo.setStatusDateRangeHigh(null);
-
         return bo;
     }
 

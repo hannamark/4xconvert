@@ -91,6 +91,8 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * Abstract class for managing functional roles.
  *
@@ -123,6 +125,7 @@ public class FunctionalRole extends AbstractEntity {
     @Column(name = "STATUS_CODE")
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Searchable
     public FunctionalRoleStatusCode  getStatusCode() {
         return statusCode;
     }
@@ -163,6 +166,7 @@ public class FunctionalRole extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
     @NotNull
+    @Searchable(nested = true)
     public StudyProtocol getStudyProtocol() {
         return studyProtocol;
     }

@@ -78,7 +78,6 @@ package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.security.authorization.domainobjects.User;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -91,13 +90,16 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * Base class for all domain classes.
  * @author Naveen Amiruddin
  * @since 05/22/2008
  */
 @MappedSuperclass
-public class AbstractEntity implements Serializable, Auditable {
+public class AbstractEntity implements PersistentObject {
 
     private static final long serialVersionUID = 1234567890L;
 
@@ -122,6 +124,7 @@ public class AbstractEntity implements Serializable, Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "IDENTIFIER")
+    @Searchable
     public Long getId() {
         return this.id;
     }
@@ -147,7 +150,7 @@ public class AbstractEntity implements Serializable, Auditable {
      *
      * @return userLastUpdated
      */
-    @ManyToOne 
+    @ManyToOne
     @JoinColumn(name = "USER_LAST_UPDATED_ID")
     public User getUserLastUpdated() {
         return userLastUpdated;
@@ -183,8 +186,9 @@ public class AbstractEntity implements Serializable, Auditable {
      *
      * @return userLastCreated
      */
-    @ManyToOne 
+    @ManyToOne
     @JoinColumn(name = "USER_LAST_CREATED_ID", updatable = false)
+    @Searchable(fields = "loginName")
     public User getUserLastCreated() {
         return userLastCreated;
     }

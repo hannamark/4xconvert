@@ -89,6 +89,8 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * base class for all Structural role.
  * @author NAmiruddin
@@ -107,6 +109,7 @@ public class StructuralRole extends AbstractEntity {
      */
     @Column(name = "assigned_identifier")
     @NotNull
+    @Searchable(matchMode = Searchable.MATCH_MODE_EXACT)
     public String getIdentifier() {
         return identifier;
     }

@@ -104,6 +104,8 @@ import org.hibernate.Session;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
 
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+
 /**
  * @author Hugh Reinhart
  * @since 09/30/2008
@@ -112,8 +114,7 @@ import org.hibernate.validator.InvalidValue;
  * @param <CONVERTER> converter class
  */
 public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends AbstractEntity,
-                                            CONVERTER extends AbstractConverter<DTO, BO>>
-            implements BasePaService<DTO> {
+    CONVERTER extends AbstractConverter<DTO, BO>> extends AbstractBaseSearchBean<BO> implements BasePaService<DTO> {
 
     private static final String UNCHECKED = "unchecked";
     private final Class<BO> typeArgument;
