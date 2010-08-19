@@ -83,6 +83,7 @@
 package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.coppa.services.pa.StudyProtocolType;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
@@ -96,6 +97,8 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.util.PAUtil;
+
+import org.iso._21090.CD;
 
 /**
  * Transforms StudyProtocol instances.
@@ -136,8 +139,6 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setAmendmentNumber(STTransformer.INSTANCE.toDto(input.getAmendmentNumber()));
         result.setKeywordText(STTransformer.INSTANCE.toDto(input.getKeywordText()));
         result.setOfficialTitle(STTransformer.INSTANCE.toDto(input.getOfficialTitle()));
-        result.setPhaseOtherText(STTransformer.INSTANCE.toDto(input.getPhaseOtherText()));
-        result.setPrimaryPurposeOtherText(STTransformer.INSTANCE.toDto(input.getPrimaryPurposeOtherText()));
         result.setProgramCodeText(STTransformer.INSTANCE.toDto(input.getProgramCodeText()));
         result.setPublicDescription(STTransformer.INSTANCE.toDto(input.getPublicDescription()));
         result.setPublicTitle(STTransformer.INSTANCE.toDto(input.getPublicTitle()));
@@ -164,6 +165,21 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setPrimaryPurposeCode(CDTransformer.INSTANCE.toDto(input.getPrimaryPurposeCode()));
         result.setStartDateTypeCode(CDTransformer.INSTANCE.toDto(input.getStartDateTypeCode()));
         result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
+        CD phaseAddtionalQualifier = new CD();
+        if (input.getPhaseOtherText() != null) {
+            phaseAddtionalQualifier.setCode(input.getPhaseOtherText().getValue());
+        } else {
+            phaseAddtionalQualifier.setCode(null);
+        }
+        result.setPhaseAdditionalQualifierCode(CDTransformer.INSTANCE.toDto(phaseAddtionalQualifier));
+        CD primaryPurposeAdditionalQualifier = new CD();
+        if (input.getPrimaryPurposeOtherText() != null) {
+              primaryPurposeAdditionalQualifier.setCode(input.getPrimaryPurposeOtherText().getValue());
+        } else {
+              primaryPurposeAdditionalQualifier.setCode(null);
+        }
+        result.setPrimaryPurposeAdditionalQualifierCode(
+             CDTransformer.INSTANCE.toDto(primaryPurposeAdditionalQualifier));
         // II
         result.setSecondaryIdentifiers(
                 DSetConverter.convertIiToDset(IITransformer.INSTANCE.toDto(input.getAssignedIdentifier())));
@@ -197,8 +213,12 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setAmendmentNumber(STTransformer.INSTANCE.toXml(input.getAmendmentNumber()));
         result.setKeywordText(STTransformer.INSTANCE.toXml(input.getKeywordText()));
         result.setOfficialTitle(STTransformer.INSTANCE.toXml(input.getOfficialTitle()));
-        result.setPhaseOtherText(STTransformer.INSTANCE.toXml(input.getPhaseOtherText()));
-        result.setPrimaryPurposeOtherText(STTransformer.INSTANCE.toXml(input.getPrimaryPurposeOtherText()));
+        St phaseOtherText = new St();
+        phaseOtherText.setValue(input.getPhaseAdditionalQualifierCode().getCode());
+        result.setPhaseOtherText(STTransformer.INSTANCE.toXml(phaseOtherText));
+        St primaryPurposeOtherText = new St();
+        primaryPurposeOtherText.setValue(input.getPrimaryPurposeAdditionalQualifierCode().getCode());
+        result.setPrimaryPurposeOtherText(STTransformer.INSTANCE.toXml(primaryPurposeOtherText));
         result.setProgramCodeText(STTransformer.INSTANCE.toXml(input.getProgramCodeText()));
         result.setPublicDescription(STTransformer.INSTANCE.toXml(input.getPublicDescription()));
         result.setPublicTitle(STTransformer.INSTANCE.toXml(input.getPublicTitle()));

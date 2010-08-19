@@ -106,8 +106,8 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setAmendmentNumber(new STTransformerTest().makeDtoSimple());
         result.setKeywordText(new STTransformerTest().makeDtoSimple());
         result.setOfficialTitle(new STTransformerTest().makeDtoSimple());
-        result.setPhaseOtherText(new STTransformerTest().makeDtoSimple());
-        result.setPrimaryPurposeOtherText(new STTransformerTest().makeDtoSimple());
+        result.setPhaseAdditionalQualifierCode(new CDTransformerTest().makeDtoSimple());
+        result.setPrimaryPurposeAdditionalQualifierCode(new CDTransformerTest().makeDtoSimple());
         result.setProgramCodeText(new STTransformerTest().makeDtoSimple());
         result.setPublicDescription(new STTransformerTest().makeDtoSimple());
         result.setPublicTitle(new STTransformerTest().makeDtoSimple());
@@ -206,8 +206,6 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new STTransformerTest().verifyDtoSimple(x.getAmendmentNumber());
         new STTransformerTest().verifyDtoSimple(x.getKeywordText());
         new STTransformerTest().verifyDtoSimple(x.getOfficialTitle());
-        new STTransformerTest().verifyDtoSimple(x.getPhaseOtherText());
-        new STTransformerTest().verifyDtoSimple(x.getPrimaryPurposeOtherText());
         new STTransformerTest().verifyDtoSimple(x.getProgramCodeText());
         new STTransformerTest().verifyDtoSimple(x.getPublicDescription());
         new STTransformerTest().verifyDtoSimple(x.getPublicTitle());
@@ -231,6 +229,9 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new CDTransformerTest().verifyDtoSimple(x.getPrimaryPurposeCode());
         new CDTransformerTest().verifyDtoSimple(x.getStartDateTypeCode());
         new CDTransformerTest().verifyDtoSimple(x.getStatusCode());
+        new CDTransformerTest().verifyDtoSimple(x.getPhaseAdditionalQualifierCode());
+        new CDTransformerTest().verifyDtoSimple(x.getPrimaryPurposeAdditionalQualifierCode());
+
         //DSET
         new DSETIITransformerTest().verifyDtoSimple(x.getSecondaryIdentifiers());
         //II

@@ -105,7 +105,7 @@ import java.util.List;
 
 /**
  * Wrapper class for invoking the TrialRegistrationServiceRemote remote EJB.
- * 
+ *
  * @author Steve Lustbader
  */
 public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemote {
@@ -128,6 +128,14 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             StudyProtocolDTO currentSp = locator.getStudyProtocolService()
                 .getStudyProtocol(studyProtocolDTO.getIdentifier());
             studyProtocolDTO.setCtgovXmlRequiredIndicator(currentSp.getCtgovXmlRequiredIndicator());
+            studyProtocolDTO.setFdaRegulatedIndicator(currentSp.getFdaRegulatedIndicator());
+            studyProtocolDTO.setSection801Indicator(currentSp.getSection801Indicator());
+            studyProtocolDTO.setDelayedpostingIndicator(currentSp.getDelayedpostingIndicator());
+            studyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(
+                  currentSp.getDataMonitoringCommitteeAppointedIndicator());
+            studyRegAuthDTO = locator.getStudyRegulatoryAuthorityService().getCurrentByStudyProtocol(
+                   studyProtocolDTO.getIdentifier());
+
             return locator.getTrialRegistrationService().amend(studyProtocolDTO,
                     overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
                     principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,

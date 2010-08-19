@@ -248,10 +248,6 @@
                     <artifactId>saxpath</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>gov.nih.nci</groupId>
-                    <artifactId>security</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>servlet-api</groupId>
                     <artifactId>servlet-api</artifactId>
                 </exclusion>

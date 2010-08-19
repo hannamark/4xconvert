@@ -17,6 +17,7 @@ import gov.nih.nci.coppa.services.pa.grid.remote.InvokeTrialRegistrationEjb;
 import gov.nih.nci.coppa.services.pa.studyprotocolservice.service.StudyProtocolServiceImpl;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -37,6 +38,7 @@ import java.util.List;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.globus.wsrf.security.SecurityManager;
 
 /**
  * Grid service for managing trial registration.
@@ -65,7 +67,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             OrganizationDTO sponsorOrganizationDTO = OrganizationTransformer.INSTANCE.toDto(sponsorOrganization);
             StudySiteDTO leadOrganizationSiteIdentifierDTO =
                     StudySiteTransformer.INSTANCE.toDto(leadOrganizationSiteIdentifier);
-            List<StudySiteDTO> studyIdentifierDTOs = 
+            List<StudySiteDTO> studyIdentifierDTOs =
                 StudySiteTransformer.INSTANCE.convert(nctIdentifierSiteIdentifiers);
             StudyContactDTO studyContactDTO = StudyContactTransformer.INSTANCE.toDto(studyContact);
             StudySiteContactDTO studySiteContactDTO = StudySiteContactTransformer.INSTANCE.toDto(studySiteContact);
@@ -75,10 +77,11 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             Ii responsiblePartyContactIi = IITransformer.INSTANCE.toDto(responsiblePartyContact);
             Bl isBatch = new Bl();
             isBatch.setValue(Boolean.FALSE);
-            
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO = 
+            defaultingUserLoggedIn(studyProtocolDTO);
+
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO =
                 StudyRegulatoryAuthorityTransformer.INSTANCE.toDto(studyRegulatoryAuthority);
-            
+
             Ii ii = service.createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                             sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
@@ -103,9 +106,9 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             OrganizationDTO sponsorOrganizationDTO = OrganizationTransformer.INSTANCE.toDto(sponsorOrganization);
             StudySiteDTO leadOrganizationSiteIdentifierDTO =
                     StudySiteTransformer.INSTANCE.toDto(leadOrganizationSiteIdentifier);
-            List<StudySiteDTO> studyIdentifierDTOs = 
+            List<StudySiteDTO> studyIdentifierDTOs =
                 StudySiteTransformer.INSTANCE.convert(nctIdentifierSiteIdentifiers);
-            
+
             StudyContactDTO studyContactDTO = StudyContactTransformer.INSTANCE.toDto(studyContact);
             StudySiteContactDTO studySiteContactDTO = StudySiteContactTransformer.INSTANCE.toDto(studySiteContact);
             OrganizationDTO summary4organizationDTO = OrganizationTransformer.INSTANCE.toDto(summaryForOrganization);
@@ -114,10 +117,11 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             Ii responsiblePartyContactIi = IITransformer.INSTANCE.toDto(responsiblePartyContact);
             Bl isBatch = new Bl();
             isBatch.setValue(Boolean.FALSE);
-            
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO = 
+            defaultingUserLoggedIn(studyProtocolDTO);
+
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO =
                 StudyRegulatoryAuthorityTransformer.INSTANCE.toDto(studyRegulatoryAuthority);
-            
+
             Ii ii = service.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                             documentDTOs, leadOrganizationDTO, principalInvestigatorDTO, sponsorOrganizationDTO,
                             leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs, studyContactDTO,
@@ -152,10 +156,11 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             List<StudySiteDTO> studySiteDTOs = StudySiteTransformer.INSTANCE.convert(studySites);
             Bl isBatch = new Bl();
             isBatch.setValue(Boolean.FALSE);
-            
-            service.update(studyProtocolDTO, overallStatusDTO, studyIdentifierDTOs, studyIndldeDTOs, 
-                    studyResourcingDTOs, documentDTOs, studyContactDTO, studySiteContactDTO, summary4organizationDTO, 
-                    summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs, 
+            defaultingUserLoggedIn(studyProtocolDTO);
+
+            service.update(studyProtocolDTO, overallStatusDTO, studyIdentifierDTOs, studyIndldeDTOs,
+                    studyResourcingDTOs, documentDTOs, studyContactDTO, studySiteContactDTO, summary4organizationDTO,
+                    summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs,
                     studySiteAccrualStatusDTOs, studySiteDTOs, isBatch);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -181,6 +186,8 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
             Bl isBatch = new Bl();
             isBatch.setValue(Boolean.FALSE);
+            defaultingUserLoggedIn(studyProtocolDTO);
+
             Ii ii = service.createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
                             documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
                             studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4organizationDTO,
@@ -191,5 +198,15 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             throw FaultUtil.reThrowRemote(e);
         }
     }
+  /**
+   * @param studyProtocolDTO
+   */
+  private void defaultingUserLoggedIn(StudyProtocolDTO studyProtocolDTO) {
+      //defaulting logged in user as UserLastCreated
+      String identity = SecurityManager.getManager().getCaller();
+      St loggedInUser = new St();
+      loggedInUser.setValue(identity);
+      studyProtocolDTO.setUserLastCreated(loggedInUser);
+  }
 
 }
