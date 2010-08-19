@@ -82,12 +82,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -235,5 +237,33 @@ public class ArmServiceTest {
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.ARM_ROOT);
         assertTrue(StringUtils.isNotEmpty(dto.getIdentifier().getIdentifierName()));
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
+    @Test
+    public void testDuplicateArmRule() throws PAException {
+        ArmDTO dto = remoteEjb.get(ii);
+        dto.setIdentifier(null);
+        dto.setName(StConverter.convertToSt("new ARM"));
+        try {
+            remoteEjb.create(dto);
+            fail("Duplicates Arms are not allowed.");
+        } catch (PAException e) {
+            assertEquals("Duplicates Arms are not allowed.", e.getMessage());
+        }
+        dto = new ArmDTO();
+        dto.setName(StConverter.convertToSt("ARM 01"));
+        dto.setTypeCode(CdConverter.convertToCd(ArmTypeCode.ACTIVE_COMPARATOR));
+        dto.setStudyProtocolIdentifier(spIi);
+        try {
+            remoteEjb.create(dto);
+            fail("Duplicates Arms are not allowed.");
+        } catch (PAException e) {
+            assertEquals("Duplicates Arms are not allowed.", e.getMessage());
+        }
+        dto = new ArmDTO();
+        dto.setName(StConverter.convertToSt("ARM Name"));
+        dto.setTypeCode(CdConverter.convertToCd(ArmTypeCode.ACTIVE_COMPARATOR));
+        dto.setStudyProtocolIdentifier(spIi);
+        dto.setInterventions(DSetConverter.convertIiSetToDset(new HashSet<Ii>()));
+        remoteEjb.create(dto);
     }
 }

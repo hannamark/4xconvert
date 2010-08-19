@@ -402,7 +402,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         Set<Long> tSet = getAssociatedIds();
         Set<Ii> intSet = new HashSet<Ii>();
         for (Long t : tSet) {
-            intSet.add(IiConverter.convertToIi(t));
+            intSet.add(IiConverter.convertToActivityIi(t));
         }
         DSet<Ii> interventions = new DSet<Ii>();
         interventions.setItem(intSet);

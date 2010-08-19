@@ -32,6 +32,14 @@
         document.armForm.checkBoxEntry.value += rowId;
         document.armForm.checkBoxEntry.value += ",";
     }
+    function cancel(){
+        document.armForm.action="trialArms.action";
+        document.armForm.submit();
+    }
+    function resetValues() {
+        document.armForm.reset();
+    }
+    
 </script>
 
 </head>
@@ -129,6 +137,12 @@
                     <span class="btn_img"> <span class="save">Save</span></span>
                 </s:a>
             </s:elseif>
+            <s:a href="#" cssClass="btn" onclick="resetValues();return false">
+                <span class="btn_img"><span class="cancel">Reset</span></span>
+            </s:a>
+            <s:a href="#" cssClass="btn" onclick="cancel();">
+               <span class="btn_img"><span class="cancel">Cancel</span></span>
+            </s:a>
             </li>
         </ul>
         </del></div>

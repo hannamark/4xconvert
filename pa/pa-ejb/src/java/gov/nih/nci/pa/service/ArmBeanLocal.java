@@ -10,8 +10,11 @@ import gov.nih.nci.pa.interceptor.ProprietaryTrialInterceptor;
 import gov.nih.nci.pa.iso.convert.ArmConverter;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -29,6 +32,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -89,6 +93,7 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
     if (StringUtils.isEmpty(StConverter.convertToString(dto.getName()))) {
         throw new PAException("The arm/group label (name) must be set.  ");
     }
+    enforceNoDuplicate(dto);
   }
 
   /**
@@ -155,5 +160,43 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
     return interventions;
   }
 
+  private void enforceNoDuplicate(ArmDTO dto) throws PAException {
+      List<ArmDTO> armList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+       for (ArmDTO armDbDTO : armList) {
+           if (isDuplicate(dto, armDbDTO) && (dto.getIdentifier() == null
+                   || (!dto.getIdentifier().getExtension().equals(armDbDTO.getIdentifier().getExtension())))) {
+                   throw new PADuplicateException("Duplicates Arms are not allowed.");
+           }
+       }
+    }
+
+/**
+ * @param sameLabel
+ * @param sameType
+ * @param sameDesc
+ * @param sameInterventions
+ * @param dto
+ * @throws PADuplicateException
+ */
+  private boolean isDuplicate(ArmDTO dto, ArmDTO dbDTO) throws PADuplicateException {
+      String newLabel = StConverter.convertToString(dto.getName());
+      String newType = CdConverter.convertCdToString(dto.getTypeCode());
+      String newDescription = StConverter.convertToString(dto.getDescriptionText());
+      Set<Ii> newIntervention = DSetConverter.convertDsetToIiSet(dto.getInterventions());
+      boolean sameLabel = StringUtils.equalsIgnoreCase(newLabel, StConverter.convertToString(dbDTO.getName()));
+      boolean sameType = StringUtils.equalsIgnoreCase(newType, CdConverter.convertCdToString(
+              dbDTO.getTypeCode()));
+      boolean sameDesc = StringUtils.equalsIgnoreCase(newDescription, StConverter.convertToString(
+                 dbDTO.getDescriptionText()));
+      boolean sameInterventions = false;
+      Set<Ii> armInterventions = DSetConverter.convertDsetToIiSet(dbDTO.getInterventions());
+      if (CollectionUtils.isEmpty(newIntervention) && CollectionUtils.isEmpty(armInterventions)) {
+          sameInterventions = true;
+      } else if (CollectionUtils.isNotEmpty(newIntervention) && CollectionUtils.isNotEmpty(armInterventions)) {
+          sameInterventions =  CollectionUtils.isEmpty(CollectionUtils.subtract(newIntervention,
+                     armInterventions));
+      }
+    return ((sameType && sameDesc && sameInterventions) || sameLabel);
+  }
 
  }
