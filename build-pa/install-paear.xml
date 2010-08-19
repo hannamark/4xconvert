@@ -140,6 +140,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <property name="application.url" value="${jboss.application.url}"/>
       <property name="register.mail.body.url" value="${jboss.application.external.url}/${register.mail.body.url.action}"/>
       <property name="doc.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}"/>
+      <property name="tooltips.filepath.loc" value="${application.base.path}/${tooltips.filepath.relative.dir}"/>
       <available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
       <basename file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.file"/>
       <dirname file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.dir"/>
@@ -172,6 +173,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <mkdir dir="${doc.upload.filepath.loc}" />
       <available file="${doc.upload.filepath.loc}" property="doc.upload.filepath.exists" />
       <fail unless="doc.upload.filepath.exists" message="The doc upload dir at ${doc.upload.filepath.loc} has not been created." />
+
+      <!-- Create the tooltips directory -->
+      <mkdir dir="${tooltips.filepath.loc}" />
+      <available file="${tooltips.filepath.loc}" property="tooltips.filepath.exists" />
+      <fail unless="doc.upload.filepath.exists" message="The tooltips dir at ${tooltips.filepath.loc} has not been created." />
+      <!-- End creating the tooltips directory -->
 
       <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
       <delete dir="${jboss.home}/server/${jboss.server.name}/work" failonerror="false"/>
@@ -389,7 +396,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           <fileset dir="${pa-container-jar.dist.dir}">
               <exclude name="servlet-2.2.jar"/>
           </fileset>
-      </copy>   
+      </copy>
   </target>
 
   <target name="install:pa-ear-jboss:configure" unless="exclude.pa-ear">

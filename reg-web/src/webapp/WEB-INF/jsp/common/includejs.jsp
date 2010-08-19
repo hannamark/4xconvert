@@ -8,3 +8,4 @@
 <script type="text/javascript" language="javascript">
 var contextPath = '<%=request.getContextPath()%>';
 </script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/overlib.js'/>"></script>

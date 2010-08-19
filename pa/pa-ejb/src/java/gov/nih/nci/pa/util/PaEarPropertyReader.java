@@ -102,6 +102,7 @@ public class PaEarPropertyReader {
     private static String csmSubmitterGroup = "csm.submitter.group";
     private static String allowedUploadFileTypes = "allowed.uploadfile.types";
     private static String batchUploadPath = "batch.upload.path";
+    private static String tooltipsPath = "tooltips.path";
 
     static {
         try {
@@ -111,6 +112,23 @@ public class PaEarPropertyReader {
             LOG.error("Unable to read paear.properties ", e);
             throw new IllegalStateException(e);
         }
+    }
+
+    /**
+    *
+    * @return tooltip folder path
+    * @throws PAException e
+    */
+    public static String getTooltipsPath() throws PAException {
+      String tooltipsFolderPath = props.getProperty(tooltipsPath);
+      if (tooltipsFolderPath == null) {
+          throw new PAException("tooltips.path does not have value in paear.properties");
+      }
+      File f = new File(tooltipsFolderPath);
+      if (!f.isDirectory()) {
+          throw new PAException(tooltipsFolderPath + " is not a valid directory ");
+      }
+      return tooltipsFolderPath;
     }
 
     /**

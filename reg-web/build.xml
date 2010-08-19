@@ -290,7 +290,7 @@
     <!-- Package target                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="war">
+    <target name="war" depends="copy-tooltips">
         <mkdir dir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib"/>
         <copy todir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib">
             <fileset dir="${runtime.jar.dir}"/>
@@ -340,6 +340,11 @@
         <available file="${reg-web.ear.file}" property="reg-web.ear.present"/>
         <fail unless="reg-web.ear.present" message="Ear file not found."/>
         <copy todir="${jboss.deploy.directory}" file="${reg-web.ear.file}"/>
+    </target>
+
+    <target name="copy-tooltips">
+        <echo message="Copying ${reg-web.build.resourceDir.0}/RegWebTooltips.properties to ${tooltips.filepath.loc}"/>
+        <copy file="${reg-web.build.resourceDir.0}/RegWebTooltips.properties" todir="${tooltips.filepath.loc}" overwrite="true" />
     </target>
 
     <target name="deploy" depends="package,ear,deploy-ear,fix-server-xml"

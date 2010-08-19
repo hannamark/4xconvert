@@ -1,4 +1,4 @@
-	<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
+	<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 	<script language="JavaScript">
 	function trim(val) {
 		var ret = val.replace(/^\s+/, '');
@@ -7,13 +7,13 @@
 		}
 	function getIndIdeRadioValue(size){
 		for(var i=0; i<size; i++) {
-			if(document.forms[0].group3[i].checked==true) 
+			if(document.forms[0].group3[i].checked==true)
 				return(document.forms[0].group3[i].value);
 		}
 	}
 	function getExpandedAccessRadioValue(size){
 	for(var i=0; i<size; i++) {
-		if(document.forms[0].group4[i].checked==true) 
+		if(document.forms[0].group4[i].checked==true)
 			return(document.forms[0].group4[i].value);
 	}
 	}
@@ -21,14 +21,14 @@
 	 if (selection.checked==true)
 	 {
 	  document.getElementById('expanded_status').disabled=false;
-	 } 
-	 else 
+	 }
+	 else
 	  {
 	   document.getElementById('expanded_status').value='';
 	   document.getElementById('expanded_status').disabled=true;
-	  } 
+	  }
 	}
-	function setProgramCodes(ref){	
+	function setProgramCodes(ref){
 		if (ref.value == 'NCI') {
 			document.getElementById('programcodenciid').style.display = '';
 			document.getElementById('programcodenihid').style.display = 'none';
@@ -47,11 +47,11 @@
 	    var indide = document.getElementById('group3').value;
 	    var number = document.getElementById('indidenumber').value;
 	    var grantor = document.getElementById('SubCat').value;
-	    var holder = document.getElementById('holderType').value;	
+	    var holder = document.getElementById('holderType').value;
 		number = trim(number);
 	    if (indide == "") {
             alert("Please choose an IND/IDE Type")
-            return false;    
+            return false;
 	    }
 		if( number == "") {
 			alert("Please enter an IND/IDE number")
@@ -61,14 +61,14 @@
 	         if(!numericExpression.test(number)){
 	         alert("IND/IDE  Number must be alphanumeric");
 	         return false;
-	        } 
+	        }
 	    }
 		var grantor = document.getElementById('SubCat').value;
 		if( grantor == "") {
 			alert("Please select a Grantor")
 			return false;
 		}
-		
+
 		var holdertype = document.getElementById('holderType').value;
 		if( holdertype == "") {
 			alert("Please select an IND Holder Type")
@@ -86,9 +86,9 @@
 		if( document.getElementById('programcodenihselectedvalue').value != '' ) {
 			programcode = document.getElementById('programcodenihselectedvalue').value
 		}else {
-			programcode = document.getElementById('programcodenciselectedvalue').value;		
+			programcode = document.getElementById('programcodenciselectedvalue').value;
 		}
-		
+
 		var expandedaccess = document.forms[0].group4;
 		if (expandedaccess.checked == true) {
 			expandedaccess ='Yes';
@@ -105,11 +105,11 @@
 	}
 	function resetValues(){
 		document.getElementById('indidenumber').value='';
-		document.getElementById('group3').value=''; 
+		document.getElementById('group3').value='';
     	removeAllOptions(document.getElementById('SubCat'));
-    	addOption(document.getElementById('SubCat'), "", "--Select--", "");	
-    	document.getElementById('holderType').value='';    	
-		document.getElementById('programcodenihselectedvalue').value='';	
+    	addOption(document.getElementById('SubCat'), "", "--Select--", "");
+    	document.getElementById('holderType').value='';
+		document.getElementById('programcodenihselectedvalue').value='';
 		document.getElementById('programcodenciselectedvalue').value='';
 		document.getElementById('programcodenihid').style.display = 'none';
 		document.getElementById('programcodenciid').style.display = 'none';
@@ -131,12 +131,12 @@
 	function addOption(selectbox, value, text ){
 		var optn = document.createElement("OPTION");
 		optn.text = text;
-		optn.value = value;		
+		optn.value = value;
 		selectbox.options.add(optn);
-	}	
+	}
 	function SelectSubCat(i){
 		removeAllOptions(document.getElementById('SubCat'));
-		addOption(document.getElementById('SubCat'), "", "-Select-", "");	
+		addOption(document.getElementById('SubCat'), "", "-Select-", "");
 		if(i.value == 'IND'){
 			addOption(document.getElementById('SubCat'),"CDER", "CDER");
 			addOption(document.getElementById('SubCat'),"CBER", "CBER");
@@ -162,7 +162,7 @@
 				document.getElementById('addbtn').disabled = false;
 			}
 		}
-	}	
+	}
 
 	function bindNIHToolTipOnLoad(){
 		var opts = document.getElementById('programcodenihselectedvalue').options;
@@ -175,7 +175,7 @@
 		 for (var i=0; i<opts.length; i++) {
 			opts[i].title=opts[i].value;
 	  }
-	}	
+	}
 	function enableTooltip(ref){
 	if(ref == 'nih')
 		document.getElementById('programcodenihselectedvalue').title = document.getElementById('programcodenihselectedvalue').value;
@@ -187,39 +187,39 @@
 	<s:set name="phaseCodeValuesNCI" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
 	<s:set name="expandedAccessStatusCodeValues" value="@gov.nih.nci.pa.enums.ExpandedAccessStatusCode@getDisplayNames()" />
 
-	<table class="form">	
+	<table class="form">
 
 		<tbody>
 			<tr>
-				<th>IND/IDE Types</th>
-				<th>IND/IDE Number</th>
-				<th>IND/IDE Grantor</th>
-				<th>IND/IDE Holder Type</th>
-				<th>NIH Institution, NCI Division/Program Code (if applicable)</th>
-				<th>Expanded Access</th>
-				<th>Expanded Access Type (if applicable)</th>
+				<th><reg-web:displayTooltip tooltip="tooltip.ind_ide_type">IND/IDE Types</reg-web:displayTooltip></th>
+				<th><reg-web:displayTooltip tooltip="tooltip.ind_ide_number">IND/IDE Number</reg-web:displayTooltip></th>
+				<th><reg-web:displayTooltip tooltip="tooltip.ind_ide_grantor">IND/IDE Grantor</reg-web:displayTooltip></th>
+				<th><reg-web:displayTooltip tooltip="tooltip.ind_ide_holder_type">IND/IDE Holder Type</reg-web:displayTooltip></th>
+				<th><reg-web:displayTooltip tooltip="tooltip.nih_institution_nci_division_program_code">NIH Institution, NCI Division/Program Code (if applicable)</reg-web:displayTooltip></th>
+				<th><reg-web:displayTooltip tooltip="tooltip.has_expanded_access_indicator">Expanded Access</reg-web:displayTooltip></th>
+				<th><reg-web:displayTooltip tooltip="tooltip.has_expanded_status">Expanded Access Type (if applicable)</reg-web:displayTooltip></th>
 				<th></th>
 			</tr>
-		
+
 			<tr>
-				<td style="white-space:nowrap;">							
+				<td style="white-space:nowrap;">
 					<s:select id="group3" name="indldeType" headerKey="" headerValue="-Select-" onblur="SelectSubCat(this);" cssStyle="width:75px" onclick="SelectSubCat(this);"
                     list="#{'IND':'IND','IDE':'IDE'}"/>
-                    
+
 				</td>
 				<td>
-					<input id="indidenumber" name="indidenumber"  type="text" size="10" /> 
+					<input id="indidenumber" name="indidenumber"  type="text" size="10" />
 				</td>
 				<td>
 					<SELECT id="SubCat" name="SubCat" style="width:75px">
 						<Option value="">-Select-</option>
 					</SELECT>
-				</td>	
-				 					
+				</td>
+
 				<td>
 					<s:select id="holderType" name="holderType" headerKey="" headerValue="-Select-" onblur="setProgramCodes(this);bindNIHToolTipOnLoad();bindNCIToolTipOnLoad();" cssStyle="width:75px" onclick="setProgramCodes(this);"
 					list="#{'Investigator':'Investigator','Organization':'Organization','Industry':'Industry','NIH':'NIH','NCI':'NCI'}"/>
-					
+
 				</td>
 				<td>
 				<div id="programcodeid" style="display:''">
@@ -232,16 +232,16 @@
 					<input type="checkbox" name="group4" id="group4" onclick="setExpandedStatus(this);"/> Yes
 				</td>
 				<td>
-					<s:select id="expanded_status" headerKey="" headerValue="-Select-" name="expanded_status" disabled="true" 
+					<s:select id="expanded_status" headerKey="" headerValue="-Select-" name="expanded_status" disabled="true"
 					list="#expandedAccessStatusCodeValues"/>
-					
+
 				</td>
 				<td>
 					<input type="button" id="addbtn" onclick="callAddIndIde();" value="Add IND/IDE" >
 				</td>
 			</tr>
 			</tbody>
-	
+
 
 </table>
 

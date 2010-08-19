@@ -2,6 +2,7 @@
 application.base.path=${user.home}/apps/pa
 doc.upload.filepath.relative.dir=doc
 batch.upload.filepath.relative.dir=batch_docs
+tooltips.filepath.relative.dir=tooltips
 pa.server.name=localhost
 
 ########################### INCLUDE/EXCLUDE VIEWER #########################
@@ -25,6 +26,7 @@ test.schema.showsql=false
 
 test.java.naming.provider=localhost
 doc.upload.filepath.loc=${application.base.path}/${doc.upload.filepath.relative.dir}
+tooltips.filepath.loc=${application.base.path}/${tooltips.filepath.relative.dir}
 po.server.name=localhost
 po.port.number=31099
 po.username=ejbclient
