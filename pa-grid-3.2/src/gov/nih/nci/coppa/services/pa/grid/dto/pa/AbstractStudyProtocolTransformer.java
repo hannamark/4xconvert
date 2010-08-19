@@ -96,6 +96,7 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLINTTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
 import org.iso._21090.CD;
 /**
@@ -212,10 +213,11 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setKeywordText(STTransformer.INSTANCE.toXml(input.getKeywordText()));
         result.setOfficialTitle(STTransformer.INSTANCE.toXml(input.getOfficialTitle()));
         St phaseOtherText = new St();
-        phaseOtherText.setValue(input.getPhaseAdditionalQualifierCode().getCode());
+        phaseOtherText.setValue(CdConverter.convertCdToString(input.getPhaseAdditionalQualifierCode()));
         result.setPhaseOtherText(STTransformer.INSTANCE.toXml(phaseOtherText));
         St primaryPurposeOtherText = new St();
-        primaryPurposeOtherText.setValue(input.getPrimaryPurposeAdditionalQualifierCode().getCode());
+        primaryPurposeOtherText.setValue(CdConverter.convertCdToString(
+           input.getPrimaryPurposeAdditionalQualifierCode()));
         result.setPrimaryPurposeOtherText(STTransformer.INSTANCE.toXml(primaryPurposeOtherText));
 
         result.setProgramCodeText(STTransformer.INSTANCE.toXml(input.getProgramCodeText()));

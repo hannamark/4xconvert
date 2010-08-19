@@ -229,9 +229,6 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new CDTransformerTest().verifyDtoSimple(x.getPrimaryPurposeCode());
         new CDTransformerTest().verifyDtoSimple(x.getStartDateTypeCode());
         new CDTransformerTest().verifyDtoSimple(x.getStatusCode());
-        new CDTransformerTest().verifyDtoSimple(x.getPhaseAdditionalQualifierCode());
-        new CDTransformerTest().verifyDtoSimple(x.getPrimaryPurposeAdditionalQualifierCode());
-
         //DSET
         new DSETIITransformerTest().verifyDtoSimple(x.getSecondaryIdentifiers());
         //II
@@ -255,8 +252,6 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new STTransformerTest().verifyXmlSimple(x.getAmendmentNumber());
         new STTransformerTest().verifyXmlSimple(x.getKeywordText());
         new STTransformerTest().verifyXmlSimple(x.getOfficialTitle());
-        new STTransformerTest().verifyXmlSimple(x.getPhaseOtherText());
-        new STTransformerTest().verifyXmlSimple(x.getPrimaryPurposeOtherText());
         new STTransformerTest().verifyXmlSimple(x.getProgramCodeText());
         new STTransformerTest().verifyXmlSimple(x.getPublicDescription());
         new STTransformerTest().verifyXmlSimple(x.getPublicTitle());
