@@ -17,7 +17,7 @@
         <java>jboss-service.xml</java>
     </module>
     <module>
-        <java>pa-ejb-client-3.3-alpha5.jar</java>
+        <java>pa-ejb-client-3.3-alpha6.jar</java>
     </module>
     <module>
         <java>pa-commons-3.3-alpha9.jar</java>
