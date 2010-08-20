@@ -103,8 +103,8 @@
 	<classpathentry kind="lib" path="lib/xsom14.jar"/>
 	<classpathentry kind="lib" path="build/lib/CoreServices-common-3.2m5.jar"/>
 	<classpathentry kind="lib" path="build/lib/CoreServices-stubs-3.2m5.jar"/>
-	<classpathentry kind="lib" path="/Users/ajevans/dev/coppa/code/pa-grid-3.1/build/lib/pa-commons-3.3-alpha9.jar"/>
+    <classpathentry kind="lib" path="build/lib/pa-commons-3.3-alpha9.jar"/>
+    <classpathentry kind="lib" path="build/lib/pa-ejb-client-3.3-alpha5.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pa"/>
-	<classpathentry kind="lib" path="/Users/ajevans/dev/coppa/code/pa-grid-3.1/build/lib/pa-ejb-client-3.3-alpha5.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
