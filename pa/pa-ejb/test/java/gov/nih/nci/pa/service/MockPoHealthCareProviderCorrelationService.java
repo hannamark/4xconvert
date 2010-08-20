@@ -3,11 +3,12 @@
  */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.IdentifierReliability;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -45,6 +46,8 @@ public class MockPoHealthCareProviderCorrelationService implements
         throw new NullifiedRoleException(nullifiedEntities);
     }
     HealthCareProviderDTO hcp = new HealthCareProviderDTO();
+    ii.setReliability(IdentifierReliability.ISS);
+    ii.setRoot(IiConverter.HEALTH_CARE_PROVIDER_ROOT);
     hcp.setIdentifier(DSetConverter.convertIiToDset(ii));
     hcp.setPlayerIdentifier(IiConverter.convertToPoPersonIi("abc"));
     hcp.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("abc"));

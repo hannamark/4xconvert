@@ -82,12 +82,12 @@ import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceLocal;
-import gov.nih.nci.pa.service.DocumentBeanLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceBean;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
@@ -130,7 +130,6 @@ import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceBean;
@@ -569,6 +568,14 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ParticipatingSiteServiceLocal getParticipatingSiteService() {
         // TODO Auto-generated method stub
         return null;
     }

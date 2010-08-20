@@ -94,20 +94,13 @@ import javax.interceptor.Interceptors;
 import org.jboss.annotation.security.SecurityDomain;
 
 /**
- * @author Naveen Amiruddin
- * @since 03/19/2009
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author mshestopalov
  */
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
 @RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
-public class TrialRegistrationServiceBean extends TrialRegistrationBeanLocal implements TrialRegistrationServiceRemote {
-
-   
-
+public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal implements ParticipatingSiteServiceRemote {
 
 }

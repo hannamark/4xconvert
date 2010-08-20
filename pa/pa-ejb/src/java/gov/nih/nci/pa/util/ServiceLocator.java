@@ -87,6 +87,7 @@ import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
@@ -395,5 +396,10 @@ public interface ServiceLocator {
      * @return service for ProprietaryTrial
      */
     ProprietaryTrialManagementServiceLocal getProprietaryTrialService();
+    
+    /**
+     * @return service for Participating Sites.
+     */
+    ParticipatingSiteServiceLocal getParticipatingSiteService();
 }
 

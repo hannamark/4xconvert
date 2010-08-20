@@ -3,11 +3,13 @@
  */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.IdentifierReliability;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -16,6 +18,7 @@ import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +48,11 @@ public class MockPoClinicalResearchStaffCorrelationService implements
             throw new NullifiedRoleException(nullifiedEntities);
         }
         ClinicalResearchStaffDTO crs = new ClinicalResearchStaffDTO();
-        crs.setIdentifier(null);
+        crs.setIdentifier(new DSet<Ii>());
+        crs.getIdentifier().setItem(new HashSet<Ii>());
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setRoot(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT);
+        crs.getIdentifier().getItem().add(ii);
         crs.setPlayerIdentifier(IiConverter.convertToPoPersonIi("abc"));
         crs.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
         crs.setStatus(CdConverter.convertStringToCd("ACTIVE"));

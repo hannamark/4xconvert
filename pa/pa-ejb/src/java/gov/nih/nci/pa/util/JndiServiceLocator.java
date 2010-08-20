@@ -87,6 +87,7 @@ import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
@@ -476,5 +477,12 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
         return (ProprietaryTrialManagementServiceLocal) JNDIUtil.lookup("pa/ProprietaryTrialManagementBeanLocal/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ParticipatingSiteServiceLocal getParticipatingSiteService() {
+        return (ParticipatingSiteServiceLocal) JNDIUtil.lookup("pa/ParticipatingSiteServiceBeanLocal/local");
     }
 }

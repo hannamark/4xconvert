@@ -89,6 +89,7 @@ import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
@@ -520,6 +521,13 @@ public class MockPaServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ParticipatingSiteServiceLocal getParticipatingSiteService() {
         return null;
     }
 }

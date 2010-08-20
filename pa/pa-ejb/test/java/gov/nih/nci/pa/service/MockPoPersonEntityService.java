@@ -3,14 +3,8 @@
  */
 package gov.nih.nci.pa.service;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Enxp;
@@ -18,8 +12,6 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
@@ -29,6 +21,14 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vrushali
@@ -43,6 +43,7 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
         dto.setName(EnPnConverter.convertToEnPn("firstName", null, "lastName", null, null));
         dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", null, "cityOrMunicipality",
                 "stateOrProvince", "postalCode", "USA"));
+        dto.setStatusCode(CdConverter.convertStringToCd("PENDING"));
         try {
             DSet<Tel> list = new DSet<Tel>();
             list.setItem(new HashSet<Tel>());
@@ -58,7 +59,8 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
         dto.setName(EnPnConverter.convertToEnPn("OtherName", null, "OtherName", null, null));
         dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", null, "cityOrMunicipality",
                 "stateOrProvince", "postalCode", "USA"));
-
+        dto.setStatusCode(CdConverter.convertStringToCd("PENDING"));
+        
         personList.add(dto);
         dto = new PersonDTO();
         dto.setIdentifier(IiConverter.convertToIi("abc"));

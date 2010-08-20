@@ -80,34 +80,90 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.jboss.annotation.security.SecurityDomain;
+import javax.ejb.Remote;
 
 /**
- * @author Naveen Amiruddin
- * @since 03/19/2009
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author mshestopalov
  */
-@Stateless
-@Interceptors({ HibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SecurityDomain("pa")
-@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
-public class TrialRegistrationServiceBean extends TrialRegistrationBeanLocal implements TrialRegistrationServiceRemote {
+@Remote
+@SuppressWarnings("PMD.ExcessiveParameterList")
+public interface ParticipatingSiteServiceRemote {
 
-   
-
-
+    /**
+     * Create a participating site for an existing prop trial.
+     * If organization dto has id set, then use id to pull org. The id is the ctep id of the org.
+     * @param studyProtocolIi NCI trial identifier
+     * @param organizationDTO
+     * @param studySiteDTO
+     * @param investigatorDTO
+     * @param investigatorRole
+     * @param investigatorSiteContact
+     * @param contactType
+     * @param primeContact
+     * @param genericContactDTO
+     * @return new site Ii.
+     * @throws PAException in case of error.
+     
+    // CHECKSTYLE:OFF More than 7 Parameters
+    Ii createStudySiteParticipantForNonPropTrial(Ii studyProtocolIi,
+            OrganizationDTO organizationDTO, StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatus, PersonDTO investigatorDTO, Cd investigatorRole,
+            Bl investigatorSiteContact, St contactType, 
+            PersonDTO primeContact, OrganizationalContactDTO genericContactDTO) throws PAException;
+    
+    */
+    
+    /**
+     * Create a participating site for an existing prop trial.
+     * If organization dto has id set, then use id to pull org. The id is the ctep id of the org.
+     * If investigator dto has id set, then use if to pull person. The id is the ctep id of the person.
+     * The expectation is that necessary fields will be filled in on the study site dto and the study accrual
+     * status dto.
+     * @param studyProtocolIi nci identifier.
+     * @param organizationDTO ctep org identifier or data.
+     * @param studySiteDTO site data to be created.
+     * @param currentStatus recruitment status data to be created.
+     * @param investigatorDTO PI data to be added.
+     * @return Ii of the new study site.
+     * @throws PAException in case of error.
+     */
+    Ii createStudySiteParticipantForPropTrial(Ii studyProtocolIi,
+            OrganizationDTO organizationDTO, StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatus, PersonDTO investigatorDTO) throws PAException;
+    
+    /**
+     * Update a participating site for an existing prop trial.
+     * Use the trial nci id and the org ctep id to find the participating site to edit.
+     * If investigator dto has id set, then use it to pull person. The id is the ctep id of the person.
+     * The expectation is that necessary fields will be filled in on the study site dto and the study accrual
+     * status dto.
+     * @param studyProtocolIi nci identifier.
+     * @param organizationIi ctep org identifier.
+     * @param studySiteDTO site data to be created.
+     * @param currentStatus recruitment status data to be created.
+     * @param investigatorDTO PI data to be added.
+     * @return Ii of the new study site.
+     * @throws PAException in case of error.
+     */
+    void updateStudySiteParticipantForPropTrial(Ii studyProtocolIi,
+            Ii organizationIi, StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatus, PersonDTO investigatorDTO) throws PAException;
+    
+    /**
+     * Will lookup if an org ID is a participating site on a trial.
+     * @param studyProtocolIi trial id.
+     * @param organizationIi org id.
+     * @return boolean.
+     * @throws PAException in case of error.
+     */
+    Bl isParticipatingSite(Ii studyProtocolIi, Ii organizationIi)  throws PAException;  
 }
