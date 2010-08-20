@@ -38,11 +38,14 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+
 /**
  * @author Vrushali
  *
  */
-public class MockStudyProtocolStageService implements StudyProtocolStageServiceLocal {
+public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyProtocolStage>
+    implements StudyProtocolStageServiceLocal {
     static List<StudyProtocolStage> list;
     static List<StudyFundingStage> studyFundingList;
     static List<StudyIndIdeStage> studyIndIdeList;

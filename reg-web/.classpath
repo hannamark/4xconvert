@@ -53,5 +53,6 @@
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/commons-beanutils-1.8.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/cgmmapi-0.7.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/mockrunner-0.4.1.jar"/>
+	<classpathentry kind="var" path="PA_LIB/reg-web/compile/nci-commons-core-1.2.14.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
