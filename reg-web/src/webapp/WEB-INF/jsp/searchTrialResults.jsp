@@ -15,7 +15,7 @@
     <display:column escapeXml="true" titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier"    sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column escapeXml="true" titleKey="search.trial.trialCategory" property="trialCategory"    sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column titleKey="search.trial.action" >
-        <s:if test="%{#attr.row.isProprietaryTrial == 'true'}">
+        <s:if test="%{#attr.row.isProprietaryTrial}">
             <s:url id="completeUrl" action="submitProprietaryTrialcomplete"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
         </s:if>
         <s:else>
