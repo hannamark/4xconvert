@@ -309,7 +309,7 @@ var winprint=window.open("","",sOption);
      <tr id="sec801row">
          <td scope="row" class="label"><fmt:message key="regulatory.section801.ind"/></td>
          <td class="value">
-         <s:property value="trialDTO.delayedPostingIndicator"/>
+         <s:property value="trialDTO.section801Indicator"/>
          </td>
      </tr>
 
