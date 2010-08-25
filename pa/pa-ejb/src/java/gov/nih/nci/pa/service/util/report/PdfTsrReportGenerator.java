@@ -631,9 +631,11 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
         if (getPrimaryOutcomeMeasures() != null && getPrimaryOutcomeMeasures().size() > 0) {
             PdfPTable table = getOuterTable(TSRReportLabelText.TABLE_PRIMARY_OUTCOME_MEASURES);
             PdfPTable pomTable = getInnerTable(new ArrayList<String>(Arrays.asList(TSRReportLabelText.POM_TITLE,
-                    TSRReportLabelText.POM_TIMEFRAME, TSRReportLabelText.POM_SAFETY_ISSUE)));
+                    TSRReportLabelText.POM_DESCRIPTION, TSRReportLabelText.POM_TIMEFRAME,
+                    TSRReportLabelText.POM_SAFETY_ISSUE)));
             for (TSRReportOutcomeMeasure pom : getPrimaryOutcomeMeasures()) {
                 pomTable.addCell(getItemValueCell(pom.getTitle()));
+                pomTable.addCell(getItemValueCell(pom.getDescription()));
                 pomTable.addCell(getItemValueCell(pom.getTimeFrame()));
                 pomTable.addCell(getItemValueCell(pom.getSafetyIssue()));
             }
@@ -647,9 +649,11 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
         if (getSecondaryOutcomeMeasures() != null && getSecondaryOutcomeMeasures().size() > 0) {
             PdfPTable table = getOuterTable(TSRReportLabelText.TABLE_SECONDARY_OUTCOME_MEASURES);
             PdfPTable somTable = getInnerTable(new ArrayList<String>(Arrays.asList(TSRReportLabelText.SOM_TITLE,
-                    TSRReportLabelText.SOM_TIMEFRAME, TSRReportLabelText.SOM_SAFETY_ISSUE)));
+                    TSRReportLabelText.SOM_DESCRIPTION, TSRReportLabelText.SOM_TIMEFRAME,
+                    TSRReportLabelText.SOM_SAFETY_ISSUE)));
             for (TSRReportOutcomeMeasure som : getSecondaryOutcomeMeasures()) {
                 somTable.addCell(getItemValueCell(som.getTitle()));
+                somTable.addCell(getItemValueCell(som.getDescription()));
                 somTable.addCell(getItemValueCell(som.getTimeFrame()));
                 somTable.addCell(getItemValueCell(som.getSafetyIssue()));
             }

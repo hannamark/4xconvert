@@ -546,4 +546,8 @@
         <comment>Data re-assignment for Primary Purpose.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/PO-2223-1.sql"/>
     </changeSet>
+    <changeSet id="PO-1972" author="ludetc">
+        <comment>PO-1972 - Add Description to Outcome Measure</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-1972.sql"/>
+    </changeSet>
 </databaseChangeLog>

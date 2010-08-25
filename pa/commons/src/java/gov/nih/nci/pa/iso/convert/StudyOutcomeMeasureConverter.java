@@ -92,7 +92,9 @@ import java.util.Date;
  * @author Kalpana Guthikonda
  * @since 10/29/2008
  */
-public class StudyOutcomeMeasureConverter extends AbstractConverter<StudyOutcomeMeasureDTO, StudyOutcomeMeasure> {
+
+public class StudyOutcomeMeasureConverter extends
+   gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOutcomeMeasureDTO, StudyOutcomeMeasure> {
 
     /**
      * @param som StudyOutcomeMeasure
@@ -107,10 +109,9 @@ public class StudyOutcomeMeasureConverter extends AbstractConverter<StudyOutcome
         somDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(som.getStudyProtocol().getId()));
         somDTO.setPrimaryIndicator(BlConverter.convertToBl(som.getPrimaryIndicator()));
         somDTO.setSafetyIndicator(BlConverter.convertToBl(som.getSafetyIndicator()));
-
+        somDTO.setDescription(StConverter.convertToSt(som.getDescription()));
         return somDTO;
     }
-
 
     /**
      * @param somDTO StudyOutcomeMeasureDTO
@@ -124,21 +125,14 @@ public class StudyOutcomeMeasureConverter extends AbstractConverter<StudyOutcome
         spBo.setId(IiConverter.convertToLong(somDTO.getStudyProtocolIdentifier()));
         som.setDateLastUpdated(new Date());
         som.setStudyProtocol(spBo);
-        if (somDTO.getIdentifier() != null) {
-            som.setId(IiConverter.convertToLong(somDTO.getIdentifier()));
-        }
-        if (somDTO.getName() != null) {
-            som.setName(somDTO.getName().getValue());
-        }
-        if (somDTO.getTimeFrame() != null) {
-            som.setTimeFrame(somDTO.getTimeFrame().getValue());
-        }
-        if (somDTO.getPrimaryIndicator() != null) {
-            som.setPrimaryIndicator(somDTO.getPrimaryIndicator().getValue());
-        }
-        if (somDTO.getSafetyIndicator() != null) {
-            som.setSafetyIndicator(somDTO.getSafetyIndicator().getValue());
-        }
+
+        som.setId(IiConverter.convertToLong(somDTO.getIdentifier()));
+        som.setName(StConverter.convertToString(somDTO.getName()));
+        som.setDescription(StConverter.convertToString(somDTO.getDescription()));
+        som.setTimeFrame(StConverter.convertToString(somDTO.getTimeFrame()));
+        som.setPrimaryIndicator(BlConverter.convertToBoolean(somDTO.getPrimaryIndicator()));
+        som.setSafetyIndicator(BlConverter.convertToBoolean(somDTO.getSafetyIndicator()));
+
         return som;
     }
 

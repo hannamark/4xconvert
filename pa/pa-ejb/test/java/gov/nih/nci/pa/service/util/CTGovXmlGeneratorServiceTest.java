@@ -128,6 +128,7 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -136,6 +137,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -154,6 +156,7 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
@@ -205,6 +208,7 @@ public class CTGovXmlGeneratorServiceTest {
     private StudySiteContactServiceLocal ssconSvc;
     private OrganizationEntityServiceRemote poOrgSvc;
     private InterventionServiceLocal interSvc;
+    private StudyResourcingServiceLocal studyResSvc;
     private InterventionAlternateNameServiceRemote interAnSvc;
 
     private Ii spId;
@@ -247,6 +251,7 @@ public class CTGovXmlGeneratorServiceTest {
     private InterventionAlternateNameDTO interAnDto;
     private List<InterventionAlternateNameDTO> interAnDtoList;
     private ObservationalStudyProtocolDTO ospDto;
+    private List<StudyResourcingDTO> studyResDtoList;
 
     @Before
     public void setUp() throws Exception {
@@ -301,6 +306,8 @@ public class CTGovXmlGeneratorServiceTest {
        setupPlEcDto();
 
        setupInterDto();
+
+       setupStudyResDtos();
 
        ospDto = new ObservationalStudyProtocolDTO();
 
@@ -481,6 +488,19 @@ public class CTGovXmlGeneratorServiceTest {
         return telAd;
     }
 
+    private void setupStudyResDtos() {
+        studyResDtoList = new ArrayList<StudyResourcingDTO>();
+        StudyResourcingDTO studyResDto = new StudyResourcingDTO();
+        Cd cd = new Cd();
+        cd.setCode("U10");
+        studyResDto.setFundingMechanismCode(cd);
+        cd = new Cd();
+        cd.setCode("CA");
+        studyResDto.setNihInstitutionCode(cd);
+        studyResDto.setSerialNumber(StConverter.convertToSt("SR_SER"));
+        studyResDtoList.add(studyResDto);
+    }
+
     private void setupOrg() {
         orgList = new ArrayList<Organization>();
            org = new Organization();
@@ -509,21 +529,30 @@ public class CTGovXmlGeneratorServiceTest {
 
     private void setupSpDto() {
         spId = new Ii();
-           spId.setExtension("1");
+        spId.setExtension("1");
 
-           spDto = new StudyProtocolDTO();
-           spDto.setPublicTitle(StConverter.convertToSt("title"));
-           spDto.setAcronym(StConverter.convertToSt("acronym"));
-           spDto.setOfficialTitle(StConverter.convertToSt("off title"));
-           spDto.setIdentifier(spId);
-           spDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
-           spDto.setStudyProtocolType(StConverter.convertToSt("InterventionalStudyProtocol"));
-           spDto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(true));
-           spDto.setSection801Indicator(BlConverter.convertToBl(true));
-           spDto.setExpandedAccessIndicator(BlConverter.convertToBl(true));
-           spDto.setReviewBoardApprovalRequiredIndicator(BlConverter.convertToBl(true));
-           spDto.setPrimaryCompletionDate(TsConverter.convertToTs(new Timestamp(0)));
-           spDto.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp(0)));
+        spDto = new StudyProtocolDTO();
+        spDto.setPublicTitle(StConverter.convertToSt("title"));
+        spDto.setAcronym(StConverter.convertToSt("acronym"));
+        spDto.setOfficialTitle(StConverter.convertToSt("off title"));
+        spDto.setIdentifier(spId);
+        spDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
+        spDto.setStudyProtocolType(StConverter.convertToSt("InterventionalStudyProtocol"));
+        spDto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(true));
+        spDto.setSection801Indicator(BlConverter.convertToBl(true));
+        spDto.setExpandedAccessIndicator(BlConverter.convertToBl(true));
+        spDto.setReviewBoardApprovalRequiredIndicator(BlConverter.convertToBl(true));
+        spDto.setPrimaryCompletionDate(TsConverter.convertToTs(new Timestamp(0)));
+        spDto.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp(0)));
+
+        DSet<Ii> secondaryIdentifiers = new DSet<Ii>();
+        Ii assignedId = new Ii();
+        assignedId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        assignedId.setExtension("NCI_2010_0001");
+        Set<Ii> iis = new HashSet<Ii>();
+        iis.add(assignedId);
+        secondaryIdentifiers.setItem(iis);
+        spDto.setSecondaryIdentifiers(secondaryIdentifiers);
     }
 
     private void setupMocks() throws PAException, NullifiedRoleException, NullifiedEntityException {
@@ -569,6 +598,8 @@ public class CTGovXmlGeneratorServiceTest {
 
         setupPoSvc();
 
+        setupStudyResSvc();
+
     }
 
     private void setupPoSvc() throws NullifiedEntityException, PAException {
@@ -577,6 +608,12 @@ public class CTGovXmlGeneratorServiceTest {
         poOrgSvc = mock(OrganizationEntityServiceRemote.class);
         when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(orgDto);
         when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
+    }
+
+    private void setupStudyResSvc() throws PAException {
+        studyResSvc = mock(StudyResourcingServiceLocal.class);
+        when(studyResSvc.getStudyResourcingByStudyProtocol(any(Ii.class))).thenReturn(studyResDtoList);
+        bean.setStudyResourcingService(studyResSvc);
     }
 
     private void setupInterSvc() throws PAException {
@@ -725,6 +762,7 @@ public class CTGovXmlGeneratorServiceTest {
        String st = bean.generateCTGovXml(spId);
        assertTrue(st.contains("<clinical_study>"));
        assertTrue(st.contains("<is_section_801>"));
+       assertTrue(st.contains("<id_type>Registry Identifier</id_type>"));
     }
 
     @Test

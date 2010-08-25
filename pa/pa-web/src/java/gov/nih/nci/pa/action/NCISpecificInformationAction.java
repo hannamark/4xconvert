@@ -136,8 +136,8 @@ public class NCISpecificInformationAction extends ActionSupport {
             // Step 2 : get from StudyResourcing
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
-            StudyResourcingDTO studyResourcingDTO = PaRegistry.getStudyResourcingService().getsummary4ReportedResource(
-                    studyProtocolIi);
+            StudyResourcingDTO studyResourcingDTO = PaRegistry.getStudyResourcingService()
+                .getSummary4ReportedResourcing(studyProtocolIi);
             nciSpecificInformationWebDTO = setNCISpecificDTO(studyProtocolDTO, studyResourcingDTO);
             if (studyResourcingDTO != null && studyResourcingDTO.getOrganizationIdentifier() != null) {
                     Organization org = getPAOrganizationById(studyResourcingDTO.getOrganizationIdentifier());
@@ -268,7 +268,7 @@ public class NCISpecificInformationAction extends ActionSupport {
     private void updateSummary4DTO(Ii studyProtocolIi, Long orgId)
             throws PAException {
         // Step4 : find out if summary 4 records already exists
-        StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService().getsummary4ReportedResource(
+        StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(
                 studyProtocolIi);
         if (summary4ResoureDTO == null) {
             // summary 4 record does not exist,so create a new one

@@ -122,11 +122,11 @@ public class StudyResourcingServiceBeanTest {
         TestSchema.addUpdObject(sr);
         assertNotNull(sr.getId());
 
-        StudyResourcingDTO srDTO = remoteEjb.getsummary4ReportedResource(IiConverter.convertToIi(sp.getId()));
+        StudyResourcingDTO srDTO = remoteEjb.getSummary4ReportedResourcing(IiConverter.convertToIi(sp.getId()));
         assertNotNull(srDTO);
-        StudyResourcingDTO srDTO2 = remoteEjb.getStudyResourceByID(srDTO.getIdentifier());
+        StudyResourcingDTO srDTO2 = remoteEjb.getStudyResourcingById(srDTO.getIdentifier());
         assertNotNull(srDTO2);
-        remoteEjb.deleteStudyResourceByID(srDTO2);
+        remoteEjb.deleteStudyResourcingById(srDTO2);
 
     }
 
@@ -178,7 +178,7 @@ public class StudyResourcingServiceBeanTest {
         assertNotNull(srDTO3);
         assertEquals (srDTO3.getSerialNumber().getValue().toString(), "123123");
 
-        List<StudyResourcingDTO> statusList =remoteEjb.getstudyResourceByStudyProtocol(pid);
+        List<StudyResourcingDTO> statusList =remoteEjb.getStudyResourcingByStudyProtocol(pid);
         assertNotNull(statusList);
     }
 
@@ -192,7 +192,7 @@ public class StudyResourcingServiceBeanTest {
         TestSchema.addUpdObject(sr);
         assertNotNull(sr.getId());
 
-        StudyResourcingDTO dto = remoteEjb.getStudyResourceByID(IiConverter.convertToStudyResourcingIi(sr.getId()));
+        StudyResourcingDTO dto = remoteEjb.getStudyResourcingById(IiConverter.convertToStudyResourcingIi(sr.getId()));
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_RESOURCING_ROOT);
         assertTrue(StringUtils.isNotEmpty(dto.getIdentifier().getIdentifierName()));
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);

@@ -127,7 +127,7 @@ public class TrialFundingAction extends ActionSupport {
       Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
       getAttribute(Constants.STUDY_PROTOCOL_II);
       List<StudyResourcingDTO> isoList = PaRegistry.getStudyResourcingService().
-      getstudyResourceByStudyProtocol(studyProtocolIi);
+      getStudyResourcingByStudyProtocol(studyProtocolIi);
       if (!(isoList.isEmpty())) {
         trialFundingList = new ArrayList<TrialFundingWebDTO>();
         for (StudyResourcingDTO dto : isoList) {
@@ -192,7 +192,7 @@ public class TrialFundingAction extends ActionSupport {
       getAttribute(Constants.STUDY_PROTOCOL_II);
       StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
 
-      studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourceByID(
+      studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourcingById(
           IiConverter.convertToIi(cbValue));
       studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
       studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
@@ -228,11 +228,11 @@ public class TrialFundingAction extends ActionSupport {
     try {
       StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
 
-      studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourceByID(
+      studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourcingById(
           IiConverter.convertToIi(cbValue));
       studyResoureDTO.setInactiveCommentText(StConverter.convertToSt(
           trialFundingWebDTO.getInactiveCommentText()));
-      PaRegistry.getStudyResourcingService().deleteStudyResourceByID(studyResoureDTO);
+      PaRegistry.getStudyResourcingService().deleteStudyResourcingById(studyResoureDTO);
 
       query();
       ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
@@ -248,7 +248,7 @@ public class TrialFundingAction extends ActionSupport {
    */
   public String edit()  {
     try {
-      StudyResourcingDTO studyR = PaRegistry.getStudyResourcingService().getStudyResourceByID(
+      StudyResourcingDTO studyR = PaRegistry.getStudyResourcingService().getStudyResourcingById(
           IiConverter.convertToIi(cbValue));
       trialFundingWebDTO = new TrialFundingWebDTO(studyR);
       return SUCCESS;

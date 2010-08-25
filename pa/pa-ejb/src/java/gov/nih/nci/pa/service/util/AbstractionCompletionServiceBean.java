@@ -610,7 +610,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
     private void enforceTrialFunding(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
             throws PAException {
-        List<StudyResourcingDTO> srList = studyResourcingService.getstudyResourceByStudyProtocol(studyProtocolIi);
+        List<StudyResourcingDTO> srList = studyResourcingService.getStudyResourcingByStudyProtocol(studyProtocolIi);
 
         if (!(srList.isEmpty())) {
             for (int i = 0; i < srList.size(); i++) {
@@ -1444,7 +1444,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
      */
     private void enforceSummary4OrgNullfication(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList)
         throws PAException  {
-        StudyResourcingDTO studyResourcingDTO = studyResourcingService.getsummary4ReportedResource(
+        StudyResourcingDTO studyResourcingDTO = studyResourcingService.getSummary4ReportedResourcing(
                 studyProtocolIi);
         if (studyResourcingDTO != null && PAUtil.isIiNotNull(studyResourcingDTO.getOrganizationIdentifier())) {
             Long paOrgId = IiConverter.convertToLong(studyResourcingDTO.getOrganizationIdentifier());

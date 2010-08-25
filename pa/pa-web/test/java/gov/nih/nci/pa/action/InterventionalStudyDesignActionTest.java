@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.ISDesignDetailsWebDTO;
+import gov.nih.nci.pa.dto.OutcomeMeasureWebDTO;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -119,10 +120,12 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
     public void testOutcomecreate() {
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
-        webDTO.setPrimaryIndicator("yes");
-        webDTO.setName("Name");
-        webDTO.setTimeFrame("designConfigurationCode");
-        webDTO.setSafetyIndicator("1");
+        OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
+        webDTO.setOutcomeMeasure(omDto);
+        webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
+        webDTO.getOutcomeMeasure().setName("Name");
+        webDTO.getOutcomeMeasure().setTimeFrame("designConfigurationCode");
+        webDTO.getOutcomeMeasure().setSafetyIndicator(true);
         action.setWebDTO(webDTO);
         assertEquals("outcome",action.outcomecreate());
     }
@@ -130,7 +133,9 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
     public void testUpdateErr() {
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
-        webDTO.setPrimaryIndicator("");
+        OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
+        webDTO.setOutcomeMeasure(omDto);
+        webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
         webDTO.setPrimaryPurposeCode("");
         webDTO.setPhaseCode("");
         webDTO.setDesignConfigurationCode("");
@@ -138,9 +143,9 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setBlindingSchemaCode("");
         webDTO.setAllocationCode("");
         webDTO.setMinimumTargetAccrualNumber("minimumTargetAccrualNumber");
-        webDTO.setName("Name");
-        webDTO.setTimeFrame("designConfigurationCode");
-        webDTO.setSafetyIndicator("1");
+        webDTO.getOutcomeMeasure().setName("Name");
+        webDTO.getOutcomeMeasure().setTimeFrame("designConfigurationCode");
+        webDTO.getOutcomeMeasure().setSafetyIndicator(true);
         action.setWebDTO(webDTO);
 
         assertEquals("details",action.update());
@@ -149,7 +154,9 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
     public void testUpdateErrOther() {
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
-        webDTO.setPrimaryIndicator("");
+        OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
+        webDTO.setOutcomeMeasure(omDto);
+        webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
         webDTO.setPrimaryPurposeCode("Other");
         webDTO.setPhaseCode("Other");
         webDTO.setDesignConfigurationCode("");
@@ -157,9 +164,9 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setBlindingSchemaCode("");
         webDTO.setAllocationCode("");
         webDTO.setMinimumTargetAccrualNumber("");
-        webDTO.setName("Name");
-        webDTO.setTimeFrame("designConfigurationCode");
-        webDTO.setSafetyIndicator("1");
+        webDTO.getOutcomeMeasure().setName("Name");
+        webDTO.getOutcomeMeasure().setTimeFrame("designConfigurationCode");
+        webDTO.getOutcomeMeasure().setSafetyIndicator(true);
         action.setWebDTO(webDTO);
 
         assertEquals("details",action.update());
@@ -168,7 +175,9 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
     public void testUpdate(){
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
-        webDTO.setPrimaryIndicator("yes");
+        OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
+        webDTO.setOutcomeMeasure(omDto);
+        webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
         webDTO.setPrimaryPurposeCode(PrimaryPurposeCode.TREATMENT.getDisplayName());
         webDTO.setPhaseCode(PhaseCode.I.getDisplayName());
         webDTO.setDesignConfigurationCode("designConfigurationCode");
@@ -176,9 +185,9 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setBlindingSchemaCode("blindingSchemaCode");
         webDTO.setAllocationCode("allocationCode");
         webDTO.setMinimumTargetAccrualNumber("1");
-        webDTO.setName("Name");
-        webDTO.setTimeFrame("designConfigurationCode");
-        webDTO.setSafetyIndicator("1");
+        webDTO.getOutcomeMeasure().setName("Name");
+        webDTO.getOutcomeMeasure().setTimeFrame("designConfigurationCode");
+        webDTO.getOutcomeMeasure().setSafetyIndicator(true);
         action.setWebDTO(webDTO);
         action.setInvestigator("Investigator");
         action.setOutcomesassessor("Outcomes Assessor");
@@ -191,7 +200,9 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
     public void testUpdateS(){
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
-        webDTO.setPrimaryIndicator("yes");
+        OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
+        webDTO.setOutcomeMeasure(omDto);
+        webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
         webDTO.setPrimaryPurposeCode(PrimaryPurposeCode.TREATMENT.getDisplayName());
         webDTO.setPhaseCode(PhaseCode.I.getDisplayName());
         webDTO.setDesignConfigurationCode("designConfigurationCode");
@@ -199,9 +210,9 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setBlindingSchemaCode("Open");
         webDTO.setAllocationCode("allocationCode");
         webDTO.setMinimumTargetAccrualNumber("1");
-        webDTO.setName("Name");
-        webDTO.setTimeFrame("designConfigurationCode");
-        webDTO.setSafetyIndicator("1");
+        webDTO.getOutcomeMeasure().setName("Name");
+        webDTO.getOutcomeMeasure().setTimeFrame("designConfigurationCode");
+        webDTO.getOutcomeMeasure().setSafetyIndicator(true);
         action.setWebDTO(webDTO);
         action.setInvestigator("FALSE");
         action.setOutcomesassessor("FALSE");
@@ -215,10 +226,12 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
     public void testOutcomedelete(){
      assertEquals("outcome", action.outcomedelete());
     }
+
     @Test
-    public void testOutcomeupdateErr(){
+    public void testOutcomeUpdateErr(){
        assertEquals("outcomeAdd", action.outcomeupdate());
     }
+
     @Test
     public void testDetailsQueryException(){
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(9L));
@@ -228,7 +241,9 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
     public void testUpdateException(){
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
-        webDTO.setPrimaryIndicator("yes");
+        OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
+        webDTO.setOutcomeMeasure(omDto);
+        webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
         webDTO.setPrimaryPurposeCode(PrimaryPurposeCode.TREATMENT.getDisplayName());
         webDTO.setPhaseCode(PhaseCode.I.getDisplayName());
         webDTO.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT.getDisplayName());
@@ -237,9 +252,9 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setBlindingSchemaCode("blindingSchemaCode");
         webDTO.setAllocationCode("allocationCode");
         webDTO.setMinimumTargetAccrualNumber("1");
-        webDTO.setName("Name");
-        webDTO.setTimeFrame("designConfigurationCode");
-        webDTO.setSafetyIndicator("1");
+        webDTO.getOutcomeMeasure().setName("Name");
+        webDTO.getOutcomeMeasure().setTimeFrame("designConfigurationCode");
+        webDTO.getOutcomeMeasure().setSafetyIndicator(true);
         action.setWebDTO(webDTO);
         action.setInvestigator("FALSE");
         action.setOutcomesassessor("FALSE");

@@ -82,20 +82,37 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.St;
 
 /**
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 10/29/2008
  * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the
- * copyright holder, NCI. 
+ * copyright holder, NCI.
  */
 public class StudyOutcomeMeasureDTO extends StudyDTO {
     private static final long serialVersionUID = -7897206730366124158L;
     private St name;
+    private St description;
     private St timeFrame;
     private Bl primaryIndicator;
     private Bl safetyIndicator;
-    
+
+    /**
+     *
+     * @return the description.
+     */
+    public St getDescription() {
+        return description;
+    }
+
+    /**
+     *
+     * @param description description.
+     */
+    public void setDescription(St description) {
+        this.description = description;
+    }
+
     /**
      * @return name
      */

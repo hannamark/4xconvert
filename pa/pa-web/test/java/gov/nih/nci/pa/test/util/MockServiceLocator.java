@@ -382,7 +382,7 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
 
-    public StudyOutcomeMeasureServiceLocal getOutcomeMeasurService() {
+    public StudyOutcomeMeasureServiceLocal getOutcomeMeasureService() {
         return studyOutcomeMService;
     }
     public ClinicalResearchStaffCorrelationServiceRemote getPoClinicalResearchStaffCorrelationService() {

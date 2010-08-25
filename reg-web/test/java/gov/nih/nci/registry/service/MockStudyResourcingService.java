@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.service;
 
@@ -40,8 +40,9 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         studyRDto.setStudyProtocolIdentifier(IiConverter.convertToIi("3"));
         list.add(studyRDto);
     }
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyResourcingService#createStudyResourcing(gov.nih.nci.pa.iso.dto.StudyResourcingDTO)
+
+    /*
+     * {@inheritDoc}
      */
     public StudyResourcingDTO createStudyResourcing(
             StudyResourcingDTO studyResourcingDTO) throws PAException {
@@ -49,19 +50,19 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyResourcingService#deleteStudyResourceByID(gov.nih.nci.pa.iso.dto.StudyResourcingDTO)
+    /*
+     * {@inheritDoc}
      */
-    public Boolean deleteStudyResourceByID(StudyResourcingDTO studyResourcingDTO)
+    public Boolean deleteStudyResourcingById(StudyResourcingDTO studyResourcingDTO)
             throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyResourcingService#getStudyResourceByID(gov.nih.nci.iso21090.Ii)
+    /*
+     * {@inheritDoc}
      */
-    public StudyResourcingDTO getStudyResourceByID(Ii studyResourceIi)
+    public StudyResourcingDTO getStudyResourcingById(Ii studyResourceIi)
             throws PAException {
         StudyResourcingDTO matchingDto= new StudyResourcingDTO();
         for (StudyResourcingDTO dto :list){
@@ -72,10 +73,10 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         return matchingDto;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyResourcingService#getstudyResourceByStudyProtocol(gov.nih.nci.iso21090.Ii)
+    /*
+     * {@inheritDoc}
      */
-    public List<StudyResourcingDTO> getstudyResourceByStudyProtocol(
+    public List<StudyResourcingDTO> getStudyResourcingByStudyProtocol(
             Ii studyProtocolIi) throws PAException {
         List<StudyResourcingDTO> matchingDtosList = new ArrayList<StudyResourcingDTO>();
         for (StudyResourcingDTO dto :list){
@@ -86,10 +87,10 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         return matchingDtosList;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyResourcingService#getsummary4ReportedResource(gov.nih.nci.iso21090.Ii)
+    /*
+     * {@inheritDoc}
      */
-    public StudyResourcingDTO getsummary4ReportedResource(Ii studyProtocolIi)
+    public StudyResourcingDTO getSummary4ReportedResourcing(Ii studyProtocolIi)
             throws PAException {
         if (studyProtocolIi != null && studyProtocolIi.getExtension().equals("3")) {
             return new StudyResourcingDTO();
@@ -97,8 +98,8 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyResourcingService#updateStudyResourcing(gov.nih.nci.pa.iso.dto.StudyResourcingDTO)
+    /*
+     * {@inheritDoc}
      */
     public StudyResourcingDTO updateStudyResourcing(
             StudyResourcingDTO studyResourcingDTO) throws PAException {
@@ -109,7 +110,7 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
     public void validate(StudyResourcingDTO studyResourcingDTO)
             throws PAException {
         // TODO Auto-generated method stub
-        
+
     }
 
 	public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
@@ -131,7 +132,7 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
 
 	public void delete(Ii ii) throws PAException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public StudyResourcingDTO get(Ii ii) throws PAException {

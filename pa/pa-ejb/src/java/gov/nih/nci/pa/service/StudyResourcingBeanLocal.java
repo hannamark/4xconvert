@@ -69,7 +69,7 @@ public class StudyResourcingBeanLocal extends
    */
    @SuppressWarnings("unchecked")
    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-   public StudyResourcingDTO getsummary4ReportedResource(Ii studyProtocolIi) throws PAException {
+   public StudyResourcingDTO getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException {
 
     if (PAUtil.isIiNull(studyProtocolIi)) {
         throw new PAException("studyProtocol Identifer should not be null");
@@ -191,7 +191,7 @@ public class StudyResourcingBeanLocal extends
   */
   @SuppressWarnings("unchecked")
   @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-  public List<StudyResourcingDTO> getstudyResourceByStudyProtocol(Ii studyProtocolIi)
+  public List<StudyResourcingDTO> getStudyResourcingByStudyProtocol(Ii studyProtocolIi)
   throws PAException {
     if (PAUtil.isIiNull(studyProtocolIi)) {
         LOG.error(" studyProtocol Identifer should not be null ");
@@ -230,7 +230,7 @@ public class StudyResourcingBeanLocal extends
    */
    @SuppressWarnings("unchecked")
    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-   public StudyResourcingDTO getStudyResourceByID(Ii studyResourceIi)
+   public StudyResourcingDTO getStudyResourcingById(Ii studyResourceIi)
    throws PAException {
      return get(studyResourceIi);
    }
@@ -241,7 +241,7 @@ public class StudyResourcingBeanLocal extends
    * @throws PAException PAException
    */
    @SuppressWarnings("unchecked")
-   public Boolean deleteStudyResourceByID(StudyResourcingDTO studyResourcingDTO) throws PAException {
+   public Boolean deleteStudyResourcingById(StudyResourcingDTO studyResourcingDTO) throws PAException {
      if (studyResourcingDTO == null) {
         LOG.error(" studyResourcingDTO should not be null ");
         throw new PAException(" studyResourcingDTO should not be null ");
@@ -280,7 +280,7 @@ public class StudyResourcingBeanLocal extends
       String newFundingMech = dto.getFundingMechanismCode().getCode();
       String newNciDivCode = dto.getNciDivisionProgramCode().getCode();
       String newNihInstCode = dto.getNihInstitutionCode().getCode();
-      List<StudyResourcingDTO> spList = getstudyResourceByStudyProtocol(dto.getStudyProtocolIdentifier());
+      List<StudyResourcingDTO> spList = getStudyResourcingByStudyProtocol(dto.getStudyProtocolIdentifier());
       boolean duplicateExists = false;
       for (StudyResourcingDTO sp : spList) {
           boolean sameSerialNumber = newSerialNumber.equals(sp.getSerialNumber().getValue());

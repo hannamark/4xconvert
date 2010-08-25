@@ -483,8 +483,8 @@ public class PAServiceUtils {
                 paOrg = corrUtils.createPAOrganization(poOrg);
             }
 
-            StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService().getsummary4ReportedResource(
-                    studyProtocolIi);
+            StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService()
+                .getSummary4ReportedResourcing(studyProtocolIi);
             if (summary4ResoureDTO == null) {
                 // summary 4 record does not exist,so create a new one
                 summary4ResoureDTO = new StudyResourcingDTO();

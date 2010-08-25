@@ -358,11 +358,13 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             getAttribute(Constants.STUDY_PROTOCOL_II);
             StudyOutcomeMeasureDTO sgDTO = new StudyOutcomeMeasureDTO();
             sgDTO.setStudyProtocolIdentifier(studyProtocolIi);
-            sgDTO.setName(StConverter.convertToSt(webDTO.getName()));
-            updateBooleanValues();
-            sgDTO.setPrimaryIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getPrimaryIndicator())));
-            sgDTO.setSafetyIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSafetyIndicator())));
-            sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getTimeFrame()));
+            sgDTO.setName(StConverter.convertToSt(webDTO.getOutcomeMeasure().getName()));
+            sgDTO.setDescription(StConverter.convertToSt(webDTO.getOutcomeMeasure().getDescription()));
+            sgDTO.setPrimaryIndicator(BlConverter.convertToBl(
+                    Boolean.valueOf(webDTO.getOutcomeMeasure().getPrimaryIndicator())));
+            sgDTO.setSafetyIndicator(BlConverter.convertToBl(
+                    Boolean.valueOf(webDTO.getOutcomeMeasure().getSafetyIndicator())));
+            sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getOutcomeMeasure().getTimeFrame()));
             PaRegistry.getStudyOutcomeMeasurService().create(sgDTO);
             outcomeQuery();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
@@ -395,17 +397,15 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             return OUTCOMEADD;
         }
         try {
-
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
             StudyOutcomeMeasureDTO  sgDTO = new StudyOutcomeMeasureDTO();
             sgDTO.setIdentifier(IiConverter.convertToIi(id));
             sgDTO.setStudyProtocolIdentifier(studyProtocolIi);
-            sgDTO.setName(StConverter.convertToSt(webDTO.getName()));
-            updateBooleanValues();
-            sgDTO.setPrimaryIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getPrimaryIndicator())));
-            sgDTO.setSafetyIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSafetyIndicator())));
-            sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getTimeFrame()));
+            sgDTO.setName(StConverter.convertToSt(webDTO.getOutcomeMeasure().getName()));
+            sgDTO.setPrimaryIndicator(BlConverter.convertToBl(webDTO.getOutcomeMeasure().getPrimaryIndicator()));
+            sgDTO.setSafetyIndicator(BlConverter.convertToBl(webDTO.getOutcomeMeasure().getSafetyIndicator()));
+            sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getOutcomeMeasure().getTimeFrame()));
             PaRegistry.getStudyOutcomeMeasurService().update(sgDTO);
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             outcomeQuery();
@@ -416,36 +416,23 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         return OUTCOME;
     }
 
-    private void updateBooleanValues() {
-        if (webDTO.getPrimaryIndicator().equalsIgnoreCase("Yes")) {
-            webDTO.setPrimaryIndicator("true");
-        } else {
-            webDTO.setPrimaryIndicator(FALSE);
-        }
-        if (webDTO.getSafetyIndicator().equalsIgnoreCase("Yes")) {
-            webDTO.setSafetyIndicator("true");
-        } else {
-            webDTO.setSafetyIndicator(FALSE);
-        }
-    }
-
     private void enforceOutcomeBusinessRules() {
-        if (StringUtils.isEmpty(webDTO.getPrimaryIndicator())) {
+        if (webDTO.getOutcomeMeasure().getPrimaryIndicator() == null) {
             addFieldError("webDTO.primaryIndicator", getText("error.outcome.primary"));
         }
-        if (StringUtils.isEmpty(webDTO.getName())) {
+        if (StringUtils.isEmpty(webDTO.getOutcomeMeasure().getName())) {
             addFieldError("webDTO.name", getText("error.outcome.description"));
+        } else if (webDTO.getOutcomeMeasure().getName().length() > MAXIMUM_CHAR_OUTCOME) {
+          addFieldError("webDTO.name",
+              getText("error.outcome.maximumChar"));
         }
-        if (StringUtils.isNotEmpty(webDTO.getName()) && webDTO.getName().length() > MAXIMUM_CHAR_OUTCOME) {
-            addFieldError("webDTO.name", getText("error.outcome.maximumChar"));
-        }
-        if (StringUtils.isEmpty(webDTO.getTimeFrame())) {
+        if (StringUtils.isEmpty(webDTO.getOutcomeMeasure().getTimeFrame())) {
             addFieldError("webDTO.timeFrame", getText("error.outcome.timeFrame"));
+        } else if (webDTO.getOutcomeMeasure().getTimeFrame().length() > MAXIMUM_CHAR_OUTCOME) {
+          addFieldError("webDTO.timeFrame",
+              getText("error.outcome.maximumChar"));
         }
-        if (StringUtils.isNotEmpty(webDTO.getTimeFrame()) && webDTO.getTimeFrame().length() > MAXIMUM_CHAR_OUTCOME) {
-            addFieldError("webDTO.timeFrame", getText("error.outcome.maximumChar"));
-        }
-        if (StringUtils.isEmpty(webDTO.getSafetyIndicator())) {
+        if (webDTO.getOutcomeMeasure().getSafetyIndicator() == null) {
             addFieldError("webDTO.safetyIndicator", getText("error.outcome.safety"));
         }
     }
@@ -464,33 +451,15 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         return OUTCOME;
     }
 
-    private ISDesignDetailsWebDTO setOutcomeMeasureDTO(StudyOutcomeMeasureDTO dto) {
+    private ISDesignDetailsWebDTO setOutcomeMeasureDTO(
+            StudyOutcomeMeasureDTO dto) {
         ISDesignDetailsWebDTO webdto = new ISDesignDetailsWebDTO();
         if (dto != null) {
-            if (dto.getPrimaryIndicator().getValue() != null) {
-                if (dto.getPrimaryIndicator().getValue().toString().equalsIgnoreCase("true")) {
-                  webdto.setPrimaryIndicator(("Yes"));
-                } else {
-                  webdto.setPrimaryIndicator("No");
-                }
-            }
-            if (dto.getName() != null) {
-                webdto.setName(dto.getName().getValue());
-            }
-            if (dto.getTimeFrame() != null) {
-                webdto.setTimeFrame(dto.getTimeFrame().getValue());
-            }
-            if (dto.getSafetyIndicator().getValue() != null) {
-               if (dto.getSafetyIndicator().getValue().toString().equalsIgnoreCase("true")) {
-                 webdto.setSafetyIndicator(("Yes"));
-               } else {
-                 webdto.setSafetyIndicator("No");
-               }
-            }
-            if (dto.getIdentifier() != null) {
-                webdto.setId(dto.getIdentifier().getExtension());
-            }
-
+            webdto.getOutcomeMeasure().setPrimaryIndicator(BlConverter.convertToBoolean(dto.getPrimaryIndicator()));
+            webdto.getOutcomeMeasure().setName(StConverter.convertToString(dto.getName()));
+            webdto.getOutcomeMeasure().setTimeFrame(StConverter.convertToString(dto.getTimeFrame()));
+            webdto.getOutcomeMeasure().setSafetyIndicator(BlConverter.convertToBoolean(dto.getSafetyIndicator()));
+            webdto.getOutcomeMeasure().setId(IiConverter.convertToLong(dto.getIdentifier()).toString());
         }
         return webdto;
     }

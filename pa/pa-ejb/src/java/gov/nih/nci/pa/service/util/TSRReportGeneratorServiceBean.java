@@ -691,7 +691,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private void setNihGrants() throws PAException {
         List<TSRReportNihGrant> nihGrants = new ArrayList<TSRReportNihGrant>();
         List<StudyResourcingDTO> funds = studyResourcingService
-                .getstudyResourceByStudyProtocol(studyProtocolDtoIdentifier);
+                .getStudyResourcingByStudyProtocol(studyProtocolDtoIdentifier);
         for (StudyResourcingDTO fund : funds) {
             TSRReportNihGrant nihGrant = new TSRReportNihGrant();
             nihGrant.setFundingMechanism(getValue(fund.getFundingMechanismCode()));
@@ -706,7 +706,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private void setSummary4Information() throws PAException {
         TSRReportSummary4Information sum4Info = new TSRReportSummary4Information();
         StudyResourcingDTO studyResourcingDTO = studyResourcingService
-                .getsummary4ReportedResource(studyProtocolDtoIdentifier);
+                .getSummary4ReportedResourcing(studyProtocolDtoIdentifier);
         if (studyResourcingDTO != null) {
             sum4Info.setFundingCategory(getValue(studyResourcingDTO.getTypeCode(), INFORMATION_NOT_PROVIDED));
             Organization org = null;
@@ -911,6 +911,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             List<TSRReportOutcomeMeasure> secondaryOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
             for (StudyOutcomeMeasureDTO somDto : somDtos) {
                 TSRReportOutcomeMeasure outcomeMeasure = new TSRReportOutcomeMeasure();
+                outcomeMeasure.setDescription(StConverter.convertToString(somDto.getDescription()));
                 outcomeMeasure.setTitle(StConverter.convertToString(somDto.getName()));
                 outcomeMeasure.setTimeFrame(StConverter.convertToString(somDto.getTimeFrame()));
                 outcomeMeasure.setSafetyIssue(getValue(somDto.getSafetyIndicator(), INFORMATION_NOT_PROVIDED));

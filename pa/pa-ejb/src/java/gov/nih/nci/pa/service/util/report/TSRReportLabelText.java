@@ -556,6 +556,10 @@ public class TSRReportLabelText {
      */
     public static final String POM_TITLE = "Title";
     /**
+     * Outcome Measure Desc.
+     */
+    public static final String POM_DESCRIPTION = "Description";
+    /**
      * Time Frame.
      */
     public static final String POM_TIMEFRAME = "TimeFrame";
@@ -573,6 +577,10 @@ public class TSRReportLabelText {
      * Title.
      */
     public static final String SOM_TITLE = "Title";
+    /**
+     * Secondary Outcome Desc.
+     */
+    public static final String SOM_DESCRIPTION = "Description";
     /**
      * Time Frame.
      */

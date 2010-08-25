@@ -97,6 +97,7 @@ public class StudyOutcomeMeasure extends AbstractEntity {
 
     private static final long serialVersionUID = 3611886766045727957L;
     private String name;
+    private String description;
     private String timeFrame;
     private Boolean primaryIndicator;
     private Boolean safetyIndicator;
@@ -114,6 +115,19 @@ public class StudyOutcomeMeasure extends AbstractEntity {
      */
     public void setName(String name) {
         this.name = name;
+    }
+    /**
+     * @return description
+     */
+    @Column(name = "DESCRIPTION")
+    public String getDescription() {
+        return description;
+    }
+    /**
+     * @param description descritpion
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
     /**
      * @return timeFrame

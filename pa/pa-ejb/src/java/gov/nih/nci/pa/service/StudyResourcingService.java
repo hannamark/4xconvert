@@ -98,7 +98,7 @@ public interface StudyResourcingService extends StudyPaService<StudyResourcingDT
      * @return StudyProtocolDTO
      * @throws PAException PAException
      */
-    StudyResourcingDTO getsummary4ReportedResource(Ii studyProtocolIi) throws PAException;
+    StudyResourcingDTO getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException;
     
     /**
      * 
@@ -121,19 +121,19 @@ public interface StudyResourcingService extends StudyPaService<StudyResourcingDT
      * @return StudyResourcingDTO
      * @throws PAException PAException
      */
-    List<StudyResourcingDTO> getstudyResourceByStudyProtocol(Ii studyProtocolIi) throws PAException; 
+    List<StudyResourcingDTO> getStudyResourcingByStudyProtocol(Ii studyProtocolIi) throws PAException; 
     /**
      * @param studyResourceIi Ii 
      * @return StudyResourcingDTO
      * @throws PAException PAException
      */
-    StudyResourcingDTO getStudyResourceByID(Ii studyResourceIi) throws PAException; 
+    StudyResourcingDTO getStudyResourcingById(Ii studyResourceIi) throws PAException; 
     /**
      * @param studyResourcingDTO StudyResourcingDTO 
      * @return Boolean
      * @throws PAException PAException
      */
-    Boolean deleteStudyResourceByID(StudyResourcingDTO studyResourcingDTO) throws PAException;
+    Boolean deleteStudyResourcingById(StudyResourcingDTO studyResourcingDTO) throws PAException;
     /**
      * 
      * @param studyResourcingDTO dto to validate

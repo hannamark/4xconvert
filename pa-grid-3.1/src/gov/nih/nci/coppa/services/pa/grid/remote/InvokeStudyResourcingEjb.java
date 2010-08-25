@@ -39,10 +39,10 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
     /**
      * {@inheritDoc}
      */
-    public Boolean deleteStudyResourceByID(StudyResourcingDTO studyResourcingDTO) throws PAException {
+    public Boolean deleteStudyResourcingById(StudyResourcingDTO studyResourcingDTO) throws PAException {
         try {
             Boolean result = GridSecurityJNDIServiceLocator.newInstance().getStudyResourcingService()
-                    .deleteStudyResourceByID(studyResourcingDTO);
+                    .deleteStudyResourcingById(studyResourcingDTO);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -54,10 +54,10 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
     /**
      * {@inheritDoc}
      */
-    public StudyResourcingDTO getStudyResourceByID(Ii ii) throws PAException {
+    public StudyResourcingDTO getStudyResourcingById(Ii ii) throws PAException {
         try {
             StudyResourcingDTO result = GridSecurityJNDIServiceLocator.newInstance().getStudyResourcingService()
-                    .getStudyResourceByID(ii);
+                    .getStudyResourcingById(ii);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -69,10 +69,10 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
     /**
      * {@inheritDoc}
      */
-    public List<StudyResourcingDTO> getstudyResourceByStudyProtocol(Ii studyProtocolIi) throws PAException {
+    public List<StudyResourcingDTO> getStudyResourcingByStudyProtocol(Ii studyProtocolIi) throws PAException {
         try {
             List<StudyResourcingDTO> result = GridSecurityJNDIServiceLocator.newInstance().getStudyResourcingService()
-                    .getstudyResourceByStudyProtocol(studyProtocolIi);
+                    .getStudyResourcingByStudyProtocol(studyProtocolIi);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -84,10 +84,10 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
     /**
      * {@inheritDoc}
      */
-    public StudyResourcingDTO getsummary4ReportedResource(Ii studyProtocolIi) throws PAException {
+    public StudyResourcingDTO getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException {
         try {
             StudyResourcingDTO result = GridSecurityJNDIServiceLocator.newInstance().getStudyResourcingService()
-                    .getsummary4ReportedResource(studyProtocolIi);
+                    .getSummary4ReportedResourcing(studyProtocolIi);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -114,6 +114,7 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
     /**
      * {@inheritDoc}
      */
+    @Override
     public void validate(StudyResourcingDTO studyResourcingDTO) throws PAException {
     }
 

@@ -421,4 +421,12 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return null;
     }
 
+    /*
+     * {@inheritDoc}
+     */
+    public StudyOutcomeMeasureServiceLocal getOutcomeMeasureService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

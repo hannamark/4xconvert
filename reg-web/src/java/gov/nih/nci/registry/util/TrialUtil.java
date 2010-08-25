@@ -341,7 +341,7 @@ public class TrialUtil extends TrialConvertUtils {
        copySponsor(studyProtocolIi, trialDTO);
        copyNctNummber(studyProtocolIi, trialDTO);
        copySummaryFour(PaRegistry.getStudyResourcingService().
-                   getsummary4ReportedResource(studyProtocolIi), trialDTO);
+                   getSummary4ReportedResourcing(studyProtocolIi), trialDTO);
        //Copy IND's
        List<StudyIndldeDTO> studyIndldeDTOList = PaRegistry.getStudyIndldeService()
            .getByStudyProtocol(studyProtocolIi);
@@ -350,7 +350,7 @@ public class TrialUtil extends TrialConvertUtils {
        }
        // query the study grants
        List<StudyResourcingDTO> isoList = PaRegistry.getStudyResourcingService()
-                   .getstudyResourceByStudyProtocol(studyProtocolIi);
+                   .getStudyResourcingByStudyProtocol(studyProtocolIi);
        if (!(isoList.isEmpty())) {
            copyGrantList(isoList, trialDTO);
        }
@@ -752,7 +752,7 @@ public class TrialUtil extends TrialConvertUtils {
                 IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())), trialDTO);
         copyNctNummber(studyProtocolIi, trialDTO);
         copySummaryFour(PaRegistry.getStudyResourcingService().
-                getsummary4ReportedResource(studyProtocolIi), trialDTO);
+                getSummary4ReportedResourcing(studyProtocolIi), trialDTO);
         copyParticipatingSites(studyProtocolIi, trialDTO);
     }
 

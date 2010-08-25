@@ -282,7 +282,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return OutcomeMeasureServiceLocal
      */
-    public StudyOutcomeMeasureServiceLocal getOutcomeMeasurService() {
+    public StudyOutcomeMeasureServiceLocal getOutcomeMeasureService() {
         return (StudyOutcomeMeasureServiceLocal) JNDIUtil.lookup("pa/StudyOutcomeMeasureBeanLocal/local");
     }
 

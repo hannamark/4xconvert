@@ -142,7 +142,7 @@ public class TrialRegistrationServiceTest {
         StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(spIi);
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
-        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getstudyResourceByStudyProtocol(spIi);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<DocumentDTO> documentDTOs = documentService.getDocumentsByStudyProtocol(spIi);
         OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
         leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));

@@ -101,11 +101,7 @@ public class ISDesignDetailsWebDTO {
     private String minimumTargetAccrualNumber;
     private String studyClassificationCode;
 
-    private String name;
-    private String timeFrame;
-    private String primaryIndicator;
-    private String safetyIndicator;
-    private String id;
+    private OutcomeMeasureWebDTO outcomeMeasure = new OutcomeMeasureWebDTO();
 
     private String criterionName;
     private String inclusionIndicator;
@@ -113,6 +109,8 @@ public class ISDesignDetailsWebDTO {
     private String valueText;
     private String unit;
     private String textDescription;
+
+    private String id;
 
     private String displayOrder;
 
@@ -129,6 +127,37 @@ public class ISDesignDetailsWebDTO {
 
     private String minUOM;
     private String maxUOM;
+
+
+    /**
+     * @return id
+     */
+    public String getId() {
+        return id;
+    }
+    /**
+     * @param id id
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
+    /**
+     *
+     * @return outcomeMeasure
+     */
+    public OutcomeMeasureWebDTO getOutcomeMeasure() {
+        return outcomeMeasure;
+    }
+
+    /**
+     *
+     * @param outcomeMeasureWebDTO outcomeMeasure
+     */
+    public void setOutcomeMeasure(OutcomeMeasureWebDTO outcomeMeasureWebDTO) {
+        this.outcomeMeasure = outcomeMeasureWebDTO;
+    }
 
     /**
      * @return the cdePublicIdentifier
@@ -178,6 +207,7 @@ public class ISDesignDetailsWebDTO {
     public void setPrimaryPurposeCode(String primaryPurposeCode) {
         this.primaryPurposeCode = primaryPurposeCode;
     }
+
     /**
      * @return phaseCode
      */
@@ -238,24 +268,22 @@ public class ISDesignDetailsWebDTO {
     public void setAllocationCode(String allocationCode) {
         this.allocationCode = allocationCode;
     }
-
     /**
-     * @return phaseOtherText
-     */
-
-    /**
-     * @return the primaryPurposeAdditionalQualifierCode
+     * @return primaryPurposeAdditionalQualifierCode
      */
     public String getPrimaryPurposeAdditionalQualifierCode() {
         return primaryPurposeAdditionalQualifierCode;
     }
     /**
-     * @param primaryPurposeAdditionalQualifierCode the primaryPurposeAdditionalQualifierCode to set
+     * @param code primaryPurposeAdditionalQualifierCode
      */
-    public void setPrimaryPurposeAdditionalQualifierCode(
-            String primaryPurposeAdditionalQualifierCode) {
-        this.primaryPurposeAdditionalQualifierCode = primaryPurposeAdditionalQualifierCode;
+    public void setPrimaryPurposeAdditionalQualifierCode(String code) {
+        this.primaryPurposeAdditionalQualifierCode = code;
     }
+    /**
+     * @return phaseOtherText
+     */
+
     /**
      * @return blindingRoleCode
      */
@@ -305,66 +333,7 @@ public class ISDesignDetailsWebDTO {
     public void setStudyClassificationCode(String studyClassificationCode) {
         this.studyClassificationCode = studyClassificationCode;
     }
-    /**
-     * @return name
-     */
-    public String getName() {
-        return name;
-    }
-    /**
-     * @param name name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-    /**
-     * @return timeFrame
-     */
-    public String getTimeFrame() {
-        return timeFrame;
-    }
-    /**
-     * @param timeFrame timeFrame
-     */
-    public void setTimeFrame(String timeFrame) {
-        this.timeFrame = timeFrame;
-    }
-    /**
-     * @return primaryIndicator
-     */
-    public String getPrimaryIndicator() {
-        return primaryIndicator;
-    }
-    /**
-     * @param primaryIndicator primaryIndicator
-     */
-    public void setPrimaryIndicator(String primaryIndicator) {
-        this.primaryIndicator = primaryIndicator;
-    }
-    /**
-     * @return safetyIndicator
-     */
-    public String getSafetyIndicator() {
-        return safetyIndicator;
-    }
-    /**
-     * @param safetyIndicator safetyIndicator
-     */
-    public void setSafetyIndicator(String safetyIndicator) {
-        this.safetyIndicator = safetyIndicator;
-    }
-    /**
-     * @return id
-     */
-    public String getId() {
-        return id;
-    }
-    /**
-     * @param id id
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
+
     /**
      * @return criterionName
      */

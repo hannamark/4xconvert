@@ -322,7 +322,7 @@ public final class PaRegistry {
      * @return OutcomeMeasureServiceLocal
      */
     public static StudyOutcomeMeasureServiceLocal getStudyOutcomeMeasurService() {
-        return getInstance().getServiceLocator().getOutcomeMeasurService();
+        return getInstance().getServiceLocator().getOutcomeMeasureService();
     }
 
     /**

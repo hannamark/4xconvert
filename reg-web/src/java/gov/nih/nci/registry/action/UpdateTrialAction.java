@@ -847,7 +847,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
   private StudyResourcingDTO convertToStudyResourcingDTO(TrialFundingWebDTO trialFundingWebDTO, Ii studyProtocolIi)
   throws PAException {
       StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
-      studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourceByID(
+      studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourcingById(
               IiConverter.convertToIi(Long.parseLong(trialFundingWebDTO.getId())));
       studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
       studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(

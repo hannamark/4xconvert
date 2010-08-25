@@ -94,6 +94,23 @@ public class TSRReportOutcomeMeasure {
     private String title;
     private String timeFrame;
     private String safetyIssue;
+    private String description;
+
+    /**
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     *
+     * @param description the description.
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     /**
      * @return the title

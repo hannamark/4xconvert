@@ -32,14 +32,14 @@ implements StudyResourcingServiceLocal {
 	}
 
 	
-	public Boolean deleteStudyResourceByID(StudyResourcingDTO studyResourcingDTO)
+	public Boolean deleteStudyResourcingById(StudyResourcingDTO studyResourcingDTO)
 			throws PAException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	
-	public StudyResourcingDTO getStudyResourceByID(Ii studyResourceIi)
+	public StudyResourcingDTO getStudyResourcingById(Ii studyResourceIi)
 			throws PAException {
 		StudyResourcingDTO dto = null;
 		if (studyResourceIi.getExtension().equals("1")) {
@@ -56,14 +56,14 @@ implements StudyResourcingServiceLocal {
 	}
 
 	
-	public List<StudyResourcingDTO> getstudyResourceByStudyProtocol(
+	public List<StudyResourcingDTO> getStudyResourcingByStudyProtocol(
 			Ii studyProtocolIi) throws PAException {
 		// TODO Auto-generated method stub
 		return new ArrayList<StudyResourcingDTO>();
 	}
 
 	
-	public StudyResourcingDTO getsummary4ReportedResource(Ii studyProtocolIi)
+	public StudyResourcingDTO getSummary4ReportedResourcing(Ii studyProtocolIi)
 			throws PAException {
 		// TODO Auto-generated method stub
 		return null;

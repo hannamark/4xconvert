@@ -405,7 +405,7 @@ public class TrialConvertUtils {
             isoDto = new StudyResourcingDTO();
             if (PAUtil.isIiNotNull(studyProtocolIi)) {
                 StudyResourcingDTO summary4studyResourcingDTO = PaRegistry.getStudyResourcingService()
-                    .getsummary4ReportedResource(studyProtocolIi);
+                    .getSummary4ReportedResourcing(studyProtocolIi);
                 if (summary4studyResourcingDTO != null) {
                     isoDto = summary4studyResourcingDTO;
                 }

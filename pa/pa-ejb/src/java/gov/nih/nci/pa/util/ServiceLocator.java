@@ -248,7 +248,7 @@ public interface ServiceLocator {
     /**
      * @return OutcomeMeasureServiceLocal
      */
-    StudyOutcomeMeasureServiceLocal getOutcomeMeasurService();
+    StudyOutcomeMeasureServiceLocal getOutcomeMeasureService();
 
     /**
      * @return ArmServiceLocal

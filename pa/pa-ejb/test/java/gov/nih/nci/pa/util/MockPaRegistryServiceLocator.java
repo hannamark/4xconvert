@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.util;
 
@@ -79,7 +79,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     private final LookUpTableServiceRemote lookUpService = new MockLookUpTableServiceBean();
     StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
     StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
-    StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal(); 
+    StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
     StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
     OrganizationCorrelationServiceRemote ocsr = new OrganizationCorrelationServiceBean();
     PAHealthCareProviderRemote paHealthCareProvider = new PAHealthCareProviderServiceBean();
@@ -250,7 +250,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     public StudyOutcomeMeasureServiceLocal getOutcomeMeasurService() {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -336,14 +336,14 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
             throws PAException {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public StudyMilestoneServicelocal getStudyMilestoneService() {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -421,7 +421,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     public StudyRecruitmentStatusServiceLocal getStudyRecruitmentStatusService() {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -460,14 +460,14 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     public StudyRelationshipServiceLocal getStudyRelationshipService() {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public StudyProtocolStageServiceLocal getStudyProtocolStageService() {    
+    public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -486,6 +486,14 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
      * {@inheritDoc}
      */
     public ParticipatingSiteServiceLocal getParticipatingSiteService() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getOutcomeMeasureService()
+     */
+    public StudyOutcomeMeasureServiceLocal getOutcomeMeasureService() {
+        // TODO Auto-generated method stub
         return null;
     }
 

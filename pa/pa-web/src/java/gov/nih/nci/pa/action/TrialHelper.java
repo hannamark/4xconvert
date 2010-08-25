@@ -102,7 +102,7 @@ public class TrialHelper {
         copyNctNummber(studyProtocolIi, gtdDTO);
         if (VALIDATION.equalsIgnoreCase(operation)) {
             copySummaryFour(PaRegistry.getStudyResourcingService()
-                    .getsummary4ReportedResource(studyProtocolIi), gtdDTO);
+                    .getSummary4ReportedResourcing(studyProtocolIi), gtdDTO);
         }
         copyIdentifier(studyProtocolIi, gtdDTO);
         return gtdDTO;

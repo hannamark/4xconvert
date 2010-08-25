@@ -63,10 +63,10 @@ BubbleTips.activateTipOn("dfn");
 						<fmt:message key="osdesign.outcome.primary"/><span class="required">*</span></label>
 					</td>
 					<td class="value">
-						<s:select  name="webDTO.primaryIndicator" list="#{' ':' ', 'No':'No', 'Yes':'Yes'}" />
+						<s:select  name="webDTO.outcomeMeasure.primaryIndicator" list="#{' ':' ', 'false':'No', 'true':'Yes'}" />
 						<span class="formErrorMsg"> 
                                 <s:fielderror>
-                                <s:param>webDTO.primaryIndicator</s:param>
+                                <s:param>webDTO.outcomeMeasure.primaryIndicator</s:param>
                                </s:fielderror>                            
                          </span>
 					</td>
@@ -74,14 +74,29 @@ BubbleTips.activateTipOn("dfn");
 				<tr>
                      <td scope="row" class="label">
                      <label for="fileName">
-                            <fmt:message key="osdesign.outcome.description"/>(Max 254 chars)<span class="required">*</span>
+                            <fmt:message key="osdesign.outcome.name"/>(Max 254 chars)<span class="required">*</span>
                      </label>
                     </td>
                     <td class="value">
-                        <s:textarea name="webDTO.name" rows="4" cssStyle="width:400px"/>
+                        <s:textarea name="webDTO.outcomeMeasure.name" rows="4" cssStyle="width:400px"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
-                                <s:param>webDTO.name</s:param>
+                                <s:param>webDTO.outcomeMeasure.name</s:param>
+                               </s:fielderror>                            
+                         </span>
+                      </td>         
+                </tr> 
+				<tr>
+                     <td scope="row" class="label">
+                     <label for="fileName">
+                            <fmt:message key="osdesign.outcome.description"/>(Max 600 chars)<span class="required">*</span>
+                     </label>
+                    </td>
+                    <td class="value">
+                        <s:textarea name="webDTO.outcomeMeasure.description" rows="4" cssStyle="width:400px"/>
+                        <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>webDTO.outcomeMeasure.description</s:param>
                                </s:fielderror>                            
                          </span>
                       </td>         
@@ -93,10 +108,10 @@ BubbleTips.activateTipOn("dfn");
                      </label>
                     </td>
     				<td class="value">
-							<s:textarea name="webDTO.timeFrame" rows="4" cssStyle="width:400px"/>
+							<s:textarea name="webDTO.outcomeMeasure.timeFrame" rows="4" cssStyle="width:400px"/>
                            	<span class="formErrorMsg"> 
                                 <s:fielderror>
-                                <s:param>webDTO.timeFrame</s:param>
+                                <s:param>webDTO.outcomeMeasure.timeFrame</s:param>
                                </s:fielderror>                            
                             </span> 
                       </td>         
@@ -106,15 +121,13 @@ BubbleTips.activateTipOn("dfn");
 						<fmt:message key="osdesign.outcome.safety"/><span class="required">*</span></label>
 					</td>
 					<td class="value">
-						<s:select name="webDTO.safetyIndicator" list="#{' ':' ', 'No':'No', 'Yes':'Yes'}" /><span class="formErrorMsg"> 
+						<s:select name="webDTO.outcomeMeasure.safetyIndicator" list="#{' ':' ', 'false':'No', 'true':'Yes'}" /><span class="formErrorMsg"> 
                                 <s:fielderror>
-                                <s:param>webDTO.safetyIndicator</s:param>
+                                <s:param>webDTO.outcomeMeasure.safetyIndicator</s:param>
                                </s:fielderror>                            
                          </span>
 					</td>
-				</tr>    			                
-                     
-                     
+				</tr>    			                                                          
         </table>
 		<div class="actionsrow">
             <del class="btnwrapper">
@@ -122,9 +135,7 @@ BubbleTips.activateTipOn("dfn");
                     <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>                
                 </ul>   
             </del>
-        </div> 
-
-                   
+        </div>                    
     </s:form>
    </div>
  </body>

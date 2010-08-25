@@ -29,7 +29,7 @@ public class StudyResourcingServiceImpl extends StudyResourcingServiceImplBase {
   public gov.nih.nci.coppa.services.pa.StudyResourcing getSummaryForReportedResource(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
-            StudyResourcingDTO studyResourcingDto = srService.getsummary4ReportedResource(iiDto);
+            StudyResourcingDTO studyResourcingDto = srService.getSummary4ReportedResourcing(iiDto);
             return StudyResourcingTransformer.INSTANCE.toXml(studyResourcingDto);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -48,7 +48,7 @@ public class StudyResourcingServiceImpl extends StudyResourcingServiceImplBase {
   public gov.nih.nci.coppa.services.pa.StudyResourcing[] getStudyResourceByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
-            List<StudyResourcingDTO> studyResourcingDto = srService.getstudyResourceByStudyProtocol(iiDto);
+            List<StudyResourcingDTO> studyResourcingDto = srService.getStudyResourcingByStudyProtocol(iiDto);
             return StudyResourcingTransformer.INSTANCE.convert(studyResourcingDto);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -59,7 +59,7 @@ public class StudyResourcingServiceImpl extends StudyResourcingServiceImplBase {
   public gov.nih.nci.coppa.services.pa.StudyResourcing getStudyResourceByID(gov.nih.nci.coppa.services.pa.Id studyResourceId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyResourceId);
-            StudyResourcingDTO studyResourcingDto = srService.getStudyResourceByID(iiDto);
+            StudyResourcingDTO studyResourcingDto = srService.getStudyResourcingById(iiDto);
             return StudyResourcingTransformer.INSTANCE.toXml(studyResourcingDto);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
