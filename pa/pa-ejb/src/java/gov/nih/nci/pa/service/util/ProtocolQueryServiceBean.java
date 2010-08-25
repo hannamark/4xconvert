@@ -713,6 +713,12 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             where.append(" and sp.submissionNumber = 1 and sp.amendmentNumber is null and "
                     + " sp.amendmentDate is null)");
         }
+        if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getSubmissionType())
+                && studyProtocolQueryCriteria.getSubmissionType().equalsIgnoreCase(SubmissionTypeCode.U.getCode())) {
+            where.append(" and sp.submissionNumber = 1 and "
+                    + " sinbx.id in (select max(id) from StudyInbox as sinbx1 "
+                    + " where sp.id = sinbx1.studyProtocol and sinbx1.closeDate is null))");
+        }
         if (studyProtocolQueryCriteria.isStudyLockedBy()) {
             where.append(" and sp.id in(select sp3.id from StudyProtocol as sp3 "
                     + " left outer join sp3.studyCheckout as spco " + " where spco.userIdentifier='"
