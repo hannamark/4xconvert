@@ -210,8 +210,8 @@
                           srcdir="${web.build.srcDir}"/>
 
         <cobertura-check datafile="${web.build.dir}/cobertura.ser"
-                         totalbranchrate="10"
-                         totallinerate="10"
+                         totalbranchrate="78"
+                         totallinerate="87"
                          haltonfailure="true"/>
      </target>
 

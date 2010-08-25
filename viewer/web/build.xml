@@ -331,9 +331,9 @@
                           srcdir="${viewer.build.srcDir.0}"/>
 
         <cobertura-check datafile="${viewer.build.dir}/cobertura.ser"
-                         totalbranchrate="10"
-                         totallinerate="10"
-                         haltonfailure="false"/>
+                         totalbranchrate="72"
+                         totallinerate="73"
+                         haltonfailure="true"/>
      </target>
 
 

@@ -433,9 +433,9 @@
                           srcdir="${reg-web.build.srcDir.0}" />
 
         <cobertura-check datafile="${reg-web.build.dir}/cobertura.ser"
-                         totalbranchrate="70"
-                         totallinerate="80"
-                         haltonfailure="false"/>
+                         totalbranchrate="61"
+                         totallinerate="77"
+                         haltonfailure="true"/>
      </target>
 
 

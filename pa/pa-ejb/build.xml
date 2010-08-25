@@ -313,8 +313,8 @@
                           destdir="${pa-ejb.coverage.reports}"
                           srcdir="${pa-ejb.build.srcDir.0}" />
         <cobertura-check datafile="${pa-ejb.build.dir}/cobertura.ser"
-                         totalbranchrate="32"
-                         totallinerate="47"
+                         totalbranchrate="34"
+                         totallinerate="50"
                          haltonfailure="true"/>
      </target>
 

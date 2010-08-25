@@ -262,9 +262,9 @@
                           srcdir="${commons.build.srcDir.0}" />
 
         <cobertura-check datafile="${commons.build.dir}/cobertura.ser"
-                         totalbranchrate="70"
-                         totallinerate="70"
-                         haltonfailure="false"/>
+                         totalbranchrate="45"
+                         totallinerate="66"
+                         haltonfailure="true"/>
      </target>
 
     <!-- ====================================================================== -->
