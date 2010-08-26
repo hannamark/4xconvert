@@ -346,6 +346,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <target name="install:pa-grid-3.3-jboss:stop" unless="exclude.pa-grid-3.3">
     <jboss-stop-jboss jboss.server.jndi.port="${pa-grid-3.3-jboss.server.jndi.port}" jboss.server.name="${pa-grid-3.3-jboss.server.name}" sleep.time="15"/>
   </target>
+    
+    <target name="install:pa-grid-3.3-jboss:remove-retired-service" unless="exclude.pa-grid-3.3">
+        <delete dir="${application.base.path}/${pa-grid-3.3-jboss.retired.server.name}" failonerror="false"/>
+    </target>
 
     <target name="install:pa-grid-3.3-jboss:start" unless="exclude.pa-grid-3.3">
     <if>
@@ -477,6 +481,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 	  install:pa-grid-3.3-jboss:validation:pre-install,
 	  install:common:validation:pre-install,
 	  install:pa-grid-3.3-jboss:stop,
+	  install:pa-grid-3.3-jboss:remove-retired-service,
 	  install:pa-grid-3.3-jboss:validation:pre-install:ports,
 	  install:pa-grid-3.3-jboss:clean,
 	  install:pa-grid-3.3-jboss:binaries,
@@ -607,7 +612,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 	  <!-- call your custom readers here, two properties included in these scripts that don't have readers are "fs-data.base.dir, mail.smtp.server" -->
   </target>
 
-  <target name="upgrade:pa-grid-3.3-jboss:readers:bda" if="jboss.exists" unless="exclude.pa-grid-3.3">
+  <target name="upgrade:pa-grid-3.3-jboss:readers:bda" if="pa-grid-3.3-jboss.exists" unless="exclude.pa-grid-3.3">
 
 	  <if>
 		  <equals arg1="${jboss.major.version}" arg2="4"/>
