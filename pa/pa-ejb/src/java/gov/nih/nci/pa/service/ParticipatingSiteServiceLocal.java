@@ -101,8 +101,8 @@ import javax.ejb.Local;
 public interface ParticipatingSiteServiceLocal {
 
     /**
-     * Create a participating site for an existing prop trial.
-     * If organization dto has id set, then use id to pull org. The id is the ctep id of the org.
+     * Create a participating site for an existing prop trial. The nci id of the trial is expected. 
+     * If organization dto has id set, then use id to pull org. The id is either the nci or ctep id of the org.
      * @param studyProtocolIi NCI trial identifier
      * @param organizationDTO
      * @param studySiteDTO
@@ -125,9 +125,9 @@ public interface ParticipatingSiteServiceLocal {
     */
     
     /**
-     * Create a participating site for an existing prop trial.
-     * If organization dto has id set, then use id to pull org. The id is the ctep id of the org.
-     * If investigator dto has id set, then use if to pull person. The id is the ctep id of the person.
+     * Create a participating site for an existing prop trial. The nci id of the trial is expected. 
+     * If organization dto has id set, then use id to pull org. The id is either the nci or ctep id of the org.
+     * If investigator dto has id set, then use id to pull person. The id is either the nci or ctep id of the person.
      * The expectation is that necessary fields will be filled in on the study site dto and the study accrual
      * status dto.
      * @param studyProtocolIi nci identifier.
@@ -144,8 +144,9 @@ public interface ParticipatingSiteServiceLocal {
     
     /**
      * Update a participating site for an existing prop trial.
-     * Use the trial nci id and the org ctep id to find the participating site to edit.
-     * If investigator dto has id set, then use it to pull person. The id is the ctep id of the person.
+     * The nci id of the trial is expected. The org id will be used to identify the site.
+     * The org id is either the nci or ctep id of the org.
+     * If investigator dto has id set, then use id to pull person. The id is either the nci or ctep id of the person.
      * The expectation is that necessary fields will be filled in on the study site dto and the study accrual
      * status dto.
      * @param studyProtocolIi nci identifier.
