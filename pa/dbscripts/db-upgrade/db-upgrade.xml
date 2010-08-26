@@ -550,4 +550,8 @@
         <comment>PO-1972 - Add Description to Outcome Measure</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-1972.sql"/>
     </changeSet>
+    <changeSet id="PO-2605" author="vrushali">
+        <comment>Primary_Purpose EARLY_DETECTION must be migrated.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2605.sql"/>
+    </changeSet>
 </databaseChangeLog>
