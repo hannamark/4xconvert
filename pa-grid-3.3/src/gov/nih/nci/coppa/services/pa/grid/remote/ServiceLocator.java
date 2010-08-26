@@ -89,6 +89,7 @@ import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.ParticipatingSiteServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
@@ -293,4 +294,11 @@ public interface ServiceLocator {
     * @throws NamingException if unable to lookup.
     */
    RegulatoryAuthorityServiceRemote getRegulatoryAuthorityService() throws NamingException;
+   
+   /**
+    * Get ParticipatingSite service.
+    * @return the remote ParticipatingSiteService.
+    * @throws NamingException if unable to lookup.
+    */
+   ParticipatingSiteServiceRemote getParticipatingSiteService() throws NamingException;
 }

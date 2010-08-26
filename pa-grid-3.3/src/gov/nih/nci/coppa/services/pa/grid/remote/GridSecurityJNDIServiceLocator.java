@@ -114,6 +114,7 @@ import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.ParticipatingSiteServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
@@ -475,5 +476,12 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      */
     public RegulatoryAuthorityServiceRemote getRegulatoryAuthorityService() throws NamingException {
         return (RegulatoryAuthorityServiceRemote) lookup("/pa/RegulatoryAuthorityServiceBean/remote");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public ParticipatingSiteServiceRemote getParticipatingSiteService() throws NamingException {
+        return (ParticipatingSiteServiceRemote) lookup("/pa/ParticipatingSiteServiceBean/remote");
     }
 }

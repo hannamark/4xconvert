@@ -25,7 +25,6 @@ public class StudyResourcingServiceProviderImpl{
 		impl = new StudyResourcingServiceImpl();
 	}
 
-
     public gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetSummaryForReportedResourceResponse getSummaryForReportedResource(gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetSummaryForReportedResourceRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetSummaryForReportedResourceResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetSummaryForReportedResourceResponse();
     boxedResult.setStudyResourcing(impl.getSummaryForReportedResource(params.getStudyProtocolId().getId()));

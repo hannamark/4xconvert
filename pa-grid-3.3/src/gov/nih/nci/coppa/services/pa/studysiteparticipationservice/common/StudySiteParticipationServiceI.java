@@ -12,7 +12,11 @@ import java.rmi.RemoteException;
  */
 public interface StudySiteParticipationServiceI {
 
+  public gov.nih.nci.iso21090.extensions.Id createParticipatingSiteForPropTrial(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.coppa.po.Organization organization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus status,gov.nih.nci.coppa.po.Person investigator) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
+  public void updateParticipatingSiteForPropTrial(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.iso21090.extensions.Id organizationId,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus status,gov.nih.nci.coppa.po.Person investigator) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
+  public gov.nih.nci.iso21090.extensions.Bl isParticipatingSite(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.iso21090.extensions.Id organizationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
 }
 

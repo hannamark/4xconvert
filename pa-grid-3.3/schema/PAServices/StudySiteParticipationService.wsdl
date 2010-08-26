@@ -52,6 +52,127 @@
       <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types" schemaLocation="./StudySiteServiceTypes.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <element name="CreateParticipatingSiteForPropTrialRequest">
+        <complexType>
+          <sequence>
+            <element name="studyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="organization">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:Organization" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="studySite">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudySite" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="status">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudySiteAccrualStatus" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="investigator">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:Person" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateParticipatingSiteForPropTrialResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns3:Id" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateParticipatingSiteForPropTrialRequest">
+        <complexType>
+          <sequence>
+            <element name="studyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="organizationId">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="studySite">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudySite" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="status">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudySiteAccrualStatus" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="investigator">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:Person" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateParticipatingSiteForPropTrialResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="IsParticipatingSiteRequest">
+        <complexType>
+          <sequence>
+            <element name="studyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="organizationId">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="IsParticipatingSiteResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns3:Bl" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="StudySiteParticipationServiceResourceProperties">
         <complexType>
           <sequence />
@@ -60,12 +181,48 @@
     </schema>
   </types>
   <!--  place service messages here -->
+  <message name="CreateParticipatingSiteForPropTrialRequest">
+    <part name="parameters" element="tns:CreateParticipatingSiteForPropTrialRequest" />
+  </message>
+  <message name="CreateParticipatingSiteForPropTrialResponse">
+    <part name="parameters" element="tns:CreateParticipatingSiteForPropTrialResponse" />
+  </message>
+  <message name="UpdateParticipatingSiteForPropTrialRequest">
+    <part name="parameters" element="tns:UpdateParticipatingSiteForPropTrialRequest" />
+  </message>
+  <message name="UpdateParticipatingSiteForPropTrialResponse">
+    <part name="parameters" element="tns:UpdateParticipatingSiteForPropTrialResponse" />
+  </message>
+  <message name="IsParticipatingSiteRequest">
+    <part name="parameters" element="tns:IsParticipatingSiteRequest" />
+  </message>
+  <message name="IsParticipatingSiteResponse">
+    <part name="parameters" element="tns:IsParticipatingSiteResponse" />
+  </message>
+  <message name="PAFaultFaultMessage">
+    <part name="fault" element="ns5:PAFault" />
+  </message>
   <!--============================================================
 
                        P O R T T Y P E
                       
   ============================================================-->
   <portType name="StudySiteParticipationServicePortType" wsrp:ResourceProperties="tns:StudySiteParticipationServiceResourceProperties">
+    <operation name="createParticipatingSiteForPropTrial">
+      <input message="tns:CreateParticipatingSiteForPropTrialRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/CreateParticipatingSiteForPropTrialRequest" />
+      <output message="tns:CreateParticipatingSiteForPropTrialResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/CreateParticipatingSiteForPropTrialResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="updateParticipatingSiteForPropTrial">
+      <input message="tns:UpdateParticipatingSiteForPropTrialRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/UpdateParticipatingSiteForPropTrialRequest" />
+      <output message="tns:UpdateParticipatingSiteForPropTrialResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/UpdateParticipatingSiteForPropTrialResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="isParticipatingSite">
+      <input message="tns:IsParticipatingSiteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/IsParticipatingSiteRequest" />
+      <output message="tns:IsParticipatingSiteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/IsParticipatingSiteResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/PAFaultFaultMessage" />
+    </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
       <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
