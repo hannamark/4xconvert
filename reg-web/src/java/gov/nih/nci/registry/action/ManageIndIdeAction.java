@@ -101,6 +101,14 @@ import com.opensymphony.xwork2.ActionSupport;
 public class ManageIndIdeAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private String studyProtocolId;
+    private String number;
+    private String grantor;
+    private String programCode;
+    private String expandedAccess;
+    private String expandedAccessType;
+    private String holderType;
+    private String indIde;
+    private Boolean exemptIndicator;
 
     /**
      * Sets the ind ide information in the collection.
@@ -108,18 +116,9 @@ public class ManageIndIdeAction extends ActionSupport {
      * @return result
      */
     public String addIdeIndIndicator() {
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        if (isNoParamSet(request)) {
+        if (isNoParamSet()) {
             return SUCCESS;
         }
-        String number = request.getParameter("number");
-        String grantor = request.getParameter("grantor");
-        String programCode = request.getParameter("programcode");
-        String expandedAccess = request.getParameter("expandedaccess");
-        String expandedAccessType = request.getParameter("expandedaccesstype");
-        String holderType = request.getParameter("holdertype");
-        String indIde = request.getParameter("indIde");
-
         TrialIndIdeDTO indIdeHolder = new TrialIndIdeDTO();
         indIdeHolder.setExpandedAccess(StringUtils.defaultIfEmpty(expandedAccess, "-"));
         indIdeHolder.setExpandedAccessType(StringUtils.defaultIfEmpty(expandedAccessType, "-"));
@@ -129,7 +128,8 @@ public class ManageIndIdeAction extends ActionSupport {
         indIdeHolder.setProgramCode(StringUtils.defaultIfEmpty(programCode, "-"));
         indIdeHolder.setIndIde(StringUtils.defaultIfEmpty(indIde, "-"));
         indIdeHolder.setRowId(UUID.randomUUID().toString());
-        final HttpSession session = request.getSession();
+        indIdeHolder.setExemptIndicator(exemptIndicator);
+        final HttpSession session = ServletActionContext.getRequest().getSession();
         List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) session.getAttribute(Constants.INDIDE_LIST);
         if (sessionList != null) {
             sessionList.add(indIdeHolder);
@@ -142,15 +142,7 @@ public class ManageIndIdeAction extends ActionSupport {
         return "display_ideind";
     }
 
-    private boolean isNoParamSet(HttpServletRequest request) {
-        String number = request.getParameter("number");
-        String grantor = request.getParameter("grantor");
-        String programCode = request.getParameter("programcode");
-        String expandedAccess = request.getParameter("expandedaccess");
-        String expandedAccessType = request.getParameter("expandedaccesstype");
-        String holderType = request.getParameter("holdertype");
-        String indIde = request.getParameter("indIde");
-
+    private boolean isNoParamSet() {
         return StringUtils.isBlank(number) && StringUtils.isBlank(grantor) && StringUtils.isBlank(programCode)
                 && StringUtils.equals("No", expandedAccess) && StringUtils.isBlank(expandedAccessType)
                 && StringUtils.isBlank(holderType) && StringUtils.equals("undefined", indIde);
@@ -163,16 +155,9 @@ public class ManageIndIdeAction extends ActionSupport {
      */
     public String addIdeIndIndicatorForUpdate() {
         final HttpServletRequest request = ServletActionContext.getRequest();
-        if (isNoParamSet(request)) {
+        if (isNoParamSet()) {
             return SUCCESS;
         }
-        String number = request.getParameter("number");
-        String grantor = request.getParameter("grantor");
-        String programCode = request.getParameter("programcode");
-        String expandedAccess = request.getParameter("expandedaccess");
-        String expandedAccessType = request.getParameter("expandedaccesstype");
-        String holderType = request.getParameter("holdertype");
-        String indIde = request.getParameter("indIde");
 
         TrialIndIdeDTO indIdeHolder = new TrialIndIdeDTO();
         indIdeHolder.setExpandedAccess(StringUtils.defaultIfEmpty(expandedAccess, "-"));
@@ -183,6 +168,7 @@ public class ManageIndIdeAction extends ActionSupport {
         indIdeHolder.setProgramCode(StringUtils.defaultIfEmpty(programCode, "-"));
         indIdeHolder.setIndIde(StringUtils.defaultIfEmpty(indIde, "-"));
         indIdeHolder.setRowId(UUID.randomUUID().toString());
+        indIdeHolder.setExemptIndicator(exemptIndicator);
         String studyid = request.getParameter("studyid");
         setStudyProtocolId(studyid);
         final HttpSession session = request.getSession();
@@ -248,6 +234,118 @@ public class ManageIndIdeAction extends ActionSupport {
      */
     public void setStudyProtocolId(String studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
+    }
+
+    /**
+     * @return the number
+     */
+    public String getNumber() {
+        return number;
+    }
+
+    /**
+     * @param number the number to set
+     */
+    public void setNumber(String number) {
+         this.number = number;
+    }
+
+    /**
+     * @return the grantor
+     */
+    public String getGrantor() {
+         return grantor;
+    }
+
+    /**
+     * @param grantor the grantor to set
+     */
+    public void setGrantor(String grantor) {
+          this.grantor = grantor;
+    }
+
+    /**
+     * @return the programCode
+     */
+    public String getProgramCode() {
+        return programCode;
+    }
+
+    /**
+     * @param programCode the programCode to set
+     */
+    public void setProgramCode(String programCode) {
+         this.programCode = programCode;
+    }
+
+    /**
+     * @return the expandedAccess
+     */
+    public String getExpandedAccess() {
+         return expandedAccess;
+    }
+
+    /**
+     * @param expandedAccess the expandedAccess to set
+     */
+    public void setExpandedAccess(String expandedAccess) {
+         this.expandedAccess = expandedAccess;
+    }
+
+    /**
+     * @return the expandedAccessType
+     */
+    public String getExpandedAccessType() {
+        return expandedAccessType;
+    }
+
+    /**
+     * @param expandedAccessType the expandedAccessType to set
+     */
+    public void setExpandedAccessType(String expandedAccessType) {
+        this.expandedAccessType = expandedAccessType;
+    }
+
+    /**
+     * @return the holderType
+     */
+    public String getHolderType() {
+        return holderType;
+    }
+
+    /**
+     * @param holderType the holderType to set
+     */
+    public void setHolderType(String holderType) {
+         this.holderType = holderType;
+    }
+
+    /**
+     * @return the indIde
+     */
+    public String getIndIde() {
+        return indIde;
+    }
+
+    /**
+     * @param indIde the indIde to set
+     */
+    public void setIndIde(String indIde) {
+        this.indIde = indIde;
+    }
+
+    /**
+     * @return the exemptIndicator
+     */
+    public Boolean getExemptIndicator() {
+        return exemptIndicator;
+    }
+
+    /**
+     * @param exemptIndicator the exemptIndicator to set
+     */
+    public void setExemptIndicator(Boolean exemptIndicator) {
+         this.exemptIndicator = exemptIndicator;
     }
 
 }

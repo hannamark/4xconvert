@@ -231,8 +231,8 @@ function deleteIndIde(rowid){
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
     callAjax(url, div);
 }
-function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype) {
-    var  url = '/registry/protected/ajaxManageIndIdeActionaddIdeIndIndicator.action?indIde='+indIde+'&number='+number+'&grantor='+grantor+'&holdertype='+holdertype+'&programcode='+programcode+'&expandedaccess='+expandedaccess+'&expandedaccesstype='+expandedaccesstype;
+function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype,exemptIndicator) {
+    var  url = '/registry/protected/ajaxManageIndIdeActionaddIdeIndIndicator.action?indIde='+indIde+'&number='+number+'&grantor='+grantor+'&holderType='+holdertype+'&programCode='+programcode+'&expandedAccess='+expandedaccess+'&expandedAccessType='+expandedaccesstype+'&exemptIndicator='+exemptIndicator;
     var div = document.getElementById('indidediv');
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
     callAjax(url, div);

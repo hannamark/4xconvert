@@ -210,9 +210,9 @@ function deleteIndIde(rowid){
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
     callAjax(url, div);             
 }
-function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype) {
+function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype,exemptIndicator) {
     var studyid = document.getElementById('trialDTO.studyProtocolId').value;
-    var  url = '/registry/protected/ajaxManageIndIdeActionaddIdeIndIndicatorForUpdate.action?indIde='+indIde+'&number='+number+'&grantor='+grantor+'&holdertype='+holdertype+'&programcode='+programcode+'&expandedaccess='+expandedaccess+'&expandedaccesstype='+expandedaccesstype+'&studyid='+studyid;
+    var  url = '/registry/protected/ajaxManageIndIdeActionaddIdeIndIndicatorForUpdate.action?indIde='+indIde+'&number='+number+'&grantor='+grantor+'&holderType='+holdertype+'&programCode='+programcode+'&expandedAccess='+expandedaccess+'&expandedAccessType='+expandedaccesstype+'&studyid='+studyid+'&exemptIndicator='+exemptIndicator;
     var div = document.getElementById('indideadddiv');
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
     callAjax(url, div);

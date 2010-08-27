@@ -217,7 +217,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
                   }
                }
             }
-            List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
+            List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos(), null);
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
 

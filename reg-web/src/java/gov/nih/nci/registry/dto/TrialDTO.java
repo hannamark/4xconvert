@@ -47,7 +47,7 @@ public class TrialDTO extends BaseTrialDTO {
     // private RegulatoryAuthorityWebDTO regulatoryAuthority;
     private List<CountryRegAuthorityDTO> countryList = new ArrayList<CountryRegAuthorityDTO>();
     private List<RegulatoryAuthOrgDTO> regIdAuthOrgList = new ArrayList<RegulatoryAuthOrgDTO>();
-    private List<StudyIndldeWebDTO> indIdeUpdateDtos;
+    private List<TrialIndIdeDTO> indIdeUpdateDtos;
     private List<TrialFundingWebDTO> fundingAddDtos;
     private List<TrialIndIdeDTO> indIdeAddDtos;
     private String lst = null;
@@ -77,7 +77,7 @@ public class TrialDTO extends BaseTrialDTO {
         collaborators = new ArrayList<PaOrganizationDTO>();
         participatingSites = new ArrayList<PaOrganizationDTO>();
         // regulatoryAuthority = new RegulatoryAuthorityWebDTO();
-        indIdeUpdateDtos = new ArrayList<StudyIndldeWebDTO>();
+        indIdeUpdateDtos = new ArrayList<TrialIndIdeDTO>();
         fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
         indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
         secondaryIdentifierList = new ArrayList<Ii>();
@@ -479,14 +479,14 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the indIdeUpdateDtos
      */
-    public List<StudyIndldeWebDTO> getIndIdeUpdateDtos() {
+    public List<TrialIndIdeDTO> getIndIdeUpdateDtos() {
         return indIdeUpdateDtos;
     }
 
     /**
      * @param indIdeUpdateDtos the indIdeUpdateDtos to set
      */
-    public void setIndIdeUpdateDtos(List<StudyIndldeWebDTO> indIdeUpdateDtos) {
+    public void setIndIdeUpdateDtos(List<TrialIndIdeDTO> indIdeUpdateDtos) {
         this.indIdeUpdateDtos = indIdeUpdateDtos;
     }
 

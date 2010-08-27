@@ -346,7 +346,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
                     }
                 }
             }
-            List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
+            List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos(), null);
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
 
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();

@@ -1,9 +1,10 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.dto;
 
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -17,17 +18,19 @@ import java.util.UUID;
 public class TrialIndIdeDTO {
     private String indIdeId;
     private String expandedAccess;
-    private String expandedAccessType; //expandedAccessIndicator
+    private String expandedAccessType; //expandedAccessStatusCode
     private String grantor;
     private String holderType; //holderTypeCode
     private String programCode;
     private String number; //indIdeNumber
     private String indIde; //IndIdeTypeCode
     private String studyProtocolId;
-    
+    private Boolean exemptIndicator;
+    private String nihInstHolder;
+    private String nciDivProgHolder;
     private String rowId;
     /**
-     * 
+     *
      * @param isoDto dto
      */
     public TrialIndIdeDTO(StudyIndldeDTO isoDto) {
@@ -39,10 +42,10 @@ public class TrialIndIdeDTO {
               this.expandedAccess = "Yes";
             } else {
               this.expandedAccess = "No";
-            } 
+            }
           }
         this.grantor = CdConverter.convertCdToString(isoDto.getGrantorCode());
-        this.holderType = CdConverter.convertCdToString(isoDto.getHolderTypeCode());       
+        this.holderType = CdConverter.convertCdToString(isoDto.getHolderTypeCode());
         if (isoDto.getNihInstHolderCode().getCode() != null) {
             this.programCode = CdConverter.convertCdToString(isoDto.getNihInstHolderCode());
         }
@@ -52,6 +55,10 @@ public class TrialIndIdeDTO {
         this.number = StConverter.convertToString(isoDto.getIndldeNumber());
         this.indIde = CdConverter.convertCdToString(isoDto.getIndldeTypeCode());
         this.rowId = UUID.randomUUID().toString();
+        this.exemptIndicator = BlConverter.convertToBoolean(isoDto.getExemptIndicator());
+        this.nihInstHolder = isoDto.getNihInstHolderCode().getCode();
+        this.nciDivProgHolder = isoDto.getNciDivProgHolderCode().getCode();
+
     }
     /**
      * Default.
@@ -179,5 +186,41 @@ public class TrialIndIdeDTO {
     public void setStudyProtocolId(String studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
     }
-    
+    /**
+     * @param exemptIndicator the exemptIndicator to set
+     */
+    public void setExemptIndicator(Boolean exemptIndicator) {
+        this.exemptIndicator = exemptIndicator;
+    }
+    /**
+     * @return the exemptIndicator
+     */
+    public Boolean getExemptIndicator() {
+         return exemptIndicator;
+    }
+    /**
+     * @return the nihInstHolder
+     */
+    public String getNihInstHolder() {
+        return nihInstHolder;
+    }
+    /**
+     * @param nihInstHolder the nihInstHolder to set
+     */
+    public void setNihInstHolder(String nihInstHolder) {
+         this.nihInstHolder = nihInstHolder;
+    }
+    /**
+     * @return the nciDivProgHolder
+     */
+    public String getNciDivProgHolder() {
+         return nciDivProgHolder;
+    }
+    /**
+     * @param nciDivProgHolder the nciDivProgHolder to set
+     */
+    public void setNciDivProgHolder(String nciDivProgHolder) {
+        this.nciDivProgHolder = nciDivProgHolder;
+    }
+
 }

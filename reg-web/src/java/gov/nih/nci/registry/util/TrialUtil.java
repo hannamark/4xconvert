@@ -39,7 +39,6 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
-import gov.nih.nci.registry.dto.StudyIndldeWebDTO;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
@@ -278,24 +277,6 @@ public class TrialUtil extends TrialConvertUtils {
     }
 
     /**
-     * Copy indide update list.
-     * @param studyIndldeDTOList iiDto
-     * @param trialDTO dto
-     * @throws PAException ex
-     */
-    private void copyINDIDEUpdateList(List<StudyIndldeDTO> studyIndldeDTOList, TrialDTO trialDTO) throws PAException {
-        if (studyIndldeDTOList == null) {
-            return;
-        }
-        List<StudyIndldeWebDTO> indList = new ArrayList<StudyIndldeWebDTO>();
-        //loop thru the iso dto
-        for (StudyIndldeDTO isoDto : studyIndldeDTOList) {
-            indList.add(new StudyIndldeWebDTO(isoDto));
-        }
-        trialDTO.setIndIdeUpdateDtos(indList);
-    }
-
-    /**
      * Copy grant list.
      * @param isoGrantlist iso
      * @param trialDTO dto
@@ -372,12 +353,8 @@ public class TrialUtil extends TrialConvertUtils {
        //get the participating sites information.
        copyParticipatingSites(studyProtocolIi, trialDTO);
 
-       //Copy IND's
-       List<StudyIndldeDTO> studyIndldeUpdateDTOList = PaRegistry.getStudyIndldeService()
-           .getByStudyProtocol(studyProtocolIi);
-       if (!(studyIndldeUpdateDTOList.isEmpty())) {
-            copyINDIDEUpdateList(studyIndldeUpdateDTOList, trialDTO);
-       }
+       //Copy IND's to update list
+       trialDTO.setIndIdeUpdateDtos(trialDTO.getIndIdeDtos());
        //copy Dcp
        copyDcpIdentifier(studyProtocolIi, trialDTO);
        //copy ctep

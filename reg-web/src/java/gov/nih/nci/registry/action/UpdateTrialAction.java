@@ -4,7 +4,6 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -27,7 +26,6 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.registry.dto.StudyIndldeWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
@@ -46,6 +44,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -85,8 +84,8 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
     private List<PaOrganizationDTO> participatingSitesList = new ArrayList<PaOrganizationDTO>();
 
     @CreateIfNull(value = true)
-    @Element (value = gov.nih.nci.registry.dto.StudyIndldeWebDTO.class)
-    private List <StudyIndldeWebDTO> indIdeUpdateDtos = new ArrayList<StudyIndldeWebDTO>();
+    @Element (value = gov.nih.nci.registry.dto.TrialIndIdeDTO.class)
+    private List <TrialIndIdeDTO> indIdeUpdateDtos = new ArrayList<TrialIndIdeDTO>();
 
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
@@ -103,28 +102,9 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
     private String programcodenihselectedvalue;
     private String programcodenciselectedvalue;
     private PaOrganizationDTO paOrganizationDTO;
-    private StudyIndldeWebDTO studyIndldeWebDTO;
     private TrialFundingWebDTO trialFundingDTO;
     private TrialIndIdeDTO trialIndIdeDTO;
     private int indIdeUpdateDtosLen = 0;
-
-    /**
-     * Gets the study indlde web dto.
-     *
-     * @return the studyIndldeWebDTO
-     */
-    public StudyIndldeWebDTO getStudyIndldeWebDTO() {
-        return studyIndldeWebDTO;
-    }
-
-    /**
-     * Sets the study indlde web dto.
-     *
-     * @param studyIndldeWebDTO the studyIndldeWebDTO to set
-     */
-    public void setStudyIndldeWebDTO(StudyIndldeWebDTO studyIndldeWebDTO) {
-        this.studyIndldeWebDTO = studyIndldeWebDTO;
-    }
 
     /**
      * Gets the trial funding dto.
@@ -293,7 +273,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
     *
     * @return the indIdeUpdateDtos
     */
-   public List<StudyIndldeWebDTO> getIndIdeUpdateDtos() {
+   public List<TrialIndIdeDTO> getIndIdeUpdateDtos() {
        return indIdeUpdateDtos;
    }
 
@@ -302,7 +282,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
     *
     * @param indIdeUpdateDtos the indIdeUpdateDtos to set
     */
-   public void setIndIdeUpdateDtos(List<StudyIndldeWebDTO> indIdeUpdateDtos) {
+   public void setIndIdeUpdateDtos(List<TrialIndIdeDTO> indIdeUpdateDtos) {
        this.indIdeUpdateDtos = indIdeUpdateDtos;
    }
 
@@ -494,17 +474,14 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                 synchActionWithDTO();
             return ERROR;
             }
-
             if (hasActionErrors()) {
                 TrialValidator.addSessionAttributes(trialDTO);
                 synchActionWithDTO();
                 trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
             }
-
             populateList(docDTOList);
             trialDTO.setDocDtos(docDTOList);
-
             //add the IndIde,FundingList
             List<TrialIndIdeDTO> indAddList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
            .getSession().getAttribute(Constants.INDIDE_ADD_LIST);
@@ -512,7 +489,6 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                trialDTO.setIndIdeAddDtos(indAddList);
                setIndIdeAddDtos(indAddList);
            }
-
            List<TrialFundingWebDTO> grantAddList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
            .getSession().getAttribute(Constants.GRANT_ADD_LIST);
            if (grantAddList != null) {
@@ -522,14 +498,12 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
            if (trialDTO.isXmlRequired()) {
               trialUtil.setOversgtInfo(trialDTO);
            }
-           List<Ii> otherIdsList =
-               (List<Ii>) ServletActionContext.getRequest()
+           List<Ii> otherIdsList = (List<Ii>) ServletActionContext.getRequest()
                  .getSession().getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
               if (otherIdsList != null) {
                   trialDTO.setSecondaryIdentifierAddList(otherIdsList);
               }
            synchDTOWithAction();
-
         } catch (IOException e) {
             LOG.error(e.getMessage());
             synchActionWithDTO();
@@ -621,16 +595,13 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                }
             }
             //indide updates and adds
-
             List<StudyIndldeDTO> studyIndldeDTOList = new ArrayList<StudyIndldeDTO>();
             //updated
-            if (trialDTO.getIndIdeUpdateDtos() != null && trialDTO.getIndIdeUpdateDtos().size() > 0) {
-                for (StudyIndldeWebDTO webdto : trialDTO.getIndIdeUpdateDtos()) {
-                    studyIndldeDTOList.add(convetToIndIdeWebDTO(webdto, studyProtocolIi));
-                }
+            if (CollectionUtils.isNotEmpty(trialDTO.getIndIdeUpdateDtos())) {
+               studyIndldeDTOList = util.convertISOINDIDEList(trialDTO.getIndIdeUpdateDtos(), studyProtocolIi);
             }
             //newly added
-            if (trialDTO.getIndIdeAddDtos() != null && trialDTO.getIndIdeAddDtos().size() > 0) {
+            if (CollectionUtils.isNotEmpty(trialDTO.getIndIdeAddDtos())) {
                 List<StudyIndldeDTO> studyIndldeDTOs =
                         util.convertISOINDIDEList(trialDTO.getIndIdeAddDtos(), studyProtocolIi);
                 studyIndldeDTOList.addAll(studyIndldeDTOs);
@@ -711,7 +682,20 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
         Map<String, String> err = new HashMap<String, String>();
         err = validator.validateTrialDTO(trialDTO);
         addErrors(err);
-        // validate trial status and dates specific for amendment
+        validateStatusAndDate(validator);
+        validateCollaborators();
+        validateParticipatingSite();
+        validateGrantsInfo();
+        validateIndIdeInfo();
+    }
+
+    /**
+     * @param validator
+     * @throws PAException
+     */
+    private void validateStatusAndDate(TrialValidator validator)
+         throws PAException {
+        // validate trial status and dates
         if (StringUtils.isNotEmpty(trialDTO.getStatusCode())
                 && RegistryUtil.isValidDate(trialDTO.getStatusDate())
                 && RegistryUtil.isValidDate(trialDTO.getCompletionDate())
@@ -724,117 +708,92 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                 }
             }
         }
-         //Add other validation rules
-        //Regulatory information validation moved to validator
+    }
 
+    /**
+     * @param ind
+     */
+    private void validateIndIdeInfo() {
         int ind = 0;
-        if (getCollaborators() != null && !getCollaborators().isEmpty()) {
-            for (PaOrganizationDTO coll : getCollaborators()) {
-                if (coll.getFunctionalRole() == null) {
-                    addFieldError("collaborator.functionalCode" + ind, "Functional role should not be null");
-                }
-                ind++;
-            }
-        }
-        ind = 0;
-        if (getParticipatingSitesList() != null && !getParticipatingSitesList().isEmpty()) {
-            for (PaOrganizationDTO ps : getParticipatingSitesList()) {
-                if (ps.getRecruitmentStatus() == null) {
-                    addFieldError("participatingsite.recStatus" + ind, "Recruitment Status should not be null");
-                }
-                if (ps.getRecruitmentStatusDate() == null) {
-                    addFieldError("participatingsite.recStatusDate" + ind,
-                            "Recruitment Status date should not be null");
-                }
-                ind++;
-            }
-        }
-        ind = 0;
-        if (getFundingDtos() != null && !getFundingDtos().isEmpty()) {
-            for (TrialFundingWebDTO fm : getFundingDtos()) {
-                if (fm.getFundingMechanismCode() == null) {
-                    addFieldError("updfundingMechanismCode" + ind, "Funding Mechanism Code should not be null");
-                }
-                if (fm.getNciDivisionProgramCode() == null) {
-                    addFieldError("updnciDivisionProgramCode" + ind, "NCI Division Code should not be null");
-                }
-                if (fm.getNihInstitutionCode() == null) {
-                    addFieldError("updnihInstitutionCode" + ind, "NIH Institution Code  should not be null");
-                }
-                if (fm.getSerialNumber() == null) {
-                    addFieldError("updserialNumber" + ind, "Serial Number should not be null");
-                }
-                ind++;
-            }
-        }
-        ind = 0;
         if (getIndIdeUpdateDtos() != null && !getIndIdeUpdateDtos().isEmpty()) {
-            for (StudyIndldeWebDTO indide : getIndIdeUpdateDtos()) {
-                if (indide.getGrantor() == null) {
-                    addFieldError("updindideGrantor" + ind, "Grantor should not be null");
+            for (TrialIndIdeDTO indide : getIndIdeUpdateDtos()) {
+                validate(indide.getGrantor(), "updindideGrantor" + ind, "Grantor should not be null");
+                validate(indide.getNumber(), "updindideNumber" + ind, "IND/IDE Number should not be null");
+                validate(indide.getHolderType(), "updindideHolderType" + ind, "Ind/IDE Holder Type should not be null");
+                if (StringUtils.isNotEmpty(indide.getHolderType())) {
+                   if (indide.getHolderType().equalsIgnoreCase("NIH")) {
+                      validate(indide.getNihInstHolder(), "updindideNihInstHolder" + ind,
+                              "NIH Institute holder should not be null");
+                    }
+                    if (indide.getHolderType().equalsIgnoreCase("NCI")) {
+                        validate(indide.getNciDivProgHolder(), "updindideNciDivPrgHolder" + ind,
+                              "NCI Division Program holder should not be null");
+                    }
                 }
-                if (indide.getIndldeNumber() == null) {
-                    addFieldError("updindideNumber" + ind, "IND/IDE Number should not be null");
-                }
-                if (indide.getHolderType() == null) {
-                    addFieldError("updindideHolderType" + ind, "Ind/IDE Holder Type should not be null");
-                }
-                if (indide.getHolderType() != null &&  indide.getHolderType().equalsIgnoreCase("NIH")
-                  && indide.getNihInstHolder() == null) {
-                    addFieldError("updindideNihInstHolder" + ind, "NIH Institute holder should not be null");
-                }
-                if (indide.getHolderType() != null &&  indide.getHolderType().equalsIgnoreCase("NCI")
-                   && indide.getNciDivProgHolder() == null) {
-                      addFieldError("updindideNciDivPrgHolder" + ind, "NCI Division Program holder should not be null");
-                }
-                if (indide.getExpandedAccessIndicator() != null
-                    && indide.getExpandedAccessIndicator().equalsIgnoreCase("yes")
-                    && indide.getExpandedAccessStatus() == null) {
-                      addFieldError("updindideExpandedStatus" + ind, "Expanded Access Status should not be null");
+                if (StringUtils.isNotEmpty(indide.getExpandedAccess())
+                    && indide.getExpandedAccess().equalsIgnoreCase("yes")) {
+                      validate(indide.getExpandedAccessType(), "updindideExpandedStatus" + ind,
+                              "Expanded Access Status should not be null");
                 }
                 ind++;
             }
         }
     }
 
+    /**
+     *
+     */
+    private void validateGrantsInfo() {
+        int ind = 0;
+        if (CollectionUtils.isNotEmpty(getFundingDtos())) {
+            for (TrialFundingWebDTO fm : getFundingDtos()) {
+                validate(fm.getFundingMechanismCode(), "updfundingMechanismCode" + ind,
+                    "Funding Mechanism Code should not be null");
+                validate(fm.getNciDivisionProgramCode(), "updnciDivisionProgramCode" + ind,
+                      "NCI Division Code should not be null");
+                validate(fm.getNihInstitutionCode(), "updnihInstitutionCode" + ind,
+                     "NIH Institution Code  should not be null");
+                validate(fm.getSerialNumber(), "updserialNumber" + ind, "Serial Number should not be null");
+                ind++;
+            }
+        }
+    }
+    private void validate(String value, String errorField, String msg) {
+         if (StringUtils.isEmpty(value)) {
+            addFieldError(errorField, msg);
+         }
+    }
 
-  /**
-   * Convet to ind ide web dto.
-   *
-   * @param indldeWebDTO the indlde web dto
-   *
-   * @return the study indlde dto
-   */
-  private StudyIndldeDTO convetToIndIdeWebDTO(StudyIndldeWebDTO indldeWebDTO, Ii studyProtocolIi) {
-      StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();
-      studyIndldeDTO.setIdentifier(IiConverter.convertToStudyIndIdeIi(
-                                  Long.valueOf(indldeWebDTO.getId())));
+    /**
+     *
+     */
+    private void validateParticipatingSite() {
+        int ind = 0;
+        if (CollectionUtils.isNotEmpty(getParticipatingSitesList())) {
+            for (PaOrganizationDTO ps : getParticipatingSitesList()) {
+                validate(ps.getRecruitmentStatus(), "participatingsite.recStatus" + ind,
+                    "Recruitment Status should not be null");
+                validate(ps.getRecruitmentStatusDate(), "participatingsite.recStatusDate" + ind,
+                    "Recruitment Status date should not be null");
+                ind++;
+            }
+        }
+    }
 
-      studyIndldeDTO.setStudyProtocolIdentifier(studyProtocolIi);
-      if (indldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase("Yes")) {
-          studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
-          studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(
-                  indldeWebDTO.getExpandedAccessStatus()));
-      } else {
-          studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.FALSE));
-          studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(null));
-      }
-      studyIndldeDTO.setGrantorCode(CdConverter.convertStringToCd(indldeWebDTO.getGrantor()));
-      studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(indldeWebDTO.getHolderType()));
-      studyIndldeDTO.setIndldeNumber(StConverter.convertToSt(indldeWebDTO.getIndldeNumber()));
-      if (indldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())) {
-          studyIndldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(
-                  indldeWebDTO.getNihInstHolder()));
-       }
-      if (indldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())) {
-          studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(
-                  indldeWebDTO.getNciDivProgHolder()));
-      }
-      studyIndldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(indldeWebDTO.getIndldeType()));
+    /**
+     *
+     */
+    private void validateCollaborators() {
+        int ind = 0;
+        if (CollectionUtils.isNotEmpty(getCollaborators())) {
+            for (PaOrganizationDTO coll : getCollaborators()) {
+                validate(coll.getFunctionalRole(), "collaborator.functionalCode" + ind,
+                     "Functional role should not be null");
+                ind++;
+            }
+        }
+    }
 
-      return studyIndldeDTO;
-
-  }
 
   /**
    * Convert to study resourcing dto.
@@ -926,7 +885,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
   *
   * @throws PAException the PA exception
   */
- private StudyOverallStatusDTO getOverallStatusForUpdate(TrialUtil util) throws PAException {
+  private StudyOverallStatusDTO getOverallStatusForUpdate(TrialUtil util) throws PAException {
       StudyOverallStatusDTO sosDto = null;
       StudyProtocolQueryDTO spqDTO = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                                       Long.parseLong(trialDTO.getIdentifier()));
@@ -948,18 +907,17 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
       return sosDto;
   }
 
-/**
- * @return the indIdeUpdateDtosLen
- */
-public int getIndIdeUpdateDtosLen() {
+  /**
+   * @return the indIdeUpdateDtosLen
+   */
+  public int getIndIdeUpdateDtosLen() {
     return indIdeUpdateDtosLen;
-}
+  }
 
-/**
- * @param indIdeUpdateDtosLen the indIdeUpdateDtosLen to set
- */
-public void setIndIdeUpdateDtosLen(int indIdeUpdateDtosLen) {
-    this.indIdeUpdateDtosLen = indIdeUpdateDtosLen;
-}
-
+  /**
+   * @param indIdeUpdateDtosLen the indIdeUpdateDtosLen to set
+   */
+  public void setIndIdeUpdateDtosLen(int indIdeUpdateDtosLen) {
+     this.indIdeUpdateDtosLen = indIdeUpdateDtosLen;
+  }
 }

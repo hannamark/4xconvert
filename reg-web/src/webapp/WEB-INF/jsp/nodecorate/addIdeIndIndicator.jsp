@@ -10,6 +10,7 @@
 		<display:column escapeXml="true" title="Program Code" property="programCode"  headerClass="sortable"/>
 		<display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable"/>
 		<display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable"/>
+		<display:column title="Exempt Indicator" property="exemptIndicator"  headerClass="sortable"/>
 		<display:column title="Action" class="action" sortable="false">
 			<c:choose>
             <c:when test="${row.indIdeId != null}">
@@ -31,6 +32,7 @@
 		<display:column escapeXml="true" title="Program Code" property="programCode"  headerClass="sortable"/>
 		<display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable"/>
 		<display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable"/>
+		<display:column title="Exempt Indicator" property="exemptIndicator"  headerClass="sortable"/>
 		<display:column title="Action" class="action" sortable="false">
 	        <c:choose>
 	        <c:when test="${row.indIdeId != null}">
@@ -53,6 +55,7 @@
         <display:column escapeXml="true" title="Program Code" property="programCode"  headerClass="sortable"/>
         <display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable"/>
         <display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable"/>
+        <display:column title="Exempt Indicator" property="exemptIndicator"  headerClass="sortable"/>
     </display:table>
 </c:when>
 

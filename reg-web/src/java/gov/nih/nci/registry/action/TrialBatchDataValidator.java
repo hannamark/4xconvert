@@ -761,14 +761,15 @@ public class TrialBatchDataValidator {
     public List<TrialIndIdeDTO> convertIndsToList(StudyProtocolBatchDTO dto) {
         List<TrialIndIdeDTO> indIdeList = new ArrayList<TrialIndIdeDTO>();
             if (isMultipleIndIde(dto)) {
-                Map <Integer, String> indTypeMap = covertToMap(dto.getIndType());
-                Map <Integer, String> indNumbereMap = covertToMap(dto.getIndNumber());
-                Map <Integer, String> indGrantorMap = covertToMap(dto.getIndGrantor());
-                Map <Integer, String> indHolderTypeMap = covertToMap(dto.getIndHolderType());
-                Map <Integer, String> indNIHInstitutionMap = covertToMap(dto.getIndNIHInstitution());
-                Map <Integer, String> indNCIDivisionMap = covertToMap(dto.getIndNCIDivision());
-                Map <Integer, String> indHasExpandedAccessMap = covertToMap(dto.getIndHasExpandedAccess());
-                Map <Integer, String> indHasExpandedAccessStatusMap = covertToMap(dto.getIndExpandedAccessStatus());
+                Map <Integer, String> indTypeMap = convertToMap(dto.getIndType());
+                Map <Integer, String> indNumbereMap = convertToMap(dto.getIndNumber());
+                Map <Integer, String> indGrantorMap = convertToMap(dto.getIndGrantor());
+                Map <Integer, String> indHolderTypeMap = convertToMap(dto.getIndHolderType());
+                Map <Integer, String> indNIHInstitutionMap = convertToMap(dto.getIndNIHInstitution());
+                Map <Integer, String> indNCIDivisionMap = convertToMap(dto.getIndNCIDivision());
+                Map <Integer, String> indHasExpandedAccessMap = convertToMap(dto.getIndHasExpandedAccess());
+                Map <Integer, String> indHasExpandedAccessStatusMap = convertToMap(dto.getIndExpandedAccessStatus());
+                Map <Integer, String> indExemptIndicator = convertToMap(dto.getExemptIndicator());
                 //get the map with highest size
                 int maxSize = indTypeMap.size();
                 if (maxSize < indNumbereMap.size()) {
@@ -791,6 +792,9 @@ public class TrialBatchDataValidator {
                 }
                 if (maxSize < indHasExpandedAccessStatusMap.size()) {
                     maxSize = indHasExpandedAccessStatusMap.size();
+                }
+                if (maxSize < indExemptIndicator.size()) {
+                   maxSize = indExemptIndicator.size();
                 }
                 for (int i = 0; i < maxSize; i++) {
                     TrialIndIdeDTO indldeDTO = new TrialIndIdeDTO();
@@ -836,6 +840,12 @@ public class TrialBatchDataValidator {
                     } else {
                         indldeDTO.setExpandedAccessType("");
                     }
+                    if (StringUtils.isNotEmpty(indExemptIndicator.get(i))
+                          && StringUtils.endsWithIgnoreCase("Yes", indExemptIndicator.get(i))) {
+                        indldeDTO.setExemptIndicator(true);
+                    } else {
+                        indldeDTO.setExemptIndicator(false);
+                    }
                     indIdeList.add(indldeDTO);
                 }
             } else {
@@ -857,6 +867,12 @@ public class TrialBatchDataValidator {
                     } else {
                         indldeDTO.setExpandedAccessType("");
                     }
+                    if (StringUtils.isNotEmpty(dto.getExemptIndicator())
+                            && StringUtils.endsWithIgnoreCase("Yes", dto.getExemptIndicator())) {
+                          indldeDTO.setExemptIndicator(true);
+                      } else {
+                          indldeDTO.setExemptIndicator(false);
+                      }
                     indIdeList.add(indldeDTO);
                 }
             }
@@ -871,7 +887,7 @@ public class TrialBatchDataValidator {
         }
         return retValue;
     }
-    private Map<Integer, String> covertToMap(String commaSeparated) {
+    private Map<Integer, String> convertToMap(String commaSeparated) {
         Map <Integer, String> map = new HashMap<Integer, String>();
         Integer key = 0;
         if (commaSeparated == null) {
@@ -898,10 +914,10 @@ public class TrialBatchDataValidator {
     public List<TrialFundingWebDTO> convertToGrantList(StudyProtocolBatchDTO dto) {
         List<TrialFundingWebDTO> grantList = new ArrayList<TrialFundingWebDTO>();
         if (isMultipleGrant(dto)) {
-            Map <Integer, String> fundingMechanismCodeMap = covertToMap(dto.getNihGrantFundingMechanism());
-            Map <Integer, String> grantNCIDivisionCodeMap = covertToMap(dto.getNihGrantNCIDivisionCode());
-            Map <Integer, String> grantInstituteCodeMap = covertToMap(dto.getNihGrantInstituteCode());
-            Map <Integer, String> grantSrNumberMap = covertToMap(dto.getNihGrantSrNumber());
+            Map <Integer, String> fundingMechanismCodeMap = convertToMap(dto.getNihGrantFundingMechanism());
+            Map <Integer, String> grantNCIDivisionCodeMap = convertToMap(dto.getNihGrantNCIDivisionCode());
+            Map <Integer, String> grantInstituteCodeMap = convertToMap(dto.getNihGrantInstituteCode());
+            Map <Integer, String> grantSrNumberMap = convertToMap(dto.getNihGrantSrNumber());
             int maxSize = fundingMechanismCodeMap.size();
             if (maxSize < grantNCIDivisionCodeMap.size()) {
                 maxSize = grantNCIDivisionCodeMap.size();

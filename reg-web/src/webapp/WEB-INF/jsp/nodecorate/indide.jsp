@@ -101,7 +101,13 @@
 		  alert("Please select an Expanded Access Type");
           return false;
 		}
-		addIndIde(indide,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype);
+		var exemptIndicator = document.getElementById('exemptIndicator');
+        if (exemptIndicator.checked == true) {
+        	exemptIndicator ='true';
+        } else {
+        	exemptIndicator ='false';
+        }
+		addIndIde(indide,number,grantor,holdertype,programcode,expandedaccess,expandedaccesstype,exemptIndicator);
 	}
 	function resetValues(){
 		document.getElementById('indidenumber').value='';
@@ -117,6 +123,7 @@
 		document.getElementById('group4').checked = false;
 		document.getElementById('expanded_status').value='';
 		document.getElementById('expanded_status').disabled=true;
+		document.getElementById('exemptIndicator').checked = false;
 	}
 	function clearRadios( radioname ){
 	   for( i = 0; i < document.forms[0][radioname].length; i++ )
@@ -198,6 +205,7 @@
 				<th><reg-web:displayTooltip tooltip="tooltip.nih_institution_nci_division_program_code">NIH Institution, NCI Division/Program Code (if applicable)</reg-web:displayTooltip></th>
 				<th><reg-web:displayTooltip tooltip="tooltip.has_expanded_access_indicator">Expanded Access</reg-web:displayTooltip></th>
 				<th><reg-web:displayTooltip tooltip="tooltip.has_expanded_status">Expanded Access Type (if applicable)</reg-web:displayTooltip></th>
+				<th><reg-web:displayTooltip tooltip="tooltip.has_exempt_indicator">Exempt Indicator (if applicable)</reg-web:displayTooltip></th>
 				<th></th>
 			</tr>
 
@@ -236,6 +244,9 @@
 					list="#expandedAccessStatusCodeValues"/>
 
 				</td>
+				<td>
+                    <input type="checkbox" name="exemptIndicator" id="exemptIndicator" /> Yes
+                </td>
 				<td>
 					<input type="button" id="addbtn" onclick="callAddIndIde();" value="Add IND/IDE" >
 				</td>

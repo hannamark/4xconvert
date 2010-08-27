@@ -9,6 +9,7 @@
 
 	<display:column titleKey="search.trial.view.expandedAccessIndicator" property="expandedAccess"   sortable="true" headerClass="sortable"/>
 	<display:column titleKey="search.trial.view.expandedAccessStatusCode" property="expandedAccessType"   sortable="true" headerClass="sortable"/>
+    <display:column titleKey="search.trial.view.exemptIndicator" property="exemptIndicator"   sortable="true" headerClass="sortable"/>
 </display:table>
 
 

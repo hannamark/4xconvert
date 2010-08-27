@@ -321,7 +321,7 @@ public class BatchCreateProtocols {
                 }
             }
         }
-        List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
+        List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos(), null);
         if (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty()) {
             for (Iterator<StudyIndldeDTO> it = studyIndldeDTOs.iterator(); it.hasNext();) {
                 StudyIndldeDTO indIdeDto = it.next();
@@ -578,7 +578,7 @@ public class BatchCreateProtocols {
             studyRegAuthDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(regAuthId));
         }
 
-        List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
+        List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos(), null);
         List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
         List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
         studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, studyProtocolIi));

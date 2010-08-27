@@ -223,6 +223,8 @@ public enum BatchStringConstants implements CodedEnum<String> {
      IND_HAS_EXPANDED_ACCESS("[IND/IDE] Has Expanded Access?", "setIndHasExpandedAccess"),
     /** */
      IND_EXPANED_ACCESS_STATUS("[IND/IDE] Expanded Access Status", "setIndExpandedAccessStatus"),
+     /** */
+     IND_EXEMPT_INDICATOR("[IND/IDE] Exempt Indicator", "setExemptIndicator"),
     /** */
      OVERSIGHT_AUTHORITY_COUNTRY("Oversight Authority Country", "setOversightAuthorityCountry"),
     /** */

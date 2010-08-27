@@ -333,14 +333,15 @@ var winprint=window.open("","",sOption);
        <div class="box">
        <h3>Updated FDA IND/IDE </h3>
        <display:table class="data" sort="list"  uid="row"  name="${trialDTO.indIdeUpdateDtos}">
-        <display:column title="IndIde Type" property="indldeType"  headerClass="sortable" style="width:75px" />
-        <display:column escapeXml="true" title="Number" property="indldeNumber"  headerClass="sortable" style="width:75px"/>
+        <display:column title="IndIde Type" property="indIde"  headerClass="sortable" style="width:75px" />
+        <display:column escapeXml="true" title="Number" property="number"  headerClass="sortable" style="width:75px"/>
         <display:column escapeXml="true" title="Grantor" property="grantor"  headerClass="sortable" style="width:75px"/>
         <display:column escapeXml="true" title="Holder" property="holderType"  headerClass="sortable" style="width:75px"/>
         <display:column escapeXml="true" title="NIH Inst Holder Code" property="nihInstHolder"  headerClass="sortable"  style="width:75px"/>
         <display:column escapeXml="true" title="NCI Div Prog Holder Code" property="nciDivProgHolder" headerClass="sortable"  style="width:75px"/>
-         <display:column title="Expanded Access" property="expandedAccessIndicator"  headerClass="sortable" style="width:75px"/>
-        <display:column title="Expanded Access Type" property="expandedAccessStatus"  headerClass="sortable" style="width:75px"/>
+         <display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable" style="width:75px"/>
+        <display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable" style="width:75px"/>
+        <display:column title="Exempt Indicator" property="exemptIndicator"  headerClass="sortable" style="width:75px"/>
         </display:table>
       </div>
      </c:if>
@@ -355,6 +356,7 @@ var winprint=window.open("","",sOption);
          <display:column escapeXml="true" title="Program Code" property="programCode"  headerClass="sortable" style="width:75px"/>
          <display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable" style="width:75px"/>
          <display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable" style="width:75px" />
+         <display:column title="Exempt Indicator" property="exemptIndicator"  headerClass="sortable" style="width:75px"/>
          </display:table>
        </div>
      </c:if>

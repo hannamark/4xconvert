@@ -124,6 +124,7 @@ public class StudyProtocolBatchDTO {
     private String indNCIDivision;
     private String indHasExpandedAccess;
     private String indExpandedAccessStatus;
+    private String exemptIndicator;
 
     private String protcolDocumentFileName;
     private String irbApprovalDocumentFileName;
@@ -1861,5 +1862,17 @@ public class StudyProtocolBatchDTO {
        this.ctGovXmlIndicator = ctGovXmlIndicator;
      }
 
+     /**
+      * @param exemptIndicator the exemptIndicator to set
+      */
+     public void setExemptIndicator(String exemptIndicator) {
+         this.exemptIndicator = exemptIndicator;
+     }
 
+     /**
+      * @return the exemptIndicator
+      */
+     public String getExemptIndicator() {
+         return exemptIndicator;
+     }
 }

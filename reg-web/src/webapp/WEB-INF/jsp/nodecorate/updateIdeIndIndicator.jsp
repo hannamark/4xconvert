@@ -114,16 +114,17 @@
                 <th>NIH Institution, NCI Division/Program Code (if applicable)</th>
                 <th>Expanded Access</th>
                 <th>Expanded Access Type (if applicable)</th>
+                <th>Exempt Indicator (if applicable)</th>
                 <th></th>
              </tr>
                <s:iterator id="indIdeUpdateDtos" value="indIdeUpdateDtos" status="indidestats">
                 <tr>
                  <td style="white-space:nowrap;">                            
-                  <s:select id="group3Update" name="indIdeUpdateDtos[%{#indidestats.index}].indldeType" value="%{indIdeUpdateDtos[#indidestats.index].indldeType}" list="#{'IND':'IND', 'IDE':'IDE'}" onclick="SelectSubCatUpdate(this);"/>
+                  <s:select id="group3Update" name="indIdeUpdateDtos[%{#indidestats.index}].indIde" value="%{indIdeUpdateDtos[#indidestats.index].indIde}" list="#{'IND':'IND', 'IDE':'IDE'}" onclick="SelectSubCatUpdate(this);"/>
                    
                  </td>
                  <td>
-                  <s:textfield id="indIdesDTOs.indldeNumberUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].indldeNumber" value="%{indIdeUpdateDtos[#indidestats.index].indldeNumber}" size="10" />
+                  <s:textfield id="indIdesDTOs.indldeNumberUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].number" value="%{indIdeUpdateDtos[#indidestats.index].number}" size="10" />
                    <span class="formErrorMsg" >
                                         <s:fielderror>
                                         <s:param>updindideNumber<s:property value="%{#indidestats.index}"/></s:param>
@@ -131,7 +132,7 @@
                                      </span> 
                  </td>
                  <td> 
-                  <s:if test="%{indIdeUpdateDtos[#indidestats.index].indldeType == 'IND'}">
+                  <s:if test="%{indIdeUpdateDtos[#indidestats.index].indIde == 'IND'}">
                    <s:select id="indIdeUpdateDtos[%{#indidestats.index}].grantor" name="indIdeUpdateDtos[%{#indidestats.index}].grantor" value="%{indIdeUpdateDtos[#indidestats.index].grantor}" list="#{'CDER':'CDER', 'CBER':'CBER'}" cssStyle="width:75px" ></s:select>
                   </s:if>
                   <s:else>
@@ -174,19 +175,22 @@
                 </s:div>
                </td>
                <td>
-                <s:select id="group4Update%{#indidestats.index}" name="indIdeUpdateDtos[%{#indidestats.index}].expandedAccessIndicator"  value="%{indIdeUpdateDtos[#indidestats.index].expandedAccessIndicator}"  list="#{'No':'No', 'Yes':'Yes'}" onclick="checkIndicatorUpdate(%{#indidestats.index});"  />
+                <s:select id="group4Update%{#indidestats.index}" name="indIdeUpdateDtos[%{#indidestats.index}].expandedAccess"  value="%{indIdeUpdateDtos[#indidestats.index].expandedAccess}"  list="#{'No':'No', 'Yes':'Yes'}" onclick="checkIndicatorUpdate(%{#indidestats.index});"  />
                </td>
                <td>
                <s:div id="show%{#indidestats.index}" cssStyle="display:''">
-                  <s:select id="expanded_status_update" headerKey="" headerValue="-Select-" name="indIdeUpdateDtos[%{#indidestats.index}].expandedAccessStatus" value="%{indIdeUpdateDtos[#indidestats.index].expandedAccessStatus}" list="#expandedAccessStatusCodeValues" />
+                  <s:select id="expanded_status_update" headerKey="" headerValue="-Select-" name="indIdeUpdateDtos[%{#indidestats.index}].expandedAccessType" value="%{indIdeUpdateDtos[#indidestats.index].expandedAccessType}" list="#expandedAccessStatusCodeValues" />
                  <span class="formErrorMsg" >
                                         <s:fielderror>
                                         <s:param>updindideExpandedStatus<s:property value="%{#indidestats.index}"/></s:param>
                                        </s:fielderror>                            
                                      </span>  
                </s:div> 
-               <s:hidden  name="indIdeUpdateDtos[%{#indidestats.index}].id" value="%{id}"/>     
+               <s:hidden  name="indIdeUpdateDtos[%{#indidestats.index}].indIdeId" value="%{indIdeId}"/>     
               </td> 
+              <td>
+                <s:select id="exemptIndicator4Update%{#indidestats.index}" name="indIdeUpdateDtos[%{#indidestats.index}].exemptIndicator"  value="%{indIdeUpdateDtos[#indidestats.index].exemptIndicator}"  list="#{'false':'No', 'true':'Yes'}"  />
+               </td>
               </tr>                 
              </s:iterator>                    
          </tbody>

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.action;
 
@@ -9,7 +9,6 @@ import static org.junit.Assert.assertNull;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
-import gov.nih.nci.registry.dto.StudyIndldeWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
@@ -33,9 +32,9 @@ import com.mockrunner.mock.web.MockHttpSession;
  *
  */
 public class UpdateTrialActionTest extends AbstractRegWebTest {
-    private UpdateTrialAction action = new UpdateTrialAction();
+    private final UpdateTrialAction action = new UpdateTrialAction();
     //private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
-    @Before 
+    @Before
     public void setup() {
       /*  HibernateUtil.testHelper = testHelper;
         Session session = HibernateUtil.getCurrentSession();
@@ -64,7 +63,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         assertNull(action.getIrbApproval());
         action.setIrbApproval(new File("irbApprovalFileName.doc"));
         assertNotNull(action.getIrbApproval());
-        
+
     }
     @Test
     public void testProtocolFileNameProperty(){
@@ -132,12 +131,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setPaOrganizationDTO(new PaOrganizationDTO());
         assertNotNull(action.getPaOrganizationDTO());
     }
-    @Test
-    public void testStudyIndldeWebDTOProperty() {
-        assertNull(action.getStudyIndldeWebDTO());
-        action.setStudyIndldeWebDTO(new StudyIndldeWebDTO());
-        assertNotNull(action.getStudyIndldeWebDTO());
-    }
+
     @Test
     public void testTrialFundingDTOProperty() {
         assertNull(action.getTrialFundingDTO());
@@ -156,7 +150,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setIndIdeUpdateDtosLen(2);
         assertEquals(2, action.getIndIdeUpdateDtosLen());
     }
-    @Test 
+    @Test
     public void testCancle() {
         assertEquals("redirect_to_search", action.cancel());
     }
@@ -184,18 +178,18 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         List<RegulatoryAuthOrgDTO> regIdAuthOrgList = new ArrayList<RegulatoryAuthOrgDTO>();
         regIdAuthOrgList.add(new RegulatoryAuthOrgDTO());
         tDto.setRegIdAuthOrgList(regIdAuthOrgList);
-        List<StudyIndldeWebDTO> indIdeUpdateDtos = new ArrayList<StudyIndldeWebDTO>();
-        StudyIndldeWebDTO indIdeDto = new StudyIndldeWebDTO();
-        indIdeDto.setIndldeType("IND");
+        List<TrialIndIdeDTO> indIdeUpdateDtos = new ArrayList<TrialIndIdeDTO>();
+        TrialIndIdeDTO indIdeDto = new TrialIndIdeDTO();
+        indIdeDto.setIndIde("IND");
         indIdeDto.setGrantor("grantor");
-        indIdeDto.setIndldeNumber("indldeNumber");
+        indIdeDto.setNumber("indldeNumber");
         indIdeDto.setHolderType("NCI");
         indIdeDto.setNciDivProgHolder("nciDivProgHolder");
-        indIdeDto.setExpandedAccessIndicator("Yes");
-        indIdeDto.setExpandedAccessStatus("expandedAccessStatus");
-        indIdeDto.setStudyProtocolIi("1");
+        indIdeDto.setExpandedAccess("Yes");
+        indIdeDto.setExpandedAccessType("expandedAccessStatus");
+        indIdeDto.setStudyProtocolId("1");
         indIdeDto.setProgramCode("programCode");
-        indIdeDto.setId("1");
+        indIdeDto.setIndIdeId("1");
         indIdeUpdateDtos.add(indIdeDto);
         tDto.setIndIdeUpdateDtos(indIdeUpdateDtos);
         session.setAttribute("trialDTO", tDto);
@@ -256,7 +250,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         session.setAttribute(Constants.GRANT_ADD_LIST, new ArrayList<TrialFundingWebDTO>());
         session.setAttribute(Constants.INDIDE_ADD_LIST, new ArrayList<TrialIndIdeDTO>());
         request.setSession(session);
-        
+
         action.getTrialDTO().setSelectedRegAuth("2");
         action.getTrialDTO().setLst("3");
         action.setIrbApprovalFileName("ProtocolDoc.doc");
@@ -265,7 +259,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setTrialDTO(getMockTrialDTO());
         assertEquals("error", action.reviewUpdate());
     }
-    @Test 
+    @Test
     public void testReviewUpdateWithCollaborators() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
@@ -286,13 +280,13 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setCollaborators(paOrgList);
         assertEquals("error", action.reviewUpdate());
     }
-    @Test 
+    @Test
     public void testReviewUpdateWithParticipatingSite() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         request.setSession(session);
         ServletActionContext.setRequest(request);
-        
+
         action.getTrialDTO().setSelectedRegAuth("2");
         action.getTrialDTO().setLst("3");
         action.setTrialDTO(getMockTrialDTO());
@@ -309,7 +303,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         paOrgList.add(paOrgDto);
         action.setParticipatingSitesList(paOrgList);
         assertEquals("error", action.reviewUpdate());
-        
+
         paOrgList = new ArrayList<PaOrganizationDTO>();
         paOrgDto = new PaOrganizationDTO();
         paOrgDto.setName("name");
@@ -319,13 +313,13 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setParticipatingSitesList(paOrgList);
         assertEquals("error", action.reviewUpdate());
     }
-    @Test 
+    @Test
     public void testReviewUpdateWithFundingDtos() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         request.setSession(session);
         ServletActionContext.setRequest(request);
-        
+
         action.getTrialDTO().setSelectedRegAuth("2");
         action.getTrialDTO().setLst("3");
         action.setTrialDTO(getMockTrialDTO());
@@ -334,14 +328,14 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         fundingDtos.add(dto);
         action.setFundingDtos(fundingDtos);
         assertEquals("error", action.reviewUpdate());
-        
+
         fundingDtos = new ArrayList<TrialFundingWebDTO>();
         dto = new TrialFundingWebDTO();
         dto.setFundingMechanismCode("fundingMechanismCode");
         fundingDtos.add(dto);
         action.setFundingDtos(fundingDtos);
         assertEquals("error", action.reviewUpdate());
-        
+
         fundingDtos = new ArrayList<TrialFundingWebDTO>();
         dto = new TrialFundingWebDTO();
         dto.setFundingMechanismCode("fundingMechanismCode");
@@ -350,7 +344,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         fundingDtos.add(dto);
         action.setFundingDtos(fundingDtos);
         assertEquals("error", action.reviewUpdate());
-        
+
         fundingDtos = new ArrayList<TrialFundingWebDTO>();
         dto = new TrialFundingWebDTO();
         dto.setFundingMechanismCode("fundingMechanismCode");
@@ -360,7 +354,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setFundingDtos(fundingDtos);
         assertEquals("error", action.reviewUpdate());
     }
-    @Test 
+    @Test
     public void testReviewUpdateWithIndIdeDtos() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
@@ -369,49 +363,49 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.getTrialDTO().setSelectedRegAuth("2");
         action.getTrialDTO().setLst("3");
         action.setTrialDTO(getMockTrialDTO());
-        List<StudyIndldeWebDTO> indIdeDtos = new ArrayList<StudyIndldeWebDTO>();
-        indIdeDtos.add(new StudyIndldeWebDTO());
+        List<TrialIndIdeDTO> indIdeDtos = new ArrayList<TrialIndIdeDTO>();
+        indIdeDtos.add(new TrialIndIdeDTO());
         action.setIndIdeUpdateDtos(indIdeDtos);
         assertEquals("error", action.reviewUpdate());
-        indIdeDtos = new ArrayList<StudyIndldeWebDTO>();
-        StudyIndldeWebDTO indIdeDto = new StudyIndldeWebDTO();
+        indIdeDtos = new ArrayList<TrialIndIdeDTO>();
+        TrialIndIdeDTO indIdeDto = new TrialIndIdeDTO();
         indIdeDto.setGrantor("grantor");
         indIdeDtos.add(indIdeDto);
         action.setIndIdeUpdateDtos(indIdeDtos);
         assertEquals("error", action.reviewUpdate());
-        indIdeDtos = new ArrayList<StudyIndldeWebDTO>();
-        indIdeDto = new StudyIndldeWebDTO();
+        indIdeDtos = new ArrayList<TrialIndIdeDTO>();
+        indIdeDto = new TrialIndIdeDTO();
         indIdeDto.setGrantor("grantor");
-        indIdeDto.setIndldeNumber("indldeNumber");
+        indIdeDto.setNumber("indldeNumber");
         indIdeDtos.add(indIdeDto);
         action.setIndIdeUpdateDtos(indIdeDtos);
         assertEquals("error", action.reviewUpdate());
 
-        indIdeDtos = new ArrayList<StudyIndldeWebDTO>();
-        indIdeDto = new StudyIndldeWebDTO();
+        indIdeDtos = new ArrayList<TrialIndIdeDTO>();
+        indIdeDto = new TrialIndIdeDTO();
         indIdeDto.setGrantor("grantor");
-        indIdeDto.setIndldeNumber("indldeNumber");
+        indIdeDto.setNumber("indldeNumber");
         indIdeDto.setHolderType("holderType");
-        indIdeDto.setExpandedAccessIndicator("Yes");
+        indIdeDto.setExpandedAccess("Yes");
         indIdeDtos.add(indIdeDto);
         action.setIndIdeUpdateDtos(indIdeDtos);
         assertEquals("error", action.reviewUpdate());
-        
-        indIdeDtos = new ArrayList<StudyIndldeWebDTO>();
-        indIdeDto = new StudyIndldeWebDTO();
+
+        indIdeDtos = new ArrayList<TrialIndIdeDTO>();
+        indIdeDto = new TrialIndIdeDTO();
         indIdeDto.setGrantor("grantor");
-        indIdeDto.setIndldeNumber("indldeNumber");
+        indIdeDto.setNumber("indldeNumber");
         indIdeDto.setHolderType("NIH");
-        indIdeDto.setExpandedAccessIndicator("Yes");
+        indIdeDto.setExpandedAccessType("Yes");
         indIdeDtos.add(indIdeDto);
         action.setIndIdeUpdateDtos(indIdeDtos);
         assertEquals("error", action.reviewUpdate());
-        indIdeDtos = new ArrayList<StudyIndldeWebDTO>();
-        indIdeDto = new StudyIndldeWebDTO();
+        indIdeDtos = new ArrayList<TrialIndIdeDTO>();
+        indIdeDto = new TrialIndIdeDTO();
         indIdeDto.setGrantor("grantor");
-        indIdeDto.setIndldeNumber("indldeNumber");
+        indIdeDto.setNumber("indldeNumber");
         indIdeDto.setHolderType("NCI");
-        indIdeDto.setExpandedAccessIndicator("Yes");
+        indIdeDto.setExpandedAccessType("Yes");
         indIdeDtos.add(indIdeDto);
         action.setIndIdeUpdateDtos(indIdeDtos);
         assertEquals("error", action.reviewUpdate());
@@ -464,36 +458,36 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         TrialDTO tDto = getMockTrialDTO();
-        List<StudyIndldeWebDTO> indIdeUpdateDtos = new ArrayList<StudyIndldeWebDTO>();
-        StudyIndldeWebDTO indIdeDto = new StudyIndldeWebDTO();
-        indIdeDto.setIndldeType("IND");
+        List<TrialIndIdeDTO> indIdeUpdateDtos = new ArrayList<TrialIndIdeDTO>();
+        TrialIndIdeDTO indIdeDto = new TrialIndIdeDTO();
+        indIdeDto.setIndIde("IND");
         indIdeDto.setGrantor("grantor");
-        indIdeDto.setIndldeNumber("indldeNumber");
+        indIdeDto.setNumber("indldeNumber");
         indIdeDto.setHolderType("NCI");
         indIdeDto.setNciDivProgHolder("nciDivProgHolder");
-        indIdeDto.setExpandedAccessIndicator("Yes");
-        indIdeDto.setExpandedAccessStatus("expandedAccessStatus");
-        indIdeDto.setId("1");
+        indIdeDto.setExpandedAccessType("Yes");
+        indIdeDto.setExpandedAccess("expandedAccessStatus");
+        indIdeDto.setIndIdeId("1");
         indIdeUpdateDtos.add(indIdeDto);
-        indIdeDto = new StudyIndldeWebDTO();
-        indIdeDto.setId("2");
-        indIdeDto.setIndldeType("IDE");
+        indIdeDto = new TrialIndIdeDTO();
+        indIdeDto.setIndIdeId("2");
+        indIdeDto.setIndIde("IDE");
         indIdeDto.setGrantor("grantor");
-        indIdeDto.setIndldeNumber("indldeNumber");
+        indIdeDto.setNumber("indldeNumber");
         indIdeDto.setHolderType("NIH");
         indIdeDto.setNihInstHolder("nihInstHolder");
-        indIdeDto.setExpandedAccessIndicator("Yes");
-        indIdeDto.setExpandedAccessStatus("expandedAccessStatus");
+        indIdeDto.setExpandedAccessType("Yes");
+        indIdeDto.setExpandedAccess("expandedAccessStatus");
         indIdeUpdateDtos.add(indIdeDto);
-        indIdeDto = new StudyIndldeWebDTO();
-        indIdeDto.setId("2");
-        indIdeDto.setIndldeType("IDE");
+        indIdeDto = new TrialIndIdeDTO();
+        indIdeDto.setIndIdeId("2");
+        indIdeDto.setIndIde("IDE");
         indIdeDto.setGrantor("grantor");
-        indIdeDto.setIndldeNumber("indldeNumber");
+        indIdeDto.setNumber("indldeNumber");
         indIdeDto.setHolderType("NIH");
         indIdeDto.setNihInstHolder("nihInstHolder");
-        indIdeDto.setExpandedAccessIndicator("No");
-        indIdeDto.setExpandedAccessStatus("");
+        indIdeDto.setExpandedAccessType("No");
+        indIdeDto.setExpandedAccess("");
         indIdeUpdateDtos.add(indIdeDto);
         tDto.setIndIdeUpdateDtos(indIdeUpdateDtos );
         session.setAttribute("trialDTO", tDto);
