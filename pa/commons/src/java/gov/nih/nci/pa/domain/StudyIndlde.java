@@ -114,7 +114,7 @@ public class StudyIndlde extends AbstractEntity {
     private HolderTypeCode holderTypeCode;
     private String indldeNumber;
     private IndldeTypeCode indldeTypeCode;
-
+    private Boolean exemptIndicator = false;
     /**
      * @return studyProtocol
      */
@@ -242,5 +242,18 @@ public class StudyIndlde extends AbstractEntity {
      */
     public void setIndldeTypeCode(IndldeTypeCode indldeTypeCode) {
         this.indldeTypeCode = indldeTypeCode;
+    }
+    /**
+     * @param exemptIndicator the exemptIndicator to set
+     */
+    public void setExemptIndicator(Boolean exemptIndicator) {
+        this.exemptIndicator = exemptIndicator;
+    }
+    /**
+     * @return the exemptIndicator
+     */
+    @Column(name = "EXEMPT_INDICATOR")
+    public Boolean getExemptIndicator() {
+        return exemptIndicator;
     }
 }

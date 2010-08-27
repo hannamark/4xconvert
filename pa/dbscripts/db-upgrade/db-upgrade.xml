@@ -554,4 +554,8 @@
         <comment>Primary_Purpose EARLY_DETECTION must be migrated.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2605.sql"/>
     </changeSet>
+    <changeSet id="PO-2596" author="vrushali"> 
+        <comment>Add ExemptIndicator to model.</comment> 
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2596.sql"/> 
+     </changeSet> 
 </databaseChangeLog>

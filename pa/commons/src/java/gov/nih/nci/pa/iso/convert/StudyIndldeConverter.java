@@ -91,6 +91,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.Date;
 
@@ -116,6 +117,7 @@ public class StudyIndldeConverter extends AbstractConverter<StudyIndldeDTO, Stud
         siDTO.setHolderTypeCode(CdConverter.convertToCd(si.getHolderTypeCode()));
         siDTO.setIndldeNumber(StConverter.convertToSt(si.getIndldeNumber()));
         siDTO.setIndldeTypeCode(CdConverter.convertToCd(si.getIndldeTypeCode()));
+        siDTO.setExemptIndicator(BlConverter.convertToBl(si.getExemptIndicator()));
         return siDTO;
     }
 
@@ -157,6 +159,9 @@ public class StudyIndldeConverter extends AbstractConverter<StudyIndldeDTO, Stud
         }
         if (siDTO.getIndldeTypeCode() != null) {
             si.setIndldeTypeCode(IndldeTypeCode.getByCode(siDTO.getIndldeTypeCode().getCode()));
+        }
+        if (!ISOUtil.isBlNull(siDTO.getExemptIndicator())) {
+            si.setExemptIndicator(BlConverter.convertToBoolean(siDTO.getExemptIndicator()));
         }
         return si;
     }

@@ -58,6 +58,7 @@ public class StudyIndIdeStageConverter {
         studyIndIdeStageDTO.setHolderTypeCode(CdConverter.convertToCd(studyIndIdeStage.getHolderTypeCode()));
         studyIndIdeStageDTO.setIndldeNumber(StConverter.convertToSt(studyIndIdeStage.getIndIdeNumber()));
         studyIndIdeStageDTO.setIndldeTypeCode(CdConverter.convertToCd(studyIndIdeStage.getIndldeTypeCode()));
+        studyIndIdeStageDTO.setExemptIndicator(BlConverter.convertToBl(studyIndIdeStage.getExemptIndicator()));
         return studyIndIdeStageDTO;
     }
 
@@ -97,6 +98,9 @@ public class StudyIndIdeStageConverter {
       if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getIndldeTypeCode())) {
           studyIndIdeStage.setIndldeTypeCode(IndldeTypeCode.getByCode(
                   studyIndIdeStageDTO.getIndldeTypeCode().getCode()));
+      }
+      if (!ISOUtil.isBlNull(studyIndIdeStageDTO.getExemptIndicator())) {
+          studyIndIdeStage.setExemptIndicator(studyIndIdeStageDTO.getExemptIndicator().getValue());
       }
       return studyIndIdeStage;
   }

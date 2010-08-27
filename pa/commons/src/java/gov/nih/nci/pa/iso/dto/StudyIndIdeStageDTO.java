@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.iso.dto;
 
@@ -15,7 +15,7 @@ import gov.nih.nci.iso21090.St;
 public class StudyIndIdeStageDTO extends BaseDTO {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1676965808746172635L;
     private Cd expandedAccessStatusCode;
@@ -27,6 +27,7 @@ public class StudyIndIdeStageDTO extends BaseDTO {
     private St indldeNumber;
     private Cd indldeTypeCode;
     private Ii studyProtocolStageIi;
+    private Bl exemptIndicator;
     /**
      * @return the expandedAccessStatusCode
      */
@@ -135,6 +136,18 @@ public class StudyIndIdeStageDTO extends BaseDTO {
     public void setStudyProtocolStageIi(Ii studyProtocolStageIi) {
         this.studyProtocolStageIi = studyProtocolStageIi;
     }
-    
+    /**
+     * @param exemptIndicator the exemptIndicator to set
+     */
+    public void setExemptIndicator(Bl exemptIndicator) {
+        this.exemptIndicator = exemptIndicator;
+    }
+    /**
+     * @return the exemptIndicator
+     */
+    public Bl getExemptIndicator() {
+        return exemptIndicator;
+    }
+
 
 }

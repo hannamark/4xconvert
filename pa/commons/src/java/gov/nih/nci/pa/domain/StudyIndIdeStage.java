@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.domain;
 
@@ -29,7 +29,7 @@ import org.hibernate.validator.NotNull;
 public class StudyIndIdeStage extends AbstractEntity {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4623392526279206778L;
     private String indIdeNumber;
@@ -41,6 +41,7 @@ public class StudyIndIdeStage extends AbstractEntity {
     private NihInstituteCode nihInstHolderCode;
     private NciDivisionProgramCode nciDivPrgHolderCode;
     private StudyProtocolStage studyProtocolStage;
+    private Boolean exemptIndicator = false;
     /**
      * @return the indIdeNumber
      */
@@ -166,6 +167,19 @@ public class StudyIndIdeStage extends AbstractEntity {
     public StudyProtocolStage getStudyProtocolStage() {
         return studyProtocolStage;
     }
-  
-    
+    /**
+     * @param exemptIndicator the exemptIndicator to set
+     */
+    public void setExemptIndicator(Boolean exemptIndicator) {
+        this.exemptIndicator = exemptIndicator;
+    }
+    /**
+     * @return the exemptIndicator
+     */
+    @Column(name = "EXEMPT_INDICATOR")
+    public Boolean getExemptIndicator() {
+        return exemptIndicator;
+    }
+
+
 }
