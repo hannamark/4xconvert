@@ -530,4 +530,12 @@ public class MockPaServiceLocator implements ServiceLocator {
     public ParticipatingSiteServiceLocal getParticipatingSiteService() {
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyOutcomeMeasureServiceLocal getOutcomeMeasureService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
