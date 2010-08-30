@@ -1,7 +1,6 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.ClinicalResearchStaffTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.CorrelationNodeTransformer;
@@ -37,9 +36,12 @@ public class TransformerRegistryTest {
     @Test (expected=UnsupportedOperationException.class)
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
-        assertNotNull(tMap);
         assertEquals(11, tMap.size());
+
+        // ensure the registry can't get cleared out by a caller
         tMap.clear();
+        tMap = TransformerRegistry.getRegistry();
+        assertEquals(11, tMap.size());
     }
 
     @Test

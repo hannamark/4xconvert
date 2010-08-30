@@ -36,20 +36,20 @@ import java.util.Map;
  */
 public final class TransformerRegistry {
 
-    private static Map<Class<?>, Transformer<?, ?>> values = new HashMap<Class<?>, Transformer<?, ?>>();
+    private static final Map<Class<?>, Transformer<?, ?>> VALUES = new HashMap<Class<?>, Transformer<?, ?>>();
 
     static {
-        values.put(ClinicalResearchStaffDTO.class, ClinicalResearchStaffTransformer.INSTANCE);
-        values.put(HealthCareFacilityDTO.class, HealthCareFacilityTransformer.INSTANCE);
-        values.put(HealthCareProviderDTO.class, HealthCareProviderTransformer.INSTANCE);
-        values.put(IdentifiedOrganizationDTO.class, IdentifiedOrganizationTransformer.INSTANCE);
-        values.put(IdentifiedPersonDTO.class, IdentifiedPersonTransformer.INSTANCE);
-        values.put(ResearchOrganizationDTO.class, ResearchOrganizationTransformer.INSTANCE);
-        values.put(OversightCommitteeDTO.class, OversightCommitteeTransformer.INSTANCE);
-        values.put(OrganizationalContactDTO.class, OrganizationalContactTransformer.INSTANCE);
-        values.put(PatientDTO.class, PatientTransformer.INSTANCE);
-        values.put(CorrelationNodeDTO.class, CorrelationNodeTransformer.INSTANCE);
-        values.put(EntityNodeDto.class, EntityNodeTransformer.INSTANCE);
+        VALUES.put(ClinicalResearchStaffDTO.class, ClinicalResearchStaffTransformer.INSTANCE);
+        VALUES.put(HealthCareFacilityDTO.class, HealthCareFacilityTransformer.INSTANCE);
+        VALUES.put(HealthCareProviderDTO.class, HealthCareProviderTransformer.INSTANCE);
+        VALUES.put(IdentifiedOrganizationDTO.class, IdentifiedOrganizationTransformer.INSTANCE);
+        VALUES.put(IdentifiedPersonDTO.class, IdentifiedPersonTransformer.INSTANCE);
+        VALUES.put(ResearchOrganizationDTO.class, ResearchOrganizationTransformer.INSTANCE);
+        VALUES.put(OversightCommitteeDTO.class, OversightCommitteeTransformer.INSTANCE);
+        VALUES.put(OrganizationalContactDTO.class, OrganizationalContactTransformer.INSTANCE);
+        VALUES.put(PatientDTO.class, PatientTransformer.INSTANCE);
+        VALUES.put(CorrelationNodeDTO.class, CorrelationNodeTransformer.INSTANCE);
+        VALUES.put(EntityNodeDto.class, EntityNodeTransformer.INSTANCE);
     }
 
     /**
@@ -65,7 +65,7 @@ public final class TransformerRegistry {
      * @return transformer for the type requested
      */
     public Transformer<?, ?> getTransformer(Class<?> type) {
-        Transformer<?, ?> transformer = values.get(type);
+        Transformer<?, ?> transformer = VALUES.get(type);
         if (transformer == null) {
             throw new RuntimeException("Unable to find Transformer for type " + type);
         }
@@ -76,6 +76,6 @@ public final class TransformerRegistry {
      * @return an unmodifiable version of the registry
      */
     public static Map<Class<?>, Transformer<?, ?>> getRegistry() {
-        return Collections.unmodifiableMap(values);
+        return Collections.unmodifiableMap(VALUES);
     }
 }

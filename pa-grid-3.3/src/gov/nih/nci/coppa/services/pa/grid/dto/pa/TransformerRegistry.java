@@ -119,32 +119,32 @@ import java.util.Map;
  */
 public final class TransformerRegistry {
 
-    private static Map<Class<?>, Transformer<?, ?>> values = new HashMap<Class<?>, Transformer<?, ?>>();
+    private static final Map<Class<?>, Transformer<?, ?>> VALUES = new HashMap<Class<?>, Transformer<?, ?>>();
 
     static {
-        values.put(ArmDTO.class, ArmTransformer.INSTANCE);
-        values.put(StudyResourcingDTO.class, StudyResourcingTransformer.INSTANCE);
-        values.put(StudyProtocolDTO.class, StudyProtocolTransformer.INSTANCE);
-        values.put(InterventionalStudyProtocolDTO.class, InterventionalStudyProtocolTransformer.INSTANCE);
-        values.put(StudyRegulatoryAuthorityDTO.class, StudyRegulatoryAuthorityTransformer.INSTANCE);
-        values.put(StudyRecruitmentStatusDTO.class, StudyRecruitmentStatusTransformer.INSTANCE);
-        values.put(StudySiteAccrualStatusDTO.class, StudySiteAccrualStatusTransformer.INSTANCE);
-        values.put(StudySiteContactDTO.class, StudySiteContactTransformer.INSTANCE);
-        values.put(StudyOutcomeMeasureDTO.class, StudyOutcomeMeasureTransformer.INSTANCE);
-        values.put(StudySiteDTO.class, StudySiteTransformer.INSTANCE);
-        values.put(StudyOverallStatusDTO.class, StudyOverallStatusTransformer.INSTANCE);
-        values.put(StudyDiseaseDTO.class, StudyDiseaseTransformer.INSTANCE);
-        values.put(StudyContactDTO.class, StudyContactTransformer.INSTANCE);
-        values.put(StudyOnholdDTO.class, StudyOnholdTransformer.INSTANCE);
-        values.put(StudyIndldeDTO.class, StudyIndldeTransformer.INSTANCE);
-        values.put(StudyRelationshipDTO.class, StudyRelationshipTransformer.INSTANCE);
-        values.put(DocumentWorkflowStatusDTO.class, DocumentWorkflowStatusTransformer.INSTANCE);
-        values.put(PlannedActivityDTO.class, PlannedActivityTransformer.INSTANCE);
-        values.put(PlannedEligibilityCriterionDTO.class, PlannedEligibilityCriterionTransformer.INSTANCE);
-        values.put(DocumentDTO.class, DocumentTransformer.INSTANCE);
-        values.put(DiseaseDTO.class, DiseaseTransformer.INSTANCE);
-        values.put(InterventionDTO.class, InterventionTransformer.INSTANCE);
-        values.put(RegulatoryAuthorityDTO.class, RegulatoryAuthorityTransformer.INSTANCE);
+        VALUES.put(ArmDTO.class, ArmTransformer.INSTANCE);
+        VALUES.put(StudyResourcingDTO.class, StudyResourcingTransformer.INSTANCE);
+        VALUES.put(StudyProtocolDTO.class, StudyProtocolTransformer.INSTANCE);
+        VALUES.put(InterventionalStudyProtocolDTO.class, InterventionalStudyProtocolTransformer.INSTANCE);
+        VALUES.put(StudyRegulatoryAuthorityDTO.class, StudyRegulatoryAuthorityTransformer.INSTANCE);
+        VALUES.put(StudyRecruitmentStatusDTO.class, StudyRecruitmentStatusTransformer.INSTANCE);
+        VALUES.put(StudySiteAccrualStatusDTO.class, StudySiteAccrualStatusTransformer.INSTANCE);
+        VALUES.put(StudySiteContactDTO.class, StudySiteContactTransformer.INSTANCE);
+        VALUES.put(StudyOutcomeMeasureDTO.class, StudyOutcomeMeasureTransformer.INSTANCE);
+        VALUES.put(StudySiteDTO.class, StudySiteTransformer.INSTANCE);
+        VALUES.put(StudyOverallStatusDTO.class, StudyOverallStatusTransformer.INSTANCE);
+        VALUES.put(StudyDiseaseDTO.class, StudyDiseaseTransformer.INSTANCE);
+        VALUES.put(StudyContactDTO.class, StudyContactTransformer.INSTANCE);
+        VALUES.put(StudyOnholdDTO.class, StudyOnholdTransformer.INSTANCE);
+        VALUES.put(StudyIndldeDTO.class, StudyIndldeTransformer.INSTANCE);
+        VALUES.put(StudyRelationshipDTO.class, StudyRelationshipTransformer.INSTANCE);
+        VALUES.put(DocumentWorkflowStatusDTO.class, DocumentWorkflowStatusTransformer.INSTANCE);
+        VALUES.put(PlannedActivityDTO.class, PlannedActivityTransformer.INSTANCE);
+        VALUES.put(PlannedEligibilityCriterionDTO.class, PlannedEligibilityCriterionTransformer.INSTANCE);
+        VALUES.put(DocumentDTO.class, DocumentTransformer.INSTANCE);
+        VALUES.put(DiseaseDTO.class, DiseaseTransformer.INSTANCE);
+        VALUES.put(InterventionDTO.class, InterventionTransformer.INSTANCE);
+        VALUES.put(RegulatoryAuthorityDTO.class, RegulatoryAuthorityTransformer.INSTANCE);
     }
 
     /**
@@ -160,7 +160,7 @@ public final class TransformerRegistry {
      * @return transformer for the type requested
      */
     public Transformer<?, ?> getTransformer(Class<?> type) {
-        Transformer<?, ?> transformer = values.get(type);
+        Transformer<?, ?> transformer = VALUES.get(type);
         if (transformer == null) {
             throw new RuntimeException("Unable to find Transformer for type " + type);
         }
@@ -171,6 +171,6 @@ public final class TransformerRegistry {
      * @return an unmodifiable version of the registry
      */
     public static Map<Class<?>, Transformer<?, ?>> getRegistry() {
-        return Collections.unmodifiableMap(values);
+        return Collections.unmodifiableMap(VALUES);
     }
 }
