@@ -301,10 +301,11 @@ public class StudyOverallStatusBeanLocal extends
     /**
      *
      * @param newStatusDto dto
+     * @param studyProtocolIi study protocol ii
      * @return s
      * @throws PAException e
      */
-    private boolean isTrialStatusOrDateChanged(StudyOverallStatusDTO newStatusDto,
+    public boolean isTrialStatusOrDateChanged(StudyOverallStatusDTO newStatusDto,
             Ii studyProtocolIi) throws PAException {
         DocumentWorkflowStatusDTO dwsDTO = dwsService.getCurrentByStudyProtocol(studyProtocolIi);
         StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);

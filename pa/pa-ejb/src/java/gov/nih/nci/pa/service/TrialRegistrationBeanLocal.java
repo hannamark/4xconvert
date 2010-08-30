@@ -85,7 +85,6 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -144,6 +143,7 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.TrialRegistrationHelper;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -208,7 +208,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
 
     private static final String CREATE = "Create";
     private static final String AMENDMENT = "Amendment";
-    private static final String UPDAT = "Update";
+    private static final String UPDATE = "Update";
     private static final String REJECTION = "Reject";
     private static PAServiceUtils paServiceUtils = new PAServiceUtils();
     private static final String PROTOCOL_ID_NULL = "Study Protocol Identifer is null";
@@ -218,6 +218,8 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     private static final String SQL_APPEND = " AND FUNCTIONAL_CODE IN ";
     private SessionContext ejbContext;
     private static final String VALIDATION_EXCEPTION = "Validation Exception ";
+
+    private TrialRegistrationHelper trialRegistrationHelper = null;
 
     /**
      * @return the studyProtocolService
@@ -656,55 +658,19 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         }
     }
 
-    private void createInboxProcessingComments(List<DocumentDTO> documentDTOs, StudyProtocolDTO studyProtocolDTO)
+    private void createInboxProcessingComments(StudyProtocolDTO studyProtocolDTO)
             throws PAException {
-        StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
-        studyInboxDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
-        studyInboxDTO.setInboxDateRange(IvlConverter.convertTs()
-                .convertToIvl(new Timestamp(new Date().getTime()), null));
-        boolean docUpdated = false;
-        boolean docParticipatingUpdated = false;
-        boolean trialUpdateForReview = false;
-        StringBuffer stringBuffer = new StringBuffer();
-        DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(studyProtocolDTO
-                .getIdentifier());
-        if (documentDTOs != null && !documentDTOs.isEmpty()) {
-            for (DocumentDTO doc : documentDTOs) {
-                if (DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode().equals(
-                        CdConverter.convertCdToString(doc.getTypeCode()))) {
-                    docUpdated = true;
-                }
-                if (DocumentTypeCode.PARTICIPATING_SITES.getCode().equals(
-                        CdConverter.convertCdToString(doc.getTypeCode()))) {
-                    docParticipatingUpdated = true;
-                }
-            }
+        String inboxProcessingComments = null;
+        if (trialRegistrationHelper != null) {
+            inboxProcessingComments = trialRegistrationHelper.getInboxProcessingComments();
         }
-        if (docUpdated) {
-            stringBuffer.append("IRB Document was updated<br>");
-            studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
-            trialUpdateForReview = true;
-        }
-        if (docParticipatingUpdated) {
-            stringBuffer.append("Participating Document was updated<br>");
-            studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
-            trialUpdateForReview = true;
-        }
-        if (PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode())) {
-            List<AbstractionCompletionDTO> errorList = abstractionCompletionService
-                    .validateAbstractionCompletion(studyProtocolDTO.getIdentifier());
-            if (!errorList.isEmpty()) {
-                stringBuffer.append("<b>Type :</b>  <b>Description :</b> <b>Comments :</b><br>");
-                for (AbstractionCompletionDTO abDTO : errorList) {
-                    stringBuffer.append(abDTO.getErrorType()).append(':').append(abDTO.getErrorDescription()).append(
-                            ':').append(abDTO.getComment()).append("<br>");
-                }
-                studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
-                trialUpdateForReview = true;
-            }
-        }
-        if (trialUpdateForReview) {
-            // create
+        if (StringUtils.isNotEmpty(inboxProcessingComments)) {
+            StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
+            studyInboxDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+            studyInboxDTO.setInboxDateRange(IvlConverter.convertTs()
+                    .convertToIvl(new Timestamp(new Date().getTime()), null));
+            studyInboxDTO.setComments(StConverter.convertToSt(inboxProcessingComments));
+            // create the inbox processing comments.
             studyInboxServiceLocal.create(studyInboxDTO);
         }
     }
@@ -1300,7 +1266,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             sb.append(PAUtil.isTsNull(overallStatusDTO.getStatusDate()) ? "Current Trial Status Date cannot be null , "
                     : "");
         }
-        if (UPDAT.equalsIgnoreCase(operation) && collaborators != null && !collaborators.isEmpty()) {
+        if (UPDATE.equalsIgnoreCase(operation) && collaborators != null && !collaborators.isEmpty()) {
             for (StudySiteDTO collaborator : collaborators) {
                 if (PAUtil.isIiNotNull(collaborator.getIdentifier())
                         && !paServiceUtils.isIiExistInPA(IiConverter.convertToStudySiteIi(Long.valueOf(collaborator
@@ -1316,7 +1282,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         paServiceUtils.enforceNoDuplicateIndIde(studyIndldeDTOs, studyProtocolDTO);
         paServiceUtils.enforceNoDuplicateGrants(studyResourcingDTOs);
         paServiceUtils.enforceRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, regulatoryInfoBean);
-        if (UPDAT.equalsIgnoreCase(operation)) {
+        if (UPDATE.equalsIgnoreCase(operation)) {
             enforceRecruitmentStatus(studyProtocolDTO, participatingSites);
         }
     }
@@ -1546,7 +1512,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         if (PAUtil.isBlNull(isBatchMode) || !BlConverter.convertToBool(isBatchMode)) {
             if (AMENDMENT.equalsIgnoreCase(operation)) {
                 mailManagerSerivceLocal.sendAmendNotificationMail(studyProtocolIi);
-            } else if (UPDAT.equalsIgnoreCase(operation)) {
+            } else if (UPDATE.equalsIgnoreCase(operation)) {
                 mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi);
             } else if (CREATE.equalsIgnoreCase(operation)) {
                 mailManagerSerivceLocal.sendNotificationMail(studyProtocolIi);
@@ -1592,7 +1558,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         // CHECKSTYLE:ON
 
         try {
-            validateStudyExist(studyProtocolDTO, UPDAT);
+            validateStudyExist(studyProtocolDTO, UPDATE);
             // get
             CorrelationUtils cUtils = new CorrelationUtils();
             OrganizationDTO leadOrgDTO = new OrganizationDTO();
@@ -1644,7 +1610,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                     studyResourcingDTOs, documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO,
                     studyContactDTO, studyParticipationContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
                     responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs, studySiteAccrualStatusDTOs,
-                    studySiteDTOs, UPDAT, isBatchMode);
+                    studySiteDTOs, UPDATE, isBatchMode);
 
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
@@ -1664,6 +1630,39 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         String sqlUpd = targetSpIi.getExtension() + " WHERE STUDY_PROTOCOL_IDENTIFIER = " + sourceSpIi.getExtension();
         String sql = "UPDATE STUDY_SITE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + SQL_APPEND + "('SPONSOR')";
         paServiceUtils.executeSql(sql);
+    }
+
+    private Ii updateStudyProtocol(StudyProtocolDTO studyProtocolDTO, Ii toStudyProtocolIi, String operation)
+        throws PAException {
+        if (AMENDMENT.equalsIgnoreCase(operation)) {
+            ByteArrayOutputStream pdfStream = tsrReportService.generateTsrReport(studyProtocolDTO.getIdentifier());
+            DocumentDTO docDto = new DocumentDTO();
+            docDto.setStudyProtocolIdentifier(toStudyProtocolIi);
+            docDto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.TSR));
+            docDto.setText(EdConverter.convertToEd(pdfStream.toByteArray()));
+            docDto.setFileName(StConverter.convertToSt("TSR.pdf"));
+
+            documentService.create(docDto);
+            // reset milestones
+            String sql = null;
+            Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
+            sql = "Delete from STUDY_MILESTONE WHERE STUDY_PROTOCOL_IDENTIFIER  = " + studyProtocolIi.getExtension();
+            paServiceUtils.executeSql(sql);
+            sql = "Delete from DOCUMENT_WORKFLOW_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = "
+                    + studyProtocolIi.getExtension();
+            paServiceUtils.executeSql(sql);
+            sql = "Delete from STUDY_ONHOLD WHERE STUDY_PROTOCOL_IDENTIFIER  = " + studyProtocolIi.getExtension();
+            paServiceUtils.executeSql(sql);
+            studyProtocolDTO.setAmendmentReasonCode(null);
+            studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(paServiceUtils
+                    .generateSubmissionNumber(PAUtil.getAssignedIdentifierExtension(studyProtocolDTO))));
+            studyProtocolDTO.setStatusDate(TsConverter.convertToTs(null));
+        }
+        if (UPDATE.equalsIgnoreCase(operation)) {
+            studyProtocolDTO.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
+        }
+        studyProtocolService.updateStudyProtocol(studyProtocolDTO);
+        return studyProtocolDTO.getIdentifier();
     }
 
     // CHECKSTYLE:OFF More than 7 Parameters
@@ -1688,37 +1687,18 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         enforceBusinessRulesForUpdate(studyProtocolDTO, overallStatusDTO, studyContactDTO, studySiteContactDTO,
                 studyIndldeDTOs, studyResourcingDTOs, studyRegAuthDTO, participatingSites, operation, collaborators);
 
-        // update studyProtocol
-        if (AMENDMENT.equalsIgnoreCase(operation)) {
+        if (UPDATE.equalsIgnoreCase(operation)) {
+            trialRegistrationHelper = new TrialRegistrationHelper(docWrkFlowStatusService, abstractionCompletionService,
+                    studyProtocolService, studyOverallStatusService, studySiteAccrualStatusService, studyIndldeService,
+                    studyResourcingService);
+            trialRegistrationHelper.checkForInboxProcessingComments(studyProtocolDTO, documentDTOs, overallStatusDTO,
+                    participatingSites, studyIndldeDTOs, studyResourcingDTOs);
+        } else if (AMENDMENT.equalsIgnoreCase(operation)) {
             toStudyProtocolIi = paServiceUtils.copy(studyProtocolDTO.getIdentifier());
-            ByteArrayOutputStream pdfStream = tsrReportService.generateTsrReport(studyProtocolDTO.getIdentifier());
-            DocumentDTO docDto = new DocumentDTO();
-            docDto.setStudyProtocolIdentifier(toStudyProtocolIi);
-            docDto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.TSR));
-            docDto.setText(EdConverter.convertToEd(pdfStream.toByteArray()));
-            docDto.setFileName(StConverter.convertToSt("TSR.pdf"));
-
-            documentService.create(docDto);
-            // reset milestones
-            String sql = null;
-            sql = "Delete from STUDY_MILESTONE WHERE STUDY_PROTOCOL_IDENTIFIER  = " + studyProtocolIi.getExtension();
-            paServiceUtils.executeSql(sql);
-            sql = "Delete from DOCUMENT_WORKFLOW_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = "
-                    + studyProtocolIi.getExtension();
-            paServiceUtils.executeSql(sql);
-            sql = "Delete from STUDY_ONHOLD WHERE STUDY_PROTOCOL_IDENTIFIER  = " + studyProtocolIi.getExtension();
-            paServiceUtils.executeSql(sql);
-            studyProtocolDTO.setAmendmentReasonCode(null);
-            studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(paServiceUtils
-                    .generateSubmissionNumber(PAUtil.getAssignedIdentifierExtension(studyProtocolDTO))));
-            studyProtocolDTO.setStatusDate(TsConverter.convertToTs(null));
-
         }
-        if (UPDAT.equalsIgnoreCase(operation)) {
-            studyProtocolDTO.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
-        }
-        studyProtocolService.updateStudyProtocol(studyProtocolDTO);
-        studyProtocolIi = studyProtocolDTO.getIdentifier();
+
+        // update studyProtocol
+        studyProtocolIi = updateStudyProtocol(studyProtocolDTO, toStudyProtocolIi, operation);
 
         // list of study identifiers like NCT,DCP, CTEP
         for (StudySiteDTO studyIdentifierDTO : studyIdentifierDTOs) {
@@ -1734,7 +1714,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         paServiceUtils.createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null),
                 studyProtocolIi);
 
-        if (UPDAT.equalsIgnoreCase(operation)) {
+        if (UPDATE.equalsIgnoreCase(operation)) {
             List<StudySiteDTO> collaboratorDTOs = new ArrayList<StudySiteDTO>();
             if (CollectionUtils.isNotEmpty(collaborators)) {
                 for (StudySiteDTO collaborator : collaborators) {
@@ -1799,8 +1779,8 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         studyOverallStatusService.create(overallStatusDTO);
         paServiceUtils.createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null), studyProtocolDTO
                 .getIdentifier());
-        if (UPDAT.equalsIgnoreCase(operation)) {
-            createInboxProcessingComments(documentDTOs, studyProtocolDTO);
+        if (UPDATE.equalsIgnoreCase(operation)) {
+            createInboxProcessingComments(studyProtocolDTO);
         }
         // do not send the mail when its batch mode
         sendMail(operation, isBatchMode, studyProtocolIi);
@@ -1861,7 +1841,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                 }
             }
         }
-        if (AMENDMENT.equalsIgnoreCase(operation) || UPDAT.equalsIgnoreCase(operation)) {
+        if (AMENDMENT.equalsIgnoreCase(operation) || UPDATE.equalsIgnoreCase(operation)) {
             DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService
                     .getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
             String dwfs = isoDocWrkStatus.getStatusCode().getCode();
@@ -1878,7 +1858,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                 errorMsg.append("Trial with processing status Abstraction Verified Response or "
                         + " Abstraction Verified No Response can be Amended.\n");
             }
-            if ((UPDAT.equalsIgnoreCase(operation))
+            if ((UPDATE.equalsIgnoreCase(operation))
                     && (dwfs.equals(DocumentWorkflowStatusCode.SUBMITTED.getCode()) || dwfs
                             .equals(DocumentWorkflowStatusCode.REJECTED.getCode()))) {
                 errorMsg.append("Only Trials with processing status Accepted or Abstracted or  "
@@ -1909,7 +1889,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             errorMsg.append(validatePoObjects(summary4organizationDTO, "Summary 4 Organization "));
             errorMsg.append(validatePoObjects(piPersonDTO, "Prinicipal Investigator "));
         }
-        if (UPDAT.equalsIgnoreCase(operation) && documentDTOs != null && !documentDTOs.isEmpty()) {
+        if (UPDATE.equalsIgnoreCase(operation) && documentDTOs != null && !documentDTOs.isEmpty()) {
             for (DocumentDTO docDto : documentDTOs) {
                 if (PAUtil.isIiNotNull(docDto.getIdentifier())
                         && !paServiceUtils.isIiExistInPA(IiConverter.convertToDocumentIi(Long.valueOf(docDto
@@ -1963,7 +1943,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     }
 
     private void validateStudyExist(StudyProtocolDTO studyProtocolDTO, String operation) throws PAException {
-        if (AMENDMENT.equalsIgnoreCase(operation) || UPDAT.equalsIgnoreCase(operation)) {
+        if (AMENDMENT.equalsIgnoreCase(operation) || UPDATE.equalsIgnoreCase(operation)) {
             // make sure Trial Exist
             InterventionalStudyProtocolDTO dto = studyProtocolService.getInterventionalStudyProtocol(studyProtocolDTO
                     .getIdentifier());

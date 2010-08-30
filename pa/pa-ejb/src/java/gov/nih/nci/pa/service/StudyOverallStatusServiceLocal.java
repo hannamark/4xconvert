@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
@@ -99,4 +100,13 @@ public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<St
      * @throws PAException e
      */
     void validate(StudyOverallStatusDTO statusDto, StudyProtocolDTO studyProtocolDTO) throws PAException;
+
+    /**
+     *
+     * @param newStatusDto dto
+     * @param studyProtocolIi ii
+     * @return trial status or date changed.
+     * @throws PAException the exception.
+     */
+    boolean isTrialStatusOrDateChanged(StudyOverallStatusDTO newStatusDto, Ii studyProtocolIi) throws PAException;
 }
