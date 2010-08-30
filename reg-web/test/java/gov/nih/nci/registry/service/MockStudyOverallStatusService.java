@@ -90,4 +90,13 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
         // TODO Auto-generated method stub
     }
 
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudyOverallStatusServiceLocal#isTrialStatusOrDateChanged(gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO, gov.nih.nci.iso21090.Ii)
+     */
+    public boolean isTrialStatusOrDateChanged(StudyOverallStatusDTO newStatusDto, Ii studyProtocolIi)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
