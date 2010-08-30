@@ -121,27 +121,29 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     public String getAmend() {
         Long studyProtocolId = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyProtocolId();
         String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
-        boolean isProprietaryTrial =
-                  ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial();
+        boolean isProprietaryTrial = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial();
 
-        DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO)
-                this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
-        StudyStatusCode statusCode = ((StudyProtocolQueryDTO)
-                this.getCurrentRowObject()).getStudyStatusCode();
+        DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) this.getCurrentRowObject())
+            .getDocumentWorkflowStatusCode();
+        StudyStatusCode statusCode = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyStatusCode();
 
-        if (isProprietaryTrial || dwfs == null || statusCode == null) {
-            return "";
-        }
-        if ((dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
-                || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE))
-                && isOwner(studyProtocolId, loginUser)
-                && (!(statusCode.equals(StudyStatusCode.DISAPPROVED)
-                        || statusCode.equals(StudyStatusCode.WITHDRAWN)
-                        || statusCode.equals(StudyStatusCode.COMPLETE)
-                        || statusCode.equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE)))) {
+        if (!isProprietaryTrial && isAmendDWFS(dwfs) && isOwner(studyProtocolId, loginUser)
+                && isAmendStatus(statusCode)) {
             return "Amend";
         }
         return "";
+    }
+
+    private boolean isAmendStatus(StudyStatusCode statusCode) {
+        return !(StudyStatusCode.DISAPPROVED.equals(statusCode)
+                || StudyStatusCode.WITHDRAWN.equals(statusCode)
+                || StudyStatusCode.COMPLETE.equals(statusCode)
+                || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(statusCode));
+    }
+
+    private boolean isAmendDWFS(DocumentWorkflowStatusCode dwfs) {
+        return DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.equals(dwfs)
+                || DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.equals(dwfs);
     }
 
     /**
@@ -210,16 +212,30 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         String instProgramCode = null;
         Cd holderTypeCode = ((StudyIndldeDTO) this.getCurrentRowObject()).getHolderTypeCode();
 
-        if (holderTypeCode != null && holderTypeCode.getCode().equals("NIH")) {
-            Cd nihInstCode = ((StudyIndldeDTO) this.getCurrentRowObject()).getNihInstHolderCode();
-            if (nihInstCode != null) {
-                instProgramCode = nihInstCode.getCode();
+        if (holderTypeCode != null) {
+            if (holderTypeCode.getCode().equals("NIH")) {
+                instProgramCode = getNIHProgramCode();
+            } else if (holderTypeCode.getCode().equals("NCI")) {
+                instProgramCode = getNCIProgramCode();
             }
-        } else if (holderTypeCode != null && holderTypeCode.getCode().equals("NCI")) {
-            Cd nciPrgCode = ((StudyIndldeDTO) this.getCurrentRowObject()).getNciDivProgHolderCode();
-            if (nciPrgCode != null) {
-                instProgramCode = nciPrgCode.getCode();
-            }
+        }
+        return instProgramCode;
+    }
+
+    private String getNCIProgramCode() {
+        String instProgramCode = null;
+        Cd nciPrgCode = ((StudyIndldeDTO) this.getCurrentRowObject()).getNciDivProgHolderCode();
+        if (nciPrgCode != null) {
+            instProgramCode = nciPrgCode.getCode();
+        }
+        return instProgramCode;
+    }
+
+    private String getNIHProgramCode() {
+        String instProgramCode = null;
+        Cd nihInstCode = ((StudyIndldeDTO) this.getCurrentRowObject()).getNihInstHolderCode();
+        if (nihInstCode != null) {
+            instProgramCode = nihInstCode.getCode();
         }
         return instProgramCode;
     }

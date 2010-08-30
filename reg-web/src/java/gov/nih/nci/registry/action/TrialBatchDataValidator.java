@@ -156,6 +156,7 @@ public class TrialBatchDataValidator {
                 "Lead Organization's "));
         return fieldErr;
     }
+
     private StringBuffer validateUpdate(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         if (StringUtils.isNotEmpty(batchDto.getSubmissionType())
@@ -164,15 +165,16 @@ public class TrialBatchDataValidator {
                 fieldErr.append("NCI Trial Identifier is required. \n");
             }
             if (batchDto.isCtGovXmlIndicator()) {
-               fieldErr.append(validateSponsorContactInfo(batchDto));
+                fieldErr.append(validateSponsorContactInfo(batchDto));
             }
-            if (null == TrialStatusCode.getByCode(batchDto.getCurrentTrialStatus())
+            if (TrialStatusCode.getByCode(batchDto.getCurrentTrialStatus()) == null
                     && !StudyStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(batchDto.getCurrentTrialStatus())) {
                 fieldErr.append("Please enter valid value for Current Trial Status");
             }
         }
         return fieldErr;
     }
+
     private StringBuffer validateOversightInfo(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         if (StringUtils.isEmpty(batchDto.getOversightOrgName())) {

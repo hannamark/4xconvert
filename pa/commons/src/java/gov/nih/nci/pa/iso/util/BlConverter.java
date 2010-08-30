@@ -82,6 +82,8 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.util.CommonsConstant;
 
+import org.apache.commons.lang.BooleanUtils;
+
 
 /**
  * utility method for converting for Bl.
@@ -133,13 +135,8 @@ public class BlConverter {
      * @return Boolean Boolean
      */
     public static boolean convertToBool(Bl bl) {
-        if (bl == null) {
-            return false;
-        }
-        if (bl.getValue() == null) {
-            return false;
-        }
-        if (bl.getNullFlavor() != null && bl.getNullFlavor().equals(NullFlavor.NI)) {
+        if (bl == null || bl.getValue() == null
+                || (bl.getNullFlavor() != null && bl.getNullFlavor().equals(NullFlavor.NI))) {
             return false;
         }
         return bl.getValue().booleanValue();
@@ -171,11 +168,9 @@ public class BlConverter {
         if (bl == null) {
             return null;
         }
-        Boolean b = bl.getValue();
-        if (b != null && b.booleanValue()) {
+        if (BooleanUtils.isTrue(bl.getValue())) {
             return CommonsConstant.YES;
-        } else {
-            return CommonsConstant.NO;
         }
+        return CommonsConstant.NO;
     }
 }

@@ -20,7 +20,7 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
 
 public abstract class AbstractViewerActionTest {
 
-    protected static final String user = "joe@barngrill.com";
+    protected static final String USER = "joe@barngrill.com";
 
     /**
      * Initialize the mock request.
@@ -40,7 +40,7 @@ public abstract class AbstractViewerActionTest {
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
-        request.setRemoteUser(user);
+        request.setRemoteUser(USER);
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
 

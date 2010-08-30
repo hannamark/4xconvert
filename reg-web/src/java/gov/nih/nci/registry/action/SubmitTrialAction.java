@@ -353,9 +353,9 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             validateForm();
             List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
             if (hasFieldErrors()) {
-                ServletActionContext.getRequest().setAttribute(
-                        "failureMessage" , "The form has errors and could not be submitted, "
-                        + "please check the fields highlighted below");
+                ServletActionContext.getRequest().setAttribute("failureMessage",
+                                                               "The form has errors and could not be submitted, "
+                                                                       + "please check the fields highlighted below");
                 TrialValidator.addSessionAttributes(trialDTO);
                 trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
@@ -365,43 +365,37 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
 
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
             trialDTO.setDocDtos(docDTOList);
-           //add the IndIde,FundingList
-           List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
-           .getSession().getAttribute(Constants.INDIDE_LIST);
-           if (indList != null) {
-               trialDTO.setIndIdeDtos(indList);
-           }
+            // add the IndIde,FundingList
+            List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.INDIDE_LIST);
+            if (indList != null) {
+                trialDTO.setIndIdeDtos(indList);
+            }
 
-           List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
-           .getSession().getAttribute(Constants.GRANT_LIST);
-           if (grantList != null) {
-               trialDTO.setFundingDtos(grantList);
-           }
+            List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
+                .getSession().getAttribute(Constants.GRANT_LIST);
+            if (grantList != null) {
+                trialDTO.setFundingDtos(grantList);
+            }
 
-           List<Ii> otherIdsList =
-            (List<Ii>) ServletActionContext.getRequest()
-              .getSession().getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
-           if (otherIdsList != null) {
-               trialDTO.setSecondaryIdentifierList(otherIdsList);
-           }
+            List<Ii> otherIdsList = (List<Ii>) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
+            if (otherIdsList != null) {
+                trialDTO.setSecondaryIdentifierList(otherIdsList);
+            }
 
-           trialUtil.setOversgtInfo(trialDTO);
+            trialUtil.setOversgtInfo(trialDTO);
 
         } catch (IOException e) {
-            LOG.error(e.getMessage());
-            return ERROR;
-        } catch (NumberFormatException e) {
-            LOG.error(e.getMessage());
-            addActionError(e.getMessage());
+            LOG.error(e);
             return ERROR;
         } catch (PAException e) {
-            LOG.error(e.getMessage());
+            LOG.error(e);
             addActionError(e.getMessage());
             return ERROR;
         }
         TrialValidator.removeSessionAttributes();
         ServletActionContext.getRequest().getSession().setAttribute("trialDTO", trialDTO);
-        LOG.info("Calling the review page...");
         return "review";
     }
 

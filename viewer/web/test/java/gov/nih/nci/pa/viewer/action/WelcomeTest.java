@@ -87,8 +87,8 @@ import com.mockrunner.mock.web.MockHttpServletRequest;
 
 public class WelcomeTest extends AbstractViewerActionTest {
 
-    private static String AR_CTRO = "ctroWelcome";
-    private static String AR_SUBMITTING_SITES = "publicWelcome";
+    private static final String AR_CTRO = "ctroWelcome";
+    private static final String AR_SUBMITTING_SITES = "publicWelcome";
 
     WelcomeAction action;
 

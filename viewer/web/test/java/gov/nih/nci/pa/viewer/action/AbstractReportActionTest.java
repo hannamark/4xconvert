@@ -87,8 +87,8 @@ import org.junit.Test;
 @SuppressWarnings("unchecked")
 public class AbstractReportActionTest<ACTION extends AbstractReportAction> extends AbstractViewerActionTest {
 
-    protected static final String date1 = "1/13/2009";
-    protected static final String date2 = "3/31/2009";
+    protected static final String DATE_1 = "1/13/2009";
+    protected static final String DATE_2 = "3/31/2009";
 
     ACTION action = null;
 

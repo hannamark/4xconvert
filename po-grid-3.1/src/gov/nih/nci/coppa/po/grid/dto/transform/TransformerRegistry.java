@@ -36,7 +36,7 @@ import java.util.Map;
  */
 public final class TransformerRegistry {
 
-    private static Map<Class<?>, Transformer<?, ?>> values = new HashMap<Class<?>, Transformer<?, ?>>();
+    private static final Map<Class<?>, Transformer<?, ?>> values = new HashMap<Class<?>, Transformer<?, ?>>();
 
     static {
         values.put(ClinicalResearchStaffDTO.class, ClinicalResearchStaffTransformer.INSTANCE);

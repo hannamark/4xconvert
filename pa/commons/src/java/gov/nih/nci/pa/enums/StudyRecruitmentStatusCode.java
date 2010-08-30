@@ -82,6 +82,9 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Enumeration  for Study Recruitment Status codes.
  *
@@ -109,14 +112,36 @@ public enum StudyRecruitmentStatusCode implements CodedEnum<String> {
     TERMINATED("Terminated");
 
     private String code;
+
+    private static final Map<StudyStatusCode, StudyRecruitmentStatusCode> STATUS_TO_RECRUITMENT_STATUS =
+        new HashMap<StudyStatusCode, StudyRecruitmentStatusCode>();
+    static {
+        STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.IN_REVIEW, StudyRecruitmentStatusCode.NOT_YET_RECRUITING);
+        STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.DISAPPROVED, StudyRecruitmentStatusCode.NOT_YET_RECRUITING);
+        STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.APPROVED, StudyRecruitmentStatusCode.NOT_YET_RECRUITING);
+        STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.ACTIVE, StudyRecruitmentStatusCode.RECRUITING_ACTIVE);
+        STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.CLOSED_TO_ACCRUAL, StudyRecruitmentStatusCode.NOT_RECRUITING);
+        STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                                         StudyRecruitmentStatusCode.NOT_RECRUITING);
+        STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL,
+                                         StudyRecruitmentStatusCode.SUSPENDED);
+        STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                                         StudyRecruitmentStatusCode.SUSPENDED);
+        STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.WITHDRAWN, StudyRecruitmentStatusCode.WITHDRAWN);
+        STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.COMPLETE, StudyRecruitmentStatusCode.COMPLETED);
+        STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.ADMINISTRATIVELY_COMPLETE,
+                                         StudyRecruitmentStatusCode.TERMINATED);
+    }
+
+
     /**
-     *
      * @param code
      */
     private StudyRecruitmentStatusCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
@@ -138,7 +163,6 @@ public enum StudyRecruitmentStatusCode implements CodedEnum<String> {
     }
 
     /**
-     *
      * @param code code
      * @return StudyRecruitmentStatusCode
      */
@@ -147,47 +171,11 @@ public enum StudyRecruitmentStatusCode implements CodedEnum<String> {
     }
 
    /**
-    *
     * @param code code
     * @return StudyRecruitmentStatusCode
     */
    public static StudyRecruitmentStatusCode getByStudyStatusCode(StudyStatusCode code) {
-       if (code != null) {
-           if (code.equals(StudyStatusCode.IN_REVIEW)) {
-               return StudyRecruitmentStatusCode.NOT_YET_RECRUITING;
-           }
-           if (code.equals(StudyStatusCode.DISAPPROVED)) {
-               return StudyRecruitmentStatusCode.NOT_YET_RECRUITING;
-           }
-           if (code.equals(StudyStatusCode.APPROVED)) {
-               return StudyRecruitmentStatusCode.NOT_YET_RECRUITING;
-           }
-           if (code.equals(StudyStatusCode.ACTIVE)) {
-               return StudyRecruitmentStatusCode.RECRUITING_ACTIVE;
-           }
-           if (code.equals(StudyStatusCode.CLOSED_TO_ACCRUAL)) {
-               return StudyRecruitmentStatusCode.NOT_RECRUITING;
-           }
-           if (code.equals(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION)) {
-               return StudyRecruitmentStatusCode.NOT_RECRUITING;
-           }
-           if (code.equals(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL)) {
-               return StudyRecruitmentStatusCode.SUSPENDED;
-           }
-           if (code.equals(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION)) {
-               return StudyRecruitmentStatusCode.SUSPENDED;
-           }
-           if (code.equals(StudyStatusCode.WITHDRAWN)) {
-               return StudyRecruitmentStatusCode.WITHDRAWN;
-           }
-           if (code.equals(StudyStatusCode.COMPLETE)) {
-               return StudyRecruitmentStatusCode.COMPLETED;
-           }
-           if (code.equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE)) {
-               return StudyRecruitmentStatusCode.TERMINATED;
-           }
-       }
-       return null;
+       return STATUS_TO_RECRUITMENT_STATUS.get(code);
    }
 
     /**

@@ -84,11 +84,11 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.sql.Timestamp;
 
 public class MockService {
-    public static String TEST_STR = "test";
-    public static Integer TEST_INT = 23;
-    public static String TEST_MILESTONE = MilestoneCode.QC_START.getName();
-    public static String TEST_DWS = DocumentWorkflowStatusCode.ACCEPTED.getName();
-    public static Timestamp TEST_TS = PAUtil.dateStringToTimestamp("2/1/2009");
-    public static String TEST_TS_STR = "02/01/2009";
-    public static String TEST_SUBTYPE = SubmissionTypeCode.BOTH.name();
+    public static final String TEST_STR = "test";
+    public static final Integer TEST_INT = 23;
+    public static final String TEST_MILESTONE = MilestoneCode.QC_START.getName();
+    public static final String TEST_DWS = DocumentWorkflowStatusCode.ACCEPTED.getName();
+    public static final Timestamp TEST_TS = PAUtil.dateStringToTimestamp("2/1/2009");
+    public static final String TEST_TS_STR = "02/01/2009";
+    public static final String TEST_SUBTYPE = SubmissionTypeCode.BOTH.name();
 }

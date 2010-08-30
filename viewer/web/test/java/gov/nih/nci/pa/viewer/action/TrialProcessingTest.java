@@ -120,7 +120,7 @@ public class TrialProcessingTest extends AbstractReportActionTest<TrialProcessin
         assertEquals(Action.SUCCESS, action.getReport());
 
         // result header displays
-        assertEquals(user, ServletActionContext.getRequest().getRemoteUser());
+        assertEquals(USER, ServletActionContext.getRequest().getRemoteUser());
         assertNotNull(action.getHeader());
 
         // result spreadsheet displays

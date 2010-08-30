@@ -114,17 +114,17 @@ public class SubmissionByDateTest extends AbstractReportActionTest<SubmissionByD
 
         // user enters criteria
         action.getCriteria().setCtep(false);
-        action.getCriteria().setIntervalStartDate(date1);
-        action.getCriteria().setIntervalEndDate(date2);
+        action.getCriteria().setIntervalStartDate(DATE_1);
+        action.getCriteria().setIntervalEndDate(DATE_2);
         action.getCriteria().setSubmissionType(SubmissionTypeCode.BOTH.name());
 
         // user clicks "Run report"
         assertEquals(Action.SUCCESS, action.getReport());
 
         // result header displays
-        assertEquals(PAUtil.normalizeDateString(date1), action.getCriteria().getIntervalStartDate());
-        assertEquals(PAUtil.normalizeDateString(date2), action.getCriteria().getIntervalEndDate());
-        assertEquals(user, ServletActionContext.getRequest().getRemoteUser());
+        assertEquals(PAUtil.normalizeDateString(DATE_1), action.getCriteria().getIntervalStartDate());
+        assertEquals(PAUtil.normalizeDateString(DATE_2), action.getCriteria().getIntervalEndDate());
+        assertEquals(USER, ServletActionContext.getRequest().getRemoteUser());
 
         // result spreadsheet displays
         List<AverageMilestoneResultWebDto> resultList = (List<AverageMilestoneResultWebDto>)

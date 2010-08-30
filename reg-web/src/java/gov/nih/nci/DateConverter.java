@@ -30,6 +30,7 @@ import com.opensymphony.xwork2.conversion.TypeConversionException;
 /**
  * Class used to convert dates.
  */
+@SuppressWarnings("rawtypes") // raw types inherited from superclass
 public class DateConverter extends StrutsTypeConverter {
     /**
      * @param context context

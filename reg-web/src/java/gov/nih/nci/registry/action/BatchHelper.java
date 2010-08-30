@@ -170,7 +170,7 @@ public class BatchHelper implements Runnable {
             Map<String, String> map =
                     new BatchCreateProtocols().createProtocols(dtoList, unzipLoc + File.separator, userName);
 
-            // get the Failed and Sucess count and remove it from map so that reporting of each trial
+            // get the Failed and Success count and remove it from map so that reporting of each trial
             String sucessCount = map.get("Success Trial Count");
             map.remove("Success Trial Count");
             String failedCount = map.get("Failed Trial Count");

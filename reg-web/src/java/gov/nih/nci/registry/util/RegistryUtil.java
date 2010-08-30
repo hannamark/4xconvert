@@ -14,11 +14,10 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,7 +91,7 @@ public class RegistryUtil {
             return false;
         }
         //set the format to use as a constructor argument
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
         if (dateString.trim().length() != dateFormat.toPattern().length())  {
             return false;
         }
@@ -153,68 +152,75 @@ public class RegistryUtil {
     */
     public static void generateMail(String action, String userName, String successCount, String failedCount,
             String totalCount, String attachFileName, String errorMessage) {
-      final MailManager mailManager = new MailManager();
-      try {
-          StringBuffer submissionMailBody = new StringBuffer();
-          Calendar calendar = new GregorianCalendar();
-          Date date = calendar.getTime();
-          DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        final MailManager mailManager = new MailManager();
+        try {
+            StringBuffer submissionMailBody = new StringBuffer();
+            Calendar calendar = new GregorianCalendar();
+            Date date = calendar.getTime();
+            DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
 
-         //get the values of email's subject and email body from the database
-         String emailSubject = PaRegistry.getLookUpTableService().getPropertyValue("trial.batchUpload.subject");
-         LOG.debug("emailSubject is: " + emailSubject);
+            // get the values of email's subject and email body from the database
+            String emailSubject = PaRegistry.getLookUpTableService().getPropertyValue("trial.batchUpload.subject");
+            LOG.debug("emailSubject is: " + emailSubject);
 
-         //add the mail header
-         String submissionMailBodyHeader = PaRegistry.getLookUpTableService().
-                  getPropertyValue("trial.batchUpload.bodyHeader");
+            // add the mail header
+            String submissionMailBodyHeader = PaRegistry.getLookUpTableService()
+                .getPropertyValue("trial.batchUpload.bodyHeader");
 
-         RegistryUser registryUser = PaRegistry.getRegisterUserService().getUser(userName);
+            RegistryUser registryUser = PaRegistry.getRegisterUserService().getUser(userName);
 
-         submissionMailBodyHeader = submissionMailBodyHeader.replace("${SubmitterName}",
-                 registryUser.getFirstName() + " " + registryUser.getLastName());
-         submissionMailBodyHeader = submissionMailBodyHeader.replace("${CurrentDate}", format.format(date));
-         submissionMailBody.append(submissionMailBodyHeader);
-         //append the body text for processed or error
-         String submissionMailBodyText = "";
-         if (Constants.PROCESSED.equals(action)) {
-            submissionMailBodyText = PaRegistry.getLookUpTableService().getPropertyValue("trial.batchUpload.body");
-            submissionMailBodyText = submissionMailBodyText.replace("${totalCount}", totalCount);
-            submissionMailBodyText = submissionMailBodyText.replace("${successCount}", successCount);
-            submissionMailBodyText = submissionMailBodyText.replace("${failedCount}", failedCount);
+            submissionMailBodyHeader = submissionMailBodyHeader.replace("${SubmitterName}", registryUser.getFirstName()
+                    + " " + registryUser.getLastName());
+            submissionMailBodyHeader = submissionMailBodyHeader.replace("${CurrentDate}", format.format(date));
+            submissionMailBody.append(submissionMailBodyHeader);
+            // append the body text for processed or error
+            if (Constants.PROCESSED.equals(action)) {
+                prepareProcessedMessage(successCount, failedCount, totalCount, submissionMailBody);
+            } else {
+                prepareErrorMessage(errorMessage, submissionMailBody);
+            }
+            // append the footer
+            String submissionMailBodyFooter = PaRegistry.getLookUpTableService()
+                .getPropertyValue("trial.batchUpload.bodyFooter");
+            submissionMailBody.append(submissionMailBodyFooter);
 
-            submissionMailBody.append(submissionMailBodyText);
+            String emailBody = submissionMailBody.toString();
+            String emailTo = registryUser.getEmailAddress();
+            if (!StringUtils.isEmpty(attachFileName)) {
+                // Send the batch upload report to the submitter
+                mailManager.sendMailWithAattchement(emailTo, null, emailBody, emailSubject, attachFileName);
+            } else {
+                // Send the batch upload Error to the submitter
+                mailManager.sendMail(emailTo, null, emailBody, emailSubject);
+            }
 
-            String submissionMailReportBody = PaRegistry.getLookUpTableService().
-            getPropertyValue("trial.batchUpload.reportMsg");
-            submissionMailBody.append('\n').append(submissionMailReportBody);
-         } else {
-            submissionMailBody.append("Error: ").append(errorMessage).append('\n');
-            String submissionMailErrorBody = PaRegistry.getLookUpTableService().
-               getPropertyValue("trial.batchUpload.errorMsg");
-            String currentReleaseNumber = PaRegistry.getLookUpTableService().
-               getPropertyValue("current.release.no");
-            submissionMailErrorBody = submissionMailErrorBody.replace("${ReleaseNumber}", currentReleaseNumber);
-            submissionMailBody.append(submissionMailErrorBody);
-         }
-        //append the footer
-        String submissionMailBodyFooter = PaRegistry.getLookUpTableService().
-                getPropertyValue("trial.batchUpload.bodyFooter");
-        submissionMailBody.append(submissionMailBodyFooter);
-
-        String emailBody =  submissionMailBody.toString();
-        String emailTo = registryUser.getEmailAddress();
-        if (!StringUtils.isEmpty(attachFileName)) {
-          // Send the batch upload report to the submitter
-          mailManager.sendMailWithAattchement(emailTo, null, emailBody, emailSubject, attachFileName);
-        } else {
-         // Send the batch upload Error to the submitter
-         mailManager.sendMail(emailTo, null, emailBody, emailSubject);
+        } catch (PAException e) {
+            LOG.error("Error occured while generating the batch upload email", e);
         }
+    }
 
-      } catch (PAException e) {
-         LOG.error("Error occured while generating the batch upload email " + e.getMessage());
-      }
-  }
+    private static void prepareErrorMessage(String errorMessage, StringBuffer submissionMailBody) throws PAException {
+        submissionMailBody.append("Error: ").append(errorMessage).append('\n');
+        String submissionMailErrorBody = PaRegistry.getLookUpTableService()
+            .getPropertyValue("trial.batchUpload.errorMsg");
+        String currentReleaseNumber = PaRegistry.getLookUpTableService().getPropertyValue("current.release.no");
+        submissionMailErrorBody = submissionMailErrorBody.replace("${ReleaseNumber}", currentReleaseNumber);
+        submissionMailBody.append(submissionMailErrorBody);
+    }
+
+    private static void prepareProcessedMessage(String successCount, String failedCount, String totalCount,
+            StringBuffer submissionMailBody) throws PAException {
+        String submissionMailBodyText = PaRegistry.getLookUpTableService().getPropertyValue("trial.batchUpload.body");
+        submissionMailBodyText = submissionMailBodyText.replace("${totalCount}", totalCount);
+        submissionMailBodyText = submissionMailBodyText.replace("${successCount}", successCount);
+        submissionMailBodyText = submissionMailBodyText.replace("${failedCount}", failedCount);
+
+        submissionMailBody.append(submissionMailBodyText);
+
+        String submissionMailReportBody = PaRegistry.getLookUpTableService()
+            .getPropertyValue("trial.batchUpload.reportMsg");
+        submissionMailBody.append('\n').append(submissionMailReportBody);
+    }
 
   /**
    * Get Registry user web dto.
@@ -235,22 +241,6 @@ public class RegistryUtil {
           LOG.error("Error getting the csm user for login name = " + loginName);
       }
       return regUserWebDto;
-  }
-
-  /**
-   * Given a list of RegistryUser objects, return a corresponding list of RegistryUserWebDTO objects.
-   * @param registryUsers the list of registry users.
-   * @return registryUserWebDto the list of registry user web dtos.
-   */
-  public static ArrayList<RegistryUserWebDTO> getRegistryUserWebDto(List<RegistryUser> registryUsers) {
-      ArrayList<RegistryUserWebDTO> registryUserWebDtos = null;
-      if (registryUsers != null && !registryUsers.isEmpty()) {
-          registryUserWebDtos = new ArrayList<RegistryUserWebDTO>();
-          for (RegistryUser regUser : registryUsers) {
-              registryUserWebDtos.add(new RegistryUserWebDTO(regUser));
-          }
-      }
-      return registryUserWebDtos;
   }
 
   /**

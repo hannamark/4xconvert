@@ -43,6 +43,10 @@ import com.opensymphony.xwork2.ActionSupport;
  *
  */
 public class RegisterUserAction extends ActionSupport {
+    /**
+     *
+     */
+    private static final String RETYPE_PW_FIELD = "registryUserWebDTO.retypePassword";
     private static final long serialVersionUID = 1L;
     private static final Logger LOG  = Logger.getLogger(RegisterUserAction.class);
     private RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
@@ -386,11 +390,10 @@ public class RegisterUserAction extends ActionSupport {
                         getText(invalidValues[i].getMessage().trim()));
             }
             addErrors(addFieldError);
-            if (!isAccountEdit && StringUtils.isNotEmpty(registryUserWebDTO.getUsername())) {
-               if (registryUserWebDTO.getUsername().length() < MIN_UN
-                   || registryUserWebDTO.getUsername().length() > MAX_UN) {
-                   addFieldError("registryUserWebDTO.username", getText("error.register.usernameLength"));
-               }
+            final String username = registryUserWebDTO.getUsername();
+            if (!isAccountEdit && StringUtils.isNotEmpty(username)
+                    && (username.length() < MIN_UN || username.length() > MAX_UN)) {
+                addFieldError("registryUserWebDTO.username", getText("error.register.usernameLength"));
             }
             if (isAccountEdit && registryUserWebDTO.getAffiliatedOrganizationId() == null) {
                    registryUserWebDTO.setAffiliateOrg("");
@@ -402,9 +405,7 @@ public class RegisterUserAction extends ActionSupport {
             }
 
             validateNewPassword(allowPasswordEditing);
-
             validateRetypePassword(allowPasswordEditing);
-
             validatePasswordMatch(allowPasswordEditing);
 
             if (allowPasswordEditing
@@ -415,9 +416,9 @@ public class RegisterUserAction extends ActionSupport {
                 addFieldError("registryUserWebDTO.password", getText("error.register.invalidPassword"));
             }
 
-            if (StringUtils.isNotEmpty(registryUserWebDTO.getUsername()) && !isAccountEdit
+            if (StringUtils.isNotEmpty(username) && !isAccountEdit
                     && !registryUserWebDTO.isHasExistingGridAccount()
-                    && PaRegistry.getGridAccountService().doesGridAccountExist(registryUserWebDTO.getUsername())) {
+                    && PaRegistry.getGridAccountService().doesGridAccountExist(username)) {
                 addFieldError("registryUserWebDTO.username", getText("error.register.usernameTaken"));
             }
 
@@ -446,7 +447,7 @@ public class RegisterUserAction extends ActionSupport {
                 && !StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
                 && (StringUtils.isNotEmpty(registryUserWebDTO.getPassword())
                         || StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword()))) {
-            addFieldError("registryUserWebDTO.retypePassword", getText("error.register.oldPassword"));
+            addFieldError(RETYPE_PW_FIELD, getText("error.register.oldPassword"));
         }
     }
 
@@ -456,7 +457,7 @@ public class RegisterUserAction extends ActionSupport {
                 && !StringUtils.isNotEmpty(registryUserWebDTO.getPassword())
                 && (StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
                         || StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword()))) {
-            addFieldError("registryUserWebDTO.retypePassword", getText("error.register.password"));
+            addFieldError(RETYPE_PW_FIELD, getText("error.register.password"));
         }
     }
 
@@ -466,7 +467,7 @@ public class RegisterUserAction extends ActionSupport {
                 && !StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword())
                 && (StringUtils.isNotEmpty(registryUserWebDTO.getOldPassword())
                         || StringUtils.isNotEmpty(registryUserWebDTO.getPassword()))) {
-            addFieldError("registryUserWebDTO.retypePassword", getText("error.register.retypePassword"));
+            addFieldError(RETYPE_PW_FIELD, getText("error.register.retypePassword"));
         }
     }
 
@@ -477,7 +478,7 @@ public class RegisterUserAction extends ActionSupport {
                 && StringUtils.isNotEmpty(registryUserWebDTO.getPassword())
                 && StringUtils.isNotEmpty(registryUserWebDTO.getRetypePassword())
                 && !registryUserWebDTO.getPassword().equals(registryUserWebDTO.getRetypePassword())) {
-            addFieldError("registryUserWebDTO.retypePassword", getText("error.register.matchPassword"));
+            addFieldError(RETYPE_PW_FIELD, getText("error.register.matchPassword"));
         }
     }
 

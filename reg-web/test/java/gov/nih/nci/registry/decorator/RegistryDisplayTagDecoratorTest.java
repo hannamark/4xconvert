@@ -60,6 +60,7 @@ public class RegistryDisplayTagDecoratorTest {
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertNotNull(decorator.getStudyStatusDate());
     }
+
     @Test
     public void testGetAmend() {
         StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
@@ -68,7 +69,7 @@ public class RegistryDisplayTagDecoratorTest {
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("Amend",decorator.getAmend());
+        assertEquals("Amend", decorator.getAmend());
 
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
@@ -76,44 +77,44 @@ public class RegistryDisplayTagDecoratorTest {
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
         dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("",decorator.getAmend());
+        assertEquals("", decorator.getAmend());
 
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("muserLastCreated");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
         dto.setStudyStatusCode(StudyStatusCode.APPROVED);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("",decorator.getAmend());
-
+        assertEquals("", decorator.getAmend());
 
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
         dto.setStudyStatusCode(StudyStatusCode.DISAPPROVED);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("",decorator.getAmend());
+        assertEquals("", decorator.getAmend());
 
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         dto.setStudyStatusCode(StudyStatusCode.WITHDRAWN);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("",decorator.getAmend());
+        assertEquals("", decorator.getAmend());
 
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
         dto.setStudyStatusCode(StudyStatusCode.COMPLETE);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("",decorator.getAmend());
+        assertEquals("", decorator.getAmend());
 
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         dto.setStudyStatusCode(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("",decorator.getAmend());
+        assertEquals("", decorator.getAmend());
     }
+
     @Test
     public void testGetDocumentWorkflowStatusDate() {
         StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
