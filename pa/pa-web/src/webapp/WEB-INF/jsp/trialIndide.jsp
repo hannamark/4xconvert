@@ -61,6 +61,13 @@ function handleDelete(studyProtocolIi){
     	<display:column escapeXml="true" titleKey="trialIndide.nciDivProgHolderCode" property="nciDivProgHolder"   sortable="true" headerClass="sortable"/>
     	<display:column escapeXml="true" titleKey="trialIndide.expandedAccessIndicator" property="expandedAccessIndicator"   sortable="true" headerClass="sortable"/>
     	<display:column escapeXml="true" titleKey="trialIndide.expandedAccessStatusCode" property="expandedAccessStatus"   sortable="true" headerClass="sortable"/>
+    	<s:if test="%{#attr.row.exemptIndicator.booleanValue()}">
+    	   <display:column escapeXml="true" titleKey="trialIndide.exemptIndicator">Yes</display:column>
+    	</s:if>
+    	<s:else>
+    	   <display:column escapeXml="true" titleKey="trialIndide.exemptIndicator">No</display:column>
+    	</s:else>
+        
     	<c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
     						|| (sessionScope.role == 'SuAbstractor')}">
         <display:column title="Edit" class="action">

@@ -111,6 +111,7 @@ function resetValues(){
 		document.getElementById('expandedStatus').value='';
 		document.getElementById('expandedStatus').disabled=true;
 		document.getElementById('addbtn').disabled=true;
+        document.getElementById('exemptIndicator').checked = false;
 }
 function clearRadios( radioname ){
 	   for( i = 0; i < document.forms[0][radioname].length; i++ )
@@ -279,6 +280,14 @@ function tooltip() {
                          </span>
 						</td>
 					</tr>
+                    <tr>
+                         <td scope="row"  class="label"><label>
+                            <fmt:message key="trialIndide.exemptIndicator"/>:</label>
+                        </td>
+                       <td>
+                        <s:select name="studyIndldeWebDTO.exemptIndicator" id="exemptIndicator" list="#{'false':'No', 'true':'Yes'}"></s:select>
+                        </td>
+                    </tr>
     </table>
         <div class="actionsrow">
             <del class="btnwrapper">

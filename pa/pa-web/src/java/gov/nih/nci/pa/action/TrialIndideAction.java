@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -152,34 +153,12 @@ public class TrialIndideAction extends ActionSupport {
             return "add";
         }
         try {
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-            getAttribute(Constants.STUDY_PROTOCOL_II);
-            StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();
-            studyIndldeDTO.setStudyProtocolIdentifier(studyProtocolIi);
-            studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(
-                studyIndldeWebDTO.getExpandedAccessIndicator())));
-            studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(
-                studyIndldeWebDTO.getExpandedAccessStatus()));
-            studyIndldeDTO.setGrantorCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getGrantor()));
-            studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getHolderType()));
-            studyIndldeDTO.setIndldeNumber(StConverter.convertToSt(studyIndldeWebDTO.getIndldeNumber()));
-            if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())) {
-                studyIndldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(
-                    studyIndldeWebDTO.getNihInstHolder()));
-            }
-            if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())) {
-                studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(
-                    studyIndldeWebDTO.getNciDivProgHolder()));
-            }
-            studyIndldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getIndldeType()));
-            PaRegistry.getStudyIndldeService().create(studyIndldeDTO);
-            query();
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
-            return QUERY_RESULT;
+            saveOrUpdate();
         } catch (Exception e) {
           ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return "add";
         }
+        return QUERY_RESULT;
     }
     /**
      * @return result
@@ -190,42 +169,64 @@ public class TrialIndideAction extends ActionSupport {
             return EDIT_RESULT;
         }
         try {
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-            getAttribute(Constants.STUDY_PROTOCOL_II);
-            StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();
-            studyIndldeDTO = PaRegistry.getStudyIndldeService().get(IiConverter.convertToIi(cbValue));
-            studyIndldeDTO.setStudyProtocolIdentifier(studyProtocolIi);
-            if (studyIndldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase("Yes")) {
-              studyIndldeWebDTO.setExpandedAccessIndicator("true");
-            } else {
-              studyIndldeWebDTO.setExpandedAccessIndicator("false");
-              studyIndldeWebDTO.setExpandedAccessStatus(null);
-            }
-            studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(
-                studyIndldeWebDTO.getExpandedAccessIndicator())));
-            studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(
-                studyIndldeWebDTO.getExpandedAccessStatus()));
-            studyIndldeDTO.setGrantorCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getGrantor()));
-            studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getHolderType()));
-            studyIndldeDTO.setIndldeNumber(StConverter.convertToSt(studyIndldeWebDTO.getIndldeNumber()));
-            if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())) {
-                studyIndldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(
-                    studyIndldeWebDTO.getNihInstHolder()));
-             }
-            if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())) {
-                studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(
-                    studyIndldeWebDTO.getNciDivProgHolder()));
-            }
-            studyIndldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getIndldeType()));
-            PaRegistry.getStudyIndldeService().update(studyIndldeDTO);
-            query();
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-            return QUERY_RESULT;
-
+            saveOrUpdate();
         } catch (Exception e) {
           ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return EDIT_RESULT;
         }
+        return QUERY_RESULT;
+    }
+    /**
+     * @return
+     * @throws PAException
+     */
+    private void saveOrUpdate() throws PAException {
+        StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();
+        if (cbValue != null) {
+            studyIndldeDTO = PaRegistry.getStudyIndldeService().get(IiConverter.convertToIi(cbValue));
+        }
+        studyIndldeDTO = getStudyIndIdeDTO(studyIndldeDTO);
+        if (cbValue != null) {
+            PaRegistry.getStudyIndldeService().update(studyIndldeDTO);
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+        } else {
+            PaRegistry.getStudyIndldeService().create(studyIndldeDTO);
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
+        }
+        query();
+    }
+    /**
+     * @param studyIndldeDTO
+     * @return
+     */
+    private StudyIndldeDTO getStudyIndIdeDTO(StudyIndldeDTO studyIndldeDTO) {
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                Constants.STUDY_PROTOCOL_II);
+        studyIndldeDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        if (studyIndldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase("Yes")) {
+          studyIndldeWebDTO.setExpandedAccessIndicator("true");
+        } else {
+          studyIndldeWebDTO.setExpandedAccessIndicator("false");
+          studyIndldeWebDTO.setExpandedAccessStatus(null);
+        }
+        studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(
+            studyIndldeWebDTO.getExpandedAccessIndicator())));
+        studyIndldeDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(
+            studyIndldeWebDTO.getExpandedAccessStatus()));
+        studyIndldeDTO.setGrantorCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getGrantor()));
+        studyIndldeDTO.setHolderTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getHolderType()));
+        studyIndldeDTO.setIndldeNumber(StConverter.convertToSt(studyIndldeWebDTO.getIndldeNumber()));
+        if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())) {
+            studyIndldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(
+                studyIndldeWebDTO.getNihInstHolder()));
+        }
+        if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())) {
+            studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(
+                studyIndldeWebDTO.getNciDivProgHolder()));
+        }
+        studyIndldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getIndldeType()));
+        studyIndldeDTO.setExemptIndicator(BlConverter.convertToBl(studyIndldeWebDTO.getExemptIndicator()));
+        return studyIndldeDTO;
     }
 
     /**
@@ -258,47 +259,48 @@ public class TrialIndideAction extends ActionSupport {
     }
 
     private void enforceBusinessRules() {
-
-      if (StringUtils.isEmpty(studyIndldeWebDTO.getExpandedAccessIndicator())) {
-        addFieldError("studyIndldeWebDTO.expandedAccessIndicator",
-            getText("error.trialIndide.expandedAccessIndicator"));
-      }
+      clearErrorsAndMessages();
+      clearFieldErrors();
+      validateIndIdeNumber();
+      addFieldErrorIfEmpty(studyIndldeWebDTO.getIndldeNumber(), "studyIndldeWebDTO.indldeNumber",
+              getText("error.trialIndide.indldeNumber"));
+      addFieldErrorIfEmpty(studyIndldeWebDTO.getIndldeType(), "studyIndldeWebDTO.indldeType",
+            getText("error.trialIndide.indldeType"));
+      addFieldErrorIfEmpty(studyIndldeWebDTO.getExpandedAccessIndicator(), "studyIndldeWebDTO.expandedAccessIndicator",
+              getText("error.trialIndide.expandedAccessIndicator"));
+      addFieldErrorIfEmpty(studyIndldeWebDTO.getGrantor(), "studyIndldeWebDTO.grantor",
+              getText("error.trialIndide.grantor"));
+      addFieldErrorIfEmpty(studyIndldeWebDTO.getHolderType(), "studyIndldeWebDTO.holderType",
+                getText("error.trialIndide.holderType"));
       if (StringUtils.isNotEmpty(studyIndldeWebDTO.getExpandedAccessIndicator())
-          &&  studyIndldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase("true")
-          && StringUtils.isEmpty(studyIndldeWebDTO.getExpandedAccessStatus())) {
-        addFieldError("studyIndldeWebDTO.expandedAccessStatus", getText("error.trialIndide.expandedAccessStatus"));
+          &&  studyIndldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase("true")) {
+          addFieldErrorIfEmpty(studyIndldeWebDTO.getExpandedAccessStatus(), "studyIndldeWebDTO.expandedAccessStatus",
+                  getText("error.trialIndide.expandedAccessStatus"));
       }
-      if (StringUtils.isEmpty(studyIndldeWebDTO.getGrantor())) {
-        addFieldError("studyIndldeWebDTO.grantor",
-            getText("error.trialIndide.grantor"));
-      }
-      if (StringUtils.isEmpty(studyIndldeWebDTO.getHolderType())) {
-        addFieldError("studyIndldeWebDTO.holderType", getText("error.trialIndide.holderType"));
-      }
-      if (StringUtils.isNotEmpty(studyIndldeWebDTO.getHolderType())
-          && studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())
-          && StringUtils.isEmpty(studyIndldeWebDTO.getNihInstHolder())) {
-        addFieldError("studyIndldeWebDTO.nihInstHolder", getText("error.trialIndide.nihInstHolder"));
-      }
-      if (StringUtils.isNotEmpty(studyIndldeWebDTO.getHolderType())
-          && studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())
-          && StringUtils.isEmpty(studyIndldeWebDTO.getNciDivProgHolder())) {
-        addFieldError("studyIndldeWebDTO.nciDivProgHolder", getText("error.trialIndide.nciDivProgHolder"));
-      }
-      if (StringUtils.isEmpty(studyIndldeWebDTO.getIndldeNumber())) {
-        addFieldError("studyIndldeWebDTO.indldeNumber", getText("error.trialIndide.indldeNumber"));
-      }
-      if (StringUtils.isNotEmpty(studyIndldeWebDTO.getIndldeNumber())) {
-          Pattern indIdePattern = Pattern.compile("^[A-Za-z0-9,._]+$");
-          Matcher indIdematch = indIdePattern.matcher(studyIndldeWebDTO.getIndldeNumber());
-          if (!indIdematch.matches()) {
-              addFieldError("studyIndldeWebDTO.indldeNumber", getText("error.numeric"));
+      if (StringUtils.isNotEmpty(studyIndldeWebDTO.getHolderType())) {
+          if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())) {
+          addFieldErrorIfEmpty(studyIndldeWebDTO.getNihInstHolder(), "studyIndldeWebDTO.nihInstHolder",
+                  getText("error.trialIndide.nihInstHolder"));
+          }
+          if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())) {
+              addFieldErrorIfEmpty(studyIndldeWebDTO.getNciDivProgHolder(), "studyIndldeWebDTO.nciDivProgHolder",
+                      getText("error.trialIndide.nciDivProgHolder"));
           }
       }
-      if (StringUtils.isEmpty(studyIndldeWebDTO.getIndldeType())) {
-        addFieldError("studyIndldeWebDTO.indldeType",
-            getText("error.trialIndide.indldeType"));
-      }
+
+    }
+
+    /**
+     *
+     */
+    private void validateIndIdeNumber() {
+        if (StringUtils.isNotEmpty(studyIndldeWebDTO.getIndldeNumber())) {
+              Pattern indIdePattern = Pattern.compile("^[A-Za-z0-9,._]+$");
+              Matcher indIdematch = indIdePattern.matcher(studyIndldeWebDTO.getIndldeNumber());
+              if (!indIdematch.matches()) {
+                  addFieldError("studyIndldeWebDTO.indldeNumber", getText("error.numeric"));
+              }
+          }
     }
     /**
      * @return cbValue
@@ -355,4 +357,10 @@ public class TrialIndideAction extends ActionSupport {
     public void setStudyIndideList(List<StudyIndldeWebDTO> studyIndideList) {
         this.studyIndideList = studyIndideList;
     }
+    private void addFieldErrorIfEmpty(String value, String errorField, String msg) {
+        if (StringUtils.isEmpty(value)) {
+           addFieldError(errorField, msg);
+        }
+   }
+
 }
