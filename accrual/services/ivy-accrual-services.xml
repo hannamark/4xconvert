@@ -34,7 +34,7 @@
     <dependency org="gov.nih.nci.security"   name="clm"                     rev="4.0"             conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa"      name="coppa-commons"           rev="1.3.0-alpha1"    conf="compile->master"/>
     <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"        rev="2.0.0-alpha1"    conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.3-alpha9"      conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.3-alpha10"      conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa.pa"   name="pa-ejb-client"           rev="3.3-alpha6"      conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.2.0-m10"       force="true"   conf="compile->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.2"             conf="compile->master"/>
@@ -55,7 +55,7 @@
     <dependency org="jboss"                  name="cglib"                   rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="jboss"                  name="jboss-jaxrpc"            rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->master"/>
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.3-alpha9"      conf="test->test"/>
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.3-alpha10"      conf="test->test"/>
     <dependency org="antlr"                  name="antlr"                   rev="2.7.6"           conf="test->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.2"             conf="test->master"/>
 
