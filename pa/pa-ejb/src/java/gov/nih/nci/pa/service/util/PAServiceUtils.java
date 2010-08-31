@@ -167,6 +167,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -887,7 +888,8 @@ public class PAServiceUtils {
                  && PAUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator())) {
                    errMsg.append("Delayed posting Indicator is required if Section 801 is true.");
             }
-            if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
+
+            if (containsNonExemptInds(studyIndldeDTOs)) {
                      if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
                         studyProtocolDTO.getFdaRegulatedIndicator()))) {
                          errMsg.append("FDA Regulated Intervention Indicator must be Yes "
@@ -911,6 +913,23 @@ public class PAServiceUtils {
             throw new PAException(errMsg.toString());
         }
   }
+    /**
+     * @param studyIndldeDTOs ind
+     * @return true if least one non-exempt IND/IDE exists
+     */
+    public boolean containsNonExemptInds(List<StudyIndldeDTO> studyIndldeDTOs) {
+        boolean isNonExemptInds = false;
+        if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
+            for (StudyIndldeDTO dto : studyIndldeDTOs) {
+                if (BooleanUtils.isFalse(BlConverter.convertToBoolean(dto.getExemptIndicator()))) {
+                    isNonExemptInds = true;
+                    break;
+                }
+            }
+        }
+        return isNonExemptInds;
+    }
+
     /**
      *
      * @param studyProtocolIi Ii

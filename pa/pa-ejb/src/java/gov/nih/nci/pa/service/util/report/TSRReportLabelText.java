@@ -363,7 +363,10 @@ public class TSRReportLabelText {
      * Expanded Access Status.
      */
     public static final String IND_IDE_EXPANDED_ACCESS_STATUS = "Expanded Access Status";
-
+    /**
+     * Exempt Indicator.
+     */
+    public static final String IND_IDE_EXEMPT_INDICATOR = "Exempt Indicator";
     // NIH Grants.
     /**
      * Tbale NIH Grants.

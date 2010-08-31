@@ -101,6 +101,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -150,6 +151,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     @EJB
     private StudyIndldeServiceLocal studyIndldeService;
     private SessionContext ejbContext;
+    private PAServiceUtils paServiceUtils = new PAServiceUtils();
     /**
      * Set the invocation context.
      * @param ctx EJB context
@@ -472,7 +474,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         }
         if (isCorrelationRuleRequired(studyProtocolDTO)) {
             List<StudyIndldeDTO> list = getStudyIndldeService().getByStudyProtocol(studyProtocolDTO.getIdentifier());
-            if (!list.isEmpty()) {
+            if (getPaServiceUtils().containsNonExemptInds(list)) {
                 throw new PAException("Unable to set FDARegulatedIndicator to 'No', "
                         + " Please remove IND/IDEs and try again");
             }
@@ -708,5 +710,19 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
      */
     public StudyIndldeServiceLocal getStudyIndldeService() {
         return studyIndldeService;
+    }
+
+    /**
+     * @param paServiceUtils the paServiceUtils to set
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
+    }
+
+    /**
+     * @return the paServiceUtils
+     */
+    public PAServiceUtils getPaServiceUtils() {
+        return paServiceUtils;
     }
 }

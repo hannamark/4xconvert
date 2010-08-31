@@ -264,6 +264,13 @@ public class StudyProtocolServiceBeanTest {
         StudyIndldeServiceLocal sIndSvc = mock(StudyIndldeServiceLocal.class);
         when(sIndSvc.getByStudyProtocol(any(Ii.class))).thenReturn(sIndDtoList);
         bean.setStudyIndldeService(sIndSvc);
+        remoteEjb.updateInterventionalStudyProtocol(saved);
+        sIndDto = new StudyIndldeDTO();
+        sIndDto.setExemptIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        sIndDtoList.add(sIndDto);
+        sIndSvc = mock(StudyIndldeServiceLocal.class);
+        when(sIndSvc.getByStudyProtocol(any(Ii.class))).thenReturn(sIndDtoList);
+        bean.setStudyIndldeService(sIndSvc);
         try {
         remoteEjb.updateInterventionalStudyProtocol(saved);
         fail("Unable to set FDARegulatedIndicator to 'No', Please remove IND/IDEs and try again");
@@ -271,6 +278,7 @@ public class StudyProtocolServiceBeanTest {
             assertEquals("Unable to set FDARegulatedIndicator to 'No',  Please remove IND/IDEs and try again",
                     e.getMessage());
         }
+
     }
 
     @Test

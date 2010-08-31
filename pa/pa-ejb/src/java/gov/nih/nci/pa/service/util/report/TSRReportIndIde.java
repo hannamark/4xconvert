@@ -98,7 +98,7 @@ public class TSRReportIndIde {
     private String holder;
     private String expandedAccess;
     private String expandedAccessStatus;
-
+    private String exemptIndicator;
     /**
      * @return the type
      */
@@ -195,6 +195,20 @@ public class TSRReportIndIde {
      */
     public void setExpandedAccessStatus(String expandedAccessStatus) {
         this.expandedAccessStatus = expandedAccessStatus;
+    }
+
+    /**
+     * @param exemptIndicator the exemptIndicator to set
+     */
+    public void setExemptIndicator(String exemptIndicator) {
+        this.exemptIndicator = exemptIndicator;
+    }
+
+    /**
+     * @return the exemptIndicator
+     */
+    public String getExemptIndicator() {
+        return exemptIndicator;
     }
 
 }

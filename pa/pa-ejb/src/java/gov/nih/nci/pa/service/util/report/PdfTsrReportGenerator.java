@@ -445,7 +445,8 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
             PdfPTable indIdesTable = getInnerTable(new ArrayList<String>(Arrays.asList(TSRReportLabelText.TYPE,
                     TSRReportLabelText.IND_IDE_GRANTOR, TSRReportLabelText.IND_IDE_NUMBER,
                     TSRReportLabelText.IND_IDE_HOLDER_TYPE, TSRReportLabelText.IND_IDE_HOLDER,
-                    TSRReportLabelText.IND_IDE_EXPANDED_ACCESS, TSRReportLabelText.IND_IDE_EXPANDED_ACCESS_STATUS)));
+                    TSRReportLabelText.IND_IDE_EXPANDED_ACCESS, TSRReportLabelText.IND_IDE_EXPANDED_ACCESS_STATUS,
+                    TSRReportLabelText.IND_IDE_EXEMPT_INDICATOR)));
             for (TSRReportIndIde indIde : getIndIdes()) {
                 indIdesTable.addCell(getItemValueCell(indIde.getType()));
                 indIdesTable.addCell(getItemValueCell(indIde.getGrantor()));
@@ -454,6 +455,7 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
                 indIdesTable.addCell(getItemValueCell(indIde.getHolder()));
                 indIdesTable.addCell(getItemValueCell(indIde.getExpandedAccess()));
                 indIdesTable.addCell(getItemValueCell(indIde.getExpandedAccessStatus()));
+                indIdesTable.addCell(getItemValueCell(indIde.getExemptIndicator()));
             }
             table.addCell(getInnerTableCell(indIdesTable));
             pdfDoc.add(table);

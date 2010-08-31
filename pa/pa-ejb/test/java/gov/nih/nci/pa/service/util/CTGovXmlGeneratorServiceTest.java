@@ -1107,6 +1107,14 @@ public class CTGovXmlGeneratorServiceTest {
     public void testSIndExpTrue() throws PAException {
         sIndDto.setExpandedAccessIndicator(BlConverter.convertToBl(true));
         assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        PAServiceUtils paServiceUtil = mock (PAServiceUtils.class);
+        bean.setPaServiceUtil(paServiceUtil);
+        when(paServiceUtil.containsNonExemptInds(any(List.class))).thenReturn(Boolean.TRUE);
+        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        sIndDto.setExemptIndicator(BlConverter.convertToBl(false));
+        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        when(sIndSvc.getByStudyProtocol(any(Ii.class))).thenReturn(new ArrayList<StudyIndldeDTO>());
+        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test

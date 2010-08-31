@@ -202,6 +202,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -280,7 +281,7 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
     private static final String NA = "N/A";
     private static final String TAB = "     ";
     private static final String DASH = "- ";
-
+    private PAServiceUtils paServiceUtil = new PAServiceUtils();
     private static Map<String, String> nv = null;
 
     static {
@@ -699,11 +700,11 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
 
     private void createIndInfo(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
         List<StudyIndldeDTO> ideDtos = studyIndldeService.getByStudyProtocol(spDTO.getIdentifier());
-        if (CollectionUtils.isEmpty(ideDtos)) {
+        if (!getPaServiceUtil().containsNonExemptInds(ideDtos)) {
             appendElement(root, createElement("is_ind_study", NO, doc));
             return;
         }
-        StudyIndldeDTO ideDTO = ideDtos.get(0);
+        StudyIndldeDTO ideDTO = getFirstNonExemptInd(ideDtos);
         appendElement(root, createElement("is_ind_study", YES, doc));
         Element idInfo = doc.createElement("ind_info");
         appendElement(idInfo, createElement("ind_grantor", convertToCtValues(ideDTO.getGrantorCode()), doc));
@@ -715,6 +716,23 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
             appendElement(root, idInfo);
         }
 
+    }
+
+    /**
+     * @param ideDtos
+     * @return
+     */
+    private StudyIndldeDTO getFirstNonExemptInd(List<StudyIndldeDTO> studyIndldeDTOs) {
+        StudyIndldeDTO nonExemptInd =  new StudyIndldeDTO();
+        if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
+            for (StudyIndldeDTO dto : studyIndldeDTOs) {
+                if (BooleanUtils.isFalse(BlConverter.convertToBoolean(dto.getExemptIndicator()))) {
+                    nonExemptInd = dto;
+                    break;
+                }
+            }
+        }
+        return nonExemptInd;
     }
 
     private void createEligibility(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
@@ -1550,6 +1568,20 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
      */
     public void setCorrelationUtils(CorrelationUtils cUtils) {
         this.corUtils = cUtils;
+    }
+
+    /**
+     * @param paServiceUtil the paServiceUtil to set
+     */
+    public void setPaServiceUtil(PAServiceUtils paServiceUtil) {
+        this.paServiceUtil = paServiceUtil;
+    }
+
+    /**
+     * @return the paServiceUtil
+     */
+    public PAServiceUtils getPaServiceUtil() {
+        return paServiceUtil;
     }
 
 }

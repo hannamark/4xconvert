@@ -207,7 +207,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
     private static final String YES = "Yes";
     private static final String NO = "No";
-
+    private PAServiceUtils paServiceUtil = new PAServiceUtils();
     /**
      * @param studyProtocolIi studyProtocolIi
      * @return AbstractionCompletionDTO list
@@ -688,23 +688,25 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             // if IND is is there for Trial Oversight Authority Country =USA
             // then Trial Oversight Authority Organization Name shld be FDA if not throw err
             // get the country and check if its usa if so then check if Org name is FDA if not throw err
-            StudyRegulatoryAuthorityDTO sraFromDatabaseDTO =
-                    studyRegulatoryAuthorityService.getCurrentByStudyProtocol(studyProtocolDto.getIdentifier());
-            if (sraFromDatabaseDTO != null) {
-                Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityIdentifier().getExtension());
-                RegulatoryAuthority regAuth = regulatoryInfoBean.get(sraId);
-                /*
-                 * if (regAuth.getCountry().getAlpha3().equals("USA") &&
-                 * !regAuth.getAuthorityName().equalsIgnoreCase("Food and Drug Administration")) {
-                 * abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information" +
-                 * " from Administrative Data menu.", "For IND protocols, Oversight Authorities " +
-                 * " must include United States: Food and Drug Administration.")); }
-                 */
-                if (!(regAuth.getCountry().getAlpha3().equals("USA") && regAuth.getAuthorityName().equalsIgnoreCase(
-                        "Food and Drug Administration"))) {
-                    abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information"
-                            + " from Administrative Data menu.", "For IND protocols, Oversight Authorities "
-                            + " must include United States: Food and Drug Administration."));
+            if (paServiceUtil.containsNonExemptInds(siList)) {
+                StudyRegulatoryAuthorityDTO sraFromDatabaseDTO =
+                        studyRegulatoryAuthorityService.getCurrentByStudyProtocol(studyProtocolDto.getIdentifier());
+                if (sraFromDatabaseDTO != null) {
+                    Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityIdentifier().getExtension());
+                    RegulatoryAuthority regAuth = regulatoryInfoBean.get(sraId);
+                    /*
+                     * if (regAuth.getCountry().getAlpha3().equals("USA") &&
+                     * !regAuth.getAuthorityName().equalsIgnoreCase("Food and Drug Administration")) {
+                     * abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information" +
+                     * " from Administrative Data menu.", "For IND protocols, Oversight Authorities " +
+                     * " must include United States: Food and Drug Administration.")); }
+                     */
+                    if (!(regAuth.getCountry().getAlpha3().equals("USA") && regAuth.getAuthorityName().equalsIgnoreCase(
+                            "Food and Drug Administration"))) {
+                        abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information"
+                                + " from Administrative Data menu.", "For IND protocols, Oversight Authorities "
+                                + " must include United States: Food and Drug Administration."));
+                    }
                 }
             }
         } // if
@@ -1457,6 +1459,20 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                                 + "Please select another Summary 4 Funding Sponsor"));
             }
         }
+    }
+
+    /**
+     * @param paServiceUtil the paServiceUtil to set
+     */
+    public void setPaServiceUtil(PAServiceUtils paServiceUtil) {
+        this.paServiceUtil = paServiceUtil;
+    }
+
+    /**
+     * @return the paServiceUtil
+     */
+    public PAServiceUtils getPaServiceUtil() {
+        return paServiceUtil;
     }
 
 

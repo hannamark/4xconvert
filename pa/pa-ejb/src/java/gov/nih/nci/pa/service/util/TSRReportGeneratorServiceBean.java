@@ -586,7 +586,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 INFORMATION_NOT_PROVIDED));
            regInfo.setSection801(getValue(studyProtocolDto.getSection801Indicator(), INFORMATION_NOT_PROVIDED));
            List<StudyIndldeDTO> indIde = studyIndldeService.getByStudyProtocol(studyProtocolDto.getIdentifier());
-           if (indIde != null && (!indIde.isEmpty())) {
+           if (paServiceUtils.containsNonExemptInds(indIde)) {
               regInfo.setIndIdeStudy(YES);
            } else {
               regInfo.setIndIdeStudy(NO);
@@ -683,6 +683,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             }
             indIde.setExpandedAccess(getValue(indDto.getExpandedAccessIndicator()));
             indIde.setExpandedAccessStatus(getValue(indDto.getExpandedAccessStatusCode()));
+            indIde.setExemptIndicator(BlConverter.convertBLToString(indDto.getExemptIndicator()));
             indIdes.add(indIde);
         }
         tsrReportGenerator.setIndIdes(indIdes);
