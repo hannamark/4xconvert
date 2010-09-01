@@ -103,6 +103,7 @@ public class StudyIndldeTransformerTest
 
         //BL
         result.setExpandedAccessIndicator(new BLTransformerTest().makeDtoSimple());
+        result.setExemptIndicator(new BLTransformerTest().makeDtoSimple());
 
         //CD
         result.setExpandedAccessStatusCode(new CDTransformerTest().makeDtoSimple());
@@ -127,7 +128,7 @@ public class StudyIndldeTransformerTest
 
         //BL
         result.setExpandedAccessIndicator(new BLTransformerTest().makeXmlSimple());
-
+        result.setExemptIndicator(new BLTransformerTest().makeXmlSimple());
         //CD
         result.setExpandedAccessStatusCode(new CDTransformerTest().makeXmlSimple());
         result.setGrantorCode(new CDTransformerTest().makeXmlSimple());
@@ -148,6 +149,7 @@ public class StudyIndldeTransformerTest
         new IITransformerTest().verifyDtoSimple(x.getIdentifier());
         new IITransformerTest().verifyDtoSimple(x.getStudyProtocolIdentifier());
         new BLTransformerTest().verifyDtoSimple(x.getExpandedAccessIndicator());
+        new BLTransformerTest().verifyDtoSimple(x.getExemptIndicator());
         new CDTransformerTest().verifyDtoSimple(x.getExpandedAccessStatusCode());
         new CDTransformerTest().verifyDtoSimple(x.getGrantorCode());
         new CDTransformerTest().verifyDtoSimple(x.getHolderTypeCode());
@@ -162,6 +164,7 @@ public class StudyIndldeTransformerTest
         new IITransformerTest().verifyXmlSimple(x.getIdentifier());
         new IITransformerTest().verifyXmlSimple(x.getStudyProtocolIdentifier());
         new BLTransformerTest().verifyXmlSimple(x.getExpandedAccessIndicator());
+        new BLTransformerTest().verifyXmlSimple(x.getExemptIndicator());
         new CDTransformerTest().verifyXmlSimple(x.getExpandedAccessStatusCode());
         new CDTransformerTest().verifyXmlSimple(x.getGrantorCode());
         new CDTransformerTest().verifyXmlSimple(x.getHolderTypeCode());

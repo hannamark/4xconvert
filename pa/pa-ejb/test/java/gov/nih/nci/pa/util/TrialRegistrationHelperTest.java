@@ -82,6 +82,11 @@
  */
 package gov.nih.nci.pa.util;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
@@ -89,6 +94,7 @@ import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -99,6 +105,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
@@ -108,17 +115,13 @@ import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 
 /**
  * @author ludetc
@@ -213,7 +216,58 @@ public class TrialRegistrationHelperTest {
         assertTrue(comments.contains(STATUS_DATES_UPDATED));
         assertTrue(comments.contains(PRIMARY_PURPOSE_UPDATED));
         assertFalse(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
+    }
 
+    /**
+     * @throws PAException
+     */
+    @Test
+    public void testNoInboxProccessingComments() throws PAException {
+        String comments;
+        irbDocs.clear();
+        DocumentDTO otherDocDTO = new DocumentDTO();
+        otherDocDTO.setTypeCode(CdConverter.convertStringToCd(DocumentTypeCode.OTHER.getCode()));
+
+        spDto.setPrimaryPurposeCode(CdConverter.convertStringToCd(PrimaryPurposeCode.PREVENTION.getCode()));
+        when(studyOverallStatusService.isTrialStatusOrDateChanged(any(StudyOverallStatusDTO.class), any(Ii.class)))
+             .thenReturn(false);
+
+        StudySiteAccrualStatusDTO acSiteDto = new StudySiteAccrualStatusDTO();
+        acSiteDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING));
+        acSiteDto.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        when(studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(acSiteDto);
+        ssasList.clear();
+        ssasList.add(acSiteDto);
+        helper.checkForInboxProcessingComments(spDto, irbDocs, new StudyOverallStatusDTO(),
+                ssasList, null, studyResList);
+
+        comments = helper.getInboxProcessingComments();
+
+        assertFalse(comments.contains(PARTICIPATING_DOCUMENT_UPDATED));
+        assertFalse(comments.contains(IND_IDE_UPDATED));
+        assertFalse(comments.contains(IRB_DOCUMENT_UPDATED));
+        assertFalse(comments.contains(RECRUITMENT_STATUS_DATE_UPDATED));
+        assertFalse(comments.contains(STATUS_DATES_UPDATED));
+        assertFalse(comments.contains(PRIMARY_PURPOSE_UPDATED));
+        assertFalse(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
+    }
+
+    /**
+     * @throws PAException
+     */
+    @Test
+    public void testNullForInboxProcessingComments() throws PAException {
+        String comments;
+        helper.checkForInboxProcessingComments(spDto, null, new StudyOverallStatusDTO(),
+                null, null, null);
+        comments = helper.getInboxProcessingComments();
+        assertFalse(comments.contains(PARTICIPATING_DOCUMENT_UPDATED));
+        assertFalse(comments.contains(IND_IDE_UPDATED));
+        assertFalse(comments.contains(IRB_DOCUMENT_UPDATED));
+        assertFalse(comments.contains(RECRUITMENT_STATUS_DATE_UPDATED));
+        assertTrue(comments.contains(STATUS_DATES_UPDATED));
+        assertTrue(comments.contains(PRIMARY_PURPOSE_UPDATED));
+        assertFalse(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
     }
 
     @Test
@@ -226,6 +280,10 @@ public class TrialRegistrationHelperTest {
 
         assertTrue(helper.getInboxProcessingComments().contains(IND_IDE_UPDATED));
 
+        helper.checkForInboxProcessingComments(spDto, irbDocs, new StudyOverallStatusDTO(),
+                ssasList, null, studyResList);
+        assertFalse(helper.getInboxProcessingComments().contains(IND_IDE_UPDATED));
+
     }
 
     @Test
@@ -237,6 +295,10 @@ public class TrialRegistrationHelperTest {
                 ssasList, studyIndList, studyResList);
 
         assertTrue(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
+
+        helper.checkForInboxProcessingComments(spDto, irbDocs, new StudyOverallStatusDTO(),
+                ssasList, studyIndList, null);
+        assertFalse(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
 
     }
 
@@ -255,6 +317,9 @@ public class TrialRegistrationHelperTest {
 
         assertTrue(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
 
+        helper.checkForInboxProcessingComments(spDto, irbDocs, new StudyOverallStatusDTO(),
+                ssasList, studyIndList, null);
+        assertFalse(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
     }
 
     private void setupMocks() throws PAException {

@@ -232,10 +232,6 @@
                     <artifactId>msv</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.fiveamsolutions</groupId>
-                    <artifactId>nci-commons-core</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>oracle.oc4j</groupId>
                     <artifactId>oc4jclient</artifactId>
                 </exclusion>

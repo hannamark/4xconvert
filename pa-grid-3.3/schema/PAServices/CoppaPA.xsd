@@ -354,6 +354,7 @@
                         <xs:element name="nciDivProgHolderCode" type="ISO:CD" />
                         <xs:element name="indldeNumber" type="ISO:ST" />
                         <xs:element name="indldeTypeCode" type="ISO:CD" />
+                        <xs:element name="exemptIndicator" type="ISO:BL" />
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>

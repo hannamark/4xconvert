@@ -266,31 +266,44 @@ public class TrialRegistrationHelper {
     }
 
     private void checkIndIdeUpdates(List<StudyIndldeDTO> studyIndIdeDTOs) throws PAException {
-        for (StudyIndldeDTO indIdeDto : studyIndIdeDTOs) {
-            if (PAUtil.isIiNull(indIdeDto.getIdentifier())) {
-                inboxProcessingComments.add(IND_IDE_UPDATED);
-                return;
-            }
-            StudyIndldeDTO dto = studyIndldeService.get(indIdeDto.getIdentifier());
-            if (!(indIdeDto.getIndldeTypeCode().getCode().equals(dto.getIndldeTypeCode().getCode()))
-                    || !(indIdeDto.getIndldeNumber().getValue().equals(dto.getIndldeNumber().getValue()))
-                    || !(indIdeDto.getGrantorCode().getCode().equals(dto.getGrantorCode().getCode()))) {
-                inboxProcessingComments.add(IND_IDE_UPDATED);
-                return;
+        if (CollectionUtils.isNotEmpty(studyIndIdeDTOs)) {
+            for (StudyIndldeDTO indIdeDto : studyIndIdeDTOs) {
+                if (PAUtil.isIiNull(indIdeDto.getIdentifier())) {
+                    inboxProcessingComments.add(IND_IDE_UPDATED);
+                    return;
+                }
+                StudyIndldeDTO dto = studyIndldeService.get(indIdeDto.getIdentifier());
+                if (isIndUpdated(indIdeDto, dto)) {
+                    inboxProcessingComments.add(IND_IDE_UPDATED);
+                    return;
+                }
             }
         }
     }
 
+    /**
+     * @param indIdeDto
+     * @param dto
+     * @return
+     */
+    private boolean isIndUpdated(StudyIndldeDTO indIdeDto, StudyIndldeDTO dto) {
+        return !(indIdeDto.getIndldeTypeCode().getCode().equals(dto.getIndldeTypeCode().getCode()))
+                || !(indIdeDto.getIndldeNumber().getValue().equals(dto.getIndldeNumber().getValue()))
+                || !(indIdeDto.getGrantorCode().getCode().equals(dto.getGrantorCode().getCode()));
+    }
+
     private void checkGrantUpdates(List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
-        for (StudyResourcingDTO grantDto : studyResourcingDTOs) {
-            if (PAUtil.isIiNull(grantDto.getIdentifier())) {
-                inboxProcessingComments.add(GRANT_INFORMATION_UPDATED);
-                return;
-            }
-            StudyResourcingDTO dto = studyResourcingService.get(grantDto.getIdentifier());
-            if (isGrantUpdated(grantDto, dto)) {
-                inboxProcessingComments.add(GRANT_INFORMATION_UPDATED);
-                return;
+        if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
+            for (StudyResourcingDTO grantDto : studyResourcingDTOs) {
+                if (PAUtil.isIiNull(grantDto.getIdentifier())) {
+                    inboxProcessingComments.add(GRANT_INFORMATION_UPDATED);
+                    return;
+                }
+                StudyResourcingDTO dto = studyResourcingService.get(grantDto.getIdentifier());
+                if (isGrantUpdated(grantDto, dto)) {
+                    inboxProcessingComments.add(GRANT_INFORMATION_UPDATED);
+                    return;
+                }
             }
         }
     }

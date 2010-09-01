@@ -121,6 +121,7 @@ public final class StudyIndldeTransformer
 
         //BL
         result.setExpandedAccessIndicator(BLTransformer.INSTANCE.toDto(input.getExpandedAccessIndicator()));
+        result.setExemptIndicator(BLTransformer.INSTANCE.toDto(input.getExemptIndicator()));
 
         //CD
         result.setExpandedAccessStatusCode(CDTransformer.INSTANCE.toDto(input.getExpandedAccessStatusCode()));
@@ -151,6 +152,7 @@ public final class StudyIndldeTransformer
 
         //BL
         result.setExpandedAccessIndicator(BLTransformer.INSTANCE.toXml(input.getExpandedAccessIndicator()));
+        result.setExemptIndicator(BLTransformer.INSTANCE.toXml(input.getExemptIndicator()));
 
         //CD
         result.setExpandedAccessStatusCode(CDTransformer.INSTANCE.toXml(input.getExpandedAccessStatusCode()));

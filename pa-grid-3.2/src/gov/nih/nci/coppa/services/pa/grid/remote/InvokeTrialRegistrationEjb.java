@@ -100,6 +100,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.List;
 
@@ -213,6 +214,15 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             List<StudySiteDTO> studySiteDTOs, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
         try {
+            if (studyIndldeDTOs != null) {
+                for (StudyIndldeDTO indIdeDto : studyIndldeDTOs) {
+                     if (!ISOUtil.isIiNull(indIdeDto.getIdentifier())) {
+                         StudyIndldeDTO dto = GridSecurityJNDIServiceLocator.newInstance().getStudyIndldeService()
+                             .get(indIdeDto.getIdentifier());
+                         indIdeDto.setExemptIndicator(dto.getExemptIndicator());
+                     }
+                }
+            }
             GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService().update(studyProtocolDTO,
                     overallStatusDTO, studyIdentifierDTOs, studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
                     studyContactDTO, studyParticipationContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
