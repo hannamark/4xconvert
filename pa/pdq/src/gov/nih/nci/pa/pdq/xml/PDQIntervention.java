@@ -189,15 +189,13 @@ public class PDQIntervention extends AbstractPDQProcessor {
                     Node other = others.item(y);
                     if(other.getNodeName().equals(Rule.NODE_NAME_OTHER_TERM_NAME)) {
                         if (!PAUtil.isEmpty(ian.getName())) {
-                            System.out.println("Data error in XML");
-                            System.exit(1);
+                            throw new RuntimeException("Data error in XML");
                         }
                         ian.setName(other.getTextContent());
                     }
                     if(other.getNodeName().equals(Rule.NODE_NAME_OTHER_NAME_TYPE) ) {
                         if (!PAUtil.isEmpty(ian.getNameTypeCode())) {
-                            System.out.println("Data error in XML");
-                            System.exit(1);
+                            throw new RuntimeException("Data error in XML");
                         }
                         ian.setNameTypeCode(other.getTextContent());
                     }

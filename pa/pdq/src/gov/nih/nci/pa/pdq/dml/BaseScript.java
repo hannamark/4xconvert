@@ -114,8 +114,7 @@ public class BaseScript {
             result = revised;
         }
         if (result.length() > length) {
-            System.out.println("Bad length '" + original + "' should be max of " +Integer.toString(length));
-            System.exit(1);
+            throw new RuntimeException("Bad length '" + original + "' should be max of " +Integer.toString(length));
         }
         return "'" + result + "'";
     }
