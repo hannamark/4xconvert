@@ -48,7 +48,7 @@
     <display:column titleKey="search.trial.documentWorkflowStatus" property="documentWorkflowStatusCode"   sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column titleKey="search.trial.recordVerificationDate" property="recordVerificationDate"  format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
     <display:column titleKey="search.trial.update"  sortable="true" headerClass="sortable">
-        <s:if test="%{#attr.row.isProprietaryTrial == 'true'}">
+        <s:if test="%{#attr.row.isProprietaryTrial}">
             <s:url id="url" action="updateProprietaryTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
             <s:a href="%{url}"><s:property value="%{#attr.row.update}" /></s:a>
         </s:if>
