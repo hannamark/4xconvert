@@ -137,7 +137,8 @@ public abstract class AbstractStandardReportBean<CRITERIA extends AbstractStanda
         if (BlConverter.convertToBool(criteria.getCtep())) {
             return "";
         }
-        return "AND (sp.user_last_created NOT IN ('brownph2@mail.nih.gov', 'pb8593@yahoo.com') "
-                  + "OR sp.user_last_created IS NULL) ";
+        return "AND (sp.user_last_created_id NOT IN (select user_id from csm_user where login_name like '%brownph2'"
+                  + " or login_name like '%pb8593@yahoo.com') "
+                  + "OR sp.user_last_created_id IS NULL) ";
     }
 }

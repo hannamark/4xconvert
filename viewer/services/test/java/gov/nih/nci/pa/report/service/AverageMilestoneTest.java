@@ -157,6 +157,12 @@ public class AverageMilestoneTest
         criteria.setTimeInterval(IvlConverter.convertTs().convertToIvl("1/1/2000", PAUtil.today()));
         List<AverageMilestoneResultDto> resultList = bean.get(criteria);
         assertNotNull(resultList);
+        criteria = new SubmissionTypeCriteriaDto();
+        criteria.setCtep(BlConverter.convertToBl(null));
+        criteria.setSubmissionType(CdConverter.convertToCd(SubmissionTypeCode.BOTH));
+        criteria.setTimeInterval(IvlConverter.convertTs().convertToIvl("1/1/2000", PAUtil.today()));
+        resultList = bean.get(criteria);
+        assertNotNull(resultList);
     }
 
     @Test
