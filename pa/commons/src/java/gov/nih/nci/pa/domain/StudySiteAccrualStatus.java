@@ -92,6 +92,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * Maintains history of accrual status for the StudySite.
  *
@@ -147,6 +149,7 @@ public class StudySiteAccrualStatus extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "STUDY_SITE_IDENTIFIER", updatable = false)
     @NotNull
+    @Searchable(nested = true)
     public StudySite getStudySite() {
         return studySite;
     }

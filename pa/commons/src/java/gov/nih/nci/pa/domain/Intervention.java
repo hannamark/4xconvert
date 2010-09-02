@@ -97,6 +97,8 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * @author Hugh Reinhart
  * @since 10/28/2008
@@ -195,6 +197,7 @@ public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePen
      */
     @OneToMany(mappedBy = "intervention")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Searchable(nested = true)
     public List<InterventionAlternateName> getInterventionAlternateNames() {
         return interventionAlternateNames;
     }

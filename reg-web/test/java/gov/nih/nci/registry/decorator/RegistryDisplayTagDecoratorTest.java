@@ -73,7 +73,7 @@ public class RegistryDisplayTagDecoratorTest {
 
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
-        dto.setIsProprietaryTrial(true);
+        dto.setProprietaryTrial(true);
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
         dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
@@ -269,7 +269,7 @@ public class RegistryDisplayTagDecoratorTest {
     public void testGetTrialCategory() {
         StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
-        dto.setIsProprietaryTrial(true);
+        dto.setProprietaryTrial(true);
         dto.setNciIdentifier("");
         dto.setStudyProtocolId(1L);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
@@ -277,7 +277,7 @@ public class RegistryDisplayTagDecoratorTest {
 
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("muserLastCreated");
-        dto.setIsProprietaryTrial(false);
+        dto.setProprietaryTrial(false);
         dto.setNciIdentifier("");
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("Non Proprietary Trial", decorator.getTrialCategory());

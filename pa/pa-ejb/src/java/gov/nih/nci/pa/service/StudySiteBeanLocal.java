@@ -336,20 +336,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         if (studySiteList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }
-        return convertFromDomainToDTO(studySiteList);
-    }
-
-    private List<StudySiteDTO> convertFromDomainToDTO(List<StudySite> studySiteList) throws PAException {
-        List<StudySiteDTO> studySiteDTOList = null;
-        StudySiteConverter ssConverter = new StudySiteConverter();
-        if (studySiteList != null) {
-            studySiteDTOList = new ArrayList<StudySiteDTO>();
-            for (StudySite ss : studySiteList) {
-                StudySiteDTO studySiteDTO = ssConverter.convertFromDomainToDto(ss);
-                studySiteDTOList.add(studySiteDTO);
-            }
-        }
-        return studySiteDTOList;
+        return convertFromDomainToDTOs(studySiteList);
     }
 
     /**

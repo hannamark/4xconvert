@@ -222,6 +222,7 @@ public class MailManagerServiceTest {
         StudySite spc = StudySiteTest.createStudySiteObj(nonPropTrial, hcf);
         spc.setResearchOrganization(ro);
         TestSchema.addUpdObject(spc);
+        nonPropTrial.getStudySites().add(spc);
 
         StudyRecruitmentStatus studyRecStatus = StudyRecruitmentStatusTest.createStudyRecruitmentStatusobj(nonPropTrial);
         TestSchema.addUpdObject(studyRecStatus);
@@ -249,6 +250,7 @@ public class MailManagerServiceTest {
         spc = StudySiteTest.createStudySiteObj(propTrial, hcf);
         spc.setResearchOrganization(ro);
         TestSchema.addUpdObject(spc);
+        propTrial.getStudySites().add(spc);
 
         studyRecStatus = StudyRecruitmentStatusTest.createStudyRecruitmentStatusobj(propTrial);
         TestSchema.addUpdObject(studyRecStatus);

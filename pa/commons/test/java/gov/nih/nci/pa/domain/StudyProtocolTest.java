@@ -107,7 +107,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
@@ -159,8 +158,6 @@ public class StudyProtocolTest  {
      */
     @Test
     public void createStudyProtocolWithWFStatusTest() {
-        Session session  = HibernateUtil.getCurrentSession();
-
         StudyProtocol sp = createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
@@ -172,13 +169,6 @@ public class StudyProtocolTest  {
         DocumentWorkflowStatus dfs2 = DocumentWorkFlowStatusTest.createDocumentWorkflowStatus(sp);
         TestSchema.addUpdObject(dfs2);
         assertNotNull(dfs2.getId());
-
-        StudyProtocol saved = (StudyProtocol) session.load(StudyProtocol.class, sp.getId());
-        List dwfs = saved.getDocumentWorkflowStatuses();
-//        assertEquals("Document Workflow status size does not match " ,
-//                saved.getDocumentWorkflowStatuses().size() , 2);
-        //@todo: this is not working to fix it
-
     }
 
     @Test
@@ -286,6 +276,7 @@ public class StudyProtocolTest  {
         sp.setSubmissionNumber(2);
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        TestSchema.addUpdObject(sp);
         addOwners(sp);
         return sp;
     }
@@ -293,11 +284,13 @@ public class StudyProtocolTest  {
     private static void addOwners(StudyProtocol sp) {
         RegistryUser newUser = getRegistryUserObj();
         TestSchema.addUpdObject(newUser);
+        newUser.getStudyProtocols().add(sp);
         sp.getStudyOwners().add(newUser);
 
-        newUser = getRegistryUserObj();
-        TestSchema.addUpdObject(newUser);
-        sp.getStudyOwners().add(newUser);
+        RegistryUser newUser2 = getRegistryUserObj();
+        TestSchema.addUpdObject(newUser2);
+        newUser2.getStudyProtocols().add(sp);
+        sp.getStudyOwners().add(newUser2);
     }
 
     private static RegistryUser getRegistryUserObj() {

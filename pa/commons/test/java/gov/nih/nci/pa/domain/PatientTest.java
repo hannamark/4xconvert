@@ -99,7 +99,7 @@ public class PatientTest {
 
     @Before
     public void setUp() {
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
     }
 

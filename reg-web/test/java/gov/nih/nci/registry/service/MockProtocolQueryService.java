@@ -19,11 +19,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+
 /**
  * @author Vrushali
  *
  */
-public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
+public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtocol> implements ProtocolQueryServiceLocal {
     static List<StudyProtocolQueryDTO> list;
     static {
         list = new ArrayList<StudyProtocolQueryDTO>();
@@ -36,7 +38,7 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
         spQueryDTO.setLeadOrganizationId(1L);
         spQueryDTO.setPiId(2L);
-        spQueryDTO.setIsProprietaryTrial(false);
+        spQueryDTO.setProprietaryTrial(false);
         spQueryDTO.setCtgovXmlRequiredIndicator(true);
         spQueryDTO.setUserLastCreated("TestUser@test.com");
         spQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
@@ -115,7 +117,7 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
                 others.add(nciid);
                 sp.setOtherIdentifiers(others);
                 sp.setOfficialTitle(spDto.getOfficialTitle());
-                sp.setProprietaryTrialIndicator(Boolean.valueOf(spDto.getIsProprietaryTrial()));
+                sp.setProprietaryTrialIndicator(Boolean.valueOf(spDto.isProprietaryTrial()));
                 sp.setCtgovXmlRequiredIndicator(spDto.getCtgovXmlRequiredIndicator());
                 sp.setUserLastCreated(null);
                 returnList.add(sp);

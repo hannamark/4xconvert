@@ -88,6 +88,7 @@ import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.ISOUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -107,12 +108,43 @@ public abstract class AbstractConverter<DTO extends BaseDTO, BO extends Abstract
      * @throws PAException exception
      */
     public abstract BO convertFromDtoToDomain(DTO dto) throws PAException;
+
     /**
      * @param bo domain object
      * @return dto
      * @throws PAException exception
      */
     public abstract DTO convertFromDomainToDto(BO bo) throws PAException;
+
+
+    /**
+     * Converts from a list of domain objects to DTO objects.
+     * @param boList boList
+     * @return dtoList
+     * @throws PAException on error
+     */
+    public List<DTO> convertFromDomainToDtos(List<BO> boList) throws PAException {
+        List<DTO> dtoList = new ArrayList<DTO>();
+        for (BO bo : boList) {
+            dtoList.add(convertFromDomainToDto(bo));
+        }
+        return dtoList;
+    }
+
+    /**
+     * Converts from a list of domain objects to DTO objects.
+     * @param dtoList dtoList
+     * @return boList
+     * @throws PAException on error
+     */
+    public List<BO> convertFromDtoToDomains(List<DTO> dtoList) throws PAException {
+        List<BO> boList = new ArrayList<BO>();
+        for (DTO dto : dtoList) {
+            boList.add(convertFromDtoToDomain(dto));
+        }
+        return boList;
+    }
+
 
     /** this method get the equivalent pa identifier for a given po identifier.
      *

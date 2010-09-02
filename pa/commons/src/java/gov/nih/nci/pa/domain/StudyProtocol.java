@@ -83,8 +83,12 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.util.LastCreatedComparator;
 import gov.nih.nci.pa.util.NotEmptyIiExtension;
 import gov.nih.nci.pa.util.NotEmptyIiRoot;
+import gov.nih.nci.pa.util.StudyContactComparator;
+import gov.nih.nci.pa.util.StudyInboxComparator;
+import gov.nih.nci.pa.util.StudySiteComparator;
 import gov.nih.nci.pa.util.ValidIi;
 
 import java.sql.Timestamp;
@@ -92,6 +96,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -115,8 +120,12 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.NotNull;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * An action plan and execution of a pre-clinical or clinical study including
@@ -159,21 +168,22 @@ public class StudyProtocol extends AbstractStudyProtocol {
     private AmendmentReasonCode amendmentReasonCode;
     private Integer submissionNumber;
 
-    private List<StudyOverallStatus> studyOverallStatuses = new ArrayList<StudyOverallStatus>();
-    private List<DocumentWorkflowStatus> documentWorkflowStatuses = new ArrayList<DocumentWorkflowStatus>();
-    private List<StudySite> studySites = new ArrayList<StudySite>();
-    private List<StudyContact> studyContacts = new ArrayList<StudyContact>();
+    private Set<StudyOverallStatus> studyOverallStatuses = new TreeSet<StudyOverallStatus>(new LastCreatedComparator());
+    private Set<DocumentWorkflowStatus> documentWorkflowStatuses =
+        new TreeSet<DocumentWorkflowStatus>(new LastCreatedComparator());
+    private Set<StudySite> studySites = new TreeSet<StudySite>(new StudySiteComparator());
+    private Set<StudyContact> studyContacts = new TreeSet<StudyContact>(new StudyContactComparator());
     private List<StudyResourcing> studyResourcings = new ArrayList<StudyResourcing>();
     private List<PlannedActivity> plannedActivities = new ArrayList<PlannedActivity>();
     private List<Arm> arms = new ArrayList<Arm>();
     private List<StudyDisease> studyDiseases = new ArrayList<StudyDisease>();
-    private List<StudyMilestone> studyMilestones = new ArrayList<StudyMilestone>();
+    private Set<StudyMilestone> studyMilestones = new TreeSet<StudyMilestone>(new LastCreatedComparator());
     private List<StudyOnhold> studyOnholds = new ArrayList<StudyOnhold>();
     private List<StudySubject> studySubjects = new ArrayList<StudySubject>();
     private List<PerformedActivity> performedActivities = new ArrayList<PerformedActivity>();
     private List<Submission> submissions = new ArrayList<Submission>();
-    private List<StudyInbox> studyInbox = new ArrayList<StudyInbox>();
-    private List<StudyCheckout> studyCheckout = new ArrayList<StudyCheckout>();
+    private Set<StudyInbox> studyInbox = new TreeSet<StudyInbox>(new StudyInboxComparator());
+    private Set<StudyCheckout> studyCheckout = new TreeSet<StudyCheckout>(new LastCreatedComparator());
 
     private Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
     /**
@@ -189,8 +199,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @param accrualReportingMethodCode
      *            accrualReportingMethodCode
      */
-    public void setAccrualReportingMethodCode(
-            AccrualReportingMethodCode accrualReportingMethodCode) {
+    public void setAccrualReportingMethodCode(AccrualReportingMethodCode accrualReportingMethodCode) {
         this.accrualReportingMethodCode = accrualReportingMethodCode;
     }
 
@@ -319,6 +328,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @return publicTitle
      */
     @Column(name = "PUBLIC_TITTLE")
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getPublicTitle() {
         return publicTitle;
     }
@@ -373,7 +383,8 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @return studyOverallStatuses
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
-    public List<StudyOverallStatus> getStudyOverallStatuses() {
+    @Sort(type = SortType.COMPARATOR, comparator = LastCreatedComparator.class)
+    public Set<StudyOverallStatus> getStudyOverallStatuses() {
         return studyOverallStatuses;
     }
 
@@ -382,8 +393,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @param studyOverallStatuses
      *            studyOverallStatuses
      */
-    public void setStudyOverallStatuses(
-            List<StudyOverallStatus> studyOverallStatuses) {
+    public void setStudyOverallStatuses(Set<StudyOverallStatus> studyOverallStatuses) {
         this.studyOverallStatuses = studyOverallStatuses;
     }
 
@@ -392,7 +402,8 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @return documentWorkflowStatuses
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
-    public List<DocumentWorkflowStatus> getDocumentWorkflowStatuses() {
+    @Sort(type = SortType.COMPARATOR, comparator = LastCreatedComparator.class)
+    public Set<DocumentWorkflowStatus> getDocumentWorkflowStatuses() {
         return documentWorkflowStatuses;
     }
 
@@ -401,8 +412,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @param documentWorkflowStatuses
      *            documentWorkflowStatuses
      */
-    public void setDocumentWorkflowStatuses(
-            List<DocumentWorkflowStatus> documentWorkflowStatuses) {
+    public void setDocumentWorkflowStatuses(Set<DocumentWorkflowStatus> documentWorkflowStatuses) {
         this.documentWorkflowStatuses = documentWorkflowStatuses;
     }
 
@@ -411,7 +421,9 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @return studySites
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
-    public List<StudySite> getStudySites() {
+    @Sort(type = SortType.COMPARATOR, comparator = StudySiteComparator.class)
+    @Searchable(nested = true)
+    public Set<StudySite> getStudySites() {
         return studySites;
     }
 
@@ -420,7 +432,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @param studySites
      *            studySites
      */
-    public void setStudySites(List<StudySite> studySites) {
+    public void setStudySites(Set<StudySite> studySites) {
         this.studySites = studySites;
     }
 
@@ -429,7 +441,9 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @return studyContacts
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
-    public List<StudyContact> getStudyContacts() {
+    @Sort(type = SortType.COMPARATOR, comparator = LastCreatedComparator.class)
+    @Searchable(nested = true)
+    public Set<StudyContact> getStudyContacts() {
         return studyContacts;
     }
 
@@ -438,7 +452,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @param studyContacts
      *            studyContacts
      */
-    public void setStudyContacts(List<StudyContact> studyContacts) {
+    public void setStudyContacts(Set<StudyContact> studyContacts) {
         this.studyContacts = studyContacts;
     }
 
@@ -533,7 +547,8 @@ public class StudyProtocol extends AbstractStudyProtocol {
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    public List<StudyMilestone> getStudyMilestones() {
+    @Sort(type = SortType.COMPARATOR, comparator = LastCreatedComparator.class)
+    public Set<StudyMilestone> getStudyMilestones() {
         return studyMilestones;
     }
 
@@ -541,7 +556,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @param studyMilestones
      *            the studyMilestones to set
      */
-    public void setStudyMilestones(List<StudyMilestone> studyMilestones) {
+    public void setStudyMilestones(Set<StudyMilestone> studyMilestones) {
         this.studyMilestones = studyMilestones;
     }
 
@@ -584,6 +599,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      */
     @Column(name = "STATUS_CODE")
     @Enumerated(EnumType.STRING)
+    @Searchable
     public ActStatusCode getStatusCode() {
         return statusCode;
     }
@@ -718,13 +734,15 @@ public class StudyProtocol extends AbstractStudyProtocol {
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    public List<StudyInbox> getStudyInbox() {
+    @Sort(type = SortType.COMPARATOR, comparator = StudyInboxComparator.class)
+    public Set<StudyInbox> getStudyInbox() {
         return studyInbox;
     }
+
     /**
      * @param studyInbox the studyInbox to set
      */
-    public void setStudyInbox(List<StudyInbox> studyInbox) {
+    public void setStudyInbox(Set<StudyInbox> studyInbox) {
         this.studyInbox = studyInbox;
     }
 
@@ -733,14 +751,15 @@ public class StudyProtocol extends AbstractStudyProtocol {
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    public List<StudyCheckout> getStudyCheckout() {
+    @Sort(type = SortType.COMPARATOR, comparator = LastCreatedComparator.class)
+    public Set<StudyCheckout> getStudyCheckout() {
         return studyCheckout;
     }
 
     /**
      * @param studyCheckout the studyCheckout to set
      */
-    public void setStudyCheckout(List<StudyCheckout> studyCheckout) {
+    public void setStudyCheckout(Set<StudyCheckout> studyCheckout) {
         this.studyCheckout = studyCheckout;
     }
 

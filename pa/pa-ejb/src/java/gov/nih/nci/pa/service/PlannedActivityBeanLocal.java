@@ -1,12 +1,12 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.PlannedProcedure;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
-import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.PlannedActivityConverter;
 import gov.nih.nci.pa.iso.convert.PlannedEligibilityCriterionConverter;
 import gov.nih.nci.pa.iso.convert.PlannedProcedureConverter;
@@ -19,8 +19,11 @@ import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.PlannedActivitySortCriterion;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -37,6 +40,8 @@ import javax.interceptor.Interceptors;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
  * @author asharma
@@ -79,36 +84,22 @@ public class PlannedActivityBeanLocal extends
     }
 
     /**
-     * @param ii index of arm
-     * @return list of planned activities associated w/arm
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedActivityDTO> getByArm(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            return null;
+           return new ArrayList<PlannedActivityDTO>();
         }
+        PlannedActivity criteria = new PlannedActivity();
+        Arm arm = new Arm();
+        arm.setId(IiConverter.convertToLong(ii));
+        criteria.getArms().add(arm);
 
-        Session session = null;
-        List<PlannedActivity> queryList = new ArrayList<PlannedActivity>();
-        session = HibernateUtil.getCurrentSession();
-        Query query = null;
-
-        // step 1: form the hql
-        String hql = "select pa from PlannedActivity pa join pa.arms a where a.id = :armId order by pa.id ";
-        LOG.info("query PlannedActivity = " + hql + ".  ");
-
-        // step 2: construct query object
-        query = session.createQuery(hql);
-        query.setParameter("armId", IiConverter.convertToLong(ii));
-
-        // step 3: query the result
-        queryList = query.list();
-        ArrayList<PlannedActivityDTO> resultList = new ArrayList<PlannedActivityDTO>();
-        for (PlannedActivity bo : queryList) {
-            resultList.add(Converters.get(PlannedActivityConverter.class).convertFromDomainToDto(bo));
-        }
-        return resultList;
+        PageSortParams<PlannedActivity> params = new PageSortParams<PlannedActivity>(PAConstants.MAX_SEARCH_RESULTS, 0,
+                PlannedActivitySortCriterion.PLANNED_ACTIVITY_ID, false);
+        List<PlannedActivity> results = search(new AnnotatedBeanSearchCriteria<PlannedActivity>(criteria), params);
+        return convertFromDomainToDTOs(results);
     }
 
     /**
@@ -120,7 +111,7 @@ public class PlannedActivityBeanLocal extends
     public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii ii)
         throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            return null;
+            return new ArrayList<PlannedEligibilityCriterionDTO>();
         }
 
         Session session = null;
@@ -129,8 +120,8 @@ public class PlannedActivityBeanLocal extends
         Query query = null;
 
         // step 1: form the hql
-        String hql = "select pa " + "from PlannedEligibilityCriterion pa " + "join pa.studyProtocol sp "
-            + "where sp.id = :studyProtocolId " + "order by pa.displayOrder,pa.id";
+        String hql = "select pa from PlannedEligibilityCriterion pa join pa.studyProtocol sp "
+            + "where sp.id = :studyProtocolId order by pa.displayOrder,pa.id";
 
         // step 2: construct query object
         query = session.createQuery(hql);
@@ -175,10 +166,10 @@ public class PlannedActivityBeanLocal extends
     public PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(PlannedEligibilityCriterionDTO dto)
         throws PAException {
         if (PAUtil.isIiNotNull(dto.getIdentifier())) {
-            throw new PAException("Update method should be used to modify existing.  ");
+            throw new PAException("Cannot call createPlannedEligibilityCriterion with a non null identifier");
         }
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
-            throw new PAException("StudyProtocol must be set.  ");
+            throw new PAException("Cannot call createPlannedEligibilityCriterion with a null protocol identifier");
         }
         return createOrUpdatePlannedEligibilityCriterion(dto);
     }
@@ -191,7 +182,7 @@ public class PlannedActivityBeanLocal extends
     public PlannedEligibilityCriterionDTO updatePlannedEligibilityCriterion(PlannedEligibilityCriterionDTO dto)
         throws PAException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new PAException("Create method should be used to modify existing.  ");
+            throw new PAException("Cannot call updatePlannedEligibilityCriterion with a null identifier");
         }
         return createOrUpdatePlannedEligibilityCriterion(dto);
     }
@@ -204,8 +195,7 @@ public class PlannedActivityBeanLocal extends
         if (PAUtil.isIiNull(ii)) {
             throw new PAException(II_NOTFOUND);
         }
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         PlannedEligibilityCriterion bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class,
                                                                                    IiConverter.convertToLong(ii));
         session.delete(bo);
@@ -235,10 +225,11 @@ public class PlannedActivityBeanLocal extends
     public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
         throws PAException {
         if (PAUtil.isIiNotNull(dto.getIdentifier())) {
-            throw new PAException("Update method should be used to modify existing.  ");
+            throw new PAException("Cannot call createPlannedSubstanceAdministration with a non null identifier.");
         }
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
-            throw new PAException("StudyProtocol must be set.  ");
+            throw new PAException("Cannot call createPlannedSubstanceAdministration with a null study protocol "
+                    + "identifier");
         }
         validatePlannedSubstance(dto);
         return createOrUpdatePlannedSubstanceAdministration(dto);
@@ -250,7 +241,7 @@ public class PlannedActivityBeanLocal extends
     public PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
         throws PAException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new PAException("Create method should be used to modify existing.  ");
+            throw new PAException("Create method should be used to modify existing.");
         }
         validatePlannedSubstance(dto);
         return createOrUpdatePlannedSubstanceAdministration(dto);
@@ -263,17 +254,16 @@ public class PlannedActivityBeanLocal extends
     public List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(Ii ii)
         throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            return null;
+            return new ArrayList<PlannedSubstanceAdministrationDTO>();
         }
 
-        Session session = null;
+        Session session = HibernateUtil.getCurrentSession();
         List<PlannedSubstanceAdministration> queryList = new ArrayList<PlannedSubstanceAdministration>();
-        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
-        String hql = "select pa " + "from PlannedSubstanceAdministration pa " + "join pa.studyProtocol sp "
-            + "where sp.id = :studyProtocolId " + "order by pa.id ";
+        String hql = "select pa from PlannedSubstanceAdministration pa join pa.studyProtocol sp "
+            + "where sp.id = :studyProtocolId order by pa.id ";
 
         // step 2: construct query object
         query = session.createQuery(hql);
@@ -281,9 +271,9 @@ public class PlannedActivityBeanLocal extends
 
         // step 3: query the result
         queryList = query.list();
-        ArrayList<PlannedSubstanceAdministrationDTO> resultList = new ArrayList<PlannedSubstanceAdministrationDTO>();
+        List<PlannedSubstanceAdministrationDTO> resultList = new ArrayList<PlannedSubstanceAdministrationDTO>();
         for (PlannedSubstanceAdministration bo : queryList) {
-            resultList.add(PlannedSubstanceAdministrationConverter.convertFromDomainToDTO(bo));
+            resultList.add(new PlannedSubstanceAdministrationConverter().convertFromDomainToDto(bo));
         }
         return resultList;
     }
@@ -297,15 +287,14 @@ public class PlannedActivityBeanLocal extends
             return null;
         }
         PlannedSubstanceAdministrationDTO resultDto = null;
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         PlannedSubstanceAdministration bo =
             (PlannedSubstanceAdministration) session.get(PlannedSubstanceAdministration.class,
                                                          IiConverter.convertToLong(ii));
         if (bo == null) {
             throw new PAException("Object not found using get() for id = " + IiConverter.convertToString(ii) + ".  ");
         }
-        resultDto = PlannedSubstanceAdministrationConverter.convertFromDomainToDTO(bo);
+        resultDto = new PlannedSubstanceAdministrationConverter().convertFromDomainToDto(bo);
         return resultDto;
     }
 
@@ -343,17 +332,16 @@ public class PlannedActivityBeanLocal extends
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedProcedureDTO> getPlannedProcedureByStudyProtocol(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            return null;
+            return new ArrayList<PlannedProcedureDTO>();
         }
 
-        Session session = null;
+        Session session = HibernateUtil.getCurrentSession();
         List<PlannedProcedure> queryList = new ArrayList<PlannedProcedure>();
-        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
-        String hql = "select pa " + "from PlannedProcedure pa " + "join pa.studyProtocol sp "
-            + "where sp.id = :studyProtocolId " + "order by pa.id ";
+        String hql = "select pa from PlannedProcedure pa join pa.studyProtocol sp where sp.id = :studyProtocolId "
+                + "order by pa.id ";
 
         // step 2: construct query object
         query = session.createQuery(hql);
@@ -361,7 +349,7 @@ public class PlannedActivityBeanLocal extends
 
         // step 3: query the result
         queryList = query.list();
-        ArrayList<PlannedProcedureDTO> resultList = new ArrayList<PlannedProcedureDTO>();
+        List<PlannedProcedureDTO> resultList = new ArrayList<PlannedProcedureDTO>();
         for (PlannedProcedure bo : queryList) {
             resultList.add(PlannedProcedureConverter.convertFromDomainToDTO(bo));
         }
@@ -377,8 +365,7 @@ public class PlannedActivityBeanLocal extends
             return null;
         }
         PlannedProcedureDTO resultDto = null;
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         PlannedProcedure bo = (PlannedProcedure) session.get(PlannedProcedure.class, IiConverter.convertToLong(ii));
         if (bo == null) {
             throw new PAException("Object not found using get() for id = " + IiConverter.convertToString(ii) + ".  ");
@@ -517,20 +504,21 @@ public class PlannedActivityBeanLocal extends
         PlannedSubstanceAdministrationDTO resultDto = null;
         Session session = null;
         session = HibernateUtil.getCurrentSession();
+        PlannedSubstanceAdministrationConverter converter = new PlannedSubstanceAdministrationConverter();
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PlannedSubstanceAdministrationConverter.convertFromDTOToDomain(dto);
+            bo = converter.convertFromDtoToDomain(dto);
         } else {
             bo = (PlannedSubstanceAdministration) session.load(PlannedSubstanceAdministration.class,
                                                                IiConverter.convertToLong(dto.getIdentifier()));
 
-            PlannedSubstanceAdministration delta = PlannedSubstanceAdministrationConverter.convertFromDTOToDomain(dto);
+            PlannedSubstanceAdministration delta = converter.convertFromDtoToDomain(dto);
             bo = delta;
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }
 
         session.merge(bo);
-        resultDto = PlannedSubstanceAdministrationConverter.convertFromDomainToDTO(bo);
+        resultDto = converter.convertFromDomainToDto(bo);
         return resultDto;
     }
 

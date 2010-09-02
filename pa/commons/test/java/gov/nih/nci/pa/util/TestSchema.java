@@ -132,6 +132,7 @@ import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudySiteTest;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -178,7 +179,6 @@ import org.hibernate.Transaction;
  *
  */
 public class TestSchema {
-        /** . **/
         public static ArrayList<Long> studyProtocolIds;
         public static ArrayList<Long> studySiteIds;
         public static ArrayList<Long> studySiteContactIds;
@@ -199,22 +199,12 @@ public class TestSchema {
         private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
         private static User user;
+
         /**
          *
          */
         public static void reset() {
-//            HibernateUtil.getHibernateHelper().openTestSession();
-            HibernateUtil.setTestHelper(testHelper);
-            HibernateUtil.getCurrentSession().clear();
-
-        }
-
-        /**
-         *
-         */
-        public static void reset1() {
             // clean up HQLDB schema
-//            Session session = HibernateUtil.getHibernateHelper().getSessionFactory().openSession();
             HibernateUtil.setTestHelper(testHelper);
             Session session = HibernateUtil.getCurrentSession();
             session.clear();
@@ -270,20 +260,14 @@ public class TestSchema {
                     statement.close();
                 } catch (HibernateException e) {
                     connection.rollback();
-                    //throw new RuntimeException(e);
                 } catch (SQLException e) {
                     connection.rollback();
-                    //throw new RuntimeException(e);
                 }
             } catch (SQLException e) {
-                //throw new RuntimeException(e);
+
             } finally {
-//                session.close();
                 session.clear();
             }
-
-            // start session
-//            HibernateUtil.getHibernateHelper().openTestSession();
         }
 
         /**
@@ -332,17 +316,19 @@ public class TestSchema {
 
             User curator = getUser();
             addUpdObject(curator);
-            
+
             StudyProtocol sp = new InterventionalStudyProtocol();
-            sp.setOfficialTitle("cacncer for THOLA");
+            sp.setOfficialTitle("cancer for THOLA");
             sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
             sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
             sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
             sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
             sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+            sp.setStatusCode(ActStatusCode.ACTIVE);
             Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
             Ii spSecId = new Ii();
             spSecId.setExtension("NCI-2009-00001");
+            spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
             studySecondaryIdentifiers.add(spSecId);
             sp.setOtherIdentifiers(studySecondaryIdentifiers);
             sp.setSubmissionNumber(Integer.valueOf(1));
@@ -744,11 +730,11 @@ public class TestSchema {
                 sp.setId(sp.getId());
                 return IiConverter.convertToStudyProtocolIi(sp.getId());
             }
-        
+
         public static User getUser() {
             return getUser(false);
         }
-        
+
         public static User getUser(Boolean createNew) {
             if ( user == null || createNew ) {
                 user = new User();

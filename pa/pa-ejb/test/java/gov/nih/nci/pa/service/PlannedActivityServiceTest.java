@@ -124,7 +124,7 @@ public class PlannedActivityServiceTest {
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.plannedActivityIds.get(0));
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));

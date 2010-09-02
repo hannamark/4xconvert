@@ -102,8 +102,8 @@ public class PerformedActivityTest {
     Session sess;
 
     @Before
-    public void setUp() throws Exception {        
-        TestSchema.reset1();
+    public void setUp() throws Exception {
+        TestSchema.reset();
         TestSchema.primeData();
         sess = HibernateUtil.getCurrentSession();
     }

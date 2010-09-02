@@ -121,7 +121,8 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     public String getAmend() {
         Long studyProtocolId = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyProtocolId();
         String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
-        boolean isProprietaryTrial = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial();
+        boolean isProprietaryTrial = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).isProprietaryTrial();
+
 
         DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) this.getCurrentRowObject())
             .getDocumentWorkflowStatusCode();
@@ -290,7 +291,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         String trialCat = "";
 
         boolean isProprietaryTrial =
-            ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial();
+            ((StudyProtocolQueryDTO) this.getCurrentRowObject()).isProprietaryTrial();
         if (isProprietaryTrial) {
             trialCat = "Proprietary Trial";
         } else {

@@ -180,7 +180,7 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         gov.nih.nci.security.authorization.domainobjects.UserGroupRoleProtectionGroup.class,
         gov.nih.nci.security.authorization.domainobjects.UserProtectionElement.class,
         gov.nih.nci.security.authorization.domainobjects.FilterClause.class };
-    
+
     private final Configuration configuration;
     private final SessionFactory sessionFactory;
     private final Session testSession;
@@ -289,11 +289,11 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
         setProperty("hibernate.hbm2ddl.auto", "create-drop").
         setProperty("hibernate.show_sql", "false");
-    	
+
     	for (Class<?> cls : CSM_CLASSES) {
             configuration.addClass(cls);
         }
-    	
+
         sessionFactory = configuration.buildSessionFactory();
         testSession = sessionFactory.openSession();
     }

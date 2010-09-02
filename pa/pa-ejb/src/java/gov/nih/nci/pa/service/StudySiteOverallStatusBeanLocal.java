@@ -77,6 +77,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteOverallStatus;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.Converters;
@@ -84,7 +85,10 @@ import gov.nih.nci.pa.iso.convert.StudySiteOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.StudySiteOverallStatusSortCriterion;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
@@ -95,18 +99,18 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 
 /**
  * @author asharma
  *
  */
 @Stateless
-public class StudySiteOverallStatusBeanLocal implements StudySiteOverallStatusServiceLocal {
-
-    private static final Logger LOG = Logger.getLogger(StudySiteOverallStatusBeanLocal.class);
+public class StudySiteOverallStatusBeanLocal extends AbstractBaseSearchBean<StudySiteOverallStatus>
+    implements StudySiteOverallStatusServiceLocal {
 
     /**
      *
@@ -117,20 +121,17 @@ public class StudySiteOverallStatusBeanLocal implements StudySiteOverallStatusSe
     public StudySiteOverallStatusDTO create(StudySiteOverallStatusDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIdentifier())) {
             String errMsg = " Existing StudyOverallStatus objects cannot be modified.  Append new object instead. ";
-            LOG.error(errMsg);
             throw new PAException(errMsg);
         }
-        StudySiteOverallStatusDTO resultDto = null;
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+
+        Session session = HibernateUtil.getCurrentSession();
         validate(dto);
 
         StudySiteOverallStatus bo = Converters.get(StudySiteOverallStatusConverter.class).convertFromDtoToDomain(dto);
 
         // update
         session.saveOrUpdate(bo);
-        resultDto = Converters.get(StudySiteOverallStatusConverter.class).convertFromDomainToDto(bo);
-        return resultDto;
+        return Converters.get(StudySiteOverallStatusConverter.class).convertFromDomainToDto(bo);
     }
 
     /**
@@ -168,10 +169,7 @@ public class StudySiteOverallStatusBeanLocal implements StudySiteOverallStatusSe
     }
 
     /**
-     *
-     * @param studySiteIdentifier ii
-     * @return dto
-     * @throws PAException e
+     * {@inheritDoc}
      */
     public StudySiteOverallStatusDTO getCurrentByStudySite(Ii studySiteIdentifier) throws PAException {
         List<StudySiteOverallStatusDTO> dtoList = getByStudySite(studySiteIdentifier);
@@ -183,38 +181,30 @@ public class StudySiteOverallStatusBeanLocal implements StudySiteOverallStatusSe
     }
 
     /**
-     * @param studySiteIi id of Site
-     * @return list StudySiteAccrualStatusDTO
-     * @throws PAException on error
+     * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteOverallStatusDTO> getByStudySite(Ii studySiteIi) throws PAException {
         if (PAUtil.isIiNull(studySiteIi)) {
-            LOG.error(" Ii should not be null ");
-            throw new PAException(" Ii should not be null ");
+            throw new PAException("Ii should not be null.");
         }
-        Session session = null;
-        List<StudySiteOverallStatus> queryList = new ArrayList<StudySiteOverallStatus>();
-        session = HibernateUtil.getCurrentSession();
-        Query query = null;
 
-        // step 1: form the hql
-        String hql = "select ssos from StudySiteOverallStatus as ssos join ssos.studySite as sp "
-                + " where sp.id = :studySiteId order by ssos.id ";
-        LOG.info(" query StudySiteOverallStatus = " + hql);
+        StudySiteOverallStatus criteria = new StudySiteOverallStatus();
+        StudySite ss = new StudySite();
+        ss.setId(IiConverter.convertToLong(studySiteIi));
+        criteria.setStudySite(ss);
 
-        // step 2: construct query object
-        query = session.createQuery(hql);
-        query.setParameter("studySiteId", IiConverter.convertToLong(studySiteIi));
+        PageSortParams<StudySiteOverallStatus> params =
+            new PageSortParams<StudySiteOverallStatus>(PAConstants.MAX_SEARCH_RESULTS, 0,
+                    StudySiteOverallStatusSortCriterion.STUDY_SITE_OVERALL_STATUS_ID, false);
+        List<StudySiteOverallStatus> results =
+            search(new AnnotatedBeanSearchCriteria<StudySiteOverallStatus>(criteria), params);
 
-        // step 3: query the result
-        queryList = query.list();
-        ArrayList<StudySiteOverallStatusDTO> resultList = new ArrayList<StudySiteOverallStatusDTO>();
-        for (StudySiteOverallStatus bo : queryList) {
-            resultList.add(new StudySiteOverallStatusConverter().convertFromDomainToDto(bo));
+        List<StudySiteOverallStatusDTO> returnList = new ArrayList<StudySiteOverallStatusDTO>();
+        for (StudySiteOverallStatus bo : results) {
+            returnList.add(new StudySiteOverallStatusConverter().convertFromDomainToDto(bo));
         }
-        return resultList;
+        return returnList;
     }
 
     private boolean isTrialStatusOrDateChanged(StudySiteOverallStatusDTO newStatusDto, Ii studySiteIdentifier)

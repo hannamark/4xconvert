@@ -240,6 +240,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
      * @return the proprietaryTrialIndicator
      */
     @Column(name = "PROPRIETARY_TRIAL_INDICATOR")
+    @Searchable
     public Boolean getProprietaryTrialIndicator() {
         return proprietaryTrialIndicator;
     }

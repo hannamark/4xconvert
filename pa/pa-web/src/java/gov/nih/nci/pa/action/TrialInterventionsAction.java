@@ -102,11 +102,13 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.BaseLookUpService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
@@ -984,14 +986,15 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      }
 
      private String getDoseFreq(String doseFreqCode) throws PAException {
-      String doseFreqDisplayName = "";
-      BaseLookUpService<DoseFrequency> lookUpService =
-          new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
-      DoseFrequency example = new DoseFrequency();
-      example.setCode(doseFreqCode);
-      DoseFrequency dfreq = lookUpService.getByCode(example);
-      doseFreqDisplayName =  dfreq.getDisplayName();
-      return doseFreqDisplayName;
+         String doseFreqDisplayName = "";
+         BaseLookUpService<DoseFrequency> lookUpService = new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
+         DoseFrequency example = new DoseFrequency();
+         example.setCode(doseFreqCode);
+         List<DoseFrequency> dfreqs = lookUpService.search(new AnnotatedBeanSearchCriteria<DoseFrequency>(example));
+         if (CollectionUtils.isNotEmpty(dfreqs)) {
+             doseFreqDisplayName =  dfreqs.get(0).getDisplayName();
+         }
+         return doseFreqDisplayName;
      }
 
     /**

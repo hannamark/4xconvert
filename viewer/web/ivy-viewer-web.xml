@@ -54,7 +54,7 @@
 
     <!-- other test targets -->
     <dependency org="checkstyle"                name="checkstyle"              rev="5.0"             conf="test-checkstyle->master,runtime"/>
-    <dependency org="net.sourceforge.cobertura" name="cobertura"               rev="1.9"             conf="test-cobertura->master,runtime"/>
+    <dependency org="net.sourceforge.cobertura" name="cobertura"               rev="1.9.4.1"         conf="test-cobertura->master,runtime"/>
     <dependency org="pmd"                       name="pmd"                     rev="4.2.2"           conf="test-pmd->master,runtime"/>
     <dependency org="redhill"                   name="simian"                  rev="2.2.4"           conf="test-simian->master,runtime"/>
   </dependencies>

@@ -4,15 +4,17 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.DiseaseAltername;
 import gov.nih.nci.pa.iso.convert.DiseaseAlternameConverter;
 import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.DiseaseAlternameSortCriterion;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -20,9 +22,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
  * @author asharma
@@ -32,47 +32,27 @@ import org.hibernate.Session;
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DiseaseAlternameBeanLocal
-extends AbstractBaseIsoService<DiseaseAlternameDTO, DiseaseAltername, DiseaseAlternameConverter>
-implements DiseaseAlternameServiceLocal , DiseaseAlternameServiceRemote {
-
-    private static final Logger LOG = Logger.getLogger(DiseaseAlternameBeanLocal.class);
+    extends AbstractBaseIsoService<DiseaseAlternameDTO, DiseaseAltername, DiseaseAlternameConverter>
+    implements DiseaseAlternameServiceLocal , DiseaseAlternameServiceRemote {
 
     /**
-     * @param ii index of the disease
-     * @return list of alternate names for disease
-     * @throws PAException exception
+     * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DiseaseAlternameDTO> getByDisease(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.  ");
         }
 
-        Session session = null;
-        List<DiseaseAltername> queryList = new ArrayList<DiseaseAltername>();
-        session = HibernateUtil.getCurrentSession();
-        Query query = null;
+        DiseaseAltername criteria = new DiseaseAltername();
+        Disease disease = new Disease();
+        disease.setId(IiConverter.convertToLong(ii));
+        criteria.setDisease(disease);
 
-        // step 1: form the hql
-        String hql = "select alt "
-            + "from DiseaseAltername alt "
-            + "join alt.disease dis "
-            + "where dis.id = :diseaseId "
-            + "order by alt.id ";
-        LOG.info("query DiseaseAltername = " + hql + ".  ");
-
-        // step 2: construct query object
-        query = session.createQuery(hql);
-        query.setParameter("diseaseId", IiConverter.convertToLong(ii));
-
+        PageSortParams<DiseaseAltername> params = new PageSortParams<DiseaseAltername>(PAConstants.MAX_SEARCH_RESULTS,
+                0, DiseaseAlternameSortCriterion.DISEASE_ALTERNAME_ID, false);
         // step 3: query the result
-        queryList = query.list();
-        ArrayList<DiseaseAlternameDTO> resultList = new ArrayList<DiseaseAlternameDTO>();
-        for (DiseaseAltername bo : queryList) {
-            resultList.add(convertFromDomainToDto(bo));
-        }
-        return resultList;
+        List<DiseaseAltername> results = search(new AnnotatedBeanSearchCriteria<DiseaseAltername>(criteria), params);
+        return convertFromDomainToDTOs(results);
     }
-
 }

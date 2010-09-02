@@ -43,49 +43,65 @@
     <!-- ====================================================================== -->
 
      <path id="common.package.classpath">
-             <fileset dir="${pa.dir}/commons/target">
-                <include name="*.jar"/>
-             </fileset>
+         <fileset dir="${pa.dir}/commons/target">
+             <include name="*.jar"/>
+         </fileset>
       </path>
 
     <property name="compile.jar.dir" location="${lib.dir}/commons/compile" />
     <path id="compile.classpath">
-        <fileset dir="${compile.jar.dir}"/>
+        <fileset dir="${compile.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test.jar.dir" location="${lib.dir}/commons/test" />
     <path id="test.classpath">
-        <fileset dir="${test.jar.dir}"/>
+        <fileset dir="${test.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-simian.jar.dir" location="${lib.dir}/commons/test-simian" />
     <path id="test-simian.classpath">
-        <fileset dir="${test-simian.jar.dir}"/>
+        <fileset dir="${test-simian.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-junit.jar.dir" location="${lib.dir}/commons/test-junit" />
     <path id="test-junit.classpath">
-        <fileset dir="${test-junit.jar.dir}"/>
+        <fileset dir="${test-junit.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-cobertura.jar.dir" location="${lib.dir}/commons/test-cobertura" />
     <path id="test-cobertura.classpath">
-        <fileset dir="${test-cobertura.jar.dir}"/>
+        <fileset dir="${test-cobertura.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-checkstyle.jar.dir" location="${lib.dir}/commons/test-checkstyle" />
     <path id="test-checkstyle.classpath">
-        <fileset dir="${test-checkstyle.jar.dir}"/>
+        <fileset dir="${test-checkstyle.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-pmd.jar.dir" location="${lib.dir}/commons/test-pmd" />
     <path id="test-pmd.classpath">
-        <fileset dir="${test-pmd.jar.dir}"/>
+        <fileset dir="${test-pmd.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-selenium.jar.dir" location="${lib.dir}/commons/test-selenium" />
     <path id="test-selenium.classpath">
-        <fileset dir="${test-selenium.jar.dir}"/>
+        <fileset dir="${test-selenium.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <path id="ivy.classpath">
@@ -262,8 +278,8 @@
                           srcdir="${commons.build.srcDir.0}" />
 
         <cobertura-check datafile="${commons.build.dir}/cobertura.ser"
-                         totalbranchrate="45"
-                         totallinerate="66"
+                         totalbranchrate="47"
+                         totallinerate="67"
                          haltonfailure="true"/>
      </target>
 
@@ -295,6 +311,7 @@
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/commons/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/commons/pmd.xml"/>
+            <formatter type="html" toFile="${pa.report.dir}/commons/pmd.html"/>
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>

@@ -121,7 +121,7 @@ public class StudyOverallStatusServiceTest {
     public void setUp() throws Exception {
         bean.setDwsService(dws);
         bean.setStudyProtocolService(sps);
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
 

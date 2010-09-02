@@ -20,19 +20,19 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class PlannedSubstanceAdministrationServiceTest {
-    
+
     private PlannedSubstanceAdministrationServiceBean remoteBean = new PlannedSubstanceAdministrationServiceBean();
     private PlannedSubstanceAdministrationServiceRemote remoteEjb = remoteBean;
-   
+
     private Ii spIi;
-    
+
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
-     }   
-    
+     }
+
     @Test
     public void getPlannedSubstanceAdministration() throws Exception {
         List<PlannedSubstanceAdministrationDTO> statusList =
@@ -61,7 +61,7 @@ public class PlannedSubstanceAdministrationServiceTest {
         dto.setDoseRegimen(StConverter.convertToSt(">"));
         IvlConverter.JavaPq low  = new IvlConverter.JavaPq(UnitsCode.YEARS.getCode(), new BigDecimal("2"), null);
         IvlConverter.JavaPq high  = new IvlConverter.JavaPq(UnitsCode.YEARS.getCode(), new BigDecimal("8"), null);
-        Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);      
+        Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);
         dto.setDose(ivl);
         dto.setDoseFormCode(CdConverter.convertStringToCd("TABLET"));
         dto.setDoseFrequencyCode(CdConverter.convertStringToCd("BID"));

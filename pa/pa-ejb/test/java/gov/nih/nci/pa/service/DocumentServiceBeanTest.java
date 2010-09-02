@@ -101,7 +101,7 @@ public class DocumentServiceBeanTest {
 
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
         pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
     }

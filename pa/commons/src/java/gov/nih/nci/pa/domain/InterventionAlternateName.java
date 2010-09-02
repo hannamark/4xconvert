@@ -90,6 +90,8 @@ import javax.persistence.Table;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * @author Hugh Reinhart
  * @since 10/28/2008
@@ -102,7 +104,7 @@ public class InterventionAlternateName extends AbstractEntityWithStatusCode<Acti
     private String name;
     private Intervention intervention;
     private String nameTypeCode;
-    
+
     /**
      * @return the name
      */
@@ -124,6 +126,7 @@ public class InterventionAlternateName extends AbstractEntityWithStatusCode<Acti
     @ManyToOne
     @JoinColumn(name = "INTERVENTION_IDENTIFIER")
     @NotNull
+    @Searchable(nested = true)
     public Intervention getIntervention() {
         return intervention;
     }
@@ -147,5 +150,5 @@ public class InterventionAlternateName extends AbstractEntityWithStatusCode<Acti
     public void setNameTypeCode(String nameTypeCode) {
         this.nameTypeCode = nameTypeCode;
     }
-    
+
 }

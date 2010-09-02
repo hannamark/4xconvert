@@ -11,13 +11,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class DoseFrequencyTest {
-    
+
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
     }
-    
+
    @Test
     public void createDoseFrequencyTest() {
         try {
@@ -37,7 +37,7 @@ public class DoseFrequencyTest {
             e.printStackTrace();
         }
     }
-       
+
     public static DoseFrequency createDoseFrequencyObj() {
         DoseFrequency df = new DoseFrequency();
         df.setCode("Code");

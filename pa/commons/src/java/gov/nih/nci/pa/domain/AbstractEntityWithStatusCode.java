@@ -87,6 +87,8 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * Abstract class which should be extended for PA domain objects which
  * have statusCode and statusDateRangeLow attributes.
@@ -109,6 +111,7 @@ public abstract class AbstractEntityWithStatusCode<ENUM> extends AbstractEntity 
     @Column(name = "STATUS_CODE")
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Searchable
     public ENUM getStatusCode() {
         return statusCode;
     }

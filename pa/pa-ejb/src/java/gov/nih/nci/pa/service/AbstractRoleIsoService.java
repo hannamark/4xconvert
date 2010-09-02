@@ -128,12 +128,11 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
      * @throws PAException on error
      */
     public List<DTO> getByStudyProtocol(Ii studyProtocolIi, List<DTO> dtos) throws PAException {
-        if (studyProtocolIi == null || PAUtil.isIiNull(studyProtocolIi)) {
-            throw new PAException("Ii is null ");
+        if (PAUtil.isIiNull(studyProtocolIi)) {
+            throw new PAException("Cannot call getByStudyProtocol method with a null identifier.");
         }
         StringBuffer criteria = new StringBuffer();
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         StringBuffer hql = new StringBuffer("select spart from ");
         hql.append(getTypeArgument().getName());
         hql.append(" spart join spart.studyProtocol spro where spro.id = :studyProtocolId");
@@ -207,8 +206,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
     @SuppressWarnings("unchecked")
     public void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException {
         List<BO> sps = null;
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         StringBuffer hql = new StringBuffer("select sps from ");
         if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySite")) {
             if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {

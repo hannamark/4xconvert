@@ -201,7 +201,7 @@ public class StudySiteTest  {
 
         List<Organization> organizations = null;
         organizations =  session.createQuery(hql.toString()).list();
-        assertEquals("Size  does not match " , organizations.size() , 3);
+        assertEquals("Size  does not match " , organizations.size() , 2);
 
 
     }

@@ -79,17 +79,18 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.convert.DocumentWorkflowStatusConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -98,8 +99,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author asharma
@@ -113,36 +113,31 @@ AbstractCurrentStudyIsoService<DocumentWorkflowStatusDTO, DocumentWorkflowStatus
 implements DocumentWorkflowStatusServiceLocal {
 
     /**
-     * @param dto arm to create
-     * @return the created planned activity
-     * @throws PAException exception.
+     * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public DocumentWorkflowStatusDTO create(DocumentWorkflowStatusDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Update method should be used to modify existing.  ");
         }
-        Session session = null;
-        List<DocumentWorkflowStatus> queryList = new ArrayList<DocumentWorkflowStatus>();
-        session = HibernateUtil.getCurrentSession();
-        Query query = null;
-        // step 1: form the hql
-        String hql = "select dwfs from DocumentWorkflowStatus dwfs "
-            + " join dwfs.studyProtocol sp where sp.id = :spId "
-            + " and dwfs.statusCode = :statusCode";
-        query = session.createQuery(hql);
-        query.setParameter("spId", IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-        query.setParameter("statusCode", DocumentWorkflowStatusCode.getByCode(dto.getStatusCode().getCode()));
-        queryList = query.list();
+
+        DocumentWorkflowStatus criteria = new DocumentWorkflowStatus();
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+        criteria.setStudyProtocol(sp);
+        criteria.setStatusCode(
+                DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
+        List<DocumentWorkflowStatus> results =
+            search(new AnnotatedBeanSearchCriteria<DocumentWorkflowStatus>(criteria));
+
         dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp((new Date()).getTime()), null));
-        if (queryList == null || queryList.isEmpty()) {
+        if (CollectionUtils.isEmpty(results)) {
             super.create(dto);
-        } else if (queryList.size() == 1) {
-            dto.setIdentifier(IiConverter.convertToIi(queryList.get(0).getId()));
+        } else if (results.size() == 1) {
+            dto.setIdentifier(IiConverter.convertToIi(results.get(0).getId()));
             super.update(dto);
-        } else if (queryList.size() > 1) {
-            throw new PAException("There cannot be more than 1 record for a give protocol and status "
+        } else if (results.size() > 1) {
+            throw new PAException("There cannot be more than 1 record for a given protocol and status "
                     + " protocol id = " + dto.getStudyProtocolIdentifier().getExtension() + " status code "
                     + dto.getStatusCode().getCode());
         }

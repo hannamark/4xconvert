@@ -42,49 +42,65 @@
     <!-- ====================================================================== -->
 
     <path id="common.package.classpath">
-            <fileset dir="${pa.dir}/commons/target">
-                    <include name="*.jar"/>
-              </fileset>
+        <fileset dir="${pa.dir}/commons/target">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="compile.jar.dir" location="${lib.dir}/pa-ejb/compile" />
     <path id="compile.classpath">
-        <fileset dir="${compile.jar.dir}"/>
+        <fileset dir="${compile.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test.jar.dir" location="${lib.dir}/pa-ejb/test" />
     <path id="test.classpath">
-        <fileset dir="${test.jar.dir}"/>
+        <fileset dir="${test.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-simian.jar.dir" location="${lib.dir}/pa-ejb/test-simian" />
     <path id="test-simian.classpath">
-        <fileset dir="${test-simian.jar.dir}"/>
+        <fileset dir="${test-simian.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-junit.jar.dir" location="${lib.dir}/pa-ejb/test-junit" />
     <path id="test-junit.classpath">
-        <fileset dir="${test-junit.jar.dir}"/>
+        <fileset dir="${test-junit.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-cobertura.jar.dir" location="${lib.dir}/pa-ejb/test-cobertura" />
     <path id="test-cobertura.classpath">
-        <fileset dir="${test-cobertura.jar.dir}"/>
+        <fileset dir="${test-cobertura.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-checkstyle.jar.dir" location="${lib.dir}/pa-ejb/test-checkstyle" />
     <path id="test-checkstyle.classpath">
-        <fileset dir="${test-checkstyle.jar.dir}"/>
+        <fileset dir="${test-checkstyle.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-pmd.jar.dir" location="${lib.dir}/pa-ejb/test-pmd" />
     <path id="test-pmd.classpath">
-        <fileset dir="${test-pmd.jar.dir}"/>
+        <fileset dir="${test-pmd.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-selenium.jar.dir" location="${lib.dir}/pa-ejb/test-selenium" />
     <path id="test-selenium.classpath">
-        <fileset dir="${test-selenium.jar.dir}"/>
+        <fileset dir="${test-selenium.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <path id="ivy.classpath">
@@ -313,8 +329,8 @@
                           destdir="${pa-ejb.coverage.reports}"
                           srcdir="${pa-ejb.build.srcDir.0}" />
         <cobertura-check datafile="${pa-ejb.build.dir}/cobertura.ser"
-                         totalbranchrate="35"
-                         totallinerate="51"
+                         totalbranchrate="36"
+                         totallinerate="52"
                          haltonfailure="true"/>
      </target>
 
@@ -343,10 +359,11 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="546">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="512">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/pa-ejb/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/pa-ejb/pmd.xml"/>
+            <formatter type="html" toFile="${pa.report.dir}/pa-ejb/pmd.html"/>
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>

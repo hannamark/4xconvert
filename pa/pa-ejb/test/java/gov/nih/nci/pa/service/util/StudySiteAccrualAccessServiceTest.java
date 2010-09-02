@@ -134,7 +134,7 @@ public class StudySiteAccrualAccessServiceTest {
         users.add(user);
         StudySiteAccrualAccessServiceBean.setSubmitterList(users);
         this.bean = bean;
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
         ssId = TestSchema.studySiteIds.get(0);
      }

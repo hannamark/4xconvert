@@ -93,6 +93,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.Length;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * @author Hugh Reinhart
  * @since 11/29/2008
@@ -215,6 +217,7 @@ public class Disease extends AbstractEntityWithStatusCode<ActiveInactivePendingC
      */
     @OneToMany(mappedBy = DISEASE_STR)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Searchable(nested = true)
     public List<DiseaseAltername> getDiseaseAlternames() {
         return diseaseAlternames;
     }

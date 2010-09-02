@@ -79,13 +79,16 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.DiseaseParent;
+import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.convert.DiseaseParentConverter;
 import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.DiseaseParentSortCriterion;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PAConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,16 +98,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
 * @author Hugh Reinhart
 * @since 11/30/2008
-* copyright NCI 2008.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
 */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
@@ -112,49 +110,23 @@ import org.hibernate.Session;
 public class DiseaseParentServiceBean
         extends AbstractBaseIsoService<DiseaseParentDTO, DiseaseParent, DiseaseParentConverter>
         implements DiseaseParentServiceRemote {
-    private static final Logger LOG = Logger.getLogger(DiseaseParentServiceBean.class);
 
-    @SuppressWarnings("unchecked")
-    private List<DiseaseParentDTO> getByDisease(Ii ii, String assoc) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
-            throw new PAException("Check the Ii value; null found.  ");
-        }
-
-        Session session = null;
-        List<DiseaseParent> queryList = new ArrayList<DiseaseParent>();
-        session = HibernateUtil.getCurrentSession();
-        Query query = null;
-
-        // step 1: form the hql
-        String hql = "select dp "
-            + "from DiseaseParent dp "
-            + "join dp." + assoc + " dis "
-            + "where dis.id = :diseaseId "
-            + "  and dis.statusCode = 'ACTIVE' "
-            + "order by dp.id ";
-        LOG.info("query DiseaseParent = " + hql + ".  ");
-
-        // step 2: construct query object
-        query = session.createQuery(hql);
-        query.setParameter("diseaseId", IiConverter.convertToLong(ii));
-
-        // step 3: query the result
-        queryList = query.list();
-        ArrayList<DiseaseParentDTO> resultList = new ArrayList<DiseaseParentDTO>();
-        for (DiseaseParent bo : queryList) {
-            resultList.add(convertFromDomainToDto(bo));
-        }
-        return resultList;
-    }
     /**
      * @param ii index of disease
      * @return list of DiseaseParent associations for children of disease
      * @throws PAException exception
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<DiseaseParentDTO> getByChildDisease(Ii ii)
-            throws PAException {
-        return getByDisease(ii, "disease");
+    public List<DiseaseParentDTO> getByChildDisease(Ii ii) throws PAException {
+        DiseaseParent criteria = new DiseaseParent();
+        Disease disease = new Disease();
+        disease.setId(IiConverter.convertToLong(ii));
+        disease.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        criteria.setDisease(disease);
+        PageSortParams<DiseaseParent> params = new PageSortParams<DiseaseParent>(PAConstants.MAX_SEARCH_RESULTS,
+                    0, DiseaseParentSortCriterion.DISEASE_PARENT_ID, false);
+        List<DiseaseParent> results = search(new AnnotatedBeanSearchCriteria<DiseaseParent>(criteria), params);
+        return convertFromDomainToDTOs(results);
     }
 
     /**
@@ -163,10 +135,18 @@ public class DiseaseParentServiceBean
      * @throws PAException exception
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<DiseaseParentDTO> getByParentDisease(Ii ii)
-            throws PAException {
-        return getByDisease(ii, "parentDisease");
+    public List<DiseaseParentDTO> getByParentDisease(Ii ii) throws PAException {
+        DiseaseParent criteria = new DiseaseParent();
+        Disease disease = new Disease();
+        disease.setId(IiConverter.convertToLong(ii));
+        disease.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        criteria.setParentDisease(disease);
+        PageSortParams<DiseaseParent> params = new PageSortParams<DiseaseParent>(PAConstants.MAX_SEARCH_RESULTS,
+                    0, DiseaseParentSortCriterion.DISEASE_PARENT_ID, false);
+        List<DiseaseParent> results = search(new AnnotatedBeanSearchCriteria<DiseaseParent>(criteria), params);
+        return convertFromDomainToDTOs(results);
     }
+
     /**
      * @param iis array of indexes of diseases
      * @return list of DiseaseParent associations for children of disease

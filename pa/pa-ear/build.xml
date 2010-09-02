@@ -57,12 +57,16 @@
 
     <property name="test.jar.dir" location="${lib.dir}/pa-ear/test" />
     <path id="test.classpath">
-        <fileset dir="${test.jar.dir}"/>
+        <fileset dir="${test.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-junit.jar.dir" location="${lib.dir}/pa-ear/test-junit" />
     <path id="test-junit.classpath">
-        <fileset dir="${test-junit.jar.dir}"/>
+        <fileset dir="${test-junit.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <path id="ivy.classpath">
@@ -73,14 +77,20 @@
 
 
     <path id="build.test.classpath">
-        <fileset dir="${test.jar.dir}"/>
-        <fileset dir="${test-junit.jar.dir}"/>
-        <fileset dir="${compile.jar.dir}"/>
+        <fileset dir="${test.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${test-junit.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${compile.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
         <fileset dir="${pa-ejb.output.dir}">
             <include name="pa-ejb.jar"/>
         </fileset>
     	<fileset dir="${pa-commons.output.dir}">
-    	            <include name="pa-commons.jar"/>
+    	    <include name="pa-commons.jar"/>
     	</fileset>
     </path>
 

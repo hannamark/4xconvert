@@ -104,7 +104,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -131,37 +130,33 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     public void performTask() throws PAException {
         // create the criteria search object
         StudyMilestoneDTO studyMilestoneDTO = new StudyMilestoneDTO();
-        studyMilestoneDTO.setMilestoneCode(
-        CdConverter.convertStringToCd(MilestoneCode.TRIAL_SUMMARY_SENT.getCode()));
+        studyMilestoneDTO.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT));
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
         Calendar milestoneDate = Calendar.getInstance();
         try {
             List<StudyMilestoneDTO> studyMilestoneDTOList = smRemote.search(studyMilestoneDTO, limit);
-
-            if (CollectionUtils.isNotEmpty(studyMilestoneDTOList)) {
-                LOG.debug("The Search results returned" + studyMilestoneDTOList.size());
-                for (StudyMilestoneDTO smdto : studyMilestoneDTOList) {
-                    milestoneDate.setTime(smdto.getMilestoneDate().getValue());
-                    if (isMoreThan5Businessdays(milestoneDate) && !checkMilestoneExists(smdto)) {
-                        LOG.debug("Creating a new milestone with code - initial abstration verify"
-                                + smdto.getStudyProtocolIdentifier());
-                        StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
-                        newDTO.setCommentText(StConverter.convertToSt(
-                                "Milestone auto-set based on Non-Response within 5 days"));
-                        newDTO.setMilestoneCode(CdConverter.convertStringToCd(
-                                                   MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode()));
-                        newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-                        newDTO.setStudyProtocolIdentifier(smdto.getStudyProtocolIdentifier());
-                        try {
-                            smRemote.create(newDTO);
-                        } catch (PAException e) {
-                            // swallowing the exception in oder to continue processing of rest of records
-                            LOG.error("Error occurred in a quartz job while creating INITIAL_ABSTRACTION_VERIFY "
-                                    + " milestone based on Non-Response within 5 days" + e);
-                        }
-                   }
+            LOG.debug("The Search results returned" + studyMilestoneDTOList.size());
+            for (StudyMilestoneDTO smdto : studyMilestoneDTOList) {
+                milestoneDate.setTime(smdto.getMilestoneDate().getValue());
+                if (isMoreThan5Businessdays(milestoneDate) && !checkMilestoneExists(smdto)) {
+                    LOG.debug("Creating a new milestone with code - initial abstration verify"
+                            + smdto.getStudyProtocolIdentifier());
+                    StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
+                    newDTO.setCommentText(StConverter.convertToSt(
+                            "Milestone auto-set based on Non-Response within 5 days"));
+                    newDTO.setMilestoneCode(CdConverter.convertStringToCd(
+                            MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode()));
+                    newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+                    newDTO.setStudyProtocolIdentifier(smdto.getStudyProtocolIdentifier());
+                    try {
+                        smRemote.create(newDTO);
+                    } catch (PAException e) {
+                        // swallowing the exception in oder to continue processing of rest of records
+                        LOG.error("Error occurred in a quartz job while creating INITIAL_ABSTRACTION_VERIFY "
+                                + " milestone based on Non-Response within 5 days" + e);
+                    }
                 }
-              }
+            }
         } catch (TooManyResultsException e) {
             throw new PAException("ToomanyReusltsException occured", e);
         }

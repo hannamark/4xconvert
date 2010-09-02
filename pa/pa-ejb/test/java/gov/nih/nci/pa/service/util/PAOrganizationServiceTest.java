@@ -11,15 +11,15 @@ import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudySiteTest;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
-import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.TestSchema;
@@ -33,6 +33,7 @@ public class PAOrganizationServiceTest {
 
     private PAOrganizationServiceBean bean = new PAOrganizationServiceBean();
     private PAOrganizationServiceRemote remoteEjb = bean;
+    private Long orgId;
 
     @Before
     public void setUp(  ) throws Exception {
@@ -41,6 +42,7 @@ public class PAOrganizationServiceTest {
         TestSchema.addUpdObject(sp);
         Organization o = OrganizationTest.createOrganizationObj();
         TestSchema.addUpdObject(o);
+        orgId = o.getId();
         Person p = PersonTest.createPersonObj();
         p.setIdentifier("11");
         TestSchema.addUpdObject(p);
@@ -54,7 +56,7 @@ public class PAOrganizationServiceTest {
         StudySite spc = StudySiteTest.createStudySiteObj(sp, hcf);
         spc.setResearchOrganization(ro);
         TestSchema.addUpdObject(spc);
-        
+
         ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o, p);
         TestSchema.addUpdObject(crs);
         StudySiteContact spcc = new StudySiteContact();
@@ -65,15 +67,15 @@ public class PAOrganizationServiceTest {
         spcc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         TestSchema.addUpdObject(spcc);
     }
-    
+
     @Test
     public void getOrganizationsAssociatedWithStudyProtocolTest() throws Exception {
         List<PaOrganizationDTO> data = remoteEjb.getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION);
         assertNotNull(data);
-        assertEquals("Size does not match  " , data.size(), 1);
-        assertEquals(" name does not match   " , data.get(0).getName(), "Mayo University");
+        assertEquals("Size does not match", data.size(), 1);
+        assertEquals(" name does not match", data.get(0).getName(), "Mayo University");
     }
-    
+
     @Test(expected=PAException.class)
     public void nullParameter() throws Exception {
         remoteEjb.getOrganizationByIndetifers(new Organization());
@@ -82,13 +84,9 @@ public class PAOrganizationServiceTest {
     @Test
     public void getOrganizationByIndetifersTest() throws Exception {
         Organization o = new Organization();
-        o.setId(Long.valueOf(1));
+        o.setId(orgId);
         Organization data = remoteEjb.getOrganizationByIndetifers(o);
         assertNotNull(data);
-        assertEquals(" name does not match   " , data.getName(), "Mayo University");
-        
+        assertEquals(" name does not match" , data.getName(), "Mayo University");
     }
-
-        
-
 }

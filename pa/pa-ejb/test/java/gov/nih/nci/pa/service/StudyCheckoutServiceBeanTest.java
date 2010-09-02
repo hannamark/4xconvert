@@ -18,10 +18,10 @@ public class StudyCheckoutServiceBeanTest {
     private StudyCheckoutServiceLocal localEjb = new StudyCheckoutServiceBean();
     StudyCheckoutDTO dto = new StudyCheckoutDTO();
     Ii pid;
-    
+
     @Before
     public void setUp() throws Exception {
-      TestSchema.reset1();
+      TestSchema.reset();
       TestSchema.primeData();
       pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
     }
@@ -43,13 +43,13 @@ public class StudyCheckoutServiceBeanTest {
         dtoNew.setUserIdentifier(StConverter.convertToSt("Checkout"));
         localEjb.create(dtoNew);
     }
-    
+
     @Test(expected=PAException.class)
     public void update() throws Exception {
         dto.setUserIdentifier(StConverter.convertToSt("Checkout User"));
         localEjb.update(dto);
     }
-    
+
     @Test (expected=PAException.class)
     public void delete() throws Exception {
         localEjb.delete(dto.getIdentifier());

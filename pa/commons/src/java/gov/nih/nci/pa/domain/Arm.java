@@ -95,6 +95,8 @@ import javax.persistence.Table;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * @author Hugh Reinhart
  * @since 11/05/2008
@@ -166,6 +168,7 @@ public class Arm extends AbstractStudyEntity {
         name = "ARM_INTERVENTION",
         joinColumns = @JoinColumn(name = "ARM_IDENTIFIER"),
         inverseJoinColumns = @JoinColumn(name = "PLANNED_ACTIVITY_IDENTIFIER"))
+    @Searchable(nested = true)
     public Collection<PlannedActivity> getInterventions() {
         return interventions;
     }

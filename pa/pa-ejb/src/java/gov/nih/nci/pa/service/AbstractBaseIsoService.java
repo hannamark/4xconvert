@@ -91,7 +91,6 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -144,8 +143,8 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         }
         ParameterizedType parameterizedType = (ParameterizedType) type;
 
-        typeArgument = (Class) parameterizedType.getActualTypeArguments()[1];
-        converterArgument = (Class) parameterizedType.getActualTypeArguments()[2];
+        typeArgument = (Class<BO>) parameterizedType.getActualTypeArguments()[1];
+        converterArgument = (Class<CONVERTER>) parameterizedType.getActualTypeArguments()[2];
     }
 
     /**
@@ -164,6 +163,9 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
     protected BO convertFromDtoToDomain(DTO dto) throws PAException {
         return Converters.get(getConverterArgument()).convertFromDtoToDomain(dto);
     }
+
+
+
     /**
      * Get class of the implementation.
      *
@@ -172,6 +174,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
     protected Class<BO> getTypeArgument() {
         return typeArgument;
     }
+
     /**
      * Get class of the implementation.
      *
@@ -180,6 +183,28 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
     protected Class<CONVERTER> getConverterArgument() {
         return converterArgument;
     }
+
+
+    /**
+     * Converts from a list of domain objects to DTO objects.
+     * @param boList boList
+     * @return dtoList
+     * @throws PAException on error
+     */
+    protected List<DTO> convertFromDomainToDTOs(List<BO> boList) throws PAException {
+        return Converters.get(getConverterArgument()).convertFromDomainToDtos(boList);
+    }
+
+    /**
+     * Converts from a list of domain objects to DTO objects.
+     * @param dtoList dtoList
+     * @return boList
+     * @throws PAException on error
+     */
+    protected List<BO> convertFromDTOToDomains(List<DTO> dtoList) throws PAException {
+        return Converters.get(getConverterArgument()).convertFromDtoToDomains(dtoList);
+    }
+
     /**
      * @param ii index of object
      * @return null
@@ -187,7 +212,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      */
     @SuppressWarnings(UNCHECKED)
     public DTO get(Ii ii) throws PAException {
-        if ((ii == null) || PAUtil.isIiNull(ii)) {
+        if (PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.");
         }
         DTO resultDto = null;
@@ -212,7 +237,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      */
     @SuppressWarnings(UNCHECKED)
     public void delete(Ii ii) throws PAException {
-        if ((ii == null) || PAUtil.isIiNull(ii)) {
+        if (PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.");
         }
         Session session = null;
@@ -300,22 +325,5 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
             throw new PAException("Validation Exception " + sb.toString());
         }
 
-    }
-
-    /**
-     *
-     * @param boList boList
-     * @return dtoList
-     * @throws PAException on error
-     */
-    protected List<DTO> convertFromDomainToDTOs(List<BO> boList)
-       throws PAException {
-        List<DTO> dtoList = new ArrayList<DTO>();
-        if (boList != null && !boList.isEmpty()) {
-            for (BO bo : boList) {
-               dtoList.add(convertFromDomainToDto(bo));
-            }
-        }
-        return dtoList;
     }
 }

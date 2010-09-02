@@ -44,51 +44,67 @@
     <!-- ====================================================================== -->
 
     <path id="common.package.classpath">
-            <fileset dir="${pa.dir}/commons/target">
-                    <include name="pa-commons.jar"/>
-              </fileset>
+        <fileset dir="${pa.dir}/commons/target">
+            <include name="pa-commons.jar"/>
+        </fileset>
     </path>
 
     <property name="compile.jar.dir" location="${lib.dir}/pa-web/compile" />
     <path id="compile.classpath">
-        <fileset dir="${compile.jar.dir}"/>
+        <fileset dir="${compile.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="runtime.jar.dir" location="${lib.dir}/pa-web/runtime" />
 
     <property name="test.jar.dir" location="${lib.dir}/pa-web/test" />
     <path id="test.classpath">
-        <fileset dir="${test.jar.dir}"/>
+        <fileset dir="${test.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-simian.jar.dir" location="${lib.dir}/pa-web/test-simian" />
     <path id="test-simian.classpath">
-        <fileset dir="${test-simian.jar.dir}"/>
+        <fileset dir="${test-simian.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-junit.jar.dir" location="${lib.dir}/pa-web/test-junit" />
     <path id="test-junit.classpath">
-        <fileset dir="${test-junit.jar.dir}"/>
+        <fileset dir="${test-junit.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-cobertura.jar.dir" location="${lib.dir}/pa-web/test-cobertura" />
     <path id="test-cobertura.classpath">
-        <fileset dir="${test-cobertura.jar.dir}"/>
+        <fileset dir="${test-cobertura.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-checkstyle.jar.dir" location="${lib.dir}/pa-web/test-checkstyle" />
     <path id="test-checkstyle.classpath">
-        <fileset dir="${test-checkstyle.jar.dir}"/>
+        <fileset dir="${test-checkstyle.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-pmd.jar.dir" location="${lib.dir}/pa-web/test-pmd" />
     <path id="test-pmd.classpath">
-        <fileset dir="${test-pmd.jar.dir}"/>
+        <fileset dir="${test-pmd.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-selenium.jar.dir" location="${lib.dir}/pa-web/test-selenium" />
     <path id="test-selenium.classpath">
-        <fileset dir="${test-selenium.jar.dir}"/>
+        <fileset dir="${test-selenium.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <path id="ejb.package.classpath">
@@ -268,10 +284,11 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="208">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="206">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/pa-web/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/pa-web/pmd.xml"/>
+            <formatter type="html" toFile="${pa.report.dir}/pa-web/pmd.html"/>
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>

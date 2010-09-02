@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.domain;
 
@@ -8,6 +8,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.NotNull;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * @author Vrushali
@@ -23,6 +25,7 @@ public class OrganizationalStructuralRole extends StructuralRole {
    @ManyToOne
    @JoinColumn(name = "ORGANIZATION_IDENTIFIER", nullable = false)
    @NotNull
+   @Searchable(nested = true)
    public Organization getOrganization() {
        return organization;
    }

@@ -88,7 +88,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
@@ -97,9 +97,13 @@ import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.StudyProtocolSortCriterion;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -114,7 +118,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -132,6 +135,9 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+
 /**
  * @author Naveen Amiruddin
  * @since 11/03/2009
@@ -139,7 +145,7 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
+public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol> implements StudyProtocolServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolBeanLocal.class);
     /**
@@ -182,9 +188,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         if (studyProtocol == null) {
             throw new PAException("No matching study protocol for Ii.extension " + ii.getExtension());
         }
-        StudyProtocolDTO studyProtocolDTO = StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
-
-        return studyProtocolDTO;
+        return StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
     }
 
     /**
@@ -196,14 +200,13 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     public StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException {
         // enforce business rules
         if (studyProtocolDTO == null) {
-            throw new PAException(" studyProtocolDTO should not be null ");
+            throw new PAException(" studyProtocolDTO should not be null.");
         }
 
         enForceBusinessRules(studyProtocolDTO);
 
         StudyProtocolDTO  spDTO = null;
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class,
                 Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
 
@@ -228,16 +231,10 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Ii should not be null");
         }
-        Session session = null;
-
-        InterventionalStudyProtocol isp = null;
-        session = HibernateUtil.getCurrentSession();
-        isp = (InterventionalStudyProtocol)
-        session.load(InterventionalStudyProtocol.class, Long.valueOf(ii.getExtension()));
-        InterventionalStudyProtocolDTO ispDTO =
-            InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
-
-        return ispDTO;
+        Session session = HibernateUtil.getCurrentSession();
+        InterventionalStudyProtocol isp = (InterventionalStudyProtocol) session.load(InterventionalStudyProtocol.class,
+                    Long.valueOf(ii.getExtension()));
+        return InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
     }
 
 
@@ -297,28 +294,21 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
      * @return ii ii
      * @throws PAException exception
      */
-    public Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO)
-    throws PAException {
+    public Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO) throws PAException {
         if (ispDTO == null) {
-            throw new PAException("studyProtocolDTO should not be null ");
-
+            throw new PAException("studyProtocolDTO should not be null.");
         }
         if (ispDTO.getIdentifier() != null && ispDTO.getIdentifier().getExtension() != null) {
             throw new PAException("Extension should be null, but got  = " + ispDTO.getIdentifier().getExtension());
 
         }
         enForceBusinessRules(ispDTO);
-        InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.
-                convertFromDTOToDomain(ispDTO);
+        InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
         Session session = HibernateUtil.getCurrentSession();
         setDefaultValues(isp , ispDTO , session , CREATE);
         session.save(isp);
         return IiConverter.convertToStudyProtocolIi(isp.getId());
-
     }
-
-
-
 
     /**
      *
@@ -331,17 +321,10 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Ii should not be null ");
         }
-        Session session = null;
-
-        ObservationalStudyProtocol osp = null;
-        session = HibernateUtil.getCurrentSession();
-        osp = (ObservationalStudyProtocol)
-        session.load(ObservationalStudyProtocol.class, Long.valueOf(ii.getExtension()));
-        ObservationalStudyProtocolDTO ospDTO =
-            ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
-
-        return ospDTO;
-
+        Session  session = HibernateUtil.getCurrentSession();
+        ObservationalStudyProtocol osp = (ObservationalStudyProtocol) session.load(ObservationalStudyProtocol.class,
+                Long.valueOf(ii.getExtension()));
+        return ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
     }
 
     /**
@@ -350,26 +333,22 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
      * @return ObservationalStudyProtocolDTO
      * @throws PAException PAException
      */
-    public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(
-            ObservationalStudyProtocolDTO ospDTO) throws PAException {
+    public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(ObservationalStudyProtocolDTO ospDTO)
+        throws PAException {
         // enforce business rules
         if (ospDTO == null) {
             throw new PAException("studyProtocolDTO should not be null ");
 
         }
         //enForceBusinessRules(ospDTO);
-        ObservationalStudyProtocolDTO  ospRetDTO = null;
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         ObservationalStudyProtocol osp = (ObservationalStudyProtocol)
         session.load(ObservationalStudyProtocol.class, Long.valueOf(ospDTO.getIdentifier().getExtension()));
         ObservationalStudyProtocol upd = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
         setDefaultValues(osp, ospDTO, session, UPDATE);
         osp = upd;
         session.merge(osp);
-        ospRetDTO =  ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
-        return ospRetDTO;
-
+        return ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
     }
 
     /**
@@ -391,8 +370,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         enForceBusinessRules(ospDTO);
         ObservationalStudyProtocol osp = ObservationalStudyProtocolConverter.
         convertFromDTOToDomain(ospDTO);
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         setDefaultValues(osp, ospDTO, session , CREATE);
         session.save(osp);
         return IiConverter.convertToStudyProtocolIi(osp.getId());
@@ -575,78 +553,34 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
         if (dto == null) {
-            throw new PAException("StudyProtocolDTO should not be null");
-        }
-        Session session = null;
-        List<StudyProtocol> studyProtocolList = null;
-        StringBuffer hql = new StringBuffer();
-        hql.append("select sp from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws "
-                + " where dws.statusCode  <> '");
-        hql.append(DocumentWorkflowStatusCode.REJECTED);
-        hql.append("' and (dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                + " where sp.id=dws1.studyProtocol) or dws.id is null)");
-
-        StringBuffer criteriaClause = new StringBuffer();
-        if (dto.getSecondaryIdentifiers() != null && dto.getSecondaryIdentifiers().getItem() != null) {
-            Iterator<Ii> ids = dto.getSecondaryIdentifiers().getItem().iterator();
-            criteriaClause.append(" and ( ");
-            while (ids.hasNext()) {
-                Ii id = ids.next();
-                criteriaClause.append("exists (select oi.extension from sp.otherIdentifiers oi where oi.root = '"
-                        + id.getRoot() + "' and oi.extension like '%" + id.getExtension() + "%') ");
-                if (ids.hasNext()) {
-                    criteriaClause.append(" or ");
-                } else {
-                    criteriaClause.append(") ");
-                }
-            }
-        }
-        if (dto.getPhaseCode() != null) {
-            criteriaClause.append(addCriteriaEq("sp.phaseCode", dto.getPhaseCode().getCode()));
-        }
-        if (dto.getOfficialTitle() != null) {
-            criteriaClause.append(addCriteriaLike("sp.officialTitle", StConverter.convertToString(
-                    dto.getOfficialTitle())));
-        }
-        if (dto.getPublicTitle() != null) {
-           criteriaClause.append(addCriteriaLike("sp.publicTitle", StConverter.convertToString(dto.getPublicTitle())));
-        }
-        if (dto.getStatusCode() == null || dto.getStatusCode().getCode().equals(ActStatusCode.ACTIVE.getCode())) {
-            criteriaClause.append(addCriteriaEq("sp.statusCode", ActStatusCode.ACTIVE.getCode()));
-        }
-        if (dto.getStatusCode() != null && dto.getStatusCode().getCode().equals(ActStatusCode.INACTIVE.getCode())) {
-            criteriaClause.append(addCriteriaEq("sp.statusCode", ActStatusCode.INACTIVE.getCode()));
-        }
-        if (StringUtils.isNotEmpty(criteriaClause.toString())) {
-            hql.append(criteriaClause);
+            throw new PAException("StudyProtocolDTO should not be null.");
         }
 
-        session = HibernateUtil.getCurrentSession();
-        Query query = session.createQuery(hql.toString());
+        StudyProtocol criteria = new StudyProtocol();
+        criteria.setPhaseCode(PhaseCode.getByCode(CdConverter.convertCdToString(dto.getPhaseCode())));
+        criteria.setOfficialTitle(StConverter.convertToString(dto.getOfficialTitle()));
+        criteria.setPublicTitle(StConverter.convertToString(dto.getPublicTitle()));
+        criteria.setStatusCode(ActStatusCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
+        criteria.setOtherIdentifiers(DSetConverter.convertDsetToIiSet(dto.getSecondaryIdentifiers()));
+
         int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
-        query.setMaxResults(maxLimit);
-        query.setFirstResult(pagingParams.getOffset());
-
-        studyProtocolList = query.list();
-        if (studyProtocolList.size() > PAConstants.MAX_SEARCH_RESULTS) {
-            throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
-        }
-        return convertFromDomainToDTO(studyProtocolList);
+        PageSortParams<StudyProtocol> params = new PageSortParams<StudyProtocol>(maxLimit, pagingParams.getOffset(),
+                StudyProtocolSortCriterion.STUDY_PROTOCOL_ID, false);
+        StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(criteria);
+        List<StudyProtocol> results = search(crit, params);
+        return convertFromDomainToDTO(results);
     }
 
+
     private List<StudyProtocolDTO> convertFromDomainToDTO(List<StudyProtocol> studyProtocolList) {
-        List<StudyProtocolDTO> studyProtocolDTOList = null;
-        if (studyProtocolList != null) {
-            studyProtocolDTOList = new ArrayList<StudyProtocolDTO>();
-            for (StudyProtocol sp : studyProtocolList) {
-                StudyProtocolDTO studyProtocolDTO = StudyProtocolConverter.convertFromDomainToDTO(sp);
-                studyProtocolDTOList.add(studyProtocolDTO);
-            }
+        List<StudyProtocolDTO> studyProtocolDTOList =  new ArrayList<StudyProtocolDTO>();
+        for (StudyProtocol sp : studyProtocolList) {
+            StudyProtocolDTO studyProtocolDTO = StudyProtocolConverter.convertFromDomainToDTO(sp);
+            studyProtocolDTOList.add(studyProtocolDTO);
         }
         return studyProtocolDTOList;
     }
@@ -679,23 +613,6 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
                 Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
 
         StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, newSp);
-    }
-    private String addCriteriaLike(String criteriaName, String criteriaValue) {
-        StringBuffer retVal = new StringBuffer();
-        if (StringUtils.isNotEmpty(criteriaValue)) {
-            String criteria = "%" + criteriaValue + "%";
-            retVal.append(" and lower(").append(criteriaName).append(") like lower('")
-            .append(criteria).append("') ");
-        }
-        return retVal.toString();
-    }
-    private String addCriteriaEq(String criteriaName, String criteriaValue) {
-        StringBuffer retVal = new StringBuffer();
-        if (StringUtils.isNotEmpty(criteriaValue)) {
-            retVal.append(" and lower(").append(criteriaName).append(") = lower('")
-            .append(criteriaValue).append("')");
-        }
-        return retVal.toString();
     }
 
     /**

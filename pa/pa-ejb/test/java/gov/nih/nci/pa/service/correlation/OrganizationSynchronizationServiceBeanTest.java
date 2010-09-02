@@ -37,10 +37,7 @@ public class OrganizationSynchronizationServiceBeanTest {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         bean.setSpsLocal(spsService);
-//        TestSchema.reset();
-        TestSchema.reset1();
-//        session = TestSchema.getSession();
-        //TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
 
         session  = HibernateUtil.getCurrentSession();

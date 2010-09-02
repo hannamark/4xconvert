@@ -101,7 +101,7 @@ import org.junit.Test;
 public class SubmissionTest {
     @Before
     public void setUp() {
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
     }
 

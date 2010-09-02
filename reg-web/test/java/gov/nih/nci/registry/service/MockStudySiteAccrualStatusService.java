@@ -1,9 +1,10 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -15,12 +16,14 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+
 /**
  * @author Vrushali
  *
  */
-public class MockStudySiteAccrualStatusService implements
-        StudySiteAccrualStatusServiceLocal {
+public class MockStudySiteAccrualStatusService extends AbstractBaseSearchBean<StudySiteAccrualStatus>
+    implements StudySiteAccrualStatusServiceLocal {
     static List<StudySiteAccrualStatusDTO> dtoList;
     static {
         dtoList = new ArrayList<StudySiteAccrualStatusDTO>();
@@ -30,7 +33,7 @@ public class MockStudySiteAccrualStatusService implements
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("12/16/2009")));
         dto.setStudySiteIi(IiConverter.convertToStudySiteIi(1L));
         dtoList.add(dto);
-        
+
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#createStudySiteAccrualStatus(gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO)
@@ -48,7 +51,7 @@ public class MockStudySiteAccrualStatusService implements
             Ii studySiteIi) throws PAException {
         StudySiteAccrualStatusDTO  returnDto = new StudySiteAccrualStatusDTO();
         for (StudySiteAccrualStatusDTO dto :dtoList) {
-            if (PAUtil.isIiNotNull(studySiteIi) && PAUtil.isIiNotNull(dto.getStudySiteIi()) 
+            if (PAUtil.isIiNotNull(studySiteIi) && PAUtil.isIiNotNull(dto.getStudySiteIi())
                     && studySiteIi.getExtension().equalsIgnoreCase(dto.getStudySiteIi().getExtension())) {
                 returnDto = dto;
             }

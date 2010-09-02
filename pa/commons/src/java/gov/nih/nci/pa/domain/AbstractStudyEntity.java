@@ -84,6 +84,8 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * Abstract class which should be extended for PA domain objects which
  * have an attribute studyProtocol for a many to one association with StudyProtocol.
@@ -103,6 +105,7 @@ public class AbstractStudyEntity extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
     @NotNull
+    @Searchable(nested = true)
     public StudyProtocol getStudyProtocol() {
         return studyProtocol;
     }

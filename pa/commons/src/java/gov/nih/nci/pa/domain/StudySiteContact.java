@@ -90,6 +90,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * @author Hugh Reinhart
  * @since 09/29/2008
@@ -268,6 +270,7 @@ public class StudySiteContact extends PersonFunctionalRole {
     @ManyToOne
     @JoinColumn(name = "STUDY_SITE_IDENTIFIER")
     @NotNull
+    @Searchable(nested = true)
     public StudySite getStudySite() {
         return studySite;
     }

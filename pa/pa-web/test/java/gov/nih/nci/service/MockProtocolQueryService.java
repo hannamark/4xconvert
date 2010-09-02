@@ -14,11 +14,14 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+
 /**
  * @author Vrushali
  *
  */
-public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
+public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtocol>
+    implements ProtocolQueryServiceLocal {
     static List<StudyProtocolQueryDTO> list;
     static {
         list = new ArrayList<StudyProtocolQueryDTO>();
@@ -41,8 +44,9 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         list.add(spQueryDTO);
 
     }
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByCriteria(gov.nih.nci.pa.dto.StudyProtocolQueryCriteria)
+
+    /**
+     * {@inheritDoc}
      */
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
             StudyProtocolQueryCriteria sc) throws PAException {
@@ -59,8 +63,8 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         return returnList;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getTrialSummaryByStudyProtocolId(java.lang.Long)
+    /**
+     * {@inheritDoc}
      */
     public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(
             Long studyProtocolId) throws PAException {
@@ -73,8 +77,9 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByOrgIdentifier(java.lang.Long)
+
+    /**
+     * {@inheritDoc}
      */
     public List<StudyProtocol> getStudyProtocolByOrgIdentifier(Long orgIdentifier) throws PAException {
         // TODO Auto-generated method stub

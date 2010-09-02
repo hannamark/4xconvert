@@ -82,7 +82,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
     public List<StudyProtocolStageDTO> search(StudyProtocolStageDTO dto, LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
         if (dto == null) {
-            throw new PAException(" StudyProtocolDTO should not be null ");
+            throw new PAException("StudyProtocolDTO should not be null.");
         }
         StudyProtocolStage criteria = new StudyProtocolStage();
         criteria.setPhaseCode(PhaseCode.getByCode(CdConverter.convertCdToString(dto.getPhaseCode())));
@@ -123,8 +123,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Ii can not be null");
         }
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         StudyProtocolStage tempSp = (StudyProtocolStage)
             session.load(StudyProtocolStage.class, Long.valueOf(ii.getExtension()));
         session.delete(tempSp);

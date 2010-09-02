@@ -79,18 +79,18 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
-import gov.nih.nci.pa.iso.convert.PlannedActivityConverter;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.convert.PlannedSubstanceAdministrationConverter;
-import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.PlannedSubstanceAdministrationSortCriterion;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -99,8 +99,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 
 /**
@@ -113,44 +114,32 @@ import org.hibernate.Session;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
-public class PlannedSubstanceAdministrationServiceBean extends
-        AbstractStudyIsoService<PlannedActivityDTO, PlannedActivity, PlannedActivityConverter> implements
-        PlannedSubstanceAdministrationServiceLocal, PlannedSubstanceAdministrationServiceRemote {
+public class PlannedSubstanceAdministrationServiceBean
+extends AbstractStudyIsoService<PlannedSubstanceAdministrationDTO, PlannedSubstanceAdministration,
+    PlannedSubstanceAdministrationConverter>
+    implements PlannedSubstanceAdministrationServiceLocal, PlannedSubstanceAdministrationServiceRemote {
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(Ii ii)
     throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            throw new PAException("Check the Ii value; found null.  ");
+            throw new PAException("Check the Ii value; found null.");
         }
 
-        Session session = null;
-        List<PlannedSubstanceAdministration> queryList = new ArrayList<PlannedSubstanceAdministration>();
-        session = HibernateUtil.getCurrentSession();
-        Query query = null;
+        PlannedSubstanceAdministration criteria = new PlannedSubstanceAdministration();
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(IiConverter.convertToLong(ii));
+        criteria.setStudyProtocol(sp);
 
-        // step 1: form the hql
-        String hql = "select pa "
-            + "from PlannedSubstanceAdministration pa "
-            + "join pa.studyProtocol sp "
-            + "where sp.id = :studyProtocolId "
-            + "order by pa.id ";
-
-        // step 2: construct query object
-        query = session.createQuery(hql);
-        query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
-
-        // step 3: query the result
-        queryList = query.list();
-        ArrayList<PlannedSubstanceAdministrationDTO> resultList = new ArrayList<PlannedSubstanceAdministrationDTO>();
-        for (PlannedSubstanceAdministration bo : queryList) {
-            resultList.add(PlannedSubstanceAdministrationConverter.convertFromDomainToDTO(bo));
-        }
-        return resultList;
+        PageSortParams<PlannedSubstanceAdministration> params =
+            new PageSortParams<PlannedSubstanceAdministration>(PAConstants.MAX_SEARCH_RESULTS, 0,
+                    PlannedSubstanceAdministrationSortCriterion.PLANNED_SUBSTANCE_ADMINISTRATION_ID, false);
+        List<PlannedSubstanceAdministration> results =
+            search(new AnnotatedBeanSearchCriteria<PlannedSubstanceAdministration>(criteria), params);
+        return convertFromDomainToDTOs(results);
     }
 
     /**
@@ -158,32 +147,19 @@ public class PlannedSubstanceAdministrationServiceBean extends
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public PlannedSubstanceAdministrationDTO getPlannedSubstanceAdministration(Ii ii) throws PAException {
-        if ((ii == null) || PAUtil.isIiNull(ii)) {
-            throw new PAException("Check the Ii value; found null.  ");
-        }
-        PlannedSubstanceAdministrationDTO resultDto = null;
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
-        PlannedSubstanceAdministration bo = (PlannedSubstanceAdministration) session.get(
-                PlannedSubstanceAdministration.class, IiConverter.convertToLong(ii));
-        if (bo == null) {
-            throw new PAException("Object not found using get() for id = "
-                    + IiConverter.convertToString(ii) + ".  ");
-        }
-        resultDto = PlannedSubstanceAdministrationConverter.convertFromDomainToDTO(bo);
-        return resultDto;
+        return super.get(ii);
     }
 
     /**
      * {@inheritDoc}
      */
-    public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(
-            PlannedSubstanceAdministrationDTO dto) throws PAException {
+    public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
+        throws PAException {
         if (!PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new PAException("Update method should be used to modify existing.  ");
+            throw new PAException("Update method should be used to modify existing.");
         }
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
-            throw new PAException("StudyProtocol must be set.  ");
+            throw new PAException("StudyProtocol must be set.");
         }
         return createOrUpdatePlannedSubstanceAdministration(dto);
     }
@@ -191,10 +167,10 @@ public class PlannedSubstanceAdministrationServiceBean extends
     /**
      * {@inheritDoc}
      */
-    public PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(
-            PlannedSubstanceAdministrationDTO dto) throws PAException {
+    public PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
+        throws PAException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new PAException("Create method should be used to modify existing.  ");
+            throw new PAException("Create method should be used to modify existing.");
         }
         return createOrUpdatePlannedSubstanceAdministration(dto);
     }
@@ -203,28 +179,21 @@ public class PlannedSubstanceAdministrationServiceBean extends
      * {@inheritDoc}
      */
     public void deletePlannedSubstanceAdministration(Ii ii) throws PAException {
-        if ((ii == null) || PAUtil.isIiNull(ii)) {
-            throw new PAException("Check the Ii value; null found.  ");
-        }
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
-        PlannedSubstanceAdministration bo = (PlannedSubstanceAdministration) session.get(
-                PlannedSubstanceAdministration.class, IiConverter.convertToLong(ii));
-        session.delete(bo);
+        super.delete(ii);
     }
+
     private PlannedSubstanceAdministrationDTO createOrUpdatePlannedSubstanceAdministration(
             PlannedSubstanceAdministrationDTO dto) throws PAException {
         PlannedSubstanceAdministration bo = null;
-        PlannedSubstanceAdministrationDTO resultDto = null;
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
+        PlannedSubstanceAdministrationConverter converter = new PlannedSubstanceAdministrationConverter();
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PlannedSubstanceAdministrationConverter.convertFromDTOToDomain(dto);
+            bo = converter.convertFromDtoToDomain(dto);
         } else {
             bo = (PlannedSubstanceAdministration) session.get(PlannedSubstanceAdministration.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
 
-            PlannedSubstanceAdministration delta = PlannedSubstanceAdministrationConverter.convertFromDTOToDomain(dto);
+            PlannedSubstanceAdministration delta = converter.convertFromDtoToDomain(dto);
             bo.setDoseDescription(delta.getDoseDescription());
             bo.setDoseRegimen(delta.getDoseRegimen());
             bo.setDoseFormCode(delta.getDoseFormCode());
@@ -244,7 +213,6 @@ public class PlannedSubstanceAdministrationServiceBean extends
         }
         bo.setDateLastUpdated(new Date());
         session.saveOrUpdate(bo);
-        resultDto = PlannedSubstanceAdministrationConverter.convertFromDomainToDTO(bo);
-        return resultDto;
+        return converter.convertFromDomainToDto(bo);
     }
 }

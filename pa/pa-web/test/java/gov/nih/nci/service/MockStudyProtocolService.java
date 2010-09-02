@@ -112,11 +112,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+
 /**
  * @author hreinhart
  *
  */
-public class MockStudyProtocolService    implements StudyProtocolServiceLocal {
+public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtocol>
+    implements StudyProtocolServiceLocal {
 
     public static List<StudyProtocol> list;
     public static List<InterventionalStudyProtocol> isplist;

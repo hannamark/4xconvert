@@ -217,7 +217,7 @@ public class SearchTrialAction extends ActionSupport {
         if (records != null && !records.isEmpty()) {
             for (StudyProtocolQueryDTO queryDto : records) {
                 String dwfs = queryDto.getDocumentWorkflowStatusCode().getCode();
-                if (!queryDto.getIsProprietaryTrial()
+                if (!queryDto.isProprietaryTrial()
                         && (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
                         || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode()))
                         && queryDto.getCtgovXmlRequiredIndicator() && isOwner(queryDto.getStudyProtocolId(),
@@ -268,7 +268,7 @@ public class SearchTrialAction extends ActionSupport {
                     queryDto.setUpdate("");
                 }
 
-                if (queryDto.getIsProprietaryTrial()
+                if (queryDto.isProprietaryTrial()
                         && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
                         && isOwner(queryDto.getStudyProtocolId(), loginUser)) {
                         queryDto.setUpdate("Update");
@@ -631,9 +631,9 @@ public class SearchTrialAction extends ActionSupport {
             spQueryDTO.setUserLastCreated(StConverter.convertToString(studyProtocolStageDTO.getUserLastCreated()));
             if (!PAUtil.isBlNull(studyProtocolStageDTO.getProprietaryTrialIndicator())
                     && BlConverter.convertToBoolean(studyProtocolStageDTO.getProprietaryTrialIndicator())) {
-                spQueryDTO.setIsProprietaryTrial(true);
+                spQueryDTO.setProprietaryTrial(true);
             } else {
-                spQueryDTO.setIsProprietaryTrial(false);
+                spQueryDTO.setProprietaryTrial(false);
             }
             returnList.add(spQueryDTO);
         }

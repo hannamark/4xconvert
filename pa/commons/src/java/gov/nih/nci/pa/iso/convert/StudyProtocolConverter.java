@@ -131,13 +131,13 @@ public class StudyProtocolConverter {
      * @param studyProtocolDTO spDTO
      * @return StudyProtocolDTO sp
      */
-    public static StudyProtocolDTO convertFromDomainToDTO(
-            StudyProtocol studyProtocol , StudyProtocolDTO studyProtocolDTO) {
+    public static StudyProtocolDTO convertFromDomainToDTO(StudyProtocol studyProtocol,
+            StudyProtocolDTO studyProtocolDTO) {
         AbstractStudyProtocolConverter.convertFromDomainToDTO(studyProtocol, studyProtocolDTO);
         studyProtocolDTO.setAcronym(StConverter.convertToSt(studyProtocol.getAcronym()));
         studyProtocolDTO.setAccrualReportingMethodCode(
                 CdConverter.convertToCd(studyProtocol.getAccrualReportingMethodCode()));
-        //TODO - as part of PO-2434 this should be moved to the AbstractStudyProtocolConverter 
+        //TODO - as part of PO-2434 this should be moved to the AbstractStudyProtocolConverter
         //once the AbstractStudyProtocolDTO owns the SecondaryIdentifiers.
         if (studyProtocol.getOtherIdentifiers() != null) {
           studyProtocolDTO.setSecondaryIdentifiers(

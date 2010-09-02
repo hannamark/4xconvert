@@ -84,6 +84,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Document;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.convert.DocumentConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -92,6 +93,7 @@ import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -116,8 +118,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
@@ -129,12 +129,13 @@ import org.hibernate.Session;
 public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Document, DocumentConverter> implements
         DocumentServiceLocal {
 
-    private static final Logger LOG = Logger.getLogger(DocumentBeanLocal.class);
     private SessionContext ejbContext;
+
     /**
      * Set the invocation context.
      * @param ctx EJB context
      */
+    @Override
     @Resource
     public void setSessionContext(SessionContext ctx) {
         this.ejbContext = ctx;
@@ -145,32 +146,20 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      * @return DocumentDTO
      * @throws PAException PAException
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
-            LOG.error(" studyProtocol Identifer should not be null ");
-            throw new PAException(" studyProtocol Identifer should not be null ");
+            throw new PAException(" studyProtocol Identifer should not be null.");
         }
-        Session session = null;
-        List<Document> queryList = new ArrayList<Document>();
-        session = HibernateUtil.getCurrentSession();
 
-        Query query = null;
+        Document criteria = new Document();
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(IiConverter.convertToLong(studyProtocolIi));
+        criteria.setStudyProtocol(sp);
+        criteria.setActiveIndicator(Boolean.TRUE);
 
-        String hql = "select doc from Document doc join doc.studyProtocol sp"
-                        + " where sp.id = :spId and doc.activeIndicator = true";
-        LOG.debug("query getDocumentsByStudyProtocol = " + hql);
-
-        query = session.createQuery(hql);
-        query.setLong("spId", IiConverter.convertToLong(studyProtocolIi));
-        queryList = query.list();
-
-        ArrayList<DocumentDTO> resultList = new ArrayList<DocumentDTO>();
-        for (Document bo : queryList) {
-            resultList.add(new DocumentConverter().convertFromDomainToDto(bo));
-        }
-        return resultList;
+        List<Document> results = search(new AnnotatedBeanSearchCriteria<Document>(criteria));
+        return convertFromDomainToDTOs(results);
     }
 
     /**
@@ -187,7 +176,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         doc.setDateLastCreated(now);
         doc.setUserLastCreated(CSMUserService.getInstance().lookupUser(ejbContext));
-        
+
         doc.setActiveIndicator(true);
         session = HibernateUtil.getCurrentSession();
         session.save(doc);
@@ -202,40 +191,20 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      * @return DocumentDTO
      * @throws PAException PAException
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @Override
     public DocumentDTO get(Ii id) throws PAException {
-        Session session = null;
-        DocumentDTO docDTO = null;
-        Document doc = null;
-        List<Document> queryList = new ArrayList<Document>();
-        session = HibernateUtil.getCurrentSession();
-
-        Query query = null;
-
-        // step 1: form the hql
-        String hql = " select doc " + " from Document doc " + " where doc.id = " + IiConverter.convertToLong(id);
-
-        LOG.debug(" query getTrialDocumentById = " + hql);
-
-        // step 2: construct query object
-        query = session.createQuery(hql);
-        queryList = query.list();
-
-        if (!queryList.isEmpty()) {
-            DocumentConverter dc = new DocumentConverter();
-            doc = queryList.get(0);
-            docDTO = dc.convertFromDomainToDto(doc);
+        DocumentDTO docDTO = super.get(id);
+        if (docDTO != null) {
             try {
                 StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
                 StudyProtocolBeanLocal spBean = new StudyProtocolBeanLocal();
                 StudyProtocolDTO spDTO = spBean.getStudyProtocol(docDTO.getStudyProtocolIdentifier());
                 sb.append(File.separator).append(PAUtil.getAssignedIdentifierExtension(spDTO)).append(File.separator)
-                  .append(docDTO.getIdentifier().getExtension()).append('-').append(doc.getFileName());
+                  .append(docDTO.getIdentifier().getExtension()).append('-')
+                  .append(StConverter.convertToString(docDTO.getFileName()));
                 File downloadFile = new File(sb.toString());
                 docDTO.setText(EdConverter.convertToEd(PAUtil.readInputStream(new FileInputStream(downloadFile))));
-
             } catch (FileNotFoundException fe) {
                 throw new PAException(" File Not found " + fe.getLocalizedMessage(), fe);
             } catch (IOException io) {
@@ -254,14 +223,11 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      */
     @Override
     public DocumentDTO update(DocumentDTO docDTO) throws PAException {
-
         validate(docDTO);
-        DocumentDTO docRetDTO = null;
         docDTO.setInactiveCommentText(StConverter.convertToSt("A new record will be created"));
         docDTO.setInactiveCommentText(null);
         updateObjectToInActive(docDTO);
-        docRetDTO = create(docDTO);
-        return docRetDTO;
+        return create(docDTO);
     }
 
     /**
@@ -321,20 +287,14 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     }
 
     private void updateObjectToInActive(DocumentDTO docDTO) throws PAException {
-        Session session = null;
-        Document doc = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
 
-        String hql = " select d from Document d where d.id = :id";
-        Query query = session.createQuery(hql);
-        query.setLong("id", IiConverter.convertToLong(docDTO.getIdentifier()));
-        doc = (Document) query.uniqueResult();
-        // set the values from parameter
+        Document doc = convertFromDtoToDomain(super.get(docDTO.getIdentifier()));
         doc.setActiveIndicator(false);
         doc.setInactiveCommentText(StConverter.convertToString(docDTO.getInactiveCommentText()));
         doc.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
         doc.setUserLastUpdated(CSMUserService.getInstance().lookupUser(ejbContext));
-        
+
         session.update(doc);
         session.flush();
     }

@@ -20,13 +20,13 @@ public class StudyRelationshipServiceBeanTest {
 
     @Before
     public void setUp() throws Exception {
-      TestSchema.reset1();
+      TestSchema.reset();
       TestSchema.primeData();
       srDto.setSourceStudyProtocolIdentifier(IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)));
-    
+
       }
 
-    @Test    
+    @Test
     public void testSearchStudyRelationshipDTOLimitOffset() throws PAException,TooManyResultsException{
         LimitOffset limitOffset = new LimitOffset(1, 1);
         List<StudyRelationshipDTO> listDTO = localEjb.search(srDto, limitOffset);

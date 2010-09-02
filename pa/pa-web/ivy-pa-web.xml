@@ -83,7 +83,7 @@ This is the definition of a virtual module called bda-download that has a depend
 
     <!-- other test targets -->
     <dependency org="checkstyle"                name="checkstyle"              rev="5.0"             conf="test-checkstyle->master,runtime"/>
-    <dependency org="net.sourceforge.cobertura" name="cobertura"               rev="1.9"             conf="test-cobertura->master,runtime"/>
+    <dependency org="net.sourceforge.cobertura" name="cobertura"               rev="1.9.4.1"         conf="test-cobertura->master,runtime"/>
     <dependency org="junit"                     name="junit"                   rev="4.4"             conf="test-junit->master,runtime"/>
     <dependency org="org.seleniumhq.selenium.server" name="selenium-server"    rev="1.0-beta-2"      conf="test-selenium->master,runtime">
         <exclude module="commons-logging"/>

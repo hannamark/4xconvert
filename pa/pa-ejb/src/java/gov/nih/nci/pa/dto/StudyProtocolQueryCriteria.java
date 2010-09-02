@@ -227,8 +227,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      *
      * @param leadOrganizationTrialIdentifier leadOrganizationTrialIdentifier
      */
-    public void setLeadOrganizationTrialIdentifier(
-            String leadOrganizationTrialIdentifier) {
+    public void setLeadOrganizationTrialIdentifier(String leadOrganizationTrialIdentifier) {
         this.leadOrganizationTrialIdentifier = leadOrganizationTrialIdentifier;
     }
     /**
@@ -282,8 +281,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      *
      * @param documentWorkflowStatusCode documentWorkflowStatusCode
      */
-    public void setDocumentWorkflowStatusCode(
-            String documentWorkflowStatusCode) {
+    public void setDocumentWorkflowStatusCode(String documentWorkflowStatusCode) {
         this.documentWorkflowStatusCode = documentWorkflowStatusCode;
     }
     /**
@@ -464,8 +462,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     /**
      * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
      */
-    public void setPhaseAdditionalQualifierCode(
-            String phaseAdditionalQualifierCode) {
+    public void setPhaseAdditionalQualifierCode(String phaseAdditionalQualifierCode) {
         this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
     }
     /**

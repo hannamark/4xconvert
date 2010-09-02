@@ -19,7 +19,7 @@ public class StudyCheckoutConverterTest {
 
     @Before
     public void setUp() throws Exception {
-      TestSchema.reset1();
+      TestSchema.reset();
       TestSchema.primeData();
       sess = HibernateUtil.getCurrentSession();
     }
@@ -31,7 +31,7 @@ public class StudyCheckoutConverterTest {
       bo.setId(123L);
       bo.setStudyProtocol(sp);
       bo.setUserIdentifier("Test");
-      
+
       StudyCheckoutDTO dto = (Converters.get(StudyCheckoutConverter.class).convertFromDomainToDto(bo));
       assertStudyCheckoutConverter(bo, dto);
     }
@@ -50,7 +50,7 @@ public class StudyCheckoutConverterTest {
       dto.setIdentifier(IiConverter.convertToIi((Long) null));
       dto.setUserIdentifier(StConverter.convertToSt(null));
       dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
-      
+
       StudyCheckoutConverter sg = new StudyCheckoutConverter();
       StudyCheckout bo = sg.convertFromDtoToDomain(dto);
       assertStudyCheckoutConverter(bo, dto);

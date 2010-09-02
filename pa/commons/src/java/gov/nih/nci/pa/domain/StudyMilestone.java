@@ -92,6 +92,8 @@ import javax.persistence.Table;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * @author Hugh Reinhart
  * @since 01/14/2009
@@ -125,6 +127,7 @@ public class StudyMilestone extends AbstractStudyEntity {
     @Column(name = "MILESTONE_CODE")
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Searchable
     public MilestoneCode getMilestoneCode() {
         return milestoneCode;
     }

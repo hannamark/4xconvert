@@ -19,7 +19,10 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockStudyProtocolService implements StudyProtocolServiceLocal {
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+
+public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtocol>
+    implements StudyProtocolServiceLocal {
 
     static List<StudyProtocol> list;
     static List<InterventionalStudyProtocol> isplist;
@@ -33,7 +36,7 @@ public class MockStudyProtocolService implements StudyProtocolServiceLocal {
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("01/20/2010"));
         sp.setOfficialTitle("officialTitle");
-        
+
         list.add(sp);
         sp = new InterventionalStudyProtocol();
         sp.setId(3L);
@@ -43,7 +46,7 @@ public class MockStudyProtocolService implements StudyProtocolServiceLocal {
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("01/20/2010"));
         sp.setOfficialTitle("officialTitle");
         list.add(sp);
-        
+
         isplist = new ArrayList<InterventionalStudyProtocol>();
         InterventionalStudyProtocol isp = new InterventionalStudyProtocol();
         isp.setId(1L);
@@ -82,7 +85,7 @@ public class MockStudyProtocolService implements StudyProtocolServiceLocal {
 
     public void deleteStudyProtocol(Ii ii) throws PAException {
         // TODO Auto-generated method stub
-        
+
     }
 
     public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii)
@@ -128,13 +131,13 @@ public class MockStudyProtocolService implements StudyProtocolServiceLocal {
 
     public void validate(StudyProtocolDTO studyProtocolDTO) throws PAException {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void changeOwnership(StudyProtocolDTO studyProtocolDTO)
             throws PAException {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

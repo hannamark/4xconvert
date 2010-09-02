@@ -109,7 +109,7 @@ public class RegulatoryAuthorityServiceBeanTest {
 
   @Before
   public void setUp() throws Exception {
-    TestSchema.reset1();
+    TestSchema.reset();
     TestSchema.primeData();
     sess = HibernateUtil.getCurrentSession();
     reg = (RegulatoryAuthority) sess.get(RegulatoryAuthority.class, TestSchema.regAuthIds.get(0));

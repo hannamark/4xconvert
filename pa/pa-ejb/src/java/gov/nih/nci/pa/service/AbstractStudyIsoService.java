@@ -126,9 +126,9 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
             throw new PAException("Check the Ii value; null found.  ");
         }
 
-        Session session = null;
+        Session  session = HibernateUtil.getCurrentSession();
         List<BO> queryList = new ArrayList<BO>();
-        session = HibernateUtil.getCurrentSession();
+
         Query query = null;
 
         // step 1: form the hql
@@ -145,7 +145,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
 
         // step 3: query the result
         queryList = query.list();
-        ArrayList<DTO> resultList = new ArrayList<DTO>();
+        List<DTO> resultList = new ArrayList<DTO>();
         for (BO bo : queryList) {
             resultList.add(convertFromDomainToDto(bo));
         }

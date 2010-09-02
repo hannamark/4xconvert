@@ -165,9 +165,9 @@ public class StudyOverallStatusBeanLocal extends
                 || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
                 || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
                 || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(bo.getStatusCode())) {
-            if ((bo.getCommentText() == null) || (bo.getCommentText().length() < 1)) {
+            if (StringUtils.isBlank(bo.getCommentText())) {
                 throw new PAException("A reason must be entered when the study status is set to "
-                        + bo.getStatusCode().getCode() + ".  ");
+                        + bo.getStatusCode().getCode() + ".");
             }
         } else {
             bo.setCommentText(null);
@@ -278,9 +278,9 @@ public class StudyOverallStatusBeanLocal extends
                 || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
                 || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
                 || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(bo.getStatusCode())) {
-            if ((bo.getCommentText() == null) || (bo.getCommentText().length() < 1)) {
+            if (StringUtils.isBlank(bo.getCommentText())) {
                 throw new PAException("A reason must be entered when the study status is set to "
-                        + bo.getStatusCode().getCode() + ".  ");
+                        + bo.getStatusCode().getCode() + ".");
             }
         } else {
             bo.setCommentText(null);

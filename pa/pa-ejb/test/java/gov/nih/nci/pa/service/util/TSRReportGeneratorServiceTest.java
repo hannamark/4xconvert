@@ -243,7 +243,7 @@ public class TSRReportGeneratorServiceTest {
 
     @Test
     public void generateTsrReport() throws Exception {
-        Ii ii = IiConverter.convertToStudyProtocolIi(Long.valueOf(1));
+        Ii ii = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         ByteArrayOutputStream x = bean.generateTsrReport(ii);
         assertNotNull(x);
         assertTrue(x.size() > 0);

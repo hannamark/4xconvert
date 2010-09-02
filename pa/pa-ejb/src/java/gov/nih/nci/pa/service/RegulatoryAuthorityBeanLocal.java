@@ -7,6 +7,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.RegulatoryAuthorityConverter;
@@ -15,7 +16,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.RegulatoryAuthoritySortCriterion;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 
 import java.util.List;
@@ -23,9 +23,8 @@ import java.util.List;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
@@ -98,6 +97,8 @@ public class RegulatoryAuthorityBeanLocal extends AbstractBaseIsoService<Regulat
         }
         return convertFromDomainToDTOs(regulatoryList);
     }
+
+
     /**
      * gets the Id.
      *
@@ -110,21 +111,21 @@ public class RegulatoryAuthorityBeanLocal extends AbstractBaseIsoService<Regulat
      *             e
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Ii getRegulatoryAuthorityId(St authorityName,
-            St countryName) throws PAException {
-        String stAuthorityName = StConverter.convertToString(authorityName);
-        String stCountryName = StConverter.convertToString(countryName);
-        Session session = null;
+    public Ii getRegulatoryAuthorityId(St authorityName, St countryName) throws PAException {
+
+        RegulatoryAuthority criteria = new RegulatoryAuthority();
+        Country country = new Country();
+        country.setName(StConverter.convertToString(countryName));
+        criteria.setCountry(country);
+        criteria.setAuthorityName(StConverter.convertToString(authorityName));
+        PageSortParams<RegulatoryAuthority> params = new PageSortParams<RegulatoryAuthority>(1,
+                0, RegulatoryAuthoritySortCriterion.REGULATORY_AUTHORITY_ID, false);
+        List<RegulatoryAuthority> results =
+            search(new AnnotatedBeanSearchCriteria<RegulatoryAuthority>(criteria), params);
+
         Long retRegAuthId = null;
-        session = HibernateUtil.getCurrentSession();
-        Query query = session.createQuery("select id from RegulatoryAuthority "
-                + "as ra where ra.authorityName = :authorityName  and ra.country.name=:countryName");
-        query.setParameter("authorityName", stAuthorityName);
-        query.setParameter("countryName", stCountryName);
-        query.setMaxResults(1);
-        List results = query.list();
-        if (results != null && !results.isEmpty()) {
-            retRegAuthId = (Long) results.get(0);
+        if (CollectionUtils.isNotEmpty(results)) {
+            retRegAuthId = results.get(0).getId();
         }
         return IiConverter.convertToIi(retRegAuthId);
     }

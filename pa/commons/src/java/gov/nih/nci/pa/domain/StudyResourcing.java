@@ -87,6 +87,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 
 /**
  * Fiscal support for research.
@@ -133,6 +135,7 @@ public class StudyResourcing extends AbstractStudyEntity {
      * @return summary4ReportedResourceIndicator
      */
     @Column(name = "SUMM_4_REPT_INDICATOR")
+    @Searchable
     public Boolean getSummary4ReportedResourceIndicator() {
         return summary4ReportedResourceIndicator;
     }
@@ -159,7 +162,7 @@ public class StudyResourcing extends AbstractStudyEntity {
     public void setOrganizationIdentifier(String organizationIdentifier) {
         this.organizationIdentifier = organizationIdentifier;
     }
-   
+
     /**
      * @return fundingMechanismCode
      */
@@ -173,7 +176,7 @@ public class StudyResourcing extends AbstractStudyEntity {
     public void setFundingMechanismCode(String fundingMechanismCode) {
         this.fundingMechanismCode = fundingMechanismCode;
     }
-  
+
     /**
      * @return serialNumber
      */
@@ -219,12 +222,13 @@ public class StudyResourcing extends AbstractStudyEntity {
     public void setNciDivisionProgramCode(NciDivisionProgramCode nciDivisionProgramCode) {
         this.nciDivisionProgramCode = nciDivisionProgramCode;
     }
-     
+
     /**
      *
      * @return activeIndicator
      */
     @Column(name = "ACTIVE_INDICATOR")
+    @Searchable
     public Boolean getActiveIndicator() {
         return activeIndicator;
     }

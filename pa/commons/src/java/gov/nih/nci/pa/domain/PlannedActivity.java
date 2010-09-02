@@ -92,6 +92,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * @author Hugh Reinhart
  * @since 10/28/2008
@@ -140,10 +142,8 @@ public class PlannedActivity extends Activity {
     /**
      * @return the arms
      */
-    @ManyToMany(
-//            cascade = {CascadeType.ALL },
-            mappedBy = "interventions",
-            targetEntity = Arm.class)
+    @ManyToMany(mappedBy = "interventions", targetEntity = Arm.class)
+    @Searchable(nested = true)
     public Collection<Arm> getArms() {
         return arms;
     }

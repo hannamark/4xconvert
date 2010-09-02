@@ -79,12 +79,15 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.iso.convert.InterventionAlternateNameConverter;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.InterventionAlternateNameSortCriterion;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -95,15 +98,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
  * @author Hugh Reinhart
- * @since 10/29/2008 copyright NCI 2008. All rights reserved. This code may not
- *        be used without the express written permission of the copyright
- *        holder, NCI.
+ * @since 10/29/2008
  */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
@@ -113,46 +112,28 @@ public class InterventionAlternateNameServiceBean
                 <InterventionAlternateNameDTO, InterventionAlternateName, InterventionAlternateNameConverter>
         implements InterventionAlternateNameServiceRemote {
 
-    private static final Logger LOG = Logger.getLogger(InterventionAlternateNameServiceBean.class);
-
-    /**
-     * @param interventionIi Primary key assigned to an Intervention.
-     * @return List.
-     * @throws PAException Exception.
-     */
-    @SuppressWarnings("unchecked")
+   /**
+    * {@inheritDoc}
+    */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<InterventionAlternateNameDTO> getByIntervention(
-            Ii interventionIi) throws PAException {
+    public List<InterventionAlternateNameDTO> getByIntervention(Ii interventionIi) throws PAException {
         if (PAUtil.isIiNull(interventionIi)) {
-            throw new PAException(" Ii should not be null ");
+            throw new PAException("Cannot call getByIntervention with a null identifier.");
         }
 
-        Session session = null;
-        List<InterventionAlternateName> queryList = new ArrayList<InterventionAlternateName>();
-        session = HibernateUtil.getCurrentSession();
-        Query query = null;
+        InterventionAlternateName criteria = new InterventionAlternateName();
+        Intervention intervention = new Intervention();
+        intervention.setId(IiConverter.convertToLong(interventionIi));
+        criteria.setIntervention(intervention);
 
-        // step 1: form the hql
-        String hql = "select ian "
-            + "from InterventionAlternateName ian "
-            + "join ian.intervention int "
-            + "where int.id = :interventionId "
-            + "order by ian.id ";
-        LOG.info("query InterventionAlternateName = " + hql + "  ");
-
-        // step 2: construct query object
-        query = session.createQuery(hql);
-        query.setParameter("interventionId", IiConverter.convertToLong(interventionIi));
-
-        // step 3: query the result
-        queryList = query.list();
-        ArrayList<InterventionAlternateNameDTO> resultList = new ArrayList<InterventionAlternateNameDTO>();
-        for (InterventionAlternateName bo : queryList) {
-            resultList.add(convertFromDomainToDto(bo));
-        }
-        return resultList;
+        PageSortParams<InterventionAlternateName> params =
+            new PageSortParams<InterventionAlternateName>(PAConstants.MAX_SEARCH_RESULTS, 0,
+                    InterventionAlternateNameSortCriterion.INTERVENTION_ALTERNATE_NAME_ID, false);
+        List<InterventionAlternateName> results =
+            search(new AnnotatedBeanSearchCriteria<InterventionAlternateName>(criteria), params);
+        return convertFromDomainToDTOs(results);
     }
+
     /**
      * @param interventionsIi array of indexes of associated Intervention
      * @return list of InterventionAlternateNameDTO
@@ -160,7 +141,7 @@ public class InterventionAlternateNameServiceBean
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<InterventionAlternateNameDTO> getByIntervention(Ii[] interventionsIi) throws PAException {
-        ArrayList<InterventionAlternateNameDTO> resultList = new ArrayList<InterventionAlternateNameDTO>();
+        List<InterventionAlternateNameDTO> resultList = new ArrayList<InterventionAlternateNameDTO>();
         for (Ii ii : interventionsIi) {
             resultList.addAll(getByIntervention(ii));
         }

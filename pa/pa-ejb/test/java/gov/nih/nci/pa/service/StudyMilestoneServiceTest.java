@@ -81,6 +81,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
@@ -108,6 +109,7 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -147,7 +149,7 @@ public class StudyMilestoneServiceTest {
         mailSrc.setProtocolQueryService(new ProtocolQueryServiceBean());
         bean.setValidateAbstractions(false);
         bean.setAbstractionCompletionService(abstractionCompletionSerivce);
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
         spAmendIi = TestSchema.createAmendStudyProtocol();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
@@ -649,21 +651,6 @@ public class StudyMilestoneServiceTest {
         assertTrue(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode()
                                                                            .equalsIgnoreCase(dtoDwf.getStatusCode()
                                                                                                    .getCode()));
-        /*
-         * assertTrue(dwsList.contains(DocumentWorkflowStatusCode.VERIFICATION_PENDING.getCode()));
-         *
-         * dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.LATE_REJECTION_DATE)); remote.create(dto); dwsList
-         * = dws.getByStudyProtocol(spIi); assertEquals(++dwsCount, dwsList.size());
-         *
-         * // ongoing verifications set to verified-response after feedback
-         * dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION));
-         * remote.create(dto); dtoDwf = dws.getCurrentByStudyProtocol(spIi);
-         */
-        // TODO this testing was failing. Need to revisit.
-        // assertTrue(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.equals(
-        // DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dwsList.get(0).getStatusCode()))));
-        // dwsList = dws.getByStudyProtocol(spIi);
-        // assertEquals(++dwsCount, dwsList.size());
     }
 
     @Test
@@ -685,12 +672,26 @@ public class StudyMilestoneServiceTest {
 
     @Test
     public void search() throws TooManyResultsException, PAException {
-        try {
-            remote.search(null, null);
-            fail("StudyMilestoneDTO should not be null.");
-        } catch (PAException e) {
-            assertEquals(" StudyMilestoneDTO should not be null ", e.getMessage());
-        }
+        StudyMilestoneDTO studyMilestone = new StudyMilestoneDTO();
+        studyMilestone.setStudyProtocolIdentifier(spIi);
+        studyMilestone.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.READY_FOR_QC));
+        LimitOffset limitOffset = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+
+        List<StudyMilestoneDTO> milestones = remote.search(studyMilestone, limitOffset);
+        assertEquals("There should only be one milestone present for READY_FOR_QC", milestones.size(), 1);
+        StudyMilestoneDTO milestone = milestones.get(0);
+        assertEquals(milestone.getMilestoneCode(), studyMilestone.getMilestoneCode());
+        assertEquals(milestone.getStudyProtocolIdentifier(), studyMilestone.getStudyProtocolIdentifier());
+
+        studyMilestone = new StudyMilestoneDTO();
+        studyMilestone.setStudyProtocolIdentifier(spIi);
+        studyMilestone.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT));
+
+        milestones = remote.search(studyMilestone, limitOffset);
+        assertEquals("There should only be one milestone present for TRIAL_SUMMARY_SENT", milestones.size(), 1);
+        milestone = milestones.get(0);
+        assertEquals(milestone.getMilestoneCode(), studyMilestone.getMilestoneCode());
+        assertEquals(milestone.getStudyProtocolIdentifier(), studyMilestone.getStudyProtocolIdentifier());
     }
 
     private Timestamp getDate(Integer day) {

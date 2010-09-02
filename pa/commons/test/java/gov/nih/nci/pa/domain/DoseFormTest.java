@@ -11,13 +11,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class DoseFormTest {
-    
+
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
     }
-    
+
    @Test
     public void createDoseFormTest() {
         try {
@@ -37,7 +37,7 @@ public class DoseFormTest {
             e.printStackTrace();
         }
     }
-       
+
     public static DoseForm createDoseFormObj() {
         DoseForm df = new DoseForm();
         df.setCode("Code");

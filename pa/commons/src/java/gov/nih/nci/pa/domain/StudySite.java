@@ -146,7 +146,7 @@ public class StudySite extends OrganizationFunctionalRole {
      * @return localStudyProtocolIdentifier
      */
     @Column(name = "LOCAL_SP_INDENTIFIER")
-    @Searchable
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getLocalStudyProtocolIdentifier() {
         return localStudyProtocolIdentifier;
     }
@@ -231,6 +231,7 @@ public class StudySite extends OrganizationFunctionalRole {
      */
     @ManyToOne(optional = true)
     @JoinColumn(name = "HEALTHCARE_FACILITY_IDENTIFIER", nullable = true)
+    @Searchable(nested = true)
     public HealthCareFacility getHealthCareFacility() {
         return healthCareFacility;
     }
@@ -249,6 +250,7 @@ public class StudySite extends OrganizationFunctionalRole {
      */
     @ManyToOne(optional = true)
     @JoinColumn(name = "RESEARCH_ORGANIZATION_IDENTIFIER", nullable = true)
+    @Searchable(nested = true)
     public ResearchOrganization getResearchOrganization() {
         return researchOrganization;
     }
@@ -266,6 +268,7 @@ public class StudySite extends OrganizationFunctionalRole {
      */
     @ManyToOne(optional = true)
     @JoinColumn(name = "OVERSIGHT_COMMITTEE_IDENTIFIER", nullable = true)
+    @Searchable(nested = true)
     public OversightCommittee getOversightCommittee() {
         return oversightCommittee;
     }

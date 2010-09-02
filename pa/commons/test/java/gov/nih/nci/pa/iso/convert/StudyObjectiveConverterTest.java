@@ -102,7 +102,7 @@ public class StudyObjectiveConverterTest {
 
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
         sess = HibernateUtil.getCurrentSession();
     }

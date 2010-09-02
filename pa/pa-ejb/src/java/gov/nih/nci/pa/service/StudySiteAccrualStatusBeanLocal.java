@@ -4,14 +4,18 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.convert.StudySiteAccrualStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.StudySiteAccrualStatusSortCriterion;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
@@ -24,8 +28,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 
 /**
  * @author asharma
@@ -34,12 +40,12 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudySiteAccrualStatusBeanLocal implements StudySiteAccrualStatusServiceLocal {
+public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<StudySiteAccrualStatus>
+    implements StudySiteAccrualStatusServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(StudySiteAccrualStatusBeanLocal.class);
     private static String errMsgMethodNotImplemented = "Method not yet implemented.";
 
-    // Standard methods
     /**
      * @param ii index
      * @return StudySiteAccrualStatusDTO
@@ -100,41 +106,31 @@ public class StudySiteAccrualStatusBeanLocal implements StudySiteAccrualStatusSe
         throw new PAException(errMsgMethodNotImplemented);
     }
 
-    // Custom methods
     /**
-     * @param studySiteIi id of Site
-     * @return list StudySiteAccrualStatusDTO
-     * @throws PAException on error
+     * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException {
         if (PAUtil.isIiNull(studySiteIi)) {
-            LOG.error(" Ii should not be null ");
-            throw new PAException(" Ii should not be null ");
+            throw new PAException("Cannot call getStudySiteAccrualStatusByStudySite with a null identifier.");
         }
 
-        Session session = null;
-        List<StudySiteAccrualStatus> queryList = new ArrayList<StudySiteAccrualStatus>();
-        session = HibernateUtil.getCurrentSession();
-        Query query = null;
+        StudySiteAccrualStatus criteria = new StudySiteAccrualStatus();
+        StudySite ss = new StudySite();
+        ss.setId(IiConverter.convertToLong(studySiteIi));
+        criteria.setStudySite(ss);
 
-        // step 1: form the hql
-        String hql = "select ssas " + "from StudySiteAccrualStatus ssas " + "join ssas.studySite sp "
-                + "where sp.id = :studySiteId " + "order by ssas.id ";
-        LOG.info(" query StudySiteAccrualStatus = " + hql);
+        PageSortParams<StudySiteAccrualStatus> params =
+            new PageSortParams<StudySiteAccrualStatus>(PAConstants.MAX_SEARCH_RESULTS, 0,
+                    StudySiteAccrualStatusSortCriterion.STUDY_SITE_ACCRUAL_ID, false);
+        List<StudySiteAccrualStatus> results =
+            search(new AnnotatedBeanSearchCriteria<StudySiteAccrualStatus>(criteria), params);
 
-        // step 2: construct query object
-        query = session.createQuery(hql);
-        query.setParameter("studySiteId", IiConverter.convertToLong(studySiteIi));
-
-        // step 3: query the result
-        queryList = query.list();
-        ArrayList<StudySiteAccrualStatusDTO> resultList = new ArrayList<StudySiteAccrualStatusDTO>();
-        for (StudySiteAccrualStatus bo : queryList) {
-            resultList.add(StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo));
+        List<StudySiteAccrualStatusDTO> returnList = new ArrayList<StudySiteAccrualStatusDTO>();
+        for (StudySiteAccrualStatus bo : results) {
+            returnList.add(StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo));
         }
-        return resultList;
+        return returnList;
     }
 
     /**

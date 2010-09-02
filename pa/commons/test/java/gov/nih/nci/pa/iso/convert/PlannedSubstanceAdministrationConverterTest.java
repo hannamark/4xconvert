@@ -26,7 +26,7 @@ public class PlannedSubstanceAdministrationConverterTest {
 
     @Before
     public void setUp() throws Exception {
-      TestSchema.reset1();
+      TestSchema.reset();
       TestSchema.primeData();
       sess = HibernateUtil.getCurrentSession();
     }
@@ -50,7 +50,7 @@ public class PlannedSubstanceAdministrationConverterTest {
       bo.setStudyProtocol(sp);
       bo.setDoseDurationValue(new BigDecimal("24"));
       bo.setDoseDurationUnit("15Milligrams");
-      PlannedSubstanceAdministrationDTO dto = PlannedSubstanceAdministrationConverter.convertFromDomainToDTO(bo);
+      PlannedSubstanceAdministrationDTO dto = new PlannedSubstanceAdministrationConverter().convertFromDomainToDto(bo);
       assertPlannedSubstanceAdministrationConverter(bo, dto);
     }
 
@@ -76,17 +76,17 @@ public class PlannedSubstanceAdministrationConverterTest {
       dto.setIdentifier(IiConverter.convertToIi((Long) null));
       dto.setDoseDescription(StConverter.convertToSt("Dose"));
       dto.setDoseRegimen(StConverter.convertToSt(">"));
-      
+
       IvlConverter.JavaPq low  = new IvlConverter.JavaPq(UnitsCode.YEARS.getCode(), new BigDecimal("2"), null);
       IvlConverter.JavaPq high  = new IvlConverter.JavaPq(UnitsCode.YEARS.getCode(), new BigDecimal("8"), null);
-      Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);      
+      Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);
       dto.setDose(ivl);
-      
+
       IvlConverter.JavaPq lowTotal  = new IvlConverter.JavaPq(UnitsCode.YEARS.getCode(), new BigDecimal("2"), null);
       IvlConverter.JavaPq highTotal  = new IvlConverter.JavaPq(UnitsCode.YEARS.getCode(), new BigDecimal("4"), null);
       Ivl<Pq> ivlTotal = IvlConverter.convertPq().convertToIvl(lowTotal, highTotal);
       dto.setDoseTotal(ivlTotal);
-      
+
       dto.setDoseFormCode(CdConverter.convertStringToCd("TABLET"));
       dto.setDoseFrequencyCode(CdConverter.convertStringToCd("BID"));
       dto.setRouteOfAdministrationCode(CdConverter.convertStringToCd("ORAL"));
@@ -95,7 +95,7 @@ public class PlannedSubstanceAdministrationConverterTest {
       pqDuration.setValue(new BigDecimal("4"));
       pqDuration.setUnit(UnitsCode.HOURS.getCode());
       dto.setDoseDuration(pqDuration);
-      PlannedSubstanceAdministration bo = PlannedSubstanceAdministrationConverter.convertFromDTOToDomain(dto);
+      PlannedSubstanceAdministration bo = new PlannedSubstanceAdministrationConverter().convertFromDtoToDomain(dto);
       assertPlannedSubstanceAdministrationConverter(bo, dto);
     }
 

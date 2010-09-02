@@ -87,6 +87,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 /**
  *
  * @author Kalpana Guthikonda
@@ -108,7 +110,7 @@ public class Document extends AbstractStudyEntity {
      */
     @Column(name = "TYPE_CODE")
     @Enumerated(EnumType.STRING)
-    @NotNull ()
+    @NotNull
     public DocumentTypeCode getTypeCode() {
         return typeCode;
     }
@@ -126,6 +128,7 @@ public class Document extends AbstractStudyEntity {
      */
     @Column(name = "ACTIVE_INDICATOR")
     @NotNull
+    @Searchable
     public Boolean getActiveIndicator() {
         return activeIndicator;
     }
@@ -143,7 +146,7 @@ public class Document extends AbstractStudyEntity {
      * @return fileName
      */
     @Column(name = "FILE_NAME")
-    @NotNull()
+    @NotNull
     public String getFileName() {
         return fileName;
     }

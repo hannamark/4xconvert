@@ -208,7 +208,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 } else {
                     body = lookUpTableService.getPropertyValue("noxml.tsr.amend.body");
                 }
-            } else if (spDTO.getIsProprietaryTrial()) {
+            } else if (spDTO.isProprietaryTrial()) {
                 body = lookUpTableService.getPropertyValue("tsr.proprietary.body");
             } else {
                 if (spDTO.getCtgovXmlRequiredIndicator().booleanValue()) {
@@ -223,7 +223,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getDateLastCreated()));
             body = body.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier().toString());
             body = body.replace("${fileName}", TSR + spDTO.getNciIdentifier().toString() + EXTENSION_PDF);
-            if (!spDTO.getIsProprietaryTrial()) {
+            if (!spDTO.isProprietaryTrial()) {
                 body = body.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
             }
 
@@ -239,7 +239,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             String tsrFile = getTSRFile(studyProtocolIi, spDTO, sb2);
             String mailSubject = "";
 
-            if (spDTO.getIsProprietaryTrial()) {
+            if (spDTO.isProprietaryTrial()) {
                 File[] attachments = {new File(tsrFile) };
 
                 mailSubject = lookUpTableService.getPropertyValue("tsr.proprietary.subject");
@@ -291,7 +291,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private String getXmlFile(Ii studyProtocolIi, StudyProtocolQueryDTO spDTO, StringBuffer sb) throws PAException {
         String xmlFile = new String(sb.append(File.separator).append(spDTO.getNciIdentifier().toString() + ".xml"));
         try {
-            if (!spDTO.getIsProprietaryTrial()) {
+            if (!spDTO.isProprietaryTrial()) {
 
                 // Format the xml only for non proprietary
                 String xmlData = format(ctGovXmlGeneratorService.generateCTGovXml(studyProtocolIi));
@@ -415,7 +415,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
         String submissionMailBody = "";
         String subOrgTrialIdentifier = "";
-        if (!spDTO.getIsProprietaryTrial()) {
+        if (!spDTO.isProprietaryTrial()) {
             submissionMailBody = lookUpTableService.getPropertyValue("trial.register.body");
         } else {
             submissionMailBody = lookUpTableService.getPropertyValue("proprietarytrial.register.body");
@@ -439,7 +439,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         submissionMailBody = submissionMailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
 
         String mailSubject = "";
-        if (!spDTO.getIsProprietaryTrial()) {
+        if (!spDTO.isProprietaryTrial()) {
             mailSubject = lookUpTableService.getPropertyValue("trial.register.subject");
         } else {
             mailSubject = lookUpTableService.getPropertyValue("proprietarytrial.register.subject");

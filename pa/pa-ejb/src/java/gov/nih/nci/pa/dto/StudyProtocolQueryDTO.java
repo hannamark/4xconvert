@@ -98,7 +98,6 @@ import java.util.List;
  * @author Naveen Amiruddin
  * @since 07/22/2007
  */
-
 public class StudyProtocolQueryDTO implements Serializable {
     static final long serialVersionUID = 283476876L;
 
@@ -136,11 +135,10 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String updatedComments;
     private Date updatedDate;
     private Long studyInboxId;
-    private boolean isProprietaryTrial;
+    private boolean proprietaryTrial;
     private String studyCheckoutBy;
     private String studyCheckoutByUsername;
     private Long studyCheckoutId;
-    private String trialCategory;
     private Date recordVerificationDate;
     private Boolean ctgovXmlRequiredIndicator;
     private Boolean showSendXml = false;
@@ -150,74 +148,79 @@ public class StudyProtocolQueryDTO implements Serializable {
      * @return the trialCategory
      */
     public String getTrialCategory() {
-        if (this.isProprietaryTrial) {
-            trialCategory = "Proprietary Trial";
-            return trialCategory;
-        }
-        trialCategory = "Non Proprietary Trial";
-        return trialCategory;
+        return this.proprietaryTrial ? "Proprietary Trial" : "Non Proprietary Trial";
     }
 
     /**
      * @return the isProprietaryTrial
      */
-    public boolean getIsProprietaryTrial() {
-        return isProprietaryTrial;
+    public boolean isProprietaryTrial() {
+        return proprietaryTrial;
     }
+
     /**
-     * @param isProprietaryTrial the isProprietaryTrial to set
+     * @param proprietaryTrial the isProprietaryTrial to set
      */
-    public void setIsProprietaryTrial(boolean isProprietaryTrial) {
-        this.isProprietaryTrial = isProprietaryTrial;
+    public void setProprietaryTrial(boolean proprietaryTrial) {
+        this.proprietaryTrial = proprietaryTrial;
     }
+
     /**
      * @return the studyInboxId
      */
     public Long getStudyInboxId() {
       return studyInboxId;
     }
+
     /**
      * @param studyInboxId the studyInboxId to set
      */
     public void setStudyInboxId(Long studyInboxId) {
       this.studyInboxId = studyInboxId;
     }
+
     /**
      * @return the updatedComments
      */
     public String getUpdatedComments() {
       return updatedComments;
     }
+
     /**
      * @param updatedComments the updatedComments to set
      */
     public void setUpdatedComments(String updatedComments) {
       this.updatedComments = updatedComments;
     }
+
     /**
      * @return the updatedDate
      */
     public Date getUpdatedDate() {
       return updatedDate;
     }
+
     /**
      * @param updatedDate the updatedDate to set
      */
     public void setUpdatedDate(Date updatedDate) {
       this.updatedDate = updatedDate;
     }
+
     /**
      * @return the submissionTypeCode
      */
     public SubmissionTypeCode getSubmissionTypeCode() {
         return submissionTypeCode;
     }
+
     /**
      * @param submissionTypeCode the submissionTypeCode to set
      */
     public void setSubmissionTypeCode(SubmissionTypeCode submissionTypeCode) {
         this.submissionTypeCode = submissionTypeCode;
     }
+
     /**
      *
      * @return studyProtocolId
@@ -225,6 +228,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     public Long getStudyProtocolId() {
         return studyProtocolId;
     }
+
     /**
      *
      * @param studyProtocolId studyProtocolId

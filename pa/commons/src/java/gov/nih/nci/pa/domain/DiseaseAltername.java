@@ -90,6 +90,8 @@ import javax.persistence.Table;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * @author Hugh Reinhart
  * @since 11/29/2008
@@ -122,6 +124,7 @@ public class DiseaseAltername extends AbstractEntityWithStatusCode<ActiveInactiv
     @ManyToOne
     @JoinColumn(name = "DISEASE_IDENTIFIER", updatable = false)
     @NotNull
+    @Searchable(nested = true)
     public Disease getDisease() {
         return disease;
     }

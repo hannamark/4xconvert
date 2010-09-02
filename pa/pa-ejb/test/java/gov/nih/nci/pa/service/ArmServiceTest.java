@@ -121,7 +121,7 @@ public class ArmServiceTest {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         remoteEjb = new ArmBeanLocal();
         paRemoteEjb = new PlannedActivityBeanLocal();
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.armIds.get(0));
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));

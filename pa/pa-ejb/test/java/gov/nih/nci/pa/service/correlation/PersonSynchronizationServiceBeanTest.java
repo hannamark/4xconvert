@@ -32,7 +32,6 @@ public class PersonSynchronizationServiceBeanTest {
     StudyContactServiceLocal scService = new StudyContactBeanLocal();
 
     Ii pid;
-    // Session session = null;
     Long personId = Long.valueOf(1);
 
     @Before
@@ -41,7 +40,7 @@ public class PersonSynchronizationServiceBeanTest {
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         bean.setSpcLocal(spcService);
         bean.setScLocal(scService);
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.reset();
         // TestSchema.primeData();
 

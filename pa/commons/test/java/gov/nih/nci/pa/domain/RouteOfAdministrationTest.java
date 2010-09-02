@@ -11,13 +11,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class RouteOfAdministrationTest {
-    
+
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
     }
-    
+
    @Test
     public void createRouteOfAdministrationTestTest() {
         try {
@@ -37,7 +37,7 @@ public class RouteOfAdministrationTest {
             e.printStackTrace();
         }
     }
-       
+
     public static RouteOfAdministration createRouteOfAdministrationObj() {
         RouteOfAdministration df = new RouteOfAdministration();
         df.setCode("Code");

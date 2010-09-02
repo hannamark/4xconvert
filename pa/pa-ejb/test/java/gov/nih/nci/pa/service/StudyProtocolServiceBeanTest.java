@@ -87,12 +87,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
-import gov.nih.nci.pa.domain.StudyRelationship;
-import gov.nih.nci.pa.domain.StudyRelationshipTest;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTOTest;
@@ -102,20 +103,21 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -153,6 +155,7 @@ public class StudyProtocolServiceBeanTest {
     public void nullParameter4() throws Exception {
         remoteEjb.updateStudyProtocol(null);
     }
+
     @Test(expected=PAException.class)
     public void nullParameter6() throws Exception {
         remoteEjb.getInterventionalStudyProtocol(null);
@@ -179,10 +182,12 @@ public class StudyProtocolServiceBeanTest {
         dto.setIdentifier(IiConverter.convertToIi("111"));
         remoteEjb.createObservationalStudyProtocol(dto);
     }
+
     @Test(expected=PAException.class)
     public void nullParameter11() throws Exception {
         remoteEjb.createObservationalStudyProtocol(null);
     }
+
     @Test(expected=PAException.class)
     public void nullExtension() throws Exception {
         InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
@@ -191,6 +196,7 @@ public class StudyProtocolServiceBeanTest {
         ispDTO.setIdentifier(ii);
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
+
     @Test(expected=PAException.class)
     public void businessRulesException1() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
@@ -198,6 +204,7 @@ public class StudyProtocolServiceBeanTest {
         ispDTO.setStartDateTypeCode(null);
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
+
     @Test(expected=PAException.class)
     public void businessRulesException2() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
@@ -221,6 +228,7 @@ public class StudyProtocolServiceBeanTest {
         ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/9999")));
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
+
     @Test(expected=PAException.class)
     public void businessRulesException5() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
@@ -237,15 +245,16 @@ public class StudyProtocolServiceBeanTest {
         ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
+
     @Test(expected=PAException.class)
     public void businessRulesException7() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
             InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
-        ispDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2001" +
-        		"")));
+        ispDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2001")));
         ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
+
     @Test
     public void businessRulesExceptionForUpdate() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
@@ -272,8 +281,8 @@ public class StudyProtocolServiceBeanTest {
         when(sIndSvc.getByStudyProtocol(any(Ii.class))).thenReturn(sIndDtoList);
         bean.setStudyIndldeService(sIndSvc);
         try {
-        remoteEjb.updateInterventionalStudyProtocol(saved);
-        fail("Unable to set FDARegulatedIndicator to 'No', Please remove IND/IDEs and try again");
+            remoteEjb.updateInterventionalStudyProtocol(saved);
+            fail("Unable to set FDARegulatedIndicator to 'No', Please remove IND/IDEs and try again");
         } catch (PAException e) {
             assertEquals("Unable to set FDARegulatedIndicator to 'No',  Please remove IND/IDEs and try again",
                     e.getMessage());
@@ -289,64 +298,56 @@ public class StudyProtocolServiceBeanTest {
         assertNotNull(ii.getExtension());
     }
 
-    @Test
+    @Test(expected = PAException.class)
     public void deleteStudyProtocol() throws Exception {
-        try {
         InterventionalStudyProtocolDTO ispDTO =
                 InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
-        InterventionalStudyProtocolDTO target =
-            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
 
         Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
-        Ii targetIi = remoteEjb.createInterventionalStudyProtocol(target);
-
-        assertNotNull(ii.getExtension());
-        StudyProtocolDTO sp = remoteEjb.getStudyProtocol(ii);
-        assertNotNull(sp);
-        StudyProtocol spd  = new StudyProtocol();
-        StudyProtocol targetD  = new StudyProtocol();
-        targetD.setId(IiConverter.convertToLong(targetIi));
-
-        spd.setId(IiConverter.convertToLong(ii));
-        StudyRelationship srd = StudyRelationshipTest.createStudyRelationshipObj(spd);
-        srd.setTargetStudyProtocol(targetD);
-        Session session  = HibernateUtil.getCurrentSession();
-        session.save(srd);
-
         remoteEjb.deleteStudyProtocol(ii);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Test
     public void search() throws Exception {
-        try {
-        InterventionalStudyProtocolDTO ispDTO =
-                InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
-        Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
-        assertNotNull(ii.getExtension());
-        remoteEjb.deleteStudyProtocol(ii);
-        StudyProtocolDTO sp = remoteEjb.getStudyProtocol(ii);
-        assertEquals(sp , null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        createStudyProtocols(6);
+
+        StudyProtocolDTO criteria = new StudyProtocolDTO();
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+
+        List<StudyProtocolDTO> results = remoteEjb.search(criteria, limit);
+        assertEquals(6, results.size());
+
+        criteria.setOfficialTitle(StConverter.convertToSt("Cancer for kids"));
+        criteria.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+        assertEquals(6, results.size());
+
+        limit = new LimitOffset(3, 0);
+        results = remoteEjb.search(criteria, limit);
+        assertEquals(3, results.size());
+
+
+        Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
+        Ii spSecId = new Ii();
+        spSecId.setExtension("NCI-2010-00001");
+        spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        secondaryIdentifiers.add(spSecId);
+        criteria.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(secondaryIdentifiers));
+
+        results = remoteEjb.search(criteria, limit);
+        assertEquals(1, results.size());
+
+        Ii otherId = new Ii();
+        otherId.setExtension("OTHER-1");
+        otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+        secondaryIdentifiers.add(otherId);
+        criteria.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(secondaryIdentifiers));
+
+        results = remoteEjb.search(criteria, limit);
+        assertEquals(1, results.size());
+
+
     }
-    @Test
-    public void searchWithLimits() throws Exception {
-        try {
-        InterventionalStudyProtocolDTO ispDTO =
-                InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
-        Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
-        assertNotNull(ii.getExtension());
-        LimitOffset limit = new LimitOffset(5,0);
-        List <StudyProtocolDTO> studyList = remoteEjb.search(ispDTO,limit);
-        assertNotNull(studyList);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
     @Test
     public void getInterventionalStudyProtocol() throws Exception {
         InterventionalStudyProtocolDTO create =
@@ -428,6 +429,7 @@ public class StudyProtocolServiceBeanTest {
         assertEquals(IvlConverter.convertInt().convertLow(update.getTargetAccrualNumber()).intValue() ,IvlConverter.convertInt().convertLow(saved.getTargetAccrualNumber()).intValue());
         assertNotNull(update.getIdentifier().getExtension());
     }
+
     @Test
     public void nullInDatesTest() throws Exception {
         StudyProtocol sp = new InterventionalStudyProtocol();
@@ -479,5 +481,54 @@ public class StudyProtocolServiceBeanTest {
         Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
         assertEquals(ii.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
         assertTrue(StringUtils.isNotEmpty(ii.getIdentifierName()));
+    }
+
+
+    /**
+     * Creates study protocols
+     * @param count the number of study protocols to create
+     */
+    private void createStudyProtocols(int count) {
+        for (int i = 1; i <= count; i++) {
+            InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
+            sp = (InterventionalStudyProtocol) StudyProtocolTest.createStudyProtocolObj(sp);
+            sp = StudyProtocolTest.createInterventionalStudyProtocolObj(sp);
+
+            Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
+            Ii spSecId = new Ii();
+            spSecId.setExtension("NCI-2010-0000" + i);
+            spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+
+            Ii otherId = new Ii();
+            otherId.setExtension("OTHER-" + i);
+            otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+
+            secondaryIdentifiers.add(spSecId);
+            secondaryIdentifiers.add(otherId);
+            sp.setOtherIdentifiers(secondaryIdentifiers);
+            TestSchema.addUpdObject(sp);
+
+            DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
+            dws.setStudyProtocol(sp);
+            dws.setStatusCode(DocumentWorkflowStatusCode.REJECTED);
+            dws.setCommentText("Rejected");
+            dws.setUserLastUpdated(sp.getUserLastUpdated());
+            TestSchema.addUpdObject(dws);
+
+            dws = new DocumentWorkflowStatus();
+            dws.setStudyProtocol(sp);
+            dws.setStatusCode(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
+            dws.setCommentText("Verification Pending.");
+            dws.setUserLastUpdated(sp.getUserLastUpdated());
+            TestSchema.addUpdObject(dws);
+
+            dws = new DocumentWorkflowStatus();
+            dws.setStudyProtocol(sp);
+            dws.setStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
+            dws.setCommentText("Accepted");
+            dws.setUserLastUpdated(sp.getUserLastUpdated());
+            TestSchema.addUpdObject(dws);
+
+        }
     }
 }

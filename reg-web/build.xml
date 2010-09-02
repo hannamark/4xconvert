@@ -53,42 +53,58 @@
 
     <property name="compile.jar.dir" location="${lib.dir}/reg-web/compile" />
     <path id="compile.classpath">
-        <fileset dir="${compile.jar.dir}"/>
+        <fileset dir="${compile.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="runtime.jar.dir" location="${lib.dir}/reg-web/runtime" />
     <path id="runtime.classpath">
-        <fileset dir="${runtime.jar.dir}"/>
+        <fileset dir="${runtime.jar.dir}">
+            <include name="*.jar"/>
+       </fileset>
     </path>
 
     <property name="test.jar.dir" location="${lib.dir}/reg-web/test" />
     <path id="test.classpath">
-        <fileset dir="${test.jar.dir}"/>
+        <fileset dir="${test.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-simian.jar.dir" location="${lib.dir}/reg-web/test-simian" />
     <path id="test-simian.classpath">
-        <fileset dir="${test-simian.jar.dir}"/>
+        <fileset dir="${test-simian.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-junit.jar.dir" location="${lib.dir}/reg-web/test-junit" />
     <path id="test-junit.classpath">
-        <fileset dir="${test-junit.jar.dir}"/>
+        <fileset dir="${test-junit.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-cobertura.jar.dir" location="${lib.dir}/reg-web/test-cobertura" />
     <path id="test-cobertura.classpath">
-        <fileset dir="${test-cobertura.jar.dir}"/>
+        <fileset dir="${test-cobertura.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-checkstyle.jar.dir" location="${lib.dir}/reg-web/test-checkstyle" />
     <path id="test-checkstyle.classpath">
-        <fileset dir="${test-checkstyle.jar.dir}"/>
+        <fileset dir="${test-checkstyle.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <property name="test-pmd.jar.dir" location="${lib.dir}/reg-web/test-pmd" />
     <path id="test-pmd.classpath">
-        <fileset dir="${test-pmd.jar.dir}"/>
+        <fileset dir="${test-pmd.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <path id="ivy.classpath">

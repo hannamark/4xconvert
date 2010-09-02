@@ -101,7 +101,6 @@ public class StudyRegulatoryAuthority extends AbstractStudyEntity {
     private static final long serialVersionUID = 1L;
     private RegulatoryAuthority regulatoryAuthority;
 
-
     /**
      *
      * @return regulatoryAuthority
@@ -112,6 +111,7 @@ public class StudyRegulatoryAuthority extends AbstractStudyEntity {
     public RegulatoryAuthority getRegulatoryAuthority() {
         return regulatoryAuthority;
     }
+
     /**
      *
      * @param regulatoryAuthority regulatoryAuthority

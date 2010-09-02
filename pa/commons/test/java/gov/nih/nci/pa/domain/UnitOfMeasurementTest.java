@@ -11,13 +11,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class UnitOfMeasurementTest {
-    
+
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
     }
-    
+
    @Test
     public void createUnitOfMeasurementTest() {
         try {
@@ -37,7 +37,7 @@ public class UnitOfMeasurementTest {
             e.printStackTrace();
         }
     }
-       
+
     public static UnitOfMeasurement createUnitOfMeasurementObj() {
         UnitOfMeasurement uof = new UnitOfMeasurement();
         uof.setCode("Code");

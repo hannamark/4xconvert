@@ -78,12 +78,15 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
-import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyCheckout;
+import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
@@ -103,8 +106,11 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
-import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.StudyProtocolOptions;
+import gov.nih.nci.pa.service.search.StudyProtocolQueryBeanSearchCriteria;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -121,11 +127,14 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 
 /**
  * @author Naveen Amiruddin
@@ -136,18 +145,10 @@ import org.hibernate.Session;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
-public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
+public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtocol>
+    implements ProtocolQueryServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(ProtocolQueryServiceBean.class);
-    private static final int STUDY_PROTOCOL_INDEX = 0;
-    private static final int WORKFLOW_STATUS_INDEX = 1;
-    private static final int MILESTONE_INDEX = 2;
-    private static final int OVERALL_STATUS_INDEX = 3;
-    private static final int PI_INDEX = 4;
-    private static final int LEAD_ORG_INDEX = 5;
-    private static final int STUDY_SITE_INDEX = 6;
-    private static final int STUDY_INBOX_INDEX = 8;
-    private static final int STUDY_CHECKOUT_INDEX = 9;
 
     /**
      * gets a list StudyProtocl by criteria.
@@ -164,9 +165,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             throw new PAException("At least one criteria is required.");
         }
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
-        List<Object> queryList = getStudyProtocolQueryResults(spsc);
+        List<StudyProtocol> queryList = getStudyProtocolQueryResults(spsc);
         pdtos = convertToStudyProtocolDTO(queryList);
-        if (pdtos != null && !pdtos.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(pdtos)) {
             pdtos = appendOnHold(pdtos);
         }
         return pdtos;
@@ -188,7 +189,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         }
         StudyProtocolQueryCriteria spqc = new StudyProtocolQueryCriteria();
         spqc.setStudyProtocolId(studyProtocolId);
-        List<Object> queryList = getStudyProtocolQueryResults(spqc);
+        List<StudyProtocol> queryList = getStudyProtocolQueryResults(spqc);
         if (queryList == null) {
             // this will never happen is real scenario, as a practice throw
             // exception
@@ -213,10 +214,10 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
      * @throws PAException
      *             paException
      */
-    private List<StudyProtocolQueryDTO> convertToStudyProtocolDTO(List<Object> protocolQueryResult) throws PAException {
+    private List<StudyProtocolQueryDTO> convertToStudyProtocolDTO(List<StudyProtocol> protocolQueryResult)
+        throws PAException {
         List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO studyProtocolDto = null;
-        StudyProtocol studyProtocol = null;
         StudyOverallStatus studyOverallStatus = null;
         DocumentWorkflowStatus documentWorkflowStatus = null;
         StudyMilestone studyMilestone;
@@ -225,43 +226,48 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         StudySite studySite = null;
         StudyInbox studyInbox = null;
         StudyCheckout studyCheckout = null;
-        // array of objects for each row
-        Object[] searchResult = null;
         try {
-            for (int i = 0; i < protocolQueryResult.size(); i++) {
-                searchResult = (Object[]) protocolQueryResult.get(i);
-                if (searchResult == null) {
-                    break;
-                }
+            for (StudyProtocol studyProtocol : protocolQueryResult) {
                 studyProtocolDto = new StudyProtocolQueryDTO();
-                // get study protocol
-                studyProtocol = (StudyProtocol) searchResult[STUDY_PROTOCOL_INDEX];
+
                 // get documentWorkflowStatus
-                documentWorkflowStatus = (DocumentWorkflowStatus) searchResult[WORKFLOW_STATUS_INDEX];
-                // get studyMilestone
-                studyMilestone = (StudyMilestone) searchResult[MILESTONE_INDEX];
+                documentWorkflowStatus = studyProtocol.getDocumentWorkflowStatuses().isEmpty() ? null
+                        : studyProtocol.getDocumentWorkflowStatuses().iterator().next();
+
+                studyMilestone = studyProtocol.getStudyMilestones().isEmpty() ? null
+                        : studyProtocol.getStudyMilestones().iterator().next();
                 // get studyOverallStatus
-                studyOverallStatus = (StudyOverallStatus) searchResult[OVERALL_STATUS_INDEX];
+                studyOverallStatus = studyProtocol.getStudyOverallStatuses().isEmpty() ? null
+                        : studyProtocol.getStudyOverallStatuses().iterator().next();
                 // get the person
-                person = (Person) searchResult[PI_INDEX];
-                // get the organization
-                organization = (Organization) searchResult[LEAD_ORG_INDEX];
-                // get the StudySite
-                studySite = (StudySite) searchResult[STUDY_SITE_INDEX];
+                StudyContact sc = studyProtocol.getStudyContacts().isEmpty() ? null
+                        : studyProtocol.getStudyContacts().iterator().next();
+                if (sc != null) {
+                    person = sc.getClinicalResearchStaff().getPerson();
+                }
+
+                // study site and organization
+                studySite = studyProtocol.getStudySites().isEmpty() ? null
+                        : studyProtocol.getStudySites().iterator().next();
+                if (studySite != null) {
+                    organization =  studySite.getResearchOrganization().getOrganization();
+                }
+
                 // get the StudyInbox
-                studyInbox = (StudyInbox) searchResult[STUDY_INBOX_INDEX];
-                studyCheckout = (StudyCheckout) searchResult[STUDY_CHECKOUT_INDEX];
+                studyInbox = studyProtocol.getStudyInbox().isEmpty() ? null
+                        : studyProtocol.getStudyInbox().iterator().next();
+                studyCheckout = studyProtocol.getStudyCheckout().isEmpty() ? null
+                        : studyProtocol.getStudyCheckout().iterator().next();
 
                 // transfer protocol to studyProtocolDto
                 if (documentWorkflowStatus != null) {
                     studyProtocolDto.setDocumentWorkflowStatusCode(documentWorkflowStatus.getStatusCode());
                     studyProtocolDto.setDocumentWorkflowStatusDate(documentWorkflowStatus.getStatusDateRangeLow());
                 }
+
                 if (studyProtocol != null) {
                     if (studyProtocol instanceof ObservationalStudyProtocol) {
                         studyProtocolDto.setStudyProtocolType("ObservationalStudyProtocol");
-                    } else if (studyProtocol instanceof InterventionalStudyProtocol) {
-                        studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
                     } else {
                         studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
                     }
@@ -287,10 +293,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.O);
                     }
                    if (studyProtocol.getProprietaryTrialIndicator() != null) {
-                       studyProtocolDto.setIsProprietaryTrial(
-                               studyProtocol.getProprietaryTrialIndicator());
+                       studyProtocolDto.setProprietaryTrial(studyProtocol.getProprietaryTrialIndicator());
                    } else {
-                       studyProtocolDto.setIsProprietaryTrial(false);
+                       studyProtocolDto.setProprietaryTrial(false);
                    }
                    studyProtocolDto.setRecordVerificationDate(studyProtocol.getRecordVerificationDate());
                    if (!(studyProtocol.getCtgovXmlRequiredIndicator() != null
@@ -425,305 +430,117 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
 
     /**
      *
-     * @param studyProtocolQueryCriteria
+     * @param criteria
      *            studyProtocolQueryCriteria
      * @return List queryList
      * @throws PAException
      *             paException
      */
-    @SuppressWarnings("unchecked")
-    private List<Object> getStudyProtocolQueryResults(
-            StudyProtocolQueryCriteria studyProtocolQueryCriteria)
-            throws PAException {
-        List<Object> queryList = new ArrayList<Object>();
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
-        Query query = null;
-        // step 1: form the hql
-        String hql = generateStudyProtocolQuery(studyProtocolQueryCriteria);
-        // String hql = "select sp from StudyProtocol sp";
-        LOG.debug(" query protocol = " + hql);
-        // step 2: construct query object
-        query = session.createQuery(hql);
-        // step 3: query the result
-        queryList = query.list();
-        if (queryList.size() > PAConstants.MAX_SEARCH_RESULTS) {
+    private List<StudyProtocol> getStudyProtocolQueryResults(StudyProtocolQueryCriteria criteria)
+    throws PAException {
+        StudyProtocol example = new StudyProtocol();
+        StudyProtocolOptions options = new StudyProtocolOptions();
+        options.setUserId(criteria.getUserId());
+        options.setExcludeRejectedTrials(BooleanUtils.isTrue(criteria.isExcludeRejectProtocol()));
+        options.setLockedTrials(criteria.isStudyLockedBy());
+        options.setLockedUser(criteria.getUserLastCreated());
+        options.setMyTrialsOnly(BooleanUtils.isTrue(criteria.isMyTrialsOnly()));
+        options.setParticipatingSite(StringUtils.equals(criteria.getOrganizationType(),
+                PAConstants.PARTICIPATING_SITE));
+        options.setParticipatingSiteId(criteria.getParticipatingSiteId() == null ? null
+                : Long.valueOf(criteria.getParticipatingSiteId()));
+        options.setTrialSubmissionType(SubmissionTypeCode.getByCode(criteria.getSubmissionType()));
+        options.setSearchOnHoldTrials(criteria.isSearchOnHold());
+        options.setInboxProcessing(BooleanUtils.isTrue(criteria.isInBoxProcessing()));
+
+        populateExample(criteria, example);
+        StudyProtocolQueryBeanSearchCriteria crit = new StudyProtocolQueryBeanSearchCriteria(example, options);
+        List<StudyProtocol> results = search(crit);
+        if (results.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new PAException("Results exceed more than 500, Please redefine the seacrh criteria");
         }
-        return queryList;
+        return results;
     }
 
-    @SuppressWarnings("unchecked")
-    private List<StudyProtocol> getStudyProtocolQueryResults(Long orgIdentifier) throws PAException {
-        StringBuffer hql = new StringBuffer();
-        hql.append("select sp from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as "
-                + "dws left outer join sp.studySites as sps left outer join sps.researchOrganization as "
-                + "ro left outer join ro.organization as org where 1=1 and str(")
-        .append(orgIdentifier.toString())
-        .append(") in (select researchOrganization.organization.identifier from StudySite where functionalCode ='")
-        .append(StudySiteFunctionalCode.LEAD_ORGANIZATION)
-        .append("' and studyProtocol.id = sp.id) and dws.statusCode  <> '")
-        .append(DocumentWorkflowStatusCode.REJECTED)
-        .append("' and (dws.id in (select max(id) from DocumentWorkflowStatus as dws1 where sp.id=dws1.studyProtocol) "
-                + "or dws.id is null) and sps.functionalCode = '")
-        .append(StudySiteFunctionalCode.LEAD_ORGANIZATION)
-        .append("' ");
+    private void populateExample(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
+        sp.setId(crit.getStudyProtocolId());
+        sp.setOfficialTitle(crit.getOfficialTitle());
+        sp.setPhaseCode(PhaseCode.getByCode(crit.getPhaseCode()));
+        sp.setPhaseAdditionalQualifierCode(
+                PhaseAdditionalQualifierCode.getByCode(crit.getPhaseAdditionalQualifierCode()));
 
-        Session session = HibernateUtil.getCurrentSession();
-        Query query = session.createQuery(hql.toString());
-        return query.list();
-    }
-
-    /**
-     * generate HQL query for search protocol.
-     *
-     * @param studyProtocolQueryCriteria
-     *            studyProtocolQueryCriteria
-     * @return hql
-     * @throws PAException
-     *             paException
-     */
-    private String generateStudyProtocolQuery(StudyProtocolQueryCriteria studyProtocolQueryCriteria)
-            throws PAException {
-        StringBuffer hql = new StringBuffer();
-        try {
-            hql.append(" select distinct sp , dws , sms , sos  , per , org , sps , sc, sinbx, "
-                            + "scheckout from StudyProtocol as sp  "
-                            + "left outer join sp.documentWorkflowStatuses as dws  "
-                            + "left outer join sp.studyMilestones as sms  "
-                            + "left outer join sp.studyOverallStatuses as sos  "
-                            + "left outer join sp.studyContacts as sc "
-                            + "left outer join sc.clinicalResearchStaff as hcp "
-                            + "left outer join hcp.person as per "
-                            + "left outer join sp.studySites as sps  "
-                            + "left outer join sps.researchOrganization as ro "
-                            + "left outer join ro.organization as org "
-                            + "left outer join sp.studyInbox as sinbx "
-                            + "left outer join sp.studyCheckout as scheckout "
-                            + "left outer join sp.studyOwners as sowner ");
-
-            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
-                hql.append(" left outer join sp.studySites as sps_nct ");
-            }
-
-            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())
-                    || StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
-                hql.append(" left outer join sp.otherIdentifiers as sp_oids ");
-            }
-
-            hql.append(generateWhereClause(studyProtocolQueryCriteria));
-            hql.append(" order by dws.statusDateRangeLow asc");
-        } catch (Exception e) {
-            throw new PAException("General error in while executing Study Query protocol", e);
+        if (StringUtils.isNotEmpty(crit.getNciIdentifier())) {
+            Ii nciId = new Ii();
+            nciId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+            nciId.setExtension(crit.getNciIdentifier());
+            sp.getOtherIdentifiers().add(nciId);
         }
-        return hql.toString();
 
-    }
+        if (StringUtils.isNotEmpty(crit.getOtherIdentifier())) {
+            Ii otherId = new Ii();
+            otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+            otherId.setExtension(crit.getOtherIdentifier());
+            sp.getOtherIdentifiers().add(otherId);
+        }
 
-    /**
-     * generate a where clause for a given protocol search criteria.
-     *
-     * @param studyProtocolQueryCriteria
-     * @return String String
-     * @throws PAException
-     *             paException
-     */
-    private String generateWhereClause(StudyProtocolQueryCriteria studyProtocolQueryCriteria) throws PAException {
-        StringBuffer where = new StringBuffer();
-        try {
-            where.append("where 1 = 1 ");
-            if (studyProtocolQueryCriteria.getStudyProtocolId() != null) {
-                where.append(" and sp.id = ").append(studyProtocolQueryCriteria.getStudyProtocolId());
-            }
-            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getOfficialTitle())) {
-                where.append(" and upper(sp.officialTitle)  like '%"
-                        + studyProtocolQueryCriteria.getOfficialTitle().toUpperCase().trim().replaceAll("'", "''")
-                        + "%'");
-            }
-            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getPhaseCode())) {
-                where.append(" and sp.phaseCode  = '"
-                        + PhaseCode.getByCode(studyProtocolQueryCriteria.getPhaseCode()) + "'");
-            }
-            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getPhaseAdditionalQualifierCode())) {
-                where.append(" and sp.phaseAdditionalQualifierCode  = '"
-                        + PhaseAdditionalQualifierCode.getByCode(
-                                studyProtocolQueryCriteria.getPhaseAdditionalQualifierCode()) + "'");
-            }
-            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())) {
-                where.append(" and sp_oids.extension like '%"
-                        + studyProtocolQueryCriteria.getNciIdentifier().toUpperCase().trim().replaceAll("'", "''")
-                        + "%'");
-            } else if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getOtherIdentifier())) {
-                where.append(" and upper(sp_oids.extension) like '%"
-                        + studyProtocolQueryCriteria.getOtherIdentifier().toUpperCase().trim().replaceAll("'", "''")
-                        + "%'");
-            }
-            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getStudyStatusCode())) {
-                where.append(" and sos.statusCode  = '"
-                        + StudyStatusCode.getByCode(studyProtocolQueryCriteria.getStudyStatusCode()) + "'");
-                where.append(" and ( sos.id in (select max(id) from StudyOverallStatus as sos1 "
-                        + "                where sp.id = sos1.studyProtocol )"
-                        + " or sos.id is null ) ");
-            } else {
-                // add the subquery to pick the latest record
-                where.append(" and ( sos.id in (select max(id) from StudyOverallStatus as sos1 "
-                                + "                where sp.id = sos1.studyProtocol )"
-                                + " or sos.id is null ) ");
-            }
-            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getPrimaryPurposeCode())) {
-                where.append(" and sp.primaryPurposeCode  = '" + PrimaryPurposeCode.getByCode(studyProtocolQueryCriteria
-                                        .getPrimaryPurposeCode()) + "'");
-            }
-            if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode())) {
-                where.append(" and dws.statusCode  = '" + DocumentWorkflowStatusCode.
-                        getByCode(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode()) + "'");
-                where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                        + "                where sp.id = dws1.studyProtocol )"
-                        + " or dws.id is null ) ");
-            } else {
-                whereClauseForRegistrySearch(studyProtocolQueryCriteria, where);
-           }
-           if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier())) {
-                where.append(" and upper(sps.localStudyProtocolIdentifier) like '%"
-                                + studyProtocolQueryCriteria.getLeadOrganizationTrialIdentifier()
-                                        .toUpperCase().trim().replaceAll("'", "''") + "%'");
-           }
-           if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getNctNumber())) {
-               where.append(" and upper(sps_nct.localStudyProtocolIdentifier) = '"
-                       + studyProtocolQueryCriteria.getNctNumber().toUpperCase().trim().replaceAll("'", "''")
-                       + "' and sps_nct.functionalCode = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER + "'");
-           }
-           if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getLeadOrganizationId())) {
-                    where.append(" and org.id = " + studyProtocolQueryCriteria.getLeadOrganizationId());
+        if (StringUtils.isNotEmpty(crit.getStudyStatusCode())) {
+            StudyOverallStatus sos = new StudyOverallStatus();
+            sos.setStatusCode(StudyStatusCode.getByCode(crit.getStudyStatusCode()));
+            sp.getStudyOverallStatuses().add(sos);
+        }
 
-           }
-           if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getPrincipalInvestigatorId())) {
-                where.append(" and per.id = " + studyProtocolQueryCriteria.getPrincipalInvestigatorId());
-           }
-           // required for Registry duplicate trial check
-           // Rejected trial should be excluded from duplicate check
-           if (BooleanUtils.isTrue(studyProtocolQueryCriteria.isExcludeRejectProtocol()))  {
-               where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
-           }
-           if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getStudyMilestone())) {
-               where.append(" and sms.milestoneCode  = '"
-                       + MilestoneCode.getByCode(studyProtocolQueryCriteria.getStudyMilestone()) + "'");
-               where.append(" and ( sms.id in (select max(id) from StudyMilestone as sms1 "
-                       + " where sp.id = sms1.studyProtocol )"
-                       + " or sms.id is null ) ");
-           } else {
-               // add the sub-query to pick the latest record
-               where.append(" and ( sms.id in (select max(id) from StudyMilestone as sms1 "
-                               + " where sp.id = sms1.studyProtocol )"
-                               + " or sms.id is null ) ");
-           }
-           // sub-query for inbox processing to retrieve only the updated records for review
-           if (studyProtocolQueryCriteria.isInBoxProcessing() != null
-                   && studyProtocolQueryCriteria.isInBoxProcessing().booleanValue()) {
-             where.append(" and sinbx.id in (select distinct id from StudyInbox as sinbx1 "
-                   + " where sp.id = sinbx1.studyProtocol and"
-                     + " sinbx1.closeDate is null)");
-           } else {
-               where.append(" and (sinbx.id in (select max(id) from StudyInbox as sinbx1 "
-                       + " where sp.id = sinbx1.studyProtocol )"
-                         + " or sinbx.id is null)");
-           }
-           studyCheckoutWhereClause(where);
-           where.append(" and sps.functionalCode ='" + StudySiteFunctionalCode.LEAD_ORGANIZATION + "'");
-           where.append(" and (sc.roleCode ='"
-                   + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "' or sc.studyProtocol is null) ");
-           where.append(" and sp.statusCode ='" + ActStatusCode.ACTIVE + "'");
-           if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getTrialCategory())) {
-               if (studyProtocolQueryCriteria.getTrialCategory().equalsIgnoreCase("p")) {
-                   where.append(" and sp.proprietaryTrialIndicator is true");
-               } else if (studyProtocolQueryCriteria.getTrialCategory().equalsIgnoreCase("n")) {
-                   where.append(" and (sp.proprietaryTrialIndicator is false or sp.proprietaryTrialIndicator is null)");
-               }
-           }
-           addSubQueries(studyProtocolQueryCriteria, where);
-        } catch (Exception e) {
-            LOG.error("General error in while create where cluase", e);
-            throw new PAException("General error in while create where cluase", e);
+        if (StringUtils.isNotEmpty(crit.getDocumentWorkflowStatusCode())) {
+            DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
+            dws.setStatusCode(DocumentWorkflowStatusCode.getByCode(crit.getDocumentWorkflowStatusCode()));
+            sp.getDocumentWorkflowStatuses().add(dws);
         }
-        return where.toString();
-    }
 
-    private void whereClauseForRegistrySearch(StudyProtocolQueryCriteria criteria, StringBuffer where) {
-        // added for Registry Trial Search
-        if (criteria.isMyTrialsOnly() != null && StringUtils.isNotEmpty(criteria.getUserLastCreated())) {
-            if (criteria.isMyTrialsOnly().booleanValue()) {
-                where.append(" and ( sowner.id = ").append(criteria.getUserId());
-                where.append(" or ").append(criteria.getUserId());
-                where.append(" in (select id from RegistryUser where affiliatedOrgUserType = '");
-                where.append(UserOrgType.ADMIN).append("' and str(affiliatedOrganizationId) in ( select ");
-                where.append(" researchOrganization.organization.identifier from StudySite where ");
-                where.append(" functionalCode ='").append(StudySiteFunctionalCode.LEAD_ORGANIZATION);
-                where.append("' and studyProtocol.id = sp.id))) ");
-                where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
-                // add the subquery to pick the latest record
-                where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                        + "                where sp.id = dws1.studyProtocol )" + " or dws.id is null ) ");
-            } else {
-                where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                        + " where sp.id = dws1.studyProtocol )" + " or dws.id is null ) ");
-                where.append(" and sowner.id ='").append(criteria.getUserId());
-                where.append("' or (sowner.id <> '").append(criteria.getUserId());
-                where.append("' and dws.statusCode not in('" + DocumentWorkflowStatusCode.SUBMITTED + "'))");
-            }
-        } else {
-            // add the subquery to pick the latest record
-            where.append(" and ( dws.id in ");
-            where.append(" (select max(id) from DocumentWorkflowStatus as dws1 where sp.id = dws1.studyProtocol) ");
-            where.append(" or dws.id is null ) ");
+        if (StringUtils.isNotEmpty(crit.getLeadOrganizationTrialIdentifier())) {
+            StudySite ss = new StudySite();
+            ss.setLocalStudyProtocolIdentifier(crit.getLeadOrganizationTrialIdentifier());
+            ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+            sp.getStudySites().add(ss);
         }
-    }
 
-    private void studyCheckoutWhereClause(StringBuffer where) {
-        where.append(" and (scheckout.id in (select max(id) from StudyCheckout as scheckout1 "
-                + " where scheckout.studyProtocol = scheckout1.studyProtocol )" + " or scheckout.id is null)");
-    }
+        if (StringUtils.isNotEmpty(crit.getNctNumber())) {
+            StudySite ss = new StudySite();
+            ss.setLocalStudyProtocolIdentifier(crit.getNctNumber());
+            ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+            sp.getStudySites().add(ss);
+        }
 
-    /**
-     * @param studyProtocolQueryCriteria
-     * @param where
-     */
-    private void addSubQueries(StudyProtocolQueryCriteria studyProtocolQueryCriteria, StringBuffer where) {
-        // sub-query for searching trials by Participating site
-        if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getOrganizationType())
-                && studyProtocolQueryCriteria.getOrganizationType().equalsIgnoreCase(PAConstants.PARTICIPATING_SITE)) {
-            where.append(" and sp.id in(select sp2.id from StudyProtocol as sp2  "
-                    + "left outer join sp2.studySites as sps2  " + "left outer join sps2.healthCareFacility as hcf "
-                    + "left outer join hcf.organization as site " + " where site.id = "
-                    + studyProtocolQueryCriteria.getParticipatingSiteId() + ")");
+        if (StringUtils.isNotEmpty(crit.getStudyMilestone())) {
+            StudyMilestone sm = new StudyMilestone();
+            sm.setMilestoneCode(MilestoneCode.getByCode(crit.getStudyMilestone()));
+            sp.getStudyMilestones().add(sm);
         }
-        // sub-query for searching only on hold trials
-        if (studyProtocolQueryCriteria.isSearchOnHold()) {
-            where.append(" and sp.id in(select distinct sp3.id from StudyProtocol as sp3 "
-                    + " left outer join sp3.studyOnholds as spoh " + " where spoh.onholdDate is not null and "
-                    + " spoh.offholdDate is null)");
+
+        if (StringUtils.isNotEmpty(crit.getLeadOrganizationId())) {
+            StudySite ss = new StudySite();
+            ResearchOrganization ro = new ResearchOrganization();
+            ro.setId(Long.valueOf(crit.getLeadOrganizationId()));
+            ss.setResearchOrganization(ro);
+            ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+            sp.getStudySites().add(ss);
         }
-        // sub-query for searching only Amend trials
-        if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getSubmissionType())
-                && studyProtocolQueryCriteria.getSubmissionType().equalsIgnoreCase(SubmissionTypeCode.A.getCode())) {
-            where.append(" and sp.submissionNumber > 1 and sp.amendmentNumber is not null and "
-                    + " sp.amendmentDate is not null)");
+
+        if (StringUtils.isNotEmpty(crit.getPrincipalInvestigatorId())) {
+            StudyContact sc = new StudyContact();
+            ClinicalResearchStaff crs = new ClinicalResearchStaff();
+            crs.setId(Long.valueOf(crit.getPrincipalInvestigatorId()));
+            sc.setClinicalResearchStaff(crs);
+            sc.setRoleCode(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
+            sp.getStudyContacts().add(sc);
         }
-        if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getSubmissionType())
-                && studyProtocolQueryCriteria.getSubmissionType().equalsIgnoreCase(SubmissionTypeCode.O.getCode())) {
-            where.append(" and sp.submissionNumber = 1 and sp.amendmentNumber is null and "
-                    + " sp.amendmentDate is null)");
+
+        if (StringUtils.equalsIgnoreCase(crit.getTrialCategory(), "p")) {
+            sp.setProprietaryTrialIndicator(Boolean.TRUE);
+        } else if (StringUtils.equalsIgnoreCase(crit.getTrialCategory(), "n")) {
+            sp.setProprietaryTrialIndicator(Boolean.FALSE);
         }
-        if (StringUtils.isNotEmpty(studyProtocolQueryCriteria.getSubmissionType())
-                && studyProtocolQueryCriteria.getSubmissionType().equalsIgnoreCase(SubmissionTypeCode.U.getCode())) {
-            where.append(" and sp.submissionNumber = 1 and "
-                    + " sinbx.id in (select max(id) from StudyInbox as sinbx1 "
-                    + " where sp.id = sinbx1.studyProtocol and sinbx1.closeDate is null))");
-        }
-        if (studyProtocolQueryCriteria.isStudyLockedBy()) {
-            where.append(" and sp.id in(select sp3.id from StudyProtocol as sp3 "
-                    + " left outer join sp3.studyCheckout as spco " + " where spco.userIdentifier='"
-                    + studyProtocolQueryCriteria.getUserLastCreated() + "')");
-        }
+
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(crit.getPrimaryPurposeCode()));
     }
 
     private boolean isCriteriaEmpty(StudyProtocolQueryCriteria criteria) {
@@ -757,6 +574,21 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         if (orgIdentifier == null) {
             throw new PAException("Organization Identifier is null.");
         }
-        return getStudyProtocolQueryResults(orgIdentifier);
+        StudyProtocol sp = new StudyProtocol();
+
+        Organization org = new Organization();
+        org.setIdentifier(String.valueOf(orgIdentifier));
+
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setOrganization(org);
+
+        StudySite ss = new StudySite();
+        ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setResearchOrganization(ro);
+
+        sp.getStudySites().add(ss);
+
+        StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(sp);
+        return search(crit);
     }
 }

@@ -106,7 +106,7 @@ public class StudyOutcomeMeasureServiceBeanTest {
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset1();
+        TestSchema.reset();
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         outComesid=IiConverter.convertToIi(TestSchema.outcomeIds.get(0));

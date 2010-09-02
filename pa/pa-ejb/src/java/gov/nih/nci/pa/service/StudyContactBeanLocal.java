@@ -23,7 +23,6 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -68,21 +67,9 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
         if (studyContactList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }
-        return convertFromDomainToDTO(studyContactList);
+        return convertFromDomainToDTOs(studyContactList);
     }
 
-    private List<StudyContactDTO> convertFromDomainToDTO(List<StudyContact> studyContactList) throws PAException {
-        List<StudyContactDTO> studyContactDTOList = null;
-        StudyContactConverter scConverter = new StudyContactConverter();
-        if (studyContactList != null) {
-            studyContactDTOList = new ArrayList<StudyContactDTO>();
-            for (StudyContact ss : studyContactList) {
-                StudyContactDTO studyContactDTO = scConverter.convertFromDomainToDto(ss);
-                studyContactDTOList.add(studyContactDTO);
-            }
-        }
-        return studyContactDTOList;
-    }
     /**
      * @param dto dto
      * @throws PAException e
@@ -94,6 +81,7 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
         getStatusCode(dto);
         return super.update(dto);
     }
+
     /**
      * validates the dto.
      * @param dto dto to validate.
@@ -115,9 +103,8 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
                 }
             }
         }
-
-
     }
+
     /**
      * @param dto dto to validate
      * @throws PAException e
@@ -128,6 +115,7 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
         validate(dto);
         return super.create(dto);
     }
+
     private void getStatusCode(StudyContactDTO dto) throws PAException {
         PAServiceUtils paServiceUtil = new PAServiceUtils();
         StructuralRole sr =  null;

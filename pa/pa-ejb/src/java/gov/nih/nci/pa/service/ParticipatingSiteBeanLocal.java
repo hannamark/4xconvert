@@ -118,20 +118,20 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * @author mshestopalov
- * 
+ *
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(HibernateSessionInterceptor.class)
-public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean 
+public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
     implements ParticipatingSiteServiceLocal {
     private SessionContext ejbContext;
-    
+
     @Resource
     void setSessionContext(SessionContext ctx) {
         this.ejbContext = ctx;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -141,16 +141,16 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
             StudySiteAccrualStatusDTO currentStatus, PersonDTO investigatorDTO) throws PAException {
         Ii studySiteIi = null;
         try {
-            
+
             StudyProtocolDTO studyProtocolDTO = getStudyProtocolDTOFromNciId(studyProtocolIi);
-            
+
             Ii orgIi = getOrganizationIiFromCtepId(organizationDTO);
-            
+
             Ii investigatorIi = getPersonIiFromCtepId(investigatorDTO);
-            
-            enforceBusinessRulesForProprietary(studyProtocolDTO, orgIi, studySiteDTO, 
-                    investigatorIi, currentStatus);     
-            studySiteIi = savePropStudySite(true, studySiteDTO, orgIi, investigatorIi, 
+
+            enforceBusinessRulesForProprietary(studyProtocolDTO, orgIi, studySiteDTO,
+                    investigatorIi, currentStatus);
+            studySiteIi = savePropStudySite(true, studySiteDTO, orgIi, investigatorIi,
                     studyProtocolDTO.getIdentifier(), currentStatus,
                     studyProtocolDTO.getStudyProtocolType().getValue());
         } catch (Exception e) {
@@ -159,7 +159,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
         }
         return studySiteIi;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -168,19 +168,19 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
             StudySiteDTO studySiteDTO, StudySiteAccrualStatusDTO currentStatus, PersonDTO investigatorDTO)
             throws PAException {
         try {
-            
+
             StudyProtocolDTO studyProtocolDTO = getStudyProtocolDTOFromNciId(studyProtocolIi);
             OrganizationDTO holderOrg = new OrganizationDTO();
             holderOrg.setIdentifier(organizationIi);
             Ii orgIi = getOrganizationIiFromCtepId(holderOrg);
-            
+
             studySiteDTO.setIdentifier(getStudySiteIiByTrialAndOrg(studyProtocolDTO.getIdentifier(), orgIi));
-            
+
             Ii investigatorIi = getPersonIiFromCtepId(investigatorDTO);
-            
-            enforceBusinessRulesForProprietary(studyProtocolDTO, orgIi, studySiteDTO, 
-                    investigatorIi, currentStatus);     
-            savePropStudySite(false, studySiteDTO, orgIi, investigatorIi, 
+
+            enforceBusinessRulesForProprietary(studyProtocolDTO, orgIi, studySiteDTO,
+                    investigatorIi, currentStatus);
+            savePropStudySite(false, studySiteDTO, orgIi, investigatorIi,
                     studyProtocolDTO.getIdentifier(), currentStatus,
                     studyProtocolDTO.getStudyProtocolType().getValue());
         } catch (Exception e) {
@@ -193,7 +193,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
      * {@inheritDoc}
      */
     public Bl isParticipatingSite(Ii studyProtocolIi, Ii organizationIi) throws PAException {
-        try {            
+        try {
             StudyProtocolDTO studyProtocolDTO = getStudyProtocolDTOFromNciId(studyProtocolIi);
             OrganizationDTO holderOrg = new OrganizationDTO();
             holderOrg.setIdentifier(organizationIi);
@@ -211,7 +211,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
             throw new PAException(e);
         }
     }
-    
+
     /**
      * savePropStudySite.
      * @param isCreate bool
@@ -228,13 +228,13 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
      */
     @SuppressWarnings({"PMD.ExcessiveParameterList" })
     protected Ii savePropStudySite(boolean isCreate, StudySiteDTO siteDTO, Ii orgIi, Ii investigatorIi,
-            Ii studyProtocolIi, StudySiteAccrualStatusDTO currentStatus, String trialType) 
+            Ii studyProtocolIi, StudySiteAccrualStatusDTO currentStatus, String trialType)
     throws PAException, EntityValidationException, CurationException {
-        
+
         siteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         StudySiteDTO studySiteDTO = saveStudySiteHelper(isCreate, siteDTO, orgIi,
                 studyProtocolIi, currentStatus);
-        
+
         //save the PI check if PI is there
         List<StudySiteContactDTO> contactDTOList = getStudySiteContactService()
             .getByStudySite(studySiteDTO.getIdentifier());
@@ -246,11 +246,11 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
           updateStudyParticationContactRecord(trialType, contactDTOList, orgIi.getExtension(),
                   investigatorIi.getExtension());
         }
-        
+
         return studySiteDTO.getIdentifier();
-   
+
     }
-    
+
     /**
      * saveStudySiteHelper.
      * @param isCreate bool
@@ -264,32 +264,32 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
      * @throws EntityValidationException when error
      */
     protected StudySiteDTO saveStudySiteHelper(boolean isCreate, StudySiteDTO siteDTO, Ii orgIi,
-            Ii studyProtocolIi, StudySiteAccrualStatusDTO currentStatus) 
+            Ii studyProtocolIi, StudySiteAccrualStatusDTO currentStatus)
     throws PAException, EntityValidationException, CurationException {
-        
+
         Long paHealthCareFacilityId = getOcsr().createHealthCareFacilityCorrelations(orgIi.getExtension());
         siteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
         siteDTO.setHealthcareFacilityIi(IiConverter.convertToIi(paHealthCareFacilityId));
-        
+
         if (isCreate) {
             siteDTO.setIdentifier(null);
-        } 
-        
+        }
+
         siteDTO.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
         siteDTO.setStudyProtocolIdentifier(studyProtocolIi);
-        
+
         StudySiteDTO studySiteDTO = null;
         if (isCreate) {
             studySiteDTO = getStudySiteService().create(siteDTO);
         } else {
             studySiteDTO = getStudySiteService().update(siteDTO);
         }
-       
+
         createStudySiteAccrualStatus(studySiteDTO.getIdentifier(), currentStatus);
- 
+
         return studySiteDTO;
     }
-    
+
     private void createStudySiteAccrualStatus(Ii studySiteIi,
             StudySiteAccrualStatusDTO newStatus) throws PAException {
         StudySiteAccrualStatusDTO currentStatus = getStudySiteAccrualStatusService()
@@ -298,12 +298,12 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
                 || currentStatus.getStatusDate() == null
                 || !currentStatus.getStatusCode().getCode().equals(newStatus.getStatusCode())
                 || !currentStatus.getStatusDate().equals(newStatus.getStatusDate())) {
-                
+
                  newStatus.setIdentifier(IiConverter.convertToIi((Long) null));
                  newStatus.setStudySiteIi(studySiteIi);
                  getStudySiteAccrualStatusService().createStudySiteAccrualStatus(newStatus);
         }
     }
 
-   
+
 }

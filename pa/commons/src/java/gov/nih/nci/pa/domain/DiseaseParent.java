@@ -91,6 +91,8 @@ import javax.persistence.Table;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * @author Hugh Reinhart
  * @since 11/29/2008
@@ -103,36 +105,43 @@ public class DiseaseParent extends AbstractEntityWithStatusCode<ActiveInactiveCo
     private Disease disease;
     private Disease parentDisease;
     private String parentDiseaseCode;
+
     /**
      * @return the disease
      */
     @ManyToOne
     @JoinColumn(name = "DISEASE_IDENTIFIER", updatable = false)
     @NotNull
+    @Searchable(nested = true)
     public Disease getDisease() {
         return disease;
     }
+
     /**
      * @param disease the disease to set
      */
     public void setDisease(Disease disease) {
         this.disease = disease;
     }
+
     /**
      * @return the parentDisease
      */
     @ManyToOne
     @JoinColumn(name = "PARENT_DISEASE_IDENTIFIER", updatable = false)
     @NotNull
+    @Searchable(nested = true)
     public Disease getParentDisease() {
         return parentDisease;
     }
+
     /**
      * @param parentDisease the parentDisease to set
      */
     public void setParentDisease(Disease parentDisease) {
         this.parentDisease = parentDisease;
     }
+
     /**
      * @return the parentDiseaseCode
      */
@@ -141,6 +150,7 @@ public class DiseaseParent extends AbstractEntityWithStatusCode<ActiveInactiveCo
     public String getParentDiseaseCode() {
         return parentDiseaseCode;
     }
+
     /**
      * @param parentDiseaseCode the parentDiseaseCode to set
      */

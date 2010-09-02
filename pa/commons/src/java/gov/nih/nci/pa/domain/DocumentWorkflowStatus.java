@@ -92,6 +92,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * These are the workflow status associated with a Protocol from Submission thru Abstraction..
  *
@@ -107,10 +109,10 @@ public class DocumentWorkflowStatus extends AbstractEntity {
     private DocumentWorkflowStatusCode statusCode;
     /** The status date range low. */
     private Timestamp statusDateRangeLow;
-    
+
     /** The status date range high. */
     private Timestamp statusDateRangeHigh;
-    
+
     private StudyProtocol studyProtocol;
 
     /**
@@ -132,6 +134,7 @@ public class DocumentWorkflowStatus extends AbstractEntity {
      */
     @Column(name = "STATUS_CODE")
     @Enumerated(EnumType.STRING)
+    @Searchable
     public DocumentWorkflowStatusCode getStatusCode() {
         return statusCode;
     }
@@ -145,23 +148,23 @@ public class DocumentWorkflowStatus extends AbstractEntity {
     }
     /**
      * Gets the status date range low.
-     * 
+     *
      * @return statusDateRangeLow
      */
     @Column(name = "STATUS_DATE_RANGE_LOW")
     public Timestamp getStatusDateRangeLow() {
         return statusDateRangeLow;
     }
-    
+
     /**
      * Sets the status date range low.
-     * 
+     *
      * @param statusDateRangeLow  statusDateRangeLow
      */
     public void setStatusDateRangeLow(Timestamp statusDateRangeLow) {
         this.statusDateRangeLow = statusDateRangeLow;
     }
-    
+
     /**
      * @return the statusDateRangeHigh
      */
@@ -183,6 +186,7 @@ public class DocumentWorkflowStatus extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
     @NotNull
+    @Searchable(nested = true)
     public StudyProtocol getStudyProtocol() {
        return studyProtocol;
     }

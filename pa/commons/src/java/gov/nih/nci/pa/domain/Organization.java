@@ -95,6 +95,8 @@ import javax.persistence.Table;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * A formalized group of persons or other organizations collected together for a common purpose
  * (such as administrative, legal, political) and the infrastructure to carry out that purpose..
@@ -138,6 +140,7 @@ public class Organization extends AbstractEntity {
      * @return identifier
      */
     @Column(name = "ASSIGNED_IDENTIFIER")
+    @Searchable(matchMode = Searchable.MATCH_MODE_EXACT)
     public String getIdentifier() {
         return identifier;
     }
@@ -222,7 +225,7 @@ public class Organization extends AbstractEntity {
         return statusCode;
     }
     /**
-     * 
+     *
      * @param eStatusCode s
      */
     public void setStatusCode(EntityStatusCode eStatusCode) {
@@ -266,7 +269,7 @@ public class Organization extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @return oversightCommittees
      */
     @OneToMany(mappedBy = "organization")
@@ -275,14 +278,14 @@ public class Organization extends AbstractEntity {
     }
 
     /**
-     * 
+     *
      * @param oversightCommittees oversightCommittees
      */
     public void setOversightCommittees(List<OversightCommittee> oversightCommittees) {
         this.oversightCommittees = oversightCommittees;
     }
-    
-    
+
+
 
 
 }

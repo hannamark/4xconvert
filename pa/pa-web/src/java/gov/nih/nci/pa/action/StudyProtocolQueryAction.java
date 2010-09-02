@@ -254,7 +254,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             ServletActionContext.getRequest().getSession().setAttribute(
                     "nctIdentifier", paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
                             studyProtocolId), PAConstants.NCT_IDENTIFIER_TYPE));
-            if (!studyProtocolQueryDTO.getIsProprietaryTrial()) {
+            if (!studyProtocolQueryDTO.isProprietaryTrial()) {
                 ServletActionContext.getRequest().getSession().setAttribute(
                         "dcpIdentifier", paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
                     studyProtocolId), PAConstants.DCP_IDENTIFIER_TYPE));
