@@ -83,17 +83,12 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.UserOrgType;
-import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -104,7 +99,6 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-
 /**
  *
  * @author Harsha
@@ -112,11 +106,11 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class InboxProcessingAction extends ActionSupport implements ServletResponseAware {
     private static final long serialVersionUID = -2308994602660261367L;
-    private List<StudyProtocolQueryDTO> records = null;
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private Long studyProtocolId = null;
     private HttpServletResponse servletResponse;
     private List<RegistryUser> pendingAdminUsers = null;
+
     /**
      * @return res
      * @throws PAException exception
@@ -145,35 +139,6 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
         }
         throw new PAException("User configured improperly.  Use UPT to assign user to a valid group "
                 + "for this application.");
-    }
-
-    /**
-     * @return res
-     * @throws PAException exception
-     */
-    public String query() throws PAException {
-        if (!userRoleInSession()) {
-            return showCriteria();
-        }
-        try {
-            //set the inbox processing boolean to true
-            criteria.setInBoxProcessing(Boolean.TRUE);
-            records = new ArrayList<StudyProtocolQueryDTO>();
-            records = PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(criteria);
-            return SUCCESS;
-        } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-            return SUCCESS;
-        }
-    }
-
-
-    /**
-     *
-     * @return records
-     */
-    public List<StudyProtocolQueryDTO> getRecords() {
-        return records;
     }
 
     /**
@@ -238,33 +203,6 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
             return ERROR;
         }
     }
-
-    /**
-     * @return res
-     * @throws PAException exception
-     */
-    public String remove() throws PAException {
-        if (!userRoleInSession()) {
-            return showCriteria();
-        }
-        try {
-         String sInbxId = ServletActionContext.getRequest().getParameter("studyInboxId");
-         StudyInboxDTO dto = PaRegistry.getStudyInboxService().get(IiConverter.convertToIi(sInbxId));
-         StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
-         studyInboxDTO.setIdentifier(IiConverter.convertToIi(sInbxId));
-         //set the close date
-         Timestamp now = new Timestamp(new Date().getTime());
-         studyInboxDTO.setInboxDateRange(dto.getInboxDateRange());
-         studyInboxDTO.getInboxDateRange().setHigh(TsConverter.convertToTs(now));
-         //update
-         PaRegistry.getStudyInboxService().update(studyInboxDTO);
-         } catch (Exception e) {
-            LOG.error("Error while removing the trial from inbox" , e);
-            return query();
-         }
-         return query();
-    }
-
 
     private String setMenuLinks(DocumentWorkflowStatusCode dwsCode) {
         String action = "";

@@ -322,6 +322,9 @@
             <result name="edit">/WEB-INF/jsp/trialHistoryEdit.jsp</result>
             <result name="list">/WEB-INF/jsp/trialHistory.jsp</result>
         </action>
+        <action name="ajaxTrialHistory*" class="gov.nih.nci.pa.action.TrialHistoryAction" method="{1}">
+            <result name="list">/WEB-INF/jsp/displayTrialUpdates.jsp</result>
+        </action>
          <action name="manageAccrualAccess*" class="gov.nih.nci.pa.action.ManageAccrualAccessAction" method="{1}">
             <result name="edit">/WEB-INF/jsp/manageAccrualAccessEdit.jsp</result>
             <result name="list">/WEB-INF/jsp/manageAccrualAccess.jsp</result>

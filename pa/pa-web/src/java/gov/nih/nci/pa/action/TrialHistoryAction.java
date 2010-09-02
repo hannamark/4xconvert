@@ -81,14 +81,18 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.util.Constants;
@@ -98,15 +102,18 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -118,15 +125,15 @@ import org.apache.struts2.interceptor.ServletResponseAware;
  * @since 04/16/2009
  */
 public final class TrialHistoryAction extends AbstractListEditAction implements ServletResponseAware {
-
     private static final long serialVersionUID = 1876567890L;
-
     private List<TrialHistoryWebDTO> trialHistoryWebDTO;
     private TrialHistoryWebDTO trialHistoryWbDto;
     private String studyProtocolii;
     private String docii;
     private String docFileName;
     private HttpServletResponse servletResponse;
+    private List<StudyProtocolQueryDTO> records = null;
+    private final StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
 
     /**
      * Gets the study protocolii.
@@ -146,8 +153,6 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         this.studyProtocolii = studyProtocolii;
     }
 
-
-
     /**
      * Gets the docii.
      *
@@ -156,8 +161,6 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     public String getDocii() {
         return docii;
     }
-
-
 
     /**
      * Sets the docii.
@@ -168,8 +171,6 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         this.docii = docii;
     }
 
-
-
     /**
      * Gets the doc file name.
      * @return the docFileName
@@ -178,27 +179,21 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         return docFileName;
     }
 
-
-
     /**
      * Sets the doc file name.
      * @param docFileName the docFileName to set
      */
     public void setDocFileName(String docFileName) {
-    this.docFileName = docFileName;
+        this.docFileName = docFileName;
     }
-
-
 
     /**
      * Gets the servlet response.
      * @return the servletResponse
      */
     public HttpServletResponse getServletResponse() {
-    return servletResponse;
+        return servletResponse;
     }
-
-
 
    /**
     * Sets the servlet response.
@@ -208,7 +203,52 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
       this.servletResponse = servletResponse;
     }
 
+    /**
+     * Call initial list jsp.
+     * @return action result
+     * @throws PAException exception
+     */
+    @Override
+    public String execute() throws PAException {
+        loadListForm();
+        loadTrialUpdates();
+        return AR_LIST;
+    }
 
+    /**
+     * @return res
+     * @throws PAException exception
+     */
+    public String acceptUpdate() throws PAException {
+        try {
+         String sInbxId = ServletActionContext.getRequest().getParameter("studyInboxId");
+         StudyInboxDTO dto = PaRegistry.getStudyInboxService().get(IiConverter.convertToIi(sInbxId));
+         StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
+         studyInboxDTO.setIdentifier(IiConverter.convertToIi(sInbxId));
+         //set the close date
+         Timestamp now = new Timestamp(new Date().getTime());
+         studyInboxDTO.setInboxDateRange(dto.getInboxDateRange());
+         studyInboxDTO.getInboxDateRange().setHigh(TsConverter.convertToTs(now));
+         //update
+         PaRegistry.getStudyInboxService().update(studyInboxDTO);
+         } catch (Exception e) {
+            LOG.error("Error while accepting the trial update." , e);
+            addActionError("Error while accepting the trial update.");
+         } finally {
+             loadTrialUpdates();
+         }
+         return AR_LIST;
+    }
+
+    private void loadTrialUpdates() throws PAException {
+        Ii studyProtocolIi =
+            (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+        StudyProtocolDTO spDTO = getStudyProtocolSvc().getStudyProtocol(studyProtocolIi);
+        criteria.setInBoxProcessing(Boolean.TRUE);
+        criteria.setNciIdentifier(PAUtil.getAssignedIdentifierExtension(spDTO));
+        records = new ArrayList<StudyProtocolQueryDTO>();
+        records = PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(criteria);
+    }
 
     /**
      * Load list form.
@@ -216,9 +256,8 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
      */
     @Override
     protected void loadListForm() throws PAException {
-        Ii studyProtocolIi =
-                (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
-
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+            .getAttribute(Constants.STUDY_PROTOCOL_II);
         StudyProtocolDTO spDTO = getStudyProtocolSvc().getStudyProtocol(studyProtocolIi);
         StudyProtocolDTO toSearchspDTO = new StudyProtocolDTO();
         toSearchspDTO.setSecondaryIdentifiers(DSetConverter.convertIiToDset(PAUtil.getAssignedIdentifier(spDTO)));
@@ -227,13 +266,13 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         List<StudyProtocolDTO> spList = new ArrayList<StudyProtocolDTO>();
         try {
             List<StudyProtocolDTO> activeList = getStudyProtocolSvc().search(toSearchspDTO, limit);
-            if (activeList != null && !activeList.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(activeList)) {
                 spList.addAll(activeList);
             }
 
             toSearchspDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
             List<StudyProtocolDTO> inactiveList = getStudyProtocolSvc().search(toSearchspDTO, limit);
-            if (inactiveList != null && !inactiveList.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(inactiveList)) {
                 spList.addAll(inactiveList);
             }
 
@@ -441,5 +480,20 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     public void setTrialHistoryWbDto(TrialHistoryWebDTO trialHistoryWbDto) {
         this.trialHistoryWbDto = trialHistoryWbDto;
     }
+
+    /**
+     * @return the records
+     */
+    public List<StudyProtocolQueryDTO> getRecords() {
+        return records;
+    }
+
+    /**
+     * @param records the records to set
+     */
+    public void setRecords(List<StudyProtocolQueryDTO> records) {
+        this.records = records;
+    }
+
 
 }
