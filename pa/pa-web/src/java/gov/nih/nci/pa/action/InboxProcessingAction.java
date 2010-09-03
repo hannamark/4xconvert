@@ -287,9 +287,10 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
         if (StringUtils.isNotEmpty(abstractorResponse) && StringUtils.isNotEmpty(userId)) {
             try {
                 if (abstractorResponse.equalsIgnoreCase("accept")) {
-                    updateUserRole(UserOrgType.ADMIN, userId);
+                    updateUserRole(UserOrgType.ADMIN, userId, "");
                 } else {
-                    updateUserRole(UserOrgType.MEMBER, userId);
+                    updateUserRole(UserOrgType.MEMBER, userId, ServletActionContext.getRequest().getParameter(
+                            "rejectReason"));
                 }
             } catch (Exception e) {
                 LOG.error(e.getMessage());
@@ -304,7 +305,7 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
      * @param userId
      * @throws PAException
      */
-    private void updateUserRole(UserOrgType affiliatedOrgUserType, String userId)
+    private void updateUserRole(UserOrgType affiliatedOrgUserType, String userId, String rejectReason)
             throws PAException {
         RegistryUser pendingUsr = PaRegistry.getRegisterUserService().getUserById(Long.parseLong(userId));
         if (pendingUsr == null) {
@@ -315,7 +316,7 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
         if (pendingUsr.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)) {
             PaRegistry.getMailManagerService().sendAdminAcceptanceEmail(pendingUsr.getId());
         } else {
-            PaRegistry.getMailManagerService().sendAdminRejectionEmail(pendingUsr.getId(), "");
+            PaRegistry.getMailManagerService().sendAdminRejectionEmail(pendingUsr.getId(), rejectReason);
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
     }

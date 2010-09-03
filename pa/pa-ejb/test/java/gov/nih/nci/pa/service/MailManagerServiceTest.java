@@ -308,15 +308,16 @@ public class MailManagerServiceTest {
 
     @Test
     public void testSendAdminAcceptanceEmail() throws PAException {
-        testSendAdminAcceptanceOrRejectionEmail(true);
+        testSendAdminAcceptanceOrRejectionEmail(true, "");
     }
 
     @Test
     public void testSendAdminRejectionEmail() throws PAException {
-        testSendAdminAcceptanceOrRejectionEmail(false);
+        testSendAdminAcceptanceOrRejectionEmail(false, "Reason for Rejection");
+        testSendAdminAcceptanceOrRejectionEmail(false, null);
     }
 
-    private void testSendAdminAcceptanceOrRejectionEmail(boolean accept) throws PAException {
+    private void testSendAdminAcceptanceOrRejectionEmail(boolean accept,String reason) throws PAException {
         RegistryUser user = new RegistryUser();
         user.setLastName("LastName");
         user.setFirstName("FirstName");
@@ -341,7 +342,7 @@ public class MailManagerServiceTest {
         if (accept) {
             bean.sendAdminAcceptanceEmail(user.getId());
         } else {
-            bean.sendAdminRejectionEmail(user.getId(), "Reason for Rejection");
+            bean.sendAdminRejectionEmail(user.getId(), reason);
         }
     }
 

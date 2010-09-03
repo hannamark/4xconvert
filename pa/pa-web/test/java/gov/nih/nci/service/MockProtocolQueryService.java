@@ -6,6 +6,7 @@ package gov.nih.nci.service;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -41,6 +42,7 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
         spQueryDTO.setOfficialTitle("officialTitle");
         spQueryDTO.setStudyStatusCode(StudyStatusCode.ACTIVE);
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
+        spQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
         list.add(spQueryDTO);
 
     }
@@ -70,6 +72,9 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
             Long studyProtocolId) throws PAException {
 
         for (StudyProtocolQueryDTO sp: list) {
+            if (studyProtocolId != null && studyProtocolId == 3) {
+                throw new PAException("test");
+            }
             if(sp.getStudyProtocolId().equals(studyProtocolId)) {
                 return sp;
             }

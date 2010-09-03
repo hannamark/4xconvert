@@ -143,6 +143,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -728,7 +729,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * @param userId userid
      */
     public void sendAdminAcceptanceEmail(Long userId) {
-        sendAdminAcceptanceRejectionEmail(userId, "trial.admin.accept.body");
+        sendAdminAcceptanceRejectionEmail(userId, "trial.admin.accept.body", "");
     }
 
     /**
@@ -736,16 +737,23 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * @param reason reason
      */
     public void sendAdminRejectionEmail(Long userId, String reason) {
-        sendAdminAcceptanceRejectionEmail(userId, "trial.admin.reject.body");
+        String rejectReason = "No Reason Provided.";
+        if (StringUtils.isNotEmpty(reason)) {
+            rejectReason = reason;
+        }
+        sendAdminAcceptanceRejectionEmail(userId, "trial.admin.reject.body", rejectReason);
     }
 
-    private void sendAdminAcceptanceRejectionEmail(Long userId, String emailBodyLookupKey) {
+    private void sendAdminAcceptanceRejectionEmail(Long userId, String emailBodyLookupKey, String reason) {
         try {
             RegistryUser admin = registryUserService.getUserById(userId);
             String emailSubject = lookUpTableService.getPropertyValue("trial.admin.accept.subject");
             String emailBody = lookUpTableService.getPropertyValue(emailBodyLookupKey);
             emailBody = emailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
             emailBody = emailBody.replace("${affliateOrgName}", admin.getAffiliateOrg());
+            if (StringUtils.isNotEmpty(reason)) {
+                emailBody = emailBody.replace("${rejectReason}", reason);
+            }
             emailBody = emailBody.replace(OWNER_NAME, admin.getFirstName() + " " + admin.getLastName());
             sendMailWithAttachment(admin.getEmailAddress(), emailSubject, emailBody, null);
         } catch (PAException e) {

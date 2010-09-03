@@ -558,4 +558,8 @@
         <comment>Add ExemptIndicator to model.</comment> 
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2596.sql"/> 
      </changeSet> 
+     <changeSet id="PO-1922" author="vrushali"> 
+        <comment>Collect Reason for Admin request rejection.</comment> 
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-1922.sql"/> 
+     </changeSet> 
 </databaseChangeLog>

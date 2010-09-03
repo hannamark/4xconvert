@@ -83,8 +83,11 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#getUserById(java.lang.Long)
      */
-    public RegistryUser getUserById(Long userId) {
+    public RegistryUser getUserById(Long userId) throws PAException {
         for (RegistryUser regUser: usrList) {
+            if (userId != null && userId ==4) {
+                throw new PAException("test");
+            }
             if(regUser.getId().equals(userId)) {
                 return regUser;
             }
@@ -151,7 +154,7 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
         // TODO Auto-generated method stub
         return new ArrayList<DisplayTrialOwnershipInformation>();
     }
-    
+
     /**
      * {@inheritDoc}
      */

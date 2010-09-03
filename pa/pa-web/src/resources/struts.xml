@@ -351,5 +351,8 @@
         <action name="assignOwnership*" class="gov.nih.nci.pa.action.AssignOwnershipAction" method="{1}">
             <result>/WEB-INF/jsp/assignOwnership.jsp</result>
         </action>
+        <action name="ajaxcollectRejectReason">
+            <result>/WEB-INF/jsp/nodecorate/collectRejectReason.jsp</result>
+        </action>
     </package>
 </struts>
