@@ -576,6 +576,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
             <property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
             <property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
+            <property name="tooltips.filepath.loc" value="${application.base.path}/${tooltips.filepath.relative.dir}" />
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${reg-web.build.target}"/>
@@ -747,7 +748,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </zip>
         <delete dir="${pa-grid-3.1.artifact.dir}/server" />
     </target>
-    
+
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="validate:pre:build">
         <mkdir dir="${download.dir}" />
@@ -1365,7 +1366,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <property name="accrual.jnp.url" value="${accrual.jnp.url}" />
         <property name="po.port.number" value="${po.port.number}" />
         <property name="jboss.server.hostname" value="${jboss.server.hostname}" />
-        
+
         <property name="po.username" value="${po.username}"/>
         <property name="po.pass" value="${po.pass}"/>
         <property name="po.server.name" value="${po.server.name}"/>
@@ -1427,7 +1428,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
         </ant>
     </target>
-	
+
 	<target name="static-analysis:viewer" depends="init">
 	        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
 	            target="test-static-analysis"
