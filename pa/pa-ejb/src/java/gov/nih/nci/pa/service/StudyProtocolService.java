@@ -81,14 +81,11 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 import java.util.List;
-
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * @author Bala Nair
@@ -97,7 +94,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public interface StudyProtocolService extends GenericSearchService<StudyProtocol, SearchCriteria<StudyProtocol>> {
+public interface StudyProtocolService {
 
 
     /**

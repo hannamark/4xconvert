@@ -80,20 +80,16 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 
 import java.util.List;
-
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * @author Hugh Reinhart
  * @since 09/26/2008
  */
 
-public interface StudySiteAccrualStatusService
-    extends GenericSearchService<StudySiteAccrualStatus, SearchCriteria<StudySiteAccrualStatus>> {
+public interface StudySiteAccrualStatusService {
 
     /**
      * @param ii index
