@@ -76,9 +76,11 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jboss"                  name="hibernate3"              rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="jboss"                  name="jboss-ejb3x"             rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="com.mockrunner"         name="mockrunner"              rev="0.4.1"           conf="test->master"/>
+    <dependency org="com.mockrunner"         name="mockrunner"              rev="0.4.1"           conf="test->master"/>
     <dependency org="com.opensymphony"       name="xwork"                   rev="2.0.7"           conf="test->master"/>
     <dependency org="postgresql"             name="postgresql"              rev="8.3-603.jdbc3"   conf="test->master"/>
     <dependency org="org.acegisecurity"      name="acegi-security"          rev="1.0.4"           conf="test->master"/>
+    <dependency org="org.mockito"            name="mockito-all"             rev="1.8.4"           conf="test->master"/>
     <dependency org="gov.nih.nci.security"   name="cgmm"                    rev="0.7.0"           conf="test->cgmm-api"/>
 
     <!-- other test targets -->
