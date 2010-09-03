@@ -141,6 +141,8 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
         trialHistory = new TrialHistoryAction();
         trialHistory.prepare();
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
+
+        setupMocks();
      }
 
     @Test
@@ -200,8 +202,7 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
         assertEquals("list", trialHistory.execute());
     }
 
-    @Before
-    public void setupMocks() throws PAException, TooManyResultsException {
+    private void setupMocks() throws PAException, TooManyResultsException {
         StudyProtocolDTO spDto = new StudyProtocolDTO();
         spDto.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.NA.getCode()));
         when(studyProtocolService.getStudyProtocol(any(Ii.class))).thenReturn(spDto);
