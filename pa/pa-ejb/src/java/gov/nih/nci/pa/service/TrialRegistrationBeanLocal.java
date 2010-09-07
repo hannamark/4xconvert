@@ -85,6 +85,7 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -956,6 +957,11 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         // assign ownership
         RegistryUser usr = userServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO.getUserLastCreated()));
         userServiceLocal.assignOwnership(usr.getId(), IiConverter.convertToLong(studyProtocolIi));
+        //PO-2646: We're adding an explicit evict of the study protocol so the complete trial is loaded
+        //when searched upon later in the trial creation process. Failure to do so was resulting in NPE further down
+        //the line.
+        Session session = HibernateUtil.getCurrentSession();
+        session.evict(session.get(StudyProtocol.class, IiConverter.convertToLong(studyProtocolIi)));
         sendMail(operation, isBatchMode, studyProtocolIi);
         return studyProtocolIi;
     }

@@ -160,7 +160,7 @@ public class StudyResourcingBeanLocal extends
         if (results.size() > 1) {
             throw new PAException(" Summary 4 Reported Sourcing should not be more than 1 record ");
         }
-        return convertFromDomainToDto(results.get(0));
+        return results.isEmpty() ? null : convertFromDomainToDto(results.get(0));
     }
 
     /**
