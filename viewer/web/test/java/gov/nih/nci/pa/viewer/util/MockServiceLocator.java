@@ -78,6 +78,7 @@ package gov.nih.nci.pa.viewer.util;
 
 import gov.nih.nci.pa.report.service.AverageMilestoneLocal;
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
+import gov.nih.nci.pa.report.service.Summ4RepLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.report.service.TrialProcessingLocal;
@@ -89,6 +90,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final TrialCountsLocal trialCounts = new MockTrialCountsService();
     private final TrialListLocal trialList = new MockTrialListService();
     private final TrialProcessingLocal trialProcessing = new MockTrialProcessingService();
+    private final Summ4RepLocal summ4Rep = new MockSumm4RepService();
 
     public AverageMilestoneLocal getAverageMilestoneReportService() {
         return averageMilestone;
@@ -108,6 +110,10 @@ public class MockServiceLocator implements ServiceLocator {
 
     public TrialProcessingLocal getTrialProcessingReportService() {
         return trialProcessing;
+    }
+
+    public Summ4RepLocal getSumm4ReportService() {
+        return summ4Rep;
     }
 
 }

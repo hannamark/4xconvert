@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -73,48 +73,106 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
-package gov.nih.nci.pa.viewer.util;
+package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.pa.report.service.AverageMilestoneLocal;
-import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
-import gov.nih.nci.pa.report.service.Summ4RepLocal;
-import gov.nih.nci.pa.report.service.TrialCountsLocal;
-import gov.nih.nci.pa.report.service.TrialListLocal;
-import gov.nih.nci.pa.report.service.TrialProcessingLocal;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.viewer.dto.criteria.Summ4RepCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.Summ4ResultWebDto;
+import gov.nih.nci.pa.viewer.util.MockService;
+import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
-/**
- * @author Hugh Reinhart
- * @since 4/13/2009
- */
-public interface ServiceLocator {
+import java.util.List;
 
-    /**
-     * @return trial counts report service
-     */
-    TrialCountsLocal getTrialCountsReportService();
-    /**
-     * @return trial list report service
-     */
-    TrialListLocal getTrialListReportService();
-    /**
-     * @return trial processing report service
-     */
-    TrialProcessingLocal getTrialProcessingReportService();
-    /**
-     * @return average milestone report service
-     */
-    AverageMilestoneLocal getAverageMilestoneReportService();
-    /**
-     * @return average milestone report service
-     */
-    SubmitterOrganizationLocal getSubmitterOrganizationReportService();
+import org.apache.struts2.ServletActionContext;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.opensymphony.xwork2.Action;
+
+public class Summ4RepActionTest extends AbstractReportActionTest<Summ4RepAction> {
+
+    @Before
+    public void initAction() {
+        action = new Summ4RepAction();
+        action.setCriteria(new Summ4RepCriteriaWebDto());
+    }
+
+    @Test
+    public void noCriteriaReportTest() {
+        // user selects type of report
+        assertEquals(Action.SUCCESS, action.getReport());
+        assertTrue(action.getActionErrors().size() > 0);
+    }
     
-    /**
-     * @return summary 4 report types service.
-     */
-    Summ4RepLocal getSumm4ReportService();
+    @Test
+    public void executeTest() {
+        // user selects type of report
+        assertEquals(Action.SUCCESS, action.execute());
+    }
     
+    @Test 
+    public void autoCompleteTest() throws PAException {
+        action.getCriteria().setOrgName("Duke");
+        assertEquals(Action.SUCCESS, action.getAutoComplete());
+        List<String> resultList = action.getAutoCompleteResult();
+        assertTrue(resultList.size() > 0);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getReportTest() {
+        // user selects type of report
+        assertEquals(Action.SUCCESS, action.execute());
+
+        // user enters criteria
+        action.getCriteria().setIntervalStartDate(DATE_1);
+        action.getCriteria().setIntervalEndDate(DATE_2);
+        action.getCriteria().setOrgName("Duke");
+
+        // user clicks "Run report"
+        assertEquals(Action.SUCCESS, action.getReport());
+        assertFalse(action.getActionErrors().size() > 0);
+
+        // result header displays
+        assertEquals(PAUtil.normalizeDateString(DATE_1), action.getCriteria().getIntervalStartDate());
+        assertEquals(PAUtil.normalizeDateString(DATE_2), action.getCriteria().getIntervalEndDate());
+        assertEquals(USER, ServletActionContext.getRequest().getRemoteUser());
+
+        // result spreadsheet displays
+        List<Summ4ResultWebDto> resultList = (List<Summ4ResultWebDto>)
+                ServletActionContext.getRequest().getSession().getAttribute(ViewerConstants.RESULT_LIST);
+        assertTrue(resultList.size() > 0);
+        Summ4ResultWebDto item = resultList.get(0);
+        
+        
+        assertEquals(MockService.TEST_INT, item.getAccrualCenter12m());
+        assertEquals(MockService.TEST_INT, item.getAccrualCenterToDate());
+        assertEquals(MockService.TEST_TS, item.getClosedDate());
+        assertEquals(MockService.TEST_TS, item.getOpenDate());
+        assertEquals(MockService.TEST_STR, item.getPhase());
+        assertEquals(MockService.TEST_STR, item.getPi());
+        assertEquals(MockService.TEST_STR, item.getProgramCode());
+        assertEquals(MockService.TEST_STR, item.getProtoId());
+        assertEquals(MockService.TEST_STR, item.getSponsor());
+        assertEquals(MockService.TEST_INT, item.getTarget());
+        assertEquals(MockService.TEST_STR, item.getTitle());
+        assertEquals(MockService.TEST_STR, item.getType());
+        
+        assertEquals(1, action.getAgentDeviceMap().get("NATIONAL").size());  
+        assertEquals(1, action.getAgentDeviceMap().get("INDUSTRIAL").size());
+        assertEquals(1, action.getAgentDeviceMap().get("EXTERNALLY_PEER_REVIEWED").size());
+        assertEquals(1, action.getAgentDeviceMap().get("INSTITUTIONAL").size());
+        
+        assertEquals(1, action.getAnciCorrList().size());
+        assertEquals(1, action.getEpidemOutcomeList().size());
+        
+        assertEquals(1, action.getOtherInterventionMap().get("NATIONAL").size());
+        assertEquals(1, action.getOtherInterventionMap().get("INSTITUTIONAL").size());
+        assertEquals(1, action.getOtherInterventionMap().get("EXTERNALLY_PEER_REVIEWED").size());
+    }
 }

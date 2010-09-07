@@ -43,5 +43,26 @@
         <action name="results*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="getReport">
             <result>/WEB-INF/jsp/{1}.jsp</result> 
         </action>
+        
     </package>
+    
+     <package name="ctroajax" namespace="/ctro/ajax" extends="public">
+        <action name="refreshAncCorResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAncillaryCorrelativeResult.jsp</result> 
+        </action>
+        <action name="refreshEpidemResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <result>/WEB-INF/jsp/nodecorate/summ4RepEpidemOutcomeResult.jsp</result> 
+        </action>
+        <action name="refreshAgencyDeviceResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceResult.jsp</result> 
+        </action>
+        <action name="refreshOtherIntResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionResult.jsp</result> 
+        </action>
+        <action name="refreshAutocompleteResults*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="getAutoComplete">
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAutoCompleteResult.jsp</result> 
+        </action>
+    </package>
+    
+    
 </struts>

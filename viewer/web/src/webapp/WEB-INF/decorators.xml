@@ -7,7 +7,14 @@
         <pattern>/styles/*</pattern>
         <pattern>/scripts/*</pattern>
         <pattern>/images/*</pattern>
-        <pattern>/helpDocs/*</pattern> 
+        <pattern>/dojo/*</pattern>
+        <pattern>/struts/*</pattern>
+        <pattern>*popup*</pattern>  
+        <pattern>*Ajax*</pattern>  
+        <pattern>*ajax*</pattern>
+        <pattern>*nodecor*</pattern>   
+        <pattern>*lookup*</pattern>
+        <pattern>/helpDocs/*</pattern>
     </excludes>
 
 

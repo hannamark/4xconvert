@@ -101,4 +101,18 @@ public final class ViewerConstants {
 
     /** Action result for the global log out result. */
     public static final String AR_LOGOUT = "logout";
+    
+    /** Attribute used to store summ4 agent/device map. */
+    public static final String SUMM4_AGENT_DEVICE_RESULT_MAP = "agentDeviceMap";
+    
+    /** Attribute used to store summ4 other intervention map. */
+    public static final String SUMM4_OTHER_INTERVENTION_RESULT_MAP = "otherInterventionMap";
+    
+    /** Attribute used to store summ4 Epidemiologic/Other/Outcome list. */
+    public static final String SUMM4_EPIDEMIOLOGIC_OTHER_OUTCOME_RESULT_LIST = "epidemiologicOutcomeList";
+    
+    /** Attribute used to store summ4 Ancillary/Correlative list. */
+    public static final String SUMM4_ANCILLARY_CORRELATIVE_RESULT_LIST = "ancillaryCorrelativeList";
+    
+    
 }

@@ -80,6 +80,7 @@ package gov.nih.nci.pa.viewer.util;
 
 import gov.nih.nci.pa.report.service.AverageMilestoneLocal;
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
+import gov.nih.nci.pa.report.service.Summ4RepLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.report.service.TrialProcessingLocal;
@@ -154,5 +155,12 @@ public final class ViewerServiceLocator implements ServiceLocator {
      */
     public SubmitterOrganizationLocal getSubmitterOrganizationReportService() {
         return serviceLocator.getSubmitterOrganizationReportService();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Summ4RepLocal getSumm4ReportService() {
+        return serviceLocator.getSumm4ReportService();
     }
 }

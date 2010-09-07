@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -73,48 +73,83 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
 package gov.nih.nci.pa.viewer.util;
 
-import gov.nih.nci.pa.report.service.AverageMilestoneLocal;
-import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.Summ4RepCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
+import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.report.service.Summ4RepLocal;
-import gov.nih.nci.pa.report.service.TrialCountsLocal;
-import gov.nih.nci.pa.report.service.TrialListLocal;
-import gov.nih.nci.pa.report.service.TrialProcessingLocal;
+import gov.nih.nci.pa.report.service.Summ4ReportBean;
+import gov.nih.nci.pa.service.PAException;
 
-/**
- * @author Hugh Reinhart
- * @since 4/13/2009
- */
-public interface ServiceLocator {
+import java.util.ArrayList;
+import java.util.List;
 
-    /**
-     * @return trial counts report service
-     */
-    TrialCountsLocal getTrialCountsReportService();
-    /**
-     * @return trial list report service
-     */
-    TrialListLocal getTrialListReportService();
-    /**
-     * @return trial processing report service
-     */
-    TrialProcessingLocal getTrialProcessingReportService();
-    /**
-     * @return average milestone report service
-     */
-    AverageMilestoneLocal getAverageMilestoneReportService();
-    /**
-     * @return average milestone report service
-     */
-    SubmitterOrganizationLocal getSubmitterOrganizationReportService();
+public class MockSumm4RepService extends MockService implements Summ4RepLocal {
+
+    public List<TrialListResultDto> get(AbstractStandardCriteriaDto criteria)
+            throws PAException {
+        List<TrialListResultDto> rList = new ArrayList<TrialListResultDto>();
+        TrialListResultDto dto = new TrialListResultDto();
+        dto.setAssignedIdentifier(StConverter.convertToSt(TEST_STR));
+        dto.setDateLastCreated(TsConverter.convertToTs(TEST_TS));
+        dto.setDws(CdConverter.convertStringToCd(TEST_DWS));
+        dto.setDwsDate(TsConverter.convertToTs(TEST_TS));
+        dto.setLeadOrg(StConverter.convertToSt(TEST_STR));
+        dto.setLeadOrgTrialIdentifier(StConverter.convertToSt(TEST_STR));
+        dto.setMilestone(CdConverter.convertStringToCd(TEST_MILESTONE));
+        dto.setMilestoneDate(TsConverter.convertToTs(TEST_TS));
+        dto.setSubmissionNumber(IntConverter.convertToInt(TEST_INT));
+        dto.setSubmitterOrg(StConverter.convertToSt(TEST_STR));
+        rList.add(dto);
+        return rList;
+    }
+
+    private  Summ4RepResultDto generateDto(String sort, String subSort) {
+        Summ4RepResultDto dto = new Summ4RepResultDto();
+        dto.setAccrualCenter12m(IntConverter.convertToInt(TEST_INT));
+        dto.setAccrualCenterToDate(IntConverter.convertToInt(TEST_INT));
+        dto.setClosedDate(TsConverter.convertToTs(TEST_TS));
+        dto.setOpenDate(TsConverter.convertToTs(TEST_TS));
+        dto.setPhase(StConverter.convertToSt(TEST_STR));
+        dto.setPi(StConverter.convertToSt(TEST_STR));
+        dto.setProgramCode(StConverter.convertToSt(TEST_STR));
+        dto.setProtoId(StConverter.convertToSt(TEST_STR));
+        dto.setSortCriteria(StConverter.convertToSt(sort));
+        dto.setSponsor(StConverter.convertToSt(TEST_STR));
+        dto.setSubSortCriteria(StConverter.convertToSt(subSort));
+        dto.setTarget(IntConverter.convertToInt(TEST_INT));
+        dto.setTitle(StConverter.convertToSt(TEST_STR));
+        dto.setType(StConverter.convertToSt(TEST_STR));
+        
+        return dto;
+    }
     
-    /**
-     * @return summary 4 report types service.
-     */
-    Summ4RepLocal getSumm4ReportService();
-    
+    public List<Summ4RepResultDto> get(Summ4RepCriteriaDto criteria) throws PAException {
+        List<Summ4RepResultDto> rList = new ArrayList<Summ4RepResultDto>();
+        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, Summ4ReportBean.NATIONAL));
+        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, Summ4ReportBean.INSTITUTIONAL));
+        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, Summ4ReportBean.EXTERNALLY_PEER_REVIEWED));
+        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, Summ4ReportBean.INDUSTRIAL));
+        rList.add(generateDto(Summ4ReportBean.OTHER_INTERVENTION, Summ4ReportBean.NATIONAL));
+        rList.add(generateDto(Summ4ReportBean.OTHER_INTERVENTION, Summ4ReportBean.INSTITUTIONAL));
+        rList.add(generateDto(Summ4ReportBean.OTHER_INTERVENTION, Summ4ReportBean.EXTERNALLY_PEER_REVIEWED));
+        rList.add(generateDto(Summ4ReportBean.EPIDEM_OUTCOME, "n/a"));
+        rList.add(generateDto(Summ4ReportBean.ANCILLARY_CORRELATIVE, "n/a"));
+        return rList;
+    }
+
+    public List<String> searchPoOrgNames(String partial, int maxLimit) throws PAException {
+        List<String> returnList = new ArrayList<String>();
+        returnList.add("org1");
+        returnList.add("org2");
+        return returnList;
+    }
+
 }
