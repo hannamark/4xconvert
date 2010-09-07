@@ -3,6 +3,7 @@
 
     <description>5AM PMD Rules</description>
     <exclude-pattern>.*/test/.*</exclude-pattern>
+    <exclude-pattern>.*/pdq/src/.*</exclude-pattern>
 
     <rule ref="rulesets/basic.xml" />
     <rule ref="rulesets/basic.xml/EmptyCatchBlock">

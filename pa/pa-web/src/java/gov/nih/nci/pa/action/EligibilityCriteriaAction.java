@@ -118,11 +118,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
@@ -162,7 +163,6 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static final int RECORDSVALUE = 2;
     private String studyPopulationDescription;
     private String samplingMethodCode;
-    //private List<DataElement> cadsrResult = new ArrayList<DataElement>();
     private List<CaDSRWebDTO> cadsrResult = new ArrayList<CaDSRWebDTO>();
     private static long cadsrCsId;
     private static float cadsrCsVersion;
@@ -188,51 +188,50 @@ public class EligibilityCriteriaAction extends ActionSupport {
      */
     public String query() {
 
-    try {
-        retrieveFromPaProperties();
-        getClassSchemeItems();
-        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-            .getAttribute(Constants.STUDY_PROTOCOL_II);
-        List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
-        .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
-        if (pecList != null && !pecList.isEmpty()) {
-            list = new ArrayList<ISDesignDetailsWebDTO>();
-            for (PlannedEligibilityCriterionDTO dto : pecList) {
-                list.add(setEligibilityDetailsDTO(dto));
-            }
-            if (list.size() > RECORDSVALUE) {
-                eligibilityList = new ArrayList<ISDesignDetailsWebDTO>();
-                for (ISDesignDetailsWebDTO weblist : list) {
-                    if (weblist.getCriterionName() == null
-                            || (!(weblist.getCriterionName().equalsIgnoreCase("GENDER")))
-                            && (!(weblist.getCriterionName().equalsIgnoreCase("AGE")))) {
-                        eligibilityList.add(weblist);
+        try {
+            retrieveFromPaProperties();
+            getClassSchemeItems();
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.STUDY_PROTOCOL_II);
+            List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
+                .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
+            if (CollectionUtils.isNotEmpty(pecList)) {
+                list = new ArrayList<ISDesignDetailsWebDTO>();
+                for (PlannedEligibilityCriterionDTO dto : pecList) {
+                    list.add(setEligibilityDetailsDTO(dto));
+                }
+                if (list.size() > RECORDSVALUE) {
+                    eligibilityList = new ArrayList<ISDesignDetailsWebDTO>();
+                    for (ISDesignDetailsWebDTO weblist : list) {
+                        if (weblist.getCriterionName() == null
+                                || !weblist.getCriterionName().equalsIgnoreCase("GENDER")
+                                && !weblist.getCriterionName().equalsIgnoreCase("AGE")) {
+                            eligibilityList.add(weblist);
+                        }
                     }
                 }
             }
-        }
 
-        StudyProtocolDTO spDTO = new StudyProtocolDTO();
-        spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-        if (spDTO.getAcceptHealthyVolunteersIndicator().getValue() != null) {
-            acceptHealthyVolunteersIndicator = spDTO.getAcceptHealthyVolunteersIndicator().getValue().toString();
-        }
-        StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext
-        .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-        if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
-            ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
-            ospDTO = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
-            if (ospDTO != null) {
-                if (ospDTO.getSamplingMethodCode() != null
-                    && ospDTO.getSamplingMethodCode().getCode() != null) {
-                    samplingMethodCode = ospDTO.getSamplingMethodCode().getCode().toString();
-                }
-                if (ospDTO.getStudyPopulationDescription() != null
-                    && ospDTO.getStudyPopulationDescription().getValue() != null) {
-                    studyPopulationDescription = ospDTO.getStudyPopulationDescription().getValue().toString();
+            StudyProtocolDTO spDTO = new StudyProtocolDTO();
+            spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            if (spDTO.getAcceptHealthyVolunteersIndicator().getValue() != null) {
+                acceptHealthyVolunteersIndicator = spDTO.getAcceptHealthyVolunteersIndicator().getValue().toString();
+            }
+            StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.TRIAL_SUMMARY);
+            if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
+                ObservationalStudyProtocolDTO ospDTO = PaRegistry.getStudyProtocolService()
+                    .getObservationalStudyProtocol(studyProtocolIi);
+                if (ospDTO != null) {
+                    if (ospDTO.getSamplingMethodCode() != null && ospDTO.getSamplingMethodCode().getCode() != null) {
+                        samplingMethodCode = ospDTO.getSamplingMethodCode().getCode().toString();
+                    }
+                    if (ospDTO.getStudyPopulationDescription() != null
+                            && ospDTO.getStudyPopulationDescription().getValue() != null) {
+                        studyPopulationDescription = ospDTO.getStudyPopulationDescription().getValue().toString();
+                    }
                 }
             }
-        }
 
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -247,13 +246,13 @@ public class EligibilityCriteriaAction extends ActionSupport {
     public String getClassSchemeItems() {
         try {
             if (csisResult == null) {
-              csisResult = new ArrayList<ClassificationSchemeItem>();
+                csisResult = new ArrayList<ClassificationSchemeItem>();
             }
             ClassificationScheme cs = new ClassificationScheme();
             cs.setPublicID(cadsrCsId);
             cs.setVersion(cadsrCsVersion);
             ApplicationService appService = ApplicationServiceProvider.getApplicationService();
-            Collection csResult = appService.search(ClassificationScheme.class, cs);
+            Collection<Object> csResult = appService.search(ClassificationScheme.class, cs);
             ClassificationScheme classifSch = (ClassificationScheme) csResult.iterator().next();
 
             Collection<ClassSchemeClassSchemeItem> csItem = classifSch.getClassSchemeClassSchemeItemCollection();
@@ -281,10 +280,10 @@ public class EligibilityCriteriaAction extends ActionSupport {
             DetachedCriteria criteria = DetachedCriteria.forClass(DataElement.class, "de");
             criteria.add(Expression.eq("workflowStatusName", "RELEASED"));
             criteria.createAlias("referenceDocumentCollection", "refDoc")
-            .add(Expression.eq("refDoc.type", "Preferred Question Text"))
-            .add(Expression.ilike("refDoc.doctext", "%" + deName + "%"));
+                .add(Expression.eq("refDoc.type", "Preferred Question Text"))
+                .add(Expression.ilike("refDoc.doctext", "%" + deName + "%"));
             DetachedCriteria csCsiCriteria = criteria.createCriteria("administeredComponentClassSchemeItemCollection")
-            .createCriteria("classSchemeClassSchemeItem");
+                .createCriteria("classSchemeClassSchemeItem");
 
             DetachedCriteria csCriteria = csCsiCriteria.createCriteria("classificationScheme");
             csCriteria.add(Expression.eq("publicID", cadsrCsId));
@@ -293,33 +292,33 @@ public class EligibilityCriteriaAction extends ActionSupport {
             DetachedCriteria csiCriteria = csCsiCriteria.createCriteria("classificationSchemeItem");
             csiCriteria.add(Expression.eq("longName", csiName));
 
-            List classCes = appService.query(criteria);
+            List<Object> classCes = appService.query(criteria);
 
             for (Object obj : classCes) {
-              CaDSRWebDTO cadsrWebDTO = new CaDSRWebDTO();
-              DataElement de = (DataElement) obj;
-              cadsrWebDTO.setId(de.getId());
-              cadsrWebDTO.setPublicId(Long.toString(de.getPublicID()));
-              cadsrWebDTO.setVersion(Float.toString(de.getVersion()));
-              if (de.getReferenceDocumentCollection() != null && !de.getReferenceDocumentCollection().isEmpty()) {
-               for (ReferenceDocument  refDoc : de.getReferenceDocumentCollection()) {
-                 if (refDoc.getType().equals("Preferred Question Text")) {
-                   cadsrWebDTO.setPreferredQuestion(refDoc.getDoctext());
-                  }
-               }
+                CaDSRWebDTO cadsrWebDTO = new CaDSRWebDTO();
+                DataElement de = (DataElement) obj;
+                cadsrWebDTO.setId(de.getId());
+                cadsrWebDTO.setPublicId(Long.toString(de.getPublicID()));
+                cadsrWebDTO.setVersion(Float.toString(de.getVersion()));
+                if (CollectionUtils.isNotEmpty(de.getReferenceDocumentCollection())) {
+                    for (ReferenceDocument refDoc : de.getReferenceDocumentCollection()) {
+                        if (refDoc.getType().equals("Preferred Question Text")) {
+                            cadsrWebDTO.setPreferredQuestion(refDoc.getDoctext());
+                        }
+                    }
 
-              } else {
-                 if (de.getDataElementConcept() != null && de.getDataElementConcept().getLongName() != null) {
-                   cadsrWebDTO.setPreferredQuestion(de.getDataElementConcept().getLongName());
-                 }
-              }
-              cadsrResult.add(cadsrWebDTO);
+                } else {
+                    if (de.getDataElementConcept() != null && de.getDataElementConcept().getLongName() != null) {
+                        cadsrWebDTO.setPreferredQuestion(de.getDataElementConcept().getLongName());
+                    }
+                }
+                cadsrResult.add(cadsrWebDTO);
             }
             if (cadsrResult.size() > MAX_CADSR_RESULT) {
-              ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
-               "Search results too large returned more than 200 records");
-              cadsrResult.clear();
-              return CDES_BY_CSI;
+                ServletActionContext.getRequest()
+                    .setAttribute(Constants.FAILURE_MESSAGE, "Search results too large returned more than 200 records");
+                cadsrResult.clear();
+                return CDES_BY_CSI;
             }
             webDTO.setCdeCategoryCode(csiName);
             setCdeCategoryCode(csiName);
@@ -335,7 +334,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
      * @return the classified cd es display tag
      */
     public String getClassifiedCDEsDisplayTag() {
-      this.getClassifiedCDEs();
+        this.getClassifiedCDEs();
         return "cdeDisplayTag";
     }
 
@@ -351,35 +350,33 @@ public class EligibilityCriteriaAction extends ActionSupport {
           DataElement de = new DataElement();
           de.setId(cdeid);
 
-          Collection collResult = appService.search(DataElement.class, de);
+          Collection<Object> collResult = appService.search(DataElement.class, de);
 
           cdeResult = (DataElement) collResult.iterator().next();
           webDTO.setCriterionName(cdeResult.getDataElementConcept().getLongName());
 
           ValueDomain vd = cdeResult.getValueDomain();
-          if (vd instanceof EnumeratedValueDomain) {
-              EnumeratedValueDomain evd = (EnumeratedValueDomain) vd;
+            if (vd instanceof EnumeratedValueDomain) {
+                EnumeratedValueDomain evd = (EnumeratedValueDomain) vd;
 
-              permValues = new ArrayList<String>();
-              Collection<ValueDomainPermissibleValue> vdPvList = evd.getValueDomainPermissibleValueCollection();
-              for (ValueDomainPermissibleValue vdPv : vdPvList) {
-                 // permValues.add(vdPv.getPermissibleValue().getValue());
-                  permValues.add(vdPv.getPermissibleValue().getValueMeaning().getLongName());
-              }
+                permValues = new ArrayList<String>();
+                Collection<ValueDomainPermissibleValue> vdPvList = evd.getValueDomainPermissibleValueCollection();
+                for (ValueDomainPermissibleValue vdPv : vdPvList) {
+                    permValues.add(vdPv.getPermissibleValue().getValueMeaning().getLongName());
+                }
 
-          } else {
-              permValues = null;
-          }
-          cdeDatatype = vd.getDatatypeName();
-          webDTO.setCdePublicIdentifier(Long.toString(vd.getPublicID()));
-          webDTO.setCdeVersionNumber(Float.toString(vd.getVersion()));
-          webDTO.setCdeCategoryCode(getCdeCategoryCode());
+            } else {
+                permValues = null;
+            }
+            cdeDatatype = vd.getDatatypeName();
+            webDTO.setCdePublicIdentifier(Long.toString(vd.getPublicID()));
+            webDTO.setCdeVersionNumber(Float.toString(vd.getVersion()));
+            webDTO.setCdeCategoryCode(getCdeCategoryCode());
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
 
         return DISPLAY_CDE;
-
     }
 
     /**
@@ -399,100 +396,100 @@ public class EligibilityCriteriaAction extends ActionSupport {
      * @return the string
      */
     public String sendCDERequestEmail() {
-    try {
-        StringBuffer err = new StringBuffer();
-        String fromEmail = ServletActionContext.getRequest().getParameter("fromEmail");
-        String emailMessage = ServletActionContext.getRequest().getParameter("emailMsg");
-        if (StringUtils.isEmpty(fromEmail)) {
-          err.append("Please enter an email address").append(BR);
+        try {
+            StringBuffer err = new StringBuffer();
+            String fromEmail = ServletActionContext.getRequest().getParameter("fromEmail");
+            String emailMessage = ServletActionContext.getRequest().getParameter("emailMsg");
+            if (StringUtils.isEmpty(fromEmail)) {
+                err.append("Please enter an email address").append(BR);
+            }
+            if (!PAUtil.isValidEmail(fromEmail)) {
+                err.append("Please enter a valid email address").append(BR);
+            }
+            if (StringUtils.isEmpty(emailMessage)) {
+                err.append("Please enter a request to CDE message").append(BR);
+            }
+            if (err.length() > 0) {
+                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, err.toString());
+                return requestToCreateCDE();
+            }
+            PaRegistry.getMailManagerService().sendCDERequestMail(fromEmail, emailMessage);
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "CDE Request sent successfully");
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
-        if (!PAUtil.isValidEmail(fromEmail)) {
-          err.append("Please enter a valid email address").append(BR);
-        }
-        if (StringUtils.isEmpty(emailMessage)) {
-          err.append("Please enter a request to CDE message").append(BR);
-        }
-        if (err.length() > 0) {
-           ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, err.toString());
-           return requestToCreateCDE();
-        }
-        PaRegistry.getMailManagerService().sendCDERequestMail(fromEmail, emailMessage);
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "CDE Request sent successfully");
-    } catch (PAException e) {
-       ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        return requestToCreateCDE();
     }
-    return requestToCreateCDE();
-  }
-  /**
-   * @return res
-   */
-  public String save() {
-    enforceBusinessRules();
-    if (hasFieldErrors()) {
-      return ELIGIBILITY;
-    }
-    try {
-      Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-      .getAttribute(Constants.STUDY_PROTOCOL_II);
 
-      StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext
-      .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-      if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
-        ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
-        ospDTO = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
-        ospDTO.setStudyPopulationDescription(StConverter.convertToSt(studyPopulationDescription));
-        ospDTO.setSamplingMethodCode(CdConverter.convertToCd(SamplingMethodCode
-            .getByCode(samplingMethodCode)));
-        ospDTO = PaRegistry.getStudyProtocolService().updateObservationalStudyProtocol(ospDTO);
-      }
-
-      StudyProtocolDTO spDTO = new StudyProtocolDTO();
-      spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-      spDTO.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBl(Boolean
-          .valueOf(acceptHealthyVolunteersIndicator)));
-      spDTO = PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
-
-      PlannedEligibilityCriterionDTO pecDTOGender = new PlannedEligibilityCriterionDTO();
-      PlannedEligibilityCriterionDTO pecDTOAge = new PlannedEligibilityCriterionDTO();
-
-      if (eligibleGenderCode != null) {
-       pecDTOGender.setStudyProtocolIdentifier(studyProtocolIi);
-       pecDTOGender.setCriterionName(StConverter.convertToSt("GENDER"));
-       pecDTOGender.setEligibleGenderCode(CdConverter.convertToCd(EligibleGenderCode
-            .getByCode(eligibleGenderCode)));
-       pecDTOGender.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
-       pecDTOGender.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        if (StringUtils.isNotEmpty(eligibleGenderCodeId)) {
-          pecDTOGender.setIdentifier(IiConverter.convertToIi(eligibleGenderCodeId));
-          PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTOGender);
-        } else {
-          PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTOGender);
+    /**
+     * @return res
+     */
+    public String save() {
+        enforceBusinessRules();
+        if (hasFieldErrors()) {
+            return ELIGIBILITY;
         }
-      }
-      if (minimumValue != null || maximumValue != null) {
-        pecDTOAge.setStudyProtocolIdentifier(studyProtocolIi);
-        pecDTOAge.setCriterionName(StConverter.convertToSt("AGE"));
-        pecDTOAge.setValue(convertToIvlPq(minValueUnit, minimumValue, maxValueUnit, maximumValue));
-        pecDTOAge.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
-        pecDTOAge.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        if (StringUtils.isNotEmpty(valueId)) {
-          pecDTOAge.setIdentifier(IiConverter.convertToIi(valueId));
-          PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTOAge);
-        } else {
-          PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTOAge);
+        try {
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.STUDY_PROTOCOL_II);
+
+            StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.TRIAL_SUMMARY);
+            if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
+                ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
+                ospDTO = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
+                ospDTO.setStudyPopulationDescription(StConverter.convertToSt(studyPopulationDescription));
+                ospDTO.setSamplingMethodCode(CdConverter.convertToCd(SamplingMethodCode.getByCode(samplingMethodCode)));
+                ospDTO = PaRegistry.getStudyProtocolService().updateObservationalStudyProtocol(ospDTO);
+            }
+
+            StudyProtocolDTO spDTO = new StudyProtocolDTO();
+            spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            spDTO.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBl(Boolean
+                .valueOf(acceptHealthyVolunteersIndicator)));
+            spDTO = PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
+
+            PlannedEligibilityCriterionDTO pecDTOGender = new PlannedEligibilityCriterionDTO();
+            PlannedEligibilityCriterionDTO pecDTOAge = new PlannedEligibilityCriterionDTO();
+
+            if (eligibleGenderCode != null) {
+                pecDTOGender.setStudyProtocolIdentifier(studyProtocolIi);
+                pecDTOGender.setCriterionName(StConverter.convertToSt("GENDER"));
+                pecDTOGender.setEligibleGenderCode(CdConverter.convertToCd(EligibleGenderCode
+                    .getByCode(eligibleGenderCode)));
+                pecDTOGender.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
+                pecDTOGender.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
+                if (StringUtils.isNotEmpty(eligibleGenderCodeId)) {
+                    pecDTOGender.setIdentifier(IiConverter.convertToIi(eligibleGenderCodeId));
+                    PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTOGender);
+                } else {
+                    PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTOGender);
+                }
+            }
+            if (minimumValue != null || maximumValue != null) {
+                pecDTOAge.setStudyProtocolIdentifier(studyProtocolIi);
+                pecDTOAge.setCriterionName(StConverter.convertToSt("AGE"));
+                pecDTOAge.setValue(convertToIvlPq(minValueUnit, minimumValue, maxValueUnit, maximumValue));
+                pecDTOAge.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
+                pecDTOAge.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
+                if (StringUtils.isNotEmpty(valueId)) {
+                    pecDTOAge.setIdentifier(IiConverter.convertToIi(valueId));
+                    PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTOAge);
+                } else {
+                    PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTOAge);
+                }
+            }
+            if (StringUtils.isNotEmpty(eligibleGenderCodeId)) {
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            } else {
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
+            }
+            query();
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
-      }
-      if (StringUtils.isNotEmpty(eligibleGenderCodeId)) {
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-      } else {
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
-      }
-      query();
-    } catch (PAException e) {
-      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        return ELIGIBILITY;
     }
-    return ELIGIBILITY;
-  }
 
     private Ivl<Pq> convertToIvlPq(String minUom, String minValue, String maxUom, String maxValue) {
         if (minUom == null && minValue == null && maxValue == null && maxUom == null) {
@@ -503,444 +500,442 @@ public class EligibilityCriteriaAction extends ActionSupport {
         return IvlConverter.convertPq().convertToIvl(low, high);
     }
 
-  /**
-   * @return result
-   */
-  @Override
-  public String input() {
-    return ELIGIBILITYADD;
-  }
+    /**
+     * @return result
+     */
+    @Override
+    public String input() {
+        return ELIGIBILITYADD;
+    }
 
-  /**
-   * Re order.
-   *
-   * @return the string
-   */
-  public String reOrder() {
-   StringBuffer ruleError = new StringBuffer();
-   HashSet<String> order =  new HashSet<String>();
-   try {
-    for (ISDesignDetailsWebDTO dto : getEligibilityList()) {
-      ruleError.append(rulesForDisplayOrder(dto.getDisplayOrder()));
-      checkDisplayOrderExists(dto.getDisplayOrder(), Long.parseLong(dto.getId()), buildDisplayOrderUIList(), order);
-    }
-    if (ruleError.length() > 0) {
-      addFieldError("reOrder", ruleError.toString());
-      populateList();
-      return ELIGIBILITY;
-    }
-    if (!order.isEmpty()) {
-      StringBuffer orderStr =  new StringBuffer("Display Order(s) exist: ");
-      orderStr.append(order.toString());
-      addFieldError("reOrder", orderStr.toString());
-    } else {
-        for (ISDesignDetailsWebDTO dto : eligibilityList) {
-        PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(dto, Long.parseLong(dto.getId()));
-        PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
+    /**
+     * Re order.
+     *
+     * @return the string
+     */
+    public String reOrder() {
+        StringBuffer ruleError = new StringBuffer();
+        HashSet<String> order = new HashSet<String>();
+        try {
+            for (ISDesignDetailsWebDTO dto : getEligibilityList()) {
+                ruleError.append(rulesForDisplayOrder(dto.getDisplayOrder()));
+                checkDisplayOrderExists(dto.getDisplayOrder(), Long.parseLong(dto.getId()), buildDisplayOrderUIList(),
+                                        order);
+            }
+            if (ruleError.length() > 0) {
+                addFieldError("reOrder", ruleError.toString());
+                populateList();
+                return ELIGIBILITY;
+            }
+            if (!order.isEmpty()) {
+                StringBuffer orderStr = new StringBuffer("Display Order(s) exist: ");
+                orderStr.append(order.toString());
+                addFieldError("reOrder", orderStr.toString());
+            } else {
+                for (ISDesignDetailsWebDTO dto : eligibilityList) {
+                    PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(dto, Long.parseLong(dto
+                        .getId()));
+                    PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
+                }
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+                query();
+            }
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
-         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-         query();
+        return ELIGIBILITY;
     }
-  } catch (PAException e) {
-      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-  }
-  return ELIGIBILITY;
-  }
 
-/**
- * @throws PAException
- */
-private void populateList() throws PAException {
-    Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-      .getAttribute(Constants.STUDY_PROTOCOL_II);
-      List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
-      .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
-      if (pecList != null && !pecList.isEmpty()) {
-          list = new ArrayList<ISDesignDetailsWebDTO>();
-          for (PlannedEligibilityCriterionDTO dto : pecList) {
-              list.add(setEligibilityDetailsDTO(dto));
-          }
-      }
-}
-
-
-  /**
-   * Generate.
-   *
-   * @return the string
-   *
-   * @throws PAException the PA exception
-   */
-  public String generate() throws PAException {
-     StringBuffer generatedName = new StringBuffer();
-
-     if (StringUtils.isNotEmpty(webDTO.getCriterionName())) {
-         generatedName.append(webDTO.getCriterionName());
-     }
-     if (StringUtils.isNotEmpty(webDTO.getOperator()) && webDTO.getOperator().equalsIgnoreCase("In")) {
-         generatedName.append(SP).append("In:");
-     }
-     if (StringUtils.isNotEmpty(webDTO.getOperator()) && !webDTO.getOperator().equalsIgnoreCase("In")) {
-         generatedName.append(SP).append(webDTO.getOperator());
-     }
-     if (StringUtils.isNotEmpty(webDTO.getValueIntegerMin())) {
-      if (StringUtils.isNotEmpty(webDTO.getValueIntegerMin())) {
-         generatedName.append(webDTO.getValueIntegerMin());
-      }
-      if (StringUtils.isNotEmpty(webDTO.getValueIntegerMax())) {
-       generatedName.append(" - ").append(webDTO.getValueIntegerMax());
-      }
-      if (StringUtils.isNotEmpty(webDTO.getUnit())) {
-         generatedName.append(SP).append(webDTO.getUnit());
-      }
-     } else if (StringUtils.isNotEmpty(webDTO.getValueText())) {
-         generatedName.append(SP).append(webDTO.getValueText());
-     }
-     webDTO.setTextDescription(generatedName.toString());
-     webDTO.setOperator(webDTO.getOperator());
-     return ELIGIBILITYADD;
-  }
-
-  /**
-   * @return result
-   */
-  public String create() {
-
-   try {
-      enforceEligibilityBusinessRules();
-      if (hasFieldErrors()) {
-       return ELIGIBILITYADD;
-      }
-      PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(webDTO, null);
-      PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTO);
-      query();
-      ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
-      return ELIGIBILITY;
-    } catch (Exception e) {
-      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-      return ELIGIBILITYADD;
-    }
-  }
-
-  /**
-   * @return result
-   */
-  public String edit() {
-    try {
-      PlannedEligibilityCriterionDTO sgDTO = PaRegistry.getPlannedActivityService()
-      .getPlannedEligibilityCriterion(IiConverter.convertToIi(id));
-      webDTO = setEligibilityDetailsDTO(sgDTO);
-    } catch (Exception e) {
-      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-    }
-    return ELIGIBILITYADD;
-  }
-
-  /**
-   * @return result
-   */
-  public String update() {
-   try {
-    enforceEligibilityBusinessRules();
-    if (hasFieldErrors()) {
-      return ELIGIBILITYADD;
-    }
-      PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(webDTO, id);
-      PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
-      ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-      query();
-    } catch (Exception e) {
-      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-      return ELIGIBILITYADD;
-    }
-    return ELIGIBILITY;
-  }
-
-  /**
-   * @return result
-   */
-  public String delete() {
-
-    try {
-      PaRegistry.getPlannedActivityService().deletePlannedEligibilityCriterion(IiConverter.convertToIi(id));
-      query();
-      ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
-    } catch (Exception e) {
-      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-    }
-    return ELIGIBILITY;
-  }
-
-  /**
-   * Display selected type.
-   *
-   * @return the string
-   *
-   * @throws PAException the PA exception
-   */
-  public String displaySelectedType() throws PAException {
-      String uomid = ServletActionContext.getRequest().getParameter("id");
-      String className =  ServletActionContext.getRequest().getParameter("className");
-      String divName =  ServletActionContext.getRequest().getParameter("divName");
-       if (StringUtils.isNotEmpty(uomid)) {
-        if ("UnitOfMeasurement".equalsIgnoreCase(className) && divName.contains("loadUOM")) {
-           BaseLookUpService<UnitOfMeasurement> lookUpService =
-                        new BaseLookUpService<UnitOfMeasurement>(UnitOfMeasurement.class);
-           UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(uomid));
-           webDTO.setUnit(uom.getCode());
-         }
-       }
-       return divName;
-  }
-
-  private PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(ISDesignDetailsWebDTO dtoWeb,
-                                                                           Long identifier) {
-     Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-       .getAttribute(Constants.STUDY_PROTOCOL_II);
-      PlannedEligibilityCriterionDTO pecDTO = new PlannedEligibilityCriterionDTO();
-      pecDTO.setIdentifier(IiConverter.convertToIi(identifier));
-      pecDTO.setStudyProtocolIdentifier(studyProtocolIi);
-      pecDTO.setCriterionName(StConverter.convertToSt(dtoWeb.getCriterionName()));
-      pecDTO.setValue(convertToIvlPq(
-              dtoWeb.getUnit(), dtoWeb.getValueIntegerMin(), dtoWeb.getUnit(), dtoWeb.getValueIntegerMax()));
-      if (dtoWeb.getInclusionIndicator() == null) {
-          pecDTO.setInclusionIndicator(BlConverter.convertToBl(null));
-      } else  if (dtoWeb.getInclusionIndicator().equalsIgnoreCase("Inclusion")) {
-          pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
-      } else {
-           pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.FALSE));
-      }
-      pecDTO.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
-      pecDTO.setTextDescription(StConverter.convertToSt(dtoWeb.getTextDescription()));
-      pecDTO.setOperator(StConverter.convertToSt(dtoWeb.getOperator()));
-      pecDTO.setDisplayOrder(IntConverter.convertToInt(dtoWeb.getDisplayOrder()));
-      pecDTO.setTextValue(StConverter.convertToSt(dtoWeb.getValueText()));
-      if (dtoWeb.getStructuredType() == null) {
-          pecDTO.setStructuredIndicator(BlConverter.convertToBl(null));
-      } else  if (dtoWeb.getStructuredType().equalsIgnoreCase(STRUCTURED)) {
-          pecDTO.setStructuredIndicator(BlConverter.convertToBl(Boolean.TRUE));
-      } else {
-           pecDTO.setStructuredIndicator(BlConverter.convertToBl(Boolean.FALSE));
-      }
-      pecDTO.setCdePublicIdentifier(IiConverter.convertToIi(dtoWeb.getCdePublicIdentifier()));
-      pecDTO.setCdeVersionNumber(StConverter.convertToSt(dtoWeb.getCdeVersionNumber()));
-      pecDTO.setSubcategoryCode(CdConverter.convertStringToCd(dtoWeb.getCdeCategoryCode()));
-      return pecDTO;
-  }
-
-  private ISDesignDetailsWebDTO setEligibilityDetailsDTO(PlannedEligibilityCriterionDTO dto) {
-    ISDesignDetailsWebDTO webdto = new ISDesignDetailsWebDTO();
-    if (dto != null) {
-      if (dto.getEligibleGenderCode().getCode() != null) {
-        eligibleGenderCode = dto.getEligibleGenderCode().getCode();
-        eligibleGenderCodeId = dto.getIdentifier().getExtension();
-      }
-      if (dto.getCriterionName().getValue() != null
-          && dto.getCriterionName().getValue().equals("AGE")) {
-        if (dto.getValue().getHigh().getValue() != null) {
-          maximumValue = String.valueOf(dto.getValue().getHigh().getValue());
-          maxValueUnit = dto.getValue().getHigh().getUnit();
+    /**
+     * @throws PAException
+     */
+    private void populateList() throws PAException {
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+            .getAttribute(Constants.STUDY_PROTOCOL_II);
+        List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
+            .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
+        if (pecList != null && !pecList.isEmpty()) {
+            list = new ArrayList<ISDesignDetailsWebDTO>();
+            for (PlannedEligibilityCriterionDTO dto : pecList) {
+                list.add(setEligibilityDetailsDTO(dto));
+            }
         }
-        if (dto.getValue().getLow().getValue() != null) {
-          minimumValue = String.valueOf(dto.getValue().getLow().getValue());
-          minValueUnit = dto.getValue().getLow().getUnit();
+    }
+
+    /**
+     * Generate.
+     *
+     * @return the string
+     *
+     * @throws PAException the PA exception
+     */
+    public String generate() throws PAException {
+        StringBuffer generatedName = new StringBuffer();
+
+        if (StringUtils.isNotEmpty(webDTO.getCriterionName())) {
+            generatedName.append(webDTO.getCriterionName());
         }
-        valueId = dto.getIdentifier().getExtension();
-      }
-      if (dto.getCriterionName().getValue() != null) {
-        webdto.setCriterionName(dto.getCriterionName().getValue());
-      }
-      if (dto.getInclusionIndicator().getValue() != null) {
-        if (BlConverter.convertToBool(dto.getInclusionIndicator())) {
-          webdto.setInclusionIndicator(("Inclusion"));
+        if (StringUtils.isNotEmpty(webDTO.getOperator()) && webDTO.getOperator().equalsIgnoreCase("In")) {
+            generatedName.append(SP).append("In:");
+        }
+        if (StringUtils.isNotEmpty(webDTO.getOperator()) && !webDTO.getOperator().equalsIgnoreCase("In")) {
+            generatedName.append(SP).append(webDTO.getOperator());
+        }
+        if (StringUtils.isNotEmpty(webDTO.getValueIntegerMin())) {
+            generatedName.append(webDTO.getValueIntegerMin());
+            if (StringUtils.isNotEmpty(webDTO.getValueIntegerMax())) {
+                generatedName.append(" - ").append(webDTO.getValueIntegerMax());
+            }
+            if (StringUtils.isNotEmpty(webDTO.getUnit())) {
+                generatedName.append(SP).append(webDTO.getUnit());
+            }
+        } else if (StringUtils.isNotEmpty(webDTO.getValueText())) {
+            generatedName.append(SP).append(webDTO.getValueText());
+        }
+        webDTO.setTextDescription(generatedName.toString());
+        webDTO.setOperator(webDTO.getOperator());
+        return ELIGIBILITYADD;
+    }
+
+    /**
+     * @return result
+     */
+    public String create() {
+
+        try {
+            enforceEligibilityBusinessRules();
+            if (hasFieldErrors()) {
+                return ELIGIBILITYADD;
+            }
+            PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(webDTO, null);
+            PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTO);
+            query();
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
+            return ELIGIBILITY;
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return ELIGIBILITYADD;
+        }
+    }
+
+    /**
+     * @return result
+     */
+    public String edit() {
+        try {
+            PlannedEligibilityCriterionDTO sgDTO = PaRegistry.getPlannedActivityService()
+                .getPlannedEligibilityCriterion(IiConverter.convertToIi(id));
+            webDTO = setEligibilityDetailsDTO(sgDTO);
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        }
+        return ELIGIBILITYADD;
+    }
+
+    /**
+     * @return result
+     */
+    public String update() {
+        try {
+            enforceEligibilityBusinessRules();
+            if (hasFieldErrors()) {
+                return ELIGIBILITYADD;
+            }
+            PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(webDTO, id);
+            PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            query();
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return ELIGIBILITYADD;
+        }
+        return ELIGIBILITY;
+    }
+
+    /**
+     * @return result
+     */
+    public String delete() {
+
+        try {
+            PaRegistry.getPlannedActivityService().deletePlannedEligibilityCriterion(IiConverter.convertToIi(id));
+            query();
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        }
+        return ELIGIBILITY;
+    }
+
+    /**
+     * Display selected type.
+     *
+     * @return the string
+     *
+     * @throws PAException the PA exception
+     */
+    public String displaySelectedType() throws PAException {
+        String uomid = ServletActionContext.getRequest().getParameter("id");
+        String className = ServletActionContext.getRequest().getParameter("className");
+        String divName = ServletActionContext.getRequest().getParameter("divName");
+        if (StringUtils.isNotEmpty(uomid) && "UnitOfMeasurement".equalsIgnoreCase(className)
+                && divName.contains("loadUOM")) {
+            BaseLookUpService<UnitOfMeasurement> lookUpService = new BaseLookUpService<UnitOfMeasurement>(
+                    UnitOfMeasurement.class);
+            UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(uomid));
+            webDTO.setUnit(uom.getCode());
+        }
+        return divName;
+    }
+
+    private PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(ISDesignDetailsWebDTO dtoWeb,
+            Long identifier) {
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+            .getAttribute(Constants.STUDY_PROTOCOL_II);
+        PlannedEligibilityCriterionDTO pecDTO = new PlannedEligibilityCriterionDTO();
+        pecDTO.setIdentifier(IiConverter.convertToIi(identifier));
+        pecDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        pecDTO.setCriterionName(StConverter.convertToSt(dtoWeb.getCriterionName()));
+        pecDTO.setValue(convertToIvlPq(dtoWeb.getUnit(), dtoWeb.getValueIntegerMin(), dtoWeb.getUnit(),
+                                       dtoWeb.getValueIntegerMax()));
+        if (dtoWeb.getInclusionIndicator() == null) {
+            pecDTO.setInclusionIndicator(BlConverter.convertToBl(null));
+        } else if (dtoWeb.getInclusionIndicator().equalsIgnoreCase("Inclusion")) {
+            pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
         } else {
-          webdto.setInclusionIndicator("Exclusion");
+            pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.FALSE));
         }
-      }
-      if (dto.getIdentifier() != null) {
-        webdto.setId(dto.getIdentifier().getExtension());
-      }
-      if (dto.getOperator() != null) {
-        webdto.setOperator(dto.getOperator().getValue());
-      }
-      if (dto.getTextDescription() != null) {
-        webdto.setTextDescription(dto.getTextDescription().getValue());
-      }
-      if (dto.getValue().getLow().getValue() != null) {
-        webdto.setValueIntegerMin(dto.getValue().getLow().getValue().toString());
-      }
-      if (dto.getValue().getHigh().getValue() != null) {
-          webdto.setValueIntegerMax(dto.getValue().getHigh().getValue().toString());
+        pecDTO.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
+        pecDTO.setTextDescription(StConverter.convertToSt(dtoWeb.getTextDescription()));
+        pecDTO.setOperator(StConverter.convertToSt(dtoWeb.getOperator()));
+        pecDTO.setDisplayOrder(IntConverter.convertToInt(dtoWeb.getDisplayOrder()));
+        pecDTO.setTextValue(StConverter.convertToSt(dtoWeb.getValueText()));
+        if (dtoWeb.getStructuredType() == null) {
+            pecDTO.setStructuredIndicator(BlConverter.convertToBl(null));
+        } else if (dtoWeb.getStructuredType().equalsIgnoreCase(STRUCTURED)) {
+            pecDTO.setStructuredIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else {
+            pecDTO.setStructuredIndicator(BlConverter.convertToBl(Boolean.FALSE));
         }
-      if (dto.getValue().getLow().getUnit() != null) {
-        webdto.setUnit(dto.getValue().getLow().getUnit());
-      }
-      if (dto.getDisplayOrder() != null) {
-          webdto.setDisplayOrder(IntConverter.convertToString(dto.getDisplayOrder()));
-      }
-      if (dto.getTextValue() != null) {
-          webdto.setValueText(StConverter.convertToString(dto.getTextValue()));
-      }
-      if (dto.getStructuredIndicator().getValue() != null) {
-          if (BlConverter.convertToBool(dto.getStructuredIndicator())) {
-            webdto.setStructuredType(STRUCTURED);
-          } else {
-            webdto.setStructuredType("Unstructured");
-          }
-        }
-      if (dto.getSubcategoryCode().getCode() != null) {
-        webdto.setCdeCategoryCode(dto.getSubcategoryCode().getCode());
-      }
-    }
-    return webdto;
-  }
-
-  private void enforceBusinessRules() {
-
-    StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext
-    .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-    if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
-      if (StringUtils.isEmpty(studyPopulationDescription)) {
-        addFieldError("studyPopulationDescription", getText("error.trialPopulationDescription"));
-      }
-      if (StringUtils.isNotEmpty(studyPopulationDescription)
-          && studyPopulationDescription.length() > MAXIMUM_CHAR_POPULATION) {
-        addFieldError("studyPopulationDescription", getText("error.spType.population.maximumChar"));
-      }
-      if (StringUtils.isEmpty(samplingMethodCode)) {
-        addFieldError("samplingMethodCode", getText("error.samplingMethod"));
-      }
+        pecDTO.setCdePublicIdentifier(IiConverter.convertToIi(dtoWeb.getCdePublicIdentifier()));
+        pecDTO.setCdeVersionNumber(StConverter.convertToSt(dtoWeb.getCdeVersionNumber()));
+        pecDTO.setSubcategoryCode(CdConverter.convertStringToCd(dtoWeb.getCdeCategoryCode()));
+        return pecDTO;
     }
 
-    if (StringUtils.isEmpty(acceptHealthyVolunteersIndicator)) {
-      addFieldError("acceptHealthyVolunteersIndicator", getText("error.acceptHealthyVolunteersIndicator"));
-    }
-    if (StringUtils.isEmpty(eligibleGenderCode)) {
-      addFieldError("eligibleGenderCode", getText("error.eligibleGenderCode"));
-    }
-    if (StringUtils.isEmpty(this.maximumValue)) {
-      addFieldError("maximumValue", getText("error.maximumValue"));
-    }
-    if (!NumberUtils.isNumber(this.maximumValue)) {
-        addFieldError("maximumValue", getText("error.numeric"));
-    }
-    if (StringUtils.isEmpty(this.minValueUnit)) {
-      addFieldError("minValueUnit", getText("error.valueUnit"));
-    }
-    if (StringUtils.isEmpty(this.maxValueUnit)) {
-        addFieldError("maxValueUnit", getText("error.valueUnit"));
-      }
-    String strMinVal = "minimumValue";
-    if (StringUtils.isEmpty(this.minimumValue)) {
-      addFieldError(strMinVal, getText("error.minimumValue"));
-    }
-    if (!NumberUtils.isNumber(this.minimumValue)) {
-        addFieldError(strMinVal, getText("error.numeric"));
-    }
-    if (StringUtils.isNotEmpty(minValueUnit)  && StringUtils.isNotEmpty(maxValueUnit)
-            && NumberUtils.isNumber(this.minimumValue) && NumberUtils.isNumber(this.maximumValue)) {
-        double minVal = Double.parseDouble(minimumValue);
-        double maxVal = Double.parseDouble(maximumValue);
-        if (minValueUnit.equalsIgnoreCase(maxValueUnit) && minVal > maxVal) {
-            addFieldError(strMinVal, "Minimum age should not be greater than maximum age.");
+    private ISDesignDetailsWebDTO setEligibilityDetailsDTO(PlannedEligibilityCriterionDTO dto) {
+        ISDesignDetailsWebDTO webdto = new ISDesignDetailsWebDTO();
+        if (dto != null) {
+            if (dto.getEligibleGenderCode().getCode() != null) {
+                eligibleGenderCode = dto.getEligibleGenderCode().getCode();
+                eligibleGenderCodeId = dto.getIdentifier().getExtension();
+            }
+            if (dto.getCriterionName().getValue() != null && dto.getCriterionName().getValue().equals("AGE")) {
+                if (dto.getValue().getHigh().getValue() != null) {
+                    maximumValue = String.valueOf(dto.getValue().getHigh().getValue());
+                    maxValueUnit = dto.getValue().getHigh().getUnit();
+                }
+                if (dto.getValue().getLow().getValue() != null) {
+                    minimumValue = String.valueOf(dto.getValue().getLow().getValue());
+                    minValueUnit = dto.getValue().getLow().getUnit();
+                }
+                valueId = dto.getIdentifier().getExtension();
+            }
+            if (dto.getCriterionName().getValue() != null) {
+                webdto.setCriterionName(dto.getCriterionName().getValue());
+            }
+            if (dto.getInclusionIndicator().getValue() != null) {
+                if (BlConverter.convertToBool(dto.getInclusionIndicator())) {
+                    webdto.setInclusionIndicator(("Inclusion"));
+                } else {
+                    webdto.setInclusionIndicator("Exclusion");
+                }
+            }
+            if (dto.getIdentifier() != null) {
+                webdto.setId(dto.getIdentifier().getExtension());
+            }
+            if (dto.getOperator() != null) {
+                webdto.setOperator(dto.getOperator().getValue());
+            }
+            if (dto.getTextDescription() != null) {
+                webdto.setTextDescription(dto.getTextDescription().getValue());
+            }
+            if (dto.getValue().getLow().getValue() != null) {
+                webdto.setValueIntegerMin(dto.getValue().getLow().getValue().toString());
+            }
+            if (dto.getValue().getHigh().getValue() != null) {
+                webdto.setValueIntegerMax(dto.getValue().getHigh().getValue().toString());
+            }
+            if (dto.getValue().getLow().getUnit() != null) {
+                webdto.setUnit(dto.getValue().getLow().getUnit());
+            }
+            if (dto.getDisplayOrder() != null) {
+                webdto.setDisplayOrder(IntConverter.convertToString(dto.getDisplayOrder()));
+            }
+            if (dto.getTextValue() != null) {
+                webdto.setValueText(StConverter.convertToString(dto.getTextValue()));
+            }
+            if (dto.getStructuredIndicator().getValue() != null) {
+                if (BlConverter.convertToBool(dto.getStructuredIndicator())) {
+                    webdto.setStructuredType(STRUCTURED);
+                } else {
+                    webdto.setStructuredType("Unstructured");
+                }
+            }
+            if (dto.getSubcategoryCode().getCode() != null) {
+                webdto.setCdeCategoryCode(dto.getSubcategoryCode().getCode());
+            }
         }
-        if (!PAUtil.isUnitLessOrSame(minValueUnit, maxValueUnit)) {
-            addFieldError("minValueUnit", "Minimum UOM should not be greater than maximum UOM.");
+        return webdto;
+    }
+
+    private void enforceBusinessRules() {
+
+        StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
+            .getAttribute(Constants.TRIAL_SUMMARY);
+        if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
+            if (StringUtils.isEmpty(studyPopulationDescription)) {
+                addFieldError("studyPopulationDescription", getText("error.trialPopulationDescription"));
+            }
+            if (StringUtils.isNotEmpty(studyPopulationDescription)
+                    && studyPopulationDescription.length() > MAXIMUM_CHAR_POPULATION) {
+                addFieldError("studyPopulationDescription", getText("error.spType.population.maximumChar"));
+            }
+            if (StringUtils.isEmpty(samplingMethodCode)) {
+                addFieldError("samplingMethodCode", getText("error.samplingMethod"));
+            }
         }
-        if (PAUtil.isUnitLessOrSame(minValueUnit, maxValueUnit)) {
-            double minValUOM = convertToMinutes(minVal, minValueUnit);
-            double maxValUOM = convertToMinutes(maxVal, maxValueUnit);
-            if (minValUOM > maxValUOM) {
+
+        if (StringUtils.isEmpty(acceptHealthyVolunteersIndicator)) {
+            addFieldError("acceptHealthyVolunteersIndicator", getText("error.acceptHealthyVolunteersIndicator"));
+        }
+        if (StringUtils.isEmpty(eligibleGenderCode)) {
+            addFieldError("eligibleGenderCode", getText("error.eligibleGenderCode"));
+        }
+        if (StringUtils.isEmpty(this.maximumValue)) {
+            addFieldError("maximumValue", getText("error.maximumValue"));
+        }
+        if (!NumberUtils.isNumber(this.maximumValue)) {
+            addFieldError("maximumValue", getText("error.numeric"));
+        }
+        if (StringUtils.isEmpty(this.minValueUnit)) {
+            addFieldError("minValueUnit", getText("error.valueUnit"));
+        }
+        if (StringUtils.isEmpty(this.maxValueUnit)) {
+            addFieldError("maxValueUnit", getText("error.valueUnit"));
+        }
+        String strMinVal = "minimumValue";
+        if (StringUtils.isEmpty(this.minimumValue)) {
+            addFieldError(strMinVal, getText("error.minimumValue"));
+        }
+        if (!NumberUtils.isNumber(this.minimumValue)) {
+            addFieldError(strMinVal, getText("error.numeric"));
+        }
+        if (StringUtils.isNotEmpty(minValueUnit) && StringUtils.isNotEmpty(maxValueUnit)
+                && NumberUtils.isNumber(this.minimumValue) && NumberUtils.isNumber(this.maximumValue)) {
+            double minVal = Double.parseDouble(minimumValue);
+            double maxVal = Double.parseDouble(maximumValue);
+            if (minValueUnit.equalsIgnoreCase(maxValueUnit) && minVal > maxVal) {
                 addFieldError(strMinVal, "Minimum age should not be greater than maximum age.");
             }
-        }
-    }
-  }
-
-  private double convertToMinutes(double value, String unit) {
-      double retMaxVal = 0;
-      UnitsCode unitCode = UnitsCode.getByCode(unit);
-      retMaxVal = unitCode.getMinuteMultiplicationFactor() * Double.valueOf(value);
-      return retMaxVal;
-  }
-private void enforceEligibilityBusinessRules() throws PAException {
-
-   if (StringUtils.isEmpty(webDTO.getStructuredType())) {
-    addFieldError("webDTO.structuredType", getText("error.structuredType.mandatory"));
-   }
-   String ruleError = rulesForDisplayOrder(webDTO.getDisplayOrder());
-   if (ruleError.length() > 0) {
-      addFieldError("webDTO.displayOrder", ruleError);
-    }
-    if (StringUtils.isNotEmpty(webDTO.getTextDescription())
-        && webDTO.getTextDescription().length() > MAXIMUM_CHAR_DESCRIPTION) {
-      addFieldError("webDTO.TextDescription", getText("error.spType.description.maximumChar"));
-    }
-    if (StringUtils.isNotEmpty(webDTO.getStructuredType())) {
-        if (STRUCTURED.equalsIgnoreCase(webDTO.getStructuredType())) {
-           if (StringUtils.isEmpty(webDTO.getTextDescription()) || isBuildCriterionEmpty()) {
-               addFieldError("webDTO.buldcriterion", getText("error.mandatory"));
+            if (!PAUtil.isUnitLessOrSame(minValueUnit, maxValueUnit)) {
+                addFieldError("minValueUnit", "Minimum UOM should not be greater than maximum UOM.");
             }
-           if (isBuildCriterionEmpty()) {
-               addFieldError("webDTO.buldcriterion", getText("error.buldcriterion"));
+            if (PAUtil.isUnitLessOrSame(minValueUnit, maxValueUnit)) {
+                double minValUOM = convertToMinutes(minVal, minValueUnit);
+                double maxValUOM = convertToMinutes(maxVal, maxValueUnit);
+                if (minValUOM > maxValUOM) {
+                    addFieldError(strMinVal, "Minimum age should not be greater than maximum age.");
+                }
             }
-           if (StringUtils.isNotEmpty(webDTO.getValueIntegerMax())
-                   && StringUtils.isEmpty(webDTO.getValueIntegerMin())) {
-               addFieldError("webDTO.valueIntegerMin", "Minimum value must be entered");
-            }
-        } else if (StringUtils.isEmpty(webDTO.getTextDescription())) {
-            addFieldError("webDTO.buldcriterion",  getText("error.unstructured.description"));
         }
     }
 
-    HashSet<String> order =  new HashSet<String>();
-    String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id, buildDisplayOrderDBList(), order);
-    if (dispOrder != null && !dispOrder.equals("")) {
-      String mesg = "Display Order(s) exist: ";
-      addFieldError("webDTO.displayOrder", mesg + dispOrder);
+    private double convertToMinutes(double value, String unit) {
+        double retMaxVal = 0;
+        UnitsCode unitCode = UnitsCode.getByCode(unit);
+        retMaxVal = unitCode.getMinuteMultiplicationFactor() * Double.valueOf(value);
+        return retMaxVal;
     }
-  }
-  private boolean isBuildCriterionEmpty() {
-      int emptyCount = 0;
-      boolean retVal = false;
-      if (StringUtils.isEmpty(webDTO.getCriterionName())) {
-          emptyCount++;
-      }
-      if (StringUtils.isEmpty(webDTO.getOperator())) {
-          emptyCount++;
-      }
-      if (StringUtils.isEmpty(webDTO.getValueIntegerMin()) && StringUtils.isEmpty(webDTO.getValueText())) {
-          emptyCount++;
-      }
-      if (emptyCount != 0 && emptyCount <= TOTAL_COUNT) {
-          retVal = true;
-      }
-      return retVal;
-  }
-  private String rulesForDisplayOrder(String displayOrder) throws PAException {
-    StringBuffer err = new StringBuffer();
-    if (StringUtils.isEmpty(displayOrder)) {
-      err.append("Please enter display order\n");
+
+    private void enforceEligibilityBusinessRules() throws PAException {
+
+        if (StringUtils.isEmpty(webDTO.getStructuredType())) {
+            addFieldError("webDTO.structuredType", getText("error.structuredType.mandatory"));
+        }
+        String ruleError = rulesForDisplayOrder(webDTO.getDisplayOrder());
+        if (ruleError.length() > 0) {
+            addFieldError("webDTO.displayOrder", ruleError);
+        }
+        if (StringUtils.isNotEmpty(webDTO.getTextDescription())
+                && webDTO.getTextDescription().length() > MAXIMUM_CHAR_DESCRIPTION) {
+            addFieldError("webDTO.TextDescription", getText("error.spType.description.maximumChar"));
+        }
+        if (StringUtils.isNotEmpty(webDTO.getStructuredType())) {
+            if (STRUCTURED.equalsIgnoreCase(webDTO.getStructuredType())) {
+                if (StringUtils.isEmpty(webDTO.getTextDescription()) || isBuildCriterionEmpty()) {
+                    addFieldError("webDTO.buldcriterion", getText("error.mandatory"));
+                }
+                if (isBuildCriterionEmpty()) {
+                    addFieldError("webDTO.buldcriterion", getText("error.buldcriterion"));
+                }
+                if (StringUtils.isNotEmpty(webDTO.getValueIntegerMax())
+                        && StringUtils.isEmpty(webDTO.getValueIntegerMin())) {
+                    addFieldError("webDTO.valueIntegerMin", "Minimum value must be entered");
+                }
+            } else if (StringUtils.isEmpty(webDTO.getTextDescription())) {
+                addFieldError("webDTO.buldcriterion", getText("error.unstructured.description"));
+            }
+        }
+
+        HashSet<String> order = new HashSet<String>();
+        String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id, buildDisplayOrderDBList(), order);
+        if (StringUtils.isNotEmpty(dispOrder)) {
+            String mesg = "Display Order(s) exist: ";
+            addFieldError("webDTO.displayOrder", mesg + dispOrder);
+        }
     }
-    if (StringUtils.isNotEmpty(displayOrder)) {
-      try {
-         Integer.parseInt(displayOrder);
-      } catch (NumberFormatException e) {
-       err.append("Please enter a numeric value for display order\n");
-       }
+
+    private boolean isBuildCriterionEmpty() {
+        int emptyCount = 0;
+        boolean retVal = false;
+        if (StringUtils.isEmpty(webDTO.getCriterionName())) {
+            emptyCount++;
+        }
+        if (StringUtils.isEmpty(webDTO.getOperator())) {
+            emptyCount++;
+        }
+        if (StringUtils.isEmpty(webDTO.getValueIntegerMin()) && StringUtils.isEmpty(webDTO.getValueText())) {
+            emptyCount++;
+        }
+        if (emptyCount != 0 && emptyCount <= TOTAL_COUNT) {
+            retVal = true;
+        }
+        return retVal;
     }
-      return err.toString();
-  }
+
+    private String rulesForDisplayOrder(String displayOrder) throws PAException {
+        StringBuffer err = new StringBuffer();
+        if (StringUtils.isEmpty(displayOrder)) {
+            err.append("Please enter display order\n");
+        }
+        if (StringUtils.isNotEmpty(displayOrder)) {
+            try {
+                Integer.parseInt(displayOrder);
+            } catch (NumberFormatException e) {
+                err.append("Please enter a numeric value for display order\n");
+            }
+        }
+        return err.toString();
+    }
 
     private String checkDisplayOrderExists(String displayOrder, Long dtoId, Map<String, String> orderList,
             Set<String> order) throws PAException {
         boolean exists = false;
 
-        if (orderList != null && !orderList.isEmpty()) {
-            if (doesContainInList(displayOrder, dtoId, orderList)) {
-                order.add(displayOrder);
-                exists = true;
-            }
+        if (MapUtils.isNotEmpty(orderList) && doesContainInList(displayOrder, dtoId, orderList)) {
+            order.add(displayOrder);
+            exists = true;
         }
         if (exists) {
             return order.toString();
@@ -951,10 +946,8 @@ private void enforceEligibilityBusinessRules() throws PAException {
     private boolean doesContainInList(String displayOrder, Long dtoId, Map<String, String> dList) {
         boolean containsInList = false;
         ArrayList<String> valueList = new ArrayList<String>();
-        if (dList != null && !dList.isEmpty()) {
-            Iterator iterator = dList.keySet().iterator();
-            while (iterator.hasNext()) {
-                String keyId = (String) iterator.next();
+        if (MapUtils.isNotEmpty(dList)) {
+            for (String keyId : dList.keySet()) {
                 if (dtoId == null || !dtoId.toString().equals(keyId)) {
                     valueList.add(dList.get(keyId));
                 }
@@ -970,9 +963,9 @@ private void enforceEligibilityBusinessRules() throws PAException {
     private Map<String, String> buildDisplayOrderDBList() throws PAException {
         Map<String, String> orderListDB = new HashMap<String, String>();
         Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-                                                      .getAttribute(Constants.STUDY_PROTOCOL_II);
+            .getAttribute(Constants.STUDY_PROTOCOL_II);
         List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
-                                                        .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
+            .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
         if (pecList != null && !pecList.isEmpty()) {
             for (PlannedEligibilityCriterionDTO dto : pecList) {
                 if (dto.getCategoryCode() != null
