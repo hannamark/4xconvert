@@ -116,7 +116,7 @@ function toggledisplayDivs(val) {
         </td>
     </tr>
     
-    <c:if test="${(sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false')}">
+    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
      <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">

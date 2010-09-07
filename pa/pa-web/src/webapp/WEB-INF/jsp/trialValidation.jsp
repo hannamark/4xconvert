@@ -130,7 +130,7 @@
             </td>
         </tr>
         <c:choose>
-            <c:when test="${sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+            <c:when test="${!sessionScope.trialSummary.proprietaryTrial}">
                 <tr>
                     <td scope="row" class="label">
                         <a href="http://ClinicalTrials.gov" target="_blank">ClinicalTrials.gov</a> XML required?  
@@ -212,7 +212,7 @@
           </span>
         </td>
     </tr>
-    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
     <tr>
         <td   scope="row" class="label"><label><fmt:message key="isdesign.details.phase.comment"/></label></td>
         <td>
@@ -236,7 +236,7 @@
           </span>
         </td>
     </tr>
-    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
     <tr>
         <td   scope="row" class="label"><label>
             <fmt:message key="isdesign.details.primary.purpose.other"/></label></td>
@@ -247,7 +247,7 @@
         </td>
     </tr>
     </c:if>
-    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
     <tr>
         <th colspan="2">Other Identifiers</th>
     </tr>

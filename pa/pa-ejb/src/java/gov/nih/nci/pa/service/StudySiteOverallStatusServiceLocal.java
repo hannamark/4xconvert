@@ -83,22 +83,18 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.StudySiteOverallStatus;
 import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
 
 import java.util.List;
 
 import javax.ejb.Local;
 
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
-
 /**
  * @author Vrushali
  *
  */
 @Local
-public interface StudySiteOverallStatusServiceLocal
-    extends GenericSearchService<StudySiteOverallStatus, SearchCriteria<StudySiteOverallStatus>> {
+public interface StudySiteOverallStatusServiceLocal {
 
     /**
      *

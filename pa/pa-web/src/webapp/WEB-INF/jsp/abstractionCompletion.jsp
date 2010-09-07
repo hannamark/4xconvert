@@ -72,7 +72,7 @@ function generateTSRWord() {
         <del class="btnwrapper">
             <ul class="btnrow">
                 <s:if test="abstractionError == false">
-                 <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">                                    
+                 <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                         <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>
                     </c:if>                                  
                    <!-- <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>

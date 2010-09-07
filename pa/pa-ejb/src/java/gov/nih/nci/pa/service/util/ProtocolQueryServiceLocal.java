@@ -81,21 +81,18 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.service.GenericSearchService;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
 
 import javax.ejb.Local;
 
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
-
 /**
  * @author Naveen Amiruddin
  * @since 08/13/2008
  */
 @Local
-public interface ProtocolQueryServiceLocal extends GenericSearchService<StudyProtocol, SearchCriteria<StudyProtocol>> {
+public interface ProtocolQueryServiceLocal {
 
     /**
      *

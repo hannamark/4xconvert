@@ -8,7 +8,7 @@
     <title><fmt:message key="studyProtocol.view.title"/></title>
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
-    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/tooltip.js'/>"></script>
     <script type="text/javascript">
     // this function is called from body onload in main.jsp (decorator)
     function callOnloadFunctions(){
@@ -66,7 +66,7 @@
              <span class="formErrorMsg"> <s:fielderror><s:param>localTrialIdentifier</s:param></s:fielderror></span>
             </td>
             </tr>
-            <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+            <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                 <tr>
                     <td scope="row" class="label">
                         <label for="secondaryIdentifiers">Other Trial Identifiers</label>
@@ -85,7 +85,7 @@
                 <c:out value="${sessionScope.nctIdentifier }"/>
             </td>
             </tr>
-            <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+            <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
             <tr>
                 <td scope="row" class="label"> <label for="ctepIdentifier"> CTEP Trial Identifier</label></td>
                 <td class="value">
@@ -112,7 +112,7 @@
                 </label>
             </td>
             <td class="value">
-                <c:out value="${sessionScope.trialSummary.isProprietaryTrial }"/>
+                <c:out value="${sessionScope.trialSummary.proprietaryTrial }"/>
             </td>
             </tr>
             <tr>

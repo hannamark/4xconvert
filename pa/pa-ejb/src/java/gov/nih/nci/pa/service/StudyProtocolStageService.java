@@ -3,22 +3,18 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
 
 import java.util.List;
 
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
-
 /**
  *
  * @author Vrushali
  *
  */
-public interface StudyProtocolStageService
-    extends GenericSearchService<StudyProtocolStage, SearchCriteria<StudyProtocolStage>>  {
+public interface StudyProtocolStageService {
 
     /**
      *

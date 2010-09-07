@@ -94,7 +94,7 @@
                     </c:choose>
                     
                     <c:choose>
-                    <c:when test="${sessionScope.trialSummary.isProprietaryTrial == 'true'}">
+                    <c:when test="${sessionScope.trialSummary.proprietaryTrial}">
                         <c:choose>
                             <c:when test="${requestScope.topic == 'abstract_site'}">
                                 <li><a href="participatingOrganizations.action?trialType=proprietary" class="selected">Participating Sites</a></li>
@@ -170,7 +170,7 @@
     				    </c:choose>
     				    
     					
-                        <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+                        <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                         <li class="hassubmenu">Regulatory Information
                            <ul id="part_sites">
                                 <c:choose>
@@ -225,7 +225,7 @@
                                 <li><a href="participatingOrganizations.action">Participating Sites</a></li>
                             </c:otherwise>
                         </c:choose>
-                        <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+                        <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                         <c:choose>
                             <c:when test="${requestScope.topic == 'abstract_collaborator'}">
                                 <li><a href="collaborators.action" class="selected">Collaborators</a></li>
@@ -248,7 +248,7 @@
     			</li>
     			<li><div>Scientific Data</div>
     				<ul>
-    				<c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+    				<c:if test="${sessionScope.trialSummary.proprietaryTrial}">
     				    <c:choose>
     				        <c:when test="${requestScope.topic == 'abstract_description'}">
     				            <li><a href="trialDescriptionquery.action" class="selected">Trial Description</a></li>
@@ -318,7 +318,7 @@
                             </c:otherwise>
                         </c:choose>
                         
-                        <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+                        <c:if test="${sessionScope.trialSummary.proprietaryTrial}">
                         <c:choose>
                         <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
                             <c:choose>

@@ -144,7 +144,7 @@
      <s:hidden name="gtdDTO.nonOtherIdentifiers.extension" id="gtdDTO.nonOtherIdentifiers.extension"/>
      <s:hidden name="gtdDTO.nonOtherIdentifiers.root" id="gtdDTO.nonOtherIdentifiers.root"/>
      <s:hidden name="gtdDTO.nonOtherIdentifiers.identifierName" id="gtdDTO.nonOtherIdentifiers.identifierName"/>
-    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
         <s:hidden name="gtdDTO.phaseCode" id= "gtdDTO.phaseCode"></s:hidden>
         <s:hidden name="gtdDTO.phaseOtherText" id= "gtdDTO.phaseOtherText"></s:hidden>
         <s:hidden name="gtdDTO.primaryPurposeCode" id= "gtdDTO.primaryPurposeCode"></s:hidden>
@@ -158,7 +158,7 @@
        </td>
        </tr>
     </c:if>
-    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == 'true'}">
+    <c:if test="${sessionScope.trialSummary.proprietaryTrial}">
         <s:hidden name="gtdDTO.centralContactName" id="gtdDTO.centralContactName"></s:hidden>
         <s:hidden name="gtdDTO.centralContactTitle" id="gtdDTO.centralContactTitle"></s:hidden>
         <s:hidden name="gtdDTO.centralContactIdentifier" id="gtdDTO.centralContactIdentifier"></s:hidden>
@@ -185,7 +185,7 @@
              </s:fielderror>
           </span> </td>
     </tr>
-    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
     <tr>
         <td scope="row" class="label"><label for="CtepIdentifier">
              <fmt:message key="studyProtocol.ctepId"/></label> </td>
@@ -208,7 +208,7 @@
     </tr>
     </c:if>
 
-    <c:if test="${sessionScope.trialSummary.isProprietaryTrial != null && sessionScope.trialSummary.isProprietaryTrial == 'true'}">
+    <c:if test="${sessionScope.trialSummary.proprietaryTrial}">
       <tr>
         <td scope="row" class="label"><label for="studyPhase">
              <fmt:message key="studyProtocol.studyPhase"/><span class="required">*</span></label> </td>
@@ -281,7 +281,7 @@
         </td>
 
     </tr>
-    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
     <tr>
         <th colspan="2">Other Identifiers</th>
     </tr>
@@ -303,7 +303,7 @@
     </tr>
     </c:if>
     <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>
-    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
     <tr>
         <th colspan="2"> Central Contact</th>
     </tr>
