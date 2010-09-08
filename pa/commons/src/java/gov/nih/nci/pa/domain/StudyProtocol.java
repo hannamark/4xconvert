@@ -441,7 +441,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @return studyContacts
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
-    @Sort(type = SortType.COMPARATOR, comparator = LastCreatedComparator.class)
+    @Sort(type = SortType.COMPARATOR, comparator = StudyContactComparator.class)
     @Searchable(nested = true)
     public Set<StudyContact> getStudyContacts() {
         return studyContacts;
