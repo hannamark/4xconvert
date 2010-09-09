@@ -85,6 +85,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -92,7 +93,8 @@ import java.util.Comparator;
  *
  * @author Abraham J. Evans-EL
  */
-public class StudyContactComparator implements Comparator<StudyContact> {
+public class StudyContactComparator implements Comparator<StudyContact>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}

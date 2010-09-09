@@ -84,6 +84,7 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.domain.AbstractEntity;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -91,7 +92,8 @@ import java.util.Comparator;
  *
  * @author Abraham J. Evans-EL
  */
-public class LastCreatedComparator implements Comparator<AbstractEntity> {
+public class LastCreatedComparator implements Comparator<AbstractEntity>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}

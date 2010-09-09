@@ -84,6 +84,7 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.domain.StudyInbox;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Comparator;
 
@@ -92,7 +93,8 @@ import java.util.Comparator;
  *
  * @author Abraham J. Evans-EL
  */
-public class StudyInboxComparator implements Comparator<StudyInbox> {
+public class StudyInboxComparator implements Comparator<StudyInbox>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}
