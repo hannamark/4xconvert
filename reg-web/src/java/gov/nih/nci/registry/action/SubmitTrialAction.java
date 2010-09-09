@@ -127,6 +127,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
  */
 @SuppressWarnings("unchecked")
 public class SubmitTrialAction extends ManageFileAction implements ServletResponseAware {
+    private static final String REDIRECT_TO_SEARCH = "redirect_to_search";
     private static final Logger LOG = Logger.getLogger(SubmitTrialAction.class);
     private Long cbValue;
     private String page;
@@ -140,6 +141,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
     // Collection for holding the ideInd information
     private TrialDTO trialDTO;
     private final TrialUtil  trialUtil = new TrialUtil();
+    private String sum4FundingCatCode;
 
     /**
      *
@@ -149,8 +151,14 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
     public String execute() {
         //check if users accepted the desclaimer if not show one
         String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
-        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
+        if (StringUtils.isEmpty(strDesclaimer) || !"accept".equals(strDesclaimer)) {
             return "show_Disclaimer_Page";
+        }
+        if (StringUtils.isEmpty(sum4FundingCatCode)) {
+            setTrialAction("");
+            ServletActionContext.getRequest().setAttribute(
+                    "failureMessage" , "Summary 4 Funding Sponsor Type is required to continue onto registration.");
+            return REDIRECT_TO_SEARCH;
         }
         trialDTO = new TrialDTO();
         trialDTO.setResponsiblePartyType("pi");
@@ -158,6 +166,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
         TrialValidator.removeSessionAttributes();
         trialUtil.populateRegulatoryList(trialDTO);
+        trialDTO.setSummaryFourFundingCategoryCode(sum4FundingCatCode);
         setPageFrom("submitTrial");
         return SUCCESS;
     }
@@ -193,8 +202,6 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
 
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
             studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));
-            //studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, null));
-            //studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO , null));
 
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studySiteContactDTO = null;
@@ -206,15 +213,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
                     studyContactDTO = util.convertToStudyContactDTO(trialDTO);
                 } else {
                    studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
-                   if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
-                       responsiblePartyContactIi =
-                          IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
-                   }
-                   if (trialDTO.getResponsibleGenericContactName() != null
-                        && !trialDTO.getResponsibleGenericContactName().equals("")) {
-                       responsiblePartyContactIi = IiConverter.
-                         convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
-                  }
+                   responsiblePartyContactIi = getResponsiblePartyContactIi();
                }
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos(), null);
@@ -245,7 +244,24 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             setDocumentsInSession(trialDTO);
             return ERROR;
         }
-        return "redirect_to_search";
+        return REDIRECT_TO_SEARCH;
+    }
+
+
+    /**
+     * @param responsiblePartyContactIi
+     * @return
+     */
+    private Ii getResponsiblePartyContactIi() {
+        Ii responsiblePartyContactIi = null;
+        if (StringUtils.isNotEmpty(trialDTO.getResponsiblePersonName())) {
+            responsiblePartyContactIi = IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
+        }
+        if (StringUtils.isNotEmpty(trialDTO.getResponsibleGenericContactName())) {
+             responsiblePartyContactIi = IiConverter.convertToPoOrganizationalContactIi(
+                     trialDTO.getResponsiblePersonIdentifier());
+        }
+        return responsiblePartyContactIi;
     }
 
     /**
@@ -406,7 +422,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
     public String cancel() {
         TrialValidator.removeSessionAttributes();
         setTrialAction("");
-        return "redirect_to_search";
+        return REDIRECT_TO_SEARCH;
     }
     /**
      *
@@ -514,7 +530,23 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             addActionError(e.getMessage());
         }
         setTrialAction("deletePartialSubmission");
-        return "redirect_to_search";
+        return REDIRECT_TO_SEARCH;
+    }
+
+
+    /**
+     * @param sum4FundingCatCode the sum4FundingCatCode to set
+     */
+    public void setSum4FundingCatCode(String sum4FundingCatCode) {
+        this.sum4FundingCatCode = sum4FundingCatCode;
+    }
+
+
+    /**
+     * @return the sum4FundingCatCode
+     */
+    public String getSum4FundingCatCode() {
+         return sum4FundingCatCode;
     }
 
 }

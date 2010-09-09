@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.action;
 
@@ -26,20 +26,26 @@ import com.mockrunner.mock.web.MockHttpSession;
  */
 public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
     private static final String FILE_NAME = "ProtocolDoc.doc";
-    private SubmitProprietaryTrialAction action = new SubmitProprietaryTrialAction();
+    private final SubmitProprietaryTrialAction action = new SubmitProprietaryTrialAction();
+    @Test
+    public void testProperty() {
+        assertNull(action.getSum4FundingCatCode());
+        action.setSum4FundingCatCode("sum4FundingCatCode");
+        assertNotNull(action.getSum4FundingCatCode());
+    }
     @Test
     public void testPropertyTrialDTO() {
         assertNull(action.getTrialDTO());
         action.setTrialDTO(new ProprietaryTrialDTO());
         assertNotNull(action.getTrialDTO());
-        
+
     }
     @Test
     public void testPropertyProtocolDoc() {
         assertNull(action.getProtocolDoc());
         action.setProtocolDoc(new File(FILE_NAME));
         assertNotNull(action.getProtocolDoc());
-        
+
     }
     @Test
     public void testProtocolFileNameProperty(){
@@ -101,6 +107,8 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         MockHttpSession session = new MockHttpSession();
         request.setSession(session);
         ServletActionContext.setRequest(request);
+        assertEquals("redirect_to_search",action.execute());
+        action.setSum4FundingCatCode("sum4FundingCatCode");
         assertEquals("success", action.execute());
     }
     @Test
@@ -110,7 +118,7 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         request.setSession(session);
         assertEquals("edit", action.edit());
     }
-    @Test 
+    @Test
     public void testCancle() {
         assertEquals("redirect_to_search", action.cancel());
     }
@@ -192,7 +200,7 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         action.getTrialDTO().setNctIdentifier(null);
         action.getTrialDTO().setPhaseCode(null);
         assertEquals("error", action.review());
-        
+
     }
     @Test
     public void testCreateWithNoDTO() {

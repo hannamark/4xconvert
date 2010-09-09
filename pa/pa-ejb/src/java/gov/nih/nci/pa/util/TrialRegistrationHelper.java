@@ -85,6 +85,7 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -92,6 +93,7 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
@@ -101,11 +103,13 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Helper class for TrialRegistrationBeanLocal.
@@ -315,4 +319,56 @@ public class TrialRegistrationHelper {
         || !(grantDto.getNciDivisionProgramCode().getCode().equals(dto.getNciDivisionProgramCode()
                 .getCode()));
     }
+    /**
+     * @param spDTO spDTO
+     * @param summary4organizationDTO summary4organizationDTO
+     * @param summary4studyResourcingDTO summary4studyResourcingDTO
+     * @throws PAException on error
+     */
+    public void enforceSummaryFourSponsorAndCategory(StudyProtocolDTO spDTO, OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO) throws PAException {
+        StringBuffer sb = new StringBuffer();
+        String summ4Category = null;
+        // validate of null objects
+        sb.append(summary4organizationDTO == null ? "Summary Four Organization DTO cannot be null , " : "");
+        if (summary4studyResourcingDTO != null) {
+            summ4Category = CdConverter.convertCdToString(summary4studyResourcingDTO.getTypeCode());
+        } else {
+            sb.append("Summary Four Study Resourcing DTO cannot be null , ");
+        }
+        if (StringUtils.isEmpty(summ4Category)) {
+            sb.append("Summary 4 Sponsor Category cannot be null , ");
+        } else {
+            validateSponsorType(spDTO, sb, summ4Category);
+        }
+        if (sb.length() > 0) {
+            throw new PAException("Validation Exception " + sb.toString());
+        }
+    }
+
+    /**
+     * @param spDTO
+     * @param sb
+     * @param summ4Category
+     */
+    private void validateSponsorType(StudyProtocolDTO spDTO, StringBuffer sb,
+            String summ4Category) {
+        if ((null == SummaryFourFundingCategoryCode.getByCode(summ4Category))
+                || (BlConverter.convertToBool(spDTO.getProprietaryTrialIndicator())
+                && !isSum4IndustrialSponsorType(summ4Category))
+                || (!BlConverter.convertToBool(spDTO.getProprietaryTrialIndicator())
+                && isSum4IndustrialSponsorType(summ4Category))) {
+                sb.append("Please enter valid value for Summary 4 Sponsor Category.");
+        }
+    }
+
+    /**
+     * @param spDTO
+     * @param summ4Category
+     * @return
+     */
+    private boolean isSum4IndustrialSponsorType(String summ4Category) {
+        return  StringUtils.equalsIgnoreCase(summ4Category, SummaryFourFundingCategoryCode.INDUSTRIAL.getCode());
+    }
+
 }

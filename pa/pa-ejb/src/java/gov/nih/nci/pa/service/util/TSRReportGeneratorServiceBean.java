@@ -260,8 +260,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private static final String NO = "No";
     private static final String INFORMATION_NOT_PROVIDED = "Information Not Provided";
     private static final String BLANK = "";
-    private static final String PROPRIETARY = "Proprietary";
-    private static final String NON_PROPRIETARY = "Non-Proprietary";
+    private static final String PROPRIETARY = "Abbreviated";
+    private static final String NON_PROPRIETARY = "Complete";
     private static final String TYPE_INTERVENTIONAL = "Interventional";
     private static final String TYPE_OBSERVATIONAL = "Observational";
     private static final String CRITERION_GENDER = "GENDER";

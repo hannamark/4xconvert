@@ -118,7 +118,8 @@ public abstract class AbstractRegWebTest {
         trialDTO.setStartDateType("Actual");
         trialDTO.setStartDate("01/20/2008");
         trialDTO.setReason("");
-        trialDTO.setSummaryFourOrgIdentifier("");
+        trialDTO.setSummaryFourOrgIdentifier("1");
+        trialDTO.setSummaryFourFundingCategoryCode("summaryFourFundingCategoryCode");
         trialDTO.setNctIdentifier("nctIdentifier");
         trialDTO.setLeadOrganizationName("leadOrganizationName");
         trialDTO.setPiName("piName");
@@ -240,7 +241,7 @@ public abstract class AbstractRegWebTest {
         trialDTO.setLeadOrganizationName("leadOrganizationName");
         trialDTO.setLeadOrgTrialIdentifier("leadOrgTrialIdentifier");
         trialDTO.setIdentifier("1");
-        trialDTO.setSummaryFourOrgIdentifier("");
+        trialDTO.setSummaryFourOrgIdentifier("1");
         trialDTO.setNctIdentifier("nctIdentifier");
 
         trialDTO.setSiteStatusCode("Not yet recruiting");
@@ -251,6 +252,7 @@ public abstract class AbstractRegWebTest {
         trialDTO.setSitePiName("sitePiName");
         trialDTO.setSiteProgramCodeText("siteProgramCodeTxt");
         trialDTO.setLocalSiteIdentifier("localSiteIdentifier");
+        trialDTO.setSummaryFourFundingCategoryCode("summaryFourFundingCategoryCode");
         return trialDTO;
     }
     /**

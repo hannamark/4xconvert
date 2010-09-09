@@ -773,6 +773,9 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
         }
+        studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        validateSummary4Information(studyProtocolDTO, summary4OrganizationDTO, summary4StudyResourcingDTO);
+
         List<PoDto> listOfDTOToCreateInPO = new ArrayList<PoDto>();
         listOfDTOToCreateInPO.add(leadOrganizationDTO);
         listOfDTOToCreateInPO.add(studySiteOrganizationDTO);
@@ -780,7 +783,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         listOfDTOToCreateInPO.add(summary4OrganizationDTO);
         paServiceUtils.createPoObject(listOfDTOToCreateInPO);
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt("1"));
-        studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));
+
         try {
             if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
                 studyProtocolIi = studyProtocolService
@@ -822,17 +825,32 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             // set PI
             createStudySiteContact(studySiteIi, studyProtocolIi, studySiteOrganizationDTO, studySiteInvestigatorDTO,
                     studyTypeCode);
-
-            // assign ownership
-            RegistryUser usr = userServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO
-                    .getUserLastCreated()));
-            userServiceLocal.assignOwnership(usr.getId(), IiConverter.convertToLong(studyProtocolIi));
-            sendMail(CREATE, isBatchMode, studyProtocolIi);
+            assignOwnershipAndSendMail(CREATE, studyProtocolDTO, isBatchMode,
+                    studyProtocolIi);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
         return studyProtocolIi;
+    }
+    /**This will assign ownership and send the mail.
+     * @param studyProtocolDTO
+     * @param isBatchMode
+     * @param studyProtocolIi
+     * @throws PAException
+     */
+    private void assignOwnershipAndSendMail(String operation, StudyProtocolDTO studyProtocolDTO,
+            Bl isBatchMode, Ii studyProtocolIi) throws PAException {
+        // assign ownership
+        RegistryUser usr = userServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO
+                .getUserLastCreated()));
+        userServiceLocal.assignOwnership(usr.getId(), IiConverter.convertToLong(studyProtocolIi));
+        //PO-2646: We're adding an explicit evict of the study protocol so the complete trial is loaded
+        //when searched upon later in the trial creation process. Failure to do so was resulting in NPE further down
+        //the line.
+        Session session = HibernateUtil.getCurrentSession();
+        session.evict(session.get(StudyProtocol.class, IiConverter.convertToLong(studyProtocolIi)));
+        sendMail(operation, isBatchMode, studyProtocolIi);
     }
 
     private void createSponsor(Ii studyProtocolIi, OrganizationDTO sponsorOrganizationDto) throws PAException {
@@ -873,7 +891,9 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         enforceBusinessRules(studyProtocolDTO, overallStatusDTO, documentDTOs, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, studyContactDTO, studySiteContactDTO,
                 leadOrganizationSiteIdentifierDTO);
+        validateSummary4Information(studyProtocolDTO, summary4organizationDTO, summary4studyResourcingDTO);
         paServiceUtils.enforceRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, regulatoryInfoBean);
+
         List<PoDto> listOfDTOToCreateInPO = new ArrayList<PoDto>();
         listOfDTOToCreateInPO.add(leadOrganizationDTO);
         // created only if the ctGovXmlRequired is true
@@ -954,16 +974,23 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                     studyProtocolIi);
 
         }
-        // assign ownership
-        RegistryUser usr = userServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO.getUserLastCreated()));
-        userServiceLocal.assignOwnership(usr.getId(), IiConverter.convertToLong(studyProtocolIi));
-        //PO-2646: We're adding an explicit evict of the study protocol so the complete trial is loaded
-        //when searched upon later in the trial creation process. Failure to do so was resulting in NPE further down
-        //the line.
-        Session session = HibernateUtil.getCurrentSession();
-        session.evict(session.get(StudyProtocol.class, IiConverter.convertToLong(studyProtocolIi)));
-        sendMail(operation, isBatchMode, studyProtocolIi);
+        assignOwnershipAndSendMail(operation, studyProtocolDTO, isBatchMode, studyProtocolIi);
         return studyProtocolIi;
+    }
+    /**
+     * @param studyProtocolDTO
+     * @param summary4organizationDTO
+     * @param summary4studyResourcingDTO
+     * @throws PAException
+     */
+    private void validateSummary4Information(StudyProtocolDTO studyProtocolDTO,
+            OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO) throws PAException {
+        trialRegistrationHelper = new TrialRegistrationHelper(docWrkFlowStatusService, abstractionCompletionService,
+                studyProtocolService, studyOverallStatusService, studySiteAccrualStatusService, studyIndldeService,
+                studyResourcingService);
+        trialRegistrationHelper.enforceSummaryFourSponsorAndCategory(studyProtocolDTO, summary4organizationDTO,
+                summary4studyResourcingDTO);
     }
 
     private void createStudyRelationship(Ii fromStudyProtocolIi, Ii toStudyProtocolIi, StudyProtocolDTO spDto)
@@ -1692,7 +1719,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
 
         enforceBusinessRulesForUpdate(studyProtocolDTO, overallStatusDTO, studyContactDTO, studySiteContactDTO,
                 studyIndldeDTOs, studyResourcingDTOs, studyRegAuthDTO, participatingSites, operation, collaborators);
-
+        validateSummary4Information(studyProtocolDTO, summary4organizationDTO, summary4studyResourcingDTO);
         if (UPDATE.equalsIgnoreCase(operation)) {
             trialRegistrationHelper = new TrialRegistrationHelper(docWrkFlowStatusService, abstractionCompletionService,
                     studyProtocolService, studyOverallStatusService, studySiteAccrualStatusService, studyIndldeService,

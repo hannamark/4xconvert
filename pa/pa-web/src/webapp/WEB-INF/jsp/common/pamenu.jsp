@@ -248,7 +248,7 @@
     			</li>
     			<li><div>Scientific Data</div>
     				<ul>
-    				<c:if test="${sessionScope.trialSummary.proprietaryTrial}">
+    				<c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
     				    <c:choose>
     				        <c:when test="${requestScope.topic == 'abstract_description'}">
     				            <li><a href="trialDescriptionquery.action" class="selected">Trial Description</a></li>
@@ -318,7 +318,7 @@
                             </c:otherwise>
                         </c:choose>
                         
-                        <c:if test="${sessionScope.trialSummary.proprietaryTrial}">
+                        <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                         <c:choose>
                         <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
                             <c:choose>

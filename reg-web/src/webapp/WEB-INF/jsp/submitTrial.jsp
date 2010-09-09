@@ -323,6 +323,7 @@ function loadRegAuthoritiesDiv() {
         <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
         <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
         <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
+        <s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
         <s:hidden name="page" />
         <p>Register trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
         <table class="form">
@@ -455,7 +456,7 @@ function loadRegAuthoritiesDiv() {
                      <s:select headerKey="" headerValue="--Select--"
                             name="trialDTO.summaryFourFundingCategoryCode"
                             list="#summaryFourFundingCategoryCodeValues"
-                            cssStyle="width:206px" />
+                            cssStyle="width:206px" disabled="true"/>
                      <span class="formErrorMsg">
                            <s:fielderror>
                            <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>

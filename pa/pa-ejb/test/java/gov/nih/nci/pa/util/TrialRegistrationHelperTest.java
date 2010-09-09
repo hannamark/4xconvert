@@ -82,8 +82,10 @@
  */
 package gov.nih.nci.pa.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -95,6 +97,7 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -102,6 +105,7 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -114,6 +118,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -361,6 +366,62 @@ public class TrialRegistrationHelperTest {
         sResDto.setNciDivisionProgramCode(CdConverter.convertStringToCd("nci code"));
         when(studyResourcingService.get(any(Ii.class))).thenReturn(sResDto);
 
+    }
+    @Test
+    public void testEnforceSummaryFourSponsorAndCategory() {
+        StudyProtocolDTO spDTO = new StudyProtocolDTO();
+        try {
+            helper.enforceSummaryFourSponsorAndCategory(spDTO, null, null);
+            fail();
+        }catch (PAException e) {
+            assertEquals("Validation Exception Summary Four Organization DTO cannot be null , "
+                + "Summary Four Study Resourcing DTO cannot be null , Summary 4 Sponsor Category cannot be null , "
+                    , e.getMessage());
+        }
+        StudyResourcingDTO sum4Cat = new StudyResourcingDTO();
+        try {
+            helper.enforceSummaryFourSponsorAndCategory(spDTO, new OrganizationDTO(), sum4Cat);
+            fail();
+        }catch (PAException e) {
+            assertEquals("Validation Exception Summary 4 Sponsor Category cannot be null , " , e.getMessage());
+        }
+        spDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        sum4Cat.setTypeCode(CdConverter.convertStringToCd("some Code"));
+        try {
+            helper.enforceSummaryFourSponsorAndCategory(spDTO, new OrganizationDTO(), sum4Cat);
+            fail();
+        }catch (PAException e) {
+            assertEquals("Validation Exception Please enter valid value for Summary 4 Sponsor Category."
+                    , e.getMessage());
+        }
+        sum4Cat.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.EXTERNALLY_PEER_REVIEWED));
+        try {
+            helper.enforceSummaryFourSponsorAndCategory(spDTO, new OrganizationDTO(), sum4Cat);
+            fail();
+        }catch (PAException e) {
+            assertEquals("Validation Exception Please enter valid value for Summary 4 Sponsor Category."
+                    , e.getMessage());
+        }
+        sum4Cat.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
+        try {
+            helper.enforceSummaryFourSponsorAndCategory(spDTO, new OrganizationDTO(), sum4Cat);
+        } catch (PAException e) {
+            //will never reach here.
+        }
+        spDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        try {
+            helper.enforceSummaryFourSponsorAndCategory(spDTO, new OrganizationDTO(), sum4Cat);
+            fail();
+        }catch (PAException e) {
+            assertEquals("Validation Exception Please enter valid value for Summary 4 Sponsor Category."
+                    , e.getMessage());
+        }
+        sum4Cat.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.NATIONAL));
+        try {
+            helper.enforceSummaryFourSponsorAndCategory(spDTO, new OrganizationDTO(), sum4Cat);
+        } catch (PAException e) {
+            //will never reach here.
+        }
     }
 
 }

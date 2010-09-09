@@ -63,7 +63,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
     private String trialAction = "submit";
     private String selectedTrialType = "no";
     private final TrialUtil  util = new TrialUtil();
-
+    private String sum4FundingCatCode;
     /**
      * @param response servletResponse
      */
@@ -94,9 +94,17 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
     @Override
     public String execute() {
         TrialValidator.removeSessionAttributes();
+
+        if (StringUtils.isEmpty(getSum4FundingCatCode())) {
+            setTrialAction("");
+            ServletActionContext.getRequest().setAttribute(
+                    "failureMessage" , "Summary 4 Funding Sponsor Type is required to continue onto registration.");
+            return "redirect_to_search";
+        }
         trialDTO = new ProprietaryTrialDTO();
         trialDTO.setPropritaryTrialIndicator(CommonsConstant.YES);
         trialDTO.setTrialType("Interventional");
+        trialDTO.setSummaryFourFundingCategoryCode(getSum4FundingCatCode());
         setPageFrom("proprietaryTrial");
      return SUCCESS;
     }
@@ -391,5 +399,19 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
             addActionError(e.getMessage());
         }
        return SUCCESS;
+    }
+
+    /**
+     * @param sum4FundingCatCode the sum4FundingCatCode to set
+     */
+    public void setSum4FundingCatCode(String sum4FundingCatCode) {
+        this.sum4FundingCatCode = sum4FundingCatCode;
+    }
+
+    /**
+     * @return the sum4FundingCatCode
+     */
+    public String getSum4FundingCatCode() {
+        return sum4FundingCatCode;
     }
 }

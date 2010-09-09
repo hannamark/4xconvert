@@ -164,6 +164,7 @@ public class BaseTrialDTO {
     /**
      * @return the summaryFourOrgIdentifier
      */
+    @NotEmpty (message = "error.submit.sumFourOrganization")
     public String getSummaryFourOrgIdentifier() {
         return summaryFourOrgIdentifier;
     }
@@ -188,6 +189,7 @@ public class BaseTrialDTO {
     /**
      * @return the summaryFourFundingCategoryCode
      */
+    @NotEmpty (message = "error.submit.sumFourCategoryCode")
     public String getSummaryFourFundingCategoryCode() {
         return summaryFourFundingCategoryCode;
     }

@@ -148,7 +148,7 @@ public class StudyProtocolQueryDTO implements Serializable {
      * @return the trialCategory
      */
     public String getTrialCategory() {
-        return this.proprietaryTrial ? "Proprietary Trial" : "Non Proprietary Trial";
+        return this.proprietaryTrial ? "Abbreviated Trial" : "Complete Trial";
     }
 
     /**

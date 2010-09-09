@@ -192,7 +192,10 @@ public class StudyResourcingBeanLocal extends
                 studyResourcingDTO.getNciDivisionProgramCode().getCode()));
         studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
         studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
-        return super.update(convertFromDomainToDto(studyResourcing));
+        Session session = HibernateUtil.getCurrentSession();
+        session.merge(studyResourcing);
+        session.flush();
+        return src.convertFromDomainToDto(studyResourcing);
     }
 
     /**

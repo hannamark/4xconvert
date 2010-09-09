@@ -139,8 +139,8 @@ import org.junit.Test;
  *
  */
 public class ProtocolQueryServiceTest {
-    private ProtocolQueryServiceBean bean = new ProtocolQueryServiceBean();
-    private ProtocolQueryServiceLocal localEjb = bean;
+    private final ProtocolQueryServiceBean bean = new ProtocolQueryServiceBean();
+    private final ProtocolQueryServiceLocal localEjb = bean;
     private Long spId = null;
     private Long leadOrgId = null;
     private Long principalInvestigator = null;
@@ -283,14 +283,14 @@ public class ProtocolQueryServiceTest {
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 2, results.size());
         for (StudyProtocolQueryDTO dto : results) {
-            assertEquals("Non Proprietary Trial", dto.getTrialCategory());
+            assertEquals("Complete Trial", dto.getTrialCategory());
         }
 
         otherCriteria.setTrialCategory("P");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 3, results.size());
         for (StudyProtocolQueryDTO dto : results) {
-            assertEquals("Proprietary Trial", dto.getTrialCategory());
+            assertEquals("Abbreviated Trial", dto.getTrialCategory());
         }
 
         StudyProtocol sp = createStudyProtocol("6", false, Boolean.FALSE, false, false, false);

@@ -320,7 +320,10 @@ function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,e
     <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
     <s:hidden name="trialDTO.leadOrgTrialIdentifier" id="trialDTO.leadOrgTrialIdentifier"/>
     <s:hidden name="trialDTO.phaseAdditonalQualifier" id="trialDTO.phaseAdditonalQualifier" />    
-    <s:hidden name="trialDTO.xmlRequired" id="trialDTO.xmlRequired" />    
+    <s:hidden name="trialDTO.xmlRequired" id="trialDTO.xmlRequired" />
+    <c:if test="${not empty trialDTO.summaryFourFundingCategoryCode}">
+        <s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
+    </c:if>
         <s:hidden name="page" />
         <s:hidden name="uuidhidden"/>  
     <p>Update trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
@@ -416,54 +419,7 @@ function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,e
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
           <!--  summary4 information -->
-          <tr>
-                <th colspan="2">Summary 4 Information (for trials at NCI-designated cancer centers)</th>
-          </tr>
-          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>      
-          <tr><td>
-          <table>    
-          <tr>  
-                <td scope="row" class="label">
-                    <label for="updateTrial_summary4FundingCategory">Summary 4 Funding Sponsor Type:</label> 
-                </td>
-                     <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
-                <td class="value">
-                     <s:select headerKey="" headerValue="--Select--" 
-                            name="trialDTO.summaryFourFundingCategoryCode" 
-                            list="#summaryFourFundingCategoryCodeValues"
-                            cssStyle="width:206px" />
-                     <span class="formErrorMsg"> 
-                           <s:fielderror>
-                           <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
-                           </s:fielderror>                            
-                      </span>
-                </td>
-           </tr>          
-           <tr>
-                <td scope="row" class="label">
-                        <label for="updateTrial_selectedSummary4Sponsor_name_part_0__value"> Summary 4 Funding Sponsor: </label> 
-                </td>
-                <td class="value">
-                        <div id="loadSummary4FundingSponsorField">
-                            <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
-                        </div>      
-                </td>
-            </tr>  
-          <tr>
-             <td scope="row" class="label"><label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label></td>
-             <td class="value">
-                <s:textfield name="trialDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
-                <span class="formErrorMsg">
-                    <s:fielderror>
-                            <s:param>trialDTO.programCodeText</s:param>
-                    </s:fielderror>                            
-                 </span>
-               </td>
-            </tr>
-           </table>
-           </td></tr> 
+          <%@ include file="/WEB-INF/jsp/nodecorate/summaryFourInfo.jsp" %>
           <tr>  <td colspan="2" class="space">&nbsp;</td></tr>
           <tr><td>
           <table class="data2">

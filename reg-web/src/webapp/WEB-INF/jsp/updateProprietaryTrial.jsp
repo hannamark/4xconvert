@@ -105,6 +105,9 @@ function toggledisplay2 (it) {
         <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
     	<s:hidden name="trialDTO.identifier" id="trialDTO.identifier"/>
     	<s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
+        <c:if test="${not empty trialDTO.summaryFourFundingCategoryCode}">
+            <s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
+        </c:if>
         <s:hidden name="page" />
         <table class="form"> 
           <tr>
@@ -236,10 +239,19 @@ function toggledisplay2 (it) {
                 </td>
                      <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                 <td class="value">
-                     <s:select headerKey="" headerValue="--Select--" 
+                    <c:if test="${not empty trialDTO.summaryFourFundingCategoryCode}">
+                         <s:select headerKey="" headerValue="--Select--" 
+                            name="trialDTO.summaryFourFundingCategoryCode" 
+                            list="#summaryFourFundingCategoryCodeValues"
+                            cssStyle="width:206px" 
+                            disabled="true"/>
+                     </c:if>
+                    <c:if test="${empty trialDTO.summaryFourFundingCategoryCode}">
+                         <s:select headerKey="" headerValue="--Select--" 
                             name="trialDTO.summaryFourFundingCategoryCode" 
                             list="#summaryFourFundingCategoryCodeValues"
                             cssStyle="width:206px" />
+                     </c:if>
                      <span class="formErrorMsg"> 
                            <s:fielderror>
                            <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>

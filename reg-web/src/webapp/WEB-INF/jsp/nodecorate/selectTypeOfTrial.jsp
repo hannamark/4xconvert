@@ -10,17 +10,19 @@
     }
     function loadSelectedTrialType() {
     	 var action = '<%=request.getContextPath()%>';   
-    	    
-    	if(document.getElementById('selectedTrialTypeyes').checked==true) { 
-    	    action = action + "/protected/submitProprietaryTrial.action";
-        }
-    	if(document.getElementById('selectedTrialTypeno').checked==true) {
-    		action = action + "/protected/submitTrial.action"; 
+    	var sum4FundingCatCode = document.getElementById('summaryFourFundingCategoryCode').value;
+    	if (sum4FundingCatCode == '' ) {
+        	alert('Please Select Summary Four Funding Category');
+        	return;
+    	}    
+    	if(sum4FundingCatCode == 'Industrial') { 
+    	    action = action + "/protected/submitProprietaryTrial.action?sum4FundingCatCode="+sum4FundingCatCode;
+        } else {
+    		action = action + "/protected/submitTrial.action?sum4FundingCatCode="+sum4FundingCatCode; 
         }
     	window.top.location = action;
         window.top.hidePopWin(true); 
     }
-     
 </SCRIPT> 
 </head> 
 <body onload="setFocusToFirstControl(); window.top.centerPopWin();" class="submodal">
@@ -28,16 +30,35 @@
 <s:form id="selectTypeOfTrial" name="selectTypeOfTrial" >
     <div class="box" align="center">
     <table>
-    <tr>
-        <td colspan="2">
-        Is your trial proprietary?  
-        <s:radio name="selectedTrialType" id="selectedTrialType" list="#{'yes':'Yes', 'no':'No'}"/>
-       </td>
-       </tr>
-       <tr>
-       <td colspan="2">&nbsp; </td>
-       </tr>
-       <tr>
+          <!--  summary4 information -->
+          <tr>
+                <th colspan="2">Summary 4 Information</th>
+          </tr>
+          <tr>
+                <td colspan="2" class="space">&nbsp;</td>
+          </tr>
+          <tr>
+                <td scope="row" class="label">
+                    <reg-web:displayTooltip tooltip="tooltip.summary_4_funding_sponsor_type">
+                        <label for="submitTrial_summary4FundingCategory">Summary 4 Funding Sponsor Type:</label>
+                        <span class="required">*</span>
+                    </reg-web:displayTooltip>
+                </td>
+                     <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
+                <td class="value">
+                     <s:select headerKey="" headerValue="--Select--"
+                            name="summaryFourFundingCategoryCode"
+                            id = "summaryFourFundingCategoryCode"
+                            list="#summaryFourFundingCategoryCodeValues"
+                            cssStyle="width:206px" />
+                     <span class="formErrorMsg">
+                           <s:fielderror>
+                           <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
+                           </s:fielderror>
+                      </span>
+                </td>
+           </tr>
+           <tr>
        <td colspan="2">&nbsp; </td>
        </tr>
        <tr>
@@ -54,23 +75,6 @@
             </div>
        </td>
        </tr>
-       <tr>
-            <td>
-                <b><i><fmt:message key="trial.proprietary"/></i></b>
-            </td>
-            
-            <td>
-               <fmt:message key="trial.docInstructionalText_one"/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <b><i><fmt:message key="trial.non-proprietary"/></i></b>
-            </td>
-            <td>
-               <fmt:message key="trial.docInstructionalText_two"/>
-            </td>
-        </tr>
         </table>
 </div>
 </s:form>

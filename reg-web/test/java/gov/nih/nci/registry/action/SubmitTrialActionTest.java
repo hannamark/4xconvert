@@ -40,6 +40,8 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         submitAction.execute();
+        assertEquals("redirect_to_search",submitAction.execute());
+        submitAction.setSum4FundingCatCode("sum4FundingCatCode");
         assertEquals("success",submitAction.execute());
     }
     @Test
@@ -690,5 +692,12 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("redirect_to_search", submitAction.deletePartialSubmission());
+    }
+    @Test
+    public void testProperty() {
+        submitAction = new SubmitTrialAction();
+        assertNull(submitAction.getSum4FundingCatCode());
+        submitAction.setSum4FundingCatCode("sum4FundingCatCode");
+        assertNotNull(submitAction.getSum4FundingCatCode());
     }
 }

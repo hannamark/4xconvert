@@ -13,9 +13,8 @@
     <display:column escapeXml="true" titleKey="search.trial.officialTitle" property="officialTitle" maxLength= "200" sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column escapeXml="true" titleKey="search.trial.leadOrganizationName" property="leadOrganizationName"    sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column escapeXml="true" titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier"    sortable="true" headerClass="sortable" headerScope="col"/>
-    <display:column escapeXml="true" titleKey="search.trial.trialCategory" property="trialCategory"    sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column titleKey="search.trial.action" >
-        <s:if test="%{#attr.row.isProprietaryTrial}">
+        <s:if test="%{#attr.row.proprietaryTrial}">
             <s:url id="completeUrl" action="submitProprietaryTrialcomplete"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
         </s:if>
         <s:else>
@@ -48,7 +47,7 @@
     <display:column titleKey="search.trial.documentWorkflowStatus" property="documentWorkflowStatusCode"   sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column titleKey="search.trial.recordVerificationDate" property="recordVerificationDate"  format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
     <display:column titleKey="search.trial.update"  sortable="true" headerClass="sortable">
-        <s:if test="%{#attr.row.isProprietaryTrial}">
+        <s:if test="%{#attr.row.proprietaryTrial}">
             <s:url id="url" action="updateProprietaryTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
             <s:a href="%{url}"><s:property value="%{#attr.row.update}" /></s:a>
         </s:if>
