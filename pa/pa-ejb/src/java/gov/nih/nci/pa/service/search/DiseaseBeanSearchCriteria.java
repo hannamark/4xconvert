@@ -159,7 +159,7 @@ public class DiseaseBeanSearchCriteria<T extends AbstractEntityWithStatusCode<?>
                         DISEASE_NAME_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NAME_PARAM));
                 params.put(DISEASE_NAME_PARAM, "%" + this.name + "%");
             } else if (!includeSynonyms && exactMatch) {
-                whereClause.append(String.format("and (upper(%s.preferredName) like upper(:%s)",
+                whereClause.append(String.format("and upper(%s.preferredName) like upper(:%s)",
                         SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NAME_PARAM));
                 params.put(DISEASE_NAME_PARAM, this.name);
             } else if (includeSynonyms && exactMatch) {
@@ -168,7 +168,7 @@ public class DiseaseBeanSearchCriteria<T extends AbstractEntityWithStatusCode<?>
                         DISEASE_NAME_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NAME_PARAM));
                 params.put(DISEASE_NAME_PARAM, this.name);
             } else if (!includeSynonyms && !exactMatch) {
-                whereClause.append(String.format("and (upper(%s.preferredName) like upper(:%s)",
+                whereClause.append(String.format("and upper(%s.preferredName) like upper(:%s)",
                         SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NAME_PARAM));
                 params.put(DISEASE_NAME_PARAM, "%" + this.name + "%");
             }

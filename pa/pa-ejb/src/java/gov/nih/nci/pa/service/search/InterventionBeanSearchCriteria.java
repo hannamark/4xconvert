@@ -160,7 +160,7 @@ public class InterventionBeanSearchCriteria<T extends AbstractEntityWithStatusCo
                         INTERVENTION_NAME_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, INTERVENTION_NAME_PARAM));
                 params.put(INTERVENTION_NAME_PARAM, "%" + this.name + "%");
             } else if (!includeSynonyms && exactMatch) {
-                whereClause.append(String.format("and (upper(%s.name) like upper(:%s)", SearchableUtils.ROOT_OBJ_ALIAS,
+                whereClause.append(String.format("and upper(%s.name) like upper(:%s)", SearchableUtils.ROOT_OBJ_ALIAS,
                         INTERVENTION_NAME_PARAM));
                 params.put(INTERVENTION_NAME_PARAM, this.name);
             } else if (includeSynonyms && exactMatch) {
@@ -169,7 +169,7 @@ public class InterventionBeanSearchCriteria<T extends AbstractEntityWithStatusCo
                         INTERVENTION_NAME_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, INTERVENTION_NAME_PARAM));
                 params.put(INTERVENTION_NAME_PARAM, this.name);
             } else if (!includeSynonyms && !exactMatch) {
-                whereClause.append(String.format("and (upper(%s.name) like upper(:%s)", SearchableUtils.ROOT_OBJ_ALIAS,
+                whereClause.append(String.format("and upper(%s.name) like upper(:%s)", SearchableUtils.ROOT_OBJ_ALIAS,
                         INTERVENTION_NAME_PARAM));
                 params.put(INTERVENTION_NAME_PARAM, "%" + this.name + "%");
             }
