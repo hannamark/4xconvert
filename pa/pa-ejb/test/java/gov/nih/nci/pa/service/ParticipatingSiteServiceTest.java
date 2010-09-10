@@ -160,13 +160,13 @@ public class ParticipatingSiteServiceTest {
                 DSetConverter.convertListToDSet(emailList, "EMAIL", org.getTelecomAddress()));
         
         StudySiteDTO studySiteDTO = new StudySiteDTO();
-        studySiteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime() + Long.valueOf("300000000")), null));
+        studySiteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime() - Long.valueOf("300000000")), null));
         studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LOCAL SP ID"));
         studySiteDTO.setProgramCodeText(StConverter.convertToSt("PROGRAM CODE"));
         
         StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
         currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
-        currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() + Long.valueOf("300000000"))));
+        currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - Long.valueOf("300000000"))));
         
         Ii studySiteIi = bean.createStudySiteParticipantForPropTrial(spSecId, org,
                 studySiteDTO, currentStatus, person);
@@ -198,8 +198,8 @@ public class ParticipatingSiteServiceTest {
         // test update.
         studySiteDTO.setIdentifier(null);
         studySiteDTO.setAccrualDateRange(IvlConverter.convertTs()
-                .convertToIvl(new Timestamp(new Date().getTime() + Long.valueOf("300000000")),
-                        new Timestamp(new Date().getTime() + Long.valueOf("400000000"))));
+                .convertToIvl(new Timestamp(new Date().getTime() - Long.valueOf("300000000")),
+                        new Timestamp(new Date().getTime() - Long.valueOf("200000000"))));
         studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("changedLocalSp"));
         currentStatus.setIdentifier(null);
         currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.COMPLETED.getCode()));

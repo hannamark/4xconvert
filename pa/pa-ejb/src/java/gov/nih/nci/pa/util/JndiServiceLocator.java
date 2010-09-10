@@ -483,6 +483,6 @@ public class JndiServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public ParticipatingSiteServiceLocal getParticipatingSiteService() {
-        return (ParticipatingSiteServiceLocal) JNDIUtil.lookup("pa/ParticipatingSiteServiceBeanLocal/local");
+        return (ParticipatingSiteServiceLocal) JNDIUtil.lookup("pa/ParticipatingSiteBeanLocal/local");
     }
 }

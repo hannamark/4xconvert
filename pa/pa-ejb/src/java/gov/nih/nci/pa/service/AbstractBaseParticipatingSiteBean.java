@@ -90,7 +90,10 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.ejb.EJB;
 
@@ -110,6 +113,8 @@ public abstract class AbstractBaseParticipatingSiteBean {
     @EJB private OrganizationCorrelationServiceRemote ocsr = null;
     
     private static final String INVALID_STATUS_DATE_CURRENT = "Trial Status Date cannot be in the future.";
+    private static final String INVALID_OPEN_DATE_CURRENT = "Open Date cannot be in the future.";
+    private static final String INVALID_CLOSED_DATE_CURRENT = "Closed Date cannot be in the future.";
     
     /**
      * @return the studyProtocolService
@@ -207,8 +212,8 @@ public abstract class AbstractBaseParticipatingSiteBean {
             boolean closedDateAvail, StudySiteDTO studySiteDTO,  
             Timestamp currentTime) throws PAException {
         
-            if (openDateAvail && studySiteDTO.getAccrualDateRange().getLow().getValue().before(currentTime)) {
-                throw new PAException(INVALID_STATUS_DATE_CURRENT);
+            if (openDateAvail && currentTime.before(studySiteDTO.getAccrualDateRange().getLow().getValue())) {
+                throw new PAException(INVALID_OPEN_DATE_CURRENT);
             }
     
             if (closedDateAvail && !openDateAvail) {
@@ -221,8 +226,8 @@ public abstract class AbstractBaseParticipatingSiteBean {
             boolean closedDateAvail, StudySiteDTO studySiteDTO,  
             Timestamp currentTime) throws PAException {
         
-            if (closedDateAvail && studySiteDTO.getAccrualDateRange().getHigh().getValue().before(currentTime)) {
-                throw new PAException(INVALID_STATUS_DATE_CURRENT);
+            if (closedDateAvail && currentTime.before(studySiteDTO.getAccrualDateRange().getHigh().getValue())) {
+                throw new PAException(INVALID_CLOSED_DATE_CURRENT);
             } 
 
             if (closedDateAvail && openDateAvail
@@ -266,17 +271,19 @@ public abstract class AbstractBaseParticipatingSiteBean {
      * @param investigatorIi ii
      * @param currentStatus status
      * @throws PAException when error
+     * @throws ParseException when error
      */
     protected void enforceBusinessRulesForProprietary(StudyProtocolDTO studyProtocolDTO, Ii orgIi, 
             StudySiteDTO studySiteDTO, Ii investigatorIi, 
-            StudySiteAccrualStatusDTO currentStatus) throws PAException {
+            StudySiteAccrualStatusDTO currentStatus) throws PAException, ParseException {
         
         // check prop status
         if (BooleanUtils.isFalse(studyProtocolDTO.getProprietaryTrialIndicator().getValue())) {
             throw new PAException("Not a prop trial.");
         }
-        
-        Timestamp currentTime = new Timestamp(new Date().getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        String simpleDate = sdf.format(new Date());
+        Timestamp currentTime = new Timestamp(sdf.parse(simpleDate).getTime());
         enforceBusinessRules(currentStatus, currentTime);
         
         if (StringUtils.isEmpty(orgIi.getExtension())) {
@@ -308,7 +315,7 @@ public abstract class AbstractBaseParticipatingSiteBean {
         
         if (currentStatus.getStatusDate() != null
                 && currentStatus.getStatusDate().getValue() != null) { 
-            if (currentStatus.getStatusDate().getValue().before(currentTime)) {
+            if (currentTime.before(currentStatus.getStatusDate().getValue())) {
                 throw new PAException(INVALID_STATUS_DATE_CURRENT);
             }
         } else {

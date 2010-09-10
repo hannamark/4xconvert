@@ -118,6 +118,7 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.axis.utils.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -150,6 +151,9 @@ public abstract class AbstractParticipatingSitesBean extends AbstractBasePartici
                 throw new PAException("could not find unique trial with this identifier.");
             }
             studyProtocolDTO = spList.get(0);
+        } else if (StringUtils.isEmpty(studyProtocolIi.getRoot()) 
+                && !StringUtils.isEmpty(studyProtocolIi.getExtension())) {
+            studyProtocolDTO =  getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         } else {
             throw new PAException("unrecognizable trial Ii");
         }
@@ -212,7 +216,6 @@ public abstract class AbstractParticipatingSitesBean extends AbstractBasePartici
         throws EntityValidationException, CurationException, PAException {
         
         Session session = null;
-        StudySite queryResult = new StudySite();
         session = HibernateUtil.getCurrentSession();
         Query query = null;
         String hql = "select ss from StudySite ss " 
@@ -224,17 +227,18 @@ public abstract class AbstractParticipatingSitesBean extends AbstractBasePartici
                 + " and ss.functionalCode = '" + StudySiteFunctionalCode.TREATING_SITE + "'" 
                 + " and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'" + " and sp.statusCode ='"
                 + ActStatusCode.ACTIVE + "'" + " and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                + "  where dws.studyProtocol = dws1.studyProtocol ) or dws.id is null ) ";
-
-          
+                + "where dws.studyProtocol = dws1.studyProtocol ) or dws.id is null ) "
+                + "order by ss.dateLastUpdated desc";
+         
         query = session.createQuery(hql);
         query.setParameter("StudyProtocolIdentifier", Long.valueOf(studyProtocolIi.getExtension()));
         query.setParameter("OrganizationIdentifier", orgIi.getExtension());
-        queryResult = (StudySite) query.uniqueResult();
-        if (queryResult == null) {
+        @SuppressWarnings("unchecked")
+        List<StudySite> qList = query.list();
+        if (qList == null || qList.isEmpty() || qList.get(0).getId() == null) {
             return null;
         } else {
-            return IiConverter.convertToStudySiteIi(queryResult.getId());
+            return IiConverter.convertToStudySiteIi(qList.get(0).getId());
         }
     }
     
