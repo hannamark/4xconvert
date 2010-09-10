@@ -31,19 +31,6 @@ public class StudyDiseaseBeanLocal extends
 
     private StudyDiseaseDTO businessRules(StudyDiseaseDTO dto) throws PAException {
         boolean isNew = PAUtil.isIiNull(dto.getIdentifier());
-        // only one lead disease per study
-        if (!PAUtil.isBlNull(dto.getLeadDiseaseIndicator())
-                && BlConverter.convertToBoolean(dto.getLeadDiseaseIndicator())) {
-            List<StudyDiseaseDTO> sdList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
-            for (StudyDiseaseDTO sd : sdList) {
-                if ((isNew || !IiConverter.convertToLong(dto.getIdentifier()).equals(IiConverter.convertToLong(sd
-                                                                                         .getIdentifier())))
-                        && !PAUtil.isBlNull(sd.getLeadDiseaseIndicator())
-                        && BlConverter.convertToBoolean(sd.getLeadDiseaseIndicator())) {
-                    throw new PAException("Only one disease may be marked as lead for a given study.  ");
-                }
-            }
-        }
         // no duplicate diseases in a study
         if (isNew) {
             long newDiseaseId = IiConverter.convertToLong(dto.getDiseaseIdentifier());
@@ -54,6 +41,7 @@ public class StudyDiseaseBeanLocal extends
                 }
             }
         }
+        dto.setLeadDiseaseIndicator(BlConverter.convertToBl(null));
         return dto;
     }
 

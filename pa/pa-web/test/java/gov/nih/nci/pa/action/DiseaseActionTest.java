@@ -1,9 +1,10 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -19,10 +20,10 @@ import org.junit.Test;
  */
 public class DiseaseActionTest extends AbstractPaActionTest{
 
-    
+
     DiseaseAction diseaseAction;
     DiseaseWebDTO dto;
-    
+
     @Before
     public void setUp() throws PAException {
         diseaseAction = new DiseaseAction();
@@ -30,8 +31,8 @@ public class DiseaseActionTest extends AbstractPaActionTest{
         diseaseAction.setDisease(dto);
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         diseaseAction.prepare();
-        
-        
+
+
     }
     /**
      * Test method for {@link gov.nih.nci.pa.action.DiseaseAction#edit()}.
@@ -41,7 +42,7 @@ public class DiseaseActionTest extends AbstractPaActionTest{
         diseaseAction.setSelectedRowIdentifier("1");
         String result = diseaseAction.edit();
         assertEquals("edit", result);
-        
+
     }
 
     /**
@@ -74,13 +75,13 @@ public class DiseaseActionTest extends AbstractPaActionTest{
     	webdto.setDiseaseIdentifier("1");
     	diseaseAction.setDisease(webdto);
     	 assertEquals("list",diseaseAction.update());
-        
-    } 
+
+    }
     @Test
     public void testdisplay() throws PAException{
-    	getRequest().setupAddParameter("diseaseId", "1");    	
+    	getRequest().setupAddParameter("diseaseId", "1");
         assertEquals("edit",diseaseAction.display());
-    } 
+    }
     /**
      * Test method for {@link gov.nih.nci.pa.action.DiseaseAction#delete()}.
      */
@@ -89,5 +90,9 @@ public class DiseaseActionTest extends AbstractPaActionTest{
         diseaseAction.setSelectedRowIdentifier("1");
         assertEquals("list",diseaseAction.delete());
     }
-
+    @Test
+    public void testExecute()  throws PAException{
+        assertEquals("list",diseaseAction.execute());
+        assertNotNull(diseaseAction.getDiseaseList());
+    }
 }

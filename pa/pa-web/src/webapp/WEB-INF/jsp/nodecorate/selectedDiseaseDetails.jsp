@@ -47,12 +47,6 @@
     </tr>
     <tr><td/>
         <td class="value">
-            <s:checkbox name="disease.lead"/>
-            <s:label cssClass="label">Lead?</s:label>
-        </td>
-    </tr>
-    <tr><td/>
-        <td class="value">
             <s:checkbox name="disease.ctGovXmlIndicator"/>
             <s:label cssClass="label">Include in XML?</s:label>
         </td>

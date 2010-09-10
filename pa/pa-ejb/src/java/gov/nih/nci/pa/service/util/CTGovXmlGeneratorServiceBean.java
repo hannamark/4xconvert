@@ -441,20 +441,10 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
     private void createCondition(Ii studyProtocolIi, Document doc, Element root) throws PAException {
         List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
 
-        if (sdDtos != null) {
-            for (StudyDiseaseDTO sdDto : sdDtos) {
-                if (BlConverter.convertToBool(sdDto.getCtGovXmlIndicator())
-                        && BlConverter.convertToBool(sdDto.getLeadDiseaseIndicator())) {
-                    DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
-                    appendElement(root, createElement("condition", StringUtils.substring(StConverter.convertToString(d
-                            .getPreferredName()), 0, PAAttributeMaxLen.LEN_160), doc));
-                    break;
-                }
-            }
+        if (CollectionUtils.isNotEmpty(sdDtos)) {
             List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
             for (StudyDiseaseDTO sdDto : sdDtos) {
-                if (BlConverter.convertToBool(sdDto.getCtGovXmlIndicator())
-                        && BlConverter.convertToBool(sdDto.getLeadDiseaseIndicator())) {
+                if (BlConverter.convertToBool(sdDto.getCtGovXmlIndicator())) {
                     DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
                     diseases.add(d);
                 }

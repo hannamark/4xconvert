@@ -105,8 +105,8 @@ import org.junit.Test;
  *
  */
 public class StudyDiseaseServiceTest {
-    private StudyDiseaseBeanLocal bean = new StudyDiseaseBeanLocal();
-    private StudyDiseaseServiceLocal remote = bean;
+    private final StudyDiseaseBeanLocal bean = new StudyDiseaseBeanLocal();
+    private final StudyDiseaseServiceLocal remote = bean;
     private Ii spIi;
     private Ii dIi;
 
@@ -121,7 +121,6 @@ public class StudyDiseaseServiceTest {
 
     private void compareDataAttributes(StudyDisease bo1, StudyDisease bo2) {
         assertEquals(bo1.getDisease().getId(), bo2.getDisease().getId());
-        assertEquals(bo1.getLeadDiseaseIndicator(), bo2.getLeadDiseaseIndicator());
         assertEquals(bo1.getStudyProtocol().getId(), bo2.getStudyProtocol().getId());
     }
 
@@ -151,6 +150,12 @@ public class StudyDiseaseServiceTest {
         assertNotNull(resultBo.getId());
         dtoList = bean.getByStudyProtocol(spIi);
         assertEquals(oldSize + 1, dtoList.size());
+        try {
+            resultBo = bean.convertFromDtoToDomain(remote.create(bean.convertFromDomainToDto(bo)));
+        } catch (PAException e) {
+            assertEquals("Redundancy error:  this trial already includes the selected disease.  ",
+                    e.getMessage());
+        }
     }
 
     @Test
@@ -159,8 +164,6 @@ public class StudyDiseaseServiceTest {
         assertTrue(dtoList.size() > 0);
         StudyDiseaseDTO dto = dtoList.get(0);
         StudyDisease bo = bean.convertFromDtoToDomain(dto);
-        assertFalse(bo.getLeadDiseaseIndicator());
-        bo.setLeadDiseaseIndicator(true);
         StudyDiseaseDTO resultDto = remote.update(bean.convertFromDomainToDto(bo));
         StudyDisease resultBo = bean.convertFromDtoToDomain(resultDto);
         compareDataAttributes(bo, resultBo);

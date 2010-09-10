@@ -155,6 +155,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -577,25 +578,18 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
     private void enforceDisease(StudyProtocolDTO studyProtocolDTO, List<AbstractionCompletionDTO> abstractionList)
             throws PAException {
-        boolean leadExist = false;
         boolean ctgovxmlIndicator = false;
         Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
         List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
-        for (StudyDiseaseDTO sdDto : sdDtos) {
-            if (sdDto.getLeadDiseaseIndicator() != null && sdDto.getLeadDiseaseIndicator().getValue()) {
-                leadExist = true;
-                break;
-            }
-        }
         for (StudyDiseaseDTO sdDto : sdDtos) {
             if (sdDto.getCtGovXmlIndicator() != null && sdDto.getCtGovXmlIndicator().getValue()) {
                 ctgovxmlIndicator = true;
                 break;
             }
         }
-        if (!leadExist) {
+        if (CollectionUtils.isEmpty(sdDtos)) {
             abstractionList.add(createError("Error", "Select Disease/Condition from Scientific Data Menu",
-                    "Trial must include at least one LEAD disease"));
+            "A trial must have at least one disease/condition"));
         }
         // not a proprietary trial and the studyprotocol is set to ctgov = true
         // and there are no diseases with xml inclusion indicator set to true

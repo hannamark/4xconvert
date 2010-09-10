@@ -414,13 +414,11 @@ public class CTGovXmlGeneratorServiceTest {
     private void setupSdDto() {
         sdDtoList = new ArrayList<StudyDiseaseDTO>();
            sdDto = new StudyDiseaseDTO();
-           sdDto.setLeadDiseaseIndicator(BlConverter.convertToBl(true));
            sdDto.setCtGovXmlIndicator(BlConverter.convertToBl(true));
            sdDto.setDiseaseIdentifier(spId);
            sdDtoList.add(sdDto);
 
            sdDto = new StudyDiseaseDTO();
-           sdDto.setLeadDiseaseIndicator(BlConverter.convertToBl(true));
            sdDto.setCtGovXmlIndicator(BlConverter.convertToBl(true));
            sdDtoList.add(sdDto);
     }
@@ -798,13 +796,6 @@ public class CTGovXmlGeneratorServiceTest {
     @Test
     public void testCtGovNull() throws PAException {
         sdDto.setCtGovXmlIndicator(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
-    }
-
-    @Test
-    public void testLeadDisIndNull() throws PAException {
-        sdDtoList.remove(0);
-        sdDto.setLeadDiseaseIndicator(null);
         assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
