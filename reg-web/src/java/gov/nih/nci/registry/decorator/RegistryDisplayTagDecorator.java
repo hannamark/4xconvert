@@ -84,8 +84,6 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 
 import java.util.Date;
@@ -119,17 +117,12 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
      * @return link
      */
     public String getAmend() {
-        Long studyProtocolId = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyProtocolId();
-        String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
-        boolean isProprietaryTrial = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).isProprietaryTrial();
+        StudyProtocolQueryDTO row = (StudyProtocolQueryDTO) this.getCurrentRowObject();
+        boolean isProprietaryTrial = row.isProprietaryTrial();
+        DocumentWorkflowStatusCode dwfs = row.getDocumentWorkflowStatusCode();
+        StudyStatusCode statusCode = row.getStudyStatusCode();
 
-
-        DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) this.getCurrentRowObject())
-            .getDocumentWorkflowStatusCode();
-        StudyStatusCode statusCode = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyStatusCode();
-
-        if (!isProprietaryTrial && isAmendDWFS(dwfs) && isOwner(studyProtocolId, loginUser)
-                && isAmendStatus(statusCode)) {
+        if (!isProprietaryTrial && isAmendDWFS(dwfs) && isAmendStatus(statusCode)) {
             return "Amend";
         }
         return "";
@@ -148,21 +141,6 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     }
 
     /**
-     * @param studyProtocolId
-     * @param loginUser
-     * @return
-     */
-    private boolean isOwner(Long studyProtocolId, String loginUser) {
-        boolean owner;
-        try {
-            owner = PaRegistry.getRegisterUserService().hasTrialAccess(loginUser, studyProtocolId);
-        } catch (PAException e) {
-            owner = false;
-        }
-        return owner;
-    }
-
-    /**
      *
      * @return formated date
      */
@@ -176,17 +154,13 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     }
 
     /**
-     *
      * @return masked processing status
      */
     public DocumentWorkflowStatusCode getDocumentWorkflowStatusCode() {
-        String loginUser = null;
-        DocumentWorkflowStatusCode documentWorkflowStatusCode = ((StudyProtocolQueryDTO) this.getCurrentRowObject())
-                .getDocumentWorkflowStatusCode();
-        Long studyProtocolId = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyProtocolId();
-        loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
-        if (loginUser != null && isOwner(studyProtocolId, loginUser)) {
-            return documentWorkflowStatusCode;
+        String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
+        StudyProtocolQueryDTO row = (StudyProtocolQueryDTO) this.getCurrentRowObject();
+        if (loginUser != null) {
+            return row.getDocumentWorkflowStatusCode();
         }
         return null;
     }
@@ -258,11 +232,10 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
      * @return st
      */
     public String getCompletePartialSubmission() {
-        Long studyProtocolId = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyProtocolId();
-        String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
-        String nciNumber =  ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getNciIdentifier();
+        StudyProtocolQueryDTO row = (StudyProtocolQueryDTO) this.getCurrentRowObject();
+        String nciNumber =  row.getNciIdentifier();
         String retComplete = "";
-        if (isOwner(studyProtocolId, loginUser) && StringUtils.isEmpty(nciNumber)) {
+        if (StringUtils.isEmpty(nciNumber)) {
             retComplete = "Complete";
         }
         return retComplete;
@@ -273,11 +246,10 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
      * @return st
      */
     public String getDeletePartialSubmission() {
-        Long studyProtocolId = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyProtocolId();
-        String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
-        String nciNumber =  ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getNciIdentifier();
+        StudyProtocolQueryDTO row = (StudyProtocolQueryDTO) this.getCurrentRowObject();
+        String nciNumber =  row.getNciIdentifier();
         String retComplete = "";
-        if (isOwner(studyProtocolId, loginUser) && StringUtils.isEmpty(nciNumber)) {
+        if (StringUtils.isEmpty(nciNumber)) {
             retComplete = "Delete";
         }
         return retComplete;

@@ -52,6 +52,7 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
         spQueryDTO.setStudyStatusCode(StudyStatusCode.ACTIVE);
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
         spQueryDTO.setCtgovXmlRequiredIndicator(true);
+        spQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
         list.add(spQueryDTO);
         spQueryDTO = new StudyProtocolQueryDTO();
         spQueryDTO.setLeadOrganizationId(3L);
@@ -61,6 +62,7 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
         spQueryDTO.setOfficialTitle("officialTitle");
         spQueryDTO.setStudyStatusCode(StudyStatusCode.ACTIVE);
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
+        spQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
         spQueryDTO.setCtgovXmlRequiredIndicator(true);
         list.add(spQueryDTO);
     }
@@ -83,7 +85,7 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
                 returnList.add(sp);
             }
             if (sc.isMyTrialsOnly()) {
-                return list;
+                returnList.add(sp);
             }
         }
         return returnList;

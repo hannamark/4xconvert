@@ -32,9 +32,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     //private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
     @Before
     public void setup(){
-       /* HibernateUtil.testHelper = testHelper;
-        Session session = HibernateUtil.getCurrentSession();
-        session.clear();*/
         action = new SearchTrialAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteUser("firstName");
@@ -46,7 +43,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     @Test
     public void testRecordsProperty(){
         action = new SearchTrialAction();
-        assertNull(action.getRecords());
+        assertTrue(action.getRecords().isEmpty());
     }
     @Test
     public void testCriteriaProperty(){

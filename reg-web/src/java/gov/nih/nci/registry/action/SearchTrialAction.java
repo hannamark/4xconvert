@@ -123,7 +123,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -136,7 +135,7 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class SearchTrialAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
-    private List<StudyProtocolQueryDTO> records = null;
+    private List<StudyProtocolQueryDTO> records = new ArrayList<StudyProtocolQueryDTO>();
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
     private Long studyProtocolId = null;
     private final TrialUtil trialUtil = new TrialUtil();
@@ -182,97 +181,57 @@ public class SearchTrialAction extends ActionSupport {
             if (hasFieldErrors()) {
                 return ERROR;
             }
-            List<StudyProtocolQueryDTO> studyProtocolList = new ArrayList<StudyProtocolQueryDTO>();
-            studyProtocolList =
+            List<StudyProtocolQueryDTO> studyProtocolList =
                 PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
-            if (studyProtocolList != null) {
-                records = new ArrayList<StudyProtocolQueryDTO>();
-                // when selected search my trials
-                if (BooleanUtils.toBoolean(criteria.isMyTrialsOnly())) {
-                    String loginName =  ServletActionContext.getRequest().getRemoteUser();
-                    for (StudyProtocolQueryDTO queryDto : studyProtocolList) {
-                        if (PaRegistry.getRegisterUserService().hasTrialAccess(loginName,
-                              queryDto.getStudyProtocolId())) {
-                           records.add(queryDto);
-                        }
-                    }
-                } else {
-                    // when selected search all trials
-                    records = studyProtocolList;
-                }
-            }
+            records.addAll(studyProtocolList);
             checkToShowSendXml();
             checkToShowUpdate();
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
-            ServletActionContext.getRequest().setAttribute(
-                    "failureMessage" , e.getMessage());
+            ServletActionContext.getRequest().setAttribute("failureMessage" , e.getMessage());
             return ERROR;
         }
     }
 
     private void checkToShowSendXml() throws PAException {
-        String loginUser =  ServletActionContext.getRequest().getRemoteUser();
-        if (records != null && !records.isEmpty()) {
-            for (StudyProtocolQueryDTO queryDto : records) {
-                String dwfs = queryDto.getDocumentWorkflowStatusCode().getCode();
-                if (!queryDto.isProprietaryTrial()
-                        && (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
-                        || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode()))
-                        && queryDto.getCtgovXmlRequiredIndicator() && isOwner(queryDto.getStudyProtocolId(),
-                            loginUser)) {
-                    queryDto.setShowSendXml(true);
-                }
+        for (StudyProtocolQueryDTO queryDto : records) {
+            String dwfs = queryDto.getDocumentWorkflowStatusCode().getCode();
+            if (!queryDto.isProprietaryTrial()
+                    && (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
+                            || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode()))
+                            && queryDto.getCtgovXmlRequiredIndicator()) {
+                queryDto.setShowSendXml(true);
             }
         }
     }
 
-    private boolean isOwner(Long spId, String loginUser) {
-        boolean owner;
-        try {
-            owner = PaRegistry.getRegisterUserService().hasTrialAccess(loginUser, spId);
-        } catch (PAException e) {
-            owner = false;
-        }
-        return owner;
-    }
-
     private void checkToShowUpdate() {
-        String loginUser = null;
-        loginUser =  ServletActionContext.getRequest().getRemoteUser();
-        if (!records.isEmpty()) {
-            for (StudyProtocolQueryDTO queryDto : records) {
+        for (StudyProtocolQueryDTO queryDto : records) {
+            DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
+            StudyStatusCode statusCode = queryDto.getStudyStatusCode();
+            if (dwfs == null) {
+                queryDto.setUpdate("");
+            }
+            if (statusCode == null) {
+                queryDto.setUpdate("");
+            }
 
-                DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
-                StudyStatusCode statusCode = queryDto.getStudyStatusCode();
-                if (dwfs == null) {
-                    queryDto.setUpdate("");
-                }
-                if (statusCode == null) {
-                    queryDto.setUpdate("");
-                }
+            Set<StudyStatusCode> updatableStatuses = new HashSet<StudyStatusCode>();
+            updatableStatuses.add(StudyStatusCode.DISAPPROVED);
+            updatableStatuses.add(StudyStatusCode.WITHDRAWN);
+            updatableStatuses.add(StudyStatusCode.COMPLETE);
+            updatableStatuses.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
 
-                Set<StudyStatusCode> updatableStatuses = new HashSet<StudyStatusCode>();
-                updatableStatuses.add(StudyStatusCode.DISAPPROVED);
-                updatableStatuses.add(StudyStatusCode.WITHDRAWN);
-                updatableStatuses.add(StudyStatusCode.COMPLETE);
-                updatableStatuses.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
+            if (statusCode != null && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
+                    && !updatableStatuses.contains(statusCode)) {
+                queryDto.setUpdate("Update");
+            } else  {
+                queryDto.setUpdate("");
+            }
 
-
-                if (statusCode != null && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
-                        && isOwner(queryDto.getStudyProtocolId(), loginUser)
-                        && (!(updatableStatuses.contains(statusCode)))) {
-                    queryDto.setUpdate("Update");
-                } else  {
-                    queryDto.setUpdate("");
-                }
-
-                if (queryDto.isProprietaryTrial()
-                        && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
-                        && isOwner(queryDto.getStudyProtocolId(), loginUser)) {
-                        queryDto.setUpdate("Update");
-                    }
+            if (queryDto.isProprietaryTrial() && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)) {
+                queryDto.setUpdate("Update");
             }
         }
     }
@@ -389,8 +348,7 @@ public class SearchTrialAction extends ActionSupport {
                     maskFields = true;
             }
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
-            StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
-                    studyProtocolIi);
+            StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             if (!PAUtil.isBlNull(protocolDTO.getProprietaryTrialIndicator())
                     && BlConverter.convertToBoolean(protocolDTO.getProprietaryTrialIndicator())) {
                 // prop trial
@@ -458,16 +416,11 @@ public class SearchTrialAction extends ActionSupport {
             //spidfromviewresults
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     "spidfromviewresults");
-            //Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             DocumentDTO docDTO = PaRegistry.getDocumentService().get(IiConverter.convertToIi(docId));
-            // InterventionalStudyProtocolWebDTO spDTO =
-            // (InterventionalStudyProtocolWebDTO) ServletActionContext
-            // .getRequest().getSession().getAttribute(Constants.PROTOCOL_DOCUMENT);
             StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
             sb.append(File.separator).append(PAUtil.getAssignedIdentifier(spDTO)).append(File.separator)
-            .append(
-                    docDTO.getIdentifier().getExtension()).append('-').append(docDTO.getFileName().getValue());
+            .append(docDTO.getIdentifier().getExtension()).append('-').append(docDTO.getFileName().getValue());
             File downloadFile = new File(sb.toString());
             HttpServletResponse servletResponse = ServletActionContext.getResponse();
             servletResponse.setContentType("application/x-unknown");
@@ -489,7 +442,6 @@ public class SearchTrialAction extends ActionSupport {
             query();
             return ERROR;
         } catch (Exception e) {
-            // e.printStackTrace();
             LOG.error("Exception occured while retrieving document " + e);
         }
         return NONE;
@@ -503,47 +455,42 @@ public class SearchTrialAction extends ActionSupport {
             addFieldError("criteria.identifier", getText("error.search.identifier"));
         }
         if (StringUtils.isNotEmpty(criteria.getIdentifier()) && StringUtils.isEmpty(criteria.getIdentifierType())) {
-           addFieldError("criteria.identifierType", getText("error.search.identifierType"));
-       }
-       if (StringUtils.isNotEmpty(criteria.getOrganizationType()) && (criteria.getOrganizationId() == null
-                       && criteria.getParticipatingSiteId() == null)) {
-           addFieldError("criteria.organizationId", getText("error.search.organization"));
+            addFieldError("criteria.identifierType", getText("error.search.identifierType"));
+        }
+        if (StringUtils.isNotEmpty(criteria.getOrganizationType()) && (criteria.getOrganizationId() == null
+                && criteria.getParticipatingSiteId() == null)) {
+            addFieldError("criteria.organizationId", getText("error.search.organization"));
 
-       }
+        }
 
     }
 
-    private void getReponsibleParty(
-                TrialDTO trialDTO, boolean maskFields) throws PAException, NullifiedRoleException {
-            if (!maskFields) {
-                ServletActionContext.getRequest().setAttribute(
-                                Constants.RESP_PARTY, trialDTO.getResponsiblePartyType());
-                if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("Sponsor")) {
-                    if (StringUtils.isNotEmpty(trialDTO.getResponsiblePersonName())) {
-                    ServletActionContext.getRequest().setAttribute(
-                                Constants.RESP_PARTY_CONTACT, trialDTO.getResponsiblePersonName());
-                    }
-                    if (StringUtils.isNotEmpty(trialDTO.getResponsibleGenericContactName())) {
-                        ServletActionContext.getRequest().setAttribute(
-                                    Constants.RESP_PARTY_CONTACT, trialDTO.getResponsibleGenericContactName());
-                    }
+    private void getReponsibleParty(TrialDTO trialDTO, boolean maskFields) throws PAException, NullifiedRoleException {
+        if (!maskFields) {
+            ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY, trialDTO.getResponsiblePartyType());
+            if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("Sponsor")) {
+                if (StringUtils.isNotEmpty(trialDTO.getResponsiblePersonName())) {
+                    ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY_CONTACT,
+                            trialDTO.getResponsiblePersonName());
                 }
-                ServletActionContext.getRequest().setAttribute(
-                                Constants.SPONSOR, trialDTO.getSponsorName());
-                ServletActionContext.getRequest().setAttribute(
-                                Constants.RESP_PARTY_PHONE, trialDTO.getContactPhone());
-                ServletActionContext.getRequest().setAttribute(
-                                Constants.RESP_PARTY_EMAIL, trialDTO.getContactEmail());
+                if (StringUtils.isNotEmpty(trialDTO.getResponsibleGenericContactName())) {
+                    ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY_CONTACT,
+                            trialDTO.getResponsibleGenericContactName());
+                }
             }
+            ServletActionContext.getRequest().setAttribute(Constants.SPONSOR, trialDTO.getSponsorName());
+            ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY_PHONE, trialDTO.getContactPhone());
+            ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY_EMAIL, trialDTO.getContactEmail());
+        }
     }
+
     /**
      *
      * @return st
      */
     public String getMyPartiallySavedTrial() {
         StudyProtocolStageDTO criteriaSpDTO = new StudyProtocolStageDTO();
-        criteriaSpDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext
-                .getRequest().getRemoteUser()));
+        criteriaSpDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser()));
         criteriaSpDTO.setOfficialTitle(StConverter.convertToSt(criteria.getOfficialTitle()));
         criteriaSpDTO.setPhaseCode(CdConverter.convertStringToCd(criteria.getPhaseCode()));
         criteriaSpDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(criteria.getPrimaryPurposeCode()));
@@ -551,8 +498,8 @@ public class SearchTrialAction extends ActionSupport {
                 criteria.getPhaseAdditionalQualifierCode()));
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
         try {
-            List<StudyProtocolStageDTO> spStageDTOs =  PaRegistry.getStudyProtocolStageService()
-                .search(criteriaSpDTO, limit);
+            List<StudyProtocolStageDTO> spStageDTOs =  PaRegistry.getStudyProtocolStageService().search(criteriaSpDTO,
+                    limit);
             records = convertToSpQueryDTO(spStageDTOs);
         } catch (PAException e) {
             LOG.equals(e.getMessage());

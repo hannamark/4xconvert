@@ -707,5 +707,4 @@ public class StudyProtocolQueryDTO implements Serializable {
     public PhaseAdditionalQualifierCode getPhaseAdditionalQualifier() {
         return phaseAdditionalQualifier;
     }
-
 }

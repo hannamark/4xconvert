@@ -175,14 +175,11 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException {
-        // first check that the user isn't already a trial owner
-        if (isTrialOwner(user.getId(), studyProtocolId)) {
-            return true;
-        }
-
         StudyProtocol studyProtocol =
             (StudyProtocol) HibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
-        if (user.getStudyProtocols().contains(studyProtocol)) {
+
+        // first check that the user isn't already a trial owner
+        if (studyProtocol.getStudyOwners().contains(user)) {
             return true;
         }
 
@@ -191,15 +188,12 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             return false;
         }
 
-        // second check that the user isn't the lead org admin
-        if (studyProtocol.getStudySites() != null) {
-            for (StudySite sSites : studyProtocol.getStudySites()) {
-                if (sSites.getFunctionalCode().equals(StudySiteFunctionalCode.LEAD_ORGANIZATION)
-                        && sSites.getResearchOrganization().getOrganization()
-                        .getIdentifier().equals(user.getAffiliatedOrganizationId().toString())) {
-                    return true;
-                }
-            }
+        // second check that the user isn't the lead org admin. The first study site will be the lead org if it exists.
+        StudySite leadOrg = studyProtocol.getStudySites().isEmpty() ? null
+                : studyProtocol.getStudySites().iterator().next();
+        if (leadOrg != null && StringUtils.equals(leadOrg.getResearchOrganization().getOrganization().getIdentifier(),
+                user.getAffiliatedOrganizationId().toString())) {
+            return true;
         }
         return false;
     }

@@ -56,15 +56,13 @@
             <s:a href="%{url}"><s:property value="%{#attr.row.update}" /></s:a>
         </s:else>
      </display:column>
-     <display:column titleKey="search.trial.amend"
-        href="amendTrialview.action" property="amend"
-        paramId="studyProtocolId" paramProperty="studyProtocolId"
+     <display:column titleKey="search.trial.amend" href="amendTrialview.action" property="amend" paramId="studyProtocolId" paramProperty="studyProtocolId"
         sortable="true" headerClass="sortable"/>
         <display:column class="title" title="Action" sortable="true" headerScope="col" scope="row">
             <s:if test="%{#attr.row.showSendXml.booleanValue() == true}">
                 <a href="#" onclick="sendXml('${row.studyProtocolId}');">Send XML/TSR</a>
             </s:if>
-        </display:column>
+      </display:column>
 </display:table>
 </c:otherwise>
  </c:choose>

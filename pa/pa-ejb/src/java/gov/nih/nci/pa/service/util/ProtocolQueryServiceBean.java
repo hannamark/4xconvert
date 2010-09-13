@@ -84,6 +84,7 @@ import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
@@ -122,6 +123,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -148,6 +150,8 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtocol>
     implements ProtocolQueryServiceLocal {
 
+    @EJB
+    private RegistryUserServiceLocal registryUserService;
     private static final Logger LOG = Logger.getLogger(ProtocolQueryServiceBean.class);
 
     /**
@@ -166,7 +170,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<StudyProtocol> queryList = getStudyProtocolQueryResults(spsc);
-        pdtos = convertToStudyProtocolDTO(queryList);
+        pdtos = convertToStudyProtocolDTO(queryList, spsc.getUserId(), BooleanUtils.toBoolean(spsc.isMyTrialsOnly()));
         if (CollectionUtils.isNotEmpty(pdtos)) {
             pdtos = appendOnHold(pdtos);
         }
@@ -196,25 +200,27 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             LOG.error(" Study protcol was not found for id " + studyProtocolId);
             throw new PAException(" Study protcol was not found for id " + studyProtocolId);
         }
-        List<StudyProtocolQueryDTO> trialSummarys = convertToStudyProtocolDTO(queryList);
+        List<StudyProtocolQueryDTO> trialSummaries = convertToStudyProtocolDTO(queryList, null, false);
 
-        if (trialSummarys == null || trialSummarys.size() <= 0) {
+        if (trialSummaries == null || trialSummaries.size() <= 0) {
             // this will never happen is real scenario, as a practice throw
             // exception
             LOG.error(" Could not be converted to DTO for id " + studyProtocolId);
             throw new PAException(" Could not be converted to DTO for id " + studyProtocolId);
         }
-        return trialSummarys.get(0);
+        return trialSummaries.get(0);
     }
 
     /**
-     *
-     * @param protocolQueryResult
-     * @return List ProtocolDTO
-     * @throws PAException
-     *             paException
+     * Converts Study protocols objects to dtos.
+     * @param protocolQueryResult the resulting study protocols
+     * @param userId the id of the person calling the search
+     * @param myTrialsOnly whether to return trials for the given user only
+     * @return a list of StudyProtocolQueryDTOs
+     * @throws PAException on error
      */
-    private List<StudyProtocolQueryDTO> convertToStudyProtocolDTO(List<StudyProtocol> protocolQueryResult)
+    private List<StudyProtocolQueryDTO> convertToStudyProtocolDTO(List<StudyProtocol> protocolQueryResult, Long userId,
+            boolean myTrialsOnly)
         throws PAException {
         List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO studyProtocolDto = null;
@@ -226,6 +232,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         StudySite studySite = null;
         StudyInbox studyInbox = null;
         StudyCheckout studyCheckout = null;
+        RegistryUser potentialOwner = userId == null ? null : registryUserService.getUserById(userId);
         try {
             for (StudyProtocol studyProtocol : protocolQueryResult) {
                 studyProtocolDto = new StudyProtocolQueryDTO();
@@ -340,12 +347,21 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     studyProtocolDto.setStudyCheckoutBy(studyCheckout.getUserIdentifier());
                     studyProtocolDto.setStudyCheckoutId(studyCheckout.getId());
                 }
-                // add to the list
-                studyProtocolDtos.add(studyProtocolDto);
+
+                if (potentialOwner != null && myTrialsOnly) {
+                    if (registryUserService.hasTrialAccess(potentialOwner, studyProtocol.getId())) {
+                        // add to the list
+                        studyProtocolDtos.add(studyProtocolDto);
+                    }
+                } else {
+                    // add to the list
+                    studyProtocolDtos.add(studyProtocolDto);
+                }
+
+
             } // for loop
         } catch (Exception e) {
-            throw new PAException("General error in while converting to DTO2",
-                    e);
+            throw new PAException("General error in while converting to StudyProtocolQueryDTO", e);
         }
         return studyProtocolDtos;
     }
@@ -590,5 +606,19 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
         StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(sp);
         return search(crit);
+    }
+
+    /**
+     * @return the registry user service
+     */
+    public RegistryUserServiceLocal getRegistryUserService() {
+        return registryUserService;
+    }
+
+    /**
+     * @param registryUserService the registry user service to set
+     */
+    public void setRegistryUserService(RegistryUserServiceLocal registryUserService) {
+        this.registryUserService = registryUserService;
     }
 }

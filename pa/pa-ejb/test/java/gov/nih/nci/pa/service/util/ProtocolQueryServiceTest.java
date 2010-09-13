@@ -148,6 +148,7 @@ public class ProtocolQueryServiceTest {
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
+        bean.setRegistryUserService(new RegistryUserServiceBean());
         createStudyProtocol("1", false, Boolean.FALSE, false, false, false);
     }
 
