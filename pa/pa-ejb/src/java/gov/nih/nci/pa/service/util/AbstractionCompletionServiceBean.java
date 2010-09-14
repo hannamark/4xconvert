@@ -642,7 +642,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
         } else {
             for (ArmDTO dto : dtos) {
-                if (PAUtil.isGreatenThan(dto.getName(), PAAttributeMaxLen.ARM_NAME)) {
+                if (PAUtil.isGreaterThan(dto.getName(), PAAttributeMaxLen.ARM_NAME)) {
                     abstractionList.add(createError("Error", "Select Arm/Group under Scientific Data menu.", dto
                             .getName().getValue() + "  must not be more than 62 characters  "));
                 }
@@ -1056,19 +1056,19 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (studyProtocolDTO.getOfficialTitle().getValue() == null) {
             abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
                     "Official Title must be Entered"));
-        } else if (PAUtil.isGreatenThan(studyProtocolDTO.getOfficialTitle(), PAAttributeMaxLen.LEN_600)) {
+        } else if (PAUtil.isGreaterThan(studyProtocolDTO.getOfficialTitle(), PAAttributeMaxLen.LEN_600)) {
             abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
                     "Official Title cannot be more than 600 chracters "));
         }
-        if (PAUtil.isGreatenThan(studyProtocolDTO.getAcronym(), PAAttributeMaxLen.ACRONYM)) {
+        if (PAUtil.isGreaterThan(studyProtocolDTO.getAcronym(), PAAttributeMaxLen.ACRONYM)) {
             abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
                     "Acronym must not be more than 14 characters "));
         }
-        if (PAUtil.isGreatenThan(studyProtocolDTO.getScientificDescription(), PAAttributeMaxLen.LEN_32000)) {
+        if (PAUtil.isGreaterThan(studyProtocolDTO.getScientificDescription(), PAAttributeMaxLen.LEN_32000)) {
             abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
                     "Detailed Description must not be more than 32000 characters "));
         }
-        if (PAUtil.isGreatenThan(studyProtocolDTO.getKeywordText(), PAAttributeMaxLen.KEYWORD)) {
+        if (PAUtil.isGreaterThan(studyProtocolDTO.getKeywordText(), PAAttributeMaxLen.KEYWORD)) {
             abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
                     "Keywords must not be more than 160 characters "));
         }
@@ -1087,7 +1087,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (studyProtocolDTO.getPublicDescription().getValue() == null) {
             abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
                     "Brief Summary must be Entered"));
-        } else if (PAUtil.isGreatenThan(studyProtocolDTO.getPublicDescription(), PAAttributeMaxLen.LEN_5000)) {
+        } else if (PAUtil.isGreaterThan(studyProtocolDTO.getPublicDescription(), PAAttributeMaxLen.LEN_5000)) {
             abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
                     "Brief Summary must not be more than 5000 characters "));
         }
@@ -1267,7 +1267,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         sParts.add(spartDTO);
         List<StudySiteDTO> dtos = studySiteService.getByStudyProtocol(spDto.getIdentifier(), sParts);
         for (StudySiteDTO dto : dtos) {
-            if (PAUtil.isGreatenThan(dto.getLocalStudyProtocolIdentifier(), PAAttributeMaxLen.LEN_30)) {
+            if (PAUtil.isGreaterThan(dto.getLocalStudyProtocolIdentifier(), PAAttributeMaxLen.LEN_30)) {
                 if (StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode().equals(dto.getFunctionalCode().getCode())) {
                     abstractionList.add(createError("Error",
                             "Select General Trial Details from Administrative Data menu.",

@@ -345,18 +345,18 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isGreatenThan(gov.nih.nci.iso21090.St, int)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isGreaterThan(gov.nih.nci.iso21090.St, int)}.
 	 */
 	@Test
-	public void testIsGreatenThan() {
-		assertTrue(PAUtil.isGreatenThan(StConverter.convertToSt("hello"), 2));
-		assertFalse(PAUtil.isGreatenThan(null, 2));
+	public void testIsGreaterThan() {
+		assertTrue(PAUtil.isGreaterThan(StConverter.convertToSt("hello"), 2));
+		assertFalse(PAUtil.isGreaterThan(null, 2));
 		St st = new St();
 		st.setValue(null);
-		assertFalse(PAUtil.isGreatenThan(st, 2));
+		assertFalse(PAUtil.isGreaterThan(st, 2));
 		st.setValue("hello");
-		assertTrue(PAUtil.isGreatenThan(st, 2));
-		assertFalse(PAUtil.isGreatenThan(st, 6));
+		assertTrue(PAUtil.isGreaterThan(st, 2));
+		assertFalse(PAUtil.isGreaterThan(st, 6));
 	}
 
 	/**

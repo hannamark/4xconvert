@@ -131,20 +131,16 @@ public class NCISpecificInformationAction extends ActionSupport {
      */
     public String query() {
         try {
-            // Step 1 : get from StudyProtocol
             StudyProtocolDTO studyProtocolDTO = getStudyProtocol();
-            // Step 2 : get from StudyResourcing
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
             StudyResourcingDTO studyResourcingDTO = PaRegistry.getStudyResourcingService()
                 .getSummary4ReportedResourcing(studyProtocolIi);
             nciSpecificInformationWebDTO = setNCISpecificDTO(studyProtocolDTO, studyResourcingDTO);
             if (studyResourcingDTO != null && studyResourcingDTO.getOrganizationIdentifier() != null) {
-                    Organization org = getPAOrganizationById(studyResourcingDTO.getOrganizationIdentifier());
-                    // set the name
-                    nciSpecificInformationWebDTO.setOrganizationName(org.getName());
-                    // set the organization identifer
-                    nciSpecificInformationWebDTO.setOrganizationIi(org.getIdentifier());
+                Organization org = getPAOrganizationById(studyResourcingDTO.getOrganizationIdentifier());
+                nciSpecificInformationWebDTO.setOrganizationName(org.getName());
+                nciSpecificInformationWebDTO.setOrganizationIi(org.getIdentifier());
             }
             return SUCCESS;
         } catch (Exception e) {

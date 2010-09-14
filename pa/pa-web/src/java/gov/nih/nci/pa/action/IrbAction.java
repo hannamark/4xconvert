@@ -115,6 +115,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -150,6 +151,7 @@ public class IrbAction extends ActionSupport implements Preparable {
     /**
      * @throws Exception exception
      */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")  // Method signature is inherited from Struts
     public void prepare() throws Exception {
         sProtService = PaRegistry.getStudyProtocolService();
         sPartService = PaRegistry.getStudySiteService();
@@ -195,17 +197,14 @@ public class IrbAction extends ActionSupport implements Preparable {
      * @return action
      */
     public String save() {
-        businessRules();
+        checkBusinessRules();
         if (hasActionErrors()) {
             return SUCCESS;
         }
         try {
             if (ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED.equals(getApprovalStatusEnum())) {
                 saveSubmissionNotRequired();
-            } else if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.equals(getApprovalStatusEnum())
-                    || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.equals(getApprovalStatusEnum())
-                    || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.equals(getApprovalStatusEnum())
-                    || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.equals(getApprovalStatusEnum())) {
+            } else if (isSubmissionRequired(getApprovalStatusEnum())) {
                 saveSubmissionRequired();
             }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
@@ -216,6 +215,13 @@ public class IrbAction extends ActionSupport implements Preparable {
             addActionError(e.getMessage());
         }
         return SUCCESS;
+    }
+
+    private boolean isSubmissionRequired(ReviewBoardApprovalStatusCode approvalStatusEnum) {
+        return ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.equals(approvalStatusEnum)
+                || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.equals(approvalStatusEnum)
+                || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.equals(approvalStatusEnum)
+                || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.equals(approvalStatusEnum);
     }
 
     /**
@@ -330,20 +336,17 @@ public class IrbAction extends ActionSupport implements Preparable {
         this.newOrgName = newOrgName;
     }
 
-    private void businessRules() {
+    private void checkBusinessRules() {
         if (StringUtils.isEmpty(getApprovalStatus())) {
             addActionError("Must select an approval status.  ");
         }
-        if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.equals(getApprovalStatusEnum())
-            || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.equals(getApprovalStatusEnum())
-            || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.equals(getApprovalStatusEnum())
-            || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.equals(getApprovalStatusEnum())) {
-
+        if (isSubmissionRequired(getApprovalStatusEnum())) {
             if (getContactAffiliation() == null) {
                 addActionError("Must Enter a Board Affliation.  ");
             }
-            if (getContactAffiliation() != null && PAUtil.isGreatenThan(StConverter.convertToSt(getContactAffiliation())
-                    , PAAttributeMaxLen.LEN_200)) {
+            if (getContactAffiliation() != null
+                    && PAUtil
+                        .isGreaterThan(StConverter.convertToSt(getContactAffiliation()), PAAttributeMaxLen.LEN_200)) {
                 addActionError("Board Affiliation must not be more than 200 characters. ");
             }
             if (StringUtils.isEmpty(ct.getName())) {
@@ -366,7 +369,6 @@ public class IrbAction extends ActionSupport implements Preparable {
                 }
             }
         }
-
     }
 
     private void saveSubmissionNotRequired() throws PAException {
@@ -441,7 +443,7 @@ public class IrbAction extends ActionSupport implements Preparable {
     private void loadForm() throws PAException, NullifiedEntityException  {
         StudyProtocolDTO study = sProtService.getStudyProtocol(spIdIi);
         Boolean b = BlConverter.convertToBoolean(study.getReviewBoardApprovalRequiredIndicator());
-        if (b == null || !b) {
+        if (BooleanUtils.isNotTrue(b)) {
             setApprovalStatus((b == null) ? null : ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED.getCode());
             setApprovalNumber(null);
             setContactAffiliation(null);
@@ -527,7 +529,7 @@ public class IrbAction extends ActionSupport implements Preparable {
             }
             if (!phoneSet && tel instanceof TelPhone) {
                 String schema = ((TelPhone) tel).getValue().getScheme();
-                if (("tel").equals(schema)) {
+                if ("tel".equals(schema)) {
                     ct.setPhone(((TelPhone) tel).getValue().getSchemeSpecificPart());
                     phoneSet = true;
                 }

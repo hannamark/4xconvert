@@ -13,7 +13,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Session;
 
 /**
@@ -21,7 +21,6 @@ import org.hibernate.Session;
  *
  */
 public class ProprietaryTrialInterceptor {
-    private static final Logger LOG  = Logger.getLogger(ProprietaryTrialInterceptor.class);
     /**
      *
      * @param ctx ctx
@@ -42,14 +41,10 @@ public class ProprietaryTrialInterceptor {
             }
         }
         if (PAUtil.isIiNotNull(ii)) {
-            Session session = null;
-            StudyProtocol studyProtocol = null;
-            session = HibernateUtil.getCurrentSession();
-            studyProtocol = (StudyProtocol)
-            session.get(StudyProtocol.class, Long.valueOf(ii.getExtension()));
-            if (studyProtocol != null && studyProtocol.getProprietaryTrialIndicator() != null
-                    && studyProtocol.getProprietaryTrialIndicator()) {
-                LOG.info(ctx.getMethod().getName() + "for Proprietary trial is not allowed");
+            Session session = HibernateUtil.getCurrentSession();
+            StudyProtocol studyProtocol = (StudyProtocol) session.get(StudyProtocol.class,
+                                                                      Long.valueOf(ii.getExtension()));
+            if (studyProtocol != null && BooleanUtils.isTrue(studyProtocol.getProprietaryTrialIndicator())) {
                 throw new PAException(ctx.getMethod().getName() + " for Proprietary trial is not allowed");
             }
         }

@@ -551,7 +551,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                    } catch (NullifiedEntityException e1) {
                        // TODO refactor the code to handle chain of nullified entities ... Naveen Amiruddin
                        throw new PAException("This scenario is currrently not handled .... "
-                               + "Duplicate Ii of nullified is also nullified" , e1);
+                               + "Duplicate Ii of nullified is also nullified", e1);
                    }
                }
        }

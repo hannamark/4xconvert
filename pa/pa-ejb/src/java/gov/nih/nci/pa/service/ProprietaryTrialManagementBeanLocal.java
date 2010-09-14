@@ -155,8 +155,6 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
     @EJB
     private RegistryUserServiceLocal userServiceLocal;
 
-    private TrialRegistrationHelper trialRegistrationHelper = null;
-
     @Resource
     void setSessionContext(SessionContext ctx) {
         this.ejbContext = ctx;
@@ -194,7 +192,7 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
             studyProtocolDTO.setProprietaryTrialIndicator(spDto.getProprietaryTrialIndicator());
             validate(studyProtocolDTO, leadOrganizationDTO, leadOrganizationIdentifier, nctIdentifier, documentDTOs,
                     studySiteDTOs, studySiteAccrualDTOs);
-            trialRegistrationHelper = new TrialRegistrationHelper(docWrkFlowStatusService, null,
+            TrialRegistrationHelper trialRegistrationHelper = new TrialRegistrationHelper(docWrkFlowStatusService, null,
                     studyProtocolService, null, studySiteAccrualStatusService, null, null);
 
             StudyResourcingDTO summary4StudyResourcingDTO = new StudyResourcingDTO();

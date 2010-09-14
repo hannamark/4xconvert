@@ -242,8 +242,7 @@ public class PAServiceUtils {
         executeCopy(getRemoteService(IiConverter.convertToStudyResourcingIi(null)), fromStudyProtocolIi, toIi);
         executeCopy(getRemoteService(IiConverter.convertToStudyOnHoldIi(null)), fromStudyProtocolIi, toIi);
         executeCopy(getRemoteService(IiConverter.convertToStudyOverallStatusIi(null)) , fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudyRecruitmentStatusIi(null))
-                            , fromStudyProtocolIi, toIi);
+        executeCopy(getRemoteService(IiConverter.convertToStudyRecruitmentStatusIi(null)), fromStudyProtocolIi, toIi);
         StudyPaService<ArmDTO> sp = getRemoteService(IiConverter.convertToArmIi(null));
         Map<Ii , Ii> map = sp.copy(fromStudyProtocolIi, toIi);
         ArmServiceLocal as = getRemoteService(IiConverter.convertToArmIi(null));
@@ -251,16 +250,14 @@ public class PAServiceUtils {
         executeCopy(getRemoteService(IiConverter.convertToStudyContactIi(null)) , fromStudyProtocolIi, toIi);
         executeCopy(getRemoteService(IiConverter.convertToStudySiteIi(null)) , fromStudyProtocolIi, toIi);
         executeCopy(getRemoteService(IiConverter.convertToStudyOutcomeMeasureIi(null)) , fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudyRegulatoryAuthorityIi(null))
-            , fromStudyProtocolIi, toIi);
+        executeCopy(getRemoteService(IiConverter.convertToStudyRegulatoryAuthorityIi(null)), fromStudyProtocolIi, toIi);
         executeCopy(getRemoteService(IiConverter.convertToDocumentIi(null)) , fromStudyProtocolIi, toIi);
         return toIi;
 
     }
 
-    private void executeCopy(StudyPaService sp , Ii from , Ii to) throws PAException {
+    private void executeCopy(StudyPaService sp, Ii from, Ii to) throws PAException {
         sp.copy(from, to);
-
     }
 
     /**
@@ -397,15 +394,14 @@ public class PAServiceUtils {
      * @param studySiteContactDTO Study Site Contact
      * @throws PAException on error
      */
-    public void createResponsibleParty(Ii studyProtocolIi , OrganizationDTO leadOrganizationDTO ,
-            PersonDTO principalInvestigatorDTO , OrganizationDTO sponsorOrganizationDTO , Ii responsiblePartyContactIi,
-            StudyContactDTO studyContactDTO , StudySiteContactDTO studySiteContactDTO) throws PAException {
+    public void createResponsibleParty(Ii studyProtocolIi, OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO, OrganizationDTO sponsorOrganizationDTO, Ii responsiblePartyContactIi,
+            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO) throws PAException {
         if (studyContactDTO != null) {
-            createPIAsResponsibleParty(studyProtocolIi, leadOrganizationDTO ,
-                    principalInvestigatorDTO , studyContactDTO);
+            createPIAsResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO, studyContactDTO);
         } else {
-            createSponsorAsPrimaryContact(studyProtocolIi, sponsorOrganizationDTO ,
-                    responsiblePartyContactIi, studySiteContactDTO);
+            createSponsorAsPrimaryContact(studyProtocolIi, sponsorOrganizationDTO, responsiblePartyContactIi,
+                                          studySiteContactDTO);
         }
 
     }
@@ -451,7 +447,7 @@ public class PAServiceUtils {
      * @param summary4studyResourcingDTO summary four Resourcing Dto
      * @throws PAException on error
      */
-    public void manageSummaryFour(Ii studyProtocolIi , OrganizationDTO organizationDto ,
+    public void manageSummaryFour(Ii studyProtocolIi, OrganizationDTO organizationDto,
             StudyResourcingDTO summary4studyResourcingDTO) throws PAException {
         if (organizationDto != null && organizationDto.getIdentifier() != null) {
             SummaryFourFundingCategoryCode summaryFourFundingCategoryCode = null;
@@ -520,7 +516,7 @@ public class PAServiceUtils {
     public void manageSponsor(Ii studyProtocolIi, OrganizationDTO sponsorDto) throws PAException {
         OrganizationCorrelationServiceBean ocsr = new OrganizationCorrelationServiceBean();
         String orgPoIdentifier = sponsorDto.getIdentifier().getExtension();
-        if (orgPoIdentifier  == null) {
+        if (orgPoIdentifier == null) {
             throw new PAException(ORGANIZATION_IDENTIFIER_IS_NULL);
         }
         if (studyProtocolIi == null) {
@@ -802,57 +798,58 @@ public class PAServiceUtils {
      * @throws PAException the PA exception
      */
     public void enforceRecruitmentStatus(StudyProtocolDTO studyProtocolDTO,
-                                         List<StudySiteAccrualStatusDTO> participatingSites,
-                                         StudyRecruitmentStatusDTO recruitmentStatusDto) throws PAException {
+            List<StudySiteAccrualStatusDTO> participatingSites, StudyRecruitmentStatusDTO recruitmentStatusDto)
+            throws PAException {
         StringBuffer errorMsg = new StringBuffer();
-        if (CollectionUtils.isNotEmpty(participatingSites)) {
-               if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().
-                      equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {
-                  boolean recruiting = false;
-                  StudySiteAccrualStatusDTO latestDTO = null;
-                  List<StudySiteAccrualStatusDTO> participatingSitesOld = null;
-                  for (StudySiteAccrualStatusDTO studySiteAccuralStatus : participatingSites) {
-                      if (PAUtil.isIiNotNull(studySiteAccuralStatus.getStudySiteIi())
-                              && !isIiExistInPA(IiConverter.convertToStudySiteIi(Long.valueOf(
-                                      studySiteAccuralStatus.getStudySiteIi().getExtension())))) {
-                          errorMsg.append("Study Site Id " + studySiteAccuralStatus.getStudySiteIi().getExtension()
-                                  + " does not exit");
-                      }
-                      Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
-                      //base condition if one of the newly changed status is recruiting ;then break
-                      if (latestId == null) {
-                        if (RecruitmentStatusCode.RECRUITING.getCode().
-                               equalsIgnoreCase(studySiteAccuralStatus.getStatusCode().getCode())) {
-                             recruiting = true;
-                             break;
-                        } else if (!RecruitmentStatusCode.RECRUITING.getCode().
-                                      equalsIgnoreCase(studySiteAccuralStatus.getStatusCode().getCode())) {
-                            continue;
-                        }
-                      } else {
-                          participatingSitesOld = new ArrayList<StudySiteAccrualStatusDTO>();
-                          participatingSitesOld.add(studySiteAccuralStatus);
-                      }
-                  }
-                  if (participatingSitesOld != null && !participatingSitesOld.isEmpty()) {
-                      //else sort the old statuses and the get the latest
-                      Collections.sort(participatingSitesOld, new Comparator<StudySiteAccrualStatusDTO>() {
-                          public int compare(StudySiteAccrualStatusDTO o1, StudySiteAccrualStatusDTO o2) {
-                              return o1.getIdentifier().getExtension().compareToIgnoreCase(
-                                      o2.getIdentifier().getExtension());
-                          }
-                      });
-                      latestDTO = participatingSitesOld.get(participatingSitesOld.size() - 1);
-                      if (latestDTO != null && RecruitmentStatusCode.RECRUITING.getCode().
-                              equalsIgnoreCase(latestDTO.getStatusCode().getCode())) {
-                          recruiting = true;
-                      }
-                      if (!recruiting) {
-                              new PAException("Data inconsistency: Atleast one location needs to be recruiting"
-                                      + " if the overall status recruitment status is\'Recruiting\'");
-                      }
-                  }
-              }
+        if (CollectionUtils.isNotEmpty(participatingSites)
+                && StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().equalsIgnoreCase(recruitmentStatusDto
+                                                                                               .getStatusCode()
+                                                                                               .getCode())) {
+            boolean recruiting = false;
+            StudySiteAccrualStatusDTO latestDTO = null;
+            List<StudySiteAccrualStatusDTO> participatingSitesOld = null;
+            for (StudySiteAccrualStatusDTO studySiteAccuralStatus : participatingSites) {
+                if (PAUtil.isIiNotNull(studySiteAccuralStatus.getStudySiteIi())
+                        && !isIiExistInPA(IiConverter.convertToStudySiteIi(Long.valueOf(studySiteAccuralStatus
+                            .getStudySiteIi().getExtension())))) {
+                    errorMsg.append("Study Site Id " + studySiteAccuralStatus.getStudySiteIi().getExtension()
+                            + " does not exit");
+                }
+                Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
+                // base condition if one of the newly changed status is recruiting ;then break
+                if (latestId == null) {
+                    if (RecruitmentStatusCode.RECRUITING.getCode().equalsIgnoreCase(studySiteAccuralStatus
+                                                                                        .getStatusCode().getCode())) {
+                        recruiting = true;
+                        break;
+                    } else if (!RecruitmentStatusCode.RECRUITING.getCode().equalsIgnoreCase(studySiteAccuralStatus
+                                                                                                .getStatusCode()
+                                                                                                .getCode())) {
+                        continue;
+                    }
+                } else {
+                    participatingSitesOld = new ArrayList<StudySiteAccrualStatusDTO>();
+                    participatingSitesOld.add(studySiteAccuralStatus);
+                }
+            }
+            if (CollectionUtils.isNotEmpty(participatingSitesOld)) {
+                // else sort the old statuses and the get the latest
+                Collections.sort(participatingSitesOld, new Comparator<StudySiteAccrualStatusDTO>() {
+                    public int compare(StudySiteAccrualStatusDTO o1, StudySiteAccrualStatusDTO o2) {
+                        return o1.getIdentifier().getExtension().compareToIgnoreCase(o2.getIdentifier().getExtension());
+                    }
+                });
+                latestDTO = participatingSitesOld.get(participatingSitesOld.size() - 1);
+                if (latestDTO != null
+                        && RecruitmentStatusCode.RECRUITING.getCode().equalsIgnoreCase(latestDTO.getStatusCode()
+                                                                                           .getCode())) {
+                    recruiting = true;
+                }
+                if (!recruiting) {
+                    new PAException("Data inconsistency: Atleast one location needs to be recruiting"
+                            + " if the overall status recruitment status is\'Recruiting\'");
+                }
+            }
         }
     }
 

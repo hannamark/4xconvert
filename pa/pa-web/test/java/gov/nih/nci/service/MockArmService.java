@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.service;
 
@@ -18,45 +18,48 @@ import java.util.Map;
  */
 public class MockArmService extends MockAbstractBaseIsoService <ArmDTO> implements ArmServiceLocal {
 
-	
-	public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi,
-			Map<Ii, Ii> armMap) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	public List<ArmDTO> getByPlannedActivity(Ii ii) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi,
+            Map<Ii, Ii> armMap) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	
-	public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
-			throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<ArmDTO> getByStudyProtocol(Ii ii) throws PAException {
-		 List<ArmDTO> armIsoList =  new ArrayList<ArmDTO>();
-		return armIsoList;
-	}
-
-	public ArmDTO create(ArmDTO dto) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public List<ArmDTO> getByPlannedActivity(Ii ii) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 
-	public ArmDTO update(ArmDTO dto) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public void validate(ArmDTO dto) throws PAException {
-		// TODO Auto-generated method stub
-		
-	}
+    public List<ArmDTO> getByStudyProtocol(Ii ii) throws PAException {
+         List<ArmDTO> armIsoList =  new ArrayList<ArmDTO>();
+        return armIsoList;
+    }
 
-   
+    @Override
+    public ArmDTO create(ArmDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    @Override
+    public ArmDTO update(ArmDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void validate(ArmDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+
+    }
+
+
 }

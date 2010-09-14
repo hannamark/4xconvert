@@ -527,7 +527,7 @@ public class PAUtil {
      * @param len length to trim
      * @return trimmed data
      */
-    public static boolean isGreatenThan(St st , int len) {
+    public static boolean isGreaterThan(St st, int len) {
         boolean ret = false;
         String str = null;
         if (st == null) {

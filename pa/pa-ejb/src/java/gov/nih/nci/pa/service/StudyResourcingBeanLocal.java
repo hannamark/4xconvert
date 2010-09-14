@@ -290,12 +290,11 @@ public class StudyResourcingBeanLocal extends
             boolean sameNciDivCode = newNciDivCode.equals(sp.getNciDivisionProgramCode().getCode());
             boolean sameNihInstCode = newNihInstCode.equals(sp.getNihInstitutionCode().getCode());
 
-            if (sameSerialNumber && sameFundingMech && sameNciDivCode && sameNihInstCode) {
-                if (dto.getIdentifier() == null
-                        || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension()))) {
-                    duplicateExists = true;
-                    break;
-                }
+            if (sameSerialNumber && sameFundingMech && sameNciDivCode && sameNihInstCode
+                    && (dto.getIdentifier() == null
+                            || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension())))) {
+                duplicateExists = true;
+                break;
             }
         }
         return duplicateExists;

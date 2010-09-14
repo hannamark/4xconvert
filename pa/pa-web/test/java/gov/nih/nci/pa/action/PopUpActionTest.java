@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.action;
 
@@ -18,26 +18,26 @@ import org.junit.Test;
 public class PopUpActionTest extends AbstractPaActionTest {
 
     PopUpAction popUpAction;
-    
+
     @Before
     public void setUp(){
         popUpAction = new PopUpAction();
         List<String> countryList = new ArrayList <String>();
         getSession().setAttribute("countrylist",countryList);
-        
+
     }
-    
+
     /**
      * Test method for {@link gov.nih.nci.pa.action.PopUpAction#lookupcontactpersons()}.
      */
     @Test
     public void testLookupcontactpersons() throws Exception {
-    	getRequest().setupAddParameter("email", "test@test.org");
-    	getRequest().setupAddParameter("tel", "132412312");
+        getRequest().setupAddParameter("email", "test@test.org");
+        getRequest().setupAddParameter("tel", "132412312");
         String result = popUpAction.lookupcontactpersons();
-        assertEquals("test@test.org",(String)getRequest().getSession().getAttribute("emailEntered"));
-        assertEquals("132412312",(String)getRequest().getSession().getAttribute("telephoneEntered"));
-        assertEquals("contactpersons",result);
+        assertEquals("test@test.org", getRequest().getSession().getAttribute("emailEntered"));
+        assertEquals("132412312", getRequest().getSession().getAttribute("telephoneEntered"));
+        assertEquals("contactpersons", result);
     }
 
     /**
@@ -59,66 +59,66 @@ public class PopUpActionTest extends AbstractPaActionTest {
     }
     @Test
     public void testdisplaycontactPersonsList() {
-    	getRequest().setupAddParameter("firstName", "fname");
-    	getRequest().setupAddParameter("lastName", "lname");
-    	getRequest().setupAddParameter("countryName", "USA");
-    	getRequest().setupAddParameter("cityName", "dallas");
-    	getRequest().setupAddParameter("zipCode", "75090");
-    	getRequest().setupAddParameter("stateName", "TX");
-    	String result = popUpAction.displaycontactPersonsList();
+        getRequest().setupAddParameter("firstName", "fname");
+        getRequest().setupAddParameter("lastName", "lname");
+        getRequest().setupAddParameter("countryName", "USA");
+        getRequest().setupAddParameter("cityName", "dallas");
+        getRequest().setupAddParameter("zipCode", "75090");
+        getRequest().setupAddParameter("stateName", "TX");
+        String result = popUpAction.displaycontactPersonsList();
         assertEquals("success",result);
     }
     @Test
     public void testdisplaycontactPersonsListDisplayTag() {
-    	getRequest().setupAddParameter("firstName", "fname");
-    	getRequest().setupAddParameter("lastName", "lname");
-    	getRequest().setupAddParameter("countryName", "USA");
-    	getRequest().setupAddParameter("cityName", "dallas");
-    	getRequest().setupAddParameter("zipCode", "75090");
-    	getRequest().setupAddParameter("stateName", "TX");
-    	String result = popUpAction.displaycontactPersonsListDisplayTag();
+        getRequest().setupAddParameter("firstName", "fname");
+        getRequest().setupAddParameter("lastName", "lname");
+        getRequest().setupAddParameter("countryName", "USA");
+        getRequest().setupAddParameter("cityName", "dallas");
+        getRequest().setupAddParameter("zipCode", "75090");
+        getRequest().setupAddParameter("stateName", "TX");
+        String result = popUpAction.displaycontactPersonsListDisplayTag();
         assertEquals("contactpersons",result);
     }
     @Test
     public void testdisplayPersonsList() {
-    	getRequest().setupAddParameter("firstName", "fname");
-    	getRequest().setupAddParameter("lastName", "lname");
-    	getRequest().setupAddParameter("countryName", "USA");
-    	getRequest().setupAddParameter("cityName", "dallas");
-    	getRequest().setupAddParameter("zipCode", "75090");
-    	getRequest().setupAddParameter("stateName", "TX");
-    	String result = popUpAction.displayPersonsList();
+        getRequest().setupAddParameter("firstName", "fname");
+        getRequest().setupAddParameter("lastName", "lname");
+        getRequest().setupAddParameter("countryName", "USA");
+        getRequest().setupAddParameter("cityName", "dallas");
+        getRequest().setupAddParameter("zipCode", "75090");
+        getRequest().setupAddParameter("stateName", "TX");
+        String result = popUpAction.displayPersonsList();
         assertEquals("success",result);
     }
     @Test
     public void testdisplayPersonsListDisplayTag() {
-    	getRequest().setupAddParameter("firstName", "fname");
-    	getRequest().setupAddParameter("lastName", "lname");
-    	getRequest().setupAddParameter("countryName", "USA");
-    	getRequest().setupAddParameter("cityName", "dallas");
-    	getRequest().setupAddParameter("zipCode", "75090");
-    	getRequest().setupAddParameter("stateName", "TX");
-    	String result = popUpAction.displayPersonsListDisplayTag();
+        getRequest().setupAddParameter("firstName", "fname");
+        getRequest().setupAddParameter("lastName", "lname");
+        getRequest().setupAddParameter("countryName", "USA");
+        getRequest().setupAddParameter("cityName", "dallas");
+        getRequest().setupAddParameter("zipCode", "75090");
+        getRequest().setupAddParameter("stateName", "TX");
+        String result = popUpAction.displayPersonsListDisplayTag();
         assertEquals("persons",result);
     }
     @Test
     public void testdisplayOrgList() {
-    	getRequest().setupAddParameter("orgName", "OrgName");
-    	getRequest().setupAddParameter("countryName", "USA");
-    	getRequest().setupAddParameter("cityName", "dallas");
-    	getRequest().setupAddParameter("zipCode", "75090");
-    	getRequest().setupAddParameter("stateName", "TX");
-    	String result = popUpAction.displayOrgList();
+        getRequest().setupAddParameter("orgName", "OrgName");
+        getRequest().setupAddParameter("countryName", "USA");
+        getRequest().setupAddParameter("cityName", "dallas");
+        getRequest().setupAddParameter("zipCode", "75090");
+        getRequest().setupAddParameter("stateName", "TX");
+        String result = popUpAction.displayOrgList();
         assertEquals("success",result);
     }
     @Test
     public void testdisplayOrgListDisplayTag() {
-    	getRequest().setupAddParameter("orgName", "OrgName");
-    	getRequest().setupAddParameter("countryName", "USA");
-    	getRequest().setupAddParameter("cityName", "dallas");
-    	getRequest().setupAddParameter("zipCode", "75090");
-    	getRequest().setupAddParameter("stateName", "TX");
-    	String result = popUpAction.displayOrgListDisplayTag();
+        getRequest().setupAddParameter("orgName", "OrgName");
+        getRequest().setupAddParameter("countryName", "USA");
+        getRequest().setupAddParameter("cityName", "dallas");
+        getRequest().setupAddParameter("zipCode", "75090");
+        getRequest().setupAddParameter("stateName", "TX");
+        String result = popUpAction.displayOrgListDisplayTag();
         assertEquals("orgs",result);
     }
 }

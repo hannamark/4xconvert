@@ -61,38 +61,36 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
 
 
     private void enforceNoDuplicate(StudyIndldeDTO dto) throws PAException {
-      String newType = dto.getIndldeTypeCode().getCode();
-      String newNumber = dto.getIndldeNumber().getValue();
-      String newGrantor = dto.getGrantorCode().getCode();
-      List<StudyIndldeDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
-       for (StudyIndldeDTO sp : spList) {
-         boolean sameType = newType.equals(sp.getIndldeTypeCode().getCode());
-         boolean sameNumber = newNumber.equals(sp.getIndldeNumber().getValue());
-         boolean sameGrantor = newGrantor.equals(sp.getGrantorCode().getCode());
-          if (sameType && sameNumber && sameGrantor) {
-            if (dto.getIdentifier() == null
-                || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension()))) {
-                 throw new PADuplicateException("Duplicates Ind/Ide are not allowed.");
+        String newType = dto.getIndldeTypeCode().getCode();
+        String newNumber = dto.getIndldeNumber().getValue();
+        String newGrantor = dto.getGrantorCode().getCode();
+        List<StudyIndldeDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+        for (StudyIndldeDTO sp : spList) {
+            boolean sameType = newType.equals(sp.getIndldeTypeCode().getCode());
+            boolean sameNumber = newNumber.equals(sp.getIndldeNumber().getValue());
+            boolean sameGrantor = newGrantor.equals(sp.getGrantorCode().getCode());
+            if (sameType && sameNumber && sameGrantor && (dto.getIdentifier() == null
+                                || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension())))) {
+                throw new PADuplicateException("Duplicates Ind/Ide are not allowed.");
             }
-          }
-       }
+        }
     }
 
-     /**
-      * @param studyIndldeDTO dto
-      * @throws PAException e
-      */
-      @Override
+    /**
+     * @param studyIndldeDTO dto
+     * @throws PAException e
+     */
+    @Override
     public void validate(StudyIndldeDTO studyIndldeDTO) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
         errorMsg.append(validateIndIdeObject(studyIndldeDTO));
         if (errorMsg.length() > 0) {
-          throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
+            throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
         }
         if (PAUtil.isIiNotNull(studyIndldeDTO.getStudyProtocolIdentifier())) {
-          enforceNoDuplicate(studyIndldeDTO);
+            enforceNoDuplicate(studyIndldeDTO);
         }
-      }
+    }
 
      /**
       * @param studyIndldeDTO

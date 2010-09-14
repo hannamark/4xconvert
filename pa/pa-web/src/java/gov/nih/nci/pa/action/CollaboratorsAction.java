@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
@@ -159,14 +160,14 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")  // Method signature is inherited from Struts
     public void prepare() throws Exception {
         sPartService = PaRegistry.getStudySiteService();
         ocService = new OrganizationCorrelationServiceBean();
         correlationUtils = new CorrelationUtils();
 
-        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
-        .getRequest().getSession()
-        .getAttribute(Constants.TRIAL_SUMMARY);
+        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
+            .getAttribute(Constants.TRIAL_SUMMARY);
 
         spIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
     }
@@ -290,9 +291,9 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
 
     /**
      * @return result
-     * @throws Exception exception
+     * @throws PAException on error
      */
-    public String delete() throws Exception {
+    public String delete() throws PAException {
         clearErrorsAndMessages();
 
         sPartService.delete(IiConverter.convertToIi(cbValue));
@@ -328,14 +329,19 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
 
     /**
      * @return the organizationList
-     * @throws Exception on error.
+     * @throws PAException on error.
      */
-    public String displayOrg() throws Exception {
+    public String displayOrg() throws PAException {
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
         LimitOffset limit = new LimitOffset(1, 0);
-        selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria, limit).get(0);
+        try {
+            selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria, limit).get(0);
+        } catch (TooManyResultsException e) {
+            // This should never happen, because we set the limit to 1
+            throw new PAException("TooManyResultsException caught while searching with a limit of 1", e);
+        }
 
         // store selection
         Organization org = new Organization();
@@ -368,9 +374,9 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
 
     /**
      * @return result
-     * @throws Exception on error.
+     * @throws PAException on error.
      */
-    public String nodecorlookup() throws Exception {
+    public String nodecorlookup() throws PAException {
         countryRegDTO = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
         return "lookup";
     }

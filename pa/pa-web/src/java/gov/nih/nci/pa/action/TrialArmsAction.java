@@ -297,7 +297,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
             addFieldError("armType", "Select an Arm Type");
         }
         if (StringUtils.isNotEmpty(getArmDescription())
-              && PAUtil.isGreatenThan(StConverter.convertToSt(getArmDescription()), PAAttributeMaxLen.LEN_1000)) {
+              && PAUtil.isGreaterThan(StConverter.convertToSt(getArmDescription()), PAAttributeMaxLen.LEN_1000)) {
             addFieldError("armDescription", "Arm Description length should not be greater than 1000");
         }
         if ((getCurrentAction().equals(ACT_EDIT_ARM) || getCurrentAction().equals(ACT_EDIT_NEW_ARM))
