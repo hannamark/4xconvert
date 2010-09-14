@@ -358,24 +358,23 @@
         <copy todir="${jboss.deploy.directory}" file="${reg-web.ear.file}"/>
     </target>
 
-    <target name="copy-tooltips">
-            <available file="${tooltips.filepath.loc}/RegWebTooltips.properties" type="file"
-                property="tooltips.file.present" value="true"/>
-            <condition property="copy.tooltips.file" value="true" else="false">
-                <or>
-                    <isfalse value="${tooltips.file.present}" />
-                    <istrue value="${tooltips.file.overwrite}" />
-                </or>
-            </condition>
-            <if>
-                <equals arg1="${copy.tooltips.file}" arg2="true" />
-                <then>
-                    <echo message="Copying ${reg-web.build.resourceDir.0}/RegWebTooltips.properties to ${tooltips.filepath.loc}"/>
-                    <copy file="${reg-web.build.resourceDir.0}/RegWebTooltips.properties" todir="${tooltips.filepath.loc}" overwrite="true" />
-                </then>
-            </if>
-
+    <target name="prepare-tooltips">
+        <available file="${tooltips.filepath.loc}/RegWebTooltips.properties" type="file"
+            property="tooltips.file.present" value="true"/>
+        <condition property="copy.tooltips.file" value="true">
+            <or>
+                <isfalse value="${tooltips.file.present}" />
+                <istrue value="${tooltips.file.overwrite}" />
+            </or>
+        </condition>  
     </target>
+    
+    <target name="copy-tooltips-file" if="copy.tooltips.file">
+        <echo message="Copying ${reg-web.build.resourceDir.0}/RegWebTooltips.properties to ${tooltips.filepath.loc}" />
+        <copy file="${reg-web.build.resourceDir.0}/RegWebTooltips.properties" todir="${tooltips.filepath.loc}" overwrite="true" />    	
+    </target>
+    
+    <target name="copy-tooltips"  depends="prepare-tooltips, copy-tooltips-file"/>
 
     <target name="deploy" depends="package,ear,deploy-ear,fix-server-xml"
             description="Build test and deploy."/>
