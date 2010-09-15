@@ -88,6 +88,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -101,6 +102,7 @@ import org.hibernate.validator.NotNull;
 public class StudyOverallStatus extends AbstractStudyEntity {
 
     private static final long serialVersionUID = 1234567890L;
+    private static final int MAX_COMMENT_LENGTH = 2000;
 
     private String commentText;
     private StudyStatusCode statusCode;
@@ -112,6 +114,7 @@ public class StudyOverallStatus extends AbstractStudyEntity {
      * @return commentText
      */
     @Column(name = "COMMENT_TEXT")
+    @Length(max = MAX_COMMENT_LENGTH)
     public String getCommentText() {
         return commentText;
     }

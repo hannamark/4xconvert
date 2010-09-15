@@ -561,5 +561,9 @@
      <changeSet id="PO-1922" author="vrushali"> 
         <comment>Collect Reason for Admin request rejection.</comment> 
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-1922.sql"/> 
+     </changeSet>
+     <changeSet id="PO-2211" author="aevansel"> 
+        <comment>Updating length of comment_text field from 200 to 2000 in the study_overall_status table.</comment> 
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2211.sql"/> 
      </changeSet> 
 </databaseChangeLog>
