@@ -140,7 +140,6 @@ public class IdConverterRegistry {
      * @param clz converter for given Class
      * @return IdConverter instance
      */
-    @SuppressWarnings("PMD.SystemPrintln")
     public static IdConverter find(Class<? extends PersistentObject> clz) {
         Class<?> tmp = CGLIBUtils.unEnhanceCBLIBClass(clz);
         IdConverter idConverter = REGISTRY.get(tmp);

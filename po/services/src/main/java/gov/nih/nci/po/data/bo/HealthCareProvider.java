@@ -129,11 +129,13 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @RoleStatusChange
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 @UniquePlayerScoper(friendlyName = "Health Care Provider")
 @PhoneNotEmptyValidator.PhoneNotEmpty
 public class HealthCareProvider extends AbstractHealthCareProvider implements Correlation, PersonRole {
     private static final long serialVersionUID = 2L;
+    private static final String INDEX_NAME = "idx";
+    private static final String JOIN_COLUMN = "hcp_id";
+
 
     private Set<HealthCareProviderCR> changeRequests = new HashSet<HealthCareProviderCR>();
 
@@ -196,10 +198,10 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     )
     @JoinTable(
             name = "hcp_address",
-            joinColumns = @JoinColumn(name = "hcp_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "address_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "HCP_ADDRESS_FK", inverseName = "ADDRESS_HCP_FK")
     @Valid
     @Searchable(nested = true)
@@ -217,10 +219,10 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     )
     @JoinTable(
             name = "hcp_email",
-            joinColumns = @JoinColumn(name = "hcp_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "email_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "HCP_EMAIL_FK", inverseName = "EMAIL_HCP_FK")
     @Valid
     @Searchable(nested = true)
@@ -238,10 +240,10 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     )
     @JoinTable(
             name = "hcp_fax",
-            joinColumns = @JoinColumn(name = "hcp_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "fax_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "HCP_FAX_FK", inverseName = "FAX_HCP_FK")
     @Valid
     @Searchable(nested = true)
@@ -259,10 +261,10 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     )
     @JoinTable(
             name = "hcp_phone",
-            joinColumns = @JoinColumn(name = "hcp_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "phone_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "HCP_PHONE_FK", inverseName = "PHONE_HCP_FK")
     @Valid
     @Searchable(nested = true)
@@ -280,10 +282,10 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     )
     @JoinTable(
             name = "hcp_tty",
-            joinColumns = @JoinColumn(name = "hcp_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "tty_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "HCP_TTY_FK", inverseName = "TTY_HCP_FK")
     @Valid
     @Searchable(nested = true)
@@ -301,10 +303,10 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     )
     @JoinTable(
             name = "hcp_url",
-            joinColumns = @JoinColumn(name = "hcp_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "url_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "HCP_URL_FK", inverseName = "URL_HCP_FK")
     @Valid
     @Searchable(nested = true)
@@ -319,7 +321,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @CollectionOfElements
     @JoinTable(
             name = "hcp_otheridentifier",
-            joinColumns = @JoinColumn(name = "hcp_id")
+            joinColumns = @JoinColumn(name = JOIN_COLUMN)
     )
     @ForeignKey(name = "HCP_OI_FK")
     @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")

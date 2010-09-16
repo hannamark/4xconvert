@@ -1,10 +1,10 @@
 
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.VaildResearchOrganizationTypeWithFundingMechanism;
+
 import java.util.List;
 import java.util.Set;
-
-import gov.nih.nci.po.util.VaildResearchOrganizationTypeWithFundingMechanism;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +27,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *
  * @author gax
  */
-@SuppressWarnings("PMD.UselessOverridingMethod")
 @Entity
 @VaildResearchOrganizationTypeWithFundingMechanism
 public class ResearchOrganizationCR extends AbstractResearchOrganization
@@ -76,7 +75,6 @@ public class ResearchOrganizationCR extends AbstractResearchOrganization
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
     public Long getId() {
         return super.getId();
     }
@@ -98,7 +96,7 @@ public class ResearchOrganizationCR extends AbstractResearchOrganization
         this.target = target;
     }
 
-    
+
     /**
      * {@inheritDoc}
      */

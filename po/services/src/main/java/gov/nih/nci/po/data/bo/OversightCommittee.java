@@ -124,7 +124,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @Entity
 @RoleStatusChange
 @UniqueOversightCommittee
-@SuppressWarnings("PMD.UselessOverridingMethod")
 public class OversightCommittee extends AbstractOversightCommittee implements Correlation {
 
     private static final long serialVersionUID = 2L;

@@ -92,7 +92,6 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         return cd.getCode();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void verifyTestClassFields(AbstractPersonRoleDTO dto) {
         //verify Ii

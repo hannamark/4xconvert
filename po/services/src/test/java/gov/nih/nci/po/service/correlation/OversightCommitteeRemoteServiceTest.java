@@ -274,16 +274,15 @@ public class OversightCommitteeRemoteServiceTest extends AbstractOrganizationalR
 
         testNullifiedRoleNotFoundInSearch(id2, searchCriteria, OversightCommittee.class);
     }
-    
+
     @Test
-    @SuppressWarnings("unchecked")
     public void testNestedTypeCode() throws Exception {
         OversightCommitteeDTO oc = getSampleDto();
         Ii id1 = getCorrelationService().createCorrelation(oc);
 
-    
+
         OversightCommitteeDTO searchCriteria = getEmptySearchCriteria();
-     
+
         List<OversightCommitteeDTO> results = null;
 
         Cd type = new Cd();

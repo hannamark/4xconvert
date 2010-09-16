@@ -28,11 +28,13 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @author gax
  */
 @Entity
-@SuppressWarnings({ "PMD.UselessOverridingMethod", "PMD.AvoidDuplicateLiterals" })
 public class ClinicalResearchStaffCR extends AbstractPersonRole
         implements CorrelationChangeRequest<ClinicalResearchStaff> {
 
     private static final long serialVersionUID = 1L;
+    private static final String INDEX_NAME = "idx";
+    private static final String JOIN_COLUMN = "crscr_id";
+
 
     private ClinicalResearchStaff target;
 
@@ -106,10 +108,10 @@ public class ClinicalResearchStaffCR extends AbstractPersonRole
     )
     @JoinTable(
             name = "crscr_address",
-            joinColumns = @JoinColumn(name = "crscr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "address_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "CRSCR_ADDRESS_FK", inverseName = "ADDRESS_CRSCR_FK")
     @Valid
     public Set<Address> getPostalAddresses() {
@@ -126,10 +128,10 @@ public class ClinicalResearchStaffCR extends AbstractPersonRole
     )
     @JoinTable(
             name = "crscr_email",
-            joinColumns = @JoinColumn(name = "crscr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "email_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "CRSCR_EMAIL_FK", inverseName = "EMAIL_CRSCR_FK")
     @Valid
     public List<Email> getEmail() {
@@ -146,10 +148,10 @@ public class ClinicalResearchStaffCR extends AbstractPersonRole
     )
     @JoinTable(
             name = "crscr_fax",
-            joinColumns = @JoinColumn(name = "crscr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "fax_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "CRSCR_FAX_FK", inverseName = "FAX_CRSCR_FK")
     @Valid
     public List<PhoneNumber> getFax() {
@@ -166,10 +168,10 @@ public class ClinicalResearchStaffCR extends AbstractPersonRole
     )
     @JoinTable(
             name = "crscr_phone",
-            joinColumns = @JoinColumn(name = "crscr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "phone_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "CRSCR_PHONE_FK", inverseName = "PHONE_CRSCR_FK")
     @Valid
     public List<PhoneNumber> getPhone() {
@@ -186,10 +188,10 @@ public class ClinicalResearchStaffCR extends AbstractPersonRole
     )
     @JoinTable(
             name = "crscr_tty",
-            joinColumns = @JoinColumn(name = "crscr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "tty_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "CRSCR_TTY_FK", inverseName = "TTY_CRSCR_FK")
     @Valid
     public List<PhoneNumber> getTty() {
@@ -206,10 +208,10 @@ public class ClinicalResearchStaffCR extends AbstractPersonRole
     )
     @JoinTable(
             name = "crscr_url",
-            joinColumns = @JoinColumn(name = "crscr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "url_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "CRSCR_URL_FK", inverseName = "URL_CRSCR_FK")
     @Valid
     public List<URL> getUrl() {

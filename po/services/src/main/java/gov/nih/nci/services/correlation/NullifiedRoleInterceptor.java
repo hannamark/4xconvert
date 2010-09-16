@@ -108,7 +108,7 @@ public class NullifiedRoleInterceptor extends AbstractBaseNullifiedInterceptor {
      * @throws Exception if invoking the method throws an exception.
      */
     @AroundInvoke
-    @SuppressWarnings({ "PMD.SignatureDeclareThrowsException" })
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     // method invocation wrapper requires
     public Object checkForNullified(InvocationContext invContext) throws Exception {
         // make the call to the underlying method. This method (prepareReturnValue) wraps the intended method.

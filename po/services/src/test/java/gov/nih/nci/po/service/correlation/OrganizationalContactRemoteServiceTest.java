@@ -144,7 +144,6 @@ public class OrganizationalContactRemoteServiceTest extends
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     void verifyDto(OrganizationalContactDTO e, OrganizationalContactDTO a) {
         String expectedValue = OrganizationalContactDTOTest.getCodeValue(e.getTypeCode());
@@ -165,16 +164,14 @@ public class OrganizationalContactRemoteServiceTest extends
         Map<String, String[]> errors = getCorrelationService().validate(pr);
         assertEquals(4, errors.keySet().size());
     }
-    
+
     @Test
-    @SuppressWarnings("unchecked")
     public void testNestedTypeCode() throws Exception {
         OrganizationalContactDTO oc = getSampleDto();
         Ii id1 = getCorrelationService().createCorrelation(oc);
 
-    
         OrganizationalContactDTO searchCriteria = getEmptySearchCriteria();
-     
+
         List<OrganizationalContactDTO> results = null;
 
         Cd fm = new Cd();
@@ -216,7 +213,6 @@ public class OrganizationalContactRemoteServiceTest extends
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     protected void testSearchOnSubClassSpecificFields(OrganizationalContactDTO correlation1, Ii id2,
             OrganizationalContactDTO searchCriteria) throws NullifiedRoleException {
         // search by typeCode

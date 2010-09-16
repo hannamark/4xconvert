@@ -93,7 +93,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="org.seleniumhq.selenium.client-drivers" name="selenium-java-client-driver"    rev="1.0-beta-2"      conf="test-selenium->master,runtime">
         <exclude module="commons-logging"/>
     </dependency>
-    <dependency org="pmd"                       name="pmd"                     rev="4.2.2"           conf="test-pmd->master,runtime"/>
+    <dependency org="pmd"                       name="pmd"                     rev="4.2.5"           conf="test-pmd->master,runtime"/>
     <dependency org="redhill"                   name="simian"                  rev="2.2.4"           conf="test-simian->master,runtime"/>
   </dependencies>
 </ivy-module>

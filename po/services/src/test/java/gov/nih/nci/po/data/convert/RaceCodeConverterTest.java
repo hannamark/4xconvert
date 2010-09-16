@@ -105,10 +105,10 @@ public class RaceCodeConverterTest {
         } catch(UnsupportedOperationException e){
         }
 
-        
+
         Set<PersonRace> result = cvt.convert(Set.class, dset);
         PersonRace expected = PersonRace.BLACK_OR_AFRICAN_AMERICAN;
-        assertEquals(expected, (PersonRace) result.iterator().next());
+        assertEquals(expected, result.iterator().next());
 
     }
 
@@ -125,7 +125,7 @@ public class RaceCodeConverterTest {
         }
 
         DSet<Cd> result = cvt.convert(DSet.class, pset);
-        assertEquals("black_or_african_american", ((Cd)result.getItem().iterator().next()).getCode());
+        assertEquals("black_or_african_american", result.getItem().iterator().next().getCode());
     }
 
 }

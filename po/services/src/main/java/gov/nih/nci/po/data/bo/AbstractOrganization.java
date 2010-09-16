@@ -121,7 +121,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="1L"
  */
 @MappedSuperclass
-@SuppressWarnings({ "PMD.UnusedPrivateMethod" })
+@SuppressWarnings("PMD.UnusedPrivateMethod")
 public abstract class AbstractOrganization implements PersistentObject, UsOrCanEnforceable {
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_TEXT_COL_LENGTH = 160;

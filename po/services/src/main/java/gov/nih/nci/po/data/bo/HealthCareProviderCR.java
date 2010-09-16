@@ -24,10 +24,11 @@ import org.hibernate.validator.Valid;
  * @author gax
  */
 @Entity
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class HealthCareProviderCR  extends AbstractHealthCareProvider
         implements CorrelationChangeRequest<HealthCareProvider>  {
     private static final long serialVersionUID = 1L;
+    private static final String INDEX_NAME = "idx";
+    private static final String JOIN_COLUMN = "hcpcr_id";
     private HealthCareProvider target;
 
     private boolean processed;
@@ -99,10 +100,10 @@ public class HealthCareProviderCR  extends AbstractHealthCareProvider
     )
     @JoinTable(
             name = "hcpcr_email",
-            joinColumns = @JoinColumn(name = "hcpcr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "email_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "HCPRC_EMAIL_FK", inverseName = "EMAIL_HCPRC_FK")
     @Valid
     @Override
@@ -119,10 +120,10 @@ public class HealthCareProviderCR  extends AbstractHealthCareProvider
     )
     @JoinTable(
             name = "hcpcr_fax",
-            joinColumns = @JoinColumn(name = "hcpcr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "fax_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "HCPRC_FAX_FK", inverseName = "FAX_HCPRC_FK")
     @Valid
     @Override
@@ -139,10 +140,10 @@ public class HealthCareProviderCR  extends AbstractHealthCareProvider
     )
     @JoinTable(
             name = "hcpcr_phone",
-            joinColumns = @JoinColumn(name = "hcpcr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "phone_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "HCPRC_PHONE_FK", inverseName = "PHONE_HCPRC_FK")
     @Valid
     @Override
@@ -159,10 +160,10 @@ public class HealthCareProviderCR  extends AbstractHealthCareProvider
     )
     @JoinTable(
             name = "hcpcr_tty",
-            joinColumns = @JoinColumn(name = "hcpcr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "tty_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "HCPRC_TTY_FK", inverseName = "TTY_HCPRC_FK")
     @Valid
     @Override
@@ -179,10 +180,10 @@ public class HealthCareProviderCR  extends AbstractHealthCareProvider
     )
     @JoinTable(
             name = "hcpcr_url",
-            joinColumns = @JoinColumn(name = "hcpcr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "url_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "HCPRC_URL_FK", inverseName = "URL_HCPRC_FK")
     @Valid
     @Override
@@ -199,10 +200,10 @@ public class HealthCareProviderCR  extends AbstractHealthCareProvider
     )
     @JoinTable(
             name = "hcpcr_address",
-            joinColumns = @JoinColumn(name = "hcpcr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "address_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "HCPRC_ADDRESS_FK", inverseName = "ADDRESS_HCPRC_FK")
     @Valid
     @Override

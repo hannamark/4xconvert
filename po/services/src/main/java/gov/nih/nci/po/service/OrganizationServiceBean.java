@@ -114,7 +114,7 @@ import javax.jms.JMSException;
 import org.hibernate.Session;
 
 /**
- * 
+ *
  * @author gax
  */
 @Stateless
@@ -198,7 +198,6 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         }
     }
 
-    @SuppressWarnings(UNCHECKED)
     private void mergeCorrelations(Organization org, Session s) throws JMSException {
         Organization dup = org.getDuplicateOf();
         Set<Correlation> associatedRoles = getAssociatedRoles(org, s);
@@ -245,7 +244,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
             key.append(correlation.getClass().getName());
             key.append(':');
             key.append(correlation.getId());
-            if (msgKey != null) { 
+            if (msgKey != null) {
                 key.append(':').append(msgKey);
             }
             errorMsgs.put(key.toString(), correlationErrorMsgs.get(msgKey));
@@ -260,7 +259,6 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         }
     }
 
-    @SuppressWarnings(UNCHECKED)
     private boolean mergeScopedRoleCorrelation(Organization org, Organization dup, Correlation correlation) {
         if (correlation instanceof ScopedRole && ((ScopedRole) correlation).getScoper().getId().equals(org.getId())) {
             ScopedRole sr = (ScopedRole) correlation;

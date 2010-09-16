@@ -70,7 +70,6 @@ public class PersonBatchDTO extends AddressDTO {
     @Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$" , message = "(fieldName) Phone is required.\n")
     @NotEmpty (message = "")
     @Override
-    @SuppressWarnings("PMD.UselessOverridingMethod")
     public String getPhone() {
         return super.getPhone();
     }

@@ -58,7 +58,6 @@ public class OversightCommitteeCR extends AbstractOversightCommittee
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
     public Long getId() {
         return super.getId();
     }

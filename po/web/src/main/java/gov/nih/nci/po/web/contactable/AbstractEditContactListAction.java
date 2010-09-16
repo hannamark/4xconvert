@@ -108,9 +108,8 @@ import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
  *
  * @author gax
  */
-@SuppressWarnings({"PMD.UselessOverridingMethod", "PMD.TooManyMethods" })
-public abstract class AbstractEditContactListAction<Entry extends Contact>
-        extends ActionSupport implements Preparable {
+@SuppressWarnings("PMD.TooManyMethods")
+public abstract class AbstractEditContactListAction<Entry extends Contact> extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = 1L;
 

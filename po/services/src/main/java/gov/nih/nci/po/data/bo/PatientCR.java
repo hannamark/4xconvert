@@ -1,7 +1,5 @@
 package gov.nih.nci.po.data.bo;
 
-import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -11,12 +9,11 @@ import java.util.Set;
  * @author mshestopalov
  */
 
-@SuppressWarnings({ "PMD.UselessOverridingMethod", "PMD.AvoidDuplicateLiterals" })
 public class PatientCR extends AbstractPatient
         implements CorrelationChangeRequest<Patient> {
 
     private static final long serialVersionUID = 1L;
-   
+
     private Patient target;
 
     private boolean processed;
@@ -65,60 +62,4 @@ public class PatientCR extends AbstractPatient
         this.target = target;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Long getId() {
-        return super.getId();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Set<Address> getPostalAddresses() {
-        return super.getPostalAddresses();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<Email> getEmail() {
-        return super.getEmail();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<PhoneNumber> getFax() {
-        return super.getFax();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<PhoneNumber> getPhone() {
-        return super.getPhone();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<PhoneNumber> getTty() {
-        return super.getTty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<URL> getUrl() {
-        return super.getUrl();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Person getPlayer() {
-        return super.getPlayer();
-    }
-    
 }

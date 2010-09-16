@@ -86,9 +86,9 @@ import static org.junit.Assert.assertEquals;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.FundingMechanism;
+import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
-import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
@@ -187,16 +187,15 @@ public class ResearchOrganizationRemoteServiceTest extends
         correlation2.setTypeCode(type);
 
     }
-    
+
     @Test
-    @SuppressWarnings("unchecked")
     public void testNestedTypeCode() throws Exception {
         ResearchOrganizationDTO ro = getSampleDto();
         Ii id1 = getCorrelationService().createCorrelation(ro);
 
-    
+
         ResearchOrganizationDTO searchCriteria = getEmptySearchCriteria();
-     
+
         List<ResearchOrganizationDTO> results = null;
 
         Cd fm = new Cd();

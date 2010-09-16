@@ -127,7 +127,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
                 columnNames = {"assigned_identifier_extension", "assigned_identifier_root" }) })
 @RoleStatusChange
 @UniquePlayerScoperIdentifier
-@SuppressWarnings("PMD.UselessOverridingMethod")
 public class IdentifiedOrganization extends AbstractIdentifiedOrganization implements Correlation {
     private static final long serialVersionUID = 2L;
 
@@ -175,7 +174,6 @@ public class IdentifiedOrganization extends AbstractIdentifiedOrganization imple
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Searchable

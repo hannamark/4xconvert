@@ -128,11 +128,12 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @RoleStatusChange
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 @UniquePlayerScoper(friendlyName = "Clinical Research Staff")
 @PhoneNotEmptyValidator.PhoneNotEmpty
 public class ClinicalResearchStaff extends AbstractPersonRole implements Correlation, PersonRole {
     private static final long serialVersionUID = 2L;
+    private static final String JOIN_COLUMN = "crs_id";
+    private static final String INDEX_NAME = "idx";
 
     private Set<ClinicalResearchStaffCR> changeRequests = new HashSet<ClinicalResearchStaffCR>();
 
@@ -195,10 +196,10 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     )
     @JoinTable(
             name = "crs_address",
-            joinColumns = @JoinColumn(name = "crs_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "address_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "CRS_ADDRESS_FK", inverseName = "ADDRESS_CRS_FK")
     @Valid
     @Searchable(nested = true)
@@ -216,10 +217,10 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     )
     @JoinTable(
             name = "crs_email",
-            joinColumns = @JoinColumn(name = "crs_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "email_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "CRS_EMAIL_FK", inverseName = "EMAIL_CRS_FK")
     @Valid
     @Searchable(nested = true)
@@ -237,10 +238,10 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     )
     @JoinTable(
             name = "crs_fax",
-            joinColumns = @JoinColumn(name = "crs_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "fax_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "CRS_FAX_FK", inverseName = "FAX_CRS_FK")
     @Valid
     @Searchable(nested = true)
@@ -258,10 +259,10 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     )
     @JoinTable(
             name = "crs_phone",
-            joinColumns = @JoinColumn(name = "crs_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "phone_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "CRS_PHONE_FK", inverseName = "PHONE_CRS_FK")
     @Valid
     @Searchable(nested = true)
@@ -279,10 +280,10 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     )
     @JoinTable(
             name = "crs_tty",
-            joinColumns = @JoinColumn(name = "crs_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "tty_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "CRS_TTY_FK", inverseName = "TTY_CRS_FK")
     @Valid
     @Searchable(nested = true)
@@ -300,10 +301,10 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     )
     @JoinTable(
             name = "crs_url",
-            joinColumns = @JoinColumn(name = "crs_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "url_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "CRS_URL_FK", inverseName = "URL_CRS_FK")
     @Valid
     @Searchable(nested = true)
@@ -332,7 +333,7 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     @CollectionOfElements
     @JoinTable(
             name = "crs_otheridentifier",
-            joinColumns = @JoinColumn(name = "crs_id")
+            joinColumns = @JoinColumn(name = JOIN_COLUMN)
     )
     @ForeignKey(name = "CRS_OI_FK")
     @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")

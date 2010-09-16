@@ -29,7 +29,6 @@ import gov.nih.nci.po.service.HealthCareFacilityServiceBean;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceBean;
 import gov.nih.nci.po.service.MessageProducerTest;
-import gov.nih.nci.po.service.OrganizationCRServiceBean;
 import gov.nih.nci.po.service.OrganizationServiceBean;
 import gov.nih.nci.po.service.ResearchOrganizationServiceBean;
 import gov.nih.nci.po.service.correlation.HealthCareFacilityServiceTest;
@@ -66,13 +65,11 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
     private IdentifiedOrganizationServiceBean ioSvc;
     private HealthCareFacilityServiceLocal hcfSvc;
     private Organization ctep;
-    private OrganizationCRServiceBean oCRSvc;
     private ResearchOrganizationServiceBean roSvc;
 
     @Before
     public void setup() throws Exception {
         oSvc = EjbTestHelper.getOrganizationServiceBean();
-        oCRSvc = EjbTestHelper.getOrganizationCRServiceBean();
         ioSvc = EjbTestHelper.getIdentifiedOrganizationServiceBean();
         hcfSvc = EjbTestHelper.getHealthCareFacilityServiceBean();
         roSvc = (ResearchOrganizationServiceBean) EjbTestHelper.getResearchOrganizationServiceBean();
@@ -199,7 +196,8 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
             assertEquals(1, hcfs.size());
             HealthCareFacility persistedHCF = hcfs.get(0);
-            assertEquals(IdentifierReliability.VRF, ((Ii) persistedHCF.getOtherIdentifiers().iterator().next()).getReliability());
+            assertEquals(IdentifierReliability.VRF,
+                         (persistedHCF.getOtherIdentifiers().iterator().next()).getReliability());
             assertEquals(RoleStatus.PENDING, persistedHCF.getStatus());
             MessageProducerTest.assertMessageCreated(persistedHCF, (HealthCareFacilityServiceBean) importer
                     .getHCFService(), true);
@@ -209,7 +207,8 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             assertEquals(1, ros.size());
 
             ResearchOrganization persistedRO = ros.get(0);
-            assertEquals(IdentifierReliability.VRF, ((Ii) persistedRO.getOtherIdentifiers().iterator().next()).getReliability());
+            assertEquals(IdentifierReliability.VRF,
+                         (persistedRO.getOtherIdentifiers().iterator().next()).getReliability());
             assertEquals(RoleStatus.PENDING, persistedRO.getStatus());
             MessageProducerTest.assertMessageCreated(persistedRO, (ResearchOrganizationServiceBean) importer
                     .getROService(), true);
@@ -336,7 +335,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             assertEquals(1, hcfs.size());
 
             HealthCareFacility persistedHCF = hcfs.get(0);
-            assertEquals(IdentifierReliability.VRF, ((Ii) persistedHCF.getOtherIdentifiers().iterator().next()).getReliability());
+            assertEquals(IdentifierReliability.VRF, (persistedHCF.getOtherIdentifiers().iterator().next()).getReliability());
             MessageProducerTest.assertMessageCreated(persistedHCF, (HealthCareFacilityServiceBean) importer
                     .getHCFService(), false);
             if (initialOrgStatus.equals(EntityStatus.PENDING)) {
@@ -350,7 +349,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             assertEquals(1, ros.size());
 
             ResearchOrganization persistedRO = ros.get(0);
-            assertEquals(IdentifierReliability.VRF, ((Ii) persistedRO.getOtherIdentifiers().iterator().next()).getReliability());
+            assertEquals(IdentifierReliability.VRF, (persistedRO.getOtherIdentifiers().iterator().next()).getReliability());
             MessageProducerTest.assertMessageCreated(persistedRO, (ResearchOrganizationServiceBean) importer
                     .getROService(), false);
             if (initialOrgStatus.equals(EntityStatus.PENDING)) {
@@ -380,7 +379,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
         assertEquals(1, hcfs.size());
         HealthCareFacility persistedHCF = hcfs.get(0);
-        assertEquals(IdentifierReliability.VRF, ((Ii) persistedHCF.getOtherIdentifiers().iterator().next()).getReliability());
+        assertEquals(IdentifierReliability.VRF, (persistedHCF.getOtherIdentifiers().iterator().next()).getReliability());
         Ii hcfPOID = new IdConverter.HealthCareFacilityIdConverter().convertToIi(persistedHCF.getId());
 
         MessageProducerTest.assertMessageCreated(persistedHCF,
@@ -405,7 +404,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         importedOrg = importer.importOrganization(org.getIdentifier());
         hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
         assertEquals(1, hcfs.size());
-        assertEquals(IdentifierReliability.VRF, ((Ii) hcfs.get(0).getOtherIdentifiers().iterator().next()).getReliability());
+        assertEquals(IdentifierReliability.VRF, (hcfs.get(0).getOtherIdentifiers().iterator().next()).getReliability());
         MessageProducerTest.assertNoMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService());
         MessageProducerTest.assertNoMessageCreated(persistedHCF, (HealthCareFacilityServiceBean) importer
                 .getHCFService());
@@ -444,7 +443,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         List<ResearchOrganization> ros = roSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
         assertEquals(1, ros.size());
         ResearchOrganization persistedRO = ros.get(0);
-        assertEquals(IdentifierReliability.VRF, ((Ii) persistedRO.getOtherIdentifiers().iterator().next()).getReliability());
+        assertEquals(IdentifierReliability.VRF, (persistedRO.getOtherIdentifiers().iterator().next()).getReliability());
         Ii roPOID = new IdConverter.ResearchOrganizationIdConverter().convertToIi(persistedRO.getId());
 
         MessageProducerTest.assertMessageCreated(persistedRO,
@@ -458,7 +457,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         importedOrg = importer.importOrganization(org.getIdentifier());
         ros = roSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
         assertEquals(1, ros.size());
-        assertEquals(IdentifierReliability.VRF, ((Ii) ros.get(0).getOtherIdentifiers().iterator().next()).getReliability());
+        assertEquals(IdentifierReliability.VRF, (ros.get(0).getOtherIdentifiers().iterator().next()).getReliability());
         MessageProducerTest.assertNoMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService());
         MessageProducerTest.assertNoMessageCreated(persistedRO, (ResearchOrganizationServiceBean) importer
                 .getROService());

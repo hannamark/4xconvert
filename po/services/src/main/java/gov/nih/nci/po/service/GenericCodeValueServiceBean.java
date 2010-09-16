@@ -48,11 +48,10 @@ public class GenericCodeValueServiceBean implements GenericCodeValueServiceLocal
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public <T extends CodeValue> List<T> list(Class<T> clz) {
         return list(clz, null);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -67,7 +66,7 @@ public class GenericCodeValueServiceBean implements GenericCodeValueServiceLocal
             querySb.append(")");
         }
         Query q = s.createQuery(querySb.toString());
-        return q.list();       
+        return q.list();
     }
-    
+
 }

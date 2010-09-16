@@ -105,10 +105,10 @@ public class EthnicGroupCodeConverterTest {
         } catch(UnsupportedOperationException e){
         }
 
-        
+
         Set<PersonEthnicGroup> result = cvt.convert(Set.class, dset);
         PersonEthnicGroup expected = PersonEthnicGroup.HISPANIC_OR_LATINO;
-        assertEquals(expected, (PersonEthnicGroup) result.iterator().next());
+        assertEquals(expected, result.iterator().next());
 
     }
 
@@ -125,7 +125,7 @@ public class EthnicGroupCodeConverterTest {
         }
 
         DSet<Cd> result = cvt.convert(DSet.class, pset);
-        assertEquals("not_hispanic_or_latino", ((Cd)result.getItem().iterator().next()).getCode());
+        assertEquals("not_hispanic_or_latino", result.getItem().iterator().next().getCode());
     }
 
 }

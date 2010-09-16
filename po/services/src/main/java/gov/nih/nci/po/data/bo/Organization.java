@@ -119,10 +119,15 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="1L"
  */
 @javax.persistence.Entity
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class Organization extends AbstractOrganization
         implements Auditable, CuratableEntity<Organization, OrganizationCR>, Entity {
     private static final long serialVersionUID = 1L;
+    private static final String NOT_NULLIFIED_CLAUSE = "status <> 'NULLIFIED'";
+    private static final String PLAYER_MAPPING = "player";
+    private static final String SCOPER_MAPPING = "scoper";
+    private static final String INDEX_NAME = "idx";
+    private static final String JOIN_COLUMN = "organization_id";
     private Organization duplicateOf;
     private Set<OrganizationCR> changeRequests = new HashSet<OrganizationCR>();
     private Date statusDate;
@@ -154,10 +159,10 @@ public class Organization extends AbstractOrganization
     )
     @JoinTable(
             name = "organization_email",
-            joinColumns = @JoinColumn(name = "organization_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "email_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORG_EMAIL_FK", inverseName = "EMAIL_ORG_FK")
     @Valid
     @Override
@@ -176,10 +181,10 @@ public class Organization extends AbstractOrganization
     )
     @JoinTable(
             name = "organization_fax",
-            joinColumns = @JoinColumn(name = "organization_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "fax_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "fax")
     @ForeignKey(name = "ORG_FAX_FK", inverseName = "FAX_ORG_FK")
     @Valid
@@ -198,10 +203,10 @@ public class Organization extends AbstractOrganization
     )
     @JoinTable(
             name = "organization_phone",
-            joinColumns = @JoinColumn(name = "organization_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "phone_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "phone")
     @ForeignKey(name = "ORG_PHONE_FK", inverseName = "PHONE_ORG_FK")
     @Override
@@ -220,10 +225,10 @@ public class Organization extends AbstractOrganization
     )
     @JoinTable(
             name = "organization_url",
-            joinColumns = @JoinColumn(name = "organization_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "url_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "url")
     @ForeignKey(name = "ORG_URL_FK", inverseName = "URL_ORG_FK")
     @Override
@@ -242,10 +247,10 @@ public class Organization extends AbstractOrganization
     )
     @JoinTable(
             name = "organization_tty",
-            joinColumns = @JoinColumn(name = "organization_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "tty_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "tty")
     @ForeignKey(name = "ORG_TTY_FK", inverseName = "TTY_ORG_FK")
     @Valid
@@ -306,8 +311,8 @@ public class Organization extends AbstractOrganization
     /**
      * @return healthCareFacilities.
      */
-    @OneToMany(mappedBy = "player")
-    @Where(clause = "status <> 'NULLIFIED'")
+    @OneToMany(mappedBy = PLAYER_MAPPING)
+    @Where(clause = NOT_NULLIFIED_CLAUSE)
     @Searchable(nested = true)
     public Set<HealthCareFacility> getHealthCareFacilities() {
         return healthCareFacilities;
@@ -324,8 +329,8 @@ public class Organization extends AbstractOrganization
     /**
      * @return identifiedOrganizations.
      */
-    @OneToMany(mappedBy = "player")
-    @Where(clause = "status <> 'NULLIFIED'")
+    @OneToMany(mappedBy = PLAYER_MAPPING)
+    @Where(clause = NOT_NULLIFIED_CLAUSE)
     @Searchable(nested = true)
     public Set<IdentifiedOrganization> getIdentifiedOrganizations() {
         return identifiedOrganizations;
@@ -342,8 +347,8 @@ public class Organization extends AbstractOrganization
     /**
      * @return oversightCommittee
      */
-    @OneToMany(mappedBy = "player")
-    @Where(clause = "status <> 'NULLIFIED'")
+    @OneToMany(mappedBy = PLAYER_MAPPING)
+    @Where(clause = NOT_NULLIFIED_CLAUSE)
     @Searchable(nested = true)
     public Set<OversightCommittee> getOversightCommittees() {
         return oversightCommittees;
@@ -360,8 +365,8 @@ public class Organization extends AbstractOrganization
     /**
      * @return researchOrganization.
      */
-    @OneToMany(mappedBy = "player")
-    @Where(clause = "status <> 'NULLIFIED'")
+    @OneToMany(mappedBy = PLAYER_MAPPING)
+    @Where(clause = NOT_NULLIFIED_CLAUSE)
     @Searchable(nested = true)
     public Set<ResearchOrganization> getResearchOrganizations() {
         return researchOrganizations;
@@ -378,8 +383,8 @@ public class Organization extends AbstractOrganization
     /**
      * @return organizationalContacts.
      */
-    @OneToMany(mappedBy = "scoper")
-    @Where(clause = "status <> 'NULLIFIED'")
+    @OneToMany(mappedBy = SCOPER_MAPPING)
+    @Where(clause = NOT_NULLIFIED_CLAUSE)
     @Searchable(nested = true)
     public Set<OrganizationalContact> getOrganizationalContacts() {
         return organizationalContacts;
@@ -396,8 +401,8 @@ public class Organization extends AbstractOrganization
     /**
      * @return clinicalResearchStaff.
      */
-    @OneToMany(mappedBy = "scoper")
-    @Where(clause = "status <> 'NULLIFIED'")
+    @OneToMany(mappedBy = SCOPER_MAPPING)
+    @Where(clause = NOT_NULLIFIED_CLAUSE)
     @Searchable(nested = true)
     public Set<ClinicalResearchStaff> getClinicalResearchStaff() {
         return clinicalResearchStaff;
@@ -410,12 +415,12 @@ public class Organization extends AbstractOrganization
     private void setClinicalResearchStaff(Set<ClinicalResearchStaff> clinicalResearchStaff) {
         this.clinicalResearchStaff = clinicalResearchStaff;
     }
-    
+
     /**
      * @return Identified Persons.
      */
-    @OneToMany(mappedBy = "scoper")
-    @Where(clause = "status <> 'NULLIFIED'")
+    @OneToMany(mappedBy = SCOPER_MAPPING)
+    @Where(clause = NOT_NULLIFIED_CLAUSE)
     @Searchable(nested = true)
     public Set<IdentifiedPerson> getIdentifiedPersons() {
         return identifiedPersons;
@@ -428,12 +433,12 @@ public class Organization extends AbstractOrganization
     private void setIdentifiedPersons(Set<IdentifiedPerson> identifiedPersons) {
         this.identifiedPersons = identifiedPersons;
     }
-    
+
     /**
      * @return Health Care Providers.
      */
-    @OneToMany(mappedBy = "scoper")
-    @Where(clause = "status <> 'NULLIFIED'")
+    @OneToMany(mappedBy = SCOPER_MAPPING)
+    @Where(clause = NOT_NULLIFIED_CLAUSE)
     @Searchable(nested = true)
     public Set<HealthCareProvider> getHealthCareProviders() {
         return healthCareProviders;
@@ -446,8 +451,8 @@ public class Organization extends AbstractOrganization
     private void setHealthCareProviders(Set<HealthCareProvider> healthCareProviders) {
         this.healthCareProviders = healthCareProviders;
     }
-    
-    
+
+
     /**
      * @return comments
      */
@@ -462,7 +467,7 @@ public class Organization extends AbstractOrganization
     public void setComments(String comments) {
         this.comments = comments;
     }
-    
+
     /**
      * Checks if HCF or RO associated w/ this org are from ctep.
      * @return boolean
@@ -474,12 +479,12 @@ public class Organization extends AbstractOrganization
                 return true;
             }
         }
-         
+
         for (HealthCareFacility hcf : getHealthCareFacilities()) {
             if (hcf.isCtepOwned()) {
                 return true;
             }
-        }    
+        }
         return false;
     }
 }

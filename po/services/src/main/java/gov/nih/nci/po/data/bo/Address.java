@@ -108,7 +108,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * Primary address class.
  */
 @Entity
-@SuppressWarnings("PMD.UselessOverridingMethod")
 @ValidStateCountry
 public class Address implements Auditable, PersistentObject {
     private static final long serialVersionUID = 1L;

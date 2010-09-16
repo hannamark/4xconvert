@@ -120,13 +120,12 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="1L"
  */
 @Entity
-@SuppressWarnings({"PMD.UselessOverridingMethod" })
 @PatientRoleStatusChange
 public class Patient extends AbstractPatient implements Correlation, PersonRole {
     private static final long serialVersionUID = 1L;
     private static final String IDX = "idx";
     private static final String PATIENT_ID = "patient_id";
-    
+
 
     /**
      * {@inheritDoc}
@@ -265,7 +264,7 @@ public class Patient extends AbstractPatient implements Correlation, PersonRole 
         return super.getUrl();
     }
 
-    
+
     /**
      * {@inheritDoc}
      */
@@ -293,7 +292,7 @@ public class Patient extends AbstractPatient implements Correlation, PersonRole 
     public Set<Ii> getOtherIdentifiers() {
         return super.getOtherIdentifiers();
     }
-     
+
     /**
      * {@inheritDoc}
      * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ii" name="duplicateOf"
@@ -312,7 +311,7 @@ public class Patient extends AbstractPatient implements Correlation, PersonRole 
     public void setDuplicateOf(Patient duplicateOf) {
         //NOOP
     }
-  
+
     @SuppressWarnings("unused")
     private void setChangeRequests(Set changeRequests) {
         //NOOP
@@ -325,5 +324,5 @@ public class Patient extends AbstractPatient implements Correlation, PersonRole 
     public Set getChangeRequests() {
         return null;
     }
-    
+
 }

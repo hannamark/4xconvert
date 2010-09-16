@@ -115,7 +115,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="1L"
  */
 @MappedSuperclass
-@SuppressWarnings("PMD.UselessOverridingMethod")
 public abstract class AbstractPatient extends AbstractPersonRole implements Contactable {
     private static final long serialVersionUID = 1L;
 

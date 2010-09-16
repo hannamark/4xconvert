@@ -103,8 +103,9 @@ import org.hibernate.validator.Valid;
  * @author gax
  */
 @Entity
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class OrganizationCR extends AbstractOrganization implements ChangeRequest<Organization> {
+    private static final String INDEX_NAME = "idx";
+    private static final String JOIN_COLUMN = "org_cr_id";
     private static final long serialVersionUID = 1L;
 
     private Organization target;
@@ -124,7 +125,7 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     public void setProcessed(boolean processed) {
         this.processed = processed;
     }
-    
+
     /**
      * default ctor.
      */
@@ -150,10 +151,10 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     )
     @JoinTable(
             name = "org_cr_email",
-            joinColumns = @JoinColumn(name = "org_cr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "email_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCR_EMAIL_FK", inverseName = "EMAIL_ORGCR_FK")
     @Valid
     @Override
@@ -170,10 +171,10 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     )
     @JoinTable(
             name = "org_cr_fax",
-            joinColumns = @JoinColumn(name = "org_cr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "fax_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "fax")
     @ForeignKey(name = "ORGCR_FAX_FK", inverseName = "FAX_ORGCR_FK")
     @Valid
@@ -191,10 +192,10 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     )
     @JoinTable(
             name = "org_cr_phone",
-            joinColumns = @JoinColumn(name = "org_cr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "phone_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "phone")
     @ForeignKey(name = "ORGCR_PHONE_FK", inverseName = "PHONE_ORGCR_FK")
     @Valid
@@ -212,10 +213,10 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     )
     @JoinTable(
             name = "org_cr_url",
-            joinColumns = @JoinColumn(name = "org_cr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "url_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "url")
     @ForeignKey(name = "ORGCR_URL_FK", inverseName = "URL_ORGCR_FK")
     @Valid
@@ -233,10 +234,10 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     )
     @JoinTable(
             name = "org_cr_tty",
-            joinColumns = @JoinColumn(name = "org_cr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "tty_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "tty")
     @ForeignKey(name = "ORGCR_TTY_FK", inverseName = "TTY_ORGCR_FK")
     @Valid

@@ -130,7 +130,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @RoleStatusChange
-@SuppressWarnings("PMD.UselessOverridingMethod")
 @VaildResearchOrganizationTypeWithFundingMechanism
 @UniqueResearchOrganization
 @ResearchOrganizationTypeCodeValidator.ResearchOrganizationTypeCode

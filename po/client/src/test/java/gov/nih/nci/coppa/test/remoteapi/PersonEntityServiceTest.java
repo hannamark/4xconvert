@@ -87,6 +87,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnPn;
@@ -98,7 +99,6 @@ import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.po.data.bo.PersonEthnicGroup;
 import gov.nih.nci.po.data.bo.PersonRace;
 import gov.nih.nci.po.data.bo.PersonSex;
@@ -142,7 +142,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
     public Ii getPersonId() {
         return personId;
     }
-    
+
     public Ii getPatientId() {
         return patientId;
     }
@@ -180,7 +180,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             fail(e.getErrorMessages());
         }
     }
-    
+
     @Test
     public void createMinimalPatient() throws Exception {
         if (patientId != null) {
@@ -202,63 +202,63 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             TelUrl url = new TelUrl();
             url.setValue(new URI(DEFAULT_URL));
             dto.getTelecomAddress().getItem().add(url);
-            
+
             orgId = getOrgService().createOrganization(dto);
             assertNotNull(orgId);
-            
+
             updateOrgStatusToActive(Long.valueOf(orgId.getExtension()));
-            
+
             PatientDTO patDto = new PatientDTO();
             patDto.setScoperIdentifier(orgId);
-           
+
             patDto.setTelecomAddress(new DSet<Tel>());
             patDto.getTelecomAddress().setItem(new HashSet<Tel>());
-            
+
             TelPhone ph1 = new TelPhone();
             ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
             patDto.getTelecomAddress().getItem().add(ph1);
-         
+
             patientId = getPatientService().createCorrelation(patDto);
-            
+
             assertNotNull(patientId);
             assertNotNull(patientId.getExtension());
             patientId.setExtension("PT" + patientId.getExtension());
-            
+
             PersonDTO perDTO = getPersonService().getPerson(patientId);
-           
+
             Ts ts = new Ts();
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
             ts.setValue(sdf.parse("09/28/1980"));
             perDTO.setBirthDate(ts);
-            
+
             Cd sexCode = new Cd();
             sexCode.setCode("MALE");
             perDTO.setSexCode(sexCode);
-            
+
             DSet<Cd> ethnic = new DSet<Cd>();
             ethnic.setItem(new HashSet<Cd>());
             Cd ethnicCode = new Cd();
             ethnicCode.setCode("NOT_HISPANIC_OR_LATINO");
             ethnic.getItem().add(ethnicCode);
             perDTO.setEthnicGroupCode(ethnic);
-            
+
             DSet<Cd> race = new DSet<Cd>();
             race.setItem(new HashSet<Cd>());
             Cd raceCode = new Cd();
             raceCode.setCode("WHITE");
             race.getItem().add(raceCode);
             perDTO.setRaceCode(race);
-            
+
             getPersonService().updatePerson(perDTO);
-            
+
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }
     }
-    
+
     @Test
     public void createWithBioCodes() throws Exception {
-       
+
             PersonDTO dto = new PersonDTO();
             dto.setName(new EnPn());
             Enxp part = new Enxp(EntityNamePartType.GIV);
@@ -279,11 +279,11 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             TelUrl url = new TelUrl();
             url.setValue(new URI(DEFAULT_URL));
             dto.getTelecomAddress().getItem().add(url);
-            
+
             Cd sexCode = new Cd();
             sexCode.setCode("MALE");
             dto.setSexCode(sexCode);
-            
+
             Cd raceCode = new Cd();
             raceCode.setCode("white");
             DSet<Cd> raceCodes = new DSet<Cd>();
@@ -293,7 +293,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             raceCode2.setCode("black_or_african_american");
             raceCodes.getItem().add(raceCode2);
             dto.setRaceCode(raceCodes);
-            
+
             Cd ethnicCode = new Cd();
             ethnicCode.setCode("hispanic_or_latino");
             DSet<Cd> ethnicCodes = new DSet<Cd>();
@@ -303,22 +303,22 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             ethnicCode2.setCode("not_hispanic_or_latino");
             ethnicCodes.getItem().add(ethnicCode2);
             dto.setEthnicGroupCode(ethnicCodes);
-            
+
             Ts birthDate = new Ts();
             SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy");
             birthDate.setValue(sdf.parse("09/28/1980"));
-            dto.setBirthDate(birthDate);      
-           
+            dto.setBirthDate(birthDate);
+
             Ii p = getPersonService().createPerson(dto);
             assertNotNull(p);
             assertNotNull(p.getExtension());
             PersonDTO perDto = getPersonService().getPerson(p);
             assertEquals("male", perDto.getSexCode().getCode());
-            assertEquals("09/28/1980", sdf.format(perDto.getBirthDate().getValue())); 
+            assertEquals("09/28/1980", sdf.format(perDto.getBirthDate().getValue()));
             assertEquals(2, perDto.getEthnicGroupCode().getItem().size());
             assertEquals(2, perDto.getRaceCode().getItem().size());
             assertEquals(2, perDto.getEthnicGroupCode().getItem().size());
-           
+
     }
 
     @Test
@@ -338,7 +338,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         assertEquals(ENXP_GIV, next.getValue());
         assertEquals("pending", dto.getStatusCode().getCode());
     }
-    
+
     @Test
     public void getPatientById() throws Exception {
         if (patientId == null) {
@@ -348,23 +348,23 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         assertNotNull(dto);
         assertNotSame(patientId, dto.getIdentifier());
         assertEquals(patientId.getExtension(), dto.getIdentifier().getExtension());
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
         // everything other than the status and 4 bio fields should be masked nullflavor
         assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, dto.getName().getNullFlavor());
         assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, dto.getPostalAddress().getNullFlavor());
-        assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, ((Tel) dto.getTelecomAddress().getItem()
+        assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, (dto.getTelecomAddress().getItem()
                 .iterator().next()).getNullFlavor());
         assertEquals(RoleStatus.PENDING, CdConverter.convertToRoleStatus(dto.getStatusCode()));
-        
+
         // 4 prop fields
         assertEquals(getPatientId().getExtension(), dto.getIdentifier().getExtension());
         assertEquals(sdf.parse("09/28/1980"), TsConverter.convertToDate(dto.getBirthDate()));
         assertEquals(PersonSex.MALE, SexCodeConverter.convertToStatusEnum(dto.getSexCode()));
-        assertEquals(PersonEthnicGroup.NOT_HISPANIC_OR_LATINO, 
+        assertEquals(PersonEthnicGroup.NOT_HISPANIC_OR_LATINO,
                 EthnicGroupCodeConverter.convertToEthnicGroupEnum((Cd)dto.getEthnicGroupCode().getItem()
                         .iterator().next()));
-        assertEquals(PersonRace.WHITE, 
+        assertEquals(PersonRace.WHITE,
                 RaceCodeConverter.convertToRaceEnum((Cd)dto.getRaceCode().getItem()
                         .iterator().next()));
     }
@@ -397,7 +397,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         rs.close();
         assertEquals(count0 + 1, count1);
     }
-    
+
     private void updateOrgStatusToActive(long id) throws SQLException {
         Connection c = DataGeneratorUtil.getJDBCConnection();
         PreparedStatement ps = c.prepareStatement("update organization set status = 'ACTIVE' where id = ?");
@@ -405,7 +405,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         ps.execute();
         ps.close();
     }
-    
+
     @Test
     public void updatePatient() throws Exception {
         if (patientId == null) {

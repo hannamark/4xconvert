@@ -102,7 +102,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="1L"
  */
 @MappedSuperclass
-@SuppressWarnings("PMD.UselessOverridingMethod")
 public abstract class AbstractOversightCommittee extends AbstractOrganizationRole {
 
     private static final long serialVersionUID = 1L;

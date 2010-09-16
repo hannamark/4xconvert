@@ -109,9 +109,10 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @author smatyas
  */
 @Entity
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class OrganizationalContactCR extends AbstractOrganizationalContact
     implements CorrelationChangeRequest<OrganizationalContact> {
+    private static final String INDEX_NAME = "idx";
+    private static final String JOIN_COLUMN = "orgcontactcr_id";
     private static final long serialVersionUID = 1L;
     private OrganizationalContact target;
 
@@ -197,10 +198,10 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     )
     @JoinTable(
             name = "orgcontactcr_address",
-            joinColumns = @JoinColumn(name = "orgcontactcr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "address_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCNCTCR_ADDRESS_FK", inverseName = "ADDRESS_ORGCNCTCR_FK")
     @Valid
     public Set<Address> getPostalAddresses() {
@@ -217,10 +218,10 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     )
     @JoinTable(
             name = "orgcontactcr_email",
-            joinColumns = @JoinColumn(name = "orgcontactcr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "email_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCNCTCR_EMAIL_FK", inverseName = "EMAIL_ORGCNCTCR_FK")
     @Valid
     public List<Email> getEmail() {
@@ -237,10 +238,10 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     )
     @JoinTable(
             name = "orgcontactcr_fax",
-            joinColumns = @JoinColumn(name = "orgcontactcr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "fax_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCNCTCR_FAX_FK", inverseName = "FAX_ORGCNCTCR_FK")
     @Valid
     public List<PhoneNumber> getFax() {
@@ -257,10 +258,10 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     )
     @JoinTable(
             name = "orgcontactcr_phone",
-            joinColumns = @JoinColumn(name = "orgcontactcr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "phone_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCNCTCR_PHONE_FK", inverseName = "PHONE_ORGCNCTCR_FK")
     @Valid
     public List<PhoneNumber> getPhone() {
@@ -277,10 +278,10 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     )
     @JoinTable(
             name = "orgcontactcr_tty",
-            joinColumns = @JoinColumn(name = "orgcontactcr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "tty_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCNCTCR_TTY_FK", inverseName = "TTY_ORGCNCTCR_FK")
     @Valid
     public List<PhoneNumber> getTty() {
@@ -297,10 +298,10 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     )
     @JoinTable(
             name = "orgcontactcr_url",
-            joinColumns = @JoinColumn(name = "orgcontactcr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "url_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCNCTCR_URL_FK", inverseName = "URL_ORGCNCTCR_FK")
     @Valid
     public List<URL> getUrl() {

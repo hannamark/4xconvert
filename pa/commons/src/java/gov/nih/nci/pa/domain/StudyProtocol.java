@@ -802,7 +802,6 @@ public class StudyProtocol extends AbstractStudyProtocol {
     @NotEmptyIiExtension
     @NotEmptyIiRoot
     @Override
-    @SuppressWarnings("PMD.UselessOverridingMethod")
     public Set<Ii> getOtherIdentifiers() {
         return super.getOtherIdentifiers();
     }

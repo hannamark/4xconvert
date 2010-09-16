@@ -40,7 +40,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="commons-lang"           name="commons-lang"            rev="2.4"             conf="compile->master"/>
     <dependency org="javax.ejb"              name="api"                     rev="3.0"             conf="compile->master"/>
     <dependency org="javax.persistence"      name="persistence-api"         rev="1.0"             conf="compile->master"/>
-    
+
     <dependency org="jboss"                  name="activation"              rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="commons-logging"         rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="hibernate3"              rev="4.0.5.GA"        conf="compile->master"/>
@@ -51,7 +51,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="mail"                    rev="4.0.5.GA"        conf="compile->master"/>
-    
+
     <dependency org="net.htmlparser.jericho" name="jericho-html"            rev="2.4"             conf="compile->master"/>
     <dependency org="gov.nih.nci.security"   name="clm"                     rev="4.0"             conf="compile->master"/>
     <dependency org="gov.nih.nci.security"   name="cgmm"                    rev="0.7.0"           conf="compile->cgmm-api"/>
@@ -61,7 +61,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.14"          conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.2.0-m10"       conf="compile->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.2"             conf="compile->master"/>
-    
+
     <dependency org="asm"                    name="asm"                     rev="3.1"             conf="compile->master"/>
     <dependency org="asm"                    name="asm-attrs"               rev="1.5.3"           conf="compile->master"/>
     <dependency org="ognl"                   name="ognl"                    rev="2.7"             conf="compile->default"/>
@@ -70,7 +70,7 @@ This is the definition of a virtual module called bda-download that has a depend
        <exclude module="commons-logging"/>
     </dependency>
     <dependency org="org.directwebremoting"  name="dwr"                     rev="2.0.1"           conf="compile->master"/>
-    
+
     <dependency org="org.hibernate"          name="hibernate-annotations"   rev="3.2.0.ga"        conf="compile->master"/>
     <dependency org="org.hibernate"          name="hibernate-validator"     rev="3.0.0.ga"        conf="compile->master"/>
     <dependency org="org.hibernate"          name="hibernate-commons-annotations" rev="3.3.0.ga"  conf="compile->master"/>
@@ -112,7 +112,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="org.seleniumhq.selenium.server" name="selenium-server"    rev="1.0-beta-2"      conf="test-selenium->runtime">
         <exclude module="commons-logging"/>
     </dependency>
-    <dependency org="pmd"                       name="pmd"                     rev="4.2.2"           conf="test-pmd->master,runtime"/>
+    <dependency org="pmd"                       name="pmd"                     rev="4.2.5"           conf="test-pmd->master,runtime"/>
     <dependency org="redhill"                   name="simian"                  rev="2.2.4"           conf="test-simian->master,runtime"/>
   </dependencies>
 </ivy-module>

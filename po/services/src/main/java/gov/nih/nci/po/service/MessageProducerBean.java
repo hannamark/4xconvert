@@ -198,7 +198,6 @@ public class MessageProducerBean implements MessageProducerLocal {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public void sendUpdate(Class c, Curatable entity) throws JMSException {
         sendMessage(c, entity, msgUpdate);
     }
@@ -206,12 +205,10 @@ public class MessageProducerBean implements MessageProducerLocal {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public void sendCreate(Class c, Curatable entity) throws JMSException {
         sendMessage(c, entity, msgCreate);
     }
 
-    @SuppressWarnings("unchecked")
     private void sendMessage(Class c, Curatable entity, ObjectMessageAdjusterCallback callback) throws JMSException {
         Ii ii = IdConverterRegistry.find(c).convertToIi(entity.getId());
         SubscriberUpdateMessage msg = new SubscriberUpdateMessage(ii);

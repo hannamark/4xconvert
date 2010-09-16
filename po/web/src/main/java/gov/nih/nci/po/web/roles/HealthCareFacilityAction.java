@@ -164,7 +164,6 @@ public class HealthCareFacilityAction
                         message = "US and Canadian tty numbers must match ###-###-####(x#*).")
             })
     @Override
-    @SuppressWarnings("PMD.UselessOverridingMethod")
     public String add() throws JMSException {
         return super.add();
     }

@@ -112,7 +112,6 @@ public abstract class AbstractIdentifiedPerson extends AbstractIdentifiedEntity<
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
@@ -129,7 +128,6 @@ public abstract class AbstractIdentifiedPerson extends AbstractIdentifiedEntity<
     @NotNull
     @ForeignKey(name = "identifiedperson_player_fkey")
     @Override
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
     @Searchable(nested = true)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Person getPlayer() {
@@ -140,7 +138,7 @@ public abstract class AbstractIdentifiedPerson extends AbstractIdentifiedEntity<
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
+    @SuppressWarnings("PMD.UselessOverridingMethod") // setter needed for xsnapshot
     public void setPlayer(Person player) {
         super.setPlayer(player);
     }

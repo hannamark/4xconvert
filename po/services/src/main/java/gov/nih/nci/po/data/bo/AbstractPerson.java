@@ -126,7 +126,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="1L"
  */
 @MappedSuperclass
-@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyFields", "PMD.UselessOverridingMethod" })
+@SuppressWarnings("PMD.TooManyFields")
 public abstract class AbstractPerson implements PersistentObject, UsOrCanEnforceable {
     private static final long serialVersionUID = 1L;
     private static final int SHORT_COL_LENGTH = 10;

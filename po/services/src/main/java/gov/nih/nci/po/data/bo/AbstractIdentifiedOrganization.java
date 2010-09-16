@@ -111,7 +111,6 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
@@ -128,7 +127,6 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
     @NotNull
     @ForeignKey(name = "identifiedorg_player_fkey")
     @Override
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
     @Searchable(nested = true)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Organization getPlayer() {
@@ -139,7 +137,7 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
+    @SuppressWarnings("PMD.UselessOverridingMethod") // setter needed for xsnapshot
     public void setPlayer(Organization player) {
         super.setPlayer(player);
     }

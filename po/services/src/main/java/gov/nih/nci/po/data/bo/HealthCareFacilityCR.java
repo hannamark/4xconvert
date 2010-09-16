@@ -24,7 +24,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *
  * @author gax
  */
-@SuppressWarnings("PMD.UselessOverridingMethod")
 @Entity
 public class HealthCareFacilityCR extends AbstractEnhancedOrganizationRole
         implements CorrelationChangeRequest<HealthCareFacility> {
@@ -52,14 +51,14 @@ public class HealthCareFacilityCR extends AbstractEnhancedOrganizationRole
     public void setProcessed(boolean processed) {
         this.processed = processed;
     }
-    
+
     /**
      * useful ctor.
      */
     public HealthCareFacilityCR() {
         super();
     }
-    
+
     /**
      * useful ctor.
      * @param target the affected Correlation.
@@ -90,12 +89,11 @@ public class HealthCareFacilityCR extends AbstractEnhancedOrganizationRole
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @SuppressWarnings({ "PMD.UselessOverridingMethod" })
     public Long getId() {
         return super.getId();
     }
 
-    
+
     /**
      * {@inheritDoc}
      */

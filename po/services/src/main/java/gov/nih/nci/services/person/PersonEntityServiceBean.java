@@ -96,8 +96,6 @@ import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
-import gov.nih.nci.po.data.bo.PersonEthnicGroup;
-import gov.nih.nci.po.data.bo.PersonRace;
 import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.DateConverter;
 import gov.nih.nci.po.data.convert.EthnicGroupCodeConverter;
@@ -149,7 +147,7 @@ import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 @Interceptors({ AuthorizationInterceptor.class, PoHibernateSessionInterceptor.class,
     NullifiedEntityInterceptor.class  })
 @SecurityDomain("po")
-@SuppressWarnings({"PMD.TooManyMethods" })
+@SuppressWarnings("PMD.TooManyMethods")
 public class PersonEntityServiceBean implements PersonEntityServiceRemote {
 
     private static final String DEFAULT_ROLE_ALLOWED_GRID_CLIENT = "gridClient";
@@ -350,10 +348,9 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
             patBO.setBirthDate(TsConverter.convertToDate(proposedState.getBirthDate()));
             patBO.setSexCode(SexCodeConverter.convertToStatusEnum(proposedState.getSexCode()));
             EthnicGroupCodeConverter.DSetConverter egConv = new EthnicGroupCodeConverter.DSetConverter();
-            patBO.setEthnicGroupCode((Set<PersonEthnicGroup>) egConv
-                    .convert(Set.class, proposedState.getEthnicGroupCode()));
+            patBO.setEthnicGroupCode(egConv.convert(Set.class, proposedState.getEthnicGroupCode()));
             RaceCodeConverter.DSetConverter rcConv = new RaceCodeConverter.DSetConverter();
-            patBO.setRaceCode((Set<PersonRace>) rcConv.convert(Set.class, proposedState.getRaceCode()));
+            patBO.setRaceCode(rcConv.convert(Set.class, proposedState.getRaceCode()));
 
             try {
                 patientService.curate(patBO);

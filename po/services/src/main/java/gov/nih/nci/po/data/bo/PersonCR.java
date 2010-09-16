@@ -108,9 +108,10 @@ import org.hibernate.validator.Valid;
  * @author gax
  */
 @Entity
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     private static final long serialVersionUID = 1L;
+    private static final String INDEX_NAME = "idx";
+    private static final String JOIN_COLUMN = "per_cr_id";
 
     private Person target;
 
@@ -155,10 +156,10 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     )
     @JoinTable(
             name = "per_cr_email",
-            joinColumns = @JoinColumn(name = "per_cr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "email_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "PERCR_EMAIL_FK", inverseName = "EMAIL_PERCR_FK")
     @Valid
     @Override
@@ -175,10 +176,10 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     )
     @JoinTable(
             name = "per_cr_fax",
-            joinColumns = @JoinColumn(name = "per_cr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "fax_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "fax")
     @ForeignKey(name = "PERCR_FAX_FK", inverseName = "FAX_PERCR_FK")
     @Valid
@@ -196,10 +197,10 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     )
     @JoinTable(
             name = "per_cr_phone",
-            joinColumns = @JoinColumn(name = "per_cr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "phone_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "phone")
     @ForeignKey(name = "PERCR_PHONE_FK", inverseName = "PHONE_PERCR_FK")
     @Valid
@@ -217,10 +218,10 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     )
     @JoinTable(
             name = "per_cr_url",
-            joinColumns = @JoinColumn(name = "per_cr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "url_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "url")
     @ForeignKey(name = "PERCR_URL_FK", inverseName = "URL_PERCR_FK")
     @Valid
@@ -238,10 +239,10 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     )
     @JoinTable(
             name = "per_cr_tty",
-            joinColumns = @JoinColumn(name = "per_cr_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "tty_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "tty")
     @ForeignKey(name = "PERCR_TTY_FK", inverseName = "TTY_PERCR_FK")
     @Valid
@@ -249,7 +250,7 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -257,7 +258,7 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     @CollectionOfElements
     @JoinTable(
             name = "personcr_ethnicgroup",
-            joinColumns = @JoinColumn(name = "per_cr_id")
+            joinColumns = @JoinColumn(name = JOIN_COLUMN)
     )
     @ForeignKey(name = "PER_CR_EG_FK")
     @Columns(columns = {
@@ -275,7 +276,7 @@ public class PersonCR extends AbstractPerson implements ChangeRequest<Person> {
     @CollectionOfElements
     @JoinTable(
             name = "personcr_race",
-            joinColumns = @JoinColumn(name = "per_cr_id")
+            joinColumns = @JoinColumn(name = JOIN_COLUMN)
     )
     @ForeignKey(name = "PER_CR_RACE_FK")
     @Columns(columns = {

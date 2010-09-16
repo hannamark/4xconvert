@@ -132,7 +132,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @RoleStatusChange
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 @RequiredOrganizationalContactTitleOrPerson
 @UniqueOrganizationalContactTitleScoperType
 @UniqueOrganizationalContactPlayerScoperType
@@ -140,6 +139,8 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 public class OrganizationalContact extends AbstractOrganizationalContact implements Correlation, PersonRole {
 
     private static final long serialVersionUID = 2L;
+    private static final String INDEX_NAME = "idx";
+    private static final String JOIN_COLUMN = "orgcontact_id";
 
     private Set<OrganizationalContactCR> changeRequests = new HashSet<OrganizationalContactCR>();
     private OrganizationalContact duplicateOf;
@@ -215,10 +216,10 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     )
     @JoinTable(
             name = "orgcontact_address",
-            joinColumns = @JoinColumn(name = "orgcontact_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "address_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCNCT_ADDRESS_FK", inverseName = "ADDRESS_ORGCNCT_FK")
     @Valid
     @Searchable(nested = true)
@@ -236,10 +237,10 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     )
     @JoinTable(
             name = "orgcontact_email",
-            joinColumns = @JoinColumn(name = "orgcontact_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "email_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCNCT_EMAIL_FK", inverseName = "EMAIL_ORGCNCT_FK")
     @Valid
     @Searchable(nested = true)
@@ -257,10 +258,10 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     )
     @JoinTable(
             name = "orgcontact_fax",
-            joinColumns = @JoinColumn(name = "orgcontact_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "fax_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCNCT_FAX_FK", inverseName = "FAX_ORGCNCT_FK")
     @Valid
     @Searchable(nested = true)
@@ -278,10 +279,10 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     )
     @JoinTable(
             name = "orgcontact_phone",
-            joinColumns = @JoinColumn(name = "orgcontact_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "phone_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCNCT_PHONE_FK", inverseName = "PHONE_ORGCNCT_FK")
     @Valid
     @Searchable(nested = true)
@@ -299,10 +300,10 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     )
     @JoinTable(
             name = "orgcontact_tty",
-            joinColumns = @JoinColumn(name = "orgcontact_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "tty_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCNCT_TTY_FK", inverseName = "TTY_ORGCNCT_FK")
     @Valid
     @Searchable(nested = true)
@@ -320,10 +321,10 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     )
     @JoinTable(
             name = "orgcontact_url",
-            joinColumns = @JoinColumn(name = "orgcontact_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "url_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "ORGCNCT_URL_FK", inverseName = "URL_ORGCNCT_FK")
     @Valid
     @Searchable(nested = true)
@@ -361,7 +362,7 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     @CollectionOfElements
     @JoinTable(
             name = "orgcontact_otheridentifier",
-            joinColumns = @JoinColumn(name = "orgcontact_id")
+            joinColumns = @JoinColumn(name = JOIN_COLUMN)
     )
     @ForeignKey(name = "ORGCONTACT_OI_FK")
     @Type(type = "gov.nih.nci.po.util.IiCompositeUserType")

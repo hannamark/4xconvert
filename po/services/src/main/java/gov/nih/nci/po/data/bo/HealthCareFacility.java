@@ -127,7 +127,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @Entity
 @RoleStatusChange
 @OnlyCtepOwnedMayBeActive
-@SuppressWarnings("PMD.UselessOverridingMethod")
 public class HealthCareFacility extends AbstractEnhancedOrganizationRole implements Correlation {
 
     private static final String HCF_ID = "hcf_id";

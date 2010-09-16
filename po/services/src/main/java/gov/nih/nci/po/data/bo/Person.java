@@ -119,9 +119,13 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="1L"
  */
 @javax.persistence.Entity
-@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class Person extends AbstractPerson implements Auditable, CuratableEntity<Person, PersonCR>, Entity {
     private static final long serialVersionUID = 1L;
+    private static final String NOT_NULLIFIED_CLAUSE = "status <> 'NULLIFIED'";
+    private static final String PLAYER_MAPPING = "player";
+    private static final String INDEX_NAME = "idx";
+    private static final String JOIN_COLUMN = "person_id";
     private Person duplicateOf;
     private Set<PersonCR> changeRequests = new HashSet<PersonCR>();
 
@@ -148,10 +152,10 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     )
     @JoinTable(
             name = "person_email",
-            joinColumns = @JoinColumn(name = "person_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "email_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @ForeignKey(name = "PER_EMAIL_FK", inverseName = "EMAIL_PER_FK")
     @Valid
     @Override
@@ -170,10 +174,10 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     )
     @JoinTable(
             name = "person_fax",
-            joinColumns = @JoinColumn(name = "person_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "fax_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "fax")
     @ForeignKey(name = "PER_FAX_FK", inverseName = "FAX_PER_FK")
     @Valid
@@ -192,10 +196,10 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     )
     @JoinTable(
             name = "person_phone",
-            joinColumns = @JoinColumn(name = "person_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "phone_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "phone")
     @ForeignKey(name = "PER_PHONE_FK", inverseName = "PHONE_PER_FK")
     @Valid
@@ -214,10 +218,10 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     )
     @JoinTable(
             name = "person_url",
-            joinColumns = @JoinColumn(name = "person_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "url_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "url")
     @ForeignKey(name = "PER_URL_FK", inverseName = "URL_PER_FK")
     @Valid
@@ -236,10 +240,10 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     )
     @JoinTable(
             name = "person_tty",
-            joinColumns = @JoinColumn(name = "person_id"),
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
             inverseJoinColumns = @JoinColumn(name = "tty_id")
     )
-    @IndexColumn(name = "idx")
+    @IndexColumn(name = INDEX_NAME)
     @Column(name = "tty")
     @ForeignKey(name = "PER_TTY_FK", inverseName = "TTY_PER_FK")
     @Valid
@@ -256,7 +260,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @CollectionOfElements
     @JoinTable(
             name = "person_ethnicgroup",
-            joinColumns = @JoinColumn(name = "person_id")
+            joinColumns = @JoinColumn(name = JOIN_COLUMN)
     )
     @ForeignKey(name = "PER_EG_FK")
     @Columns(columns = {
@@ -274,7 +278,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @CollectionOfElements
     @JoinTable(
             name = "person_race",
-            joinColumns = @JoinColumn(name = "person_id")
+            joinColumns = @JoinColumn(name = JOIN_COLUMN)
     )
     @ForeignKey(name = "PER_RACE_FK")
     @Columns(columns = {
@@ -320,8 +324,8 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     /**
      * @return clinicalResearchStaff.
      */
-    @OneToMany(mappedBy = "player")
-    @Where(clause = "status <> 'NULLIFIED'")
+    @OneToMany(mappedBy = PLAYER_MAPPING)
+    @Where(clause = NOT_NULLIFIED_CLAUSE)
     @Searchable(nested = true)
     public Set<ClinicalResearchStaff> getClinicalResearchStaff() {
         return clinicalResearchStaff;
@@ -338,8 +342,8 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     /**
      * @return healthCareProviders.
      */
-    @OneToMany(mappedBy = "player")
-    @Where(clause = "status <> 'NULLIFIED'")
+    @OneToMany(mappedBy = PLAYER_MAPPING)
+    @Where(clause = NOT_NULLIFIED_CLAUSE)
     @Searchable(nested = true)
     public Set<HealthCareProvider> getHealthCareProviders() {
         return healthCareProviders;
@@ -356,8 +360,8 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     /**
      * @return organizationalContacts.
      */
-    @OneToMany(mappedBy = "player")
-    @Where(clause = "status <> 'NULLIFIED'")
+    @OneToMany(mappedBy = PLAYER_MAPPING)
+    @Where(clause = NOT_NULLIFIED_CLAUSE)
     @Searchable(nested = true)
     public Set<OrganizationalContact> getOrganizationalContacts() {
         return organizationalContacts;
@@ -374,8 +378,8 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     /**
      * @return identifiedPersons.
      */
-    @OneToMany(mappedBy = "player")
-    @Where(clause = "status <> 'NULLIFIED'")
+    @OneToMany(mappedBy = PLAYER_MAPPING)
+    @Where(clause = NOT_NULLIFIED_CLAUSE)
     @Searchable(nested = true)
     public Set<IdentifiedPerson> getIdentifiedPersons() {
         return identifiedPersons;

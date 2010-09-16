@@ -320,7 +320,6 @@ public class CompositeInterceptor implements Interceptor, Serializable {
      * @param sql original sql
      * @return modified sql
      */
-    @SuppressWarnings("PMD.UseStringBufferForStringAppends") // PMD incorrectly thinks we're doing concat here
     public String onPrepareStatement(String sql) {
         String result = sql;
         for (Interceptor i : children) {

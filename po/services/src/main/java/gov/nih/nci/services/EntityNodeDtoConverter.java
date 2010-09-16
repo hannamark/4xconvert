@@ -35,7 +35,7 @@ import java.util.Set;
  * @author ludetc
  *
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity" })
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
 
     /**
@@ -74,7 +74,7 @@ public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
      * @param scoperFilters a list of classes to filter scopers by
      * @return The EntityNodeDto.
      */
-    @SuppressWarnings({ "PMD.AvoidReassigningParameters" })
+    @SuppressWarnings("PMD.AvoidReassigningParameters")
     public static EntityNodeDto convertToEntityNodeDto(
             Entity entity, Cd[] playerFilters, Cd[] scoperFilters) {
         EntityNodeDto entityNodeDto = new EntityNodeDto();

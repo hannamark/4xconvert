@@ -138,9 +138,9 @@ public class NCISpecificInformationAction extends ActionSupport {
                 .getSummary4ReportedResourcing(studyProtocolIi);
             nciSpecificInformationWebDTO = setNCISpecificDTO(studyProtocolDTO, studyResourcingDTO);
             if (studyResourcingDTO != null && studyResourcingDTO.getOrganizationIdentifier() != null) {
-                Organization org = getPAOrganizationById(studyResourcingDTO.getOrganizationIdentifier());
-                nciSpecificInformationWebDTO.setOrganizationName(org.getName());
-                nciSpecificInformationWebDTO.setOrganizationIi(org.getIdentifier());
+                    Organization org = getPAOrganizationById(studyResourcingDTO.getOrganizationIdentifier());
+                    nciSpecificInformationWebDTO.setOrganizationName(org.getName());
+                    nciSpecificInformationWebDTO.setOrganizationIi(org.getIdentifier());
             }
             return SUCCESS;
         } catch (Exception e) {

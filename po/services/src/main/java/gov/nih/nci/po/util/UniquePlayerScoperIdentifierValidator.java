@@ -21,7 +21,7 @@ import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
  *
  * @author smatyas
  */
-@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class UniquePlayerScoperIdentifierValidator implements Validator<UniquePlayerScoperIdentifier>, Serializable {
 
     private static final long serialVersionUID = 1L;
