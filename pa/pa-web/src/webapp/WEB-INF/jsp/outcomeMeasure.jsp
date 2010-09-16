@@ -40,18 +40,18 @@
     <s:hidden name="id" />
 	<s:set name="outcomeList" value="outcomeList" scope="request"/>
 	<display:table name="outcomeList" id="row" class="data" sort="list"  pagesize="200" requestURI="interventionalStudyDesignoutcomeQuery.action" export="false">
-	    <display:column escapeXml="true" titleKey="osdesign.outcome.primary" property="primaryIndicator" sortable="true" headerClass="sortable" />
-	    <display:column escapeXml="true" titleKey="osdesign.outcome.description" property="name" sortable="true" headerClass="sortable" />
-	    <display:column escapeXml="true" titleKey="osdesign.outcome.timeFrame" property="timeFrame"  sortable="true" headerClass="sortable" />
-	    <display:column escapeXml="true" titleKey="osdesign.outcome.safety" property="safetyIndicator" sortable="true" headerClass="sortable" />
+	    <display:column escapeXml="true" titleKey="osdesign.outcome.primary" property="outcomeMeasure.primaryIndicator" sortable="true" headerClass="sortable" />
+	    <display:column escapeXml="true" titleKey="osdesign.outcome.description" property="outcomeMeasure.name" sortable="true" headerClass="sortable" />
+	    <display:column escapeXml="true" titleKey="osdesign.outcome.timeFrame" property="outcomeMeasure.timeFrame"  sortable="true" headerClass="sortable" />
+	    <display:column escapeXml="true" titleKey="osdesign.outcome.safety" property="outcomeMeasure.safetyIndicator" sortable="true" headerClass="sortable" />
 	    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
 	    					|| (sessionScope.role == 'SuAbstractor')}">
 	    <display:column title="Edit" class="action">
-    		<s:url id="url" action="interventionalStudyDesignoutcomeedit"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
+    		<s:url id="url" action="interventionalStudyDesignoutcomeedit"><s:param name="id" value="%{#attr.row.outcomeMeasure.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
     	</display:column>
     	<display:column title="Delete" class="action">
-			<s:url id="url" action="interventionalStudyDesignoutcomedelete"><s:param name="id" value="%{#attr.row.id}" /></s:url>
+			<s:url id="url" action="interventionalStudyDesignoutcomedelete"><s:param name="id" value="%{#attr.row.outcomeMeasure.id}" /></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
 		</display:column>
 		</c:if>

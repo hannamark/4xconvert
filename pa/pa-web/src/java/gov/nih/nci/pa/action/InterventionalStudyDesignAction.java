@@ -403,6 +403,7 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             sgDTO.setIdentifier(IiConverter.convertToIi(id));
             sgDTO.setStudyProtocolIdentifier(studyProtocolIi);
             sgDTO.setName(StConverter.convertToSt(webDTO.getOutcomeMeasure().getName()));
+            sgDTO.setDescription(StConverter.convertToSt(webDTO.getOutcomeMeasure().getDescription()));
             sgDTO.setPrimaryIndicator(BlConverter.convertToBl(webDTO.getOutcomeMeasure().getPrimaryIndicator()));
             sgDTO.setSafetyIndicator(BlConverter.convertToBl(webDTO.getOutcomeMeasure().getSafetyIndicator()));
             sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getOutcomeMeasure().getTimeFrame()));
@@ -451,12 +452,12 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         return OUTCOME;
     }
 
-    private ISDesignDetailsWebDTO setOutcomeMeasureDTO(
-            StudyOutcomeMeasureDTO dto) {
+    private ISDesignDetailsWebDTO setOutcomeMeasureDTO(StudyOutcomeMeasureDTO dto) {
         ISDesignDetailsWebDTO webdto = new ISDesignDetailsWebDTO();
         if (dto != null) {
             webdto.getOutcomeMeasure().setPrimaryIndicator(BlConverter.convertToBoolean(dto.getPrimaryIndicator()));
             webdto.getOutcomeMeasure().setName(StConverter.convertToString(dto.getName()));
+            webdto.getOutcomeMeasure().setDescription(StConverter.convertToString(dto.getDescription()));
             webdto.getOutcomeMeasure().setTimeFrame(StConverter.convertToString(dto.getTimeFrame()));
             webdto.getOutcomeMeasure().setSafetyIndicator(BlConverter.convertToBoolean(dto.getSafetyIndicator()));
             webdto.getOutcomeMeasure().setId(IiConverter.convertToLong(dto.getIdentifier()).toString());
