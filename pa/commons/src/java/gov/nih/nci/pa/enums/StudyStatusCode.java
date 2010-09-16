@@ -278,12 +278,9 @@ public enum StudyStatusCode implements CodedEnum<String> {
       * @return String[] display names for StudyStatusCode
       */
      public static String[]  getDisplayNamesForAmend() {
-         String[] codedNames = getDisplayNames();
-         List<String> list = new ArrayList<String>(Arrays.asList(codedNames));
+         List<String> list = new ArrayList<String>(Arrays.asList(getDisplayNames()));
          list.remove("Disapproved");
-         codedNames = new String[list.size()];
-         codedNames = list.toArray(codedNames);
-         return codedNames;
+         return list.toArray(new String[list.size()]);
      }
 
      /**

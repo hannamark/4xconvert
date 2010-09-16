@@ -115,6 +115,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  *
@@ -171,7 +172,7 @@ public class AddressConverterUtil {
      */
     public static String convertToAddress(Ad ad) {
 
-        if (ad == null || ad.getPart() == null || ad.getPart().isEmpty()) {
+        if (ad == null || CollectionUtils.isEmpty(ad.getPart())) {
             return null;
         }
         List<Adxp> adxpList = ad.getPart();

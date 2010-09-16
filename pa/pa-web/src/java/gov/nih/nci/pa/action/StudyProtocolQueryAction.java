@@ -81,6 +81,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -113,13 +114,15 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class StudyProtocolQueryAction extends ActionSupport implements ServletResponseAware {
     private static final long serialVersionUID = -2308994602660261367L;
-    private List<StudyProtocolQueryDTO> records = null;
+    private List<StudyProtocolQueryDTO> records = new ArrayList<StudyProtocolQueryDTO>();
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private Long studyProtocolId = null;
     private HttpServletResponse servletResponse;
     private boolean checkoutStatus = false;
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     private static final String SHOW_VIEW = "view";
+    private String identifier;
+
     /**
      * @return res
      * @throws PAException exception
@@ -161,9 +164,13 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         if (!userRoleInSession()) {
             return showCriteria();
         }
+        validateIdentifierSearchParameters();
+        if (hasFieldErrors()) {
+            return ERROR;
+        }
+
         try {
-            records = new ArrayList<StudyProtocolQueryDTO>();
-            criteria.setUserLastCreated(ServletActionContext.getRequest().getUserPrincipal().getName());
+            populateIdentifierSearchParameters();
             records = PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(criteria);
             return SUCCESS;
         } catch (Exception e) {
@@ -172,6 +179,33 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         }
     }
 
+    /**
+     * Validates the identifier portion of the search.
+     */
+    private void validateIdentifierSearchParameters() {
+        if (criteria.getIdentifierType() != null && StringUtils.isEmpty(getIdentifier())) {
+            addFieldError("identifier", getText("error.studyProtocol.identifier"));
+        }
+        if (StringUtils.isNotEmpty(getIdentifier()) && criteria.getIdentifierType() == null) {
+            addFieldError("criteria.identifierType", getText("error.studyProtocol.identifierType"));
+        }
+    }
+
+    /**
+     * Populates the identifier search parameters.
+     */
+    private void populateIdentifierSearchParameters() {
+        criteria.setUserLastCreated(ServletActionContext.getRequest().getUserPrincipal().getName());
+        if (criteria.getIdentifierType() != null && StringUtils.isNotEmpty(getIdentifier())) {
+            if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.NCI.getCode())) {
+                criteria.setNciIdentifier(getIdentifier());
+            } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.LEAD_ORG.getCode())) {
+                criteria.setLeadOrganizationTrialIdentifier(getIdentifier());
+            } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.OTHER_IDENTIFIER.getCode())) {
+                criteria.setOtherIdentifier(getIdentifier());
+            }
+        }
+    }
 
     /**
      *
@@ -376,4 +410,17 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         this.checkoutStatus = checkoutStatus;
     }
 
+    /**
+     * @return the identifier
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
 }

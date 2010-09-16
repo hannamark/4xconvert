@@ -380,25 +380,19 @@ public enum MilestoneCode implements CodedEnum<String> {
      * @return String[] display names of enums
      */
     public static String[]  getDisplayNamesForAddMilestone() {
-        String[] codedNames = getDisplayNames();
-        List<String> list = new ArrayList<String>(Arrays.asList(codedNames));
+        List<String> list = new ArrayList<String>(Arrays.asList(getDisplayNames()));
         list.remove(MilestoneCode.SUBMISSION_REJECTED.getCode());
         list.remove(MilestoneCode.LATE_REJECTION_DATE.getCode());
-        codedNames = new String[list.size()];
-        codedNames = list.toArray(codedNames);
-        return codedNames;
+        return list.toArray(new String[list.size()]);
     }
     /**
      *
      * @return milestone code for super user
      */
     public static String[] getDisplayNamesMilestoneForSuperUser() {
-        String[] codedNames = getDisplayNames();
-        List<String> list = new ArrayList<String>(Arrays.asList(codedNames));
+        List<String> list = new ArrayList<String>(Arrays.asList(getDisplayNames()));
         list.remove(MilestoneCode.SUBMISSION_REJECTED.getCode());
-        codedNames = new String[list.size()];
-        codedNames = list.toArray(codedNames);
-        return codedNames;
+        return list.toArray(new String[list.size()]);
     }
 
     /**

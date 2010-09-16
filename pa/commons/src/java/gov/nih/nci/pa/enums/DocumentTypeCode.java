@@ -174,12 +174,9 @@ public enum DocumentTypeCode implements CodedEnum<String> {
      * @return String[] display names of enums
      */
     public static String[] getDocTypeCodes() {
-        String[] codedNames = getDisplayNames();
-        List<String> list = new ArrayList<String>(Arrays.asList(codedNames));
+        List<String> list = new ArrayList<String>(Arrays.asList(getDisplayNames()));
         list.remove("TSR");
-        codedNames = new String[list.size()];
-        codedNames = list.toArray(codedNames);
-        return codedNames;
+        return list.toArray(new String[list.size()]);
     }
 
     /**

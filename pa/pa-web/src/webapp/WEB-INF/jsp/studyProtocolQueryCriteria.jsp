@@ -31,10 +31,10 @@ function generateReport(pid) {
 	showPopup('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId='+pid, '', 'View Trial Summary Report');
 }
 function resetValues(){
-    document.getElementById("nciIdentifier").value="";
     document.getElementById("officialTitle").value="";
-    document.getElementById("leadOrganizationTrialIdentifier").value="";
     document.getElementById("leadOrganizationId").value="";
+    document.getElementById("identifierType").value="";
+    document.getElementById("identifier").value="";
     document.getElementById("principalInvestigatorId").value="";
     document.getElementById("phaseCode").value="";
     document.getElementById("primaryPurpose").value="";
@@ -57,47 +57,48 @@ function resetValues(){
     <s:form>
     <pa:failureMessage/>
         <table class="form">
+            <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
             <tr>
-                <td scope="row" class="label">
-                     <label for="nciIdentifier"> <fmt:message key="studyProtocol.nciIdentifier"/></label>
-                </td>
-                <td>
-                    <s:textfield id="nciIdentifier" name="criteria.nciIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
                 <td  scope="row" class="label">
                     <label for="officialTitle"> <fmt:message key="studyProtocol.officialTitle"/></label>
                 </td>
                 <td>
                     <s:textfield id="officialTitle" name="criteria.officialTitle" maxlength="200" size="100" cssStyle="width:200px"  />
                 </td>
-             </tr>
-            <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
-
-            <tr>
-                <td scope="row" class="label">
-                    <label for="localProtocolIdentifer"> <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/></label>
-                </td>
-
-                <td>
-                    <s:textfield id="leadOrganizationTrialIdentifier" name="criteria.leadOrganizationTrialIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
-
-                </td>
                 <td  scope="row" class="label">
                     <label for="leadOrganization"> <fmt:message key="studyProtocol.leadOrganization"/></label>
-
                 </td>
                 <td>
-                     <s:select
-                        name="criteria.leadOrganizationId"
-                        id="leadOrganizationId"
-                        list="#protocolOrgs"
-                        listKey="id"
-                        listValue="name"
-                        headerKey=""
-                        headerValue="All"
-                        value="criteria.leadOrganizationId" />
+                    <s:select name="criteria.leadOrganizationId" id="leadOrganizationId" list="#protocolOrgs" listKey="id"
+                        listValue="name" headerKey="" headerValue="All" value="criteria.leadOrganizationId" />
                 </td>
-
+            </tr>
+            <s:set name="identifierSearchTypes" value="@gov.nih.nci.pa.enums.IdentifierType@getDisplayNames()" />
+            <tr>
+                <td scope="row" class="label">
+                    <label for="identfierType"><fmt:message key="studyProtocol.identifierType"/></label>
+                </td>
+                <td>
+                    <s:select id="identifierType" headerKey="" headerValue="--Select--" name="criteria.identifierType"  
+                        list="#identifierSearchTypes" value="criteria.identifierType"  cssStyle="width:206px" />
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                            <s:param>criteria.identifierType</s:param>
+                        </s:fielderror>                            
+                    </span> 
+                </td>
+                <td scope="row" class="label">
+                    <label for="identifier"><fmt:message key="studyProtocol.identifier"/></label>
+                    <br><span class="info">(e.g: NCI-2008-00015; ECOG-1234, etc)</span>
+                </td>
+                <td>
+                    <s:textfield id="identifier" name="identifier" maxlength="200" size="100"  cssStyle="width:200px" />
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                            <s:param>identifier</s:param>
+                       </s:fielderror>                            
+                    </span>  
+                </td>
             </tr>
 
             <tr>
