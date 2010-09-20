@@ -138,9 +138,10 @@ public interface TrialRegistrationServiceLocal {
      * @throws PAException on error
      */
     // CHECKSTYLE:OFF More than 7 parameters
-    Ii createInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
-            List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
+    Ii createCompleteInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO, List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
@@ -242,7 +243,7 @@ public interface TrialRegistrationServiceLocal {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     // CHECKSTYLE:OFF More than 7 parameters
-    Ii createProprietaryInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+    Ii createAbbreviatedInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.service;
 
@@ -52,7 +52,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
                 return IiConverter.convertToIi("2");
         }
 
-    public Ii createInterventionalStudyProtocol(
+    public Ii createCompleteInterventionalStudyProtocol(
             StudyProtocolDTO studyProtocolDTO,
             StudyOverallStatusDTO overallStatusDTO,
             List<StudyIndldeDTO> studyIndldeDTOs,
@@ -76,10 +76,10 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
     }
     public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
         // TODO Auto-generated method stub
-        
+
     }
 
-    public Ii createProprietaryInterventionalStudyProtocol(
+    public Ii createAbbreviatedInterventionalStudyProtocol(
             StudyProtocolDTO studyProtocolDTO,
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO,
             List<DocumentDTO> documentDTOs,
@@ -110,10 +110,10 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
             List<StudySiteAccrualStatusDTO> studySiteAccrualStatuses,
             List<StudySiteDTO> studySites, Bl isBatchMode) throws PAException {
         // TODO Auto-generated method stub
-        
+
     }
 
-   
-    
+
+
 
 }

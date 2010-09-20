@@ -152,7 +152,7 @@
         <dependency>
             <groupId>gov.nih.nci.coppa.pa</groupId>
             <artifactId>pa-ejb-client</artifactId>
-            <version>3.3-alpha8</version>
+            <version>3.3-alpha10</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>

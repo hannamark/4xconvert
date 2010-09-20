@@ -55,7 +55,7 @@ public class TrialRegistrationServiceAuthorization implements PDP {
 		}
 	}
 					
-	public void authorizeCreateInterventionalStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+	public void authorizeCreateCompleteInterventionalStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 		// authorization using service authorization from the enforce_auth extension
 		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
@@ -80,7 +80,7 @@ public class TrialRegistrationServiceAuthorization implements PDP {
 		
 	}
 	   				
-	public void authorizeCreateProprietaryInterventionalStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+	public void authorizeCreateAbbreviatedInterventionalStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 		// authorization using service authorization from the enforce_auth extension
 		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
@@ -94,8 +94,8 @@ public class TrialRegistrationServiceAuthorization implements PDP {
 		if(!operation.getNamespaceURI().equals(getServiceNamespace())){
 		  return false;
 		}
-		if(operation.getLocalPart().equals("createInterventionalStudyProtocol")){
-			authorizeCreateInterventionalStudyProtocol(peerSubject, context, operation);
+		if(operation.getLocalPart().equals("createCompleteInterventionalStudyProtocol")){
+			authorizeCreateCompleteInterventionalStudyProtocol(peerSubject, context, operation);
 			return true;
 		} else if(operation.getLocalPart().equals("amendInterventionalStudyProtocol")){
 			authorizeAmendInterventionalStudyProtocol(peerSubject, context, operation);
@@ -106,8 +106,8 @@ public class TrialRegistrationServiceAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("getServiceSecurityMetadata")){
 			authorizeGetServiceSecurityMetadata(peerSubject, context, operation);
 			return true;
-		} else if(operation.getLocalPart().equals("createProprietaryInterventionalStudyProtocol")){
-			authorizeCreateProprietaryInterventionalStudyProtocol(peerSubject, context, operation);
+		} else if(operation.getLocalPart().equals("createAbbreviatedInterventionalStudyProtocol")){
+			authorizeCreateAbbreviatedInterventionalStudyProtocol(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

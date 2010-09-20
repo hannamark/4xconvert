@@ -221,7 +221,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
 
             Ii studyProtocolIi =  PaRegistry.getTrialRegistrationService().
-                createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                     studyResourcingDTOs, documentDTOs,
                     leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
                     studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,

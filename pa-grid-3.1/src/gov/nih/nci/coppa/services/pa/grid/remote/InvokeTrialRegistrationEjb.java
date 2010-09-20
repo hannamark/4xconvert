@@ -84,8 +84,10 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -96,11 +98,16 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
-import gov.nih.nci.pa.util.ISOUtil;
+
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -152,7 +159,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      * {@inheritDoc}
      */
     // CHECKSTYLE:OFF
-    public Ii createProprietaryInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+    public Ii createAbbreviatedInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
@@ -164,8 +171,28 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             Bl trueCt = new Bl();
             trueCt.setValue(true);
             studyProtocolDTO.setCtgovXmlRequiredIndicator(trueCt);
+
+            if (summary4OrganizationDTO == null) {
+                //We're going to default to the Unknown Organization if one is not provided.
+                summary4OrganizationDTO = new OrganizationDTO();
+                List<String> email = Arrays.asList("unknown@unknown.com");
+                summary4OrganizationDTO.setName(EnOnConverter.convertToEnOn("Unknown"));
+                summary4OrganizationDTO.setTelecomAddress(DSetConverter.convertListToDSet(email,
+                        DSetConverter.TYPE_EMAIL, null));
+                summary4OrganizationDTO.setPostalAddress(AddressConverterUtil.create("UNKNOWN", "UNKNOWN", "UNKNOWN",
+                        "MD", "00000", "USA"));
+            }
+
+            if (summary4StudyResourcingDTO == null) {
+                //If the study resourcing is not provided, we're defaulting to industrial for proprietary trials.
+                summary4StudyResourcingDTO = new StudyResourcingDTO();
+                Cd typeCode = new Cd();
+                typeCode.setCode(SummaryFourFundingCategoryCode.INDUSTRIAL.getCode());
+                summary4StudyResourcingDTO.setTypeCode(typeCode);
+            }
+
             return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
-                    .createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
+                    .createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
                             documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
                             studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4OrganizationDTO,
                             summary4StudyResourcingDTO, isBatch);
@@ -180,7 +207,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      * {@inheritDoc}
      */
     // CHECKSTYLE:OFF
-    public Ii createInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+    public Ii createCompleteInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudyOverallStatusDTO overallStatusDTO, List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
@@ -208,8 +235,28 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
                 noFda.setValue(Boolean.FALSE);
                 studyProtocolDTO.setFdaRegulatedIndicator(noFda);
             }
+
+            if (summary4organizationDTO == null) {
+                //We're going to default to the Unknown Organization if one is not provided.
+                summary4organizationDTO = new OrganizationDTO();
+                List<String> email = Arrays.asList("unknown@unknown.com");
+                summary4organizationDTO.setName(EnOnConverter.convertToEnOn("Unknown"));
+                summary4organizationDTO.setTelecomAddress(DSetConverter.convertListToDSet(email,
+                        DSetConverter.TYPE_EMAIL, null));
+                summary4organizationDTO.setPostalAddress(AddressConverterUtil.create("UNKNOWN", "UNKNOWN", "UNKNOWN",
+                        "MD", "00000", "USA"));
+            }
+
+            if (summary4studyResourcingDTO == null) {
+                //If the study resourcing not provided, we're defaulting to institutional for non-proprietary trials.
+                summary4studyResourcingDTO = new StudyResourcingDTO();
+                Cd typeCode = new Cd();
+                typeCode.setCode(SummaryFourFundingCategoryCode.INSTITUTIONAL.getCode());
+                summary4studyResourcingDTO.setTypeCode(typeCode);
+            }
+
             return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
-                    .createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                    .createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                             sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
                             studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,

@@ -273,7 +273,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
 
             Ii studyProtocolIi = PaRegistry.getTrialRegistrationService().
-            createProprietaryInterventionalStudyProtocol(studyProtocolDTO, siteAccrualStatusDTO,
+            createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO, siteAccrualStatusDTO,
                     documentDTOs, leadOrganizationDTO, siteInvestigatorDTO,
                     leadOrganizationTrialIdentifierDTO, studySiteOrgDTO, siteDTO,
                     nctIdentifierDTO, summary4organizationDTO, studyResourcingDTO,

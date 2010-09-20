@@ -105,7 +105,7 @@ import java.util.List;
 
 /**
  * Wrapper class for invoking the TrialRegistrationServiceRemote remote EJB.
- * 
+ *
  * @author Steve Lustbader
  */
 
@@ -121,7 +121,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi, 
+            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
 
@@ -142,7 +142,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      * {@inheritDoc}
      */
     // CHECKSTYLE:OFF
-    public Ii createProprietaryInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+    public Ii createAbbreviatedInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
@@ -152,7 +152,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
 
         try {
             return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
-                    .createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
+                    .createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
                             documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
                             studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4OrganizationDTO,
                             summary4StudyResourcingDTO, isBatch);
@@ -167,20 +167,20 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      * {@inheritDoc}
      */
     // CHECKSTYLE:OFF
-    public Ii createInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+    public Ii createCompleteInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudyOverallStatusDTO overallStatusDTO, List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi, 
+            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
-        
+
         try {
             return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
-                    .createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                    .createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                             sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
                             studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,

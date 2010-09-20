@@ -3326,7 +3326,7 @@
   </ns3:Service>
   <ns3:Service name="TrialRegistrationService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService" packageName="gov.nih.nci.coppa.services.pa.trialregistrationservice" xsi:type="ns3:ServiceType">
    <ns713:Methods xsi:type="ns713:MethodsType" xmlns:ns713="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns713:Method description="Create an interventional study protocol, an action plan and execution of a pre-clinical or clinical study including all activities to test a particular hypothesis that is the basis of the study regarding the effectiveness of a particular treatment, drug, device, procedure, or care plan. This includes prevention, observational, therapeutic, and other types of studies that involve subjects." isImported="false" isProvided="false" name="createInterventionalStudyProtocol" xsi:type="ns713:MethodType">
+    <ns713:Method description="Create an interventional study protocol, an action plan and execution of a pre-clinical or clinical study including all activities to test a particular hypothesis that is the basis of the study regarding the effectiveness of a particular treatment, drug, device, procedure, or care plan. This includes prevention, observational, therapeutic, and other types of studies that involve subjects." isImported="false" isProvided="false" name="createCompleteInterventionalStudyProtocol" xsi:type="ns713:MethodType">
      <ns713:Inputs>
       <ns713:Input qName="ns714:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns714="http://pa.services.coppa.nci.nih.gov"/>
       <ns713:Input qName="ns715:StudyOverallStatus" description="" isArray="false" name="studyOverallStatus" xmlns:ns715="http://pa.services.coppa.nci.nih.gov"/>
@@ -3444,7 +3444,7 @@
      <ns713:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
      <ns713:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
     </ns713:Method>
-    <ns713:Method description="" isImported="false" isProvided="false" name="createProprietaryInterventionalStudyProtocol" xsi:type="ns713:MethodType">
+    <ns713:Method description="" isImported="false" isProvided="false" name="createAbbreviatedInterventionalStudyProtocol" xsi:type="ns713:MethodType">
      <ns713:Inputs>
       <ns713:Input qName="ns774:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns774="http://pa.services.coppa.nci.nih.gov"/>
       <ns713:Input qName="ns775:StudySiteAccrualStatus" description="" isArray="false" name="studySiteAccrualStatus" xmlns:ns775="http://pa.services.coppa.nci.nih.gov"/>

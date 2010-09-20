@@ -587,7 +587,7 @@ public class BatchCreateProtocols {
 
         if (dto.getSubmissionType().equalsIgnoreCase("O") && StringUtils.isEmpty(trialDTO.getAssignedIdentifier())) {
             studyProtocolIi =
-                    PaRegistry.getTrialRegistrationService().createInterventionalStudyProtocol(studyProtocolDTO,
+                    PaRegistry.getTrialRegistrationService().createCompleteInterventionalStudyProtocol(studyProtocolDTO,
                             overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, leadOrgDTO,
                             principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO, studyIdentifierDTOs,
                             studyContactDTO, studySiteContactDTO, summary4orgDTO, summary4studyResourcingDTO,

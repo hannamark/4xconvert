@@ -56,7 +56,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
 
     private static II organizationIi = new II();
     private static II personIi = new II();
-    
+
     public TrialRegistrationServiceClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
     }
@@ -81,17 +81,17 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         System.out.println("Running the Grid Service Client");
         // change this as per your db
         organizationIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        organizationIi.setExtension("502");
+        organizationIi.setExtension("501");
         organizationIi.setIdentifierName("NCI organization entity identifier");
         personIi.setRoot("2.16.840.1.113883.3.26.4.1");
-        personIi.setExtension("164556");
+        personIi.setExtension("1231");
         personIi.setIdentifierName("NCI person entity identifier");
-        
+
         try{
         if(!(args.length < 2)){
             if(args[0].equals("-url")){
               TrialRegistrationServiceClient client = new TrialRegistrationServiceClient(args[1]);
-              
+
               // place client calls here if you want to use this main as a
               // test....
               System.out.println("creating a protocol");
@@ -134,7 +134,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
-        studyProtocol.setUserLastCreated(ISOUtils.buildST("mshestopalov@5amsolutions.com"));
+        studyProtocol.setUserLastCreated(ISOUtils.buildST("aevansel@5amsolutions.com"));
         BL fdaRegInd = new BL();
         fdaRegInd.setValue(Boolean.FALSE);
         studyProtocol.setFdaRegulatedIndicator(fdaRegInd);
@@ -191,13 +191,12 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyContact.getTelecomAddresses().getItem().add(phone);
 
         StudySiteContact studySiteContact = null;
-        Organization summaryForOrganization = new Organization();
-        summaryForOrganization.setIdentifier(organizationIi);
-        StudyResourcing summaryForStudyResourcing = new StudyResourcing();
+        Organization summaryForOrganization = null;
+        StudyResourcing summaryForStudyResourcing = null;
         Id responsiblePartyContact = new Id();
-        
+
         StudyRegulatoryAuthority studyRegulatoryAuthority = new StudyRegulatoryAuthority();
-        RegulatoryAuthorityServiceClient regAuthClient = 
+        RegulatoryAuthorityServiceClient regAuthClient =
             new RegulatoryAuthorityServiceClient("https://localhost:39543/wsrf/services/cagrid/RegulatoryAuthorityService");
         LimitOffset limit = new LimitOffset();
         limit.setLimit(10);
@@ -250,9 +249,9 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
 
         StudySite studySite = new StudySite();
         studySite.setLocalStudyProtocolIdentifier(ISOUtils.buildST("localStudyProtocolIdentifier"));
-        
+
         StudySite[] studyIdentifiers = new StudySite[] {studySite};
-        
+
         StudyIndlde[] studyIndlde = new StudyIndlde[0];
         StudyResourcing[] studyResourcing = new StudyResourcing[0];
 
@@ -356,14 +355,14 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         Organization summaryForOrganization = new Organization();
         summaryForOrganization.setIdentifier(organizationIi);
         StudyResourcing summaryForStudyResourcing = new StudyResourcing();
-        
+
         Id responsiblePartyContact = new Id();
-        
+
         StudyRegulatoryAuthority studyRegulatoryAuthority = new StudyRegulatoryAuthority();
         II regAuthId = new II();
         regAuthId.setExtension("0");
         studyRegulatoryAuthority.setRegulatoryAuthorityIdentifier(regAuthId);
-        
+
         client.amendInterventionalStudyProtocol(studyProtocol, studyOverallStatus, studyIndlde, studyResourcing,
                 document, leadOrganization, principalInvestigator, sponsorOrganization, leadOrganizationSiteIdentifier,
                 nctIdentifierSiteIdentifiers, studyContact, studySiteContact, summaryForOrganization,

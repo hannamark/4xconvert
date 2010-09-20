@@ -82,7 +82,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             StudyRegulatoryAuthorityDTO studyRegAuthDTO =
                 StudyRegulatoryAuthorityTransformer.INSTANCE.toDto(studyRegulatoryAuthority);
 
-            Ii ii = service.createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+            Ii ii = service.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                             sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
                             studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
@@ -188,7 +188,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             isBatch.setValue(Boolean.FALSE);
             defaultingUserLoggedIn(studyProtocolDTO);
 
-            Ii ii = service.createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
+            Ii ii = service.createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
                             documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
                             studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4organizationDTO,
                             summary4studyResourcingDTO, isBatch);

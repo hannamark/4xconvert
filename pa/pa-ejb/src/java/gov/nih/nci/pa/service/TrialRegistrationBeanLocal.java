@@ -703,7 +703,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
      */
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Ii createInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+    public Ii createCompleteInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudyOverallStatusDTO overallStatusDTO, List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
@@ -755,7 +755,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
      */
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Ii createProprietaryInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+    public Ii createAbbreviatedInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
@@ -901,7 +901,8 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             listOfDTOToCreateInPO.add(sponsorOrganizationDTO);
         }
         listOfDTOToCreateInPO.add(principalInvestigatorDTO);
-        listOfDTOToCreateInPO.add(summary4organizationDTO);
+        OrganizationDTO newSummary4OrganizationDTO = paServiceUtils.findOrCreateEntity(summary4organizationDTO);
+        listOfDTOToCreateInPO.add(newSummary4OrganizationDTO);
         paServiceUtils.createPoObject(listOfDTOToCreateInPO);
 
         Ii studyProtocolIi = null;
@@ -935,7 +936,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         paServiceUtils.createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null),
                 studyProtocolIi);
         paServiceUtils.createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null), studyProtocolIi);
-        paServiceUtils.manageSummaryFour(studyProtocolIi, summary4organizationDTO, summary4studyResourcingDTO);
+        paServiceUtils.manageSummaryFour(studyProtocolIi, newSummary4OrganizationDTO, summary4studyResourcingDTO);
         if (leadOrganizationSiteIdentifierDTO != null) {
             leadOrganizationSiteIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
             ocsr.createResearchOrganizationCorrelations(leadOrganizationDTO.getIdentifier().getExtension());
