@@ -566,4 +566,8 @@
         <comment>Updating length of comment_text field from 200 to 2000 in the study_overall_status table.</comment> 
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2211.sql"/> 
      </changeSet> 
+     <changeSet id="PO-2487" author="ludetc"> 
+        <comment>Set caDSR public ID. </comment> 
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2487.sql"/> 
+     </changeSet> 
 </databaseChangeLog>

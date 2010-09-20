@@ -116,6 +116,8 @@ import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -257,9 +259,18 @@ public class EligibilityCriteriaAction extends ActionSupport {
 
             Collection<ClassSchemeClassSchemeItem> csItem = classifSch.getClassSchemeClassSchemeItemCollection();
             csisResult = new ArrayList<ClassificationSchemeItem>();
+
+            Comparator<ClassificationSchemeItem> csiComp = new Comparator<ClassificationSchemeItem>() {
+                public int compare(ClassificationSchemeItem csi1, ClassificationSchemeItem csi2) {
+                    return csi1.getLongName().compareToIgnoreCase(csi2.getLongName());
+                }
+            };
+
             for (ClassSchemeClassSchemeItem csCsi : csItem) {
                 csisResult.add(csCsi.getClassificationSchemeItem());
             }
+
+            Collections.sort(csisResult, csiComp);
 
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
