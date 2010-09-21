@@ -114,7 +114,7 @@
                 <th>NIH Institution, NCI Division/Program Code (if applicable)</th>
                 <th>Expanded Access</th>
                 <th>Expanded Access Type (if applicable)</th>
-                <th>Exempt Indicator (if applicable)</th>
+                <th>Exempt? (if applicable)</th>
                 <th></th>
              </tr>
                <s:iterator id="indIdeUpdateDtos" value="indIdeUpdateDtos" status="indidestats">

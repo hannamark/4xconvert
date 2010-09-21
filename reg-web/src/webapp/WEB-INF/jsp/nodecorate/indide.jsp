@@ -205,7 +205,7 @@
 				<th><reg-web:displayTooltip tooltip="tooltip.nih_institution_nci_division_program_code">NIH Institution, NCI Division/Program Code (if applicable)</reg-web:displayTooltip></th>
 				<th><reg-web:displayTooltip tooltip="tooltip.has_expanded_access_indicator">Expanded Access</reg-web:displayTooltip></th>
 				<th><reg-web:displayTooltip tooltip="tooltip.has_expanded_status">Expanded Access Type (if applicable)</reg-web:displayTooltip></th>
-				<th><reg-web:displayTooltip tooltip="tooltip.has_exempt_indicator">Exempt Indicator (if applicable)</reg-web:displayTooltip></th>
+				<th><reg-web:displayTooltip tooltip="tooltip.has_exempt_indicator">Exempt? (if applicable)</reg-web:displayTooltip></th>
 				<th></th>
 			</tr>
 
