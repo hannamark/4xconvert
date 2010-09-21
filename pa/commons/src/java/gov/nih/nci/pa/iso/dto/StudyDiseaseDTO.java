@@ -89,7 +89,6 @@ public class StudyDiseaseDTO extends StudyDTO {
     private static final long serialVersionUID = 177737890L;
 
     private Ii diseaseIdentifier;
-    private Bl leadDiseaseIndicator;
     private Bl ctGovXmlIndicator;
 
     /**
@@ -104,20 +103,6 @@ public class StudyDiseaseDTO extends StudyDTO {
      */
     public void setDiseaseIdentifier(Ii diseaseIdentifier) {
         this.diseaseIdentifier = diseaseIdentifier;
-    }
-
-    /**
-     * @return the leadDiseaseIndicator
-     */
-    public Bl getLeadDiseaseIndicator() {
-        return leadDiseaseIndicator;
-    }
-
-    /**
-     * @param leadDiseaseIndicator the leadDiseaseIndicator to set
-     */
-    public void setLeadDiseaseIndicator(Bl leadDiseaseIndicator) {
-        this.leadDiseaseIndicator = leadDiseaseIndicator;
     }
 
     /**

@@ -111,19 +111,6 @@ public class StudyDiseaseTest {
     }
 
     @Test
-    public void getTest() {
-        List<StudyDisease> sdList = sp.getStudyDiseases();
-        assertTrue(sdList.size() > 0);
-
-        Long sdId = sdList.get(0).getId();
-        Boolean lead = sdList.get(0).getLeadDiseaseIndicator();
-        sess.clear();
-
-        StudyDisease sd = (StudyDisease) sess.get(StudyDisease.class, sdId);
-        assertEquals(lead, sd.getLeadDiseaseIndicator());
-    }
-
-    @Test
     public void deleteTest() {
         List<StudyDisease> sdList = sp.getStudyDiseases();
         assertTrue(sdList.size() > 0);
@@ -151,7 +138,6 @@ public class StudyDiseaseTest {
         StudyDisease create = new StudyDisease();
         create.setStudyProtocol(studyProtocol);
         create.setDisease(disease);
-        create.setLeadDiseaseIndicator(false);
         create.setUserLastCreated(TestSchema.getUser());
         create.setDateLastCreated(new Timestamp(new Date().getTime()));
         create.setUserLastUpdated(TestSchema.getUser());

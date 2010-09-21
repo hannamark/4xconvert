@@ -85,7 +85,6 @@ package gov.nih.nci.coppa.pa.grid.dto.transform.pa;
 import gov.nih.nci.coppa.services.pa.StudyDisease;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyDiseaseTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 
@@ -99,10 +98,6 @@ public class StudyDiseaseTransformerTest
         result.setIdentifier(new IITransformerTest().makeDtoSimple());
         result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
         result.setDiseaseIdentifier(new IITransformerTest().makeDtoSimple());
-
-        //BL
-        result.setLeadDiseaseIndicator(new BLTransformerTest().makeDtoSimple());
-
         return result;
     }
 
@@ -113,9 +108,6 @@ public class StudyDiseaseTransformerTest
         result.setIdentifier(new IITransformerTest().makeXmlSimple());
         result.setStudyProtocolIdentifier(new IITransformerTest().makeXmlSimple());
         result.setDiseaseIdentifier(new IITransformerTest().makeXmlSimple());
-
-        //BL
-        result.setLeadDiseaseIndicator(new BLTransformerTest().makeXmlSimple());
         return result;
     }
 
@@ -124,7 +116,6 @@ public class StudyDiseaseTransformerTest
         new IITransformerTest().verifyDtoSimple(x.getIdentifier());
         new IITransformerTest().verifyDtoSimple(x.getStudyProtocolIdentifier());
         new IITransformerTest().verifyDtoSimple(x.getDiseaseIdentifier());
-        new BLTransformerTest().verifyDtoSimple(x.getLeadDiseaseIndicator());
     }
 
     @Override
@@ -132,6 +123,5 @@ public class StudyDiseaseTransformerTest
         new IITransformerTest().verifyXmlSimple(x.getIdentifier());
         new IITransformerTest().verifyXmlSimple(x.getStudyProtocolIdentifier());
         new IITransformerTest().verifyXmlSimple(x.getDiseaseIdentifier());
-        new BLTransformerTest().verifyXmlSimple(x.getLeadDiseaseIndicator());
     }
 }

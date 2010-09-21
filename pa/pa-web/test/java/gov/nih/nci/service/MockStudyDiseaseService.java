@@ -70,7 +70,6 @@ public class MockStudyDiseaseService implements StudyDiseaseServiceLocal {
 	public StudyDiseaseDTO get(Ii ii) throws PAException {
 		StudyDiseaseDTO sd =  new StudyDiseaseDTO();
 		sd.setDiseaseIdentifier(IiConverter.convertToIi("1"));
-		sd.setLeadDiseaseIndicator(BlConverter.convertToBl(Boolean.TRUE));
 		sd.setCtGovXmlIndicator(BlConverter.convertToBl(Boolean.FALSE));
 		return sd;
 	}

@@ -86,7 +86,6 @@ import gov.nih.nci.coppa.services.pa.StudyDisease;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 
@@ -117,10 +116,6 @@ public final class StudyDiseaseTransformer
         result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
         result.setStudyProtocolIdentifier((IITransformer.INSTANCE.toDto(input.getStudyProtocolIdentifier())));
         result.setDiseaseIdentifier((IITransformer.INSTANCE.toDto(input.getDiseaseIdentifier())));
-
-        //BL
-        result.setLeadDiseaseIndicator(BLTransformer.INSTANCE.toDto(input.getLeadDiseaseIndicator()));
-
         return result;
     }
 
@@ -136,10 +131,6 @@ public final class StudyDiseaseTransformer
         result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
         result.setStudyProtocolIdentifier((IITransformer.INSTANCE.toXml(input.getStudyProtocolIdentifier())));
         result.setDiseaseIdentifier((IITransformer.INSTANCE.toXml(input.getDiseaseIdentifier())));
-
-        //BL
-        result.setLeadDiseaseIndicator(BLTransformer.INSTANCE.toXml(input.getLeadDiseaseIndicator()));
-
         return result;
     }
 

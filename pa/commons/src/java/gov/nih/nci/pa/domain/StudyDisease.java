@@ -96,8 +96,8 @@ public class StudyDisease extends AbstractStudyEntity {
     private static final long serialVersionUID = 1898967890L;
 
     private Disease disease;
-    private Boolean leadDiseaseIndicator;
     private Boolean ctGovXmlIndicator;
+
     /**
      * @return the disease
      */
@@ -107,25 +107,14 @@ public class StudyDisease extends AbstractStudyEntity {
     public Disease getDisease() {
         return disease;
     }
+
     /**
      * @param disease the disease to set
      */
     public void setDisease(Disease disease) {
         this.disease = disease;
     }
-    /**
-     * @return the leadDiseaseIndicator
-     */
-    @Column(name = "LEAD_DISEASE_INDICATOR")
-    public Boolean getLeadDiseaseIndicator() {
-        return leadDiseaseIndicator;
-    }
-    /**
-     * @param leadDiseaseIndicator the leadDiseaseIndicator to set
-     */
-    public void setLeadDiseaseIndicator(Boolean leadDiseaseIndicator) {
-        this.leadDiseaseIndicator = leadDiseaseIndicator;
-    }
+
     /**
      * @return the ctGovXmlIndicator
      */
@@ -133,11 +122,12 @@ public class StudyDisease extends AbstractStudyEntity {
     public Boolean getCtGovXmlIndicator() {
         return ctGovXmlIndicator;
     }
+
     /**
      * @param ctGovXmlIndicator the ctGovXmlIndicator to set
      */
     public void setCtGovXmlIndicator(Boolean ctGovXmlIndicator) {
         this.ctGovXmlIndicator = ctGovXmlIndicator;
     }
-    
+
 }

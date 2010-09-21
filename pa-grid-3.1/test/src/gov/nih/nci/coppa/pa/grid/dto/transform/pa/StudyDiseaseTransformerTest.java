@@ -99,10 +99,6 @@ public class StudyDiseaseTransformerTest
         result.setIdentifier(new IITransformerTest().makeDtoSimple());
         result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
         result.setDiseaseIdentifier(new IITransformerTest().makeDtoSimple());
-
-        //BL
-        result.setLeadDiseaseIndicator(new BLTransformerTest().makeDtoSimple());
-
         return result;
     }
 
@@ -124,7 +120,6 @@ public class StudyDiseaseTransformerTest
         new IITransformerTest().verifyDtoSimple(x.getIdentifier());
         new IITransformerTest().verifyDtoSimple(x.getStudyProtocolIdentifier());
         new IITransformerTest().verifyDtoSimple(x.getDiseaseIdentifier());
-        new BLTransformerTest().verifyDtoSimple(x.getLeadDiseaseIndicator());
     }
 
     @Override

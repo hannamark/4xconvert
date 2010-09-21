@@ -70,11 +70,10 @@ public class StudyDiseaseServiceClient extends StudyDiseaseServiceClientBase imp
     }
 
     private static void getForStudyDisease(StudyDiseaseServiceClient client) throws RemoteException {
-
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension("27432");
+        id.setExtension("108005");
         StudyDisease[] stCont = client.getByStudyProtocol(id);
         if (stCont != null) {
             System.out.println("get by study protocol brought back set sized " + stCont.length);
@@ -84,9 +83,8 @@ public class StudyDiseaseServiceClient extends StudyDiseaseServiceClientBase imp
     }
 
     private static void getStudyDisease(StudyDiseaseServiceClient client) throws RemoteException {
-
         Id id = new Id();
-        id.setExtension("27484");
+        id.setExtension("108666");
         StudyDisease stCont = client.get(id);
         if (stCont == null) {
             System.out.println("could not find StudyParticipant");

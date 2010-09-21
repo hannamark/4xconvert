@@ -334,7 +334,6 @@
                 <xs:extension base="COPPA-PA:StudyType">
                     <xs:sequence>
                         <xs:element name="diseaseIdentifier" type="ISO:II" />
-                        <xs:element name="leadDiseaseIndicator" type="ISO:BL" />
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>
