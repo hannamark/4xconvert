@@ -158,30 +158,14 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
         // CHECKSTYLE:ON
 
         try {
-            if (summary4OrganizationDTO == null) {
-                //We're going to default to the Unknown Organization if one is not provided.
-                summary4OrganizationDTO = new OrganizationDTO();
-                List<String> email = Arrays.asList("unknown@unknown.com");
-                summary4OrganizationDTO.setName(EnOnConverter.convertToEnOn("Unknown"));
-                summary4OrganizationDTO.setTelecomAddress(DSetConverter.convertListToDSet(email,
-                        DSetConverter.TYPE_EMAIL, null));
-                summary4OrganizationDTO.setPostalAddress(AddressConverterUtil.create("UNKNOWN", "UNKNOWN", "UNKNOWN",
-                        "MD", "00000", "USA"));
-            }
-
-            if (summary4StudyResourcingDTO == null) {
-                //If the study resourcing is not provided, we're defaulting to industrial for proprietary trials.
-                summary4StudyResourcingDTO = new StudyResourcingDTO();
-                Cd typeCode = new Cd();
-                typeCode.setCode(SummaryFourFundingCategoryCode.INDUSTRIAL.getCode());
-                summary4StudyResourcingDTO.setTypeCode(typeCode);
-            }
-
+            StudyResourcingDTO resourcing =
+                getSummaryStudyResourcing(summary4StudyResourcingDTO, SummaryFourFundingCategoryCode.INDUSTRIAL);
+            OrganizationDTO org = getSummaryOrganization(summary4OrganizationDTO);
             return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
                     .createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
                             documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
-                            studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4OrganizationDTO,
-                            summary4StudyResourcingDTO, isBatch);
+                            studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, org,
+                            resourcing, isBatch);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {
@@ -205,29 +189,14 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
         // CHECKSTYLE:ON
 
         try {
-            if (summary4organizationDTO == null) {
-                //We're going to default to the Unknown Organization if one is not provided.
-                summary4organizationDTO = new OrganizationDTO();
-                List<String> email = Arrays.asList("unknown@unknown.com");
-                summary4organizationDTO.setName(EnOnConverter.convertToEnOn("Unknown"));
-                summary4organizationDTO.setTelecomAddress(DSetConverter.convertListToDSet(email,
-                        DSetConverter.TYPE_EMAIL, null));
-                summary4organizationDTO.setPostalAddress(AddressConverterUtil.create("UNKNOWN", "UNKNOWN", "UNKNOWN",
-                        "MD", "00000", "USA"));
-            }
-
-            if (summary4studyResourcingDTO == null) {
-                //If the study resourcing not provided, we're defaulting to institutional for non-proprietary trials.
-                summary4studyResourcingDTO = new StudyResourcingDTO();
-                Cd typeCode = new Cd();
-                typeCode.setCode(SummaryFourFundingCategoryCode.INSTITUTIONAL.getCode());
-                summary4studyResourcingDTO.setTypeCode(typeCode);
-            }
+            StudyResourcingDTO resourcing =
+                getSummaryStudyResourcing(summary4studyResourcingDTO, SummaryFourFundingCategoryCode.INSTITUTIONAL);
+            OrganizationDTO org = getSummaryOrganization(summary4organizationDTO);
             return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
                     .createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                             sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
-                            studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
+                            studyContactDTO, studySiteContactDTO, org, resourcing,
                             responsiblePartyContactIi, studyRegAuthDTO, isBatch);
         } catch (PAException pae) {
             throw pae;
@@ -276,5 +245,31 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
+    }
+
+    private OrganizationDTO getSummaryOrganization(OrganizationDTO summary4OrganizationDTO) {
+        OrganizationDTO org = summary4OrganizationDTO;
+        if (org == null) {
+            //We're going to default to the Unknown Organization if one is not provided.
+            org = new OrganizationDTO();
+            List<String> email = Arrays.asList("unknown@unknown.com");
+            org.setName(EnOnConverter.convertToEnOn("Unknown"));
+            org.setTelecomAddress(DSetConverter.convertListToDSet(email, DSetConverter.TYPE_EMAIL, null));
+            org.setPostalAddress(AddressConverterUtil.create("UNKNOWN", "UNKNOWN", "UNKNOWN", "MD", "00000", "USA"));
+        }
+        return org;
+    }
+
+    private StudyResourcingDTO getSummaryStudyResourcing(StudyResourcingDTO summary4StudyResourcingDTO,
+            SummaryFourFundingCategoryCode categoryCode) {
+        StudyResourcingDTO resourcing = summary4StudyResourcingDTO;
+        if (resourcing == null) {
+            //If the study resourcing not provided, we're defaulting to institutional for non-proprietary trials.
+            resourcing = new StudyResourcingDTO();
+            Cd typeCode = new Cd();
+            typeCode.setCode(categoryCode.getCode());
+            resourcing.setTypeCode(typeCode);
+        }
+        return resourcing;
     }
 }
