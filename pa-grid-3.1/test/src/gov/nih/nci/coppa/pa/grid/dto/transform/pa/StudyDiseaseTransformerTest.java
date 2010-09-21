@@ -127,6 +127,5 @@ public class StudyDiseaseTransformerTest
         new IITransformerTest().verifyXmlSimple(x.getIdentifier());
         new IITransformerTest().verifyXmlSimple(x.getStudyProtocolIdentifier());
         new IITransformerTest().verifyXmlSimple(x.getDiseaseIdentifier());
-        new BLTransformerTest().verifyXmlSimple(x.getLeadDiseaseIndicator());
     }
 }
