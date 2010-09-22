@@ -16,7 +16,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -39,7 +38,7 @@ import org.jdom.Element;
  */
 public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
     /**
-     * 
+     *
      */
     private static final String YYYY_MM_DD = "yyyy-MM-dd";
     private StudyProtocolDTO studyProtocolDTO;
@@ -70,7 +69,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         PHASE_MAP.put("NA", "NA");
         PHASE_MAP.put("N/A", "NA");
     }
-
+    private PAServiceUtils paServiceUtils = new PAServiceUtils();
     /**
      *
      */
@@ -111,20 +110,6 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
                 CdConverter.convertStringToCd(getText(parent, "primary_compl_date_type")));
         studyProtocolDTO.setPhaseCode(CdConverter.convertStringToCd(PHASE_MAP.get(parent.getChildText("phase"))));
         studyProtocolDTO.setOfficialTitle(StConverter.convertToSt(getText(parent, "official_title")));
-        studyProtocolDTO.setPublicTitle(StConverter.convertToSt(getText(parent, "brief_title")));
-        studyProtocolDTO.setPublicDescription(StConverter.convertToSt(getFullText(parent.getChild("brief_summary"))));
-        studyProtocolDTO.setScientificDescription(StConverter.convertToSt(getFullText(
-                parent.getChild("detailed_description"))));
-        studyProtocolDTO.setRecordVerificationDate(tsFromString(YYYY_MM_DD,
-                parent.getChildText("verification_date")));
-        studyProtocolDTO.setTargetAccrualNumber(IvlConverter.convertInt().convertToIvl(
-                getText(parent, "enrollment"), null));
-        List<Element> keywordList = parent.getChildren("keyword");
-        StringBuffer keyWord = new StringBuffer();
-        for (Element keywordElt : keywordList) {
-            keyWord.append(keywordElt.getText()).append('\n');
-        }
-        studyProtocolDTO.setKeywordText(StConverter.convertToSt(keyWord.toString()));
         doIds(parent.getChild("id_info"));
         doFda(parent);
     }
@@ -234,7 +219,15 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         if (parent == null) {
             return;
         }
+        String ctepId =  parent.getAttributeValue("ctep-id");
+        PersonDTO per = null;
+        if (StringUtils.isNotEmpty(ctepId)) {
+            per = getPaServiceUtils().getPersonByCtepId(ctepId);
+        }
         principalInvestigatorDTO = new PersonDTO();
+        if (per != null) {
+            principalInvestigatorDTO.setIdentifier(per.getIdentifier());
+        }
         principalInvestigatorDTO.setName(EnPnConverter.convertToEnPn(getText(parent, "first_name"),
                 getText(parent, "middle_name"), getText(parent, "last_name"), null, null));
         //lead org
@@ -365,6 +358,20 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
      */
     public StudyOverallStatusDTO getStudyOverallStatusDTO() {
         return studyOverallStatusDTO;
+    }
+
+    /**
+     * @param paServiceUtils the paServiceUtils to set
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
+    }
+
+    /**
+     * @return the paServiceUtils
+     */
+    public PAServiceUtils getPaServiceUtils() {
+        return paServiceUtils;
     }
 
 

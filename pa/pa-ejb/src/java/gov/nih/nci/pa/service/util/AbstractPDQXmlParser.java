@@ -83,9 +83,16 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.IOException;
 import java.net.URL;
@@ -97,6 +104,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -110,7 +118,7 @@ import org.jdom.input.SAXBuilder;
 public abstract class AbstractPDQXmlParser {
     private URL url;
     private Document document;
-
+    private static final Logger LOG = Logger.getLogger(AbstractPDQXmlParser.class);
     /**
      * set the url of the source to parse.
      * @param url source URL
@@ -183,7 +191,7 @@ public abstract class AbstractPDQXmlParser {
         try {
             ts.setValue(new SimpleDateFormat(format, Locale.getDefault()).parse(date));
         } catch (ParseException e) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Value " + date + " is not a valid date.", e);
         }
         return ts;
     }
@@ -225,5 +233,42 @@ public abstract class AbstractPDQXmlParser {
     public Document getDocument() {
         return document;
     }
+
+    /**
+     * @param countryName name of country
+     * @return alpha3 code
+     */
+    protected String getAlpha3CountryName(String countryName) {
+        String alpha3CountryName = null;
+        if (StringUtils.equalsIgnoreCase("U.S.A", countryName)) {
+            return "USA";
+        }
+        try {
+            Country country = PaRegistry.getLookUpTableService().getCountryByName(countryName);
+            if (country != null) {
+                alpha3CountryName = country.getAlpha3();
+            }
+        } catch (PAException e) {
+            LOG.error("Error getting country.", e);
+        }
+        return alpha3CountryName;
+    }
+    /**
+     * Converts to Ivl<Pq>.
+     * @param minUom min UOM
+     * @param minValue value
+     * @param maxUom UOM
+     * @param maxValue value
+     * @return ivl<pq>
+     */
+    protected Ivl<Pq> convertToIvlPq(String minUom, String minValue, String maxUom, String maxValue) {
+        if (minUom == null && minValue == null && maxValue == null && maxUom == null) {
+            return null;
+        }
+        IvlConverter.JavaPq low = new IvlConverter.JavaPq(minUom, PAUtil.convertStringToDecimal(minValue), null);
+        IvlConverter.JavaPq high = new IvlConverter.JavaPq(maxUom, PAUtil.convertStringToDecimal(maxValue), null);
+        return IvlConverter.convertPq().convertToIvl(low, high);
+    }
+
 
 }

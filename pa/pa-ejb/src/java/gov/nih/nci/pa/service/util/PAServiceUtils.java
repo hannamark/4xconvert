@@ -151,6 +151,8 @@ import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
+import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
@@ -158,11 +160,15 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -179,6 +185,11 @@ import org.hibernate.Session;
  */
 @SuppressWarnings("unchecked")
 public class PAServiceUtils {
+
+   /**
+     *
+     */
+    private static final String ERR_MSG = "Found more than 1 record for a protocol id = %d for a given status %s";
 
     /**
      * ORGANIZATION_IDENTIFIER_IS_NULL.
@@ -201,7 +212,7 @@ public class PAServiceUtils {
      */
     public static final String LEAD_ORGANIZATION_NULLIFIED = "The Lead Organization has been nullified";
     private static final Logger LOG  = Logger.getLogger(PAServiceUtils.class);
-
+    private static final int MAXF = 1024;
     /**
      * Executes an sql.
      * @param sql sql to be executed
@@ -658,16 +669,14 @@ public class PAServiceUtils {
         try {
             spDtos = PaRegistry.getStudySiteService().search(spDto, pagingParams);
         } catch (TooManyResultsException e) {
-            throw new PAException("Found more than 1 record for a protocol id = "
-                    + spDto.getStudyProtocolIdentifier().getExtension() + " for a given status "
-                    + spDto.getFunctionalCode().getCode());
+            throw new PAException(String.format(ERR_MSG, spDto.getStudyProtocolIdentifier().getExtension()
+                    , spDto.getFunctionalCode().getCode()));
         }
         if (spDtos != null && spDtos.size() == 1) {
             return spDtos;
         } else if (spDtos != null && spDtos.size() > 1 && isUnique) {
-            throw new PAException(" Found more than 1 record for a protocol id = "
-                    + spDto.getStudyProtocolIdentifier().getExtension() + " for a given status "
-                    + spDto.getFunctionalCode().getCode());
+            throw new PAException(String.format(ERR_MSG, spDto.getStudyProtocolIdentifier().getExtension()
+                    , spDto.getFunctionalCode().getCode()));
 
         }
         return spDtos;
@@ -695,8 +704,7 @@ public class PAServiceUtils {
         if (spDtos != null && spDtos.size() == 1) {
             return spDtos;
         } else if (spDtos != null && spDtos.size() > 1 && isUnique) {
-            throw new PAException(" Found more than 1 record for a protocol id = "
-                    + studyProtocolIi.getExtension() + " for a given status " + cd.getCode());
+            throw new PAException(String.format(ERR_MSG, studyProtocolIi.getExtension(), cd.getCode()));
 
         }
         return spDtos;
@@ -1140,8 +1148,14 @@ public class PAServiceUtils {
 
         return entity;
     }
-
-    private <Entity extends PoDto> Entity findEntity(Entity entity) throws PAException {
+    /**
+     * Search the Person or Organization Entity.
+     * @param <Entity> Person or Organization
+     * @param entity Person or Organization
+     * @return Person or Organization
+     * @throws PAException on error
+     */
+    public <Entity extends PoDto> Entity findEntity(Entity entity) throws PAException {
         LimitOffset limit = new LimitOffset(PAAttributeMaxLen.LEN_2, 0);
         List<? extends Entity> entities = null;
         Entity retEntity = null;
@@ -1149,7 +1163,7 @@ public class PAServiceUtils {
             if (entity instanceof OrganizationDTO) {
                 entities = (List<Entity>) PoRegistry.getOrganizationEntityService().search((OrganizationDTO) entity,
                                                                                            limit);
-            } else if (entity instanceof OrganizationDTO) {
+            } else if (entity instanceof PersonDTO) {
                 entities = (List<Entity>) PoRegistry.getPersonEntityService().search((PersonDTO) entity, limit);
             }
             if (!entities.isEmpty()) {
@@ -1500,9 +1514,8 @@ public class PAServiceUtils {
               }
               spDtos = PaRegistry.getStudySiteService().search(criteriaDTO, pagingParams);
           } catch (TooManyResultsException e) {
-              throw new PAException(" Found more than 1 record for a protocol id = "
-                      + identifierDTO.getStudyProtocolIdentifier().getExtension() + " for a given status "
-                      + identifierDTO.getFunctionalCode().getCode(), e);
+              throw new PAException(String.format(ERR_MSG, identifierDTO.getStudyProtocolIdentifier().getExtension()
+                      , identifierDTO.getFunctionalCode().getCode()), e);
           }
           StudySiteDTO studySiteDB = PAUtil.getFirstObj(spDtos);
           if (studySiteDB != null && PAUtil.isIiNotNull(studySiteDB.getIdentifier())) {
@@ -1670,5 +1683,86 @@ public class PAServiceUtils {
           }
           return null;
       }
+      /**
+       *Read an input stream in its entirety into a byte array.
+       *@param inputStream input stream
+       *@return byte[]
+       *@throws IOException on error
+       */
+      public byte[] readInputStream(InputStream inputStream) throws IOException {
+          int bufSize = MAXF * MAXF;
+          byte[] content;
+          List<byte[]> parts = new LinkedList<byte[]>();
+          InputStream in = new BufferedInputStream(inputStream);
 
+          byte[] readBuffer = new byte[bufSize];
+          byte[] part = null;
+          int bytesRead = 0;
+
+          // read everyting into a list of byte arrays
+          while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
+              part = new byte[bytesRead];
+              System.arraycopy(readBuffer, 0, part, 0, bytesRead);
+              parts.add(part);
+          }
+
+          // calculate the total size
+          int totalSize = 0;
+          for (byte[] partBuffer : parts) {
+              totalSize += partBuffer.length;
+          }
+
+          // allocate the array
+          content = new byte[totalSize];
+          int offset = 0;
+          for (byte[] partBuffer : parts) {
+              System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
+              offset += partBuffer.length;
+          }
+          return content;
+      }
+      /**Gets the Person by giving ctepId.
+       * @param ctepId id
+       * @return person
+       */
+      public PersonDTO getPersonByCtepId(String ctepId) {
+          PersonDTO personDto = null;
+          try {
+              if (StringUtils.isNotEmpty(ctepId)) {
+                  personDto = new PersonDTO();
+                  IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
+                  identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi(ctepId));
+                  List<IdentifiedPersonDTO> identifiedPersons;
+                  identifiedPersons = PoRegistry.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
+                  if (CollectionUtils.isNotEmpty(identifiedPersons)) {
+                      personDto.setIdentifier(identifiedPersons.get(0).getPlayerIdentifier());
+                  }
+              }
+          } catch (PAException e) {
+              personDto = null;
+              LOG.error(e);
+          }
+          return personDto;
+      }
+      /**Gets the Person by giving ctepId.
+       * @param ctepId id
+       * @return person
+       */
+      public OrganizationDTO getOrganizationByCtepId(String ctepId) {
+          OrganizationDTO orgDto = new OrganizationDTO();
+          try {
+              if (StringUtils.isNotEmpty(ctepId)) {
+                  IdentifiedOrganizationDTO identifiedOrgDto = new IdentifiedOrganizationDTO();
+                  identifiedOrgDto.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(ctepId));
+                  List<IdentifiedOrganizationDTO> identifiedOrgs;
+                  identifiedOrgs = PoRegistry.getIdentifiedOrganizationEntityService().search(identifiedOrgDto);
+                  if (CollectionUtils.isNotEmpty(identifiedOrgs)) {
+                      orgDto.setIdentifier(identifiedOrgs.get(0).getScoperIdentifier());
+                  }
+              }
+          } catch (PAException e) {
+              LOG.error(e);
+          }
+          return orgDto;
+      }
 }

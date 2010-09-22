@@ -86,18 +86,15 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -118,8 +115,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * copyright holder, NCI.
  */
 
-public class TrialDocumentAction extends ActionSupport implements
-ServletResponseAware {
+public class TrialDocumentAction extends ActionSupport implements ServletResponseAware {
 
     private static final long serialVersionUID = 2798002815820961877L;
     private static final Logger LOG  = Logger.getLogger(TrialDocumentAction.class);
@@ -131,7 +127,7 @@ ServletResponseAware {
     private Long id = null;
     private HttpServletResponse servletResponse;
     private String page;
-    private static final int MAXF = 1024;
+    private PAServiceUtils paServiceUtil = new PAServiceUtils();
 
 
     /**
@@ -191,7 +187,7 @@ ServletResponseAware {
              docDTO.setTypeCode(
                      CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
-             docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(upload))));
+             docDTO.setText(EdConverter.convertToEd(paServiceUtil.readInputStream(new FileInputStream(upload))));
              PaRegistry.getDocumentService().create(docDTO);
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
@@ -283,7 +279,7 @@ ServletResponseAware {
              docDTO.setTypeCode(
                      CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
-             docDTO.setText(EdConverter.convertToEd(readInputStream(new FileInputStream(upload))));
+             docDTO.setText(EdConverter.convertToEd(paServiceUtil.readInputStream(new FileInputStream(upload))));
              PaRegistry.getDocumentService().update(docDTO);
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
              query();
@@ -418,41 +414,18 @@ ServletResponseAware {
         this.page = page;
     }
 
-    /** Read an input stream in its entirety into a byte array. */
-    private static byte[] readInputStream(InputStream inputStream) throws IOException {
+    /**
+     * @return the paServiceUtil
+     */
+    public PAServiceUtils getPaServiceUtil() {
+        return paServiceUtil;
+    }
 
-        int bufSize = MAXF * MAXF;
-        byte[] content;
-
-        List<byte[]> parts = new LinkedList<byte[]>();
-        InputStream in = new BufferedInputStream(inputStream);
-
-        byte[] readBuffer = new byte[bufSize];
-        byte[] part = null;
-        int bytesRead = 0;
-
-        // read everyting into a list of byte arrays
-        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
-            part = new byte[bytesRead];
-            System.arraycopy(readBuffer, 0, part, 0, bytesRead);
-            parts.add(part);
-        }
-
-        // calculate the total size
-        int totalSize = 0;
-        for (byte[] partBuffer : parts) {
-            totalSize += partBuffer.length;
-        }
-
-        // allocate the array
-        content = new byte[totalSize];
-        int offset = 0;
-        for (byte[] partBuffer : parts) {
-            System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
-            offset += partBuffer.length;
-        }
-
-        return content;
+    /**
+     * @param paServiceUtil the paServiceUtil to set
+     */
+    public void setPaServiceUtil(PAServiceUtils paServiceUtil) {
+        this.paServiceUtil = paServiceUtil;
     }
 
 }

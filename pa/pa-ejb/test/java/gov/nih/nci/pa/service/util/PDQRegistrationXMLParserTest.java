@@ -85,16 +85,25 @@ package gov.nih.nci.pa.service.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.PoServiceLocator;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -111,10 +120,26 @@ public class PDQRegistrationXMLParserTest {
     private final URL testXMLUrl = this.getClass().getResource("/sample-pdq-input.xml");
 
     private PDQRegistrationXMLParser rXMLParser;
+    private PoServiceLocator poSvcLoc;
+    private IdentifiedPersonCorrelationServiceRemote identifierPersonSvc;
 
     @Before
     public void setup() throws PAException, NullifiedEntityException, TooManyResultsException {
         rXMLParser = new PDQRegistrationXMLParser();
+        setupPoSvc();
+        PAServiceUtils paServiceUtil = mock (PAServiceUtils.class);
+        rXMLParser.setPaServiceUtils(paServiceUtil);
+    }
+    private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException {
+        poSvcLoc = mock(PoServiceLocator.class);
+        PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
+        identifierPersonSvc = mock(IdentifiedPersonCorrelationServiceRemote.class);
+        when(poSvcLoc.getIdentifiedPersonEntityService()).thenReturn(identifierPersonSvc);
+        IdentifiedPersonDTO idPersonDTO = new IdentifiedPersonDTO();
+        idPersonDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi("1"));
+        List<IdentifiedPersonDTO> idPerDtos = new ArrayList<IdentifiedPersonDTO>();
+        idPerDtos.add(idPersonDTO);
+        when(identifierPersonSvc.search(any(IdentifiedPersonDTO.class))).thenReturn(idPerDtos);
     }
 
     @Test(expected=IllegalStateException.class)
@@ -144,16 +169,9 @@ public class PDQRegistrationXMLParserTest {
         assertEquals(false, spDto.getDelayedpostingIndicator().getValue());
 
         assertTrue(spDto.getOfficialTitle().getValue().startsWith("A Phase 2 Study Of Bevacizumab And"));
-        assertTrue(spDto.getPublicTitle().getValue().startsWith("Bevacizumab With or Without Interferon "));
-        assertTrue(spDto.getPublicDescription().getValue().startsWith("RATIONALE: Monoclonal antibodies,"));
-        assertTrue(spDto.getScientificDescription().getValue().startsWith("OBJECTIVES:"));
-
-        assertTrue(spDto.getKeywordText().getValue().startsWith("stage"));
-        assertEquals("10/05/2007", TsConverter.convertToString(spDto.getRecordVerificationDate()));
         StudySiteDTO leadTrialId = rXMLParser.getLeadOrganizationSiteIdentifierDTO();
         assertEquals("CDR0000069010", leadTrialId.getLocalStudyProtocolIdentifier().getValue());
         assertTrue(rXMLParser.getStudyIdentifierMap().containsValue("NCT00026221"));
-        assertEquals(65, spDto.getTargetAccrualNumber().getLow().getValue().intValue());
         //test resp party
         assertNotNull(rXMLParser.getResponsiblePartyContact());
         assertNotNull(rXMLParser.getPrincipalInvestigatorDTO());
@@ -164,6 +182,7 @@ public class PDQRegistrationXMLParserTest {
 
     @Test
     public void testStudyInd() {
+        when(identifierPersonSvc.search(any(IdentifiedPersonDTO.class))).thenReturn(new ArrayList<IdentifiedPersonDTO>());
         rXMLParser.setUrl(this.getClass().getResource("/sample-with-ind.xml"));
         rXMLParser.parse();
         List<StudyIndldeDTO> indList = rXMLParser.getStudyIndldeDTOs();
@@ -171,12 +190,5 @@ public class PDQRegistrationXMLParserTest {
         StudyIndldeDTO indDTO = indList.get(0);
         assertEquals("CDER", indDTO.getGrantorCode().getCode());
     }
-
-    @Test
-    public void testGetDset() {
-        rXMLParser.getDset("som@p.co", "123-453-5433");
-    }
-
-
 
 }
