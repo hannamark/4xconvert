@@ -54,7 +54,7 @@ import org.junit.Test;
 public class PDQAbstractionXMLParserTest {
     private final URL testXMLUrl = this.getClass().getResource("/sample-with-location.xml");
 
-    private PDQAbstractionXMLParser abstractionElememtParser;
+    private PDQAbstractionXMLParser abstractionElementParser;
     private PoServiceLocator poSvcLoc;
     private IdentifiedPersonCorrelationServiceRemote identifierPersonSvc;
     private IdentifiedOrganizationCorrelationServiceRemote identifierOrgSvc;
@@ -62,7 +62,7 @@ public class PDQAbstractionXMLParserTest {
     private LookUpTableServiceRemote lookupSvc;
     @Before
     public void setup() throws PAException, NullifiedEntityException, TooManyResultsException {
-        abstractionElememtParser = new PDQAbstractionXMLParser();
+        abstractionElementParser = new PDQAbstractionXMLParser();
         setupPoSvc();
         paSvcLoc = mock (ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
@@ -72,7 +72,8 @@ public class PDQAbstractionXMLParserTest {
         country.setAlpha3("USA");
         when(lookupSvc.getCountryByName(anyString())).thenReturn(country);
         PAServiceUtils paServiceUtil = mock (PAServiceUtils.class);
-        abstractionElememtParser.setPaServiceUtils(paServiceUtil);
+        abstractionElementParser.setPaServiceUtils(paServiceUtil);
+        when(paServiceUtil.getOrganizationByCtepId(anyString())).thenReturn(new OrganizationDTO());
     }
     private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException {
         poSvcLoc = mock(PoServiceLocator.class);
@@ -94,35 +95,35 @@ public class PDQAbstractionXMLParserTest {
 
     @Test(expected=IllegalStateException.class)
     public void testIForgotToCallSetURL() {
-        abstractionElememtParser.parse();
-        abstractionElememtParser.getIspDTO();
+        abstractionElementParser.parse();
+        abstractionElementParser.getIspDTO();
     }
 
     @Test
     public void testReadStudyDesign() {
         setURLAndParse();
-        assertEquals(3, abstractionElememtParser.getIspDTO().getNumberOfInterventionGroups().getValue().intValue());
-        assertEquals("Randomized", abstractionElememtParser.getIspDTO().getAllocationCode().getCode());
+        assertEquals(3, abstractionElementParser.getIspDTO().getNumberOfInterventionGroups().getValue().intValue());
+        assertEquals("Randomized", abstractionElementParser.getIspDTO().getAllocationCode().getCode());
         assertEquals("3", IntConverter.convertToString(
-                abstractionElememtParser.getIspDTO().getNumberOfInterventionGroups()));
-        assertTrue(abstractionElememtParser.getIspDTO().getPublicTitle().getValue().startsWith(
+                abstractionElementParser.getIspDTO().getNumberOfInterventionGroups()));
+        assertTrue(abstractionElementParser.getIspDTO().getPublicTitle().getValue().startsWith(
                 "Bevacizumab With or Without Interferon "));
-        assertTrue(abstractionElememtParser.getIspDTO().getPublicDescription().getValue().startsWith(
+        assertTrue(abstractionElementParser.getIspDTO().getPublicDescription().getValue().startsWith(
                 "RATIONALE: Monoclonal antibodies,"));
-        assertTrue(abstractionElememtParser.getIspDTO().getScientificDescription().getValue().startsWith("OBJECTIVES:"));
+        assertTrue(abstractionElementParser.getIspDTO().getScientificDescription().getValue().startsWith("OBJECTIVES:"));
 
-        assertTrue(abstractionElememtParser.getIspDTO().getKeywordText().getValue().startsWith("stage"));
+        assertTrue(abstractionElementParser.getIspDTO().getKeywordText().getValue().startsWith("stage"));
         assertEquals("10/05/2007", TsConverter.convertToString(
-                abstractionElememtParser.getIspDTO().getRecordVerificationDate()));
-        assertEquals(65, abstractionElememtParser.getIspDTO().getTargetAccrualNumber().getLow().getValue().intValue());
+                abstractionElementParser.getIspDTO().getRecordVerificationDate()));
+        assertEquals(65, abstractionElementParser.getIspDTO().getTargetAccrualNumber().getLow().getValue().intValue());
 
 
     }
     @Test
     public void testReadOutcomes() {
         setURLAndParse();
-        assertEquals(2, abstractionElememtParser.getOutcomeMeasureDTOs().size());
-        List <StudyOutcomeMeasureDTO> outList = abstractionElememtParser.getOutcomeMeasureDTOs();
+        assertEquals(2, abstractionElementParser.getOutcomeMeasureDTOs().size());
+        List <StudyOutcomeMeasureDTO> outList = abstractionElementParser.getOutcomeMeasureDTOs();
         assertTrue(outList.get(0).getPrimaryIndicator().getValue());
     }
 
@@ -130,8 +131,8 @@ public class PDQAbstractionXMLParserTest {
     @Test
     public void testReadIntervention() {
         setURLAndParse();
-        assertEquals(2, abstractionElememtParser.getListOfInterventionsDTOS().size());
-        Map<InterventionDTO, List<ArmDTO>> map = abstractionElememtParser.getArmInterventionMap();
+        assertEquals(2, abstractionElementParser.getListOfInterventionsDTOS().size());
+        Map<InterventionDTO, List<ArmDTO>> map = abstractionElementParser.getArmInterventionMap();
         for (Iterator<InterventionDTO> iter = map.keySet().iterator(); iter.hasNext();) {
             InterventionDTO interventionDTO = (InterventionDTO) iter.next();
             assertEquals("Biological/Vaccine", interventionDTO.getTypeCode().getCode());
@@ -147,22 +148,22 @@ public class PDQAbstractionXMLParserTest {
     @Test
     public void testReadCondition() {
         setURLAndParse();
-        assertEquals(2,abstractionElememtParser.getListOfDiseaseDTOs().size());
-        assertEquals(abstractionElememtParser.getListOfDiseaseDTOs().get(0).getDiseaseCode().getValue(),"CDR0000038837");
+        assertEquals(2,abstractionElementParser.getListOfDiseaseDTOs().size());
+        assertEquals(abstractionElementParser.getListOfDiseaseDTOs().get(0).getDiseaseCode().getValue(),"CDR0000038837");
     }
 
     @Test
     public void testArmGroup() {
         setURLAndParse();
-        assertEquals(3,abstractionElememtParser.getListOfArmDTOS().size());
-        assertEquals(abstractionElememtParser.getListOfArmDTOS().get(0).getName().getValue(),"Arm I");
-        assertEquals(abstractionElememtParser.getListOfArmDTOS().get(0).getTypeCode().getCode(),"Experimental");
+        assertEquals(3,abstractionElementParser.getListOfArmDTOS().size());
+        assertEquals(abstractionElementParser.getListOfArmDTOS().get(0).getName().getValue(),"Arm I");
+        assertEquals(abstractionElementParser.getListOfArmDTOS().get(0).getTypeCode().getCode(),"Experimental");
     }
     @Test
     public void testReadLocations() {
         setURLAndParse();
         Map<OrganizationDTO, Map<PersonDTO, StudySiteAccrualStatusDTO>> location
-            = abstractionElememtParser.getLocationsMap();
+            = abstractionElementParser.getLocationsMap();
         for (OrganizationDTO locOrg : location.keySet()) {
             Map<PersonDTO, StudySiteAccrualStatusDTO> valueMap = location.get(locOrg);
             String orgName = EnOnConverter.convertEnOnToString(locOrg.getName());
@@ -178,33 +179,47 @@ public class PDQAbstractionXMLParserTest {
     @Test
     public void testReadIrbInfo() {
         setURLAndParse();
-        assertNull(abstractionElememtParser.getIrbOrgDTO());
+        assertNull(abstractionElementParser.getIrbOrgDTO());
     }
     @Test
     public void testReadEligibility() {
         setURLAndParse();
-        PlannedEligibilityCriterionDTO  eligibleCriterionDTO = abstractionElememtParser.getEligibilityList().get(0);
+        PlannedEligibilityCriterionDTO  eligibleCriterionDTO = abstractionElementParser.getEligibilityList().get(0);
         assertNotNull(eligibleCriterionDTO);
         assertEquals(EligibleGenderCode.BOTH.getCode(), eligibleCriterionDTO.getEligibleGenderCode().getCode());
-        eligibleCriterionDTO = abstractionElememtParser.getEligibilityList().get(1);
+        eligibleCriterionDTO = abstractionElementParser.getEligibilityList().get(1);
         assertEquals(18,IvlConverter.convertPq().convertLow(eligibleCriterionDTO.getValue()).getValue().intValue());
         assertEquals(120,IvlConverter.convertPq().convertHigh(eligibleCriterionDTO.getValue()).getValue().intValue());
-        assertTrue(abstractionElememtParser.getOtherCriterionTextBlock().startsWith("DISEASE CHARACTERISTICS:"));
-        assertEquals("no", abstractionElememtParser.getHealthyVolunteers());
+        assertTrue(abstractionElementParser.getOtherCriterionTextBlock().startsWith("DISEASE CHARACTERISTICS:"));
+        assertEquals("no", abstractionElementParser.getHealthyVolunteers());
     }
     @Test
     public void testReadCollaborators() {
         setURLAndParse();
-        assertNotNull(abstractionElememtParser.getCollaboratorOrgDTOs());
-        OrganizationDTO orgDTO = abstractionElememtParser.getCollaboratorOrgDTOs().get(0);
+        assertNotNull(abstractionElementParser.getCollaboratorOrgDTOs());
+        OrganizationDTO orgDTO = abstractionElementParser.getCollaboratorOrgDTOs().get(0);
         assertEquals("Eastern Cooperative Oncology Group", EnOnConverter.convertEnOnToString(orgDTO.getName()));
     }
     /**
      *
      */
     private void setURLAndParse() {
-        abstractionElememtParser.setUrl(testXMLUrl);
-        abstractionElememtParser.parse();
+        abstractionElementParser.setUrl(testXMLUrl);
+        abstractionElementParser.parse();
+    }
+    @Test
+    public void testProperties() {
+        abstractionElementParser.setHealthyVolunteers("healthyVolunteers");
+        assertNotNull(abstractionElementParser.getHealthyVolunteers());
+
+        abstractionElementParser.setIrbOrgDTO(new OrganizationDTO());
+        assertNotNull(abstractionElementParser.getIrbOrgDTO());
+
+        abstractionElementParser.setEligibilityList(new ArrayList<PlannedEligibilityCriterionDTO>());
+        assertNotNull(abstractionElementParser.getEligibilityList());
+
+        abstractionElementParser.setOtherCriterionTextBlock("otherCriterionTextBlock");
+        assertNotNull(abstractionElementParser.getOtherCriterionTextBlock());
     }
 
 }

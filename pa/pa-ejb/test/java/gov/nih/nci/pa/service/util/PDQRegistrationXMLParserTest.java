@@ -86,6 +86,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.TooManyResultsException;
@@ -101,9 +102,12 @@ import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -129,6 +133,8 @@ public class PDQRegistrationXMLParserTest {
         setupPoSvc();
         PAServiceUtils paServiceUtil = mock (PAServiceUtils.class);
         rXMLParser.setPaServiceUtils(paServiceUtil);
+        when(paServiceUtil.getOrganizationByCtepId(anyString())).thenReturn(new OrganizationDTO());
+        when(paServiceUtil.getPersonByCtepId(anyString())).thenReturn(new PersonDTO());
     }
     private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException {
         poSvcLoc = mock(PoServiceLocator.class);
@@ -189,6 +195,35 @@ public class PDQRegistrationXMLParserTest {
         assertEquals(1, indList.size());
         StudyIndldeDTO indDTO = indList.get(0);
         assertEquals("CDER", indDTO.getGrantorCode().getCode());
+    }
+    @Test
+    public void testProperties() {
+        rXMLParser.setStudyIndldeDTOs(new ArrayList<StudyIndldeDTO>());
+        assertNotNull(rXMLParser.getStudyIndldeDTOs());
+
+        rXMLParser.setLeadOrganizationDTO(new OrganizationDTO());
+        assertNotNull(rXMLParser.getLeadOrganizationDTO());
+
+        rXMLParser.setPrincipalInvestigatorDTO(new PersonDTO());
+        assertNotNull(rXMLParser.getPrincipalInvestigatorDTO());
+
+        rXMLParser.setSponsorOrganizationDTO(new OrganizationDTO());
+        assertNotNull(rXMLParser.getSponsorOrganizationDTO());
+
+        rXMLParser.setStudyIdentifierMap(new HashMap<String, String>());
+        assertNotNull(rXMLParser.getStudyIdentifierMap());
+
+        rXMLParser.setResponsiblePartyContact(new PersonDTO());
+        assertNotNull(rXMLParser.getResponsiblePartyContact());
+
+        rXMLParser.setRegAuthMap(new HashMap<String, String>());
+        assertNotNull(rXMLParser.getRegAuthMap());
+
+        rXMLParser.setStudyProtocolDTO(new StudyProtocolDTO());
+        assertNotNull(rXMLParser.getStudyProtocolDTO());
+
+        rXMLParser.setLeadOrganizationSiteIdentifierDTO(new StudySiteDTO());
+        assertNotNull(rXMLParser.getLeadOrganizationSiteIdentifierDTO());
     }
 
 }
