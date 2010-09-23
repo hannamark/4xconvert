@@ -530,7 +530,6 @@ public class TestSchema {
         // StudyDisease
         StudyDisease sd = new StudyDisease();
         sd.setDisease(diseases.get(0));
-        sd.setLeadDiseaseIndicator(true);
         sd.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(sd);
         studyDiseases.add(sd);
