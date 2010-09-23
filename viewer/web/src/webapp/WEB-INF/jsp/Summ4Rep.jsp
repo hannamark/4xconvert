@@ -4,6 +4,7 @@
 <head>
 <title><fmt:message key="summ4Rep.header" /></title>
 <s:head />
+<script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <script type="text/javascript">
 addCalendar("Cal1", "Select Date", "criteria.intervalStartDate", "criteria");
 addCalendar("Cal2", "Select Date", "criteria.intervalEndDate", "criteria");
