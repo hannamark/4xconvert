@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -51,7 +52,7 @@ import org.junit.Test;
  * @author vrushali
  *
  */
-public class PDQAbstractionXMLParserTest {
+public class PDQXMLParserTest {
     private final URL testXMLUrl = this.getClass().getResource("/sample-with-location.xml");
 
     private PDQAbstractionXMLParser abstractionElementParser;

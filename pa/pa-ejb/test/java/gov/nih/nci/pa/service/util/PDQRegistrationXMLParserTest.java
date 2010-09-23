@@ -85,6 +85,8 @@ package gov.nih.nci.pa.service.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -225,5 +227,21 @@ public class PDQRegistrationXMLParserTest {
         rXMLParser.setLeadOrganizationSiteIdentifierDTO(new StudySiteDTO());
         assertNotNull(rXMLParser.getLeadOrganizationSiteIdentifierDTO());
     }
-
+	    @Test
+    public void testGetAlpha3CountryName() {
+        assertEquals("USA",rXMLParser.getAlpha3CountryName("U.S.A"));
+    }
+    @Test
+    public void  testConvertToIvlPq() {
+        assertNull(rXMLParser.convertToIvlPq(null, null, null, null));
+    }
+    @Test
+    public void testTsFromString() {
+        try {
+            rXMLParser.tsFromString("yyyy-MM-dd", "123/33/22");
+            fail("not a valid date");
+        } catch (IllegalArgumentException e) {
+            assertNotNull(e.getMessage());
+        }
+    }
 }
