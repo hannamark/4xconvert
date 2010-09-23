@@ -34,5 +34,8 @@
     <module>
         <java>commons-lang-2.4.jar</java>
     </module>
+    <module>
+      <java>ehcache-1.2.4.jar</java>
+    </module>
     <security-role><role-name>Submitter</role-name></security-role>
 </application>

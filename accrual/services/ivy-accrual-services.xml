@@ -13,7 +13,9 @@
   <dependencies>
     <!-- compile -->
     <dependency org="aopalliance"            name="aopalliance"             rev="1.0"             conf="compile->master"/>
-    <dependency org="net.sf.ehcache"         name="ehcache"                 rev="1.2.4"           conf="compile->master"/>
+    <dependency org="net.sf.ehcache"         name="ehcache"                 rev="1.2.4"           conf="compile->master">
+        <exclude module="commons-logging"/>
+    </dependency>
     <dependency org="com.lowagie"            name="itext"                   rev="2.0.6"           conf="compile->master"/>
     <dependency org="commons-collections"    name="commons-collections"     rev="3.2.1"           conf="compile->master"/>
     <dependency org="commons-fileupload"     name="commons-fileupload"      rev="1.2.1"           conf="compile->master"/>
