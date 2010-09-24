@@ -32,12 +32,6 @@
     <table>
           <!--  summary4 information -->
           <tr>
-                <th colspan="2">Summary 4 Information</th>
-          </tr>
-          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-          <tr>
                 <td scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.summary_4_funding_sponsor_type">
                         <label for="submitTrial_summary4FundingCategory">Summary 4 Funding Sponsor Type:</label>
