@@ -111,7 +111,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
     private static final String DISPLAY_XML = "displayXML";
     private HttpServletResponse servletResponse;
     private static final String TSR = "TSR_";
-    private static final String EXTENSION_PDF = ".pdf";
+    private static final String EXTENSION_RTF = ".rtf";
 
     /**
     * @return result
@@ -163,15 +163,15 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
             (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
 
           ByteArrayOutputStream reportData =
-              PaRegistry.getTSRReportGeneratorService().generateTsrReport(studyProtocolIi);
+              PaRegistry.getTSRReportGeneratorService().generateRtfTsrReport(studyProtocolIi);
 
         final int i = 1000;
         Random randomGenerator = new Random();
         int randomInt = randomGenerator.nextInt(i);
 
-        String fileName = TSR + randomInt + studyProtocolIi.getExtension() + EXTENSION_PDF;
+        String fileName = TSR + randomInt + studyProtocolIi.getExtension() + EXTENSION_RTF;
 
-        servletResponse.setContentType("application/pdf;");
+        servletResponse.setContentType("application/rtf;");
         servletResponse.setContentLength(reportData.size());
         servletResponse.setHeader("Content-Disposition", "attachment; filename=\""  + fileName + "\"");
         servletResponse.setHeader("Pragma", "public");

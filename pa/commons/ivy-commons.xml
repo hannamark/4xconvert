@@ -27,7 +27,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="taglibs"                name="standard"                rev="1.1.2"           conf="compile->master"/>
     <dependency org="displaytag"             name="displaytag"              rev="1.1"             conf="compile->master"/>
     <dependency org="org.freemarker"         name="freemarker"              rev="2.3.13"          conf="compile->master"/>
-    <dependency org="com.lowagie"            name="itext"                   rev="2.0.6"           conf="compile->master"/>
+    <dependency org="com.lowagie"            name="itext"                   rev="2.1.7"           conf="compile->master"/>
     <dependency org="commons-collections"    name="commons-collections"     rev="3.2.1"           conf="compile->master"/>
     <dependency org="commons-fileupload"     name="commons-fileupload"      rev="1.2.1"           conf="compile->master"/>
     <dependency org="commons-io"             name="commons-io"              rev="1.4"             conf="compile->master"/>

@@ -313,13 +313,10 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         }
         try {
             String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
-            PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
-                    Long.valueOf(pId));
-
-            ByteArrayOutputStream reportData = PaRegistry.getTSRReportGeneratorService().generateTsrReport(
-                    IiConverter.convertToIi(pId));
-            servletResponse.setHeader("Content-disposition", "inline; filename=TsrReport.pdf");
-            servletResponse.setContentType("application/pdf;");
+            ByteArrayOutputStream reportData =
+                PaRegistry.getTSRReportGeneratorService().generateRtfTsrReport(IiConverter.convertToIi(pId));
+            servletResponse.setHeader("Content-disposition", "inline; filename=TsrReport.rtf");
+            servletResponse.setContentType("application/rtf;");
             servletResponse.setContentLength(reportData.size());
             ServletOutputStream servletout = servletResponse.getOutputStream();
             reportData.writeTo(servletout);

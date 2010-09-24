@@ -143,6 +143,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -165,7 +167,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final Logger LOG = Logger.getLogger(MailManagerBeanLocal.class);
     private static final int LINE_WIDTH = 65;
     private static final String TSR = "TSR_";
-    private static final String EXTENSION_PDF = ".pdf";
+    private static final String EXTENSION_RTF = ".rtf";
+    private static final String EXTENSION_HTML = ".html";
     private static final String CURRENT_DATE = "${CurrentDate}";
     private static final String NCI_TRIAL_IDENTIFIER = "${nciTrialIdentifier}";
     private static final String OWNER_NAME = "${SubmitterName}";
@@ -195,15 +198,15 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      */
     public void sendTSREmail(Ii studyProtocolIi) throws PAException {
         try {
-            StudyProtocolQueryDTO spDTO = protocolQueryService
-                .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+            StudyProtocolQueryDTO spDTO =
+                protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
 
             String body = "";
             String amendNumber = "";
             if (spDTO.getAmendmentNumber() != null) {
                 amendNumber = spDTO.getAmendmentNumber();
             }
-            if (spDTO.getAmendmentDate() != null && !spDTO.getAmendmentDate().equals("")) {
+            if (spDTO.getAmendmentDate() != null) {
                 if (spDTO.getCtgovXmlRequiredIndicator().booleanValue()) {
                     body = lookUpTableService.getPropertyValue("tsr.amend.body");
                 } else {
@@ -223,66 +226,74 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle().toString());
             body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getDateLastCreated()));
             body = body.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier().toString());
-            body = body.replace("${fileName}", TSR + spDTO.getNciIdentifier().toString() + EXTENSION_PDF);
+            body = body.replace("${fileName}", TSR + spDTO.getNciIdentifier().toString() + EXTENSION_RTF);
             if (!spDTO.isProprietaryTrial()) {
                 body = body.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
             }
 
             body = body.replace(AMENDMENT_NUMBER, amendNumber);
-            if (spDTO.getAmendmentDate() != null && !spDTO.getAmendmentDate().equals("")) {
+            if (spDTO.getAmendmentDate() != null) {
                 body = body.replace(AMENDMENT_DATE, getFormatedDate(spDTO.getAmendmentDate()));
             }
 
-            protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
             String folderPath = PaEarPropertyReader.getDocUploadPath();
             StringBuffer sb = new StringBuffer(folderPath);
             StringBuffer sb2 = new StringBuffer(folderPath);
-            String tsrFile = getTSRFile(studyProtocolIi, spDTO, sb2);
+            StringBuffer sb3 = new StringBuffer(folderPath);
+            String rtfTsrFile = getTSRFile(studyProtocolIi, spDTO, sb2, EXTENSION_RTF);
+            String htmlTsrFile = getTSRFile(studyProtocolIi, spDTO, sb3, EXTENSION_HTML);
             String mailSubject = "";
 
             if (spDTO.isProprietaryTrial()) {
-                File[] attachments = {new File(tsrFile) };
-
+                File[] attachments = {new File(rtfTsrFile), new File(htmlTsrFile)};
                 mailSubject = lookUpTableService.getPropertyValue("tsr.proprietary.subject");
                 sendEmail(spDTO, body, attachments, mailSubject);
-                new File(tsrFile).delete();
-            } else {
-                if (spDTO.getCtgovXmlRequiredIndicator().booleanValue()) {
-                    String xmlFile = getXmlFile(studyProtocolIi, spDTO, sb);
-                    File[] attachments = {new File(xmlFile), new File(tsrFile) };
+                new File(rtfTsrFile).delete();
+                new File(htmlTsrFile).delete();
+            } else if (BooleanUtils.isTrue(spDTO.getCtgovXmlRequiredIndicator())) {
+                String xmlFile = getXmlFile(studyProtocolIi, spDTO, sb);
+                File[] attachments = {new File(xmlFile), new File(rtfTsrFile), new File(htmlTsrFile)};
 
-                    if (spDTO.getAmendmentDate() != null && !spDTO.getAmendmentDate().equals("")) {
-                        mailSubject = lookUpTableService.getPropertyValue("tsr.amend.subject");
-                    } else {
-                        mailSubject = lookUpTableService.getPropertyValue("tsr.subject");
-                    }
-                    sendEmail(spDTO, body, attachments, mailSubject);
-                    new File(tsrFile).delete();
-                    new File(xmlFile).delete();
+                if (spDTO.getAmendmentDate() != null) {
+                    mailSubject = lookUpTableService.getPropertyValue("tsr.amend.subject");
                 } else {
-                    File[] attachments = {new File(tsrFile) };
-
-                    if (spDTO.getAmendmentDate() != null && !spDTO.getAmendmentDate().equals("")) {
-                        mailSubject = lookUpTableService.getPropertyValue("noxml.tsr.amend.subject");
-                    } else {
-                        mailSubject = lookUpTableService.getPropertyValue("noxml.tsr.subject");
-                    }
-                    sendEmail(spDTO, body, attachments, mailSubject);
-                    new File(tsrFile).delete();
+                    mailSubject = lookUpTableService.getPropertyValue("tsr.subject");
                 }
+                sendEmail(spDTO, body, attachments, mailSubject);
+                new File(rtfTsrFile).delete();
+                new File(htmlTsrFile).delete();
+                new File(xmlFile).delete();
+            } else {
+                File[] attachments = {new File(rtfTsrFile), new File(htmlTsrFile)};
+
+                if (spDTO.getAmendmentDate() != null) {
+                    mailSubject = lookUpTableService.getPropertyValue("noxml.tsr.amend.subject");
+                } else {
+                    mailSubject = lookUpTableService.getPropertyValue("noxml.tsr.subject");
+                }
+                sendEmail(spDTO, body, attachments, mailSubject);
+                new File(rtfTsrFile).delete();
+                new File(htmlTsrFile).delete();
             }
+
         } catch (Exception e) {
             throw new PAException("Exception occured while sending TSR Report to submitter", e);
         }
     }
 
-    private String getTSRFile(Ii studyProtocolIi, StudyProtocolQueryDTO spDTO, StringBuffer sb2) throws PAException {
+    private String getTSRFile(Ii studyProtocolIi, StudyProtocolQueryDTO spDTO, StringBuffer sb, String format)
+        throws PAException {
 
-        String tsrFile = new String(sb2.append(File.separator).append(TSR)
-                                       .append(spDTO.getNciIdentifier().toString() + EXTENSION_PDF));
+        String tsrFile =
+            sb.append(File.separator).append(TSR).append(spDTO.getNciIdentifier().toString()).append(format).toString();
+        ByteArrayOutputStream tsrStream = null;
         try {
-            ByteArrayOutputStream pdfStream = tsrReportGeneratorService.generateTsrReport(studyProtocolIi);
-            pdfStream.writeTo(new FileOutputStream(tsrFile));
+            if (StringUtils.equals(format, EXTENSION_RTF)) {
+                tsrStream = tsrReportGeneratorService.generateRtfTsrReport(studyProtocolIi);
+            } else if (StringUtils.equals(format, EXTENSION_HTML)) {
+                tsrStream = tsrReportGeneratorService.generateHtmlTsrReport(studyProtocolIi);
+            }
+            tsrStream.writeTo(new FileOutputStream(tsrFile));
         } catch (Exception e) {
             throw new PAException("Exception occured while getting TSR Report to submitter", e);
         }
@@ -336,7 +347,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             BodyPart msgPart = new MimeBodyPart();
             msgPart.setText(mailBody);
             multipart.addBodyPart(msgPart);
-            if (attachments != null && attachments.length > 0) {
+            if (!ArrayUtils.isEmpty(attachments)) {
                 // Add attachments to message
                 for (File attachment : attachments) {
                     MimeBodyPart attPart = new MimeBodyPart();
@@ -673,15 +684,18 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             StringBuffer sb = new StringBuffer(folderPath);
             String xmlFile = getXmlFile(studyProtocolIi, spDTO, sb);
             StringBuffer sb2 = new StringBuffer(folderPath);
-            String tsrFile = getTSRFile(studyProtocolIi, spDTO, sb2);
+            StringBuffer sb3 = new StringBuffer(folderPath);
+            String rtfTsrFile = getTSRFile(studyProtocolIi, spDTO, sb2, EXTENSION_RTF);
+            String htmlTsrFile = getTSRFile(studyProtocolIi, spDTO, sb3, EXTENSION_HTML);
 
             String mailSubject = lookUpTableService.getPropertyValue("xml.subject");
             mailSubject = mailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
             mailSubject = mailSubject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
 
-            File[] attachments = {new File(xmlFile), new File(tsrFile) };
+            File[] attachments = {new File(xmlFile), new File(rtfTsrFile), new File(htmlTsrFile)};
             sendMailWithAttachment(mailTo, mailSubject, body, attachments);
-            new File(tsrFile).delete();
+            new File(rtfTsrFile).delete();
+            new File(htmlTsrFile).delete();
             new File(xmlFile).delete();
         } catch (Exception e) {
             throw new PAException("Exception occured while sending XML and TSR Report to submitter", e);

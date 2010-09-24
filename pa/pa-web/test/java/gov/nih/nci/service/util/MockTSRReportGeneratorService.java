@@ -89,12 +89,27 @@ public class MockTSRReportGeneratorService implements TSRReportGeneratorServiceR
 	      return st;
 	  }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote#generateTsrReport(gov.nih.nci.iso21090.Ii)
-     */
-    public ByteArrayOutputStream generateTsrReport(Ii studyProtocolIi) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	 /**
+	  * {@inheritDoc}
+	  */
+	 public ByteArrayOutputStream generatePdfTsrReport(Ii studyProtocolIi) throws PAException {
+	     // TODO Auto-generated method stub
+	     return null;
+	 }
 
+	 /**
+      * {@inheritDoc}
+      */
+	 public ByteArrayOutputStream generateRtfTsrReport(Ii studyProtocolIi) throws PAException {
+	     // TODO Auto-generated method stub
+	     return null;
+	 }
+
+	 /**
+      * {@inheritDoc}
+      */
+	 public ByteArrayOutputStream generateHtmlTsrReport(Ii studyProtocolIi) throws PAException {
+	     // TODO Auto-generated method stub
+	     return null;
+	 }
 }

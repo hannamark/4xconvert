@@ -88,19 +88,20 @@ import java.io.ByteArrayOutputStream;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.rtf.RtfWriter2;
 
 /**
- * Generates a PDF version of the TSR Report.
+ * Generates a RTF version of the TSR Report.
  *
- * @author kkanchinadam
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
+public class RtfTsrReportGenerator extends AbstractTsrReportGenerator {
+
 
     /**
      * Default constructor.
      */
-    public PdfTsrReportGenerator() {
+    public RtfTsrReportGenerator() {
         super();
     }
 
@@ -108,14 +109,14 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
      * @param tsrReport the tsr report
      * @param isProprietaryTrial proprietary trial indicator
      */
-    public PdfTsrReportGenerator(TSRReport tsrReport, boolean isProprietaryTrial) {
+    public RtfTsrReportGenerator(TSRReport tsrReport, boolean isProprietaryTrial) {
         super(tsrReport, isProprietaryTrial);
     }
 
     /**
      * @param tsrErrorReport the tsr error object
      */
-    public PdfTsrReportGenerator(TSRErrorReport tsrErrorReport) {
+    public RtfTsrReportGenerator(TSRErrorReport tsrErrorReport) {
         super(tsrErrorReport);
     }
 
@@ -127,7 +128,7 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
         try {
             setReportDocument(new Document());
             //The below is being called for it's side effects; namely preparing the document for generation.
-            PdfWriter.getInstance(getReportDocument(), getOutputStream());
+            RtfWriter2.getInstance(getReportDocument(), getOutputStream());
             generateReport();
         } catch (DocumentException e) {
             throw new PAException("Exception in generateTsrReport()", e);
@@ -143,7 +144,7 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
         try {
             setReportDocument(new Document());
             //The below is being called for it's sie effects; namely preparing the document for generation.
-            PdfWriter.getInstance(getReportDocument(), getOutputStream());
+            RtfWriter2.getInstance(getReportDocument(), getOutputStream());
             getReportDocument().open();
             addErrorReportTitle();
             getReportDocument().add(getLineBreak());

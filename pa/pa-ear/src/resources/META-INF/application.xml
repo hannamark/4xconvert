@@ -39,7 +39,10 @@
 	  <java>commons-lang-2.4.jar</java>
 	</module>
     <module>
-      <java>itext-2.0.6.jar</java>
+      <java>itext-2.1.7.jar</java>
+    </module>
+    <module>
+      <java>itext-rtf-2.1.7.jar</java>
     </module>
     <module>
       <java>ehcache-1.2.4.jar</java>

@@ -122,7 +122,9 @@ import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.report.AbstractTsrReportGenerator;
+import gov.nih.nci.pa.service.util.report.HtmlTsrReportGenerator;
 import gov.nih.nci.pa.service.util.report.PdfTsrReportGenerator;
+import gov.nih.nci.pa.service.util.report.RtfTsrReportGenerator;
 import gov.nih.nci.pa.service.util.report.TSRErrorReport;
 import gov.nih.nci.pa.service.util.report.TSRReport;
 import gov.nih.nci.pa.service.util.report.TSRReportArmGroup;
@@ -237,39 +239,69 @@ public class TSRReportGeneratorServiceTest {
       }
 
     @Test(expected=PAException.class)
-    public void nullParameter() throws Exception {
-        bean.generateTsrReport(null);
+    public void nullParameterPDF() throws Exception {
+        bean.generatePdfTsrReport(null);
+    }
+
+    @Test(expected=PAException.class)
+    public void nullParameterRTF() throws Exception {
+        bean.generateRtfTsrReport(null);
+    }
+
+    @Test(expected=PAException.class)
+    public void nullParameterHTML() throws Exception {
+        bean.generateHtmlTsrReport(null);
     }
 
     @Test
-    public void generateTsrReport() throws Exception {
+    public void generateTsrReports() throws Exception {
         Ii ii = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
-        ByteArrayOutputStream x = bean.generateTsrReport(ii);
+        ByteArrayOutputStream x = bean.generatePdfTsrReport(ii);
         assertNotNull(x);
         assertTrue(x.size() > 0);
         writeToFile(x, "./tsr_report.pdf");
+
+        x = bean.generateRtfTsrReport(ii);
+        assertNotNull(x);
+        assertTrue(x.size() > 0);
+        writeToFile(x, "./tsr_report.rtf");
+
+        x = bean.generateHtmlTsrReport(ii);
+        assertNotNull(x);
+        assertTrue(x.size() > 0);
+        writeToFile(x, "./tsr_report.html");
     }
 
     @Test
-    public void generateProprietaryTsrReportToFile() throws Exception {
-        // Setup the data.
-
+    public void generateProprietaryTsrReportsToFile() throws Exception {
         TSRReport tsrReport = new TSRReport("Trial Summary Report", PAUtil.today(), PAUtil.today());
-        AbstractTsrReportGenerator pdfTsrReportGenerator = new PdfTsrReportGenerator(tsrReport, true);
-        setupDataForPdfTest(pdfTsrReportGenerator);
-        // GENERATE PDF
-        writeToFile(pdfTsrReportGenerator.generateTsrReport(), "./Proprietary_Tsr_Report.pdf");
+        AbstractTsrReportGenerator tsrReportGenerator = new PdfTsrReportGenerator(tsrReport, true);
+        setupDataForTsrGenerationTest(tsrReportGenerator);
+        writeToFile(tsrReportGenerator.generateTsrReport(), "./Proprietary_Tsr_Report.pdf");
+
+        tsrReportGenerator = new RtfTsrReportGenerator(tsrReport, true);
+        setupDataForTsrGenerationTest(tsrReportGenerator);
+        writeToFile(tsrReportGenerator.generateTsrReport(), "./Proprietary_Tsr_Report.rtf");
+
+        tsrReportGenerator = new HtmlTsrReportGenerator(tsrReport, true);
+        setupDataForTsrGenerationTest(tsrReportGenerator);
+        writeToFile(tsrReportGenerator.generateTsrReport(), "./Proprietary_Tsr_Report.html");
     }
 
     @Test
     public void generateNonProprietaryTsrReportToFile() throws Exception {
-        // Setup the data.
-
         TSRReport tsrReport = new TSRReport("Trial Summary Report", PAUtil.today(), PAUtil.today());
-        AbstractTsrReportGenerator pdfTsrReportGenerator = new PdfTsrReportGenerator(tsrReport, false);
-        setupDataForPdfTest(pdfTsrReportGenerator);
-        // GENERATE PDF
-        writeToFile(pdfTsrReportGenerator.generateTsrReport(), "./Non_Proprietary_Tsr_Report.pdf");
+        AbstractTsrReportGenerator tsrReportGenerator = new PdfTsrReportGenerator(tsrReport, false);
+        setupDataForTsrGenerationTest(tsrReportGenerator);
+        writeToFile(tsrReportGenerator.generateTsrReport(), "./Non_Proprietary_Tsr_Report.pdf");
+
+        tsrReportGenerator = new RtfTsrReportGenerator(tsrReport, false);
+        setupDataForTsrGenerationTest(tsrReportGenerator);
+        writeToFile(tsrReportGenerator.generateTsrReport(), "./Non_Proprietary_Tsr_Report.rtf");
+
+        tsrReportGenerator = new HtmlTsrReportGenerator(tsrReport, false);
+        setupDataForTsrGenerationTest(tsrReportGenerator);
+        writeToFile(tsrReportGenerator.generateTsrReport(), "./Non_Proprietary_Tsr_Report.html");
     }
 
     @Test
@@ -280,10 +312,15 @@ public class TSRReportGeneratorServiceTest {
         tsrReport.getErrorReasons().add("Reason 1");
         tsrReport.getErrorReasons().add("Reason 2");
         tsrReport.getErrorReasons().add("Reason 3");
-        AbstractTsrReportGenerator pdfTsrReportGenerator = new PdfTsrReportGenerator(tsrReport);
 
-        // GENERATE PDF
-        writeToFile(pdfTsrReportGenerator.generateErrorReport(), "./Error_Report.pdf");
+        AbstractTsrReportGenerator tsrReportGenerator = new PdfTsrReportGenerator(tsrReport);
+        writeToFile(tsrReportGenerator.generateErrorReport(), "./Error_Report.pdf");
+
+        tsrReportGenerator = new RtfTsrReportGenerator(tsrReport);
+        writeToFile(tsrReportGenerator.generateErrorReport(), "./Error_Report.rtf");
+
+        tsrReportGenerator = new HtmlTsrReportGenerator(tsrReport);
+        writeToFile(tsrReportGenerator.generateErrorReport(), "./Error_Report.html");
     }
 
     private void writeToFile(ByteArrayOutputStream os, String fileName) throws DocumentException, IOException {
@@ -291,7 +328,7 @@ public class TSRReportGeneratorServiceTest {
         os.writeTo(fos);
     }
 
-    private void setupDataForPdfTest(AbstractTsrReportGenerator pdfTsrReportGenerator) throws Exception {
+    private void setupDataForTsrGenerationTest(AbstractTsrReportGenerator pdfTsrReportGenerator) throws Exception {
         // Trial Identification Data
         TSRReportTrialIdentification trialIdentification = new TSRReportTrialIdentification();
         trialIdentification.setTrialCategory("Proprietary. Unité de Fabrication et Contrôles Hospitaliers");

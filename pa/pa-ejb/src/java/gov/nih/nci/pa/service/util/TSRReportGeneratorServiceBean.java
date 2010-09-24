@@ -148,7 +148,9 @@ import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.report.AbstractTsrReportGenerator;
+import gov.nih.nci.pa.service.util.report.HtmlTsrReportGenerator;
 import gov.nih.nci.pa.service.util.report.PdfTsrReportGenerator;
+import gov.nih.nci.pa.service.util.report.RtfTsrReportGenerator;
 import gov.nih.nci.pa.service.util.report.TSRErrorReport;
 import gov.nih.nci.pa.service.util.report.TSRReport;
 import gov.nih.nci.pa.service.util.report.TSRReportArmGroup;
@@ -191,6 +193,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -250,10 +253,6 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     private AbstractTsrReportGenerator tsrReportGenerator;
-    private Ii studyProtocolIi;
-    private StudyProtocolDTO studyProtocolDto;
-    private Ii studyProtocolDtoIdentifier;
-    private boolean isProprietaryTrial;
 
     private static final String REPORT_TITLE = "Trial Summary Report";
     private static final String YES = "Yes";
@@ -273,37 +272,63 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private static final String AFFILIATED_WITH = " affiliated with ";
     private static final String IN_THE_ROLE_OF = " in the role of ";
     private static final String AS_OF = " as of ";
+    private static final String EMAIL = " email: ";
+    private static final String PHONE = " phone: ";
 
     /**
-     * Generate tsr html.
-     *
-     * @param studyProtIi ii of studyprotocol.
-     * @return ByteArrayOutputStream the byte stream.
-     * @throws PAException the exception.
+     * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public ByteArrayOutputStream generateTsrReport(Ii studyProtIi) throws PAException {
-        ByteArrayOutputStream outputByteStream = null;
-        studyProtocolIi = studyProtIi;
+    public ByteArrayOutputStream generatePdfTsrReport(Ii studyProtIi) throws PAException {
+        tsrReportGenerator = new PdfTsrReportGenerator();
+        return getTsrReport(tsrReportGenerator, studyProtIi);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public ByteArrayOutputStream generateRtfTsrReport(Ii studyProtIi) throws PAException {
+        tsrReportGenerator = new RtfTsrReportGenerator();
+        return getTsrReport(tsrReportGenerator, studyProtIi);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public ByteArrayOutputStream generateHtmlTsrReport(Ii studyProtIi) throws PAException {
+        tsrReportGenerator = new HtmlTsrReportGenerator();
+        return getTsrReport(tsrReportGenerator, studyProtIi);
+    }
+
+
+    private ByteArrayOutputStream getTsrReport(AbstractTsrReportGenerator reportGenerator, Ii studyProtocolIi)
+        throws PAException {
         if (studyProtocolIi == null) {
-            throw new PAException("Study Protocol Identifier is null");
+            throw new PAException("Study Protocol Identifier is null.");
         }
 
-        try {
-            studyProtocolDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
-            studyProtocolDtoIdentifier = studyProtocolDto.getIdentifier();
-            isProprietaryTrial = !PAUtil.isBlNull(studyProtocolDto.getProprietaryTrialIndicator())
-                    && BlConverter.convertToBoolean(studyProtocolDto.getProprietaryTrialIndicator());
+        ByteArrayOutputStream outputByteStream = null;
 
-            TSRReport tsrReport = new TSRReport(REPORT_TITLE, PAUtil.today(),
-                    PAUtil.convertTsToFormattedDate(studyProtocolDto.getRecordVerificationDate()));
-            tsrReportGenerator = new PdfTsrReportGenerator(tsrReport, isProprietaryTrial);
+        StudyProtocolDTO studyProtocolDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
+        boolean isProprietaryTrial = !PAUtil.isBlNull(studyProtocolDto.getProprietaryTrialIndicator())
+            && BlConverter.convertToBoolean(studyProtocolDto.getProprietaryTrialIndicator());
+
+        TSRReport tsrReport = new TSRReport(REPORT_TITLE, PAUtil.today(),
+                PAUtil.convertTsToFormattedDate(studyProtocolDto.getRecordVerificationDate()));
+        reportGenerator.setProprietaryTrial(isProprietaryTrial);
+        reportGenerator.setTsrReport(tsrReport);
+
+        try {
             if (isProprietaryTrial) {
-                setProprietaryTrialReportDetails();
+                setProprietaryTrialReportDetails(studyProtocolDto);
             } else {
-                setNonProprietaryTrialReportDetails();
+                setNonProprietaryTrialReportDetails(studyProtocolDto);
             }
-            outputByteStream = tsrReportGenerator.generateTsrReport();
+            outputByteStream = reportGenerator.generateTsrReport();
         } catch (Exception e) {
             TSRErrorReport tsrErrorReport =
                 new TSRErrorReport(REPORT_TITLE, PAUtil.getAssignedIdentifierExtension(studyProtocolDto),
@@ -312,42 +337,44 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             for (StackTraceElement ste : e.getStackTrace()) {
                 tsrErrorReport.getErrorReasons().add(ste.toString());
             }
-            tsrReportGenerator = new PdfTsrReportGenerator(tsrErrorReport);
-            outputByteStream = tsrReportGenerator.generateErrorReport();
+            reportGenerator.setTsrErrorReport(tsrErrorReport);
+            outputByteStream = reportGenerator.generateErrorReport();
         }
         return outputByteStream;
     }
 
-    private void setProprietaryTrialReportDetails() throws PAException, NullifiedRoleException {
-        setTrialIdentificationDetails();
-        setGeneralTrialDetails();
-        setSummary4Information();
-        setDiseases();
-        setInterventions();
-        setParticipatingSites();
+    private void setProprietaryTrialReportDetails(StudyProtocolDTO studyProtocolDto) throws PAException,
+    NullifiedRoleException {
+        setTrialIdentificationDetails(studyProtocolDto, true);
+        setGeneralTrialDetails(studyProtocolDto, true);
+        setSummary4Information(studyProtocolDto);
+        setDiseases(studyProtocolDto);
+        setInterventions(studyProtocolDto);
+        setParticipatingSites(studyProtocolDto, true);
     }
 
-    private void setNonProprietaryTrialReportDetails() throws PAException, NullifiedRoleException {
-        setTrialIdentificationDetails();
-        setGeneralTrialDetails();
-        setStatusDatesDetails();
-        setRegulatoryInformation();
-        setHumanSubjectSafety();
-        setIndIdes();
-        setNihGrants();
-        setSummary4Information();
-        setCollaborators();
-        setDiseases();
-        setTrialDesign();
-        setEligibilityCriteria();
-        setArmGroups();
-        setPrimaryAndSecondaryOutcomeMeasures();
-        setSubGroupStratificationCriteria();
-        setParticipatingSites();
+    private void setNonProprietaryTrialReportDetails(StudyProtocolDTO studyProtocolDto) throws PAException,
+    NullifiedRoleException {
+        setTrialIdentificationDetails(studyProtocolDto, false);
+        setGeneralTrialDetails(studyProtocolDto, false);
+        setStatusDatesDetails(studyProtocolDto);
+        setRegulatoryInformation(studyProtocolDto);
+        setHumanSubjectSafety(studyProtocolDto);
+        setIndIdes(studyProtocolDto);
+        setNihGrants(studyProtocolDto);
+        setSummary4Information(studyProtocolDto);
+        setCollaborators(studyProtocolDto);
+        setDiseases(studyProtocolDto);
+        setTrialDesign(studyProtocolDto);
+        setEligibilityCriteria(studyProtocolDto);
+        setArmGroups(studyProtocolDto);
+        setPrimaryAndSecondaryOutcomeMeasures(studyProtocolDto);
+        setSubGroupStratificationCriteria(studyProtocolDto);
+        setParticipatingSites(studyProtocolDto, false);
     }
 
-    private void setInterventions() throws PAException {
-        List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(studyProtocolDtoIdentifier);
+    private void setInterventions(StudyProtocolDTO studyProtocolDto) throws PAException {
+        List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(studyProtocolDto.getIdentifier());
         if (paList != null && !paList.isEmpty()) {
             for (PlannedActivityDTO paDto : paList) {
                 if (PAUtil.isTypeIntervention(paDto.getCategoryCode())) {
@@ -367,7 +394,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return intervention;
     }
 
-    private void setTrialIdentificationDetails() throws PAException {
+    private void setTrialIdentificationDetails(StudyProtocolDTO studyProtocolDto, boolean isProprietaryTrial)
+    throws PAException {
         TSRReportTrialIdentification trialIdentification = new TSRReportTrialIdentification();
         trialIdentification.setTrialCategory(isProprietaryTrial ? PROPRIETARY : NON_PROPRIETARY);
         if (!isProprietaryTrial) {
@@ -377,20 +405,20 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             }
         }
         trialIdentification.setNciIdentifier(PAUtil.getAssignedIdentifierExtension(studyProtocolDto));
-        trialIdentification.setLeadOrgIdentifier(getTiLeadOrgIdentifier());
-        trialIdentification.setNctNumber(getIdentifier(PAConstants.NCT_IDENTIFIER_TYPE));
-        trialIdentification.setDcpIdentifier(getIdentifier(PAConstants.DCP_IDENTIFIER_TYPE));
-        trialIdentification.setCtepIdentifier(getIdentifier(PAConstants.CTEP_IDENTIFIER_TYPE));
+        trialIdentification.setLeadOrgIdentifier(getTiLeadOrgIdentifier(studyProtocolDto));
+        trialIdentification.setNctNumber(getIdentifier(studyProtocolDto, PAConstants.NCT_IDENTIFIER_TYPE));
+        trialIdentification.setDcpIdentifier(getIdentifier(studyProtocolDto, PAConstants.DCP_IDENTIFIER_TYPE));
+        trialIdentification.setCtepIdentifier(getIdentifier(studyProtocolDto, PAConstants.CTEP_IDENTIFIER_TYPE));
         trialIdentification.setAmendmentNumber(getValue(studyProtocolDto.getAmendmentNumber()));
         trialIdentification.setAmendmentDate(PAUtil.convertTsToFormattedDate(studyProtocolDto.getAmendmentDate()));
-        Organization lead = ocsr.getOrganizationByFunctionRole(studyProtocolDtoIdentifier, CdConverter
+        Organization lead = ocsr.getOrganizationByFunctionRole(studyProtocolDto.getIdentifier(), CdConverter
                 .convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
         trialIdentification.setLeadOrganization(lead.getName());
 
         tsrReportGenerator.setTrialIdentification(trialIdentification);
     }
 
-    private String getTiLeadOrgIdentifier() throws PAException {
+    private String getTiLeadOrgIdentifier(StudyProtocolDTO studyProtocolDto) throws PAException {
         String leadOrgIdentifier = null;
         StudySiteDTO spartDTO = new StudySiteDTO();
         spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
@@ -401,12 +429,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return leadOrgIdentifier;
     }
 
-    private String getIdentifier(String identifierType) throws PAException {
-        String identifier = paServiceUtils.getStudyIdentifier(studyProtocolDtoIdentifier, identifierType);
+    private String getIdentifier(StudyProtocolDTO studyProtocolDto, String identifierType) throws PAException {
+        String identifier = paServiceUtils.getStudyIdentifier(studyProtocolDto.getIdentifier(), identifierType);
         return (StringUtils.isNotBlank(identifier) ? identifier : INFORMATION_NOT_PROVIDED);
     }
 
-    private void setGeneralTrialDetails() throws PAException, NullifiedRoleException {
+    private void setGeneralTrialDetails(StudyProtocolDTO studyProtocolDto, boolean isProprietaryTrial)
+    throws PAException, NullifiedRoleException {
         TSRReportGeneralTrialDetails gtd = new TSRReportGeneralTrialDetails();
 
         gtd.setOfficialTitle(getValue(studyProtocolDto.getOfficialTitle(), INFORMATION_NOT_PROVIDED));
@@ -417,8 +446,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                     , null));
             gtd.setPhase(getValue(studyProtocolDto.getPhaseCode(), INFORMATION_NOT_PROVIDED));
             gtd.setPhaseAdditonalQualifier(getValue(studyProtocolDto.getPhaseAdditionalQualifierCode(), null));
-            InterventionalStudyProtocolDTO ispDTO = studyProtocolService
-                    .getInterventionalStudyProtocol(studyProtocolDtoIdentifier);
+            InterventionalStudyProtocolDTO ispDTO =
+                studyProtocolService.getInterventionalStudyProtocol(studyProtocolDto.getIdentifier());
             boolean interventionalType = ispDTO != null ? true : false;
             gtd.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_OBSERVATIONAL);
         } else {
@@ -432,15 +461,17 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                         .getDisplayName(), INFORMATION_NOT_PROVIDED));
             }
             if (studyProtocolDto.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-             gtd.setSponsor(getGtdSponsorOrLeadOrganization(StudySiteFunctionalCode.SPONSOR, INFORMATION_NOT_PROVIDED));
+             gtd.setSponsor(getGtdSponsorOrLeadOrganization(studyProtocolDto,
+                     StudySiteFunctionalCode.SPONSOR, INFORMATION_NOT_PROVIDED));
             }
-            String leadOrganization = getGtdSponsorOrLeadOrganization(StudySiteFunctionalCode.LEAD_ORGANIZATION,
-                    INFORMATION_NOT_PROVIDED);
+            String leadOrganization = getGtdSponsorOrLeadOrganization(studyProtocolDto,
+                    StudySiteFunctionalCode.LEAD_ORGANIZATION, INFORMATION_NOT_PROVIDED);
             gtd.setLeadOrganization(leadOrganization);
             // PI
             StudyContactDTO scDto = new StudyContactDTO();
             scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
-            List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolDtoIdentifier, scDto);
+            List<StudyContactDTO> scDtos =
+                studyContactService.getByStudyProtocol(studyProtocolDto.getIdentifier(), scDto);
             if (!scDtos.isEmpty()) {
                 Person leadPi = correlationUtils.getPAPersonByIi(scDtos.get(0).getClinicalResearchStaffIi());
                 gtd.setPi(leadPi.getFullName() + AFFILIATED_WITH + leadOrganization);
@@ -450,10 +481,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                         IN_THE_ROLE_OF).append(ROLE_PI);
                 gtd.setOverallOfficial(overallOffBuilder.toString());
                 // Central Contact
-                gtd.setCentralContact(getCentralContactDetails());
+                gtd.setCentralContact(getCentralContactDetails(studyProtocolDto));
                 if (studyProtocolDto.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
                    // Responsible Party
-                   gtd.setResponsibleParty(getResponsiblePartyDetails());
+                   gtd.setResponsibleParty(getResponsiblePartyDetails(studyProtocolDto));
                 }
             }
         }
@@ -461,11 +492,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         tsrReportGenerator.setGeneralTrialDetails(gtd);
     }
 
-    private String getCentralContactDetails() throws PAException, NullifiedRoleException {
+    private String getCentralContactDetails(StudyProtocolDTO studyProtocolDto) throws PAException,
+    NullifiedRoleException {
         String retVal = null;
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.CENTRAL_CONTACT));
-        List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolDtoIdentifier, scDto);
+        List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolDto.getIdentifier(), scDto);
         if (!scDtos.isEmpty()) {
             String centralContactName = "";
 
@@ -482,18 +514,19 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             String extn = PAUtil.getPhoneExtension(cc.getTelecomAddresses());
 
             StringBuilder builder = new StringBuilder();
-            builder.append(centralContactName).append(", email: ").append(email).append(", phone: ").append(phone)
-                    .append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
+            builder.append(centralContactName).append(",").append(EMAIL).append(email).append(",").append(PHONE)
+            .append(phone).append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
             retVal = builder.toString();
         }
         return retVal;
     }
 
-    private String getResponsiblePartyDetails() throws PAException, NullifiedRoleException {
+    private String getResponsiblePartyDetails(StudyProtocolDTO studyProtocolDto) throws PAException,
+    NullifiedRoleException {
         String retVal = null;
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
-        List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolDtoIdentifier, scDto);
+        List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolDto.getIdentifier(), scDto);
         Person rp = null;
         String resPartyContactName = null;
         DSet<Tel> dset = null;
@@ -505,15 +538,15 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             resPartyContactName = rp.getFullName();
             StudySiteDTO spartDTO = new StudySiteDTO();
             spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-            List<StudySiteDTO> sParts = studySiteService.getByStudyProtocol(studyProtocolDtoIdentifier, spartDTO);
+            List<StudySiteDTO> sParts = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);
             for (StudySiteDTO spart : sParts) {
                 sponsorResponsible = correlationUtils.getPAOrganizationByIi(spart.getResearchOrganizationIi());
             }
         } else {
             StudySiteContactDTO spart = new StudySiteContactDTO();
             spart.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-            List<StudySiteContactDTO> spDtos = studySiteContactService.getByStudyProtocol(studyProtocolDtoIdentifier,
-                    spart);
+            List<StudySiteContactDTO> spDtos =
+                studySiteContactService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spart);
             if (spDtos != null && !spDtos.isEmpty()) {
                 PAContactDTO paCDto = correlationUtils.getContactByPAOrganizationalContactId((Long.valueOf(spDtos
                         .get(0).getOrganizationalContactIi().getExtension())));
@@ -522,7 +555,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
                 StudySiteDTO spDto = new StudySiteDTO();
                 spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-                List<StudySiteDTO> spartDtos = studySiteService.getByStudyProtocol(studyProtocolDtoIdentifier, spDto);
+                List<StudySiteDTO> spartDtos =
+                    studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spDto);
                 if (spartDtos != null && !spartDtos.isEmpty()) {
                     spDto = spartDtos.get(0);
                     sponsorResponsible = new CorrelationUtils()
@@ -536,17 +570,17 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
         StringBuilder builder = new StringBuilder();
         builder.append("Name/Official Title: ").append(resPartyContactName).append(", Organization: ").append(
-                sponsorResponsible.getName()).append(", email: ").append(email).append(", phone: ").append(phone)
-                .append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
+                sponsorResponsible.getName()).append(",").append(EMAIL).append(email).append(",").append(PHONE)
+                .append(phone).append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
         retVal = builder.toString();
 
         return retVal;
     }
 
-    private void setStatusDatesDetails() throws PAException {
+    private void setStatusDatesDetails(StudyProtocolDTO studyProtocolDto) throws PAException {
         TSRReportStatusDate statusDate = new TSRReportStatusDate();
         StudyOverallStatusDTO statusDateDto = studyOverallStatusService
-                .getCurrentByStudyProtocol(studyProtocolDtoIdentifier);
+                .getCurrentByStudyProtocol(studyProtocolDto.getIdentifier());
         statusDate.setCurrentTrialStatus(getValue(statusDateDto.getStatusCode()) + AS_OF
                 + PAUtil.convertTsToFormattedDate(statusDateDto.getStatusDate()));
         statusDate.setReasonText(getValue(statusDateDto.getReasonText(), null));
@@ -559,11 +593,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         tsrReportGenerator.setStatusDate(statusDate);
     }
 
-    private void setRegulatoryInformation() throws PAException {
+    private void setRegulatoryInformation(StudyProtocolDTO studyProtocolDto) throws PAException {
         TSRReportRegulatoryInformation regInfo = new TSRReportRegulatoryInformation();
         if (studyProtocolDto.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
            StudyRegulatoryAuthorityDTO sraDTO = studyRegulatoryAuthorityService
-                .getCurrentByStudyProtocol(studyProtocolDtoIdentifier);
+                .getCurrentByStudyProtocol(studyProtocolDto.getIdentifier());
             if (sraDTO != null) {
                String data = INFORMATION_NOT_PROVIDED;
                RegulatoryAuthority ra = regulatoryInformationService.get(Long.valueOf(sraDTO
@@ -596,12 +630,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         tsrReportGenerator.setRegulatoryInformation(regInfo);
     }
 
-    private void setHumanSubjectSafety() throws PAException {
+    private void setHumanSubjectSafety(StudyProtocolDTO studyProtocolDto) throws PAException {
         TSRReportHumanSubjectSafety hss = new TSRReportHumanSubjectSafety();
 
         Boolean b = BlConverter.convertToBoolean(studyProtocolDto.getReviewBoardApprovalRequiredIndicator());
         if (b != null && b) {
-            List<StudySiteDTO> partList = studySiteService.getByStudyProtocol(studyProtocolDtoIdentifier);
+            List<StudySiteDTO> partList = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier());
             for (StudySiteDTO part : partList) {
                 if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
                         part.getReviewBoardApprovalStatusCode().getCode())
@@ -648,14 +682,15 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private String getHSSBoardNameAndAddress(String orgName, String fullAddress,
             String email, String phone, String extn) {
         StringBuilder retVal = new StringBuilder();
-        retVal.append(StringUtils.isNotEmpty(orgName) ? orgName : "").append(
-                StringUtils.isNotEmpty(orgName) && StringUtils.isNotEmpty(fullAddress) ? ", " : "").append(
-                StringUtils.isNotEmpty(fullAddress) ? fullAddress : "");
+        retVal.append(StringUtils.defaultString(orgName))
+            .append(StringUtils.isNotEmpty(orgName) && StringUtils.isNotEmpty(fullAddress) ? ", " : "")
+            .append(StringUtils.defaultString(fullAddress));
         if (StringUtils.isNotEmpty(phone)) {
-            retVal.append(", phone: ").append(phone).append(StringUtils.isNotEmpty(extn) ? ", extn: " + extn : BLANK);
+            retVal.append(",").append(PHONE).append(phone)
+            .append(StringUtils.isNotEmpty(extn) ? ", extn: " + extn : BLANK);
         }
         if (StringUtils.isNotEmpty(email)) {
-            retVal.append(", email: ").append(email);
+            retVal.append(",").append(EMAIL).append(email);
         }
         if (StringUtils.isEmpty(retVal.toString())) {
             return null;
@@ -664,10 +699,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return retVal.toString();
     }
 
-    private void setIndIdes() throws PAException {
+    private void setIndIdes(StudyProtocolDTO studyProtocolDto) throws PAException {
         List<TSRReportIndIde> indIdes = new ArrayList<TSRReportIndIde>();
 
-        List<StudyIndldeDTO> indides = studyIndldeService.getByStudyProtocol(studyProtocolDtoIdentifier);
+        List<StudyIndldeDTO> indides = studyIndldeService.getByStudyProtocol(studyProtocolDto.getIdentifier());
         for (StudyIndldeDTO indDto : indides) {
             TSRReportIndIde indIde = new TSRReportIndIde();
             indIde.setType(getValue(indDto.getIndldeTypeCode()));
@@ -689,10 +724,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         tsrReportGenerator.setIndIdes(indIdes);
     }
 
-    private void setNihGrants() throws PAException {
+    private void setNihGrants(StudyProtocolDTO studyProtocolDto) throws PAException {
         List<TSRReportNihGrant> nihGrants = new ArrayList<TSRReportNihGrant>();
         List<StudyResourcingDTO> funds = studyResourcingService
-                .getStudyResourcingByStudyProtocol(studyProtocolDtoIdentifier);
+                .getStudyResourcingByStudyProtocol(studyProtocolDto.getIdentifier());
         for (StudyResourcingDTO fund : funds) {
             TSRReportNihGrant nihGrant = new TSRReportNihGrant();
             nihGrant.setFundingMechanism(getValue(fund.getFundingMechanismCode()));
@@ -704,10 +739,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         tsrReportGenerator.setNihGrants(nihGrants);
     }
 
-    private void setSummary4Information() throws PAException {
+    private void setSummary4Information(StudyProtocolDTO studyProtocolDto) throws PAException {
         TSRReportSummary4Information sum4Info = new TSRReportSummary4Information();
         StudyResourcingDTO studyResourcingDTO = studyResourcingService
-                .getSummary4ReportedResourcing(studyProtocolDtoIdentifier);
+                .getSummary4ReportedResourcing(studyProtocolDto.getIdentifier());
         if (studyResourcingDTO != null) {
             sum4Info.setFundingCategory(getValue(studyResourcingDTO.getTypeCode(), INFORMATION_NOT_PROVIDED));
             Organization org = null;
@@ -728,7 +763,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         tsrReportGenerator.setSummary4Information(sum4Info);
     }
 
-    private void setCollaborators() throws PAException {
+    private void setCollaborators(StudyProtocolDTO studyProtocolDto) throws PAException {
         List<TSRReportCollaborator> lstCollabs = new ArrayList<TSRReportCollaborator>();
 
         ArrayList<StudySiteDTO> criteriaList = new ArrayList<StudySiteDTO>();
@@ -739,7 +774,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 criteriaList.add(searchCode);
             }
         }
-        List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, criteriaList);
+        List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), criteriaList);
         for (StudySiteDTO sp : spList) {
             Organization orgBo = correlationUtils.getPAOrganizationByIi(sp.getResearchOrganizationIi());
             TSRReportCollaborator collab = new TSRReportCollaborator();
@@ -750,9 +785,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         tsrReportGenerator.setCollaborators(lstCollabs);
     }
 
-    private void setDiseases() throws PAException {
+    private void setDiseases(StudyProtocolDTO studyProtocolDto) throws PAException {
         List<TSRReportDiseaseCondition> diseaseConditions = new ArrayList<TSRReportDiseaseCondition>();
-        List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
+        List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolDto.getIdentifier());
         if (sdDtos != null) {
             List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
             for (StudyDiseaseDTO sdDto : sdDtos) {
@@ -772,10 +807,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         tsrReportGenerator.setDiseaseConditions(diseaseConditions);
     }
 
-    private void setTrialDesign() throws PAException {
+    private void setTrialDesign(StudyProtocolDTO studyProtocolDto) throws PAException {
         TSRReportTrialDesign trialDesign = new TSRReportTrialDesign();
         InterventionalStudyProtocolDTO ispDTO = studyProtocolService
-                .getInterventionalStudyProtocol(studyProtocolDtoIdentifier);
+                .getInterventionalStudyProtocol(studyProtocolDto.getIdentifier());
         boolean interventionalType = ispDTO != null ? true : false;
         trialDesign.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_OBSERVATIONAL);
         if (ispDTO != null) {
@@ -825,11 +860,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return maskedRoles;
     }
 
-    private void setEligibilityCriteria() throws PAException {
+    private void setEligibilityCriteria(StudyProtocolDTO studyProtocolDto) throws PAException {
         List<PlannedEligibilityCriterionDTO> paECs = plannedActivityService
-                .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolDtoIdentifier);
+                .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolDto.getIdentifier());
 
-        if (paECs != null && !paECs.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(paECs)) {
             TSRReportEligibilityCriteria eligibilityCriteria = new TSRReportEligibilityCriteria();
 
             eligibilityCriteria.setAcceptsHealthyVolunteers(getValue(studyProtocolDto
@@ -849,10 +884,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                         : null;
                 Ivl<Pq> pq = paEC.getValue();
 
-                if (criterionName != null && criterionName.equalsIgnoreCase(CRITERION_GENDER)
+                if (StringUtils.equalsIgnoreCase(criterionName, CRITERION_GENDER)
                         && paEC.getEligibleGenderCode() != null) {
                     eligibilityCriteria.setGender(getValue(paEC.getEligibleGenderCode(), INFORMATION_NOT_PROVIDED));
-                } else if (criterionName != null && criterionName.equalsIgnoreCase(CRITERION_AGE)) {
+                } else if (StringUtils.equalsIgnoreCase(criterionName, CRITERION_AGE)) {
                     if (pq.getLow() != null && pq.getLow().getValue() != null) {
                         eligibilityCriteria
                                 .setMinimumAge(pq.getLow().getValue().intValue() == MIN_AGE ? INFORMATION_NOT_PROVIDED
@@ -887,9 +922,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         }
     }
 
-    private void setArmGroups() throws PAException {
+    private void setArmGroups(StudyProtocolDTO studyProtocolDto) throws PAException {
         List<TSRReportArmGroup> armGroups = new ArrayList<TSRReportArmGroup>();
-        List<ArmDTO> arms = armService.getByStudyProtocol(studyProtocolDtoIdentifier);
+        List<ArmDTO> arms = armService.getByStudyProtocol(studyProtocolDto.getIdentifier());
         for (ArmDTO armDto : arms) {
             TSRReportArmGroup armGroup = new TSRReportArmGroup();
             armGroup.setType(getValue(armDto.getName()));
@@ -904,9 +939,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         tsrReportGenerator.setArmGroups(armGroups);
     }
 
-    private void setPrimaryAndSecondaryOutcomeMeasures() throws PAException {
-        List<StudyOutcomeMeasureDTO> somDtos = studyOutcomeMeasureService
-                .getByStudyProtocol(studyProtocolDtoIdentifier);
+    private void setPrimaryAndSecondaryOutcomeMeasures(StudyProtocolDTO studyProtocolDto) throws PAException {
+        List<StudyOutcomeMeasureDTO> somDtos =
+            studyOutcomeMeasureService.getByStudyProtocol(studyProtocolDto.getIdentifier());
         if (!somDtos.isEmpty()) {
             List<TSRReportOutcomeMeasure> primaryOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
             List<TSRReportOutcomeMeasure> secondaryOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
@@ -928,8 +963,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         }
     }
 
-    private void setSubGroupStratificationCriteria() throws PAException {
-        List<StratumGroupDTO> stratumGrpDtos = stratumGroupService.getByStudyProtocol(studyProtocolDtoIdentifier);
+    private void setSubGroupStratificationCriteria(StudyProtocolDTO studyProtocolDto) throws PAException {
+        List<StratumGroupDTO> stratumGrpDtos = stratumGroupService.getByStudyProtocol(studyProtocolDto.getIdentifier());
         if (!stratumGrpDtos.isEmpty()) {
             List<TSRReportSubGroupStratificationCriteria> sgsCriterias =
                 new ArrayList<TSRReportSubGroupStratificationCriteria>();
@@ -943,10 +978,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         }
     }
 
-    private void setParticipatingSites() throws PAException, NullifiedRoleException {
+    private void setParticipatingSites(StudyProtocolDTO studyProtocolDto, boolean isProprietaryTrial)
+    throws PAException, NullifiedRoleException {
         StudySiteDTO srDTO = new StudySiteDTO();
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
-        List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolDtoIdentifier, srDTO);
+        List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), srDTO);
         if (!spList.isEmpty()) {
             List<TSRReportParticipatingSite> participatingSites = new ArrayList<TSRReportParticipatingSite>();
             for (StudySiteDTO sp : spList) {
@@ -998,8 +1034,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                                 contact = paCDto.getTitle();
                             }
                             StringBuilder builder = new StringBuilder();
-                            builder.append(contact).append(", email: ").append(email).append(", phone: ").append(phone)
-                                    .append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
+                            builder.append(contact).append(",").append(EMAIL).append(email).append(",").append(PHONE)
+                            .append(phone).append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
                             participatingSite.setContact(builder.toString());
 
                         } else {
@@ -1030,16 +1066,16 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     }
 
     private String getLocation(Organization orgBo) {
-        String city = orgBo.getCity() != null ? orgBo.getCity() : " ";
-        String state = orgBo.getState() != null ? orgBo.getState() : " ";
-        String pc = orgBo.getPostalCode() != null ? orgBo.getPostalCode() : " ";
-        String country = orgBo.getCountryName() != null ? orgBo.getCountryName() : " ";
+        String city = StringUtils.defaultString(orgBo.getCity(), " ");
+        String state = StringUtils.defaultString(orgBo.getState(), " ");
+        String pc = StringUtils.defaultString(orgBo.getPostalCode(), " ");
+        String country = StringUtils.defaultString(orgBo.getCountryName(), " ");
         return city + ", " + state + " " + pc + " " + country;
     }
 
     private String getInterventionAltNames(InterventionDTO i) throws PAException {
-        List<InterventionAlternateNameDTO> ianList = interventionAlternateNameService.getByIntervention(i
-                .getIdentifier());
+        List<InterventionAlternateNameDTO> ianList =
+            interventionAlternateNameService.getByIntervention(i.getIdentifier());
         int cnt = 1;
         StringBuffer interventionAltName = new StringBuffer();
         List<InterventionAlternateNameDTO> interventionNames = new ArrayList<InterventionAlternateNameDTO>();
@@ -1075,10 +1111,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return interventionAltName.toString();
     }
 
-    private String getGtdSponsorOrLeadOrganization(StudySiteFunctionalCode enumValue, String defaultValue)
-            throws PAException {
+    private String getGtdSponsorOrLeadOrganization(StudyProtocolDTO studyProtocolDto, StudySiteFunctionalCode enumValue,
+            String defaultValue) throws PAException {
         String retVal = defaultValue;
-        Organization org = ocsr.getOrganizationByFunctionRole(studyProtocolDtoIdentifier, CdConverter
+        Organization org = ocsr.getOrganizationByFunctionRole(studyProtocolDto.getIdentifier(), CdConverter
                 .convertToCd(enumValue));
         if (org != null) {
             retVal = org.getName();

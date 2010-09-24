@@ -1669,12 +1669,12 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     private Ii updateStudyProtocol(StudyProtocolDTO studyProtocolDTO, Ii toStudyProtocolIi, String operation)
         throws PAException {
         if (AMENDMENT.equalsIgnoreCase(operation)) {
-            ByteArrayOutputStream pdfStream = tsrReportService.generateTsrReport(studyProtocolDTO.getIdentifier());
+            ByteArrayOutputStream rtfStream = tsrReportService.generateRtfTsrReport(studyProtocolDTO.getIdentifier());
             DocumentDTO docDto = new DocumentDTO();
             docDto.setStudyProtocolIdentifier(toStudyProtocolIi);
             docDto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.TSR));
-            docDto.setText(EdConverter.convertToEd(pdfStream.toByteArray()));
-            docDto.setFileName(StConverter.convertToSt("TSR.pdf"));
+            docDto.setText(EdConverter.convertToEd(rtfStream.toByteArray()));
+            docDto.setFileName(StConverter.convertToSt("TSR.rtf"));
 
             documentService.create(docDto);
             // reset milestones
