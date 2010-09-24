@@ -104,13 +104,12 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jprov-jce-1.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/kmu-jce-1.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/mysql-connector-java-3.0.16-ga-bin.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/postgresql-8.3-603.jdbc3.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/postgresql-8.4-701.jdbc3.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/servlet-2.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/spring-2.0.5.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/spring-beans-1.2.8.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/spring-core-1.2.8.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/hibernate-annotations-3.2.0.ga.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/compile/postgresql-8.3-603.jdbc3.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/test/mockrunner-0.4.1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/hibernate-annotations-3.2.0.ga.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/jdom-1.1.jar"/>

@@ -84,7 +84,6 @@ import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 import org.junit.Before;
 import org.junit.Test;
 
-@SuppressWarnings("unchecked")
 public class AbstractReportActionTest<ACTION extends AbstractReportAction> extends AbstractViewerActionTest {
 
     protected static final String DATE_1 = "1/13/2009";

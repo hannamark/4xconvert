@@ -18,7 +18,7 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-struts2-1.2.13.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/persistence-api-1.0.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/postgresql-8.3-603.jdbc3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/compile/postgresql-8.4-701.jdbc3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/security-4.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/sitemesh-2.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/standard-1.1.2.jar"/>
@@ -29,7 +29,6 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/dom4j-1.6.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/hsqldb-1.8.0.10.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/ognl-2.6.11.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/test/postgresql-8.3-603.jdbc3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/security-4.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/spring-2.0.5.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/struts2-core-2.1.6.jar"/>

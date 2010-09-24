@@ -945,21 +945,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <fileset file="${build.dir}/jboss-server-lib-deletes.txt" />
         </copy>
 
-    <dist-prep />
+        <dist-prep />
 
         <!-- This copies container jars which for deployment to the <server>/lib directory -->
         <copy todir="${pa-container-jar.dist.dir}" overwrite="true">
             <fileset dir="${lib.dir}/pa-ear/container" />
         </copy>
-    <copy todir="${dist.exploded.dir}">
-    <fileset dir="${build.dir}">
-        <include name="install-paear.xml"/>
-        <include name="install-pagrid-3.3.xml"/>
-        <include name="install-pagrid-3.2.xml"/>
-        <include name="install-pagrid-3.1.xml"/>
-    </fileset>
-</copy>
-
+        <copy todir="${dist.exploded.dir}">
+            <fileset dir="${build.dir}">
+                <include name="install-paear.xml"/>
+                <include name="install-pagrid-3.3.xml"/>
+                <include name="install-pagrid-3.2.xml"/>
+                <include name="install-pagrid-3.1.xml"/>
+            </fileset>
+        </copy>
     </target>
 
     <!-- Creates the installer distribution used by automated or manual remote installations -->
@@ -1002,23 +1001,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <fileset file="${build.dir}/jboss-server-lib-deletes.txt" />
         </copy>
 
-    <dist-prep
-        default.target="upgrade"
-        />
+        <dist-prep default.target="upgrade" />
 
         <!-- This copies container jars which for deployment to the <server>/lib directory -->
         <copy todir="${pa-container-jar.dist.dir}" overwrite="true">
             <fileset dir="${lib.dir}/pa-ear/container" />
         </copy>
-    <copy todir="${dist.exploded.dir}">
-    <fileset dir="${build.dir}">
-        <include name="install-paear.xml"/>
-        <include name="install-pagrid-3.3.xml"/>
-        <include name="install-pagrid-3.2.xml"/>
-        <include name="install-pagrid-3.1.xml"/>
-    </fileset>
-</copy>
-
+        <copy todir="${dist.exploded.dir}">
+            <fileset dir="${build.dir}">
+                <include name="install-paear.xml"/>
+                <include name="install-pagrid-3.3.xml"/>
+                <include name="install-pagrid-3.2.xml"/>
+                <include name="install-pagrid-3.1.xml"/>
+            </fileset>
+        </copy>
     </target>
 
     <!-- Creates upgrader distribution -->
@@ -1285,12 +1281,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         depends="
         clean,
         init,
-    	test:pa-commons,
+        test:pa-commons,
         test:pa-ejb,
         test:pa-web,
         test:reg-web,
         test:accrual,
-    	test:viewer
+        test:viewer
         "/>
 
     <target name="test:pa-web" depends="init">
@@ -1373,18 +1369,17 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <property name="po.server.name" value="${po.server.name}"/>
         </ant>
     </target>
-	<target name="test:viewer" depends="init" unless="exclude.viewer">
-	        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
-	            target="test-dynamic-analysis"
-	            dir="${viewer-services.base.dir}" >
-	        	 <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-	        	 <property name="hibernate.dialect" value="${database.dialect}"/>
-	        	 <property name="db.username" value="${database.user}"/>
-	        	 <property name="db.password" value="${database.password}"/>
-	        	 <property name="jdbc.driver" value="${database.dirver}"/>
-	        	 <property name="jdbc.url" value="${database.url}"/>
-	        </ant>
-	</target>
+    <target name="test:viewer" depends="init" unless="exclude.viewer">
+        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
+                target="test-dynamic-analysis" dir="${viewer-services.base.dir}" >
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+            <property name="hibernate.dialect" value="${database.dialect}"/>
+            <property name="db.username" value="${database.user}"/>
+            <property name="db.password" value="${database.password}"/>
+            <property name="jdbc.driver" value="${database.dirver}"/>
+            <property name="jdbc.url" value="${database.url}"/>
+        </ant>
+    </target>
 
     <!-- Wrapper test target, call appropriate test for sub-projects -->
     <target name="static-analysis:all" description="Runs static-analysis target for all sub-projects"
@@ -1395,7 +1390,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         static-analysis:pa-ejb,
         static-analysis:pa-web,
         static-analysis:reg-web,
-    	static-analysis:viewer
+        static-analysis:viewer
         "/>
 
     <target name="static-analysis:pa-web" depends="init">
@@ -1430,13 +1425,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
     </target>
 
-	<target name="static-analysis:viewer" depends="init">
-	        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
-	            target="test-static-analysis"
-	            dir="${viewer-services.base.dir}" >
-	            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-	        </ant>
-	</target>
+    <target name="static-analysis:viewer" depends="init">
+            <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
+                target="test-static-analysis"
+                dir="${viewer-services.base.dir}" >
+                <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+            </ant>
+    </target>
 
     <target name="continuous-integration" description="calls wrapper targets for continuous integration build"
         depends="

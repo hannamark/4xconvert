@@ -69,7 +69,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="gov.nih.nci.security"   name="cgmm"                    rev="0.7.0"           conf="compile->cgmm-api"/>
     <dependency org="org.hibernate"          name="hibernate-validator"     rev="3.0.0.ga"        conf="compile->master"/>
     <dependency org="org.hibernate"          name="hibernate-annotations"   rev="3.2.0.ga"        conf="compile->master"/>
-    <dependency org="postgresql"             name="postgresql"              rev="8.3-603.jdbc3"   conf="compile->master"/>
+    <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="compile->master"/>
 
     <!-- test -->
     <dependency org="antlr"                  name="antlr"                   rev="2.7.6"           conf="test->master"/>
@@ -87,7 +87,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="gov.nih.nci.security"   name="clm"                     rev="4.0"             conf="test->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.2"             conf="test->master"/>
     <dependency org="org.jdom"               name="jdom"                    rev="1.1"             conf="test->master"/>
-    <dependency org="postgresql"             name="postgresql"              rev="8.3-603.jdbc3"   conf="test->master"/>
+    <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="test->master"/>
     <dependency org="org.springframework"    name="spring"                  rev="2.0.5"           conf="test->master"/>
 
 

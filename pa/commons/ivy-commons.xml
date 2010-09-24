@@ -69,7 +69,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="org.hibernate"          name="hibernate-validator"     rev="3.0.0.ga"        conf="compile->master"/>
     <dependency org="org.hibernate"          name="hibernate-commons-annotations"   rev="3.3.0.ga"        conf="compile->master"/>
     <dependency org="org.jdom"               name="jdom"                    rev="1.1"             conf="compile->master"/>
-    <dependency org="postgresql"             name="postgresql"              rev="8.3-603.jdbc3"   conf="compile->master"/>
+    <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="compile->master"/>
     <dependency org="org.springframework"    name="spring"                  rev="2.0.5"           conf="compile->master"/>
     <dependency org="javax.servlet"          name="jstl"                    rev="1.1.2"           conf="compile->master"/>
 

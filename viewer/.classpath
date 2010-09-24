@@ -18,7 +18,7 @@
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/nci-commons-struts2-1.0.7.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/poi-3.2-FINAL.jar"/>
-	<classpathentry kind="var" path="VIEWER_LIB/web/compile/postgresql-8.3-603.jdbc3.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/web/compile/postgresql-8.4-701.jdbc3.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/security-4.2.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/sitemesh-2.3.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/standard-1.1.2.jar"/>

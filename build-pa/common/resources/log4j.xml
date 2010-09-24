@@ -53,7 +53,7 @@
 
      <layout class="org.apache.log4j.PatternLayout">
        <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
-     </layout>	    
+     </layout>
    </appender>
    -->
 
@@ -145,16 +145,16 @@
    <!--  Emit events as JMX notifications
    <appender name="JMX" class="org.jboss.monitor.services.JMXNotificationAppender">
       <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
-      
+
       <param name="Threshold" value="WARN"/>
       <param name="ObjectName" value="jboss.system:service=Logging,type=JMXNotificationAppender"/>
-      
+
       <layout class="org.apache.log4j.PatternLayout">
          <param name="ConversionPattern" value="%d %-5p [%c] %m"/>
       </layout>
    </appender>
    -->
-   
+
    <!-- ================ -->
    <!-- Limit categories -->
    <!-- ================ -->
@@ -174,11 +174,6 @@
       <priority value="@LOG_LEVEL@"/>
    </category>
 
-   <!-- Set the logging level for Accrual/outcomes packages -->
-   <category name="gov.nih.nci.outcomes">
-      <priority value="@LOG_LEVEL@"/>
-   </category>
-
    <!-- Set the logging level for Coppa packages -->
    <category name="gov.nih.nci.coppa">
       <priority value="@LOG_LEVEL@"/>
@@ -193,7 +188,7 @@
    <category name="org.jboss.serial">
       <priority value="INFO"/>
    </category>
- 
+
    <!-- Limit the org.jgroups category to WARN as its INFO is verbose -->
    <category name="org.jgroups">
       <priority value="WARN"/>
@@ -203,12 +198,12 @@
    <category name="jacorb">
       <priority value="WARN"/>
    </category>
-   
+
    <!-- Hide Struts 2 OGNL false Error message: https://issues.apache.org/jira/browse/WW-1714 -->
    <category name="com.opensymphony.xwork2.ObjectFactory">
       <priority value="FATAL"/>
    </category>
-    
+
    <!-- Limit JBoss categories
    <category name="org.jboss">
       <priority value="INFO"/>
@@ -219,7 +214,7 @@
    <category name="org.jboss.management">
       <priority value="INFO"/>
    </category>
-   
+
    <!-- Limit SSL Debug Messages -->
    <category name="COM.claymoresystems.ptls.SSLDebug">
       <priority value="OFF" />
@@ -265,19 +260,19 @@
      <priority value="TRACE" class="org.jboss.logging.XLevel"/>
    </category>
    -->
-  
+
    <!--
        | Logs these events to SNMP:
            - server starts/stops
            - cluster evolution (node death/startup)
            - When an EJB archive is deployed (and associated verified messages)
            - When an EAR archive is deployed
-      	 
+
    <category name="org.jboss.system.server.Server">
      <priority value="INFO" />
      <appender-ref ref="TRAP_LOG"/>
    </category>
-  
+
    <category name="org.jboss.ha.framework.interfaces.HAPartition.lifecycle">
      <priority value="INFO" />
      <appender-ref ref="TRAP_LOG"/>
@@ -287,17 +282,17 @@
      <priority value="ERROR" />
      <appender-ref ref="TRAP_LOG"/>
    </category>
-   
+
    <category name="org.jboss.ejb.EJBDeployer">
      <priority value="INFO" />
      <appender-ref ref="TRAP_LOG"/>
    </category>
-   
+
    <category name="org.jboss.deployment.EARDeployer">
      <priority value="INFO" />
      <appender-ref ref="TRAP_LOG"/>
    </category>
-  
+
    -->
 
    <!-- ======================= -->

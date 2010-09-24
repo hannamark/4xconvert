@@ -17,7 +17,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.cache.use_query_cache">true</property>
         <property name="hibernate.cache.use_second_level_cache">true</property>
         <property name="hibernate.show_sql">false</property>
-     
+
         <!-- mapping classes -->
         <mapping class="gov.nih.nci.pa.domain.StudyProtocol" />
         <mapping class="gov.nih.nci.pa.domain.InterventionalStudyProtocol" />
@@ -54,7 +54,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.OrganizationalContact" />
         <mapping class="gov.nih.nci.pa.domain.RegistryUser" />
         <mapping class="gov.nih.nci.pa.domain.PlannedEligibilityCriterion" />
-        <mapping class="gov.nih.nci.pa.domain.OversightCommittee" />        
+        <mapping class="gov.nih.nci.pa.domain.OversightCommittee" />
         <mapping class="gov.nih.nci.pa.domain.StudyDisease" />
         <mapping class="gov.nih.nci.pa.domain.Disease" />
         <mapping class="gov.nih.nci.pa.domain.DiseaseAltername" />
@@ -79,12 +79,12 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.TargetSite" />
         <mapping class="gov.nih.nci.pa.domain.MethodCode" />
         <mapping class="gov.nih.nci.pa.domain.PlannedProcedure" />
-        
+
         <mapping class="gov.nih.nci.pa.domain.ActivityRelationship" />
         <mapping class="gov.nih.nci.pa.domain.StudyProtocolStage" />
         <mapping class="gov.nih.nci.pa.domain.StudyFundingStage" />
         <mapping class="gov.nih.nci.pa.domain.StudyIndIdeStage"/>
-        
+
         <!-- mapping classes for Accrual -->
         <mapping class="gov.nih.nci.pa.domain.Patient" />
         <mapping class="gov.nih.nci.pa.domain.PerformedActivity" />
@@ -92,11 +92,11 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.PerformedSubjectMilestone" />
         <mapping class="gov.nih.nci.pa.domain.StudySubject" />
         <mapping class="gov.nih.nci.pa.domain.Submission" />
-        
-          <!-- mapping classes for Outcomes -->       
+
+          <!-- mapping classes for Outcomes -->
         <mapping class="gov.nih.nci.pa.domain.PerformedObservation" />
         <mapping class="gov.nih.nci.pa.domain.PerformedImaging" />
-        <mapping class="gov.nih.nci.pa.domain.PerformedProcedure" />        
+        <mapping class="gov.nih.nci.pa.domain.PerformedProcedure" />
         <mapping class="gov.nih.nci.pa.domain.PerformedRadiationAdministration" />
         <mapping class="gov.nih.nci.pa.domain.PerformedSubstanceAdministration" />
         <mapping class="gov.nih.nci.pa.domain.PerformedObservationResult" />
