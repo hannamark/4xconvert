@@ -280,27 +280,23 @@ public class InterventionalStudyDesignAction extends ActionSupport {
                 dto.setPrimaryPurposeAdditionalQualifierCode(ispDTO.getPrimaryPurposeAdditionalQualifierCode()
                         .getCode());
             }
-            if (ispDTO.getBlindedRoleCode() != null) {
-                List<Cd> cds =  DSetConverter.convertDsetToCdList(ispDTO.getBlindedRoleCode());
-                if (cds != null) {
-                    for (Cd cd : cds) {
-                        if (BlindingRoleCode.CAREGIVER.getCode().equals(cd.getCode())) {
-                            this.caregiver = BlindingRoleCode.CAREGIVER.getCode();
-                            continue;
-                        }
-                        if (BlindingRoleCode.INVESTIGATOR.getCode().equals(cd.getCode())) {
-                            this.investigator = BlindingRoleCode.INVESTIGATOR.getCode();
-                            continue;
-                        }
-                        if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(cd.getCode())) {
-                            this.outcomesassessor = BlindingRoleCode.OUTCOMES_ASSESSOR.getCode();
-                            continue;
-                        }
-                        if (BlindingRoleCode.SUBJECT.getCode().equals(cd.getCode())) {
-                            this.subject = BlindingRoleCode.SUBJECT.getCode();
-                            continue;
-                        }
-                    }
+            List<Cd> cds =  DSetConverter.convertDsetToCdList(ispDTO.getBlindedRoleCode());
+            for (Cd cd : cds) {
+                if (BlindingRoleCode.CAREGIVER.getCode().equals(cd.getCode())) {
+                    this.caregiver = BlindingRoleCode.CAREGIVER.getCode();
+                    continue;
+                }
+                if (BlindingRoleCode.INVESTIGATOR.getCode().equals(cd.getCode())) {
+                    this.investigator = BlindingRoleCode.INVESTIGATOR.getCode();
+                    continue;
+                }
+                if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(cd.getCode())) {
+                    this.outcomesassessor = BlindingRoleCode.OUTCOMES_ASSESSOR.getCode();
+                    continue;
+                }
+                if (BlindingRoleCode.SUBJECT.getCode().equals(cd.getCode())) {
+                    this.subject = BlindingRoleCode.SUBJECT.getCode();
+                    continue;
                 }
             }
             if (ispDTO.getTargetAccrualNumber().getLow().getValue() != null) {

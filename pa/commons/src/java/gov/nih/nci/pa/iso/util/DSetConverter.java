@@ -236,16 +236,15 @@ public class DSetConverter {
     }
 
     /**
-     *
+     * Converts a DSet to a list of cds. Returns an empty list if the dset is null or empty.
      * @param dset dset
-     * @return cds
+     * @return cds the converted list of cds
      */
     public static List<Cd> convertDsetToCdList(DSet<Cd> dset) {
-        List<Cd> cds = null;
-        if (dset == null || dset.getItem() == null || dset.getItem().isEmpty()) {
+        List<Cd> cds = new ArrayList<Cd>();
+        if (dset == null || CollectionUtils.isEmpty(dset.getItem())) {
             return cds;
         }
-        cds = new ArrayList<Cd>();
         Set<Cd> set = dset.getItem();
         cds.addAll(set);
         return cds;
@@ -260,7 +259,7 @@ public class DSetConverter {
     public static String getFirstElement(DSet<Tel> dSet, String type) {
         List<String> tels = convertDSetToList(dSet, type);
         String tel = null;
-        if (tels != null && !tels.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(tels)) {
             tel =  tels.get(0);
         }
         return tel;
@@ -284,14 +283,14 @@ public class DSetConverter {
         }
         return null;
     }
-    
+
     /**
      * Extract any (first) identifier from the set of identifiers.
      * @param identifier set of identifiers
      * @return internal identifier
      */
     public static Ii getFirstInDSet(DSet<Ii> identifier) {
-        if (identifier != null && CollectionUtils.isNotEmpty(identifier.getItem())) { 
+        if (identifier != null && CollectionUtils.isNotEmpty(identifier.getItem())) {
             return identifier.getItem().iterator().next();
         }
         return null;
@@ -334,17 +333,13 @@ public class DSetConverter {
     }
 
     /**
-     * Convert dset to ii set.
-     *
+     * Convert dset to ii set, returning an empty set if the dset is null or empty.
      * @param identifierList the identifier list
-     *
      * @return the set< ii>
      */
     public static Set<Ii> convertDsetToIiSet(DSet<Ii> identifierList) {
-
-        Set<Ii> iiset = null;
+        Set<Ii> iiset = new HashSet<Ii>();
         if (identifierList != null && identifierList.getItem() != null) {
-            iiset = new HashSet<Ii>();
             iiset.addAll(identifierList.getItem());
         }
         return iiset;

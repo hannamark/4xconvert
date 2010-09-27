@@ -125,6 +125,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.PqConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
@@ -181,6 +182,7 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -194,6 +196,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -531,7 +534,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         String resPartyContactName = null;
         DSet<Tel> dset = null;
         Organization sponsorResponsible = null;
-        if (scDtos != null && !scDtos.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(scDtos)) {
             scDto = scDtos.get(0);
             rp = correlationUtils.getPAPersonByIi(scDto.getClinicalResearchStaffIi());
             dset = scDto.getTelecomAddresses();
@@ -547,7 +550,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             spart.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
             List<StudySiteContactDTO> spDtos =
                 studySiteContactService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spart);
-            if (spDtos != null && !spDtos.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(spDtos)) {
                 PAContactDTO paCDto = correlationUtils.getContactByPAOrganizationalContactId((Long.valueOf(spDtos
                         .get(0).getOrganizationalContactIi().getExtension())));
                 resPartyContactName = paCDto.getResponsiblePartyContactName();
@@ -557,7 +560,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
                 List<StudySiteDTO> spartDtos =
                     studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spDto);
-                if (spartDtos != null && !spartDtos.isEmpty()) {
+                if (CollectionUtils.isNotEmpty(spartDtos)) {
                     spDto = spartDtos.get(0);
                     sponsorResponsible = new CorrelationUtils()
                             .getPAOrganizationByIi(spDto.getResearchOrganizationIi());
@@ -633,18 +636,16 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private void setHumanSubjectSafety(StudyProtocolDTO studyProtocolDto) throws PAException {
         TSRReportHumanSubjectSafety hss = new TSRReportHumanSubjectSafety();
 
-        Boolean b = BlConverter.convertToBoolean(studyProtocolDto.getReviewBoardApprovalRequiredIndicator());
-        if (b != null && b) {
+        boolean reviewBoardApprovalRequired =
+            BlConverter.convertToBool(studyProtocolDto.getReviewBoardApprovalRequiredIndicator());
+        if (reviewBoardApprovalRequired) {
             List<StudySiteDTO> partList = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier());
+            String[] submittedStatusCodes = new String[] {ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode(),
+                    ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode(),
+                    ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode(),
+                    ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode()};
             for (StudySiteDTO part : partList) {
-                if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
-                        part.getReviewBoardApprovalStatusCode().getCode())
-                        || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().equals(
-                                part.getReviewBoardApprovalStatusCode().getCode())
-                        || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode().equals(
-                                part.getReviewBoardApprovalStatusCode().getCode())
-                        || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode().equals(
-                                part.getReviewBoardApprovalStatusCode().getCode())) {
+                if (ArrayUtils.contains(submittedStatusCodes, part.getReviewBoardApprovalStatusCode().getCode())) {
                     hss.setBoardApprovalStatus(getValue(part.getReviewBoardApprovalStatusCode(),
                             INFORMATION_NOT_PROVIDED));
                     hss.setBoardApprovalNumber(getValue(part.getReviewBoardApprovalNumber(), INFORMATION_NOT_PROVIDED));
@@ -753,8 +754,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 org = paOrganizationService.getOrganizationByIndetifers(o);
             }
             if (org != null) {
-                sum4Info.setFundingSponsor(StringUtils.isNotEmpty(org.getName()) ? org.getName()
-                        : INFORMATION_NOT_PROVIDED);
+                sum4Info.setFundingSponsor(StringUtils.defaultString(org.getName(), INFORMATION_NOT_PROVIDED));
             }
             if (studyProtocolDto.getProgramCodeText().getValue() != null) {
                 sum4Info.setProgramCode(getValue(studyProtocolDto.getProgramCodeText(), INFORMATION_NOT_PROVIDED));
@@ -839,23 +839,19 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         String investigator = NO;
         String caregiver = NO;
         String outcomesAssessor = NO;
-        if (dto.getBlindedRoleCode() != null) {
-            List<Cd> cds = DSetConverter.convertDsetToCdList(dto.getBlindedRoleCode());
-            if (cds != null) {
-                for (Cd cd : cds) {
-                    if (BlindingRoleCode.CAREGIVER.getCode().equals(cd.getCode())) {
-                        caregiver = YES;
-                    } else if (BlindingRoleCode.INVESTIGATOR.getCode().equals(cd.getCode())) {
-                        investigator = YES;
-                    } else if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(cd.getCode())) {
-                        outcomesAssessor = YES;
-                    } else if (BlindingRoleCode.SUBJECT.getCode().equals(cd.getCode())) {
-                        subject = YES;
-                    }
-                }
+        List<Cd> cds = DSetConverter.convertDsetToCdList(dto.getBlindedRoleCode());
+        for (Cd cd : cds) {
+            if (BlindingRoleCode.CAREGIVER.getCode().equals(cd.getCode())) {
+                caregiver = YES;
+            } else if (BlindingRoleCode.INVESTIGATOR.getCode().equals(cd.getCode())) {
+                investigator = YES;
+            } else if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(cd.getCode())) {
+                outcomesAssessor = YES;
+            } else if (BlindingRoleCode.SUBJECT.getCode().equals(cd.getCode())) {
+                subject = YES;
             }
             maskedRoles = "Subject: " + subject + "; Investigator: " + investigator + "; Caregiver: " + caregiver
-                    + "; Outcomes Assessor: " + outcomesAssessor;
+            + "; Outcomes Assessor: " + outcomesAssessor;
         }
         return maskedRoles;
     }
@@ -879,24 +875,22 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             for (PlannedEligibilityCriterionDTO paEC : paECs) {
                 String criterionName = StConverter.convertToString(paEC.getCriterionName());
                 String descriptionText = StConverter.convertToString(paEC.getTextDescription());
-                Boolean inclusionCriteriaIndicator = paEC.getInclusionIndicator() != null
-                        && paEC.getInclusionIndicator().getValue() != null ? paEC.getInclusionIndicator().getValue()
-                        : null;
+                Boolean inclusionCriteriaIndicator = BlConverter.convertToBoolean(paEC.getInclusionIndicator());
                 Ivl<Pq> pq = paEC.getValue();
 
                 if (StringUtils.equalsIgnoreCase(criterionName, CRITERION_GENDER)
                         && paEC.getEligibleGenderCode() != null) {
                     eligibilityCriteria.setGender(getValue(paEC.getEligibleGenderCode(), INFORMATION_NOT_PROVIDED));
                 } else if (StringUtils.equalsIgnoreCase(criterionName, CRITERION_AGE)) {
-                    if (pq.getLow() != null && pq.getLow().getValue() != null) {
-                        eligibilityCriteria
-                                .setMinimumAge(pq.getLow().getValue().intValue() == MIN_AGE ? INFORMATION_NOT_PROVIDED
-                                        : PAUtil.getAge(pq.getLow().getValue()) + SPACE + pq.getLow().getUnit());
+                    BigDecimal low = PqConverter.convertToPqToDecimal(pq.getLow());
+                    BigDecimal high = PqConverter.convertToPqToDecimal(pq.getHigh());
+                    if (low != null) {
+                        eligibilityCriteria.setMinimumAge(low.intValue() == MIN_AGE ? INFORMATION_NOT_PROVIDED
+                                        : PAUtil.getAge(low) + SPACE + pq.getLow().getUnit());
                     }
-                    if (pq.getHigh() != null && pq.getHigh().getValue() != null) {
-                        eligibilityCriteria
-                                .setMaximumAge(pq.getHigh().getValue().intValue() == MAX_AGE ? INFORMATION_NOT_PROVIDED
-                                        : PAUtil.getAge(pq.getHigh().getValue()) + SPACE + pq.getHigh().getUnit());
+                    if (high != null) {
+                        eligibilityCriteria.setMaximumAge(high.intValue() == MAX_AGE ? INFORMATION_NOT_PROVIDED
+                                        : PAUtil.getAge(high) + SPACE + pq.getHigh().getUnit());
                     }
                 } else {
                     String criteriaText = null;
@@ -907,14 +901,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                                 + pq.getLow().getValue() + SPACE + pq.getLow().getUnit();
                     }
 
-                    if (inclusionCriteriaIndicator != null) { // Inclusion OR Exclusion Criteria
-                        if (inclusionCriteriaIndicator.booleanValue()) { // Inclusion criteria
-                            eligibilityCriteria.getInclusionCriteria().add(criteriaText);
-                        } else { // Exclusion Criteria
-                            eligibilityCriteria.getExclusionCriteria().add(criteriaText);
-                        }
-                    } else { // Other Criteria
+                    if (inclusionCriteriaIndicator == null) {
                         eligibilityCriteria.getOtherCriteria().add(criteriaText);
+                    } else if (inclusionCriteriaIndicator.booleanValue()) {
+                        eligibilityCriteria.getInclusionCriteria().add(criteriaText);
+                    } else {
+                        eligibilityCriteria.getExclusionCriteria().add(criteriaText);
                     }
                 }
             }
@@ -1079,17 +1071,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         int cnt = 1;
         StringBuffer interventionAltName = new StringBuffer();
         List<InterventionAlternateNameDTO> interventionNames = new ArrayList<InterventionAlternateNameDTO>();
-
+        String[] nameTypeCodes = new String[] {PAConstants.SYNONYM, PAConstants.ABBREVIATION, PAConstants.US_BRAND_NAME,
+                PAConstants.FOREIGN_BRAND_NAME, PAConstants.CODE_NAME};
         for (InterventionAlternateNameDTO ian : ianList) {
-            if (ian.getNameTypeCode().getValue() != null
-                    && (ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.SYNONYM)
-                            || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.ABBREVIATION)
-                            || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.US_BRAND_NAME)
-                            || ian.getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.FOREIGN_BRAND_NAME) || ian
-                            .getNameTypeCode().getValue().equalsIgnoreCase(PAConstants.CODE_NAME))) {
-
+            if (ArrayUtils.contains(nameTypeCodes, ian.getNameTypeCode().getValue())) {
                 interventionNames.add(ian);
-
                 if (cnt++ > PAAttributeMaxLen.LEN_5) {
                     break;
                 }

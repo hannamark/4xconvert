@@ -237,11 +237,7 @@ public class StudyProtocolConverter {
     private static void setSecondaryIdentifiers(StudyProtocolDTO studyProtocolDTO, StudyProtocol studyProtocol) {
         // TODO - as part of PO-2434 this should be moved to the AbstractStudyProtocolConverter
         // once the AbstractStudyProtocolDTO owns the SecondaryIdentifiers.
-        if (studyProtocolDTO.getSecondaryIdentifiers() != null
-                && studyProtocolDTO.getSecondaryIdentifiers().getItem() != null) {
-            studyProtocol.setOtherIdentifiers(DSetConverter.convertDsetToIiSet(studyProtocolDTO
-                    .getSecondaryIdentifiers()));
-        }
+        studyProtocol.setOtherIdentifiers(DSetConverter.convertDsetToIiSet(studyProtocolDTO.getSecondaryIdentifiers()));
     }
 
     private static void setStatusFields(StudyProtocolDTO studyProtocolDTO, StudyProtocol studyProtocol) {

@@ -944,22 +944,18 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
         appendElement(invDesign, createElement("phase", convertToCtValues(ispDTO.getPhaseCode()), doc));
         appendElement(invDesign, createElement("allocation", convertToCtValues(ispDTO.getAllocationCode()), doc));
         appendElement(invDesign, createElement("masking", convertToCtValues(ispDTO.getBlindingSchemaCode()), doc));
-        if (ispDTO.getBlindedRoleCode() != null) {
-            List<Cd> cds = DSetConverter.convertDsetToCdList(ispDTO.getBlindedRoleCode());
-            if (cds != null) {
-                for (Cd cd : cds) {
-                    if (BlindingRoleCode.CAREGIVER.getCode().equals(cd.getCode())) {
-                        appendElement(invDesign, createElement("masked_caregiver", YES, doc));
-                    } else if (BlindingRoleCode.INVESTIGATOR.getCode().equals(cd.getCode())) {
-                        appendElement(invDesign, createElement("masked_investigator", YES, doc));
-                    } else if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(cd.getCode())) {
-                        appendElement(invDesign, createElement("masked_assessor", YES, doc));
-                    } else if (BlindingRoleCode.SUBJECT.getCode().equals(cd.getCode())) {
-                        appendElement(invDesign, createElement("masked_subject", YES, doc));
-                    }
-                } // for
-            } // if
-        } // if
+        List<Cd> cds = DSetConverter.convertDsetToCdList(ispDTO.getBlindedRoleCode());
+        for (Cd cd : cds) {
+            if (BlindingRoleCode.CAREGIVER.getCode().equals(cd.getCode())) {
+                appendElement(invDesign, createElement("masked_caregiver", YES, doc));
+            } else if (BlindingRoleCode.INVESTIGATOR.getCode().equals(cd.getCode())) {
+                appendElement(invDesign, createElement("masked_investigator", YES, doc));
+            } else if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(cd.getCode())) {
+                appendElement(invDesign, createElement("masked_assessor", YES, doc));
+            } else if (BlindingRoleCode.SUBJECT.getCode().equals(cd.getCode())) {
+                appendElement(invDesign, createElement("masked_subject", YES, doc));
+            }
+        } // for
         appendElement(invDesign, createElement("assignment",
                 convertToCtValues(ispDTO.getDesignConfigurationCode()), doc));
         appendElement(invDesign, createElement("endpoint", convertToCtValues(

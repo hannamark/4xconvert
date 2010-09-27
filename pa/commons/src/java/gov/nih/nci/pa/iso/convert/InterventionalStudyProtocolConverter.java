@@ -156,9 +156,7 @@ public class InterventionalStudyProtocolConverter extends StudyProtocolConverter
         }
         isp.setNumberOfInterventionGroups(IntConverter.convertToInteger(ispDTO.getNumberOfInterventionGroups()));
         List<Cd> cds =  DSetConverter.convertDsetToCdList(ispDTO.getBlindedRoleCode());
-        if (cds != null) {
-            updateBlindingRoleCodes(isp, cds);
-        }
+        updateBlindingRoleCodes(isp, cds);
         if (ispDTO.getStudyClassificationCode() != null) {
             isp.setStudyClassificationCode(
                     StudyClassificationCode.getByCode(ispDTO.getStudyClassificationCode().getCode()));
