@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service.correlation;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
@@ -188,32 +189,11 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
         if (poOrg == null) {
             throw new PAException("PO and PA databases out of synchronization.  Error getting "
-                    + "organization from PO for id = " + orgPoIdentifier + ".  ");
+                    + "organization from PO for id = " + orgPoIdentifier + ". ");
         }
 
         // Step 2 : check if PO has hcf correlation if not create one
-        HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
-        List<HealthCareFacilityDTO> hcfDTOs = null;
-        hcfDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
-
-        hcfDTOs = PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
-        if (hcfDTOs != null && hcfDTOs.size() > 1) {
-            LOG.info("PO HealthCareFacilityDTOs Correlation has more than 1. Using first.  " + orgPoIdentifier);
-        }
-        if (hcfDTOs == null || hcfDTOs.isEmpty()) {
-            try {
-                Ii ii = PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
-                hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(ii);
-            } catch (NullifiedRoleException e) {
-                throw new PAException("NullifiedRoleException exception during get ClinicalResearchStaff " , e);
-            } catch (EntityValidationException e) {
-                throw new PAException("Validation exception during create ClinicalResearchStaff " , e);
-            } catch (CurationException e) {
-                throw new PAException("CurationException during create ClinicalResearchStaff " , e);
-            }
-        } else {
-            hcfDTO = hcfDTOs.get(0);
-        }
+        HealthCareFacilityDTO hcfDTO = getOrCreatePAHealthCareFacilityCorrelation(orgPoIdentifier);
 
 
         // Step 3 : check for pa org, if not create one
@@ -236,6 +216,34 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
         return hcf.getId();
 
+    }
+    
+    private HealthCareFacilityDTO getOrCreatePAHealthCareFacilityCorrelation(String orgPoIdentifier) 
+    throws PAException {
+        HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
+        List<HealthCareFacilityDTO> hcfDTOs = 
+            PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
+        hcfDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+        
+        if (CollectionUtils.isEmpty(hcfDTOs)) {
+            try {
+                Ii ii = PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
+                hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(ii);
+            } catch (NullifiedRoleException e) {
+                throw new PAException("NullifiedRoleException exception during get ClinicalResearchStaff " , e);
+            } catch (EntityValidationException e) {
+                throw new PAException("Validation exception during create ClinicalResearchStaff " , e);
+            } catch (CurationException e) {
+                throw new PAException("CurationException during create ClinicalResearchStaff " , e);
+            }
+        } else {
+            if (hcfDTOs.size() > 1) {
+                LOG.info("PO HealthCareFacilityDTOs Correlation has more than 1. Using first.  " + orgPoIdentifier);
+            }
+            hcfDTO = hcfDTOs.get(0);
+        }
+        
+        return hcfDTO;
     }
 
 
@@ -265,28 +273,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
 
         // Step 2 : check if PO has hcf correlation if not create one
-        ResearchOrganizationDTO roDTO = new ResearchOrganizationDTO();
-        List<ResearchOrganizationDTO> roDTOs = null;
-        roDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
-        roDTOs = PoRegistry.getResearchOrganizationCorrelationService().search(roDTO);
-        if (roDTOs != null && roDTOs.size() > 1) {
-            LOG.info("PO ResearchOrganizationDTOs Correlation has more than 1.  Using first. " + orgPoIdentifier);
-        }
-        if (roDTOs == null || roDTOs.isEmpty()) {
-            try {
-                Ii ii = PoRegistry.getResearchOrganizationCorrelationService().createCorrelation(roDTO);
-                roDTO = PoRegistry.getResearchOrganizationCorrelationService().getCorrelation(ii);
-            } catch (NullifiedRoleException e) {
-                throw new PAException("Validation exception during get ClinicalResearchStaff " , e);
-            } catch (EntityValidationException e) {
-                throw new PAException("Validation exception during create ClinicalResearchStaff " , e);
-            } catch (CurationException e) {
-                throw new PAException("Curation exception during create ClinicalResearchStaff " , e);
-            }
-        } else {
-            roDTO = roDTOs.get(0);
-        }
-
+        ResearchOrganizationDTO roDTO = getOrCreatePAResearchOrganizationCorrelation(orgPoIdentifier);
 
         // Step 3 : check for pa org, if not create one
         Organization paOrg = getCorrUtils().getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(
@@ -333,15 +320,42 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
 
         // Step 2 : check if PO has oc correlation if not create one
+        OversightCommitteeDTO ocDTO = getOrCreatePAOversightCommitteeCorrelation(orgPoIdentifier); 
+
+        // Step 3 : check for pa org, if not create one
+        Organization paOrg = getCorrUtils().getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(
+                orgPoIdentifier));
+        if (paOrg == null) {
+            paOrg = getCorrUtils().createPAOrganization(poOrg);
+        }
+
+        // Step 4 : Check of PA has oc , if not create one
+        return storeOversightCommittee(ocDTO, paOrg);
+    }
+    
+    private Long storeOversightCommittee(OversightCommitteeDTO ocDTO, Organization paOrg) 
+    throws PAException {
+        OversightCommittee oc = 
+            getCorrUtils().getStructuralRoleByIi(DSetConverter.convertToIi(ocDTO.getIdentifier()));
+        if (oc == null) {
+            // create a new oversight committee
+            oc = new OversightCommittee();
+            oc.setOrganization(paOrg);
+            oc.setIdentifier(DSetConverter.convertToIi(ocDTO.getIdentifier()).getExtension());
+            oc.setStatusCode(getCorrUtils().convertPORoleStatusToPARoleStatus(ocDTO.getStatus()));
+            getCorrUtils().createPADomain(oc);
+        }
+        return oc.getId();
+    }
+    
+    private OversightCommitteeDTO getOrCreatePAOversightCommitteeCorrelation(String orgPoIdentifier) 
+    throws PAException {
         OversightCommitteeDTO ocDTO = new OversightCommitteeDTO();
         List<OversightCommitteeDTO> ocDTOs = null;
         ocDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         ocDTO.setTypeCode(CdConverter.convertStringToCd(PAConstants.IRB_CODE));
         ocDTOs = PoRegistry.getOversightCommitteeCorrelationService().search(ocDTO);
-        if (ocDTOs != null && ocDTOs.size() > 1) {
-            LOG.info("PO OversightCommitteeDTOs Correlation has more than 1. Using first.  " + orgPoIdentifier);
-        }
-        if (ocDTOs == null || ocDTOs.isEmpty()) {
+        if (CollectionUtils.isEmpty(ocDTOs)) {
             try {
                 ocDTO.setTypeCode(CdConverter.convertStringToCd(IRB_CODE));
                 Ii ii = PoRegistry.getOversightCommitteeCorrelationService().createCorrelation(ocDTO);
@@ -355,30 +369,55 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
                         + IRB_CODE + ".  ", e);
             }
         } else {
+            if (ocDTOs.size() > 1) {
+                LOG.info("PO OversightCommitteeDTOs Correlation has more than 1. Using first.  " + orgPoIdentifier);
+            }
             ocDTO = ocDTOs.get(0);
         }
+        
+        return ocDTO;
 
-
-        // Step 3 : check for pa org, if not create one
-        Organization paOrg = getCorrUtils().getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(
-                orgPoIdentifier));
-        if (paOrg == null) {
-            paOrg = getCorrUtils().createPAOrganization(poOrg);
+    }
+    
+    private ResearchOrganizationDTO getOrCreatePAResearchOrganizationCorrelation(String orgPoIdentifier) 
+    throws PAException {
+        ResearchOrganizationDTO roDTO = new ResearchOrganizationDTO();
+        List<ResearchOrganizationDTO> roDTOs = null;
+        roDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+        roDTOs = PoRegistry.getResearchOrganizationCorrelationService().search(roDTO);
+        
+        if (CollectionUtils.isEmpty(roDTOs)) {
+            try {
+                Ii ii = PoRegistry.getResearchOrganizationCorrelationService().createCorrelation(roDTO);
+                roDTO = PoRegistry.getResearchOrganizationCorrelationService().getCorrelation(ii);
+            } catch (NullifiedRoleException e) {
+                throw new PAException("Validation exception during get ClinicalResearchStaff " , e);
+            } catch (EntityValidationException e) {
+                throw new PAException("Validation exception during create ClinicalResearchStaff " , e);
+            } catch (CurationException e) {
+                throw new PAException("Curation exception during create ClinicalResearchStaff " , e);
+            }
+        } else {
+            if (roDTOs.size() > 1) {
+                LOG.info("PO ResearchOrganizationDTOs Correlation has more than 1.  Using first. " + orgPoIdentifier);
+            }
+            roDTO = roDTOs.get(0);
         }
-
-        // Step 4 : Check of PA has oc , if not create one
-        OversightCommittee oc = getCorrUtils().getStructuralRoleByIi(DSetConverter.convertToIi(ocDTO.getIdentifier()));
-        if (oc == null) {
-            // create a new oversight committee
-            oc = new OversightCommittee();
-            oc.setOrganization(paOrg);
-            oc.setIdentifier(DSetConverter.convertToIi(ocDTO.getIdentifier()).getExtension());
-            oc.setStatusCode(getCorrUtils().convertPORoleStatusToPARoleStatus(ocDTO.getStatus()));
-            getCorrUtils().createPADomain(oc);
-        }
-        return oc.getId();
+        
+        return roDTO;
     }
 
+    private String setOrgRoleSql(StudySiteFunctionalCode functionalCode) {
+        String returnVal = "";
+        if (StudySiteFunctionalCode.TREATING_SITE.equals(functionalCode)) {
+            returnVal = " join org.healthCareFacilities as orgRole  ";
+        } else if (StudySiteFunctionalCode.COLLABORATORS.equals(functionalCode)) {
+            returnVal = " join org.researchOrganizations as orgRole  ";
+        } else if (StudySiteFunctionalCode.LEAD_ORGANIZATION.equals(functionalCode)) {
+            returnVal = " join org.healthCareFacilities as orgRole  ";
+        }
+        return returnVal;
+    }
 
     /***
      *
@@ -394,14 +433,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         Session session  = HibernateUtil.getCurrentSession();
         StringBuffer sb = new StringBuffer();
         sb.append("select org from Organization as org ");
-        if (StudySiteFunctionalCode.TREATING_SITE.equals(functionalCode)) {
-            sb.append(" join org.healthCareFacilities as orgRole  ");
-        } else if (StudySiteFunctionalCode.COLLABORATORS.equals(functionalCode)) {
-            sb.append(" join org.researchOrganizations as orgRole  ");
-        } else if (StudySiteFunctionalCode.LEAD_ORGANIZATION.equals(functionalCode)) {
-            sb.append(" join org.healthCareFacilities as orgRole  ");
-        }
-
+        sb.append(setOrgRoleSql(functionalCode));
         sb.append(" join org.researchOrganizations as orgRole join orgRole.studySites as sps "
                 + "join sps.studyProtocol as sp where 1 = 1 and sp.id = ");
         sb.append(studyProtocolId);
@@ -452,6 +484,22 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
         return o;
     }
+    
+    private EnOn convertIdTypeToName(String identifierType) throws PAException {
+        EnOn name = null;
+        if (identifierType.equalsIgnoreCase(PAConstants.NCT_IDENTIFIER_TYPE)) {
+            name = EnOnConverter.convertToEnOn("ClinicalTrials.gov");
+        } else if (identifierType.equalsIgnoreCase(PAConstants.CTEP_IDENTIFIER_TYPE)) {
+            name = EnOnConverter.convertToEnOn("Cancer Therapy Evaluation Program");
+        } else if (identifierType.equalsIgnoreCase(PAConstants.DCP_IDENTIFIER_TYPE)) {
+            name = EnOnConverter.convertToEnOn("Division of Cancer Control and Population Sciences");
+        }
+        
+        if (name == null) {
+            throw new PAException("Org name is null");
+        }
+        return name;
+    }
 
     /**
      * returns the id of the of give type.
@@ -461,18 +509,8 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      */
     public String getPOOrgIdentifierByIdentifierType(String identifierType) throws PAException {
         OrganizationDTO poOrgDto = new OrganizationDTO();
-        if (identifierType.equalsIgnoreCase(PAConstants.NCT_IDENTIFIER_TYPE)) {
-            poOrgDto.setName(EnOnConverter.convertToEnOn("ClinicalTrials.gov"));
-        }
-        if (identifierType.equalsIgnoreCase(PAConstants.CTEP_IDENTIFIER_TYPE)) {
-            poOrgDto.setName(EnOnConverter.convertToEnOn("Cancer Therapy Evaluation Program"));
-        }
-        if (identifierType.equalsIgnoreCase(PAConstants.DCP_IDENTIFIER_TYPE)) {
-            poOrgDto.setName(EnOnConverter.convertToEnOn("Division of Cancer Control and Population Sciences"));
-        }
-        if (poOrgDto.getName() == null) {
-            throw new PAException("Org name is null");
-        }
+        
+        poOrgDto.setName(convertIdTypeToName(identifierType));
 
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         List<OrganizationDTO> poOrgs = null;

@@ -93,7 +93,7 @@ public class OrganizationCorrelationServiceBeanTest {
             fail("No org Found");
         } catch (PAException e) {
             assertEquals("PO and PA databases out of synchronization.  Error getting "
-                    + "organization from PO for id = 12.  ", e.getMessage());
+                    + "organization from PO for id = 12. ", e.getMessage());
         }
         setupPoSvcLocMock();
         setupCorSvcMockForHCF();
