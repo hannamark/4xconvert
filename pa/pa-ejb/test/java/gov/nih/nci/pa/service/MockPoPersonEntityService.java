@@ -63,7 +63,7 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
         
         personList.add(dto);
         dto = new PersonDTO();
-        dto.setIdentifier(IiConverter.convertToIi("abc"));
+        dto.setIdentifier(IiConverter.convertToIi("1"));
         dto.setName(EnPnConverter.convertToEnPn("OtherName", null, "OtherName", null, null));
         dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", null, "cityOrMunicipality",
                 "stateOrProvince", "postalCode", "USA"));

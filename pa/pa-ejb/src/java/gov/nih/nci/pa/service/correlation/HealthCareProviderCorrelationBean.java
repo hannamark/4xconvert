@@ -88,6 +88,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAExceptionConstants;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -115,6 +116,7 @@ public class HealthCareProviderCorrelationBean {
 
     private static final Logger LOG  = Logger.getLogger(HealthCareProviderCorrelationBean.class);
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
+    private final CorrelationUtils corrUtils = new CorrelationUtils();
     /**
      * This method assumes Organization and Person record exists in PO.
      * @param orgPoIdentifier po primary org id
@@ -124,7 +126,7 @@ public class HealthCareProviderCorrelationBean {
      */
     public Long createHealthCareProviderCorrelationBeans(String orgPoIdentifier, String personPoIdentifer)
             throws PAException {
-        CorrelationUtils corrUtils = new CorrelationUtils();
+        
         if (orgPoIdentifier == null) {
             throw new PAException(PAExceptionConstants.NULL_II_ORG);
         }
@@ -197,6 +199,42 @@ public class HealthCareProviderCorrelationBean {
             hcp = new HealthCareProvider();
             hcp.setPerson(paPer);
             hcp.setOrganization(paOrg);
+            hcp.setIdentifier(DSetConverter.convertToIi(hcpDTO.getIdentifier()).getExtension());
+            hcp.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(hcpDTO.getStatus()));
+            createPAHealthCareProvider(hcp);
+        }
+        return hcp.getId();
+    }
+    
+    /**
+     * createHealthCareProviderCorrelationsWithExistingPoCrs.
+     * @param poHcpIdentifier ii
+     * @return pa id
+     * @throws PAException when error.
+     */
+    public Long createHealthCareProviderCorrelationsWithExistingPoHcp(Ii poHcpIdentifier) throws PAException {
+        HealthCareProviderDTO hcpDTO = null;
+        try {
+            hcpDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(poHcpIdentifier);
+        } catch (NullifiedRoleException e) {
+            throw new PAException("This HealthCareProvider is no longer available.", e);
+        }
+        HealthCareProvider hcp = corrUtils.getStructuralRoleByIi(poHcpIdentifier);
+        if (hcp == null) {
+            PersonDTO poPersonDTO;
+            OrganizationDTO poOrganizationDTO;
+            try {
+                poPersonDTO = PoRegistry.getPersonEntityService().getPerson(hcpDTO.getPlayerIdentifier());
+                poOrganizationDTO = 
+                    PoRegistry.getOrganizationEntityService().getOrganization(hcpDTO.getScoperIdentifier());
+            } catch (NullifiedEntityException e) {
+                throw new PAException(PAUtil.handleNullifiedEntityException(e), e);
+            }
+            Person paPerson = corrUtils.createPAPerson(poPersonDTO);
+            Organization paOrganization = corrUtils.createPAOrganization(poOrganizationDTO);
+            hcp = new HealthCareProvider();
+            hcp.setPerson(paPerson);
+            hcp.setOrganization(paOrganization);
             hcp.setIdentifier(DSetConverter.convertToIi(hcpDTO.getIdentifier()).getExtension());
             hcp.setStatusCode(corrUtils.convertPORoleStatusToPARoleStatus(hcpDTO.getStatus()));
             createPAHealthCareProvider(hcp);

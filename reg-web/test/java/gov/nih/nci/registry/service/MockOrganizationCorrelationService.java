@@ -230,4 +230,8 @@ public class MockOrganizationCorrelationService implements
         return IiConverter.convertToIi("1");
     }
 
+    public Long createHcfWithExistingPoHcf(Ii poHcfIdentifier) throws PAException {
+        return 1L;
+    }
+
 }

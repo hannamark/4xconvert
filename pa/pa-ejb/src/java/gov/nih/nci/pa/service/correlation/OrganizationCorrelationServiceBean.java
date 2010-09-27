@@ -137,6 +137,36 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     private static final String IRB_CODE = "Institutional Review Board (IRB)";
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     private CorrelationUtils corrUtils = new CorrelationUtils();
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Long createHcfWithExistingPoHcf(Ii poHcfIdentifier) 
+        throws PAException {
+        HealthCareFacilityDTO hcfDTO = null;
+        try {
+            hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(poHcfIdentifier);
+        } catch (NullifiedRoleException e) {
+            throw new PAException("This HealthCareFacility is no longer available.", e);
+        }
+        HealthCareFacility hcf = getCorrUtils().getStructuralRoleByIi(poHcfIdentifier);
+        if (hcf == null) {
+            OrganizationDTO poOrgDTO;
+            try {
+                poOrgDTO = PoRegistry.getOrganizationEntityService().getOrganization(hcfDTO.getPlayerIdentifier());
+            } catch (NullifiedEntityException e) {
+                throw new PAException(PAUtil.handleNullifiedEntityException(e), e);
+            }
+            Organization paOrg = getCorrUtils().createPAOrganization(poOrgDTO);
+            hcf = new HealthCareFacility();
+            hcf.setOrganization(paOrg);
+            hcf.setIdentifier(poHcfIdentifier.getExtension());
+            hcf.setStatusCode(getCorrUtils().convertPORoleStatusToPARoleStatus(hcfDTO.getStatus()));
+            getCorrUtils().createPADomain(hcf);
+        }
+        return hcf.getId();
+    }
+   
     /**
      *
      * @param orgPoIdentifier org id
@@ -502,6 +532,5 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     public CorrelationUtils getCorrUtils() {
         return corrUtils;
     }
-
 
 }

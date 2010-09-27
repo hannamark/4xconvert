@@ -3,11 +3,11 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -47,8 +47,8 @@ public class MockPoOrganizationalContactCorrelationService implements
         }
         OrganizationalContactDTO oc = new OrganizationalContactDTO();
         oc.setIdentifier(DSetConverter.convertIiToDset(ii));
-        oc.setPlayerIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        oc.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
+        oc.setPlayerIdentifier(IiConverter.convertToPoPersonIi("1"));
+        oc.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("1"));
         oc.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         return oc;    
     }

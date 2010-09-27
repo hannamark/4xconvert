@@ -17,6 +17,7 @@ import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemo
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +50,8 @@ public class MockPoHealthCareProviderCorrelationService implements
     ii.setReliability(IdentifierReliability.ISS);
     ii.setRoot(IiConverter.HEALTH_CARE_PROVIDER_ROOT);
     hcp.setIdentifier(DSetConverter.convertIiToDset(ii));
-    hcp.setPlayerIdentifier(IiConverter.convertToPoPersonIi("abc"));
-    hcp.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
+    hcp.setPlayerIdentifier(IiConverter.convertToPoPersonIi("1"));
+    hcp.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("1"));
     hcp.setStatus(CdConverter.convertStringToCd("ACTIVE"));
     return hcp;
     }
@@ -106,8 +107,13 @@ public class MockPoHealthCareProviderCorrelationService implements
 
     public List<HealthCareProviderDTO> getCorrelationsByPlayerIds(Ii[] arg0)
             throws NullifiedRoleException {
-        // TODO Auto-generated method stub
-        return null;
+        List<HealthCareProviderDTO> hcpList = new ArrayList<HealthCareProviderDTO>();
+        HealthCareProviderDTO hcpDTO = new HealthCareProviderDTO();
+        Ii hcpIi = IiConverter.convertToPoHealtcareProviderIi("1");
+        hcpIi.setReliability(IdentifierReliability.ISS);
+        hcpDTO.setIdentifier(DSetConverter.convertIiToDset(hcpIi));
+        hcpList.add(hcpDTO);
+        return hcpList;
     }
 
 }

@@ -104,6 +104,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil.ValidDateFormat;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -1111,5 +1112,47 @@ public class PAUtil {
      */
     public static boolean isEdNull(Ed ed) {
       return (ed == null || ed.getData() == null);
+    }
+    
+    /**
+     * Given a NullifiedEntityException pull out a useful error message.
+     * @param e NEE.
+     * @return message
+     */
+    public static String handleNullifiedEntityException(NullifiedEntityException e) {
+        StringBuffer message = new StringBuffer("The entity is no longer available.");
+        if (e.getNullifiedEntities().size() > 0) {
+            message = new StringBuffer("");
+            for (Ii key : e.getNullifiedEntities().keySet()) {
+                if (IiConverter.ORG_ROOT.equals(key.getRoot())) {
+                    message.append("The Organization with id ");
+                } else if (IiConverter.PERSON_ROOT.equals(key.getRoot())) {
+                    message.append("The Person with id ");
+                } else {
+                    continue;
+                }
+                 
+                message.append(key.getExtension());
+                message.append(" is no longer available.");
+                Ii value = e.getNullifiedEntities().get(key);
+                if (PAUtil.isIiNotNull(value)) {
+                    message.append("Switch to id ");
+                    message.append(value.getExtension());
+                }
+                                                                
+            }
+        }
+        return message.toString();
+    }
+    
+    /**
+     * Current time.
+     * @return current time.
+     * @throws ParseException if parse error.
+     */
+    public static Timestamp getCurrentTime() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        String simpleDate = sdf.format(new Date());
+        return new Timestamp(sdf.parse(simpleDate).getTime());
     }
 }

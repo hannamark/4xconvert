@@ -108,6 +108,15 @@ public interface OrganizationCorrelationServiceRemote {
     Long createHealthCareFacilityCorrelations(String orgPoIdentifier) throws PAException;
     
     /**
+     * Given a poHcf Ii generate a pa hcf and store.
+     * @param poHcfIdentifier hcf id
+     * @return Long
+     * @throws PAException pe
+     */
+    Long createHcfWithExistingPoHcf(Ii poHcfIdentifier) 
+        throws PAException;
+    
+    /**
      * @param orgPoIdentifier org id
      * @return Long
      * @throws PAException pe

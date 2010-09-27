@@ -78,10 +78,10 @@
 */
 package gov.nih.nci.service;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.ResearchOrganization;
@@ -93,6 +93,8 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -205,6 +207,7 @@ public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySite
      * @return
      * @throws PAException
      */
+    @Override
     public StudySiteDTO create(StudySiteDTO dto) throws PAException {
         StudySite bo = converter.convertFromDtoToDomain(dto);
         bo.setId(seq++);
@@ -216,6 +219,7 @@ public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySite
      * @param ii
      * @throws PAException
      */
+    @Override
     public void delete(Ii ii) throws PAException {
         // TODO Auto-generated method stub
 
@@ -226,6 +230,7 @@ public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySite
      * @return
      * @throws PAException
      */
+    @Override
     public StudySiteDTO get(Ii ii) throws PAException {
         StudySiteDTO dto = new StudySiteDTO();
         dto.setResearchOrganizationIi(IiConverter.convertToIi("1"));
@@ -239,6 +244,7 @@ public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySite
      * @return
      * @throws PAException
      */
+    @Override
     public StudySiteDTO update(StudySiteDTO dto)
             throws PAException {
         // TODO Auto-generated method stub
@@ -260,6 +266,14 @@ public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySite
             throws PAException, TooManyResultsException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudySiteService#getStudySiteIiByTrialAndPoHcfIi(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
+     */
+    public Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi) throws EntityValidationException,
+            CurationException, PAException, TooManyResultsException {
+        return IiConverter.convertToStudySiteIi(1L);
     }
 
 }

@@ -11,12 +11,14 @@ import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -53,8 +55,8 @@ public class MockPoClinicalResearchStaffCorrelationService implements
         ii.setReliability(IdentifierReliability.ISS);
         ii.setRoot(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT);
         crs.getIdentifier().getItem().add(ii);
-        crs.setPlayerIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        crs.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
+        crs.setPlayerIdentifier(IiConverter.convertToPoPersonIi("1"));
+        crs.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("1"));
         crs.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         return crs;
     }
@@ -110,8 +112,13 @@ public class MockPoClinicalResearchStaffCorrelationService implements
 
     public List<ClinicalResearchStaffDTO> getCorrelationsByPlayerIds(Ii[] arg0)
             throws NullifiedRoleException {
-        // TODO Auto-generated method stub
-        return null;
+        List<ClinicalResearchStaffDTO> crsList = new ArrayList<ClinicalResearchStaffDTO>();
+        ClinicalResearchStaffDTO crsDTO = new ClinicalResearchStaffDTO();
+        Ii crsIi = IiConverter.convertToPoClinicalResearchStaffIi("1");
+        crsIi.setReliability(IdentifierReliability.ISS);
+        crsDTO.setIdentifier(DSetConverter.convertIiToDset(crsIi));
+        crsList.add(crsDTO);
+        return crsList;
     }
 
 }

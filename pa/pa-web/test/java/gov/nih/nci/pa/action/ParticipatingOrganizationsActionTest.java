@@ -108,7 +108,6 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
     public void prepare() throws Exception {
         act = new ParticipatingOrganizationsAction();
         act.prepare();
-        act.setOrgCorrelationService(new MockOrganizationCorrelationService());
         act.setCorrelationUtils(new MockCorrelationUtils());
     }
 

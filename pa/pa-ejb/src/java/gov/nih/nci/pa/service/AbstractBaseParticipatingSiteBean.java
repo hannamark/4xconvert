@@ -87,15 +87,17 @@ import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import javax.ejb.EJB;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -105,79 +107,12 @@ import org.apache.commons.lang.StringUtils;
  * @author mshestopalov
  *
  */
-public abstract class AbstractBaseParticipatingSiteBean {
-    @EJB private StudyProtocolServiceLocal studyProtocolService = null;
-    @EJB private StudySiteServiceLocal studySiteService = null;
-    @EJB private StudySiteContactServiceLocal studySiteContactService = null;
-    @EJB private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = null;
-    @EJB private OrganizationCorrelationServiceRemote ocsr = null;
+public abstract class AbstractBaseParticipatingSiteBean extends 
+    AbstractBaseParticipatingSiteEjbBean {
     
     private static final String INVALID_STATUS_DATE_CURRENT = "Trial Status Date cannot be in the future.";
     private static final String INVALID_OPEN_DATE_CURRENT = "Open Date cannot be in the future.";
     private static final String INVALID_CLOSED_DATE_CURRENT = "Closed Date cannot be in the future.";
-    
-    /**
-     * @return the studyProtocolService
-     */
-    protected StudyProtocolServiceLocal getStudyProtocolService() {
-        return studyProtocolService;
-    }
-    /**
-     * @param studyProtocolService the studyProtocolService to set
-     */
-    protected void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
-        this.studyProtocolService = studyProtocolService;
-    }
-  
-    /**
-     * @return the studySiteService
-     */
-    protected StudySiteServiceLocal getStudySiteService() {
-        return studySiteService;
-    }
-    /**
-     * @param studySiteService the studySiteService to set
-     */
-    protected void setStudySiteService(StudySiteServiceLocal studySiteService) {
-        this.studySiteService = studySiteService;
-    }
-    /**
-     * @return the studySiteContactService
-     */
-    protected StudySiteContactServiceLocal getStudySiteContactService() {
-        return studySiteContactService;
-    }
-    /**
-     * @param studySiteContactService the studySiteContactService to set
-     */
-    protected void setStudySiteContactService(StudySiteContactServiceLocal studySiteContactService) {
-        this.studySiteContactService = studySiteContactService;
-    }
-    /**
-     * @return the studySiteAccrualStatusService
-     */
-    protected StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
-        return studySiteAccrualStatusService;
-    }
-    /**
-     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
-     */
-    protected void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
-        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
-    }
-
-    /**
-     * @return the ocsr
-     */
-    protected OrganizationCorrelationServiceRemote getOcsr() {
-        return ocsr;
-    }
-    /**
-     * @param ocsr the ocsr to set
-     */
-    protected void setOcsr(OrganizationCorrelationServiceRemote ocsr) {
-        this.ocsr = ocsr;
-    }
     
     private void enforceBusinessRecruitmentRules1ForProprietary(boolean openDateAvail, 
             StudySiteAccrualStatusDTO currentStatus) throws PAException {
@@ -266,35 +201,27 @@ public abstract class AbstractBaseParticipatingSiteBean {
     /**
      * enforceBusinessRulesForProprietary.
      * @param studyProtocolDTO dto
-     * @param orgIi ii
      * @param studySiteDTO dto
-     * @param investigatorIi ii
      * @param currentStatus status
      * @throws PAException when error
      * @throws ParseException when error
      */
-    protected void enforceBusinessRulesForProprietary(StudyProtocolDTO studyProtocolDTO, Ii orgIi, 
-            StudySiteDTO studySiteDTO, Ii investigatorIi, 
+
+    protected void enforceBusinessRulesForProprietary(StudyProtocolDTO studyProtocolDTO,
+            StudySiteDTO studySiteDTO, 
             StudySiteAccrualStatusDTO currentStatus) throws PAException, ParseException {
         
         // check prop status
         if (BooleanUtils.isFalse(studyProtocolDTO.getProprietaryTrialIndicator().getValue())) {
             throw new PAException("Not a prop trial.");
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-        String simpleDate = sdf.format(new Date());
-        Timestamp currentTime = new Timestamp(sdf.parse(simpleDate).getTime());
-        enforceBusinessRules(currentStatus, currentTime);
         
-        if (StringUtils.isEmpty(orgIi.getExtension())) {
-            throw new PAException("Organization is required.");
-        }
+        Timestamp currentTime = PAUtil.getCurrentTime();
+        enforceBusinessRules(currentStatus, currentTime);
+     
         
         if (StringUtils.isEmpty(studySiteDTO.getLocalStudyProtocolIdentifier().getValue())) {
             throw new PAException("Local Trial Identifier is required.");
-        }
-        if (StringUtils.isEmpty(investigatorIi.getExtension())) {
-            throw new PAException("Investigator is required.");
         }
         
         enforceBusinessSiteRulesForProprietary(studySiteDTO, currentStatus, currentTime);
@@ -322,4 +249,66 @@ public abstract class AbstractBaseParticipatingSiteBean {
             throw new PAException("Please provide a valid trial status date.");
         }
     }
+    
+    
+    
+    /**
+     * generateHcfIiFromCtepIdOrNewOrg.
+     * @param organizationDTO dto.
+     * @param hcfDTO hcf dto.
+     * @return po hcf ii
+     * @throws EntityValidationException when error
+     * @throws CurationException when error
+     * @throws PAException when error
+     */
+    protected Ii generateHcfIiFromCtepIdOrNewOrg(OrganizationDTO organizationDTO, 
+            HealthCareFacilityDTO hcfDTO) 
+        throws EntityValidationException, CurationException, PAException {
+       
+        Ii someHcfIi = null;
+        if (hcfDTO != null && hcfDTO.getIdentifier() != null) {
+            someHcfIi = DSetConverter.getFirstInDSet(hcfDTO.getIdentifier());
+        }
+        
+        return generateHcfIiFromCtepIdOrNewOrg(organizationDTO, someHcfIi, hcfDTO);
+    }
+
+    private Ii generateHcfIiFromCtepIdOrNewOrg(OrganizationDTO organizationDTO, Ii someHcfIi, 
+            HealthCareFacilityDTO hcfDTO) throws PAException, EntityValidationException, CurationException {
+        Ii poHcfIi = null;
+        if (someHcfIi != null && IiConverter.HEALTH_CARE_PROVIDER_ROOT.equals(someHcfIi.getRoot())) {
+            poHcfIi = someHcfIi;
+        } else if (someHcfIi != null && IiConverter.CTEP_ORG_IDENTIFIER_ROOT.equals(someHcfIi.getRoot())) {
+                poHcfIi = getCorrUtils().getPoHcfByCtepId(someHcfIi);
+        } else if (organizationDTO != null) {
+            poHcfIi = getPoHcfFromNewOrg(organizationDTO, hcfDTO);        
+        } else {
+            throw new PAException("Expecting either full org dto or po hcf ii, got ii with ext: " 
+                    + someHcfIi.getExtension());
+        }
+        return poHcfIi;
+    }
+    
+    private Ii getPoHcfFromNewOrg(OrganizationDTO organizationDTO, 
+            HealthCareFacilityDTO toStoreDTO) throws EntityValidationException, CurationException, PAException {
+        Ii poOrgIi = PoRegistry.getOrganizationEntityService().createOrganization(organizationDTO);
+        HealthCareFacilityDTO hcfDTO = null;
+        if (toStoreDTO == null) {
+            hcfDTO = new HealthCareFacilityDTO();
+        } else {
+            hcfDTO = toStoreDTO;
+        }
+        hcfDTO.setIdentifier(null);
+        hcfDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(poOrgIi.getExtension()));
+        try {
+                return PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
+        } catch (EntityValidationException e) {
+                throw new PAException("Validation exception during create HealthCareFacility " , e);
+        } catch (CurationException e) {
+                throw new PAException("CurationException during create HealthCareFacility " , e);
+        }
+        
+    }
+    
+    
 }

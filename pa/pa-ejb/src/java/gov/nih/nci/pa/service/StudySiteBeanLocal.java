@@ -34,6 +34,8 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -367,6 +369,34 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
             dto.setStatusCode(getFunctionalRoleStatusCode(CdConverter.convertStringToCd(sr.getStatusCode().getCode()),
                                                           ActStatusCode.ACTIVE));
         }
+
+    }
+    
+    /**
+     * getStudySiteIiByTrialAndPoHcfIi.
+     * @param studyProtocolIi ii
+     * @param poHcfIi ii
+     * @return ii
+     * @throws EntityValidationException when error
+     * @throws CurationException when error
+     * @throws PAException when error
+     * @throws TooManyResultsException when error
+     */
+    public Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi) 
+        throws EntityValidationException, CurationException, PAException, TooManyResultsException {
+        
+        StudySiteDTO criteria = new StudySiteDTO();
+        criteria.setStudyProtocolIdentifier(studyProtocolIi);
+        // get the pa hcf from the po hcf
+        CorrelationUtils corrUtils = new CorrelationUtils();
+       
+        StructuralRole strRl = corrUtils.getStructuralRoleByIi(poHcfIi);
+        Ii myIi = IiConverter.convertToPoHealthCareFacilityIi(strRl.getId().toString());
+        criteria.setHealthcareFacilityIi(myIi);
+        LimitOffset limit = new LimitOffset(1 , 0);
+        List<StudySiteDTO> freshStudySiteDTOList = 
+            search(criteria, limit);
+       return  freshStudySiteDTOList.get(0).getIdentifier();
 
     }
 }

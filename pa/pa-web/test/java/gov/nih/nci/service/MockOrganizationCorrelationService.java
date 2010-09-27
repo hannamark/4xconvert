@@ -296,8 +296,12 @@ public class MockOrganizationCorrelationService implements
 
     public Ii getPoResearchOrganizationByEntityIdentifier(Ii orgPoIdentifier)
             throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        return IiConverter.convertToPoResearchOrganizationIi(orgPoIdentifier.getExtension());
+    }
+
+   
+    public Long createHcfWithExistingPoHcf(Ii poHcfIdentifier) throws PAException {
+        return 1L;
     }
 
 }

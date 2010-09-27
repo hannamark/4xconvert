@@ -194,4 +194,14 @@ public interface StudyProtocolService {
      * @throws PAException on error
      */
     void changeOwnership(StudyProtocolDTO studyProtocolDTO) throws PAException;
+    
+    /**
+     * getStudyProtocolDTOFromNciId.
+     * @param studyProtocolIi ii
+     * @return dto
+     * @throws PAException when error
+     * @throws TooManyResultsException when error
+     */
+    StudyProtocolDTO getStudyProtocolDTOFromNciId(Ii studyProtocolIi) 
+        throws PAException, TooManyResultsException;
 }

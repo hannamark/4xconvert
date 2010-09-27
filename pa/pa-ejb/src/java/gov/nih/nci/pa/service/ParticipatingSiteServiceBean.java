@@ -102,5 +102,4 @@ import org.jboss.annotation.security.SecurityDomain;
 @SecurityDomain("pa")
 @RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
 public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal implements ParticipatingSiteServiceRemote {
-
 }

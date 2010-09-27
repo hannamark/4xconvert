@@ -14,6 +14,8 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +106,13 @@ public class MockStudySiteService extends MockAbstractRoleIsoService<StudySiteDT
         return null;
     }
     
+    @Override
     public StudySiteDTO get(Ii ii) {
      return new StudySiteDTO();   
+    }
+    
+    public Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi) throws EntityValidationException,
+            CurationException, PAException, TooManyResultsException {
+        return IiConverter.convertToStudySiteIi(1L);
     }
 }

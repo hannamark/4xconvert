@@ -83,9 +83,15 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -101,72 +107,101 @@ import javax.ejb.Local;
 public interface ParticipatingSiteServiceLocal {
 
     /**
-     * Create a participating site for an existing prop trial. The nci id of the trial is expected. 
-     * If organization dto has id set, then use id to pull org. The id is either the nci or ctep id of the org.
-     * @param studyProtocolIi NCI trial identifier
-     * @param organizationDTO
-     * @param studySiteDTO
-     * @param investigatorDTO
-     * @param investigatorRole
-     * @param investigatorSiteContact
-     * @param contactType
-     * @param primeContact
-     * @param genericContactDTO
-     * @return new site Ii.
-     * @throws PAException in case of error.
-     
-    // CHECKSTYLE:OFF More than 7 Parameters
-    Ii createStudySiteParticipantForNonPropTrial(Ii studyProtocolIi,
-            OrganizationDTO organizationDTO, StudySiteDTO studySiteDTO,
-            StudySiteAccrualStatusDTO currentStatus, PersonDTO investigatorDTO, Cd investigatorRole,
-            Bl investigatorSiteContact, St contactType, 
-            PersonDTO primeContact, OrganizationalContactDTO genericContactDTO) throws PAException;
-    
-    */
-    
-    /**
-     * Create a participating site for an existing prop trial. The nci id of the trial is expected. 
-     * If organization dto has id set, then use id to pull org. The id is either the nci or ctep id of the org.
-     * If investigator dto has id set, then use id to pull person. The id is either the nci or ctep id of the person.
-     * The expectation is that necessary fields will be filled in on the study site dto and the study accrual
-     * status dto.
-     * @param studyProtocolIi nci identifier.
-     * @param organizationDTO ctep org identifier or data.
-     * @param studySiteDTO site data to be created.
-     * @param currentStatus recruitment status data to be created.
-     * @param investigatorDTO PI data to be added.
-     * @return Ii of the new study site.
-     * @throws PAException in case of error.
+     * Save a study site and its status with a new organization or
+     * a ctep id for the po hcf.
+     * StudySiteDTO is expected to have the studyProtocol id set.
+     * @param orgDTO po org dto
+     * @param studySiteDTO dto
+     * @param currentStatusDTO dto
+     * @param hcfDTO po hcf dto
+     * @return Ii
+     * @throws PAException when error
      */
-    Ii createStudySiteParticipantForPropTrial(Ii studyProtocolIi,
-            OrganizationDTO organizationDTO, StudySiteDTO studySiteDTO,
-            StudySiteAccrualStatusDTO currentStatus, PersonDTO investigatorDTO) throws PAException;
+    Ii createStudySiteParticipant(
+            StudySiteDTO studySiteDTO, StudySiteAccrualStatusDTO currentStatusDTO, 
+            OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO) throws PAException;
     
     /**
-     * Update a participating site for an existing prop trial.
-     * The nci id of the trial is expected. The org id will be used to identify the site.
-     * The org id is either the nci or ctep id of the org.
-     * If investigator dto has id set, then use id to pull person. The id is either the nci or ctep id of the person.
-     * The expectation is that necessary fields will be filled in on the study site dto and the study accrual
-     * status dto.
-     * @param studyProtocolIi nci identifier.
-     * @param organizationIi ctep org identifier.
-     * @param studySiteDTO site data to be created.
-     * @param currentStatus recruitment status data to be created.
-     * @param investigatorDTO PI data to be added.
-     * @return Ii of the new study site.
-     * @throws PAException in case of error.
+     * Save a study site and its status where the PO org already exists
+     * and will be found using the po hcf ii or the ctep hcf ii.
+     * StudySiteDTO is expected to have the studyProtocol id set.
+     * @param studySiteDTO dto
+     * @param currentStatusDTO dto
+     * @param poHcfIi po hcf ii
+     * @return Ii
+     * @throws PAException when error
      */
-    void updateStudySiteParticipantForPropTrial(Ii studyProtocolIi,
-            Ii organizationIi, StudySiteDTO studySiteDTO,
-            StudySiteAccrualStatusDTO currentStatus, PersonDTO investigatorDTO) throws PAException;
+    Ii createStudySiteParticipant(
+            StudySiteDTO studySiteDTO, StudySiteAccrualStatusDTO currentStatusDTO, 
+            Ii poHcfIi) throws PAException;
     
+     /**
+     * Update the study site and its status. Expect id set on studySiteDTO. 
+     * @param studySiteDTO dto.
+     * @param currentStatusDTO dto.
+     * @throws PAException when error.
+     */
+    void updateStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO) throws PAException;
+       
     /**
-     * Will lookup if an org ID is a participating site on a trial.
-     * @param studyProtocolIi trial id.
-     * @param organizationIi org id.
+     * Given a trial id and a hcf id is a participating site on a trial.
+     * @param studyProtocolIi trial id (nci or pa)
+     * @param someHcfIi hcf id (po hcf or ctep id)
      * @return boolean.
      * @throws PAException in case of error.
      */
-    Bl isParticipatingSite(Ii studyProtocolIi, Ii organizationIi)  throws PAException;  
+    Bl isParticipatingSite(Ii studyProtocolIi, Ii someHcfIi)  throws PAException; 
+    
+    /**
+     * Lookup study site id given a trial id and a hcf id.
+     * @param studyProtocolIi trial id (nci or pa)
+     * @param someHcfIi hcf id (po hcf or ctep id)
+     * @return Ii.
+     * @throws PAException in case of error.
+     */
+    Ii getParticipatingSiteIi(Ii studyProtocolIi, Ii someHcfIi)  throws PAException; 
+    
+    /**
+     * Add a investigator contact. Either a po crs id or po hcp id is needed or can be null if creating
+     * a new person from the person dto. If crs or hcp ids are set they must be po ids or ctep ids for the person.
+     * If crs or hcp are provided but the ids are not set, they will be used in creating new SRs for Person. 
+     * @param studySiteIi ii
+     * @param poCrsDTO dto
+     * @param poHcpDTO dto
+     * @param investigatorDTO dto
+     * @param roleCode role (principal or sub)
+     * @throws PAException when error.
+     */
+    void addStudySiteInvestigator(Ii studySiteIi, ClinicalResearchStaffDTO poCrsDTO,
+            HealthCareProviderDTO poHcpDTO, PersonDTO investigatorDTO, 
+            String roleCode) throws PAException;
+    
+    /**
+     * Add a primary person contact. Either a po crs id or po hcp id is needed or can be null if creating
+     * a new person from the person dto. If crs or hcp ids are set they must be po ids or ctep ids for the person.
+     * If crs or hcp are provided but the ids are not set, they will be used in creating new SRs for Person.  
+     * @param studySiteIi ii
+     * @param poCrsDTO dto
+     * @param poHcpDTO dto
+     * @param personDTO dto
+     * @param telecom telecom list of tel and email can be null.
+     * @throws PAException when error
+     */
+    void addStudySitePrimaryContact(Ii studySiteIi, ClinicalResearchStaffDTO poCrsDTO,
+            HealthCareProviderDTO poHcpDTO, PersonDTO personDTO, DSet<Tel> telecom) throws PAException;
+    
+    /**
+     * Add a generic contact. Provide a dto w/ id set to reuse existing organizational contact.
+     * If id is set, it must be a po id or a ctep id.
+     * Otherwise provide dto data to create new.   
+     * @param studySite ii 
+     * @param contactDTO dto.
+     * @param isPrimaryContact bool
+     * @param telecom list of tel and email can be null.
+     * @throws PAException when error.
+     */
+    void addStudySiteGenericContact(Ii studySite, OrganizationalContactDTO contactDTO, 
+            boolean isPrimaryContact, DSet<Tel> telecom) throws PAException;
+    
 }

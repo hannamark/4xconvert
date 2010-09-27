@@ -82,246 +82,74 @@
  */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.OrganizationalContact;
-import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
-import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
-import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.po.data.CurationException;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
-import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
-import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.person.PersonDTO;
 
-import java.util.HashSet;
 import java.util.List;
-
-import org.apache.axis.utils.StringUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import java.util.Map;
 
 /**
  * Helper for ParticipatingSiteBeanLocal.
  * @author mshestopalov
  *
  */
-public abstract class AbstractParticipatingSitesBean extends AbstractBaseParticipatingSiteBean {
+public abstract class AbstractParticipatingSitesBean 
+    extends AbstractBaseParticipatingSiteBean {
+    
+    
+    /**
+     * createStudySiteAccrualStatus.
+     * @param studySiteIi ii
+     * @param newStatus status
+     * @throws PAException when error
+     */
+    protected void createStudySiteAccrualStatus(Ii studySiteIi,
+            StudySiteAccrualStatusDTO newStatus) throws PAException {
+        StudySiteAccrualStatusDTO currentStatus = getStudySiteAccrualStatusService()
+                .getCurrentStudySiteAccrualStatusByStudySite(studySiteIi);
+        if (currentStatus == null || currentStatus.getStatusCode() == null
+                || currentStatus.getStatusDate() == null
+                || !currentStatus.getStatusCode().getCode().equals(newStatus.getStatusCode())
+                || !currentStatus.getStatusDate().equals(newStatus.getStatusDate())) {
 
-    /**
-     * getStudyProtocolDTOFromNciId.
-     * @param studyProtocolIi ii
-     * @return dto
-     * @throws PAException when error
-     * @throws TooManyResultsException when error
-     */
-    protected StudyProtocolDTO getStudyProtocolDTOFromNciId(Ii studyProtocolIi) 
-        throws PAException, TooManyResultsException {
-        StudyProtocolDTO studyProtocolDTO = null;
-        // this will be the NCI id.
-        if (IiConverter.STUDY_PROTOCOL_ROOT.equals(studyProtocolIi.getRoot())) {
-            StudyProtocolDTO spDTO = new StudyProtocolDTO();
-            spDTO.setSecondaryIdentifiers(new DSet<Ii>());
-            spDTO.getSecondaryIdentifiers().setItem(new HashSet<Ii>());
-            spDTO.getSecondaryIdentifiers().getItem().add(studyProtocolIi);
-            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
-            List<StudyProtocolDTO> spList =  getStudyProtocolService().search(spDTO, limit);
-            if (spList.isEmpty() || spList.size() > 1) {
-                throw new PAException("could not find unique trial with this identifier.");
-            }
-            studyProtocolDTO = spList.get(0);
-        } else if (StringUtils.isEmpty(studyProtocolIi.getRoot()) 
-                && !StringUtils.isEmpty(studyProtocolIi.getExtension())) {
-            studyProtocolDTO =  getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-        } else {
-            throw new PAException("unrecognizable trial Ii");
-        }
-        
-        return studyProtocolDTO;
-    }
-    /**
-     * genIdentifierPerson.
-     * @param ctepInvIi person ii
-     * @return ii
-     * @throws PAException when error
-     */
-    protected Ii genIdentifierPerson(Ii ctepInvIi) throws PAException {
-        IdentifiedPersonDTO criteria = new IdentifiedPersonDTO();
-        criteria.setAssignedId(ctepInvIi);
-        List<IdentifiedPersonDTO> idps = PoRegistry.getIdentifiedPersonEntityService().search(criteria);
-        if (idps.isEmpty()) {
-            throw new PAException("Provided Person ctep id but did not find a corresponding"
-                    + " Identified Person in PO.");
-        } else if (idps.size() > 1) {
-            throw new PAException("more than 1 Identified Person found for given ctep id.");
-        }
-        return idps.get(0).getPlayerIdentifier();
-    }
-    /**
-     * getPersonIiFromCtepId.
-     * @param investigatorDTO person dto
-     * @return ii
-     * @throws EntityValidationException when error
-     * @throws CurationException when error
-     * @throws PAException when error
-     */
-    protected Ii getPersonIiFromCtepId(PersonDTO investigatorDTO) 
-        throws EntityValidationException, CurationException, PAException {
-        Ii investigatorIi = null;
-        
-        if (investigatorDTO.getIdentifier() == null 
-                || investigatorDTO.getIdentifier().getExtension() == null) {
-            investigatorIi = PoRegistry.getPersonEntityService().createPerson(investigatorDTO);
-        } else if (IiConverter.PERSON_ROOT.equals(investigatorDTO.getIdentifier().getRoot())) {
-            investigatorIi = investigatorDTO.getIdentifier();
-        } else if (IiConverter.CTEP_PERSON_IDENTIFIER_ROOT.equals(investigatorDTO.getIdentifier().getRoot())) {    
-            investigatorIi = genIdentifierPerson(investigatorDTO.getIdentifier());
-        } else {
-            throw new PAException("Could not determine root of investigator.");
-        }
-        return investigatorIi;
-    }
-    
-    /**
-     * getStudySiteIiByTrialAndOrg.
-     * @param studyProtocolIi ii
-     * @param orgIi ii
-     * @return ii
-     * @throws EntityValidationException when error
-     * @throws CurationException when error
-     * @throws PAException when error
-     */
-    protected Ii getStudySiteIiByTrialAndOrg(Ii studyProtocolIi, Ii orgIi) 
-        throws EntityValidationException, CurationException, PAException {
-        
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
-        Query query = null;
-        String hql = "select ss from StudySite ss " 
-                + " join ss.healthCareFacility as hcf "
-                + " join ss.studyProtocol as sp " 
-                + " join sp.documentWorkflowStatuses as dws  "
-                + " where sp.id = :StudyProtocolIdentifier "
-                + " and hcf.organization.identifier = :OrganizationIdentifier " 
-                + " and ss.functionalCode = '" + StudySiteFunctionalCode.TREATING_SITE + "'" 
-                + " and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'" + " and sp.statusCode ='"
-                + ActStatusCode.ACTIVE + "'" + " and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                + "where dws.studyProtocol = dws1.studyProtocol ) or dws.id is null ) "
-                + "order by ss.dateLastUpdated desc";
-         
-        query = session.createQuery(hql);
-        query.setParameter("StudyProtocolIdentifier", Long.valueOf(studyProtocolIi.getExtension()));
-        query.setParameter("OrganizationIdentifier", orgIi.getExtension());
-        @SuppressWarnings("unchecked")
-        List<StudySite> qList = query.list();
-        if (qList == null || qList.isEmpty() || qList.get(0).getId() == null) {
-            return null;
-        } else {
-            return IiConverter.convertToStudySiteIi(qList.get(0).getId());
+                 newStatus.setIdentifier(IiConverter.convertToIi((Long) null));
+                 newStatus.setStudySiteIi(studySiteIi);
+                 getStudySiteAccrualStatusService().createStudySiteAccrualStatus(newStatus);
         }
     }
-    
-    /**
-     * generateHcf.
-     * @param ctepOrgIi ii
-     * @return ii
-     * @throws PAException when error
-     */
-    protected Ii generateHcf(Ii ctepOrgIi) throws PAException {
-        HealthCareFacilityDTO criteria = new HealthCareFacilityDTO();
-        criteria.setIdentifier(new DSet<Ii>());
-        criteria.getIdentifier().setItem(new HashSet<Ii>());
-        criteria.getIdentifier().getItem().add(ctepOrgIi);
-        List<HealthCareFacilityDTO> hcfs = 
-            PoRegistry.getHealthCareFacilityCorrelationService().search(criteria);
-        if (hcfs.isEmpty()) {
-            throw new PAException("Provided Org ctep id but did not find a corresponding HCF in PO.");
-        } else if (hcfs.size() > 1) {
-            throw new PAException("more than 1 HCF found for given ctep id.");
-        }             
-        return hcfs.get(0).getPlayerIdentifier();
-    }
-    
-    /**
-     * getOrganizationIiFromCtepId.
-     * @param organizationDTO dto
-     * @return ii
-     * @throws EntityValidationException when error
-     * @throws CurationException when error
-     * @throws PAException when error
-     */
-    protected Ii getOrganizationIiFromCtepId(OrganizationDTO organizationDTO) 
-        throws EntityValidationException, CurationException, PAException {
-        Ii orgIi = null;
-        if (organizationDTO.getIdentifier() == null 
-                || organizationDTO.getIdentifier().getExtension() == null) {
-            orgIi = PoRegistry.getOrganizationEntityService().createOrganization(organizationDTO);
-        } else if (IiConverter.ORG_ROOT.equals(organizationDTO.getIdentifier().getRoot())) {
-            orgIi = organizationDTO.getIdentifier();
-        } else if (IiConverter.CTEP_ORG_IDENTIFIER_ROOT.equals(organizationDTO.getIdentifier().getRoot())) {
-            orgIi = generateHcf(organizationDTO.getIdentifier());
-        } else {
-            throw new PAException("Root of org Id provided is incorrect.");
-        }
-        return orgIi;
-    }
-    
-    /**
-     * updateStudyParticationContactRecord.
-     * @param trialType string
-     * @param contactDTOList dto
-     * @param poOrgId ii
-     * @param selectedPersId ii
-     * @throws PAException when error
-     */
-    protected void updateStudyParticationContactRecord(String trialType,
-        List<StudySiteContactDTO> contactDTOList, String poOrgId, String selectedPersId) throws PAException {
-
-        StudySiteContactDTO participationContactDTO = contactDTOList.get(0);
-        Long clinicalStfid = new ClinicalResearchStaffCorrelationServiceBean().
-        createClinicalResearchStaffCorrelations(poOrgId, selectedPersId);
-        Long healthCareProviderIi = null;
-        if (trialType.startsWith("Interventional")) {
-            healthCareProviderIi = new HealthCareProviderCorrelationBean().createHealthCareProviderCorrelationBeans(
-                    poOrgId, selectedPersId);
-        }
-        participationContactDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(clinicalStfid.toString()));
-        participationContactDTO.setHealthCareProviderIi(IiConverter.convertToIi(healthCareProviderIi));
-
-        getStudySiteContactService().update(participationContactDTO);
-    }        
     
     /**
      * createGenericContactRecord.
      * @param participationContactDTO dto
-     * @param orgIi ii
-     * @param personIi ii
+     * @param srMap map
      * @throws PAException when error
      */
     protected void createGenericContactRecord(StudySiteContactDTO participationContactDTO, 
-            Ii orgIi, Ii personIi) throws PAException {
-        if (IiConverter.ORGANIZATIONAL_CONTACT_ROOT.equalsIgnoreCase(personIi.getRoot())) {
+            Map<String, Ii> srMap) throws PAException {
+        if (srMap != null 
+                && srMap.containsKey(IiConverter.ORGANIZATIONAL_CONTACT_ROOT)
+                && srMap.containsKey(IiConverter.ORG_ROOT)) {
+            Ii poGenericContactIi = srMap.get(IiConverter.ORGANIZATIONAL_CONTACT_ROOT);
+            Ii poOrgIi = srMap.get(IiConverter.ORG_ROOT);
             //means title is selected for contact
             // now create study SITE contact as
             PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
@@ -330,8 +158,8 @@ public abstract class AbstractParticipatingSitesBean extends AbstractBasePartici
             PAOrganizationalContactDTO.class, OrganizationalContact.class, OrganizationalContactConverter.class);
 
             PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
-            orgContacPaDto.setOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(orgIi.getExtension()));
-            orgContacPaDto.setIdentifier(personIi);
+            orgContacPaDto.setOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(poOrgIi.getExtension()));
+            orgContacPaDto.setIdentifier(poGenericContactIi);
             Long ocId = oc.create(orgContacPaDto);
             participationContactDTO.setOrganizationalContactIi(IiConverter.convertToIi(ocId));
         }
@@ -341,30 +169,31 @@ public abstract class AbstractParticipatingSitesBean extends AbstractBasePartici
      * createPersonContactRecord.
      * @param participationContactDTO dto
      * @param trialType string
-     * @param orgIi ii
-     * @param personIi ii
+     * @param srMap ii map
      * @throws PAException when error
      */
     protected void createPersonContactRecord(StudySiteContactDTO participationContactDTO, 
-            String trialType, Ii orgIi, Ii personIi) throws PAException {
-        if (IiConverter.PERSON_ROOT.equalsIgnoreCase(personIi.getRoot())) {
+            String trialType, Map<String, Ii> srMap) throws PAException {
+        
+        if (srMap != null 
+                && srMap.containsKey(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT)) {
             
-            Long clinicalStfid = new ClinicalResearchStaffCorrelationServiceBean().
-                createClinicalResearchStaffCorrelations(orgIi.getExtension(),
-                        personIi.getExtension());
-            Long healthCareProviderIi = null;
-            if (trialType.startsWith("Interventional")) {
-                healthCareProviderIi = new HealthCareProviderCorrelationBean()
-                .createHealthCareProviderCorrelationBeans(orgIi.getExtension(),
-                        personIi.getExtension());
-            }
-
+            Long clinicalStfid = new ClinicalResearchStaffCorrelationServiceBean()
+            .createClinicalResearchStaffCorrelationsWithExistingPoCrs(
+                    srMap.get(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT));
             participationContactDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(clinicalStfid));
-            if (healthCareProviderIi != null) {
-                participationContactDTO.setHealthCareProviderIi(IiConverter.convertToIi(healthCareProviderIi));
-            }
         }
-    
+            
+        if (srMap != null 
+                && srMap.containsKey(IiConverter.HEALTH_CARE_PROVIDER_ROOT)
+                && trialType.startsWith("Interventional")) {   
+             
+                Long healthCareProviderIi = new HealthCareProviderCorrelationBean()
+                    .createHealthCareProviderCorrelationsWithExistingPoHcp(
+                            srMap.get(IiConverter.HEALTH_CARE_PROVIDER_ROOT));
+                participationContactDTO.setHealthCareProviderIi(
+                        IiConverter.convertToIi(healthCareProviderIi));
+        }    
     }
     
     /**
@@ -392,25 +221,26 @@ public abstract class AbstractParticipatingSitesBean extends AbstractBasePartici
     
     /**
      * createStudyParticationContactRecord.
-     * @param orgIi ii
-     * @param studyProtocolIi ii
-     * @param studySiteIi ii
-     * @param isPrimaryContact bool
-     * @param roleCode string
-     * @param personIi ii
-     * @param trialType string
+     * @param studySiteDTO dto.
+     * @param srMap map
+     * @param isPrimaryContact prim contact
+     * @param roleCode role
+     * @param telecom email and telephone.
      * @return bool
-     * @throws PAException when error
+     * @throws PAException when error.
      */
-    @SuppressWarnings({"PMD.ExcessiveParameterList" })
-    // CHECKSTYLE:OFF More than 7 Parameters
-    protected boolean createStudyParticationContactRecord(Ii orgIi, Ii studyProtocolIi, Ii studySiteIi,
-            boolean isPrimaryContact, String roleCode, Ii personIi, String trialType) throws PAException {
-        // CHECKSTYLE:ON
+    protected boolean createStudyParticationContactRecord(StudySiteDTO studySiteDTO,
+            Map<String, Ii> srMap, boolean isPrimaryContact, String roleCode, DSet<Tel> telecom) 
+        throws PAException {
+        StudyProtocolDTO studyProtocolDTO = PaRegistry.getStudyProtocolService()
+            .getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
+        
         StudySiteContactDTO participationContactDTO = new StudySiteContactDTO();
         
-        createPersonContactRecord(participationContactDTO, trialType, orgIi, personIi); 
-        createGenericContactRecord(participationContactDTO, orgIi, personIi); 
+        createPersonContactRecord(participationContactDTO, 
+                StConverter.convertToString(studyProtocolDTO.getStudyProtocolType()),
+                srMap); 
+        createGenericContactRecord(participationContactDTO, srMap); 
         
         if (!isPrimaryContact) {
             participationContactDTO.setRoleCode(CdConverter.convertStringToCd(roleCode));
@@ -418,19 +248,24 @@ public abstract class AbstractParticipatingSitesBean extends AbstractBasePartici
             participationContactDTO.setRoleCode(CdConverter.convertToCd(
                     StudySiteContactRoleCode.PRIMARY_CONTACT));
         }
-        participationContactDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        participationContactDTO.setStudyProtocolIdentifier(studySiteDTO.getStudyProtocolIdentifier());
         participationContactDTO.setStatusCode(CdConverter.convertStringToCd(
                 FunctionalRoleStatusCode.PENDING.getCode()));
-        participationContactDTO.setStudySiteIi(studySiteIi);
+        participationContactDTO.setStudySiteIi(studySiteDTO.getIdentifier());
+        participationContactDTO.setTelecomAddresses(telecom);
         if (isPrimaryContact) {
-            recreatePrimaryContactRecord(participationContactDTO, studySiteIi);
+            recreatePrimaryContactRecord(participationContactDTO, studySiteDTO.getIdentifier());
         }
         if (!isPrimaryContact
-                && !doesSPCRecordExistforPerson(Long.valueOf(personIi.getExtension()), studySiteIi)) {
+                && srMap.containsKey(IiConverter.PERSON_ROOT)
+                && !doesSPCRecordExistforPerson(Long.valueOf(
+                        srMap.get(IiConverter.PERSON_ROOT).getExtension()), studySiteDTO.getIdentifier())) {
             getStudySiteContactService().create(participationContactDTO);
         }
         return true;
     }
+    
+    
     
     
     private boolean iterateSubInvresults(Long persid, List<PaPersonDTO> subInvresults) throws PAException {
@@ -467,50 +302,6 @@ public abstract class AbstractParticipatingSitesBean extends AbstractBasePartici
                 Long.valueOf(studfySiteIi.getExtension()), StudySiteContactRoleCode.SUB_INVESTIGATOR.getName());
         return iteratePrincipalInvresults(persid, principalInvresults)
             && iterateSubInvresults(persid, subInvresults);
-    }
+    }       
     
-    /*
-    // CHECKSTYLE:OFF
-    protected Ii createStudySiteParticipantForNonPropTrial(Ii studyProtocolIi, OrganizationDTO organizationDTO,
-            StudySiteDTO studySiteDTO, StudySiteAccrualStatusDTO currentStatus, PersonDTO investigatorDTO,
-            Cd investigatorRole, Bl investigatorSiteContact, St contactType, PersonDTO primeContact,
-            OrganizationalContactDTO genericContactDTO) throws PAException {
-        // CHECKSTYLE:ON
-        Ii studySiteIi = null;
-        try {
-            
-            StudyProtocolDTO studyProtocolDTO = getStudyProtocolDTOFromNciId(studyProtocolIi);
-            
-            Ii orgIi = getOrganizationIiFromCtepId(organizationDTO);
-            // check prop status
-            if (BooleanUtils.isTrue(studyProtocolDTO.getProprietaryTrialIndicator().getValue())) {
-                throw new PAException("Not a non-prop trial.");
-            }
-            
-            Timestamp currentTime = new Timestamp(new Date().getTime());
-            enforceBusinessRules(currentStatus, currentTime);
-          
-            studySiteIi = saveNonPropStudySite(true, studySiteDTO, orgIi,
-                    studyProtocolDTO.getIdentifier(), currentStatus);
-            
-            
-        } catch (Exception e) {
-            ejbContext.setRollbackOnly();
-            throw new PAException(e);
-        } 
-        return studySiteIi;
-    }
-
-    */
-    
-    /*
-    protected Ii saveNonPropStudySite(boolean isCreate, StudySiteDTO siteDTO, Ii orgIi,
-            Ii studyProtocolIi, StudySiteAccrualStatusDTO currentStatus) throws PAException {
-        
-        siteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-        StudySiteDTO studySiteDTO = saveStudySiteHelper(isCreate, siteDTO, orgIi,
-                studyProtocolIi, currentStatus);
-        return studySiteDTO.getIdentifier();
-    }
-    */
 }

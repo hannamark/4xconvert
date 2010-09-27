@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
@@ -613,6 +614,41 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                 Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
 
         StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, newSp);
+    }
+    
+    /**
+     * getStudyProtocolDTOFromNciId.
+     * @param studyProtocolIi ii
+     * @return dto
+     * @throws PAException when error
+     * @throws TooManyResultsException when error
+     */
+    public StudyProtocolDTO getStudyProtocolDTOFromNciId(Ii studyProtocolIi) 
+        throws PAException, TooManyResultsException {
+        StudyProtocolDTO studyProtocolDTO = null;
+        // this will be the NCI id.
+        if (IiConverter.STUDY_PROTOCOL_ROOT.equals(studyProtocolIi.getRoot())
+            && studyProtocolIi.getExtension().startsWith("NCI")) {
+                StudyProtocolDTO spDTO = new StudyProtocolDTO();
+                spDTO.setSecondaryIdentifiers(new DSet<Ii>());
+                spDTO.getSecondaryIdentifiers().setItem(new HashSet<Ii>());
+                spDTO.getSecondaryIdentifiers().getItem().add(studyProtocolIi);
+                LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
+                List<StudyProtocolDTO> spList =  search(spDTO, limit);
+                if (spList.isEmpty() || spList.size() > 1) {
+                    throw new PAException("could not find unique trial with this identifier " 
+                            + studyProtocolIi.getExtension());
+                }
+                studyProtocolDTO = spList.get(0);
+        } else if (IiConverter.STUDY_PROTOCOL_ROOT.equals(studyProtocolIi.getRoot()))  {
+                studyProtocolDTO = getStudyProtocol(studyProtocolIi);
+        } else {
+            throw new PAException("Unrecognizable trial Ii: " 
+                    + "ext: " +  studyProtocolIi.getExtension()
+                    + " root: " + studyProtocolIi.getRoot());
+        }
+        
+        return studyProtocolDTO;
     }
 
     /**

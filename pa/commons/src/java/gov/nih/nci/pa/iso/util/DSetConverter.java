@@ -96,6 +96,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+
 
 /**
  *
@@ -279,6 +281,18 @@ public class DSetConverter {
                     return ii;
                 }
             }
+        }
+        return null;
+    }
+    
+    /**
+     * Extract any (first) identifier from the set of identifiers.
+     * @param identifier set of identifiers
+     * @return internal identifier
+     */
+    public static Ii getFirstInDSet(DSet<Ii> identifier) {
+        if (identifier != null && CollectionUtils.isNotEmpty(identifier.getItem())) { 
+            return identifier.getItem().iterator().next();
         }
         return null;
     }
