@@ -82,7 +82,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         readIndInfo(clinicalStudy);
         readSponsor(clinicalStudy.getChild("sponsors"));
         readOversightInfo(clinicalStudy.getChild("oversight_info"));
-        readOverallOfficial(clinicalStudy.getChild("overall_official"));
+        readOverallOfficials(clinicalStudy);
 
     }
 
@@ -211,29 +211,40 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         }
     }
 
-
     /**
      * @param parent
      */
-    private void readOverallOfficial(Element parent) {
-        if (parent == null) {
-            return;
+    private void readOverallOfficials(Element parent) {
+        List<Element> overallOfficialElmtList = parent.getChildren("overall_official");
+        for (Element overallOfficialElement : overallOfficialElmtList) {
+            leadOrganizationDTO = new OrganizationDTO();
+            if (overallOfficialElmtList.size() > 1) {
+                // if multiple overall official then check if it one has role PI else pick first.
+                for (Element elmt : overallOfficialElmtList) {
+                    String role = getText(elmt, "role");
+                    if (StringUtils.equalsIgnoreCase(role, "Principal Investigator")) {
+                        principalInvestigatorDTO = readPrincipalInvestigatorInfo(elmt);
+                        leadOrganizationDTO.setName(EnOnConverter.convertToEnOn(getText(elmt, "affiliation")));
+                    }
+                }
+                // if there are no PI role then pick the first
+                if (principalInvestigatorDTO == null) {
+                    principalInvestigatorDTO = readPrincipalInvestigatorInfo(overallOfficialElmtList.get(0));
+                    leadOrganizationDTO.setName(EnOnConverter.convertToEnOn(getText(overallOfficialElmtList.get(0),
+                    "affiliation")));
+                }
+                break;
+            } else {
+                //No multiple Overall official so pick whatever provided as PI
+                principalInvestigatorDTO =  readPrincipalInvestigatorInfo(overallOfficialElement);
+              //lead org
+                leadOrganizationDTO.setName(EnOnConverter.convertToEnOn(getText(overallOfficialElement,
+                        "affiliation")));
+            }
         }
-        String ctepId =  parent.getAttributeValue("ctep-id");
-        PersonDTO per = null;
-        if (StringUtils.isNotEmpty(ctepId)) {
-            per = getPaServiceUtils().getPersonByCtepId(ctepId);
-        }
-        principalInvestigatorDTO = new PersonDTO();
-        if (per != null) {
-            principalInvestigatorDTO.setIdentifier(per.getIdentifier());
-        }
-        principalInvestigatorDTO.setName(EnPnConverter.convertToEnPn(getText(parent, "first_name"),
-                getText(parent, "middle_name"), getText(parent, "last_name"), null, null));
-        //lead org
-        leadOrganizationDTO = new OrganizationDTO();
-        leadOrganizationDTO.setName(EnOnConverter.convertToEnOn(getText(parent, "affiliation")));
+
     }
+
     /**
      * @return the studyIndldeDTOs
      */

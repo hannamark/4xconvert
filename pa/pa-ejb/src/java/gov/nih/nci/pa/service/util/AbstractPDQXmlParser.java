@@ -89,10 +89,12 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.IOException;
 import java.net.URL;
@@ -119,6 +121,7 @@ public abstract class AbstractPDQXmlParser {
     private URL url;
     private Document document;
     private static final Logger LOG = Logger.getLogger(AbstractPDQXmlParser.class);
+    private PAServiceUtils paServiceUtils = new PAServiceUtils();
     /**
      * set the url of the source to parse.
      * @param url source URL
@@ -199,9 +202,11 @@ public abstract class AbstractPDQXmlParser {
     /**
      *
      * @param element element
+     * @param appendNewLine string to append.
+     * @param appendSpace String to append.
      * @return String
      */
-    public String getFullText(Element element) {
+    public String getFullText(Element element, String appendNewLine, String appendSpace) {
         StringBuffer result = new StringBuffer();
         List content = element.getContent();
         Iterator iterator = content.iterator();
@@ -209,10 +214,10 @@ public abstract class AbstractPDQXmlParser {
           Object o = iterator.next();
           if (o instanceof Text) {
             Text t = (Text) o;
-            result.append(t.getTextTrim());
+            result.append(t.getTextTrim()).append(appendNewLine);
           } else if (o instanceof Element) {
             Element child = (Element) o;
-            result.append(getFullText(child));
+            result.append(appendSpace).append(getFullText(child, appendNewLine, appendSpace));
           }
         }
 
@@ -268,6 +273,38 @@ public abstract class AbstractPDQXmlParser {
         IvlConverter.JavaPq low = new IvlConverter.JavaPq(minUom, PAUtil.convertStringToDecimal(minValue), null);
         IvlConverter.JavaPq high = new IvlConverter.JavaPq(maxUom, PAUtil.convertStringToDecimal(maxValue), null);
         return IvlConverter.convertPq().convertToIvl(low, high);
+    }
+    /**
+     * this method parse the PI information.
+     * @param overallOfficialElement element
+     * @return personDTO
+     */
+    protected PersonDTO readPrincipalInvestigatorInfo(Element overallOfficialElement) {
+        String ctepId =  overallOfficialElement.getAttributeValue("ctep-id");
+        PersonDTO per = null;
+        if (StringUtils.isNotEmpty(ctepId)) {
+            per = getPaServiceUtils().getPersonByCtepId(ctepId);
+        }
+        if (per == null) {
+            per = new PersonDTO();
+        }
+        per.setName(EnPnConverter.convertToEnPn(getText(overallOfficialElement, "first_name"),
+            getText(overallOfficialElement, "middle_name"), getText(overallOfficialElement, "last_name"), null, null));
+        return per;
+    }
+
+    /**
+     * @param paServiceUtils the paServiceUtils to set
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
+    }
+
+    /**
+     * @return the paServiceUtils
+     */
+    public PAServiceUtils getPaServiceUtils() {
+        return paServiceUtils;
     }
 
 
