@@ -133,7 +133,8 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             ArmDTO armDTO = new ArmDTO();
             armDTO.setName(StConverter.convertToSt(getText(armElmt, "arm_group_label")));
             armDTO.setTypeCode(CdConverter.convertToCd(ArmTypeCode.getByCode(getText(armElmt, "arm_type"))));
-            armDTO.setDescriptionText(StConverter.convertToSt(getFullText(armElmt.getChild("arm_group_description"))));
+            armDTO.setDescriptionText(StConverter.convertToSt(getFullText(
+                  armElmt.getChild("arm_group_description"), "", "")));
             getListOfArmDTOS().add(armDTO);
         }
     }
@@ -151,7 +152,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             interventionDto.setTypeCode(CdConverter.convertToCd(InterventionTypeCode.getByCode(getText(interventionElmt,
                     "intervention_type"))));
             interventionDto.setDescriptionText(StConverter.convertToSt(getFullText(interventionElmt.getChild(
-                    "intervention_description"))));
+                    "intervention_description"), "" , "")));
             listOfInterventionsDTOS.add(interventionDto);
             List<Element> armGrpLableElmtList = interventionElmt.getChildren("arm_group_label");
             List<ArmDTO> armList = new ArrayList<ArmDTO>();
@@ -253,14 +254,15 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             pEligibiltyCriterionDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
             eligibilityList.add(pEligibiltyCriterionDTO);
         }
-        setOtherCriterionTextBlock(getFullText(parent.getChild("criteria")));
+        setOtherCriterionTextBlock(getFullText(parent.getChild("criteria"), "", ""));
 
     }
     private void readStudyDesign(Element parent) {
         setIspDTO(new InterventionalStudyProtocolDTO());
         ispDTO.setPublicTitle(StConverter.convertToSt(getText(parent, "brief_title")));
-        ispDTO.setPublicDescription(StConverter.convertToSt(getFullText(parent.getChild("brief_summary"))));
-        ispDTO.setScientificDescription(StConverter.convertToSt(getFullText(parent.getChild("detailed_description"))));
+        ispDTO.setPublicDescription(StConverter.convertToSt(getFullText(parent.getChild("brief_summary"), "" , "")));
+        ispDTO.setScientificDescription(StConverter.convertToSt(
+                getFullText(parent.getChild("detailed_description"), "", "")));
         ispDTO.setRecordVerificationDate(tsFromString("yyyy-MM-dd", parent.getChildText("verification_date")));
         ispDTO.setTargetAccrualNumber(IvlConverter.convertInt().convertToIvl(getText(parent, "enrollment"), null));
         List<Element> keywordList = parent.getChildren("keyword");
