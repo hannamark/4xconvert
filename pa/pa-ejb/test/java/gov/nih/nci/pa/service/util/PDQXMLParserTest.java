@@ -7,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -191,7 +190,6 @@ public class PDQXMLParserTest {
         eligibleCriterionDTO = abstractionElementParser.getEligibilityList().get(1);
         assertEquals(18,IvlConverter.convertPq().convertLow(eligibleCriterionDTO.getValue()).getValue().intValue());
         assertEquals(120,IvlConverter.convertPq().convertHigh(eligibleCriterionDTO.getValue()).getValue().intValue());
-        assertTrue(abstractionElementParser.getOtherCriterionTextBlock().startsWith("DISEASE CHARACTERISTICS:"));
         assertEquals("no", abstractionElementParser.getHealthyVolunteers());
     }
     @Test
@@ -218,9 +216,6 @@ public class PDQXMLParserTest {
 
         abstractionElementParser.setEligibilityList(new ArrayList<PlannedEligibilityCriterionDTO>());
         assertNotNull(abstractionElementParser.getEligibilityList());
-
-        abstractionElementParser.setOtherCriterionTextBlock("otherCriterionTextBlock");
-        assertNotNull(abstractionElementParser.getOtherCriterionTextBlock());
     }
 
 }

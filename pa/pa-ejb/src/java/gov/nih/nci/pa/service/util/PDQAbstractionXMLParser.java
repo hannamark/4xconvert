@@ -52,7 +52,6 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     private Map <InterventionDTO, List<ArmDTO>> armInterventionMap;
     private List<ArmDTO> listOfArmDTOS;
     private Map<OrganizationDTO, Map<PersonDTO, StudySiteAccrualStatusDTO>> locationsMap;
-    private String otherCriterionTextBlock;
     private String healthyVolunteers;
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
@@ -254,7 +253,6 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             pEligibiltyCriterionDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
             eligibilityList.add(pEligibiltyCriterionDTO);
         }
-        setOtherCriterionTextBlock(getFullText(parent.getChild("criteria"), "", ""));
 
     }
     private void readStudyDesign(Element parent) {
@@ -364,12 +362,6 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         return locationsMap;
     }
     /**
-     * @return the otherCriterionTextBlock
-     */
-    public String getOtherCriterionTextBlock() {
-        return otherCriterionTextBlock;
-    }
-    /**
      * @param eligibilityList the eligibilityList to set
      */
     public void setEligibilityList(List<PlannedEligibilityCriterionDTO> eligibilityList) {
@@ -422,12 +414,6 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
      */
     public void setLocationsMap(Map<OrganizationDTO, Map<PersonDTO, StudySiteAccrualStatusDTO>> locationsMap) {
         this.locationsMap = locationsMap;
-    }
-    /**
-     * @param otherCriterionTextBlock the otherCriterionTextBlock to set
-     */
-    public void setOtherCriterionTextBlock(String otherCriterionTextBlock) {
-        this.otherCriterionTextBlock = otherCriterionTextBlock;
     }
     /**
      * @param healthyVolunteers the healthyVolunteers to set
