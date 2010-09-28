@@ -8,8 +8,12 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
 
 import java.util.List;
+
+import org.apache.commons.lang.NotImplementedException;
 
 /**
  * Wrapper class for invoking the StudyParticipant remote EJB.
@@ -79,5 +83,13 @@ public class InvokeStudySiteEjb extends InvokeStudyPaServiceEjb<StudySiteDTO> im
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi) throws EntityValidationException,
+            CurationException, PAException, TooManyResultsException {
+        throw new NotImplementedException();
     }
 }

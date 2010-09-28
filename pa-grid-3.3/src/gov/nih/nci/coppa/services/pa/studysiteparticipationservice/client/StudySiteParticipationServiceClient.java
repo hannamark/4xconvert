@@ -1,15 +1,14 @@
 package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.client;
 
-import gov.nih.nci.coppa.po.Organization;
-import gov.nih.nci.coppa.po.Person;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationTransformer;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.PersonTransformer;
-import gov.nih.nci.coppa.services.pa.StudySite;
-import gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteAccrualStatusTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.common.StudySiteParticipationServiceI;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers.HealthCareFacilityParticipationSiteManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers.OrganizationParticipationSiteManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers.StudySiteAccrualStatusParticipationSiteManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers.StudySiteParticipationSiteManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.HealthCareFacility;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteAccrualStatus;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
@@ -26,6 +25,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -118,8 +118,6 @@ public class StudySiteParticipationServiceClient extends StudySiteParticipationS
         email.setValue(uri);
         org.getTelecomAddress().getItem().add(email);
         
-        Organization orgXml = OrganizationTransformer.INSTANCE.toXml(org);
-        
         PersonDTO person = new PersonDTO();
         person.setBirthDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         person.setName(EnPnConverter.convertToEnPn("first", "middle", "lastName", "prefix", "suffix"));
@@ -130,38 +128,46 @@ public class StudySiteParticipationServiceClient extends StudySiteParticipationS
         person.setTelecomAddress(new DSet<Tel>());
         person.getTelecomAddress().setItem(new HashSet<Tel>());
         person.getTelecomAddress().getItem().add(email);
-        Person personXml = PersonTransformer.INSTANCE.toXml(person);
         
         StudySiteDTO studySiteDTO = new StudySiteDTO();
         studySiteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime() + Long.valueOf("300000000")), null));
         studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LOCAL SP ID"));
         studySiteDTO.setProgramCodeText(StConverter.convertToSt("PROGRAM CODE"));
         
-        StudySite ssXml = StudySiteTransformer.INSTANCE.toXml(studySiteDTO);
+        StudySite ssXml = StudySiteParticipationSiteManagementTransformer.INSTANCE.toXml(studySiteDTO);
         
         StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
         currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
         currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() + Long.valueOf("300000000"))));
     
-        StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusTransformer.INSTANCE.toXml(currentStatus);
+        StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusParticipationSiteManagementTransformer.INSTANCE.toXml(currentStatus);
+        ssXml.setAccrualStatus(ssasXml);
         
-        client.createParticipatingSiteForPropTrial(studyProtocolIi, orgXml, ssXml, ssasXml, personXml);
+        HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
+        hcfDTO.setName(EnOnConverter.convertToEnOn("hcf name"));
+        OrganizationDTO organizationDTO = new OrganizationDTO();
+        organizationDTO.setName(EnOnConverter.convertToEnOn("org name"));
+
+        ssXml.setOrganizationRole(HealthCareFacilityParticipationSiteManagementTransformer.INSTANCE.toXml(hcfDTO));
+        ssXml.getOrganizationRole().setPlayer(OrganizationParticipationSiteManagementTransformer.INSTANCE.toXml(organizationDTO));
+        
+        client.createParticipatingSite(studyProtocolIi, ssXml);
 
   }
 	
 	private static void updatePropSite(StudySiteParticipationServiceClient client) 
 	  throws DtoTransformException, PAFault, RemoteException, URISyntaxException {
 	      
-	      Id studyProtocolIi = new Id();
-	      studyProtocolIi.setExtension("NCI-2009-00933");
-	      studyProtocolIi.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+	      Id studySiteIi = new Id();
+	      studySiteIi.setExtension("NCI-2009-00933");
+	      studySiteIi.setRoot(IiConverter.STUDY_SITE_ROOT);
 	      
 	      
 	      Id organizationIi = new Id(); 
 	      organizationIi.setExtension("SUPERCOOL");
 	      organizationIi.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
 	      
-	      System.out.println("true = " + client.isParticipatingSite(studyProtocolIi, organizationIi).isValue());
+	      System.out.println("true = " + client.isParticipatingSite(studySiteIi, organizationIi).isValue());
 	      
 	      PersonDTO person = new PersonDTO();
 	      person.setBirthDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
@@ -176,71 +182,24 @@ public class StudySiteParticipationServiceClient extends StudySiteParticipationS
 	      URI uri = new URI(TelEmail.SCHEME_MAILTO + ":aaa@bbb.com");
 	      email.setValue(uri);
 	      person.getTelecomAddress().getItem().add(email);
-	      Person personXml = PersonTransformer.INSTANCE.toXml(person);
 	      
 	      StudySiteDTO studySiteDTO = new StudySiteDTO();
 	      studySiteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime() + Long.valueOf("300000000")), null));
 	      studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("CHANGED SP ID"));
 	      studySiteDTO.setProgramCodeText(StConverter.convertToSt("PROGRAM CODE"));
 	      
-	      StudySite ssXml = StudySiteTransformer.INSTANCE.toXml(studySiteDTO);
+	      StudySite ssXml = StudySiteParticipationSiteManagementTransformer.INSTANCE.toXml(studySiteDTO);
 	      
 	      StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
 	      currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
 	      currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() + Long.valueOf("300000000"))));
 	    
-	      StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusTransformer.INSTANCE.toXml(currentStatus);
-	      
-	      client.updateParticipatingSiteForPropTrial(studyProtocolIi, organizationIi, ssXml, ssasXml, personXml);
+	      StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusParticipationSiteManagementTransformer.INSTANCE.toXml(currentStatus);
+	      ssXml.setAccrualStatus(ssasXml);
+
+	      client.updateParticipatingSite(studySiteIi, ssXml);
 
 	}
-
-  public gov.nih.nci.iso21090.extensions.Id createParticipatingSiteForPropTrial(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.coppa.po.Organization organization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus status,gov.nih.nci.coppa.po.Person investigator) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"createParticipatingSiteForPropTrial");
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequest params = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequest();
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequestStudyProtocolId studyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequestStudyProtocolId();
-    studyProtocolIdContainer.setId(studyProtocolId);
-    params.setStudyProtocolId(studyProtocolIdContainer);
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequestOrganization organizationContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequestOrganization();
-    organizationContainer.setOrganization(organization);
-    params.setOrganization(organizationContainer);
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequestStudySite studySiteContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequestStudySite();
-    studySiteContainer.setStudySite(studySite);
-    params.setStudySite(studySiteContainer);
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequestStatus statusContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequestStatus();
-    statusContainer.setStudySiteAccrualStatus(status);
-    params.setStatus(statusContainer);
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequestInvestigator investigatorContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequestInvestigator();
-    investigatorContainer.setPerson(investigator);
-    params.setInvestigator(investigatorContainer);
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialResponse boxedResult = portType.createParticipatingSiteForPropTrial(params);
-    return boxedResult.getId();
-    }
-  }
-
-  public void updateParticipatingSiteForPropTrial(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.iso21090.extensions.Id organizationId,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus status,gov.nih.nci.coppa.po.Person investigator) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"updateParticipatingSiteForPropTrial");
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequest params = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequest();
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequestStudyProtocolId studyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequestStudyProtocolId();
-    studyProtocolIdContainer.setId(studyProtocolId);
-    params.setStudyProtocolId(studyProtocolIdContainer);
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequestOrganizationId organizationIdContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequestOrganizationId();
-    organizationIdContainer.setId(organizationId);
-    params.setOrganizationId(organizationIdContainer);
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequestStudySite studySiteContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequestStudySite();
-    studySiteContainer.setStudySite(studySite);
-    params.setStudySite(studySiteContainer);
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequestStatus statusContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequestStatus();
-    statusContainer.setStudySiteAccrualStatus(status);
-    params.setStatus(statusContainer);
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequestInvestigator investigatorContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequestInvestigator();
-    investigatorContainer.setPerson(investigator);
-    params.setInvestigator(investigatorContainer);
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialResponse boxedResult = portType.updateParticipatingSiteForPropTrial(params);
-    }
-  }
 
   public gov.nih.nci.iso21090.extensions.Bl isParticipatingSite(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.iso21090.extensions.Id organizationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
@@ -254,6 +213,35 @@ public class StudySiteParticipationServiceClient extends StudySiteParticipationS
     params.setOrganizationId(organizationIdContainer);
     gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteResponse boxedResult = portType.isParticipatingSite(params);
     return boxedResult.getBl();
+    }
+  }
+
+  public gov.nih.nci.iso21090.extensions.Id createParticipatingSite(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite studySite) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"createParticipatingSite");
+    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteRequest params = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteRequest();
+    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteRequestStudyProtocolId studyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteRequestStudyProtocolId();
+    studyProtocolIdContainer.setId(studyProtocolId);
+    params.setStudyProtocolId(studyProtocolIdContainer);
+    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteRequestStudySite studySiteContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteRequestStudySite();
+    studySiteContainer.setStudySite(studySite);
+    params.setStudySite(studySiteContainer);
+    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteResponse boxedResult = portType.createParticipatingSite(params);
+    return boxedResult.getId();
+    }
+  }
+
+  public void updateParticipatingSite(gov.nih.nci.iso21090.extensions.Id studySiteId,gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite studySite) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"updateParticipatingSite");
+    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteRequest params = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteRequest();
+    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteRequestStudySiteId studySiteIdContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteRequestStudySiteId();
+    studySiteIdContainer.setId(studySiteId);
+    params.setStudySiteId(studySiteIdContainer);
+    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteRequestStudySite studySiteContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteRequestStudySite();
+    studySiteContainer.setStudySite(studySite);
+    params.setStudySite(studySiteContainer);
+    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteResponse boxedResult = portType.updateParticipatingSite(params);
     }
   }
 

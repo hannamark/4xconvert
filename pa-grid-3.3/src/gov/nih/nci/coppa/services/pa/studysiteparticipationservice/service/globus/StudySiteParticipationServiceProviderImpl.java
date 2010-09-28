@@ -26,21 +26,21 @@ public class StudySiteParticipationServiceProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialResponse createParticipatingSiteForPropTrial(gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialResponse boxedResult = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteForPropTrialResponse();
-    boxedResult.setId(impl.createParticipatingSiteForPropTrial(params.getStudyProtocolId().getId(),params.getOrganization().getOrganization(),params.getStudySite().getStudySite(),params.getStatus().getStudySiteAccrualStatus(),params.getInvestigator().getPerson()));
-    return boxedResult;
-  }
-
-    public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialResponse updateParticipatingSiteForPropTrial(gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialResponse boxedResult = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteForPropTrialResponse();
-    impl.updateParticipatingSiteForPropTrial(params.getStudyProtocolId().getId(),params.getOrganizationId().getId(),params.getStudySite().getStudySite(),params.getStatus().getStudySiteAccrualStatus(),params.getInvestigator().getPerson());
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteResponse isParticipatingSite(gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteResponse boxedResult = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteResponse();
     boxedResult.setBl(impl.isParticipatingSite(params.getStudyProtocolId().getId(),params.getOrganizationId().getId()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteResponse createParticipatingSite(gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteResponse boxedResult = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.CreateParticipatingSiteResponse();
+    boxedResult.setId(impl.createParticipatingSite(params.getStudyProtocolId().getId(),params.getStudySite().getStudySite()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteResponse updateParticipatingSite(gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteResponse boxedResult = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.UpdateParticipatingSiteResponse();
+    impl.updateParticipatingSite(params.getStudySiteId().getId(),params.getStudySite().getStudySite());
     return boxedResult;
   }
 

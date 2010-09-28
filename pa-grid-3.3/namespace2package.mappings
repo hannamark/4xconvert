@@ -111,6 +111,7 @@ uri\:iso.org\:21090=org.iso._21090
 http\://po.coppa.nci.nih.gov=gov.nih.nci.coppa.po
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/types=gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/DocumentService/types=gov.nih.nci.coppa.services.pa.documentservice.stubs.types
+http\://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/Management=gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/types=gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types=gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/InterventionService/types=gov.nih.nci.coppa.services.pa.interventionservice.stubs.types

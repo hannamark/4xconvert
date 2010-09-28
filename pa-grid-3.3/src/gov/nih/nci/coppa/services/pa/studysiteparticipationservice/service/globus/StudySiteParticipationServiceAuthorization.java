@@ -59,21 +59,21 @@ public class StudySiteParticipationServiceAuthorization implements PDP {
 		
 	}
 	   				
-	public void authorizeCreateParticipatingSiteForPropTrial(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
-		
-		// authorization using service authorization from the enforce_auth extension
-		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
-		 	  
-	}
-	   				
-	public void authorizeUpdateParticipatingSiteForPropTrial(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
-		
-		// authorization using service authorization from the enforce_auth extension
-		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
-		 	  
-	}
-	   				
 	public void authorizeIsParticipatingSite(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
+	}
+	   				
+	public void authorizeCreateParticipatingSite(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
+	}
+	   				
+	public void authorizeUpdateParticipatingSite(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 		// authorization using service authorization from the enforce_auth extension
 		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
@@ -90,14 +90,14 @@ public class StudySiteParticipationServiceAuthorization implements PDP {
 		if(operation.getLocalPart().equals("getServiceSecurityMetadata")){
 			authorizeGetServiceSecurityMetadata(peerSubject, context, operation);
 			return true;
-		} else if(operation.getLocalPart().equals("createParticipatingSiteForPropTrial")){
-			authorizeCreateParticipatingSiteForPropTrial(peerSubject, context, operation);
-			return true;
-		} else if(operation.getLocalPart().equals("updateParticipatingSiteForPropTrial")){
-			authorizeUpdateParticipatingSiteForPropTrial(peerSubject, context, operation);
-			return true;
 		} else if(operation.getLocalPart().equals("isParticipatingSite")){
 			authorizeIsParticipatingSite(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("createParticipatingSite")){
+			authorizeCreateParticipatingSite(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("updateParticipatingSite")){
+			authorizeUpdateParticipatingSite(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

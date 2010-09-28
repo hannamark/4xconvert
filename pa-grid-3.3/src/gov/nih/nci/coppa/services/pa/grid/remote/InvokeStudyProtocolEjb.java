@@ -12,6 +12,8 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
+
 /**
  * Wrapper class for invoking the StudyProtocol remote EJB.
  */
@@ -153,5 +155,13 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyProtocolDTO getStudyProtocolDTOFromNciId(Ii studyProtocolIi) throws PAException,
+            TooManyResultsException {
+        throw new NotImplementedException();
     }
 }
