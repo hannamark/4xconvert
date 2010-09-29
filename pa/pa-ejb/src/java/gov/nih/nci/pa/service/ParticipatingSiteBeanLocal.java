@@ -156,7 +156,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Ii getParticipatingSiteIi(Ii studyProtocolIi, Ii someHcfIi) throws PAException {
         try {
-            StudyProtocolDTO studyProtocolDTO = getStudyProtocolService().getStudyProtocolDTOFromNciId(studyProtocolIi);
+            StudyProtocolDTO studyProtocolDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
             hcfDTO.setIdentifier(DSetConverter.convertIiToDset(someHcfIi));
             Ii poHcfIi = generateHcfIiFromCtepIdOrNewOrg(null, hcfDTO);
@@ -263,7 +263,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
         try {
             // check business rules based on trial type.
             StudyProtocolDTO spDTO =
-                getStudyProtocolService().getStudyProtocolDTOFromNciId(studySiteDTO.getStudyProtocolIdentifier()); 
+                getStudyProtocolService().getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier()); 
             studySiteDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
             if (spDTO.getProprietaryTrialIndicator().getValue().booleanValue()) {
                 enforceBusinessRulesForProprietary(spDTO, studySiteDTO, currentStatusDTO);

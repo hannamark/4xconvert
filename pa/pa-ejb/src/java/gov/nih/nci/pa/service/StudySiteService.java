@@ -80,10 +80,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.po.data.CurationException;
-import gov.nih.nci.po.service.EntityValidationException;
 
 import java.util.List;
 
@@ -113,16 +110,5 @@ public interface StudySiteService extends RolePaService<StudySiteDTO> {
      */
     void validate(StudySiteDTO dto) throws PAException;
     
-    /**
-     * getStudySiteIiByTrialAndPoHcfIi.
-     * @param studyProtocolIi ii
-     * @param poHcfIi ii
-     * @return ii
-     * @throws EntityValidationException when error
-     * @throws CurationException when error
-     * @throws PAException when error
-     * @throws TooManyResultsException when error
-     */
-    Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi) 
-        throws EntityValidationException, CurationException, PAException, TooManyResultsException;
+    
 }

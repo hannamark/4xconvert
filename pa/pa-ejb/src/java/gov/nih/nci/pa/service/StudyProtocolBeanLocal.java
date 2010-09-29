@@ -168,26 +168,18 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         this.ejbContext = ctx;
     }
 
-     /**
-     *
-     * @param ii primary id of StudyProtocol
-     * @return StudyProtocolDTO
-     * @throws PAException PAException
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
-            throw new PAException("Ii should not be null");
-        }
+    
+    private StudyProtocolDTO getStudyProtocolById(Long id) throws PAException {
+        
         Session session = HibernateUtil.getCurrentSession();
         StudyProtocol studyProtocol = (InterventionalStudyProtocol) session.get(InterventionalStudyProtocol.class,
-                                                                                Long.valueOf(ii.getExtension()));
+                                                                                id);
         if (studyProtocol == null) {
             studyProtocol = (ObservationalStudyProtocol) session.get(ObservationalStudyProtocol.class,
-                                                                     Long.valueOf(ii.getExtension()));
+                                                                     id);
         }
         if (studyProtocol == null) {
-            throw new PAException("No matching study protocol for Ii.extension " + ii.getExtension());
+            throw new PAException("No matching study protocol for Ii.extension " + id);
         }
         return StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
     }
@@ -257,6 +249,22 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         if (ispDTO.getBlindedRoleCode() != null && ispDTO.getBlindedRoleCode().getItem() != null) {
             totBlindCodes = ispDTO.getBlindedRoleCode().getItem().size();
         }
+        checkBlindingSchemaCode(ispDTO, totBlindCodes); 
+        InterventionalStudyProtocolDTO  ispRetDTO = null;
+        Session session = HibernateUtil.getCurrentSession();
+        InterventionalStudyProtocol isp = (InterventionalStudyProtocol)
+        session.load(InterventionalStudyProtocol.class, Long.valueOf(ispDTO.getIdentifier().getExtension()));
+        InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
+        setDefaultValues(upd , ispDTO , session , UPDATE);
+        isp = upd;
+        session.merge(isp);
+        ispRetDTO =  InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+        return ispRetDTO;
+
+    }
+    
+    private void checkBlindingSchemaCode(InterventionalStudyProtocolDTO ispDTO, int totBlindCodes) 
+    throws PAException {
         if (ispDTO.getBlindingSchemaCode() != null) {
             if (BlindingSchemaCode.OPEN.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes > 0) {
@@ -276,17 +284,6 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             }
 
         }
-        InterventionalStudyProtocolDTO  ispRetDTO = null;
-        Session session = HibernateUtil.getCurrentSession();
-        InterventionalStudyProtocol isp = (InterventionalStudyProtocol)
-        session.load(InterventionalStudyProtocol.class, Long.valueOf(ispDTO.getIdentifier().getExtension()));
-        InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
-        setDefaultValues(upd , ispDTO , session , UPDATE);
-        isp = upd;
-        session.merge(isp);
-        ispRetDTO =  InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
-        return ispRetDTO;
-
     }
 
     /**
@@ -434,7 +431,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
         if (!PAUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
             StudyProtocol oldBo = StudyProtocolConverter.convertFromDTOToDomain(
-                    getStudyProtocol(studyProtocolDTO.getIdentifier()));
+                    getStudyProtocolById(Long.valueOf(studyProtocolDTO.getIdentifier().getExtension())));
             boolean isProprietaryTrial = false;
             if (oldBo.getProprietaryTrialIndicator() != null && oldBo.getProprietaryTrialIndicator()) {
                 isProprietaryTrial = true;
@@ -585,9 +582,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
         return studyProtocolDTOList;
     }
+    
     /**
-     *@param studyProtocolDTO studyProtocolDTO
-     *@throws PAException on err.
+     * {@inheritDoc}
      */
     public void changeOwnership(StudyProtocolDTO studyProtocolDTO) throws PAException {
         if (studyProtocolDTO == null) {
@@ -617,16 +614,15 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
     
     /**
-     * getStudyProtocolDTOFromNciId.
-     * @param studyProtocolIi ii
-     * @return dto
-     * @throws PAException when error
-     * @throws TooManyResultsException when error
+     * {@inheritDoc}
      */
-    public StudyProtocolDTO getStudyProtocolDTOFromNciId(Ii studyProtocolIi) 
-        throws PAException, TooManyResultsException {
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public StudyProtocolDTO getStudyProtocol(Ii studyProtocolIi) 
+        throws PAException {
         StudyProtocolDTO studyProtocolDTO = null;
-        // this will be the NCI id.
+        if (PAUtil.isIiNull(studyProtocolIi)) {
+            throw new PAException("Ii should not be null");
+        }
         if (IiConverter.STUDY_PROTOCOL_ROOT.equals(studyProtocolIi.getRoot())
             && studyProtocolIi.getExtension().startsWith("NCI")) {
                 StudyProtocolDTO spDTO = new StudyProtocolDTO();
@@ -634,19 +630,21 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                 spDTO.getSecondaryIdentifiers().setItem(new HashSet<Ii>());
                 spDTO.getSecondaryIdentifiers().getItem().add(studyProtocolIi);
                 LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
-                List<StudyProtocolDTO> spList =  search(spDTO, limit);
+                List<StudyProtocolDTO> spList;
+                try {
+                    spList = search(spDTO, limit);
+                } catch (TooManyResultsException e) {
+                    throw new PAException("found too many trials with this identifier " 
+                            + studyProtocolIi.getExtension() + " when only 1 expected.", e);
+                }
                 if (spList.isEmpty() || spList.size() > 1) {
                     throw new PAException("could not find unique trial with this identifier " 
                             + studyProtocolIi.getExtension());
                 }
                 studyProtocolDTO = spList.get(0);
-        } else if (IiConverter.STUDY_PROTOCOL_ROOT.equals(studyProtocolIi.getRoot()))  {
-                studyProtocolDTO = getStudyProtocol(studyProtocolIi);
         } else {
-            throw new PAException("Unrecognizable trial Ii: " 
-                    + "ext: " +  studyProtocolIi.getExtension()
-                    + " root: " + studyProtocolIi.getRoot());
-        }
+                studyProtocolDTO = getStudyProtocolById(Long.valueOf(studyProtocolIi.getExtension()));
+        } 
         
         return studyProtocolDTO;
     }

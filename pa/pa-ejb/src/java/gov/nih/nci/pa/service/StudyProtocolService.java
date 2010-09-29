@@ -98,10 +98,15 @@ public interface StudyProtocolService {
 
 
     /**
-     *
-     * @param ii primary id of StudyProtocol
+     * Gets a study protocol by either the internal PA DB ID or the NCI assigned identifier. 
+     * If the <code>ii.extension</code> starts with "NCI," the identifier is assumed to be the 
+     * NCI assigned identifier; otherwise, it is assumed to be the internal ID. 
+     * The NCI assigned identifier must be the full identifier, as an exact match is performed, 
+     * not a starts-with search.
+     * @param ii Primary DB ID or NCI assigned identifier of the study protocol to get. The ID must 
+     * uniquely identify a study protocol.
      * @return StudyProtocolDTO
-     * @throws PAException PAException
+     * @throws PAException on error, including if the given II matches more than one study protocol
      */
     StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException;
     /**
@@ -195,13 +200,4 @@ public interface StudyProtocolService {
      */
     void changeOwnership(StudyProtocolDTO studyProtocolDTO) throws PAException;
     
-    /**
-     * getStudyProtocolDTOFromNciId.
-     * @param studyProtocolIi ii
-     * @return dto
-     * @throws PAException when error
-     * @throws TooManyResultsException when error
-     */
-    StudyProtocolDTO getStudyProtocolDTOFromNciId(Ii studyProtocolIi) 
-        throws PAException, TooManyResultsException;
 }
