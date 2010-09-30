@@ -295,7 +295,7 @@ public class CSMUserService implements CSMUserUtil {
             return null;
         }
         String [] userNames = userName.split(PRINCIPAL_SEPARATOR);
-        return userNames[userNames.length-1];
+        return userNames[userNames.length - 1];
     }
 
     /**
