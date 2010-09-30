@@ -276,7 +276,7 @@ public abstract class AbstractBaseParticipatingSiteBean extends
     private Ii generateHcfIiFromCtepIdOrNewOrg(OrganizationDTO organizationDTO, Ii someHcfIi, 
             HealthCareFacilityDTO hcfDTO) throws PAException, EntityValidationException, CurationException {
         Ii poHcfIi = null;
-        if (someHcfIi != null && IiConverter.HEALTH_CARE_PROVIDER_ROOT.equals(someHcfIi.getRoot())) {
+        if (someHcfIi != null && IiConverter.HEALTH_CARE_FACILITY_ROOT.equals(someHcfIi.getRoot())) {
             poHcfIi = someHcfIi;
         } else if (someHcfIi != null && IiConverter.CTEP_ORG_IDENTIFIER_ROOT.equals(someHcfIi.getRoot())) {
                 poHcfIi = getCorrUtils().getPoHcfByCtepId(someHcfIi);

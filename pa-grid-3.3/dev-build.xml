@@ -553,4 +553,8 @@
     <target name="runStudySiteParticipationClient" depends="checkGlobus, defineClasspaths" description="Run the sample studysiteparticipation Client">
             <run-client serviceendpointname="StudySiteParticipationService" class="gov.nih.nci.coppa.services.pa.studysiteparticipationservice.client.StudySiteParticipationServiceClient" debug-suspend="n" />
     </target>
+    
+    <target name="runStudySiteParticipationSimpleClient" depends="checkGlobus, defineClasspaths" description="Run the sample studysiteparticipation Client">
+            <run-client serviceendpointname="StudySiteParticipationService" class="gov.nih.nci.coppa.services.pa.studysiteparticipationservice.client.StudySiteParticipationServiceSimpleClient" debug-suspend="n" />
+    </target>
 </project>

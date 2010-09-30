@@ -96,6 +96,7 @@ import java.util.Set;
 
 import javax.ejb.SessionContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -108,6 +109,10 @@ public class CSMUserService implements CSMUserUtil {
     private static final String CSM_LOOKUP_ERR_MSG = "CSM exception while retrieving CSM user: ";
     private static final Logger LOG  = Logger.getLogger(CSMUserService.class);
     private static CSMUserUtil registryUserService = null;
+    /**
+     * Based on gridServicePrincipalSeparator used in security-config.xml.  Escaped for regular expression support. 
+     */
+    private static final String PRINCIPAL_SEPARATOR = "\\|\\|";
 
     static {
         setRegistryUserService(new CSMUserService());
@@ -269,12 +274,28 @@ public class CSMUserService implements CSMUserUtil {
         String userName = null;
         if (ejbContext != null && ejbContext.getCallerPrincipal() != null) {
             userName = ejbContext.getCallerPrincipal().getName();
-            user = CSMUserService.getInstance().getCSMUser(userName);
+            user = CSMUserService.getInstance().getCSMUser(extractUserName(userName));
         }
         if (user == null) {
             throw new PAException("Unable to lookup user for: " + userName + " in SessionContext: " + ejbContext);
         }
         return user;
+    }
+
+    /**
+     * Extract the userName.  Used in case, there are multiple userNames passed in of the form:
+     * 'userName1||userName2' or just 'userName'.  The first version userName1 is grid account userName,
+     * and userName2 is the actual userName of interest.  In both scenarios, we want to use the userName 
+     * at the end (e.g. 'userName2','userName').
+     * @param userName
+     * @return
+     */
+    private String extractUserName(String userName) {
+        if (StringUtils.isEmpty(userName)) {
+            return null;
+        }
+        String [] userNames = userName.split(PRINCIPAL_SEPARATOR);
+        return userNames[userNames.length-1];
     }
 
     /**

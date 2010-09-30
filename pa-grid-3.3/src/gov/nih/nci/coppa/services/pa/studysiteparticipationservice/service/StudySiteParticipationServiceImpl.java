@@ -30,6 +30,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
@@ -57,11 +58,11 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
         super();
     }
 
-  public gov.nih.nci.iso21090.extensions.Bl isParticipatingSite(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.iso21090.extensions.Id organizationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.iso21090.extensions.Bl isParticipatingSite(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.iso21090.extensions.Id hcfId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
-            Ii orgIi = IITransformer.INSTANCE.toDto(organizationId);
+            Ii hcfIi = IITransformer.INSTANCE.toDto(hcfId);
             Ii studyProtocolIi = IITransformer.INSTANCE.toDto(studyProtocolId);
-            gov.nih.nci.iso21090.Bl isPart = service.isParticipatingSite(studyProtocolIi, orgIi);
+            gov.nih.nci.iso21090.Bl isPart = service.isParticipatingSite(studyProtocolIi, hcfIi);
             gov.nih.nci.iso21090.extensions.Bl result = new gov.nih.nci.iso21090.extensions.Bl();
             result.setValue(BlConverter.convertToBoolean(isPart));
             return result;
@@ -123,7 +124,7 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
                   .toDto(studySite.getOrganizationRole().getPlayer());
 
           Ii studySiteIi = null;
-          if (hcfDTO != null) {
+          if (PAUtil.isIiNotNull(DSetConverter.convertToIi(hcfDTO.getIdentifier()))) {
               studySiteIi = service.createStudySiteParticipant(studySiteDTO, studySiteAccrualStatusDTO, DSetConverter
                       .convertToIi(hcfDTO.getIdentifier()));
           } else {

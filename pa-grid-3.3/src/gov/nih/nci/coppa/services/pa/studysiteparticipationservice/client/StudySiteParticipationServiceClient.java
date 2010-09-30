@@ -6,9 +6,9 @@ import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.tr
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers.OrganizationParticipationSiteManagementTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers.StudySiteAccrualStatusParticipationSiteManagementTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers.StudySiteParticipationSiteManagementTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.HealthCareFacility;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteAccrualStatus;
+import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
@@ -100,7 +100,8 @@ public class StudySiteParticipationServiceClient extends StudySiteParticipationS
     throws DtoTransformException, PAFault, RemoteException, URISyntaxException {
    
         Id studyProtocolIi = new Id();
-        studyProtocolIi.setExtension("NCI-2009-00933");
+        
+        studyProtocolIi.setExtension("NCI-2010-00003"); //Use existing Study Protocol Id
         studyProtocolIi.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         
         OrganizationDTO org = new OrganizationDTO();
@@ -138,15 +139,28 @@ public class StudySiteParticipationServiceClient extends StudySiteParticipationS
         
         StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
         currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
-        currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() + Long.valueOf("300000000"))));
+        currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - Long.valueOf("300000000"))));
     
         StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusParticipationSiteManagementTransformer.INSTANCE.toXml(currentStatus);
         ssXml.setAccrualStatus(ssasXml);
         
         HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
         hcfDTO.setName(EnOnConverter.convertToEnOn("hcf name"));
+        DSet<Ad> dSet = new DSet<Ad>();
+        dSet.setItem(new HashSet<Ad>());
+        dSet.getItem().add(AddressConverterUtil.create("1000 Some St.", "1000 Some St.", 
+                "Rockville", "MD", "20855", "USA"));
+        hcfDTO.setPostalAddress(dSet);
+        hcfDTO.setTelecomAddress(new DSet<Tel>());
+        hcfDTO.getTelecomAddress().setItem(new HashSet<Tel>());
+        hcfDTO.getTelecomAddress().getItem().add(email);
         OrganizationDTO organizationDTO = new OrganizationDTO();
         organizationDTO.setName(EnOnConverter.convertToEnOn("org name"));
+        organizationDTO.setPostalAddress(AddressConverterUtil.create("1000 Some St.", "1000 Some St.", 
+                "Rockville", "MD", "20855", "USA"));
+        organizationDTO.setTelecomAddress(new DSet<Tel>());
+        organizationDTO.getTelecomAddress().setItem(new HashSet<Tel>());
+        organizationDTO.getTelecomAddress().getItem().add(email);
 
         ssXml.setOrganizationRole(HealthCareFacilityParticipationSiteManagementTransformer.INSTANCE.toXml(hcfDTO));
         ssXml.getOrganizationRole().setPlayer(OrganizationParticipationSiteManagementTransformer.INSTANCE.toXml(organizationDTO));
@@ -158,16 +172,18 @@ public class StudySiteParticipationServiceClient extends StudySiteParticipationS
 	private static void updatePropSite(StudySiteParticipationServiceClient client) 
 	  throws DtoTransformException, PAFault, RemoteException, URISyntaxException {
 	      
-	      Id studySiteIi = new Id();
-	      studySiteIi.setExtension("NCI-2009-00933");
-	      studySiteIi.setRoot(IiConverter.STUDY_SITE_ROOT);
+        Id studyProtocolIi = new Id();
+        
+        studyProtocolIi.setExtension("NCI-2010-00003"); //Use existing Study Protocol Id
+        studyProtocolIi.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
 	      
 	      
-	      Id organizationIi = new Id(); 
-	      organizationIi.setExtension("SUPERCOOL");
-	      organizationIi.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+	      Id hcfIi = new Id(); 
+	      hcfIi.setExtension("771");
+	      hcfIi.setRoot(IiConverter.HEALTH_CARE_FACILITY_ROOT);
+	      hcfIi.setIdentifierName(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
 	      
-	      System.out.println("true = " + client.isParticipatingSite(studySiteIi, organizationIi).isValue());
+	      System.out.println("true = " + client.isParticipatingSite(studyProtocolIi, hcfIi).isValue());
 	      
 	      PersonDTO person = new PersonDTO();
 	      person.setBirthDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
@@ -197,11 +213,12 @@ public class StudySiteParticipationServiceClient extends StudySiteParticipationS
 	      StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusParticipationSiteManagementTransformer.INSTANCE.toXml(currentStatus);
 	      ssXml.setAccrualStatus(ssasXml);
 
+	      Id studySiteIi = new Id(); 
 	      client.updateParticipatingSite(studySiteIi, ssXml);
 
 	}
 
-  public gov.nih.nci.iso21090.extensions.Bl isParticipatingSite(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.iso21090.extensions.Id organizationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.iso21090.extensions.Bl isParticipatingSite(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.iso21090.extensions.Id hcfId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"isParticipatingSite");
     gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteRequest params = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteRequest();
@@ -209,7 +226,7 @@ public class StudySiteParticipationServiceClient extends StudySiteParticipationS
     studyProtocolIdContainer.setId(studyProtocolId);
     params.setStudyProtocolId(studyProtocolIdContainer);
     gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteRequestOrganizationId organizationIdContainer = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteRequestOrganizationId();
-    organizationIdContainer.setId(organizationId);
+    organizationIdContainer.setId(hcfId);
     params.setOrganizationId(organizationIdContainer);
     gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteResponse boxedResult = portType.isParticipatingSite(params);
     return boxedResult.getBl();
