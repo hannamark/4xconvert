@@ -87,12 +87,14 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.HashMap;
@@ -193,10 +195,12 @@ public class AbstractBaseParticipatingSiteEjbBean {
      * @throws CurationException when error
      * @throws PAException when error
      * @throws NullifiedRoleException when error
+     * @throws NullifiedEntityException when error
      */
     protected Map<String, Ii> generateCrsAndHcpFromCtepIdOrNewPerson(PersonDTO investigatorDTO,
             ClinicalResearchStaffDTO crsDTO, HealthCareProviderDTO hcpDTO, Ii orgIi) 
-        throws EntityValidationException, CurationException, PAException, NullifiedRoleException {
+        throws EntityValidationException, CurationException, PAException, 
+        NullifiedRoleException, NullifiedEntityException {
         Ii someCrsIi = null; 
         Ii someHcpIi = null;
         if (crsDTO != null) {
@@ -220,24 +224,40 @@ public class AbstractBaseParticipatingSiteEjbBean {
                     .getPlayerIdentifier());
         }
         boolean isSrEmpty = (someCrsIi == null && someHcpIi == null);
-        loadNewPerson(myMap, crsDTO, hcpDTO, investigatorDTO, isSrEmpty); 
+        loadOrCreatePerson(myMap, crsDTO, hcpDTO, investigatorDTO, isSrEmpty); 
         
         return myMap;
         
     }
     
-    private void loadNewPerson(Map<String, Ii> myMap, ClinicalResearchStaffDTO crsDTO, 
+    private void loadOrCreatePerson(Map<String, Ii> myMap, ClinicalResearchStaffDTO crsDTO, 
             HealthCareProviderDTO hcpDTO, PersonDTO investigatorDTO, boolean isSrEmpty) 
-    throws EntityValidationException, CurationException, PAException {
+    throws EntityValidationException, CurationException, PAException, NullifiedEntityException {
        
         if (isSrEmpty && investigatorDTO != null) {
-            Ii poPersonIi = PoRegistry.getPersonEntityService().createPerson(investigatorDTO);    
+            Ii poPersonIi = getPoPersonIiFromPoPersonDTO(investigatorDTO);
             myMap.put(IiConverter.PERSON_ROOT, poPersonIi);
-            myMap.put(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT, createPoCrs(poPersonIi, crsDTO));
-            myMap.put(IiConverter.HEALTH_CARE_PROVIDER_ROOT, createPoHcp(poPersonIi, hcpDTO));          
+            myMap.put(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT, createPoCrs(poPersonIi, 
+                    myMap.get(IiConverter.ORG_ROOT), crsDTO));
+            myMap.put(IiConverter.HEALTH_CARE_PROVIDER_ROOT, createPoHcp(poPersonIi, 
+                    myMap.get(IiConverter.ORG_ROOT), hcpDTO));          
         } else if (isSrEmpty && investigatorDTO == null) {
             throw new PAException("Expecting either full person dto or po crs and po hcp ii.");
         }
+    }
+    
+    private Ii getPoPersonIiFromPoPersonDTO(PersonDTO investigatorDTO) 
+    throws EntityValidationException, CurationException, PAException, NullifiedEntityException {
+        Ii poPersonIi = null;
+        if (PAUtil.isIiNotNull(investigatorDTO.getIdentifier()) 
+                && IiConverter.PERSON_ROOT.equals(investigatorDTO.getIdentifier().getRoot())) {
+            PersonDTO personDTO = 
+                PoRegistry.getPersonEntityService().getPerson(investigatorDTO.getIdentifier());
+            poPersonIi = personDTO.getIdentifier();
+        } else {
+            poPersonIi = PoRegistry.getPersonEntityService().createPerson(investigatorDTO);    
+        }
+        return poPersonIi;
     }
     
     private boolean findPoCrsIi(ClinicalResearchStaffDTO crsDTO, 
@@ -271,7 +291,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
         return isHcp;
     }
     
-    private Ii createPoCrs(Ii personIi, ClinicalResearchStaffDTO toStoreDTO) throws PAException {
+    private Ii createPoCrs(Ii personIi, Ii orgIi, ClinicalResearchStaffDTO toStoreDTO) throws PAException {
         Ii poCrsIi = null;
         ClinicalResearchStaffDTO crsDTO = null;
         if (toStoreDTO == null) {
@@ -281,6 +301,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
         }
         crsDTO.setIdentifier(null);
         crsDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi(personIi.getExtension()));
+        crsDTO.setScoperIdentifier(orgIi);
         try {
                 Ii ii = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
                 crsDTO = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(ii);
@@ -296,7 +317,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
         return poCrsIi;
     }
     
-    private Ii createPoHcp(Ii personIi, HealthCareProviderDTO toStoreDTO) throws PAException {
+    private Ii createPoHcp(Ii personIi, Ii orgIi, HealthCareProviderDTO toStoreDTO) throws PAException {
         Ii poHcpIi = null;
         HealthCareProviderDTO hcpDTO = null;
         if (toStoreDTO == null) {
@@ -306,6 +327,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
         }
         hcpDTO.setIdentifier(null);
         hcpDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi(personIi.getExtension()));
+        hcpDTO.setScoperIdentifier(orgIi);
         try {
                 Ii ii = PoRegistry.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
                 hcpDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(ii);

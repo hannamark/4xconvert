@@ -94,6 +94,7 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.sql.Timestamp;
@@ -260,10 +261,11 @@ public abstract class AbstractBaseParticipatingSiteBean extends
      * @throws EntityValidationException when error
      * @throws CurationException when error
      * @throws PAException when error
+     * @throws NullifiedEntityException when error
      */
     protected Ii generateHcfIiFromCtepIdOrNewOrg(OrganizationDTO organizationDTO, 
             HealthCareFacilityDTO hcfDTO) 
-        throws EntityValidationException, CurationException, PAException {
+        throws EntityValidationException, CurationException, PAException, NullifiedEntityException {
        
         Ii someHcfIi = null;
         if (hcfDTO != null && hcfDTO.getIdentifier() != null) {
@@ -274,14 +276,15 @@ public abstract class AbstractBaseParticipatingSiteBean extends
     }
 
     private Ii generateHcfIiFromCtepIdOrNewOrg(OrganizationDTO organizationDTO, Ii someHcfIi, 
-            HealthCareFacilityDTO hcfDTO) throws PAException, EntityValidationException, CurationException {
+            HealthCareFacilityDTO hcfDTO) throws PAException, 
+            EntityValidationException, CurationException, NullifiedEntityException {
         Ii poHcfIi = null;
         if (someHcfIi != null && IiConverter.HEALTH_CARE_FACILITY_ROOT.equals(someHcfIi.getRoot())) {
             poHcfIi = someHcfIi;
         } else if (someHcfIi != null && IiConverter.CTEP_ORG_IDENTIFIER_ROOT.equals(someHcfIi.getRoot())) {
                 poHcfIi = getCorrUtils().getPoHcfByCtepId(someHcfIi);
         } else if (organizationDTO != null) {
-            poHcfIi = getPoHcfFromNewOrg(organizationDTO, hcfDTO);        
+            poHcfIi = getPoHcfFromNewOrCurrentOrg(organizationDTO, hcfDTO);        
         } else {
             throw new PAException("Expecting either full org dto or po hcf ii, got ii with ext: " 
                     + someHcfIi.getExtension());
@@ -289,9 +292,19 @@ public abstract class AbstractBaseParticipatingSiteBean extends
         return poHcfIi;
     }
     
-    private Ii getPoHcfFromNewOrg(OrganizationDTO organizationDTO, 
-            HealthCareFacilityDTO toStoreDTO) throws EntityValidationException, CurationException, PAException {
-        Ii poOrgIi = PoRegistry.getOrganizationEntityService().createOrganization(organizationDTO);
+    private Ii getPoHcfFromNewOrCurrentOrg(OrganizationDTO organizationDTO, 
+            HealthCareFacilityDTO toStoreDTO) throws EntityValidationException,
+            CurationException, PAException, NullifiedEntityException {
+        
+        Ii poOrgIi = null;
+        if (PAUtil.isIiNotNull(organizationDTO.getIdentifier()) 
+                && IiConverter.ORG_ROOT.equals(organizationDTO.getIdentifier().getRoot())) {
+            OrganizationDTO currOrgDTO = PoRegistry.getOrganizationEntityService()
+                .getOrganization(organizationDTO.getIdentifier());   
+            poOrgIi = currOrgDTO.getIdentifier();
+        } else {
+            poOrgIi = PoRegistry.getOrganizationEntityService().createOrganization(organizationDTO);
+        }
         HealthCareFacilityDTO hcfDTO = null;
         if (toStoreDTO == null) {
             hcfDTO = new HealthCareFacilityDTO();
