@@ -110,6 +110,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Date documentWorkflowStatusDate;
     private String leadOrganizationName;
     private Long leadOrganizationId;
+    private String sponsorOrganizationName;
     private String piFullName;
     private Long piId;
     private String localStudyProtocolIdentifier;
@@ -706,5 +707,19 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public PhaseAdditionalQualifierCode getPhaseAdditionalQualifier() {
         return phaseAdditionalQualifier;
+    }
+
+    /**
+     * @return the sponsor organization name
+     */
+    public String getSponsorOrganizationName() {
+        return sponsorOrganizationName;
+    }
+
+    /**
+     * @param sponsorOrganizationName the sponsor org name to set
+     */
+    public void setSponsorOrganizationName(String sponsorOrganizationName) {
+        this.sponsorOrganizationName = sponsorOrganizationName;
     }
 }

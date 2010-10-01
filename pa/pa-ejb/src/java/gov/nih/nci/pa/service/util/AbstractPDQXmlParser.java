@@ -122,12 +122,20 @@ public abstract class AbstractPDQXmlParser {
     private Document document;
     private static final Logger LOG = Logger.getLogger(AbstractPDQXmlParser.class);
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
+
     /**
      * set the url of the source to parse.
      * @param url source URL
      */
     public void setUrl(URL url) {
         this.url = url;
+    }
+
+    /**
+     * @return the url to parse
+     */
+    public URL getUrl() {
+        return this.url;
     }
 
     /**

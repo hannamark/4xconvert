@@ -86,20 +86,12 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestRegistryUserSchema;
-import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.List;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -109,44 +101,6 @@ import org.junit.Test;
  *
  */
 public class RegistryUserServiceTest {
-
-    private class MockRegistryUserServiceBean extends RegistryUserServiceBean {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-        public RegistryUser getUser(String loginName) throws PAException {
-            RegistryUser registryUser = null;
-            Session session = HibernateUtil.getCurrentSession();
-
-            try {
-                // /first get the CSM user through non csm means.
-                Criteria criteria = session.createCriteria(User.class, "csmUser");
-                criteria.add(Restrictions.eq("csmUser.loginName",
-                        loginName));
-                List<User> csmUsers =  criteria.list();
-
-                User csmUser = csmUsers.get(csmUsers.size() - 1);
-                // if csm user exists retrieve the registry user
-                if (csmUser != null) {
-                    Criteria criteria2 = session.createCriteria(RegistryUser.class, "regUser");
-                    criteria2.add(Restrictions.eq("regUser.csmUserId",
-                            csmUser.getUserId()));
-                    List<RegistryUser> regUsers =  criteria2.list();
-                    return regUsers.get(0);
-                }
-
-            } catch (Exception cse) {
-                throw new PAException("CSM exception while retrieving user: " + loginName, cse);
-            }
-
-            return registryUser;
-
-        }
-    }
-
     private RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
 
     @Before

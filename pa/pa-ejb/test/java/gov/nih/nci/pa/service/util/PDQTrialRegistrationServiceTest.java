@@ -87,19 +87,60 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.RegulatoryAuthority;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.ArmServiceBean;
+import gov.nih.nci.pa.service.DocumentServiceBean;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusBeanLocal;
+import gov.nih.nci.pa.service.MockPoClinicalResearchStaffCorrelationService;
+import gov.nih.nci.pa.service.MockPoHealthCareProviderCorrelationService;
+import gov.nih.nci.pa.service.MockPoResearchOrganizationCorrelationService;
+import gov.nih.nci.pa.service.MockStudyProtocolService;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StratumGroupBeanLocal;
+import gov.nih.nci.pa.service.StudyContactServiceBean;
+import gov.nih.nci.pa.service.StudyDiseaseServiceBean;
+import gov.nih.nci.pa.service.StudyInboxServiceBean;
+import gov.nih.nci.pa.service.StudyInboxServiceLocal;
+import gov.nih.nci.pa.service.StudyIndldeBeanLocal;
+import gov.nih.nci.pa.service.StudyMilestoneServiceBean;
+import gov.nih.nci.pa.service.StudyObjectiveServiceBean;
+import gov.nih.nci.pa.service.StudyOnholdBeanLocal;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureBeanLocal;
+import gov.nih.nci.pa.service.StudyOverallStatusBeanLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceBean;
+import gov.nih.nci.pa.service.StudyRecruitmentStatusBeanLocal;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityBeanLocal;
+import gov.nih.nci.pa.service.StudyRelationshipServiceBean;
+import gov.nih.nci.pa.service.StudyResourcingBeanLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceBean;
+import gov.nih.nci.pa.service.StudySiteServiceBean;
 import gov.nih.nci.pa.service.TrialRegistrationBeanLocal;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -108,13 +149,21 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.ejb.SessionContext;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * @author vrushali
@@ -130,28 +179,138 @@ public class PDQTrialRegistrationServiceTest {
     private ServiceLocator paSvcLoc;
     private TrialRegistrationBeanLocal trialRegistrationSvc;
     private OrganizationCorrelationServiceRemote orgCorrelationSvc;
-    private RegulatoryInformationServiceRemote regulatorySvc;
-    private final URL testXMLUrl = this.getClass().getResource("/sample-pdq-input.xml");
+    private ProtocolQueryServiceLocal protocolQuerySvc;
+    private MailManagerServiceLocal mailManagerSerivceLocal;
+    private final URL testXMLUrl = this.getClass().getResource("/sample-pdq-register.xml");
+    private final URL testUpdateXMLUrl = this.getClass().getResource("/sample-pdq-update.xml");
+    private final URL testAmendXMLUrl = this.getClass().getResource("/sample-pdq-amend.xml");
+    private Map<Ii, OrganizationDTO> mockOrgs = new HashMap<Ii, OrganizationDTO>();
+    private PersonDTO mockPerson = new PersonDTO();
+    private Ii trialIi;
+
     @Before
     public void setUp() throws Exception {
+        setupOrgCorrelationSvcMock();
         setupPoSvc();
         setUpPaSvc();
-        setupOrgCorrelationSvcMock();
+        TestSchema.reset();
+
+        Country c = new Country();
+        c.setAlpha2("US");
+        c.setAlpha3("USA");
+        c.setName("United States");
+        TestSchema.addUpdObject(c);
+
+        RegulatoryAuthority ra = new RegulatoryAuthority();
+        ra.setAuthorityName("Food and Drug Administration");
+        ra.setCountry(c);
+        TestSchema.addUpdObject(ra);
+
+        ra = new RegulatoryAuthority();
+        ra.setAuthorityName("Institutional Review Board");
+        ra.setCountry(c);
+        TestSchema.addUpdObject(ra);
+
+        RegistryUser create = new RegistryUser();
+        create.setAddressLine("xxxxx");
+        create.setAffiliateOrg("aff");
+        create.setCity("city");
+        create.setCountry("country");
+        create.setCsmUserId(Long.valueOf(1));
+        create.setFirstName("firstname");
+        create.setLastName("lastname");
+        create.setMiddleName("middlename");
+        create.setPhone("1111");
+        create.setPostalCode("00000");
+        create.setState("va");
+        create.setPrsOrgName("prsOrgName");
+        create.setAffiliatedOrganizationId(501L);
+        create.setAffiliatedOrgUserType(UserOrgType.ADMIN);
+        TestSchema.addUpdObject(create);
     }
+
     /**
      * @throws PAException
      *
      */
-    private void setUpPaSvc() throws PAException {
+    private void setUpPaSvc() throws PAException, IOException {
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
+
         paSvcLoc = mock (ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
-        trialRegistrationSvc = mock (TrialRegistrationBeanLocal.class);
-        when(paSvcLoc.getTrialRegistrationService()).thenReturn(trialRegistrationSvc);
-        regulatorySvc = mock(RegulatoryInformationServiceRemote.class);
-        when(paSvcLoc.getRegulatoryInformationService()).thenReturn(regulatorySvc);
-        when(regulatorySvc.getRegulatoryAuthorityId(anyString(),anyString())).thenReturn(1L);
 
+        mailManagerSerivceLocal = mock(MailManagerServiceLocal.class);
+
+        trialRegistrationSvc = new TrialRegistrationBeanLocal();
+        trialRegistrationSvc.setSessionContext(mock(SessionContext.class));
+        trialRegistrationSvc.setStudyOverallStatusService(new StudyOverallStatusBeanLocal());
+        trialRegistrationSvc.setStudyIndldeService(new StudyIndldeBeanLocal());
+        trialRegistrationSvc.setStudyProtocolService(new MockStudyProtocolService());
+        trialRegistrationSvc.setOcsr(orgCorrelationSvc);
+        trialRegistrationSvc.setStudySiteService(new StudySiteServiceBean());
+        trialRegistrationSvc.setUserServiceLocal(new MockRegistryUserServiceBean());
+        trialRegistrationSvc.setDocWrkFlowStatusService(new DocumentWorkflowStatusBeanLocal());
+        trialRegistrationSvc.setStudyInboxServiceLocal(new StudyInboxServiceBean());
+        trialRegistrationSvc.setStudyRegulatoryAuthorityService(new StudyRegulatoryAuthorityBeanLocal());
+        trialRegistrationSvc.setMailManagerSerivceLocal(mailManagerSerivceLocal);
+        trialRegistrationSvc.setDocumentService(new DocumentServiceBean());
+        trialRegistrationSvc.setStudyRelationshipService(new StudyRelationshipServiceBean());
+
+        TSRReportGeneratorServiceRemote mockTsrGeneratorSvc = mock(TSRReportGeneratorServiceRemote.class);
+        ByteArrayOutputStream tsrReport = new ByteArrayOutputStream();
+        tsrReport.write("Mock TSR Report".getBytes());
+        when(mockTsrGeneratorSvc.generateRtfTsrReport(any(Ii.class))).thenReturn(tsrReport);
+        trialRegistrationSvc.setTsrReportService(mockTsrGeneratorSvc);
+
+        StudyMilestoneServiceBean studyMilestoneSvc = new StudyMilestoneServiceBean();
+        studyMilestoneSvc.setStudyProtocolService(new MockStudyProtocolService());
+        studyMilestoneSvc.setStudyOnholdService(new StudyOnholdBeanLocal());
+        studyMilestoneSvc.setMailManagerService(mailManagerSerivceLocal);
+
+        StudyInboxServiceLocal mockInboxSvc = mock(StudyInboxServiceLocal.class);
+        studyMilestoneSvc.setStudyInboxService(mockInboxSvc);
+
+        AbstractionCompletionServiceBean abstractionCompletionSvc = mock(AbstractionCompletionServiceBean.class);
+        studyMilestoneSvc.setAbstractionCompletionService(abstractionCompletionSvc);
+
+        when(paSvcLoc.getTrialRegistrationService()).thenReturn(trialRegistrationSvc);
+        when(paSvcLoc.getStudyMilestoneService()).thenReturn(studyMilestoneSvc);
+        when(paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(new DocumentWorkflowStatusBeanLocal());
+        when(paSvcLoc.getStudyIndldeService()).thenReturn(new StudyIndldeBeanLocal());
+        when(paSvcLoc.getDocumentService()).thenReturn(new DocumentServiceBean());
+        when(paSvcLoc.getStudyResoucringService()).thenReturn(new StudyResourcingBeanLocal());
+        when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(orgCorrelationSvc);
+        when(paSvcLoc.getStudyContactService()).thenReturn(new StudyContactServiceBean());
+        when(paSvcLoc.getStudyRegulatoryAuthorityService()).thenReturn(new StudyRegulatoryAuthorityBeanLocal());
+        when(paSvcLoc.getRegulatoryInformationService()).thenReturn(new RegulatoryInformationBean());
+        when(paSvcLoc.getStudySiteService()).thenReturn(new StudySiteServiceBean());
+        when(paSvcLoc.getStudyProtocolService()).thenReturn(new StudyProtocolServiceBean());
+        when(paSvcLoc.getStudyDiseaseService()).thenReturn(new StudyDiseaseServiceBean());
+        when(paSvcLoc.getStudyObjectiveService()).thenReturn(new StudyObjectiveServiceBean());
+        when(paSvcLoc.getStratumGroupService()).thenReturn(new StratumGroupBeanLocal());
+        when(paSvcLoc.getStudyOverallStatusService()).thenReturn(new StudyOverallStatusBeanLocal());
+        when(paSvcLoc.getStudyOnholdService()).thenReturn(new StudyOnholdBeanLocal());
+        when(paSvcLoc.getStudyRecruitmentStatusService()).thenReturn(new StudyRecruitmentStatusBeanLocal());
+        when(paSvcLoc.getArmService()).thenReturn(new ArmServiceBean());
+        when(paSvcLoc.getStudySiteContactService()).thenReturn(new StudySiteContactServiceBean());
+        when(paSvcLoc.getOutcomeMeasureService()).thenReturn(new StudyOutcomeMeasureBeanLocal());
+
+        List<StudyProtocolQueryDTO> queryResults = new ArrayList<StudyProtocolQueryDTO>();
+        StudyProtocolQueryDTO result = new StudyProtocolQueryDTO();
+        result.setLeadOrganizationName("Arthur G. James Cancer Hospital and Richard J. Solove Research Institute at "
+                + "Ohio State University Comprehensive Cancer Center");
+        result.setPiFullName("William E. Carson");
+        result.setSponsorOrganizationName("Arthur G. James Cancer Hospital and Richard J. Solove Research Institute at "
+                + "Ohio State University Comprehensive Cancer Center");
+        result.setStudyProtocolId(1L);
+        queryResults.add(result);
+
+        protocolQuerySvc = mock(ProtocolQueryServiceBean.class);
+        when(protocolQuerySvc.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
+            .thenReturn(new ArrayList<StudyProtocolQueryDTO>()).thenReturn(queryResults);
+        bean.setProtocolQueryService(protocolQuerySvc);
     }
+
     private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException {
         poSvcLoc = mock(PoServiceLocator.class);
         PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
@@ -160,14 +319,47 @@ public class PDQTrialRegistrationServiceTest {
 
         when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
         when(poSvcLoc.getPersonEntityService()).thenReturn(poPersonSvc);
+        when(poSvcLoc.getResearchOrganizationCorrelationService()).thenReturn(new MockPoResearchOrganizationCorrelationService());
+        when(poSvcLoc.getClinicalResearchStaffCorrelationService()).thenReturn(new MockPoClinicalResearchStaffCorrelationService());
+        when(poSvcLoc.getHealthCareProviderCorrelationService()).thenReturn(new MockPoHealthCareProviderCorrelationService());
 
-        List<OrganizationDTO> orgDtos = new ArrayList<OrganizationDTO>();
-        orgDtos.add(new OrganizationDTO());
-        when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(orgDtos);
+        when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenAnswer(new Answer<List<OrganizationDTO>>() {
+            public List<OrganizationDTO> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                OrganizationDTO org = (OrganizationDTO) args[0];
+                org.setIdentifier(IiConverter.convertToPoOrganizationIi("1"));
+                OrganizationDTO mockOrg = new OrganizationDTO();
+                mockOrg.setIdentifier(org.getIdentifier());
+                mockOrg.setName(org.getName());
+                mockOrg.setPostalAddress(org.getPostalAddress());
+                mockOrg.setStatusCode(CdConverter.convertToCd(EntityStatusCode.PENDING));
+                mockOrg.setTelecomAddress(org.getTelecomAddress());
+                mockOrgs.put(org.getIdentifier(), mockOrg);
+                return Arrays.asList(org);
+            }});
+        when(poOrgSvc.getOrganization(any(Ii.class))).thenAnswer(new Answer<OrganizationDTO>() {
+            public OrganizationDTO answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                Ii id = (Ii) args[0];
+                return mockOrgs.get(id);
+            }});
 
-        List<PersonDTO> personDtos = new ArrayList<PersonDTO>();
-        personDtos.add(new PersonDTO());
-        when(poPersonSvc.search(any(PersonDTO.class), any(LimitOffset.class))).thenReturn(personDtos);
+        when(poPersonSvc.search(any(PersonDTO.class), any(LimitOffset.class))).thenAnswer(new Answer<List<PersonDTO>>() {
+            public List<PersonDTO> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                PersonDTO person = (PersonDTO) args[0];
+                person.setIdentifier(IiConverter.convertToPoPersonIi("1"));
+
+                mockPerson.setIdentifier(person.getIdentifier());
+                mockPerson.setName(person.getName());
+                mockPerson.setPostalAddress(AddressConverterUtil.create("UNKNOWN", "UNKNOWN", "UNKNOWN", "MD", "00000",
+                "USA"));
+                mockPerson.setStatusCode(CdConverter.convertToCd(EntityStatusCode.PENDING));
+                mockPerson.setTelecomAddress(DSetConverter.convertListToDSet(Arrays.asList("111-111-1111"),
+                        DSetConverter.TYPE_PHONE, null));
+                return Arrays.asList(person);
+            }});
+        when(poPersonSvc.getPerson(any(Ii.class))).thenReturn(mockPerson);
 
         identifierPersonSvc = mock(IdentifiedPersonCorrelationServiceRemote.class);
         when(poSvcLoc.getIdentifiedPersonEntityService()).thenReturn(identifierPersonSvc);
@@ -177,27 +369,52 @@ public class PDQTrialRegistrationServiceTest {
         idPerDtos.add(idPersonDTO);
         when(identifierPersonSvc.search(any(IdentifiedPersonDTO.class))).thenReturn(idPerDtos);
     }
+
     private void setupOrgCorrelationSvcMock() throws PAException {
-        orgCorrelationSvc = mock(OrganizationCorrelationServiceRemote.class);
-        when(orgCorrelationSvc.getPOOrgIdentifierByIdentifierType(anyString())).thenReturn("1");
+        orgCorrelationSvc = new OrganizationCorrelationServiceBean();
         bean.setOrgCorrelationService(orgCorrelationSvc);
     }
 
     @Test
     public void testLoadPDQXml() throws PAException, IOException {
-        PAServiceUtils paServiceUtil = mock (PAServiceUtils.class);
-        bean.setPaServiceUtils(paServiceUtil);
         try {
             assertNull(bean.loadRegistrationElementFromPDQXml(null,null));
             fail("URL is not set, call setUrl first");
         } catch (Exception e) {
             assertEquals("URL is not set, call setUrl first.", e.getMessage());
         }
-        assertNull(bean.loadRegistrationElementFromPDQXml(testXMLUrl, "userName"));
+        trialIi = bean.loadRegistrationElementFromPDQXml(testXMLUrl, TestSchema.getUser().getLoginName());
+        assertNotNull("Null identifier returned when registering a trial", trialIi);
+
+        //Get trial into abstraction verified state and re-run to test amending.
+        St comment = StConverter.convertToSt("Comment.");
+        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.SUBMISSION_ACCEPTED,
+                StConverter.convertToSt("Accepted."));
+        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, comment);
+        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
+                comment);
+        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, comment);
+        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, comment);
+        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.READY_FOR_QC, comment);
+        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.QC_START, comment);
+        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.QC_COMPLETE, comment);
+        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.TRIAL_SUMMARY_SENT, comment);
+        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.TRIAL_SUMMARY_FEEDBACK, comment);
+        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.INITIAL_ABSTRACTION_VERIFY, comment);
+        assertNotNull("Null identifier returned when amending a trial",
+                bean.loadRegistrationElementFromPDQXml(testAmendXMLUrl, TestSchema.getUser().getLoginName()));
+
+        //Accept the trial then re-run to test updating.
+        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.SUBMISSION_ACCEPTED,
+                StConverter.convertToSt("Accepted."));
+        assertNull("Non Null identifier returned when updating a trial.",
+                bean.loadRegistrationElementFromPDQXml(testUpdateXMLUrl, TestSchema.getUser().getLoginName()));
     }
+
     @Test
     public void testProperties() {
         assertNotNull(bean.getPaServiceUtils());
         assertNotNull(bean.getOrgCorrelationService());
+        assertNotNull(bean.getProtocolQueryService());
     }
 }

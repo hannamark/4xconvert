@@ -96,11 +96,11 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -122,10 +122,6 @@ public class StudyOverallStatusBeanLocal extends
 
     /** Standard error message for empty methods to be overridden. */
     private static final String ERR_MSG_METHOD_NOT_IMPLEMENTED = "Method not yet implemented.";
-    @EJB
-    private StudyProtocolServiceLocal studyProtocolService;
-    @EJB
-    private DocumentWorkflowStatusServiceLocal dwsService;
 
     /**
      * Method used to update the StudyOverallStatus and StudyRecruitmentStatus.
@@ -268,7 +264,8 @@ public class StudyOverallStatusBeanLocal extends
         if (newDate == null) {
             throw new PAException("Study status date must be set.  ");
         }
-        StudyProtocolDTO studyProtocolDto = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
+        StudyProtocolDTO studyProtocolDto =
+            PaRegistry.getStudyProtocolService().getStudyProtocol(dto.getStudyProtocolIdentifier());
         if (IntConverter.convertToInteger(studyProtocolDto.getSubmissionNumber()) > 1) {
             throw new PAException("Study status Cannot be updated.  ");
         }
@@ -305,10 +302,11 @@ public class StudyOverallStatusBeanLocal extends
      * @return s
      * @throws PAException e
      */
-    public boolean isTrialStatusOrDateChanged(StudyOverallStatusDTO newStatusDto,
-            Ii studyProtocolIi) throws PAException {
-        DocumentWorkflowStatusDTO dwsDTO = dwsService.getCurrentByStudyProtocol(studyProtocolIi);
-        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
+    public boolean isTrialStatusOrDateChanged(StudyOverallStatusDTO newStatusDto, Ii studyProtocolIi)
+    throws PAException {
+        DocumentWorkflowStatusDTO dwsDTO =
+            PaRegistry.getDocumentWorkflowStatusService().getCurrentByStudyProtocol(studyProtocolIi);
+        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         boolean statusOrDateChanged = true;
         //original submission
         if (dwsDTO.getStatusCode().getCode() != null
@@ -505,19 +503,4 @@ public class StudyOverallStatusBeanLocal extends
 
         return errors;
     }
-
-    /**
-     * @param studyProtocolService the studyProtocolService to set
-     */
-    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
-        this.studyProtocolService = studyProtocolService;
-    }
-
-    /**
-     * @param dwsService the dwsService to set
-     */
-    public void setDwsService(DocumentWorkflowStatusServiceLocal dwsService) {
-        this.dwsService = dwsService;
-    }
-
 }

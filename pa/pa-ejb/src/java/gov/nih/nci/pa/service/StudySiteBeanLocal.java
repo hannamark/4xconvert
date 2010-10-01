@@ -34,6 +34,7 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 
@@ -67,8 +68,6 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
 
     private static final Logger LOG = Logger.getLogger(ArmBeanLocal.class);
 
-    @EJB
-    private StudySiteContactServiceLocal studySiteContactService;
     @EJB
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
 
@@ -130,7 +129,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
             to.setRoot(from.getRoot());
             to.setExtension(bo.getId().toString());
             // create study contact
-            spcDtos = studySiteContactService.getByStudySite(from);
+            spcDtos = PaRegistry.getStudySiteContactService().getByStudySite(from);
             if (spcDtos != null && !spcDtos.isEmpty()) {
                 for (StudySiteContactDTO spcDto : spcDtos) {
                     spcDto.setIdentifier(null);
@@ -371,7 +370,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         }
 
     }
-    
+
     /**
      * getStudySiteIiByTrialAndPoHcfIi.
      * @param studyProtocolIi ii
@@ -382,19 +381,19 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
      * @throws PAException when error
      * @throws TooManyResultsException when error
      */
-    public Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi) 
+    public Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi)
         throws EntityValidationException, CurationException, PAException, TooManyResultsException {
-        
+
         StudySiteDTO criteria = new StudySiteDTO();
         criteria.setStudyProtocolIdentifier(studyProtocolIi);
         // get the pa hcf from the po hcf
         CorrelationUtils corrUtils = new CorrelationUtils();
-       
+
         StructuralRole strRl = corrUtils.getStructuralRoleByIi(poHcfIi);
         Ii myIi = IiConverter.convertToPoHealthCareFacilityIi(strRl.getId().toString());
         criteria.setHealthcareFacilityIi(myIi);
         LimitOffset limit = new LimitOffset(1 , 0);
-        List<StudySiteDTO> freshStudySiteDTOList = 
+        List<StudySiteDTO> freshStudySiteDTOList =
             search(criteria, limit);
        return  freshStudySiteDTOList.get(0).getIdentifier();
 

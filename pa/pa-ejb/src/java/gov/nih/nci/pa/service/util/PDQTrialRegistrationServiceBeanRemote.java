@@ -108,5 +108,4 @@ public interface PDQTrialRegistrationServiceBeanRemote {
      * @throws IOException on error
      */
     Ii loadRegistrationElementFromPDQXml(URL xmlUrl, String userName) throws PAException, IOException;
-
 }

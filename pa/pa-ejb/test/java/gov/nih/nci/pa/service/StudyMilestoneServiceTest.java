@@ -81,6 +81,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
@@ -111,6 +113,8 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
@@ -141,7 +145,11 @@ public class StudyMilestoneServiceTest {
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        bean.setDocumentWorkflowStatusService(dws);
+
+        ServiceLocator paSvcLoc = mock (ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
+        when(paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(new DocumentWorkflowStatusBeanLocal());
+
         bean.setStudyOnholdService(ohs);
         bean.setStudyProtocolService(sps);
         bean.setStudyInboxService(sis);

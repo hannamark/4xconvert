@@ -70,9 +70,11 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         PHASE_MAP.put("N/A", "NA");
     }
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
+
     /**
-     *
+     * {@inheritDoc}
      */
+    @Override
     public void parse() {
         super.parse();
         Element clinicalStudy = getDocument().getRootElement();
@@ -237,7 +239,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
             } else {
                 //No multiple Overall official so pick whatever provided as PI
                 principalInvestigatorDTO =  readPrincipalInvestigatorInfo(overallOfficialElement);
-              //lead org
+                //lead org
                 leadOrganizationDTO.setName(EnOnConverter.convertToEnOn(getText(overallOfficialElement,
                         "affiliation")));
             }
@@ -374,6 +376,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
     /**
      * @param paServiceUtils the paServiceUtils to set
      */
+    @Override
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
     }
@@ -381,6 +384,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
     /**
      * @return the paServiceUtils
      */
+    @Override
     public PAServiceUtils getPaServiceUtils() {
         return paServiceUtils;
     }

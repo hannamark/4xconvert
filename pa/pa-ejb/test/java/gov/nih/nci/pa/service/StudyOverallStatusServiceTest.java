@@ -82,6 +82,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkFlowStatusTest;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
@@ -98,6 +100,8 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -113,18 +117,18 @@ import org.junit.Test;
 public class StudyOverallStatusServiceTest {
     private StudyOverallStatusServiceBean bean = new StudyOverallStatusServiceBean();
     private StudyOverallStatusServiceRemote remoteEjb = bean;
-    private final DocumentWorkflowStatusServiceBean dws = new DocumentWorkflowStatusServiceBean();
-    private final StudyProtocolServiceLocal sps = new StudyProtocolServiceBean();
     Ii pid;
 
     @Before
     public void setUp() throws Exception {
-        bean.setDwsService(dws);
-        bean.setStudyProtocolService(sps);
+        ServiceLocator paSvcLoc = mock (ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
+        when(paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(new DocumentWorkflowStatusBeanLocal());
+        when(paSvcLoc.getStudyProtocolService()).thenReturn(new StudyProtocolServiceBean());
+
         TestSchema.reset();
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
-
     }
 
     @Test

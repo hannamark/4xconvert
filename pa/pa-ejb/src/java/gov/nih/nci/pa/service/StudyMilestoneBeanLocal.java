@@ -25,9 +25,9 @@ import gov.nih.nci.pa.service.search.StudyMilestoneSortCriterion;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -55,7 +55,6 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 public class StudyMilestoneBeanLocal
     extends AbstractCurrentStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
     implements StudyMilestoneServicelocal {
-    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService;
 
     @EJB
     private StudyOnholdServiceLocal studyOnholdService;
@@ -107,17 +106,9 @@ public class StudyMilestoneBeanLocal
         throw new PAException("The update() method in the StudyMilestoneService has been disabled.");
     }
 
-    private DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService() {
-        if (documentWorkflowStatusService == null) {
-            documentWorkflowStatusService = (DocumentWorkflowStatusServiceLocal)
-            JNDIUtil.lookup("pa/DocumentWorkflowStatusBeanLocal/local");
-        }
-        return documentWorkflowStatusService;
-    }
-
-
     private DocumentWorkflowStatusCode getCurrentDocumentWorkflowStatus(Ii studyProtocolIi) throws PAException {
-        DocumentWorkflowStatusDTO dw = getDocumentWorkflowStatusService().getCurrentByStudyProtocol(studyProtocolIi);
+        DocumentWorkflowStatusDTO dw =
+            PaRegistry.getDocumentWorkflowStatusService().getCurrentByStudyProtocol(studyProtocolIi);
         return  (dw == null) ? null
                 : DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dw.getStatusCode()));
     }
@@ -486,7 +477,7 @@ public class StudyMilestoneBeanLocal
         if (dto.getCommentText() != null) {
             dwfDto.setCommentText(dto.getCommentText());
         }
-        getDocumentWorkflowStatusService().create(dwfDto);
+        PaRegistry.getDocumentWorkflowStatusService().create(dwfDto);
     }
 
     private void updateRecordVerificationDates(StudyMilestoneDTO dto) throws PAException {
@@ -579,13 +570,6 @@ public class StudyMilestoneBeanLocal
                         + "be recorded as sending the rejection email to the submitter  failed.", e);
             }
         }
-    }
-
-    /**
-     * @param documentWorkflowStatusService the documentWorkflowStatusService to set
-     */
-    public void setDocumentWorkflowStatusService(DocumentWorkflowStatusServiceLocal documentWorkflowStatusService) {
-        this.documentWorkflowStatusService = documentWorkflowStatusService;
     }
 
     /**

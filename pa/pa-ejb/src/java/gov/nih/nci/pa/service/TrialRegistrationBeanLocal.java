@@ -153,6 +153,7 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -219,7 +220,6 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     private static final String SQL_APPEND = " AND FUNCTIONAL_CODE IN ";
     private SessionContext ejbContext;
     private static final String VALIDATION_EXCEPTION = "Validation Exception ";
-
     private TrialRegistrationHelper trialRegistrationHelper = null;
 
     /**
@@ -713,7 +713,6 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
             StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException {
         // CHECKSTYLE:ON
-
         Ii studyProtocolIi = null;
         try {
             if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
@@ -964,16 +963,11 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                 paServiceUtils.manageStudyIdentifiers(studyIdentifierDTO);
             }
         }
-
         addNciOrgAsCollaborator(studyProtocolDTO, studyProtocolIi);
-
         if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue() && studyRegAuthDTO != null) {
-            List<StudyRegulatoryAuthorityDTO> sraDto = new ArrayList<StudyRegulatoryAuthorityDTO>();
             studyRegAuthDTO.setStudyProtocolIdentifier(studyProtocolIi);
-            sraDto.add(studyRegAuthDTO);
-            paServiceUtils.createOrUpdate(sraDto, IiConverter.convertToStudyRegulatoryAuthorityIi(null),
-                    studyProtocolIi);
-
+            paServiceUtils.createOrUpdate(Arrays.asList(studyRegAuthDTO),
+                    IiConverter.convertToStudyRegulatoryAuthorityIi(null), studyProtocolIi);
         }
         assignOwnershipAndSendMail(operation, studyProtocolDTO, isBatchMode, studyProtocolIi);
         return studyProtocolIi;
@@ -1554,8 +1548,11 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         }
     }
 
+    /**
+     * @param ctx the context to set
+     */
     @Resource
-    void setSessionContext(SessionContext ctx) {
+    public void setSessionContext(SessionContext ctx) {
         this.ejbContext = ctx;
     }
 

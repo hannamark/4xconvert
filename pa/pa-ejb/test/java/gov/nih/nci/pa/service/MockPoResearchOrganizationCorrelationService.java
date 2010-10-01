@@ -13,21 +13,26 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MockPoResearchOrganizationCorrelationService implements ResearchOrganizationCorrelationServiceRemote {
 
-    public Ii createCorrelation(ResearchOrganizationDTO arg0)
-            throws EntityValidationException {
+    /**
+     * {@inheritDoc}
+     */
+    public Ii createCorrelation(ResearchOrganizationDTO arg0) throws EntityValidationException {
         Ii ii = IiConverter.convertToPoResearchOrganizationIi("2");
         ii.setReliability(IdentifierReliability.ISS);
         return ii;
     }
 
-    public ResearchOrganizationDTO getCorrelation(Ii ii)
-            throws NullifiedRoleException {
+    /**
+     * {@inheritDoc}
+     */
+    public ResearchOrganizationDTO getCorrelation(Ii ii) throws NullifiedRoleException {
         if ("NULLIFY".equals(ii.getIdentifierName())) {
             Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
             throw new NullifiedRoleException(nullifiedEntities);
@@ -39,45 +44,64 @@ public class MockPoResearchOrganizationCorrelationService implements ResearchOrg
         return ro;
     }
 
-    public List<ResearchOrganizationDTO> getCorrelations(Ii[] arg0)
-            throws NullifiedRoleException {
-        // TODO Auto-generated method stub
+    /**
+     * {@inheritDoc}
+     */
+    public List<ResearchOrganizationDTO> getCorrelations(Ii[] arg0) throws NullifiedRoleException {
         return null;
     }
 
-    public List<ResearchOrganizationDTO> search(ResearchOrganizationDTO arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    /**
+     * {@inheritDoc}
+     */
+    public List<ResearchOrganizationDTO> search(ResearchOrganizationDTO dto) {
+        ResearchOrganizationDTO ro = new ResearchOrganizationDTO();
+        ro.setStatus(CdConverter.convertStringToCd("ACTIVE"));
+        ro.setPlayerIdentifier(dto.getPlayerIdentifier());
+        Ii identifier = IiConverter.convertToPoResearchOrganizationIi("1");
+        identifier.setReliability(IdentifierReliability.ISS);
+        ro.setIdentifier(DSetConverter.convertIiToDset(identifier));
+        return Arrays.asList(ro);
     }
 
-    public void updateCorrelation(ResearchOrganizationDTO arg0)
-            throws EntityValidationException {
+    /**
+     * {@inheritDoc}
+     */
+    public void updateCorrelation(ResearchOrganizationDTO arg0) throws EntityValidationException {
         // TODO Auto-generated method stub
 
     }
 
-    public void updateCorrelationStatus(Ii arg0, Cd arg1)
-            throws EntityValidationException {
+    /**
+     * {@inheritDoc}
+     */
+    public void updateCorrelationStatus(Ii arg0, Cd arg1) throws EntityValidationException {
         // TODO Auto-generated method stub
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Map<String, String[]> validate(ResearchOrganizationDTO arg0) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public List<ResearchOrganizationDTO> search(ResearchOrganizationDTO arg0,
-            LimitOffset arg1) throws TooManyResultsException {
+    /**
+     * {@inheritDoc}
+     */
+    public List<ResearchOrganizationDTO> search(ResearchOrganizationDTO arg0, LimitOffset arg1)
+    throws TooManyResultsException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public List<ResearchOrganizationDTO> getCorrelationsByPlayerIds(Ii[] arg0)
-            throws NullifiedRoleException {
+    /**
+     * {@inheritDoc}
+     */
+    public List<ResearchOrganizationDTO> getCorrelationsByPlayerIds(Ii[] arg0) throws NullifiedRoleException {
         // TODO Auto-generated method stub
         return null;
     }
-
-
 }

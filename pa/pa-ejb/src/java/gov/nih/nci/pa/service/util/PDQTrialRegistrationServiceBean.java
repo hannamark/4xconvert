@@ -84,6 +84,8 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.GrantorCode;
@@ -106,6 +108,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -139,16 +142,18 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
-* service for loading registration element from pdq.xml into CTRP.
-*
-* @author vrushali
-*/
+ * service for loading registration element from pdq.xml into CTRP.
+ *
+ * @author vrushali
+ */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServiceBeanRemote {
     @EJB
     private OrganizationCorrelationServiceRemote orgCorrelationService;
+    @EJB
+    private ProtocolQueryServiceLocal protocolQueryService;
 
     private static final Logger LOG = Logger.getLogger(PDQTrialRegistrationServiceBean.class);
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
@@ -180,20 +185,124 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
         PDQRegistrationXMLParser parser = new PDQRegistrationXMLParser();
         parser.setUrl(xmlUrl);
         parser.parse();
+
+        StudySiteDTO nctSite =
+            getStudyIdentifierDTOs(parser.getStudyIdentifierMap().get(PAConstants.NCT_IDENTIFIER_TYPE),
+                    PAConstants.NCT_IDENTIFIER_TYPE);
+        StudyProtocolQueryDTO trial = getExistingTrial(nctSite);
+        String sponsorOrgName = EnOnConverter.convertEnOnToString(parser.getSponsorOrganizationDTO().getName());
+        String leadOrgName = EnOnConverter.convertEnOnToString(parser.getLeadOrganizationDTO().getName());
+        String piName = EnPnConverter.convertEnPnToString(parser.getPrincipalInvestigatorDTO().getName());
+        Ii resultIi = null;
+
+        if (trial == null) {
+            //No existing trial means we can go ahead and register.
+            resultIi = registerTrial(parser, userName);
+        } else if (StringUtils.equalsIgnoreCase(sponsorOrgName, trial.getSponsorOrganizationName())
+                && StringUtils.equalsIgnoreCase(leadOrgName, trial.getLeadOrganizationName())
+                && StringUtils.equalsIgnoreCase(piName, trial.getPiFullName())) {
+            //If the sponsor, lead org and pi have not been changed, we perform and update.
+            updateTrial(parser, IiConverter.convertToStudyProtocolIi(trial.getStudyProtocolId()), userName);
+        } else {
+            //Otherwise, we go ahead and amend the trial.
+            resultIi = amendTrial(parser, IiConverter.convertToStudyProtocolIi(trial.getStudyProtocolId()), userName);
+        }
+        return resultIi;
+    }
+
+    /**
+     * Registers a trial with the infomation provided by the PDQ XML.
+     * @param parser the parsed XML
+     * @param userName grid username
+     * @return the identifier of the newly created trial
+     * @throws PAException on error
+     */
+    private Ii registerTrial(PDQRegistrationXMLParser parser, String userName) throws PAException, IOException {
         return PaRegistry.getTrialRegistrationService().createCompleteInterventionalStudyProtocol(
                 getStudyProtocol(parser.getStudyProtocolDTO(), userName),
                 getOverallStatusDTO(parser.getStudyOverallStatusDTO()),
                 getStudyIndIde(parser.getStudyIndldeDTOs(), parser.getStudyIdentifierMap()), null,
-                getDocumentDtos(xmlUrl),
-                (OrganizationDTO) paServiceUtils.findOrCreateEntity(parser.getLeadOrganizationDTO()),
-                (PersonDTO) paServiceUtils.findOrCreateEntity(parser.getPrincipalInvestigatorDTO()),
-                (OrganizationDTO) paServiceUtils.findOrCreateEntity(parser.getSponsorOrganizationDTO()),
+                getDocumentDtos(parser.getUrl()),
+                paServiceUtils.findOrCreateEntity(parser.getLeadOrganizationDTO()),
+                paServiceUtils.findOrCreateEntity(parser.getPrincipalInvestigatorDTO()),
+                paServiceUtils.findOrCreateEntity(parser.getSponsorOrganizationDTO()),
                 parser.getLeadOrganizationSiteIdentifierDTO(),
                 loadStudyIdentifierDTOs(parser.getStudyIdentifierMap()),
                 getStudyContactDTO(parser.getResponsiblePartyContact()), null, getSummary4OrganizationDTO(),
                 getSummary4StudyResourcingDTO(), null,
                 getStudyRegulatoryAuthDTO(parser.getRegAuthMap(), parser.getStudyIndldeDTOs()),
                 BlConverter.convertToBl(Boolean.FALSE));
+    }
+
+    /**
+     * Updates a trial with the information provided by the PDQ XML.
+     * @param parser the parsed XML
+     * @param studyProtocolIi the id of the trial to update
+     * @param userName grid username
+     * @throws PAException on error
+     * @throws IOException on error
+     */
+    private void updateTrial(PDQRegistrationXMLParser parser, Ii studyProtocolIi, String userName) throws PAException,
+    IOException {
+        StudyProtocolDTO trial = getStudyProtocol(parser.getStudyProtocolDTO(), userName);
+        trial.setIdentifier(studyProtocolIi);
+
+        StudyOverallStatusDTO statusDTO = getOverallStatusDTO(parser.getStudyOverallStatusDTO());
+        statusDTO.setStudyProtocolIdentifier(studyProtocolIi);
+
+        PaRegistry.getTrialRegistrationService().update(trial, statusDTO,
+                loadStudyIdentifierDTOs(parser.getStudyIdentifierMap()),
+                getStudyIndIde(parser.getStudyIndldeDTOs(), parser.getStudyIdentifierMap()),
+                null, null, getStudyContactDTO(parser.getResponsiblePartyContact()), null,
+                getSummary4OrganizationDTO(), getSummary4StudyResourcingDTO(), null,
+                getStudyRegulatoryAuthDTO(parser.getRegAuthMap(), parser.getStudyIndldeDTOs()),
+                null, null, null, BlConverter.convertToBl(Boolean.FALSE));
+    }
+
+    /**
+     * Updates a trial with the information provided by the PDQ XML.
+     * @param parser the parser XML
+     * @param userName grid username
+     * @return the identifier of the ameneded trial
+     * @throws PAException
+     */
+    private Ii amendTrial(PDQRegistrationXMLParser parser, Ii studyProtocolIi,  String userName) throws PAException,
+    IOException {
+        StudyProtocolDTO trial = getStudyProtocol(parser.getStudyProtocolDTO(), userName);
+        trial.setIdentifier(studyProtocolIi);
+
+        StudyOverallStatusDTO statusDTO = getOverallStatusDTO(parser.getStudyOverallStatusDTO());
+        statusDTO.setStudyProtocolIdentifier(studyProtocolIi);
+
+        return PaRegistry.getTrialRegistrationService().amend(trial, statusDTO,
+                getStudyIndIde(parser.getStudyIndldeDTOs(), parser.getStudyIdentifierMap()), null,
+                getDocumentDtos(parser.getUrl()),
+                paServiceUtils.findOrCreateEntity(parser.getLeadOrganizationDTO()),
+                paServiceUtils.findOrCreateEntity(parser.getPrincipalInvestigatorDTO()),
+                paServiceUtils.findOrCreateEntity(parser.getSponsorOrganizationDTO()),
+                parser.getLeadOrganizationSiteIdentifierDTO(), loadStudyIdentifierDTOs(parser.getStudyIdentifierMap()),
+                getStudyContactDTO(parser.getResponsiblePartyContact()), null,  getSummary4OrganizationDTO(),
+                getSummary4StudyResourcingDTO(), null,
+                getStudyRegulatoryAuthDTO(parser.getRegAuthMap(), parser.getStudyIndldeDTOs()),
+                BlConverter.convertToBl(Boolean.FALSE));
+    }
+
+    /**
+     * retrieves an existing trial with a study site with the give NCT identifier.
+     * @param studySiteDTO the study site with a NCT identifier
+     * @throws PAException on error
+     * @return the trial with the given nct identifier
+     */
+    private StudyProtocolQueryDTO getExistingTrial(StudySiteDTO studySiteDTO) throws PAException {
+        StudyProtocolQueryCriteria crit = new StudyProtocolQueryCriteria();
+        crit.setNctNumber(StConverter.convertToString(studySiteDTO.getLocalStudyProtocolIdentifier()));
+        StudyProtocolQueryDTO result = null;
+
+        List<StudyProtocolQueryDTO> results = protocolQueryService.getStudyProtocolByCriteria(crit);
+        if (CollectionUtils.isNotEmpty(results)) {
+            result = results.get(0);
+        }
+        return result;
     }
 
     /**
@@ -235,6 +344,8 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
         studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
         //need to get information for this from charles /need to parser the new xml to get this value
         studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
+        //need to get amendment date info and parse it from the xml
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         return studyProtocolDTO;
     }
 
@@ -249,6 +360,8 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
         statusDTO.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(studySiteCode)));
         //need to parser the new xml to get this value
         statusDTO.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        //Need to provide an xml element for status reason
+        statusDTO.setReasonText(StConverter.convertToSt("Pending Reason."));
         return statusDTO;
     }
 
@@ -282,7 +395,7 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
         summ4OrgDTO.setName(EnOnConverter.convertToEnOn("Unknown"));
         summ4OrgDTO.setTelecomAddress(DSetConverter.convertListToDSet(email, DSetConverter.TYPE_EMAIL, null));
         summ4OrgDTO.setPostalAddress(AddressConverterUtil.create("UNKNOWN", "UNKNOWN", "UNKNOWN", "MD", "00000",
-                "USA"));
+        "USA"));
         summ4OrgDTO = paServiceUtils.findOrCreateEntity(summ4OrgDTO);
 
         return summ4OrgDTO;
@@ -294,15 +407,19 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
      * @throws IOException
      */
     private List<DocumentDTO> getDocumentDtos(URL urlXML) throws IOException {
-       List<DocumentDTO> docList = new ArrayList<DocumentDTO>();
-       String irbdata = "This document is a placeholder for the protocol IRB document for this trial.";
-       String protocolData = "This document is a placeholder for the protocol document for this trial.";
-       docList.add(getDocument(DocumentTypeCode.PROTOCOL_DOCUMENT, "Protocol_Document_Place_Holder.doc",
-               protocolData.getBytes()));
-       docList.add(getDocument(DocumentTypeCode.IRB_APPROVAL_DOCUMENT, "Protocol_IRB_Document_Place_Holder.doc",
-               irbdata.getBytes()));
-       docList.add(getDocument(DocumentTypeCode.OTHER, "pdq.xml", paServiceUtils.readInputStream(urlXML.openStream())));
-       return docList;
+        List<DocumentDTO> docList = new ArrayList<DocumentDTO>();
+        String irbdata = "This document is a placeholder for the protocol IRB document for this trial.";
+        String protocolData = "This document is a placeholder for the protocol document for this trial.";
+        String changeMemoData = "This document is a placeholder for the change memo document for this trial.";
+        docList.add(getDocument(DocumentTypeCode.PROTOCOL_DOCUMENT, "Protocol_Document_Place_Holder.doc",
+                protocolData.getBytes()));
+        docList.add(getDocument(DocumentTypeCode.IRB_APPROVAL_DOCUMENT, "Protocol_IRB_Document_Place_Holder.doc",
+                irbdata.getBytes()));
+        docList.add(getDocument(DocumentTypeCode.CHANGE_MEMO_DOCUMENT, "Protocol_Change_Memo_Place_Holder.doc",
+                changeMemoData.getBytes()));
+        docList.add(getDocument(DocumentTypeCode.OTHER, "pdq.xml",
+                paServiceUtils.readInputStream(urlXML.openStream())));
+        return docList;
     }
 
     /**
@@ -314,6 +431,78 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
         doc.setFileName(StConverter.convertToSt(documentName));
         doc.setText(EdConverter.convertToEd(data));
         return doc;
+    }
+
+    /**
+     *
+     * @param regAuthmap  regAuthDTO
+     * @return studyRegulatoryDTO
+     */
+    private StudyRegulatoryAuthorityDTO getStudyRegulatoryAuthDTO(Map<String, String> regAuthmap,
+            List<StudyIndldeDTO> indDtos) {
+        StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
+        try {
+            String authorityName = regAuthmap.get("AuthorityName");
+            String countryName = regAuthmap.get("CountryName");
+            if (StringUtils.isEmpty(authorityName) && StringUtils.isEmpty(countryName)) {
+                if (CollectionUtils.isEmpty(indDtos)) {
+                    authorityName = "Institutional Review Board";
+                } else {
+                    authorityName = "Food and Drug Administration";
+                }
+                countryName = "United States";
+            }
+            Long regulatoryId = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityId(authorityName,
+                    countryName);
+            studyRegAuthDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(regulatoryId));
+        } catch (PAException e) {
+            LOG.error(e);
+        }
+        return studyRegAuthDTO;
+    }
+    /**
+     * @param id id
+     * @param identifierType type
+     * @throws PAException on error
+     * @return studySiteDTO
+     */
+    public StudySiteDTO getStudyIdentifierDTOs(String id, String identifierType) throws PAException {
+        StudySiteDTO studySiteIdDTO =  new StudySiteDTO();
+        studySiteIdDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(id));
+        String poOrgId = orgCorrelationService.getPOOrgIdentifierByIdentifierType(identifierType);
+        Ii nctROIi = orgCorrelationService.getPoResearchOrganizationByEntityIdentifier(
+                IiConverter.convertToPoOrganizationIi(String.valueOf(poOrgId)));
+        studySiteIdDTO.setResearchOrganizationIi(nctROIi);
+        return studySiteIdDTO;
+    }
+
+    /**
+     *
+     * @param map map of study id
+     * @return list of study Site DTO
+     * @throws PAException on error
+     */
+    public List<StudySiteDTO> loadStudyIdentifierDTOs(Map<String, String> map) throws PAException {
+        List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
+        for (Iterator<String> iter = map.keySet().iterator(); iter.hasNext();) {
+            String idType = iter.next();
+            studyIdentifierDTOs.add(getStudyIdentifierDTOs(map.get(idType), idType));
+        }
+        return studyIdentifierDTOs;
+    }
+
+    /**
+     * @param paServiceUtils the paServiceUtils to set
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
+    }
+
+    /**
+     * @return the paServiceUtils
+     */
+    public PAServiceUtils getPaServiceUtils() {
+        return paServiceUtils;
     }
 
     /**
@@ -329,73 +518,18 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
     public OrganizationCorrelationServiceRemote getOrgCorrelationService() {
         return orgCorrelationService;
     }
-    /**
-    *
-    * @param regAuthmap  regAuthDTO
-    * @return studyRegulatoryDTO
-    */
-   private StudyRegulatoryAuthorityDTO getStudyRegulatoryAuthDTO(Map<String, String> regAuthmap,
-           List<StudyIndldeDTO> indDtos) {
-       StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
-       try {
-           String authorityName = regAuthmap.get("AuthorityName");
-           String countryName = regAuthmap.get("CountryName");
-           if (StringUtils.isEmpty(authorityName) && StringUtils.isEmpty(countryName)) {
-               if (CollectionUtils.isEmpty(indDtos)) {
-                   authorityName = "Institutional Review Board";
-               } else {
-                   authorityName = "Food and Drug Administration";
-               }
-               countryName = "United States";
-           }
-           Long regulatoryId = PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityId(authorityName,
-                       countryName);
-           studyRegAuthDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(regulatoryId));
-       } catch (PAException e) {
-           LOG.error(e);
-       }
-       return studyRegAuthDTO;
-   }
-   /**
-    * @param id id
-    * @param identifierType type
-    * @throws PAException on error
-    * @return studySiteDTO
-    */
-   public StudySiteDTO getStudyIdentifierDTOs(String id, String identifierType) throws PAException {
-       StudySiteDTO studySiteIdDTO =  new StudySiteDTO();
-       studySiteIdDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(id));
-       String poOrgId = orgCorrelationService.getPOOrgIdentifierByIdentifierType(identifierType);
-       Ii nctROIi = orgCorrelationService.getPoResearchOrganizationByEntityIdentifier(
-                   IiConverter.convertToPoOrganizationIi(String.valueOf(poOrgId)));
-       studySiteIdDTO.setResearchOrganizationIi(nctROIi);
-       return studySiteIdDTO;
-   }
-   /**
-    *
-    * @param map map of study id
-    * @return list of study Site DTO
-    * @throws PAException on error
-    */
-   public List<StudySiteDTO> loadStudyIdentifierDTOs(Map<String, String> map) throws PAException {
-       List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
-       for (Iterator<String> iter = map.keySet().iterator(); iter.hasNext();) {
-             String idType = (String) iter.next();
-             studyIdentifierDTOs.add(getStudyIdentifierDTOs(map.get(idType), idType));
-       }
-       return studyIdentifierDTOs;
-   }
-   /**
-    * @param paServiceUtils the paServiceUtils to set
-    */
-   public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
-       this.paServiceUtils = paServiceUtils;
-   }
 
-   /**
-    * @return the paServiceUtils
-    */
-   public PAServiceUtils getPaServiceUtils() {
-       return paServiceUtils;
-   }
+    /**
+     * @return the protocol query service
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryService() {
+        return protocolQueryService;
+    }
+
+    /**
+     * @param protocolQueryService the protocol query service to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
 }

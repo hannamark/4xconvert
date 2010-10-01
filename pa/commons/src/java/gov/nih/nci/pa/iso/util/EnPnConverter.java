@@ -90,6 +90,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Harsha
  */
 public class EnPnConverter {
+    private static final String SPACE = " ";
 
     /**
      * @param firstName  given name
@@ -102,12 +103,25 @@ public class EnPnConverter {
     public static final EnPn convertToEnPn(String firstName, String middleName, String lastName, String prefix,
             String suffix) {
         EnPn enpn = new EnPn();
-        addEnxp(enpn, lastName, EntityNamePartType.FAM);
+        addEnxp(enpn, prefix, EntityNamePartType.PFX);
         addEnxp(enpn, firstName, EntityNamePartType.GIV);
         addEnxp(enpn, middleName, EntityNamePartType.GIV);
-        addEnxp(enpn, prefix, EntityNamePartType.PFX);
+        addEnxp(enpn, lastName, EntityNamePartType.FAM);
         addEnxp(enpn, suffix, SFX);
         return enpn;
+    }
+
+    /**
+     * returns the name of the person.
+     * @param enPn the enPn
+     * @return the person name
+     */
+    public static final String convertEnPnToString(EnPn enPn) {
+        StringBuffer fullName = new StringBuffer();
+        for (Enxp part : enPn.getPart()) {
+            fullName.append(part.getValue()).append(SPACE);
+        }
+        return fullName.toString().trim();
     }
 
     private static void addEnxp(EnPn enpn, String value, EntityNamePartType type) {
