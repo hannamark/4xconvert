@@ -84,6 +84,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -98,6 +99,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -113,8 +115,8 @@ import org.junit.Test;
  *
  */
 public class StudySiteServiceTest {
-    private StudySiteServiceLocal remoteEjb = new StudySiteBeanLocal();
-    private StudySiteConverter studySiteConverter = new StudySiteConverter();
+    private final StudySiteServiceLocal remoteEjb = new StudySiteBeanLocal();
+    private final StudySiteConverter studySiteConverter = new StudySiteConverter();
     Long studyId;
     Ii studyIi;
     Long siteId;
@@ -154,7 +156,23 @@ public class StudySiteServiceTest {
     }
     @Test
     public void create() throws Exception {
-        int accrualNum = 63;
+        StudySiteDTO spDto = createStudySite();
+        StudySiteDTO result = remoteEjb.create(spDto);
+
+        assertFalse(PAUtil.isIiNull(result.getIdentifier()));
+        assertEquals(CdConverter.convertCdToString(spDto.getFunctionalCode())
+                , CdConverter.convertCdToString(result.getFunctionalCode()));
+        assertEquals(new Integer(63), IntConverter.convertToInteger(result.getTargetAccrualNumber()));
+        assertEquals("abc", result.getOversightCommitteeIi().getExtension());
+
+        LimitOffset pagingParams = new LimitOffset(1, 1);
+        StudySiteDTO dto2 = new StudySiteDTO();
+        dto2.setStudyProtocolIdentifier(studyIi);
+        List<StudySiteDTO> list = remoteEjb.search(dto2, pagingParams);
+        assertEquals(1,list.size());
+    }
+
+    private StudySiteDTO createStudySite() {
         StudySiteDTO spDto = new StudySiteDTO();
         spDto.setIdentifier(null);
         spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.STUDY_OVERSIGHT_COMMITTEE));
@@ -166,19 +184,10 @@ public class StudySiteServiceTest {
             (CdConverter.convertToCd(ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED));
         spDto.setReviewBoardApprovalNumber(StConverter.convertToSt("777"));
         spDto.setStudyProtocolIdentifier(studyIi);
-        spDto.setTargetAccrualNumber(IntConverter.convertToInt(accrualNum));
-        StudySiteDTO result = remoteEjb.create(spDto);
-        assertFalse(PAUtil.isIiNull(result.getIdentifier()));
-        assertEquals(CdConverter.convertCdToString(spDto.getFunctionalCode())
-                , CdConverter.convertCdToString(result.getFunctionalCode()));
-        assertTrue(accrualNum == IntConverter.convertToInteger(result.getTargetAccrualNumber()));
-
-        LimitOffset pagingParams = new LimitOffset(1, 1);
-        StudySiteDTO dto2 = new StudySiteDTO();
-        dto2.setStudyProtocolIdentifier(studyIi);
-        List<StudySiteDTO> list = remoteEjb.search(dto2, pagingParams);
-        assertEquals(1,list.size());
+        spDto.setTargetAccrualNumber(IntConverter.convertToInt(63));
+        return spDto;
     }
+
     @Test
     public void delete() throws Exception {
         remoteEjb.delete(siteIi);
@@ -213,60 +222,98 @@ public class StudySiteServiceTest {
         }
 
     }
-   /* @Test
-    public void enforceOnlyOneOversightCommittee() throws Exception {
-        StudyParticipationDTO sp1 = remoteEjb.get(siteIi);
 
-        // set first study site IRB
-        sp1.setHealthcareFacilityIi(null);
-        sp1.setOversightCommitteeIi(oversightCommitteeIi);
-        sp1.setReviewBoardApprovalDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2001")));
-        sp1.setReviewBoardApprovalNumber(StConverter.convertToSt("approval number"));
-        sp1.setReviewBoardApprovalStatusCode(CdConverter.convertToCd(ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT));
-        remoteEjb.update(sp1);
-        sp1 = remoteEjb.get(siteIi);
-        assertFalse(PAUtil.isIiNull(sp1.getOversightCommitteeIi()));
-
-        // create another study site IRB
-        sp1.setFunctionalCode(CdConverter.convertToCd(StudyParticipationFunctionalCode.STUDY_OVERSIGHT_COMMITTEE));
-        sp1.setReviewBoardApprovalStatusCode(CdConverter.convertToCd(ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED));
-        StudyParticipationDTO sp2 = remoteEjb.create(sp1);
-        assertFalse(PAUtil.isIiNull(sp2.getOversightCommitteeIi()));
-
-        // confirm first one modified
-        sp1 = remoteEjb.get(siteIi);
-        assertTrue(PAUtil.isIiNull(sp1.getOversightCommitteeIi()));
-        assertNull(TsConverter.convertToTimestamp(sp1.getReviewBoardApprovalDate()));
-        assertNull(StConverter.convertToString(sp1.getReviewBoardApprovalNumber()));
-        assertTrue(PAUtil.isCdNull(sp1.getReviewBoardApprovalStatusCode()));
-    }*/
-//    @Test
-    public void enforceOnlyOneOrgFunctionPerStudy() throws Exception {
-        StudySiteDTO sp = remoteEjb.get(siteIi);
-
-        // set functional role for first study site
-        sp.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
-        sp = remoteEjb.update(sp);
-
-        // create another identical study site
-        sp.setIdentifier(null);
-        try {
-            remoteEjb.create(sp);
-            fail("Trying to assign the same organization with the same functional role to a study "
-                    + "twice should throw PADuplicateException.");
-        } catch (PADuplicateException e) {
-            // expected behavior
-        }
-
-        // create a site with different role
-        sp.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.FUNDING_SOURCE));
-        sp = remoteEjb.create(sp);
-        assertFalse(PAUtil.isIiNull(sp.getIdentifier()));
-        assertFalse(siteId.equals(IiConverter.convertToLong(sp.getIdentifier())));
-    }
     @Test
     public void iiRootTest() throws Exception {
         StudySiteDTO dto = remoteEjb.get(siteIi);
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
+
+    @Test
+    public void testCascadeRoleStatusErrors() throws PAException {
+        Cd roleStatusCode = CdConverter.convertStringToCd("");
+
+        // test missing name
+        Ii ii = new Ii();
+        ii.setIdentifierName("some bad name");
+        try {
+            remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
+            fail("this should have generated an exception");
+        } catch (PAException ex) {
+            assertTrue(ex.getMessage().contains("ii without name"));
+        }
+
+        // test incorrect role for studySite
+        ii.setIdentifierName(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+        try {
+            remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
+            fail("this should have generated an exception");
+        } catch (PAException ex) {
+            assertTrue(ex.getMessage().contains("Unable to update Role"));
+        }
+    }
+
+    @Test
+    public void testCascadeRoleStatusForHcf() throws PAException {
+        Ii ii = new Ii();
+        ii.setExtension("abc");
+        ii.setIdentifierName(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
+        Cd roleStatusCode = CdConverter.convertStringToCd("Nullified");
+
+        remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
+
+        StudySiteDTO ssdto = remoteEjb.get(siteIi);
+        // verify Id is still abc
+        assertEquals("abc", ssdto.getHealthcareFacilityIi().getExtension());
+        // verify site status is changed to Nullified
+        assertEquals("Nullified", ssdto.getStatusCode().getCode());
+    }
+
+    @Test
+    public void testCascadeRoleStatusForOC() throws PAException {
+        StudySiteDTO spDto = createStudySite();
+        StudySiteDTO result = remoteEjb.create(spDto);
+
+        Ii ii = new Ii();
+        ii.setExtension("abc");
+        ii.setIdentifierName(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME);
+        Cd roleStatusCode = CdConverter.convertStringToCd("Nullified");
+
+        remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
+
+        HibernateUtil.getCurrentSession().clear();
+
+        StudySiteDTO ssdto = remoteEjb.get(result.getIdentifier());
+        // verify Id is still abc
+        assertEquals("abc", ssdto.getOversightCommitteeIi().getExtension());
+        // verify site status is changed to Nullified
+        assertEquals("Nullified", ssdto.getStatusCode().getCode());
+    }
+
+    @Test
+    public void testCascadeRoleStatusForRO() throws PAException {
+        StudySiteDTO spDto = createStudySite();
+        spDto.setResearchOrganizationIi(researchOrgIi);
+        spDto.setReviewBoardApprovalStatusCode(null);
+        spDto.setReviewBoardApprovalDate(null);
+        spDto.setReviewBoardApprovalNumber(null);
+        spDto.setOversightCommitteeIi(null);
+        StudySiteDTO result = remoteEjb.create(spDto);
+
+        Ii ii = new Ii();
+        ii.setExtension("abc");
+        ii.setIdentifierName(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME);
+        Cd roleStatusCode = CdConverter.convertStringToCd("Nullified");
+
+        remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
+
+        HibernateUtil.getCurrentSession().clear();
+
+        StudySiteDTO ssdto = remoteEjb.get(result.getIdentifier());
+        // verify Id is still abc
+        assertEquals("abc", ssdto.getResearchOrganizationIi().getExtension());
+        // verify site status is changed to Nullified
+        assertEquals("Nullified", ssdto.getStatusCode().getCode());
+    }
+
 }

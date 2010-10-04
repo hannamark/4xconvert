@@ -79,25 +79,38 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.OrganizationTest;
+import gov.nih.nci.pa.domain.OrganizationalContact;
+import gov.nih.nci.pa.domain.OrganizationalContactTest;
+import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 
 public class StudySiteContactServiceBeanTest {
 
-  private StudySiteContactServiceLocal remoteEjb = new StudySiteContactBeanLocal();
+  private final StudySiteContactServiceLocal remoteEjb = new StudySiteContactBeanLocal();
   Ii pid;
   Ii studySiteId;
 
@@ -126,14 +139,89 @@ public class StudySiteContactServiceBeanTest {
 
   @Test
   public void create() throws Exception {
-    StudySiteContactDTO dto = new StudySiteContactDTO();
-    dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
-    dto.setStudyProtocolIdentifier(pid);
-    dto.setStudySiteIi(studySiteId);
-    dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
-    dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+    StudySiteContactDTO dto = createSSC();
     remoteEjb.create(dto);
-      assertEquals(dto.getStudyProtocolIdentifier(), pid);
+    assertEquals(dto.getStudyProtocolIdentifier(), pid);
+  }
+
+  private StudySiteContactDTO createSSC() {
+      StudySiteContactDTO dto = new StudySiteContactDTO();
+      dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
+      dto.setStudyProtocolIdentifier(pid);
+      dto.setStudySiteIi(studySiteId);
+      dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
+      dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+      return dto;
+  }
+
+  @Test
+  public void testCascadeRoleStatusForHcp() throws PAException {
+      Ii ii = new Ii();
+      ii.setExtension("abc");
+      ii.setIdentifierName(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
+      Cd roleStatusCode = CdConverter.convertStringToCd("Nullified");
+
+      remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
+
+      StudySiteContactDTO sscdto = remoteEjb.get(studySiteId);
+      // verify Id is still abc
+      assertEquals("abc", sscdto.getHealthCareProviderIi().getExtension());
+      // verify site status is changed to Nullified
+      assertEquals("Nullified", sscdto.getStatusCode().getCode());
+  }
+
+  @Test
+  public void testCascadeRoleStatusForCrs() throws PAException {
+      Ii ii = new Ii();
+      ii.setExtension("abc");
+      ii.setIdentifierName(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+      Cd roleStatusCode = CdConverter.convertStringToCd("Nullified");
+
+      remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
+
+      StudySiteContactDTO sscdto = remoteEjb.get(studySiteId);
+      // verify Id is still abc
+      assertEquals("abc", sscdto.getClinicalResearchStaffIi().getExtension());
+      // verify site status is changed to Nullified
+      assertEquals("Nullified", sscdto.getStatusCode().getCode());
+  }
+
+  @Test
+  public void testCascadeRoleStatusForOrgCon() throws PAException {
+      StudySiteContactDTO dto = createSSC();
+
+      Session session = HibernateUtil.getCurrentSession();
+      Transaction transaction = session.beginTransaction();
+
+      Organization newOrg = OrganizationTest.createOrganizationObj();
+      Person newPerson = PersonTest.createPersonObj();
+      session.saveOrUpdate(newOrg);
+      session.saveOrUpdate(newPerson);
+
+      OrganizationalContact orgCon = OrganizationalContactTest.createOrganizationalContactObj(
+              newOrg, newPerson);
+
+      session.saveOrUpdate(orgCon);
+      transaction.commit();
+
+      dto.setOrganizationalContactIi(IiConverter.convertToIi(orgCon.getId()));
+
+      StudySiteContactDTO result = remoteEjb.create(dto);
+
+      Ii ii = new Ii();
+      ii.setExtension("abc");
+      ii.setIdentifierName(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
+      Cd roleStatusCode = CdConverter.convertStringToCd("Nullified");
+
+      HibernateUtil.getCurrentSession().clear();
+
+      remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
+
+      StudySiteContactDTO sscdto = remoteEjb.get(result.getIdentifier());
+      // verify Id is still abc
+      assertEquals("abc", sscdto.getOrganizationalContactIi().getExtension());
+      // verify site status is changed to Nullified
+      assertEquals("Nullified", sscdto.getStatusCode().getCode());
   }
 
 

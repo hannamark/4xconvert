@@ -98,8 +98,11 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -116,6 +119,41 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
     CONVERTER extends AbstractConverter<DTO, BO>>
     extends AbstractStudyIsoService<DTO, BO, CONVERTER>
     implements RolePaService<DTO> {
+
+    private final Map<String, String> roleAssociationMap = new HashMap<String, String>();
+    {
+        roleAssociationMap.put(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME, "healthCareFacility");
+        roleAssociationMap.put(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME, "researchOrganization");
+        roleAssociationMap.put(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME, "oversightCommittee");
+        roleAssociationMap.put(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME, "clinicalResearchStaff");
+        roleAssociationMap.put(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME, "healthCareProvider");
+        roleAssociationMap.put(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME, "organizationalContact");
+    }
+
+    private final Map<String, String> roleClassMap = new HashMap<String, String>();
+    {
+        roleClassMap.put(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME, "HealthCareFacility");
+        roleClassMap.put(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME, "ResearchOrganization");
+        roleClassMap.put(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME, "OversightCommittee");
+        roleClassMap.put(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME, "ClinicalResearchStaff");
+        roleClassMap.put(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME, "HealthCareProvider");
+        roleClassMap.put(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME, "OrganizationalContact");
+    }
+
+    private final Map<String, String[]> classRoleMap = new HashMap<String, String[]>();
+    {
+    classRoleMap.put("StudySite", new String[] {
+            roleAssociationMap.get(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME),
+            roleAssociationMap.get(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME),
+                    roleAssociationMap.get(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME)});
+    classRoleMap.put("StudySiteContact", new String[] {
+            roleAssociationMap.get(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME),
+            roleAssociationMap.get(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME),
+            roleAssociationMap.get(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME)});
+    classRoleMap.put("StudyContact", new String[] {
+            roleAssociationMap.get(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME),
+            roleAssociationMap.get(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME)});
+    }
 
     private static final Logger LOG = Logger.getLogger(AbstractRoleIsoService.class);
 
@@ -199,61 +237,58 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
 
     /**
      *
+     * This method updates the status of StudySite, StudySiteContact
+     * or StudyContact when a Structural Role gets updated.
+     *
      * @param ii ii of the structural roles
      * @param roleStatusCode role status code
      * @throws PAException on error
      */
-    @SuppressWarnings("unchecked")
     public void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException {
-        List<BO> sps = null;
         Session session = HibernateUtil.getCurrentSession();
-        StringBuffer hql = new StringBuffer("select sps from ");
-        if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySite")) {
-            if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {
-                hql.append(" StudySite sps join sps.healthCareFacility as hcp where hcp.identifier = '"
-                        + ii.getExtension() + "'");
-            }
-            if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {
-                hql.append(" StudySite sps join sps.researchOrganization as ro where ro.identifier = '"
-                        + ii.getExtension() + "'");
-            }
-            if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {
-                hql.append(" StudySite sps join sps.oversightCommittee as oc where oc.identifier = '"
-                        + ii.getExtension() + "'");
-            }
-        }
-        if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyContact")) {
-            if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {
-                hql.append(" StudyContact sps join sps.clinicalResearchStaff as crs where crs.identifier = '"
-                        + ii.getExtension() + "'");
-            }
-            if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {
-                hql.append(" StudyContact sps join sps.healthCareProvider as hcp where hcp.identifier = '"
-                        + ii.getExtension() + "'");
-            }
 
-        }
-        if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySiteContact")) {
-            if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {
-                hql.append(" StudySiteContact sps join sps.clinicalResearchStaff as crs where crs.identifier = '")
-                   .append(ii.getExtension()).append("'");
-            }
-            if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {
-                hql.append(" StudySiteContact sps join sps.healthCareProvider as hcp where hcp.identifier = '")
-                   .append(ii.getExtension()).append("'");
-            }
-            if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {
-                hql.append(" StudySiteContact sps join sps.organizationalContact as oc where oc.identifier = '")
-                   .append(ii.getExtension()).append("'");
-            }
+        String roleLink = roleAssociationMap.get(ii.getIdentifierName());
+
+        checkCascadeRoleStatusInput(roleLink);
+
+        StringBuffer hql = new StringBuffer("UPDATE ")
+            .append(getTypeArgument().getSimpleName())
+            .append(" ss SET ss.statusCode = :newStatus where ss.")
+            .append(roleLink)
+            .append(" = (select role from ")
+            .append(roleClassMap.get(ii.getIdentifierName()))
+            .append(" role where identifier = :myId)");
+
+        session.createQuery(hql.toString())
+        .setString("newStatus", newFRStatusCode(roleStatusCode , ActStatusCode.ACTIVE).getName())
+        .setString("myId", ii.getExtension())
+        .executeUpdate();
+
+        session.flush();
+
+    }
+
+    /**
+     * @param roleLink
+     * @param roleStatusCode
+     * @throws PAException
+     */
+    private void checkCascadeRoleStatusInput(String roleLink) throws PAException {
+
+        if (roleLink == null) {
+            throw new PAException("Error attempting to change for for ii without name");
         }
 
-        sps = session.createQuery(hql.toString()).list();
-        for (BO sp : sps) {
-            sp.setStatusCode(newFRStatusCode(roleStatusCode , ActStatusCode.ACTIVE));
-            session.update(sp);
-            session.flush();
+        String[] validClasses = {"StudySite", "StudyContact", "StudySiteContact"};
+        if (!ArrayUtils.contains(validClasses, getTypeArgument().getSimpleName())) {
+            throw new PAException("Error attempting to change status for role: " + getTypeArgument().getSimpleName());
         }
+
+        if (!ArrayUtils.contains(classRoleMap.get(getTypeArgument().getSimpleName()), roleLink)) {
+            throw new PAException("Unable to update Role: " + roleLink
+                   + " for class : " + getTypeArgument().getSimpleName());
+        }
+
     }
 
     private FunctionalRoleStatusCode newFRStatusCode(Cd roleStatusCode , ActStatusCode actStatusCode) {
