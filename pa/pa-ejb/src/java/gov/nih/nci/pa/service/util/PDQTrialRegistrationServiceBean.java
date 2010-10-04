@@ -108,7 +108,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -190,22 +189,14 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
             getStudyIdentifierDTOs(parser.getStudyIdentifierMap().get(PAConstants.NCT_IDENTIFIER_TYPE),
                     PAConstants.NCT_IDENTIFIER_TYPE);
         StudyProtocolQueryDTO trial = getExistingTrial(nctSite);
-        String sponsorOrgName = EnOnConverter.convertEnOnToString(parser.getSponsorOrganizationDTO().getName());
-        String leadOrgName = EnOnConverter.convertEnOnToString(parser.getLeadOrganizationDTO().getName());
-        String piName = EnPnConverter.convertEnPnToString(parser.getPrincipalInvestigatorDTO().getName());
         Ii resultIi = null;
 
         if (trial == null) {
             //No existing trial means we can go ahead and register.
             resultIi = registerTrial(parser, userName);
-        } else if (StringUtils.equalsIgnoreCase(sponsorOrgName, trial.getSponsorOrganizationName())
-                && StringUtils.equalsIgnoreCase(leadOrgName, trial.getLeadOrganizationName())
-                && StringUtils.equalsIgnoreCase(piName, trial.getPiFullName())) {
-            //If the sponsor, lead org and pi have not been changed, we perform and update.
-            updateTrial(parser, IiConverter.convertToStudyProtocolIi(trial.getStudyProtocolId()), userName);
         } else {
-            //Otherwise, we go ahead and amend the trial.
-            resultIi = amendTrial(parser, IiConverter.convertToStudyProtocolIi(trial.getStudyProtocolId()), userName);
+            //Otherwise we're just going to update.
+            updateTrial(parser, IiConverter.convertToStudyProtocolIi(trial.getStudyProtocolId()), userName);
         }
         return resultIi;
     }
@@ -257,34 +248,6 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
                 getSummary4OrganizationDTO(), getSummary4StudyResourcingDTO(), null,
                 getStudyRegulatoryAuthDTO(parser.getRegAuthMap(), parser.getStudyIndldeDTOs()),
                 null, null, null, BlConverter.convertToBl(Boolean.FALSE));
-    }
-
-    /**
-     * Updates a trial with the information provided by the PDQ XML.
-     * @param parser the parser XML
-     * @param userName grid username
-     * @return the identifier of the ameneded trial
-     * @throws PAException
-     */
-    private Ii amendTrial(PDQRegistrationXMLParser parser, Ii studyProtocolIi,  String userName) throws PAException,
-    IOException {
-        StudyProtocolDTO trial = getStudyProtocol(parser.getStudyProtocolDTO(), userName);
-        trial.setIdentifier(studyProtocolIi);
-
-        StudyOverallStatusDTO statusDTO = getOverallStatusDTO(parser.getStudyOverallStatusDTO());
-        statusDTO.setStudyProtocolIdentifier(studyProtocolIi);
-
-        return PaRegistry.getTrialRegistrationService().amend(trial, statusDTO,
-                getStudyIndIde(parser.getStudyIndldeDTOs(), parser.getStudyIdentifierMap()), null,
-                getDocumentDtos(parser.getUrl()),
-                paServiceUtils.findOrCreateEntity(parser.getLeadOrganizationDTO()),
-                paServiceUtils.findOrCreateEntity(parser.getPrincipalInvestigatorDTO()),
-                paServiceUtils.findOrCreateEntity(parser.getSponsorOrganizationDTO()),
-                parser.getLeadOrganizationSiteIdentifierDTO(), loadStudyIdentifierDTOs(parser.getStudyIdentifierMap()),
-                getStudyContactDTO(parser.getResponsiblePartyContact()), null,  getSummary4OrganizationDTO(),
-                getSummary4StudyResourcingDTO(), null,
-                getStudyRegulatoryAuthDTO(parser.getRegAuthMap(), parser.getStudyIndldeDTOs()),
-                BlConverter.convertToBl(Boolean.FALSE));
     }
 
     /**
@@ -344,8 +307,6 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
         studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
         //need to get information for this from charles /need to parser the new xml to get this value
         studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
-        //need to get amendment date info and parse it from the xml
-        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         return studyProtocolDTO;
     }
 
@@ -410,13 +371,10 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
         List<DocumentDTO> docList = new ArrayList<DocumentDTO>();
         String irbdata = "This document is a placeholder for the protocol IRB document for this trial.";
         String protocolData = "This document is a placeholder for the protocol document for this trial.";
-        String changeMemoData = "This document is a placeholder for the change memo document for this trial.";
         docList.add(getDocument(DocumentTypeCode.PROTOCOL_DOCUMENT, "Protocol_Document_Place_Holder.doc",
                 protocolData.getBytes()));
         docList.add(getDocument(DocumentTypeCode.IRB_APPROVAL_DOCUMENT, "Protocol_IRB_Document_Place_Holder.doc",
                 irbdata.getBytes()));
-        docList.add(getDocument(DocumentTypeCode.CHANGE_MEMO_DOCUMENT, "Protocol_Change_Memo_Place_Holder.doc",
-                changeMemoData.getBytes()));
         docList.add(getDocument(DocumentTypeCode.OTHER, "pdq.xml",
                 paServiceUtils.readInputStream(urlXML.openStream())));
         return docList;

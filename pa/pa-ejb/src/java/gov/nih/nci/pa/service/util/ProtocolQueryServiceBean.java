@@ -220,26 +220,27 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
      * @throws PAException on error
      */
     private List<StudyProtocolQueryDTO> convertToStudyProtocolDTO(List<StudyProtocol> protocolQueryResult, Long userId,
-            boolean myTrialsOnly) throws PAException {
+            boolean myTrialsOnly)
+        throws PAException {
         List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO studyProtocolDto = null;
         StudyOverallStatus studyOverallStatus = null;
         DocumentWorkflowStatus documentWorkflowStatus = null;
         StudyMilestone studyMilestone;
-        Organization leadOrg = null;
-        Organization sponsorOrg = null;
+        Organization organization = null;
         Person person = null;
-        StudySite leadOrgStudySite = null;
-        StudySite sponsorStudySite = null;
+        StudySite studySite = null;
         StudyInbox studyInbox = null;
         StudyCheckout studyCheckout = null;
         RegistryUser potentialOwner = userId == null ? null : registryUserService.getUserById(userId);
         try {
             for (StudyProtocol studyProtocol : protocolQueryResult) {
                 studyProtocolDto = new StudyProtocolQueryDTO();
+
                 // get documentWorkflowStatus
                 documentWorkflowStatus = studyProtocol.getDocumentWorkflowStatuses().isEmpty() ? null
                         : studyProtocol.getDocumentWorkflowStatuses().iterator().next();
+
                 studyMilestone = studyProtocol.getStudyMilestones().isEmpty() ? null
                         : studyProtocol.getStudyMilestones().iterator().next();
                 // get studyOverallStatus
@@ -251,30 +252,26 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 if (sc != null) {
                     person = sc.getClinicalResearchStaff().getPerson();
                 }
+
                 // study site and organization
-                for (StudySite ss : studyProtocol.getStudySites()) {
-                    if (ss.getFunctionalCode() == StudySiteFunctionalCode.LEAD_ORGANIZATION) {
-                        leadOrgStudySite = ss;
-                    } else if (ss.getFunctionalCode() == StudySiteFunctionalCode.SPONSOR) {
-                        sponsorStudySite = ss;
-                    }
+                studySite = studyProtocol.getStudySites().isEmpty() ? null
+                        : studyProtocol.getStudySites().iterator().next();
+                if (studySite != null) {
+                    organization =  studySite.getResearchOrganization().getOrganization();
                 }
-                if (leadOrgStudySite != null) {
-                    leadOrg =  leadOrgStudySite.getResearchOrganization().getOrganization();
-                }
-                if (sponsorStudySite != null) {
-                    sponsorOrg = sponsorStudySite.getResearchOrganization().getOrganization();
-                }
+
                 // get the StudyInbox
                 studyInbox = studyProtocol.getStudyInbox().isEmpty() ? null
                         : studyProtocol.getStudyInbox().iterator().next();
                 studyCheckout = studyProtocol.getStudyCheckout().isEmpty() ? null
                         : studyProtocol.getStudyCheckout().iterator().next();
+
                 // transfer protocol to studyProtocolDto
                 if (documentWorkflowStatus != null) {
                     studyProtocolDto.setDocumentWorkflowStatusCode(documentWorkflowStatus.getStatusCode());
                     studyProtocolDto.setDocumentWorkflowStatusDate(documentWorkflowStatus.getStatusDateRangeLow());
                 }
+
                 if (studyProtocol != null) {
                     if (studyProtocol instanceof ObservationalStudyProtocol) {
                         studyProtocolDto.setStudyProtocolType("ObservationalStudyProtocol");
@@ -323,20 +320,17 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     studyProtocolDto.setStudyStatusCode(studyOverallStatus.getStatusCode());
                     studyProtocolDto.setStudyStatusDate(studyOverallStatus.getStatusDate());
                 }
-                if (leadOrg != null) {
-                    studyProtocolDto.setLeadOrganizationName(leadOrg.getName());
-                    studyProtocolDto.setLeadOrganizationId(leadOrg.getId());
-                }
-                if (sponsorOrg != null) {
-                    studyProtocolDto.setSponsorOrganizationName(sponsorOrg.getName());
+                if (organization != null) {
+                    studyProtocolDto.setLeadOrganizationName(organization
+                            .getName());
+                    studyProtocolDto.setLeadOrganizationId(organization.getId());
                 }
                 if (person != null) {
                     studyProtocolDto.setPiFullName(person.getFullName());
                     studyProtocolDto.setPiId(person.getId());
                 }
-                if (leadOrgStudySite != null) {
-                    studyProtocolDto.setLocalStudyProtocolIdentifier(
-                            leadOrgStudySite.getLocalStudyProtocolIdentifier());
+                if (studySite != null) {
+                    studyProtocolDto.setLocalStudyProtocolIdentifier(studySite.getLocalStudyProtocolIdentifier());
                 }
                 if (studyInbox != null) {
                   if (studyInbox.getId() != null) {
@@ -363,6 +357,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     // add to the list
                     studyProtocolDtos.add(studyProtocolDto);
                 }
+
+
             } // for loop
         } catch (Exception e) {
             throw new PAException("General error in while converting to StudyProtocolQueryDTO", e);

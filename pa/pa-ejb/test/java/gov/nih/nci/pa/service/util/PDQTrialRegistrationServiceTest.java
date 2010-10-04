@@ -92,7 +92,6 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
@@ -183,7 +182,6 @@ public class PDQTrialRegistrationServiceTest {
     private MailManagerServiceLocal mailManagerSerivceLocal;
     private final URL testXMLUrl = this.getClass().getResource("/sample-pdq-register.xml");
     private final URL testUpdateXMLUrl = this.getClass().getResource("/sample-pdq-update.xml");
-    private final URL testAmendXMLUrl = this.getClass().getResource("/sample-pdq-amend.xml");
     private Map<Ii, OrganizationDTO> mockOrgs = new HashMap<Ii, OrganizationDTO>();
     private PersonDTO mockPerson = new PersonDTO();
     private Ii trialIi;
@@ -385,24 +383,6 @@ public class PDQTrialRegistrationServiceTest {
         }
         trialIi = bean.loadRegistrationElementFromPDQXml(testXMLUrl, TestSchema.getUser().getLoginName());
         assertNotNull("Null identifier returned when registering a trial", trialIi);
-
-        //Get trial into abstraction verified state and re-run to test amending.
-        St comment = StConverter.convertToSt("Comment.");
-        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.SUBMISSION_ACCEPTED,
-                StConverter.convertToSt("Accepted."));
-        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, comment);
-        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
-                comment);
-        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, comment);
-        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, comment);
-        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.READY_FOR_QC, comment);
-        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.QC_START, comment);
-        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.QC_COMPLETE, comment);
-        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.TRIAL_SUMMARY_SENT, comment);
-        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.TRIAL_SUMMARY_FEEDBACK, comment);
-        bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.INITIAL_ABSTRACTION_VERIFY, comment);
-        assertNotNull("Null identifier returned when amending a trial",
-                bean.loadRegistrationElementFromPDQXml(testAmendXMLUrl, TestSchema.getUser().getLoginName()));
 
         //Accept the trial then re-run to test updating.
         bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.SUBMISSION_ACCEPTED,
