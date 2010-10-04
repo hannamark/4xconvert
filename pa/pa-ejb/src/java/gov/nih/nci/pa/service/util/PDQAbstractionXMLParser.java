@@ -35,6 +35,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.jdom.Element;
 
 /**
@@ -131,7 +132,8 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         for (Element armElmt : armElmtList) {
             ArmDTO armDTO = new ArmDTO();
             armDTO.setName(StConverter.convertToSt(getText(armElmt, "arm_group_label")));
-            armDTO.setTypeCode(CdConverter.convertToCd(ArmTypeCode.getByCode(getText(armElmt, "arm_type"))));
+            armDTO.setTypeCode(CdConverter.convertToCd(ArmTypeCode.getByCode(WordUtils.capitalizeFully(
+                    getText(armElmt, "arm_type")))));
             armDTO.setDescriptionText(StConverter.convertToSt(getFullText(
                   armElmt.getChild("arm_group_description"), "", "")));
             getListOfArmDTOS().add(armDTO);
@@ -247,7 +249,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         if (minimumValue != null || maximumValue != null) {
             pEligibiltyCriterionDTO = new PlannedEligibilityCriterionDTO();
             pEligibiltyCriterionDTO.setCriterionName(StConverter.convertToSt("AGE"));
-            pEligibiltyCriterionDTO.setValue(convertToIvlPq("Year", minimumValue, "Year", maximumValue));
+            pEligibiltyCriterionDTO.setValue(convertToIvlPq("Years", minimumValue, "Years", maximumValue));
             pEligibiltyCriterionDTO.setCategoryCode(CdConverter.convertToCd(
                     ActivityCategoryCode.ELIGIBILITY_CRITERION));
             pEligibiltyCriterionDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));

@@ -147,10 +147,15 @@ import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -1765,4 +1770,106 @@ public class PAServiceUtils {
           }
           return orgDto;
       }
+      /**
+       * This method gives the HCF ii for given Org Ii.
+       * @param poOrgId org ii
+       * @return Hcf ii
+       * @throws PAException on error
+       */
+      public Ii getPoHcfIi(String poOrgId) throws PAException {
+          Ii poHcfIi = null;
+          try {
+              List<HealthCareFacilityDTO> poHcfList =
+                   PoRegistry.getHealthCareFacilityCorrelationService()
+                  .getCorrelationsByPlayerIds(new Ii[]{IiConverter.convertToPoOrganizationIi(poOrgId)});
+              if (poHcfList.isEmpty()) {
+                  OrganizationDTO orgDTO = PoRegistry.getOrganizationEntityService()
+                      .getOrganization(IiConverter.convertToPoOrganizationIi(poOrgId));
+                  HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
+                  hcfDTO.setPlayerIdentifier(orgDTO.getIdentifier());
+                  poHcfIi = PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
+              } else {
+                  poHcfIi = DSetConverter.convertToIi(poHcfList.get(0).getIdentifier());
+              }
+          } catch (NullifiedRoleException e) {
+              throw new PAException("The HCF for po Org id: " + poOrgId + " no longer exists.", e);
+          } catch (EntityValidationException e) {
+              throw new PAException("HCF could not pass validation for po Org with id: " + poOrgId, e);
+          } catch (CurationException e) {
+              throw new PAException("Could not curate HCF for po Org with id" + poOrgId, e);
+          } catch (NullifiedEntityException e) {
+              throw new PAException(PAUtil.handleNullifiedEntityException(e), e);
+          }
+          return poHcfIi;
+      }
+      /**
+       * This method gives ClinicalResearchStaffDTO for given Person ii and org Ii.
+       * @param investigatorIi personIi
+       * @param poOrgId org Ii
+       * @return ClinicalResearchStaffDTO
+       * @throws PAException on error
+       */
+      public ClinicalResearchStaffDTO getCrsDTO(Ii investigatorIi, String poOrgId) throws PAException {
+          ClinicalResearchStaffDTO crsDTO = null;
+          List<ClinicalResearchStaffDTO> poCrsList;
+          try {
+              poCrsList = PoRegistry.getClinicalResearchStaffCorrelationService()
+              .getCorrelationsByPlayerIds(new Ii[]{investigatorIi});
+              if (poCrsList.isEmpty()) {
+                  crsDTO = new ClinicalResearchStaffDTO();
+                  crsDTO.setPlayerIdentifier(investigatorIi);
+                  crsDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId));
+                  Ii newCrsIi = PoRegistry.getClinicalResearchStaffCorrelationService()
+                      .createCorrelation(crsDTO);
+                  crsDTO = PoRegistry.getClinicalResearchStaffCorrelationService()
+                  .getCorrelation(newCrsIi);
+              } else {
+                  crsDTO = poCrsList.get(0);
+              }
+          } catch (NullifiedRoleException e) {
+              throw new PAException("The CRS for Person with id: " + investigatorIi + " no longer exists.", e);
+          } catch (EntityValidationException e) {
+              throw new PAException("CRS failed validation for Person id: " + investigatorIi, e);
+          } catch (CurationException e) {
+              throw new PAException("Could not curate CRS for Person id: " + investigatorIi, e);
+          }
+          return crsDTO;
+      }
+      /**
+       * This method give the HealthCareProviderDTO for given Po OrgID.
+       * @param trialType trialType
+       * @param investigatorIi investigatorIi
+       * @param poOrgId poOrg Id
+       * @return  HealthCareProvider
+       * @throws PAException on error
+       */
+      public HealthCareProviderDTO getHcpDTO(String trialType, Ii investigatorIi, String poOrgId) throws PAException {
+          HealthCareProviderDTO hcpDTO = null;
+          if (trialType.startsWith("Interventional")) {
+              List<HealthCareProviderDTO> poHcpList;
+              try {
+                  poHcpList = PoRegistry.getHealthCareProviderCorrelationService()
+                  .getCorrelationsByPlayerIds(new Ii[]{investigatorIi});
+                  if (poHcpList.isEmpty()) {
+                      hcpDTO = new HealthCareProviderDTO();
+                      hcpDTO.setPlayerIdentifier(investigatorIi);
+                      hcpDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId));
+                      Ii newHcpIi = PoRegistry.getHealthCareProviderCorrelationService()
+                          .createCorrelation(hcpDTO);
+                      hcpDTO = PoRegistry.getHealthCareProviderCorrelationService()
+                          .getCorrelation(newHcpIi);
+                  } else {
+                      hcpDTO = poHcpList.get(0);
+                  }
+              } catch (NullifiedRoleException e) {
+                  throw new PAException("The Person no longer exists.", e);
+              } catch (EntityValidationException e) {
+                  throw new PAException("HCP failed validation.", e);
+              } catch (CurationException e) {
+                  throw new PAException("Could not curate HCP", e);
+              }
+          }
+          return hcpDTO;
+      }
+
 }

@@ -215,6 +215,9 @@ public abstract class AbstractPDQXmlParser {
      * @return String
      */
     public String getFullText(Element element, String appendNewLine, String appendSpace) {
+        if (element == null) {
+            return null;
+        }
         StringBuffer result = new StringBuffer();
         List content = element.getContent();
         Iterator iterator = content.iterator();

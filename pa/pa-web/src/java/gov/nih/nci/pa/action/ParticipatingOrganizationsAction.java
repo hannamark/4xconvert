@@ -116,16 +116,14 @@ import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.po.data.CurationException;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
-import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
@@ -188,6 +186,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private String dateClosedForAccrual;
     private Long studySiteIdentifier;
     private String programCode;
+    private final PAServiceUtils paServiceUtil = new PAServiceUtils();
 
     private static final String DISPLAY_SP_CONTACTS = "display_StudyPartipants_Contacts";
     private static final String DISPLAY_PRIM_CONTACTS = "display_primContacts";
@@ -309,7 +308,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             sp = new StudySiteDTO();
             ssIi = saveNonPropWithNewSite(sp, ssas, tab, errorOrgName);
         }
-        
+
         tab.setStudyParticipationId(IiConverter.convertToLong(ssIi));
         ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
         if (StringUtils.isNotEmpty(tab.getFacilityOrganization().getName())) {
@@ -318,15 +317,15 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         setStatusCode(sp.getStatusCode().getCode());
         setCurrentAction("edit");
     }
-    
-    private StudySiteDTO saveNonPropWithCurrentSite(StudySiteAccrualStatusDTO ssas, 
-            ParticipatingOrganizationsTabWebDTO tab, 
+
+    private StudySiteDTO saveNonPropWithCurrentSite(StudySiteAccrualStatusDTO ssas,
+            ParticipatingOrganizationsTabWebDTO tab,
             String errorOrgName) throws PAException {
         StudySiteDTO sp = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
-        
-        
+
+
         boolean spUpdated = isUpdated(sp);
-        
+
         if (spUpdated) {
             try {
                 partSiteService.updateStudySiteParticipant(sp, ssas);
@@ -336,18 +335,18 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
         return sp;
     }
-    
+
     private boolean isUpdated(StudySiteDTO sp) {
         String prgCode = (getProgramCode() == null) ? null : getProgramCode();
         Integer iTargetAccrual = (targetAccrualNumber == null) ? null : Integer.parseInt(targetAccrualNumber);
         String localId = (getSiteLocalTrialIdentifier() == null) ? null : getSiteLocalTrialIdentifier();
-        boolean spUpdated = 
-            isUpdated1(sp, prgCode, iTargetAccrual) && isUpdated2(sp, localId); 
-        
-        
+        boolean spUpdated =
+            isUpdated1(sp, prgCode, iTargetAccrual) && isUpdated2(sp, localId);
+
+
         return spUpdated;
     }
-    
+
     private boolean isUpdated1(StudySiteDTO sp, String prgCode, Integer iTargetAccrual) {
         boolean spUpdated = false;
         if (IntConverter.convertToInteger(sp.getTargetAccrualNumber()) != iTargetAccrual) {
@@ -359,10 +358,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 && !StConverter.convertToString(sp.getProgramCodeText()).equalsIgnoreCase(prgCode))) {
            sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
            spUpdated = true;
-        }      
+        }
         return spUpdated;
     }
-    
+
     private boolean isUpdated2(StudySiteDTO sp, String localId) {
         boolean spUpdated = false;
         if (PAUtil.isStNull(sp.getLocalStudyProtocolIdentifier()) || (!PAUtil.isStNull(
@@ -373,14 +372,14 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
         return spUpdated;
     }
-    
-    private Ii saveNonPropWithNewSite(StudySiteDTO sp, StudySiteAccrualStatusDTO ssas, 
-            ParticipatingOrganizationsTabWebDTO tab, 
+
+    private Ii saveNonPropWithNewSite(StudySiteDTO sp, StudySiteAccrualStatusDTO ssas,
+            ParticipatingOrganizationsTabWebDTO tab,
             String errorOrgName) throws PAException {
         Ii ssIi = null;
         String poOrgId = tab.getFacilityOrganization().getIdentifier();
-        Ii poHcfIi = getPoHcfIi(poOrgId);
-       
+        Ii poHcfIi = paServiceUtil.getPoHcfIi(poOrgId);
+
         sp.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
         sp.setIdentifier(null);
         sp.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
@@ -389,14 +388,14 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
         sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
         sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt(siteLocalTrialIdentifier));
-        
+
         try {
-            ssIi = 
+            ssIi =
                 partSiteService.createStudySiteParticipant(sp, ssas, poHcfIi);
         } catch (PADuplicateException e) {
             addFieldError(errorOrgName, e.getMessage());
         }
-        
+
         return ssIi;
     }
 
@@ -667,7 +666,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      */
     public String saveStudyParticipationContact() {
         clearErrorsAndMessages();
-        
+
         String roleCode = ServletActionContext.getRequest().getParameter("rolecode");
         String persId = ServletActionContext.getRequest().getParameter("persid");
         if (selectedPersTO == null) {
@@ -700,9 +699,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             }
             return DISPLAY_SPART_CONTACTS;
         }
-        
+
         // This makes a fresh db call to show the result on the JSP
-        return returnDisplaySPContacts(tab);       
+        return returnDisplaySPContacts(tab);
     }
 
     /**
@@ -876,7 +875,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 selectedPersTOIi = isoPerDTO.getIdentifier();
             }
 
-            
+
             Ii ssIi = IiConverter.convertToStudySiteIi(tab.getStudyParticipationId());
             String poOrgId = tab.getFacilityOrganization().getIdentifier();
             telephone = telephone.replaceAll(" ", "");
@@ -887,9 +886,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             DSet<Tel> list = new DSet<Tel>();
             list = DSetConverter.convertListToDSet(emailList, "EMAIL", list);
             list = DSetConverter.convertListToDSet(telList, "PHONE", list);
-            
+
             if (IiConverter.ORGANIZATIONAL_CONTACT_ROOT.equals(selectedPersTOIi.getRoot())) {
-                addGenericContact(ssIi, selectedPersTOIi, list);    
+                addGenericContact(ssIi, selectedPersTOIi, list);
             } else if (IiConverter.PERSON_ROOT.equals(selectedPersTOIi.getRoot())) {
                 addPrimaryContact(ssIi, selectedPersTOIi, poOrgId, list);
             }
@@ -1385,97 +1384,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
        return execute();
    }
 
-    private Ii getPoHcfIi(String poOrgId) throws PAException {
-        Ii poHcfIi = null;
-             
-        try {
-            List<HealthCareFacilityDTO> poHcfList =
-                 PoRegistry.getHealthCareFacilityCorrelationService()
-                .getCorrelationsByPlayerIds(new Ii[]{IiConverter.convertToPoOrganizationIi(poOrgId)});
-            if (poHcfList.isEmpty()) {
-                OrganizationDTO orgDTO = PoRegistry.getOrganizationEntityService()
-                    .getOrganization(IiConverter.convertToPoOrganizationIi(poOrgId));
-                HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
-                hcfDTO.setPlayerIdentifier(orgDTO.getIdentifier());
-                poHcfIi = PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
-            } else {
-                poHcfIi = DSetConverter.convertToIi(poHcfList.get(0).getIdentifier());
-            }
-        } catch (NullifiedRoleException e) {
-            throw new PAException("The HCF for po Org id: " + poOrgId + " no longer exists.", e);
-        } catch (EntityValidationException e) {
-            throw new PAException("HCF could not pass validation for po Org with id: " + poOrgId, e);
-        } catch (CurationException e) {
-            throw new PAException("Could not curate HCF for po Org with id" + poOrgId, e);
-        } catch (NullifiedEntityException e) {
-            throw new PAException(PAUtil.handleNullifiedEntityException(e), e);
-        }
-        return poHcfIi;
-    }
-    
-    private ClinicalResearchStaffDTO getCrsDTO(Ii investigatorIi, String poOrgId) 
-    throws PAException {
-        ClinicalResearchStaffDTO crsDTO = null;
-        List<ClinicalResearchStaffDTO> poCrsList;
-        try {
-            poCrsList = PoRegistry.getClinicalResearchStaffCorrelationService()
-            .getCorrelationsByPlayerIds(new Ii[]{investigatorIi});
-            if (poCrsList.isEmpty()) {
-                crsDTO = new ClinicalResearchStaffDTO();
-                crsDTO.setPlayerIdentifier(investigatorIi);
-                crsDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId));
-                Ii newCrsIi = PoRegistry.getClinicalResearchStaffCorrelationService()
-                    .createCorrelation(crsDTO);
-                crsDTO = PoRegistry.getClinicalResearchStaffCorrelationService()
-                .getCorrelation(newCrsIi);
-            } else {
-                crsDTO = poCrsList.get(0);
-            }
-        } catch (NullifiedRoleException e) {
-            throw new PAException("The CRS for Person with id: " + investigatorIi + " no longer exists.", e);
-        } catch (EntityValidationException e) {
-            throw new PAException("CRS failed validation for Person id: " + investigatorIi, e);
-        } catch (CurationException e) {
-            throw new PAException("Could not curate CRS for Person id: " + investigatorIi, e);
-        }
-        return crsDTO;
-    }
-    
-    private HealthCareProviderDTO getHcpDTO(String trialType, Ii investigatorIi, String poOrgId) throws PAException {
-        HealthCareProviderDTO hcpDTO = null;
-        if (trialType.startsWith("Interventional")) {
-            List<HealthCareProviderDTO> poHcpList;
-            try {
-                poHcpList = PoRegistry.getHealthCareProviderCorrelationService()
-                .getCorrelationsByPlayerIds(new Ii[]{investigatorIi});
-                if (poHcpList.isEmpty()) {
-                    hcpDTO = new HealthCareProviderDTO();
-                    hcpDTO.setPlayerIdentifier(investigatorIi);
-                    hcpDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId));
-                    Ii newHcpIi = PoRegistry.getHealthCareProviderCorrelationService()
-                        .createCorrelation(hcpDTO);
-                    hcpDTO = PoRegistry.getHealthCareProviderCorrelationService()
-                        .getCorrelation(newHcpIi);
-                } else {
-                    hcpDTO = poHcpList.get(0);
-                }
-            } catch (NullifiedRoleException e) {
-                throw new PAException("The Person no longer exists.", e);
-            } catch (EntityValidationException e) {
-                throw new PAException("HCP failed validation.", e);
-            } catch (CurationException e) {
-                throw new PAException("Could not curate HCP", e);
-            }
-        }
-        return hcpDTO;
-    }
-   
     private void save() throws PAException {
         StudySiteDTO siteDTO = new StudySiteDTO();
         String poOrgId = editOrg.getIdentifier();
 
-        
-        Ii poHcfIi = getPoHcfIi(poOrgId);
+
+        Ii poHcfIi = paServiceUtil.getPoHcfIi(poOrgId);
         siteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         siteDTO.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
         siteDTO.setStudyProtocolIdentifier(spIi);
@@ -1491,23 +1405,23 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(dateOpenedForAccrual,
                     null));
         }
-        
+
         selectedPersTO = new PersonDTO();
         selectedPersTO.setIdentifier(IiConverter.convertToPoPersonIi(
                 personContactWebDTO.getSelectedPersId().toString()));
-             
+
         StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
         ssas.setIdentifier(IiConverter.convertToIi((Long) null));
         ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(recStatus)));
         ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(recStatusDate)));
-        
-        
+
+
         Ii ssIi = IiConverter.convertToStudySiteIi(studySiteIdentifier);
         if (currentAction.equalsIgnoreCase("create")) {
 
-            ssIi = 
-                partSiteService.createStudySiteParticipant(siteDTO, ssas, poHcfIi);      
-        } else {          
+            ssIi =
+                partSiteService.createStudySiteParticipant(siteDTO, ssas, poHcfIi);
+        } else {
            siteDTO.setIdentifier(ssIi);
            partSiteService.updateStudySiteParticipant(siteDTO, ssas);
            clearInvestigatorsForPropTrialSite(ssIi);
@@ -1515,59 +1429,60 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
         Ii investigatorIi = IiConverter.convertToPoPersonIi(
                 personContactWebDTO.getSelectedPersId().toString());
-        addInvestigator(ssIi, investigatorIi, 
-                StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode(), poOrgId);  
+        addInvestigator(ssIi, investigatorIi,
+                StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode(), poOrgId);
     }
-    
-    private void clearInvestigatorsForPropTrialSite(Ii ssIi) 
+
+    private void clearInvestigatorsForPropTrialSite(Ii ssIi)
         throws  PAException {
-        List<StudySiteContactDTO> ssContDtoList 
+        List<StudySiteContactDTO> ssContDtoList
             = sPartContactService.getByStudySite(ssIi);
         for (StudySiteContactDTO item : ssContDtoList) {
             sPartContactService.delete(item.getIdentifier());
         }
     }
-    
+
     private void addInvestigator(Ii ssIi, Ii investigatorIi, String role, String poOrgId) throws PAException {
-        ClinicalResearchStaffDTO crsDTO = getCrsDTO(investigatorIi, poOrgId); 
+        ClinicalResearchStaffDTO crsDTO = paServiceUtil.getCrsDTO(investigatorIi, poOrgId);
         StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(spIi);
-        HealthCareProviderDTO hcpDTO = getHcpDTO(spDTO.getStudyProtocolType().getValue(), investigatorIi, poOrgId);
-        partSiteService.addStudySiteInvestigator(ssIi, crsDTO, hcpDTO, null, 
-                role);  
+        HealthCareProviderDTO hcpDTO = paServiceUtil.getHcpDTO(spDTO.getStudyProtocolType().getValue(),
+                investigatorIi, poOrgId);
+        partSiteService.addStudySiteInvestigator(ssIi, crsDTO, hcpDTO, null,
+                role);
     }
-    
+
     private void addPrimaryContact(Ii ssIi, Ii investigatorIi, String poOrgId, DSet<Tel> list) throws PAException {
-        ClinicalResearchStaffDTO crsDTO = getCrsDTO(investigatorIi, poOrgId); 
+        ClinicalResearchStaffDTO crsDTO = paServiceUtil.getCrsDTO(investigatorIi, poOrgId);
         StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(spIi);
-        HealthCareProviderDTO hcpDTO = getHcpDTO(spDTO.getStudyProtocolType().getValue(), 
-                investigatorIi, poOrgId);      
-        partSiteService.addStudySitePrimaryContact(ssIi, crsDTO, hcpDTO, null, list);  
+        HealthCareProviderDTO hcpDTO = paServiceUtil.getHcpDTO(spDTO.getStudyProtocolType().getValue(),
+                investigatorIi, poOrgId);
+        partSiteService.addStudySitePrimaryContact(ssIi, crsDTO, hcpDTO, null, list);
     }
-    
+
     private void addGenericContact(Ii ssIi, Ii orgContIi, DSet<Tel> list) throws PAException {
-        
+
         OrganizationalContactDTO orgContDTO;
         try {
             orgContDTO = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(orgContIi);
         } catch (NullifiedRoleException e) {
             throw new PAException("Generic Contact is no longer available.", e);
         }
-        partSiteService.addStudySiteGenericContact(ssIi, orgContDTO, true, list);  
+        partSiteService.addStudySiteGenericContact(ssIi, orgContDTO, true, list);
     }
 
     private void enforceBusinessRulesForProprietary() {
         String err = "error.submit.invalidDate";      // validate date and its format
         enforcePartialRulesForProp1(err);
         String strDateOpenedForAccrual = "dateOpenedForAccrual";
-        
+
         String strDateClosedForAccrual = "dateClosedForAccrual";
         enforcePartialRulesForProp2(err, strDateOpenedForAccrual, strDateClosedForAccrual);
         enforcePartialRulesForProp3(strDateOpenedForAccrual, strDateClosedForAccrual);
         enforcePartialRulesForProp4(strDateOpenedForAccrual, strDateClosedForAccrual);
-        
+
 
     }
-    private void enforcePartialRulesForProp2(String err, 
+    private void enforcePartialRulesForProp2(String err,
             String strDateOpenedForAccrual, String strDateClosedForAccrual) {
         if (StringUtils.isNotEmpty(dateOpenedForAccrual)) {
             if (!PAUtil.isValidDate(dateOpenedForAccrual)) {
@@ -1585,7 +1500,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
     }
     private void enforcePartialRulesForProp1(String err) {
-    
+
         if (StringUtils.isEmpty(editOrg.getIdentifier())) {
             addFieldError("editOrg.name", getText("error.orgId.required"));
         }
@@ -1598,17 +1513,17 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (StringUtils.isEmpty(recStatus)) {
             addFieldError("recStatus", getText("error.participatingOrganizations.recruitmentStatus"));
         }
-        
+
         if (!PAUtil.isValidDate(recStatusDate)) {
             addFieldError(REC_STATUS_DATE, getText(err));
         } else if (PAUtil.isDateCurrentOrPast(recStatusDate)) {
                 addFieldError(REC_STATUS_DATE, getText("error.submit.invalidStatusDate"));
         }
-    
-    
+
+
     }
     private void enforcePartialRulesForProp3(String strDateOpenedForAccrual, String strDateClosedForAccrual) {
-        
+
             if (StringUtils.isNotEmpty(dateClosedForAccrual)
                 && StringUtils.isEmpty(dateOpenedForAccrual)) {
                     addFieldError(strDateOpenedForAccrual,
@@ -1623,12 +1538,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                             getText("error.proprietary.dateClosedAccrualBigger"));
                 }
             }
-            
+
     }
-    
+
     private void enforcePartialRulesForProp4(String strDateOpenedForAccrual, String strDateClosedForAccrual) {
-        
-        
+
+
             if (StringUtils.isNotEmpty(recStatus)) {
                 if (RecruitmentStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(recStatus)
                         || RecruitmentStatusCode.NOT_YET_RECRUITING.getCode().equalsIgnoreCase(recStatus)) {
