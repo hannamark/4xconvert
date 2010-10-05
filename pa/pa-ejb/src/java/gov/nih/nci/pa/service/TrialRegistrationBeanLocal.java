@@ -81,6 +81,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
@@ -1130,7 +1131,8 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                 ? "Primary Completion Date Type cannot be null , " : "");
         sb.append(PAUtil.isTsNull(studyProtocolDTO.getStartDate()) ? "Trial Start Date cannot be null , " : "");
         sb.append(PAUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())
-                ? "Primary Completion Datecannot be null , " : "");
+                && studyProtocolDTO.getPrimaryCompletionDate().getNullFlavor() != NullFlavor.UNK
+                ? "Primary Completion Date cannot be null , " : "");
         sb.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
         if (leadOrganizationSiteIdentifierDTO != null) {
             sb.append(PAUtil.isStNull(leadOrganizationSiteIdentifierDTO.getLocalStudyProtocolIdentifier())
@@ -1285,7 +1287,8 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                 ? "Primary Completion Date Type cannot be null , " : "");
         sb.append(PAUtil.isTsNull(studyProtocolDTO.getStartDate()) ? "Trial Start Date cannot be null , " : "");
         sb.append(PAUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())
-                ? "Primary Completion Datecannot be null , " : "");
+                && studyProtocolDTO.getPrimaryCompletionDate().getNullFlavor() != NullFlavor.UNK
+                ? "Primary Completion Date cannot be null , " : "");
         sb.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
 
         if (overallStatusDTO != null) {
@@ -1732,13 +1735,15 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         studyProtocolIi = updateStudyProtocol(studyProtocolDTO, toStudyProtocolIi, operation);
 
         // list of study identifiers like NCT,DCP, CTEP
-        for (StudySiteDTO studyIdentifierDTO : studyIdentifierDTOs) {
-            if (studyIdentifierDTO != null && !PAUtil.isStNull(studyIdentifierDTO.getLocalStudyProtocolIdentifier())
-                    && PAUtil.isIiNotNull(studyIdentifierDTO.getResearchOrganizationIi())) {
-                studyIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
-                studyIdentifierDTO.setFunctionalCode(CdConverter
-                        .convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-                paServiceUtils.manageStudyIdentifiers(studyIdentifierDTO);
+        if (studyIdentifierDTOs != null) {
+            for (StudySiteDTO studyIdentifierDTO : studyIdentifierDTOs) {
+                if (studyIdentifierDTO != null && !PAUtil.isStNull(studyIdentifierDTO.getLocalStudyProtocolIdentifier())
+                        && PAUtil.isIiNotNull(studyIdentifierDTO.getResearchOrganizationIi())) {
+                    studyIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
+                    studyIdentifierDTO.setFunctionalCode(CdConverter
+                            .convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+                    paServiceUtils.manageStudyIdentifiers(studyIdentifierDTO);
+                }
             }
         }
         paServiceUtils.createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null), studyProtocolIi);

@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.AbstractStudyProtocol;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
@@ -144,8 +146,12 @@ public class AbstractStudyProtocolConverter {
         abstractStudyProtocolDTO.setPhaseCode(CdConverter.convertToCd(abstractStudyProtocol.getPhaseCode()));
         abstractStudyProtocolDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(abstractStudyProtocol
                 .getPhaseAdditionalQualifierCode()));
-        abstractStudyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(abstractStudyProtocol
-                .getPrimaryCompletionDate()));
+        //Defaulting null inputs to NullFlavor.UNK for PO-2429 to support optional primary completion dates.
+        Ts primaryCompletionDate = TsConverter.convertToTs(abstractStudyProtocol.getPrimaryCompletionDate());
+        if (abstractStudyProtocol.getPrimaryCompletionDate() == null) {
+            primaryCompletionDate.setNullFlavor(NullFlavor.UNK);
+        }
+        abstractStudyProtocolDTO.setPrimaryCompletionDate(primaryCompletionDate);
         abstractStudyProtocolDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(abstractStudyProtocol
                 .getPrimaryCompletionDateTypeCode()));
         abstractStudyProtocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(abstractStudyProtocol

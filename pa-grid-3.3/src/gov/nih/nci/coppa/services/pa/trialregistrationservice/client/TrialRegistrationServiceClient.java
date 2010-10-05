@@ -121,7 +121,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         TS pastDate = new TS();
         pastDate.setValue("20090922090000.0000-0500");
         TS futureDate = new TS();
-        futureDate.setValue("20100922090000.0000-0500");
+        futureDate.setValue("20120922090000.0000-0500");
         ST dummyString = new ST();
         dummyString.setValue("ctgov is set to false 2nd via grid 3.3");
 
@@ -197,7 +197,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         summaryForOrganization.setIdentifier(organizationIi);
         StudyResourcing summaryForStudyResourcing = new StudyResourcing();
         CD typeCode = new CD();
-        typeCode.setCode(SummaryFourFundingCategoryCode.INDUSTRIAL.getCode());
+        typeCode.setCode(SummaryFourFundingCategoryCode.INSTITUTIONAL.getCode());
         summaryForStudyResourcing.setTypeCode(typeCode);
         Id responsiblePartyContact = new Id();
 
@@ -226,7 +226,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         TS pastDate = new TS();
         pastDate.setValue("20090922090000.0000-0500");
         TS futureDate = new TS();
-        futureDate.setValue("20100922090000.0000-0500");
+        futureDate.setValue("20120922090000.0000-0500");
         ST dummyString = new ST();
         dummyString.setValue("dummyString");
 
@@ -241,13 +241,20 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setStatusDate(pastDate);
         studyProtocol.setPrimaryCompletionDate(futureDate);
         studyProtocol.setPrimaryCompletionDateTypeCode(ISOUtils.buildCD("Anticipated"));
+        studyProtocol.setPrimaryPurposeCode(ISOUtils.buildCD("Treatment"));
         studyProtocol.setOfficialTitle(dummyString);
+
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
-        studyProtocol.setUserLastCreated(ISOUtils.buildST("namiruddin@scenpro.com"));
+        studyProtocol.setUserLastCreated(ISOUtils.buildST("aevansel@5amsolutions.com"));
+
+        BL ctGovInd = new BL();
+        ctGovInd.setValue(Boolean.FALSE);
+        studyProtocol.setCtgovXmlRequiredIndicator(ctGovInd);
 
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
+        studyOverallStatus.setStudyProtocol(studyProtocolII);
         studyOverallStatus.setStatusDate(pastDate);
         CD studyOverallStatusCode = new CD();
         studyOverallStatusCode.setCode(StudyStatusCode.ACTIVE.getCode());
@@ -281,6 +288,9 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         Organization summaryForOrganization = new Organization();
         summaryForOrganization.setIdentifier(organizationIi);
         StudyResourcing summaryForStudyResourcing = new StudyResourcing();
+        CD typeCode = new CD();
+        typeCode.setCode(SummaryFourFundingCategoryCode.INSTITUTIONAL.getCode());
+        summaryForStudyResourcing.setTypeCode(typeCode);
         Id responsiblePartyContact = new Id();
 
         StudyRegulatoryAuthority studyRegulatoryAuthority = new StudyRegulatoryAuthority();
@@ -294,18 +304,20 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
                 studySiteAccrualStatuses, studySites);
     }
 
-    private static void amendInterventionalStudyProtocol(TrialRegistrationServiceClient client)  throws RemoteException {
+    private static void amendInterventionalStudyProtocol(TrialRegistrationServiceClient client)  throws RemoteException, MalformedURIException {
         TS pastDate = new TS();
-        pastDate.setValue("20090922090000.0000-0500");
+        pastDate.setValue("20100922090000.0000-0500");
         TS futureDate = new TS();
         futureDate.setValue("20100922090000.0000-0500");
+        TS amendmentDate = new TS();
+        amendmentDate.setValue("20101005090000.0000-0500");
         ST dummyString = new ST();
         dummyString.setValue("dummyString");
 
         II studyProtocolII = new II();
         studyProtocolII.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         studyProtocolII.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        studyProtocolII.setExtension("180522");
+        studyProtocolII.setExtension("108005");
         InterventionalStudyProtocol studyProtocol = new InterventionalStudyProtocol();
         studyProtocol.setIdentifier(studyProtocolII);
         studyProtocol.setStartDate(pastDate);
@@ -314,25 +326,42 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setPrimaryCompletionDate(futureDate);
         studyProtocol.setPrimaryCompletionDateTypeCode(ISOUtils.buildCD("Anticipated"));
         studyProtocol.setOfficialTitle(dummyString);
+        studyProtocol.setAmendmentDate(amendmentDate);
+
+        BL fdaRegInd = new BL();
+        fdaRegInd.setValue(Boolean.FALSE);
+        studyProtocol.setFdaRegulatedIndicator(fdaRegInd);
+
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
-        studyProtocol.setUserLastCreated(ISOUtils.buildST("namiruddin@scenpro.com"));
+        studyProtocol.setUserLastCreated(ISOUtils.buildST("aevansel@5amsolutions.com"));
 
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStatusDate(pastDate);
         CD studyOverallStatusCode = new CD();
-        studyOverallStatusCode.setCode(StudyStatusCode.ACTIVE.getCode());
+        studyOverallStatusCode.setCode(StudyStatusCode.CLOSED_TO_ACCRUAL.getCode());
         studyOverallStatus.setStatusCode(studyOverallStatusCode);
 
         StudyIndlde[] studyIndlde = new StudyIndlde[0];
         StudyResourcing[] studyResourcing = new StudyResourcing[0];
 
         Document d = new Document();
-        d.setFileName(ISOUtils.buildST("empty.doc"));
-        d.setTypeCode(ISOUtils.buildCD(DocumentTypeCode.OTHER.getCode()));
-        d.setText(ISOUtils.buildED("dummy ed".getBytes()));
-        Document[] document = new Document[] {d};
+        d.setFileName(ISOUtils.buildST("protocol.doc"));
+        d.setTypeCode(ISOUtils.buildCD(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode()));
+        d.setText(ISOUtils.buildED("Protocol Document".getBytes()));
+
+        Document d1 = new Document();
+        d1.setFileName(ISOUtils.buildST("irbapproval.doc"));
+        d1.setTypeCode(ISOUtils.buildCD(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode()));
+        d1.setText(ISOUtils.buildED("IRB Approval".getBytes()));
+
+        Document d2 = new Document();
+        d2.setFileName(ISOUtils.buildST("changememo.doc"));
+        d2.setTypeCode(ISOUtils.buildCD(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode()));
+        d2.setText(ISOUtils.buildED("Change Memo".getBytes()));
+
+        Document[] document = new Document[] {d, d1, d2};
 
         Organization leadOrganization = new Organization();
         leadOrganization.setIdentifier(organizationIi);
@@ -361,12 +390,24 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         Organization summaryForOrganization = new Organization();
         summaryForOrganization.setIdentifier(organizationIi);
         StudyResourcing summaryForStudyResourcing = new StudyResourcing();
+        CD typeCode = new CD();
+        typeCode.setCode(SummaryFourFundingCategoryCode.INSTITUTIONAL.getCode());
+        summaryForStudyResourcing.setTypeCode(typeCode);
 
         Id responsiblePartyContact = new Id();
 
         StudyRegulatoryAuthority studyRegulatoryAuthority = new StudyRegulatoryAuthority();
+        RegulatoryAuthorityServiceClient regAuthClient =
+            new RegulatoryAuthorityServiceClient("https://localhost:39743/wsrf/services/cagrid/RegulatoryAuthorityService");
+        LimitOffset limit = new LimitOffset();
+        limit.setLimit(10);
+        limit.setOffset(0);
+        RegulatoryAuthority regAuth = new RegulatoryAuthority();
+        regAuth.setAuthorityName(
+                STTransformer.INSTANCE.toXml(StConverter.convertToSt("Ministry of Public Health")));
+        RegulatoryAuthority[] results = regAuthClient.search(regAuth, limit);
         II regAuthId = new II();
-        regAuthId.setExtension("0");
+        regAuthId.setExtension(results[0].getIdentifier().getExtension());
         studyRegulatoryAuthority.setRegulatoryAuthorityIdentifier(regAuthId);
 
         client.amendInterventionalStudyProtocol(studyProtocol, studyOverallStatus, studyIndlde, studyResourcing,

@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -131,6 +132,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -168,9 +170,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         this.ejbContext = ctx;
     }
 
-    
+
     private StudyProtocolDTO getStudyProtocolById(Long id) throws PAException {
-        
+
         Session session = HibernateUtil.getCurrentSession();
         StudyProtocol studyProtocol = (InterventionalStudyProtocol) session.get(InterventionalStudyProtocol.class,
                                                                                 id);
@@ -249,7 +251,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         if (ispDTO.getBlindedRoleCode() != null && ispDTO.getBlindedRoleCode().getItem() != null) {
             totBlindCodes = ispDTO.getBlindedRoleCode().getItem().size();
         }
-        checkBlindingSchemaCode(ispDTO, totBlindCodes); 
+        checkBlindingSchemaCode(ispDTO, totBlindCodes);
         InterventionalStudyProtocolDTO  ispRetDTO = null;
         Session session = HibernateUtil.getCurrentSession();
         InterventionalStudyProtocol isp = (InterventionalStudyProtocol)
@@ -262,8 +264,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         return ispRetDTO;
 
     }
-    
-    private void checkBlindingSchemaCode(InterventionalStudyProtocolDTO ispDTO, int totBlindCodes) 
+
+    private void checkBlindingSchemaCode(InterventionalStudyProtocolDTO ispDTO, int totBlindCodes)
     throws PAException {
         if (ispDTO.getBlindingSchemaCode() != null) {
             if (BlindingSchemaCode.OPEN.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
@@ -438,7 +440,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             }
             StudyProtocol newBo = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
             if (!isProprietaryTrial
-                    && (!oldBo.getPrimaryCompletionDate().equals(newBo.getPrimaryCompletionDate())
+                    && (!ObjectUtils.equals(oldBo.getPrimaryCompletionDate(), newBo.getPrimaryCompletionDate())
                     || !oldBo.getPrimaryCompletionDateTypeCode().equals(newBo.getPrimaryCompletionDateTypeCode())
                     || !oldBo.getStartDate().equals(newBo.getStartDate())
                     || !oldBo.getStartDateTypeCode().equals(newBo.getStartDateTypeCode()))) {
@@ -473,6 +475,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     private void enForceDateRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
         Timestamp sDate = TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate());
         Timestamp cDate = TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate());
+        boolean unknownPrimaryCompletionDate = studyProtocolDTO.getPrimaryCompletionDate() != null
+            && studyProtocolDTO.getPrimaryCompletionDate().getNullFlavor() == NullFlavor.UNK;
         ActualAnticipatedTypeCode sCode =  null;
         ActualAnticipatedTypeCode cCode = null;
         if (studyProtocolDTO.getStartDateTypeCode() != null) {
@@ -487,7 +491,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         if (sDate == null) {
             throw new PAException("Start date must be set.  ");
         }
-        if (cDate == null) {
+        if (cDate == null && !unknownPrimaryCompletionDate) {
             throw new PAException("Completion date must be set.  ");
         }
         if (sCode == null) {
@@ -499,16 +503,19 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         if (sCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(sDate)) {
             throw new PAException("Actual start dates cannot be in the future.  ");
         }
-        if (cCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(cDate)) {
+        if (!cCode.equals(ActualAnticipatedTypeCode.ANTICIPATED) && unknownPrimaryCompletionDate) {
+            throw new PAException("Unknown primary completion dates must be marked as Anticipated. ");
+        }
+        if (cCode.equals(ActualAnticipatedTypeCode.ACTUAL) && !unknownPrimaryCompletionDate && now.before(cDate)) {
             throw new PAException("Actual primary completion dates cannot be in the future.  ");
         }
-        if (sCode.equals(ActualAnticipatedTypeCode.ANTICIPATED) && now.after(sDate)) {
+        if (sCode.equals(ActualAnticipatedTypeCode.ANTICIPATED)  && !unknownPrimaryCompletionDate && now.after(sDate)) {
             throw new PAException("Anticipated start dates must be in the future.  ");
         }
-        if (cCode.equals(ActualAnticipatedTypeCode.ANTICIPATED) && now.after(cDate)) {
+        if (cCode.equals(ActualAnticipatedTypeCode.ANTICIPATED) && !unknownPrimaryCompletionDate && now.after(cDate)) {
             throw new PAException("Anticipated primary completion dates must be in the future.  ");
         }
-        if (cDate.before(sDate)) {
+        if (!unknownPrimaryCompletionDate && cDate.before(sDate)) {
             throw new PAException("Primary completion date must be >= start date.");
         }
     }
@@ -582,7 +589,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
         return studyProtocolDTOList;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -612,12 +619,12 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
         StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, newSp);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public StudyProtocolDTO getStudyProtocol(Ii studyProtocolIi) 
+    public StudyProtocolDTO getStudyProtocol(Ii studyProtocolIi)
         throws PAException {
         StudyProtocolDTO studyProtocolDTO = null;
         if (PAUtil.isIiNull(studyProtocolIi)) {
@@ -634,18 +641,18 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                 try {
                     spList = search(spDTO, limit);
                 } catch (TooManyResultsException e) {
-                    throw new PAException("found too many trials with this identifier " 
+                    throw new PAException("found too many trials with this identifier "
                             + studyProtocolIi.getExtension() + " when only 1 expected.", e);
                 }
                 if (spList.isEmpty() || spList.size() > 1) {
-                    throw new PAException("could not find unique trial with this identifier " 
+                    throw new PAException("could not find unique trial with this identifier "
                             + studyProtocolIi.getExtension());
                 }
                 studyProtocolDTO = spList.get(0);
         } else {
                 studyProtocolDTO = getStudyProtocolById(Long.valueOf(studyProtocolIi.getExtension()));
-        } 
-        
+        }
+
         return studyProtocolDTO;
     }
 

@@ -80,6 +80,9 @@ package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -106,7 +109,6 @@ public class StudyProtocolConverterTest  {
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
-
     }
 
     /**
@@ -115,29 +117,31 @@ public class StudyProtocolConverterTest  {
     @Test
     public void convertFromDomainToDTOTest() {
         Session session  = HibernateUtil.getCurrentSession();
-
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
         session.save(sp);
-        //TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp);
         assertStudyProtocol(sp , spDTO);
 
-
+        sp.setPrimaryCompletionDate(null);
+        spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp, new StudyProtocolDTO());
+        assertNotNull(spDTO.getPrimaryCompletionDate());
+        assertEquals(NullFlavor.UNK, spDTO.getPrimaryCompletionDate().getNullFlavor());
     }
 
     @Test
     public void convertFromDomainToDTOTest1() {
         Session session  = HibernateUtil.getCurrentSession();
-
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
         session.save(sp);
-        //TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp , new StudyProtocolDTO());
         assertStudyProtocol(sp , spDTO);
 
-
+        sp.setPrimaryCompletionDate(null);
+        spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp, new StudyProtocolDTO());
+        assertNotNull(spDTO.getPrimaryCompletionDate());
+        assertEquals(NullFlavor.UNK, spDTO.getPrimaryCompletionDate().getNullFlavor());
     }
 
     /**
@@ -147,22 +151,26 @@ public class StudyProtocolConverterTest  {
     public void convertFromDtoToDomainTest() {
         Session session  = HibernateUtil.getCurrentSession();
         StudyProtocol create = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
-        //TestSchema.addUpdObject(create);
         session.save(create);
         assertNotNull(create.getId());
+
         //convert to DTO
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(create);
         AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
         StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO);
         assertStudyProtocol(sp , spDTO);
 
+        Ts unknownTs = new Ts();
+        unknownTs.setNullFlavor(NullFlavor.UNK);
+        spDTO.setPrimaryCompletionDate(unknownTs);
+        sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO);
+        assertNull(sp.getPrimaryCompletionDate());
     }
 
     @Test
     public void convertFromDtoToDomainTest1() {
         Session session  = HibernateUtil.getCurrentSession();
         StudyProtocol create = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
-        //TestSchema.addUpdObject(create);
         session.save(create);
         assertNotNull(create.getId());
         //convert to DTO
@@ -171,6 +179,11 @@ public class StudyProtocolConverterTest  {
         StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO, new StudyProtocol());
         assertStudyProtocol(sp , spDTO);
 
+        Ts unknownTs = new Ts();
+        unknownTs.setNullFlavor(NullFlavor.UNK);
+        spDTO.setPrimaryCompletionDate(unknownTs);
+        sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO, new StudyProtocol());
+        assertNull(sp.getPrimaryCompletionDate());
     }
 
     /**
@@ -178,10 +191,9 @@ public class StudyProtocolConverterTest  {
      * @param sp sp
      * @param spDTO spDTO
      */
-    public void assertStudyProtocol(StudyProtocol sp , StudyProtocolDTO spDTO) {
+    public void assertStudyProtocol(StudyProtocol sp, StudyProtocolDTO spDTO) {
         assertEquals(sp.getAcronym(), spDTO.getAcronym().getValue());
         assertEquals(sp.getAccrualReportingMethodCode().getCode(), spDTO.getAccrualReportingMethodCode().getCode());
-        // assertEquals(sp.getStudySecondaryIdentifiers().get(0).getIdentifierText() );
         assertEquals(sp.getDataMonitoringCommitteeAppointedIndicator(),
                 spDTO.getDataMonitoringCommitteeAppointedIndicator().getValue());
         assertEquals(sp.getDelayedpostingIndicator(), spDTO.getDelayedpostingIndicator().getValue());
@@ -207,6 +219,5 @@ public class StudyProtocolConverterTest  {
         assertEquals(sp.getStartDateTypeCode().getCode() , spDTO.getStartDateTypeCode().getCode());
         assertEquals(sp.getAmendmentReasonCode().getCode() ,spDTO.getAmendmentReasonCode().getCode());
         assertEquals(sp.getStatusCode().getCode() ,spDTO.getStatusCode().getCode());
-
     }
 }

@@ -157,7 +157,7 @@ public class MailManagerServiceTest {
 
     private static String email1 = "example1@example.com";
     private static String email2 = "example2@example.com";
-    private static String smtpHost = "mail.smtp.host";
+    private static String smtpHost = "";
     private static String fromAddress = "fromAddress@example.com";
 
     @Before
