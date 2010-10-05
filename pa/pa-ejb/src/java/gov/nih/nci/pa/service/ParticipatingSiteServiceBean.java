@@ -100,6 +100,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
-@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
-public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal implements ParticipatingSiteServiceRemote {
+@RolesAllowed({"gridClient", "Abstractor" })
+public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal 
+implements ParticipatingSiteServiceRemote {
 }

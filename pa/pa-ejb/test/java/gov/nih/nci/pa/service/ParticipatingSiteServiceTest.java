@@ -67,6 +67,8 @@ import org.junit.Test;
 
 public class ParticipatingSiteServiceTest {
 
+   
+    
     private final ParticipatingSiteBeanLocal bean = new ParticipatingSiteBeanLocal();
     ParticipatingSiteServiceLocal localBean = null;
     StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
@@ -85,6 +87,7 @@ public class ParticipatingSiteServiceTest {
         bean.setStudySiteContactService(studySiteContactService);
         bean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
         bean.setOcsr(ocsr);
+        bean.setSessionContext(new MockStatelessContext());
         localBean = bean;
         HibernateUtil.setTestHelper(testHelper);
         Session session = HibernateUtil.getCurrentSession();

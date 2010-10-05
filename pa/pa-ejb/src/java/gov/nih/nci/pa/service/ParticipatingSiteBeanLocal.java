@@ -86,6 +86,7 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -95,11 +96,13 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
@@ -113,11 +116,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author mshestopalov
@@ -126,6 +132,8 @@ import javax.interceptor.Interceptors;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
+@SecurityDomain("pa")
+@RolesAllowed({"client", "Abstractor" })
 public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
     implements ParticipatingSiteServiceLocal {
     private SessionContext ejbContext;
@@ -133,6 +141,22 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
     @Resource
     void setSessionContext(SessionContext ctx) {
         this.ejbContext = ctx;
+    }
+    
+    private void checkValidUser(Long studyProtocolId) throws PAException {
+        if (this.ejbContext.isCallerInRole("Abstractor") 
+                || this.ejbContext.isCallerInRole("client")) {
+            return;
+        }
+        
+        CSMUserUtil userService = CSMUserService.getInstance();
+        User user = userService.lookupUser(this.ejbContext);
+        RegistryUser userId = PaRegistry.getRegisterUserService().getUser(user.getLoginName());
+        if (!PaRegistry.getRegisterUserService().isTrialOwner(userId.getId(), studyProtocolId)) {
+            throw new PAException("User " + user.getLoginName() 
+                    + "is not a trial owner for trial id " 
+                    + studyProtocolId);
+        }
     }
 
     /**
@@ -265,6 +289,8 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
             // check business rules based on trial type.
             StudyProtocolDTO spDTO =
                 getStudyProtocolService().getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier()); 
+            checkValidUser(Long.valueOf(spDTO.getIdentifier().getExtension()));
+             
             studySiteDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
             if (spDTO.getProprietaryTrialIndicator().getValue().booleanValue()) {
                 enforceBusinessRulesForProprietary(spDTO, studySiteDTO, currentStatusDTO);
@@ -292,6 +318,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
         try {
             // check business rules based on trial type.
             StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteDTO.getIdentifier());
+            checkValidUser(Long.valueOf(currentSite.getStudyProtocolIdentifier().getExtension()));
             studySiteDTO.setStudyProtocolIdentifier(currentSite.getStudyProtocolIdentifier());
             studySiteDTO.setHealthcareFacilityIi(currentSite.getHealthcareFacilityIi());
             studySiteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
