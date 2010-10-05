@@ -80,50 +80,86 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
 
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudyProtocol;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteAccrualStatus;
-import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformerTest;
-import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLTSTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 
 /**
+ * Transform StudySite for Creating Non-Proprietary Study Site as part of the Study Site Participation Management
+ * Service.
+ * 
  * @author moweis
- *
+ * 
  */
-public class StudySiteAccrualStatusParticipationSiteManagementTransformerTest extends
-        AbstractTransformerTestBase<StudySiteAccrualStatusParticipationSiteManagementTransformer, StudySiteAccrualStatus, StudySiteAccrualStatusDTO> {
+public final class StudySiteManagementTransformer extends AbstractTransformer<StudySite, StudySiteDTO>
+        implements Transformer<StudySite, StudySiteDTO> {
 
-    @Override
-    public StudySiteAccrualStatusDTO makeDtoSimple() {
-        StudySiteAccrualStatusDTO result = new StudySiteAccrualStatusDTO();
-        result.setIdentifier(new IITransformerTest().makeDtoSimple());
-        result.setStatusCode(new CDTransformerTest().makeDtoSimple());
-        result.setStatusDate(new TSTransformerTest().makeDtoSimple());
-        result.setStudySiteIi(new IITransformerTest().makeDtoSimple());
+    /**
+     * Public singleton.
+     */
+    public static final StudySiteManagementTransformer INSTANCE = new StudySiteManagementTransformer();
+
+    private StudySiteManagementTransformer() {
+    }
+
+    /**
+     * Convert to dto object.
+     * 
+     * @param input xml
+     * @return StudySiteDTO dto
+     * @throws DtoTransformException exception
+     */
+    public StudySiteDTO toDto(StudySite input) throws DtoTransformException {
+        if (input == null) {
+            return null;
+        }
+        StudySiteDTO result = new StudySiteDTO();
+        result.setStudyProtocolIdentifier(IITransformer.INSTANCE.toDto(input.getStudyProtocol().getIdentifier()));
+        result.setAccrualDateRange(IVLTSTransformer.INSTANCE.toDto(input.getAccrualDateRange()));
+        result.setLocalStudyProtocolIdentifier(STTransformer.INSTANCE.toDto(input.getLocalStudyProtocolIdentifier()));
+        result.setProgramCodeText(STTransformer.INSTANCE.toDto(input.getProgramCodeText()));
+        result.setTargetAccrualNumber(INTTransformer.INSTANCE.toDto(input.getTargetAccrualNumber()));
+
         return result;
     }
 
-    @Override
-    public StudySiteAccrualStatus makeXmlSimple() {
-        StudySiteAccrualStatus result = new StudySiteAccrualStatus();
-        result.setStatusCode(new CDTransformerTest().makeXmlSimple());
-        result.setStatusDate(new TSTransformerTest().makeXmlSimple());
+    /**
+     * Convert to xml object.
+     * 
+     * @param input dto
+     * @return StudySite xml object
+     * @throws DtoTransformException exception
+     */
+    public StudySite toXml(StudySiteDTO input) throws DtoTransformException {
+        if (input == null) {
+            return null;
+        }
+        StudySite result = new StudySite();
+        StudyProtocol studyProtocol = new StudyProtocol();
+        studyProtocol.setIdentifier(IITransformer.INSTANCE.toXml(input.getStudyProtocolIdentifier()));
+        result.setStudyProtocol(studyProtocol);
+        result.setAccrualDateRange(IVLTSTransformer.INSTANCE.toXml(input.getAccrualDateRange()));
+        result.setLocalStudyProtocolIdentifier(STTransformer.INSTANCE.toXml(input.getLocalStudyProtocolIdentifier()));
+        result.setProgramCodeText(STTransformer.INSTANCE.toXml(input.getProgramCodeText()));
+        result.setTargetAccrualNumber(INTTransformer.INSTANCE.toXml(input.getTargetAccrualNumber()));
         return result;
     }
 
-    @Override
-    public void verifyDtoSimple(StudySiteAccrualStatusDTO x) {
-        new CDTransformerTest().verifyDtoSimple(x.getStatusCode());
-        new TSTransformerTest().verifyDtoSimple(x.getStatusDate());
+    /**
+     * {@inheritDoc}
+     */
+    public StudySite[] createXmlArray(int arg0) throws DtoTransformException {
+        return new StudySite[arg0];
     }
-
-    @Override
-    public void verifyXmlSimple(StudySiteAccrualStatus x) {
-        new CDTransformerTest().verifyXmlSimple(x.getStatusCode());
-        new TSTransformerTest().verifyXmlSimple(x.getStatusDate());
-    }    
-
 }

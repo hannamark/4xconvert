@@ -80,52 +80,45 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.HealthCareFacility;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.OrganizationalContact;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTELTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.ENTransformer.ENONTransformer;
-import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 /**
- * Transform between HealthCareFacility and HealthCareFacilityDTO.
+ * Transform between OrganizationalContact and OrganizationalContactDTO.
  * 
  * @author moweis
  * 
  */
-public final class HealthCareFacilityParticipationSiteManagementTransformer extends
-        AbstractTransformer<HealthCareFacility, HealthCareFacilityDTO> implements
-        Transformer<HealthCareFacility, HealthCareFacilityDTO> {
+public final class OrganizationalContactViewTransformer extends
+        AbstractTransformer<OrganizationalContact, OrganizationalContactDTO> implements Transformer<OrganizationalContact, OrganizationalContactDTO> {
 
     /**
      * Public singleton.
      */
-    public static final HealthCareFacilityParticipationSiteManagementTransformer INSTANCE = new HealthCareFacilityParticipationSiteManagementTransformer();
+    public static final OrganizationalContactViewTransformer INSTANCE = new OrganizationalContactViewTransformer();
 
-    private HealthCareFacilityParticipationSiteManagementTransformer() {
+    private OrganizationalContactViewTransformer() {
     }
 
     /**
      * Convert to dto object.
      * 
      * @param input xml
-     * @return HealthCareFacilityDTO dto
+     * @return OrganizationalContactDTO dto
      * @throws DtoTransformException exception
      */
-    public HealthCareFacilityDTO toDto(HealthCareFacility input) throws DtoTransformException {
+    public OrganizationalContactDTO toDto(OrganizationalContact input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
-        HealthCareFacilityDTO result = new HealthCareFacilityDTO();
+        OrganizationalContactDTO result = new OrganizationalContactDTO();
         result.setIdentifier(DSETIITransformer.INSTANCE.toDto(input.getIdentifier()));
-        result.setName(ENONTransformer.INSTANCE.toDto(input.getName()));
-        result.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
-        result.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
         return result;
     }
 
@@ -133,25 +126,22 @@ public final class HealthCareFacilityParticipationSiteManagementTransformer exte
      * Convert to xml object.
      * 
      * @param input dto
-     * @return HealthCareFacility xml object
+     * @return OrganizationalContact xml object
      * @throws DtoTransformException exception
      */
-    public HealthCareFacility toXml(HealthCareFacilityDTO input) throws DtoTransformException {
+    public OrganizationalContact toXml(OrganizationalContactDTO input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
-        HealthCareFacility result = new HealthCareFacility();
+        OrganizationalContact result = new OrganizationalContact();
         result.setIdentifier(DSETIITransformer.INSTANCE.toXml(input.getIdentifier()));
-        result.setName(ENONTransformer.INSTANCE.toXml(input.getName()));
-        result.setPostalAddress(DSETADTransformer.INSTANCE.toXml(input.getPostalAddress()));
-        result.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public HealthCareFacility[] createXmlArray(int arg0) throws DtoTransformException {
-        return new HealthCareFacility[arg0];
+    public OrganizationalContact[] createXmlArray(int arg0) throws DtoTransformException {
+        return new OrganizationalContact[arg0];
     }
 }

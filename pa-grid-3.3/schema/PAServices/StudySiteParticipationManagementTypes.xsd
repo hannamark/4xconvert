@@ -9,6 +9,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="organizationRole" type="HealthCareFacility" />
+                <xs:element name="studyProtocol" type="StudyProtocol" />
                 <xs:element name="localStudyProtocolIdentifier" type="ISO:ST" />
                 <xs:element name="accrualStatus" type="StudySiteAccrualStatus" />
                 <xs:element name="studySiteContacts" type="StudySiteContact" minOccurs="0" maxOccurs="unbounded" />
@@ -19,6 +20,12 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:complexType name="StudyProtocol">
+        <xs:sequence>
+            <xs:element name="identifier" type="ISO:II" />
+        </xs:sequence>
+    </xs:complexType>
+    
     <xs:complexType name="StudySiteAccrualStatus">
         <xs:sequence>
             <xs:element name="statusCode" type="ISO:CD" />
@@ -89,6 +96,7 @@
 
     <xs:complexType name="Person">
         <xs:sequence>
+            <xs:element name="identifier" type="ISO:II" />
             <xs:element name="name" type="ISO:EN.PN" />
             <xs:element name="postalAddress" type="ISO:AD" />
             <xs:element name="telecomAddress" type="ISO:DSET_TEL" />
@@ -107,6 +115,7 @@
 
     <xs:complexType name="Organization">
         <xs:sequence>
+            <xs:element name="identifier" type="ISO:II" />
             <xs:element name="name" type="ISO:EN.ON" />
             <xs:element name="postalAddress" type="ISO:AD" />
             <xs:element name="telecomAddress" type="ISO:DSET_TEL" />

@@ -80,7 +80,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
 
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.Person;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
@@ -88,6 +88,7 @@ import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.ADTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTELTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.ENTransformer.ENPNTransformer;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -97,16 +98,16 @@ import gov.nih.nci.services.person.PersonDTO;
  * @author moweis
  * 
  */
-public final class PersonParticipationSiteManagementTransformer extends
+public final class PersonManagementTransformer extends
         AbstractTransformer<Person, PersonDTO> implements
         Transformer<Person, PersonDTO> {
 
     /**
      * Public singleton.
      */
-    public static final PersonParticipationSiteManagementTransformer INSTANCE = new PersonParticipationSiteManagementTransformer();
+    public static final PersonManagementTransformer INSTANCE = new PersonManagementTransformer();
 
-    private PersonParticipationSiteManagementTransformer() {
+    private PersonManagementTransformer() {
     }
 
     /**
@@ -121,6 +122,7 @@ public final class PersonParticipationSiteManagementTransformer extends
             return null;
         }
         PersonDTO result = new PersonDTO();
+        result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
         result.setName(ENPNTransformer.INSTANCE.toDto(input.getName()));
         result.setPostalAddress(ADTransformer.INSTANCE.toDto(input.getPostalAddress()));
         result.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
@@ -139,6 +141,7 @@ public final class PersonParticipationSiteManagementTransformer extends
             return null;
         }
         Person result = new Person();
+        result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));        
         result.setName(ENPNTransformer.INSTANCE.toXml(input.getName()));
         result.setPostalAddress(ADTransformer.INSTANCE.toXml(input.getPostalAddress()));
         result.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));

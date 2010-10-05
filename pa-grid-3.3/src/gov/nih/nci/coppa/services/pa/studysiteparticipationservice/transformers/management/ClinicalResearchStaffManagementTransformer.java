@@ -80,53 +80,50 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.OrganizationalContact;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.ClinicalResearchStaff;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTELTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
-import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 
 /**
- * Transform between OrganizationalContact and OrganizationalContactDTO.
+ * Transform between ClinicalResearchStaff and ClinicalResearchStaffDTO.
  * 
  * @author moweis
  * 
  */
-public final class OrganizationalContactParticipationSiteManagementTransformer extends
-        AbstractTransformer<OrganizationalContact, OrganizationalContactDTO> implements Transformer<OrganizationalContact, OrganizationalContactDTO> {
+public final class ClinicalResearchStaffManagementTransformer extends
+        AbstractTransformer<ClinicalResearchStaff, ClinicalResearchStaffDTO> implements
+        Transformer<ClinicalResearchStaff, ClinicalResearchStaffDTO> {
 
     /**
      * Public singleton.
      */
-    public static final OrganizationalContactParticipationSiteManagementTransformer INSTANCE = new OrganizationalContactParticipationSiteManagementTransformer();
+    public static final ClinicalResearchStaffManagementTransformer INSTANCE = new ClinicalResearchStaffManagementTransformer();
 
-    private OrganizationalContactParticipationSiteManagementTransformer() {
+    private ClinicalResearchStaffManagementTransformer() {
     }
 
     /**
      * Convert to dto object.
      * 
      * @param input xml
-     * @return OrganizationalContactDTO dto
+     * @return ClinicalResearchStaffDTO dto
      * @throws DtoTransformException exception
      */
-    public OrganizationalContactDTO toDto(OrganizationalContact input) throws DtoTransformException {
+    public ClinicalResearchStaffDTO toDto(ClinicalResearchStaff input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
-        OrganizationalContactDTO result = new OrganizationalContactDTO();
+        ClinicalResearchStaffDTO result = new ClinicalResearchStaffDTO();
         result.setIdentifier(DSETIITransformer.INSTANCE.toDto(input.getIdentifier()));
         result.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
         result.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
-        result.setTitle(STTransformer.INSTANCE.toDto(input.getTitle()));
-        result.setTypeCode(CDTransformer.INSTANCE.toDto(input.getTypeCode()));
         return result;
     }
 
@@ -134,26 +131,24 @@ public final class OrganizationalContactParticipationSiteManagementTransformer e
      * Convert to xml object.
      * 
      * @param input dto
-     * @return OrganizationalContact xml object
+     * @return ClinicalResearchStaff xml object
      * @throws DtoTransformException exception
      */
-    public OrganizationalContact toXml(OrganizationalContactDTO input) throws DtoTransformException {
+    public ClinicalResearchStaff toXml(ClinicalResearchStaffDTO input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
-        OrganizationalContact result = new OrganizationalContact();
+        ClinicalResearchStaff result = new ClinicalResearchStaff();
         result.setIdentifier(DSETIITransformer.INSTANCE.toXml(input.getIdentifier()));
         result.setPostalAddress(DSETADTransformer.INSTANCE.toXml(input.getPostalAddress()));
         result.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
-        result.setTitle(STTransformer.INSTANCE.toXml(input.getTitle()));
-        result.setTypeCode(CDTransformer.INSTANCE.toXml(input.getTypeCode()));
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public OrganizationalContact[] createXmlArray(int arg0) throws DtoTransformException {
-        return new OrganizationalContact[arg0];
+    public ClinicalResearchStaff[] createXmlArray(int arg0) throws DtoTransformException {
+        return new ClinicalResearchStaff[arg0];
     }
 }

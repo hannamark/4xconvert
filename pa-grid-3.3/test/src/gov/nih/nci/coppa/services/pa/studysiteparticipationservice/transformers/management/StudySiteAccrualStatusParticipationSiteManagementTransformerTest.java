@@ -80,75 +80,51 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.ClinicalResearchStaff;
-import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTELTransformer;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteAccrualStatusManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteAccrualStatus;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformerTest;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 
 /**
- * Transform between ClinicalResearchStaff and ClinicalResearchStaffDTO.
- * 
  * @author moweis
- * 
+ *
  */
-public final class ClinicalResearchStaffParticipationSiteManagementTransformer extends
-        AbstractTransformer<ClinicalResearchStaff, ClinicalResearchStaffDTO> implements
-        Transformer<ClinicalResearchStaff, ClinicalResearchStaffDTO> {
+public class StudySiteAccrualStatusParticipationSiteManagementTransformerTest extends
+        AbstractTransformerTestBase<StudySiteAccrualStatusManagementTransformer, StudySiteAccrualStatus, StudySiteAccrualStatusDTO> {
 
-    /**
-     * Public singleton.
-     */
-    public static final ClinicalResearchStaffParticipationSiteManagementTransformer INSTANCE = new ClinicalResearchStaffParticipationSiteManagementTransformer();
-
-    private ClinicalResearchStaffParticipationSiteManagementTransformer() {
-    }
-
-    /**
-     * Convert to dto object.
-     * 
-     * @param input xml
-     * @return ClinicalResearchStaffDTO dto
-     * @throws DtoTransformException exception
-     */
-    public ClinicalResearchStaffDTO toDto(ClinicalResearchStaff input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-        ClinicalResearchStaffDTO result = new ClinicalResearchStaffDTO();
-        result.setIdentifier(DSETIITransformer.INSTANCE.toDto(input.getIdentifier()));
-        result.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
-        result.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
+    @Override
+    public StudySiteAccrualStatusDTO makeDtoSimple() {
+        StudySiteAccrualStatusDTO result = new StudySiteAccrualStatusDTO();
+        result.setIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setStatusCode(new CDTransformerTest().makeDtoSimple());
+        result.setStatusDate(new TSTransformerTest().makeDtoSimple());
+        result.setStudySiteIi(new IITransformerTest().makeDtoSimple());
         return result;
     }
 
-    /**
-     * Convert to xml object.
-     * 
-     * @param input dto
-     * @return ClinicalResearchStaff xml object
-     * @throws DtoTransformException exception
-     */
-    public ClinicalResearchStaff toXml(ClinicalResearchStaffDTO input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-        ClinicalResearchStaff result = new ClinicalResearchStaff();
-        result.setIdentifier(DSETIITransformer.INSTANCE.toXml(input.getIdentifier()));
-        result.setPostalAddress(DSETADTransformer.INSTANCE.toXml(input.getPostalAddress()));
-        result.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
+    @Override
+    public StudySiteAccrualStatus makeXmlSimple() {
+        StudySiteAccrualStatus result = new StudySiteAccrualStatus();
+        result.setStatusCode(new CDTransformerTest().makeXmlSimple());
+        result.setStatusDate(new TSTransformerTest().makeXmlSimple());
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public ClinicalResearchStaff[] createXmlArray(int arg0) throws DtoTransformException {
-        return new ClinicalResearchStaff[arg0];
+    @Override
+    public void verifyDtoSimple(StudySiteAccrualStatusDTO x) {
+        new CDTransformerTest().verifyDtoSimple(x.getStatusCode());
+        new TSTransformerTest().verifyDtoSimple(x.getStatusDate());
     }
+
+    @Override
+    public void verifyXmlSimple(StudySiteAccrualStatus x) {
+        new CDTransformerTest().verifyXmlSimple(x.getStatusCode());
+        new TSTransformerTest().verifyXmlSimple(x.getStatusDate());
+    }    
+
 }

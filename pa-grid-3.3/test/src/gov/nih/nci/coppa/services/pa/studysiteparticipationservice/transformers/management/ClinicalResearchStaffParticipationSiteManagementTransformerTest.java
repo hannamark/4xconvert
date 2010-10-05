@@ -80,9 +80,10 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
 
 
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.ClinicalResearchStaffManagementTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.ClinicalResearchStaff;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
@@ -93,7 +94,7 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 
 public class ClinicalResearchStaffParticipationSiteManagementTransformerTest
-    extends AbstractTransformerTestBase<ClinicalResearchStaffParticipationSiteManagementTransformer, ClinicalResearchStaff, ClinicalResearchStaffDTO> {
+    extends AbstractTransformerTestBase<ClinicalResearchStaffManagementTransformer, ClinicalResearchStaff, ClinicalResearchStaffDTO> {
 
     @Override
     public ClinicalResearchStaffDTO makeDtoSimple() {

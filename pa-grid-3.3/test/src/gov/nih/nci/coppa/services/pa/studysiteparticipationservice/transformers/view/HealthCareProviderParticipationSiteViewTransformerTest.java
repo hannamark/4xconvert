@@ -80,48 +80,38 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
 
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.Organization;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.HealthCareProvider;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.ADTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.ENONTransformerTest;
-import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformerTest;
+import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 
-public class OrganizationParticipationSiteManagementTransformerTest
-    extends AbstractTransformerTestBase<OrganizationParticipationSiteManagementTransformer, Organization, OrganizationDTO> {
+public class HealthCareProviderParticipationSiteViewTransformerTest
+    extends AbstractTransformerTestBase<HealthCareProviderViewTransformer, HealthCareProvider, HealthCareProviderDTO> {
 
     @Override
-    public OrganizationDTO makeDtoSimple() {
-        OrganizationDTO result = new OrganizationDTO();
-        result.setName(new ENONTransformerTest().makeDtoSimple());
-        result.setPostalAddress(new ADTransformerTest().makeDtoSimple());
-        result.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
+    public HealthCareProviderDTO makeDtoSimple() {
+        HealthCareProviderDTO result = new HealthCareProviderDTO();
+        result.setIdentifier(new DSETIITransformerTest().makeDtoSimple());
         return result;
     }
 
     @Override
-    public Organization makeXmlSimple() {
-        Organization result = new Organization();
-        result.setName(new ENONTransformerTest().makeXmlSimple());
-        result.setPostalAddress(new ADTransformerTest().makeXmlSimple());
-        result.setTelecomAddress(new DSETTelTransformerTest().makeXmlSimple());
+    public HealthCareProvider makeXmlSimple() {
+        HealthCareProvider result = new HealthCareProvider();
+        result.setIdentifier(new DSETIITransformerTest().makeXmlSimple());
         return result;
     }
 
     @Override
-    public void verifyDtoSimple(OrganizationDTO x) {
-        new ENONTransformerTest().verifyDtoSimple(x.getName());
-        new ADTransformerTest().verifyDtoSimple(x.getPostalAddress());
-        new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddress());
+    public void verifyDtoSimple(HealthCareProviderDTO x) {
+        new DSETIITransformerTest().verifyDtoSimple(x.getIdentifier());
     }
 
     @Override
-    public void verifyXmlSimple(Organization x) {
-        new ENONTransformerTest().verifyXmlSimple(x.getName());
-        new ADTransformerTest().verifyXmlSimple(x.getPostalAddress());
-        new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddress());
+    public void verifyXmlSimple(HealthCareProvider x) {
+        new DSETIITransformerTest().verifyXmlSimple(x.getIdentifier());
     }
 }

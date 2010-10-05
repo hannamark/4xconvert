@@ -132,6 +132,7 @@ http\://faults.common.coppa.nci.nih.gov=gov.nih.nci.coppa.common.faults
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types=gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common
+http\://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/View=gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view
 http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types=gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service
 http\://enterpriseservices.nci.nih.gov/PAServices/RegulatoryAuthorityService/types=gov.nih.nci.coppa.services.pa.regulatoryauthorityservice.stubs.types

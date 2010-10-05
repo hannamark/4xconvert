@@ -162,6 +162,7 @@
             <arg file="${basedir}/schema/PAServices/CoppaPA.xsd" />
             <arg file="${basedir}/schema/PAServices/ISO_datatypes_Narrative.xsd" />
             <arg file="${basedir}/schema/PAServices/StudySiteParticipationManagementTypes.xsd" />
+            <arg file="${basedir}/schema/PAServices/StudySiteParticipationViewTypes.xsd" />
             <arg value="-d" />
             <arg file="${stubs.src}" />
             <arg value="-b" />

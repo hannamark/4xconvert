@@ -80,48 +80,53 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteAccrualStatus;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.OrganizationalContact;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
-import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTELTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 /**
- * Transform between StudySiteAccrualStatus and StudySiteAccrualStatusDTO.
+ * Transform between OrganizationalContact and OrganizationalContactDTO.
  * 
  * @author moweis
  * 
  */
-public final class StudySiteAccrualStatusParticipationSiteManagementTransformer extends
-        AbstractTransformer<StudySiteAccrualStatus, StudySiteAccrualStatusDTO> implements
-        Transformer<StudySiteAccrualStatus, StudySiteAccrualStatusDTO> {
+public final class OrganizationalContactManagementTransformer extends
+        AbstractTransformer<OrganizationalContact, OrganizationalContactDTO> implements Transformer<OrganizationalContact, OrganizationalContactDTO> {
 
     /**
      * Public singleton.
      */
-    public static final StudySiteAccrualStatusParticipationSiteManagementTransformer INSTANCE = new StudySiteAccrualStatusParticipationSiteManagementTransformer();
+    public static final OrganizationalContactManagementTransformer INSTANCE = new OrganizationalContactManagementTransformer();
 
-    private StudySiteAccrualStatusParticipationSiteManagementTransformer() {
+    private OrganizationalContactManagementTransformer() {
     }
 
     /**
      * Convert to dto object.
      * 
      * @param input xml
-     * @return StudySiteAccrualStatusDTO dto
+     * @return OrganizationalContactDTO dto
      * @throws DtoTransformException exception
      */
-    public StudySiteAccrualStatusDTO toDto(StudySiteAccrualStatus input) throws DtoTransformException {
+    public OrganizationalContactDTO toDto(OrganizationalContact input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
-        StudySiteAccrualStatusDTO result = new StudySiteAccrualStatusDTO();
-        result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
-        result.setStatusDate(TSTransformer.INSTANCE.toDto(input.getStatusDate()));
+        OrganizationalContactDTO result = new OrganizationalContactDTO();
+        result.setIdentifier(DSETIITransformer.INSTANCE.toDto(input.getIdentifier()));
+        result.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
+        result.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
+        result.setTitle(STTransformer.INSTANCE.toDto(input.getTitle()));
+        result.setTypeCode(CDTransformer.INSTANCE.toDto(input.getTypeCode()));
         return result;
     }
 
@@ -129,23 +134,26 @@ public final class StudySiteAccrualStatusParticipationSiteManagementTransformer 
      * Convert to xml object.
      * 
      * @param input dto
-     * @return StudySiteAccrualStatus xml object
+     * @return OrganizationalContact xml object
      * @throws DtoTransformException exception
      */
-    public StudySiteAccrualStatus toXml(StudySiteAccrualStatusDTO input) throws DtoTransformException {
+    public OrganizationalContact toXml(OrganizationalContactDTO input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
-        StudySiteAccrualStatus result = new StudySiteAccrualStatus();
-        result.setStatusCode(CDTransformer.INSTANCE.toXml(input.getStatusCode()));
-        result.setStatusDate(TSTransformer.INSTANCE.toXml(input.getStatusDate()));
+        OrganizationalContact result = new OrganizationalContact();
+        result.setIdentifier(DSETIITransformer.INSTANCE.toXml(input.getIdentifier()));
+        result.setPostalAddress(DSETADTransformer.INSTANCE.toXml(input.getPostalAddress()));
+        result.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
+        result.setTitle(STTransformer.INSTANCE.toXml(input.getTitle()));
+        result.setTypeCode(CDTransformer.INSTANCE.toXml(input.getTypeCode()));
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudySiteAccrualStatus[] createXmlArray(int arg0) throws DtoTransformException {
-        return new StudySiteAccrualStatus[arg0];
+    public OrganizationalContact[] createXmlArray(int arg0) throws DtoTransformException {
+        return new OrganizationalContact[arg0];
     }
 }

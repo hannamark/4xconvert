@@ -80,58 +80,44 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
 
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.HealthCareProvider;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view.ClinicalResearchStaffViewTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.ClinicalResearchStaff;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
-import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 
-public class HealthCareProviderParticipationSiteManagementTransformerTest
-    extends AbstractTransformerTestBase<HealthCareProviderParticipationSiteManagementTransformer, HealthCareProvider, HealthCareProviderDTO> {
+public class ClinicalResearchStaffParticipationSiteViewTransformerTest
+    extends AbstractTransformerTestBase<ClinicalResearchStaffViewTransformer, ClinicalResearchStaff, ClinicalResearchStaffDTO> {
 
     @Override
-    public HealthCareProviderDTO makeDtoSimple() {
-        HealthCareProviderDTO result = new HealthCareProviderDTO();
-        result.setCertificateLicenseText(new STTransformerTest().makeDtoSimple());
+    public ClinicalResearchStaffDTO makeDtoSimple() {
+        ClinicalResearchStaffDTO result = new ClinicalResearchStaffDTO();
         result.setIdentifier(new DSETIITransformerTest().makeDtoSimple());
-        result.setPlayerIdentifier(new IITransformerTest().makeDtoSimple());
-        result.setPostalAddress(new DSETADTransformerTest().makeDtoSimple());
-        result.setScoperIdentifier(new IITransformerTest().makeDtoSimple());
-        result.setStatus(new CDTransformerTest().makeDtoSimple());
-        result.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
         return result;
     }
 
     @Override
-    public HealthCareProvider makeXmlSimple() {
-        HealthCareProvider result = new HealthCareProvider();
-        result.setCertificateLicenseText(new STTransformerTest().makeXmlSimple());
+    public ClinicalResearchStaff makeXmlSimple() {
+        ClinicalResearchStaff result = new ClinicalResearchStaff();
         result.setIdentifier(new DSETIITransformerTest().makeXmlSimple());
-        result.setPostalAddress(new DSETADTransformerTest().makeXmlSimple());
-        result.setTelecomAddress(new DSETTelTransformerTest().makeXmlSimple());
         return result;
     }
 
     @Override
-    public void verifyDtoSimple(HealthCareProviderDTO x) {
-        new STTransformerTest().verifyDtoSimple(x.getCertificateLicenseText());
+    public void verifyDtoSimple(ClinicalResearchStaffDTO x) {
         new DSETIITransformerTest().verifyDtoSimple(x.getIdentifier());
-        new DSETADTransformerTest().verifyDtoSimple(x.getPostalAddress());
-        new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddress());
     }
 
     @Override
-    public void verifyXmlSimple(HealthCareProvider x) {
-        new STTransformerTest().verifyXmlSimple(x.getCertificateLicenseText());
+    public void verifyXmlSimple(ClinicalResearchStaff x) {
         new DSETIITransformerTest().verifyXmlSimple(x.getIdentifier());
-        new DSETADTransformerTest().verifyXmlSimple(x.getPostalAddress());
-        new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddress());
+        
     }
 }

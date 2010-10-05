@@ -80,81 +80,49 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteContact;
-import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.ADTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTELTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLTSTransformer;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view.HealthCareFacilityViewTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.HealthCareFacility;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.ENONTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 
 /**
- * Transform between StudySiteContact and StudySiteContactDTO.
- * 
  * @author moweis
  * 
  */
-public final class StudySiteContactParticipationSiteManagementTransformer extends
-        AbstractTransformer<StudySiteContact, StudySiteContactDTO> implements
-        Transformer<StudySiteContact, StudySiteContactDTO> {
+public class HealthCareFacilityParticipationSiteViewTransformerTest
+        extends
+        AbstractTransformerTestBase<HealthCareFacilityViewTransformer, HealthCareFacility, HealthCareFacilityDTO> {
 
-    /**
-     * Public singleton.
-     */
-    public static final StudySiteContactParticipationSiteManagementTransformer INSTANCE = new StudySiteContactParticipationSiteManagementTransformer();
-
-    private StudySiteContactParticipationSiteManagementTransformer() {
-    }
-
-    /**
-     * Convert to dto object.
-     * 
-     * @param input xml
-     * @return StudySiteContactDTO dto
-     * @throws DtoTransformException exception
-     */
-    public StudySiteContactDTO toDto(StudySiteContact input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-        StudySiteContactDTO result = new StudySiteContactDTO();
-        result.setPostalAddress(ADTransformer.INSTANCE.toDto(input.getPostalAddress()));
-        result.setPrimaryIndicator(BLTransformer.INSTANCE.toDto(input.getPrimaryIndicator()));
-        result.setRoleCode(CDTransformer.INSTANCE.toDto(input.getRoleCode()));
-        result.setStatusDateRange(IVLTSTransformer.INSTANCE.toDto(input.getStatusDateRange()));
-        result.setTelecomAddresses(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddresses()));
+    @Override
+    public HealthCareFacilityDTO makeDtoSimple() {
+        HealthCareFacilityDTO result =  new HealthCareFacilityDTO();
+        result.setIdentifier(new DSETIITransformerTest().makeDtoSimple());
         return result;
     }
 
-    /**
-     * Convert to xml object.
-     * 
-     * @param input dto
-     * @return StudySiteContact xml object
-     * @throws DtoTransformException exception
-     */
-    public StudySiteContact toXml(StudySiteContactDTO input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-        StudySiteContact result = new StudySiteContact();
-        result.setPostalAddress(ADTransformer.INSTANCE.toXml(input.getPostalAddress()));
-        result.setPrimaryIndicator(BLTransformer.INSTANCE.toXml(input.getPrimaryIndicator()));
-        result.setRoleCode(CDTransformer.INSTANCE.toXml(input.getRoleCode()));
-        result.setStatusDateRange(IVLTSTransformer.INSTANCE.toXml(input.getStatusDateRange()));
-        result.setTelecomAddresses(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddresses()));
+    @Override
+    public HealthCareFacility makeXmlSimple() {
+        HealthCareFacility result =  new HealthCareFacility();
+        result.setIdentifier(new DSETIITransformerTest().makeXmlSimple());
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public StudySiteContact[] createXmlArray(int arg0) throws DtoTransformException {
-        return new StudySiteContact[arg0];
+    @Override
+    public void verifyDtoSimple(HealthCareFacilityDTO x) {
+        new DSETIITransformerTest().verifyDtoSimple(x.getIdentifier());
     }
+
+    @Override
+    public void verifyXmlSimple(HealthCareFacility x) {
+        new DSETIITransformerTest().verifyXmlSimple(x.getIdentifier());
+    }
+
 }

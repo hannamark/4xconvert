@@ -86,6 +86,7 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -293,6 +294,8 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
             StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteDTO.getIdentifier());
             studySiteDTO.setStudyProtocolIdentifier(currentSite.getStudyProtocolIdentifier());
             studySiteDTO.setHealthcareFacilityIi(currentSite.getHealthcareFacilityIi());
+            studySiteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
+            
             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService()
                 .getStudyProtocol(currentSite.getStudyProtocolIdentifier());
             if (spDTO.getProprietaryTrialIndicator().getValue().booleanValue()) {

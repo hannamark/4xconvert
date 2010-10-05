@@ -1,12 +1,14 @@
 package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.client;
 
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers.HealthCareFacilityParticipationSiteManagementTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers.OrganizationParticipationSiteManagementTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers.StudySiteAccrualStatusParticipationSiteManagementTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers.StudySiteParticipationSiteManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.HealthCareFacilityManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.OrganizationManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.PersonManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteAccrualStatusManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteManagementTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.ClinicalResearchStaff;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.PersonType;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudyProtocol;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteAccrualStatus;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteContact;
@@ -37,6 +39,8 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
+
+import org.iso._21090.II;
 
 /**
  * Simple client to call the StudySiteParticipationService.
@@ -75,10 +79,11 @@ public class StudySiteParticipationServiceSimpleClient{
     private static void createPropSite(StudySiteParticipationServiceClient client) throws DtoTransformException,
             PAFault, RemoteException, URISyntaxException {
 
-        Id studyProtocolIi = new Id();
-
+        II studyProtocolIi = new II();
         studyProtocolIi.setExtension("NCI-2010-00003");
         studyProtocolIi.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        StudyProtocol studyProtocol = new StudyProtocol();
+        studyProtocol.setIdentifier(studyProtocolIi);
 
         Ii personIi = new Ii();
         personIi.setExtension("597");
@@ -96,10 +101,10 @@ public class StudySiteParticipationServiceSimpleClient{
         currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
         currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime()
                 - Long.valueOf("300000000"))));
-        StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusParticipationSiteManagementTransformer.INSTANCE
+        StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusManagementTransformer.INSTANCE
                 .toXml(currentStatus);
         
-        StudySite ssXml = StudySiteParticipationSiteManagementTransformer.INSTANCE.toXml(studySiteDTO);
+        StudySite ssXml = StudySiteManagementTransformer.INSTANCE.toXml(studySiteDTO);
         ssXml.setAccrualStatus(ssasXml);
 
         Ii hcfIi = new Ii();
@@ -119,11 +124,13 @@ public class StudySiteParticipationServiceSimpleClient{
         organizationDTO.setIdentifier(orgIi);
 
         hcfDTO.setPlayerIdentifier(orgIi);
-        ssXml.setOrganizationRole(HealthCareFacilityParticipationSiteManagementTransformer.INSTANCE.toXml(hcfDTO));
+        ssXml.setOrganizationRole(HealthCareFacilityManagementTransformer.INSTANCE.toXml(hcfDTO));
         ssXml.getOrganizationRole().setPlayer(
-                OrganizationParticipationSiteManagementTransformer.INSTANCE.toXml(organizationDTO));
+                OrganizationManagementTransformer.INSTANCE.toXml(organizationDTO));
+        
+        ssXml.setStudyProtocol(studyProtocol);
 
-        client.createParticipatingSite(studyProtocolIi, ssXml);
+        client.createParticipatingSite(ssXml);
 
     }
 
@@ -142,20 +149,21 @@ public class StudySiteParticipationServiceSimpleClient{
         studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("CHANGED SP ID"));
         studySiteDTO.setProgramCodeText(StConverter.convertToSt("PROGRAM CODE"));
 
-        StudySite ssXml = StudySiteParticipationSiteManagementTransformer.INSTANCE.toXml(studySiteDTO);
+        StudySite ssXml = StudySiteManagementTransformer.INSTANCE.toXml(studySiteDTO);
 
         StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
         currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
         currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime()
                 - Long.valueOf("300000000"))));
 
-        StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusParticipationSiteManagementTransformer.INSTANCE
+        StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusManagementTransformer.INSTANCE
                 .toXml(currentStatus);
         ssXml.setAccrualStatus(ssasXml);
         
         StudySiteContact ssContact = new StudySiteContact();
         PersonType personType = new PersonType();
         ClinicalResearchStaff crs = new ClinicalResearchStaff();
+        crs.setPlayer(PersonManagementTransformer.INSTANCE.toXml(person));
         personType.getContent().add(crs);
         ssContact.setPersonRole(personType);
         ssContact.setPostalAddress(ADTransformer.INSTANCE.toXml(AddressConverterUtil.create("1000 Some St.", "1000 Some St.", 

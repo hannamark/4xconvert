@@ -80,78 +80,64 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.management.transformers;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.HealthCareProvider;
-import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTELTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
-import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.HealthCareFacilityManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.HealthCareFacility;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.ENONTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 
 /**
- * Transform between HealthCareProvider and HealthCareProviderDTO.
- * 
  * @author moweis
  * 
  */
-public final class HealthCareProviderParticipationSiteManagementTransformer extends
-        AbstractTransformer<HealthCareProvider, HealthCareProviderDTO> implements
-        Transformer<HealthCareProvider, HealthCareProviderDTO> {
+public class HealthCareFacilityParticipationSiteManagementTransformerTest
+        extends
+        AbstractTransformerTestBase<HealthCareFacilityManagementTransformer, HealthCareFacility, HealthCareFacilityDTO> {
 
-    /**
-     * Public singleton.
-     */
-    public static final HealthCareProviderParticipationSiteManagementTransformer INSTANCE = new HealthCareProviderParticipationSiteManagementTransformer();
-
-    private HealthCareProviderParticipationSiteManagementTransformer() {
-    }
-
-    /**
-     * Convert to dto object.
-     * 
-     * @param input xml
-     * @return HealthCareProviderDTO dto
-     * @throws DtoTransformException exception
-     */
-    public HealthCareProviderDTO toDto(HealthCareProvider input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-        HealthCareProviderDTO result = new HealthCareProviderDTO();
-        result.setCertificateLicenseText(STTransformer.INSTANCE.toDto(input.getCertificateLicenseText()));
-        result.setIdentifier(DSETIITransformer.INSTANCE.toDto(input.getIdentifier()));
-        result.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
-        result.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
+    @Override
+    public HealthCareFacilityDTO makeDtoSimple() {
+        HealthCareFacilityDTO result =  new HealthCareFacilityDTO();
+        result.setIdentifier(new DSETIITransformerTest().makeDtoSimple());
+        result.setName(new ENONTransformerTest().makeDtoSimple());
+        result.setPlayerIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setPostalAddress(new DSETADTransformerTest().makeDtoSimple());
+        result.setStatus(new CDTransformerTest().makeDtoSimple());
+        result.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
         return result;
     }
 
-    /**
-     * Convert to xml object.
-     * 
-     * @param input dto
-     * @return HealthCareProvider xml object
-     * @throws DtoTransformException exception
-     */
-    public HealthCareProvider toXml(HealthCareProviderDTO input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-        HealthCareProvider result = new HealthCareProvider();
-        result.setCertificateLicenseText(STTransformer.INSTANCE.toXml(input.getCertificateLicenseText()));
-        result.setIdentifier(DSETIITransformer.INSTANCE.toXml(input.getIdentifier()));
-        result.setPostalAddress(DSETADTransformer.INSTANCE.toXml(input.getPostalAddress()));
-        result.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
+    @Override
+    public HealthCareFacility makeXmlSimple() {
+        HealthCareFacility result =  new HealthCareFacility();
+        result.setIdentifier(new DSETIITransformerTest().makeXmlSimple());
+        result.setName(new ENONTransformerTest().makeXmlSimple());
+//        result.setPlayer(new OrganizationParticipationSiteManagementTransformerTest().makeXmlSimple());
+        result.setPostalAddress(new DSETADTransformerTest().makeXmlSimple());
+        result.setTelecomAddress(new DSETTelTransformerTest().makeXmlSimple());
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProvider[] createXmlArray(int arg0) throws DtoTransformException {
-        return new HealthCareProvider[arg0];
+    @Override
+    public void verifyDtoSimple(HealthCareFacilityDTO x) {
+        new DSETIITransformerTest().verifyDtoSimple(x.getIdentifier());
+        new ENONTransformerTest().verifyDtoSimple(x.getName());
+        new DSETADTransformerTest().verifyDtoSimple(x.getPostalAddress());
+        new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddress());
     }
+
+    @Override
+    public void verifyXmlSimple(HealthCareFacility x) {
+        new DSETIITransformerTest().verifyXmlSimple(x.getIdentifier());
+        new ENONTransformerTest().verifyXmlSimple(x.getName());
+        new DSETADTransformerTest().verifyXmlSimple(x.getPostalAddress());
+        new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddress());
+    }
+
 }
