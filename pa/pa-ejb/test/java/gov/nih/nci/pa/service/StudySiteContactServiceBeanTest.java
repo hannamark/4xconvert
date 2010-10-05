@@ -137,13 +137,6 @@ public class StudySiteContactServiceBeanTest {
        remoteEjb.delete(dto.getIdentifier());
   }
 
-  @Test
-  public void create() throws Exception {
-    StudySiteContactDTO dto = createSSC();
-    remoteEjb.create(dto);
-    assertEquals(dto.getStudyProtocolIdentifier(), pid);
-  }
-
   private StudySiteContactDTO createSSC() {
       StudySiteContactDTO dto = new StudySiteContactDTO();
       dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
@@ -207,6 +200,7 @@ public class StudySiteContactServiceBeanTest {
       dto.setOrganizationalContactIi(IiConverter.convertToIi(orgCon.getId()));
 
       StudySiteContactDTO result = remoteEjb.create(dto);
+      assertEquals(dto.getStudyProtocolIdentifier(), pid);
 
       Ii ii = new Ii();
       ii.setExtension("abc");
