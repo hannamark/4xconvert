@@ -83,41 +83,35 @@
 package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
 
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view.OrganizationViewTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.Organization;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.OrganizationalContact;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.ADTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.ENONTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformerTest;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
-public class OrganizationParticipationSiteViewTransformerTest
-    extends AbstractTransformerTestBase<OrganizationViewTransformer, Organization, OrganizationDTO> {
+public class OrganizationalContactViewTransformerTest
+    extends AbstractTransformerTestBase<OrganizationalContactViewTransformer, OrganizationalContact, OrganizationalContactDTO> {
 
     @Override
-    public OrganizationDTO makeDtoSimple() {
-        OrganizationDTO result = new OrganizationDTO();
-        result.setName(new ENONTransformerTest().makeDtoSimple());
-        result.setPostalAddress(new ADTransformerTest().makeDtoSimple());
-        result.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
+    public OrganizationalContactDTO makeDtoSimple() {
+        OrganizationalContactDTO result = new OrganizationalContactDTO();
+        result.setIdentifier(new DSETIITransformerTest().makeDtoSimple());
         return result;
     }
 
     @Override
-    public Organization makeXmlSimple() {
-        Organization result = new Organization();
-        result.setIdentifier(new IITransformerTest().makeXmlSimple());
+    public OrganizationalContact makeXmlSimple() {
+        OrganizationalContact result = new OrganizationalContact();
+        result.setIdentifier(new DSETIITransformerTest().makeXmlSimple());
         return result;
     }
 
     @Override
-    public void verifyDtoSimple(OrganizationDTO x) {
-        new IITransformerTest().verifyDtoSimple(x.getIdentifier());
+    public void verifyDtoSimple(OrganizationalContactDTO x) {
+        new DSETIITransformerTest().verifyDtoSimple(x.getIdentifier());
     }
 
     @Override
-    public void verifyXmlSimple(Organization x) {
-        new IITransformerTest().verifyXmlSimple(x.getIdentifier());
+    public void verifyXmlSimple(OrganizationalContact x) {
+        new DSETIITransformerTest().verifyXmlSimple(x.getIdentifier());
     }
 }

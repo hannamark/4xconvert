@@ -97,7 +97,7 @@ import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
  * @author moweis
  * 
  */
-public class HealthCareFacilityParticipationSiteManagementTransformerTest
+public class HealthCareFacilityManagementTransformerTest
         extends
         AbstractTransformerTestBase<HealthCareFacilityManagementTransformer, HealthCareFacility, HealthCareFacilityDTO> {
 

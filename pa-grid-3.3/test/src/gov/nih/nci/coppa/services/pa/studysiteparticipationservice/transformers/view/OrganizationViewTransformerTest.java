@@ -80,63 +80,38 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
 
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.OrganizationalContactManagementTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.OrganizationalContact;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.Organization;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
-import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
-public class OrganizationalContactParticipationSiteManagementTransformerTest
-    extends AbstractTransformerTestBase<OrganizationalContactManagementTransformer, OrganizationalContact, OrganizationalContactDTO> {
+public class OrganizationViewTransformerTest
+    extends AbstractTransformerTestBase<OrganizationViewTransformer, Organization, OrganizationDTO> {
 
     @Override
-    public OrganizationalContactDTO makeDtoSimple() {
-        OrganizationalContactDTO result = new OrganizationalContactDTO();
-        result.setIdentifier(new DSETIITransformerTest().makeDtoSimple());
-        result.setPlayerIdentifier(new IITransformerTest().makeDtoSimple());
-        result.setPostalAddress(new DSETADTransformerTest().makeDtoSimple());
-        result.setScoperIdentifier(new IITransformerTest().makeDtoSimple());
-        result.setStatus(new CDTransformerTest().makeDtoSimple());
-        result.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
-        result.setTitle(new STTransformerTest().makeDtoSimple());
-        result.setTypeCode(new CDTransformerTest().makeDtoSimple());
+    public OrganizationDTO makeDtoSimple() {
+        OrganizationDTO result = new OrganizationDTO();
+        result.setIdentifier(new IITransformerTest().makeDtoSimple());
         return result;
     }
 
     @Override
-    public OrganizationalContact makeXmlSimple() {
-        OrganizationalContact result = new OrganizationalContact();
-        result.setIdentifier(new DSETIITransformerTest().makeXmlSimple());
-        result.setPostalAddress(new DSETADTransformerTest().makeXmlSimple());
-        result.setTelecomAddress(new DSETTelTransformerTest().makeXmlSimple());
-        result.setTitle(new STTransformerTest().makeXmlSimple());
-        result.setTypeCode(new CDTransformerTest().makeXmlSimple());
+    public Organization makeXmlSimple() {
+        Organization result = new Organization();
+        result.setIdentifier(new IITransformerTest().makeXmlSimple());
         return result;
     }
 
     @Override
-    public void verifyDtoSimple(OrganizationalContactDTO x) {
-        new DSETIITransformerTest().verifyDtoSimple(x.getIdentifier());
-        new DSETADTransformerTest().verifyDtoSimple(x.getPostalAddress());
-        new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddress());
-        new STTransformerTest().verifyDtoSimple(x.getTitle());
-        new CDTransformerTest().verifyDtoSimple(x.getTypeCode());
+    public void verifyDtoSimple(OrganizationDTO x) {
+        new IITransformerTest().verifyDtoSimple(x.getIdentifier());
     }
 
     @Override
-    public void verifyXmlSimple(OrganizationalContact x) {
-        new DSETIITransformerTest().verifyXmlSimple(x.getIdentifier());
-        new DSETADTransformerTest().verifyXmlSimple(x.getPostalAddress());
-        new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddress());
-        new STTransformerTest().verifyXmlSimple(x.getTitle());
-        new CDTransformerTest().verifyXmlSimple(x.getTypeCode());
+    public void verifyXmlSimple(Organization x) {
+        new IITransformerTest().verifyXmlSimple(x.getIdentifier());
     }
 }

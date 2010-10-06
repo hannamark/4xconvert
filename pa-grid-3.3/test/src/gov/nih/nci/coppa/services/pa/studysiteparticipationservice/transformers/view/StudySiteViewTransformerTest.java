@@ -80,54 +80,53 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
 
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.PersonManagementTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.Person;
+import gov.nih.nci.coppa.pa.grid.dto.transform.pa.StudySiteTransformerTest;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view.StudySiteViewTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudyProtocol;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.ADTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.ENPNTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLTSTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 
-public class PersonParticipationSiteManagementTransformerTest
-    extends AbstractTransformerTestBase<PersonManagementTransformer, Person, PersonDTO> {
+public class StudySiteViewTransformerTest
+    extends AbstractTransformerTestBase<StudySiteViewTransformer, StudySite, StudySiteDTO> {
 
     @Override
-    public PersonDTO makeDtoSimple() {
-        PersonDTO result = new PersonDTO();
-        result.setIdentifier(new IITransformerTest().makeDtoSimple());
-        result.setName(new ENPNTransformerTest().makeDtoSimple());
-        result.setPostalAddress(new ADTransformerTest().makeDtoSimple());
-        result.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
+    public StudySiteDTO makeDtoSimple() {
+        return new StudySiteTransformerTest().makeDtoSimple();
+    }
+
+    @Override
+    public StudySite makeXmlSimple() {
+        StudySite result = new StudySite();
+        result.setAccrualDateRange(new IVLTSTransformerTest().makeXmlSimple());
+        result.setAccrualStatus(new StudySiteAccrualStatusViewTransformerTest().makeXmlSimple());
+        result.setLocalStudyProtocolIdentifier(new STTransformerTest().makeXmlSimple());
+        result.setProgramCodeText(new STTransformerTest().makeXmlSimple());
+        result.setTargetAccrualNumber(new INTTransformerTest().makeXmlSimple());
+        result.setStudyProtocol(new StudyProtocol());
         return result;
     }
 
     @Override
-    public Person makeXmlSimple() {
-        Person result = new Person();
-        result.setIdentifier(new IITransformerTest().makeXmlSimple());
-        result.setName(new ENPNTransformerTest().makeXmlSimple());
-        result.setPostalAddress(new ADTransformerTest().makeXmlSimple());
-        result.setTelecomAddress(new DSETTelTransformerTest().makeXmlSimple());
-        return result;
+    public void verifyDtoSimple(StudySiteDTO x) {
+        new IVLTSTransformerTest().verifyDtoSimple(x.getAccrualDateRange());
+        new STTransformerTest().verifyDtoSimple(x.getLocalStudyProtocolIdentifier());
+        new STTransformerTest().verifyDtoSimple(x.getProgramCodeText());
+        new INTTransformerTest().verifyDtoSimple(x.getTargetAccrualNumber());
     }
 
     @Override
-    public void verifyDtoSimple(PersonDTO x) {
-        new IITransformerTest().verifyDtoSimple(x.getIdentifier());
-        new ENPNTransformerTest().verifyDtoSimple(x.getName());
-        new ADTransformerTest().verifyDtoSimple(x.getPostalAddress());
-        new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddress());
-    }
+    public void verifyXmlSimple(StudySite x) {
+        new IVLTSTransformerTest().verifyXmlSimple(x.getAccrualDateRange());
+        new STTransformerTest().verifyXmlSimple(x.getLocalStudyProtocolIdentifier());
+        new STTransformerTest().verifyXmlSimple(x.getProgramCodeText());
+        new INTTransformerTest().verifyXmlSimple(x.getTargetAccrualNumber());
 
-    @Override
-    public void verifyXmlSimple(Person x) {
-        new IITransformerTest().verifyXmlSimple(x.getIdentifier());
-        new ENPNTransformerTest().verifyXmlSimple(x.getName());
-        new ADTransformerTest().verifyXmlSimple(x.getPostalAddress());
-        new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddress());
     }
 }

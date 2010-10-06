@@ -80,10 +80,10 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteAccrualStatusManagementTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteAccrualStatus;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view.StudySiteAccrualStatusViewTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySiteAccrualStatus;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
@@ -94,8 +94,8 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
  * @author moweis
  *
  */
-public class StudySiteAccrualStatusParticipationSiteManagementTransformerTest extends
-        AbstractTransformerTestBase<StudySiteAccrualStatusManagementTransformer, StudySiteAccrualStatus, StudySiteAccrualStatusDTO> {
+public class StudySiteAccrualStatusViewTransformerTest extends
+        AbstractTransformerTestBase<StudySiteAccrualStatusViewTransformer, StudySiteAccrualStatus, StudySiteAccrualStatusDTO> {
 
     @Override
     public StudySiteAccrualStatusDTO makeDtoSimple() {

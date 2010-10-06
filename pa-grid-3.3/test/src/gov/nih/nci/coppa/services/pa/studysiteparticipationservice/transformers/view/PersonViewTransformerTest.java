@@ -80,52 +80,38 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
 
 
-import gov.nih.nci.coppa.pa.grid.dto.transform.pa.StudySiteTransformerTest;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteManagementTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.Person;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLTSTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
-import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
+import gov.nih.nci.services.person.PersonDTO;
 
-public class StudySiteParticipationSiteManagementTransformerTest
-    extends AbstractTransformerTestBase<StudySiteManagementTransformer, StudySite, StudySiteDTO> {
+public class PersonViewTransformerTest
+    extends AbstractTransformerTestBase<PersonViewTransformer, Person, PersonDTO> {
 
     @Override
-    public StudySiteDTO makeDtoSimple() {
-        return new StudySiteTransformerTest().makeDtoSimple();
-    }
-
-    @Override
-    public StudySite makeXmlSimple() {
-        StudySite result = new StudySite();
-        result.setAccrualDateRange(new IVLTSTransformerTest().makeXmlSimple());
-        result.setAccrualStatus(new StudySiteAccrualStatusParticipationSiteManagementTransformerTest().makeXmlSimple());
-        result.setLocalStudyProtocolIdentifier(new STTransformerTest().makeXmlSimple());
-        result.setOrganizationRole(new HealthCareFacilityParticipationSiteManagementTransformerTest().makeXmlSimple());
-        result.setProgramCodeText(new STTransformerTest().makeXmlSimple());
-        result.setTargetAccrualNumber(new INTTransformerTest().makeXmlSimple());
+    public PersonDTO makeDtoSimple() {
+        PersonDTO result = new PersonDTO();
+        result.setIdentifier(new IITransformerTest().makeDtoSimple());
         return result;
     }
 
     @Override
-    public void verifyDtoSimple(StudySiteDTO x) {
-        new IVLTSTransformerTest().verifyDtoSimple(x.getAccrualDateRange());
-        new STTransformerTest().verifyDtoSimple(x.getLocalStudyProtocolIdentifier());
-        new STTransformerTest().verifyDtoSimple(x.getProgramCodeText());
-        new INTTransformerTest().verifyDtoSimple(x.getTargetAccrualNumber());
+    public Person makeXmlSimple() {
+        Person result = new Person();
+        result.setIdentifier(new IITransformerTest().makeXmlSimple());
+        return result;
     }
 
     @Override
-    public void verifyXmlSimple(StudySite x) {
-        new IVLTSTransformerTest().verifyXmlSimple(x.getAccrualDateRange());
-        new STTransformerTest().verifyXmlSimple(x.getLocalStudyProtocolIdentifier());
-        new STTransformerTest().verifyXmlSimple(x.getProgramCodeText());
-        new INTTransformerTest().verifyXmlSimple(x.getTargetAccrualNumber());
+    public void verifyDtoSimple(PersonDTO x) {
+        new IITransformerTest().verifyDtoSimple(x.getIdentifier());
+    }
 
+    @Override
+    public void verifyXmlSimple(Person x) {
+        new IITransformerTest().verifyXmlSimple(x.getIdentifier());
     }
 }

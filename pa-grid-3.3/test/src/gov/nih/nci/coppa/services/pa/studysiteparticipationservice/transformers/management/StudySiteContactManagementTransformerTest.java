@@ -83,53 +83,64 @@
 package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
 
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.ClinicalResearchStaffManagementTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.ClinicalResearchStaff;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteContactManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteContact;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.ADTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLTSTransformerTest;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 
-public class ClinicalResearchStaffParticipationSiteManagementTransformerTest
-    extends AbstractTransformerTestBase<ClinicalResearchStaffManagementTransformer, ClinicalResearchStaff, ClinicalResearchStaffDTO> {
+public class StudySiteContactManagementTransformerTest
+    extends AbstractTransformerTestBase<StudySiteContactManagementTransformer, StudySiteContact, StudySiteContactDTO> {
 
     @Override
-    public ClinicalResearchStaffDTO makeDtoSimple() {
-        ClinicalResearchStaffDTO result = new ClinicalResearchStaffDTO();
-        result.setIdentifier(new DSETIITransformerTest().makeDtoSimple());
-        result.setPlayerIdentifier(new IITransformerTest().makeDtoSimple());
-        result.setPostalAddress(new DSETADTransformerTest().makeDtoSimple());
-        result.setScoperIdentifier(new IITransformerTest().makeDtoSimple());
-        result.setStatus(new CDTransformerTest().makeDtoSimple());
-        result.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
+    public StudySiteContactDTO makeDtoSimple() {
+        StudySiteContactDTO result = new StudySiteContactDTO();
+        result.setClinicalResearchStaffIi(new IITransformerTest().makeDtoSimple());
+        result.setHealthCareProviderIi(new IITransformerTest().makeDtoSimple());
+        result.setIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setOrganizationalContactIi(new IITransformerTest().makeDtoSimple());
+        result.setPostalAddress(new ADTransformerTest().makeDtoSimple());
+        result.setPrimaryIndicator(new BLTransformerTest().makeDtoSimple());
+        result.setRoleCode(new CDTransformerTest().makeDtoSimple());
+        result.setStatusCode(new CDTransformerTest().makeDtoSimple());
+        result.setStatusDateRange(new IVLTSTransformerTest().makeDtoSimple());
+        result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setStudySiteIi(new IITransformerTest().makeDtoSimple());
+        result.setTelecomAddresses(new DSETTelTransformerTest().makeDtoSimple());
         return result;
     }
 
     @Override
-    public ClinicalResearchStaff makeXmlSimple() {
-        ClinicalResearchStaff result = new ClinicalResearchStaff();
-        result.setIdentifier(new DSETIITransformerTest().makeXmlSimple());
-        result.setPlayer(new PersonParticipationSiteManagementTransformerTest().makeXmlSimple());
-        result.setPostalAddress(new DSETADTransformerTest().makeXmlSimple());
-        result.setTelecomAddress(new DSETTelTransformerTest().makeXmlSimple());
+    public StudySiteContact makeXmlSimple() {
+        StudySiteContact result = new StudySiteContact();
+        result.setPostalAddress(new ADTransformerTest().makeXmlSimple());
+        result.setPrimaryIndicator(new BLTransformerTest().makeXmlSimple());
+        result.setRoleCode(new CDTransformerTest().makeXmlSimple());
+        result.setStatusDateRange(new IVLTSTransformerTest().makeXmlSimple());
+        result.setTelecomAddresses(new DSETTelTransformerTest().makeXmlSimple());
         return result;
     }
 
     @Override
-    public void verifyDtoSimple(ClinicalResearchStaffDTO x) {
-        new DSETIITransformerTest().verifyDtoSimple(x.getIdentifier());
-        new DSETADTransformerTest().verifyDtoSimple(x.getPostalAddress());
-        new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddress());
+    public void verifyDtoSimple(StudySiteContactDTO x) {
+        new ADTransformerTest().verifyDtoSimple(x.getPostalAddress());
+        new BLTransformerTest().verifyDtoSimple(x.getPrimaryIndicator());
+        new CDTransformerTest().verifyDtoSimple(x.getRoleCode());
+        new IVLTSTransformerTest().verifyDtoSimple(x.getStatusDateRange());
+        new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddresses());
     }
 
     @Override
-    public void verifyXmlSimple(ClinicalResearchStaff x) {
-        new DSETIITransformerTest().verifyXmlSimple(x.getIdentifier());
-        new DSETADTransformerTest().verifyXmlSimple(x.getPostalAddress());
-        new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddress());
-        
+    public void verifyXmlSimple(StudySiteContact x) {
+        new ADTransformerTest().verifyXmlSimple(x.getPostalAddress());
+        new BLTransformerTest().verifyXmlSimple(x.getPrimaryIndicator());
+        new CDTransformerTest().verifyXmlSimple(x.getRoleCode());
+        new IVLTSTransformerTest().verifyXmlSimple(x.getStatusDateRange());
+        new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddresses());
     }
 }

@@ -80,44 +80,54 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
 
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view.ClinicalResearchStaffViewTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.ClinicalResearchStaff;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.PersonManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.Person;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.ADTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.ENPNTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
-public class ClinicalResearchStaffParticipationSiteViewTransformerTest
-    extends AbstractTransformerTestBase<ClinicalResearchStaffViewTransformer, ClinicalResearchStaff, ClinicalResearchStaffDTO> {
+public class PersonManagementTransformerTest
+    extends AbstractTransformerTestBase<PersonManagementTransformer, Person, PersonDTO> {
 
     @Override
-    public ClinicalResearchStaffDTO makeDtoSimple() {
-        ClinicalResearchStaffDTO result = new ClinicalResearchStaffDTO();
-        result.setIdentifier(new DSETIITransformerTest().makeDtoSimple());
+    public PersonDTO makeDtoSimple() {
+        PersonDTO result = new PersonDTO();
+        result.setIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setName(new ENPNTransformerTest().makeDtoSimple());
+        result.setPostalAddress(new ADTransformerTest().makeDtoSimple());
+        result.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
         return result;
     }
 
     @Override
-    public ClinicalResearchStaff makeXmlSimple() {
-        ClinicalResearchStaff result = new ClinicalResearchStaff();
-        result.setIdentifier(new DSETIITransformerTest().makeXmlSimple());
+    public Person makeXmlSimple() {
+        Person result = new Person();
+        result.setIdentifier(new IITransformerTest().makeXmlSimple());
+        result.setName(new ENPNTransformerTest().makeXmlSimple());
+        result.setPostalAddress(new ADTransformerTest().makeXmlSimple());
+        result.setTelecomAddress(new DSETTelTransformerTest().makeXmlSimple());
         return result;
     }
 
     @Override
-    public void verifyDtoSimple(ClinicalResearchStaffDTO x) {
-        new DSETIITransformerTest().verifyDtoSimple(x.getIdentifier());
+    public void verifyDtoSimple(PersonDTO x) {
+        new IITransformerTest().verifyDtoSimple(x.getIdentifier());
+        new ENPNTransformerTest().verifyDtoSimple(x.getName());
+        new ADTransformerTest().verifyDtoSimple(x.getPostalAddress());
+        new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddress());
     }
 
     @Override
-    public void verifyXmlSimple(ClinicalResearchStaff x) {
-        new DSETIITransformerTest().verifyXmlSimple(x.getIdentifier());
-        
+    public void verifyXmlSimple(Person x) {
+        new IITransformerTest().verifyXmlSimple(x.getIdentifier());
+        new ENPNTransformerTest().verifyXmlSimple(x.getName());
+        new ADTransformerTest().verifyXmlSimple(x.getPostalAddress());
+        new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddress());
     }
 }

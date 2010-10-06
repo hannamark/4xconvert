@@ -80,20 +80,21 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
 
 
 import gov.nih.nci.coppa.pa.grid.dto.transform.pa.StudySiteTransformerTest;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view.StudySiteViewTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudyProtocol;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLTSTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 
-public class StudySiteParticipationSiteViewTransformerTest
-    extends AbstractTransformerTestBase<StudySiteViewTransformer, StudySite, StudySiteDTO> {
+public class StudySiteManagementTransformerTest
+    extends AbstractTransformerTestBase<StudySiteManagementTransformer, StudySite, StudySiteDTO> {
 
     @Override
     public StudySiteDTO makeDtoSimple() {
@@ -104,9 +105,11 @@ public class StudySiteParticipationSiteViewTransformerTest
     public StudySite makeXmlSimple() {
         StudySite result = new StudySite();
         result.setAccrualDateRange(new IVLTSTransformerTest().makeXmlSimple());
-        result.setAccrualStatus(new StudySiteAccrualStatusParticipationSiteViewTransformerTest().makeXmlSimple());
+        result.setAccrualStatus(new StudySiteAccrualStatusManagementTransformerTest().makeXmlSimple());
         result.setLocalStudyProtocolIdentifier(new STTransformerTest().makeXmlSimple());
+        result.setOrganizationRole(new HealthCareFacilityManagementTransformerTest().makeXmlSimple());
         result.setProgramCodeText(new STTransformerTest().makeXmlSimple());
+        result.setStudyProtocol(new StudyProtocol());
         result.setTargetAccrualNumber(new INTTransformerTest().makeXmlSimple());
         return result;
     }
@@ -125,6 +128,5 @@ public class StudySiteParticipationSiteViewTransformerTest
         new STTransformerTest().verifyXmlSimple(x.getLocalStudyProtocolIdentifier());
         new STTransformerTest().verifyXmlSimple(x.getProgramCodeText());
         new INTTransformerTest().verifyXmlSimple(x.getTargetAccrualNumber());
-
     }
 }

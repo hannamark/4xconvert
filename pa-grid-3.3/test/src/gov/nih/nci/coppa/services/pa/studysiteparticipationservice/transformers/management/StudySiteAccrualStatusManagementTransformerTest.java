@@ -80,49 +80,51 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
+package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management;
 
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view.HealthCareFacilityViewTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.HealthCareFacility;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteAccrualStatusManagementTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteAccrualStatus;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.ENONTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformerTest;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 
 /**
  * @author moweis
- * 
+ *
  */
-public class HealthCareFacilityParticipationSiteViewTransformerTest
-        extends
-        AbstractTransformerTestBase<HealthCareFacilityViewTransformer, HealthCareFacility, HealthCareFacilityDTO> {
+public class StudySiteAccrualStatusManagementTransformerTest extends
+        AbstractTransformerTestBase<StudySiteAccrualStatusManagementTransformer, StudySiteAccrualStatus, StudySiteAccrualStatusDTO> {
 
     @Override
-    public HealthCareFacilityDTO makeDtoSimple() {
-        HealthCareFacilityDTO result =  new HealthCareFacilityDTO();
-        result.setIdentifier(new DSETIITransformerTest().makeDtoSimple());
+    public StudySiteAccrualStatusDTO makeDtoSimple() {
+        StudySiteAccrualStatusDTO result = new StudySiteAccrualStatusDTO();
+        result.setIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setStatusCode(new CDTransformerTest().makeDtoSimple());
+        result.setStatusDate(new TSTransformerTest().makeDtoSimple());
+        result.setStudySiteIi(new IITransformerTest().makeDtoSimple());
         return result;
     }
 
     @Override
-    public HealthCareFacility makeXmlSimple() {
-        HealthCareFacility result =  new HealthCareFacility();
-        result.setIdentifier(new DSETIITransformerTest().makeXmlSimple());
+    public StudySiteAccrualStatus makeXmlSimple() {
+        StudySiteAccrualStatus result = new StudySiteAccrualStatus();
+        result.setStatusCode(new CDTransformerTest().makeXmlSimple());
+        result.setStatusDate(new TSTransformerTest().makeXmlSimple());
         return result;
     }
 
     @Override
-    public void verifyDtoSimple(HealthCareFacilityDTO x) {
-        new DSETIITransformerTest().verifyDtoSimple(x.getIdentifier());
+    public void verifyDtoSimple(StudySiteAccrualStatusDTO x) {
+        new CDTransformerTest().verifyDtoSimple(x.getStatusCode());
+        new TSTransformerTest().verifyDtoSimple(x.getStatusDate());
     }
 
     @Override
-    public void verifyXmlSimple(HealthCareFacility x) {
-        new DSETIITransformerTest().verifyXmlSimple(x.getIdentifier());
-    }
+    public void verifyXmlSimple(StudySiteAccrualStatus x) {
+        new CDTransformerTest().verifyXmlSimple(x.getStatusCode());
+        new TSTransformerTest().verifyXmlSimple(x.getStatusDate());
+    }    
 
 }
