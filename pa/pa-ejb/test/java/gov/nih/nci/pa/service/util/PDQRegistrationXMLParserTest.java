@@ -185,7 +185,7 @@ public class PDQRegistrationXMLParserTest {
         assertNotNull(rXMLParser.getPrincipalInvestigatorDTO());
         assertNotNull(rXMLParser.getLeadOrganizationDTO());
         assertTrue(StringUtils.contains(EnOnConverter.convertEnOnToString(rXMLParser.getLeadOrganizationDTO().getName())
-                , "Arthur G. James Cancer Hospital"));
+                , "Tom Baker Cancer Centre"));
     }
 
     @Test

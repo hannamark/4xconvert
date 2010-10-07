@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusBeanLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceBean;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -103,6 +104,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -208,4 +211,11 @@ public class StudySiteAccrualAccessServiceTest {
             // expected behavior
         }
     }
+  @Test
+  public void testGetTreatingSites() throws PAException {
+        Session session = HibernateUtil.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        assertNotNull(bean.getTreatingSites(TestSchema.studyProtocolIds.get(0)));
+        transaction.commit();
+  }
 }

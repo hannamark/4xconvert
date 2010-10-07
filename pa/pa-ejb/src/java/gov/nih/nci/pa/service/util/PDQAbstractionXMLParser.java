@@ -214,10 +214,11 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
      */
     private void readIrbInfo(Element parent) {
         if (parent != null) {
-            String orgName = getText(parent, "name");
-            String phone = getText(parent, "phone");
-            String email = getText(parent, "email");
-            getText(parent, "full_address");
+            Element irbInfoElement = parent.getChild("irb_info");
+            String orgName = getText(irbInfoElement, "name");
+            String phone = getText(irbInfoElement, "phone");
+            String email = getText(irbInfoElement, "email");
+            getText(irbInfoElement, "full_address");
             if (StringUtils.isNotEmpty(orgName)) {
                 setIrbOrgDTO(new OrganizationDTO());
                 getIrbOrgDTO().setName(EnOnConverter.convertToEnOn(orgName));

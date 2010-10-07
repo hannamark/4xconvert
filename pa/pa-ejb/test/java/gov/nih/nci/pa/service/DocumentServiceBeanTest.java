@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -88,6 +89,9 @@ import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.MockCSMUserService;
+
 
 import java.util.List;
 
@@ -108,14 +112,28 @@ public class DocumentServiceBeanTest {
 
     @Test
     public void create() throws Exception {
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
         DocumentDTO docDTO = new DocumentDTO();
-        docDTO.setStudyProtocolIdentifier(pid);
+        docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.parseLong(pid.getExtension())));
+        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
+        docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc"));
+        docDTO.setText(EdConverter.convertToEd("test".getBytes()));
+
+        try {
+            remoteEjb.create(docDTO);
+            fail();
+        } catch(PAException e) {
+            // expected behavior
+        }
+        docDTO = new DocumentDTO();
+        docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.parseLong(pid.getExtension())));
         docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.OTHER));
         docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc"));
         docDTO.setText(EdConverter.convertToEd("test".getBytes()));
 
         try {
             remoteEjb.create(docDTO);
+            fail();
         } catch(PAException e) {
             // expected behavior
         }
@@ -129,5 +147,43 @@ public class DocumentServiceBeanTest {
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.DOCUMENT_ROOT);
         assertTrue(StringUtils.isNotEmpty(dto.getIdentifier().getIdentifierName()));
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
+    @Test
+    public void testUpdate() throws Exception {
+        DocumentDTO docDTO = new DocumentDTO();
+        docDTO.setStudyProtocolIdentifier(pid);
+        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.OTHER));
+        docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc"));
+        docDTO.setText(EdConverter.convertToEd("test".getBytes()));
+
+        try {
+            remoteEjb.update(docDTO);
+            fail();
+        } catch(PAException e) {
+            assertTrue(StringUtils.contains(e.getMessage(), "Identifier Name does not"));
+        }
+        docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.parseLong(pid.getExtension())));
+        docDTO.setIdentifier(IiConverter.convertToDocumentIi(1L));
+        try {
+            remoteEjb.update(docDTO);
+            fail();
+        } catch(Exception e) {
+            // expected behavior
+        }
+    }
+    @Test
+    public void testDelete() throws Exception {
+        try {
+            remoteEjb.delete(null);
+            fail("Ii shld not be null");
+        } catch(PAException e) {
+            assertEquals("docDTO should not be null", e.getMessage());
+        }
+        try {
+            remoteEjb.delete(IiConverter.convertToDocumentIi(1L));
+            fail("Document with selected type cannot be deleted.");
+        } catch(Exception e) {
+         // expected behavior
+        }
     }
 }

@@ -179,7 +179,7 @@ public class PDQXMLParserTest {
     @Test
     public void testReadIrbInfo() {
         setURLAndParse();
-        assertNull(abstractionElementParser.getIrbOrgDTO());
+        assertNotNull(abstractionElementParser.getIrbOrgDTO());
     }
     @Test
     public void testReadEligibility() {

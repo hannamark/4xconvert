@@ -88,6 +88,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
@@ -251,7 +253,7 @@ public class PDQTrialRegistrationServiceTest {
         trialRegistrationSvc.setStudyInboxServiceLocal(new StudyInboxServiceBean());
         trialRegistrationSvc.setStudyRegulatoryAuthorityService(new StudyRegulatoryAuthorityBeanLocal());
         trialRegistrationSvc.setMailManagerSerivceLocal(mailManagerSerivceLocal);
-        trialRegistrationSvc.setDocumentService(new DocumentServiceBean());
+        trialRegistrationSvc.setDocumentService(mock (DocumentServiceBean.class));
         trialRegistrationSvc.setStudyRelationshipService(new StudyRelationshipServiceBean());
 
         TSRReportGeneratorServiceRemote mockTsrGeneratorSvc = mock(TSRReportGeneratorServiceRemote.class);
@@ -275,7 +277,6 @@ public class PDQTrialRegistrationServiceTest {
         when(paSvcLoc.getStudyMilestoneService()).thenReturn(studyMilestoneSvc);
         when(paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(new DocumentWorkflowStatusBeanLocal());
         when(paSvcLoc.getStudyIndldeService()).thenReturn(new StudyIndldeBeanLocal());
-        when(paSvcLoc.getDocumentService()).thenReturn(new DocumentServiceBean());
         when(paSvcLoc.getStudyResoucringService()).thenReturn(new StudyResourcingBeanLocal());
         when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(orgCorrelationSvc);
         when(paSvcLoc.getStudyContactService()).thenReturn(new StudyContactServiceBean());
@@ -292,6 +293,8 @@ public class PDQTrialRegistrationServiceTest {
         when(paSvcLoc.getArmService()).thenReturn(new ArmServiceBean());
         when(paSvcLoc.getStudySiteContactService()).thenReturn(new StudySiteContactServiceBean());
         when(paSvcLoc.getOutcomeMeasureService()).thenReturn(new StudyOutcomeMeasureBeanLocal());
+        DocumentServiceBean docService = mock(DocumentServiceBean.class);
+        when(paSvcLoc.getDocumentService()).thenReturn(docService);
 
         List<StudyProtocolQueryDTO> queryResults = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO result = new StudyProtocolQueryDTO();
@@ -396,5 +399,22 @@ public class PDQTrialRegistrationServiceTest {
         assertNotNull(bean.getPaServiceUtils());
         assertNotNull(bean.getOrgCorrelationService());
         assertNotNull(bean.getProtocolQueryService());
+        bean.setPaServiceUtils(null);
+        assertNull(bean.getPaServiceUtils());
+    }
+    @Test
+    public void testException() throws PAException, IOException {
+        RegulatoryInformationBean regulatoryBean =  mock (RegulatoryInformationBean.class);
+        when(paSvcLoc.getRegulatoryInformationService()).thenReturn(regulatoryBean);
+        when(regulatoryBean.getRegulatoryAuthorityId(anyString(),anyString())).thenThrow(new PAException());
+        try {
+            bean.loadRegistrationElementFromPDQXml(testXMLUrl, TestSchema.getUser().getLoginName());
+            fail("as regulatory info is null");
+        } catch (PAException e) {
+
+        }
+        verify(regulatoryBean, org.mockito.Mockito.atLeastOnce()).getRegulatoryAuthorityId(
+                anyString(),anyString());
+
     }
 }
