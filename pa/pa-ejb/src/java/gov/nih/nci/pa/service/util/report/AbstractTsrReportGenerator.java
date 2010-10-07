@@ -101,6 +101,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
+import com.lowagie.text.ListItem;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Table;
@@ -894,7 +895,10 @@ public abstract class AbstractTsrReportGenerator {
     private Cell getItemValueCell(List<String> lst) throws BadElementException {
         com.lowagie.text.List textList = new com.lowagie.text.List(false, INT_10);
         textList.setListSymbol(new Chunk("\u2022", FontFactory.getFont(FontFactory.HELVETICA, INT_12, Font.BOLD)));
-        for (String item : lst) {
+        Font itemValueFont = FontFactory.getFont(FontFactory.HELVETICA, Font.DEFAULTSIZE, Font.NORMAL, Color.BLACK);
+        for (String itemStr : lst) {
+            ListItem item = new ListItem(itemStr);
+            item.setFont(itemValueFont);
             textList.add(item);
         }
 

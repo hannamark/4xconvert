@@ -32,7 +32,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="taglibs"                name="standard"                rev="1.1.2"           conf="runtime->master"/>
     <dependency org="displaytag"             name="displaytag"              rev="1.1"             conf="runtime->master"/>
     <dependency org="org.freemarker"         name="freemarker"              rev="2.3.13"          conf="runtime->default"/>
-    <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.2.13"          conf="runtime->default"/>
+    <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.2.16"          conf="runtime->default"/>
     <dependency org="ognl"                   name="ognl"                    rev="2.7"             conf="runtime->default"/>
     <dependency org="opensymphony"           name="sitemesh"                rev="2.3"             conf="runtime->default"/>
     <dependency org="com.opensymphony"       name="xwork"                   rev="2.1.2"           conf="runtime->default">
@@ -66,7 +66,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="org.hibernate"          name="hibernate-validator"     rev="3.0.0.ga"        conf="compile->master"/>
     <dependency org="org.hibernate"          name="hibernate-annotations"   rev="3.2.0.ga"        conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="compile->master"/>
-    <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.14"          conf="compile->master"/>
+    <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.16"          conf="compile->master"/>
 
     <!-- test -->
     <dependency org="org.codehaus.cargo"     name="cargo-ant"               rev="0.8"             conf="test->master"/>

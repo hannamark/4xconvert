@@ -30,7 +30,7 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jboss-annotations-ejb3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jericho-html-2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jstl-1.1.2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-struts2-1.2.13.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-struts2-1.2.16.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/persistence-api-1.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/postgresql-8.4-701.jdbc3.jar"/>
@@ -97,7 +97,7 @@
 	<classpathentry kind="var" path="PA_LIB/commons/test/antlr-2.7.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/mockito-all-1.8.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-java-client-driver-1.0-beta-2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/nci-commons-core-1.2.14.jar" sourcepath="/PA_LIB/pa-ejb/compile/nci-commons-core-1.2.14.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/nci-commons-core-1.2.16.jar" sourcepath="/PA_LIB/pa-ejb/compile/nci-commons-core-1.2.16.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/itext-rtf-2.1.7.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

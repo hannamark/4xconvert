@@ -137,7 +137,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
             + "join alias.studyProtocol sp "
             + "where sp.id = :studyProtocolId "
             + "order by alias.id ";
-        LOG.info("query " +  getTypeArgument().getName() + " = " + hql + ".  ");
+        LOG.debug("query " +  getTypeArgument().getName() + " = " + hql + ".  ");
 
         // step 2: construct query object
         query = session.createQuery(hql);

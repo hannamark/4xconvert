@@ -154,7 +154,6 @@ public class SessionManagerBean implements SessionManagerRemote {
     /**
      * {@inheritDoc}
      */
-//    @RolesAllowed({ "client" })
     public long startSession(String username, String returnURL) {
         try {
             Principal callerPrincipal = ejbContext.getCallerPrincipal();

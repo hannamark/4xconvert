@@ -624,33 +624,32 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public StudyProtocolDTO getStudyProtocol(Ii studyProtocolIi)
-        throws PAException {
+    public StudyProtocolDTO getStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO studyProtocolDTO = null;
         if (PAUtil.isIiNull(studyProtocolIi)) {
             throw new PAException("Ii should not be null");
         }
         if (IiConverter.STUDY_PROTOCOL_ROOT.equals(studyProtocolIi.getRoot())
-            && studyProtocolIi.getExtension().startsWith("NCI")) {
-                StudyProtocolDTO spDTO = new StudyProtocolDTO();
-                spDTO.setSecondaryIdentifiers(new DSet<Ii>());
-                spDTO.getSecondaryIdentifiers().setItem(new HashSet<Ii>());
-                spDTO.getSecondaryIdentifiers().getItem().add(studyProtocolIi);
-                LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
-                List<StudyProtocolDTO> spList;
-                try {
-                    spList = search(spDTO, limit);
-                } catch (TooManyResultsException e) {
-                    throw new PAException("found too many trials with this identifier "
-                            + studyProtocolIi.getExtension() + " when only 1 expected.", e);
-                }
-                if (spList.isEmpty() || spList.size() > 1) {
-                    throw new PAException("could not find unique trial with this identifier "
-                            + studyProtocolIi.getExtension());
-                }
-                studyProtocolDTO = spList.get(0);
+                && studyProtocolIi.getExtension().startsWith("NCI")) {
+            StudyProtocolDTO spDTO = new StudyProtocolDTO();
+            spDTO.setSecondaryIdentifiers(new DSet<Ii>());
+            spDTO.getSecondaryIdentifiers().setItem(new HashSet<Ii>());
+            spDTO.getSecondaryIdentifiers().getItem().add(studyProtocolIi);
+            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+            List<StudyProtocolDTO> spList;
+            try {
+                spList = search(spDTO, limit);
+            } catch (TooManyResultsException e) {
+                throw new PAException("found too many trials with this identifier " + studyProtocolIi.getExtension()
+                        + " when only 1 expected.", e);
+            }
+            if (spList.isEmpty() || spList.size() > 1) {
+                throw new PAException("could not find unique trial with this identifier "
+                        + studyProtocolIi.getExtension());
+            }
+            studyProtocolDTO = spList.get(0);
         } else {
-                studyProtocolDTO = getStudyProtocolById(Long.valueOf(studyProtocolIi.getExtension()));
+            studyProtocolDTO = getStudyProtocolById(Long.valueOf(studyProtocolIi.getExtension()));
         }
 
         return studyProtocolDTO;
