@@ -121,6 +121,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     private boolean checkoutStatus = false;
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     private static final String SHOW_VIEW = "view";
+    private static final String SHOW_VIEW_REFRESH = "viewRefresh";
     private String identifier;
 
     /**
@@ -369,7 +370,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
         }
-        return view();
+        return SHOW_VIEW_REFRESH;
     }
 
     /**

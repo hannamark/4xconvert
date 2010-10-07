@@ -125,24 +125,6 @@
                  <c:out value="${sessionScope.trialSummary.officialTitle }"/>
             </td>
             </tr>
-             <tr>
-            <td scope="row" class="label">
-                <label for="checkOutStatus">
-                    <fmt:message key="studyProtocol.checkOutStatus"/>
-                </label>
-            </td>
-            <td class="value">
-            	<c:if test="${(sessionScope.trialSummary.studyCheckoutBy == null)
-            						|| (sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-            						|| (sessionScope.role == 'SuAbstractor')}">
-                 <s:select  name="checkoutStatus" list="#{'false':'Check-In', 'true':'Check-Out'}" />
-                 </c:if>
-                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName != sessionScope.trialSummary.studyCheckoutBy
-                 						&& sessionScope.role != 'SuAbstractor')}">
-                 		<b><c:out value="${sessionScope.trialSummary.studyCheckoutByUsername}"/> </b>
-                 </c:if>
-            </td>
-            </tr>
             </table>
         <c:if test="${(sessionScope.trialSummary.studyCheckoutBy == null)
         					|| (sessionScope.trialSummary.studyCheckoutBy == sessionScope.loggedUserName)
@@ -150,7 +132,17 @@
  <div class="actionsrow">
 	<del class="btnwrapper">
 		<ul class="btnrow">
-			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+            <c:choose>
+                <c:when test="${(sessionScope.trialSummary.studyCheckoutBy == null)}">
+                         <c:set var="saveButtonName" value="Check Out"/>
+                         <s:hidden name="checkoutStatus" value="true" />
+                </c:when>         
+                <c:otherwise>
+                         <c:set var="saveButtonName" value="Check In"/>
+                         <s:hidden name="checkoutStatus" value="false" />
+                </c:otherwise>   
+            </c:choose>      
+			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">${saveButtonName}</span></span></s:a></li>
 		</ul>
 	</del>
 </div>
