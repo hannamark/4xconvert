@@ -116,8 +116,6 @@ import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -259,18 +257,9 @@ public class EligibilityCriteriaAction extends ActionSupport {
 
             Collection<ClassSchemeClassSchemeItem> csItem = classifSch.getClassSchemeClassSchemeItemCollection();
             csisResult = new ArrayList<ClassificationSchemeItem>();
-
-            Comparator<ClassificationSchemeItem> csiComp = new Comparator<ClassificationSchemeItem>() {
-                public int compare(ClassificationSchemeItem csi1, ClassificationSchemeItem csi2) {
-                    return csi1.getLongName().compareToIgnoreCase(csi2.getLongName());
-                }
-            };
-
             for (ClassSchemeClassSchemeItem csCsi : csItem) {
                 csisResult.add(csCsi.getClassificationSchemeItem());
             }
-
-            Collections.sort(csisResult, csiComp);
 
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -293,15 +282,15 @@ public class EligibilityCriteriaAction extends ActionSupport {
             criteria.createAlias("referenceDocumentCollection", "refDoc")
                 .add(Expression.eq("refDoc.type", "Preferred Question Text"))
                 .add(Expression.ilike("refDoc.doctext", "%" + deName + "%"));
-      //      DetachedCriteria csCsiCriteria = criteria.createCriteria("administeredComponentClassSchemeItemCollection")
-      //          .createCriteria("classSchemeClassSchemeItem");
+            DetachedCriteria csCsiCriteria = criteria.createCriteria("administeredComponentClassSchemeItemCollection")
+                .createCriteria("classSchemeClassSchemeItem");
 
-     //       DetachedCriteria csCriteria = csCsiCriteria.createCriteria("classificationScheme");
-     //       csCriteria.add(Expression.eq("publicID", cadsrCsId));
-     //       csCriteria.add(Expression.eq("version", cadsrCsVersion));
+            DetachedCriteria csCriteria = csCsiCriteria.createCriteria("classificationScheme");
+            csCriteria.add(Expression.eq("publicID", cadsrCsId));
+            csCriteria.add(Expression.eq("version", cadsrCsVersion));
 
-    //        DetachedCriteria csiCriteria = csCsiCriteria.createCriteria("classificationSchemeItem");
-    //        csiCriteria.add(Expression.eq("longName", csiName));
+            DetachedCriteria csiCriteria = csCsiCriteria.createCriteria("classificationSchemeItem");
+            csiCriteria.add(Expression.eq("longName", csiName));
 
             List<Object> classCes = appService.query(criteria);
 
