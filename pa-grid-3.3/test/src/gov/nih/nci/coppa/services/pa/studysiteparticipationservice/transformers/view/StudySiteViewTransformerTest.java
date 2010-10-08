@@ -83,50 +83,96 @@
 package gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view;
 
 
-import gov.nih.nci.coppa.pa.grid.dto.transform.pa.StudySiteTransformerTest;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.view.StudySiteViewTransformer;
+import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.HealthCareFacility;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudyProtocol;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLTSTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
-import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformerTest;
+import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
+
+import java.util.Arrays;
 
 public class StudySiteViewTransformerTest
-    extends AbstractTransformerTestBase<StudySiteViewTransformer, StudySite, StudySiteDTO> {
+    extends AbstractTransformerTestBase<StudySiteViewTransformer, StudySite, ParticipatingSiteDTO> {
+
 
     @Override
-    public StudySiteDTO makeDtoSimple() {
-        return new StudySiteTransformerTest().makeDtoSimple();
+    public ParticipatingSiteDTO makeDtoSimple() {
+        ParticipatingSiteDTO result = new ParticipatingSiteDTO();
+        result.setIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setOrganizationRoleIdentifiers(new DSETIITransformerTest().makeDtoSimple());
+        result.setStudySiteContacts(Arrays.asList(new StudySiteContactViewTransformerTest().makeDtoSimple()));
+        result.setLocalStudyProtocolIdentifier(new STTransformerTest().makeDtoSimple());
+        result.setStudySiteAccrualStatus(new StudySiteAccrualStatusViewTransformerTest().makeDtoSimple());
+        result.setAccrualDateRange(new IVLTSTransformerTest().makeDtoSimple());
+        result.setReviewBoardApprovalDate(new TSTransformerTest().makeDtoSimple());
+        result.setReviewBoardApprovalStatusCode(new CDTransformerTest().makeDtoSimple());
+        result.setReviewBoardOrganizationalAffiliation(new STTransformerTest().makeDtoSimple());
+        result.setReviewBoardApprovalNumber(new STTransformerTest().makeDtoSimple());
+        result.setTargetAccrualNumber(new INTTransformerTest().makeDtoSimple());
+        result.setProgramCodeText(new STTransformerTest().makeDtoSimple());
+        return result;
     }
 
     @Override
     public StudySite makeXmlSimple() {
         StudySite result = new StudySite();
-        result.setAccrualDateRange(new IVLTSTransformerTest().makeXmlSimple());
-        result.setAccrualStatus(new StudySiteAccrualStatusViewTransformerTest().makeXmlSimple());
-        result.setLocalStudyProtocolIdentifier(new STTransformerTest().makeXmlSimple());
-        result.setProgramCodeText(new STTransformerTest().makeXmlSimple());
-        result.setTargetAccrualNumber(new INTTransformerTest().makeXmlSimple());
+        result.setIdentifier(new IITransformerTest().makeXmlSimple());
         result.setStudyProtocol(new StudyProtocol());
+        result.getStudyProtocol().setIdentifier(new IITransformerTest().makeXmlSimple());
+        result.setOrganizationRole(new HealthCareFacility());
+        result.getOrganizationRole().setIdentifier(new DSETIITransformerTest().makeXmlSimple());
+        result.getStudySiteContacts().add(new StudySiteContactViewTransformerTest().makeXmlSimple());
+        result.setLocalStudyProtocolIdentifier(new STTransformerTest().makeXmlSimple());
+        result.setAccrualStatus(new StudySiteAccrualStatusViewTransformerTest().makeXmlSimple());
+        result.setAccrualDateRange(new IVLTSTransformerTest().makeXmlSimple());
+        result.setReviewBoardApprovalStatusCode(new CDTransformerTest().makeXmlSimple());
+        result.setReviewBoardOrganizationalAffiliation(new STTransformerTest().makeXmlSimple());
+        result.setReviewBoardApprovalNumber(new STTransformerTest().makeXmlSimple());
+        result.setReviewBoardApprovalDate(new TSTransformerTest().makeXmlSimple());
+        result.setTargetAccrualNumber(new INTTransformerTest().makeXmlSimple());
+        result.setProgramCodeText(new STTransformerTest().makeXmlSimple());
         return result;
     }
 
     @Override
-    public void verifyDtoSimple(StudySiteDTO x) {
-        new IVLTSTransformerTest().verifyDtoSimple(x.getAccrualDateRange());
+    public void verifyDtoSimple(ParticipatingSiteDTO x) {
+        new IITransformerTest().verifyDtoSimple(x.getIdentifier());
+        new IITransformerTest().verifyDtoSimple(x.getStudyProtocolIdentifier());
+        new DSETIITransformerTest().verifyDtoSimple(x.getOrganizationRoleIdentifiers());
+        new StudySiteContactViewTransformerTest().verifyDtoSimple(x.getStudySiteContacts().get(0));
         new STTransformerTest().verifyDtoSimple(x.getLocalStudyProtocolIdentifier());
-        new STTransformerTest().verifyDtoSimple(x.getProgramCodeText());
+        new StudySiteAccrualStatusViewTransformerTest().verifyDtoSimple(x.getStudySiteAccrualStatus());
+        new IVLTSTransformerTest().verifyDtoSimple(x.getAccrualDateRange());
+        new TSTransformerTest().verifyDtoSimple(x.getReviewBoardApprovalDate());
+        new CDTransformerTest().verifyDtoSimple(x.getReviewBoardApprovalStatusCode());
+        new STTransformerTest().verifyDtoSimple(x.getReviewBoardOrganizationalAffiliation());
+        new STTransformerTest().verifyDtoSimple(x.getReviewBoardApprovalNumber());
         new INTTransformerTest().verifyDtoSimple(x.getTargetAccrualNumber());
+        new STTransformerTest().verifyDtoSimple(x.getProgramCodeText());
     }
 
     @Override
     public void verifyXmlSimple(StudySite x) {
-        new IVLTSTransformerTest().verifyXmlSimple(x.getAccrualDateRange());
+        new IITransformerTest().verifyXmlSimple(x.getIdentifier());
+        new IITransformerTest().verifyXmlSimple(x.getStudyProtocol().getIdentifier());
+        new HealthCareFacilityViewTransformerTest().verifyXmlSimple(x.getOrganizationRole());
+        new StudySiteContactViewTransformerTest().verifyXmlSimple(x.getStudySiteContacts().get(0));
         new STTransformerTest().verifyXmlSimple(x.getLocalStudyProtocolIdentifier());
-        new STTransformerTest().verifyXmlSimple(x.getProgramCodeText());
+        new StudySiteAccrualStatusViewTransformerTest().verifyXmlSimple(x.getAccrualStatus());
+        new IVLTSTransformerTest().verifyXmlSimple(x.getAccrualDateRange());
+        new TSTransformerTest().verifyXmlSimple(x.getReviewBoardApprovalDate());
+        new CDTransformerTest().verifyXmlSimple(x.getReviewBoardApprovalStatusCode());
+        new STTransformerTest().verifyXmlSimple(x.getReviewBoardOrganizationalAffiliation());
+        new STTransformerTest().verifyXmlSimple(x.getReviewBoardApprovalNumber());
         new INTTransformerTest().verifyXmlSimple(x.getTargetAccrualNumber());
-
+        new STTransformerTest().verifyXmlSimple(x.getProgramCodeText());
     }
 }

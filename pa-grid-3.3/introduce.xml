@@ -3039,30 +3039,30 @@
      <ns636:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
      <ns636:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
     </ns636:Method>
-    <ns636:Method description="" isImported="false" isProvided="false" name="isParticipatingSite" xsi:type="ns636:MethodType">
-     <ns636:Inputs>
-      <ns636:Input qName="ns639:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns639="http://iso21090.nci.nih.gov"/>
-      <ns636:Input qName="ns640:Id" description="" isArray="false" name="hcfId" xmlns:ns640="http://iso21090.nci.nih.gov"/>
-     </ns636:Inputs>
-     <ns636:Output qName="ns641:Bl" description="" isArray="false" xmlns:ns641="http://iso21090.nci.nih.gov"/>
-     <ns636:Exceptions>
-      <ns636:Exception description="" name="PAFault" qname="ns642:PAFault" xmlns:ns642="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns636:Exceptions>
-     <ns643:MethodSecurity xsi:type="ns643:MethodSecurity" xmlns:ns643="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns643:SecuritySetting xsi:type="ns643:SecuritySetting">Custom</ns643:SecuritySetting>
-      <ns643:TransportLevelSecurity xsi:type="ns643:TransportLevelSecurity">
-       <ns643:CommunicationMethod xsi:type="ns643:CommunicationMethod">Privacy</ns643:CommunicationMethod>
-      </ns643:TransportLevelSecurity>
-      <ns643:RunAsMode xsi:type="ns643:RunAsMode">System</ns643:RunAsMode>
-      <ns643:AnonymousClients xsi:type="ns643:AnonymousCommunication">No</ns643:AnonymousClients>
-      <ns643:MethodAuthorization xsi:type="ns643:MethodAuthorization">
-       <ns643:InheritServiceAuthorization xsi:type="ns643:InheritServiceAuthorization"/>
-      </ns643:MethodAuthorization>
-     </ns643:MethodSecurity>
-     <ns644:Extensions xsi:type="ns644:ExtensionsType" xmlns:ns644="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns636:Method>
     <ns636:Method description="" isImported="false" isProvided="false" name="createParticipatingSite" xsi:type="ns636:MethodType">
      <ns636:Inputs>
+      <ns636:Input qName="ns639:StudySite" description="" isArray="false" name="studySite" xmlns:ns639="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/Management"/>
+     </ns636:Inputs>
+     <ns636:Output qName="ns640:StudySite" description="" isArray="false" xmlns:ns640="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/View"/>
+     <ns636:Exceptions>
+      <ns636:Exception description="" name="PAFault" qname="ns641:PAFault" xmlns:ns641="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns636:Exceptions>
+     <ns642:MethodSecurity xsi:type="ns642:MethodSecurity" xmlns:ns642="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns642:SecuritySetting xsi:type="ns642:SecuritySetting">Custom</ns642:SecuritySetting>
+      <ns642:TransportLevelSecurity xsi:type="ns642:TransportLevelSecurity">
+       <ns642:CommunicationMethod xsi:type="ns642:CommunicationMethod">Privacy</ns642:CommunicationMethod>
+      </ns642:TransportLevelSecurity>
+      <ns642:RunAsMode xsi:type="ns642:RunAsMode">System</ns642:RunAsMode>
+      <ns642:AnonymousClients xsi:type="ns642:AnonymousCommunication">No</ns642:AnonymousClients>
+      <ns642:MethodAuthorization xsi:type="ns642:MethodAuthorization">
+       <ns642:InheritServiceAuthorization xsi:type="ns642:InheritServiceAuthorization"/>
+      </ns642:MethodAuthorization>
+     </ns642:MethodSecurity>
+     <ns643:Extensions xsi:type="ns643:ExtensionsType" xmlns:ns643="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns636:Method>
+    <ns636:Method description="" isImported="false" isProvided="false" name="updateParticipatingSite" xsi:type="ns636:MethodType">
+     <ns636:Inputs>
+      <ns636:Input qName="ns644:Id" description="" isArray="false" name="studySiteId" xmlns:ns644="http://iso21090.nci.nih.gov"/>
       <ns636:Input qName="ns645:StudySite" description="" isArray="false" name="studySite" xmlns:ns645="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/Management"/>
      </ns636:Inputs>
      <ns636:Output qName="ns646:StudySite" description="" isArray="false" xmlns:ns646="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/View"/>
@@ -3082,759 +3082,758 @@
      </ns648:MethodSecurity>
      <ns649:Extensions xsi:type="ns649:ExtensionsType" xmlns:ns649="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
     </ns636:Method>
-    <ns636:Method description="" isImported="false" isProvided="false" name="updateParticipatingSite" xsi:type="ns636:MethodType">
+    <ns636:Method description="" isImported="false" isProvided="false" name="getParticipatingSitesByStudyProtocol" xsi:type="ns636:MethodType">
      <ns636:Inputs>
-      <ns636:Input qName="ns650:Id" description="" isArray="false" name="studySiteId" xmlns:ns650="http://iso21090.nci.nih.gov"/>
-      <ns636:Input qName="ns651:StudySite" description="" isArray="false" name="studySite" xmlns:ns651="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/Management"/>
+      <ns636:Input qName="ns650:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns650="http://iso21090.nci.nih.gov"/>
      </ns636:Inputs>
-     <ns636:Output qName="ns652:StudySite" description="" isArray="false" xmlns:ns652="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/View"/>
+     <ns636:Output qName="ns651:StudySite" description="" isArray="true" xmlns:ns651="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/View"/>
      <ns636:Exceptions>
-      <ns636:Exception description="" name="PAFault" qname="ns653:PAFault" xmlns:ns653="http://faults.pa.services.coppa.nci.nih.gov"/>
+      <ns636:Exception description="" name="PAFault" qname="ns652:PAFault" xmlns:ns652="http://faults.pa.services.coppa.nci.nih.gov"/>
      </ns636:Exceptions>
-     <ns654:MethodSecurity xsi:type="ns654:MethodSecurity" xmlns:ns654="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns654:SecuritySetting xsi:type="ns654:SecuritySetting">Custom</ns654:SecuritySetting>
-      <ns654:TransportLevelSecurity xsi:type="ns654:TransportLevelSecurity">
-       <ns654:CommunicationMethod xsi:type="ns654:CommunicationMethod">Privacy</ns654:CommunicationMethod>
-      </ns654:TransportLevelSecurity>
-      <ns654:RunAsMode xsi:type="ns654:RunAsMode">System</ns654:RunAsMode>
-      <ns654:AnonymousClients xsi:type="ns654:AnonymousCommunication">No</ns654:AnonymousClients>
-      <ns654:MethodAuthorization xsi:type="ns654:MethodAuthorization">
-       <ns654:InheritServiceAuthorization xsi:type="ns654:InheritServiceAuthorization"/>
-      </ns654:MethodAuthorization>
-     </ns654:MethodSecurity>
-     <ns655:Extensions xsi:type="ns655:ExtensionsType" xmlns:ns655="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+     <ns653:MethodSecurity xsi:type="ns653:MethodSecurity" xmlns:ns653="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns653:SecuritySetting xsi:type="ns653:SecuritySetting">Custom</ns653:SecuritySetting>
+      <ns653:TransportLevelSecurity xsi:type="ns653:TransportLevelSecurity">
+       <ns653:CommunicationMethod xsi:type="ns653:CommunicationMethod">Privacy</ns653:CommunicationMethod>
+      </ns653:TransportLevelSecurity>
+      <ns653:RunAsMode xsi:type="ns653:RunAsMode">System</ns653:RunAsMode>
+      <ns653:AnonymousClients xsi:type="ns653:AnonymousCommunication">No</ns653:AnonymousClients>
+      <ns653:MethodAuthorization xsi:type="ns653:MethodAuthorization">
+       <ns653:InheritServiceAuthorization xsi:type="ns653:InheritServiceAuthorization"/>
+      </ns653:MethodAuthorization>
+     </ns653:MethodSecurity>
+     <ns654:Extensions xsi:type="ns654:ExtensionsType" xmlns:ns654="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
     </ns636:Method>
    </ns636:Methods>
-   <ns656:ResourcePropertiesList xsi:type="ns656:ResourcePropertiesListType" xmlns:ns656="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
-   <ns657:ServiceSecurity xsi:type="ns657:ServiceSecurity" xmlns:ns657="gme://gov.nih.nci.cagrid.introduce/1/Security">
-    <ns657:SecuritySetting xsi:type="ns657:SecuritySetting">Custom</ns657:SecuritySetting>
-    <ns657:TransportLevelSecurity xsi:type="ns657:TransportLevelSecurity">
-     <ns657:CommunicationMethod xsi:type="ns657:CommunicationMethod">Privacy</ns657:CommunicationMethod>
-    </ns657:TransportLevelSecurity>
-    <ns657:RunAsMode xsi:type="ns657:RunAsMode">System</ns657:RunAsMode>
-    <ns657:AnonymousClients xsi:type="ns657:AnonymousCommunication">No</ns657:AnonymousClients>
-    <ns657:ServiceAuthorization xsi:type="ns657:ServiceAuthorization">
-     <ns657:IntroducePDPAuthorization xsi:type="ns657:IntroducePDPAuthorization"/>
-    </ns657:ServiceAuthorization>
-   </ns657:ServiceSecurity>
+   <ns655:ResourcePropertiesList xsi:type="ns655:ResourcePropertiesListType" xmlns:ns655="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns656:ServiceSecurity xsi:type="ns656:ServiceSecurity" xmlns:ns656="gme://gov.nih.nci.cagrid.introduce/1/Security">
+    <ns656:SecuritySetting xsi:type="ns656:SecuritySetting">Custom</ns656:SecuritySetting>
+    <ns656:TransportLevelSecurity xsi:type="ns656:TransportLevelSecurity">
+     <ns656:CommunicationMethod xsi:type="ns656:CommunicationMethod">Privacy</ns656:CommunicationMethod>
+    </ns656:TransportLevelSecurity>
+    <ns656:RunAsMode xsi:type="ns656:RunAsMode">System</ns656:RunAsMode>
+    <ns656:AnonymousClients xsi:type="ns656:AnonymousCommunication">No</ns656:AnonymousClients>
+    <ns656:ServiceAuthorization xsi:type="ns656:ServiceAuthorization">
+     <ns656:IntroducePDPAuthorization xsi:type="ns656:IntroducePDPAuthorization"/>
+    </ns656:ServiceAuthorization>
+   </ns656:ServiceSecurity>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
     <ns3:Secure xsi:type="ns3:Secure"/>
    </ns3:ResourceFrameworkOptions>
-   <ns658:Extensions xsi:type="ns658:ExtensionsType" xmlns:ns658="gme://gov.nih.nci.cagrid.introduce/1/Extension">
-    <ns658:Extension extensionType="AUTHORIZATION" name="enforce_auth" xsi:type="ns658:ExtensionType"/>
-   </ns658:Extensions>
+   <ns657:Extensions xsi:type="ns657:ExtensionsType" xmlns:ns657="gme://gov.nih.nci.cagrid.introduce/1/Extension">
+    <ns657:Extension extensionType="AUTHORIZATION" name="enforce_auth" xsi:type="ns657:ExtensionType"/>
+   </ns657:Extensions>
   </ns3:Service>
   <ns3:Service name="StudySiteContactService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService" packageName="gov.nih.nci.coppa.services.pa.studysitecontactservice" xsi:type="ns3:ServiceType">
-   <ns659:Methods xsi:type="ns659:MethodsType" xmlns:ns659="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns659:Method description="" isImported="false" isProvided="false" name="copy" xsi:type="ns659:MethodType">
-     <ns659:Inputs>
-      <ns659:Input qName="ns660:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns660="http://iso21090.nci.nih.gov"/>
-      <ns659:Input qName="ns661:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns661="http://iso21090.nci.nih.gov"/>
-     </ns659:Inputs>
-     <ns659:Output qName="void" description="" isArray="false"/>
-     <ns659:Exceptions>
-      <ns659:Exception description="" name="PAFault" qname="ns662:PAFault" xmlns:ns662="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns659:Exceptions>
-     <ns663:MethodSecurity xsi:type="ns663:MethodSecurity" xmlns:ns663="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns663:SecuritySetting xsi:type="ns663:SecuritySetting">Custom</ns663:SecuritySetting>
-      <ns663:TransportLevelSecurity xsi:type="ns663:TransportLevelSecurity">
-       <ns663:CommunicationMethod xsi:type="ns663:CommunicationMethod">Privacy</ns663:CommunicationMethod>
-      </ns663:TransportLevelSecurity>
-      <ns663:RunAsMode xsi:type="ns663:RunAsMode">System</ns663:RunAsMode>
-      <ns663:AnonymousClients xsi:type="ns663:AnonymousCommunication">No</ns663:AnonymousClients>
-      <ns663:MethodAuthorization xsi:type="ns663:MethodAuthorization">
-       <ns663:InheritServiceAuthorization xsi:type="ns663:InheritServiceAuthorization"/>
-      </ns663:MethodAuthorization>
-     </ns663:MethodSecurity>
-     <ns664:Extensions xsi:type="ns664:ExtensionsType" xmlns:ns664="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns659:Method>
-    <ns659:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns659:MethodType">
-     <ns659:Inputs>
-      <ns659:Input qName="ns665:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns665="http://pa.services.coppa.nci.nih.gov"/>
-     </ns659:Inputs>
-     <ns659:Output qName="ns666:StudySiteContact" description="" isArray="false" xmlns:ns666="http://pa.services.coppa.nci.nih.gov"/>
-     <ns659:Exceptions>
-      <ns659:Exception description="" name="PAFault" qname="ns667:PAFault" xmlns:ns667="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns659:Exceptions>
-    </ns659:Method>
-    <ns659:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns659:MethodType">
-     <ns659:Inputs>
-      <ns659:Input qName="ns668:Id" description="" isArray="false" name="id" xmlns:ns668="http://iso21090.nci.nih.gov"/>
-     </ns659:Inputs>
-     <ns659:Output qName="void" description="" isArray="false"/>
-     <ns659:Exceptions>
-      <ns659:Exception description="" name="PAFault" qname="ns669:PAFault" xmlns:ns669="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns659:Exceptions>
-     <ns670:MethodSecurity xsi:type="ns670:MethodSecurity" xmlns:ns670="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns670:SecuritySetting xsi:type="ns670:SecuritySetting">Custom</ns670:SecuritySetting>
-      <ns670:TransportLevelSecurity xsi:type="ns670:TransportLevelSecurity">
-       <ns670:CommunicationMethod xsi:type="ns670:CommunicationMethod">Privacy</ns670:CommunicationMethod>
-      </ns670:TransportLevelSecurity>
-      <ns670:RunAsMode xsi:type="ns670:RunAsMode">System</ns670:RunAsMode>
-      <ns670:AnonymousClients xsi:type="ns670:AnonymousCommunication">No</ns670:AnonymousClients>
-      <ns670:MethodAuthorization xsi:type="ns670:MethodAuthorization">
-       <ns670:InheritServiceAuthorization xsi:type="ns670:InheritServiceAuthorization"/>
-      </ns670:MethodAuthorization>
-     </ns670:MethodSecurity>
-     <ns671:Extensions xsi:type="ns671:ExtensionsType" xmlns:ns671="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns659:Method>
-    <ns659:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns659:MethodType">
-     <ns659:Inputs>
-      <ns659:Input qName="ns672:Id" description="" isArray="false" name="id" xmlns:ns672="http://iso21090.nci.nih.gov"/>
-     </ns659:Inputs>
-     <ns659:Output qName="ns673:StudySiteContact" description="" isArray="false" xmlns:ns673="http://pa.services.coppa.nci.nih.gov"/>
-     <ns659:Exceptions>
-      <ns659:Exception description="" name="PAFault" qname="ns674:PAFault" xmlns:ns674="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns659:Exceptions>
-     <ns675:MethodSecurity xsi:type="ns675:MethodSecurity" xmlns:ns675="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns675:SecuritySetting xsi:type="ns675:SecuritySetting">Custom</ns675:SecuritySetting>
-      <ns675:TransportLevelSecurity xsi:type="ns675:TransportLevelSecurity">
-       <ns675:CommunicationMethod xsi:type="ns675:CommunicationMethod">Privacy</ns675:CommunicationMethod>
-      </ns675:TransportLevelSecurity>
-      <ns675:RunAsMode xsi:type="ns675:RunAsMode">System</ns675:RunAsMode>
-      <ns675:AnonymousClients xsi:type="ns675:AnonymousCommunication">No</ns675:AnonymousClients>
-      <ns675:MethodAuthorization xsi:type="ns675:MethodAuthorization">
-       <ns675:InheritServiceAuthorization xsi:type="ns675:InheritServiceAuthorization"/>
-      </ns675:MethodAuthorization>
-     </ns675:MethodSecurity>
-     <ns676:Extensions xsi:type="ns676:ExtensionsType" xmlns:ns676="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns659:Method>
-    <ns659:Method description="" isImported="false" isProvided="false" name="getByStudySite" xsi:type="ns659:MethodType">
-     <ns659:Inputs>
-      <ns659:Input qName="ns677:Id" description="" isArray="false" name="studySiteId" xmlns:ns677="http://iso21090.nci.nih.gov"/>
-     </ns659:Inputs>
-     <ns659:Output qName="ns678:StudySiteContact" description="" isArray="true" xmlns:ns678="http://pa.services.coppa.nci.nih.gov"/>
-     <ns659:Exceptions>
-      <ns659:Exception description="" name="PAFault" qname="ns679:PAFault" xmlns:ns679="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns659:Exceptions>
-     <ns680:MethodSecurity xsi:type="ns680:MethodSecurity" xmlns:ns680="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns680:SecuritySetting xsi:type="ns680:SecuritySetting">Custom</ns680:SecuritySetting>
-      <ns680:TransportLevelSecurity xsi:type="ns680:TransportLevelSecurity">
-       <ns680:CommunicationMethod xsi:type="ns680:CommunicationMethod">Privacy</ns680:CommunicationMethod>
-      </ns680:TransportLevelSecurity>
-      <ns680:RunAsMode xsi:type="ns680:RunAsMode">System</ns680:RunAsMode>
-      <ns680:AnonymousClients xsi:type="ns680:AnonymousCommunication">No</ns680:AnonymousClients>
-      <ns680:MethodAuthorization xsi:type="ns680:MethodAuthorization">
-       <ns680:InheritServiceAuthorization xsi:type="ns680:InheritServiceAuthorization"/>
-      </ns680:MethodAuthorization>
-     </ns680:MethodSecurity>
-     <ns681:Extensions xsi:type="ns681:ExtensionsType" xmlns:ns681="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns659:Method>
-    <ns659:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns659:MethodType">
-     <ns659:Inputs>
-      <ns659:Input qName="ns682:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns682="http://iso21090.nci.nih.gov"/>
-     </ns659:Inputs>
-     <ns659:Output qName="ns683:StudySiteContact" description="" isArray="true" xmlns:ns683="http://pa.services.coppa.nci.nih.gov"/>
-     <ns659:Exceptions>
-      <ns659:Exception description="" name="PAFault" qname="ns684:PAFault" xmlns:ns684="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns659:Exceptions>
-     <ns685:MethodSecurity xsi:type="ns685:MethodSecurity" xmlns:ns685="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns685:SecuritySetting xsi:type="ns685:SecuritySetting">Custom</ns685:SecuritySetting>
-      <ns685:TransportLevelSecurity xsi:type="ns685:TransportLevelSecurity">
-       <ns685:CommunicationMethod xsi:type="ns685:CommunicationMethod">Privacy</ns685:CommunicationMethod>
-      </ns685:TransportLevelSecurity>
-      <ns685:RunAsMode xsi:type="ns685:RunAsMode">System</ns685:RunAsMode>
-      <ns685:AnonymousClients xsi:type="ns685:AnonymousCommunication">No</ns685:AnonymousClients>
-      <ns685:MethodAuthorization xsi:type="ns685:MethodAuthorization">
-       <ns685:InheritServiceAuthorization xsi:type="ns685:InheritServiceAuthorization"/>
-      </ns685:MethodAuthorization>
-     </ns685:MethodSecurity>
-     <ns686:Extensions xsi:type="ns686:ExtensionsType" xmlns:ns686="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns659:Method>
-    <ns659:Method description="" isImported="false" isProvided="false" name="getByStudyProtocolAndRole" xsi:type="ns659:MethodType">
-     <ns659:Inputs>
-      <ns659:Input qName="ns687:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns687="http://iso21090.nci.nih.gov"/>
-      <ns659:Input qName="ns688:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns688="http://pa.services.coppa.nci.nih.gov"/>
-     </ns659:Inputs>
-     <ns659:Output qName="ns689:StudySiteContact" description="" isArray="true" xmlns:ns689="http://pa.services.coppa.nci.nih.gov"/>
-     <ns659:Exceptions>
-      <ns659:Exception description="" name="PAFault" qname="ns690:PAFault" xmlns:ns690="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns659:Exceptions>
-     <ns691:MethodSecurity xsi:type="ns691:MethodSecurity" xmlns:ns691="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns691:SecuritySetting xsi:type="ns691:SecuritySetting">Custom</ns691:SecuritySetting>
-      <ns691:TransportLevelSecurity xsi:type="ns691:TransportLevelSecurity">
-       <ns691:CommunicationMethod xsi:type="ns691:CommunicationMethod">Privacy</ns691:CommunicationMethod>
-      </ns691:TransportLevelSecurity>
-      <ns691:RunAsMode xsi:type="ns691:RunAsMode">System</ns691:RunAsMode>
-      <ns691:AnonymousClients xsi:type="ns691:AnonymousCommunication">No</ns691:AnonymousClients>
-      <ns691:MethodAuthorization xsi:type="ns691:MethodAuthorization">
-       <ns691:InheritServiceAuthorization xsi:type="ns691:InheritServiceAuthorization"/>
-      </ns691:MethodAuthorization>
-     </ns691:MethodSecurity>
-     <ns692:Extensions xsi:type="ns692:ExtensionsType" xmlns:ns692="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns659:Method>
-    <ns659:Method description="" isImported="false" isProvided="false" name="getByStudyProtocolAndRoles" xsi:type="ns659:MethodType">
-     <ns659:Inputs>
-      <ns659:Input qName="ns693:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns693="http://iso21090.nci.nih.gov"/>
-      <ns659:Input qName="ns694:StudySiteContact" description="" isArray="true" name="studySiteContact" xmlns:ns694="http://pa.services.coppa.nci.nih.gov"/>
-     </ns659:Inputs>
-     <ns659:Output qName="ns695:StudySiteContact" description="" isArray="true" xmlns:ns695="http://pa.services.coppa.nci.nih.gov"/>
-     <ns659:Exceptions>
-      <ns659:Exception description="" name="PAFault" qname="ns696:PAFault" xmlns:ns696="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns659:Exceptions>
-     <ns697:MethodSecurity xsi:type="ns697:MethodSecurity" xmlns:ns697="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns697:SecuritySetting xsi:type="ns697:SecuritySetting">Custom</ns697:SecuritySetting>
-      <ns697:TransportLevelSecurity xsi:type="ns697:TransportLevelSecurity">
-       <ns697:CommunicationMethod xsi:type="ns697:CommunicationMethod">Privacy</ns697:CommunicationMethod>
-      </ns697:TransportLevelSecurity>
-      <ns697:RunAsMode xsi:type="ns697:RunAsMode">System</ns697:RunAsMode>
-      <ns697:AnonymousClients xsi:type="ns697:AnonymousCommunication">No</ns697:AnonymousClients>
-      <ns697:MethodAuthorization xsi:type="ns697:MethodAuthorization">
-       <ns697:InheritServiceAuthorization xsi:type="ns697:InheritServiceAuthorization"/>
-      </ns697:MethodAuthorization>
-     </ns697:MethodSecurity>
-     <ns698:Extensions xsi:type="ns698:ExtensionsType" xmlns:ns698="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns659:Method>
-    <ns659:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns659:MethodType">
-     <ns659:Inputs>
-      <ns659:Input qName="ns699:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns699="http://pa.services.coppa.nci.nih.gov"/>
-     </ns659:Inputs>
-     <ns659:Output qName="ns700:StudySiteContact" description="" isArray="false" xmlns:ns700="http://pa.services.coppa.nci.nih.gov"/>
-     <ns659:Exceptions>
-      <ns659:Exception description="" name="PAFault" qname="ns701:PAFault" xmlns:ns701="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns659:Exceptions>
-    </ns659:Method>
-    <ns659:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns659:MethodType">
-     <ns659:Output qName="ns702:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns702="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns703:MethodSecurity xsi:type="ns703:MethodSecurity" xmlns:ns703="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns703:SecuritySetting xsi:type="ns703:SecuritySetting">None</ns703:SecuritySetting>
-      <ns703:MethodAuthorization xsi:type="ns703:MethodAuthorization">
-       <ns703:NoAuthorization xsi:type="ns703:NoAuthorization"/>
-      </ns703:MethodAuthorization>
-     </ns703:MethodSecurity>
-     <ns659:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns659:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns659:Method>
-   </ns659:Methods>
-   <ns704:ResourcePropertiesList xsi:type="ns704:ResourcePropertiesListType" xmlns:ns704="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
-   <ns705:ServiceSecurity xsi:type="ns705:ServiceSecurity" xmlns:ns705="gme://gov.nih.nci.cagrid.introduce/1/Security">
-    <ns705:SecuritySetting xsi:type="ns705:SecuritySetting">Custom</ns705:SecuritySetting>
-    <ns705:TransportLevelSecurity xsi:type="ns705:TransportLevelSecurity">
-     <ns705:CommunicationMethod xsi:type="ns705:CommunicationMethod">Privacy</ns705:CommunicationMethod>
-    </ns705:TransportLevelSecurity>
-    <ns705:RunAsMode xsi:type="ns705:RunAsMode">System</ns705:RunAsMode>
-    <ns705:AnonymousClients xsi:type="ns705:AnonymousCommunication">No</ns705:AnonymousClients>
-    <ns705:ServiceAuthorization xsi:type="ns705:ServiceAuthorization">
-     <ns705:IntroducePDPAuthorization xsi:type="ns705:IntroducePDPAuthorization"/>
-    </ns705:ServiceAuthorization>
-   </ns705:ServiceSecurity>
+   <ns658:Methods xsi:type="ns658:MethodsType" xmlns:ns658="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns658:Method description="" isImported="false" isProvided="false" name="copy" xsi:type="ns658:MethodType">
+     <ns658:Inputs>
+      <ns658:Input qName="ns659:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns659="http://iso21090.nci.nih.gov"/>
+      <ns658:Input qName="ns660:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns660="http://iso21090.nci.nih.gov"/>
+     </ns658:Inputs>
+     <ns658:Output qName="void" description="" isArray="false"/>
+     <ns658:Exceptions>
+      <ns658:Exception description="" name="PAFault" qname="ns661:PAFault" xmlns:ns661="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns658:Exceptions>
+     <ns662:MethodSecurity xsi:type="ns662:MethodSecurity" xmlns:ns662="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns662:SecuritySetting xsi:type="ns662:SecuritySetting">Custom</ns662:SecuritySetting>
+      <ns662:TransportLevelSecurity xsi:type="ns662:TransportLevelSecurity">
+       <ns662:CommunicationMethod xsi:type="ns662:CommunicationMethod">Privacy</ns662:CommunicationMethod>
+      </ns662:TransportLevelSecurity>
+      <ns662:RunAsMode xsi:type="ns662:RunAsMode">System</ns662:RunAsMode>
+      <ns662:AnonymousClients xsi:type="ns662:AnonymousCommunication">No</ns662:AnonymousClients>
+      <ns662:MethodAuthorization xsi:type="ns662:MethodAuthorization">
+       <ns662:InheritServiceAuthorization xsi:type="ns662:InheritServiceAuthorization"/>
+      </ns662:MethodAuthorization>
+     </ns662:MethodSecurity>
+     <ns663:Extensions xsi:type="ns663:ExtensionsType" xmlns:ns663="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns658:Method>
+    <ns658:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns658:MethodType">
+     <ns658:Inputs>
+      <ns658:Input qName="ns664:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns664="http://pa.services.coppa.nci.nih.gov"/>
+     </ns658:Inputs>
+     <ns658:Output qName="ns665:StudySiteContact" description="" isArray="false" xmlns:ns665="http://pa.services.coppa.nci.nih.gov"/>
+     <ns658:Exceptions>
+      <ns658:Exception description="" name="PAFault" qname="ns666:PAFault" xmlns:ns666="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns658:Exceptions>
+    </ns658:Method>
+    <ns658:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns658:MethodType">
+     <ns658:Inputs>
+      <ns658:Input qName="ns667:Id" description="" isArray="false" name="id" xmlns:ns667="http://iso21090.nci.nih.gov"/>
+     </ns658:Inputs>
+     <ns658:Output qName="void" description="" isArray="false"/>
+     <ns658:Exceptions>
+      <ns658:Exception description="" name="PAFault" qname="ns668:PAFault" xmlns:ns668="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns658:Exceptions>
+     <ns669:MethodSecurity xsi:type="ns669:MethodSecurity" xmlns:ns669="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns669:SecuritySetting xsi:type="ns669:SecuritySetting">Custom</ns669:SecuritySetting>
+      <ns669:TransportLevelSecurity xsi:type="ns669:TransportLevelSecurity">
+       <ns669:CommunicationMethod xsi:type="ns669:CommunicationMethod">Privacy</ns669:CommunicationMethod>
+      </ns669:TransportLevelSecurity>
+      <ns669:RunAsMode xsi:type="ns669:RunAsMode">System</ns669:RunAsMode>
+      <ns669:AnonymousClients xsi:type="ns669:AnonymousCommunication">No</ns669:AnonymousClients>
+      <ns669:MethodAuthorization xsi:type="ns669:MethodAuthorization">
+       <ns669:InheritServiceAuthorization xsi:type="ns669:InheritServiceAuthorization"/>
+      </ns669:MethodAuthorization>
+     </ns669:MethodSecurity>
+     <ns670:Extensions xsi:type="ns670:ExtensionsType" xmlns:ns670="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns658:Method>
+    <ns658:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns658:MethodType">
+     <ns658:Inputs>
+      <ns658:Input qName="ns671:Id" description="" isArray="false" name="id" xmlns:ns671="http://iso21090.nci.nih.gov"/>
+     </ns658:Inputs>
+     <ns658:Output qName="ns672:StudySiteContact" description="" isArray="false" xmlns:ns672="http://pa.services.coppa.nci.nih.gov"/>
+     <ns658:Exceptions>
+      <ns658:Exception description="" name="PAFault" qname="ns673:PAFault" xmlns:ns673="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns658:Exceptions>
+     <ns674:MethodSecurity xsi:type="ns674:MethodSecurity" xmlns:ns674="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns674:SecuritySetting xsi:type="ns674:SecuritySetting">Custom</ns674:SecuritySetting>
+      <ns674:TransportLevelSecurity xsi:type="ns674:TransportLevelSecurity">
+       <ns674:CommunicationMethod xsi:type="ns674:CommunicationMethod">Privacy</ns674:CommunicationMethod>
+      </ns674:TransportLevelSecurity>
+      <ns674:RunAsMode xsi:type="ns674:RunAsMode">System</ns674:RunAsMode>
+      <ns674:AnonymousClients xsi:type="ns674:AnonymousCommunication">No</ns674:AnonymousClients>
+      <ns674:MethodAuthorization xsi:type="ns674:MethodAuthorization">
+       <ns674:InheritServiceAuthorization xsi:type="ns674:InheritServiceAuthorization"/>
+      </ns674:MethodAuthorization>
+     </ns674:MethodSecurity>
+     <ns675:Extensions xsi:type="ns675:ExtensionsType" xmlns:ns675="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns658:Method>
+    <ns658:Method description="" isImported="false" isProvided="false" name="getByStudySite" xsi:type="ns658:MethodType">
+     <ns658:Inputs>
+      <ns658:Input qName="ns676:Id" description="" isArray="false" name="studySiteId" xmlns:ns676="http://iso21090.nci.nih.gov"/>
+     </ns658:Inputs>
+     <ns658:Output qName="ns677:StudySiteContact" description="" isArray="true" xmlns:ns677="http://pa.services.coppa.nci.nih.gov"/>
+     <ns658:Exceptions>
+      <ns658:Exception description="" name="PAFault" qname="ns678:PAFault" xmlns:ns678="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns658:Exceptions>
+     <ns679:MethodSecurity xsi:type="ns679:MethodSecurity" xmlns:ns679="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns679:SecuritySetting xsi:type="ns679:SecuritySetting">Custom</ns679:SecuritySetting>
+      <ns679:TransportLevelSecurity xsi:type="ns679:TransportLevelSecurity">
+       <ns679:CommunicationMethod xsi:type="ns679:CommunicationMethod">Privacy</ns679:CommunicationMethod>
+      </ns679:TransportLevelSecurity>
+      <ns679:RunAsMode xsi:type="ns679:RunAsMode">System</ns679:RunAsMode>
+      <ns679:AnonymousClients xsi:type="ns679:AnonymousCommunication">No</ns679:AnonymousClients>
+      <ns679:MethodAuthorization xsi:type="ns679:MethodAuthorization">
+       <ns679:InheritServiceAuthorization xsi:type="ns679:InheritServiceAuthorization"/>
+      </ns679:MethodAuthorization>
+     </ns679:MethodSecurity>
+     <ns680:Extensions xsi:type="ns680:ExtensionsType" xmlns:ns680="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns658:Method>
+    <ns658:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns658:MethodType">
+     <ns658:Inputs>
+      <ns658:Input qName="ns681:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns681="http://iso21090.nci.nih.gov"/>
+     </ns658:Inputs>
+     <ns658:Output qName="ns682:StudySiteContact" description="" isArray="true" xmlns:ns682="http://pa.services.coppa.nci.nih.gov"/>
+     <ns658:Exceptions>
+      <ns658:Exception description="" name="PAFault" qname="ns683:PAFault" xmlns:ns683="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns658:Exceptions>
+     <ns684:MethodSecurity xsi:type="ns684:MethodSecurity" xmlns:ns684="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns684:SecuritySetting xsi:type="ns684:SecuritySetting">Custom</ns684:SecuritySetting>
+      <ns684:TransportLevelSecurity xsi:type="ns684:TransportLevelSecurity">
+       <ns684:CommunicationMethod xsi:type="ns684:CommunicationMethod">Privacy</ns684:CommunicationMethod>
+      </ns684:TransportLevelSecurity>
+      <ns684:RunAsMode xsi:type="ns684:RunAsMode">System</ns684:RunAsMode>
+      <ns684:AnonymousClients xsi:type="ns684:AnonymousCommunication">No</ns684:AnonymousClients>
+      <ns684:MethodAuthorization xsi:type="ns684:MethodAuthorization">
+       <ns684:InheritServiceAuthorization xsi:type="ns684:InheritServiceAuthorization"/>
+      </ns684:MethodAuthorization>
+     </ns684:MethodSecurity>
+     <ns685:Extensions xsi:type="ns685:ExtensionsType" xmlns:ns685="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns658:Method>
+    <ns658:Method description="" isImported="false" isProvided="false" name="getByStudyProtocolAndRole" xsi:type="ns658:MethodType">
+     <ns658:Inputs>
+      <ns658:Input qName="ns686:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns686="http://iso21090.nci.nih.gov"/>
+      <ns658:Input qName="ns687:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns687="http://pa.services.coppa.nci.nih.gov"/>
+     </ns658:Inputs>
+     <ns658:Output qName="ns688:StudySiteContact" description="" isArray="true" xmlns:ns688="http://pa.services.coppa.nci.nih.gov"/>
+     <ns658:Exceptions>
+      <ns658:Exception description="" name="PAFault" qname="ns689:PAFault" xmlns:ns689="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns658:Exceptions>
+     <ns690:MethodSecurity xsi:type="ns690:MethodSecurity" xmlns:ns690="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns690:SecuritySetting xsi:type="ns690:SecuritySetting">Custom</ns690:SecuritySetting>
+      <ns690:TransportLevelSecurity xsi:type="ns690:TransportLevelSecurity">
+       <ns690:CommunicationMethod xsi:type="ns690:CommunicationMethod">Privacy</ns690:CommunicationMethod>
+      </ns690:TransportLevelSecurity>
+      <ns690:RunAsMode xsi:type="ns690:RunAsMode">System</ns690:RunAsMode>
+      <ns690:AnonymousClients xsi:type="ns690:AnonymousCommunication">No</ns690:AnonymousClients>
+      <ns690:MethodAuthorization xsi:type="ns690:MethodAuthorization">
+       <ns690:InheritServiceAuthorization xsi:type="ns690:InheritServiceAuthorization"/>
+      </ns690:MethodAuthorization>
+     </ns690:MethodSecurity>
+     <ns691:Extensions xsi:type="ns691:ExtensionsType" xmlns:ns691="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns658:Method>
+    <ns658:Method description="" isImported="false" isProvided="false" name="getByStudyProtocolAndRoles" xsi:type="ns658:MethodType">
+     <ns658:Inputs>
+      <ns658:Input qName="ns692:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns692="http://iso21090.nci.nih.gov"/>
+      <ns658:Input qName="ns693:StudySiteContact" description="" isArray="true" name="studySiteContact" xmlns:ns693="http://pa.services.coppa.nci.nih.gov"/>
+     </ns658:Inputs>
+     <ns658:Output qName="ns694:StudySiteContact" description="" isArray="true" xmlns:ns694="http://pa.services.coppa.nci.nih.gov"/>
+     <ns658:Exceptions>
+      <ns658:Exception description="" name="PAFault" qname="ns695:PAFault" xmlns:ns695="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns658:Exceptions>
+     <ns696:MethodSecurity xsi:type="ns696:MethodSecurity" xmlns:ns696="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns696:SecuritySetting xsi:type="ns696:SecuritySetting">Custom</ns696:SecuritySetting>
+      <ns696:TransportLevelSecurity xsi:type="ns696:TransportLevelSecurity">
+       <ns696:CommunicationMethod xsi:type="ns696:CommunicationMethod">Privacy</ns696:CommunicationMethod>
+      </ns696:TransportLevelSecurity>
+      <ns696:RunAsMode xsi:type="ns696:RunAsMode">System</ns696:RunAsMode>
+      <ns696:AnonymousClients xsi:type="ns696:AnonymousCommunication">No</ns696:AnonymousClients>
+      <ns696:MethodAuthorization xsi:type="ns696:MethodAuthorization">
+       <ns696:InheritServiceAuthorization xsi:type="ns696:InheritServiceAuthorization"/>
+      </ns696:MethodAuthorization>
+     </ns696:MethodSecurity>
+     <ns697:Extensions xsi:type="ns697:ExtensionsType" xmlns:ns697="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns658:Method>
+    <ns658:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns658:MethodType">
+     <ns658:Inputs>
+      <ns658:Input qName="ns698:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns698="http://pa.services.coppa.nci.nih.gov"/>
+     </ns658:Inputs>
+     <ns658:Output qName="ns699:StudySiteContact" description="" isArray="false" xmlns:ns699="http://pa.services.coppa.nci.nih.gov"/>
+     <ns658:Exceptions>
+      <ns658:Exception description="" name="PAFault" qname="ns700:PAFault" xmlns:ns700="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns658:Exceptions>
+    </ns658:Method>
+    <ns658:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns658:MethodType">
+     <ns658:Output qName="ns701:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns701="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns702:MethodSecurity xsi:type="ns702:MethodSecurity" xmlns:ns702="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns702:SecuritySetting xsi:type="ns702:SecuritySetting">None</ns702:SecuritySetting>
+      <ns702:MethodAuthorization xsi:type="ns702:MethodAuthorization">
+       <ns702:NoAuthorization xsi:type="ns702:NoAuthorization"/>
+      </ns702:MethodAuthorization>
+     </ns702:MethodSecurity>
+     <ns658:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns658:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns658:Method>
+   </ns658:Methods>
+   <ns703:ResourcePropertiesList xsi:type="ns703:ResourcePropertiesListType" xmlns:ns703="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns704:ServiceSecurity xsi:type="ns704:ServiceSecurity" xmlns:ns704="gme://gov.nih.nci.cagrid.introduce/1/Security">
+    <ns704:SecuritySetting xsi:type="ns704:SecuritySetting">Custom</ns704:SecuritySetting>
+    <ns704:TransportLevelSecurity xsi:type="ns704:TransportLevelSecurity">
+     <ns704:CommunicationMethod xsi:type="ns704:CommunicationMethod">Privacy</ns704:CommunicationMethod>
+    </ns704:TransportLevelSecurity>
+    <ns704:RunAsMode xsi:type="ns704:RunAsMode">System</ns704:RunAsMode>
+    <ns704:AnonymousClients xsi:type="ns704:AnonymousCommunication">No</ns704:AnonymousClients>
+    <ns704:ServiceAuthorization xsi:type="ns704:ServiceAuthorization">
+     <ns704:IntroducePDPAuthorization xsi:type="ns704:IntroducePDPAuthorization"/>
+    </ns704:ServiceAuthorization>
+   </ns704:ServiceSecurity>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
     <ns3:Secure xsi:type="ns3:Secure"/>
    </ns3:ResourceFrameworkOptions>
-   <ns706:Extensions xsi:type="ns706:ExtensionsType" xmlns:ns706="gme://gov.nih.nci.cagrid.introduce/1/Extension">
-    <ns706:Extension extensionType="AUTHORIZATION" name="enforce_auth" xsi:type="ns706:ExtensionType"/>
-   </ns706:Extensions>
+   <ns705:Extensions xsi:type="ns705:ExtensionsType" xmlns:ns705="gme://gov.nih.nci.cagrid.introduce/1/Extension">
+    <ns705:Extension extensionType="AUTHORIZATION" name="enforce_auth" xsi:type="ns705:ExtensionType"/>
+   </ns705:Extensions>
   </ns3:Service>
   <ns3:Service name="TrialRegistrationService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService" packageName="gov.nih.nci.coppa.services.pa.trialregistrationservice" xsi:type="ns3:ServiceType">
-   <ns707:Methods xsi:type="ns707:MethodsType" xmlns:ns707="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns707:Method description="Create an interventional study protocol, an action plan and execution of a pre-clinical or clinical study including all activities to test a particular hypothesis that is the basis of the study regarding the effectiveness of a particular treatment, drug, device, procedure, or care plan. This includes prevention, observational, therapeutic, and other types of studies that involve subjects." isImported="false" isProvided="false" name="createCompleteInterventionalStudyProtocol" xsi:type="ns707:MethodType">
-     <ns707:Inputs>
-      <ns707:Input qName="ns708:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns708="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns709:StudyOverallStatus" description="" isArray="false" name="studyOverallStatus" xmlns:ns709="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns710:StudyIndlde" description="" isArray="true" name="studyIndlde" xmlns:ns710="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns711:StudyResourcing" description="" isArray="true" name="studyResourcing" xmlns:ns711="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns712:Document" description="" isArray="true" name="document" xmlns:ns712="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns713:Organization" description="" isArray="false" name="leadOrganization" xmlns:ns713="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns714:Person" description="" isArray="false" name="principalInvestigator" xmlns:ns714="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns715:Organization" description="" isArray="false" name="sponsorOrganization" xmlns:ns715="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns716:StudySite" description="" isArray="false" name="leadOrganizationSiteIdentifier" xmlns:ns716="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns717:StudySite" description="" isArray="true" name="nctIdentifierSiteIdentifiers" xmlns:ns717="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns718:StudyContact" description="" isArray="false" name="studyContact" xmlns:ns718="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns719:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns719="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns720:Organization" description="" isArray="false" name="summaryForOrganization" xmlns:ns720="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns721:StudyResourcing" description="" isArray="false" name="summaryForStudyResourcing" xmlns:ns721="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns722:Id" description="" isArray="false" name="responsiblePartyContact" xmlns:ns722="http://iso21090.nci.nih.gov"/>
-      <ns707:Input qName="ns723:StudyRegulatoryAuthority" description="" isArray="false" name="studyRegulatoryAuthority" xmlns:ns723="http://pa.services.coppa.nci.nih.gov"/>
-     </ns707:Inputs>
-     <ns707:Output qName="ns724:Id" description="" isArray="false" xmlns:ns724="http://iso21090.nci.nih.gov"/>
-     <ns707:Exceptions>
-      <ns707:Exception description="" name="PAFault" qname="ns725:PAFault" xmlns:ns725="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns707:Exceptions>
-     <ns726:MethodSecurity xsi:type="ns726:MethodSecurity" xmlns:ns726="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns726:SecuritySetting xsi:type="ns726:SecuritySetting">Custom</ns726:SecuritySetting>
-      <ns726:TransportLevelSecurity xsi:type="ns726:TransportLevelSecurity">
-       <ns726:CommunicationMethod xsi:type="ns726:CommunicationMethod">Privacy</ns726:CommunicationMethod>
-      </ns726:TransportLevelSecurity>
-      <ns726:RunAsMode xsi:type="ns726:RunAsMode">System</ns726:RunAsMode>
-      <ns726:AnonymousClients xsi:type="ns726:AnonymousCommunication">No</ns726:AnonymousClients>
-      <ns726:MethodAuthorization xsi:type="ns726:MethodAuthorization">
-       <ns726:InheritServiceAuthorization xsi:type="ns726:InheritServiceAuthorization"/>
-      </ns726:MethodAuthorization>
-     </ns726:MethodSecurity>
-     <ns727:Extensions xsi:type="ns727:ExtensionsType" xmlns:ns727="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns707:Method>
-    <ns707:Method description="Amends an existing protocol." isImported="false" isProvided="false" name="amendInterventionalStudyProtocol" xsi:type="ns707:MethodType">
-     <ns707:Inputs>
-      <ns707:Input qName="ns728:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns728="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns729:StudyOverallStatus" description="" isArray="false" name="studyOverallStatus" xmlns:ns729="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns730:StudyIndlde" description="" isArray="true" name="studyIndlde" xmlns:ns730="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns731:StudyResourcing" description="" isArray="true" name="studyResourcing" xmlns:ns731="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns732:Document" description="" isArray="true" name="document" xmlns:ns732="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns733:Organization" description="" isArray="false" name="leadOrganization" xmlns:ns733="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns734:Person" description="" isArray="false" name="principalInvestigator" xmlns:ns734="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns735:Organization" description="" isArray="false" name="sponsorOrganization" xmlns:ns735="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns736:StudySite" description="" isArray="false" name="leadOrganizationSiteIdentifier" xmlns:ns736="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns737:StudySite" description="" isArray="true" name="nctIdentifierSiteIdentifiers" xmlns:ns737="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns738:StudyContact" description="" isArray="false" name="studyContact" xmlns:ns738="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns739:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns739="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns740:Organization" description="" isArray="false" name="summaryForOrganization" xmlns:ns740="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns741:StudyResourcing" description="" isArray="false" name="summaryForStudyResourcing" xmlns:ns741="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns742:Id" description="" isArray="false" name="responsiblePartyContact" xmlns:ns742="http://iso21090.nci.nih.gov"/>
-      <ns707:Input qName="ns743:StudyRegulatoryAuthority" description="" isArray="false" name="studyRegulatoryAuthority" xmlns:ns743="http://pa.services.coppa.nci.nih.gov"/>
-     </ns707:Inputs>
-     <ns707:Output qName="ns744:Id" description="" isArray="false" xmlns:ns744="http://iso21090.nci.nih.gov"/>
-     <ns707:Exceptions>
-      <ns707:Exception description="" name="PAFault" qname="ns745:PAFault" xmlns:ns745="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns707:Exceptions>
-     <ns746:MethodSecurity xsi:type="ns746:MethodSecurity" xmlns:ns746="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns746:SecuritySetting xsi:type="ns746:SecuritySetting">Custom</ns746:SecuritySetting>
-      <ns746:TransportLevelSecurity xsi:type="ns746:TransportLevelSecurity">
-       <ns746:CommunicationMethod xsi:type="ns746:CommunicationMethod">Privacy</ns746:CommunicationMethod>
-      </ns746:TransportLevelSecurity>
-      <ns746:RunAsMode xsi:type="ns746:RunAsMode">System</ns746:RunAsMode>
-      <ns746:AnonymousClients xsi:type="ns746:AnonymousCommunication">No</ns746:AnonymousClients>
-      <ns746:MethodAuthorization xsi:type="ns746:MethodAuthorization">
-       <ns746:InheritServiceAuthorization xsi:type="ns746:InheritServiceAuthorization"/>
-      </ns746:MethodAuthorization>
-     </ns746:MethodSecurity>
-     <ns747:Extensions xsi:type="ns747:ExtensionsType" xmlns:ns747="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns707:Method>
-    <ns707:Method description="Update an existing study protocol." isImported="false" isProvided="false" name="updateInterventionalStudyProtocol" xsi:type="ns707:MethodType">
-     <ns707:Inputs>
-      <ns707:Input qName="ns748:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns748="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns749:StudyOverallStatus" description="" isArray="false" name="studyOverallStatus" xmlns:ns749="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns750:StudySite" description="" isArray="true" name="studyIdentifiers" xmlns:ns750="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns751:StudyIndlde" description="" isArray="true" name="studyIndlde" xmlns:ns751="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns752:StudyResourcing" description="" isArray="true" name="studyResourcing" xmlns:ns752="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns753:Document" description="" isArray="true" name="document" xmlns:ns753="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns754:StudyContact" description="" isArray="false" name="studyContact" xmlns:ns754="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns755:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns755="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns756:Organization" description="" isArray="false" name="summaryForOrganization" xmlns:ns756="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns757:StudyResourcing" description="" isArray="false" name="summaryForStudyResourcing" xmlns:ns757="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns758:Id" description="" isArray="false" name="responsiblePartyContact" xmlns:ns758="http://iso21090.nci.nih.gov"/>
-      <ns707:Input qName="ns759:StudyRegulatoryAuthority" description="" isArray="false" name="studyRegulatoryAuthority" xmlns:ns759="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns760:StudySite" description="" isArray="true" name="collaborators" xmlns:ns760="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns761:StudySiteAccrualStatus" description="" isArray="true" name="studySiteAccrualStatuses" xmlns:ns761="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns762:StudySite" description="" isArray="true" name="studySites" xmlns:ns762="http://pa.services.coppa.nci.nih.gov"/>
-     </ns707:Inputs>
-     <ns707:Output qName="void" description="" isArray="false"/>
-     <ns707:Exceptions>
-      <ns707:Exception description="" name="PAFault" qname="ns763:PAFault" xmlns:ns763="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns707:Exceptions>
-     <ns764:MethodSecurity xsi:type="ns764:MethodSecurity" xmlns:ns764="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns764:SecuritySetting xsi:type="ns764:SecuritySetting">Custom</ns764:SecuritySetting>
-      <ns764:TransportLevelSecurity xsi:type="ns764:TransportLevelSecurity">
-       <ns764:CommunicationMethod xsi:type="ns764:CommunicationMethod">Privacy</ns764:CommunicationMethod>
-      </ns764:TransportLevelSecurity>
-      <ns764:RunAsMode xsi:type="ns764:RunAsMode">System</ns764:RunAsMode>
-      <ns764:AnonymousClients xsi:type="ns764:AnonymousCommunication">No</ns764:AnonymousClients>
-      <ns764:MethodAuthorization xsi:type="ns764:MethodAuthorization">
-       <ns764:InheritServiceAuthorization xsi:type="ns764:InheritServiceAuthorization"/>
-      </ns764:MethodAuthorization>
-     </ns764:MethodSecurity>
-     <ns765:Extensions xsi:type="ns765:ExtensionsType" xmlns:ns765="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns707:Method>
-    <ns707:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns707:MethodType">
-     <ns707:Output qName="ns766:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns766="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns767:MethodSecurity xsi:type="ns767:MethodSecurity" xmlns:ns767="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns767:SecuritySetting xsi:type="ns767:SecuritySetting">None</ns767:SecuritySetting>
-      <ns767:MethodAuthorization xsi:type="ns767:MethodAuthorization">
-       <ns767:NoAuthorization xsi:type="ns767:NoAuthorization"/>
-      </ns767:MethodAuthorization>
-     </ns767:MethodSecurity>
-     <ns707:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns707:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns707:Method>
-    <ns707:Method description="" isImported="false" isProvided="false" name="createAbbreviatedInterventionalStudyProtocol" xsi:type="ns707:MethodType">
-     <ns707:Inputs>
-      <ns707:Input qName="ns768:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns768="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns769:StudySiteAccrualStatus" description="" isArray="false" name="studySiteAccrualStatus" xmlns:ns769="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns770:Document" description="" isArray="true" name="documents" xmlns:ns770="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns771:Organization" description="" isArray="false" name="leadOrganization" xmlns:ns771="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns772:Person" description="" isArray="false" name="studySiteInvestigator" xmlns:ns772="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns773:StudySite" description="" isArray="false" name="leadOrganizationStudySite" xmlns:ns773="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns774:Organization" description="" isArray="false" name="studySiteOrganization" xmlns:ns774="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns775:StudySite" description="" isArray="false" name="studySite" xmlns:ns775="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns776:StudySite" description="" isArray="false" name="nctIdentifier" xmlns:ns776="http://pa.services.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns777:Organization" description="" isArray="false" name="summaryForOrganization" xmlns:ns777="http://po.coppa.nci.nih.gov"/>
-      <ns707:Input qName="ns778:StudyResourcing" description="" isArray="false" name="summaryForStudyResourcing" xmlns:ns778="http://pa.services.coppa.nci.nih.gov"/>
-     </ns707:Inputs>
-     <ns707:Output qName="ns779:Id" description="" isArray="false" xmlns:ns779="http://iso21090.nci.nih.gov"/>
-     <ns707:Exceptions>
-      <ns707:Exception description="" name="PAFault" qname="ns780:PAFault" xmlns:ns780="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns707:Exceptions>
-     <ns781:MethodSecurity xsi:type="ns781:MethodSecurity" xmlns:ns781="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns781:SecuritySetting xsi:type="ns781:SecuritySetting">Custom</ns781:SecuritySetting>
-      <ns781:TransportLevelSecurity xsi:type="ns781:TransportLevelSecurity">
-       <ns781:CommunicationMethod xsi:type="ns781:CommunicationMethod">Privacy</ns781:CommunicationMethod>
-      </ns781:TransportLevelSecurity>
-      <ns781:RunAsMode xsi:type="ns781:RunAsMode">System</ns781:RunAsMode>
-      <ns781:AnonymousClients xsi:type="ns781:AnonymousCommunication">No</ns781:AnonymousClients>
-      <ns781:MethodAuthorization xsi:type="ns781:MethodAuthorization">
-       <ns781:InheritServiceAuthorization xsi:type="ns781:InheritServiceAuthorization"/>
-      </ns781:MethodAuthorization>
-     </ns781:MethodSecurity>
-     <ns782:Extensions xsi:type="ns782:ExtensionsType" xmlns:ns782="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns707:Method>
-   </ns707:Methods>
-   <ns783:ResourcePropertiesList xsi:type="ns783:ResourcePropertiesListType" xmlns:ns783="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
-   <ns784:ServiceSecurity xsi:type="ns784:ServiceSecurity" xmlns:ns784="gme://gov.nih.nci.cagrid.introduce/1/Security">
-    <ns784:SecuritySetting xsi:type="ns784:SecuritySetting">Custom</ns784:SecuritySetting>
-    <ns784:TransportLevelSecurity xsi:type="ns784:TransportLevelSecurity">
-     <ns784:CommunicationMethod xsi:type="ns784:CommunicationMethod">Privacy</ns784:CommunicationMethod>
-    </ns784:TransportLevelSecurity>
-    <ns784:RunAsMode xsi:type="ns784:RunAsMode">System</ns784:RunAsMode>
-    <ns784:AnonymousClients xsi:type="ns784:AnonymousCommunication">No</ns784:AnonymousClients>
-    <ns784:ServiceAuthorization xsi:type="ns784:ServiceAuthorization">
-     <ns784:IntroducePDPAuthorization xsi:type="ns784:IntroducePDPAuthorization"/>
-    </ns784:ServiceAuthorization>
-   </ns784:ServiceSecurity>
+   <ns706:Methods xsi:type="ns706:MethodsType" xmlns:ns706="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns706:Method description="Create an interventional study protocol, an action plan and execution of a pre-clinical or clinical study including all activities to test a particular hypothesis that is the basis of the study regarding the effectiveness of a particular treatment, drug, device, procedure, or care plan. This includes prevention, observational, therapeutic, and other types of studies that involve subjects." isImported="false" isProvided="false" name="createCompleteInterventionalStudyProtocol" xsi:type="ns706:MethodType">
+     <ns706:Inputs>
+      <ns706:Input qName="ns707:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns707="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns708:StudyOverallStatus" description="" isArray="false" name="studyOverallStatus" xmlns:ns708="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns709:StudyIndlde" description="" isArray="true" name="studyIndlde" xmlns:ns709="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns710:StudyResourcing" description="" isArray="true" name="studyResourcing" xmlns:ns710="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns711:Document" description="" isArray="true" name="document" xmlns:ns711="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns712:Organization" description="" isArray="false" name="leadOrganization" xmlns:ns712="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns713:Person" description="" isArray="false" name="principalInvestigator" xmlns:ns713="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns714:Organization" description="" isArray="false" name="sponsorOrganization" xmlns:ns714="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns715:StudySite" description="" isArray="false" name="leadOrganizationSiteIdentifier" xmlns:ns715="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns716:StudySite" description="" isArray="true" name="nctIdentifierSiteIdentifiers" xmlns:ns716="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns717:StudyContact" description="" isArray="false" name="studyContact" xmlns:ns717="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns718:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns718="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns719:Organization" description="" isArray="false" name="summaryForOrganization" xmlns:ns719="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns720:StudyResourcing" description="" isArray="false" name="summaryForStudyResourcing" xmlns:ns720="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns721:Id" description="" isArray="false" name="responsiblePartyContact" xmlns:ns721="http://iso21090.nci.nih.gov"/>
+      <ns706:Input qName="ns722:StudyRegulatoryAuthority" description="" isArray="false" name="studyRegulatoryAuthority" xmlns:ns722="http://pa.services.coppa.nci.nih.gov"/>
+     </ns706:Inputs>
+     <ns706:Output qName="ns723:Id" description="" isArray="false" xmlns:ns723="http://iso21090.nci.nih.gov"/>
+     <ns706:Exceptions>
+      <ns706:Exception description="" name="PAFault" qname="ns724:PAFault" xmlns:ns724="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns706:Exceptions>
+     <ns725:MethodSecurity xsi:type="ns725:MethodSecurity" xmlns:ns725="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns725:SecuritySetting xsi:type="ns725:SecuritySetting">Custom</ns725:SecuritySetting>
+      <ns725:TransportLevelSecurity xsi:type="ns725:TransportLevelSecurity">
+       <ns725:CommunicationMethod xsi:type="ns725:CommunicationMethod">Privacy</ns725:CommunicationMethod>
+      </ns725:TransportLevelSecurity>
+      <ns725:RunAsMode xsi:type="ns725:RunAsMode">System</ns725:RunAsMode>
+      <ns725:AnonymousClients xsi:type="ns725:AnonymousCommunication">No</ns725:AnonymousClients>
+      <ns725:MethodAuthorization xsi:type="ns725:MethodAuthorization">
+       <ns725:InheritServiceAuthorization xsi:type="ns725:InheritServiceAuthorization"/>
+      </ns725:MethodAuthorization>
+     </ns725:MethodSecurity>
+     <ns726:Extensions xsi:type="ns726:ExtensionsType" xmlns:ns726="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns706:Method>
+    <ns706:Method description="Amends an existing protocol." isImported="false" isProvided="false" name="amendInterventionalStudyProtocol" xsi:type="ns706:MethodType">
+     <ns706:Inputs>
+      <ns706:Input qName="ns727:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns727="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns728:StudyOverallStatus" description="" isArray="false" name="studyOverallStatus" xmlns:ns728="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns729:StudyIndlde" description="" isArray="true" name="studyIndlde" xmlns:ns729="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns730:StudyResourcing" description="" isArray="true" name="studyResourcing" xmlns:ns730="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns731:Document" description="" isArray="true" name="document" xmlns:ns731="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns732:Organization" description="" isArray="false" name="leadOrganization" xmlns:ns732="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns733:Person" description="" isArray="false" name="principalInvestigator" xmlns:ns733="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns734:Organization" description="" isArray="false" name="sponsorOrganization" xmlns:ns734="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns735:StudySite" description="" isArray="false" name="leadOrganizationSiteIdentifier" xmlns:ns735="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns736:StudySite" description="" isArray="true" name="nctIdentifierSiteIdentifiers" xmlns:ns736="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns737:StudyContact" description="" isArray="false" name="studyContact" xmlns:ns737="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns738:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns738="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns739:Organization" description="" isArray="false" name="summaryForOrganization" xmlns:ns739="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns740:StudyResourcing" description="" isArray="false" name="summaryForStudyResourcing" xmlns:ns740="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns741:Id" description="" isArray="false" name="responsiblePartyContact" xmlns:ns741="http://iso21090.nci.nih.gov"/>
+      <ns706:Input qName="ns742:StudyRegulatoryAuthority" description="" isArray="false" name="studyRegulatoryAuthority" xmlns:ns742="http://pa.services.coppa.nci.nih.gov"/>
+     </ns706:Inputs>
+     <ns706:Output qName="ns743:Id" description="" isArray="false" xmlns:ns743="http://iso21090.nci.nih.gov"/>
+     <ns706:Exceptions>
+      <ns706:Exception description="" name="PAFault" qname="ns744:PAFault" xmlns:ns744="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns706:Exceptions>
+     <ns745:MethodSecurity xsi:type="ns745:MethodSecurity" xmlns:ns745="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns745:SecuritySetting xsi:type="ns745:SecuritySetting">Custom</ns745:SecuritySetting>
+      <ns745:TransportLevelSecurity xsi:type="ns745:TransportLevelSecurity">
+       <ns745:CommunicationMethod xsi:type="ns745:CommunicationMethod">Privacy</ns745:CommunicationMethod>
+      </ns745:TransportLevelSecurity>
+      <ns745:RunAsMode xsi:type="ns745:RunAsMode">System</ns745:RunAsMode>
+      <ns745:AnonymousClients xsi:type="ns745:AnonymousCommunication">No</ns745:AnonymousClients>
+      <ns745:MethodAuthorization xsi:type="ns745:MethodAuthorization">
+       <ns745:InheritServiceAuthorization xsi:type="ns745:InheritServiceAuthorization"/>
+      </ns745:MethodAuthorization>
+     </ns745:MethodSecurity>
+     <ns746:Extensions xsi:type="ns746:ExtensionsType" xmlns:ns746="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns706:Method>
+    <ns706:Method description="Update an existing study protocol." isImported="false" isProvided="false" name="updateInterventionalStudyProtocol" xsi:type="ns706:MethodType">
+     <ns706:Inputs>
+      <ns706:Input qName="ns747:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns747="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns748:StudyOverallStatus" description="" isArray="false" name="studyOverallStatus" xmlns:ns748="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns749:StudySite" description="" isArray="true" name="studyIdentifiers" xmlns:ns749="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns750:StudyIndlde" description="" isArray="true" name="studyIndlde" xmlns:ns750="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns751:StudyResourcing" description="" isArray="true" name="studyResourcing" xmlns:ns751="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns752:Document" description="" isArray="true" name="document" xmlns:ns752="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns753:StudyContact" description="" isArray="false" name="studyContact" xmlns:ns753="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns754:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns754="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns755:Organization" description="" isArray="false" name="summaryForOrganization" xmlns:ns755="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns756:StudyResourcing" description="" isArray="false" name="summaryForStudyResourcing" xmlns:ns756="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns757:Id" description="" isArray="false" name="responsiblePartyContact" xmlns:ns757="http://iso21090.nci.nih.gov"/>
+      <ns706:Input qName="ns758:StudyRegulatoryAuthority" description="" isArray="false" name="studyRegulatoryAuthority" xmlns:ns758="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns759:StudySite" description="" isArray="true" name="collaborators" xmlns:ns759="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns760:StudySiteAccrualStatus" description="" isArray="true" name="studySiteAccrualStatuses" xmlns:ns760="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns761:StudySite" description="" isArray="true" name="studySites" xmlns:ns761="http://pa.services.coppa.nci.nih.gov"/>
+     </ns706:Inputs>
+     <ns706:Output qName="void" description="" isArray="false"/>
+     <ns706:Exceptions>
+      <ns706:Exception description="" name="PAFault" qname="ns762:PAFault" xmlns:ns762="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns706:Exceptions>
+     <ns763:MethodSecurity xsi:type="ns763:MethodSecurity" xmlns:ns763="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns763:SecuritySetting xsi:type="ns763:SecuritySetting">Custom</ns763:SecuritySetting>
+      <ns763:TransportLevelSecurity xsi:type="ns763:TransportLevelSecurity">
+       <ns763:CommunicationMethod xsi:type="ns763:CommunicationMethod">Privacy</ns763:CommunicationMethod>
+      </ns763:TransportLevelSecurity>
+      <ns763:RunAsMode xsi:type="ns763:RunAsMode">System</ns763:RunAsMode>
+      <ns763:AnonymousClients xsi:type="ns763:AnonymousCommunication">No</ns763:AnonymousClients>
+      <ns763:MethodAuthorization xsi:type="ns763:MethodAuthorization">
+       <ns763:InheritServiceAuthorization xsi:type="ns763:InheritServiceAuthorization"/>
+      </ns763:MethodAuthorization>
+     </ns763:MethodSecurity>
+     <ns764:Extensions xsi:type="ns764:ExtensionsType" xmlns:ns764="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns706:Method>
+    <ns706:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns706:MethodType">
+     <ns706:Output qName="ns765:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns765="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns766:MethodSecurity xsi:type="ns766:MethodSecurity" xmlns:ns766="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns766:SecuritySetting xsi:type="ns766:SecuritySetting">None</ns766:SecuritySetting>
+      <ns766:MethodAuthorization xsi:type="ns766:MethodAuthorization">
+       <ns766:NoAuthorization xsi:type="ns766:NoAuthorization"/>
+      </ns766:MethodAuthorization>
+     </ns766:MethodSecurity>
+     <ns706:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns706:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns706:Method>
+    <ns706:Method description="" isImported="false" isProvided="false" name="createAbbreviatedInterventionalStudyProtocol" xsi:type="ns706:MethodType">
+     <ns706:Inputs>
+      <ns706:Input qName="ns767:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns767="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns768:StudySiteAccrualStatus" description="" isArray="false" name="studySiteAccrualStatus" xmlns:ns768="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns769:Document" description="" isArray="true" name="documents" xmlns:ns769="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns770:Organization" description="" isArray="false" name="leadOrganization" xmlns:ns770="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns771:Person" description="" isArray="false" name="studySiteInvestigator" xmlns:ns771="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns772:StudySite" description="" isArray="false" name="leadOrganizationStudySite" xmlns:ns772="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns773:Organization" description="" isArray="false" name="studySiteOrganization" xmlns:ns773="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns774:StudySite" description="" isArray="false" name="studySite" xmlns:ns774="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns775:StudySite" description="" isArray="false" name="nctIdentifier" xmlns:ns775="http://pa.services.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns776:Organization" description="" isArray="false" name="summaryForOrganization" xmlns:ns776="http://po.coppa.nci.nih.gov"/>
+      <ns706:Input qName="ns777:StudyResourcing" description="" isArray="false" name="summaryForStudyResourcing" xmlns:ns777="http://pa.services.coppa.nci.nih.gov"/>
+     </ns706:Inputs>
+     <ns706:Output qName="ns778:Id" description="" isArray="false" xmlns:ns778="http://iso21090.nci.nih.gov"/>
+     <ns706:Exceptions>
+      <ns706:Exception description="" name="PAFault" qname="ns779:PAFault" xmlns:ns779="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns706:Exceptions>
+     <ns780:MethodSecurity xsi:type="ns780:MethodSecurity" xmlns:ns780="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns780:SecuritySetting xsi:type="ns780:SecuritySetting">Custom</ns780:SecuritySetting>
+      <ns780:TransportLevelSecurity xsi:type="ns780:TransportLevelSecurity">
+       <ns780:CommunicationMethod xsi:type="ns780:CommunicationMethod">Privacy</ns780:CommunicationMethod>
+      </ns780:TransportLevelSecurity>
+      <ns780:RunAsMode xsi:type="ns780:RunAsMode">System</ns780:RunAsMode>
+      <ns780:AnonymousClients xsi:type="ns780:AnonymousCommunication">No</ns780:AnonymousClients>
+      <ns780:MethodAuthorization xsi:type="ns780:MethodAuthorization">
+       <ns780:InheritServiceAuthorization xsi:type="ns780:InheritServiceAuthorization"/>
+      </ns780:MethodAuthorization>
+     </ns780:MethodSecurity>
+     <ns781:Extensions xsi:type="ns781:ExtensionsType" xmlns:ns781="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns706:Method>
+   </ns706:Methods>
+   <ns782:ResourcePropertiesList xsi:type="ns782:ResourcePropertiesListType" xmlns:ns782="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns783:ServiceSecurity xsi:type="ns783:ServiceSecurity" xmlns:ns783="gme://gov.nih.nci.cagrid.introduce/1/Security">
+    <ns783:SecuritySetting xsi:type="ns783:SecuritySetting">Custom</ns783:SecuritySetting>
+    <ns783:TransportLevelSecurity xsi:type="ns783:TransportLevelSecurity">
+     <ns783:CommunicationMethod xsi:type="ns783:CommunicationMethod">Privacy</ns783:CommunicationMethod>
+    </ns783:TransportLevelSecurity>
+    <ns783:RunAsMode xsi:type="ns783:RunAsMode">System</ns783:RunAsMode>
+    <ns783:AnonymousClients xsi:type="ns783:AnonymousCommunication">No</ns783:AnonymousClients>
+    <ns783:ServiceAuthorization xsi:type="ns783:ServiceAuthorization">
+     <ns783:IntroducePDPAuthorization xsi:type="ns783:IntroducePDPAuthorization"/>
+    </ns783:ServiceAuthorization>
+   </ns783:ServiceSecurity>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Singleton xsi:type="ns3:Singleton"/>
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
     <ns3:Secure xsi:type="ns3:Secure"/>
    </ns3:ResourceFrameworkOptions>
-   <ns785:Extensions xsi:type="ns785:ExtensionsType" xmlns:ns785="gme://gov.nih.nci.cagrid.introduce/1/Extension">
-    <ns785:Extension extensionType="AUTHORIZATION" name="enforce_auth" xsi:type="ns785:ExtensionType"/>
-   </ns785:Extensions>
+   <ns784:Extensions xsi:type="ns784:ExtensionsType" xmlns:ns784="gme://gov.nih.nci.cagrid.introduce/1/Extension">
+    <ns784:Extension extensionType="AUTHORIZATION" name="enforce_auth" xsi:type="ns784:ExtensionType"/>
+   </ns784:Extensions>
   </ns3:Service>
   <ns3:Service name="DiseaseService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/DiseaseService" packageName="gov.nih.nci.coppa.services.pa.diseaseservice" xsi:type="ns3:ServiceType">
-   <ns786:Methods xsi:type="ns786:MethodsType" xmlns:ns786="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns786:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns786:MethodType">
-     <ns786:Inputs>
-      <ns786:Input qName="ns787:Id" description="" isArray="false" name="id" xmlns:ns787="http://iso21090.nci.nih.gov"/>
-     </ns786:Inputs>
-     <ns786:Output qName="ns788:Disease" description="" isArray="false" xmlns:ns788="http://pa.services.coppa.nci.nih.gov"/>
-     <ns786:Exceptions>
-      <ns786:Exception description="" name="PAFault" qname="ns789:PAFault" xmlns:ns789="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns786:Exceptions>
-     <ns790:MethodSecurity xsi:type="ns790:MethodSecurity" xmlns:ns790="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns790:SecuritySetting xsi:type="ns790:SecuritySetting">Custom</ns790:SecuritySetting>
-      <ns790:TransportLevelSecurity xsi:type="ns790:TransportLevelSecurity">
-       <ns790:CommunicationMethod xsi:type="ns790:CommunicationMethod">Privacy</ns790:CommunicationMethod>
-      </ns790:TransportLevelSecurity>
-      <ns790:RunAsMode xsi:type="ns790:RunAsMode">System</ns790:RunAsMode>
-      <ns790:AnonymousClients xsi:type="ns790:AnonymousCommunication">No</ns790:AnonymousClients>
-      <ns790:MethodAuthorization xsi:type="ns790:MethodAuthorization">
-       <ns790:InheritServiceAuthorization xsi:type="ns790:InheritServiceAuthorization"/>
-      </ns790:MethodAuthorization>
-     </ns790:MethodSecurity>
-     <ns791:Extensions xsi:type="ns791:ExtensionsType" xmlns:ns791="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns786:Method>
-    <ns786:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns786:MethodType">
-     <ns786:Inputs>
-      <ns786:Input qName="ns792:Disease" description="" isArray="false" name="disease" xmlns:ns792="http://pa.services.coppa.nci.nih.gov"/>
-     </ns786:Inputs>
-     <ns786:Output qName="ns793:Disease" description="" isArray="false" xmlns:ns793="http://pa.services.coppa.nci.nih.gov"/>
-     <ns786:Exceptions>
-      <ns786:Exception description="" name="PAFault" qname="ns794:PAFault" xmlns:ns794="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns786:Exceptions>
-     <ns795:MethodSecurity xsi:type="ns795:MethodSecurity" xmlns:ns795="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns795:SecuritySetting xsi:type="ns795:SecuritySetting">Custom</ns795:SecuritySetting>
-      <ns795:TransportLevelSecurity xsi:type="ns795:TransportLevelSecurity">
-       <ns795:CommunicationMethod xsi:type="ns795:CommunicationMethod">Privacy</ns795:CommunicationMethod>
-      </ns795:TransportLevelSecurity>
-      <ns795:RunAsMode xsi:type="ns795:RunAsMode">System</ns795:RunAsMode>
-      <ns795:AnonymousClients xsi:type="ns795:AnonymousCommunication">No</ns795:AnonymousClients>
-      <ns795:MethodAuthorization xsi:type="ns795:MethodAuthorization">
-       <ns795:InheritServiceAuthorization xsi:type="ns795:InheritServiceAuthorization"/>
-      </ns795:MethodAuthorization>
-     </ns795:MethodSecurity>
-     <ns796:Extensions xsi:type="ns796:ExtensionsType" xmlns:ns796="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns786:Method>
-    <ns786:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns786:MethodType">
-     <ns786:Inputs>
-      <ns786:Input qName="ns797:Disease" description="" isArray="false" name="disease" xmlns:ns797="http://pa.services.coppa.nci.nih.gov"/>
-     </ns786:Inputs>
-     <ns786:Output qName="ns798:Disease" description="" isArray="false" xmlns:ns798="http://pa.services.coppa.nci.nih.gov"/>
-     <ns786:Exceptions>
-      <ns786:Exception description="" name="PAFault" qname="ns799:PAFault" xmlns:ns799="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns786:Exceptions>
-     <ns800:MethodSecurity xsi:type="ns800:MethodSecurity" xmlns:ns800="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns800:SecuritySetting xsi:type="ns800:SecuritySetting">Custom</ns800:SecuritySetting>
-      <ns800:TransportLevelSecurity xsi:type="ns800:TransportLevelSecurity">
-       <ns800:CommunicationMethod xsi:type="ns800:CommunicationMethod">Privacy</ns800:CommunicationMethod>
-      </ns800:TransportLevelSecurity>
-      <ns800:RunAsMode xsi:type="ns800:RunAsMode">System</ns800:RunAsMode>
-      <ns800:AnonymousClients xsi:type="ns800:AnonymousCommunication">No</ns800:AnonymousClients>
-      <ns800:MethodAuthorization xsi:type="ns800:MethodAuthorization">
-       <ns800:InheritServiceAuthorization xsi:type="ns800:InheritServiceAuthorization"/>
-      </ns800:MethodAuthorization>
-     </ns800:MethodSecurity>
-     <ns801:Extensions xsi:type="ns801:ExtensionsType" xmlns:ns801="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns786:Method>
-    <ns786:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns786:MethodType">
-     <ns786:Inputs>
-      <ns786:Input qName="ns802:Id" description="" isArray="false" name="id" xmlns:ns802="http://iso21090.nci.nih.gov"/>
-     </ns786:Inputs>
-     <ns786:Output qName="void" description="" isArray="false"/>
-     <ns786:Exceptions>
-      <ns786:Exception description="" name="PAFault" qname="ns803:PAFault" xmlns:ns803="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns786:Exceptions>
-     <ns804:MethodSecurity xsi:type="ns804:MethodSecurity" xmlns:ns804="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns804:SecuritySetting xsi:type="ns804:SecuritySetting">Custom</ns804:SecuritySetting>
-      <ns804:TransportLevelSecurity xsi:type="ns804:TransportLevelSecurity">
-       <ns804:CommunicationMethod xsi:type="ns804:CommunicationMethod">Privacy</ns804:CommunicationMethod>
-      </ns804:TransportLevelSecurity>
-      <ns804:RunAsMode xsi:type="ns804:RunAsMode">System</ns804:RunAsMode>
-      <ns804:AnonymousClients xsi:type="ns804:AnonymousCommunication">No</ns804:AnonymousClients>
-      <ns804:MethodAuthorization xsi:type="ns804:MethodAuthorization">
-       <ns804:InheritServiceAuthorization xsi:type="ns804:InheritServiceAuthorization"/>
-      </ns804:MethodAuthorization>
-     </ns804:MethodSecurity>
-     <ns805:Extensions xsi:type="ns805:ExtensionsType" xmlns:ns805="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns786:Method>
-    <ns786:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns786:MethodType">
-     <ns786:Inputs>
-      <ns786:Input qName="ns806:Disease" description="" isArray="false" name="searchCriteria" xmlns:ns806="http://pa.services.coppa.nci.nih.gov"/>
-     </ns786:Inputs>
-     <ns786:Output qName="ns807:Disease" description="" isArray="true" xmlns:ns807="http://pa.services.coppa.nci.nih.gov"/>
-     <ns786:Exceptions>
-      <ns786:Exception description="" name="PAFault" qname="ns808:PAFault" xmlns:ns808="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns786:Exceptions>
-     <ns809:MethodSecurity xsi:type="ns809:MethodSecurity" xmlns:ns809="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns809:SecuritySetting xsi:type="ns809:SecuritySetting">Custom</ns809:SecuritySetting>
-      <ns809:TransportLevelSecurity xsi:type="ns809:TransportLevelSecurity">
-       <ns809:CommunicationMethod xsi:type="ns809:CommunicationMethod">Privacy</ns809:CommunicationMethod>
-      </ns809:TransportLevelSecurity>
-      <ns809:RunAsMode xsi:type="ns809:RunAsMode">System</ns809:RunAsMode>
-      <ns809:AnonymousClients xsi:type="ns809:AnonymousCommunication">No</ns809:AnonymousClients>
-      <ns809:MethodAuthorization xsi:type="ns809:MethodAuthorization">
-       <ns809:InheritServiceAuthorization xsi:type="ns809:InheritServiceAuthorization"/>
-      </ns809:MethodAuthorization>
-     </ns809:MethodSecurity>
-     <ns810:Extensions xsi:type="ns810:ExtensionsType" xmlns:ns810="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns786:Method>
-    <ns786:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns786:MethodType">
-     <ns786:Output qName="ns811:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns811="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns812:MethodSecurity xsi:type="ns812:MethodSecurity" xmlns:ns812="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns812:SecuritySetting xsi:type="ns812:SecuritySetting">None</ns812:SecuritySetting>
-      <ns812:MethodAuthorization xsi:type="ns812:MethodAuthorization">
-       <ns812:NoAuthorization xsi:type="ns812:NoAuthorization"/>
-      </ns812:MethodAuthorization>
-     </ns812:MethodSecurity>
-     <ns786:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns786:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns786:Method>
-   </ns786:Methods>
-   <ns813:ResourcePropertiesList xsi:type="ns813:ResourcePropertiesListType" xmlns:ns813="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
-   <ns814:ServiceSecurity xsi:type="ns814:ServiceSecurity" xmlns:ns814="gme://gov.nih.nci.cagrid.introduce/1/Security">
-    <ns814:SecuritySetting xsi:type="ns814:SecuritySetting">Custom</ns814:SecuritySetting>
-    <ns814:TransportLevelSecurity xsi:type="ns814:TransportLevelSecurity">
-     <ns814:CommunicationMethod xsi:type="ns814:CommunicationMethod">Privacy</ns814:CommunicationMethod>
-    </ns814:TransportLevelSecurity>
-    <ns814:RunAsMode xsi:type="ns814:RunAsMode">System</ns814:RunAsMode>
-    <ns814:AnonymousClients xsi:type="ns814:AnonymousCommunication">No</ns814:AnonymousClients>
-    <ns814:ServiceAuthorization xsi:type="ns814:ServiceAuthorization">
-     <ns814:IntroducePDPAuthorization xsi:type="ns814:IntroducePDPAuthorization"/>
-    </ns814:ServiceAuthorization>
-   </ns814:ServiceSecurity>
+   <ns785:Methods xsi:type="ns785:MethodsType" xmlns:ns785="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns785:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns785:MethodType">
+     <ns785:Inputs>
+      <ns785:Input qName="ns786:Id" description="" isArray="false" name="id" xmlns:ns786="http://iso21090.nci.nih.gov"/>
+     </ns785:Inputs>
+     <ns785:Output qName="ns787:Disease" description="" isArray="false" xmlns:ns787="http://pa.services.coppa.nci.nih.gov"/>
+     <ns785:Exceptions>
+      <ns785:Exception description="" name="PAFault" qname="ns788:PAFault" xmlns:ns788="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns785:Exceptions>
+     <ns789:MethodSecurity xsi:type="ns789:MethodSecurity" xmlns:ns789="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns789:SecuritySetting xsi:type="ns789:SecuritySetting">Custom</ns789:SecuritySetting>
+      <ns789:TransportLevelSecurity xsi:type="ns789:TransportLevelSecurity">
+       <ns789:CommunicationMethod xsi:type="ns789:CommunicationMethod">Privacy</ns789:CommunicationMethod>
+      </ns789:TransportLevelSecurity>
+      <ns789:RunAsMode xsi:type="ns789:RunAsMode">System</ns789:RunAsMode>
+      <ns789:AnonymousClients xsi:type="ns789:AnonymousCommunication">No</ns789:AnonymousClients>
+      <ns789:MethodAuthorization xsi:type="ns789:MethodAuthorization">
+       <ns789:InheritServiceAuthorization xsi:type="ns789:InheritServiceAuthorization"/>
+      </ns789:MethodAuthorization>
+     </ns789:MethodSecurity>
+     <ns790:Extensions xsi:type="ns790:ExtensionsType" xmlns:ns790="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns785:Method>
+    <ns785:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns785:MethodType">
+     <ns785:Inputs>
+      <ns785:Input qName="ns791:Disease" description="" isArray="false" name="disease" xmlns:ns791="http://pa.services.coppa.nci.nih.gov"/>
+     </ns785:Inputs>
+     <ns785:Output qName="ns792:Disease" description="" isArray="false" xmlns:ns792="http://pa.services.coppa.nci.nih.gov"/>
+     <ns785:Exceptions>
+      <ns785:Exception description="" name="PAFault" qname="ns793:PAFault" xmlns:ns793="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns785:Exceptions>
+     <ns794:MethodSecurity xsi:type="ns794:MethodSecurity" xmlns:ns794="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns794:SecuritySetting xsi:type="ns794:SecuritySetting">Custom</ns794:SecuritySetting>
+      <ns794:TransportLevelSecurity xsi:type="ns794:TransportLevelSecurity">
+       <ns794:CommunicationMethod xsi:type="ns794:CommunicationMethod">Privacy</ns794:CommunicationMethod>
+      </ns794:TransportLevelSecurity>
+      <ns794:RunAsMode xsi:type="ns794:RunAsMode">System</ns794:RunAsMode>
+      <ns794:AnonymousClients xsi:type="ns794:AnonymousCommunication">No</ns794:AnonymousClients>
+      <ns794:MethodAuthorization xsi:type="ns794:MethodAuthorization">
+       <ns794:InheritServiceAuthorization xsi:type="ns794:InheritServiceAuthorization"/>
+      </ns794:MethodAuthorization>
+     </ns794:MethodSecurity>
+     <ns795:Extensions xsi:type="ns795:ExtensionsType" xmlns:ns795="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns785:Method>
+    <ns785:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns785:MethodType">
+     <ns785:Inputs>
+      <ns785:Input qName="ns796:Disease" description="" isArray="false" name="disease" xmlns:ns796="http://pa.services.coppa.nci.nih.gov"/>
+     </ns785:Inputs>
+     <ns785:Output qName="ns797:Disease" description="" isArray="false" xmlns:ns797="http://pa.services.coppa.nci.nih.gov"/>
+     <ns785:Exceptions>
+      <ns785:Exception description="" name="PAFault" qname="ns798:PAFault" xmlns:ns798="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns785:Exceptions>
+     <ns799:MethodSecurity xsi:type="ns799:MethodSecurity" xmlns:ns799="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns799:SecuritySetting xsi:type="ns799:SecuritySetting">Custom</ns799:SecuritySetting>
+      <ns799:TransportLevelSecurity xsi:type="ns799:TransportLevelSecurity">
+       <ns799:CommunicationMethod xsi:type="ns799:CommunicationMethod">Privacy</ns799:CommunicationMethod>
+      </ns799:TransportLevelSecurity>
+      <ns799:RunAsMode xsi:type="ns799:RunAsMode">System</ns799:RunAsMode>
+      <ns799:AnonymousClients xsi:type="ns799:AnonymousCommunication">No</ns799:AnonymousClients>
+      <ns799:MethodAuthorization xsi:type="ns799:MethodAuthorization">
+       <ns799:InheritServiceAuthorization xsi:type="ns799:InheritServiceAuthorization"/>
+      </ns799:MethodAuthorization>
+     </ns799:MethodSecurity>
+     <ns800:Extensions xsi:type="ns800:ExtensionsType" xmlns:ns800="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns785:Method>
+    <ns785:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns785:MethodType">
+     <ns785:Inputs>
+      <ns785:Input qName="ns801:Id" description="" isArray="false" name="id" xmlns:ns801="http://iso21090.nci.nih.gov"/>
+     </ns785:Inputs>
+     <ns785:Output qName="void" description="" isArray="false"/>
+     <ns785:Exceptions>
+      <ns785:Exception description="" name="PAFault" qname="ns802:PAFault" xmlns:ns802="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns785:Exceptions>
+     <ns803:MethodSecurity xsi:type="ns803:MethodSecurity" xmlns:ns803="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns803:SecuritySetting xsi:type="ns803:SecuritySetting">Custom</ns803:SecuritySetting>
+      <ns803:TransportLevelSecurity xsi:type="ns803:TransportLevelSecurity">
+       <ns803:CommunicationMethod xsi:type="ns803:CommunicationMethod">Privacy</ns803:CommunicationMethod>
+      </ns803:TransportLevelSecurity>
+      <ns803:RunAsMode xsi:type="ns803:RunAsMode">System</ns803:RunAsMode>
+      <ns803:AnonymousClients xsi:type="ns803:AnonymousCommunication">No</ns803:AnonymousClients>
+      <ns803:MethodAuthorization xsi:type="ns803:MethodAuthorization">
+       <ns803:InheritServiceAuthorization xsi:type="ns803:InheritServiceAuthorization"/>
+      </ns803:MethodAuthorization>
+     </ns803:MethodSecurity>
+     <ns804:Extensions xsi:type="ns804:ExtensionsType" xmlns:ns804="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns785:Method>
+    <ns785:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns785:MethodType">
+     <ns785:Inputs>
+      <ns785:Input qName="ns805:Disease" description="" isArray="false" name="searchCriteria" xmlns:ns805="http://pa.services.coppa.nci.nih.gov"/>
+     </ns785:Inputs>
+     <ns785:Output qName="ns806:Disease" description="" isArray="true" xmlns:ns806="http://pa.services.coppa.nci.nih.gov"/>
+     <ns785:Exceptions>
+      <ns785:Exception description="" name="PAFault" qname="ns807:PAFault" xmlns:ns807="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns785:Exceptions>
+     <ns808:MethodSecurity xsi:type="ns808:MethodSecurity" xmlns:ns808="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns808:SecuritySetting xsi:type="ns808:SecuritySetting">Custom</ns808:SecuritySetting>
+      <ns808:TransportLevelSecurity xsi:type="ns808:TransportLevelSecurity">
+       <ns808:CommunicationMethod xsi:type="ns808:CommunicationMethod">Privacy</ns808:CommunicationMethod>
+      </ns808:TransportLevelSecurity>
+      <ns808:RunAsMode xsi:type="ns808:RunAsMode">System</ns808:RunAsMode>
+      <ns808:AnonymousClients xsi:type="ns808:AnonymousCommunication">No</ns808:AnonymousClients>
+      <ns808:MethodAuthorization xsi:type="ns808:MethodAuthorization">
+       <ns808:InheritServiceAuthorization xsi:type="ns808:InheritServiceAuthorization"/>
+      </ns808:MethodAuthorization>
+     </ns808:MethodSecurity>
+     <ns809:Extensions xsi:type="ns809:ExtensionsType" xmlns:ns809="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns785:Method>
+    <ns785:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns785:MethodType">
+     <ns785:Output qName="ns810:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns810="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns811:MethodSecurity xsi:type="ns811:MethodSecurity" xmlns:ns811="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns811:SecuritySetting xsi:type="ns811:SecuritySetting">None</ns811:SecuritySetting>
+      <ns811:MethodAuthorization xsi:type="ns811:MethodAuthorization">
+       <ns811:NoAuthorization xsi:type="ns811:NoAuthorization"/>
+      </ns811:MethodAuthorization>
+     </ns811:MethodSecurity>
+     <ns785:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns785:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns785:Method>
+   </ns785:Methods>
+   <ns812:ResourcePropertiesList xsi:type="ns812:ResourcePropertiesListType" xmlns:ns812="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns813:ServiceSecurity xsi:type="ns813:ServiceSecurity" xmlns:ns813="gme://gov.nih.nci.cagrid.introduce/1/Security">
+    <ns813:SecuritySetting xsi:type="ns813:SecuritySetting">Custom</ns813:SecuritySetting>
+    <ns813:TransportLevelSecurity xsi:type="ns813:TransportLevelSecurity">
+     <ns813:CommunicationMethod xsi:type="ns813:CommunicationMethod">Privacy</ns813:CommunicationMethod>
+    </ns813:TransportLevelSecurity>
+    <ns813:RunAsMode xsi:type="ns813:RunAsMode">System</ns813:RunAsMode>
+    <ns813:AnonymousClients xsi:type="ns813:AnonymousCommunication">No</ns813:AnonymousClients>
+    <ns813:ServiceAuthorization xsi:type="ns813:ServiceAuthorization">
+     <ns813:IntroducePDPAuthorization xsi:type="ns813:IntroducePDPAuthorization"/>
+    </ns813:ServiceAuthorization>
+   </ns813:ServiceSecurity>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Singleton xsi:type="ns3:Singleton"/>
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
     <ns3:Secure xsi:type="ns3:Secure"/>
    </ns3:ResourceFrameworkOptions>
-   <ns815:Extensions xsi:type="ns815:ExtensionsType" xmlns:ns815="gme://gov.nih.nci.cagrid.introduce/1/Extension">
-    <ns815:Extension extensionType="AUTHORIZATION" name="enforce_auth" xsi:type="ns815:ExtensionType"/>
-   </ns815:Extensions>
+   <ns814:Extensions xsi:type="ns814:ExtensionsType" xmlns:ns814="gme://gov.nih.nci.cagrid.introduce/1/Extension">
+    <ns814:Extension extensionType="AUTHORIZATION" name="enforce_auth" xsi:type="ns814:ExtensionType"/>
+   </ns814:Extensions>
   </ns3:Service>
   <ns3:Service name="InterventionService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/InterventionService" packageName="gov.nih.nci.coppa.services.pa.interventionservice" xsi:type="ns3:ServiceType">
-   <ns816:Methods xsi:type="ns816:MethodsType" xmlns:ns816="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns816:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns816:MethodType">
-     <ns816:Inputs>
-      <ns816:Input qName="ns817:Id" description="" isArray="false" name="id" xmlns:ns817="http://iso21090.nci.nih.gov"/>
-     </ns816:Inputs>
-     <ns816:Output qName="ns818:Intervention" description="" isArray="false" xmlns:ns818="http://pa.services.coppa.nci.nih.gov"/>
-     <ns816:Exceptions>
-      <ns816:Exception description="" name="PAFault" qname="ns819:PAFault" xmlns:ns819="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns816:Exceptions>
-     <ns820:MethodSecurity xsi:type="ns820:MethodSecurity" xmlns:ns820="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns820:SecuritySetting xsi:type="ns820:SecuritySetting">Custom</ns820:SecuritySetting>
-      <ns820:TransportLevelSecurity xsi:type="ns820:TransportLevelSecurity">
-       <ns820:CommunicationMethod xsi:type="ns820:CommunicationMethod">Privacy</ns820:CommunicationMethod>
-      </ns820:TransportLevelSecurity>
-      <ns820:RunAsMode xsi:type="ns820:RunAsMode">System</ns820:RunAsMode>
-      <ns820:AnonymousClients xsi:type="ns820:AnonymousCommunication">No</ns820:AnonymousClients>
-      <ns820:MethodAuthorization xsi:type="ns820:MethodAuthorization">
-       <ns820:InheritServiceAuthorization xsi:type="ns820:InheritServiceAuthorization"/>
-      </ns820:MethodAuthorization>
-     </ns820:MethodSecurity>
-     <ns821:Extensions xsi:type="ns821:ExtensionsType" xmlns:ns821="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns816:Method>
-    <ns816:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns816:MethodType">
-     <ns816:Inputs>
-      <ns816:Input qName="ns822:Intervention" description="" isArray="false" name="intervention" xmlns:ns822="http://pa.services.coppa.nci.nih.gov"/>
-     </ns816:Inputs>
-     <ns816:Output qName="ns823:Intervention" description="" isArray="false" xmlns:ns823="http://pa.services.coppa.nci.nih.gov"/>
-     <ns816:Exceptions>
-      <ns816:Exception description="" name="PAFault" qname="ns824:PAFault" xmlns:ns824="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns816:Exceptions>
-     <ns825:MethodSecurity xsi:type="ns825:MethodSecurity" xmlns:ns825="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns825:SecuritySetting xsi:type="ns825:SecuritySetting">Custom</ns825:SecuritySetting>
-      <ns825:TransportLevelSecurity xsi:type="ns825:TransportLevelSecurity">
-       <ns825:CommunicationMethod xsi:type="ns825:CommunicationMethod">Privacy</ns825:CommunicationMethod>
-      </ns825:TransportLevelSecurity>
-      <ns825:RunAsMode xsi:type="ns825:RunAsMode">System</ns825:RunAsMode>
-      <ns825:AnonymousClients xsi:type="ns825:AnonymousCommunication">No</ns825:AnonymousClients>
-      <ns825:MethodAuthorization xsi:type="ns825:MethodAuthorization">
-       <ns825:InheritServiceAuthorization xsi:type="ns825:InheritServiceAuthorization"/>
-      </ns825:MethodAuthorization>
-     </ns825:MethodSecurity>
-     <ns826:Extensions xsi:type="ns826:ExtensionsType" xmlns:ns826="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns816:Method>
-    <ns816:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns816:MethodType">
-     <ns816:Inputs>
-      <ns816:Input qName="ns827:Intervention" description="" isArray="false" name="intervention" xmlns:ns827="http://pa.services.coppa.nci.nih.gov"/>
-     </ns816:Inputs>
-     <ns816:Output qName="ns828:Intervention" description="" isArray="false" xmlns:ns828="http://pa.services.coppa.nci.nih.gov"/>
-     <ns816:Exceptions>
-      <ns816:Exception description="" name="PAFault" qname="ns829:PAFault" xmlns:ns829="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns816:Exceptions>
-     <ns830:MethodSecurity xsi:type="ns830:MethodSecurity" xmlns:ns830="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns830:SecuritySetting xsi:type="ns830:SecuritySetting">Custom</ns830:SecuritySetting>
-      <ns830:TransportLevelSecurity xsi:type="ns830:TransportLevelSecurity">
-       <ns830:CommunicationMethod xsi:type="ns830:CommunicationMethod">Privacy</ns830:CommunicationMethod>
-      </ns830:TransportLevelSecurity>
-      <ns830:RunAsMode xsi:type="ns830:RunAsMode">System</ns830:RunAsMode>
-      <ns830:AnonymousClients xsi:type="ns830:AnonymousCommunication">No</ns830:AnonymousClients>
-      <ns830:MethodAuthorization xsi:type="ns830:MethodAuthorization">
-       <ns830:InheritServiceAuthorization xsi:type="ns830:InheritServiceAuthorization"/>
-      </ns830:MethodAuthorization>
-     </ns830:MethodSecurity>
-     <ns831:Extensions xsi:type="ns831:ExtensionsType" xmlns:ns831="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns816:Method>
-    <ns816:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns816:MethodType">
-     <ns816:Inputs>
-      <ns816:Input qName="ns832:Id" description="" isArray="false" name="id" xmlns:ns832="http://iso21090.nci.nih.gov"/>
-     </ns816:Inputs>
-     <ns816:Output qName="void" description="" isArray="false"/>
-     <ns816:Exceptions>
-      <ns816:Exception description="" name="PAFault" qname="ns833:PAFault" xmlns:ns833="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns816:Exceptions>
-     <ns834:MethodSecurity xsi:type="ns834:MethodSecurity" xmlns:ns834="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns834:SecuritySetting xsi:type="ns834:SecuritySetting">Custom</ns834:SecuritySetting>
-      <ns834:TransportLevelSecurity xsi:type="ns834:TransportLevelSecurity">
-       <ns834:CommunicationMethod xsi:type="ns834:CommunicationMethod">Privacy</ns834:CommunicationMethod>
-      </ns834:TransportLevelSecurity>
-      <ns834:RunAsMode xsi:type="ns834:RunAsMode">System</ns834:RunAsMode>
-      <ns834:AnonymousClients xsi:type="ns834:AnonymousCommunication">No</ns834:AnonymousClients>
-      <ns834:MethodAuthorization xsi:type="ns834:MethodAuthorization">
-       <ns834:InheritServiceAuthorization xsi:type="ns834:InheritServiceAuthorization"/>
-      </ns834:MethodAuthorization>
-     </ns834:MethodSecurity>
-     <ns835:Extensions xsi:type="ns835:ExtensionsType" xmlns:ns835="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns816:Method>
-    <ns816:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns816:MethodType">
-     <ns816:Inputs>
-      <ns816:Input qName="ns836:Intervention" description="" isArray="false" name="searchCriteria" xmlns:ns836="http://pa.services.coppa.nci.nih.gov"/>
-     </ns816:Inputs>
-     <ns816:Output qName="ns837:Intervention" description="" isArray="true" xmlns:ns837="http://pa.services.coppa.nci.nih.gov"/>
-     <ns816:Exceptions>
-      <ns816:Exception description="" name="PAFault" qname="ns838:PAFault" xmlns:ns838="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns816:Exceptions>
-     <ns839:MethodSecurity xsi:type="ns839:MethodSecurity" xmlns:ns839="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns839:SecuritySetting xsi:type="ns839:SecuritySetting">Custom</ns839:SecuritySetting>
-      <ns839:TransportLevelSecurity xsi:type="ns839:TransportLevelSecurity">
-       <ns839:CommunicationMethod xsi:type="ns839:CommunicationMethod">Privacy</ns839:CommunicationMethod>
-      </ns839:TransportLevelSecurity>
-      <ns839:RunAsMode xsi:type="ns839:RunAsMode">System</ns839:RunAsMode>
-      <ns839:AnonymousClients xsi:type="ns839:AnonymousCommunication">No</ns839:AnonymousClients>
-      <ns839:MethodAuthorization xsi:type="ns839:MethodAuthorization">
-       <ns839:InheritServiceAuthorization xsi:type="ns839:InheritServiceAuthorization"/>
-      </ns839:MethodAuthorization>
-     </ns839:MethodSecurity>
-     <ns840:Extensions xsi:type="ns840:ExtensionsType" xmlns:ns840="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns816:Method>
-    <ns816:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns816:MethodType">
-     <ns816:Output qName="ns841:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns841="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns842:MethodSecurity xsi:type="ns842:MethodSecurity" xmlns:ns842="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns842:SecuritySetting xsi:type="ns842:SecuritySetting">None</ns842:SecuritySetting>
-      <ns842:MethodAuthorization xsi:type="ns842:MethodAuthorization">
-       <ns842:NoAuthorization xsi:type="ns842:NoAuthorization"/>
-      </ns842:MethodAuthorization>
-     </ns842:MethodSecurity>
-     <ns816:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns816:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns816:Method>
-   </ns816:Methods>
-   <ns843:ResourcePropertiesList xsi:type="ns843:ResourcePropertiesListType" xmlns:ns843="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
-   <ns844:ServiceSecurity xsi:type="ns844:ServiceSecurity" xmlns:ns844="gme://gov.nih.nci.cagrid.introduce/1/Security">
-    <ns844:SecuritySetting xsi:type="ns844:SecuritySetting">Custom</ns844:SecuritySetting>
-    <ns844:TransportLevelSecurity xsi:type="ns844:TransportLevelSecurity">
-     <ns844:CommunicationMethod xsi:type="ns844:CommunicationMethod">Privacy</ns844:CommunicationMethod>
-    </ns844:TransportLevelSecurity>
-    <ns844:RunAsMode xsi:type="ns844:RunAsMode">System</ns844:RunAsMode>
-    <ns844:AnonymousClients xsi:type="ns844:AnonymousCommunication">No</ns844:AnonymousClients>
-    <ns844:ServiceAuthorization xsi:type="ns844:ServiceAuthorization">
-     <ns844:IntroducePDPAuthorization xsi:type="ns844:IntroducePDPAuthorization"/>
-    </ns844:ServiceAuthorization>
-   </ns844:ServiceSecurity>
+   <ns815:Methods xsi:type="ns815:MethodsType" xmlns:ns815="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns815:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns815:MethodType">
+     <ns815:Inputs>
+      <ns815:Input qName="ns816:Id" description="" isArray="false" name="id" xmlns:ns816="http://iso21090.nci.nih.gov"/>
+     </ns815:Inputs>
+     <ns815:Output qName="ns817:Intervention" description="" isArray="false" xmlns:ns817="http://pa.services.coppa.nci.nih.gov"/>
+     <ns815:Exceptions>
+      <ns815:Exception description="" name="PAFault" qname="ns818:PAFault" xmlns:ns818="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns815:Exceptions>
+     <ns819:MethodSecurity xsi:type="ns819:MethodSecurity" xmlns:ns819="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns819:SecuritySetting xsi:type="ns819:SecuritySetting">Custom</ns819:SecuritySetting>
+      <ns819:TransportLevelSecurity xsi:type="ns819:TransportLevelSecurity">
+       <ns819:CommunicationMethod xsi:type="ns819:CommunicationMethod">Privacy</ns819:CommunicationMethod>
+      </ns819:TransportLevelSecurity>
+      <ns819:RunAsMode xsi:type="ns819:RunAsMode">System</ns819:RunAsMode>
+      <ns819:AnonymousClients xsi:type="ns819:AnonymousCommunication">No</ns819:AnonymousClients>
+      <ns819:MethodAuthorization xsi:type="ns819:MethodAuthorization">
+       <ns819:InheritServiceAuthorization xsi:type="ns819:InheritServiceAuthorization"/>
+      </ns819:MethodAuthorization>
+     </ns819:MethodSecurity>
+     <ns820:Extensions xsi:type="ns820:ExtensionsType" xmlns:ns820="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns815:Method>
+    <ns815:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns815:MethodType">
+     <ns815:Inputs>
+      <ns815:Input qName="ns821:Intervention" description="" isArray="false" name="intervention" xmlns:ns821="http://pa.services.coppa.nci.nih.gov"/>
+     </ns815:Inputs>
+     <ns815:Output qName="ns822:Intervention" description="" isArray="false" xmlns:ns822="http://pa.services.coppa.nci.nih.gov"/>
+     <ns815:Exceptions>
+      <ns815:Exception description="" name="PAFault" qname="ns823:PAFault" xmlns:ns823="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns815:Exceptions>
+     <ns824:MethodSecurity xsi:type="ns824:MethodSecurity" xmlns:ns824="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns824:SecuritySetting xsi:type="ns824:SecuritySetting">Custom</ns824:SecuritySetting>
+      <ns824:TransportLevelSecurity xsi:type="ns824:TransportLevelSecurity">
+       <ns824:CommunicationMethod xsi:type="ns824:CommunicationMethod">Privacy</ns824:CommunicationMethod>
+      </ns824:TransportLevelSecurity>
+      <ns824:RunAsMode xsi:type="ns824:RunAsMode">System</ns824:RunAsMode>
+      <ns824:AnonymousClients xsi:type="ns824:AnonymousCommunication">No</ns824:AnonymousClients>
+      <ns824:MethodAuthorization xsi:type="ns824:MethodAuthorization">
+       <ns824:InheritServiceAuthorization xsi:type="ns824:InheritServiceAuthorization"/>
+      </ns824:MethodAuthorization>
+     </ns824:MethodSecurity>
+     <ns825:Extensions xsi:type="ns825:ExtensionsType" xmlns:ns825="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns815:Method>
+    <ns815:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns815:MethodType">
+     <ns815:Inputs>
+      <ns815:Input qName="ns826:Intervention" description="" isArray="false" name="intervention" xmlns:ns826="http://pa.services.coppa.nci.nih.gov"/>
+     </ns815:Inputs>
+     <ns815:Output qName="ns827:Intervention" description="" isArray="false" xmlns:ns827="http://pa.services.coppa.nci.nih.gov"/>
+     <ns815:Exceptions>
+      <ns815:Exception description="" name="PAFault" qname="ns828:PAFault" xmlns:ns828="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns815:Exceptions>
+     <ns829:MethodSecurity xsi:type="ns829:MethodSecurity" xmlns:ns829="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns829:SecuritySetting xsi:type="ns829:SecuritySetting">Custom</ns829:SecuritySetting>
+      <ns829:TransportLevelSecurity xsi:type="ns829:TransportLevelSecurity">
+       <ns829:CommunicationMethod xsi:type="ns829:CommunicationMethod">Privacy</ns829:CommunicationMethod>
+      </ns829:TransportLevelSecurity>
+      <ns829:RunAsMode xsi:type="ns829:RunAsMode">System</ns829:RunAsMode>
+      <ns829:AnonymousClients xsi:type="ns829:AnonymousCommunication">No</ns829:AnonymousClients>
+      <ns829:MethodAuthorization xsi:type="ns829:MethodAuthorization">
+       <ns829:InheritServiceAuthorization xsi:type="ns829:InheritServiceAuthorization"/>
+      </ns829:MethodAuthorization>
+     </ns829:MethodSecurity>
+     <ns830:Extensions xsi:type="ns830:ExtensionsType" xmlns:ns830="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns815:Method>
+    <ns815:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns815:MethodType">
+     <ns815:Inputs>
+      <ns815:Input qName="ns831:Id" description="" isArray="false" name="id" xmlns:ns831="http://iso21090.nci.nih.gov"/>
+     </ns815:Inputs>
+     <ns815:Output qName="void" description="" isArray="false"/>
+     <ns815:Exceptions>
+      <ns815:Exception description="" name="PAFault" qname="ns832:PAFault" xmlns:ns832="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns815:Exceptions>
+     <ns833:MethodSecurity xsi:type="ns833:MethodSecurity" xmlns:ns833="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns833:SecuritySetting xsi:type="ns833:SecuritySetting">Custom</ns833:SecuritySetting>
+      <ns833:TransportLevelSecurity xsi:type="ns833:TransportLevelSecurity">
+       <ns833:CommunicationMethod xsi:type="ns833:CommunicationMethod">Privacy</ns833:CommunicationMethod>
+      </ns833:TransportLevelSecurity>
+      <ns833:RunAsMode xsi:type="ns833:RunAsMode">System</ns833:RunAsMode>
+      <ns833:AnonymousClients xsi:type="ns833:AnonymousCommunication">No</ns833:AnonymousClients>
+      <ns833:MethodAuthorization xsi:type="ns833:MethodAuthorization">
+       <ns833:InheritServiceAuthorization xsi:type="ns833:InheritServiceAuthorization"/>
+      </ns833:MethodAuthorization>
+     </ns833:MethodSecurity>
+     <ns834:Extensions xsi:type="ns834:ExtensionsType" xmlns:ns834="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns815:Method>
+    <ns815:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns815:MethodType">
+     <ns815:Inputs>
+      <ns815:Input qName="ns835:Intervention" description="" isArray="false" name="searchCriteria" xmlns:ns835="http://pa.services.coppa.nci.nih.gov"/>
+     </ns815:Inputs>
+     <ns815:Output qName="ns836:Intervention" description="" isArray="true" xmlns:ns836="http://pa.services.coppa.nci.nih.gov"/>
+     <ns815:Exceptions>
+      <ns815:Exception description="" name="PAFault" qname="ns837:PAFault" xmlns:ns837="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns815:Exceptions>
+     <ns838:MethodSecurity xsi:type="ns838:MethodSecurity" xmlns:ns838="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns838:SecuritySetting xsi:type="ns838:SecuritySetting">Custom</ns838:SecuritySetting>
+      <ns838:TransportLevelSecurity xsi:type="ns838:TransportLevelSecurity">
+       <ns838:CommunicationMethod xsi:type="ns838:CommunicationMethod">Privacy</ns838:CommunicationMethod>
+      </ns838:TransportLevelSecurity>
+      <ns838:RunAsMode xsi:type="ns838:RunAsMode">System</ns838:RunAsMode>
+      <ns838:AnonymousClients xsi:type="ns838:AnonymousCommunication">No</ns838:AnonymousClients>
+      <ns838:MethodAuthorization xsi:type="ns838:MethodAuthorization">
+       <ns838:InheritServiceAuthorization xsi:type="ns838:InheritServiceAuthorization"/>
+      </ns838:MethodAuthorization>
+     </ns838:MethodSecurity>
+     <ns839:Extensions xsi:type="ns839:ExtensionsType" xmlns:ns839="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns815:Method>
+    <ns815:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns815:MethodType">
+     <ns815:Output qName="ns840:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns840="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns841:MethodSecurity xsi:type="ns841:MethodSecurity" xmlns:ns841="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns841:SecuritySetting xsi:type="ns841:SecuritySetting">None</ns841:SecuritySetting>
+      <ns841:MethodAuthorization xsi:type="ns841:MethodAuthorization">
+       <ns841:NoAuthorization xsi:type="ns841:NoAuthorization"/>
+      </ns841:MethodAuthorization>
+     </ns841:MethodSecurity>
+     <ns815:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns815:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns815:Method>
+   </ns815:Methods>
+   <ns842:ResourcePropertiesList xsi:type="ns842:ResourcePropertiesListType" xmlns:ns842="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns843:ServiceSecurity xsi:type="ns843:ServiceSecurity" xmlns:ns843="gme://gov.nih.nci.cagrid.introduce/1/Security">
+    <ns843:SecuritySetting xsi:type="ns843:SecuritySetting">Custom</ns843:SecuritySetting>
+    <ns843:TransportLevelSecurity xsi:type="ns843:TransportLevelSecurity">
+     <ns843:CommunicationMethod xsi:type="ns843:CommunicationMethod">Privacy</ns843:CommunicationMethod>
+    </ns843:TransportLevelSecurity>
+    <ns843:RunAsMode xsi:type="ns843:RunAsMode">System</ns843:RunAsMode>
+    <ns843:AnonymousClients xsi:type="ns843:AnonymousCommunication">No</ns843:AnonymousClients>
+    <ns843:ServiceAuthorization xsi:type="ns843:ServiceAuthorization">
+     <ns843:IntroducePDPAuthorization xsi:type="ns843:IntroducePDPAuthorization"/>
+    </ns843:ServiceAuthorization>
+   </ns843:ServiceSecurity>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Singleton xsi:type="ns3:Singleton"/>
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
     <ns3:Secure xsi:type="ns3:Secure"/>
    </ns3:ResourceFrameworkOptions>
-   <ns845:Extensions xsi:type="ns845:ExtensionsType" xmlns:ns845="gme://gov.nih.nci.cagrid.introduce/1/Extension">
-    <ns845:Extension extensionType="AUTHORIZATION" name="enforce_auth" xsi:type="ns845:ExtensionType"/>
-   </ns845:Extensions>
+   <ns844:Extensions xsi:type="ns844:ExtensionsType" xmlns:ns844="gme://gov.nih.nci.cagrid.introduce/1/Extension">
+    <ns844:Extension extensionType="AUTHORIZATION" name="enforce_auth" xsi:type="ns844:ExtensionType"/>
+   </ns844:Extensions>
   </ns3:Service>
   <ns3:Service name="RegulatoryAuthorityService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/RegulatoryAuthorityService" packageName="gov.nih.nci.coppa.services.pa.regulatoryauthorityservice" xsi:type="ns3:ServiceType">
-   <ns846:Methods xsi:type="ns846:MethodsType" xmlns:ns846="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns846:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns846:MethodType">
-     <ns846:Output qName="ns847:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns847="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns848:MethodSecurity xsi:type="ns848:MethodSecurity" xmlns:ns848="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns848:SecuritySetting xsi:type="ns848:SecuritySetting">None</ns848:SecuritySetting>
-      <ns848:MethodAuthorization xsi:type="ns848:MethodAuthorization">
-       <ns848:NoAuthorization xsi:type="ns848:NoAuthorization"/>
-      </ns848:MethodAuthorization>
-     </ns848:MethodSecurity>
-     <ns846:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns846:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns846:Method>
-    <ns846:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns846:MethodType">
-     <ns846:Inputs>
-      <ns846:Input qName="ns849:RegulatoryAuthority" description="" isArray="false" name="regulatoryAuthority" xmlns:ns849="http://pa.services.coppa.nci.nih.gov"/>
-      <ns846:Input qName="ns850:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns850="http://common.coppa.nci.nih.gov"/>
-     </ns846:Inputs>
-     <ns846:Output qName="ns851:RegulatoryAuthority" description="" isArray="true" xmlns:ns851="http://pa.services.coppa.nci.nih.gov"/>
-     <ns846:Exceptions>
-      <ns846:Exception description="" name="PAFault" qname="ns852:PAFault" xmlns:ns852="http://faults.pa.services.coppa.nci.nih.gov"/>
-      <ns846:Exception description="" name="TooManyResultsFault" qname="ns853:TooManyResultsFault" xmlns:ns853="http://faults.pa.services.coppa.nci.nih.gov"/>
-     </ns846:Exceptions>
-     <ns854:Extensions xsi:type="ns854:ExtensionsType" xmlns:ns854="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
-    </ns846:Method>
-   </ns846:Methods>
-   <ns855:ResourcePropertiesList xsi:type="ns855:ResourcePropertiesListType" xmlns:ns855="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
-   <ns856:ServiceSecurity xsi:type="ns856:ServiceSecurity" xmlns:ns856="gme://gov.nih.nci.cagrid.introduce/1/Security">
-    <ns856:SecuritySetting xsi:type="ns856:SecuritySetting">Custom</ns856:SecuritySetting>
-    <ns856:TransportLevelSecurity xsi:type="ns856:TransportLevelSecurity">
-     <ns856:CommunicationMethod xsi:type="ns856:CommunicationMethod">Privacy</ns856:CommunicationMethod>
-    </ns856:TransportLevelSecurity>
-    <ns856:RunAsMode xsi:type="ns856:RunAsMode">System</ns856:RunAsMode>
-    <ns856:AnonymousClients xsi:type="ns856:AnonymousCommunication">No</ns856:AnonymousClients>
-    <ns856:ServiceAuthorization xsi:type="ns856:ServiceAuthorization">
-     <ns856:NoAuthorization xsi:type="ns856:NoAuthorization"/>
-    </ns856:ServiceAuthorization>
-   </ns856:ServiceSecurity>
+   <ns845:Methods xsi:type="ns845:MethodsType" xmlns:ns845="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns845:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns845:MethodType">
+     <ns845:Output qName="ns846:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns846="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns847:MethodSecurity xsi:type="ns847:MethodSecurity" xmlns:ns847="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns847:SecuritySetting xsi:type="ns847:SecuritySetting">None</ns847:SecuritySetting>
+      <ns847:MethodAuthorization xsi:type="ns847:MethodAuthorization">
+       <ns847:NoAuthorization xsi:type="ns847:NoAuthorization"/>
+      </ns847:MethodAuthorization>
+     </ns847:MethodSecurity>
+     <ns845:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns845:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns845:Method>
+    <ns845:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns845:MethodType">
+     <ns845:Inputs>
+      <ns845:Input qName="ns848:RegulatoryAuthority" description="" isArray="false" name="regulatoryAuthority" xmlns:ns848="http://pa.services.coppa.nci.nih.gov"/>
+      <ns845:Input qName="ns849:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns849="http://common.coppa.nci.nih.gov"/>
+     </ns845:Inputs>
+     <ns845:Output qName="ns850:RegulatoryAuthority" description="" isArray="true" xmlns:ns850="http://pa.services.coppa.nci.nih.gov"/>
+     <ns845:Exceptions>
+      <ns845:Exception description="" name="PAFault" qname="ns851:PAFault" xmlns:ns851="http://faults.pa.services.coppa.nci.nih.gov"/>
+      <ns845:Exception description="" name="TooManyResultsFault" qname="ns852:TooManyResultsFault" xmlns:ns852="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns845:Exceptions>
+     <ns853:Extensions xsi:type="ns853:ExtensionsType" xmlns:ns853="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns845:Method>
+   </ns845:Methods>
+   <ns854:ResourcePropertiesList xsi:type="ns854:ResourcePropertiesListType" xmlns:ns854="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns855:ServiceSecurity xsi:type="ns855:ServiceSecurity" xmlns:ns855="gme://gov.nih.nci.cagrid.introduce/1/Security">
+    <ns855:SecuritySetting xsi:type="ns855:SecuritySetting">Custom</ns855:SecuritySetting>
+    <ns855:TransportLevelSecurity xsi:type="ns855:TransportLevelSecurity">
+     <ns855:CommunicationMethod xsi:type="ns855:CommunicationMethod">Privacy</ns855:CommunicationMethod>
+    </ns855:TransportLevelSecurity>
+    <ns855:RunAsMode xsi:type="ns855:RunAsMode">System</ns855:RunAsMode>
+    <ns855:AnonymousClients xsi:type="ns855:AnonymousCommunication">No</ns855:AnonymousClients>
+    <ns855:ServiceAuthorization xsi:type="ns855:ServiceAuthorization">
+     <ns855:NoAuthorization xsi:type="ns855:NoAuthorization"/>
+    </ns855:ServiceAuthorization>
+   </ns855:ServiceSecurity>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
     <ns3:Secure xsi:type="ns3:Secure"/>
    </ns3:ResourceFrameworkOptions>
-   <ns857:Extensions xsi:type="ns857:ExtensionsType" xmlns:ns857="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+   <ns856:Extensions xsi:type="ns856:ExtensionsType" xmlns:ns856="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
   </ns3:Service>
  </ns3:Services>
- <ns858:Extensions xsi:type="ns858:ExtensionsType" xmlns:ns858="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns858:Extension name="cagrid_metadata" version="1.3" xsi:type="ns858:ExtensionType"/>
- </ns858:Extensions>
- <ns859:ServiceProperties xmlns:ns859="gme://gov.nih.nci.cagrid.introduce/1/Property">
-  <ns859:Property description="The separator used to encord the gridServicePrincipal and grid user's identity when Using the com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" isFromETC="false" key="gridServicePrincipalSeparator" value="||"/>
- </ns859:ServiceProperties>
+ <ns857:Extensions xsi:type="ns857:ExtensionsType" xmlns:ns857="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns857:Extension name="cagrid_metadata" version="1.3" xsi:type="ns857:ExtensionType"/>
+ </ns857:Extensions>
+ <ns858:ServiceProperties xmlns:ns858="gme://gov.nih.nci.cagrid.introduce/1/Property">
+  <ns858:Property description="The separator used to encord the gridServicePrincipal and grid user's identity when Using the com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" isFromETC="false" key="gridServicePrincipalSeparator" value="||"/>
+ </ns858:ServiceProperties>
 </ns1:ServiceDescription>

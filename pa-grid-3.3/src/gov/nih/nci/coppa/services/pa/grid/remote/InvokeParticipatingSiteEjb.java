@@ -83,10 +83,10 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
-import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.service.PAException;
@@ -98,9 +98,11 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.util.List;
+
 /**
  * Wrapper class for invoking the ParticipatingSiteServiceRemote remote EJB.
- * 
+ *
  * @author mshestopalov
  */
 
@@ -108,9 +110,9 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
 
     /**
      * {@inheritDoc}
-     * @param telecom 
+     * @param telecom
      */
-    public void addStudySiteGenericContact(Ii studySiteIi, OrganizationalContactDTO contactDTO, 
+    public void addStudySiteGenericContact(Ii studySiteIi, OrganizationalContactDTO contactDTO,
             boolean isPrimaryContact, DSet<Tel> telecom) throws PAException {
         try {
             GridSecurityJNDIServiceLocator.newInstance().getParticipatingSiteService().addStudySiteGenericContact(
@@ -136,7 +138,7 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -156,8 +158,9 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
     /**
      * {@inheritDoc}
      */
-    public Ii createStudySiteParticipant(StudySiteDTO studySiteDTO, StudySiteAccrualStatusDTO currentStatusDTO,
-            OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO) throws PAException {
+    public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO, OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO)
+    throws PAException {
         try {
             return GridSecurityJNDIServiceLocator.newInstance().getParticipatingSiteService()
                     .createStudySiteParticipant(studySiteDTO, currentStatusDTO, orgDTO, hcfDTO);
@@ -171,8 +174,8 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
     /**
      * {@inheritDoc}
      */
-    public Ii createStudySiteParticipant(StudySiteDTO studySiteDTO, StudySiteAccrualStatusDTO currentStatusDTO,
-            Ii poHcfIi) throws PAException {
+    public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi) throws PAException {
         try {
             return GridSecurityJNDIServiceLocator.newInstance().getParticipatingSiteService()
                     .createStudySiteParticipant(studySiteDTO, currentStatusDTO, poHcfIi);
@@ -200,10 +203,11 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
     /**
      * {@inheritDoc}
      */
-    public Bl isParticipatingSite(Ii studyProtocolIi, Ii someHcfIi) throws PAException {
+    public ParticipatingSiteDTO updateStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO) throws PAException {
         try {
-            return GridSecurityJNDIServiceLocator.newInstance().getParticipatingSiteService().isParticipatingSite(
-                    studyProtocolIi, someHcfIi);
+            return GridSecurityJNDIServiceLocator.newInstance().getParticipatingSiteService()
+                .updateStudySiteParticipant(studySiteDTO, currentStatusDTO);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {
@@ -214,11 +218,10 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
     /**
      * {@inheritDoc}
      */
-    public void updateStudySiteParticipant(StudySiteDTO studySiteDTO, StudySiteAccrualStatusDTO currentStatusDTO)
-            throws PAException {
+    public List<ParticipatingSiteDTO> getParticipatingSitesByStudyProtocol(Ii studyProtocolIi) throws PAException {
         try {
-            GridSecurityJNDIServiceLocator.newInstance().getParticipatingSiteService().updateStudySiteParticipant(
-                    studySiteDTO, currentStatusDTO);
+            return GridSecurityJNDIServiceLocator.newInstance().getParticipatingSiteService()
+                .getParticipatingSitesByStudyProtocol(studyProtocolIi);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

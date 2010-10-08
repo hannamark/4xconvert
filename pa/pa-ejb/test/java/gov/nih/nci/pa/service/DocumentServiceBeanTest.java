@@ -88,10 +88,9 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.MockCSMUserService;
-
+import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
 
@@ -127,7 +126,7 @@ public class DocumentServiceBeanTest {
         }
         docDTO = new DocumentDTO();
         docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.parseLong(pid.getExtension())));
-        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.OTHER));
+        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
         docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc"));
         docDTO.setText(EdConverter.convertToEd("test".getBytes()));
 

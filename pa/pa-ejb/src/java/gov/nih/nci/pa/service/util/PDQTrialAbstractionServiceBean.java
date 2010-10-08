@@ -247,7 +247,7 @@ public class PDQTrialAbstractionServiceBean implements PDQTrialAbstractionServic
                     recrutingStatus.setStatusDate(TsConverter.convertToTs(PAUtil.getCurrentTime()));
                     String poOrgId = IiConverter.convertToString(poOrgDTO.getIdentifier());
                     Ii studySiteIi = PaRegistry.getParticipatingSiteService().createStudySiteParticipant(
-                            studySiteDTO, recrutingStatus, paServiceUtils.getPoHcfIi(poOrgId));
+                            studySiteDTO, recrutingStatus, paServiceUtils.getPoHcfIi(poOrgId)).getIdentifier();
                     if (primaryContactDTO != null) {
                         ClinicalResearchStaffDTO crsDTO = paServiceUtils.getCrsDTO(primaryContactDTO.getIdentifier(),
                                 poOrgId);

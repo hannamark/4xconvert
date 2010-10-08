@@ -26,9 +26,9 @@ public class StudySiteParticipationServiceProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteResponse isParticipatingSite(gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteResponse boxedResult = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.IsParticipatingSiteResponse();
-    boxedResult.setBl(impl.isParticipatingSite(params.getStudyProtocolId().getId(),params.getHcfId().getId()));
+    public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.GetParticipatingSitesByStudyProtocolResponse getParticipatingSitesByStudyProtocol(gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.GetParticipatingSitesByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.GetParticipatingSitesByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.GetParticipatingSitesByStudyProtocolResponse();
+    boxedResult.setStudySite(impl.getParticipatingSitesByStudyProtocol(params.getStudyProtocolId().getId()));
     return boxedResult;
   }
 

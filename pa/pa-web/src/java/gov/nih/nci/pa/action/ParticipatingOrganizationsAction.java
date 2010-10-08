@@ -95,6 +95,7 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
@@ -306,7 +307,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             ssIi = sp.getIdentifier();
         } else {
             sp = new StudySiteDTO();
-            ssIi = saveNonPropWithNewSite(sp, ssas, tab, errorOrgName);
+            ssIi = saveNonPropWithNewSite(sp, ssas, tab, errorOrgName).getIdentifier();
         }
 
         tab.setStudyParticipationId(IiConverter.convertToLong(ssIi));
@@ -373,10 +374,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         return spUpdated;
     }
 
-    private Ii saveNonPropWithNewSite(StudySiteDTO sp, StudySiteAccrualStatusDTO ssas,
-            ParticipatingOrganizationsTabWebDTO tab,
-            String errorOrgName) throws PAException {
-        Ii ssIi = null;
+    private ParticipatingSiteDTO saveNonPropWithNewSite(StudySiteDTO sp, StudySiteAccrualStatusDTO ssas,
+            ParticipatingOrganizationsTabWebDTO tab, String errorOrgName) throws PAException {
+        ParticipatingSiteDTO psDTO = null;
         String poOrgId = tab.getFacilityOrganization().getIdentifier();
         Ii poHcfIi = paServiceUtil.getPoHcfIi(poOrgId);
 
@@ -390,13 +390,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt(siteLocalTrialIdentifier));
 
         try {
-            ssIi =
-                partSiteService.createStudySiteParticipant(sp, ssas, poHcfIi);
+            psDTO = partSiteService.createStudySiteParticipant(sp, ssas, poHcfIi);
         } catch (PADuplicateException e) {
             addFieldError(errorOrgName, e.getMessage());
         }
-
-        return ssIi;
+        return psDTO;
     }
 
     /**
@@ -1420,7 +1418,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (currentAction.equalsIgnoreCase("create")) {
 
             ssIi =
-                partSiteService.createStudySiteParticipant(siteDTO, ssas, poHcfIi);
+                partSiteService.createStudySiteParticipant(siteDTO, ssas, poHcfIi).getIdentifier();
         } else {
            siteDTO.setIdentifier(ssIi);
            partSiteService.updateStudySiteParticipant(siteDTO, ssas);

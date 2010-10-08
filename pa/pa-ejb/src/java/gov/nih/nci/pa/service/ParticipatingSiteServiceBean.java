@@ -101,6 +101,6 @@ import org.jboss.annotation.security.SecurityDomain;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
 @RolesAllowed({"gridClient", "Abstractor" })
-public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal 
-implements ParticipatingSiteServiceRemote {
+public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal implements ParticipatingSiteServiceRemote {
+
 }

@@ -81,6 +81,7 @@ package gov.nih.nci.pa.domain;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -116,9 +117,9 @@ public class StudySite extends OrganizationFunctionalRole {
     private HealthCareFacility healthCareFacility;
     private ResearchOrganization researchOrganization;
     private OversightCommittee oversightCommittee;
-    private List<StudySiteAccrualStatus> studySiteAccrualStatuses;
+    private List<StudySiteAccrualStatus> studySiteAccrualStatuses = new ArrayList<StudySiteAccrualStatus>();
     private List<StudySiteAccrualAccess> studySiteAccrualAccess;
-    private List<StudySiteContact> studySiteContacts;
+    private List<StudySiteContact> studySiteContacts = new ArrayList<StudySiteContact>();
     private List<StudySubject> studySubjects;
     private String reviewBoardOrganizationalAffiliation;
     private String programCodeText;

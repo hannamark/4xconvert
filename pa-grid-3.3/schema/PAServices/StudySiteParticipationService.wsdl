@@ -54,33 +54,6 @@
       <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types" schemaLocation="./StudySiteServiceTypes.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
-      <element name="IsParticipatingSiteRequest">
-        <complexType>
-          <sequence>
-            <element name="studyProtocolId">
-              <complexType>
-                <sequence>
-                  <element ref="ns5:Id" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-            <element name="hcfId">
-              <complexType>
-                <sequence>
-                  <element ref="ns5:Id" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-          </sequence>
-        </complexType>
-      </element>
-      <element name="IsParticipatingSiteResponse">
-        <complexType>
-          <sequence>
-            <element ref="ns5:Bl" minOccurs="1" maxOccurs="1" />
-          </sequence>
-        </complexType>
-      </element>
       <element name="CreateParticipatingSiteRequest">
         <complexType>
           <sequence>
@@ -128,6 +101,26 @@
           </sequence>
         </complexType>
       </element>
+      <element name="GetParticipatingSitesByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="studyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetParticipatingSitesByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySite" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="StudySiteParticipationServiceResourceProperties">
         <complexType>
           <sequence />
@@ -136,12 +129,6 @@
     </schema>
   </types>
   <!--  place service messages here -->
-  <message name="IsParticipatingSiteRequest">
-    <part name="parameters" element="tns:IsParticipatingSiteRequest" />
-  </message>
-  <message name="IsParticipatingSiteResponse">
-    <part name="parameters" element="tns:IsParticipatingSiteResponse" />
-  </message>
   <message name="CreateParticipatingSiteRequest">
     <part name="parameters" element="tns:CreateParticipatingSiteRequest" />
   </message>
@@ -154,6 +141,12 @@
   <message name="UpdateParticipatingSiteResponse">
     <part name="parameters" element="tns:UpdateParticipatingSiteResponse" />
   </message>
+  <message name="GetParticipatingSitesByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetParticipatingSitesByStudyProtocolRequest" />
+  </message>
+  <message name="GetParticipatingSitesByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetParticipatingSitesByStudyProtocolResponse" />
+  </message>
   <message name="PAFaultFaultMessage">
     <part name="fault" element="ns7:PAFault" />
   </message>
@@ -163,11 +156,6 @@
                       
   ============================================================-->
   <portType name="StudySiteParticipationServicePortType" wsrp:ResourceProperties="tns:StudySiteParticipationServiceResourceProperties">
-    <operation name="isParticipatingSite">
-      <input message="tns:IsParticipatingSiteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/IsParticipatingSiteRequest" />
-      <output message="tns:IsParticipatingSiteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/IsParticipatingSiteResponse" />
-      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/PAFaultFaultMessage" />
-    </operation>
     <operation name="createParticipatingSite">
       <input message="tns:CreateParticipatingSiteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/CreateParticipatingSiteRequest" />
       <output message="tns:CreateParticipatingSiteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/CreateParticipatingSiteResponse" />
@@ -176,6 +164,11 @@
     <operation name="updateParticipatingSite">
       <input message="tns:UpdateParticipatingSiteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/UpdateParticipatingSiteRequest" />
       <output message="tns:UpdateParticipatingSiteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/UpdateParticipatingSiteResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getParticipatingSitesByStudyProtocol">
+      <input message="tns:GetParticipatingSitesByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/GetParticipatingSitesByStudyProtocolRequest" />
+      <output message="tns:GetParticipatingSitesByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/GetParticipatingSitesByStudyProtocolResponse" />
       <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/PAFaultFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">

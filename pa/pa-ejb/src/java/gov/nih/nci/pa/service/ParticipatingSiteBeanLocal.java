@@ -82,13 +82,17 @@
  */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.convert.ParticipatingSiteConverter;
+import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -98,6 +102,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.po.data.CurationException;
@@ -113,6 +119,7 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -123,6 +130,10 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.jboss.annotation.security.SecurityDomain;
 
 /**
@@ -135,26 +146,23 @@ import org.jboss.annotation.security.SecurityDomain;
 @SecurityDomain("pa")
 @RolesAllowed({"client", "Abstractor" })
 public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
-    implements ParticipatingSiteServiceLocal {
+implements ParticipatingSiteServiceLocal {
     private SessionContext ejbContext;
 
     @Resource
     void setSessionContext(SessionContext ctx) {
         this.ejbContext = ctx;
     }
-    
+
     private void checkValidUser(Long studyProtocolId) throws PAException {
-        if (this.ejbContext.isCallerInRole("Abstractor") 
-                || this.ejbContext.isCallerInRole("client")) {
+        if (this.ejbContext.isCallerInRole("Abstractor") || this.ejbContext.isCallerInRole("client")) {
             return;
         }
-        
         CSMUserUtil userService = CSMUserService.getInstance();
         User user = userService.lookupUser(this.ejbContext);
         RegistryUser userId = PaRegistry.getRegisterUserService().getUser(user.getLoginName());
         if (!PaRegistry.getRegisterUserService().isTrialOwner(userId.getId(), studyProtocolId)) {
-            throw new PAException("User " + user.getLoginName() 
-                    + "is not a trial owner for trial id " 
+            throw new PAException("User " + user.getLoginName() + "is not a trial owner for trial id "
                     + studyProtocolId);
         }
     }
@@ -163,18 +171,38 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Bl isParticipatingSite(Ii studyProtocolIi, Ii someHcfIi) throws PAException {
+    public List<ParticipatingSiteDTO> getParticipatingSitesByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        StudyProtocolDTO studyProtocolDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+
+        StudySiteDTO criteria = new StudySiteDTO();
+        criteria.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+        criteria.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         try {
-            
-            Ii siteIi = getParticipatingSiteIi(studyProtocolIi, someHcfIi);
-            Bl bl = new Bl();
-            bl.setValue(Boolean.valueOf(PAUtil.isIiNotNull(siteIi)));
-            return bl;
-        } catch (Exception e) {
-            throw new PAException(e);
+            List<StudySiteDTO> results = getStudySiteService().search(criteria, limit);
+            return convertStudySiteDTOsToParticipatingSiteDTOs(results);
+        } catch (TooManyResultsException e) {
+            throw new PAException(e.getMessage(), e);
         }
     }
-    
+
+    @SuppressWarnings("unchecked")
+    private List<ParticipatingSiteDTO> convertStudySiteDTOsToParticipatingSiteDTOs(List<StudySiteDTO> dtos)
+        throws PAException {
+        ParticipatingSiteConverter converter = new ParticipatingSiteConverter();
+        List<Long> ids = (List<Long>) CollectionUtils.collect(dtos, new Transformer() {
+            public Object transform(Object arg) {
+                StudySiteDTO dto = (StudySiteDTO) arg;
+                return IiConverter.convertToLong(dto.getIdentifier());
+            }
+        });
+
+        Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(StudySite.class);
+        criteria.add(Restrictions.in("id", ids));
+        return converter.convertFromDomainToDtos(criteria.list());
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -185,60 +213,47 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
             HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
             hcfDTO.setIdentifier(DSetConverter.convertIiToDset(someHcfIi));
             Ii poHcfIi = generateHcfIiFromCtepIdOrNewOrg(null, hcfDTO);
-            return getStudySiteService()
-                .getStudySiteIiByTrialAndPoHcfIi(studyProtocolDTO.getIdentifier(), poHcfIi);
+            return getStudySiteService().getStudySiteIiByTrialAndPoHcfIi(studyProtocolDTO.getIdentifier(), poHcfIi);
         } catch (Exception e) {
             throw new PAException(e);
         }
     }
-    
-   
 
-    
     /**
      * {@inheritDoc}
      */
-    public void addStudySiteGenericContact(Ii studySite, OrganizationalContactDTO contactDTO, 
-            boolean isPrimaryContact, DSet<Tel> telecom) 
-        throws PAException {
+    public void addStudySiteGenericContact(Ii studySite, OrganizationalContactDTO contactDTO, boolean isPrimaryContact,
+            DSet<Tel> telecom) throws PAException {
         try {
-
             StudySiteDTO studySiteDTO = PaRegistry.getStudySiteService().get(studySite);
-            
             Ii genericContactIi = getCorrUtils().getGenericContactIiFromCtepId(contactDTO);
             Ii orgIi = getCorrUtils().getPoOrgIiFromPaHcfIi(studySiteDTO.getHealthcareFacilityIi());
             Map<String, Ii> myMap = new HashMap<String, Ii>();
             myMap.put(IiConverter.ORGANIZATIONAL_CONTACT_ROOT, genericContactIi);
             myMap.put(IiConverter.ORG_ROOT, orgIi);
-            createStudyParticationContactRecord(studySiteDTO, myMap, 
-                    isPrimaryContact, null, telecom);
+            createStudyParticationContactRecord(studySiteDTO, myMap, isPrimaryContact, null, telecom);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
-        
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void addStudySiteInvestigator(Ii studySiteIi, ClinicalResearchStaffDTO poCrsDTO,
-            HealthCareProviderDTO poHcpDTO, PersonDTO investigatorDTO, 
-            String roleCode)
-    throws PAException {
+            HealthCareProviderDTO poHcpDTO, PersonDTO investigatorDTO, String roleCode) throws PAException {
         try {
             StudySiteDTO studySiteDTO = PaRegistry.getStudySiteService().get(studySiteIi);
             Ii orgIi = getCorrUtils().getPoOrgIiFromPaHcfIi(studySiteDTO.getHealthcareFacilityIi());
-            Map<String, Ii> myMap = generateCrsAndHcpFromCtepIdOrNewPerson(investigatorDTO,
-                    poCrsDTO, poHcpDTO, orgIi); 
-            createStudyParticationContactRecord(studySiteDTO, myMap, 
-                    false, roleCode, null);
+            Map<String, Ii> myMap = generateCrsAndHcpFromCtepIdOrNewPerson(investigatorDTO, poCrsDTO, poHcpDTO, orgIi);
+            createStudyParticationContactRecord(studySiteDTO, myMap, false, roleCode, null);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -247,74 +262,63 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
         try {
             StudySiteDTO studySiteDTO = PaRegistry.getStudySiteService().get(studySiteIi);
             Ii orgIi = getCorrUtils().getPoOrgIiFromPaHcfIi(studySiteDTO.getHealthcareFacilityIi());
-            Map<String, Ii> myMap = generateCrsAndHcpFromCtepIdOrNewPerson(personDTO,
-                    poCrsDTO, poHcpDTO, orgIi); 
-            createStudyParticationContactRecord(studySiteDTO, myMap, 
-                    true, null, telecom);
+            Map<String, Ii> myMap = generateCrsAndHcpFromCtepIdOrNewPerson(personDTO, poCrsDTO, poHcpDTO, orgIi);
+            createStudyParticationContactRecord(studySiteDTO, myMap, true, null, telecom);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
-    }
-        
-    /**
-     * {@inheritDoc}
-     */
-    public Ii createStudySiteParticipant(StudySiteDTO studySiteDTO, 
-            StudySiteAccrualStatusDTO currentStatusDTO,
-            OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO) throws PAException {
-        Ii studySiteIi = null;
-        // assume that siteDTO has a real Ii for studyProtocol
-        try {
-            Ii poHcfIi = generateHcfIiFromCtepIdOrNewOrg(orgDTO, hcfDTO);
-            studySiteIi = createStudySiteParticipant(studySiteDTO,
-                    currentStatusDTO, poHcfIi); 
-        } catch (Exception e) {
-            ejbContext.setRollbackOnly();
-            throw new PAException(e);
-        }
-        return studySiteIi;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Ii createStudySiteParticipant(StudySiteDTO studySiteDTO,
-            StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi) 
-        throws PAException {
+    public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO, OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO)
+    throws PAException {
+        // assume that siteDTO has a real Ii for studyProtocol
+        try {
+            Ii poHcfIi = generateHcfIiFromCtepIdOrNewOrg(orgDTO, hcfDTO);
+            return createStudySiteParticipant(studySiteDTO, currentStatusDTO, poHcfIi);
+        } catch (Exception e) {
+            ejbContext.setRollbackOnly();
+            throw new PAException(e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi) throws PAException {
         // assume that there is a poHcf out there already
         // assume that siteDTO has a real Ii for studyProtocol
-        Ii returnVal = null;
         try {
             // check business rules based on trial type.
             StudyProtocolDTO spDTO =
-                getStudyProtocolService().getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier()); 
+                getStudyProtocolService().getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
             checkValidUser(Long.valueOf(spDTO.getIdentifier().getExtension()));
-             
+
             studySiteDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
             if (spDTO.getProprietaryTrialIndicator().getValue().booleanValue()) {
                 enforceBusinessRulesForProprietary(spDTO, studySiteDTO, currentStatusDTO);
             } else {
                 enforceBusinessRules(currentStatusDTO, PAUtil.getCurrentTime());
             }
-            StudySiteDTO ssDTO = saveOrUpdateStudySiteHelper(true, studySiteDTO, poHcfIi,
-                    currentStatusDTO);
-            returnVal =  ssDTO.getIdentifier();
+            StudySite ss = saveOrUpdateStudySiteHelper(true, studySiteDTO, poHcfIi, currentStatusDTO);
+            return new ParticipatingSiteConverter().convertFromDomainToDto(ss);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
-        return returnVal;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public void updateStudySiteParticipant(StudySiteDTO studySiteDTO,
-            StudySiteAccrualStatusDTO currentStatusDTO) 
-        throws PAException {
+    public ParticipatingSiteDTO updateStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO) throws PAException {
         // assume that siteDTO has a real Ii for studyProtocol
-        
         try {
             // check business rules based on trial type.
             StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteDTO.getIdentifier());
@@ -322,32 +326,28 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
             studySiteDTO.setStudyProtocolIdentifier(currentSite.getStudyProtocolIdentifier());
             studySiteDTO.setHealthcareFacilityIi(currentSite.getHealthcareFacilityIi());
             studySiteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
-            
-            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService()
-                .getStudyProtocol(currentSite.getStudyProtocolIdentifier());
+
+            StudyProtocolDTO spDTO =
+                PaRegistry.getStudyProtocolService().getStudyProtocol(currentSite.getStudyProtocolIdentifier());
             if (spDTO.getProprietaryTrialIndicator().getValue().booleanValue()) {
                 enforceBusinessRulesForProprietary(spDTO, studySiteDTO, currentStatusDTO);
             } else {
                 enforceBusinessRules(currentStatusDTO, PAUtil.getCurrentTime());
             }
-            saveOrUpdateStudySiteHelper(false, studySiteDTO, null,
-                    currentStatusDTO);
-            
+            StudySite ss = saveOrUpdateStudySiteHelper(false, studySiteDTO, null, currentStatusDTO);
+            return new ParticipatingSiteConverter().convertFromDomainToDto(ss);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
     }
-    
-    private StudySiteDTO saveOrUpdateStudySiteHelper(boolean isCreate, StudySiteDTO siteDTO, Ii poHcfIi,
-            StudySiteAccrualStatusDTO currentStatus)
-        throws PAException, EntityValidationException, CurationException {
 
+    private StudySite saveOrUpdateStudySiteHelper(boolean isCreate, StudySiteDTO siteDTO, Ii poHcfIi,
+            StudySiteAccrualStatusDTO currentStatus) throws PAException, EntityValidationException, CurationException {
         if (isCreate && poHcfIi != null) {
-            Long paHealthCareFacilityId = getOcsr()
-                .createHcfWithExistingPoHcf(poHcfIi);
+            Long paHealthCareFacilityId = getOcsr().createHcfWithExistingPoHcf(poHcfIi);
             siteDTO.setHealthcareFacilityIi(IiConverter.convertToIi(paHealthCareFacilityId));
-        } 
+        }
         siteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
 
         if (isCreate) {
@@ -362,10 +362,9 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
         } else {
             studySiteDTO = getStudySiteService().update(siteDTO);
         }
-
         createStudySiteAccrualStatus(studySiteDTO.getIdentifier(), currentStatus);
-
-        return studySiteDTO;
+        return (StudySite) HibernateUtil.getCurrentSession().get(StudySite.class,
+                IiConverter.convertToLong(studySiteDTO.getIdentifier()));
     }
 
 }

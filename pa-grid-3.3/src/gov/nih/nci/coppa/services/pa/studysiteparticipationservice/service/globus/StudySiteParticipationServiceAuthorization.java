@@ -59,13 +59,6 @@ public class StudySiteParticipationServiceAuthorization implements PDP {
 		
 	}
 	   				
-	public void authorizeIsParticipatingSite(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
-		
-		// authorization using service authorization from the enforce_auth extension
-		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
-		 	  
-	}
-	   				
 	public void authorizeCreateParticipatingSite(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 		// authorization using service authorization from the enforce_auth extension
@@ -74,6 +67,13 @@ public class StudySiteParticipationServiceAuthorization implements PDP {
 	}
 	   				
 	public void authorizeUpdateParticipatingSite(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
+	}
+	   				
+	public void authorizeGetParticipatingSitesByStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 		// authorization using service authorization from the enforce_auth extension
 		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
@@ -90,14 +90,14 @@ public class StudySiteParticipationServiceAuthorization implements PDP {
 		if(operation.getLocalPart().equals("getServiceSecurityMetadata")){
 			authorizeGetServiceSecurityMetadata(peerSubject, context, operation);
 			return true;
-		} else if(operation.getLocalPart().equals("isParticipatingSite")){
-			authorizeIsParticipatingSite(peerSubject, context, operation);
-			return true;
 		} else if(operation.getLocalPart().equals("createParticipatingSite")){
 			authorizeCreateParticipatingSite(peerSubject, context, operation);
 			return true;
 		} else if(operation.getLocalPart().equals("updateParticipatingSite")){
 			authorizeUpdateParticipatingSite(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("getParticipatingSitesByStudyProtocol")){
+			authorizeGetParticipatingSitesByStudyProtocol(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;
