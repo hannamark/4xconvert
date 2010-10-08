@@ -293,15 +293,15 @@ public class EligibilityCriteriaAction extends ActionSupport {
             criteria.createAlias("referenceDocumentCollection", "refDoc")
                 .add(Expression.eq("refDoc.type", "Preferred Question Text"))
                 .add(Expression.ilike("refDoc.doctext", "%" + deName + "%"));
-            DetachedCriteria csCsiCriteria = criteria.createCriteria("administeredComponentClassSchemeItemCollection")
-                .createCriteria("classSchemeClassSchemeItem");
+      //      DetachedCriteria csCsiCriteria = criteria.createCriteria("administeredComponentClassSchemeItemCollection")
+      //          .createCriteria("classSchemeClassSchemeItem");
 
-            DetachedCriteria csCriteria = csCsiCriteria.createCriteria("classificationScheme");
-            csCriteria.add(Expression.eq("publicID", cadsrCsId));
-            csCriteria.add(Expression.eq("version", cadsrCsVersion));
+     //       DetachedCriteria csCriteria = csCsiCriteria.createCriteria("classificationScheme");
+     //       csCriteria.add(Expression.eq("publicID", cadsrCsId));
+     //       csCriteria.add(Expression.eq("version", cadsrCsVersion));
 
-            DetachedCriteria csiCriteria = csCsiCriteria.createCriteria("classificationSchemeItem");
-            csiCriteria.add(Expression.eq("longName", csiName));
+    //        DetachedCriteria csiCriteria = csCsiCriteria.createCriteria("classificationSchemeItem");
+    //        csiCriteria.add(Expression.eq("longName", csiName));
 
             List<Object> classCes = appService.query(criteria);
 

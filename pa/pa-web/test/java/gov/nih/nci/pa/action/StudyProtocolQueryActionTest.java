@@ -82,7 +82,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 	public void testCheckout() throws PAException {
 		spqAction.setStudyProtocolId(1L);
 		spqAction.setCheckoutStatus(false);
-		assertEquals("view", spqAction.checkout());
+		assertEquals("viewRefresh", spqAction.checkout());
 	}
 
 
