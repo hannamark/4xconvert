@@ -26,11 +26,8 @@ public class DTOTest {
 	  assertGetterSetterBehavior(new AbstractionCompletionDTO());
 	  assertGetterSetterBehavior(new PaOrganizationDTO());
 	  assertGetterSetterBehavior(new StudyProtocolQueryCriteria());
-	  assertGetterSetterBehavior(new TrialFundingDTO());
-	  assertGetterSetterBehavior(new TrialIndIdeDTO());
 	  assertGetterSetterBehavior(new CountryRegAuthorityDTO());
 	  assertGetterSetterBehavior(new RegulatoryAuthOrgDTO());
-	  assertGetterSetterBehavior(new TrialDTO());
 	  assertGetterSetterBehavior(new StudyObjectiveDTO());
 	}
 
@@ -67,14 +64,14 @@ public class DTOTest {
 	        Method writeMethod = descriptor.getWriteMethod();
 	        Method readMethod = descriptor.getReadMethod();
 	        Object arg = argument;
-	        
+
 	        if (arg == null) {
 	            Class<?> type = descriptor.getPropertyType();
 	            if (DEFAULT_ARGUMENTS.containsKey(type.getName())) {
 	                arg = DEFAULT_ARGUMENTS.get(type.getName());
 	            }
 	        }
-	       
+
    	        writeMethod.invoke(target, arg);
 	        Object propertyValue = readMethod.invoke(target);
 	        assertEquals(property + " getter/setter test passed", arg, propertyValue);
