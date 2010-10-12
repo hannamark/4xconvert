@@ -246,6 +246,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <!--CSM Properties -->
             <filter token="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
             <filter token="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
+            <filter token="cteprss.user" value="${cteprss.user}"/>
         </filterset>
 
         <!--OS Temp dir -->
