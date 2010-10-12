@@ -260,7 +260,7 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
     @EJB
     private InterventionAlternateNameServiceRemote interventionAlternateNameService;
     @EJB
-    private RegistryUserServiceRemote registryUserService;
+    private RegistryUserServiceLocal registryUserService;
     @EJB
     private StudyRecruitmentStatusServiceLocal studyRecruitmentService;
     @EJB
@@ -1530,7 +1530,7 @@ public class CTGovXmlGeneratorServiceBean implements CTGovXmlGeneratorServiceRem
     /**
      * @param registryUserService the registryUserService to set
      */
-    public void setRegistryUserService(RegistryUserServiceRemote registryUserService) {
+    public void setRegistryUserService(RegistryUserServiceLocal registryUserService) {
         this.registryUserService = registryUserService;
     }
 

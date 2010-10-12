@@ -168,6 +168,7 @@
                 <filter token="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
                 <filter token="gridgrouper.url" value="${gridgrouper.url}"/>
                 <filter token="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
+                <filter token="cteprss.user" value="${cteprss.user}"/>                
             </filterset>
         </copy>
         <copy file="${pa.resourceDir}/ejb-jar.xml"
@@ -329,8 +330,8 @@
                           destdir="${pa-ejb.coverage.reports}"
                           srcdir="${pa-ejb.build.srcDir.0}" />
         <cobertura-check datafile="${pa-ejb.build.dir}/cobertura.ser"
-                         totalbranchrate="46"
-                         totallinerate="62"
+                         totalbranchrate="48"
+                         totallinerate="64"
                          haltonfailure="true"/>
      </target>
 

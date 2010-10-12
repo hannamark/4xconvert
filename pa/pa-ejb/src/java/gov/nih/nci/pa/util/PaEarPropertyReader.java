@@ -103,6 +103,7 @@ public class PaEarPropertyReader {
     private static String allowedUploadFileTypes = "allowed.uploadfile.types";
     private static String batchUploadPath = "batch.upload.path";
     private static String tooltipsPath = "tooltips.path";
+    private static String rssUser = "cteprss.user";
 
     static {
         try {
@@ -205,6 +206,19 @@ public class PaEarPropertyReader {
             throw new PAException("'allowedUploadFileTypes' does not have value in paear.properties ");
         }
         return allowedFileTypes;
+    }
+
+    /**
+     * Returns the ctep rss user, required owner of collaborative trials.
+     * @return the name of the user
+     * @throws PAException if the property is missing
+     */
+    public static String getRssUser() throws PAException {
+        String user = props.getProperty(rssUser);
+        if (user == null) {
+            throw new PAException(rssUser + " does not have value in paear.properties ");
+        }
+        return user;
     }
 
     /**

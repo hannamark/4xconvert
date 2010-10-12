@@ -138,11 +138,11 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     private static final String IRB_CODE = "Institutional Review Board (IRB)";
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     private CorrelationUtils corrUtils = new CorrelationUtils();
-    
+
     /**
      * {@inheritDoc}
      */
-    public Long createHcfWithExistingPoHcf(Ii poHcfIdentifier) 
+    public Long createHcfWithExistingPoHcf(Ii poHcfIdentifier)
         throws PAException {
         HealthCareFacilityDTO hcfDTO = null;
         try {
@@ -167,7 +167,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
         return hcf.getId();
     }
-   
+
     /**
      *
      * @param orgPoIdentifier org id
@@ -217,14 +217,14 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         return hcf.getId();
 
     }
-    
-    private HealthCareFacilityDTO getOrCreatePAHealthCareFacilityCorrelation(String orgPoIdentifier) 
+
+    private HealthCareFacilityDTO getOrCreatePAHealthCareFacilityCorrelation(String orgPoIdentifier)
     throws PAException {
         HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
-        List<HealthCareFacilityDTO> hcfDTOs = 
+        List<HealthCareFacilityDTO> hcfDTOs =
             PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
         hcfDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
-        
+
         if (CollectionUtils.isEmpty(hcfDTOs)) {
             try {
                 Ii ii = PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
@@ -242,7 +242,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             }
             hcfDTO = hcfDTOs.get(0);
         }
-        
+
         return hcfDTO;
     }
 
@@ -320,7 +320,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
 
         // Step 2 : check if PO has oc correlation if not create one
-        OversightCommitteeDTO ocDTO = getOrCreatePAOversightCommitteeCorrelation(orgPoIdentifier); 
+        OversightCommitteeDTO ocDTO = getOrCreatePAOversightCommitteeCorrelation(orgPoIdentifier);
 
         // Step 3 : check for pa org, if not create one
         Organization paOrg = getCorrUtils().getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(
@@ -332,10 +332,10 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         // Step 4 : Check of PA has oc , if not create one
         return storeOversightCommittee(ocDTO, paOrg);
     }
-    
-    private Long storeOversightCommittee(OversightCommitteeDTO ocDTO, Organization paOrg) 
+
+    private Long storeOversightCommittee(OversightCommitteeDTO ocDTO, Organization paOrg)
     throws PAException {
-        OversightCommittee oc = 
+        OversightCommittee oc =
             getCorrUtils().getStructuralRoleByIi(DSetConverter.convertToIi(ocDTO.getIdentifier()));
         if (oc == null) {
             // create a new oversight committee
@@ -347,8 +347,8 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
         return oc.getId();
     }
-    
-    private OversightCommitteeDTO getOrCreatePAOversightCommitteeCorrelation(String orgPoIdentifier) 
+
+    private OversightCommitteeDTO getOrCreatePAOversightCommitteeCorrelation(String orgPoIdentifier)
     throws PAException {
         OversightCommitteeDTO ocDTO = new OversightCommitteeDTO();
         List<OversightCommitteeDTO> ocDTOs = null;
@@ -374,18 +374,18 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             }
             ocDTO = ocDTOs.get(0);
         }
-        
+
         return ocDTO;
 
     }
-    
-    private ResearchOrganizationDTO getOrCreatePAResearchOrganizationCorrelation(String orgPoIdentifier) 
+
+    private ResearchOrganizationDTO getOrCreatePAResearchOrganizationCorrelation(String orgPoIdentifier)
     throws PAException {
         ResearchOrganizationDTO roDTO = new ResearchOrganizationDTO();
         List<ResearchOrganizationDTO> roDTOs = null;
         roDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         roDTOs = PoRegistry.getResearchOrganizationCorrelationService().search(roDTO);
-        
+
         if (CollectionUtils.isEmpty(roDTOs)) {
             try {
                 Ii ii = PoRegistry.getResearchOrganizationCorrelationService().createCorrelation(roDTO);
@@ -403,7 +403,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             }
             roDTO = roDTOs.get(0);
         }
-        
+
         return roDTO;
     }
 
@@ -484,17 +484,17 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
         return o;
     }
-    
+
     private EnOn convertIdTypeToName(String identifierType) throws PAException {
         EnOn name = null;
         if (identifierType.equalsIgnoreCase(PAConstants.NCT_IDENTIFIER_TYPE)) {
-            name = EnOnConverter.convertToEnOn("ClinicalTrials.gov");
+            name = EnOnConverter.convertToEnOn(PAConstants.CTGOV_ORG_NAME);
         } else if (identifierType.equalsIgnoreCase(PAConstants.CTEP_IDENTIFIER_TYPE)) {
-            name = EnOnConverter.convertToEnOn("Cancer Therapy Evaluation Program");
+            name = EnOnConverter.convertToEnOn(PAConstants.CTEP_ORG_NAME);
         } else if (identifierType.equalsIgnoreCase(PAConstants.DCP_IDENTIFIER_TYPE)) {
-            name = EnOnConverter.convertToEnOn("Division of Cancer Control and Population Sciences");
+            name = EnOnConverter.convertToEnOn(PAConstants.DCP_ORG_NAME);
         }
-        
+
         if (name == null) {
             throw new PAException("Org name is null");
         }
@@ -509,7 +509,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      */
     public String getPOOrgIdentifierByIdentifierType(String identifierType) throws PAException {
         OrganizationDTO poOrgDto = new OrganizationDTO();
-        
+
         poOrgDto.setName(convertIdTypeToName(identifierType));
 
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);

@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
@@ -140,6 +141,7 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
@@ -158,6 +160,7 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * service bean for validating the Abstraction.
@@ -170,7 +173,7 @@ import org.apache.commons.lang.StringUtils;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceRemote {
 
-    private static CorrelationUtils correlationUtils = new CorrelationUtils();
+    private CorrelationUtils correlationUtils = new CorrelationUtils();
     @EJB
     private StudyProtocolServiceLocal studyProtocolService;
     @EJB
@@ -205,10 +208,15 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private RegulatoryInformationServiceRemote regulatoryInfoBean;
     @EJB
     private InterventionServiceLocal interventionSvc;
+    @EJB
+    private RegistryUserServiceLocal registryUserSvc;
 
     private static final String YES = "Yes";
     private static final String NO = "No";
     private PAServiceUtils paServiceUtil = new PAServiceUtils();
+
+    private static final Logger LOG = Logger.getLogger(AbstractionCompletionServiceBean.class);
+
     /**
      * @param studyProtocolIi studyProtocolIi
      * @return AbstractionCompletionDTO list
@@ -241,7 +249,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             List<DocumentDTO> isoList = documentServiceLocal.getDocumentsByStudyProtocol(studyProtocolIi);
             String protocolDoc = null;
             String irbDoc = null;
-            if (!(isoList.isEmpty())) {
+            if ((CollectionUtils.isNotEmpty(isoList))) {
                 for (DocumentDTO dto : isoList) {
                     if (dto.getTypeCode().getCode().equalsIgnoreCase(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode())) {
                         protocolDoc = dto.getTypeCode().getCode().toString();
@@ -295,9 +303,50 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             enforceEligibility(studyProtocolIi, abstractionList);
             enforceCollaborator(studyProtocolIi, abstractionList);
             enforceSummary4OrgNullfication(studyProtocolIi, abstractionWarnList);
+            enforceRssOwnershipOfCollaborativeTrials(studyProtocolIi, abstractionList);
         }
         abstractionList.addAll(abstractionWarnList);
         return abstractionList;
+    }
+
+    private void enforceRssOwnershipOfCollaborativeTrials(Ii spIi,
+            List<AbstractionCompletionDTO> abstractionList) throws PAException {
+
+        // Is this a collaborative trial?
+        if (isCollaborativeTrial(spIi)) {
+            // Is ctep-rss a trial owner?
+            RegistryUser regUser = registryUserSvc.getUser(PaEarPropertyReader.getRssUser());
+            String rssUserCN = PaEarPropertyReader.getRssUser()
+                .substring(PaEarPropertyReader.getRssUser().lastIndexOf("=") + 1);
+            if (regUser == null) {
+                abstractionList.add(createError("Warning", "Could not find "
+                        + rssUserCN + " user in registered users ",
+                        "Contact Support to register that user."));
+                LOG.error("User : " + PaEarPropertyReader.getRssUser() + " must exist for "
+                        + " proper validation of Collaborative trials");
+            } else if (!registryUserSvc.isTrialOwner(regUser.getId(), Long.valueOf(spIi.getExtension()))) {
+                abstractionList.add(createError("Error", "Must assign " + rssUserCN
+                        + " as an owner to a CTEP or DCP trial "
+                        + "to allow the RSS system to submit participating sites data",
+                "Select Assign Ownership from the Trial Overview menu"));
+            }
+        }
+    }
+
+    /**
+     * @param studyProtocolIi
+     * @return
+     * @throws PAException
+     * @throws NumberFormatException
+     */
+    private boolean isCollaborativeTrial(Ii spIi) throws PAException {
+        Organization org = PaRegistry.getOrganizationCorrelationService()
+            .getOrganizationByFunctionRole(spIi, CdConverter.convertStringToCd(
+                    StudySiteFunctionalCode.SPONSOR.getCode()));
+
+        String orgName = org.getName();
+        return PAConstants.DCP_ORG_NAME.equals(orgName)
+              || PAConstants.CTEP_ORG_NAME.equals(orgName);
     }
 
     private void abstractionCompletionRuleForProprietary(StudyProtocolDTO studyProtocolDTO,
@@ -1421,6 +1470,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     }
 
     /**
+     * @param regSvc the registry user service to set
+     */
+    public void setRegistryUserServiceLocal(RegistryUserServiceLocal regSvc) {
+        this.registryUserSvc = regSvc;
+    }
+
+    /**
      * @param regulatoryInfoBean the regulatoryInfoBean to set
      */
     public void setRegulatoryInfoBean(RegulatoryInformationServiceRemote regulatoryInfoBean) {
@@ -1469,5 +1525,12 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         return paServiceUtil;
     }
 
+    /**
+     * Sets the CorrelationUtils Service.
+     * @param corUtils The service to set
+     */
+    public void setCorrelationUtils(CorrelationUtils corUtils) {
+        this.correlationUtils = corUtils;
+    }
 
 }

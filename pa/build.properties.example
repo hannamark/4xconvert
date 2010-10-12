@@ -4,6 +4,7 @@ doc.upload.filepath.relative.dir=doc
 batch.upload.filepath.relative.dir=batch_docs
 tooltips.filepath.relative.dir=tooltips
 pa.server.name=localhost
+cteprss.user=/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=ctep-rss
 
 ########################### INCLUDE/EXCLUDE VIEWER #########################
 #exclude.viewer=true
