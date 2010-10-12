@@ -172,12 +172,16 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static final String REQUEST_TO_CREATE_CDE = "requestToCreateCDE";
     private DataElement cdeResult;
     private static List<String> permValues;
+    private List<String> labTestNameValues;
+    private List<String> labTestUoMValues;
     private static String cdeDatatype;
     private static final String DISPLAY_CDE = "displaycde";
     private static String cdeCategoryCode;
     private static String cdeRequestToEmail;
     private static String cdeRequestSubject;
     private static String cdeRequestText;
+    private static Long labTestPubId;
+    private static Long labTestUofMPubId;
     private static final int TOTAL_COUNT = 3;
     private String minValueUnit;
     private String maxValueUnit;
@@ -337,38 +341,68 @@ public class EligibilityCriteriaAction extends ActionSupport {
         this.getClassifiedCDEs();
         return "cdeDisplayTag";
     }
+    
+    private DataElement getCdeByPublicID(Long publicId) throws PAException {
+        
+        ApplicationService appService;
+        try {
+            appService = ApplicationServiceProvider.getApplicationService();
+        
+            DataElement de = new DataElement();
+            de.setPublicID(publicId);
+            de.setLatestVersionIndicator("Yes");
+            Collection<Object> collResult = appService.search(DataElement.class, de);
+    
+            return (DataElement) collResult.iterator().next();      
+        } catch (Exception e) {
+            throw new PAException(e);
+        }
+    }
 
     /**
      * display the cdes.
      * @return String
      */
     public String displaycde() {
+        
         String cdeid = ServletActionContext.getRequest().getParameter("cdeid");
-
+        boolean isSpecialLabTestCase = false;
         try {
           ApplicationService appService = ApplicationServiceProvider.getApplicationService();
           DataElement de = new DataElement();
           de.setId(cdeid);
-
+          
           Collection<Object> collResult = appService.search(DataElement.class, de);
 
           cdeResult = (DataElement) collResult.iterator().next();
+          
+          if (labTestPubId.equals(cdeResult.getPublicID())) {
+              isSpecialLabTestCase = true;
+          }
+          
           webDTO.setCriterionName(cdeResult.getDataElementConcept().getLongName());
-
+          permValues = null;
+          labTestNameValues = null;
+          labTestUoMValues = null;
           ValueDomain vd = cdeResult.getValueDomain();
             if (vd instanceof EnumeratedValueDomain) {
                 EnumeratedValueDomain evd = (EnumeratedValueDomain) vd;
-
-                permValues = new ArrayList<String>();
-                Collection<ValueDomainPermissibleValue> vdPvList = evd.getValueDomainPermissibleValueCollection();
-                for (ValueDomainPermissibleValue vdPv : vdPvList) {
-                    permValues.add(vdPv.getPermissibleValue().getValueMeaning().getLongName());
+                
+                if (isSpecialLabTestCase) {
+                    labTestNameValues = getPermValues(evd);
+                    DataElement uOfMdE = getCdeByPublicID(labTestUofMPubId);
+                    labTestUoMValues = getPermValues((EnumeratedValueDomain) uOfMdE.getValueDomain());
+                } else {
+                    permValues = getPermValues(evd);
                 }
-
-            } else {
-                permValues = null;
+                
+            } 
+            
+            if (isSpecialLabTestCase) {
+                cdeDatatype = "NUMBER";
+            } else { 
+                cdeDatatype = vd.getDatatypeName();
             }
-            cdeDatatype = vd.getDatatypeName();
             webDTO.setCdePublicIdentifier(Long.toString(vd.getPublicID()));
             webDTO.setCdeVersionNumber(Float.toString(vd.getVersion()));
             webDTO.setCdeCategoryCode(getCdeCategoryCode());
@@ -377,6 +411,15 @@ public class EligibilityCriteriaAction extends ActionSupport {
         }
 
         return DISPLAY_CDE;
+    }
+    
+    private List<String> getPermValues(EnumeratedValueDomain evd) {
+        List<String> returnValues = new ArrayList<String>();
+        Collection<ValueDomainPermissibleValue> vdPvList = evd.getValueDomainPermissibleValueCollection();
+        for (ValueDomainPermissibleValue vdPv : vdPvList) {
+            returnValues.add(vdPv.getPermissibleValue().getValueMeaning().getLongName());
+        }
+        return returnValues;
     }
 
     /**
@@ -571,16 +614,10 @@ public class EligibilityCriteriaAction extends ActionSupport {
      */
     public String generate() throws PAException {
         StringBuffer generatedName = new StringBuffer();
-
-        if (StringUtils.isNotEmpty(webDTO.getCriterionName())) {
-            generatedName.append(webDTO.getCriterionName());
-        }
-        if (StringUtils.isNotEmpty(webDTO.getOperator()) && webDTO.getOperator().equalsIgnoreCase("In")) {
-            generatedName.append(SP).append("In:");
-        }
-        if (StringUtils.isNotEmpty(webDTO.getOperator()) && !webDTO.getOperator().equalsIgnoreCase("In")) {
-            generatedName.append(SP).append(webDTO.getOperator());
-        }
+        
+        generatedName.append(appendGenName());
+        generatedName.append(appendGenOp());
+        
         if (StringUtils.isNotEmpty(webDTO.getValueIntegerMin())) {
             generatedName.append(webDTO.getValueIntegerMin());
             if (StringUtils.isNotEmpty(webDTO.getValueIntegerMax())) {
@@ -595,6 +632,27 @@ public class EligibilityCriteriaAction extends ActionSupport {
         webDTO.setTextDescription(generatedName.toString());
         webDTO.setOperator(webDTO.getOperator());
         return ELIGIBILITYADD;
+    }
+    
+    private String appendGenName() {
+        StringBuffer generatedName = new StringBuffer();
+        if (StringUtils.isNotEmpty(webDTO.getLabTestNameValueText())) {
+            generatedName.append(webDTO.getLabTestNameValueText());
+        } else if (StringUtils.isNotEmpty(webDTO.getCriterionName())) {
+            generatedName.append(webDTO.getCriterionName());
+        }
+        return generatedName.toString();
+    }
+    
+    private String appendGenOp() {
+        StringBuffer generatedName = new StringBuffer();
+        if (StringUtils.isNotEmpty(webDTO.getOperator()) && webDTO.getOperator().equalsIgnoreCase("In")) {
+            generatedName.append(SP).append("In:");
+        }
+        if (StringUtils.isNotEmpty(webDTO.getOperator()) && !webDTO.getOperator().equalsIgnoreCase("In")) {
+            generatedName.append(SP).append(webDTO.getOperator());
+        }
+        return generatedName.toString();
     }
 
     /**
@@ -1216,7 +1274,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
         cdeRequestToEmail = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL");
         cdeRequestSubject = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT");
         cdeRequestText = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_TEXT");
-
+        labTestPubId = Long.valueOf(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_LABTEST_ID"));
+        labTestUofMPubId = Long.valueOf(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_LABTEST_UoM_ID"));
     }
 
     /**
@@ -1254,7 +1313,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
      * @param cdeCategoryCode the cdeCategoryCode to set
      */
     public void setCdeCategoryCode(String cdeCategoryCode) {
-        this.cdeCategoryCode = cdeCategoryCode;
+        EligibilityCriteriaAction.cdeCategoryCode = cdeCategoryCode;
     }
 
     /**
@@ -1283,5 +1342,19 @@ public class EligibilityCriteriaAction extends ActionSupport {
      */
     public void setMaxValueUnit(String maxValueUnit) {
         this.maxValueUnit = maxValueUnit;
+    }
+
+    /**
+     * @return the labTestValues
+     */
+    public List<String> getLabTestNameValues() {
+        return labTestNameValues;
+    }
+
+    /**
+     * @return the labTestUoMValues
+     */
+    public List<String> getLabTestUoMValues() {
+        return labTestUoMValues;
     }
  }

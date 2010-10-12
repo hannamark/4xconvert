@@ -88,6 +88,10 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
 		   return "New CDE Request";
 	   else if (name.equals("CDE_REQUEST_TO_EMAIL_TEXT"))
 		   return "Please create the new CDE. Thanks, CTRO";
+	   else if (name.equals("CADSR_LABTEST_ID"))
+           return "2003746";
+       else if (name.equals("CADSR_LABTEST_UoM_ID"))
+           return "2787947";
 	   else
 		  return value;
 	}

@@ -570,4 +570,8 @@
         <comment>Set caDSR public ID. </comment> 
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2487.sql"/> 
      </changeSet> 
+     <changeSet id="PO-2290" author="mshestopalov"> 
+        <comment>Set caDSR public ID. </comment> 
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2290.sql"/> 
+     </changeSet> 
 </databaseChangeLog>

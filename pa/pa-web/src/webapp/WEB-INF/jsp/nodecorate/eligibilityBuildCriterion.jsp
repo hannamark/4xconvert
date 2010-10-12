@@ -40,6 +40,23 @@
                       <s:select name="webDTO.operator" list="#{'':'-Select-','=':'=', '<':'<', '<=':'<=', '>':'>', '>=':'>=', 'in':'in'}" cssStyle="width:106px" value="webDTO.operator" onchange="activateMax()"/>
                     </td>         
                 </tr> 
+                
+                <s:if test="labTestNameValues != null">
+                
+                  <tr>
+                     <td scope="row" class="label">
+                        <label for="typeCode">
+                            <fmt:message key="isdesign.eligibilitycriteria.labTestNameValueText"/>
+                        </label>
+                    </td>
+                    <td class="value">
+                        <s:select headerKey="" headerValue="" name="webDTO.labTestNameValueText" value="webDTO.labTestNameValueText"
+                list="labTestNameValues"  cssStyle="width:150px" />
+                      </td>
+                 </tr>
+                 
+                 </s:if>
+                 
                 <s:if test="permValues == null">
                 <s:if test="cdeDatatype != null && cdeDatatype.equals(\"NUMBER\")">
                 

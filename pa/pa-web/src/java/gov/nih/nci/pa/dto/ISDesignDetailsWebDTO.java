@@ -87,7 +87,7 @@ package gov.nih.nci.pa.dto;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class ISDesignDetailsWebDTO {
+public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO {
 
     private String primaryPurposeCode;
     private String phaseCode;
@@ -103,45 +103,15 @@ public class ISDesignDetailsWebDTO {
 
     private OutcomeMeasureWebDTO outcomeMeasure = new OutcomeMeasureWebDTO();
 
-    private String criterionName;
-    private String inclusionIndicator;
-    private String operator;
-    private String valueText;
-    private String unit;
     private String textDescription;
-
-    private String id;
-
+    
     private String displayOrder;
 
     private String structuredType;
-    private String valueIntegerMin;
-    private String valueIntegerMax;
-    private String cdePublicIdentifier;
-    private String cdeVersionNumber;
-    private String cdeCategoryCode;
-
+   
     private String toEmail;
     private String subject;
     private String message;
-
-    private String minUOM;
-    private String maxUOM;
-
-
-    /**
-     * @return id
-     */
-    public String getId() {
-        return id;
-    }
-    /**
-     * @param id id
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
 
     /**
      *
@@ -159,30 +129,6 @@ public class ISDesignDetailsWebDTO {
         this.outcomeMeasure = outcomeMeasureWebDTO;
     }
 
-    /**
-     * @return the cdePublicIdentifier
-     */
-     public String getCdePublicIdentifier() {
-        return cdePublicIdentifier;
-     }
-    /**
-     * @param cdePublicIdentifier the cdePublicIdentifier to set
-     */
-     public void setCdePublicIdentifier(String cdePublicIdentifier) {
-       this.cdePublicIdentifier = cdePublicIdentifier;
-     }
-    /**
-     * @return the cdeVersionNumber
-     */
-     public String getCdeVersionNumber() {
-       return cdeVersionNumber;
-     }
-    /**
-     * @param cdeVersionNumber the cdeVersionNumber to set
-     */
-     public void setCdeVersionNumber(String cdeVersionNumber) {
-       this.cdeVersionNumber = cdeVersionNumber;
-    }
     /**
      * @return the displayOrder
      */
@@ -334,54 +280,6 @@ public class ISDesignDetailsWebDTO {
         this.studyClassificationCode = studyClassificationCode;
     }
 
-    /**
-     * @return criterionName
-     */
-    public String getCriterionName() {
-        return criterionName;
-    }
-    /**
-     * @param criterionName criterionName
-     */
-    public void setCriterionName(String criterionName) {
-        this.criterionName = criterionName;
-    }
-    /**
-     * @return inclusionIndicator
-     */
-    public String getInclusionIndicator() {
-        return inclusionIndicator;
-    }
-    /**
-     * @param inclusionIndicator inclusionIndicator
-     */
-    public void setInclusionIndicator(String inclusionIndicator) {
-        this.inclusionIndicator = inclusionIndicator;
-    }
-    /**
-     * @return operator
-     */
-    public String getOperator() {
-        return operator;
-    }
-    /**
-     * @param operator operator
-     */
-    public void setOperator(String operator) {
-        this.operator = operator;
-    }
-    /**
-     * @return unit
-     */
-    public String getUnit() {
-        return unit;
-    }
-    /**
-     * @param unit unit
-     */
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
 
     /**
      * @return textDescription
@@ -395,18 +293,7 @@ public class ISDesignDetailsWebDTO {
     public void setTextDescription(String textDescription) {
       this.textDescription = textDescription;
     }
-    /**
-     * @return the valueText
-     */
-    public String getValueText() {
-      return valueText;
-    }
-    /**
-     * @param valueText the valueText to set
-     */
-     public void setValueText(String valueText) {
-       this.valueText = valueText;
-     }
+    
     /**
      * @return the structuredType
      */
@@ -419,42 +306,7 @@ public class ISDesignDetailsWebDTO {
      public void setStructuredType(String structuredType) {
        this.structuredType = structuredType;
      }
-    /**
-     * @return the valueIntegerMin
-     */
-    public String getValueIntegerMin() {
-      return valueIntegerMin;
-    }
-    /**
-     * @param valueIntegerMin the valueIntegerMin to set
-     */
-     public void setValueIntegerMin(String valueIntegerMin) {
-       this.valueIntegerMin = valueIntegerMin;
-     }
-    /**
-     * @return the valueIntegerMax
-     */
-     public String getValueIntegerMax() {
-       return valueIntegerMax;
-     }
-    /**
-     * @param valueIntegerMax the valueIntegerMax to set
-     */
-     public void setValueIntegerMax(String valueIntegerMax) {
-      this.valueIntegerMax = valueIntegerMax;
-    }
-    /**
-     * @return the cdeCategoryCode
-     */
-     public String getCdeCategoryCode() {
-       return cdeCategoryCode;
-     }
-    /**
-     * @param cdeCategoryCode the cdeCategoryCode to set
-     */
-     public void setCdeCategoryCode(String cdeCategoryCode) {
-       this.cdeCategoryCode = cdeCategoryCode;
-     }
+  
     /**
      * @return the toEmail
      */
@@ -491,29 +343,6 @@ public class ISDesignDetailsWebDTO {
      public void setMessage(String message) {
        this.message = message;
      }
-    /**
-     * @return the minUOM
-     */
-    public String getMinUOM() {
-        return minUOM;
-    }
-    /**
-     * @param minUOM the minUOM to set
-     */
-    public void setMinUOM(String minUOM) {
-        this.minUOM = minUOM;
-    }
-    /**
-     * @return the maxUOM
-     */
-    public String getMaxUOM() {
-        return maxUOM;
-    }
-    /**
-     * @param maxUOM the maxUOM to set
-     */
-    public void setMaxUOM(String maxUOM) {
-        this.maxUOM = maxUOM;
-    }
+  
 
 }
