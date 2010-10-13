@@ -135,7 +135,7 @@ public class AbsCompletionServiceTest extends AbstractMockitoTest {
         List<AbstractionCompletionDTO> errList = bean.validateAbstractionCompletion(spId);
 
         for (AbstractionCompletionDTO error : errList) {
-            if (error.getComment().startsWith("Must assign ctep-rss as an owner to")) {
+            if (error.getComment().startsWith("as an owner to a CTEP or DCP trial")) {
                 fail("We did not want to find abstraction validation error for rss ownership");
             }
         }
@@ -163,7 +163,7 @@ public class AbsCompletionServiceTest extends AbstractMockitoTest {
         List<AbstractionCompletionDTO> errList = bean.validateAbstractionCompletion(spId);
 
         for (AbstractionCompletionDTO error : errList) {
-            if (error.getComment().startsWith("Must assign ctep-rss as an owner to")) {
+            if (error.getComment().contains("as an owner to a CTEP or DCP trial")) {
                 return;
             }
         }
@@ -177,7 +177,7 @@ public class AbsCompletionServiceTest extends AbstractMockitoTest {
         List<AbstractionCompletionDTO> errList = bean.validateAbstractionCompletion(spId);
 
         for (AbstractionCompletionDTO error : errList) {
-            if (error.getComment().startsWith("Must assign ctep-rss as an owner to")) {
+            if (error.getComment().startsWith("as an owner to a CTEP or DCP trial")) {
                 fail("We did not want to find abstraction validation error for rss ownership");
             }
         }
