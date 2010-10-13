@@ -435,9 +435,12 @@ public abstract class AbstractTsrReportGenerator {
                         getGeneralTrialDetails().getPrimaryPurpose());
                 addTableRow(table, TSRReportLabelText.GTD_PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER, getGeneralTrialDetails()
                         .getPrimaryPurposeAdditonalQualifier());
+                addTableRow(table, TSRReportLabelText.GTD_PRIMARY_PURPOSE_OTHER_TEXT,
+                        getGeneralTrialDetails().getPrimaryPurposeOtherText());
                 addTableRow(table, TSRReportLabelText.GTD_PHASE, getGeneralTrialDetails().getPhase());
                 addTableRow(table, TSRReportLabelText.GTD_PHASE_ADDITIONAL_QUALIFIER,
                         getGeneralTrialDetails().getPhaseAdditonalQualifier());
+
             }
             reportDocument.add(table);
             reportDocument.add(getLineBreak());
@@ -578,6 +581,8 @@ public abstract class AbstractTsrReportGenerator {
             addTableRow(table, TSRReportLabelText.TD_PRIMARY_PURPOSE, getTrialDesign().getPrimaryPurpose());
             addTableRow(table, TSRReportLabelText.TD_PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER,
                     getTrialDesign().getPrimaryPurposeAdditonalQualifier());
+            addTableRow(table, TSRReportLabelText.TD_PRIMARY_PURPOSE_OTHER_TEXT,
+                    getTrialDesign().getPrimaryPurposeOtherText());
             addTableRow(table, TSRReportLabelText.TD_PHASE, getTrialDesign().getPhase());
             addTableRow(table, TSRReportLabelText.TD_PHASE_ADDITIONAL_QUALIFIER,
                     getTrialDesign().getPhaseAdditonalQualifier());

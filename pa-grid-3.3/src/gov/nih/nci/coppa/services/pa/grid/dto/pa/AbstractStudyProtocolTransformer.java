@@ -98,7 +98,6 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 
-import org.iso._21090.CD;
 /**
  * Transforms StudyProtocol instances.
  *
@@ -144,6 +143,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setScientificDescription(STTransformer.INSTANCE.toDto(input.getScientificDescription()));
         result.setStudyProtocolType(STTransformer.INSTANCE.toDto(input.getStudyProtocolType()));
         result.setUserLastCreated(STTransformer.INSTANCE.toDto(input.getUserLastCreated()));
+        result.setPrimaryPurposeOtherText(STTransformer.INSTANCE.toDto(input.getPrimaryPurposeOtherText()));
         // BL
         result.setAcceptHealthyVolunteersIndicator(BLTransformer.INSTANCE.toDto(input
                 .getAcceptHealthyVolunteersIndicator()));
@@ -165,21 +165,8 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setPrimaryPurposeCode(CDTransformer.INSTANCE.toDto(input.getPrimaryPurposeCode()));
         result.setStartDateTypeCode(CDTransformer.INSTANCE.toDto(input.getStartDateTypeCode()));
         result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
-        CD phaseAddtionalQualifier = new CD();
-        if (input.getPhaseOtherText() != null) {
-            phaseAddtionalQualifier.setCode(input.getPhaseOtherText().getValue());
-        } else {
-            phaseAddtionalQualifier.setCode(null);
-        }
-        result.setPhaseAdditionalQualifierCode(CDTransformer.INSTANCE.toDto(phaseAddtionalQualifier));
-        CD primaryPurposeAdditionalQualifier = new CD();
-        if (input.getPrimaryPurposeOtherText() != null) {
-              primaryPurposeAdditionalQualifier.setCode(input.getPrimaryPurposeOtherText().getValue());
-        } else {
-              primaryPurposeAdditionalQualifier.setCode(null);
-        }
         result.setPrimaryPurposeAdditionalQualifierCode(
-             CDTransformer.INSTANCE.toDto(primaryPurposeAdditionalQualifier));
+             CDTransformer.INSTANCE.toDto(input.getPrimaryPurposeAdditionalQualifierCode()));
         // II
         result.setSecondaryIdentifiers(DSETIITransformer.INSTANCE.toDto(input.getSecondaryIdentifiers()));
         result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
@@ -215,11 +202,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         St phaseOtherText = new St();
         phaseOtherText.setValue(CdConverter.convertCdToString(input.getPhaseAdditionalQualifierCode()));
         result.setPhaseOtherText(STTransformer.INSTANCE.toXml(phaseOtherText));
-        St primaryPurposeOtherText = new St();
-        primaryPurposeOtherText.setValue(CdConverter.convertCdToString(
-           input.getPrimaryPurposeAdditionalQualifierCode()));
-        result.setPrimaryPurposeOtherText(STTransformer.INSTANCE.toXml(primaryPurposeOtherText));
-
+        result.setPrimaryPurposeOtherText(STTransformer.INSTANCE.toXml(input.getPrimaryPurposeOtherText()));
         result.setProgramCodeText(STTransformer.INSTANCE.toXml(input.getProgramCodeText()));
         result.setPublicDescription(STTransformer.INSTANCE.toXml(input.getPublicDescription()));
         result.setPublicTitle(STTransformer.INSTANCE.toXml(input.getPublicTitle()));
@@ -245,6 +228,8 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setPhaseCode(CDTransformer.INSTANCE.toXml(input.getPhaseCode()));
         result.setPrimaryCompletionDateTypeCode(CDTransformer.INSTANCE.toXml(input.getPrimaryCompletionDateTypeCode()));
         result.setPrimaryPurposeCode(CDTransformer.INSTANCE.toXml(input.getPrimaryPurposeCode()));
+        result.setPrimaryPurposeAdditionalQualifierCode(CDTransformer.INSTANCE.toXml(
+             input.getPrimaryPurposeAdditionalQualifierCode()));
         result.setStartDateTypeCode(CDTransformer.INSTANCE.toXml(input.getStartDateTypeCode()));
         result.setStatusCode(CDTransformer.INSTANCE.toXml(input.getStatusCode()));
         // II

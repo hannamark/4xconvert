@@ -100,7 +100,24 @@ function tooltip() {
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
 	}
-  	
+
+function displayPrimaryPurposeOtherCode(){
+    var valSelect  = document.getElementById('webDTO.primaryPurposeCode').value;
+    if (valSelect == 'Other') {
+          document.getElementById('purposeOtherCodeDiv').style.display='';
+    } else {
+        document.getElementById('purposeOtherCodeDiv').style.display='none';
+        document.getElementById('purposeOtherTextDiv').style.display='none';
+    }
+}
+function displayPrimaryPurposeOtherText(){
+   var valSelect  = document.getElementById('webDTO.primaryPurposeAdditionalQualifierCode').value;
+   if (valSelect == 'Other') {
+        document.getElementById('purposeOtherTextDiv').style.display='';
+   } else {
+    document.getElementById('purposeOtherTextDiv').style.display='none';
+  }
+}
 </SCRIPT>
 <body>
 <h1><fmt:message key="isdesign.details.title"/></h1>
@@ -118,8 +135,8 @@ function tooltip() {
 	 		<fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
      	<s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
         <td>
-          <s:select headerKey="" headerValue="" name="webDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
-                   value="webDTO.primaryPurposeCode" cssStyle="width:150px" onchange="activate()"/>
+          <s:select headerKey="" headerValue="" name="webDTO.primaryPurposeCode" id="webDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
+                   value="webDTO.primaryPurposeCode" cssStyle="width:150px" onchange="activate();displayPrimaryPurposeOtherCode()"/>
           <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.primaryPurposeCode</s:param>
@@ -127,15 +144,35 @@ function tooltip() {
           </span>
         </td>
     </tr>
-    <tr >
+    <tr id="purposeOtherCodeDiv" style="display:'none'">
 		<td   scope="row" class="label"><label>
 	 		Primary Purpose Additionl Qualiefier Code </label></td>
 		<td>
             <s:set name="primaryPurposeAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode@getDisplayNames()" />
             <s:select headerKey="" headerValue="" name="webDTO.primaryPurposeAdditionalQualifierCode" list="#primaryPurposeAdditionlQualiefierCodeValues" 
-                value="webDTO.primaryPurposeAdditionalQualifierCode" cssStyle="width:120px" />
+                value="webDTO.primaryPurposeAdditionalQualifierCode" id="webDTO.primaryPurposeAdditionalQualifierCode"
+                cssStyle="width:120px" onchange="displayPrimaryPurposeOtherText()"/>
+             <span class="formErrorMsg"> 
+               <s:fielderror>
+               <s:param>webDTO.primaryPurposeAdditionalQualifierCode</s:param>
+               </s:fielderror>                            
+             </span>
 		</td>
 	</tr>
+    <tr id="purposeOtherTextDiv" style="display:'none'">
+         <td scope="row" class="label">
+            <label> Primary Purpose Other Text</label>
+         </td>
+         <td>
+               <s:textarea name="webDTO.primaryPurposeOtherText"  cols="50" rows="2" />
+               <span class="info">Required if Purpose equals &#39;Other&#39;</span>
+               <span class="formErrorMsg"> 
+               <s:fielderror>
+               <s:param>webDTO.primaryPurposeOtherText</s:param>
+               </s:fielderror>                            
+               </span>
+         </td>
+      </tr>
     <tr>
         <td scope="row" class="label"><label for="studyPhase">
         	 <fmt:message key="studyProtocol.studyPhase"/><span class="required">*</span></label> </td>
@@ -159,7 +196,7 @@ function tooltip() {
                 value="webDTO.phaseAdditionalQualifierCode" cssStyle="width:120px" />
 		</td>
 	</tr>	
-    <tr>
+	<tr>
 		<td scope="row" class="label"><label>
 	 		<fmt:message key="isdesign.details.intervention.model"/><span class="required">*</span></label></td>
 		<s:set name="designConfigurationCodeValues" value="@gov.nih.nci.pa.enums.DesignConfigurationCode@getDisplayNames()" />

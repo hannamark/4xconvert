@@ -1,9 +1,10 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -18,13 +19,13 @@ import org.junit.Test;
 public class TrialValidationActionTest extends AbstractPaActionTest {
 
 	TrialValidationAction trialValidationAction;
-	
-	@Before 
+
+	@Before
 	public void setUp() throws PAException {
-		trialValidationAction =  new TrialValidationAction();	
+		trialValidationAction =  new TrialValidationAction();
 		getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
-		 
-	} 
+
+	}
 
 	/**
 	 * Test method for {@link gov.nih.nci.pa.action.TrialValidationAction#query()}.
@@ -40,6 +41,20 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
 	@Test
 	public void testUpdate() {
 		assertEquals("edit", trialValidationAction.update());
+		GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
+		gtdDTO.setProprietarytrialindicator(Boolean.TRUE.toString());
+        trialValidationAction.setGtdDTO(gtdDTO);
+        assertEquals("edit", trialValidationAction.update());
+        gtdDTO = new GeneralTrialDesignWebDTO();
+        gtdDTO.setCtGovXmlRequired(true);
+        gtdDTO.setPrimaryPurposeCode("Other");
+        trialValidationAction.setGtdDTO(gtdDTO);
+        gtdDTO = new GeneralTrialDesignWebDTO();
+        gtdDTO.setCtGovXmlRequired(true);
+        gtdDTO.setPrimaryPurposeCode("Other");
+        gtdDTO.setPrimaryPurposeAdditionalQualifierCode("Other");
+        trialValidationAction.setGtdDTO(gtdDTO);
+        assertEquals("edit", trialValidationAction.update());
 	}
 
 	/**

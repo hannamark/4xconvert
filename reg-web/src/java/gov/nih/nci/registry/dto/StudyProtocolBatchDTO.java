@@ -23,6 +23,7 @@ public class StudyProtocolBatchDTO {
     private String trialType;
     private String primaryPurpose;
     private String primaryPurposeAdditionalQualifierCode;
+    private String primaryPurposeOtherText;
     private String phase;
     private String phaseAdditionalQualifierCode;
     //Sponsor
@@ -1874,5 +1875,18 @@ public class StudyProtocolBatchDTO {
       */
      public String getExemptIndicator() {
          return exemptIndicator;
+     }
+     /**
+      * @param primaryPurposeOtherText the primaryPurposeOtherText to set
+      */
+     public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
+         this.primaryPurposeOtherText = primaryPurposeOtherText;
+     }
+
+     /**
+      * @return the primaryPurposeOtherText
+      */
+     public String getPrimaryPurposeOtherText() {
+         return primaryPurposeOtherText;
      }
 }

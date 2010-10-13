@@ -304,6 +304,7 @@ function loadRegAuthoritiesDiv() {
     document.observe("dom:loaded", function() {
         displayTrialStatusDefinition('submitTrial_trialDTO_statusCode');
         });
+
 </SCRIPT>
 <body>
 <!-- main content begins-->

@@ -103,6 +103,7 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
     private Bl section801Indicator;
     private Cd phaseCode;
     private Cd phaseAdditionalQualifierCode;
+    private St primaryPurposeOtherText;
     private Cd primaryCompletionDateTypeCode;
     private Cd primaryPurposeCode;
     private Cd startDateTypeCode;
@@ -334,5 +335,17 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
      */
     public void setCtgovXmlRequiredIndicator(Bl ctgovXmlRequiredIndicator) {
         this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+    }
+    /**
+     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
+     */
+    public void setPrimaryPurposeOtherText(St primaryPurposeOtherText) {
+        this.primaryPurposeOtherText = primaryPurposeOtherText;
+    }
+    /**
+     * @return the primaryPurposeOtherText
+     */
+    public St getPrimaryPurposeOtherText() {
+        return primaryPurposeOtherText;
     }
 }

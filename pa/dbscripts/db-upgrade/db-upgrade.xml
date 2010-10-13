@@ -542,17 +542,9 @@
         <comment>Data re-assignment for Phase.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/PO-2222-1.sql"/>
     </changeSet>
-	<changeSet id="PO-2223-1" author="vrushali">
-        <comment>Data re-assignment for Primary Purpose.</comment>
-        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/PO-2223-1.sql"/>
-    </changeSet>
     <changeSet id="PO-1972" author="ludetc">
         <comment>PO-1972 - Add Description to Outcome Measure</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-1972.sql"/>
-    </changeSet>
-    <changeSet id="PO-2605" author="vrushali">
-        <comment>Primary_Purpose EARLY_DETECTION must be migrated.</comment>
-        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2605.sql"/>
     </changeSet>
     <changeSet id="PO-2596" author="vrushali"> 
         <comment>Add ExemptIndicator to model.</comment> 
@@ -574,4 +566,8 @@
         <comment>Set caDSR public ID. </comment> 
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2290.sql"/> 
      </changeSet> 
+      <changeSet id="PO-2643" author="vrushali">
+        <comment>Modification to Primary Purpose recording.</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/PO-2643.sql"/>
+    </changeSet>
 </databaseChangeLog>

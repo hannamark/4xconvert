@@ -96,6 +96,7 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO {
     private String blindingSchemaCode;
     private String allocationCode;
     private String primaryPurposeAdditionalQualifierCode;
+    private String primaryPurposeOtherText;
     private String phaseAdditionalQualifierCode;
     private String blindingRoleCode;
     private String minimumTargetAccrualNumber;
@@ -344,5 +345,17 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO {
        this.message = message;
      }
   
+    /**
+     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
+     */
+    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
+        this.primaryPurposeOtherText = primaryPurposeOtherText;
+    }
+    /**
+     * @return the primaryPurposeOtherText
+     */
+    public String getPrimaryPurposeOtherText() {
+        return primaryPurposeOtherText;
+    }
 
 }

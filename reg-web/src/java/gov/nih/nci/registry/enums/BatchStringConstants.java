@@ -42,6 +42,8 @@ public enum BatchStringConstants implements CodedEnum<String> {
      PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER("[Primary Purpose] Additional Qualifier",
              "setPrimaryPurposeAdditionalQualifierCode"),
     /** */
+    PRIMARY_PURPOSE_OTHER_TEXT("[Primary Purpose] Other Text", "setPrimaryPurposeOtherText"),
+     /** */
      PHASE("Phase", "setPhase"),
     /** */
      PHASE_ADDITIONAL_QUALIFIER("[Phase] Additional Qualifier", "setPhaseAdditionalQualifierCode"),

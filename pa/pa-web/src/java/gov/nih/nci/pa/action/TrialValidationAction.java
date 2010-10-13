@@ -125,6 +125,7 @@ public class TrialValidationAction extends ActionSupport {
     private static final String SPONSOR = "sponsor";
     private static final String UNDEFINED = "undefined";
     private static final String REJECT_OPERATION = "Reject";
+    private static final int MAXIMUM_CHAR = 200;
     private List<Country> countryList = new ArrayList<Country>();
 
     /**
@@ -336,6 +337,15 @@ public class TrialValidationAction extends ActionSupport {
             if (StringUtils.isEmpty(gtdDTO.getPhaseCode())) {
                 addFieldError("gtdDTO.phaseCode", getText("error.phase"));
             }
+            if (PAUtil.isPrimaryPurposeOtherTextReq(gtdDTO.getPrimaryPurposeCode(),
+                    gtdDTO.getPrimaryPurposeAdditionalQualifierCode(), gtdDTO.getPrimaryPurposeOtherText())) {
+                addFieldError("gtdDTO.primaryPurposeOtherText",
+                        getText("Primary Purpose Other other text must be entered"));
+            }
+            if (StringUtils.isNotEmpty(gtdDTO.getPrimaryPurposeOtherText())
+                    && StringUtils.length(gtdDTO.getPrimaryPurposeOtherText()) > MAXIMUM_CHAR) {
+                addFieldError("gtdDTO.primaryPurposeOtherText", getText("error.spType.other.maximumChar"));
+            }
             if (gtdDTO.getCtGovXmlRequired()) {
               if (StringUtils.isEmpty(gtdDTO.getSponsorIdentifier())) {
                 addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
@@ -357,6 +367,8 @@ public class TrialValidationAction extends ActionSupport {
             }
         }
     }
+
+
     /**
      *
      * @return gtdDTO

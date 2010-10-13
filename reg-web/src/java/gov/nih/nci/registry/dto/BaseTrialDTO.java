@@ -19,6 +19,7 @@ public class BaseTrialDTO {
     private String phaseAdditionalQualifier;
     private String primaryPurposeCode;
     private String primaryPurposeAdditionalQualifierCode;
+    private String primaryPurposeOtherText;
     private String leadOrgTrialIdentifier;
     private String leadOrganizationIdentifier;
     private String leadOrganizationName;
@@ -308,6 +309,18 @@ public class BaseTrialDTO {
      */
     public String getStudyProtocolId() {
         return studyProtocolId;
+    }
+    /**
+     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
+     */
+    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
+         this.primaryPurposeOtherText = primaryPurposeOtherText;
+    }
+    /**
+     * @return the primaryPurposeOtherText
+     */
+    public String getPrimaryPurposeOtherText() {
+        return primaryPurposeOtherText;
     }
 
 }

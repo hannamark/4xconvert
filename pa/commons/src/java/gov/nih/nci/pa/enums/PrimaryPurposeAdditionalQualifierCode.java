@@ -21,7 +21,9 @@ public enum PrimaryPurposeAdditionalQualifierCode implements CodedEnum<String> {
     /** Ancillary. */
     ANCILLARY("Ancillary"),
     /** Correlative. */
-    CORRELATIVE("Correlative");
+    CORRELATIVE("Correlative"),
+    /** Other. */
+    OTHER("Other");
 
     private String code;
     private PrimaryPurposeAdditionalQualifierCode(String code) {

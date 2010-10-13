@@ -378,31 +378,7 @@ function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,e
                 </td>                
           </tr>
           </c:if>
-          <tr>
-                <td  scope="row" class="label">
-                    <label for="updateTrial_trialPurpose"><fmt:message key="update.trial.purpose"/><span class="required">*</span></label> 
-                </td>
-                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
-                <td>                                             
-                    <s:select headerKey="" headerValue="--Select--" name="trialDTO.primaryPurposeCode" list="#typeCodeValues"  cssStyle="width:206px" value="trialDTO.primaryPurposeCode"/>
-                     <span class="formErrorMsg"> 
-                        <s:fielderror>
-                        <s:param>trialDTO.primaryPurposeCode</s:param>
-                       </s:fielderror>                            
-                     </span>
-                </td>
-          </tr>
-          <tr>
-                <td scope="row" class="label">
-                    <label for="updateTrial_otherPurposeText"> <fmt:message key="update.trial.otherPurposeText"/></label>
-
-                </td>
-                <td>
-                    <s:select headerKey="" headerValue="" name="trialDTO.primaryPurposeAdditionalQualifierCode" 
-                    list="@gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode@getDisplayNames()" 
-                    value="trialDTO.primaryPurposeAdditionalQualifierCode" cssStyle="width:120px" />
-                </td>                
-          </tr>          
+          <%@ include file="/WEB-INF/jsp/nodecorate/primaryPurposeOther.jsp" %>
           </table></td></tr>
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>

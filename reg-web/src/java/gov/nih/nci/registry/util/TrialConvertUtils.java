@@ -220,11 +220,7 @@ public class TrialConvertUtils {
         isoDto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDTO.getPhaseCode())));
         isoDto.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(PhaseAdditionalQualifierCode.getByCode(
                  trialDTO.getPhaseAdditionalQualifier())));
-        isoDto.setPrimaryPurposeCode(CdConverter.convertToCd(
-                PrimaryPurposeCode.getByCode(trialDTO.getPrimaryPurposeCode())));
-        isoDto.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
-             PrimaryPurposeAdditionalQualifierCode.getByCode(trialDTO.getPrimaryPurposeAdditionalQualifierCode())));
-
+        setPrimaryPurposeToDTO(trialDTO, isoDto);
         if (trialDTO.getPropritaryTrialIndicator() == null) {
             isoDto.setProprietaryTrialIndicator(BlConverter.convertToBl(null));
         } else if  (CommonsConstant.YES.equalsIgnoreCase(trialDTO.getPropritaryTrialIndicator())) {
@@ -239,11 +235,34 @@ public class TrialConvertUtils {
     }
 
     /**
+     * @param trialDTO
+     * @param isoDto
+     */
+    private void setPrimaryPurposeToDTO(BaseTrialDTO trialDTO, StudyProtocolDTO isoDto) {
+       isoDto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.getByCode(
+           trialDTO.getPrimaryPurposeCode())));
+        isoDto.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
+             PrimaryPurposeAdditionalQualifierCode.getByCode(trialDTO.getPrimaryPurposeAdditionalQualifierCode())));
+
+        if (StringUtils.isNotEmpty(trialDTO.getPrimaryPurposeCode())
+                && PrimaryPurposeCode.OTHER.getCode().equals(trialDTO.getPrimaryPurposeCode())
+                && StringUtils.isNotEmpty(trialDTO.getPrimaryPurposeAdditionalQualifierCode())
+                && PrimaryPurposeAdditionalQualifierCode.OTHER.getCode().equals(
+                      trialDTO.getPrimaryPurposeAdditionalQualifierCode())
+                && StringUtils.isNotEmpty(trialDTO.getPrimaryPurposeOtherText())) {
+            isoDto.setPrimaryPurposeOtherText(
+                    StConverter.convertToSt(trialDTO.getPrimaryPurposeOtherText()));
+        } else {
+            isoDto.setPrimaryPurposeOtherText(StConverter.convertToSt(null));
+        }
+    }
+
+    /**
      * @param trialDTO trialDTO
      * @param isoDto isoDto
      */
-    protected void convertToStudyProtocolDTO(TrialDTO trialDTO,
-            StudyProtocolDTO isoDto) {
+    protected void convertToStudyProtocolDTO(TrialDTO trialDTO, StudyProtocolDTO isoDto) {
+        setPrimaryPurposeToDTO(trialDTO, isoDto);
         isoDto.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDTO.getStartDate())));
         isoDto.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.getByCode(trialDTO
                 .getStartDateType())));
@@ -288,10 +307,6 @@ public class TrialConvertUtils {
         } else {
             isoDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.FALSE));
         }
-        isoDto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.getByCode(
-                trialDTO.getPrimaryPurposeCode())));
-        isoDto.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
-            PrimaryPurposeAdditionalQualifierCode.getByCode(trialDTO.getPrimaryPurposeAdditionalQualifierCode())));
         if (trialDTO.getSecondaryIdentifierList() != null && !trialDTO.getSecondaryIdentifierList().isEmpty()) {
            List<Ii> iis = new ArrayList<Ii>();
            for (Ii sps : trialDTO.getSecondaryIdentifierList()) {
@@ -884,6 +899,7 @@ public class TrialConvertUtils {
                PrimaryPurposeCode.getByCode(trialDto.getPrimaryPurposeCode())));
        spStageDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
              PrimaryPurposeAdditionalQualifierCode.getByCode(trialDto.getPrimaryPurposeAdditionalQualifierCode())));
+       spStageDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(trialDto.getPrimaryPurposeOtherText()));
        spStageDTO.setLocalProtocolIdentifier(StConverter.convertToSt(trialDto.getLeadOrgTrialIdentifier()));
        spStageDTO.setLeadOrganizationIdentifier(IiConverter.convertToIi(trialDto.getLeadOrganizationIdentifier()));
        spStageDTO.setSummaryFourOrgIdentifier(IiConverter.convertToIi(trialDto.getSummaryFourOrgIdentifier()));
@@ -1011,6 +1027,7 @@ public class TrialConvertUtils {
             trialDto.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.getByCode(
              CdConverter.convertCdToString(spStageDTO.getPrimaryPurposeAdditionalQualifierCode())).getCode());
        }
+       trialDto.setPrimaryPurposeOtherText(StConverter.convertToString(spStageDTO.getPrimaryPurposeOtherText()));
        trialDto.setLeadOrgTrialIdentifier(StConverter.convertToString(spStageDTO.getLocalProtocolIdentifier()));
        trialDto.setLeadOrganizationIdentifier(IiConverter.convertToString(spStageDTO.getLeadOrganizationIdentifier()));
        if (PAUtil.isIiNotNull(spStageDTO.getLeadOrganizationIdentifier())) {

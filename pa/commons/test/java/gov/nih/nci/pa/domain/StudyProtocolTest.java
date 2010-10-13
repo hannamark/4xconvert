@@ -255,6 +255,7 @@ public class StudyProtocolTest  {
         sp.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.ANCILLARY);
+        sp.setPrimaryPurposeOtherText("primaryPurposeOtherText");
         sp.setPrimaryCompletionDate(now);
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         sp.setPublicDescription("publicDescription");
@@ -380,6 +381,7 @@ public class StudyProtocolTest  {
         assertEquals(create.getPrimaryPurposeCode() , saved.getPrimaryPurposeCode());
         assertEquals(create.getPrimaryPurposeAdditionalQualifierCode() ,
                 saved.getPrimaryPurposeAdditionalQualifierCode());
+        assertEquals(create.getPrimaryPurposeOtherText() , saved.getPrimaryPurposeOtherText());
         assertEquals("StartDate Does not match ", create.getStartDate() , saved.getStartDate());
         assertEquals("StartDate Type code Does not match ", create.getStartDateTypeCode() ,
                 saved.getStartDateTypeCode());

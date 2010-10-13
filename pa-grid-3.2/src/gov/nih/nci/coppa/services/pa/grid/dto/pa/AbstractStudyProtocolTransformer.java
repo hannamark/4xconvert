@@ -97,8 +97,9 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
-
+import gov.nih.nci.pa.iso.util.StConverter;
 import org.iso._21090.CD;
+import org.apache.commons.lang.StringUtils;
 /**
  * Transforms StudyProtocol instances.
  *
@@ -178,6 +179,10 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         } else {
               primaryPurposeAdditionalQualifier.setCode(null);
         }
+        if (StringUtils.isNotEmpty(primaryPurposeAdditionalQualifier.getCode())) {
+            primaryPurposeAdditionalQualifier.setCode("OTHER");
+            result.setPrimaryPurposeOtherText(STTransformer.INSTANCE.toDto(input.getPrimaryPurposeOtherText()));
+        }
         result.setPrimaryPurposeAdditionalQualifierCode(
              CDTransformer.INSTANCE.toDto(primaryPurposeAdditionalQualifier));
         // II
@@ -215,9 +220,12 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         St phaseOtherText = new St();
         phaseOtherText.setValue(CdConverter.convertCdToString(input.getPhaseAdditionalQualifierCode()));
         result.setPhaseOtherText(STTransformer.INSTANCE.toXml(phaseOtherText));
+        String primaryPurpose = CdConverter.convertCdToString(input.getPrimaryPurposeAdditionalQualifierCode());
+        if (StringUtils.equalsIgnoreCase("Other", primaryPurpose)) {
+              primaryPurpose = StConverter.convertToString(input.getPrimaryPurposeOtherText());
+        }
         St primaryPurposeOtherText = new St();
-        primaryPurposeOtherText.setValue(CdConverter.convertCdToString(
-           input.getPrimaryPurposeAdditionalQualifierCode()));
+        primaryPurposeOtherText.setValue(primaryPurpose);
         result.setPrimaryPurposeOtherText(STTransformer.INSTANCE.toXml(primaryPurposeOtherText));
 
         result.setProgramCodeText(STTransformer.INSTANCE.toXml(input.getProgramCodeText()));

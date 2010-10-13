@@ -371,6 +371,9 @@ public class BatchCreateProtocols {
         if (StringUtils.isEmpty(batchDto.getPrimaryPurposeAdditionalQualifierCode())) {
             trialDTO.setPrimaryPurposeAdditionalQualifierCode(batchDto.getPrimaryPurposeAdditionalQualifierCode());
         }
+        if (StringUtils.isEmpty(batchDto.getPrimaryPurposeOtherText())) {
+            trialDTO.setPrimaryPurposeOtherText(batchDto.getPrimaryPurposeOtherText());
+        }
         trialDTO.setPhaseCode(batchDto.getPhase());
         if (StringUtils.isNotEmpty(batchDto.getPhaseAdditionalQualifierCode())) {
              trialDTO.setPhaseAdditionalQualifier(batchDto.getPhaseAdditionalQualifierCode());
@@ -704,6 +707,7 @@ public class BatchCreateProtocols {
         trialDTO.setPhaseAdditionalQualifier(batchDTO.getPhaseAdditionalQualifierCode());
         trialDTO.setPrimaryPurposeCode(batchDTO.getPrimaryPurpose());
         trialDTO.setPrimaryPurposeAdditionalQualifierCode(batchDTO.getPrimaryPurposeAdditionalQualifierCode());
+        trialDTO.setPrimaryPurposeOtherText(batchDTO.getPrimaryPurposeOtherText());
         trialDTO.setReason(batchDTO.getReasonForStudyStopped());
         trialDTO.setStartDate(batchDTO.getStudyStartDate());
         trialDTO.setStartDateType(batchDTO.getStudyStartDateType());

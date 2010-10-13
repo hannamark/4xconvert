@@ -103,7 +103,14 @@ public class TrialBatchDataValidator {
         }
         //Summary 4 Info validation
         fieldErr.append(validateSummary4SponsorInfo(batchDto));
-
+        if (PAUtil.isPrimaryPurposeOtherCodeReq(batchDto.getPrimaryPurpose(),
+                batchDto.getPrimaryPurposeAdditionalQualifierCode())) {
+                fieldErr.append("Primary Purpose Code is required.\n");
+        }
+        if (PAUtil.isPrimaryPurposeOtherTextReq(batchDto.getPrimaryPurpose(),
+                batchDto.getPrimaryPurposeAdditionalQualifierCode(), batchDto.getPrimaryPurposeOtherText())) {
+                fieldErr.append("Comment for Purpose is required.\n");
+        }
         //validate grant
         fieldErr.append(validateGrantInfo(batchDto));
         //validate the IND/IDE

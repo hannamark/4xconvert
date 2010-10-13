@@ -230,11 +230,23 @@ var winprint=window.open("","",sOption);
               <tr>     
                     <td scope="row" class="label">
                         <label for="Other Purpose Text">
-                            <fmt:message key="view.trial.otherPurposeText"/>                
+                            <fmt:message key="view.trial.otherPurposeCode"/>                
                         </label>
                     </td>
                     <td class="value">
                         <c:out value="${trialDTO.primaryPurposeAdditionalQualifierCode}"/>
+                    </td>
+              </tr>
+          </c:if>
+          <c:if test="${trialDTO.primaryPurposeOtherText != ''}">
+              <tr>     
+                    <td scope="row" class="label">
+                        <label for="Other Purpose Text">
+                            <fmt:message key="view.trial.otherPurposeText"/>                
+                        </label>
+                    </td>
+                    <td class="value">
+                        <c:out value="${trialDTO.primaryPurposeOtherText}"/>
                     </td>
               </tr>
           </c:if>

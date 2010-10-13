@@ -254,7 +254,7 @@
 	          <tr>
 	                <td scope="row" class="label">
 	                    <label for="Other Purpose Text">
-	                        <fmt:message key="view.trial.otherPurposeText"/>
+	                        <fmt:message key="view.trial.otherPurposeCode"/>
 	                    </label>
 	                </td>
 	                <td class="value">
@@ -262,7 +262,18 @@
 	                </td>
 	          </tr>
           </c:if>
-
+            <c:if test="${trialDTO.primaryPurposeOtherText != null}">
+              <tr>     
+                    <td scope="row" class="label">
+                        <label for="Other Purpose Text">
+                            <fmt:message key="view.trial.otherPurposeText"/>                
+                        </label>
+                    </td>
+                    <td class="value">
+                        <c:out value="${trialDTO.primaryPurposeOtherText}"/>
+                    </td>
+              </tr>
+          </c:if>
 
           <tr>
           	<td colspan="2" class="space">&nbsp;</td>

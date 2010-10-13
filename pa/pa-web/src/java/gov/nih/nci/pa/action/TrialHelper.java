@@ -239,6 +239,7 @@ public class TrialHelper {
         gtdDTO.setPhaseAdditionalQualifierCode(spDTO.getPhaseAdditionalQualifierCode().getCode());
         gtdDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
         gtdDTO.setPrimaryPurposeAdditionalQualifierCode(spDTO.getPrimaryPurposeAdditionalQualifierCode().getCode());
+        gtdDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
         if (!PAUtil.isBlNull(spDTO.getProprietaryTrialIndicator())) {
             gtdDTO.setProprietarytrialindicator(BlConverter.convertToString(spDTO.getProprietaryTrialIndicator()));
         }
@@ -436,6 +437,11 @@ public class TrialHelper {
                 spDTO.setPhaseCode(CdConverter.convertStringToCd(gtdDTO.getPhaseCode()));
                 spDTO.setPhaseAdditionalQualifierCode(CdConverter.convertStringToCd(
                            gtdDTO.getPhaseAdditionalQualifierCode()));
+                spDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(gtdDTO.getPrimaryPurposeCode()));
+                spDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertStringToCd(
+                           gtdDTO.getPrimaryPurposeAdditionalQualifierCode()));
+                spDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(gtdDTO.getPrimaryPurposeOtherText()));
+
             }
             Set<Ii> allIdentifiers = new HashSet<Ii>();
             allIdentifiers.add(gtdDTO.getNonOtherIdentifiers());

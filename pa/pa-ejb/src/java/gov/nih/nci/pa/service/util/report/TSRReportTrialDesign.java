@@ -94,6 +94,7 @@ public class TSRReportTrialDesign {
     private String type;
     private String primaryPurpose;
     private String primaryPurposeAdditonalQualifier;
+    private String primaryPurposeOtherText;
     private String phase;
     private String phaseAdditonalQualifier;
     private String interventionModel;
@@ -271,5 +272,19 @@ public class TSRReportTrialDesign {
      */
     public void setTargetEnrollment(String targetEnrollment) {
         this.targetEnrollment = targetEnrollment;
+    }
+
+    /**
+     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
+     */
+    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
+        this.primaryPurposeOtherText = primaryPurposeOtherText;
+    }
+
+    /**
+     * @return the primaryPurposeOtherText
+     */
+    public String getPrimaryPurposeOtherText() {
+        return primaryPurposeOtherText;
     }
 }

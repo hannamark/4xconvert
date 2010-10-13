@@ -239,13 +239,27 @@
     <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
     <tr>
         <td   scope="row" class="label"><label>
-            <fmt:message key="isdesign.details.primary.purpose.other"/></label></td>
+            <fmt:message key="isdesign.details.primary.purpose.otherCode"/></label></td>
         <td>
             <s:set name="primaryPurposeAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode@getDisplayNames()" />
             <s:select headerKey="" headerValue="" name="gtdDTO.primaryPurposeAdditionalQualifierCode" list="#primaryPurposeAdditionlQualiefierCodeValues" 
                 value="gtdDTO.primaryPurposeAdditionalQualifierCode" cssStyle="width:120px" />
         </td>
     </tr>
+      <tr id="purposeOtherTextDiv" style="display:'none'">
+         <td scope="row" class="label">
+            <label> <fmt:message key="isdesign.details.primary.purpose.otherText"/></label>
+         </td>
+         <td>
+               <s:textarea name="gtdDTO.primaryPurposeOtherText"  cols="50" rows="2" />
+               <span class="info">Required if Purpose equals &#39;Other&#39;</span>
+               <span class="formErrorMsg"> 
+               <s:fielderror>
+               <s:param>gtdDTO.primaryPurposeOtherText</s:param>
+               </s:fielderror>                            
+               </span>
+         </td>
+      </tr>
     </c:if>
     <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
     <tr>

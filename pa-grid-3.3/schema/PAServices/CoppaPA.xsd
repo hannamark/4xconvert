@@ -106,6 +106,7 @@
                     <xs:element name="primaryCompletionDate" type="ISO:TS" />
                     <xs:element name="primaryCompletionDateTypeCode" type="ISO:CD" />
                     <xs:element name="primaryPurposeCode" type="ISO:CD" />
+                    <xs:element name="primaryPurposeAdditionalQualifierCode" type="ISO:CD" />
                     <xs:element name="primaryPurposeOtherText" type="ISO:ST" />
                     <xs:element name="programCodeText" type="ISO:ST" />
                     <xs:element name="publicDescription" type="ISO:ST" />

@@ -101,6 +101,7 @@ public class GeneralTrialDesignWebDTO {
     private String phaseAdditionalQualifierCode;
     private String primaryPurposeCode;
     private String primaryPurposeAdditionalQualifierCode;
+    private String primaryPurposeOtherText;
     private String publicTitle;
     private String publicDescription;
     private String scientificDescription;
@@ -809,5 +810,17 @@ public class GeneralTrialDesignWebDTO {
      public void setNonOtherIdentifiers(Ii nonOtherIdentifiers) {
          this.nonOtherIdentifiers = nonOtherIdentifiers;
      }
+    /**
+     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
+     */
+    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
+        this.primaryPurposeOtherText = primaryPurposeOtherText;
+    }
+    /**
+     * @return the primaryPurposeOtherText
+     */
+    public String getPrimaryPurposeOtherText() {
+        return primaryPurposeOtherText;
+    }
 
 }

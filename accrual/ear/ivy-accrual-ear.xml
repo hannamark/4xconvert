@@ -8,7 +8,7 @@
 
   <dependencies>
     <!-- runtime -->
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.3-alpha13"       force="true"   conf="runtime->master"/>
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.3-alpha16"       force="true"   conf="runtime->master"/>
     <dependency org="gov.nih.nci.coppa.pa"   name="pa-ejb-client"           rev="3.3-alpha11"       force="true"   conf="runtime->master"/>
     <dependency org="commons-collections"    name="commons-collections"     rev="3.2.1"             force="true"   conf="runtime->master"/>
     <dependency org="commons-fileupload"     name="commons-fileupload"      rev="1.2.1"             force="true"   conf="runtime->master"/>

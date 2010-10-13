@@ -40,31 +40,4 @@
                      </span>
                 </td>
           </tr>
-          <tr>
-                <td  scope="row" class="label">
-                    <reg-web:displayTooltip tooltip="tooltip.primary_purpose">
-                        <label for="submitTrial_protocolWebDTO_trialPurpose"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label>
-                    </reg-web:displayTooltip>
-                </td>
-                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
-                <td>
-                    <s:select headerKey="" headerValue="--Select--" name="trialDTO.primaryPurposeCode" list="#typeCodeValues"  cssStyle="width:206px" value="trialDTO.primaryPurposeCode"/>
-                     <span class="formErrorMsg">
-                        <s:fielderror>
-                        <s:param>trialDTO.primaryPurposeCode</s:param>
-                       </s:fielderror>
-                     </span>
-                </td>
-          </tr>
-          <tr>
-                <td scope="row" class="label">
-                    <reg-web:displayTooltip tooltip="tooltip.purpose_comment">
-                        <label for="submitTrial_protocolWebDTO_otherPurposeText"> <fmt:message key="submit.trial.otherPurposeText"/></label>
-                    </reg-web:displayTooltip>
-                </td>
-                <td>
-                    <s:set name="primaryPurposeAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode@getDisplayNames()" />
-                    <s:select headerKey="" headerValue="" name="trialDTO.primaryPurposeAdditionalQualifierCode" list="#primaryPurposeAdditionlQualiefierCodeValues"
-                    value="trialDTO.primaryPurposeAdditionalQualifierCode" cssStyle="width:120px" />
-                </td>
-          </tr>
+          <%@ include file="/WEB-INF/jsp/nodecorate/primaryPurposeOther.jsp" %>

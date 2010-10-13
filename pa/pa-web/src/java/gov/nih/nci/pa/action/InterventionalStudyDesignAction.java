@@ -101,12 +101,14 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -172,6 +174,17 @@ public class InterventionalStudyDesignAction extends ActionSupport {
                     CdConverter.convertToCd(AllocationCode.getByCode(webDTO.getAllocationCode())));
             ispDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
                   PrimaryPurposeAdditionalQualifierCode.getByCode(webDTO.getPrimaryPurposeAdditionalQualifierCode())));
+            if (StringUtils.isNotEmpty(webDTO.getPrimaryPurposeCode())
+                && PrimaryPurposeCode.OTHER.getCode().equals(webDTO.getPrimaryPurposeCode())
+                && StringUtils.isNotEmpty(webDTO.getPrimaryPurposeAdditionalQualifierCode())
+                && PrimaryPurposeAdditionalQualifierCode.OTHER.getCode().equals(
+                  webDTO.getPrimaryPurposeAdditionalQualifierCode())
+                && StringUtils.isNotEmpty(webDTO.getPrimaryPurposeOtherText())) {
+                ispDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(webDTO.getPrimaryPurposeOtherText()));
+            } else {
+                ispDTO.setPrimaryPurposeOtherText(null);
+            }
+
             ispDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(
                     PhaseAdditionalQualifierCode.getByCode(webDTO.getPhaseAdditionalQualifierCode())));
           //  ispDTO.setMaximumTargetAccrualNumber(
@@ -208,46 +221,47 @@ public class InterventionalStudyDesignAction extends ActionSupport {
     }
 
     private void enforceBusinessRules() {
-        if (StringUtils.isEmpty(webDTO.getPrimaryPurposeCode())) {
-            addFieldError("webDTO.primaryPurposeCode", getText("error.primary"));
+        addErrors(webDTO.getPrimaryPurposeCode(), "webDTO.primaryPurposeCode", "error.primary");
+        addErrors(webDTO.getPhaseCode(), "webDTO.phaseCode", "error.phase");
+        addErrors(webDTO.getDesignConfigurationCode(), "webDTO.designConfigurationCode", "error.intervention");
+        addErrors(webDTO.getNumberOfInterventionGroups(), "webDTO.numberOfInterventionGroups", "error.arms");
+        addErrors(webDTO.getBlindingSchemaCode(), "webDTO.blindingSchemaCode", "error.masking");
+        addErrors(webDTO.getAllocationCode(), "webDTO.allocationCode", "error.allocation");
+        addErrors(webDTO.getMinimumTargetAccrualNumber(), "webDTO.minimumTargetAccrualNumber",
+                "error.target.enrollment");
+        validateTragetAccrualNumber();
+        if (!NumberUtils.isDigits(webDTO.getNumberOfInterventionGroups())) {
+            addFieldError("webDTO.numberOfInterventionGroups", getText("error.numeric"));
+       }
+       if (PAUtil.isPrimaryPurposeOtherCodeReq(webDTO.getPrimaryPurposeCode(),
+               webDTO.getPrimaryPurposeAdditionalQualifierCode())) {
+            addFieldError("webDTO.primaryPurposeAdditionalQualifierCode", getText("error.otherPurposeCode"));
         }
-        if (StringUtils.isEmpty(webDTO.getPhaseCode())) {
-            addFieldError("webDTO.phaseCode", getText("error.phase"));
-        }
-        if (StringUtils.isEmpty(webDTO.getDesignConfigurationCode())) {
-            addFieldError("webDTO.designConfigurationCode", getText("error.intervention"));
-        }
-        if (StringUtils.isEmpty(webDTO.getNumberOfInterventionGroups())) {
-            addFieldError("webDTO.numberOfInterventionGroups", getText("error.arms"));
-        }
-        if (StringUtils.isNotEmpty(webDTO.getNumberOfInterventionGroups())) {
-            try {
-                Integer.valueOf(webDTO.getNumberOfInterventionGroups());
-            } catch (NumberFormatException e) {
-                addFieldError("webDTO.numberOfInterventionGroups", getText("error.numeric"));
-            }
-        }
-        if (StringUtils.isEmpty(webDTO.getBlindingSchemaCode())) {
-            addFieldError("webDTO.blindingSchemaCode", getText("error.masking"));
-        }
-        if (StringUtils.isEmpty(webDTO.getAllocationCode())) {
-            addFieldError("webDTO.allocationCode", getText("error.allocation"));
-        }
-        if (StringUtils.isEmpty(webDTO.getMinimumTargetAccrualNumber())) {
-            addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.target.enrollment"));
-        }
-        if (StringUtils.isNotEmpty(webDTO.getMinimumTargetAccrualNumber())) {
-            try {
-                if (Integer.valueOf(webDTO.getMinimumTargetAccrualNumber()) < 0) {
-                    addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.negative"));
-                }
-            } catch (NumberFormatException e) {
-                addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.numeric"));
-            }
-
-        }
+       //validate Purpose when Selected value is OTHER
+       if (PAUtil.isPrimaryPurposeOtherTextReq(webDTO.getPrimaryPurposeCode(),
+                webDTO.getPrimaryPurposeAdditionalQualifierCode(), webDTO.getPrimaryPurposeOtherText())) {
+            addFieldError("webDTO.primaryPurposeOtherText", getText("error.otherPurposeText"));
+       }
     }
 
+    /**
+     *
+     */
+    private void validateTragetAccrualNumber() {
+        try {
+            Integer tarAccrual = NumberUtils.createInteger(webDTO.getMinimumTargetAccrualNumber());
+            if (tarAccrual != null && tarAccrual < 0) {
+                addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.negative"));
+            }
+        } catch (NumberFormatException e) {
+                addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.numeric"));
+        }
+    }
+    private void addErrors(String fieldValue, String fieldName, String errMsg) {
+        if (StringUtils.isEmpty(fieldValue)) {
+            addFieldError(fieldName, getText(errMsg));
+        }
+     }
     /**
      * @param ispDTO InterventionalStudyProtocolDTO
      * @return DesignDetailsWebDTO
@@ -279,6 +293,9 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             if (ispDTO.getPrimaryPurposeAdditionalQualifierCode() != null) {
                 dto.setPrimaryPurposeAdditionalQualifierCode(ispDTO.getPrimaryPurposeAdditionalQualifierCode()
                         .getCode());
+            }
+            if (ispDTO.getPrimaryPurposeOtherText() != null) {
+                dto.setPrimaryPurposeOtherText(StConverter.convertToString(ispDTO.getPrimaryPurposeOtherText()));
             }
             List<Cd> cds =  DSetConverter.convertDsetToCdList(ispDTO.getBlindedRoleCode());
             for (Cd cd : cds) {
@@ -417,17 +434,13 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         if (webDTO.getOutcomeMeasure().getPrimaryIndicator() == null) {
             addFieldError("webDTO.primaryIndicator", getText("error.outcome.primary"));
         }
-        if (StringUtils.isEmpty(webDTO.getOutcomeMeasure().getName())) {
-            addFieldError("webDTO.name", getText("error.outcome.description"));
-        } else if (webDTO.getOutcomeMeasure().getName().length() > MAXIMUM_CHAR_OUTCOME) {
-          addFieldError("webDTO.name",
-              getText("error.outcome.maximumChar"));
+        addErrors(webDTO.getOutcomeMeasure().getName(), "webDTO.name", "error.outcome.description");
+        if (StringUtils.length(webDTO.getOutcomeMeasure().getName()) > MAXIMUM_CHAR_OUTCOME) {
+          addFieldError("webDTO.name", getText("error.outcome.maximumChar"));
         }
-        if (StringUtils.isEmpty(webDTO.getOutcomeMeasure().getTimeFrame())) {
-            addFieldError("webDTO.timeFrame", getText("error.outcome.timeFrame"));
-        } else if (webDTO.getOutcomeMeasure().getTimeFrame().length() > MAXIMUM_CHAR_OUTCOME) {
-          addFieldError("webDTO.timeFrame",
-              getText("error.outcome.maximumChar"));
+        addErrors(webDTO.getOutcomeMeasure().getTimeFrame(), "webDTO.timeFrame", "error.outcome.timeFrame");
+        if (StringUtils.length(webDTO.getOutcomeMeasure().getTimeFrame()) > MAXIMUM_CHAR_OUTCOME) {
+          addFieldError("webDTO.timeFrame", getText("error.outcome.maximumChar"));
         }
         if (webDTO.getOutcomeMeasure().getSafetyIndicator() == null) {
             addFieldError("webDTO.safetyIndicator", getText("error.outcome.safety"));

@@ -135,11 +135,10 @@ public class AbstractStudyProtocolConverter {
      */
     public static AbstractStudyProtocolDTO convertFromDomainToDTO(AbstractStudyProtocol abstractStudyProtocol,
             AbstractStudyProtocolDTO abstractStudyProtocolDTO) {
-        abstractStudyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter
-                .convertToBl(abstractStudyProtocol.getDataMonitoringCommitteeAppointedIndicator()));
+        abstractStudyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(
+                abstractStudyProtocol.getDataMonitoringCommitteeAppointedIndicator()));
         abstractStudyProtocolDTO.setDelayedpostingIndicator(BlConverter.convertToBl(abstractStudyProtocol
                 .getDelayedpostingIndicator()));
-
         abstractStudyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(abstractStudyProtocol
                 .getFdaRegulatedIndicator()));
         abstractStudyProtocolDTO.setOfficialTitle(StConverter.convertToSt(abstractStudyProtocol.getOfficialTitle()));
@@ -158,6 +157,8 @@ public class AbstractStudyProtocolConverter {
                 .getPrimaryPurposeCode()));
         abstractStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
                 abstractStudyProtocol.getPrimaryPurposeAdditionalQualifierCode()));
+        abstractStudyProtocolDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(abstractStudyProtocol
+                .getPrimaryPurposeOtherText()));
         abstractStudyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(abstractStudyProtocol
                 .getSection801Indicator()));
         abstractStudyProtocolDTO.setStartDate(TsConverter.convertToTs(abstractStudyProtocol.getStartDate()));
@@ -175,11 +176,10 @@ public class AbstractStudyProtocolConverter {
             abstractStudyProtocolDTO.setUserLastCreated(StConverter.convertToSt(abstractStudyProtocol
                     .getUserLastCreated().getLoginName()));
         }
-        abstractStudyProtocolDTO
-                .setProgramCodeText(StConverter.convertToSt(abstractStudyProtocol.getProgramCodeText()));
-        abstractStudyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(abstractStudyProtocol
+       abstractStudyProtocolDTO.setProgramCodeText(StConverter.convertToSt(abstractStudyProtocol.getProgramCodeText()));
+       abstractStudyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(abstractStudyProtocol
                 .getProprietaryTrialIndicator()));
-        abstractStudyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(abstractStudyProtocol
+       abstractStudyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(abstractStudyProtocol
                 .getCtgovXmlRequiredIndicator()));
         return abstractStudyProtocolDTO;
     }
@@ -251,6 +251,8 @@ public class AbstractStudyProtocolConverter {
             abstractStudyProtocol.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode
                     .getByCode(abstractStudyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode().getCode()));
         }
+        abstractStudyProtocol.setPrimaryPurposeOtherText(StConverter.convertToString(abstractStudyProtocolDTO
+                .getPrimaryPurposeOtherText()));
     }
 
     private static void setUserLastCreated(AbstractStudyProtocolDTO abstractStudyProtocolDTO,

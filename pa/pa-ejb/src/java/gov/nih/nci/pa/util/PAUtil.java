@@ -93,15 +93,17 @@ import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil.ValidDateFormat;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -1113,7 +1115,7 @@ public class PAUtil {
     public static boolean isEdNull(Ed ed) {
       return (ed == null || ed.getData() == null);
     }
-    
+
     /**
      * Given a NullifiedEntityException pull out a useful error message.
      * @param e NEE.
@@ -1131,7 +1133,7 @@ public class PAUtil {
                 } else {
                     continue;
                 }
-                 
+
                 message.append(key.getExtension());
                 message.append(" is no longer available.");
                 Ii value = e.getNullifiedEntities().get(key);
@@ -1139,12 +1141,12 @@ public class PAUtil {
                     message.append("Switch to id ");
                     message.append(value.getExtension());
                 }
-                                                                
+
             }
         }
         return message.toString();
     }
-    
+
     /**
      * Current time.
      * @return current time.
@@ -1155,4 +1157,68 @@ public class PAUtil {
         String simpleDate = sdf.format(new Date());
         return new Timestamp(sdf.parse(simpleDate).getTime());
     }
+    /**
+     * primaryPurposeOtherCode is req or not.
+     * @param primaryPurposeCode primaryPurposeCode
+     * @param primaryPurposeAdditionalQualifierCode primaryPurposeAdditionalQualifierCode
+     * @return primaryPurposeOtherText is req or not.
+     */
+    public static boolean isPrimaryPurposeOtherCodeReq(String primaryPurposeCode,
+            String primaryPurposeAdditionalQualifierCode) {
+        return isPrimaryPurposeCodeOther(primaryPurposeCode)
+            && StringUtils.isEmpty(primaryPurposeAdditionalQualifierCode);
+    }
+    /**
+     * primaryPurposeOtherText is req or not.
+     * @param primaryPurposeCode primaryPurposeCode
+     * @param primaryPurposeAdditionalQualifierCode primaryPurposeAdditionalQualifierCode
+     * @param primaryPurposeOtherText primaryPurposeOtherText
+     * @return primaryPurposeOtherText is req or not.
+     */
+    public static boolean isPrimaryPurposeOtherTextReq(String primaryPurposeCode,
+            String primaryPurposeAdditionalQualifierCode, String primaryPurposeOtherText) {
+        return isPrimaryPurposeAdditionQualifierCodeOther(primaryPurposeCode, primaryPurposeAdditionalQualifierCode)
+            && StringUtils.isEmpty(primaryPurposeOtherText);
+    }
+    /**
+     * @return
+     */
+    private static boolean isPrimaryPurposeAdditionQualifierCodeOther(String primaryPurposeCode,
+            String primaryPurposeAdditionalQualifierCode) {
+        return isPrimaryPurposeCodeOther(primaryPurposeCode)
+        && StringUtils.isNotEmpty(primaryPurposeAdditionalQualifierCode)
+        && StringUtils.equalsIgnoreCase(primaryPurposeAdditionalQualifierCode,
+                PrimaryPurposeAdditionalQualifierCode.OTHER.getCode());
+    }
+
+    /**
+     * @return
+     */
+    private static boolean isPrimaryPurposeCodeOther(String primaryPurposeCode) {
+        return StringUtils.isNotEmpty(primaryPurposeCode)
+        && StringUtils.equalsIgnoreCase(primaryPurposeCode, PrimaryPurposeCode.OTHER.getCode());
+    }
+
+    /**
+     * @param studyProtocolDTO dto
+     * @param returnStudyProtocolDTO  dto
+     */
+    public static void setPrimaryPurposeCode(StudyProtocolDTO studyProtocolDTO,
+            StudyProtocolDTO returnStudyProtocolDTO) {
+        returnStudyProtocolDTO.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
+        if (isPrimaryPurposeCodeOther(CdConverter.convertCdToString(studyProtocolDTO.getPrimaryPurposeCode()))) {
+            returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(
+                    studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode());
+        } else {
+            returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertStringToCd(null));
+        }
+        if (isPrimaryPurposeAdditionQualifierCodeOther(CdConverter.convertCdToString(studyProtocolDTO
+             .getPrimaryPurposeCode()), CdConverter.convertCdToString(
+                     studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode()))) {
+            returnStudyProtocolDTO.setPrimaryPurposeOtherText(studyProtocolDTO.getPrimaryPurposeOtherText());
+        } else {
+            returnStudyProtocolDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(null));
+        }
+    }
+
 }

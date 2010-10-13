@@ -124,6 +124,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     private Timestamp primaryCompletionDate;
     private PrimaryPurposeCode primaryPurposeCode;
     private PrimaryPurposeAdditionalQualifierCode primaryPurposeAdditionalQualifierCode;
+    private String primaryPurposeOtherText;
     private String officialTitle;
     private String programCodeText;
     private Set<Ii> otherIdentifiers = new HashSet<Ii>();
@@ -395,5 +396,20 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
      */
     public void setOtherIdentifiers(Set<Ii> otherIdentifiers) {
         this.otherIdentifiers = otherIdentifiers;
+    }
+
+    /**
+     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
+     */
+    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
+        this.primaryPurposeOtherText = primaryPurposeOtherText;
+    }
+
+    /**
+     * @return the primaryPurposeOtherText
+     */
+    @Column(name = "PRIMARY_PURPOSE_OTHER_TEXT")
+    public String getPrimaryPurposeOtherText() {
+        return primaryPurposeOtherText;
     }
 }
