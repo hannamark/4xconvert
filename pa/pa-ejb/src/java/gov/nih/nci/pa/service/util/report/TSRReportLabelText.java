@@ -230,7 +230,7 @@ public class TSRReportLabelText {
     /**
      * PI.
      */
-    public static final String GTD_PI = "Prinicipal Investigator";
+    public static final String GTD_PI = "Principal Investigator";
     /**
      * Central Contact.
      */
@@ -250,7 +250,7 @@ public class TSRReportLabelText {
     /**
      * primary purpose comment.
      */
-    public static final String GTD_PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER = "Primary Purpose Additonal Qualifier";
+    public static final String GTD_PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER = "Primary Purpose Additional Qualifier";
     /**
      * phase.
      */
@@ -258,7 +258,7 @@ public class TSRReportLabelText {
     /**
      * phase comment.
      */
-    public static final String GTD_PHASE_ADDITIONAL_QUALIFIER = "Phase Additonal Qualifier";
+    public static final String GTD_PHASE_ADDITIONAL_QUALIFIER = "Phase Additional Qualifier";
 
     // Status Dates
     /**
@@ -629,7 +629,7 @@ public class TSRReportLabelText {
      */
     public static final String PS_TARGET_ACCRUAL = "Target Accrual";
     /**
-     * Invesigators.
+     * Investigators.
      */
     public static final String PS_INVESTIGATORS = "Investigator(s)";
     /**
