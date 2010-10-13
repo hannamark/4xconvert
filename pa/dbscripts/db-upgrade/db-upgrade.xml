@@ -570,4 +570,8 @@
         <comment>Modification to Primary Purpose recording.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/PO-2643.sql"/>
     </changeSet>
+      <changeSet id="PO-2766" author="ludetc">
+        <comment>Add ctep-rss user as trial owner to collaborative trials</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2766.sql"/>
+    </changeSet>
 </databaseChangeLog>
