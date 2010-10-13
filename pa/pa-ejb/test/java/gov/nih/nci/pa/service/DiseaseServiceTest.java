@@ -190,6 +190,32 @@ public class DiseaseServiceTest {
         r = bean.search(searchCriteria);
         assertTrue(0 < r.size());
 
+        searchCriteria.setPreferredName(StConverter.convertToSt("Toe Cancer"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("true"));
+        r = bean.search(searchCriteria);
+        assertFalse("No diseases found.", r.isEmpty());
+        assertEquals("1 disease should have been found.", 1, r.size());
+
+        searchCriteria.setPreferredName(StConverter.convertToSt("Cancer"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("false"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("true"));
+        r = bean.search(searchCriteria);
+        assertTrue(r.isEmpty());
+
+        searchCriteria.setPreferredName(StConverter.convertToSt("Cancer"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("false"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        r = bean.search(searchCriteria);
+        assertFalse(r.isEmpty());
+        assertEquals(4, r.size());
+
+        searchCriteria.setPreferredName(StConverter.convertToSt("Cancer"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        r = bean.search(searchCriteria);
+        assertFalse(r.isEmpty());
+
         searchCriteria.setPreferredName(null);
         try {
             r = bean.search(searchCriteria);

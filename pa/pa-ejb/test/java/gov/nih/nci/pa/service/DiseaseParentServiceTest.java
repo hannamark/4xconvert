@@ -149,6 +149,16 @@ public class DiseaseParentServiceTest {
             childIdList.add(IiConverter.convertToLong(d.getDiseaseIdentifier()));
         }
         assertTrue(childIdList.contains(childId));
+
+        dtoList = bean.getByChildDisease(new Ii[] {dIi});
+        assertTrue(dtoList.size() > 0);
+        parentDiseaseIi = dtoList.get(0).getParentDiseaseIdentifier();
+        dtoListChildren = bean.getByParentDisease(parentDiseaseIi);
+        childIdList = new ArrayList<Long>();
+        for (DiseaseParentDTO d : dtoListChildren) {
+            childIdList.add(IiConverter.convertToLong(d.getDiseaseIdentifier()));
+        }
+        assertTrue(childIdList.contains(childId));
     }
 
     @Test

@@ -288,8 +288,8 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         setProperty("hibernate.connection.autocommit", "true").
         setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
         setProperty("hibernate.hbm2ddl.auto", "create-drop").
-        setProperty("hibernate.show_sql", "false")
-        .setProperty("hibernate.format_sql", "true");
+        setProperty("hibernate.show_sql", "false").
+        setProperty("hibernate.format_sql", "false");
 
     	for (Class<?> cls : CSM_CLASSES) {
             configuration.addClass(cls);

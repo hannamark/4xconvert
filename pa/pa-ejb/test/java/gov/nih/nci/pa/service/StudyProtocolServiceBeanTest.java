@@ -298,13 +298,12 @@ public class StudyProtocolServiceBeanTest {
         assertNotNull(ii.getExtension());
     }
 
-    @Test(expected = PAException.class)
+    @Test
     public void deleteStudyProtocol() throws Exception {
-        InterventionalStudyProtocolDTO ispDTO =
-                InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
-
-        Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
-        remoteEjb.deleteStudyProtocol(ii);
+        InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
+        sp = (InterventionalStudyProtocol) StudyProtocolTest.createStudyProtocolObj(sp);
+        sp = StudyProtocolTest.createInterventionalStudyProtocolObj(sp);
+        remoteEjb.deleteStudyProtocol(IiConverter.convertToStudyProtocolIi(sp.getId()));
     }
 
     @Test

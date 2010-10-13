@@ -80,6 +80,8 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.ArmBeanLocal;
@@ -107,8 +109,7 @@ import gov.nih.nci.pa.service.StudyOutcomeMeasureBeanLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusBeanLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
-import gov.nih.nci.pa.service.StudyProtocolBeanLocal;
-import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceBean;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityBeanLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingBeanLocal;
@@ -146,6 +147,8 @@ import gov.nih.nci.pa.service.util.report.TSRReportSummary4Information;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialDesign;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialIdentification;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.ByteArrayOutputStream;
@@ -170,7 +173,6 @@ public class TSRReportGeneratorServiceTest {
 
     private final TSRReportGeneratorServiceBean bean = new TSRReportGeneratorServiceBean();
 
-    private final StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
 
     StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
 
@@ -212,9 +214,15 @@ public class TSRReportGeneratorServiceTest {
 
     PAOrganizationServiceRemote  paOrganizationService = new PAOrganizationServiceBean();
 
+    private ServiceLocator paSvcLoc;
+
     @Before
     public void setUp() throws Exception {
-        bean.setStudyProtocolService(studyProtocolService);
+
+        paSvcLoc = mock (ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
+        when(paSvcLoc.getStudyProtocolService()).thenReturn(new StudyProtocolServiceBean());
+
         bean.setArmService(armService);
         bean.setOcsr(ocsr);
         bean.setPlannedActivityService(plannedActivityService);

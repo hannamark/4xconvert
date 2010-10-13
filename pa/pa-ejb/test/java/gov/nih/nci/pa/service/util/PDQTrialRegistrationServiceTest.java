@@ -83,13 +83,12 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
@@ -137,6 +136,7 @@ import gov.nih.nci.pa.service.TrialRegistrationBeanLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
@@ -186,7 +186,6 @@ public class PDQTrialRegistrationServiceTest {
     private final URL testUpdateXMLUrl = this.getClass().getResource("/sample-pdq-update.xml");
     private Map<Ii, OrganizationDTO> mockOrgs = new HashMap<Ii, OrganizationDTO>();
     private PersonDTO mockPerson = new PersonDTO();
-    private Ii trialIi;
 
     @Before
     public void setUp() throws Exception {
@@ -206,10 +205,10 @@ public class PDQTrialRegistrationServiceTest {
         ra.setCountry(c);
         TestSchema.addUpdObject(ra);
 
-        ra = new RegulatoryAuthority();
-        ra.setAuthorityName("Institutional Review Board");
-        ra.setCountry(c);
-        TestSchema.addUpdObject(ra);
+        RegulatoryAuthority ra2 = new RegulatoryAuthority();
+        ra2.setAuthorityName("Institutional Review Board");
+        ra2.setCountry(c);
+        TestSchema.addUpdObject(ra2);
 
         RegistryUser create = new RegistryUser();
         create.setAddressLine("xxxxx");
@@ -293,6 +292,7 @@ public class PDQTrialRegistrationServiceTest {
         when(paSvcLoc.getArmService()).thenReturn(new ArmServiceBean());
         when(paSvcLoc.getStudySiteContactService()).thenReturn(new StudySiteContactServiceBean());
         when(paSvcLoc.getOutcomeMeasureService()).thenReturn(new StudyOutcomeMeasureBeanLocal());
+        when(paSvcLoc.getTSRReportGeneratorService()).thenReturn(new TSRReportGeneratorServiceBean());
         DocumentServiceBean docService = mock(DocumentServiceBean.class);
         when(paSvcLoc.getDocumentService()).thenReturn(docService);
 
@@ -384,14 +384,21 @@ public class PDQTrialRegistrationServiceTest {
         } catch (Exception e) {
             assertEquals("URL is not set, call setUrl first.", e.getMessage());
         }
-        trialIi = bean.loadRegistrationElementFromPDQXml(testXMLUrl, TestSchema.getUser().getLoginName());
+
+        Ii trialIi = bean.loadRegistrationElementFromPDQXml(testXMLUrl, TestSchema.getUser().getLoginName());
         assertNotNull("Null identifier returned when registering a trial", trialIi);
+
+        Ii oldNciId = PAUtil.getAssignedIdentifier(PaRegistry.getStudyProtocolService().getStudyProtocol(trialIi));
 
         //Accept the trial then re-run to test updating.
         bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.SUBMISSION_ACCEPTED,
                 StConverter.convertToSt("Accepted."));
-        assertNull("Non Null identifier returned when updating a trial.",
-                bean.loadRegistrationElementFromPDQXml(testUpdateXMLUrl, TestSchema.getUser().getLoginName()));
+
+        Ii newTrialIi = bean.loadRegistrationElementFromPDQXml(testUpdateXMLUrl, TestSchema.getUser().getLoginName());
+        Ii newNciId = PAUtil.getAssignedIdentifier(PaRegistry.getStudyProtocolService().getStudyProtocol(trialIi));
+        assertNotNull("Null identifier returned when updating a trial.", trialIi);
+        assertFalse("Study Protocol id should not be equal.", trialIi.getExtension().equals(newTrialIi.getExtension()));
+        assertEquals("NCI IDs should be equal.", oldNciId.getExtension(), newNciId.getExtension());
     }
 
     @Test
@@ -401,20 +408,5 @@ public class PDQTrialRegistrationServiceTest {
         assertNotNull(bean.getProtocolQueryService());
         bean.setPaServiceUtils(null);
         assertNull(bean.getPaServiceUtils());
-    }
-    @Test
-    public void testException() throws PAException, IOException {
-        RegulatoryInformationBean regulatoryBean =  mock (RegulatoryInformationBean.class);
-        when(paSvcLoc.getRegulatoryInformationService()).thenReturn(regulatoryBean);
-        when(regulatoryBean.getRegulatoryAuthorityId(anyString(),anyString())).thenThrow(new PAException());
-        try {
-            bean.loadRegistrationElementFromPDQXml(testXMLUrl, TestSchema.getUser().getLoginName());
-            fail("as regulatory info is null");
-        } catch (PAException e) {
-
-        }
-        verify(regulatoryBean, org.mockito.Mockito.atLeastOnce()).getRegulatoryAuthorityId(
-                anyString(),anyString());
-
     }
 }

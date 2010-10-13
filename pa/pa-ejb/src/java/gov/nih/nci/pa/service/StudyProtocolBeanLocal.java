@@ -84,9 +84,30 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.pa.domain.Arm;
+import gov.nih.nci.pa.domain.Document;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
+import gov.nih.nci.pa.domain.PerformedActivity;
+import gov.nih.nci.pa.domain.PlannedActivity;
+import gov.nih.nci.pa.domain.StratumGroup;
+import gov.nih.nci.pa.domain.StudyCheckout;
+import gov.nih.nci.pa.domain.StudyContact;
+import gov.nih.nci.pa.domain.StudyDisease;
+import gov.nih.nci.pa.domain.StudyInbox;
+import gov.nih.nci.pa.domain.StudyIndlde;
+import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyOnhold;
+import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
+import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
+import gov.nih.nci.pa.domain.StudyRelationship;
+import gov.nih.nci.pa.domain.StudyResourcing;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.domain.Submission;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
@@ -135,6 +156,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -381,8 +403,53 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * @param ii ii of study Protocol
      * @throws PAException on any error
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void deleteStudyProtocol(Ii ii) throws PAException {
-        throw new PAException("Method Not Yey Implemented ");
+        if (PAUtil.isIiNull(ii)) {
+            throw new PAException("Ii should not be null.");
+        }
+        try {
+            String delete = "DELETE from ";
+            String whereClause = " where studyProtocol.id = :id";
+            List<String> hqls = new ArrayList<String>();
+            hqls.add(delete + StudyOverallStatus.class.getName() + whereClause);
+            hqls.add(delete + DocumentWorkflowStatus.class.getName() + whereClause);
+            hqls.add(delete + Document.class.getName() + whereClause);
+            hqls.add(delete + StudySite.class.getName() + whereClause);
+            hqls.add(delete + StudyContact.class.getName() + whereClause);
+            hqls.add(delete + StudyResourcing.class.getName() + whereClause);
+            hqls.add(delete + PlannedActivity.class.getName() + whereClause);
+            hqls.add(delete + Arm.class.getName() + whereClause);
+            hqls.add(delete + StudyDisease.class.getName() + whereClause);
+            hqls.add(delete + StudyMilestone.class.getName() + whereClause);
+            hqls.add(delete + StudyOnhold.class.getName() + whereClause);
+            hqls.add(delete + StudySubject.class.getName() + whereClause);
+            hqls.add(delete + PerformedActivity.class.getName() + whereClause);
+            hqls.add(delete + Submission.class.getName() + whereClause);
+            hqls.add(delete + StudyInbox.class.getName() + whereClause);
+            hqls.add(delete + StudyCheckout.class.getName() + whereClause);
+            hqls.add(delete + StudyIndlde.class.getName() + whereClause);
+            hqls.add(delete + StudyRecruitmentStatus.class.getName() + whereClause);
+            hqls.add(delete + StudyRegulatoryAuthority.class.getName() + whereClause);
+            hqls.add(delete + StratumGroup.class.getName() + whereClause);
+            hqls.add(delete + StudyRelationship.class.getName()
+                    + " where sourceStudyProtocol.id = :id or targetStudyProtocol.id = :id");
+            hqls.add(delete + StudyProtocol.class.getName() + " where id = :id");
+
+
+            Long spId = IiConverter.convertToLong(ii);
+            Session session = HibernateUtil.getCurrentSession();
+            session.createSQLQuery("DELETE from study_otheridentifiers where study_protocol_id = "
+                    + spId).executeUpdate();
+            session.createSQLQuery("DELETE from study_owner where study_id = " + spId).executeUpdate();
+
+            for (String hql : hqls) {
+                session.createQuery(hql).setParameter("id", spId).executeUpdate();
+            }
+        }  catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception while deleting ii = "
+                    + IiConverter.convertToString(ii) + ".", hbe);
+        }
     }
 
     /**

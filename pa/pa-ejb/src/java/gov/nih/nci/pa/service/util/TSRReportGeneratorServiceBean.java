@@ -140,7 +140,6 @@ import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
-import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
@@ -176,6 +175,7 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -211,8 +211,6 @@ import org.apache.commons.lang.StringUtils;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceRemote {
 
-    @EJB
-    private StudyProtocolServiceLocal studyProtocolService;
     @EJB
     private StudyOverallStatusServiceLocal studyOverallStatusService;
     @EJB
@@ -316,7 +314,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
         ByteArrayOutputStream outputByteStream = null;
 
-        StudyProtocolDTO studyProtocolDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
+        StudyProtocolDTO studyProtocolDto = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         boolean isProprietaryTrial = !PAUtil.isBlNull(studyProtocolDto.getProprietaryTrialIndicator())
             && BlConverter.convertToBoolean(studyProtocolDto.getProprietaryTrialIndicator());
 
@@ -450,7 +448,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             gtd.setPhase(getValue(studyProtocolDto.getPhaseCode(), INFORMATION_NOT_PROVIDED));
             gtd.setPhaseAdditonalQualifier(getValue(studyProtocolDto.getPhaseAdditionalQualifierCode(), null));
             InterventionalStudyProtocolDTO ispDTO =
-                studyProtocolService.getInterventionalStudyProtocol(studyProtocolDto.getIdentifier());
+                PaRegistry.getStudyProtocolService().getInterventionalStudyProtocol(studyProtocolDto.getIdentifier());
             boolean interventionalType = ispDTO != null ? true : false;
             gtd.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_OBSERVATIONAL);
         } else {
@@ -809,8 +807,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
     private void setTrialDesign(StudyProtocolDTO studyProtocolDto) throws PAException {
         TSRReportTrialDesign trialDesign = new TSRReportTrialDesign();
-        InterventionalStudyProtocolDTO ispDTO = studyProtocolService
-                .getInterventionalStudyProtocol(studyProtocolDto.getIdentifier());
+        InterventionalStudyProtocolDTO ispDTO =
+            PaRegistry.getStudyProtocolService().getInterventionalStudyProtocol(studyProtocolDto.getIdentifier());
         boolean interventionalType = ispDTO != null ? true : false;
         trialDesign.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_OBSERVATIONAL);
         if (ispDTO != null) {
@@ -1144,12 +1142,6 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return (i != null && i.getValue() != null ? i.getValue().toString() : defaultValue);
     }
 
-    /**
-     * @param studyProtocolService the studyProtocolService to set
-     */
-    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
-        this.studyProtocolService = studyProtocolService;
-    }
 
     /**
      * @param studyOverallStatusService the studyOverallStatusService to set

@@ -108,5 +108,8 @@ public class InterventionAlternateNameServiceTest {
     public void getByInterventionTest() throws Exception {
         List<InterventionAlternateNameDTO> dtoList = remoteEjb.getByIntervention(ii);
         assertEquals(2, dtoList.size());
+
+        dtoList = remoteEjb.getByIntervention(new Ii[] {ii});
+        assertEquals(2, dtoList.size());
      }
 }

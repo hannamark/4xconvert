@@ -115,10 +115,12 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
@@ -180,6 +182,7 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
      *@throws PAException on error
      * @throws IOException on error
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Ii loadRegistrationElementFromPDQXml(URL xmlUrl, String userName) throws PAException, IOException {
         PDQRegistrationXMLParser parser = new PDQRegistrationXMLParser();
         parser.setUrl(xmlUrl);
@@ -196,7 +199,7 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
             resultIi = registerTrial(parser, userName);
         } else {
             //Otherwise we're just going to update.
-            updateTrial(parser, IiConverter.convertToStudyProtocolIi(trial.getStudyProtocolId()), userName);
+            resultIi = updateTrial(parser, IiConverter.convertToStudyProtocolIi(trial.getStudyProtocolId()), userName);
         }
         return resultIi;
     }
@@ -230,24 +233,49 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
      * @param parser the parsed XML
      * @param studyProtocolIi the id of the trial to update
      * @param userName grid username
+     * @return the identifier of the newly created trial
      * @throws PAException on error
      * @throws IOException on error
      */
-    private void updateTrial(PDQRegistrationXMLParser parser, Ii studyProtocolIi, String userName) throws PAException,
+    private Ii updateTrial(PDQRegistrationXMLParser parser, Ii studyProtocolIi, String userName) throws PAException,
     IOException {
-        StudyProtocolDTO trial = getStudyProtocol(parser.getStudyProtocolDTO(), userName);
-        trial.setIdentifier(studyProtocolIi);
+        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
 
-        StudyOverallStatusDTO statusDTO = getOverallStatusDTO(parser.getStudyOverallStatusDTO());
-        statusDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        //Generate the tsr report to attach to newly created trial.
+        ByteArrayOutputStream tsrReport =
+            PaRegistry.getTSRReportGeneratorService().generateRtfTsrReport(spDTO.getIdentifier());
+        DocumentDTO tsrDoc = getDocument(DocumentTypeCode.TSR, "tsrreport.rtf", tsrReport.toByteArray());
+        List<DocumentDTO> allDocuments = getDocumentDtos(parser.getUrl());
+        allDocuments.add(tsrDoc);
 
-        PaRegistry.getTrialRegistrationService().update(trial, statusDTO,
+        //This is the old NCI ID which will replace the NCI ID of the newly created trial.
+        Ii nciId = PAUtil.getAssignedIdentifier(spDTO);
+
+        //Delete the old trial
+        PaRegistry.getStudyProtocolService().deleteStudyProtocol(studyProtocolIi);
+
+        //Then create the new trial
+        Ii newSpId = PaRegistry.getTrialRegistrationService().createCompleteInterventionalStudyProtocol(
+                getStudyProtocol(parser.getStudyProtocolDTO(), userName),
+                getOverallStatusDTO(parser.getStudyOverallStatusDTO()),
+                getStudyIndIde(parser.getStudyIndldeDTOs(), parser.getStudyIdentifierMap()), null,
+                allDocuments,
+                paServiceUtils.findOrCreateEntity(parser.getLeadOrganizationDTO()),
+                paServiceUtils.findOrCreateEntity(parser.getPrincipalInvestigatorDTO()),
+                paServiceUtils.findOrCreateEntity(parser.getSponsorOrganizationDTO()),
+                parser.getLeadOrganizationSiteIdentifierDTO(),
                 loadStudyIdentifierDTOs(parser.getStudyIdentifierMap()),
-                getStudyIndIde(parser.getStudyIndldeDTOs(), parser.getStudyIdentifierMap()),
-                null, null, getStudyContactDTO(parser.getResponsiblePartyContact()), null,
-                getSummary4OrganizationDTO(), getSummary4StudyResourcingDTO(), null,
+                getStudyContactDTO(parser.getResponsiblePartyContact()), null, getSummary4OrganizationDTO(),
+                getSummary4StudyResourcingDTO(), null,
                 getStudyRegulatoryAuthDTO(parser.getRegAuthMap(), parser.getStudyIndldeDTOs()),
-                null, null, null, BlConverter.convertToBl(Boolean.FALSE));
+                BlConverter.convertToBl(Boolean.FALSE));
+
+        //Finally update the NCI ID to be the old one.
+        spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(newSpId);
+        spDTO.getSecondaryIdentifiers().getItem().remove(PAUtil.getAssignedIdentifier(spDTO));
+        spDTO.getSecondaryIdentifiers().getItem().add(nciId);
+        PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
+        return newSpId;
     }
 
     /**
