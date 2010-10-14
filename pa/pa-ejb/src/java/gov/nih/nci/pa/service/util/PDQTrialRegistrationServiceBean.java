@@ -86,7 +86,6 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
@@ -110,7 +109,6 @@ import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -123,10 +121,8 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -150,7 +146,8 @@ import org.apache.log4j.Logger;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServiceBeanRemote {
+public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelper
+    implements PDQTrialRegistrationServiceBeanRemote {
     @EJB
     private OrganizationCorrelationServiceRemote orgCorrelationService;
     @EJB
@@ -216,16 +213,15 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
                 getStudyProtocol(parser.getStudyProtocolDTO(), userName),
                 getOverallStatusDTO(parser.getStudyOverallStatusDTO()),
                 getStudyIndIde(parser.getStudyIndldeDTOs(), parser.getStudyIdentifierMap()), null,
-                getDocumentDtos(parser.getUrl()),
-                paServiceUtils.findOrCreateEntity(parser.getLeadOrganizationDTO()),
-                paServiceUtils.findOrCreateEntity(parser.getPrincipalInvestigatorDTO()),
-                paServiceUtils.findOrCreateEntity(parser.getSponsorOrganizationDTO()),
-                parser.getLeadOrganizationSiteIdentifierDTO(),
-                loadStudyIdentifierDTOs(parser.getStudyIdentifierMap()),
-                getStudyContactDTO(parser.getResponsiblePartyContact()), null, getSummary4OrganizationDTO(),
+                getDocumentDtos(parser.getUrl()), findOrCreateEntity(parser.getLeadOrganizationDTO()),
+                findOrCreateEntity(parser.getPrincipalInvestigatorDTO()),
+                findOrCreateEntity(parser.getSponsorOrganizationDTO()),
+                parser.getLeadOrganizationSiteIdentifierDTO(), loadStudyIdentifierDTOs(parser.getStudyIdentifierMap()),
+                getStudyContactDTO(parser.getResponsiblePartyContact()), null,
+                getSummary4OrganizationDTO(),
                 getSummary4StudyResourcingDTO(), null,
                 getStudyRegulatoryAuthDTO(parser.getRegAuthMap(), parser.getStudyIndldeDTOs()),
-                BlConverter.convertToBl(Boolean.FALSE));
+                BlConverter.convertToBl(Boolean.TRUE));
     }
 
     /**
@@ -260,15 +256,15 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
                 getOverallStatusDTO(parser.getStudyOverallStatusDTO()),
                 getStudyIndIde(parser.getStudyIndldeDTOs(), parser.getStudyIdentifierMap()), null,
                 allDocuments,
-                paServiceUtils.findOrCreateEntity(parser.getLeadOrganizationDTO()),
-                paServiceUtils.findOrCreateEntity(parser.getPrincipalInvestigatorDTO()),
-                paServiceUtils.findOrCreateEntity(parser.getSponsorOrganizationDTO()),
+                findOrCreateEntity(parser.getLeadOrganizationDTO()),
+                findOrCreateEntity(parser.getPrincipalInvestigatorDTO()),
+                findOrCreateEntity(parser.getSponsorOrganizationDTO()),
                 parser.getLeadOrganizationSiteIdentifierDTO(),
                 loadStudyIdentifierDTOs(parser.getStudyIdentifierMap()),
                 getStudyContactDTO(parser.getResponsiblePartyContact()), null, getSummary4OrganizationDTO(),
                 getSummary4StudyResourcingDTO(), null,
                 getStudyRegulatoryAuthDTO(parser.getRegAuthMap(), parser.getStudyIndldeDTOs()),
-                BlConverter.convertToBl(Boolean.FALSE));
+                BlConverter.convertToBl(Boolean.TRUE));
 
         //Finally update the NCI ID to be the old one.
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(newSpId);
@@ -333,8 +329,6 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
     private StudyProtocolDTO getStudyProtocol(StudyProtocolDTO studyProtocolDTO, String userName) {
         studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
         studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        //need to get information for this from charles /need to parser the new xml to get this value
-        studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
         return studyProtocolDTO;
     }
 
@@ -347,8 +341,7 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
         String studySiteCode = OVERALL_STATUS_MAP.get(StringUtils.upperCase(
                 studyOverallStatusDTO.getStatusCode().getCode()));
         statusDTO.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(studySiteCode)));
-        //need to parser the new xml to get this value
-        statusDTO.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        statusDTO.setStatusDate(studyOverallStatusDTO.getStatusDate());
         //Need to provide an xml element for status reason
         statusDTO.setReasonText(StConverter.convertToSt("Pending Reason."));
         return statusDTO;
@@ -360,9 +353,14 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
      */
     private StudyContactDTO getStudyContactDTO(PersonDTO responsiblePartyContact) {
         StudyContactDTO contactDTO = new StudyContactDTO();
-        contactDTO.setTelecomAddresses(responsiblePartyContact.getTelecomAddress());
+        if (!PAUtil.isDSetTelNull(responsiblePartyContact.getTelecomAddress())) {
+            contactDTO.setTelecomAddresses(responsiblePartyContact.getTelecomAddress());
+        } else {
+            contactDTO.setTelecomAddresses(getUnknownTelecomeAddress());
+        }
         return contactDTO;
     }
+
 
     /**
      * @return
@@ -380,16 +378,13 @@ public class PDQTrialRegistrationServiceBean implements PDQTrialRegistrationServ
     private OrganizationDTO getSummary4OrganizationDTO() throws PAException {
         OrganizationDTO summ4OrgDTO = new OrganizationDTO();
         summ4OrgDTO.setName(EnOnConverter.convertToEnOn("unknown"));
-        List<String> email = Arrays.asList("unknown@unknown.com");
-        summ4OrgDTO.setName(EnOnConverter.convertToEnOn("Unknown"));
-        summ4OrgDTO.setTelecomAddress(DSetConverter.convertListToDSet(email, DSetConverter.TYPE_EMAIL, null));
+        summ4OrgDTO.setTelecomAddress(DSetConverter.convertListToDSet(Arrays.asList("unknown@unknown.com"),
+                DSetConverter.TYPE_EMAIL, null));
         summ4OrgDTO.setPostalAddress(AddressConverterUtil.create("UNKNOWN", "UNKNOWN", "UNKNOWN", "MD", "00000",
         "USA"));
         summ4OrgDTO = paServiceUtils.findOrCreateEntity(summ4OrgDTO);
-
         return summ4OrgDTO;
     }
-
     /**
      * @param urlXML
      * @return

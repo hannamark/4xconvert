@@ -85,7 +85,6 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.enums.AllocationCode;
@@ -119,10 +118,8 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
-import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.IOException;
 import java.net.URL;
@@ -154,7 +151,8 @@ import org.apache.log4j.Logger;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class PDQTrialAbstractionServiceBean implements PDQTrialAbstractionServiceBeanRemote {
+public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelper
+            implements PDQTrialAbstractionServiceBeanRemote {
     @EJB
     private OrganizationCorrelationServiceRemote orgCorrelationService;
 
@@ -217,57 +215,34 @@ public class PDQTrialAbstractionServiceBean implements PDQTrialAbstractionServic
      * @param locationsMap
      * @param studyProtocolIi
      */
-    private void loadParticipatingSites(Map<OrganizationDTO, Map<PersonDTO, StudySiteAccrualStatusDTO>> locationsMap,
-            Ii studyProtocolIi) {
+    private void loadParticipatingSites(Map<OrganizationDTO, Map<StudySiteAccrualStatusDTO, Map<PoDto, String>>>
+        locationsMap, Ii studyProtocolIi) {
         for (OrganizationDTO locOrg : locationsMap.keySet()) {
             try {
-                OrganizationDTO  poOrgDTO = paServiceUtils.findEntity(locOrg);
-                if (poOrgDTO != null) {
-                    StudySiteDTO studySiteDTO = new StudySiteDTO();
-                    studySiteDTO.setStudyProtocolIdentifier(studyProtocolIi);
-                    studySiteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
-                    studySiteDTO.setIdentifier(null);
-                    studySiteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-                    studySiteDTO.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
+                OrganizationDTO  poOrgDTO = findOrCreateEntity(locOrg);
+                StudySiteDTO studySiteDTO = new StudySiteDTO();
+                studySiteDTO.setStudyProtocolIdentifier(studyProtocolIi);
+                studySiteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+                studySiteDTO.setIdentifier(null);
+                studySiteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+                studySiteDTO.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
                             new Timestamp(new Date().getTime()), null));
 
-                    Map<PersonDTO, StudySiteAccrualStatusDTO> valueMap = locationsMap.get(locOrg);
-                    StudySiteAccrualStatusDTO recrutingStatus = null;
-                    DSet<Tel> telecom = null;
-                    PersonDTO primaryContactDTO = null;
-                    for (PersonDTO locContact : valueMap.keySet()) {
-                        recrutingStatus = valueMap.get(locContact);
-                        telecom = locContact.getTelecomAddress();
-                        primaryContactDTO = locContact;
-                        //search the Entity based on First and last name.
-                        primaryContactDTO.setTelecomAddress(null);
-                        primaryContactDTO = paServiceUtils.findEntity(locContact);
-                    }
-                    //Un-till Charles comes back with answer it is defaulted to todays
-                    recrutingStatus.setStatusDate(TsConverter.convertToTs(PAUtil.getCurrentTime()));
+                Map<StudySiteAccrualStatusDTO, Map<PoDto, String>> valueMap = locationsMap.get(locOrg);
+                StudySiteAccrualStatusDTO recrutingStatus = null;
+                for (StudySiteAccrualStatusDTO statusDTO : valueMap.keySet()) {
+                    recrutingStatus = statusDTO;
                     String poOrgId = IiConverter.convertToString(poOrgDTO.getIdentifier());
                     Ii studySiteIi = PaRegistry.getParticipatingSiteService().createStudySiteParticipant(
                             studySiteDTO, recrutingStatus, paServiceUtils.getPoHcfIi(poOrgId)).getIdentifier();
-                    if (primaryContactDTO != null) {
-                        ClinicalResearchStaffDTO crsDTO = paServiceUtils.getCrsDTO(primaryContactDTO.getIdentifier(),
-                                poOrgId);
-                        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-                        HealthCareProviderDTO hcpDTO = paServiceUtils.getHcpDTO(spDTO.getStudyProtocolType().getValue(),
-                                primaryContactDTO.getIdentifier(), poOrgId);
-                        PaRegistry.getParticipatingSiteService().addStudySitePrimaryContact(studySiteIi, crsDTO ,
-                                hcpDTO , null, telecom);
-                    }
-                } else {
-                   LOG.debug("Could not load participating site since Organization "
-                           + EnOnConverter.convertEnOnToString(locOrg.getName()) + " was not able be find.");
+                    Map<PoDto, String> contactMap = valueMap.get(statusDTO);
+                    addContact(studyProtocolIi, poOrgId, studySiteIi, contactMap);
                 }
             } catch (Exception e) {
                 LOG.error("error while loading participating site", e);
             }
         }
     }
-
-
     /**
      * @param collaboratorOrgDTOs
      * @param studyProtocolIi
@@ -279,22 +254,17 @@ public class PDQTrialAbstractionServiceBean implements PDQTrialAbstractionServic
             if (!StringUtils.equalsIgnoreCase("NCI", orgName)) {
                 try {
                     siteDTO = new StudySiteDTO();
-                    OrganizationDTO poOrgDTO = paServiceUtils.findEntity(orgDTO);
-                    if (poOrgDTO != null) {
-                        Long paROId = getOrgCorrelationService().createResearchOrganizationCorrelations(
+                    OrganizationDTO poOrgDTO = findOrCreateEntity(orgDTO);
+                    Long paROId = getOrgCorrelationService().createResearchOrganizationCorrelations(
                             IiConverter.convertToString(poOrgDTO.getIdentifier()));
-                        siteDTO.setResearchOrganizationIi(IiConverter.convertToIi(paROId));
-                        siteDTO.setStudyProtocolIdentifier(studyProtocolIi);
-                        siteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-                        siteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.FUNDING_SOURCE));
-                        PaRegistry.getStudySiteService().create(siteDTO);
-                    } else {
-                        LOG.debug("Could not load Collaborator " + orgName);
-                    }
+                    siteDTO.setResearchOrganizationIi(IiConverter.convertToIi(paROId));
+                    siteDTO.setStudyProtocolIdentifier(studyProtocolIi);
+                    siteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+                    siteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.FUNDING_SOURCE));
+                    PaRegistry.getStudySiteService().create(siteDTO);
                 } catch (PAException e) {
                     LOG.error("error loading collaborator for Org " + orgName, e);
                 }
-
             }
         }
     }

@@ -84,17 +84,19 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -168,7 +170,10 @@ public class PDQRegistrationXMLParserTest {
         assertEquals("Anticipated", spDto.getPrimaryCompletionDateTypeCode().getCode());
         assertEquals("II", spDto.getPhaseCode().getCode());
 
-        assertEquals("No longer recruiting", rXMLParser.getStudyOverallStatusDTO().getStatusCode().getCode());
+
+        StudyOverallStatusDTO  statusDTO = rXMLParser.getStudyOverallStatusDTO();
+        assertEquals("No longer recruiting", CdConverter.convertCdToString(statusDTO.getStatusCode()));
+
 
         assertEquals(2, rXMLParser.getStudyProtocolDTO().getSecondaryIdentifiers().getItem().size());
 
@@ -185,9 +190,18 @@ public class PDQRegistrationXMLParserTest {
         assertNotNull(rXMLParser.getPrincipalInvestigatorDTO());
         assertNotNull(rXMLParser.getLeadOrganizationDTO());
         assertTrue(StringUtils.contains(EnOnConverter.convertEnOnToString(rXMLParser.getLeadOrganizationDTO().getName())
-                , "Tom Baker Cancer Centre"));
-    }
+                , "Tom Baker Cancer Centre "));
 
+    }
+    @Test
+    public void testNewXml() {
+        rXMLParser.setUrl(this.getClass().getResource("/CDR65658.xml"));
+        rXMLParser.parse();
+        assertEquals("Actual", CdConverter.convertCdToString(rXMLParser.getStudyProtocolDTO().getStartDateTypeCode()));
+        assertTrue(StringUtils.contains(EnOnConverter.convertEnOnToString(rXMLParser.getLeadOrganizationDTO().getName())
+                , "Southwest Oncology Group"));
+        assertEquals("12/15/2007", TsConverter.convertToString(rXMLParser.getStudyOverallStatusDTO().getStatusDate()));
+    }
     @Test
     public void testStudyInd() {
         when(identifierPersonSvc.search(any(IdentifiedPersonDTO.class))).thenReturn(new ArrayList<IdentifiedPersonDTO>());

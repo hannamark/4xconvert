@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
@@ -85,12 +86,27 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         readSponsor(clinicalStudy.getChild("sponsors"));
         readOversightInfo(clinicalStudy.getChild("oversight_info"));
         readOverallOfficials(clinicalStudy);
-
+        Element leadOrgElmt = clinicalStudy.getChild("lead_org");
+        if (leadOrgElmt != null && CollectionUtils.isNotEmpty(leadOrgElmt.getContent())) {
+            String ctepId = leadOrgElmt.getAttributeValue("ctep-id");
+            if (StringUtils.isNotEmpty(ctepId)) {
+                leadOrganizationDTO = getPaServiceUtils().getOrganizationByCtepId(ctepId);
+            }
+            if (leadOrganizationDTO == null) {
+                leadOrganizationDTO = new OrganizationDTO();
+            }
+            leadOrganizationDTO.setName(EnOnConverter.convertToEnOn(leadOrgElmt.getText()));
+        }
     }
 
     private void doStudyOverallStatus(Element parent) {
         setStudyOverallStatusDTO(new StudyOverallStatusDTO());
         getStudyOverallStatusDTO().setStatusCode(CdConverter.convertStringToCd(getText(parent, "overall_status")));
+        Element leadOrgStatusElmt = parent.getChild("lead_org_status");
+        if (leadOrgStatusElmt != null && CollectionUtils.isNotEmpty(leadOrgStatusElmt.getContent())) {
+            getStudyOverallStatusDTO().setStatusDate(tsFromString(YYYY_MM_DD,
+                leadOrgStatusElmt.getAttributeValue("status_date")));
+        }
     }
     private void readStudyDesign(Element parent) {
         if (parent == null) {
@@ -106,7 +122,11 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt(studyType));
         studyProtocolDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(getText(studyDesignElt.getChild(
                 "interventional_design"), "interventional_subtype")));
-        studyProtocolDTO.setStartDate(tsFromString(YYYY_MM_DD, parent.getChildText("start_date")));
+        if (parent.getChild("start_date") != null) {
+            studyProtocolDTO.setStartDate(tsFromString(YYYY_MM_DD, parent.getChildText("start_date")));
+            studyProtocolDTO.setStartDateTypeCode(CdConverter.convertStringToCd(parent.getChild("start_date")
+                .getAttributeValue("date_type")));
+        }
         studyProtocolDTO.setPrimaryCompletionDate(tsFromString(YYYY_MM_DD, getText(parent, "primary_compl_date")));
         studyProtocolDTO.setPrimaryCompletionDateTypeCode(
                 CdConverter.convertStringToCd(getText(parent, "primary_compl_date_type")));
@@ -244,7 +264,6 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
                         "affiliation")));
             }
         }
-
     }
 
     /**

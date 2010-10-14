@@ -118,6 +118,11 @@ import org.jdom.input.SAXBuilder;
  *
  */
 public abstract class AbstractPDQXmlParser {
+    /**
+     *
+     */
+    private static final int INSERT_LOC = 3;
+    private static final int INSERT_LOC_SEVEN = 7;
     private URL url;
     private Document document;
     private static final Logger LOG = Logger.getLogger(AbstractPDQXmlParser.class);
@@ -167,7 +172,7 @@ public abstract class AbstractPDQXmlParser {
         DSet<Tel> telecomeAddress = null;
         if (StringUtils.isNotEmpty(phone)) {
             List<String> phoneList = new ArrayList<String>();
-            phoneList.add(phone);
+            phoneList.add(convertPhoneToUSAFormat(phone));
             telecomeAddress = DSetConverter.convertListToDSet(phoneList, "PHONE", telecomeAddress);
         }
         if (StringUtils.isNotEmpty(email)) {
@@ -177,7 +182,16 @@ public abstract class AbstractPDQXmlParser {
         }
         return telecomeAddress;
     }
-
+    private String convertPhoneToUSAFormat(String inputPhone) {
+        String iPhone = StringUtils.deleteWhitespace(inputPhone);
+        iPhone = StringUtils.remove(iPhone, '(');
+        iPhone = StringUtils.remove(iPhone, ')');
+        iPhone = StringUtils.remove(iPhone, '-');
+        StringBuffer formattedPhone = new StringBuffer(iPhone);
+        formattedPhone.insert(INSERT_LOC , "-");
+        formattedPhone.insert(INSERT_LOC_SEVEN , "-");
+        return formattedPhone.toString();
+    }
     /**
      *
      * @param parent parent

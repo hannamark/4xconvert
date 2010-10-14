@@ -5,7 +5,6 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -30,13 +29,13 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -162,14 +161,13 @@ public class PDQXMLParserTest {
     @Test
     public void testReadLocations() {
         setURLAndParse();
-        Map<OrganizationDTO, Map<PersonDTO, StudySiteAccrualStatusDTO>> location
+        Map<OrganizationDTO, Map<StudySiteAccrualStatusDTO,Map<PoDto, String>>> location
             = abstractionElementParser.getLocationsMap();
         for (OrganizationDTO locOrg : location.keySet()) {
-            Map<PersonDTO, StudySiteAccrualStatusDTO> valueMap = location.get(locOrg);
+            Map<StudySiteAccrualStatusDTO, Map<PoDto, String>> valueMap = location.get(locOrg);
             String orgName = EnOnConverter.convertEnOnToString(locOrg.getName());
-            assertEquals("London Regional Cancer Program at London Health Sciences Centre", orgName);
-            for (PersonDTO locContact : valueMap.keySet()) {
-                StudySiteAccrualStatusDTO recrutingStatus = valueMap.get(locContact);
+            assertEquals("Adventist Medical Center", orgName);
+            for (StudySiteAccrualStatusDTO recrutingStatus : valueMap.keySet()) {
                 assertEquals(RecruitmentStatusCode.RECRUITING.getCode(), recrutingStatus.getStatusCode().getCode());
                 break;
             }

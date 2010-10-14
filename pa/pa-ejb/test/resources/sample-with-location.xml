@@ -258,6 +258,41 @@ Other:
       <phone>519-685-5194</phone>
     </contact>
   </location>
+  <location>
+    <facility ctep-id="OH182">
+      <name>Adena Regional Medical Center</name>
+      <address>
+        <city>Chillicothe</city>
+        <state>Ohio</state>
+        <zip>45601</zip>
+        <country>U.S.A.</country>
+      </address>
+    </facility>
+    <status>Recruiting</status>
+    <contact>
+      <last_name>Clinical Trials Office - Adena Regional Medical Center</last_name>
+      <phone>877-779-7585</phone>
+    </contact>
+  </location>
+  <location>
+    <facility ctep-id="OR107">
+      <name>Adventist Medical Center</name>
+      <address>
+        <city>Portland</city>
+        <state>Oregon</state>
+        <zip>97216</zip>
+        <country>U.S.A.</country>
+      </address>
+    </facility>
+    <status>Recruiting</status>
+    <contact role="Principal investigator">
+      <first_name>Janet</first_name>
+      <middle_name>C.</middle_name>
+      <last_name>Ruzich</last_name>
+      <phone>503-257-2500</phone>
+    </contact>
+  </location>
+  
   <link>
     <url>http://cancer.gov/clinicaltrials/OSU-01H0185</url>
     <description>Clinical trial summary from the National Cancer Institute's PDQ® database</description>
