@@ -97,6 +97,7 @@ public class PaEarPropertyReader {
     private static final String RESOURCE_NAME = "paear.properties";
     private static Properties props = null;
     private static String docUploadPath = "doc.upload.path";
+    private static String pdqUploadPath = "pdq.upload.path";
     private static String lookUpServer = "po.server.name";
     private static String lookUpPort = "po.port.number";
     private static String csmSubmitterGroup = "csm.submitter.group";
@@ -148,6 +149,23 @@ public class PaEarPropertyReader {
         }
         return folderPath;
     }
+
+    /**
+     *
+     * @return folder path
+     * @throws PAException e
+     */
+   public static String getPDQUploadPath() throws PAException {
+       String folderPath = props.getProperty(pdqUploadPath);
+       if (folderPath == null) {
+           throw new PAException("pdq.upload.path does not have value in paear.properties");
+       }
+       File f = new File(folderPath);
+       if (!f.isDirectory()) {
+           throw new PAException(folderPath + " is not a valid directory.");
+       }
+       return folderPath;
+   }
 
     /**
      *

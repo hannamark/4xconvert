@@ -144,6 +144,7 @@
               overwrite="true">
             <filterset>
                 <filter token="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}" />
+                <filter token="pdq.upload.filepath.loc" value="${pdq.upload.filepath.loc}" />
                 <filter token="tooltips.filepath.loc" value="${tooltips.filepath.loc}" />
                 <filter token="batch.upload.filepath.loc" value="${batch.upload.filepath.loc}" />
                 <filter token="allowed.uploadfile.types" value="${allowed.uploadfile.types}" />

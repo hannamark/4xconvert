@@ -296,4 +296,11 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
         returnVal.setIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyProtocolDTO> getCollaborativeTrials() throws PAException {
+        return new ArrayList<StudyProtocolDTO>();
+    }
 }

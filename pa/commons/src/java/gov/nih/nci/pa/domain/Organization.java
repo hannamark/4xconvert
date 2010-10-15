@@ -124,6 +124,7 @@ public class Organization extends AbstractEntity {
      */
     @NotNull
     @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
+    @Searchable
     public String getName() {
         return name;
     }

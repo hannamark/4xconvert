@@ -89,11 +89,18 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.OrganizationTest;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTOTest;
@@ -112,7 +119,9 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -347,6 +356,14 @@ public class StudyProtocolServiceBeanTest {
 
     }
 
+
+    @Test
+    public void getCollaborativeTrials() throws Exception {
+        createStudyProtocols(1);
+        List<StudyProtocolDTO> results = remoteEjb.getCollaborativeTrials();
+        assertEquals(1, results.size());
+    }
+
     @Test
     public void getInterventionalStudyProtocol() throws Exception {
         InterventionalStudyProtocolDTO create =
@@ -528,6 +545,29 @@ public class StudyProtocolServiceBeanTest {
             dws.setUserLastUpdated(sp.getUserLastUpdated());
             TestSchema.addUpdObject(dws);
 
+            Organization org = OrganizationTest.createOrganizationObj();
+            org.setName(PAConstants.DCP_ORG_NAME);
+            TestSchema.addUpdObject(org);
+
+            ResearchOrganization ro = new ResearchOrganization();
+            ro.setOrganization(org);
+            ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+            ro.setIdentifier("abc");
+            TestSchema.addUpdObject(ro);
+
+            StudySite studySite = new StudySite();
+            studySite.setFunctionalCode(StudySiteFunctionalCode.SPONSOR);
+            studySite.setLocalStudyProtocolIdentifier("foo");
+            studySite.setUserLastUpdated(sp.getUserLastUpdated());
+            Timestamp now = new Timestamp((new Date()).getTime());
+            studySite.setDateLastUpdated(now);
+            studySite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+            studySite.setStatusDateRangeLow(now);
+            studySite.setStudyProtocol(sp);
+            studySite.setResearchOrganization(ro);
+
+            sp.getStudySites().add(studySite);
+            TestSchema.addUpdObject(studySite);
         }
     }
 }

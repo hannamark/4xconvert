@@ -204,6 +204,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <filter token="csm.submitter.group" value="${csm.submitter.group}"/>
             <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
             <filter token="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
+            <filter token="pdq.upload.filepath.loc" value="${pdq.upload.filepath.loc}"/>
             <filter token="batch.upload.filepath.loc" value="${batch.upload.filepath.loc}"/>
             <filter token="tooltips.filepath.loc" value="${tooltips.filepath.loc}"/>
             <filter token="po.server.name" value="${po.server.name}"/>

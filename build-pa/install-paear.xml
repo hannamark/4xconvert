@@ -140,6 +140,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <property name="application.url" value="${jboss.application.url}"/>
       <property name="register.mail.body.url" value="${jboss.application.external.url}/${register.mail.body.url.action}"/>
       <property name="doc.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}"/>
+      <property name="pdq.upload.filepath.loc" value="${doc.upload.filepath.loc}/${pdq.upload.filepath.relative.dir}"/>
       <property name="tooltips.filepath.loc" value="${application.base.path}/${tooltips.filepath.relative.dir}"/>
       <available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
       <basename file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.file"/>
@@ -173,11 +174,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <mkdir dir="${doc.upload.filepath.loc}" />
       <available file="${doc.upload.filepath.loc}" property="doc.upload.filepath.exists" />
       <fail unless="doc.upload.filepath.exists" message="The doc upload dir at ${doc.upload.filepath.loc} has not been created." />
+      
+      <mkdir dir="${pdq.upload.filepath.loc}" />
+      <available file="${pdq.upload.filepath.loc}" property="pdq.upload.filepath.exists" />
+      <fail unless="pdq.upload.filepath.exists" message="The pdq upload dir at ${pdq.upload.filepath.loc} has not been created." />
 
       <!-- Create the tooltips directory -->
       <mkdir dir="${tooltips.filepath.loc}" />
       <available file="${tooltips.filepath.loc}" property="tooltips.filepath.exists" />
-      <fail unless="doc.upload.filepath.exists" message="The tooltips dir at ${tooltips.filepath.loc} has not been created." />
+      <fail unless="tooltips.filepath.exists" message="The tooltips dir at ${tooltips.filepath.loc} has not been created." />
       <!-- End creating the tooltips directory -->
 
       <!-- added to ensure working.dirs are fresh for our install -->

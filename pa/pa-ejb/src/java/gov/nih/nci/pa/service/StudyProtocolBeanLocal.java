@@ -89,8 +89,10 @@ import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PlannedActivity;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
@@ -112,6 +114,7 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
@@ -645,6 +648,35 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(criteria);
         List<StudyProtocol> results = search(crit, params);
         return convertFromDomainToDTO(results);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyProtocolDTO> getCollaborativeTrials() throws PAException {
+        List<StudyProtocol> collaborativeTrials = new ArrayList<StudyProtocol>();
+        //Get all DCP trials
+        StudyProtocolBeanSearchCriteria crit =
+            new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.DCP_ORG_NAME));
+        collaborativeTrials.addAll(search(crit));
+        //Then get all CTEP trials
+        crit =
+            new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.CTEP_ORG_NAME));
+        collaborativeTrials.addAll(search(crit));
+        return convertFromDomainToDTO(collaborativeTrials);
+    }
+
+    private StudyProtocol getCollaborativeTrialCriteria(String sponsorName) {
+        StudyProtocol sp = new StudyProtocol();
+        StudySite ss = new StudySite();
+        ss.setFunctionalCode(StudySiteFunctionalCode.SPONSOR);
+        ResearchOrganization ro = new ResearchOrganization();
+        Organization org = new Organization();
+        org.setName(sponsorName);
+        ro.setOrganization(org);
+        ss.setResearchOrganization(ro);
+        sp.getStudySites().add(ss);
+        return sp;
     }
 
 

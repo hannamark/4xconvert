@@ -1,6 +1,7 @@
 ########################### APPLICATION SETTINGS #########################
 application.base.path=${user.home}/apps/pa
 doc.upload.filepath.relative.dir=doc
+pdq.upload.filepath.relative.dir=pdq
 batch.upload.filepath.relative.dir=batch_docs
 tooltips.filepath.relative.dir=tooltips
 pa.server.name=localhost
@@ -27,6 +28,7 @@ test.schema.showsql=false
 
 test.java.naming.provider=localhost
 doc.upload.filepath.loc=${application.base.path}/${doc.upload.filepath.relative.dir}
+pdq.upload.filepath.loc=${doc.upload.filepath.loc}/${pdq.upload.filepath.relative.dir}
 tooltips.filepath.loc=${application.base.path}/${tooltips.filepath.relative.dir}
 po.server.name=localhost
 po.port.number=31099
