@@ -56,6 +56,10 @@
         <action name="about">
           <result>/WEB-INF/jsp/aboutpa.jsp</result>
         </action>
+        <action name="pdq*" class="gov.nih.nci.pa.action.PDQAction" method="{1}">
+            <result>/WEB-INF/jsp/pdqExport.jsp</result>
+            <result name = "message">/WEB-INF/jsp/pdqExportMsg.jsp</result>
+        </action>
     </package>
 
     <package name="report" namespace="/report" extends="default">

@@ -122,6 +122,7 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -301,7 +302,7 @@ public class JndiServiceLocator implements ServiceLocator {
     public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() throws PAException {
         return (CTGovXmlGeneratorServiceRemote) JNDIUtil.lookup("/pa/CTGovXmlGeneratorServiceBean/remote");
     }
-    
+
     /**
      * @return PDQXmlGeneratorServiceRemote
      * @throws PAException e
@@ -493,5 +494,12 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public ParticipatingSiteServiceLocal getParticipatingSiteService() {
         return (ParticipatingSiteServiceLocal) JNDIUtil.lookup("pa/ParticipatingSiteBeanLocal/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService() {
+       return (PDQUpdateGeneratorTaskServiceLocal) JNDIUtil.lookup("pa/PDQUpdateGeneratorTaskServiceBean/local");
     }
 }

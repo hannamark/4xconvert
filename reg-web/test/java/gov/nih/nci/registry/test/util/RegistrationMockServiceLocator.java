@@ -47,6 +47,7 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -434,6 +435,10 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    public PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService() {
         // TODO Auto-generated method stub
         return null;
     }

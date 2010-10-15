@@ -96,6 +96,7 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -113,6 +114,7 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 /**
@@ -183,6 +185,43 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         } finally {
             IOUtils.closeQuietly(zipOutput);
         }
+    }
+    /**
+     * Returns the list of file names.
+     * @return listOfFilesNames
+     * @throws PAException on error
+     */
+    public List<String> getListOfFileNames() throws PAException {
+        List<String> listOfFileNames = new ArrayList<String>();
+        File folder = new File(PaEarPropertyReader.getPDQUploadPath());
+        File[] listOfFiles = folder.listFiles();
+        for (int i = 0; i < listOfFiles.length; i++) {
+               listOfFileNames.add(listOfFiles[i].getName());
+        }
+        return listOfFileNames;
+    }
+    /**
+     * Returns the file name.
+     * @param requestedFileName requestedFileName
+     * @return requested file name
+     * @throws PAException on error
+     */
+    public  String getRequestedFileName(String requestedFileName) throws PAException {
+        StringBuffer filePath = new StringBuffer();
+        filePath.append(PaEarPropertyReader.getDocUploadPath()).append(File.separator);
+        String fileRequested = "";
+        if (StringUtils.contains(requestedFileName, ZIP_ARCHIVE_NAME)) {
+            fileRequested = requestedFileName;
+        } else {
+            fileRequested = ZIP_ARCHIVE_NAME + requestedFileName + "-T";
+        }
+        for (String fileName : getListOfFileNames()) {
+            if (StringUtils.contains(fileName, fileRequested)) {
+                filePath.append(fileName);
+                break;
+            }
+        }
+        return filePath.toString();
     }
 
     /**

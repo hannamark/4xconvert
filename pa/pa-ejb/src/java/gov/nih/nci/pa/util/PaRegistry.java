@@ -120,6 +120,7 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -341,7 +342,7 @@ public final class PaRegistry {
     public static CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() throws PAException {
         return getInstance().getServiceLocator().getCTGovXmlGeneratorService();
     }
-    
+
     /**
     *
     * @return PDQXmlGeneratorServiceRemote
@@ -350,7 +351,7 @@ public final class PaRegistry {
     public static PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() throws PAException {
         return getInstance().getServiceLocator().getPDQXmlGeneratorService();
     }
-    
+
 
     /**
      *
@@ -542,11 +543,17 @@ public final class PaRegistry {
     public static ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
         return getInstance().getServiceLocator().getProprietaryTrialService();
     }
-    
+
     /**
      * @return ParticipatingSiteServiceLocal
      */
     public static ParticipatingSiteServiceLocal getParticipatingSiteService() {
         return getInstance().getServiceLocator().getParticipatingSiteService();
+    }
+    /**
+     * @return ParticipatingSiteServiceLocal
+     */
+    public static PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService() {
+        return getInstance().getServiceLocator().getPDQUpdateGeneratorTaskService();
     }
 }
