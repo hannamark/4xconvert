@@ -82,10 +82,25 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Locale;
+import java.util.zip.ZipInputStream;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -94,7 +109,7 @@ import org.junit.Test;
  *
  */
 public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
-
+    private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd-", Locale.US);
     private PDQUpdateGeneratorTaskServiceBean taskBean;
 
     @Override
@@ -111,7 +126,24 @@ public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
      * @throws PAException on error
      */
     @Test
-    public void performTaskTest() throws PAException {
+    public void performTaskTest() throws PAException, IOException {
         taskBean.performTask();
+
+        File pdqDirectory = new File(PaEarPropertyReader.getPDQUploadPath());
+
+        //Ensure only one pdq zip collection exists for today.
+        Collection<File> pdqFiles = FileUtils.listFiles(pdqDirectory, FileFilterUtils.prefixFileFilter("CTRP-TRIALS-"
+                    + date.format(new Date())), null);
+        assertEquals(1, pdqFiles.size());
+
+        File pdqZipFile = pdqFiles.iterator().next();
+
+        //Ensure only one file is included in the zip file.
+        ZipInputStream pdqFile = new ZipInputStream(new BufferedInputStream(FileUtils.openInputStream(pdqZipFile)));
+        assertNotNull(pdqFile.getNextEntry());
+        assertNull(pdqFile.getNextEntry());
+
+        //Delete the zip file.
+        FileUtils.deleteQuietly(pdqZipFile);
     }
 }

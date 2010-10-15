@@ -317,7 +317,7 @@ public class StudyProtocolServiceBeanTest {
 
     @Test
     public void search() throws Exception {
-        createStudyProtocols(6);
+        createStudyProtocols(6, null);
 
         StudyProtocolDTO criteria = new StudyProtocolDTO();
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
@@ -359,9 +359,18 @@ public class StudyProtocolServiceBeanTest {
 
     @Test
     public void getCollaborativeTrials() throws Exception {
-        createStudyProtocols(1);
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME);
         List<StudyProtocolDTO> results = remoteEjb.getCollaborativeTrials();
         assertEquals(1, results.size());
+
+        createStudyProtocols(1, PAConstants.CTEP_ORG_NAME);
+        results = remoteEjb.getCollaborativeTrials();
+        assertEquals(2, results.size());
+
+        createStudyProtocols(1, null);
+        results = remoteEjb.getCollaborativeTrials();
+        assertEquals(2, results.size());
+
     }
 
     @Test
@@ -504,7 +513,7 @@ public class StudyProtocolServiceBeanTest {
      * Creates study protocols
      * @param count the number of study protocols to create
      */
-    private void createStudyProtocols(int count) {
+    private void createStudyProtocols(int count, String sponsorName) {
         for (int i = 1; i <= count; i++) {
             InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
             sp = (InterventionalStudyProtocol) StudyProtocolTest.createStudyProtocolObj(sp);
@@ -545,29 +554,31 @@ public class StudyProtocolServiceBeanTest {
             dws.setUserLastUpdated(sp.getUserLastUpdated());
             TestSchema.addUpdObject(dws);
 
-            Organization org = OrganizationTest.createOrganizationObj();
-            org.setName(PAConstants.DCP_ORG_NAME);
-            TestSchema.addUpdObject(org);
+            if (StringUtils.isNotEmpty(sponsorName)) {
+                Organization org = OrganizationTest.createOrganizationObj();
+                org.setName(sponsorName);
+                TestSchema.addUpdObject(org);
 
-            ResearchOrganization ro = new ResearchOrganization();
-            ro.setOrganization(org);
-            ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
-            ro.setIdentifier("abc");
-            TestSchema.addUpdObject(ro);
+                ResearchOrganization ro = new ResearchOrganization();
+                ro.setOrganization(org);
+                ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+                ro.setIdentifier("abc");
+                TestSchema.addUpdObject(ro);
 
-            StudySite studySite = new StudySite();
-            studySite.setFunctionalCode(StudySiteFunctionalCode.SPONSOR);
-            studySite.setLocalStudyProtocolIdentifier("foo");
-            studySite.setUserLastUpdated(sp.getUserLastUpdated());
-            Timestamp now = new Timestamp((new Date()).getTime());
-            studySite.setDateLastUpdated(now);
-            studySite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-            studySite.setStatusDateRangeLow(now);
-            studySite.setStudyProtocol(sp);
-            studySite.setResearchOrganization(ro);
+                StudySite studySite = new StudySite();
+                studySite.setFunctionalCode(StudySiteFunctionalCode.SPONSOR);
+                studySite.setLocalStudyProtocolIdentifier("foo");
+                studySite.setUserLastUpdated(sp.getUserLastUpdated());
+                Timestamp now = new Timestamp((new Date()).getTime());
+                studySite.setDateLastUpdated(now);
+                studySite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+                studySite.setStatusDateRangeLow(now);
+                studySite.setStudyProtocol(sp);
+                studySite.setResearchOrganization(ro);
 
-            sp.getStudySites().add(studySite);
-            TestSchema.addUpdObject(studySite);
+                sp.getStudySites().add(studySite);
+                TestSchema.addUpdObject(studySite);
+            }
         }
     }
 }
