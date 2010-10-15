@@ -139,12 +139,19 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
         // TODO Auto-generated method stub
 
     }
-    
+
     public StudyProtocolDTO getStudyProtocolDTOFromNciId(Ii studyProtocolIi) throws PAException,
     TooManyResultsException {
         StudyProtocolDTO returnVal = new StudyProtocolDTO();
         returnVal.setIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyProtocolDTO> getCollaborativeTrials() throws PAException {
+        return new ArrayList<StudyProtocolDTO>();
     }
 
 }

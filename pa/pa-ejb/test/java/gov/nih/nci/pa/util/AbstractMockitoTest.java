@@ -170,8 +170,8 @@ import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
+import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -638,13 +638,13 @@ public class AbstractMockitoTest {
 
         PAOrganizationServiceRemote paOrgSvc = mock(PAOrganizationServiceRemote.class);
 
-        CTGovXmlGeneratorServiceRemote ctgovXmlSvc = mock(CTGovXmlGeneratorServiceRemote.class);
-        when(ctgovXmlSvc.generateCTGovXml(any(Ii.class))).thenReturn("<pdq></pdq>");
+        PDQXmlGeneratorServiceRemote pdqXmlGeneratorSvc = mock(PDQXmlGeneratorServiceRemote.class);
+        when(pdqXmlGeneratorSvc.generatePdqXml(any(Ii.class))).thenReturn("<pdq></pdq>");
 
         when(paRegSvcLoc.getOrganizationCorrelationService()).thenReturn(orgCorSvc);
         when(paRegSvcLoc.getPAOrganizationService()).thenReturn(paOrgSvc);
         when(paRegSvcLoc.getStudyProtocolService()).thenReturn(spSvc);
-        when(paRegSvcLoc.getCTGovXmlGeneratorService()).thenReturn(ctgovXmlSvc);
+        when(paRegSvcLoc.getPDQXmlGeneratorService()).thenReturn(pdqXmlGeneratorSvc);
 
         PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
     }

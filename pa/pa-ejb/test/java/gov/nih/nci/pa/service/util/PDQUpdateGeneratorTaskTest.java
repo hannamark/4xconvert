@@ -121,7 +121,7 @@ public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
     public void setUp() throws Exception {
         super.setUp();
         taskBean = new PDQUpdateGeneratorTaskServiceBean();
-        taskBean.setXmlGeneratorService(PaRegistry.getCTGovXmlGeneratorService());
+        taskBean.setXmlGeneratorService(PaRegistry.getPDQXmlGeneratorService());
     }
 
     /**

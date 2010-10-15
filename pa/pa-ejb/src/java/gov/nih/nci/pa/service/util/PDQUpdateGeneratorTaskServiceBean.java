@@ -130,7 +130,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
     private static final int MAX_FILE_AGE = -30;
 
     @EJB
-    private CTGovXmlGeneratorServiceRemote xmlGeneratorService;
+    private PDQXmlGeneratorServiceRemote xmlGeneratorService;
 
     /**
      * {@inheritDoc}
@@ -162,7 +162,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
             FileChannel channel = new RandomAccessFile(zipArchive, "rw").getChannel();
             FileLock lock = channel.lock();
             for (StudyProtocolDTO sp : collaborativeTrials) {
-                String pdqXml = xmlGeneratorService.generateCTGovXml(sp.getIdentifier());
+                String pdqXml = xmlGeneratorService.generatePdqXml(sp.getIdentifier());
                 String fileName = PAUtil.getAssignedIdentifierExtension(sp) + ".xml";
                 File xmlFile = new File(folderPath + File.separator + fileName);
 
@@ -189,7 +189,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
      * Sets the xml generator.
      * @param xmlGeneratorService the xml generator to set
      */
-    public void setXmlGeneratorService(CTGovXmlGeneratorServiceRemote xmlGeneratorService) {
+    public void setXmlGeneratorService(PDQXmlGeneratorServiceRemote xmlGeneratorService) {
         this.xmlGeneratorService = xmlGeneratorService;
     }
 }
