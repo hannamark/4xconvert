@@ -83,6 +83,7 @@ import gov.nih.nci.iso21090.EnPn;
 import gov.nih.nci.iso21090.EntityNamePartType;
 import gov.nih.nci.iso21090.Enxp;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -116,5 +117,30 @@ public class EnPnConverter {
             part.setValue(value);
             enpn.getPart().add(part);
         }
+    }
+    
+    /**
+     * convertToFirstLastName.
+     * @param name enpn
+     * @return string
+     */
+    public static String convertToLastCommaFirstName(EnPn name) {
+        StringBuffer sb = new StringBuffer();
+        
+        
+        if (name != null && !CollectionUtils.isEmpty(name.getPart())) {
+         
+            for (Enxp enxp : name.getPart()) {
+                if (EntityNamePartType.FAM.equals(enxp.getType())) {
+                    sb.insert(0, enxp.getValue() + ",");
+                }
+                
+                if (EntityNamePartType.GIV.equals(enxp.getType())) {
+                    sb.append(' ');
+                    sb.append(enxp.getValue());
+                }               
+            }
+        }
+        return sb.toString();
     }
 }

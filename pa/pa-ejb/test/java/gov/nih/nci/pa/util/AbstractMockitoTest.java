@@ -402,6 +402,8 @@ public class AbstractMockitoTest {
 
     private void setupOrgDto(DSet<Tel> telAd) {
         orgDto = new OrganizationDTO();
+        orgDto.setIdentifier(IiConverter.convertToPoOrganizationIi("1"));
+        orgDto.setName(EnOnConverter.convertToEnOn("name"));
         orgDto.setTelecomAddress(telAd);
         Ad adr = AddressConverterUtil.create("street", "deliv", "city", "MD", "20000", "USA");
         orgDto.setPostalAddress(adr);
@@ -524,6 +526,9 @@ public class AbstractMockitoTest {
         Cd cd = new Cd();
         cd.setCode("U10");
         studyResDto.setFundingMechanismCode(cd);
+        cd = new Cd();
+        cd.setCode("Abbreviated");
+        studyResDto.setTypeCode(cd);
         cd = new Cd();
         cd.setCode("CA");
         studyResDto.setNihInstitutionCode(cd);
@@ -660,6 +665,7 @@ public class AbstractMockitoTest {
     private void setupStudyResSvc() throws PAException {
         studyResourcingSvc = mock(StudyResourcingServiceLocal.class);
         when(studyResourcingSvc.getStudyResourcingByStudyProtocol(any(Ii.class))).thenReturn(studyResourcingDtoList);
+        when(studyResourcingSvc.getSummary4ReportedResourcing(any(Ii.class))).thenReturn(studyResourcingDtoList.get(0));
     }
 
     private void setupInterSvc() throws PAException {

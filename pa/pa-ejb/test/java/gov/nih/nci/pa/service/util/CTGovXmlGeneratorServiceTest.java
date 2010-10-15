@@ -105,6 +105,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -119,40 +120,44 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
 
     private final CTGovXmlGeneratorServiceBean bean = new CTGovXmlGeneratorServiceBean();
 
+    public CTGovXmlGeneratorServiceBean getBean() {
+        return bean;
+    }
+    
     @Before
     public void setup() throws Exception {
-        bean.setStudyResourcingService(studyResourcingSvc);
-        bean.setInterventionService(interventionSvc);
-        bean.setInterventionAlternateNameService(interventionAltNameSvc);
-        bean.setStudySiteContactService(studySiteContactSvc);
-        bean.setStudySiteAccrualStatusService(studySiteAccrualStatusSvc);
-        bean.setDiseaseService(diseaseSvc);
-        bean.setDocumentWorkflowStatusService(dwsSvc);
-        bean.setPlannedActivityService(plannedActSvc);
-        bean.setArmService(armSvc);
-        bean.setStudyDiseaseService(studyDiseaseSvc);
-        bean.setStudyOutcomeMeasureService(studyOutcomeMeasureSvc);
-        bean.setStudyRecruitmentService(studyRecruitmentStatusSvc);
-        bean.setStudyOverallStatusService(studyOverallStatusSvc);
-        bean.setRegulatoryInformationService(regulInfoSvc);
-        bean.setStudyRegulatoryAuthorityService(studyRegAuthSvc);
-        bean.setCorrelationUtils(corUtils);
-        bean.setStudyContactService(studyContactSvc);
-        bean.setOrgCorrelationService(orgSvc);
-        bean.setStudyIndldeService(studyIndIdeSvc);
-        bean.setRegistryUserService(regUserSvc);
-        bean.setStudySiteService(studySiteSvc);
-        bean.setStudyProtocolService(spSvc);
+        getBean().setStudyResourcingService(studyResourcingSvc);
+        getBean().setInterventionService(interventionSvc);
+        getBean().setInterventionAlternateNameService(interventionAltNameSvc);
+        getBean().setStudySiteContactService(studySiteContactSvc);
+        getBean().setStudySiteAccrualStatusService(studySiteAccrualStatusSvc);
+        getBean().setDiseaseService(diseaseSvc);
+        getBean().setDocumentWorkflowStatusService(dwsSvc);
+        getBean().setPlannedActivityService(plannedActSvc);
+        getBean().setArmService(armSvc);
+        getBean().setStudyDiseaseService(studyDiseaseSvc);
+        getBean().setStudyOutcomeMeasureService(studyOutcomeMeasureSvc);
+        getBean().setStudyRecruitmentService(studyRecruitmentStatusSvc);
+        getBean().setStudyOverallStatusService(studyOverallStatusSvc);
+        getBean().setRegulatoryInformationService(regulInfoSvc);
+        getBean().setStudyRegulatoryAuthorityService(studyRegAuthSvc);
+        getBean().setCorrelationUtils(corUtils);
+        getBean().setStudyContactService(studyContactSvc);
+        getBean().setOrgCorrelationService(orgSvc);
+        getBean().setStudyIndldeService(studyIndIdeSvc);
+        getBean().setRegistryUserService(regUserSvc);
+        getBean().setStudySiteService(studySiteSvc);
+        getBean().setStudyProtocolService(spSvc);
     }
 
     @Test(expected=PAException.class)
     public void nullParameter() throws Exception {
-        bean.generateCTGovXml(null);
+        getBean().generateCTGovXml(null);
     }
 
     @Test
     public void testHappyPath() throws PAException {
-       String st = bean.generateCTGovXml(spId);
+       String st = getBean().generateCTGovXml(spId);
        assertTrue(st.contains("<clinical_study>"));
        assertTrue(st.contains("<is_section_801>"));
        assertTrue(st.contains("<id_type>Registry Identifier</id_type>"));
@@ -161,50 +166,50 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
     @Test
     public void testCtGovFalse() throws PAException {
         spDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(false));
-        assertFalse(bean.generateCTGovXml(spId).contains("<is_section_801>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<is_section_801>"));
     }
 
     @Test
     public void test801False() throws PAException {
         spDto.setSection801Indicator(BlConverter.convertToBl(false));
-        assertTrue(bean.generateCTGovXml(spId).contains("<is_section_801>No</is_section_801>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<is_section_801>No</is_section_801>"));
     }
 
     @Test
     public void testExpAccIndNull() throws PAException {
         spDto.setExpandedAccessIndicator(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<expanded_access_status>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<expanded_access_status>"));
     }
 
     @Test
     public void testExpAccIndFalse() throws PAException {
         spDto.setExpandedAccessIndicator(BlConverter.convertToBl(false));
-        assertTrue(bean.generateCTGovXml(spId).contains("<expanded_access_status>No longer available</expanded_access_status>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<expanded_access_status>No longer available</expanded_access_status>"));
     }
 
     @Test
     public void testSosByCurrentIsNull() throws PAException {
         when(studyOverallStatusSvc.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<overall_status>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<overall_status>"));
     }
 
     @Test
     public void testCtGovNull() throws PAException {
         studyDiseaseDto.setCtGovXmlIndicator(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testSDCtGovNull() throws PAException {
         studyDiseaseDtoList.remove(0);
         studyDiseaseDto.setCtGovXmlIndicator(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testOrgContIiNull() throws PAException {
         studyContactDto.setOrganizationalContactIi(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("some title"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("some title"));
     }
 
     @Test
@@ -216,100 +221,100 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         telSet.add(url);
         telAd.setItem(telSet);
         studyContactDto.setTelecomAddresses(telAd);
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testTelNull() throws PAException {
         studyContactDto.setTelecomAddresses(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<email>X</email>\n</overall_contact>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<email>X</email>\n</overall_contact>"));
     }
 
     @Test
     public void testCrsNull() throws PAException {
         studyContactDto.setClinicalResearchStaffIi(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<last_name>some title"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<last_name>some title"));
     }
 
     @Test
     public void testCurrentSraNull() throws PAException {
         when(studyRegAuthSvc.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<regulatory_authority>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<regulatory_authority>"));
     }
 
     @Test
     public void testRIgetCountryNull() throws PAException {
         when(regulInfoSvc.getRegulatoryAuthorityCountry(anyLong())).thenReturn(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<regulatory_authority>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<regulatory_authority>"));
     }
 
     @Test
     public void testRiGetNull() throws PAException {
         when(regulInfoSvc.get(anyLong())).thenReturn(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<regulatory_authority>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<regulatory_authority>"));
     }
 
     @Test
     public void testRbApNull() throws PAException {
         spDto.setReviewBoardApprovalRequiredIndicator(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<approval_status>Not required</"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<approval_status>Not required</"));
     }
 
     @Test
     public void testRbAppFalse() throws PAException {
         spDto.setReviewBoardApprovalRequiredIndicator(BlConverter.convertToBl(false));
-        assertTrue(bean.generateCTGovXml(spId).contains("<approval_status>Not required</"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<approval_status>Not required</"));
     }
 
     @Test
     public void testGetOrgThrowNpe() throws PAException, NullifiedEntityException {
         when(poOrgSvc.getOrganization(any(Ii.class))).thenThrow(new NullifiedEntityException(spId));
-        assertTrue(bean.generateCTGovXml(spId).contains("<error_description>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<error_description>"));
     }
 
     @Test
     public void testGetPlActECBySpReturnNull() throws PAException {
         when(plannedActSvc.getPlannedEligibilityCriterionByStudyProtocol(any(Ii.class))).thenReturn(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<eligibility>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<eligibility>"));
     }
 
     @Test
     public void testSIndGetNull() throws PAException {
         when(studyIndIdeSvc.getByStudyProtocol(any(Ii.class))).thenReturn(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<is_ind_study>No</"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<is_ind_study>No</"));
     }
 
     @Test
     public void testCritNameNull() throws PAException {
         plannedECDto.setCriterionName(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<eligibility>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<eligibility>"));
     }
 
     @Test
     public void testInclIndTrue() throws PAException {
         plannedECDto.setInclusionIndicator(BlConverter.convertToBl(true));
-        assertTrue(bean.generateCTGovXml(spId).contains("<eligibility>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<eligibility>"));
     }
 
     @Test
     public void testCritAndInclIndNull() throws PAException {
         plannedECDto.setCriterionName(null);
         plannedECDto.setInclusionIndicator(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<eligibility>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<eligibility>"));
     }
 
     @Test
     public void testCritNullInclIndFalse() throws PAException {
         plannedECDto.setCriterionName(null);
         plannedECDto.setInclusionIndicator(BlConverter.convertToBl(false));
-        assertTrue(bean.generateCTGovXml(spId).contains("<eligibility>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<eligibility>"));
     }
 
     @Test
     public void testCritNullTextNull() throws PAException {
         plannedECDto.setCriterionName(null);
         plannedECDto.setTextDescription(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<eligibility>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<eligibility>"));
     }
 
     @Test
@@ -317,7 +322,7 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         plannedECDto.setCriterionName(null);
         plannedECDto.setTextDescription(null);
         plannedECDto.setOperator(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<eligibility>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<eligibility>"));
     }
 
     @Test
@@ -325,7 +330,7 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         plannedECDto.setCriterionName(null);
         plannedECDto.setTextDescription(null);
         plannedECDto.setInclusionIndicator(BlConverter.convertToBl(false));
-        assertTrue(bean.generateCTGovXml(spId).contains("<eligibility>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<eligibility>"));
     }
 
     @Test
@@ -333,134 +338,134 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         plannedECDto.setCriterionName(null);
         plannedECDto.setTextDescription(null);
         plannedECDto.setInclusionIndicator(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<eligibility>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<eligibility>"));
     }
 
     @Test
     public void testPlLowUnitNull() throws PAException {
         plannedECDto.getValue().getLow().setUnit(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<eligibility>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<eligibility>"));
     }
 
     @Test
     public void testArmBySpNull() throws PAException {
         when(armSvc.getByStudyProtocol(any(Ii.class))).thenReturn(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<arm_group>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<arm_group>"));
     }
 
     @Test
     public void testPlSubCatNull() throws PAException {
         plannedActDto.setSubcategoryCode(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<intervention_type>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<intervention_type>"));
     }
 
     @Test
     public void testAPlCatNull() throws PAException {
         plannedActDto.getCategoryCode().setCode(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<intervention_type>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<intervention_type>"));
     }
 
     @Test
     public void testInterTypeNull() throws PAException {
         interventionAltNameDto.getNameTypeCode().setValue(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testSpTypeObs() throws PAException {
         spDto.setStudyProtocolType(StConverter.convertToSt("ObservationalStudyProtocol"));
-        assertTrue(bean.generateCTGovXml(spId).contains("<study_type>Observational</"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<study_type>Observational</"));
     }
 
     @Test
     public void testSpTypeOther() throws PAException {
         spDto.setStudyProtocolType(StConverter.convertToSt("some other type"));
-        assertFalse(bean.generateCTGovXml(spId).contains("<study_type>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<study_type>"));
     }
 
     @Test
     public void testSomNull() throws PAException {
        when(studyOutcomeMeasureSvc.getByStudyProtocol(any(Ii.class))).thenReturn(null);
-       assertFalse(bean.generateCTGovXml(spId).contains("<primary_outcome>"));
+       assertFalse(getBean().generateCTGovXml(spId).contains("<primary_outcome>"));
     }
 
     @Test
     public void testOrgEmpty() throws PAException {
         orgList = new ArrayList<Organization>();
-        assertTrue(bean.generateCTGovXml(spId).contains("<collaborator>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<collaborator>"));
     }
 
     @Test
     public void testSsConRolePrim() throws PAException {
         studySiteContactDto.setRoleCode(CdConverter.convertStringToCd(StudySiteContactRoleCode.PRIMARY_CONTACT.getCode()));
-        assertTrue(bean.generateCTGovXml(spId).contains("<contact>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<contact>"));
     }
 
     @Test
     public void testScListEmpty() throws PAException {
         when(studyContactSvc.getByStudyProtocol(any(Ii.class), any(StudyContactDTO.class))).thenReturn(new ArrayList<StudyContactDTO>());
-        assertFalse(bean.generateCTGovXml(spId).contains("<overall_contact>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<overall_contact>"));
     }
 
     @Test
     public void testOrgBySSNull() throws PAException {
         when(orgSvc.getOrganizationByStudySite(anyLong(), any(StudySiteFunctionalCode.class))).thenReturn(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<collaborator>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<collaborator>"));
     }
 
     @Test
     public void testSpNull() throws PAException {
         when(spSvc.getStudyProtocol(any(Ii.class))).thenReturn(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<study_identifier>Unknown"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<study_identifier>Unknown"));
     }
 
     @Test
     public void testOrgAdNull() throws PAException {
         orgDto.setPostalAddress(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("</full_address>\n</irb_info>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("</full_address>\n</irb_info>"));
     }
 
     @Test
     public void testRecVerNull() throws PAException {
         spDto.setRecordVerificationDate(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testSrsNull() throws PAException {
         when(studyRecruitmentStatusSvc.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testSosStatApp() throws PAException {
         studyOverallStatusDto.setStatusCode(CdConverter.convertStringToCd(StudyStatusCode.APPROVED.getCode()));
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testSosStatTemp() throws PAException {
         studyOverallStatusDto.setStatusCode(CdConverter.convertStringToCd(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode()));
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testSosStatAccInt() throws PAException {
         studyOverallStatusDto.setStatusCode(CdConverter.convertStringToCd(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode()));
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testSdNull() throws PAException {
        when(studyDiseaseSvc.getByStudyProtocol(any(Ii.class))).thenReturn(null);
-       assertFalse(bean.generateCTGovXml(spId).contains("<condition>some disease</condition>"));
+       assertFalse(getBean().generateCTGovXml(spId).contains("<condition>some disease</condition>"));
     }
 
     @Test
     public void testScCrsNull() throws PAException {
         studyContactDto.setClinicalResearchStaffIi(null);
         studyContactDto.setOrganizationalContactIi(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<overall_contact>\n<first_name>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<overall_contact>\n<first_name>"));
     }
 
     @Test
@@ -468,71 +473,71 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         studyContactDto.setClinicalResearchStaffIi(null);
         studyContactDto.setOrganizationalContactIi(null);
         studyContactDto.setTelecomAddresses(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<overall_contact>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<overall_contact>"));
     }
 
     @Test
     public void testScRolCent() throws PAException {
         studyContactDto.setRoleCode(CdConverter.convertStringToCd(StudyContactRoleCode.CENTRAL_CONTACT.getCode()));
-        assertFalse(bean.generateCTGovXml(spId).contains("<overall_official>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<overall_official>"));
     }
 
     @Test
     public void testRBStatSub() throws PAException {
         studySiteDto.setReviewBoardApprovalStatusCode(CdConverter.convertStringToCd(ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED.getCode()));
-        assertTrue(bean.generateCTGovXml(spId).contains("<irb_info/>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<irb_info/>"));
     }
 
     @Test
     public void testRegPrsEmpty() throws PAException {
         regUser.setPrsOrgName("");
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testSIndExpTrue() throws PAException {
         studySiteIndIdeDto.setExpandedAccessIndicator(BlConverter.convertToBl(true));
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
         PAServiceUtils paServiceUtil = mock (PAServiceUtils.class);
-        bean.setPaServiceUtil(paServiceUtil);
+        getBean().setPaServiceUtil(paServiceUtil);
         when(paServiceUtil.containsNonExemptInds(any(List.class))).thenReturn(Boolean.TRUE);
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
         studySiteIndIdeDto.setExemptIndicator(BlConverter.convertToBl(false));
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
         when(studyIndIdeSvc.getByStudyProtocol(any(Ii.class))).thenReturn(new ArrayList<StudyIndldeDTO>());
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testSsListEmpty() throws PAException {
         when(studySiteSvc.getByStudyProtocol(any(Ii.class), any(StudySiteDTO.class))).thenReturn(new ArrayList<StudySiteDTO>());
-        assertFalse(bean.generateCTGovXml(spId).contains("<organization>\n</resp_party>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<organization>\n</resp_party>"));
     }
 
     @Test
     public void testSsRbSubDen() throws PAException {
         studySiteDto.setReviewBoardApprovalStatusCode(CdConverter.convertStringToCd(ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode()));
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testSsRbSubEx() throws PAException {
         studySiteDto.setReviewBoardApprovalStatusCode(CdConverter.convertStringToCd(ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode()));
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testSsRbSubPen() throws PAException {
         studySiteDto.setReviewBoardApprovalStatusCode(CdConverter.convertStringToCd(ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode()));
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testOrgTelEmpty() throws PAException {
         orgDto.setTelecomAddress(new DSet<Tel>());
-        assertTrue(bean.generateCTGovXml(spId).contains("<irb_info>\n"
+        assertTrue(getBean().generateCTGovXml(spId).contains("<irb_info>\n"
                 + "<approval_status>Approved</approval_status>\n<name>some name</name>\n"
-                + "<full_address>street,city,MD,20000USA</full_address>\n</irb_info>"));
+                + "<full_address>street, city, MD, 20000 USA</full_address>\n</irb_info>"));
     }
 
     @Test
@@ -540,13 +545,13 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         studySiteIndIdeDto.setGrantorCode(null);
         studySiteIndIdeDto.setIndldeNumber(null);
         studySiteIndIdeDto.setExpandedAccessIndicator(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<has_expanded_access>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<has_expanded_access>"));
     }
 
     @Test
     public void testPlEcDispOrdNull() throws PAException {
         plannedECDto.setDisplayOrder(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
@@ -554,14 +559,14 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         plannedECDto.setCriterionName(StConverter.convertToSt("AGE"));
         plannedECDto.getValue().setLow(null);
         plannedECDto.getValue().setHigh(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
     public void testPlEcCritGender() throws PAException {
         plannedECDto.setCriterionName(StConverter.convertToSt("GENDER"));
         plannedECDto.setEligibleGenderCode(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<clinical_study>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<clinical_study>"));
     }
 
     @Test
@@ -569,19 +574,19 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         armDto.setDescriptionText(null);
         armDto.setName(null);
         armDto.setTypeCode(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<arm_group>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<arm_group>"));
     }
 
     @Test
     public void testIspBlCodeNull() throws PAException {
         interventionalSPDto.setBlindedRoleCode(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<interventional_design>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<interventional_design>"));
     }
 
     @Test
     public void testIspBlCodeItemNull() throws PAException {
         interventionalSPDto.getBlindedRoleCode().setItem(null);
-        assertTrue(bean.generateCTGovXml(spId).contains("<interventional_design>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<interventional_design>"));
     }
 
     @Test
@@ -593,7 +598,7 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         studyOutcomeMeasureDto.setPrimaryIndicator(BlConverter.convertToBl(true));
         studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
         when(studyOutcomeMeasureSvc.getByStudyProtocol(any(Ii.class))).thenReturn(studyOutcomeMeasureDtoList);
-        assertFalse(bean.generateCTGovXml(spId).contains("<primary_outcome>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<primary_outcome>"));
     }
 
     @Test
@@ -605,21 +610,19 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         studyOutcomeMeasureDto.setPrimaryIndicator(BlConverter.convertToBl(false));
         studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
         when(studyOutcomeMeasureSvc.getByStudyProtocol(any(Ii.class))).thenReturn(studyOutcomeMeasureDtoList);
-        assertFalse(bean.generateCTGovXml(spId).contains("<primary_outcome>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<primary_outcome>"));
     }
 
     @Test
     public void testOrgNameNull() throws PAException {
         org.setName(null);
-        assertFalse(bean.generateCTGovXml(spId).contains("<lead_sponsor>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<lead_sponsor>"));
     }
 
     @Test
     public void testOrgBySsEmpty() throws PAException {
         when(orgSvc.getOrganizationByStudySite(anyLong(), any(StudySiteFunctionalCode.class)))
            .thenReturn(new ArrayList<Organization>());
-        assertFalse(bean.generateCTGovXml(spId).contains("<collaborator>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("<collaborator>"));
     }
-
-
 }

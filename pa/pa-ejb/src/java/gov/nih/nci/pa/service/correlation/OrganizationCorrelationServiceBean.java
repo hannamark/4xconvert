@@ -472,17 +472,29 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @throws PAException onError
      */
     public Organization getOrganizationByFunctionRole(Ii studyProtocolIi , Cd cd) throws PAException {
-
+        Organization o = null;
+        Ii roIi = getROByFunctionRole(studyProtocolIi, cd);
+        if (PAUtil.isIiNotNull(roIi)) {
+            o = getCorrUtils().getPAOrganizationByIi(roIi);
+        }
+        return o;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Ii getROByFunctionRole(Ii studyProtocolIi, Cd cd) throws PAException {
+        Ii returnVal = null;
         StudySiteDTO spart = new StudySiteDTO();
         spart.setFunctionalCode(cd);
         List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
                         .getByStudyProtocol(studyProtocolIi, spart);
-        Organization o = null;
+        
         if (spDtos != null && !spDtos.isEmpty()) {
-            spart = spDtos.get(0);
-            o = getCorrUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
+            returnVal = spDtos.get(0).getResearchOrganizationIi();
         }
-        return o;
+        
+        return returnVal;
     }
 
     private EnOn convertIdTypeToName(String identifierType) throws PAException {

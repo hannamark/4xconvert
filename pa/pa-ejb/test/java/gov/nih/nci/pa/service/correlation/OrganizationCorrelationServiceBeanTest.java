@@ -287,13 +287,17 @@ public class OrganizationCorrelationServiceBeanTest {
         when(studySiteSvc.getByStudyProtocol(any(Ii.class),any(StudySiteDTO.class))).thenReturn(null);
         assertNull(bean.getOrganizationByFunctionRole(null, null));
         List<StudySiteDTO> siteList = new ArrayList<StudySiteDTO>();
+        StudySiteDTO ssDTO = new StudySiteDTO();
+        ssDTO.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("1"));
+        siteList.add(ssDTO);
         when(studySiteSvc.getByStudyProtocol(any(Ii.class),any(StudySiteDTO.class))).thenReturn(siteList);
+        setUpCorrSvcMock();
+        when(corrUtils.getPAOrganizationByIi(any(Ii.class))).thenReturn(null);
         assertNull(bean.getOrganizationByFunctionRole(new Ii(), new Cd()));
         StudySiteDTO siteDTO = new StudySiteDTO();
         siteDTO.setResearchOrganizationIi(new Ii());
         siteList.add(siteDTO);
         when(studySiteSvc.getByStudyProtocol(any(Ii.class),any(StudySiteDTO.class))).thenReturn(siteList);
-        setUpCorrSvcMock();
         when(corrUtils.getPAOrganizationByIi(any(Ii.class))).thenReturn(new Organization());
         assertNotNull(bean.getOrganizationByFunctionRole(new Ii(), new Cd()));
     }

@@ -197,4 +197,12 @@ public interface RegistryUserService {
      * @throws PAException exception
      */
     boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException;
+    
+    /**
+     * Get all names based on trial id.
+     * @param studyProtocolId trial id
+     * @return list of login names.
+     * @throws PAException when error. 
+     */
+    List<String> getTrialOwnerNames(Long studyProtocolId) throws PAException;
 }

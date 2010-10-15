@@ -122,6 +122,7 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -259,6 +260,12 @@ public interface ServiceLocator {
      * @throws PAException on error 
      */
     CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() throws PAException;
+    
+    /**
+     * @return PDQXmlGeneratorService
+     * @throws PAException on error 
+     */ 
+    PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() throws PAException;
     
     /**
      * @return AbstractionCompletionService

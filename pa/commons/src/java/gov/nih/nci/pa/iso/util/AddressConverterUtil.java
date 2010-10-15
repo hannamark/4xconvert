@@ -112,7 +112,9 @@ import gov.nih.nci.iso21090.AdxpUnit;
 import gov.nih.nci.iso21090.AdxpZip;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -241,6 +243,48 @@ public class AddressConverterUtil {
 
             // there must be a new type added
             default: throw new UnsupportedOperationException(type.name());
+        }
+    }
+    
+    /**
+     * Help convert an Ad into a Address Bo.
+     * @param ad address
+     * @return address
+     */
+    public static Map<String, String> convertToAddressBo(Ad ad) {
+        Map<String, String> addressMap = new HashMap<String, String>();
+        if (ad == null || CollectionUtils.isEmpty(ad.getPart())) {
+            return null;
+        }
+        List<Adxp> adxpList = ad.getPart();
+        
+        for (Adxp adxp : adxpList) {
+                
+            addressMap.put(AdxpAl.class.getName(),
+                    getAddressPart(adxp, AdxpAl.class, addressMap.get(AdxpAl.class.getName())));
+            addressMap.put(AdxpCty.class.getName(),
+                    getAddressPart(adxp, AdxpCty.class, addressMap.get(AdxpCty.class.getName())));      
+            addressMap.put(AdxpSta.class.getName(),
+                    getAddressPart(adxp, AdxpSta.class, addressMap.get(AdxpSta.class.getName())));
+            addressMap.put(AdxpZip.class.getName(),
+                    getAddressPart(adxp, AdxpZip.class, addressMap.get(AdxpZip.class.getName())));
+            addressMap.put(AdxpCnt.class.getName(),
+                    getAddressPart(adxp, AdxpCnt.class, addressMap.get(AdxpCnt.class.getName())));
+        }
+        
+        return addressMap;
+
+    }
+    
+    
+    private static String getAddressPart(Adxp part, Class<? extends Adxp> clazz, String defaultValue) {
+        
+        if (clazz == AdxpCnt.class && clazz.isInstance(part)) {
+            return part.getCode(); 
+        } else if (clazz.isInstance(part)) {
+           return part.getValue();
+        } else {
+            return defaultValue;
         }
     }
 

@@ -129,6 +129,7 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -576,6 +577,14 @@ public class MockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public ParticipatingSiteServiceLocal getParticipatingSiteService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getPDQXmlGeneratorService()
+     */
+    public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() throws PAException {
         // TODO Auto-generated method stub
         return null;
     }

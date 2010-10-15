@@ -101,7 +101,7 @@ import org.junit.Test;
  *
  */
 public class RegistryUserServiceTest {
-    private RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
+    private final RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
 
     @Before
     public void setUp() throws Exception {
@@ -145,6 +145,15 @@ public class RegistryUserServiceTest {
         assertTrue(remoteEjb.hasTrialAccess("leadOrgAdminTest", spId));
         assertFalse(remoteEjb.hasTrialAccess("trialOwnerTest", spId));
         assertFalse(remoteEjb.hasTrialAccess("randomUserTest", spId));
+    }
+    
+    @Test
+    public void getTrialOwnerNames() throws PAException {
+        Long spId = TestRegistryUserSchema.studyProtocolId;
+        Long userId = TestRegistryUserSchema.randomUserId;
+        remoteEjb.assignOwnership(userId, spId);
+        List<String> list = remoteEjb.getTrialOwnerNames(spId);
+        assertTrue(list.contains("random random"));
     }
 
     @Test

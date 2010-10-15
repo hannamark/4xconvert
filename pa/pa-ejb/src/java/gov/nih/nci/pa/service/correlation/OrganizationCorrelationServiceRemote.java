@@ -172,4 +172,13 @@ public interface OrganizationCorrelationServiceRemote {
      * @throws PAException on error
      */
     Ii getPoResearchOrganizationByEntityIdentifier(Ii orgPoIdentifier) throws PAException;   
+    
+    /**
+     * getROByFunctionRole.
+     * @param studyProtocolIi sp id
+     * @param cd functional role code
+     * @return Organization
+     * @throws PAException onError
+     */
+    Ii getROByFunctionRole(Ii studyProtocolIi, Cd cd) throws PAException;
 }

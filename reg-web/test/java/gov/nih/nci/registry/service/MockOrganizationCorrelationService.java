@@ -234,4 +234,12 @@ public class MockOrganizationCorrelationService implements
         return 1L;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public Ii getROByFunctionRole(Ii studyProtocolIi, Cd cd) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

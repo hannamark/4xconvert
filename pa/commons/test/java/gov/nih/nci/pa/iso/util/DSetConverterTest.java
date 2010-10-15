@@ -80,6 +80,7 @@ package gov.nih.nci.pa.iso.util;
 
 
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.DSet;
@@ -130,4 +131,21 @@ public class DSetConverterTest {
                assertTrue(in.contains(dsetTel.get(i))); 
            }
         }
+    
+    
+    @Test
+    public void getTelByTypeTest () {
+        List<String> phones = new ArrayList<String>();
+        phones.add("7037071111");
+        phones.add("7037071112");
+        phones.add("7037071113");
+        List<String> email = new ArrayList<String>();
+        email.add("aa@bbb.com");
+        DSet<Tel> master = new DSet<Tel>();
+        DSet<Tel> dset = DSetConverter.convertListToDSet(phones, "PHONE", master);
+        dset = DSetConverter.convertListToDSet(email, "EMAIL", dset);
+        assertEquals(3, DSetConverter.getTelByType(dset, "tel:").size());
+        assertEquals(1, DSetConverter.getTelByType(dset, "mailto:").size());
+        
+    }
 }

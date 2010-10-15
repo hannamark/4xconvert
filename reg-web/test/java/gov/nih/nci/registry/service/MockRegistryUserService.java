@@ -188,4 +188,12 @@ public class MockRegistryUserService implements RegistryUserServiceRemote {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public List<String> getTrialOwnerNames(Long studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

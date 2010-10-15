@@ -304,4 +304,12 @@ public class MockOrganizationCorrelationService implements
         return 1L;
     }
 
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote#getROByFunctionRole(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Cd)
+     */
+    public Ii getROByFunctionRole(Ii studyProtocolIi, Cd cd) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

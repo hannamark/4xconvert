@@ -97,6 +97,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+
 
 
 /**
@@ -295,6 +297,23 @@ public class DSetConverter {
         }
         return null;
     }
+    
+    /**
+     * getFirstInDSetByRoot.
+     * @param identifier identifier 
+     * @param root root
+     * @return ii
+     */
+    public static Ii getFirstInDSetByRoot(DSet<Ii> identifier, String root) {
+        if (identifier != null && CollectionUtils.isNotEmpty(identifier.getItem())) {
+            for (Ii item : identifier.getItem()) {
+                if (root.equals(item.getRoot())) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * Extract the internal identifier from the set of identifiers.
@@ -343,5 +362,31 @@ public class DSetConverter {
             iiset.addAll(identifierList.getItem());
         }
         return iiset;
+    }
+    
+    /**
+     * Help get telecom info out of DSet.
+     * @param dset dset
+     * @param type tel type
+     * @return list
+     */
+    public static List<String> getTelByType(DSet<Tel> dset, String type) {
+
+        List<String> returnList = new ArrayList<String>();
+        
+        if (dset == null || CollectionUtils.isEmpty(dset.getItem())) {
+            return null;
+        }
+        Set<? extends Tel> telList = dset.getItem();
+        
+        for (Tel item  : telList) {
+                String value = item.getValue().toString();
+                if (!StringUtils.isEmpty(value) && value.startsWith(type)) {
+                    returnList.add(value.replaceFirst(type, ""));
+                }
+        }
+        
+        return returnList;
+
     }
 }

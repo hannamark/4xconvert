@@ -457,4 +457,22 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         }
         return usr;
     }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<String> getTrialOwnerNames(Long studyProtocolId) throws PAException {
+        List<String> names = new ArrayList<String>();
+        StudyProtocol studyProtocol =
+            (StudyProtocol) HibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
+        
+        for (RegistryUser myUser : studyProtocol.getStudyOwners()) {
+            names.add(myUser.getFirstName() + " " + myUser.getLastName());
+        }
+        
+        return names;
+    }
+    
+    
 }
