@@ -101,6 +101,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -112,12 +113,26 @@ public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
     private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd-", Locale.US);
     private PDQUpdateGeneratorTaskServiceBean taskBean;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         taskBean = new PDQUpdateGeneratorTaskServiceBean();
         taskBean.setXmlGeneratorService(PaRegistry.getCTGovXmlGeneratorService());
+    }
+
+    /**
+     * Deletes all files in the pdq directory. Ensuring nothing remains if something were to go wrong during the
+     * running of the unit tests.
+     * @throws Exception on error
+     */
+    @After
+    public void tearDown() throws Exception {
+        File pdqDirectory = new File(PaEarPropertyReader.getPDQUploadPath());
+        FileUtils.cleanDirectory(pdqDirectory);
     }
 
 
