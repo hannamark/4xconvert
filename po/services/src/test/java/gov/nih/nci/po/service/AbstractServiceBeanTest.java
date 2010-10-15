@@ -31,4 +31,7 @@ public abstract class AbstractServiceBeanTest extends AbstractBeanTest {
     public ResearchOrganizationServiceBean getResearchOrganizationServiceBean() {
         return (ResearchOrganizationServiceBean) JndiUtils.lookup("po/ResearchOrganizationServiceBean/local");
     }
+    public OversightCommitteeServiceBean getOversightCommitteeServiceBean() {
+        return (OversightCommitteeServiceBean) JndiUtils.lookup("po/OversightCommitteeServiceBean/local");
+    }
 }

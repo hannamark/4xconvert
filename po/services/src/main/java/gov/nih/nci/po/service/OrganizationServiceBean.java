@@ -97,10 +97,11 @@ import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
+import gov.nih.nci.po.util.MergeOrganizationHelper;
+import gov.nih.nci.po.util.MergeOrganizationHelperImpl;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -111,6 +112,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
 
+import org.apache.commons.collections.MapUtils;
 import org.hibernate.Session;
 
 /**
@@ -122,6 +124,36 @@ import org.hibernate.Session;
 public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<Organization> implements
         OrganizationServiceLocal {
     private static final String UNCHECKED = "unchecked";
+    private MergeOrganizationHelper mergeOrganizationHelper;
+
+    /**
+     * Constructs an {@link OrganizationServiceBean} with the default MergeOrganizationHelper. 
+     */
+    public OrganizationServiceBean() {
+        this.mergeOrganizationHelper = MergeOrganizationHelperImpl.getInstance();
+    }
+    
+    /**
+     * Constructs an {@link OrganizationServiceBean} with the provided MergeOrganizationHelper instance. 
+     * @param mergeOrganizationHelper Inject the MergeOrganizationHelper to use
+     */
+    public OrganizationServiceBean(MergeOrganizationHelper mergeOrganizationHelper) {
+        this.mergeOrganizationHelper = mergeOrganizationHelper;
+    }
+    
+    /**
+     * @return the mergeOrganizationHelper
+     */
+    public MergeOrganizationHelper getMergeOrganizationHelper() {
+        return mergeOrganizationHelper;
+    }
+
+    /**
+     * @param mergeOrganizationHelper the mergeOrganizationHelper to set
+     */
+    public void setMergeOrganizationHelper(MergeOrganizationHelper mergeOrganizationHelper) {
+        this.mergeOrganizationHelper = mergeOrganizationHelper;
+    }
 
     /**
      * {@inheritDoc}
@@ -203,53 +235,54 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         Set<Correlation> associatedRoles = getAssociatedRoles(org, s);
         List<Correlation> changes = new ArrayList<Correlation>();
         for (Correlation correlation : associatedRoles) {
-            boolean mergedPlayed = mergePlayedRoleCorrelation(org, dup, correlation);
-            boolean mergedScoped = mergeScopedRoleCorrelation(org, dup, correlation);
-            /* DO NOT INLINE OTHERWISE BOOLEAN SHORT-CIRCUITING WILL ABORT NEEDED MERGE LOGIC */
-            if (mergedPlayed || mergedScoped) {
-                changes.add(correlation);
-            }
-        }
-        Map<String, String[]> errorMsgs = validateMergedCorrelations(changes);
-        if (!errorMsgs.isEmpty()) {
-            throw new CurateEntityValidationException(errorMsgs);
+            changes.addAll(mergePlayedRoleCorrelation(org, dup, correlation));
+            changes.addAll(mergeScopedRoleCorrelation(org, dup, correlation));
         }
         curateMergedCorrelations(changes);
     }
 
-    private Map<String, String[]> validateMergedCorrelations(List<Correlation> changes) {
-        Map<String, String[]> errorMsgs = new HashMap<String, String[]>();
-        for (Correlation correlation : changes) {
-            errorMsgs.putAll(validateCorrelation(correlation));
+    private List<Correlation> mergeScopedRoleCorrelation(Organization org, Organization dup, Correlation correlation) {
+        List<Correlation> changes = new ArrayList<Correlation>();
+        if (correlation instanceof ScopedRole && ((ScopedRole) correlation).getScoper().getId().equals(org.getId())) {
+            ScopedRole sr = (ScopedRole) correlation;
+            sr.setScoper(dup);
+            activateRoleStatusByDupStatus(dup, correlation);
+            if (isChangeConflicting(correlation)) {
+                changes.addAll(MergeOrganizationHelperImpl.getInstance().handleConflictingScopedRoleCorrelation(org,
+                        correlation));
+            } else {
+                changes.add(correlation);
+            }
         }
-        return errorMsgs;
+        return changes;
+    }
+
+    private List<Correlation> mergePlayedRoleCorrelation(Organization org, Organization dup, Correlation correlation) {
+        List<Correlation> changes = new ArrayList<Correlation>();
+        if (correlation instanceof PlayedRole && ((PlayedRole) correlation).getPlayer() instanceof Organization
+                && ((PlayedRole) correlation).getPlayer().getId().equals(org.getId())) {
+            PlayedRole<Organization> pr = (PlayedRole<Organization>) correlation;
+            pr.setPlayer(dup);
+            activateRoleStatusByDupStatus(dup, correlation);
+            if (isChangeConflicting(correlation)) {
+                changes.addAll(MergeOrganizationHelperImpl.getInstance().handleConflictingPlayedRoleCorrelation(org,
+                        correlation));
+            } else {
+                changes.add(correlation);
+            }
+        }
+        return changes;
     }
 
     /**
-     * @param correlation to validate
-     * @return Map of correlation's class name (class:id[:property-path]) to error messages for that class
+     * @param correlation
+     * @return
      */
-    private Map<String, String[]> validateCorrelation(Correlation correlation) {
+    private boolean isChangeConflicting(Correlation correlation) {
         GenericStructrualRoleServiceLocal serviceForRole = getServiceForRole(correlation.getClass());
         // validate()'s behavior ensures that all keys are unique
         Map<String, String[]> correlationErrorMsgs = serviceForRole.validate(correlation);
-
-        // Map of correlation's class name (class:id[:property-path]) to error messages for that object
-        Map<String, String[]> errorMsgs = new HashMap<String, String[]>();
-        for (String msgKey : correlationErrorMsgs.keySet()) {
-            /*
-             * re-key the correlation's error messages to understand which correlation encountered errors
-             */
-            StringBuffer key = new StringBuffer();
-            key.append(correlation.getClass().getName());
-            key.append(':');
-            key.append(correlation.getId());
-            if (msgKey != null) {
-                key.append(':').append(msgKey);
-            }
-            errorMsgs.put(key.toString(), correlationErrorMsgs.get(msgKey));
-        }
-        return errorMsgs;
+        return MapUtils.isNotEmpty(correlationErrorMsgs);
     }
 
     private void curateMergedCorrelations(List<Correlation> changes) throws JMSException {
@@ -257,28 +290,6 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
             GenericStructrualRoleServiceLocal serviceForRole = getServiceForRole(correlation.getClass());
             serviceForRole.curate(correlation);
         }
-    }
-
-    private boolean mergeScopedRoleCorrelation(Organization org, Organization dup, Correlation correlation) {
-        if (correlation instanceof ScopedRole && ((ScopedRole) correlation).getScoper().getId().equals(org.getId())) {
-            ScopedRole sr = (ScopedRole) correlation;
-            sr.setScoper(dup);
-            activateRoleStatusByDupStatus(dup, correlation);
-            return true;
-        }
-        return false;
-    }
-
-    @SuppressWarnings(UNCHECKED)
-    private boolean mergePlayedRoleCorrelation(Organization org, Organization dup, Correlation correlation) {
-        if (correlation instanceof PlayedRole && ((PlayedRole) correlation).getPlayer() instanceof Organization
-                && ((PlayedRole) correlation).getPlayer().getId().equals(org.getId())) {
-            PlayedRole<Organization> pr = (PlayedRole<Organization>) correlation;
-            pr.setPlayer(dup);
-            activateRoleStatusByDupStatus(dup, correlation);
-            return true;
-        }
-        return false;
     }
 
     private void activateRoleStatusByDupStatus(Organization dup, Correlation correlation) {

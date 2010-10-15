@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.service;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -794,7 +793,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
     }
 
     @Test
-    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrgWithValidationErrors()
+    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrgWithAutomatedMerging()
             throws EntityValidationException, JMSException {
         final Country c = EjbTestHelper.getCountryServiceBean().getCountry(getDefaultCountry().getId());
         setDefaultCountry(c);
@@ -829,19 +828,27 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         o.setStatusCode(EntityStatus.NULLIFIED);
         o2 = getOrgServiceBean().getById(id2);
         o.setDuplicateOf(o2);
-        try {
-            getOrgServiceBean().curate(o);
-            fail("expected ValidationException");
-        } catch (CurateEntityValidationException e1) {
-            assertEquals(1, e1.getErrors().size());
-            assertArrayEquals(new String[] {"Organization already has an Oversight Committee of this type"}, e1
-                    .getErrors().get("gov.nih.nci.po.data.bo.OversightCommittee:" + oc1.getId()));
-        }
-        MessageProducerTest.assertNoMessageCreated(o, getOrgServiceBean());
+
+        getOrgServiceBean().curate(o);
+        o = getOrgServiceBean().getById(id);
+        o2 = getOrgServiceBean().getById(id2);
+        assert(EntityStatus.NULLIFIED.equals(o.getStatusCode()));
+        assert(o.getDuplicateOf().equals(o2));
+        oc1 = getOversightCommitteeServiceBean().getById(correlationId);
+        oc2 = getOversightCommitteeServiceBean().getById(correlation2Id);
+        assert(oc1.getPlayer().getId().equals(o.getId()));
+        assert(oc2.getPlayer().getId().equals(o2.getId()));
+        assert(EntityStatus.NULLIFIED.equals(oc1.getPlayer().getStatusCode()));
+        assert(oc1.getDuplicateOf() != null);
+        assert(oc1.getDuplicateOf().getId() != null);
+        assert(oc2.getId() != null);
+        assert(oc1.getDuplicateOf().getId().equals(oc2.getId()));
+        
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(),false);
     }
 
     @Test
-    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrgWithValidationErrors2()
+    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrgWithAutomatedMerging2()
             throws EntityValidationException, JMSException {
         final Country c = EjbTestHelper.getCountryServiceBean().getCountry(getDefaultCountry().getId());
         setDefaultCountry(c);
@@ -878,20 +885,24 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         o.setStatusCode(EntityStatus.NULLIFIED);
         o2 = getOrgServiceBean().getById(id2);
         o.setDuplicateOf(o2);
-        try {
-            getOrgServiceBean().curate(o);
-            fail("expected ValidationException");
-        } catch (CurateEntityValidationException e1) {
-            assertEquals(1, e1.getErrors().size());
-            assertArrayEquals(
-                    new String[] {"Organization already has a Research Organization of this type and funding mechanism"},
-                    e1.getErrors().get("gov.nih.nci.po.data.bo.ResearchOrganization:" + rorg1.getId()));
-        }
-        MessageProducerTest.assertNoMessageCreated(o, getOrgServiceBean());
+        
+        getOrgServiceBean().curate(o);
+        o = getOrgServiceBean().getById(id);
+        o2 = getOrgServiceBean().getById(id2);
+        assert(EntityStatus.NULLIFIED.equals(o.getStatusCode()));
+        assert(o.getDuplicateOf().equals(o2));
+        rorg1 = getResearchOrganizationServiceBean().getById(correlationId);
+        rorg2 = getResearchOrganizationServiceBean().getById(correlation2Id);
+        assert(rorg1.getPlayer().getId().equals(o.getId()));
+        assert(rorg2.getPlayer().getId().equals(o2.getId()));
+        assert(EntityStatus.NULLIFIED.equals(rorg1.getPlayer().getStatusCode()));
+        assert(rorg1.getDuplicateOf().getId().equals(rorg2.getId()));
+        
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(),false);
     }
 
     @Test
-    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrgWithValidationErrors3()
+    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrgWithAutomatedMerging3()
             throws EntityValidationException, JMSException {
         final Country c = EjbTestHelper.getCountryServiceBean().getCountry(getDefaultCountry().getId());
         setDefaultCountry(c);
@@ -943,18 +954,28 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         o.setStatusCode(EntityStatus.NULLIFIED);
         o2 = getOrgServiceBean().getById(id2);
         o.setDuplicateOf(o2);
-        try {
-            getOrgServiceBean().curate(o);
-            fail("expected ValidationException");
-        } catch (CurateEntityValidationException e1) {
-            assertEquals(2, e1.getErrors().size());
-            assertArrayEquals(new String[] {"Organization already has an Oversight Committee of this type"}, e1
-                    .getErrors().get("gov.nih.nci.po.data.bo.OversightCommittee:" + oc1Id));
-            assertArrayEquals(
-                   new String[] {"Organization already has a Research Organization of this type and funding mechanism"},
-                   e1.getErrors().get("gov.nih.nci.po.data.bo.ResearchOrganization:" + correlationId));
-        }
-        MessageProducerTest.assertNoMessageCreated(o, getOrgServiceBean());
-    }
 
+        getOrgServiceBean().curate(o);
+        o = getOrgServiceBean().getById(id);
+        o2 = getOrgServiceBean().getById(id2);
+        assert(EntityStatus.NULLIFIED.equals(o.getStatusCode()));
+        assert(o.getDuplicateOf().equals(o2));
+
+        oc1 = getOversightCommitteeServiceBean().getById(correlationId);
+        oc2 = getOversightCommitteeServiceBean().getById(correlation2Id);
+        assert(oc1.getPlayer().getId().equals(o.getId()));
+        assert(oc2.getPlayer().getId().equals(o2.getId()));
+        assert(EntityStatus.NULLIFIED.equals(oc1.getPlayer().getStatusCode()));
+        assert(oc1.getDuplicateOf().getId().equals(oc2.getId()));
+        
+        rorg1 = getResearchOrganizationServiceBean().getById(correlationId);
+        rorg2 = getResearchOrganizationServiceBean().getById(correlation2Id);
+        assert(rorg1.getPlayer().getId().equals(o.getId()));
+        assert(rorg2.getPlayer().getId().equals(o2.getId()));
+        assert(EntityStatus.NULLIFIED.equals(rorg1.getPlayer().getStatusCode()));
+        assert(rorg1.getDuplicateOf().getId().equals(rorg2.getId()));
+        
+
+        MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(),false);
+    }
 }

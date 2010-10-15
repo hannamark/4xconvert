@@ -46,15 +46,31 @@ public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper
             return false;
         }
 
-        return validate((AbstractPersonRole) value);
+        AbstractPersonRole apr = (AbstractPersonRole) value;
+        AbstractPersonRole other = findMatches(apr);
+        return isValid(apr, other);
     }
 
+
     /**
-     * Performs the actual validation of player and scoper.
-     * @param apr role to validate
-     * @return true iff player and scoper are unique for non-nullified roles
+     * Returns conflicting {@link AbstractPersonRole} if validation fails.  Otherwise returns null.
+     * 
+     * @param apr role to check for conflicting role
+     * @return AbstractPersonRole if a conflict exists
      */
-    static boolean validate(AbstractPersonRole apr) {
+    public static AbstractPersonRole getConflictingRole(AbstractPersonRole apr) {
+        AbstractPersonRole other = findMatches(apr);
+        if (!isValid(apr, other)) {
+            return other;
+        }
+        return null;
+    }
+    
+    private static boolean isValid(AbstractPersonRole input, AbstractPersonRole match) {
+        return (match == null || match.getId().equals(input.getId()));    
+    }
+    
+    private static AbstractPersonRole findMatches(AbstractPersonRole apr) {
         Session s = null;
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
@@ -63,13 +79,11 @@ public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper
             LogicalExpression scoperPlayerComposite = Restrictions.and(Restrictions.eq("player", apr.getPlayer()),
                     Restrictions.eq("scoper", apr.getScoper()));
             c.add(Restrictions.and(Restrictions.ne("status", RoleStatus.NULLIFIED), scoperPlayerComposite));
-            AbstractPersonRole other = (AbstractPersonRole) c.uniqueResult();
-            return (other == null || other.getId().equals(apr.getId()));
+            return (AbstractPersonRole) c.uniqueResult();
         } finally {
             if (s != null) {
                 s.close();
             }
         }
     }
-
 }

@@ -120,20 +120,42 @@ public class UniqueOversightCommitteeValidator
         if (!(value instanceof OversightCommittee)) {
             return false;
         }
-        
-        OversightCommittee hcf = (OversightCommittee) value;
+
+        OversightCommittee oc = (OversightCommittee) value;
+        OversightCommittee other = findMatches(oc);
+        return isValid(oc, other);
+    }
+
+    /**
+     * Returns conflicting {@link OversightCommittee} if validation fails.  Otherwise returns null.
+     * 
+     * @param oc role to check for conflicting role
+     * @return OversightCommittee if a conflict exists
+     */
+    public static OversightCommittee getConflictingRole(OversightCommittee oc) {
+        OversightCommittee other = findMatches(oc);
+        if (!isValid(oc, other)) {
+            return other;
+        }
+        return null;
+    }
+    
+    private static boolean isValid(OversightCommittee input, OversightCommittee match) {
+        return (match == null || match.getId().equals(input.getId()));
+    }
+    
+    private static OversightCommittee findMatches(OversightCommittee oc) {
         Session s = null;
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
             Criteria c = s.createCriteria(OversightCommittee.class);
             LogicalExpression and = Restrictions.and(
-                    Restrictions.eq("player", hcf.getPlayer()),
-                    Restrictions.eq("typeCode", hcf.getTypeCode()));
+                    Restrictions.eq("player", oc.getPlayer()),
+                    Restrictions.eq("typeCode", oc.getTypeCode()));
             and = Restrictions.and(and, Restrictions.ne("status", RoleStatus.NULLIFIED));
             c.add(and);
-            OversightCommittee other = (OversightCommittee) c.uniqueResult();
-            return (other == null || other.getId().equals(hcf.getId()));
+            return (OversightCommittee) c.uniqueResult();
         } finally {
             if (s != null) {
                 s.close();

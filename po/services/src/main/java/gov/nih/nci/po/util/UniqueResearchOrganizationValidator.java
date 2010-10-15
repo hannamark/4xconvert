@@ -121,21 +121,43 @@ public class UniqueResearchOrganizationValidator
         if (!(value instanceof ResearchOrganization)) {
             return false;
         }
-        
-        ResearchOrganization hcf = (ResearchOrganization) value;
+
+        ResearchOrganization ro = (ResearchOrganization) value;
+        ResearchOrganization other = findMatches(ro);
+        return isValid(ro, other);
+    }
+
+    /**
+     * Returns conflicting {@link ResearchOrganization} if validation fails.  Otherwise returns null.
+     * 
+     * @param ro role to check for conflicting role
+     * @return ResearchOrganization if a conflict exists
+     */
+    public static ResearchOrganization getConflictingRole(ResearchOrganization ro) {
+        ResearchOrganization other = findMatches(ro);
+        if (!isValid(ro, other)) {
+            return other;
+        }
+        return null;
+    }
+    
+    private static boolean isValid(ResearchOrganization input, ResearchOrganization match) {
+        return (match == null || match.getId().equals(input.getId()));
+    }
+    
+    private static ResearchOrganization findMatches(ResearchOrganization ro) {
         Session s = null;
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
             Criteria c = s.createCriteria(ResearchOrganization.class);
             LogicalExpression and = Restrictions.and(
-                    Restrictions.eq("player", hcf.getPlayer()),
-                    Restrictions.eq("typeCode", hcf.getTypeCode()));
-            and = Restrictions.and(and, Restrictions.eq("fundingMechanism", hcf.getFundingMechanism()));
+                    Restrictions.eq("player", ro.getPlayer()),
+                    Restrictions.eq("typeCode", ro.getTypeCode()));
+            and = Restrictions.and(and, Restrictions.eq("fundingMechanism", ro.getFundingMechanism()));
             and = Restrictions.and(and, Restrictions.ne("status", RoleStatus.NULLIFIED));
             c.add(and);
-            ResearchOrganization other = (ResearchOrganization) c.uniqueResult();
-            return (other == null || other.getId().equals(hcf.getId()));
+            return (ResearchOrganization) c.uniqueResult();
         } finally {
             if (s != null) {
                 s.close();
@@ -143,6 +165,7 @@ public class UniqueResearchOrganizationValidator
         }
     }
 
+    
     /**
      * {@inheritDoc}
      */

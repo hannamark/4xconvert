@@ -49,11 +49,35 @@ public class UniquePlayerScoperIdentifierValidator implements Validator<UniquePl
         if (!(value instanceof IdentifiedOrganization || value instanceof IdentifiedPerson)) {
             return false;
         }
+        AbstractIdentifiedEntity<?> ie = (AbstractIdentifiedEntity<?>) value;
+        AbstractIdentifiedEntity<?> other = findMatches(ie);
+        return isValid(ie, other);
+    }
+
+
+    /**
+     * Returns conflicting {@link AbstractIdentifiedEntity} if validation fails.  Otherwise returns null.
+     * 
+     * @param ie role to check for conflicting role
+     * @return AbstractIdentifiedEntity if a conflict exists
+     */
+    public static AbstractIdentifiedEntity<?> getConflictingRole(AbstractIdentifiedEntity<?> ie) {
+        AbstractIdentifiedEntity<?> other = findMatches(ie);
+        if (!isValid(ie, other)) {
+            return other;
+        }
+        return null;
+    }
+    
+    private static boolean isValid(AbstractIdentifiedEntity<?> input, AbstractIdentifiedEntity<?> match) {
+        return (match == null || match.getId().equals(input.getId()));    
+    }
+    
+    private static AbstractIdentifiedEntity<?> findMatches(AbstractIdentifiedEntity<?> ie) {
         Session s = null;
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
-            AbstractIdentifiedEntity<?> ie = (AbstractIdentifiedEntity<?>) value;
             Criteria c = s.createCriteria(CGLIBUtils.unEnhanceCBLIBClass(ie.getClass()));
             LogicalExpression and = Restrictions.and(Restrictions.eq("player", ie.getPlayer()),
                     Restrictions.eq("scoper", ie.getScoper()));
@@ -64,13 +88,11 @@ public class UniquePlayerScoperIdentifierValidator implements Validator<UniquePl
                     and,
                     Restrictions.eq("assignedIdentifier.root", ie.getAssignedIdentifier().getRoot()));
             c.add(Restrictions.and(Restrictions.ne("status", RoleStatus.NULLIFIED), and));
-            AbstractIdentifiedEntity<?> other = (AbstractIdentifiedEntity<?>) c.uniqueResult();
-            return (other == null || other.getId().equals(ie.getId()));
+            return (AbstractIdentifiedEntity<?>) c.uniqueResult();
         } finally {
             if (s != null) {
                 s.close();
             }
         }
     }
-
 }

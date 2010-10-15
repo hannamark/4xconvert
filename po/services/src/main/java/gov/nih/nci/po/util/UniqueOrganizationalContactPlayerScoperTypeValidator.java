@@ -38,13 +38,35 @@ public class UniqueOrganizationalContactPlayerScoperTypeValidator implements
         if (!(value instanceof AbstractOrganizationalContact)) {
             return false;
         }
-        AbstractOrganizationalContact aoc = (AbstractOrganizationalContact) value;
+        
+        AbstractPersonRole apr = (AbstractPersonRole) value;
+        AbstractPersonRole other = findMatches(apr);
+        return isValid(apr, other);
+        
+    }
 
-        if (aoc.getPlayer() == null) {
-            return true;
+    /**
+     * Returns conflicting {@link AbstractPersonRole} if validation fails.  Otherwise returns null.
+     * 
+     * @param apr role to check for conflicting role
+     * @return AbstractPersonRole if a conflict exists
+     */
+    public static AbstractPersonRole getConflictingRole(AbstractPersonRole apr) {
+        AbstractPersonRole other = findMatches(apr);
+        if (!isValid(apr, other)) {
+            return other;
         }
+        return null;
+    }
 
+    private static boolean isValid(AbstractPersonRole input, AbstractPersonRole match) {
+        return (match == null || match.getId().equals(input.getId()) || match.getPlayer() == null);
+    }
+
+    private static AbstractPersonRole findMatches(AbstractPersonRole apr) {
         Session s = null;
+        AbstractOrganizationalContact aoc = (AbstractOrganizationalContact) apr;
+
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
@@ -53,8 +75,7 @@ public class UniqueOrganizationalContactPlayerScoperTypeValidator implements
             c.add(Restrictions.eq("scoper", aoc.getScoper()));
             c.add(Restrictions.eq("type", aoc.getType()));
             c.add(Restrictions.ne("status", RoleStatus.NULLIFIED));
-            AbstractPersonRole other = (AbstractPersonRole) c.uniqueResult();
-            return (other == null || other.getId().equals(aoc.getId()));
+            return (AbstractPersonRole) c.uniqueResult();
         } finally {
             if (s != null) {
                 s.close();
