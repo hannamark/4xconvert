@@ -84,15 +84,12 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -123,8 +120,8 @@ public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
      */
     @After
     public void tearDown() throws Exception {
-        File pdqDirectory = new File(PaEarPropertyReader.getPDQUploadPath());
-        FileUtils.cleanDirectory(pdqDirectory);
+        //File pdqDirectory = new File(PaEarPropertyReader.getPDQUploadPath());
+        //FileUtils.cleanDirectory(pdqDirectory);
     }
 
 
