@@ -221,9 +221,10 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     private HealthCareFacilityDTO getOrCreatePAHealthCareFacilityCorrelation(String orgPoIdentifier)
     throws PAException {
         HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
+        hcfDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+
         List<HealthCareFacilityDTO> hcfDTOs =
             PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
-        hcfDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
 
         if (CollectionUtils.isEmpty(hcfDTOs)) {
             try {
@@ -479,7 +480,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
         return o;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -489,11 +490,11 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         spart.setFunctionalCode(cd);
         List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
                         .getByStudyProtocol(studyProtocolIi, spart);
-        
+
         if (spDtos != null && !spDtos.isEmpty()) {
             returnVal = spDtos.get(0).getResearchOrganizationIi();
         }
-        
+
         return returnVal;
     }
 
