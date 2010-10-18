@@ -273,6 +273,7 @@ public class StudyResourcingBeanLocal extends
         StudyResourcingDTO toDelete = super.get(studyResourcingDTO.getIdentifier());
         toDelete.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
         toDelete.setInactiveCommentText(studyResourcingDTO.getInactiveCommentText());
+        super.setSessionContext(ejbContext);
         super.update(toDelete);
         return Boolean.FALSE;
     }

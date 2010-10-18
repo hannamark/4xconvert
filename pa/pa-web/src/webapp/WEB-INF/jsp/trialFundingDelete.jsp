@@ -34,6 +34,7 @@ function handleAction(){
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
     <s:form>
+    <pa:failureMessage/>
     <h2><fmt:message key="trialFunding.subtitle" /></h2>
    <s:hidden name="page"/>
     <s:hidden name="cbValue"/>
