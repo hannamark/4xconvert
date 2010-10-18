@@ -110,9 +110,7 @@ import org.hibernate.Session;
  */
 public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends AbstractEntity,
                                         CONVERTER extends AbstractConverter<DTO, BO>>
-        extends AbstractBaseIsoService<DTO, BO, CONVERTER>
-        implements StudyPaService<DTO> {
-
+        extends AbstractBaseIsoService<DTO, BO, CONVERTER> implements StudyPaService<DTO> {
     private static final Logger LOG = Logger.getLogger(AbstractStudyIsoService.class);
 
     /**
@@ -153,7 +151,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
     }
 
     /**
-     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
+     * creates a new record of study protocol by changing to new study protocol identifier.
      * @param fromStudyProtocolIi from where the study protocol objects to be copied
      * @param toStudyProtocolIi to where the study protocol objects to be copied
      * @return map

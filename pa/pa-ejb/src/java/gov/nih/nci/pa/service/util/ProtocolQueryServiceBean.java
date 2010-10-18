@@ -471,7 +471,12 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
         populateExample(criteria, example);
         StudyProtocolQueryBeanSearchCriteria crit = new StudyProtocolQueryBeanSearchCriteria(example, options);
-        List<StudyProtocol> results = search(crit);
+        List<StudyProtocol> results = new ArrayList<StudyProtocol>();
+        try {
+            results = search(crit);
+        } catch (Exception e) {
+            throw new PAException("An error has occurred when searching for trials.", e);
+        }
         if (results.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new PAException("Results exceed more than 500, Please redefine the seacrh criteria");
         }

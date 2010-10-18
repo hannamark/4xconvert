@@ -172,13 +172,31 @@ public class InterventionServiceTest {
         r = remoteEjb.search(searchCriteria);
         assertEquals(1, r.size());
 
+        searchCriteria.setName(StConverter.convertToSt("CHOCOLATE"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("true"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("false"));
+        r = remoteEjb.search(searchCriteria);
+        assertEquals(0, r.size());
+
+        searchCriteria.setName(StConverter.convertToSt("CHOCOLATE BAR"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("true"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("false"));
+        r = remoteEjb.search(searchCriteria);
+        assertEquals(1, r.size());
+
+        searchCriteria.setName(StConverter.convertToSt("HERSHEY"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("true"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        r = remoteEjb.search(searchCriteria);
+        assertEquals(1, r.size());
+
         searchCriteria.setName(null);
         searchCriteria.setTypeCode(CdConverter.convertToCd(InterventionTypeCode.GENETIC));
         searchCriteria.setExactMatch(StConverter.convertToSt("false"));
         searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
         try {
             r = remoteEjb.search(searchCriteria);
-            fail("Service should throw PAException when searching w/o name.  ");
+            fail("Service should throw PAException when searching w/o name.");
         } catch(PAException e) {
             // expected behavior
         }
