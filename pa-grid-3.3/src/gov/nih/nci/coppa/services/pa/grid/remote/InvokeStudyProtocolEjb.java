@@ -164,4 +164,11 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
             TooManyResultsException {
         throw new NotImplementedException();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyProtocolDTO> getCollaborativeTrials() throws PAException {
+        throw new NotImplementedException();
+    }
 }
