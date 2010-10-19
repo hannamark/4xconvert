@@ -126,7 +126,7 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
     public ByteArrayOutputStream generateTsrReport() throws PAException {
         try {
             setReportDocument(new Document());
-            //The below is being called for it's side effects; namely preparing the document for generation.
+            //The below is being called for its side effects; namely preparing the document for generation.
             PdfWriter.getInstance(getReportDocument(), getOutputStream());
             generateReport();
         } catch (DocumentException e) {
@@ -142,7 +142,7 @@ public class PdfTsrReportGenerator extends AbstractTsrReportGenerator {
     public ByteArrayOutputStream generateErrorReport() throws PAException {
         try {
             setReportDocument(new Document());
-            //The below is being called for it's sie effects; namely preparing the document for generation.
+            //The below is being called for its side effects; namely preparing the document for generation.
             PdfWriter.getInstance(getReportDocument(), getOutputStream());
             getReportDocument().open();
             addErrorReportTitle();

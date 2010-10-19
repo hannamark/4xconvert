@@ -1899,7 +1899,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                 errorMsg.append(validatePoObjects(sponsorOrganizationDTO, "Sponsor Organization "));
             }
             errorMsg.append(validatePoObjects(summary4organizationDTO, "Summary 4 Organization "));
-            errorMsg.append(validatePoObjects(piPersonDTO, "Prinicipal Investigator "));
+            errorMsg.append(validatePoObjects(piPersonDTO, "Principal Investigator "));
         }
         if (UPDATE.equalsIgnoreCase(operation) && documentDTOs != null && !documentDTOs.isEmpty()) {
             for (DocumentDTO docDto : documentDTOs) {

@@ -874,7 +874,7 @@ public abstract class AbstractTsrReportGenerator {
 
     private Cell getItemCell(String itemText, int colspan) throws BadElementException {
         Font itemNameFont = FontFactory.getFont(FontFactory.HELVETICA, Font.DEFAULTSIZE, Font.BOLD, Color.BLACK);
-        Cell cell = new Cell(new Phrase(itemText, itemNameFont));
+        Cell cell = new Cell(new Phrase(StringUtils.replace(itemText, "\r\n", "\n"), itemNameFont));
         cell.setWidth(FLOAT_100);
         if (colspan > 1) {
             cell.setColspan(colspan);
@@ -888,7 +888,7 @@ public abstract class AbstractTsrReportGenerator {
 
     private Cell getItemValueCell(String itemValueText, int colspan) throws BadElementException {
         Font itemValueFont = FontFactory.getFont(FontFactory.HELVETICA, Font.DEFAULTSIZE, Font.NORMAL, Color.BLACK);
-        Cell cell = new Cell(new Phrase(itemValueText, itemValueFont));
+        Cell cell = new Cell(new Phrase(StringUtils.replace(itemValueText, "\r\n", "\n"), itemValueFont));
         cell.setWidth(FLOAT_100);
         cell.setVerticalAlignment(Element.ALIGN_JUSTIFIED);
         if (colspan > 1) {
@@ -902,7 +902,7 @@ public abstract class AbstractTsrReportGenerator {
         textList.setListSymbol(new Chunk("\u2022", FontFactory.getFont(FontFactory.HELVETICA, INT_12, Font.BOLD)));
         Font itemValueFont = FontFactory.getFont(FontFactory.HELVETICA, Font.DEFAULTSIZE, Font.NORMAL, Color.BLACK);
         for (String itemStr : lst) {
-            ListItem item = new ListItem(itemStr);
+            ListItem item = new ListItem(StringUtils.replace(itemStr, "\r\n", "\n"));
             item.setFont(itemValueFont);
             textList.add(item);
         }

@@ -469,7 +469,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
                         abstractionWarnList.add(createError("Warning",
                                 "Select General Trial Details from Administrative Data menu.",
-                                "Prinicipal Investigator status has been set to nullified, "
+                                "Principal Investigator status has been set to nullified, "
                                         + "Please select another Principal Investigator"));
                     }
                     if (StudyContactRoleCode.CENTRAL_CONTACT.getCode().equalsIgnoreCase(
