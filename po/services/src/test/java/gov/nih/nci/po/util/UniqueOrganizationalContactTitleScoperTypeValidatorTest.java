@@ -83,6 +83,7 @@
 package gov.nih.nci.po.util;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
@@ -96,9 +97,8 @@ import org.junit.Test;
 public class UniqueOrganizationalContactTitleScoperTypeValidatorTest extends AbstractHibernateTestCase {
 
     @Test
-    public void isValidType() {
-        UniqueOrganizationalContactTitleScoperTypeValidator validator =
-                new UniqueOrganizationalContactTitleScoperTypeValidator();
+    public void testIsValid() {
+        UniqueOrganizationalContactTitleScoperTypeValidator validator = new UniqueOrganizationalContactTitleScoperTypeValidator();
         assertFalse(validator.isValid(new HealthCareFacility()));
         OrganizationalContact oc = new OrganizationalContact();
         assertTrue(validator.isValid(oc));
@@ -106,4 +106,11 @@ public class UniqueOrganizationalContactTitleScoperTypeValidatorTest extends Abs
         oc.setTitle("test title");
         assertTrue(validator.isValid(oc));
     }
+
+    @Test
+    public void testGetConflictingRole() {
+        UniqueOrganizationalContactTitleScoperTypeValidator validator = new UniqueOrganizationalContactTitleScoperTypeValidator();
+        assertNull(validator.getConflictingRole(new OrganizationalContact()));
+    }
+
 }

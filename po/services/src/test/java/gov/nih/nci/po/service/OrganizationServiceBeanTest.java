@@ -105,7 +105,6 @@ import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
-import gov.nih.nci.po.util.MergeOrganizationHelper;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;

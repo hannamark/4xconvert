@@ -82,11 +82,15 @@
  */
 package gov.nih.nci.po.util;
 
-import static org.junit.Assert.*;
-
-import java.util.HashSet;
-import java.util.Set;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
@@ -97,13 +101,9 @@ import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
-import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.convert.AddressConverterTest;
-import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doReturn;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.junit.Before;
