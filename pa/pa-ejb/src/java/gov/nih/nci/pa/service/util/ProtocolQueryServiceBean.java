@@ -577,6 +577,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getStudyMilestone())
                 && StringUtils.isEmpty(criteria.getOtherIdentifier())
                 && StringUtils.isEmpty(criteria.getNctNumber())
+                && StringUtils.isEmpty(criteria.getParticipatingSiteId())
                 && !criteria.isSearchOnHold()
                 && !criteria.isStudyLockedBy()
                 && StringUtils.isEmpty(criteria.getSubmissionType())
