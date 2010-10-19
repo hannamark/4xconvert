@@ -468,7 +468,7 @@ function loadRegAuthoritiesDiv() {
            <tr>
                 <td scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.summary_4_funding_source">
-                        <label for="submitTrial_selectedSummary4Sponsor_name_part_0__value"> Summary 4 Funding Sponsor: </label>
+                        <label for="submitTrial_selectedSummary4Sponsor_name_part_0__value"> Summary 4 Funding Sponsor:<span class="required">*</span></label>
                     </reg-web:displayTooltip>
                 </td>
                 <td class="value">
