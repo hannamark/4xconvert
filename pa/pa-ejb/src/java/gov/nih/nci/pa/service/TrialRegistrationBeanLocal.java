@@ -179,7 +179,8 @@ import org.hibernate.Session;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(HibernateSessionInterceptor.class)
-public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal {
+public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
+    implements TrialRegistrationServiceLocal {
     @EJB private StudyProtocolServiceLocal studyProtocolService = null;
     @EJB private StudyRelationshipServiceLocal studyRelationshipService = null;
     @EJB private StudyOverallStatusServiceLocal studyOverallStatusService = null;
@@ -1624,7 +1625,9 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
                     studyContactDTO, studyParticipationContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
                     responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs, studySiteAccrualStatusDTOs,
                     studySiteDTOs, UPDATE, isBatchMode);
-
+            StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
+            List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(studyProtocolDTO.getIdentifier());
+            sendTSRXML(studyProtocolDTO.getIdentifier(), smDto.getMilestoneCode(), inbox);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);

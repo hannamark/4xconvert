@@ -79,7 +79,6 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -93,7 +92,6 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -132,7 +130,8 @@ import org.apache.commons.lang.StringUtils;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(HibernateSessionInterceptor.class)
-public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialManagementServiceLocal {
+public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrationBean
+    implements ProprietaryTrialManagementServiceLocal {
 
     private static final String VALIDATION_EXCEPTION = "Validation Exception ";
     private SessionContext ejbContext;
@@ -250,32 +249,13 @@ public class ProprietaryTrialManagementBeanLocal implements ProprietaryTrialMana
             mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi);
             StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(studyProtocolIi);
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(studyProtocolIi);
-            if (!isActiveRecordInInbox(inbox)
-                    && MilestoneCode.isAboveTrialSummaryReport(MilestoneCode.getByCode(CdConverter
-                            .convertCdToString(smDto.getMilestoneCode())))) {
-                paServiceUtils.createMilestone(studyProtocolIi, MilestoneCode.TRIAL_SUMMARY_SENT, null);
-            }
+            sendTSRXML(studyProtocolDTO.getIdentifier(), smDto.getMilestoneCode(), inbox);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
     }
 
-    /**
-     * @param inbox
-     */
-    private boolean isActiveRecordInInbox(List<StudyInboxDTO> inbox) {
-        boolean activeRecord = false;
-        if (CollectionUtils.isNotEmpty(inbox)) {
-            for (StudyInboxDTO inboxDto : inbox) {
-                String strCloseDate = IvlConverter.convertTs().convertHighToString(inboxDto.getInboxDateRange());
-                if (StringUtils.isEmpty(strCloseDate)) {
-                    activeRecord = true;
-                }
-            }
-        }
-        return activeRecord;
-    }
 
     private void updateLeadOrganization(OrganizationDTO leadOrg, St leadOrganizationIdentifier, Ii studyProtocolIi)
             throws PAException {

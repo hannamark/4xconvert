@@ -310,8 +310,7 @@ public class StudyOverallStatusBeanLocal extends
         StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         boolean statusOrDateChanged = true;
         //original submission
-        if (dwsDTO.getStatusCode().getCode() != null
-                && DocumentWorkflowStatusCode.SUBMITTED.getCode().
+        if (!PAUtil.isCdNull(dwsDTO.getStatusCode()) && DocumentWorkflowStatusCode.SUBMITTED.getCode().
                 equalsIgnoreCase(dwsDTO.getStatusCode().getCode())
                 && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) {
             statusOrDateChanged = false;

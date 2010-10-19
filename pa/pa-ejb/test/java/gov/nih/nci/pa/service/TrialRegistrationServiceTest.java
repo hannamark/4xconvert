@@ -78,29 +78,63 @@
 */
 package gov.nih.nci.pa.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.RegistryUserBeanLocal;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.PoServiceLocator;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import javax.ejb.SessionContext;
+
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TrialRegistrationServiceTest {
 
-    private TrialRegistrationBeanLocal bean = new TrialRegistrationBeanLocal();
+    private final TrialRegistrationBeanLocal bean = new TrialRegistrationBeanLocal();
     StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
     StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
     StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeBeanLocal();
@@ -115,6 +149,12 @@ public class TrialRegistrationServiceTest {
     StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
     StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
     StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
+    private ServiceLocator paSvcLoc;
+    private DocumentWorkflowStatusServiceLocal documentWrkService;
+    private PoServiceLocator poSvcLoc;
+    private OrganizationEntityServiceRemote poOrgSvc;
+    private PersonEntityServiceRemote poPersonSvc;
+
     private Ii spIi;
     @Before
     public void setUp() throws Exception {
@@ -135,7 +175,32 @@ public class TrialRegistrationServiceTest {
         TestSchema.reset();
         TestSchema.primeData();
         spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
-     }
+        paSvcLoc = mock (ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
+        documentWrkService = mock (DocumentWorkflowStatusServiceLocal.class);
+        when (paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(documentWrkService);
+        StudyProtocolServiceLocal studyProtocolSvc = mock(StudyProtocolServiceLocal.class);
+        when(paSvcLoc.getStudyProtocolService()).thenReturn(studyProtocolSvc);
+        when (documentWrkService.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(new DocumentWorkflowStatusDTO());
+        StudySiteServiceLocal studySiteSrv = mock (StudySiteServiceLocal.class);
+        when(paSvcLoc.getStudySiteService()).thenReturn(studySiteSrv);
+        StudySiteDTO studySiteDTO = new StudySiteDTO();
+        studySiteDTO.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("1"));
+        when(studySiteSrv.search(any(StudySiteDTO.class), any(LimitOffset.class))).thenReturn(
+                Arrays.asList(studySiteDTO));
+        setupPoSvc();
+        bean.setSessionContext(mock(SessionContext.class));
+    }
+    private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException {
+        poSvcLoc = mock(PoServiceLocator.class);
+        PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
+        poOrgSvc = mock(OrganizationEntityServiceRemote.class);
+        poPersonSvc = mock(PersonEntityServiceRemote.class);
+        when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
+        when(poSvcLoc.getPersonEntityService()).thenReturn(poPersonSvc);
+        when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(new OrganizationDTO());
+        when(poPersonSvc.getPerson(any(Ii.class))).thenReturn(new PersonDTO());
+    }
 
     @Test
     public void createInterventionalStudyProtocolTest() throws Exception {
@@ -154,8 +219,119 @@ public class TrialRegistrationServiceTest {
         spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
         StudySiteDTO leadOrganizationSiteIdentifierDTO  = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
 //        StudyContactDTO studyContactDTO =
-        assertEquals("","");
+        try {
+            bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, new ArrayList<StudySiteDTO>(),
+                null, null, null, null, null, null, BlConverter.convertToBl(Boolean.FALSE));
+            fail();
+        } catch (PAException e) {
+            assertTrue(StringUtils.contains(e.getMessage(),"Validation Exception "));
+        }
+    }
+    @Test
+    public void updateTest() throws Exception {
+        bean.setSessionContext(mock(SessionContext.class));
+        StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(spIi);
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
+        List<DocumentDTO> documentDTOs = documentService.getDocumentsByStudyProtocol(spIi);
+        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
+        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
+        PersonDTO principalInvestigatorDTO  = new PersonDTO();
+        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
+        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
+        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
+        StudySiteDTO spDto = new StudySiteDTO();
+        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        try {
+            bean.update(studyProtocolDTO, overallStatusDTO, null, studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
+                    null, null, null, null, null, null, null, null, null, BlConverter.convertToBl(Boolean.FALSE));
+            fail();
+        } catch (PAException e) {
+        }
 
     }
 
+    @Test
+    public void testProperties() throws PAException {
+        assertNotNull(bean.getStudyProtocolService());
+        assertNull(bean.getStudyRelationshipService());
+        bean.setStudyRelationshipService(mock(StudyRelationshipBeanLocal.class));
+        assertNotNull(bean.getStudyRelationshipService());
+        assertNotNull(bean.getStudyOverallStatusService());
+        assertNotNull(bean. getStudyIndldeService());
+        assertNotNull(bean.getStudyResourcingService());
+        assertNull(bean.getStudyMilestoneService());
+        bean.setStudyMilestoneService(mock(StudyMilestoneBeanLocal.class));
+        assertNotNull(bean.getStudyMilestoneService());
+        assertNotNull(bean.getDocumentService());
+        assertNotNull(bean.getStudyDiseaseService());
+        assertNotNull(bean.getArmService());
+        assertNotNull(bean.getPlannedActivityService());
+        assertNotNull(bean.getSubGroupsService());
+        assertNotNull(bean.getStudySiteService());
+        assertNotNull(bean.getStudySiteContactService());
+        assertNotNull(bean.getStudySiteAccrualStatusService());
+        assertNotNull(bean.getStudyOutcomeMeasureService());
+        assertNotNull(bean.getStudyRegulatoryAuthorityService());
+        assertNull(bean.getOcsr());
+        bean.setOcsr(mock(OrganizationCorrelationServiceRemote.class));
+        assertNotNull(bean.getOcsr());
+        assertNull(bean.getStudyContactService());
+        bean.setStudyContactService(mock(StudyContactBeanLocal.class));
+        assertNotNull(bean.getStudyContactService());
+        assertNull(bean.getTsrReportService());
+        bean.setTsrReportService(mock(TSRReportGeneratorServiceRemote.class));
+        assertNotNull(bean.getTsrReportService());
+        assertNull(bean.getDocWrkFlowStatusService());
+        bean.setDocWrkFlowStatusService(mock(DocumentWorkflowStatusServiceLocal.class));
+        assertNotNull(bean.getDocWrkFlowStatusService());
+        assertNull(bean.getRegulatoryInfoBean());
+        bean.setRegulatoryInfoBean(mock(RegulatoryInformationServiceRemote.class));
+        assertNotNull(bean.getRegulatoryInfoBean());
+        assertNull(bean.getStudyRecruitmentStatusServiceLocal());
+        bean.setStudyRecruitmentStatusServiceLocal(mock(StudyRecruitmentStatusBeanLocal.class));
+        assertNotNull(bean.getStudyRecruitmentStatusServiceLocal());
+        assertNull(bean.getStudyObjectiveService());
+        bean.setStudyObjectiveService(mock(StudyObjectiveServiceLocal.class));
+        assertNotNull(bean.getStudyObjectiveService());
+        assertNull(bean.getStudySiteOverallStatusService());
+        bean.setStudySiteOverallStatusService(mock(StudySiteOverallStatusServiceLocal.class));
+        assertNotNull(bean.getStudySiteOverallStatusService());
+        assertNull(bean.getAbstractionCompletionService());
+        bean.setAbstractionCompletionService(mock(AbstractionCompletionServiceRemote.class));
+        assertNotNull(bean.getAbstractionCompletionService());
+        assertNull(bean.getStudyInboxServiceLocal());
+        bean.setStudyInboxServiceLocal(mock(StudyInboxServiceLocal.class));
+        assertNotNull(bean.getStudyInboxServiceLocal());
+        assertNull(bean.getMailManagerSerivceLocal());
+        bean.setMailManagerSerivceLocal(mock(MailManagerBeanLocal.class));
+        assertNotNull(bean.getMailManagerSerivceLocal());
+        assertNull(bean.getUserServiceLocal());
+        bean.setUserServiceLocal(mock(RegistryUserBeanLocal.class));
+        assertNotNull(bean.getUserServiceLocal());
+    }
+    @Test
+    public void testSendTSRXML() throws PAException {
+        bean.sendTSRXML(null, null, null);
+        bean.sendTSRXML(spIi, null, new ArrayList<StudyInboxDTO>());
+        bean.sendTSRXML(spIi, CdConverter.convertToCd(MilestoneCode.QC_COMPLETE), new ArrayList<StudyInboxDTO>());
+        List<StudyInboxDTO> inboxList = new ArrayList<StudyInboxDTO>();
+        StudyInboxDTO inboxDto = new StudyInboxDTO();
+        Ivl<Ts> ivlTs = new Ivl<Ts>();
+        ivlTs.setLow(TsConverter.convertToTs(new Timestamp(0)));
+        inboxDto.setInboxDateRange(ivlTs);
+        inboxList.add(inboxDto);
+        bean.sendTSRXML(spIi, CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT),inboxList);
+        inboxList .remove(0);
+        ivlTs = new Ivl<Ts>();
+        ivlTs.setLow(TsConverter.convertToTs(new Timestamp(0)));
+        ivlTs.setHigh(TsConverter.convertToTs(new Timestamp(0)));
+        inboxDto.setInboxDateRange(ivlTs);
+        inboxList.add(inboxDto);
+        bean.setPaServiceUtils(mock(PAServiceUtils.class));
+        bean.sendTSRXML(spIi, CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT),inboxList);
+    }
 }
