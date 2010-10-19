@@ -127,20 +127,20 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
     private MergeOrganizationHelper mergeOrganizationHelper;
 
     /**
-     * Constructs an {@link OrganizationServiceBean} with the default MergeOrganizationHelper. 
+     * Constructs an {@link OrganizationServiceBean} with the default MergeOrganizationHelper.
      */
     public OrganizationServiceBean() {
-        this.mergeOrganizationHelper = MergeOrganizationHelperImpl.getInstance();
+        this.mergeOrganizationHelper = new MergeOrganizationHelperImpl();
     }
-    
+
     /**
-     * Constructs an {@link OrganizationServiceBean} with the provided MergeOrganizationHelper instance. 
+     * Constructs an {@link OrganizationServiceBean} with the provided MergeOrganizationHelper instance.
      * @param mergeOrganizationHelper Inject the MergeOrganizationHelper to use
      */
     public OrganizationServiceBean(MergeOrganizationHelper mergeOrganizationHelper) {
         this.mergeOrganizationHelper = mergeOrganizationHelper;
     }
-    
+
     /**
      * @return the mergeOrganizationHelper
      */
@@ -248,7 +248,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
             sr.setScoper(dup);
             activateRoleStatusByDupStatus(dup, correlation);
             if (isChangeConflicting(correlation)) {
-                changes.addAll(MergeOrganizationHelperImpl.getInstance().handleConflictingScopedRoleCorrelation(org,
+                changes.addAll(mergeOrganizationHelper.handleConflictingScopedRoleCorrelation(org,
                         correlation));
             } else {
                 changes.add(correlation);
@@ -265,7 +265,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
             pr.setPlayer(dup);
             activateRoleStatusByDupStatus(dup, correlation);
             if (isChangeConflicting(correlation)) {
-                changes.addAll(MergeOrganizationHelperImpl.getInstance().handleConflictingPlayedRoleCorrelation(org,
+                changes.addAll(mergeOrganizationHelper.handleConflictingPlayedRoleCorrelation(org,
                         correlation));
             } else {
                 changes.add(correlation);

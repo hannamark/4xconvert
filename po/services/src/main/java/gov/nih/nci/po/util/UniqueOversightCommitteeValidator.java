@@ -128,23 +128,23 @@ public class UniqueOversightCommitteeValidator
 
     /**
      * Returns conflicting {@link OversightCommittee} if validation fails.  Otherwise returns null.
-     * 
+     *
      * @param oc role to check for conflicting role
      * @return OversightCommittee if a conflict exists
      */
-    public static OversightCommittee getConflictingRole(OversightCommittee oc) {
+    public OversightCommittee getConflictingRole(OversightCommittee oc) {
         OversightCommittee other = findMatches(oc);
         if (!isValid(oc, other)) {
             return other;
         }
         return null;
     }
-    
-    private static boolean isValid(OversightCommittee input, OversightCommittee match) {
+
+    private boolean isValid(OversightCommittee input, OversightCommittee match) {
         return (match == null || match.getId().equals(input.getId()));
     }
-    
-    private static OversightCommittee findMatches(OversightCommittee oc) {
+
+    private OversightCommittee findMatches(OversightCommittee oc) {
         Session s = null;
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();

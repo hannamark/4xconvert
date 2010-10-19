@@ -132,16 +132,21 @@ import com.fiveamsolutions.nci.commons.util.HibernateHelper;
  */
 public final class MergeOrganizationHelperImpl implements MergeOrganizationHelper {
 
-    private static MergeOrganizationHelperImpl instance = new MergeOrganizationHelperImpl();
-
     private UniquePlayerScoperIdentifierValidator uniquePlayerScoperIdentifierValidator
         = new UniquePlayerScoperIdentifierValidator();
+
+    private UniquePlayerScoperValidator uniquePlayerScoperValidator
+    = new UniquePlayerScoperValidator();
 
     private UniqueOversightCommitteeValidator uniqueOversightCommitteeValidator
         = new UniqueOversightCommitteeValidator();
 
     private UniqueResearchOrganizationValidator uniqueResearchOrganizationValidator
         = new UniqueResearchOrganizationValidator();
+
+    private UniqueOrganizationalContactTitleScoperTypeValidator
+       uniqueOrganizationalContactTitleScoperTypeValidator
+           = new UniqueOrganizationalContactTitleScoperTypeValidator();
 
     private HibernateHelper hibernateHelper = PoHibernateUtil.getHibernateHelper();
 
@@ -152,6 +157,15 @@ public final class MergeOrganizationHelperImpl implements MergeOrganizationHelpe
      */
     public void setUniquePlayerScoperIdentifierValidator(UniquePlayerScoperIdentifierValidator validator) {
         uniquePlayerScoperIdentifierValidator = validator;
+    }
+
+    /**
+     * Set a UniquePlayerValidator.
+     * Optional, an instance is created by default.
+     * @param validator the validator to set.
+     */
+    public void setUniquePlayerScoperValidator(UniquePlayerScoperValidator validator) {
+        uniquePlayerScoperValidator = validator;
     }
 
     /**
@@ -173,25 +187,22 @@ public final class MergeOrganizationHelperImpl implements MergeOrganizationHelpe
     }
 
     /**
+     * Set a UniqueOrganizationalContactTitleScopeValidator.
+     * Optional, an instance is created by default.
+     * @param validator the validator to set.
+     */
+    public void setUniqueOrganizationalContactScoperTypeValidator(
+            UniqueOrganizationalContactTitleScoperTypeValidator validator) {
+        uniqueOrganizationalContactTitleScoperTypeValidator = validator;
+    }
+
+    /**
      * Set a HibernateHelper.
      * Optional, one is provided by default.
      * @param helper the helper to set.
      */
     public void setHibernateHelper(HibernateHelper helper) {
         hibernateHelper = helper;
-    }
-
-    private MergeOrganizationHelperImpl() {
-
-    }
-
-    /**
-     * Get Singleton instance of MergeOrganizationHelperImpl.
-     *
-     * @return current instance of MergeOrganizationHelperImpl
-     */
-    public static MergeOrganizationHelperImpl getInstance() {
-        return instance;
     }
 
     /**
@@ -287,7 +298,7 @@ public final class MergeOrganizationHelperImpl implements MergeOrganizationHelpe
             ((IdentifiedPerson) correlation).setDuplicateOf(survivingRole);
             nullifyAndSetScoper(org, correlation);
         } else if (correlation instanceof HealthCareProvider) {
-            HealthCareProvider survivingRole = (HealthCareProvider) UniquePlayerScoperValidator
+            HealthCareProvider survivingRole = (HealthCareProvider) uniquePlayerScoperValidator
                     .getConflictingRole((AbstractPersonRole) correlation);
             copyOverSurvivingPersonRoleData(survivingRole, (AbstractPersonRole) correlation);
             ((HealthCareProvider) correlation).setDuplicateOf(survivingRole);
@@ -295,14 +306,14 @@ public final class MergeOrganizationHelperImpl implements MergeOrganizationHelpe
             nullifyAndSetScoper(org, correlation);
         } else if (correlation instanceof OrganizationalContact) {
             OrganizationalContact survivingRole =
-                (OrganizationalContact) UniqueOrganizationalContactTitleScoperTypeValidator
+                (OrganizationalContact) uniqueOrganizationalContactTitleScoperTypeValidator
                     .getConflictingRole((AbstractOrganizationalContact) correlation);
             copyOverSurvivingPersonRoleData(survivingRole, (AbstractPersonRole) correlation);
             ((OrganizationalContact) correlation).setDuplicateOf(survivingRole);
             changes.add(survivingRole);
             nullifyAndSetScoper(org, correlation);
         } else if (correlation instanceof ClinicalResearchStaff) {
-            ClinicalResearchStaff survivingRole = (ClinicalResearchStaff) UniquePlayerScoperValidator
+            ClinicalResearchStaff survivingRole = (ClinicalResearchStaff) uniquePlayerScoperValidator
                     .getConflictingRole((AbstractPersonRole) correlation);
             copyOverSurvivingPersonRoleData(survivingRole, (AbstractPersonRole) correlation);
             ((ClinicalResearchStaff) correlation).setDuplicateOf(survivingRole);

@@ -54,23 +54,23 @@ public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper
 
     /**
      * Returns conflicting {@link AbstractPersonRole} if validation fails.  Otherwise returns null.
-     * 
+     *
      * @param apr role to check for conflicting role
      * @return AbstractPersonRole if a conflict exists
      */
-    public static AbstractPersonRole getConflictingRole(AbstractPersonRole apr) {
+    public AbstractPersonRole getConflictingRole(AbstractPersonRole apr) {
         AbstractPersonRole other = findMatches(apr);
         if (!isValid(apr, other)) {
             return other;
         }
         return null;
     }
-    
-    private static boolean isValid(AbstractPersonRole input, AbstractPersonRole match) {
-        return (match == null || match.getId().equals(input.getId()));    
+
+    private boolean isValid(AbstractPersonRole input, AbstractPersonRole match) {
+        return (match == null || match.getId().equals(input.getId()));
     }
-    
-    private static AbstractPersonRole findMatches(AbstractPersonRole apr) {
+
+    private AbstractPersonRole findMatches(AbstractPersonRole apr) {
         Session s = null;
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();

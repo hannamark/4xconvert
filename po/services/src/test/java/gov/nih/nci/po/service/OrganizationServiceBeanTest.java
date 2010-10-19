@@ -105,6 +105,7 @@ import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
+import gov.nih.nci.po.util.MergeOrganizationHelper;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -843,7 +844,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assert(oc1.getDuplicateOf().getId() != null);
         assert(oc2.getId() != null);
         assert(oc1.getDuplicateOf().getId().equals(oc2.getId()));
-        
+
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(),false);
     }
 
@@ -885,7 +886,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         o.setStatusCode(EntityStatus.NULLIFIED);
         o2 = getOrgServiceBean().getById(id2);
         o.setDuplicateOf(o2);
-        
+
         getOrgServiceBean().curate(o);
         o = getOrgServiceBean().getById(id);
         o2 = getOrgServiceBean().getById(id2);
@@ -897,7 +898,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assert(rorg2.getPlayer().getId().equals(o2.getId()));
         assert(EntityStatus.NULLIFIED.equals(rorg1.getPlayer().getStatusCode()));
         assert(rorg1.getDuplicateOf().getId().equals(rorg2.getId()));
-        
+
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(),false);
     }
 
@@ -967,14 +968,14 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assert(oc2.getPlayer().getId().equals(o2.getId()));
         assert(EntityStatus.NULLIFIED.equals(oc1.getPlayer().getStatusCode()));
         assert(oc1.getDuplicateOf().getId().equals(oc2.getId()));
-        
+
         rorg1 = getResearchOrganizationServiceBean().getById(correlationId);
         rorg2 = getResearchOrganizationServiceBean().getById(correlation2Id);
         assert(rorg1.getPlayer().getId().equals(o.getId()));
         assert(rorg2.getPlayer().getId().equals(o2.getId()));
         assert(EntityStatus.NULLIFIED.equals(rorg1.getPlayer().getStatusCode()));
         assert(rorg1.getDuplicateOf().getId().equals(rorg2.getId()));
-        
+
 
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(),false);
     }

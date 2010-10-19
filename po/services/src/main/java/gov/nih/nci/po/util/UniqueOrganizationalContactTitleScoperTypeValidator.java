@@ -48,14 +48,14 @@ public class UniqueOrganizationalContactTitleScoperTypeValidator implements
         AbstractOrganizationalContact other = findMatches(aoc);
         return isValid(aoc, other);
     }
-    
+
     /**
      * Returns conflicting {@link AbstractOrganizationalContact} if validation fails.  Otherwise returns null.
-     * 
+     *
      * @param aoc role to check for conflicting role
      * @return AbstractOrganizationalContact if a conflict exists
      */
-    public static AbstractOrganizationalContact getConflictingRole(AbstractOrganizationalContact aoc) {
+    public AbstractOrganizationalContact getConflictingRole(AbstractOrganizationalContact aoc) {
         AbstractOrganizationalContact other = findMatches(aoc);
         if (!isValid(aoc, other)) {
             return other;
@@ -63,12 +63,12 @@ public class UniqueOrganizationalContactTitleScoperTypeValidator implements
         return null;
     }
 
-    private static boolean isValid(AbstractPersonRole input, AbstractPersonRole match) {
+    private boolean isValid(AbstractPersonRole input, AbstractPersonRole match) {
         return (match == null || match.getId().equals(input.getId()) || StringUtils
                 .isBlank(((AbstractOrganizationalContact) match).getTitle()));
     }
 
-    private static AbstractOrganizationalContact findMatches(AbstractOrganizationalContact aoc) {
+    private AbstractOrganizationalContact findMatches(AbstractOrganizationalContact aoc) {
         Session s = null;
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
@@ -85,5 +85,5 @@ public class UniqueOrganizationalContactTitleScoperTypeValidator implements
             }
         }
     }
-   
+
 }

@@ -129,23 +129,23 @@ public class UniqueResearchOrganizationValidator
 
     /**
      * Returns conflicting {@link ResearchOrganization} if validation fails.  Otherwise returns null.
-     * 
+     *
      * @param ro role to check for conflicting role
      * @return ResearchOrganization if a conflict exists
      */
-    public static ResearchOrganization getConflictingRole(ResearchOrganization ro) {
+    public ResearchOrganization getConflictingRole(ResearchOrganization ro) {
         ResearchOrganization other = findMatches(ro);
         if (!isValid(ro, other)) {
             return other;
         }
         return null;
     }
-    
-    private static boolean isValid(ResearchOrganization input, ResearchOrganization match) {
+
+    private boolean isValid(ResearchOrganization input, ResearchOrganization match) {
         return (match == null || match.getId().equals(input.getId()));
     }
-    
-    private static ResearchOrganization findMatches(ResearchOrganization ro) {
+
+    private ResearchOrganization findMatches(ResearchOrganization ro) {
         Session s = null;
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
@@ -165,7 +165,7 @@ public class UniqueResearchOrganizationValidator
         }
     }
 
-    
+
     /**
      * {@inheritDoc}
      */

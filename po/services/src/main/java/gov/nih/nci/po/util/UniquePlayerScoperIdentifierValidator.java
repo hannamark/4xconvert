@@ -57,23 +57,23 @@ public class UniquePlayerScoperIdentifierValidator implements Validator<UniquePl
 
     /**
      * Returns conflicting {@link AbstractIdentifiedEntity} if validation fails.  Otherwise returns null.
-     * 
+     *
      * @param ie role to check for conflicting role
      * @return AbstractIdentifiedEntity if a conflict exists
      */
-    public static AbstractIdentifiedEntity<?> getConflictingRole(AbstractIdentifiedEntity<?> ie) {
+    public AbstractIdentifiedEntity<?> getConflictingRole(AbstractIdentifiedEntity<?> ie) {
         AbstractIdentifiedEntity<?> other = findMatches(ie);
         if (!isValid(ie, other)) {
             return other;
         }
         return null;
     }
-    
-    private static boolean isValid(AbstractIdentifiedEntity<?> input, AbstractIdentifiedEntity<?> match) {
-        return (match == null || match.getId().equals(input.getId()));    
+
+    private boolean isValid(AbstractIdentifiedEntity<?> input, AbstractIdentifiedEntity<?> match) {
+        return (match == null || match.getId().equals(input.getId()));
     }
-    
-    private static AbstractIdentifiedEntity<?> findMatches(AbstractIdentifiedEntity<?> ie) {
+
+    private AbstractIdentifiedEntity<?> findMatches(AbstractIdentifiedEntity<?> ie) {
         Session s = null;
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
