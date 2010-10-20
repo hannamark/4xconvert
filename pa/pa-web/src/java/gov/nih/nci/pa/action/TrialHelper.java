@@ -429,24 +429,34 @@ public class TrialHelper {
             spDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(gtdDTO.getAmendmentReasonCode()));
         }
         if (gtdDTO.getProprietarytrialindicator() != null) {
-            if (gtdDTO.getProprietarytrialindicator().equalsIgnoreCase("true")) {
-                spDTO.setPhaseCode(CdConverter.convertStringToCd(gtdDTO.getPhaseCode()));
-                spDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(gtdDTO.getPrimaryPurposeCode()));
-            } else {
+            if (!StringUtils.equalsIgnoreCase(gtdDTO.getProprietarytrialindicator(), "true")) {
                 spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(gtdDTO.getCtGovXmlRequired()));
-                spDTO.setPhaseCode(CdConverter.convertStringToCd(gtdDTO.getPhaseCode()));
-                spDTO.setPhaseAdditionalQualifierCode(CdConverter.convertStringToCd(
-                           gtdDTO.getPhaseAdditionalQualifierCode()));
-                spDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(gtdDTO.getPrimaryPurposeCode()));
-                spDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertStringToCd(
-                           gtdDTO.getPrimaryPurposeAdditionalQualifierCode()));
-                spDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(gtdDTO.getPrimaryPurposeOtherText()));
-
             }
+            spDTO.setPhaseCode(CdConverter.convertStringToCd(gtdDTO.getPhaseCode()));
+            if (PAUtil.isPhaseCodeNA(gtdDTO.getPhaseCode())) {
+                spDTO.setPhaseAdditionalQualifierCode(CdConverter.convertStringToCd(
+                       gtdDTO.getPhaseAdditionalQualifierCode()));
+            } else {
+                spDTO.setPhaseAdditionalQualifierCode(CdConverter.convertStringToCd(null));
+            }
+            spDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(gtdDTO.getPrimaryPurposeCode()));
+            if (PAUtil.isPrimaryPurposeCodeOther(gtdDTO.getPrimaryPurposeCode())) {
+                spDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertStringToCd(
+                       gtdDTO.getPrimaryPurposeAdditionalQualifierCode()));
+            } else {
+                spDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertStringToCd(null));
+            }
+            if (PAUtil.isPrimaryPurposeAdditionQualifierCodeOther(gtdDTO.getPrimaryPurposeCode(),
+                    gtdDTO.getPrimaryPurposeAdditionalQualifierCode())) {
+                spDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(gtdDTO.getPrimaryPurposeOtherText()));
+            } else {
+                spDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(null));
+            }
+
             Set<Ii> allIdentifiers = new HashSet<Ii>();
             allIdentifiers.add(gtdDTO.getNonOtherIdentifiers());
             List<Ii> secondaryIds = (List<Ii>) ServletActionContext.getRequest().getSession()
-                                                                   .getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
+                    .getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
             if (secondaryIds != null) {
                 allIdentifiers.addAll(secondaryIds);
             }

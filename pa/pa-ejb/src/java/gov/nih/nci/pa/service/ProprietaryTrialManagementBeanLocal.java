@@ -79,8 +79,6 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -204,21 +202,9 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
             spDto.setOfficialTitle(studyProtocolDTO.getOfficialTitle());
             spDto.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
-            if (!PAUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode())
-                    && StringUtils.equalsIgnoreCase(studyProtocolDTO.getPrimaryPurposeCode().getCode()
-                            , PrimaryPurposeCode.OTHER.getCode())) {
-                spDto.setPrimaryPurposeAdditionalQualifierCode(
-                        studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode());
-            }
-            if (!PAUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode())
-                && StringUtils.equalsIgnoreCase(studyProtocolDTO.getPrimaryPurposeCode().getCode()
-                        , PrimaryPurposeCode.OTHER.getCode())
-                && !PAUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode())
-                && StringUtils.equalsIgnoreCase(studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode().getCode()
-                        , PrimaryPurposeAdditionalQualifierCode.OTHER.getCode())) {
-                spDto.setPrimaryPurposeOtherText(studyProtocolDTO.getPrimaryPurposeOtherText());
-            }
+            setPrimaryPurposeCode(studyProtocolDTO, spDto);
             spDto.setPhaseCode(studyProtocolDTO.getPhaseCode());
+            setPhaseAdditionalQualifier(studyProtocolDTO, spDto);
             studyProtocolService.updateStudyProtocol(spDto);
             updateLeadOrganization(paServiceUtils.findOrCreateEntity(leadOrganizationDTO), leadOrganizationIdentifier,
                     studyProtocolIi);

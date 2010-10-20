@@ -210,34 +210,7 @@
     </c:if>
 
     <c:if test="${sessionScope.trialSummary.proprietaryTrial}">
-      <tr>
-        <td scope="row" class="label"><label for="studyPhase">
-             <fmt:message key="studyProtocol.studyPhase"/><span class="required">*</span></label> </td>
-        <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
-        <td>
-            <s:select headerKey="" headerValue="" name="gtdDTO.phaseCode" list="#phaseCodeValues"
-                value="gtdDTO.phaseCode" cssStyle="width:120px" />
-            <span class="formErrorMsg">
-             <s:fielderror>
-               <s:param>gtdDTO.phaseCode</s:param>
-             </s:fielderror>
-          </span>
-        </td>
-    </tr>
-    <tr>
-    <td  scope="row" class="label"><label>
-            <fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
-        <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
-        <td>
-          <s:select headerKey="" headerValue="" name="gtdDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"
-                   value="gtdDTO.primaryPurposeCode" cssStyle="width:150px" onchange="activate()"/>
-          <span class="formErrorMsg">
-             <s:fielderror>
-               <s:param>gtdDTO.primaryPurposeCode</s:param>
-             </s:fielderror>
-          </span>
-        </td>
-    </tr>
+        <%@ include file="/WEB-INF/jsp/nodecorate/phaseAndPurpose.jsp" %>
     </c:if>
     <tr>
         <th colspan="2"> Title</th>

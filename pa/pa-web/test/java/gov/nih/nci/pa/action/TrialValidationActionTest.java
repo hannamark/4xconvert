@@ -49,6 +49,7 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
         gtdDTO.setCtGovXmlRequired(true);
         gtdDTO.setPrimaryPurposeCode("Other");
         trialValidationAction.setGtdDTO(gtdDTO);
+        assertEquals("edit", trialValidationAction.update());
         gtdDTO = new GeneralTrialDesignWebDTO();
         gtdDTO.setCtGovXmlRequired(true);
         gtdDTO.setPrimaryPurposeCode("Other");
@@ -72,6 +73,11 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
 	@Test
 	public void testReject() {
 		assertEquals("edit", trialValidationAction.reject());
+		GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
+        gtdDTO.setProprietarytrialindicator(Boolean.TRUE.toString());
+        gtdDTO.setCommentText("rejectcommentText");
+        trialValidationAction.setGtdDTO(gtdDTO);
+        assertEquals("edit", trialValidationAction.reject());
 	}
 
 	/**
@@ -79,7 +85,15 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
 	 */
 	@Test
 	public void testRejectReason() {
-		assertEquals("rejectReason", trialValidationAction.rejectReason());
+	    GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
+        gtdDTO.setCommentText("rejectcommentText");
+        trialValidationAction.setGtdDTO(gtdDTO);
+        getRequest().getSession().setAttribute("submissionNumber", 1);
+        assertEquals("edit", trialValidationAction.rejectReason());
+        gtdDTO = new GeneralTrialDesignWebDTO();
+        trialValidationAction.setGtdDTO(gtdDTO);
+        assertEquals("rejectReason", trialValidationAction.rejectReason());
+
 	}
 
 }

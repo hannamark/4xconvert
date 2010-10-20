@@ -193,22 +193,7 @@ function toggledisplay2 (it) {
                 </td>
           </tr>
             <%@ include file="/WEB-INF/jsp/nodecorate/primaryPurposeOther.jsp" %>
-          <tr>
-                <td  scope="row" class="label">
-                    <label for="submitTrial_protocolWebDTO_trialPhase"> <fmt:message key="submit.trial.phase"/><span class="required">*</span></label> 
-                </td>
-              
-                <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
-                <td>                                             
-                    <s:select headerKey="" headerValue="--Select--" name="trialDTO.phaseCode" list="#phaseCodeValues" cssStyle="width:206px" value="trialDTO.phaseCode"/>
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                        <s:param>trialDTO.phaseCode</s:param>
-                       </s:fielderror>                            
-                     </span>
-                </td>
-          </tr>
-          
+            <%@ include file="/WEB-INF/jsp/nodecorate/phase.jsp" %>
         <tr><td colspan="2" class="space">&nbsp;</td></tr>
         <tr>
                 <td colspan="2" class="space">&nbsp;</td>

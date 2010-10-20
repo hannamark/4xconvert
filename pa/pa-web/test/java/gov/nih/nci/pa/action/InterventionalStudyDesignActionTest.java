@@ -158,7 +158,25 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setOutcomeMeasure(omDto);
         webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
         webDTO.setPrimaryPurposeCode("Other");
-        webDTO.setPhaseCode("Other");
+        webDTO.setPhaseCode("NA");
+        webDTO.setDesignConfigurationCode("");
+        webDTO.setNumberOfInterventionGroups("");
+        webDTO.setBlindingSchemaCode("");
+        webDTO.setAllocationCode("");
+        webDTO.setMinimumTargetAccrualNumber("");
+        webDTO.getOutcomeMeasure().setName("Name");
+        webDTO.getOutcomeMeasure().setTimeFrame("designConfigurationCode");
+        webDTO.getOutcomeMeasure().setSafetyIndicator(true);
+        action.setWebDTO(webDTO);
+        assertEquals("details",action.update());
+
+        webDTO = new ISDesignDetailsWebDTO();
+        omDto = new OutcomeMeasureWebDTO();
+        webDTO.setOutcomeMeasure(omDto);
+        webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
+        webDTO.setPrimaryPurposeCode("Other");
+        webDTO.setPrimaryPurposeAdditionalQualifierCode("Other");
+        webDTO.setPhaseCode("NA");
         webDTO.setDesignConfigurationCode("");
         webDTO.setNumberOfInterventionGroups("");
         webDTO.setBlindingSchemaCode("");
@@ -170,6 +188,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         action.setWebDTO(webDTO);
 
         assertEquals("details",action.update());
+
     }
     @Test
     public void testUpdate(){

@@ -93,6 +93,7 @@ import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.UnitsCode;
@@ -1181,44 +1182,32 @@ public class PAUtil {
             && StringUtils.isEmpty(primaryPurposeOtherText);
     }
     /**
-     * @return
+     *
+     * @param primaryPurposeCode primaryPurposeCode
+     * @param primaryPurposeAdditionalQualifierCode primaryPurposeAdditionalQualifierCode
+     * @return boolean
      */
-    private static boolean isPrimaryPurposeAdditionQualifierCodeOther(String primaryPurposeCode,
+    public static boolean isPrimaryPurposeAdditionQualifierCodeOther(String primaryPurposeCode,
             String primaryPurposeAdditionalQualifierCode) {
         return isPrimaryPurposeCodeOther(primaryPurposeCode)
-        && StringUtils.isNotEmpty(primaryPurposeAdditionalQualifierCode)
         && StringUtils.equalsIgnoreCase(primaryPurposeAdditionalQualifierCode,
                 PrimaryPurposeAdditionalQualifierCode.OTHER.getCode());
     }
 
     /**
-     * @return
+     *
+     * @param primaryPurposeCode primaryPurposeCode
+     * @return boolean
      */
-    private static boolean isPrimaryPurposeCodeOther(String primaryPurposeCode) {
-        return StringUtils.isNotEmpty(primaryPurposeCode)
-        && StringUtils.equalsIgnoreCase(primaryPurposeCode, PrimaryPurposeCode.OTHER.getCode());
+    public static boolean isPrimaryPurposeCodeOther(String primaryPurposeCode) {
+        return StringUtils.equalsIgnoreCase(primaryPurposeCode, PrimaryPurposeCode.OTHER.getCode());
     }
-
     /**
-     * @param studyProtocolDTO dto
-     * @param returnStudyProtocolDTO  dto
+     * phaseOtherCode is req or not.
+     * @param phaseCode phaseCode
+     * @return phaseOtherText is req or not.
      */
-    public static void setPrimaryPurposeCode(StudyProtocolDTO studyProtocolDTO,
-            StudyProtocolDTO returnStudyProtocolDTO) {
-        returnStudyProtocolDTO.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
-        if (isPrimaryPurposeCodeOther(CdConverter.convertCdToString(studyProtocolDTO.getPrimaryPurposeCode()))) {
-            returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(
-                    studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode());
-        } else {
-            returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertStringToCd(null));
-        }
-        if (isPrimaryPurposeAdditionQualifierCodeOther(CdConverter.convertCdToString(studyProtocolDTO
-             .getPrimaryPurposeCode()), CdConverter.convertCdToString(
-                     studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode()))) {
-            returnStudyProtocolDTO.setPrimaryPurposeOtherText(studyProtocolDTO.getPrimaryPurposeOtherText());
-        } else {
-            returnStudyProtocolDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(null));
-        }
+    public static boolean isPhaseCodeNA(String phaseCode) {
+        return StringUtils.equalsIgnoreCase(phaseCode, PhaseCode.NA.getCode());
     }
-
 }

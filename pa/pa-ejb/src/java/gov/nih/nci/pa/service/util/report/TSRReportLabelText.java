@@ -262,7 +262,7 @@ public class TSRReportLabelText {
     /**
      * phase comment.
      */
-    public static final String GTD_PHASE_ADDITIONAL_QUALIFIER = "Phase Additional Qualifier";
+    public static final String GTD_PHASE_ADDITIONAL_QUALIFIER = "If Phase equals 'N/A'";
 
     // Status Dates
     /**
@@ -459,7 +459,7 @@ public class TSRReportLabelText {
     /**
      * Trial Design Phase comment.
      */
-    public static final String TD_PHASE_ADDITIONAL_QUALIFIER = "Phase Additional Qualifier";
+    public static final String TD_PHASE_ADDITIONAL_QUALIFIER = "If Phase equals 'N/A'";
     /**
      * Trial Design Intervention Model.
      */

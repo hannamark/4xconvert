@@ -86,8 +86,10 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -138,5 +140,39 @@ public abstract class AbstractTrialRegistrationBean {
         }
         return activeRecord;
     }
+    /**
+     * @param studyProtocolDTO studyProtocolDTO
+     * @param returnStudyProtocolDTO returnDTO
+     */
+    protected void setPhaseAdditionalQualifier(StudyProtocolDTO studyProtocolDTO,
+            StudyProtocolDTO returnStudyProtocolDTO) {
+        if (PAUtil.isPhaseCodeNA(CdConverter.convertCdToString(studyProtocolDTO.getPhaseCode()))) {
+            returnStudyProtocolDTO.setPhaseAdditionalQualifierCode(studyProtocolDTO.getPhaseAdditionalQualifierCode());
+        } else {
+            returnStudyProtocolDTO.setPhaseAdditionalQualifierCode(CdConverter.convertStringToCd(null));
+        }
+    }
+    /**
+     * @param studyProtocolDTO dto
+     * @param returnStudyProtocolDTO  dto
+     */
+    protected void setPrimaryPurposeCode(StudyProtocolDTO studyProtocolDTO,
+            StudyProtocolDTO returnStudyProtocolDTO) {
+        returnStudyProtocolDTO.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
+        if (PAUtil.isPrimaryPurposeCodeOther(CdConverter.convertCdToString(studyProtocolDTO.getPrimaryPurposeCode()))) {
+            returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(
+                    studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode());
+        } else {
+            returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertStringToCd(null));
+        }
+        if (PAUtil.isPrimaryPurposeAdditionQualifierCodeOther(CdConverter.convertCdToString(studyProtocolDTO
+             .getPrimaryPurposeCode()), CdConverter.convertCdToString(
+                     studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode()))) {
+            returnStudyProtocolDTO.setPrimaryPurposeOtherText(studyProtocolDTO.getPrimaryPurposeOtherText());
+        } else {
+            returnStudyProtocolDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(null));
+        }
+    }
+
 
 }

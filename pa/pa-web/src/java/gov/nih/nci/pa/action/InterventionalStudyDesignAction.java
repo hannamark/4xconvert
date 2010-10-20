@@ -161,53 +161,23 @@ public class InterventionalStudyDesignAction extends ActionSupport {
                     Constants.STUDY_PROTOCOL_II);
             InterventionalStudyProtocolDTO ispDTO = PaRegistry.getStudyProtocolService()
             .getInterventionalStudyProtocol(studyProtocolIi);
-            ispDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(webDTO.getPhaseCode())));
-            ispDTO.setPrimaryPurposeCode(
-                    CdConverter.convertToCd(PrimaryPurposeCode.getByCode(webDTO.getPrimaryPurposeCode())));
-            ispDTO.setBlindingSchemaCode(
-                    CdConverter.convertToCd(BlindingSchemaCode.getByCode(webDTO.getBlindingSchemaCode())));
-            ispDTO.setDesignConfigurationCode(
-                    CdConverter.convertToCd(DesignConfigurationCode.getByCode(webDTO.getDesignConfigurationCode())));
-            ispDTO.setNumberOfInterventionGroups(
-                    IntConverter.convertToInt(webDTO.getNumberOfInterventionGroups()));
-            ispDTO.setAllocationCode(
-                    CdConverter.convertToCd(AllocationCode.getByCode(webDTO.getAllocationCode())));
-            ispDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
-                  PrimaryPurposeAdditionalQualifierCode.getByCode(webDTO.getPrimaryPurposeAdditionalQualifierCode())));
-            if (StringUtils.isNotEmpty(webDTO.getPrimaryPurposeCode())
-                && PrimaryPurposeCode.OTHER.getCode().equals(webDTO.getPrimaryPurposeCode())
-                && StringUtils.isNotEmpty(webDTO.getPrimaryPurposeAdditionalQualifierCode())
-                && PrimaryPurposeAdditionalQualifierCode.OTHER.getCode().equals(
-                  webDTO.getPrimaryPurposeAdditionalQualifierCode())
-                && StringUtils.isNotEmpty(webDTO.getPrimaryPurposeOtherText())) {
-                ispDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(webDTO.getPrimaryPurposeOtherText()));
-            } else {
-                ispDTO.setPrimaryPurposeOtherText(null);
-            }
-
-            ispDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(
-                    PhaseAdditionalQualifierCode.getByCode(webDTO.getPhaseAdditionalQualifierCode())));
-          //  ispDTO.setMaximumTargetAccrualNumber(
-            //        IntConverter.convertToInt(webDTO.getMaximumTargetAccrualNumber()));
-            ispDTO.setTargetAccrualNumber(
-                    IvlConverter.convertInt().convertToIvl(webDTO.getMinimumTargetAccrualNumber(), null));
-            ispDTO.setStudyClassificationCode(
-                    CdConverter.convertToCd(StudyClassificationCode.getByCode(webDTO.getStudyClassificationCode())));
-
+            setPhaseAndPurpose(ispDTO);
+            ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(BlindingSchemaCode.getByCode(
+                    webDTO.getBlindingSchemaCode())));
+            ispDTO.setDesignConfigurationCode(CdConverter.convertToCd(DesignConfigurationCode.getByCode(
+                    webDTO.getDesignConfigurationCode())));
+            ispDTO.setNumberOfInterventionGroups(IntConverter.convertToInt(webDTO.getNumberOfInterventionGroups()));
+            ispDTO.setAllocationCode(CdConverter.convertToCd(AllocationCode.getByCode(webDTO.getAllocationCode())));
+            ispDTO.setTargetAccrualNumber(IvlConverter.convertInt().convertToIvl(
+                    webDTO.getMinimumTargetAccrualNumber(), null));
+            ispDTO.setStudyClassificationCode(CdConverter.convertToCd(StudyClassificationCode.getByCode(
+                    webDTO.getStudyClassificationCode())));
             List<Cd> cds = new ArrayList<Cd>();
             if (webDTO.getBlindingSchemaCode() != null && !webDTO.getBlindingSchemaCode().equalsIgnoreCase("open")) {
-                if (caregiver != null && !caregiver.equalsIgnoreCase(FALSE)) {
-                    cds.add(CdConverter.convertStringToCd(caregiver));
-                }
-                if (investigator != null && !investigator.equalsIgnoreCase(FALSE)) {
-                    cds.add(CdConverter.convertStringToCd(investigator));
-                }
-                if (outcomesassessor != null && !outcomesassessor.equalsIgnoreCase(FALSE)) {
-                    cds.add(CdConverter.convertStringToCd(outcomesassessor));
-                }
-                if (subject != null && !subject.equalsIgnoreCase(FALSE)) {
-                    cds.add(CdConverter.convertStringToCd(subject));
-                }
+                addToCdToList(caregiver, cds);
+                addToCdToList(investigator, cds);
+                addToCdToList(outcomesassessor, cds);
+                addToCdToList(subject, cds);
             }
             ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(cds));
 
@@ -218,6 +188,42 @@ public class InterventionalStudyDesignAction extends ActionSupport {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return "details";
+    }
+    /**
+     *
+     * @param input string
+     * @param cds List<Cd>
+     */
+    private void addToCdToList(String input, List<Cd> cds) {
+        if (!StringUtils.equalsIgnoreCase(input, FALSE)) {
+            cds.add(CdConverter.convertStringToCd(input));
+        }
+    }
+    /**
+     * @param ispDTO
+     */
+    private void setPhaseAndPurpose(InterventionalStudyProtocolDTO ispDTO) {
+        ispDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(webDTO.getPhaseCode())));
+        if (PAUtil.isPhaseCodeNA(webDTO.getPhaseCode())) {
+            ispDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(
+                    PhaseAdditionalQualifierCode.getByCode(webDTO.getPhaseAdditionalQualifierCode())));
+        } else {
+            ispDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(null));
+        }
+        ispDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.getByCode(
+                webDTO.getPrimaryPurposeCode())));
+        if (PAUtil.isPrimaryPurposeCodeOther(webDTO.getPrimaryPurposeCode())) {
+            ispDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
+              PrimaryPurposeAdditionalQualifierCode.getByCode(webDTO.getPrimaryPurposeAdditionalQualifierCode())));
+        } else {
+            ispDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(null));
+        }
+        if (PAUtil.isPrimaryPurposeAdditionQualifierCodeOther(webDTO.getPrimaryPurposeCode(),
+                webDTO.getPrimaryPurposeAdditionalQualifierCode())) {
+            ispDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(webDTO.getPrimaryPurposeOtherText()));
+        } else {
+            ispDTO.setPrimaryPurposeOtherText(null);
+        }
     }
 
     private void enforceBusinessRules() {
