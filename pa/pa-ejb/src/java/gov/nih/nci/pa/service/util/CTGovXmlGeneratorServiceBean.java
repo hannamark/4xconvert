@@ -214,6 +214,7 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             doc.appendChild(root);
             createIdInfo(spDTO, doc, root);
             addStudyOwnersInfo(spDTO, doc, root);
+            addLeadOrgInfo(spDTO, doc, root);
             addNciSpecificInfo(spDTO, doc, root);
             if (spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
                 XmlGenHelper
@@ -239,34 +240,18 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             createOversightInfo(spDTO, doc, root);
             createTextBlock("brief_summary", StringUtils.substring(StConverter.convertToString(
                     spDTO.getPublicDescription()), 0, PAAttributeMaxLen.LEN_MIN_1), doc, root);
-            createCdataBlock("detailed_description", spDTO.getScientificDescription(), PAAttributeMaxLen.LEN_32000,
+            XmlGenHelper.createCdataBlock("detailed_description", 
+                    spDTO.getScientificDescription(), PAAttributeMaxLen.LEN_32000,
                     doc, root);
             createOverallStatus(spDTO, doc, root);
-            if (!PAUtil.isBlNull(spDTO.getExpandedAccessIndicator())) {
-                if (spDTO.getExpandedAccessIndicator().getValue()) {
-                    XmlGenHelper.appendElement(root, 
-                            XmlGenHelper.createElement("expanded_access_status", "Available", doc));
-                } else {
-                    XmlGenHelper.appendElement(root, 
-                            XmlGenHelper.createElement("expanded_access_status", "No longer available", doc));
-                }
-            }
-            XmlGenHelper.appendElement(root, 
-                    XmlGenHelper.createElement("start_date", 
-                            convertTsToYYYYMMFormart(spDTO.getStartDate()), doc));
-            XmlGenHelper.appendElement(root, 
-                    XmlGenHelper.createElement("primary_compl_date", convertTsToYYYYMMFormart(spDTO
-                    .getPrimaryCompletionDate()), doc));
-            XmlGenHelper.appendElement(root, 
-                    XmlGenHelper.createElement("primary_compl_date_type", convertToCtValues(spDTO
-                    .getPrimaryCompletionDateTypeCode()), doc));
-
+            createTrialFunding(spDTO, doc, root);
             XmlGenHelper.appendElement(root, createStudyDesign(spDTO, doc));
             List<StudyOutcomeMeasureDTO> somDtos = 
                 getStudyOutcomeMeasureService().getByStudyProtocol(spDTO.getIdentifier());
             createPrimaryOutcome(somDtos, doc, root);
             createSecondaryOutcome(somDtos, doc, root);
             createCondition(studyProtocolIi, doc, root);
+            createSubGroups(studyProtocolIi, doc, root); 
             XmlGenHelper.appendElement(root, 
                     XmlGenHelper.createElement("enrollment", IvlConverter.convertInt().convertLowToString(
                     spDTO.getTargetAccrualNumber()), doc));
@@ -343,31 +328,65 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         return writer.toString();
     }
 
-    private void createOverallStatus(StudyProtocolDTO spDTO, final Document doc, final Element root)
+    /**
+     * createOverallStatus.
+     * @param spDTO StudyProtocolDTO
+     * @param doc Document 
+     * @param root Element
+     * @throws PAException when error
+     */
+    protected void createOverallStatus(StudyProtocolDTO spDTO, final Document doc, final Element root)
     throws PAException {
         StudyOverallStatusDTO sosDTO = getStudyOverallStatusService().getCurrentByStudyProtocol(spDTO.getIdentifier());
-        if (sosDTO == null) {
-            return;
+        if (sosDTO != null) {
+        
+            StudyRecruitmentStatusDTO srsDto = 
+                getStudyRecruitmentService().getCurrentByStudyProtocol(spDTO.getIdentifier());
+            if (srsDto != null) {
+                XmlGenHelper.appendElement(root, 
+                        XmlGenHelper.createElement("overall_status", convertToCtValues(srsDto.getStatusCode()), doc));
+            }
+    
+            StudyStatusCode overStatusCode = StudyStatusCode.getByCode(sosDTO.getStatusCode().getCode());
+    
+            if (StudyStatusCode.WITHDRAWN.equals(overStatusCode)
+                    || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(overStatusCode)
+                    || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(overStatusCode)) {
+                XmlGenHelper.appendElement(root, 
+                        XmlGenHelper.createElement("why_stopped", 
+                                StringUtils.substring(StConverter.convertToString(sosDTO
+                        .getReasonText()), 0, PAAttributeMaxLen.LEN_160), doc));
+            }
+            
+            if (!PAUtil.isBlNull(spDTO.getExpandedAccessIndicator())) {
+                if (spDTO.getExpandedAccessIndicator().getValue()) {
+                    XmlGenHelper.appendElement(root, 
+                            XmlGenHelper.createElement("expanded_access_status", "Available", doc));
+                } else {
+                    XmlGenHelper.appendElement(root, 
+                            XmlGenHelper.createElement("expanded_access_status", "No longer available", doc));
+                }
+            }
         }
-        StudyRecruitmentStatusDTO srsDto = 
-            getStudyRecruitmentService().getCurrentByStudyProtocol(spDTO.getIdentifier());
-        if (srsDto != null) {
-            XmlGenHelper.appendElement(root, 
-                    XmlGenHelper.createElement("overall_status", convertToCtValues(srsDto.getStatusCode()), doc));
-        }
-
-        StudyStatusCode overStatusCode = StudyStatusCode.getByCode(sosDTO.getStatusCode().getCode());
-
-        if (StudyStatusCode.WITHDRAWN.equals(overStatusCode)
-                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(overStatusCode)
-                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(overStatusCode)) {
-            XmlGenHelper.appendElement(root, 
-                    XmlGenHelper.createElement("why_stopped", StringUtils.substring(StConverter.convertToString(sosDTO
-                    .getReasonText()), 0, PAAttributeMaxLen.LEN_160), doc));
-        }
+        XmlGenHelper.appendElement(root, 
+                XmlGenHelper.createElement("start_date", 
+                        convertTsToYYYYMMFormart(spDTO.getStartDate()), doc));
+        XmlGenHelper.appendElement(root, 
+                XmlGenHelper.createElement("primary_compl_date", convertTsToYYYYMMFormart(spDTO
+                .getPrimaryCompletionDate()), doc));
+        XmlGenHelper.appendElement(root, 
+                XmlGenHelper.createElement("primary_compl_date_type", convertToCtValues(spDTO
+                .getPrimaryCompletionDateTypeCode()), doc));
     }
 
-    private void createCondition(Ii studyProtocolIi, Document doc, Element root) throws PAException {
+    /**
+     * createCondition.
+     * @param studyProtocolIi study protocol ii.
+     * @param doc Document
+     * @param root Element
+     * @throws PAException when error
+     */
+    protected void createCondition(Ii studyProtocolIi, Document doc, Element root) throws PAException {
         List<StudyDiseaseDTO> sdDtos = getStudyDiseaseService().getByStudyProtocol(studyProtocolIi);
 
         if (CollectionUtils.isNotEmpty(sdDtos)) {
@@ -391,6 +410,18 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             }
 
         }
+    }
+    
+    /**
+     * createSubGroups.
+     * @param studyProtocolIi study protocol id
+     * @param doc Document
+     * @param root Element
+     * @throws PAException when error
+     */
+    protected void createSubGroups(Ii studyProtocolIi, Document doc, Element root) 
+        throws PAException {
+        //NOOP
     }
 
     private void createOverallContact(Ii studyProtocolIi, Document doc, Element root) throws PAException,
@@ -475,6 +506,7 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
                     XmlGenHelper.createElement("has_dmc", BlConverter.convertBLToString(spDTO
                     .getDataMonitoringCommitteeAppointedIndicator()), doc));
         }
+        
         XmlGenHelper.appendElement(overSightInfo, createIrbInfo(spDTO, doc));
         XmlGenHelper.appendElement(root, overSightInfo);
     }
@@ -501,7 +533,14 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
 
     }
 
-    private Element createIrbInfo(StudyProtocolDTO spDTO, Document doc) throws PAException {
+    /**
+     * createIrbInfo.
+     * @param spDTO StudyProtocolDTO
+     * @param doc Document
+     * @return Element
+     * @throws PAException when error
+     */
+    protected Element createIrbInfo(StudyProtocolDTO spDTO, Document doc) throws PAException {
         Element irbInfo = doc.createElement("irb_info");
 
         if (!BlConverter.convertToBool(spDTO.getReviewBoardApprovalRequiredIndicator())) {
@@ -626,8 +665,33 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
      * @param spDTO StudyProtocolDTO
      * @param doc Document
      * @param idInfoNode Element
+     * @throws PAException when error
      */
-    protected void addTrialSecondaryIdInfo(StudyProtocolDTO spDTO, Document doc, Element idInfoNode) {
+    protected void addTrialSecondaryIdInfo(StudyProtocolDTO spDTO, Document doc, Element idInfoNode) 
+        throws PAException {
+        //NOOP
+    }
+    
+    /**
+     * Add Human Safety Subject Info.
+     * @param spDTO StudyProtocolDTO
+     * @param doc Document
+     * @param root element root
+     * @throws PAException when error
+     */
+    protected void addHumanSafetySubjectInfo(StudyProtocolDTO spDTO, Document doc, Element root) 
+        throws PAException {
+        //NOOP
+    }
+    
+    /**
+     * Add lead org info.
+     * @param spDTO StudyProtocolDTO
+     * @param doc Document
+     * @param root Element
+     * @throws PAException when error
+     */
+    protected void addLeadOrgInfo(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
         //NOOP
     }
     
@@ -674,7 +738,14 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
 
     }
 
-    private void createIndInfo(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
+    /**
+     * createIndInfo.
+     * @param spDTO StudyProtocolDTO
+     * @param doc Document
+     * @param root Element
+     * @throws PAException when error
+     */
+    protected void createIndInfo(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
         List<StudyIndldeDTO> ideDtos = getStudyIndldeService().getByStudyProtocol(spDTO.getIdentifier());
         if (!getPaServiceUtil().containsNonExemptInds(ideDtos)) {
             XmlGenHelper.appendElement(root, XmlGenHelper.createElement("is_ind_study", XmlGenHelper.NO, doc));
@@ -694,7 +765,17 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         if (idInfo.hasChildNodes()) {
             XmlGenHelper.appendElement(root, idInfo);
         }
-
+    }
+    
+    /**
+     * createTrialFunding.
+     * @param spDTO StudyProtocolDTO
+     * @param doc Document
+     * @param root Element
+     * @throws PAException when error
+     */
+    protected void createTrialFunding(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
+        //NOOP
     }
 
     /**
@@ -714,7 +795,14 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         return nonExemptInd;
     }
 
-    private void createEligibility(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
+    /**
+     * createEligibility.
+     * @param spDTO StudyProtocolDTO
+     * @param doc Document
+     * @param root Element
+     * @throws PAException when error
+     */
+    protected void createEligibility(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
         List<PlannedEligibilityCriterionDTO> paECs = getPlannedActivityService()
                 .getPlannedEligibilityCriterionByStudyProtocol(spDTO.getIdentifier());
 
@@ -807,7 +895,8 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             data.append("Exclusion Criteria: \n").append(exCrit).append('\n');
         }
         if (data.length() > 1) {
-            createCdataBlock("criteria", StConverter.convertToSt(data.toString()), PAAttributeMaxLen.LEN_15000, doc,
+            XmlGenHelper.createCdataBlock("criteria", 
+                    StConverter.convertToSt(data.toString()), PAAttributeMaxLen.LEN_15000, doc,
                     eligibility);
         }
         XmlGenHelper.appendElement(eligibility, 
@@ -815,21 +904,12 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
                 .getAcceptHealthyVolunteersIndicator()), doc));
         XmlGenHelper.appendElement(eligibility, XmlGenHelper.createElement("gender", genderCode, doc));
         XmlGenHelper.appendElement(eligibility, 
-                XmlGenHelper.createElement("minimum_age", getAgeUnit(minAge, minUnit), doc));
+                XmlGenHelper.createElement("minimum_age", XmlGenHelper.getAgeUnit(minAge, minUnit), doc));
         XmlGenHelper.appendElement(eligibility, 
-                XmlGenHelper.createElement("maximum_age", getAgeUnit(maxAge, maxUnit), doc));
+                XmlGenHelper.createElement("maximum_age", XmlGenHelper.getAgeUnit(maxAge, maxUnit), doc));
 
         XmlGenHelper.appendElement(root, eligibility);
 
-    }
-
-    private static String getAgeUnit(BigDecimal b, String unit) {
-        if (b.intValue() == 0 || b.intValue() == XmlGenHelper.MAX_AGE) {
-            return "N/A";
-        } else if (unit == null) {
-            return null;
-        }
-        return PAUtil.getAge(b) + " " + unit.toLowerCase(Locale.US);
     }
 
     private void createArmGroup(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
@@ -934,6 +1014,17 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         }
         return studyDesign;
     }
+    
+    /**
+     * Add prim purpose and phase additional qualifiers.
+     * @param ispDTO InterventionalStudyProtocolDTO
+     * @param doc Document
+     * @param invDesign Element
+     */
+    protected void addDesignDetailsAdditionalQualifiers(InterventionalStudyProtocolDTO ispDTO, 
+            Document doc, Element invDesign) {
+        //NOOP
+    }
 
     private Element createInterventional(StudyProtocolDTO spDTO, Document doc) throws PAException {
         InterventionalStudyProtocolDTO ispDTO = getStudyProtocolService().getInterventionalStudyProtocol(spDTO
@@ -943,6 +1034,7 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         XmlGenHelper.appendElement(invDesign, 
                 XmlGenHelper.createElement("interventional_subtype", convertToCtValues(ispDTO
                 .getPrimaryPurposeCode()), doc));
+        addDesignDetailsAdditionalQualifiers(ispDTO, doc, invDesign);
         XmlGenHelper.appendElement(invDesign, 
                 XmlGenHelper.createElement("phase", convertToCtValues(ispDTO.getPhaseCode()), doc));
         XmlGenHelper.appendElement(invDesign, 
@@ -1277,16 +1369,8 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             }
         }
     }
-
-    private static void createCdataBlock(final String elementName ,  final St data , int maxLen ,
-            Document doc , Element root) throws PAException {
-        if (data != null) {
-            Element element = XmlGenHelper.createElement(elementName, StringUtils.left(data.getValue(), maxLen), doc);
-            if (element != null) {
-                root.appendChild(element);
-            }
-        }
-    }
+    
+    
 
     private void createTextBlock(final String elementName, final String st, Document doc, Element root)
             throws PAException {

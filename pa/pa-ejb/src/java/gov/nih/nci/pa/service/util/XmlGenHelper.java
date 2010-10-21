@@ -90,9 +90,11 @@ import gov.nih.nci.iso21090.AdxpSta;
 import gov.nih.nci.iso21090.AdxpZip;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
@@ -100,7 +102,9 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -252,6 +256,9 @@ public class XmlGenHelper {
         appendElement(address, createElement("country", 
                 PADomainUtils.getCountryNameUsingAlpha3Code(addressBo.get(AdxpCnt.class.getName())), doc));
         appendElement(lead, address);
+        if (PAUtil.isDSetTelNull(telecom)) {
+            return;
+        }
         List<String> phones = DSetConverter.getTelByType(telecom, "tel:");
         for (String phone : phones) {
             appendElement(lead, createElement("phone", phone, doc));
@@ -344,4 +351,38 @@ public class XmlGenHelper {
         }
         return retVal;
     }    
+    
+    /**
+     * createCdataBlock.
+     * @param elementName element name
+     * @param data string data
+     * @param maxLen max length
+     * @param doc Document
+     * @param root Element
+     * @throws PAException when error
+     */
+    public static void createCdataBlock(final String elementName ,  final St data , int maxLen ,
+            Document doc , Element root) throws PAException {
+        if (data != null) {
+            Element element = XmlGenHelper.createElement(elementName, StringUtils.left(data.getValue(), maxLen), doc);
+            if (element != null) {
+                root.appendChild(element);
+            }
+        }
+    }
+    
+    /**
+     * getAgeUnit.
+     * @param b number
+     * @param unit unit
+     * @return string
+     */
+    public static String getAgeUnit(BigDecimal b, String unit) {
+        if (b.intValue() == 0 || b.intValue() == XmlGenHelper.MAX_AGE) {
+            return "N/A";
+        } else if (unit == null) {
+            return null;
+        }
+        return PAUtil.getAge(b) + " " + unit.toLowerCase(Locale.US);
+    }
 }
