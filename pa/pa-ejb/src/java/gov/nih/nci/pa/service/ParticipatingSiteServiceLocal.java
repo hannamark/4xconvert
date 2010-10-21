@@ -85,6 +85,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.iso.dto.ParticipatingSiteContactDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -100,18 +101,18 @@ import java.util.List;
 import javax.ejb.Local;
 
 /**
- *
+ * 
  * @author mshestopalov
- *
+ * 
  */
 @Local
 @SuppressWarnings("PMD.ExcessiveParameterList")
 public interface ParticipatingSiteServiceLocal {
 
     /**
-     * Save a study site and its status with a new organization or
-     * a ctep id for the po hcf.
-     * StudySiteDTO is expected to have the studyProtocol id set.
+     * Save a study site and its status with a new organization or a ctep id for the po hcf. StudySiteDTO is expected to
+     * have the studyProtocol id set.
+     * 
      * @param orgDTO po org dto
      * @param studySiteDTO dto
      * @param currentStatusDTO dto
@@ -121,12 +122,12 @@ public interface ParticipatingSiteServiceLocal {
      */
     ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO)
-        throws PAException;
+            throws PAException;
 
     /**
-     * Save a study site and its status where the PO org already exists
-     * and will be found using the po hcf ii or the ctep hcf ii.
-     * StudySiteDTO is expected to have the studyProtocol id set.
+     * Save a study site and its status where the PO org already exists and will be found using the po hcf ii or the
+     * ctep hcf ii. StudySiteDTO is expected to have the studyProtocol id set.
+     * 
      * @param studySiteDTO dto
      * @param currentStatusDTO dto
      * @param poHcfIi po hcf ii
@@ -136,8 +137,9 @@ public interface ParticipatingSiteServiceLocal {
     ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi) throws PAException;
 
-     /**
+    /**
      * Update the study site and its status. Expect id set on studySiteDTO.
+     * 
      * @param studySiteDTO dto.
      * @param currentStatusDTO dto.
      * @return the participating site dto
@@ -147,25 +149,73 @@ public interface ParticipatingSiteServiceLocal {
             StudySiteAccrualStatusDTO currentStatusDTO) throws PAException;
 
     /**
+     * Save a study site and its status with a new organization or a ctep id for the po hcf. StudySiteDTO is expected to
+     * have the studyProtocol id set.
+     * 
+     * @param orgDTO po org dto
+     * @param studySiteDTO dto
+     * @param currentStatusDTO dto
+     * @param hcfDTO po hcf dto
+     * @param participatingSiteContactDTOList list of ParticipatingSiteContactDTOs to add.
+     * @return the participating site dto
+     * @throws PAException when error
+     */
+    ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO, OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO,
+            List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException;
+
+    /**
+     * Save a study site and its status where the PO org already exists and will be found using the po hcf ii or the
+     * ctep hcf ii. StudySiteDTO is expected to have the studyProtocol id set.
+     * 
+     * @param studySiteDTO dto
+     * @param currentStatusDTO dto
+     * @param poHcfIi po hcf ii
+     * @param participatingSiteContactDTOList list of ParticipatingSiteContactDTOs to add.
+     * @return the participating site dto
+     * @throws PAException when error
+     */
+    ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi,
+            List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException;
+
+    /**
+     * Update the study site and its status. Expect id set on studySiteDTO.
+     * 
+     * @param studySiteDTO dto.
+     * @param currentStatusDTO dto.
+     * @param participatingSiteContactDTOList list of ParticipatingSiteContactDTOs to add.
+     * @return the participating site dto
+     * @throws PAException when error.
+     */
+    ParticipatingSiteDTO updateStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO,
+            List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException;
+
+    /**
      * Returns all participating sites for a given study protocol.
-     * @param studyProtocolIi the id of the study protocol to retrieve participating sites for
+     * 
+     * @param studyProtocolIi the id of the study protocol to retrieve participating sites.
      * @return the list of participating sites
      * @throws PAException on error
      */
     List<ParticipatingSiteDTO> getParticipatingSitesByStudyProtocol(Ii studyProtocolIi) throws PAException;
+
     /**
      * Lookup study site id given a trial id and a hcf id.
+     * 
      * @param studyProtocolIi trial id (nci or pa)
      * @param someHcfIi hcf id (po hcf or ctep id)
      * @return Ii.
      * @throws PAException in case of error.
      */
-    Ii getParticipatingSiteIi(Ii studyProtocolIi, Ii someHcfIi)  throws PAException;
+    Ii getParticipatingSiteIi(Ii studyProtocolIi, Ii someHcfIi) throws PAException;
 
     /**
-     * Add a investigator contact. Either a po crs id or po hcp id is needed or can be null if creating
-     * a new person from the person dto. If crs or hcp ids are set they must be po ids or ctep ids for the person.
-     * If crs or hcp are provided but the ids are not set, they will be used in creating new SRs for Person.
+     * Add a investigator contact. Either a po crs id or po hcp id is needed or can be null if creating a new person
+     * from the person dto. If crs or hcp ids are set they must be po ids or ctep ids for the person. If crs or hcp are
+     * provided but the ids are not set, they will be used in creating new SRs for Person.
+     * 
      * @param studySiteIi ii
      * @param poCrsDTO dto
      * @param poHcpDTO dto
@@ -177,9 +227,10 @@ public interface ParticipatingSiteServiceLocal {
             PersonDTO investigatorDTO, String roleCode) throws PAException;
 
     /**
-     * Add a primary person contact. Either a po crs id or po hcp id is needed or can be null if creating
-     * a new person from the person dto. If crs or hcp ids are set they must be po ids or ctep ids for the person.
-     * If crs or hcp are provided but the ids are not set, they will be used in creating new SRs for Person.
+     * Add a primary person contact. Either a po crs id or po hcp id is needed or can be null if creating a new person
+     * from the person dto. If crs or hcp ids are set they must be po ids or ctep ids for the person. If crs or hcp are
+     * provided but the ids are not set, they will be used in creating new SRs for Person.
+     * 
      * @param studySiteIi ii
      * @param poCrsDTO dto
      * @param poHcpDTO dto
@@ -191,9 +242,9 @@ public interface ParticipatingSiteServiceLocal {
             PersonDTO personDTO, DSet<Tel> telecom) throws PAException;
 
     /**
-     * Add a generic contact. Provide a dto w/ id set to reuse existing organizational contact.
-     * If id is set, it must be a po id or a ctep id.
-     * Otherwise provide dto data to create new.
+     * Add a generic contact. Provide a dto w/ id set to reuse existing organizational contact. If id is set, it must be
+     * a po id or a ctep id. Otherwise provide dto data to create new.
+     * 
      * @param studySite ii
      * @param contactDTO dto.
      * @param isPrimaryContact bool

@@ -88,7 +88,8 @@ public class StudySiteParticipationServiceSimpleClient {
             PAFault, RemoteException, URISyntaxException {
 
         Ii personIi = new Ii();
-        personIi.setExtension("597");
+        //personIi.setExtension("597"); //works
+        personIi.setExtension("9999"); //doesn't works
         personIi.setRoot(IiConverter.PERSON_ROOT);
         PersonDTO person = new PersonDTO();
         person.setIdentifier(personIi);
@@ -116,7 +117,8 @@ public class StudySiteParticipationServiceSimpleClient {
         PersonType pt = new PersonType();
         ClinicalResearchStaffDTO crsDTO = new ClinicalResearchStaffDTO();
         Ii crsIi = new Ii();
-        crsIi.setExtension("1650");
+        //crsIi.setExtension("1650"); //works
+        crsIi.setExtension("9999999"); //doesn't works
         crsIi.setRoot(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT);
         crsIi.setIdentifierName(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
         crsIi.setReliability(IdentifierReliability.ISS);
@@ -135,7 +137,8 @@ public class StudySiteParticipationServiceSimpleClient {
         orgIi.setExtension("753");
         orgIi.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
         Ii hcfIi = new Ii();
-        hcfIi.setExtension("771");
+//        hcfIi.setExtension("771");
+        hcfIi.setExtension("99999");
         hcfIi.setRoot(IiConverter.HEALTH_CARE_FACILITY_ROOT);
         hcfIi.setIdentifierName(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
         DSet<Ii> hcfDSetIi = new DSet<Ii>();

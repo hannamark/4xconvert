@@ -89,6 +89,8 @@ package gov.nih.nci.pa.service.util.report;
  * @author kkanchinadam
  */
 public class TSRReportLabelText {
+    
+    private static final String DESCRIPTION = "Description"; 
     /**
      * Information not provided.
      */
@@ -539,7 +541,7 @@ public class TSRReportLabelText {
     /**
      * Description.
      */
-    public static final String AG_DESCRIPTION = "Description";
+    public static final String AG_DESCRIPTION = DESCRIPTION;
     /**
      * Intervention.
      */
@@ -555,7 +557,7 @@ public class TSRReportLabelText {
     /**
      * Intervention Description.
      */
-    public static final String I_INTERVENTION_DESCRIPTION = "Description";
+    public static final String I_INTERVENTION_DESCRIPTION = DESCRIPTION;
 
     // Primary Outcome Measures
     /**
@@ -569,7 +571,7 @@ public class TSRReportLabelText {
     /**
      * Outcome Measure Desc.
      */
-    public static final String POM_DESCRIPTION = "Description";
+    public static final String POM_DESCRIPTION = DESCRIPTION;
     /**
      * Time Frame.
      */
@@ -591,7 +593,7 @@ public class TSRReportLabelText {
     /**
      * Secondary Outcome Desc.
      */
-    public static final String SOM_DESCRIPTION = "Description";
+    public static final String SOM_DESCRIPTION = DESCRIPTION;
     /**
      * Time Frame.
      */
@@ -613,7 +615,7 @@ public class TSRReportLabelText {
     /**
      * Description.
      */
-    public static final String SGSC_DESCRIPTION = "Description";
+    public static final String SGSC_DESCRIPTION = DESCRIPTION;
 
     // Participating Sites
     /**
