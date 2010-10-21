@@ -85,11 +85,13 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
@@ -103,6 +105,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * @author Anupama Sharma
@@ -165,9 +170,7 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
     }
 
     /**
-     * @param dto dto
-     * @return dto
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
     public StudyInboxDTO update(StudyInboxDTO dto) throws PAException {
@@ -178,6 +181,23 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
             dateRules(wrkDto);
         }
         return super.update(wrkDto);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyInboxDTO> getOpenInboxEntries(Ii studyProtocolIi) throws PAException {
+        Criteria crit =
+            HibernateUtil.getCurrentSession().createCriteria(StudyInbox.class).add(Restrictions.isNull("closeDate"))
+            .addOrder(Order.desc("openDate"))
+            .createCriteria("studyProtocol").add(Restrictions.eq("id", IiConverter.convertToLong(studyProtocolIi)));
+        try {
+            @SuppressWarnings("unchecked")
+            List<StudyInbox> entries = crit.list();
+            return convertFromDomainToDTOs(entries);
+        } catch (Exception e) {
+            throw new PAException("Error retrieving open inbox entries.", e);
+        }
     }
 
     private void setTimeIfToday(StudyInboxDTO dto) {

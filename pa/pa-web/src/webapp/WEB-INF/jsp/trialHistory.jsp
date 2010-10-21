@@ -90,8 +90,8 @@ function acceptTrialUpdate(id) {
                                     <display:column escapeXml="true" property="submissionNumber" sortable="false" titleKey="trialHistory.submissionNumber" sortProperty="submissionNumberToSort"/>
                                     <display:column escapeXml="true" property="type" sortable="false" titleKey="trialHistory.type"/>
                                     <display:column escapeXml="true" property="amendmentNumber" sortable="false" titleKey="trialHistory.amendmentNumber"/>
-                                    <display:column escapeXml="true" property="amendmentDate" sortable="false" titleKey="trialHistory.amendmentDate" format="{0,date,MM/dd/yyyy}" />
-                                    <display:column escapeXml="true" property="submissionDate" sortable="false" titleKey="trialHistory.submissionDate" format="{0,date,MM/dd/yyyy}" />
+                                    <display:column escapeXml="true" property="amendmentDate" sortable="false" titleKey="trialHistory.amendmentDate" />
+                                    <display:column escapeXml="true" property="submissionDate" sortable="false" titleKey="trialHistory.submissionDate" />
                                     <display:column escapeXml="true" property="amendmentReasonCode" sortable="false" titleKey="trialHistory.amendmentReasonCode"/>
                                     <display:column escapeXml="false" property="documents" sortable="false" style="word-wrap: break-word"  titleKey="trialHistory.documents"/>
                                     <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)

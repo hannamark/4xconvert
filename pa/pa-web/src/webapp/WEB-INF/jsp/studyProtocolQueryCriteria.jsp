@@ -189,7 +189,7 @@ function resetValues(){
                 </td>
                 <s:set name="submissionTypeValues" value="@gov.nih.nci.pa.enums.SubmissionTypeCode@getDisplayNames()" />
                 <td>
-                   <s:select headerKey="" headerValue="Both" id="submissionType" name="criteria.submissionType" list="#submissionTypeValues"  value="criteria.submissionType" cssStyle="width:206px" />
+                   <s:select headerKey="" headerValue="All" id="submissionType" name="criteria.submissionType" list="#submissionTypeValues"  value="criteria.submissionType" cssStyle="width:206px" />
                 </td>
                 <td scope="row" class="label">
                     <label for="trialCategory"> <fmt:message key="studyProtocol.trialCategorySearch"/></label>

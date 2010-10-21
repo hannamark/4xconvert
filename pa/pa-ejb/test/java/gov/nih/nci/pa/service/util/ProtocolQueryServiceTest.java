@@ -149,7 +149,7 @@ public class ProtocolQueryServiceTest {
     public void setUp() throws Exception {
         TestSchema.reset();
         bean.setRegistryUserService(new RegistryUserServiceBean());
-        createStudyProtocol("1", false, Boolean.FALSE, false, false, false);
+        createStudyProtocol("1", false, Boolean.FALSE, false, false, false, true);
     }
 
     @Test
@@ -254,7 +254,7 @@ public class ProtocolQueryServiceTest {
         assertNotNull(results.get(0).getUpdatedComments());
         assertNotNull(results.get(0).getUpdatedDate());
 
-        createStudyProtocol("2", true, Boolean.FALSE, false, false, false);
+        createStudyProtocol("2", true, Boolean.FALSE, false, false, false, false);
         StudyProtocolQueryCriteria otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setNciIdentifier("NCI");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
@@ -271,9 +271,9 @@ public class ProtocolQueryServiceTest {
         assertEquals("Size does not match.",1, results.size());
         assertFalse(DocumentWorkflowStatusCode.REJECTED == results.get(0).getDocumentWorkflowStatusCode());
 
-        createStudyProtocol("3", false, Boolean.TRUE, false, false, false);
-        createStudyProtocol("4", false, Boolean.TRUE, false, false, false);
-        createStudyProtocol("5", false, Boolean.TRUE, false, false, false);
+        createStudyProtocol("3", false, Boolean.TRUE, false, false, false, false);
+        createStudyProtocol("4", false, Boolean.TRUE, false, false, false, false);
+        createStudyProtocol("5", false, Boolean.TRUE, false, false, false, false);
 
         otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setNciIdentifier("NCI");
@@ -294,7 +294,7 @@ public class ProtocolQueryServiceTest {
             assertEquals("Abbreviated Trial", dto.getTrialCategory());
         }
 
-        StudyProtocol sp = createStudyProtocol("6", false, Boolean.FALSE, false, false, false);
+        StudyProtocol sp = createStudyProtocol("6", false, Boolean.FALSE, false, false, false, false);
         RegistryUser owner = sp.getStudyOwners().iterator().next();
 
         otherCriteria = new StudyProtocolQueryCriteria();
@@ -310,7 +310,7 @@ public class ProtocolQueryServiceTest {
         assertEquals("Size does not match.", 1, results.size());
 
 
-        createStudyProtocol("7", false, Boolean.FALSE, true, false, false);
+        createStudyProtocol("7", false, Boolean.FALSE, true, false, false, false);
 
         otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setOfficialTitle("Cancer");
@@ -322,7 +322,7 @@ public class ProtocolQueryServiceTest {
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
 
-        createStudyProtocol("8", false, Boolean.FALSE, false, true, false);
+        createStudyProtocol("8", false, Boolean.FALSE, false, true, false, false);
 
         otherCriteria.setSearchOnHold(false);
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
@@ -334,17 +334,23 @@ public class ProtocolQueryServiceTest {
         assertEquals("Size does not match.", 1, results.size());
         assertEquals("user", results.get(0).getStudyCheckoutByUsername());
 
-        createStudyProtocol("9", false, Boolean.FALSE, false, false, true);
+        createStudyProtocol("9", false, Boolean.FALSE, false, false, true, false);
 
         otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setOfficialTitle("Cancer");
         otherCriteria.setSubmissionType("Original");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
-        assertEquals("Size does not match.", 8, results.size());
+        assertEquals("Size does not match.", 7, results.size());
 
         otherCriteria.setSubmissionType("Amendment");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
+
+        createStudyProtocol("10", false, Boolean.FALSE, false, false, false, true);
+        otherCriteria = new StudyProtocolQueryCriteria();
+        otherCriteria.setSubmissionType("Update");
+        results = localEjb.getStudyProtocolByCriteria(otherCriteria);
+        assertEquals("Size does not match.", 2, results.size());
     }
 
     @Test
@@ -357,7 +363,7 @@ public class ProtocolQueryServiceTest {
 
     @Test
     public void getStudyProtocolByOrgIdentifierTest() throws Exception {
-        createStudyProtocol("2", false, Boolean.FALSE, false, false, false);
+        createStudyProtocol("2", false, Boolean.FALSE, false, false, false, false);
         List<StudyProtocol> results = localEjb.getStudyProtocolByOrgIdentifier(Long.valueOf(1));
         assertEquals(1, results.size());
 
@@ -377,7 +383,7 @@ public class ProtocolQueryServiceTest {
 
 
     private StudyProtocol createStudyProtocol(String orgId, boolean createRejected, Boolean isPropTrial,
-            boolean onHold, boolean locked, boolean amendment) {
+            boolean onHold, boolean locked, boolean amendment, boolean update) {
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         sp.setProprietaryTrialIndicator(isPropTrial);
 
@@ -514,7 +520,9 @@ public class ProtocolQueryServiceTest {
         sp.getStudyInbox().add(si);
 
         StudyInbox si2 = StudyInboxTest.createStudyInboxobj(sp);
-        si2.setCloseDate(null);
+        if (update) {
+            si2.setCloseDate(null);
+        }
         TestSchema.addUpdObject(si2);
         sp.getStudyInbox().add(si2);
 

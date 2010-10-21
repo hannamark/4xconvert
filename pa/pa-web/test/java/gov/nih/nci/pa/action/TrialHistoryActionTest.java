@@ -79,19 +79,17 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
-
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
@@ -111,17 +109,16 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Anupama Sharma
@@ -130,11 +127,9 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
     private TrialHistoryAction trialHistory;
 
     private final StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
-    private final ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
     private final DocumentServiceLocal docSvc = mock(DocumentServiceLocal.class);
     private final StudyInboxServiceLocal studyInboxSvc = mock(StudyInboxServiceLocal.class);
     private final ServiceLocator serviceLoc = mock(ServiceLocator.class);
-    private final List<StudyProtocolQueryDTO> trialUpdateRecords = new ArrayList<StudyProtocolQueryDTO>();
 
     @Before
     public void setup() throws Exception {
@@ -179,6 +174,8 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
 
     @Test
     public void testUpdateNoFieldErrors() throws Exception {
+        PaRegistry.getInstance().setServiceLocator(serviceLoc);
+
     	trialHistory.setDocii("1");
     	trialHistory.setStudyProtocolii("1");
     	trialHistory.setServletResponse(getResponse());
@@ -192,6 +189,7 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
 
     @Test
     public void updateTest() throws Exception {
+        PaRegistry.getInstance().setServiceLocator(serviceLoc);
         assertEquals(AbstractListEditAction.AR_LIST, trialHistory.execute());
 
         assertEquals(4, trialHistory.getTrialHistoryWebDTO().size());
@@ -199,6 +197,7 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
 
     @Test
     public void testTrialUpdate() throws PAException, TooManyResultsException {
+        PaRegistry.getInstance().setServiceLocator(serviceLoc);
         assertEquals("list", trialHistory.execute());
     }
 
@@ -245,6 +244,8 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
         trialHistory.setStudyProtocolSvc(studyProtocolService);
         trialHistory.setDocumentSvc(docSvc);
 
+        when(studyInboxSvc.getByStudyProtocol(any(Ii.class))).thenReturn(new ArrayList<StudyInboxDTO>());
+        when(studyInboxSvc.update(any(StudyInboxDTO.class))).thenThrow(new PAException("ERROR!!!"));
         when(serviceLoc.getStudyInboxService()).thenReturn(studyInboxSvc);
 
         ProtocolQueryServiceLocal protocolQSvc = mock(ProtocolQueryServiceLocal.class);
@@ -281,6 +282,7 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
 
     @Test
     public void testAcceptUpdateWithException() throws PAException {
+        PaRegistry.getInstance().setServiceLocator(serviceLoc);
         assertEquals("list", trialHistory.acceptUpdate());
         assertEquals(1, trialHistory.getActionErrors().size());
     }

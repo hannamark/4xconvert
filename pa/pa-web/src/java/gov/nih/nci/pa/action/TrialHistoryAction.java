@@ -82,8 +82,8 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
+import gov.nih.nci.pa.dto.TrialUpdateWebDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
@@ -132,7 +132,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     private String docii;
     private String docFileName;
     private HttpServletResponse servletResponse;
-    private List<StudyProtocolQueryDTO> records = null;
+    private List<TrialUpdateWebDTO> records = new ArrayList<TrialUpdateWebDTO>();
     private final StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
 
     /**
@@ -246,8 +246,15 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         StudyProtocolDTO spDTO = getStudyProtocolSvc().getStudyProtocol(studyProtocolIi);
         criteria.setInBoxProcessing(Boolean.TRUE);
         criteria.setNciIdentifier(PAUtil.getAssignedIdentifierExtension(spDTO));
-        records = new ArrayList<StudyProtocolQueryDTO>();
-        records = PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(criteria);
+        List<StudyInboxDTO> inboxEntries = PaRegistry.getStudyInboxService().getOpenInboxEntries(studyProtocolIi);
+        for (StudyInboxDTO dto : inboxEntries) {
+            TrialUpdateWebDTO webDTO = new TrialUpdateWebDTO();
+            webDTO.setId(IiConverter.convertToLong(dto.getIdentifier()));
+            webDTO.setComment(StConverter.convertToString(dto.getComments()));
+            webDTO.setUpdatedDate(TsConverter.convertToTimestamp(dto.getInboxDateRange().getLow()));
+            records.add(webDTO);
+        }
+
     }
 
     /**
@@ -328,7 +335,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
             DocumentDTO docDTO = PaRegistry.getDocumentService().get(IiConverter.convertToIi(getDocii()));
 
             final Ii spIi = IiConverter.convertToIi(getStudyProtocolii());
-            StudyProtocolDTO spDTO = getStudyProtocolSvc().getStudyProtocol(spIi);
+            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(spIi);
 
             StringBuffer fileName = new StringBuffer();
             fileName.append(PAUtil.getAssignedIdentifier(spDTO)).append('-').append(docDTO.getFileName().getValue());
@@ -484,14 +491,14 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     /**
      * @return the records
      */
-    public List<StudyProtocolQueryDTO> getRecords() {
+    public List<TrialUpdateWebDTO> getRecords() {
         return records;
     }
 
     /**
      * @param records the records to set
      */
-    public void setRecords(List<StudyProtocolQueryDTO> records) {
+    public void setRecords(List<TrialUpdateWebDTO> records) {
         this.records = records;
     }
 

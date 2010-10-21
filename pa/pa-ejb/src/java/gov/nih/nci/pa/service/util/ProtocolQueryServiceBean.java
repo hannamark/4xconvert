@@ -271,47 +271,41 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     studyProtocolDto.setDocumentWorkflowStatusCode(documentWorkflowStatus.getStatusCode());
                     studyProtocolDto.setDocumentWorkflowStatusDate(documentWorkflowStatus.getStatusDateRangeLow());
                 }
-
-                if (studyProtocol != null) {
-                    if (studyProtocol instanceof ObservationalStudyProtocol) {
-                        studyProtocolDto.setStudyProtocolType("ObservationalStudyProtocol");
-                    } else {
-                        studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
-                    }
-
-                    studyProtocolDto.setOfficialTitle(studyProtocol.getOfficialTitle());
-                    studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
-                    studyProtocolDto.setNciIdentifier(PADomainUtils.getAssignedIdentifierExtension(studyProtocol));
-                    studyProtocolDto.setOtherIdentifiers(PADomainUtils.getOtherIdentifierExtensions(studyProtocol));
-                    studyProtocolDto.setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
-                    studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
-                    studyProtocolDto.setPhaseAdditionalQualifier(studyProtocol.getPhaseAdditionalQualifierCode());
-                    if (studyProtocol.getUserLastCreated() != null) {
-                        studyProtocolDto.setUserLastCreated(studyProtocol.getUserLastCreated().getLoginName());
-                    }
-                    studyProtocolDto.setDateLastCreated(studyProtocol.getDateLastCreated());
-                    // return amendment number and date only for amended trials
-                    if (studyProtocol.getSubmissionNumber() != null
-                            &&  studyProtocol.getSubmissionNumber().intValue() > 1) {
-                        studyProtocolDto.setAmendmentNumber(studyProtocol.getAmendmentNumber());
-                        studyProtocolDto.setAmendmentDate(studyProtocol.getAmendmentDate());
-                        studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.A);
-                    } else {
-                        studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.O);
-                    }
-                   if (studyProtocol.getProprietaryTrialIndicator() != null) {
-                       studyProtocolDto.setProprietaryTrial(studyProtocol.getProprietaryTrialIndicator());
-                   } else {
-                       studyProtocolDto.setProprietaryTrial(false);
-                   }
-                   studyProtocolDto.setRecordVerificationDate(studyProtocol.getRecordVerificationDate());
-                   if (!(studyProtocol.getCtgovXmlRequiredIndicator() != null
-                       && !studyProtocol.getCtgovXmlRequiredIndicator().booleanValue())) {
-                       studyProtocolDto.setCtgovXmlRequiredIndicator(Boolean.TRUE);
-                   } else {
-                       studyProtocolDto.setCtgovXmlRequiredIndicator(Boolean.FALSE);
-                   }
+                if (studyProtocol instanceof ObservationalStudyProtocol) {
+                    studyProtocolDto.setStudyProtocolType("ObservationalStudyProtocol");
+                } else {
+                    studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
                 }
+                studyProtocolDto.setOfficialTitle(studyProtocol.getOfficialTitle());
+                studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
+                studyProtocolDto.setNciIdentifier(PADomainUtils.getAssignedIdentifierExtension(studyProtocol));
+                studyProtocolDto.setOtherIdentifiers(PADomainUtils.getOtherIdentifierExtensions(studyProtocol));
+                studyProtocolDto.setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
+                studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
+                studyProtocolDto.setPhaseAdditionalQualifier(studyProtocol.getPhaseAdditionalQualifierCode());
+                if (studyProtocol.getUserLastCreated() != null) {
+                    studyProtocolDto.setUserLastCreated(studyProtocol.getUserLastCreated().getLoginName());
+                }
+                studyProtocolDto.setDateLastCreated(studyProtocol.getDateLastCreated());
+
+                if (studyInbox != null && studyInbox.getCloseDate() == null) {
+                    //Studies are considered updated if they have a study inbox entry without a closed date
+                    studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.U);
+                } else if (studyProtocol.getSubmissionNumber() != null
+                        &&  studyProtocol.getSubmissionNumber().intValue() > 1) {
+                    // return amendment number and date only for amended trials
+                    studyProtocolDto.setAmendmentNumber(studyProtocol.getAmendmentNumber());
+                    studyProtocolDto.setAmendmentDate(studyProtocol.getAmendmentDate());
+                    studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.A);
+                } else if (studyProtocol.getSubmissionNumber() != null
+                        &&  studyProtocol.getSubmissionNumber().intValue() == 1) {
+                    studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.O);
+                }
+                studyProtocolDto.setProprietaryTrial(
+                        BooleanUtils.toBoolean(studyProtocol.getProprietaryTrialIndicator()));
+                studyProtocolDto.setRecordVerificationDate(studyProtocol.getRecordVerificationDate());
+                studyProtocolDto.setCtgovXmlRequiredIndicator(
+                        BooleanUtils.toBoolean(studyProtocol.getCtgovXmlRequiredIndicator()));
                 if (studyMilestone != null) {
                     studyProtocolDto.setStudyMilsetone(studyMilestone.getMilestoneCode());
                     studyProtocolDto.setStudyMilestoneDate(studyMilestone.getMilestoneDate());
@@ -321,8 +315,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     studyProtocolDto.setStudyStatusDate(studyOverallStatus.getStatusDate());
                 }
                 if (organization != null) {
-                    studyProtocolDto.setLeadOrganizationName(organization
-                            .getName());
+                    studyProtocolDto.setLeadOrganizationName(organization.getName());
                     studyProtocolDto.setLeadOrganizationId(organization.getId());
                 }
                 if (person != null) {
@@ -333,15 +326,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     studyProtocolDto.setLocalStudyProtocolIdentifier(studySite.getLocalStudyProtocolIdentifier());
                 }
                 if (studyInbox != null) {
-                  if (studyInbox.getId() != null) {
                     studyProtocolDto.setStudyInboxId(studyInbox.getId());
-                  }
-                  if (studyInbox.getComments() != null) {
                     studyProtocolDto.setUpdatedComments(studyInbox.getComments());
-                  }
-                  if (studyInbox.getOpenDate() != null) {
                     studyProtocolDto.setUpdatedDate(studyInbox.getOpenDate());
-                  }
                 }
                 if (studyCheckout != null) {
                     studyProtocolDto.setStudyCheckoutBy(studyCheckout.getUserIdentifier());
@@ -350,16 +337,12 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
                 if (potentialOwner != null && myTrialsOnly) {
                     if (registryUserService.hasTrialAccess(potentialOwner, studyProtocol.getId())) {
-                        // add to the list
                         studyProtocolDtos.add(studyProtocolDto);
                     }
                 } else {
-                    // add to the list
                     studyProtocolDtos.add(studyProtocolDto);
                 }
-
-
-            } // for loop
+            }
         } catch (Exception e) {
             throw new PAException("General error in while converting to StudyProtocolQueryDTO", e);
         }
