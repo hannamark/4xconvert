@@ -642,6 +642,30 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         criteria.setStatusCode(ActStatusCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         criteria.setOtherIdentifiers(DSetConverter.convertDsetToIiSet(dto.getSecondaryIdentifiers()));
 
+        if (isNonDbStudyProtocolIdentifier(dto.getIdentifier())) {
+            StudySite ss = new StudySite();
+            ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+            ss.setLocalStudyProtocolIdentifier(dto.getIdentifier().getExtension());
+
+            if (StringUtils.equals(dto.getIdentifier().getRoot(), IiConverter.CTEP_STUDY_PROTOCOL_ROOT)) {
+                Organization org = new Organization();
+                org.setName(PAConstants.CTEP_ORG_NAME);
+                ResearchOrganization ro = new ResearchOrganization();
+                ro.setOrganization(org);
+                ss.setResearchOrganization(ro);
+            }
+
+            if (StringUtils.equals(dto.getIdentifier().getRoot(), IiConverter.DCP_STUDY_PROTOCOL_ROOT)) {
+                Organization org = new Organization();
+                org.setName(PAConstants.DCP_ORG_NAME);
+                ResearchOrganization ro = new ResearchOrganization();
+                ro.setOrganization(org);
+                ss.setResearchOrganization(ro);
+            }
+
+            criteria.getStudySites().add(ss);
+        }
+
         int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
         PageSortParams<StudyProtocol> params = new PageSortParams<StudyProtocol>(maxLimit, pagingParams.getOffset(),
                 StudyProtocolSortCriterion.STUDY_PROTOCOL_ID, false);
@@ -728,16 +752,11 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         if (PAUtil.isIiNull(studyProtocolIi)) {
             throw new PAException("Ii should not be null");
         }
-        if (IiConverter.STUDY_PROTOCOL_ROOT.equals(studyProtocolIi.getRoot())
-                && studyProtocolIi.getExtension().startsWith("NCI")) {
-            StudyProtocolDTO spDTO = new StudyProtocolDTO();
-            spDTO.setSecondaryIdentifiers(new DSet<Ii>());
-            spDTO.getSecondaryIdentifiers().setItem(new HashSet<Ii>());
-            spDTO.getSecondaryIdentifiers().getItem().add(studyProtocolIi);
+        if (isNonDbStudyProtocolIdentifier(studyProtocolIi)) {
             LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
             List<StudyProtocolDTO> spList;
             try {
-                spList = search(spDTO, limit);
+                spList = search(populateStudyProtocolExample(studyProtocolIi), limit);
             } catch (TooManyResultsException e) {
                 throw new PAException("found too many trials with this identifier " + studyProtocolIi.getExtension()
                         + " when only 1 expected.", e);
@@ -752,6 +771,33 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
 
         return studyProtocolDTO;
+    }
+
+    private StudyProtocolDTO populateStudyProtocolExample(Ii studyProtocolIi) {
+        StudyProtocolDTO spDTO = new StudyProtocolDTO();
+        if (StringUtils.startsWith(studyProtocolIi.getExtension(), "NCI")) {
+            spDTO.setSecondaryIdentifiers(new DSet<Ii>());
+            spDTO.getSecondaryIdentifiers().setItem(new HashSet<Ii>());
+            spDTO.getSecondaryIdentifiers().getItem().add(studyProtocolIi);
+        } else {
+            spDTO.setIdentifier(studyProtocolIi);
+        }
+        return spDTO;
+    }
+
+    /**
+     * Determines whether the given ii is either a DCP id, CTEP Id, NCT id or NCI assigned id. Basically any
+     * id other than the one assigned automatically by the database upon trial creation.
+     * @param studyProtocolIi
+     * @return true iff the given ii is not a DB assigned id
+     */
+    private boolean isNonDbStudyProtocolIdentifier(Ii studyProtocolIi) {
+        return studyProtocolIi != null
+        && (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.DCP_STUDY_PROTOCOL_ROOT)
+        || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.CTEP_STUDY_PROTOCOL_ROOT)
+        || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.NCT_STUDY_PROTOCOL_ROOT)
+        || (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT))
+                && StringUtils.startsWith(studyProtocolIi.getExtension(), "NCI"));
     }
 
     /**

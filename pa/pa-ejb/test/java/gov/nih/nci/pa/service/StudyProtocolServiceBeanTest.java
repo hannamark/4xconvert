@@ -317,7 +317,7 @@ public class StudyProtocolServiceBeanTest {
 
     @Test
     public void search() throws Exception {
-        createStudyProtocols(6, null);
+        createStudyProtocols(6, null, null);
 
         StudyProtocolDTO criteria = new StudyProtocolDTO();
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
@@ -359,15 +359,15 @@ public class StudyProtocolServiceBeanTest {
 
     @Test
     public void getCollaborativeTrials() throws Exception {
-        createStudyProtocols(1, PAConstants.DCP_ORG_NAME);
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, null);
         List<StudyProtocolDTO> results = remoteEjb.getCollaborativeTrials();
         assertEquals(1, results.size());
 
-        createStudyProtocols(1, PAConstants.CTEP_ORG_NAME);
+        createStudyProtocols(1, PAConstants.CTEP_ORG_NAME, null);
         results = remoteEjb.getCollaborativeTrials();
         assertEquals(2, results.size());
 
-        createStudyProtocols(1, null);
+        createStudyProtocols(1, null, null);
         results = remoteEjb.getCollaborativeTrials();
         assertEquals(2, results.size());
 
@@ -500,6 +500,31 @@ public class StudyProtocolServiceBeanTest {
     }
 
     @Test
+    public void testGetStudyProtocol() throws Exception {
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-1");
+        createStudyProtocols(1, null, "NCT-1");
+        createStudyProtocols(1, PAConstants.CTEP_ORG_NAME, "CTEP-1");
+
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("DCP-1");
+        StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
+        assertNotNull(spDTO);
+
+        ii = new Ii();
+        ii.setRoot(IiConverter.NCT_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("NCT-1");
+        spDTO = remoteEjb.getStudyProtocol(ii);
+        assertNotNull(spDTO);
+
+        ii = new Ii();
+        ii.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("CTEP-1");
+        spDTO = remoteEjb.getStudyProtocol(ii);
+        assertNotNull(spDTO);
+    }
+
+    @Test
     public void iiRootTest() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
             InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
@@ -512,8 +537,10 @@ public class StudyProtocolServiceBeanTest {
     /**
      * Creates study protocols
      * @param count the number of study protocols to create
+     * @param sponsorName the name of the sponsor
+     * @param identifierAssignerId the id of the identifier assigner
      */
-    private void createStudyProtocols(int count, String sponsorName) {
+    private void createStudyProtocols(int count, String sponsorName, String identifierAssignerId) {
         for (int i = 1; i <= count; i++) {
             InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
             sp = (InterventionalStudyProtocol) StudyProtocolTest.createStudyProtocolObj(sp);
@@ -576,6 +603,37 @@ public class StudyProtocolServiceBeanTest {
                 studySite.setStudyProtocol(sp);
                 studySite.setResearchOrganization(ro);
 
+                sp.getStudySites().add(studySite);
+                TestSchema.addUpdObject(studySite);
+            }
+
+            if (StringUtils.isNotEmpty(identifierAssignerId)) {
+                ResearchOrganization ro = null;
+                if (StringUtils.isNotEmpty(sponsorName)) {
+                    Organization org = OrganizationTest.createOrganizationObj();
+                    org.setName(sponsorName);
+                    TestSchema.addUpdObject(org);
+
+                    ro = new ResearchOrganization();
+                    ro.setOrganization(org);
+                    ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+                    ro.setIdentifier("abc");
+                    TestSchema.addUpdObject(ro);
+                }
+
+                StudySite studySite = new StudySite();
+                studySite.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+                studySite.setLocalStudyProtocolIdentifier(identifierAssignerId);
+                studySite.setUserLastUpdated(sp.getUserLastUpdated());
+                Timestamp now = new Timestamp((new Date()).getTime());
+                studySite.setDateLastUpdated(now);
+                studySite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+                studySite.setStatusDateRangeLow(now);
+                studySite.setStudyProtocol(sp);
+
+                if (ro != null) {
+                    studySite.setResearchOrganization(ro);
+                }
                 sp.getStudySites().add(studySite);
                 TestSchema.addUpdObject(studySite);
             }

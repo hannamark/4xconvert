@@ -104,6 +104,18 @@ public class IiConverter {
     /** Study Protocol Other Identifier. */
     public static final String STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME = "Study Protocol Other Identifier";
 
+    /** The ii root value for NCI assigned identifier, currently unused. */
+    public static final String NCI_ASSIGNED_IDENTIFIER_ROOT = "2.16.840.1.113883.3.26.4.3.17.1";
+
+    /** The ii root value for the NCT identifier. */
+    public static final String NCT_STUDY_PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3.17.2";
+
+    /** The ii root value for the DCP identifier. */
+    public static final String DCP_STUDY_PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3.17.3";
+
+    /** The ii root value CTEP identifier. */
+    public static final String CTEP_STUDY_PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3.17.4";
+
     /** Study Outcome Measure Root. * */
     public static final String STUDY_OUTCOME_MEASURE_ROOT = "2.16.840.1.113883.3.26.4.3.1";
 
@@ -326,7 +338,6 @@ public class IiConverter {
 
     /** The ii root value. */
     public static final String REGULATORY_AUTHORITY_ROOT = "2.16.840.1.113883.3.26.4.4.17";
-
 
     /** The identifier name for. */
     public static final String COUNTRY_IDENTIFIER_NAME = "Country identifier";
