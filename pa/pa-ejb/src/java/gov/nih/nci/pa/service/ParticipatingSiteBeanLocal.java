@@ -158,16 +158,21 @@ implements ParticipatingSiteServiceLocal {
         this.ejbContext = ctx;
     }
 
-    private void checkValidUser(Long studyProtocolId) throws PAException {
+    private void checkValidUser(Ii studyProtocolIi) throws PAException {
         if (this.ejbContext.isCallerInRole("Abstractor") || this.ejbContext.isCallerInRole("client")) {
             return;
         }
         CSMUserUtil userService = CSMUserService.getInstance();
         User user = userService.lookupUser(this.ejbContext);
+        StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+        if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
+            throw new PAException("Trial id " + studyProtocolIi.getExtension() + " does not exist.");
+        }
         RegistryUser userId = PaRegistry.getRegisterUserService().getUser(user.getLoginName());
-        if (!PaRegistry.getRegisterUserService().isTrialOwner(userId.getId(), studyProtocolId)) {
+        if (!PaRegistry.getRegisterUserService().isTrialOwner(userId.getId(), 
+                Long.valueOf(spDTO.getIdentifier().getExtension()))) {
             throw new PAException("User " + user.getLoginName() + "is not a trial owner for trial id "
-                    + studyProtocolId);
+                    + Long.valueOf(spDTO.getIdentifier().getExtension()));
         }
     }
 
@@ -301,8 +306,6 @@ implements ParticipatingSiteServiceLocal {
             // check business rules based on trial type.
             StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(
                     studySiteDTO.getStudyProtocolIdentifier());
-            checkValidUser(Long.valueOf(spDTO.getIdentifier().getExtension()));
-
             studySiteDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
             if (spDTO.getProprietaryTrialIndicator().getValue().booleanValue()) {
                 enforceBusinessRulesForProprietary(spDTO, studySiteDTO, currentStatusDTO);
@@ -326,7 +329,6 @@ implements ParticipatingSiteServiceLocal {
         try {
             // check business rules based on trial type.
             StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteDTO.getIdentifier());
-            checkValidUser(Long.valueOf(currentSite.getStudyProtocolIdentifier().getExtension()));
             studySiteDTO.setStudyProtocolIdentifier(currentSite.getStudyProtocolIdentifier());
             studySiteDTO.setHealthcareFacilityIi(currentSite.getHealthcareFacilityIi());
             studySiteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
@@ -377,7 +379,9 @@ implements ParticipatingSiteServiceLocal {
     public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
-        ParticipatingSiteDTO participatingSiteDTO = this.createStudySiteParticipant(studySiteDTO, currentStatusDTO,
+        checkValidUser(studySiteDTO.getStudyProtocolIdentifier());
+        ParticipatingSiteDTO participatingSiteDTO = 
+            this.createStudySiteParticipant(studySiteDTO, currentStatusDTO,
                 orgDTO, hcfDTO);
         addStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
         return participatingSiteDTO;
@@ -389,7 +393,9 @@ implements ParticipatingSiteServiceLocal {
     public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
-        ParticipatingSiteDTO participatingSiteDTO = this.createStudySiteParticipant(studySiteDTO, currentStatusDTO,
+        checkValidUser(studySiteDTO.getStudyProtocolIdentifier());
+        ParticipatingSiteDTO participatingSiteDTO = 
+            this.createStudySiteParticipant(studySiteDTO, currentStatusDTO,
                 poHcfIi);
         addStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
         return participatingSiteDTO;
@@ -401,7 +407,9 @@ implements ParticipatingSiteServiceLocal {
     public ParticipatingSiteDTO updateStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
-        ParticipatingSiteDTO participatingSiteDTO = this.updateStudySiteParticipant(studySiteDTO, currentStatusDTO);
+        checkValidUser(studySiteDTO.getStudyProtocolIdentifier());
+        ParticipatingSiteDTO participatingSiteDTO = 
+            this.updateStudySiteParticipant(studySiteDTO, currentStatusDTO);
         addStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
         return participatingSiteDTO;
     }

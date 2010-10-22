@@ -72,6 +72,8 @@ public class ParticipatingSiteServiceTest {
 
     private final ParticipatingSiteBeanLocal bean = new ParticipatingSiteBeanLocal();
     ParticipatingSiteServiceLocal localBean = null;
+    ParticipatingSiteServiceBean rBean = new ParticipatingSiteServiceBean();
+    ParticipatingSiteServiceRemote remoteBean = null;
     StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
     StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
     StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
@@ -90,6 +92,14 @@ public class ParticipatingSiteServiceTest {
         bean.setOcsr(ocsr);
         bean.setSessionContext(new MockStatelessContext());
         localBean = bean;
+        
+        rBean.setStudyProtocolService(studyProtocolService);
+        rBean.setStudySiteService(studySiteService);
+        rBean.setStudySiteContactService(studySiteContactService);
+        rBean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
+        rBean.setOcsr(ocsr);
+        rBean.setSessionContext(new MockStatelessContext());
+        remoteBean = rBean;
         HibernateUtil.setTestHelper(testHelper);
         Session session = HibernateUtil.getCurrentSession();
         session.clear();
@@ -298,8 +308,8 @@ public class ParticipatingSiteServiceTest {
 
         contList = studySiteContactService.getByStudySite(dto.getIdentifier());
         assertEquals(2, contList.size());
-
-        List<ParticipatingSiteDTO> sites = localBean.getParticipatingSitesByStudyProtocol(spSecId);
+        
+        List<ParticipatingSiteDTO> sites = remoteBean.getParticipatingSitesByStudyProtocol(spSecId);
         assertTrue(sites.size() == 1);
         assertEquals(oldIi.getExtension(), sites.get(0).getIdentifier().getExtension());
     }
