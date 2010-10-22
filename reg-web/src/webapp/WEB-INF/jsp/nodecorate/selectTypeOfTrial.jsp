@@ -32,9 +32,14 @@
     <table>
           <!--  summary4 information -->
           <tr>
+               <td align="left" colspan="2">
+                <b>Select one of the following categories that best matches the trial you want to submit</b>
+               </td>
+          </tr>
+          <tr>
                 <td scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.summary_4_funding_sponsor_type">
-                        <label for="submitTrial_summary4FundingCategory">Summary 4 Funding Sponsor Type:</label>
+                        <label for="submitTrial_summary4FundingCategory">Trial Submission Category: </label>
                         <span class="required">*</span>
                     </reg-web:displayTooltip>
                 </td>
@@ -54,6 +59,16 @@
            </tr>
            <tr>
        <td colspan="2">&nbsp; </td>
+       </tr>
+       <tr>
+       <td colspan="2">
+        <p align="left" class="info"> 
+            <b>National</b>: National Cooperative Group Trials.<br>
+            <b>Externally Peer-Reviewed</b>: R01s and P01s or other trial mechanisms funded by NIH or supported by other peer-reviewed funding organizations.<br>
+            <b>Institutional</b>: In house trials authored or co-authored by cancer center investigators and undergoing scientific peer-review solely by the Protocol Review and Monitoring System of the Center. The center investigator should have primary responsibility for conceptualizing, designing and implementing the trial and reporting results. It is acceptable for industry and other entities to provide some support (e.g., drug, device, other funding) by the trial should clearly be the intellectual product of the center investigator.<br>
+            <b>Industrial</b>: Design and implementation of the study is controlled by the pharmaceutical company.
+        </p> 
+       </td>
        </tr>
        <tr>
        <td colspan="2">

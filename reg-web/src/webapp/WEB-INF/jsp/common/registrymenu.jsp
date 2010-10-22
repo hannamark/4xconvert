@@ -8,7 +8,7 @@
 <c:url value="/protected/ajaxselectTrialselectTypeOfTrial.action" var="selectTrial"/>
 <SCRIPT LANGUAGE="JavaScript">
 function selectTrialType(){
-	showPopWin('${selectTrial}', 900, 400, '', 'Select Summary 4 Funding Sponsor Type')
+	showPopWin('${selectTrial}', 950, 400, '', 'Select a Trial Submission Category')
 }
 </script>
 		<li class="stdnav"><div>NCI CTRP</div>
