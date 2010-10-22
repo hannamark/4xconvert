@@ -290,12 +290,13 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         Session session = HibernateUtil.getCurrentSession();
 
         Document doc = convertFromDtoToDomain(super.get(docDTO.getIdentifier()));
+        doc.setId(IiConverter.convertToLong(docDTO.getIdentifier()));
         doc.setActiveIndicator(false);
         doc.setInactiveCommentText(StConverter.convertToString(docDTO.getInactiveCommentText()));
         doc.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
         doc.setUserLastUpdated(CSMUserService.getInstance().lookupUser(ejbContext));
 
-        session.update(doc);
+        session.merge(doc);
         session.flush();
     }
 
