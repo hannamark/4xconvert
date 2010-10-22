@@ -318,8 +318,8 @@ public class TrialValidator {
      */
     private void validateCompletionDateType(TrialDTO trialDto, StudyStatusCode newCode,
           Collection<String> addActionError) {
-       if (!StudyStatusCode.COMPLETE.getCode().equals(newCode.getCode())
-          || !StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(newCode.getCode())
+       if ((!StudyStatusCode.COMPLETE.getCode().equals(newCode.getCode())
+          || !StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(newCode.getCode()))
               && !trialDto.getCompletionDateType().equals(anticipatedString)) {
                 addActionError.add("Trial completion date must be 'Anticipated' when the status is "
                   + "not 'Complete' or 'Administratively Complete'.");

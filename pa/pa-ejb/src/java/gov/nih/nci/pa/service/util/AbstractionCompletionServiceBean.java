@@ -343,10 +343,12 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         Organization org = PaRegistry.getOrganizationCorrelationService()
             .getOrganizationByFunctionRole(spIi, CdConverter.convertStringToCd(
                     StudySiteFunctionalCode.SPONSOR.getCode()));
-
-        String orgName = org.getName();
-        return PAConstants.DCP_ORG_NAME.equals(orgName)
-              || PAConstants.CTEP_ORG_NAME.equals(orgName);
+        String orgName = "";
+        if (org != null) {
+            orgName = org.getName();
+        }
+        return StringUtils.equals(PAConstants.DCP_ORG_NAME, orgName)
+              || StringUtils.equals(PAConstants.CTEP_ORG_NAME, orgName);
     }
 
     private void abstractionCompletionRuleForProprietary(StudyProtocolDTO studyProtocolDTO,
