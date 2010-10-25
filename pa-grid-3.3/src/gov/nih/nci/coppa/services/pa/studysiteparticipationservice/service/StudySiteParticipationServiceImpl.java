@@ -133,6 +133,8 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
             } else {
                 throw new PAException("Invalid PersonRole for StudySiteContact: " + studySiteContact);
             }
+            
+            participatingSiteContactDTOList.add(participatingSiteContactDTO);
         }
 
     }

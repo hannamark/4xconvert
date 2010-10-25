@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service.correlation;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
@@ -111,6 +112,7 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -150,6 +152,10 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         } catch (NullifiedRoleException e) {
             throw new PAException("This HealthCareFacility is no longer available.", e);
         }
+        if (hcfDTO == null) {
+            hcfDTO = getHcfByOtherId(poHcfIdentifier);
+        }
+        
         HealthCareFacility hcf = getCorrUtils().getStructuralRoleByIi(poHcfIdentifier);
         if (hcf == null) {
             OrganizationDTO poOrgDTO;
@@ -166,6 +172,21 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             getCorrUtils().createPADomain(hcf);
         }
         return hcf.getId();
+    }
+
+    private HealthCareFacilityDTO getHcfByOtherId(Ii poHcfIdentifier) throws PAException {
+        HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
+        hcfDTO.setIdentifier(new DSet<Ii>());
+        hcfDTO.getIdentifier().setItem(new HashSet<Ii>());
+        hcfDTO.getIdentifier().getItem().add(poHcfIdentifier);
+        List<HealthCareFacilityDTO> list = PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
+        if (list == null) {
+            throw new PAException("HealthCareFacility not found for identifier: " + poHcfIdentifier);
+        } else if (list.size() > 1) {
+            throw new PAException("Multiple HealthCareFacilities found for identifier: " + poHcfIdentifier);
+        }
+        hcfDTO = list.get(0);
+        return hcfDTO;
     }
 
     /**

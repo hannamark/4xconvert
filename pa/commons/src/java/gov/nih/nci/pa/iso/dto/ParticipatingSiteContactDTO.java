@@ -82,14 +82,19 @@
  */
 package gov.nih.nci.pa.iso.dto;
 
+import java.io.Serializable;
+
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 /**
+ * DTO for transferring Participating Site Contact information.
  * @author moweis
  *
  */
-public class ParticipatingSiteContactDTO {
+public class ParticipatingSiteContactDTO implements Serializable {
+    private static final long serialVersionUID = -8708021771602650477L;
+    
     private AbstractPersonRoleDTO abstractPersonRoleDTO;
     private PersonDTO personDTO;
     private StudySiteContactDTO studySiteContactDTO;

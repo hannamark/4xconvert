@@ -278,7 +278,9 @@ public class DSetConverter {
             Set<Ii> iis = identifier.getItem();
             for (Ii ii : iis) {
                 // Since PO only assigns one ID, our identifier will be the only ISS with our root
-                if (IdentifierReliability.ISS == ii.getReliability() && ii.getRoot().startsWith(BASE_ROOT)) {
+                if (IdentifierReliability.ISS == ii.getReliability()
+                        && (ii.getRoot().startsWith(BASE_ROOT) || IiConverter.CTEP_PERSON_IDENTIFIER_ROOT.equals(ii
+                                .getRoot()))) {
                     return ii;
                 }
             }
