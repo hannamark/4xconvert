@@ -80,7 +80,6 @@ package gov.nih.nci.pa.iso.util;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
@@ -278,7 +277,7 @@ public class DSetConverter {
             Set<Ii> iis = identifier.getItem();
             for (Ii ii : iis) {
                 // Since PO only assigns one ID, our identifier will be the only ISS with our root
-                if (IdentifierReliability.ISS == ii.getReliability() && ii.getRoot().startsWith(BASE_ROOT)) {
+                if (ii.getRoot().startsWith(BASE_ROOT)) {
                     return ii;
                 }
             }
