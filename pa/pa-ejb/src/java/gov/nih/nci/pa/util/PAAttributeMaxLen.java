@@ -100,6 +100,8 @@ public class PAAttributeMaxLen {
     public static final int LONG_TEXT_LENGTH = 200;
     /** acronym  max. **/
     public static final int ACRONYM = 300;
+    /** LEN 1. **/
+    public static final int LEN_1 = 1;
     /** LEN 2. **/
     public static final int LEN_2 = 2;
     /** LEN 5. **/
