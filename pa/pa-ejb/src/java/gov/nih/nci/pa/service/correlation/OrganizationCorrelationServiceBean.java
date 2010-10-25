@@ -155,8 +155,11 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         if (hcfDTO == null) {
             hcfDTO = getHcfByOtherId(poHcfIdentifier);
         }
-        
-        HealthCareFacility hcf = getCorrUtils().getStructuralRoleByIi(poHcfIdentifier);
+        if (hcfDTO == null) {
+            throw new PAException("Unable to find HealthCareFacility for identifier: " + poHcfIdentifier);
+        }
+        HealthCareFacility hcf = getCorrUtils()
+                .getStructuralRoleByIi(DSetConverter.convertToIi(hcfDTO.getIdentifier()));
         if (hcf == null) {
             OrganizationDTO poOrgDTO;
             try {

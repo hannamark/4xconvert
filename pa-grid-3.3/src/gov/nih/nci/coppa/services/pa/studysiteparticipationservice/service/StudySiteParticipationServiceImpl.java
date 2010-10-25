@@ -28,6 +28,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.services.correlation.AbstractRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
@@ -72,9 +73,10 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
             transformContacts(studySite, participatingSiteContactDTOList);
 
             ParticipatingSiteDTO participatingSite = null;
-            if (PAUtil.isIiNotNull(DSetConverter.convertToIi(hcfDTO.getIdentifier()))) {
+            Ii hcfIi = extractIdentifer(hcfDTO);
+            if (PAUtil.isIiNotNull(hcfIi)) {
                 participatingSite = service.createStudySiteParticipant(studySiteDTO, studySiteAccrualStatusDTO,
-                        DSetConverter.convertToIi(hcfDTO.getIdentifier()), participatingSiteContactDTOList);
+                        hcfIi, participatingSiteContactDTOList);
             } else {
                 participatingSite = service.createStudySiteParticipant(studySiteDTO, studySiteAccrualStatusDTO,
                         hcfOrganizationDTO, hcfDTO, participatingSiteContactDTOList);
@@ -151,5 +153,17 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
             throw FaultUtil.reThrowRemote(e);
         }
     }
+    
+    private Ii extractIdentifer(AbstractRoleDTO abstractRoleDTO) {
+        Ii ii = null;
+        if (abstractRoleDTO != null) {
+            ii = DSetConverter.convertToIi(abstractRoleDTO.getIdentifier());
+            if (ii == null) {
+                ii = DSetConverter.convertToCTEPOrgIi(abstractRoleDTO.getIdentifier());
+            }
+        }
+        return ii;
+    }
+    
 
 }

@@ -278,9 +278,41 @@ public class DSetConverter {
             Set<Ii> iis = identifier.getItem();
             for (Ii ii : iis) {
                 // Since PO only assigns one ID, our identifier will be the only ISS with our root
-                if (IdentifierReliability.ISS == ii.getReliability()
-                        && (ii.getRoot().startsWith(BASE_ROOT) || IiConverter.CTEP_PERSON_IDENTIFIER_ROOT.equals(ii
-                                .getRoot()))) {
+                if (IdentifierReliability.ISS == ii.getReliability() && ii.getRoot().startsWith(BASE_ROOT)) {
+                    return ii;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Extract CTEP Person identifier form the set of identifiers.
+     * @param identifier set of identifiers
+     * @return CTEP Person identifier
+     */
+    public static Ii convertToCTEPPersonIi(DSet<Ii> identifier) {
+        if (identifier != null) {
+            Set<Ii> iis = identifier.getItem();
+            for (Ii ii : iis) {
+                if (IiConverter.CTEP_PERSON_IDENTIFIER_ROOT.equals(ii.getRoot())) {
+                    return ii;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Extract CTEP Organization identifier form the set of identifiers.
+     * @param identifier set of identifiers
+     * @return CTEP Organization identifier
+     */
+    public static Ii convertToCTEPOrgIi(DSet<Ii> identifier) {
+        if (identifier != null) {
+            Set<Ii> iis = identifier.getItem();
+            for (Ii ii : iis) {
+                if (IiConverter.CTEP_ORG_IDENTIFIER_ROOT.equals(ii.getRoot())) {
                     return ii;
                 }
             }

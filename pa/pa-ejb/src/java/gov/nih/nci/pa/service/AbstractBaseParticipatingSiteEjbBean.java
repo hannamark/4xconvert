@@ -91,6 +91,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.AbstractRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -201,15 +202,9 @@ public class AbstractBaseParticipatingSiteEjbBean {
             ClinicalResearchStaffDTO crsDTO, HealthCareProviderDTO hcpDTO, Ii orgIi) 
         throws EntityValidationException, CurationException, PAException, 
         NullifiedRoleException, NullifiedEntityException {
-        Ii someCrsIi = null; 
-        Ii someHcpIi = null;
-        if (crsDTO != null) {
-            someCrsIi = DSetConverter.convertToIi(crsDTO.getIdentifier());
-        }
-        
-        if (hcpDTO != null) {
-            someHcpIi = DSetConverter.convertToIi(hcpDTO.getIdentifier());
-        }
+
+        Ii someCrsIi = extractIdentifer(crsDTO); 
+        Ii someHcpIi = extractIdentifer(hcpDTO);
         
         Map<String, Ii> myMap = new HashMap<String, Ii>();
         myMap.put(IiConverter.ORG_ROOT, orgIi);
@@ -228,6 +223,16 @@ public class AbstractBaseParticipatingSiteEjbBean {
         
         return myMap;
         
+    }
+    private Ii extractIdentifer(AbstractRoleDTO abstractRoleDTO) {
+        Ii ii = null;
+        if (abstractRoleDTO != null) {
+            ii = DSetConverter.convertToIi(abstractRoleDTO.getIdentifier());
+            if (ii == null) {
+                ii = DSetConverter.convertToCTEPPersonIi(abstractRoleDTO.getIdentifier());
+            }
+        }
+        return ii;
     }
     
     private void loadOrCreatePerson(Map<String, Ii> myMap, ClinicalResearchStaffDTO crsDTO, 
