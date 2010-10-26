@@ -143,7 +143,7 @@ function getMyPartialTrial() {
 				</td>
 				<td scope="row" class="label">
 					<label for="searchTrial_criteria_identifier"> <fmt:message key="search.trial.identifier"/></label>
-					<br><span class="info">(e.g: NCI-2008-00015; ECOG-1234, etc)</span>
+					<br><span class="info">(Examples: NCI-2008-00015; ECOG-1234)</span>
 				</td>
 				<td>
 					<s:textfield id="identifier" name="criteria.identifier"  maxlength="200" size="100"  cssStyle="width:200px" />

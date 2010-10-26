@@ -620,6 +620,10 @@ var winprint=window.open("","",sOption);
         <c:if test="${requestScope.partialSubmission == null}">
         <div class="actionsrow">
         <del class="btnwrapper">
+        <p align="center" class="info">
+           Please verify ALL the trial information you provided on this screen before clicking the <b>Submit</b> button below.
+           <br>Once you submit the trial you will not be able to modify the information.
+        </p>
             <ul class="btnrow">
                 <li><a href="#"                
                     class="btn" onclick="editTrial();"><span class="btn_img"> <span class="edit">Edit</span></span></a></li>

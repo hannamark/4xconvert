@@ -99,7 +99,7 @@
                 </td>
                 <td class="value">
                     <s:textfield name="trialDTO.contactPhone"  id="trialDTO.contactPhone" maxlength="200" size="100"  cssStyle="width:100px" />
-                    Extn:<s:textfield name="trialDTO.contactPhoneExtn"  id="trialDTO.contactPhoneExtn" maxlength="15" size="10"  cssStyle="width:60px" />
+                    Ext:<s:textfield name="trialDTO.contactPhoneExtn"  id="trialDTO.contactPhoneExtn" maxlength="15" size="10"  cssStyle="width:60px" />
                     <span class="formErrorMsg">
                         <s:fielderror>
                         <s:param>trialDTO.contactPhone</s:param>
@@ -110,7 +110,7 @@
 
           <tr>
          <td colspan="2">
-          <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>
+          <p><b><I>Contact information is required for internal administrative use only; it is not revealed to the public.</I></b></p>
          </td>
          </tr>
   </table>

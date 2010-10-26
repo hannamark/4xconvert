@@ -326,12 +326,12 @@ function loadRegAuthoritiesDiv() {
         <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
         <s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
         <s:hidden name="page" />
-        <p>Register trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
+        <p>Use this form to register trials with the NCI Clinical Trials Reporting Program. Required fields are marked by asterisks(<span class="required">*</span>).</p>
         <table class="form">
         <tr>
         <td scope="row" class="label">
             <reg-web:displayTooltip tooltip="tooltip.ct_gov_xml">
-                <a href="http://www.ClinicalTrials.gov" target="_new">ClinicalTrials.gov</a> XML required?
+                XML required for <a href="http://www.ClinicalTrials.gov" target="_new">ClinicalTrials.gov</a>?
             </reg-web:displayTooltip>
         </td>
         <td>
@@ -449,7 +449,7 @@ function loadRegAuthoritiesDiv() {
           <tr>
                 <td scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.summary_4_funding_sponsor_type">
-                        <label for="submitTrial_summary4FundingCategory">Summary 4 Funding Sponsor Type:</label>
+                        <label for="submitTrial_summary4FundingCategory">Trial Submission Category:</label>
                     </reg-web:displayTooltip>
                 </td>
                      <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
@@ -629,7 +629,7 @@ function loadRegAuthoritiesDiv() {
             </td>
             <td>
                 <s:textarea name="trialDTO.reason"  cols="50" rows="2" />
-                <span class="info">Required for Administratively Complete and Temporarily Closed statuses only</span>
+                <span class="info">Required for Administratively Complete and Temporarily Closed statuses only.</span>
                 <span class="formErrorMsg">
                     <s:fielderror>
                     <s:param>trialDTO.reason</s:param>
@@ -758,10 +758,6 @@ function loadRegAuthoritiesDiv() {
         <div id="uploadDocDiv">
         <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
         </div>
-        <p align="center" class="info">
-           Please verify ALL the trial information you provided on this screen before clicking the &#34;Review Trial&#34; button below.
-           <br>Once you submit the trial you will not be able to modify the information.
-        </p>
         <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">
