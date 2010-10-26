@@ -273,7 +273,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             .add(Property.forName("regUser.affiliatedOrganizationId").isNotNull())
             .add(Restrictions.eq("regUser.affiliatedOrgUserType", userType));
 
-        registryUserList = criteria.list();
+        registryUserList = criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
         for (RegistryUser usr : registryUserList) {
             PAServiceUtils servUtil = new PAServiceUtils();
             usr.setAffiliateOrg(servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(
@@ -466,13 +466,13 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         List<String> names = new ArrayList<String>();
         StudyProtocol studyProtocol =
             (StudyProtocol) HibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
-        
+
         for (RegistryUser myUser : studyProtocol.getStudyOwners()) {
             names.add(myUser.getFirstName() + " " + myUser.getLastName());
         }
-        
+
         return names;
     }
-    
-    
+
+
 }
