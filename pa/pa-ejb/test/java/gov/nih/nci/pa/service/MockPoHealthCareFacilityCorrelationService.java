@@ -34,7 +34,7 @@ public class MockPoHealthCareFacilityCorrelationService implements HealthCareFac
             throw new NullifiedRoleException(nullifiedEntities);
         }
         HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
-        hcf.setIdentifier(null);
+        hcf.setIdentifier(DSetConverter.convertIiToDset(ii));
         hcf.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("584"));
         hcf.setStatus(CdConverter.convertStringToCd("ACTIVE"));
         return hcf;
