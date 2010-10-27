@@ -570,8 +570,16 @@
         <comment>Modification to Primary Purpose recording.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/PO-2643.sql"/>
     </changeSet>
-      <changeSet id="PO-2766" author="ludetc">
+    <changeSet id="PO-2766" author="ludetc">
         <comment>Add ctep-rss user as trial owner to collaborative trials</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2766.sql"/>
+    </changeSet>
+    <changeSet id="PO-2867-pre" author="mshestopalov">
+        <comment>Deleting old accrual audit triggers.</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/deleteAccrualAuditTriggers.sql"/>
+    </changeSet>
+    <changeSet id="PO-2867-post" author="mshestopalov">
+        <comment>Fixing trigger column name.</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/createAccrualAuditTriggers-rev.sql"/>
     </changeSet>
 </databaseChangeLog>
