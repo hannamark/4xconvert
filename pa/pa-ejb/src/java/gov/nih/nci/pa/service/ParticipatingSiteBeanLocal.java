@@ -329,6 +329,15 @@ implements ParticipatingSiteServiceLocal {
         try {
             // check business rules based on trial type.
             StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteDTO.getIdentifier());
+            if (PAUtil.isIiNotNull(studySiteDTO.getStudyProtocolIdentifier())) {
+                StudyProtocolDTO spDto = getStudyProtocolService()
+                    .getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
+                if (spDto == null || !currentSite.getStudyProtocolIdentifier().getExtension()
+                        .equals(spDto.getIdentifier().getExtension())) {
+                    throw new PAException("Trial identifier provided with this update, does not match"
+                            + " participating site trial identifier.");
+                }
+            }
             studySiteDTO.setStudyProtocolIdentifier(currentSite.getStudyProtocolIdentifier());
             studySiteDTO.setHealthcareFacilityIi(currentSite.getHealthcareFacilityIi());
             studySiteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
@@ -407,7 +416,9 @@ implements ParticipatingSiteServiceLocal {
     public ParticipatingSiteDTO updateStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
-        checkValidUser(studySiteDTO.getStudyProtocolIdentifier());
+        
+        StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteDTO.getIdentifier());   
+        checkValidUser(currentSite.getStudyProtocolIdentifier());
         ParticipatingSiteDTO participatingSiteDTO = 
             this.updateStudySiteParticipant(studySiteDTO, currentStatusDTO);
         addStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);

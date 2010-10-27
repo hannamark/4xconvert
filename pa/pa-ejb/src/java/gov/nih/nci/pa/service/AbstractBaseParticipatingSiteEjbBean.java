@@ -99,9 +99,12 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJB;
+
+import org.springframework.util.CollectionUtils;
 
 /**
  * Ejbs getters/setters for part site bean.
@@ -308,9 +311,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
         crsDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi(personIi.getExtension()));
         crsDTO.setScoperIdentifier(orgIi);
         try {
-                Ii ii = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
-                crsDTO = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(ii);
-                poCrsIi = DSetConverter.convertToIi(crsDTO.getIdentifier());
+                poCrsIi = checkExistingCrs(crsDTO); 
         } catch (NullifiedRoleException e) {
                 throw new PAException("NullifiedRoleException exception during get ClinicalResearchStaff " , e);
         } catch (EntityValidationException e) {
@@ -320,6 +321,46 @@ public class AbstractBaseParticipatingSiteEjbBean {
         }
         
         return poCrsIi;
+    }
+    
+    private Ii checkExistingCrs(ClinicalResearchStaffDTO crsDTO) 
+    throws PAException, EntityValidationException, CurationException, NullifiedRoleException {
+        List<ClinicalResearchStaffDTO> crsList = 
+            PoRegistry.getClinicalResearchStaffCorrelationService().search(crsDTO);
+        ClinicalResearchStaffDTO freshDTO =  null;
+        if (CollectionUtils.isEmpty(crsList)) {
+            Ii ii = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
+            freshDTO = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(ii);
+        } else if (crsList.size() > 1) {
+            throw new PAException("For a given Person id " 
+                    + crsDTO.getPlayerIdentifier().getExtension() 
+                    + " and Organization id "
+                    + crsDTO.getScoperIdentifier()
+                    + " more than 1 clinical research staff were found.");
+        } else {
+            freshDTO = crsList.get(0);
+        }
+        return DSetConverter.convertToIi(freshDTO.getIdentifier());
+    }
+    
+    private Ii checkExistingHcp(HealthCareProviderDTO hcpDTO) 
+    throws PAException, EntityValidationException, CurationException, NullifiedRoleException {
+        List<HealthCareProviderDTO> hcpList = 
+            PoRegistry.getHealthCareProviderCorrelationService().search(hcpDTO); 
+        HealthCareProviderDTO freshDTO =  null;
+        if (CollectionUtils.isEmpty(hcpList)) {
+            Ii ii = PoRegistry.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
+            freshDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(ii);
+        } else if (hcpList.size() > 1) {
+            throw new PAException("For a given Person id " 
+                    + hcpDTO.getPlayerIdentifier().getExtension() 
+                    + " and Organization id "
+                    + hcpDTO.getScoperIdentifier()
+                    + " more than 1 health care provider were found.");
+        } else {
+            freshDTO = hcpList.get(0);
+        }
+        return DSetConverter.convertToIi(freshDTO.getIdentifier());
     }
     
     private Ii createPoHcp(Ii personIi, Ii orgIi, HealthCareProviderDTO toStoreDTO) throws PAException {
@@ -334,9 +375,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
         hcpDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi(personIi.getExtension()));
         hcpDTO.setScoperIdentifier(orgIi);
         try {
-                Ii ii = PoRegistry.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
-                hcpDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(ii);
-                poHcpIi = DSetConverter.convertToIi(hcpDTO.getIdentifier());
+                poHcpIi = checkExistingHcp(hcpDTO); 
         } catch (NullifiedRoleException e) {
                 throw new PAException("NullifiedRoleException exception during get HealthCareProvider " , e);
         } catch (EntityValidationException e) {
