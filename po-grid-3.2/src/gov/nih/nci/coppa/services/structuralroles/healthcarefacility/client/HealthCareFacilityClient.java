@@ -65,7 +65,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
         try{
-            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};
+            String[] localArgs = new String[] {"-getId", "-getId2", "-playerId", "-playerId2"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
 
@@ -96,6 +96,28 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
 
         try {
             HealthCareFacility[] results = client.getByPlayerIds(new Id[] {id1, id2});
+            ClientUtils.print(results);
+        } catch (NullifiedRoleFault e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @GridTestMethod
+    private static void getHealthCareFacilitiesByIds(HealthCareFacilityClient client) {
+        Id id1 = new Id();
+        id1.setRoot(HEALTH_CARE_FACILITY_ROOT);
+        id1.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
+        id1.setExtension(helper.getArgument("-getId", "1"));
+
+        Id id2 = new Id();
+        id2.setRoot(HEALTH_CARE_FACILITY_ROOT);
+        id2.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
+        id2.setExtension(helper.getArgument("-getId2", "1"));
+
+        try {
+            HealthCareFacility[] results = client.getByIds(new Id[] {id1, id2});
             ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();

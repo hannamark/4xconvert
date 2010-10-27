@@ -129,7 +129,6 @@ public class StudyInboxConverterTest {
     @Test
     public void convertFromDTOToDomain() throws Exception {
         StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
-        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         StudyInboxDTO dto = new StudyInboxDTO();
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setComments(StConverter.convertToSt("Comments"));

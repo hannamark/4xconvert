@@ -91,6 +91,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.lowagie.text.BadElementException;
@@ -461,16 +462,19 @@ public abstract class AbstractTsrReportGenerator {
     }
 
     private void addRegulatoryInformationTable() throws DocumentException {
-        if (getRegulatoryInformation() != null) {
+        final TSRReportRegulatoryInformation regInfo = getRegulatoryInformation();
+        if (regInfo != null) {
             Table table = getOuterTable(TSRReportLabelText.TABLE_REGULATORY_INFORMATION, false);
-            addTableRow(table, TSRReportLabelText.RI_TRIAL_OVERSIGHT_AUTHORITY, getRegulatoryInformation()
-                    .getTrialOversightAuthority());
-            addTableRow(table, TSRReportLabelText.RI_FDA_REGULATED_INTERVENTION, getRegulatoryInformation()
-                    .getFdaRegulatedIntervention());
-            addTableRow(table, TSRReportLabelText.RI_SECTION_801, getRegulatoryInformation().getSection801());
-            addTableRow(table, TSRReportLabelText.RI_DELAYED_POSTING, getRegulatoryInformation().getDelayedPosting());
-            addTableRow(table, TSRReportLabelText.RI_DMC_APPOINTED, getRegulatoryInformation().getDmcAppointed());
-            addTableRow(table, TSRReportLabelText.RI_IND_IDE_STUDY, getRegulatoryInformation().getIndIdeStudy());
+            addTableRow(table, TSRReportLabelText.RI_TRIAL_OVERSIGHT_AUTHORITY, regInfo.getTrialOversightAuthority());
+            addTableRow(table, TSRReportLabelText.RI_FDA_REGULATED_INTERVENTION, regInfo.getFdaRegulatedIntervention());
+            if (BooleanUtils.toBoolean(regInfo.getFdaRegulatedIntervention())) {
+                addTableRow(table, TSRReportLabelText.RI_SECTION_801, regInfo.getSection801());
+                if (BooleanUtils.toBoolean(regInfo.getSection801())) {
+                    addTableRow(table, TSRReportLabelText.RI_DELAYED_POSTING, regInfo.getDelayedPosting());
+                }
+            }
+            addTableRow(table, TSRReportLabelText.RI_DMC_APPOINTED, regInfo.getDmcAppointed());
+            addTableRow(table, TSRReportLabelText.RI_IND_IDE_STUDY, regInfo.getIndIdeStudy());
             reportDocument.add(table);
             reportDocument.add(getLineBreak());
         }

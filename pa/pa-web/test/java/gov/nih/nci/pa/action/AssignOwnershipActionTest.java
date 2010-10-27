@@ -14,7 +14,6 @@ import gov.nih.nci.pa.util.Constants;
 
 import java.util.ArrayList;
 
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -23,7 +22,7 @@ import org.junit.Test;
  */
 public class AssignOwnershipActionTest extends AbstractPaActionTest {
     private AssignOwnershipAction action = new AssignOwnershipAction();
-        
+
     @Test
     public void testcsmUsersNamesProperty() {
         assertNull(action.getUsers());
