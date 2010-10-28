@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.test.util;
 
+import static org.mockito.Mockito.mock;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
@@ -536,7 +537,7 @@ public class MockServiceLocator implements ServiceLocator {
 
     public TrialRegistrationServiceLocal getTrialRegistrationService() {
         // TODO Auto-generated method stub
-        return null;
+        return mock(TrialRegistrationServiceLocal.class);
     }
 
     public StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService() {

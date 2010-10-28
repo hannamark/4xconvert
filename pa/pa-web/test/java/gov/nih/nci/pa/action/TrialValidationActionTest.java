@@ -4,6 +4,8 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -91,9 +93,37 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
         getRequest().getSession().setAttribute("submissionNumber", 1);
         assertEquals("edit", trialValidationAction.rejectReason());
         gtdDTO = new GeneralTrialDesignWebDTO();
+        gtdDTO.setProprietarytrialindicator(Boolean.TRUE.toString());
+        gtdDTO.setCommentText("rejectcommentText");
+        trialValidationAction.setGtdDTO(gtdDTO);
+        getRequest().getSession().setAttribute("submissionNumber", 2);
+        assertEquals("amend_reject", trialValidationAction.rejectReason());
+        gtdDTO = new GeneralTrialDesignWebDTO();
         trialValidationAction.setGtdDTO(gtdDTO);
         assertEquals("rejectReason", trialValidationAction.rejectReason());
-
 	}
-
+	@Test
+	public void testEnforceBusinessRules() {
+	    //reject for proprietary trial where phase,purpose and NCT is null
+	    GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
+        gtdDTO.setCommentText("rejectcommentText");
+        gtdDTO.setProprietarytrialindicator(Boolean.TRUE.toString());
+        trialValidationAction.setGtdDTO(gtdDTO);
+        getRequest().getSession().setAttribute("submissionNumber", 1);
+        assertEquals("edit", trialValidationAction.reject());
+        assertFalse(trialValidationAction.getFieldErrors().containsKey("gtdDTO.phaseCode"));
+       //reject for non-proprietary trial where phase,purpose and NCT is null
+        gtdDTO = new GeneralTrialDesignWebDTO();
+        gtdDTO.setCommentText("rejectcommentText");
+        trialValidationAction.setGtdDTO(gtdDTO);
+        getRequest().getSession().setAttribute("submissionNumber", 1);
+        assertEquals("edit", trialValidationAction.reject());
+        assertTrue(trialValidationAction.getFieldErrors().containsKey("gtdDTO.phaseCode"));
+      //accept for non-proprietary trial where phase,purpose and NCT is null
+        gtdDTO = new GeneralTrialDesignWebDTO();
+        trialValidationAction.setGtdDTO(gtdDTO);
+        trialValidationAction.getGtdDTO().setSubmissionNumber(1);
+        assertEquals("edit", trialValidationAction.accept());
+        assertTrue(trialValidationAction.getFieldErrors().containsKey("gtdDTO.phaseCode"));
+	}
 }

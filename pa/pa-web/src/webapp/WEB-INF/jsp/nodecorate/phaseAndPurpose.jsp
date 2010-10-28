@@ -74,6 +74,11 @@ function displayPrimaryPurposeOtherText() {
             <s:select headerKey="" headerValue="" name="gtdDTO.primaryPurposeAdditionalQualifierCode" id="gtdDTO.primaryPurposeAdditionalQualifierCode" 
             list="#primaryPurposeAdditionlQualiefierCodeValues" value="gtdDTO.primaryPurposeAdditionalQualifierCode" 
             cssStyle="width:120px" onchange="displayPrimaryPurposeOtherText();"/>
+            <span class="formErrorMsg"> 
+               <s:fielderror>
+               <s:param>gtdDTO.primaryPurposeAdditionalQualifierCode</s:param>
+               </s:fielderror>                            
+               </span>
         </td>
     </tr>
       <tr id="purposeOtherTextDiv" style="display:'none'">

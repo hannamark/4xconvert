@@ -106,6 +106,7 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -116,7 +117,6 @@ import com.opensymphony.xwork2.ActionSupport;
 *
 */
 public class TrialValidationAction extends ActionSupport {
-    private static final String FALSE = "FALSE";
     private static final long serialVersionUID = -6587531774808791496L;
     private static final String EDIT = "edit";
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
@@ -156,7 +156,7 @@ public class TrialValidationAction extends ActionSupport {
             return EDIT;
         }
         try {
-        save();
+        save(null);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
@@ -169,7 +169,6 @@ public class TrialValidationAction extends ActionSupport {
      */
     public String accept() {
         enforceBusinessRules("");
-        TrialHelper helper = new TrialHelper();
         //check if submission number is greater than 1 then it is amend
         if (gtdDTO.getSubmissionNumber() > 1 && StringUtils.isEmpty(gtdDTO.getAmendmentReasonCode())) {
            addFieldError("gtdDTO.amendmentReasonCode", "Amendment Reason Code is Required.");
@@ -178,11 +177,7 @@ public class TrialValidationAction extends ActionSupport {
             return EDIT;
         }
         try {
-            save();
-            createMilestones(MilestoneCode.SUBMISSION_ACCEPTED);
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Accepted");
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
-                    helper.setMenuLinks(DocumentWorkflowStatusCode.ACCEPTED));
+            save("accept");
             //send mail only if the trial is Amended
             if (gtdDTO.getSubmissionNumber() > 1) {
                 //send mail
@@ -209,7 +204,7 @@ public class TrialValidationAction extends ActionSupport {
             return EDIT;
         }
         try {
-        save();
+        save(null);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
@@ -286,15 +281,22 @@ public class TrialValidationAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
     }
 
-    private void save() throws PAException, NullifiedEntityException, NullifiedRoleException {
+    private void save(String operation) throws PAException, NullifiedEntityException, NullifiedRoleException {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
             TrialHelper helper = new TrialHelper();
             helper.saveTrial(studyProtocolIi, gtdDTO, "Validation");
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            if (StringUtils.equalsIgnoreCase(operation, "accept")) {
+                createMilestones(MilestoneCode.SUBMISSION_ACCEPTED);
+            }
             StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry.getProtocolQueryService()
-                    .getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));
+            .getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));
             // put an entry in the session and store StudyProtocolQueryDTO
+            if (StringUtils.equalsIgnoreCase(operation, "accept")) {
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Accepted");
+            } else {
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            }
             studyProtocolQueryDTO.setOfficialTitle(StringUtils.abbreviate(studyProtocolQueryDTO.getOfficialTitle(),
                     PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
             ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
@@ -303,71 +305,61 @@ public class TrialValidationAction extends ActionSupport {
             query();
     }
 
+    private void addErrors(String fieldValue, String fieldName, String errMsg) {
+        if (StringUtils.isEmpty(fieldValue)) {
+            addFieldError(fieldName, getText(errMsg));
+        }
+     }
+
     private void enforceBusinessRules(String operation) {
-        if (StringUtils.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
-            addFieldError("gtdDTO.LocalProtocolIdentifier", getText("Organization Trial ID must be Entered"));
-        }
-        if (StringUtils.isEmpty(gtdDTO.getOfficialTitle())) {
-            addFieldError("gtdDTO.OfficialTitle", getText("OfficialTitle must be Entered"));
-        }
-        if (REJECT_OPERATION.equalsIgnoreCase(operation)
-                && StringUtils.isNotEmpty(gtdDTO.getProprietarytrialindicator())
-                && gtdDTO.getProprietarytrialindicator().equalsIgnoreCase("true")) {
-            if (StringUtils.isEmpty(gtdDTO.getNctIdentifier())) {
-                if (StringUtils.isEmpty(gtdDTO.getPhaseCode())) {
-                    addFieldError("gtdDTO.phaseCode", getText("error.phase"));
-                }
-                if (StringUtils.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
-                    addFieldError("gtdDTO.primaryPurposeCode", getText("error.primary"));
-                }
+        addErrors(gtdDTO.getLocalProtocolIdentifier(), "gtdDTO.LocalProtocolIdentifier",
+                "Organization Trial ID must be Entered");
+        addErrors(gtdDTO.getOfficialTitle(), "gtdDTO.OfficialTitle", "OfficialTitle must be Entered");
+        if (StringUtils.equalsIgnoreCase(REJECT_OPERATION, operation)) {
+            if (!BooleanUtils.toBoolean(gtdDTO.getProprietarytrialindicator())) {
+                validatePhasePurpose();
             }
         } else {
-            if (StringUtils.isEmpty(gtdDTO.getPhaseCode())) {
-                addFieldError("gtdDTO.phaseCode", getText("error.phase"));
-            }
-            if (StringUtils.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
-                addFieldError("gtdDTO.primaryPurposeCode", getText("error.primary"));
-            }
+            validatePhasePurpose();
         }
-        if (gtdDTO.getProprietarytrialindicator() == null
-                || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
-            if (StringUtils.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
-                addFieldError("gtdDTO.primaryPurpose", getText("error.primary"));
-            }
-            if (StringUtils.isEmpty(gtdDTO.getPhaseCode())) {
-                addFieldError("gtdDTO.phaseCode", getText("error.phase"));
-            }
-            if (PAUtil.isPrimaryPurposeOtherTextReq(gtdDTO.getPrimaryPurposeCode(),
-                    gtdDTO.getPrimaryPurposeAdditionalQualifierCode(), gtdDTO.getPrimaryPurposeOtherText())) {
-                addFieldError("gtdDTO.primaryPurposeOtherText",
-                        getText("Primary Purpose Other other text must be entered"));
-            }
-            if (StringUtils.isNotEmpty(gtdDTO.getPrimaryPurposeOtherText())
-                    && StringUtils.length(gtdDTO.getPrimaryPurposeOtherText()) > MAXIMUM_CHAR) {
-                addFieldError("gtdDTO.primaryPurposeOtherText", getText("error.spType.other.maximumChar"));
-            }
-            if (gtdDTO.getCtGovXmlRequired()) {
-              if (StringUtils.isEmpty(gtdDTO.getSponsorIdentifier())) {
-                addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
-              }
-              if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
-                    && StringUtils.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
-                addFieldError("gtdDTO.responsibleGenericContactName",
-                                getText("Please choose Either Personal Contact or Generic Contact "));
-              }
-              if (StringUtils.isEmpty(gtdDTO.getContactEmail())) {
-                addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
-              }
-              if (!StringUtils.isEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
-                addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
-              }
-              if (StringUtils.isEmpty(gtdDTO.getContactPhone())) {
-                addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
-              }
-            }
+        if (!BooleanUtils.toBoolean(gtdDTO.getProprietarytrialindicator())) {
+            validateCtGovReqElement();
         }
     }
 
+    private void validateCtGovReqElement() {
+        if (BooleanUtils.isTrue(gtdDTO.getCtGovXmlRequired())) {
+            addErrors(gtdDTO.getSponsorIdentifier(), "gtdDTO.sponsorName", "Sponsor must be entered");
+            if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
+                && StringUtils.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
+                addFieldError("gtdDTO.responsibleGenericContactName",
+                            getText("Please choose Either Personal Contact or Generic Contact "));
+            }
+            addErrors(gtdDTO.getContactEmail(), "gtdDTO.contactEmail", "Email must be Entered");
+            if (!StringUtils.isEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
+                addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
+            }
+            addErrors(gtdDTO.getContactPhone(), "gtdDTO.contactPhone", "Phone must be Entered");
+        }
+    }
+
+    private void validatePhasePurpose() {
+        addErrors(gtdDTO.getPrimaryPurposeCode(), "gtdDTO.primaryPurposeCode", "error.primary");
+        addErrors(gtdDTO.getPhaseCode(), "gtdDTO.phaseCode", "error.phase");
+        if (PAUtil.isPrimaryPurposeOtherCodeReq(gtdDTO.getPrimaryPurposeCode(),
+                gtdDTO.getPrimaryPurposeAdditionalQualifierCode())) {
+            addFieldError("gtdDTO.primaryPurposeAdditionalQualifierCode",
+                    getText("Primary Purpose Additional Code must be entered"));
+        }
+        if (PAUtil.isPrimaryPurposeOtherTextReq(gtdDTO.getPrimaryPurposeCode(),
+                gtdDTO.getPrimaryPurposeAdditionalQualifierCode(), gtdDTO.getPrimaryPurposeOtherText())) {
+            addFieldError("gtdDTO.primaryPurposeOtherText",
+                    getText("Primary Purpose Other text must be entered"));
+        }
+        if (StringUtils.length(gtdDTO.getPrimaryPurposeOtherText()) > MAXIMUM_CHAR) {
+            addFieldError("gtdDTO.primaryPurposeOtherText", getText("error.spType.other.maximumChar"));
+        }
+    }
 
     /**
      *
