@@ -1,6 +1,5 @@
 package gov.nih.nci.coppa.services.pa.diseaseservice.client;
 
-import gov.nih.nci.coppa.services.pa.BaseType;
 import gov.nih.nci.coppa.services.pa.Disease;
 import gov.nih.nci.coppa.services.pa.diseaseservice.common.DiseaseServiceI;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
@@ -81,22 +80,23 @@ public class DiseaseServiceClient extends DiseaseServiceClientBase implements Di
         printResults(client.get(id));
     }
 
+    private static ST newST(String s) {
+        ST st = new ST();
+        st.setValue(s);
+        return st;
+    }
+
     private static void search(DiseaseServiceClient client) throws RemoteException, PAFault {
         System.out.println("Search for diseases");
         Disease disease = new Disease();
-        ST preferredName = new ST();
-        preferredName.setValue("cancer");
-        disease.setPreferredName(preferredName);
-
-        ST falseSt = new ST();
-        falseSt.setValue("true");
-        disease.setExactMatch(falseSt);
-        disease.setIncludeSynonym(falseSt);
+        disease.setPreferredName(newST("cancer"));
+        disease.setIncludeSynonym(newST("true"));
+        disease.setExactMatch(newST("true"));
 
         printResults(client.search(disease));
     }
 
-    private static void printResults(BaseType... results) {
+    private static void printResults(Disease... results) {
         if (results == null || (results.length == 1 && results[0] == null)) {
             System.out.println("No results");
         } else {

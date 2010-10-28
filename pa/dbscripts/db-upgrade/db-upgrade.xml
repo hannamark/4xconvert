@@ -264,7 +264,7 @@
         <comment>execute pa_dev_24120.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/pa_dev_24120.sql"/>
     </changeSet>
-	<changeSet id="65" author="Vrushali">
+    <changeSet id="65" author="Vrushali">
         <comment>execute pa_dev_23512.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/pa_dev_23512.sql"/>
     </changeSet>
@@ -284,11 +284,11 @@
         <comment>execute accrual_dev_23941_4.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_4.sql"/>
     </changeSet>
-	<changeSet id="70" author="Vrushali">
+    <changeSet id="70" author="Vrushali">
         <comment>execute pa_defect_24160.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/pa_defect_24160.sql"/>
     </changeSet>
-	<changeSet id="71" author="Anu">
+    <changeSet id="71" author="Anu">
         <comment>execute pa_dev_23994.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/pa_dev_23994.sql"/>
     </changeSet>
@@ -340,19 +340,19 @@
                 <comment>execute accrual_dev_24521_2.sql</comment>
                 <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_24521_2.sql"/>
     </changeSet>
-	<changeSet id="84" author="Vrushali">
+    <changeSet id="84" author="Vrushali">
                 <comment>execute pa_dev_25002.sql</comment>
                 <sqlFile path="@db-upgrade.run.dir@/3.2/pa_dev_25002.sql"/>
     </changeSet>
-	<changeSet id="85" author="Vrushali">
+    <changeSet id="85" author="Vrushali">
                 <comment>execute pa_fr_23943.sql</comment>
                 <sqlFile path="@db-upgrade.run.dir@/3.2/pa_fr_23943.sql"/>
     </changeSet>
-	<changeSet id="86" author="Vrushali">
+    <changeSet id="86" author="Vrushali">
                 <comment>execute pa_fr_25186.sql</comment>
                 <sqlFile path="@db-upgrade.run.dir@/3.2/pa_fr_25186.sql"/>
     </changeSet>
-	<changeSet id="87" author="Vrushali">
+    <changeSet id="87" author="Vrushali">
                 <comment>execute pa_dev_25497.sql</comment>
                 <sqlFile path="@db-upgrade.run.dir@/3.2/pa_dev_25497.sql"/>
     </changeSet>
@@ -360,32 +360,32 @@
                 <comment>execute accrual_dev_26144.sql</comment>
                 <sqlFile path="@db-upgrade.run.dir@/3.2/accrual_dev_26144.sql"/>
     </changeSet>
-	<changeSet id="89" author="Vrushali">
+    <changeSet id="89" author="Vrushali">
                 <comment>execute pa_dev_26510_1.sql</comment>
                 <sqlFile path="@db-upgrade.run.dir@/3.2/pa_dev_26510_1.sql"/>
     </changeSet>
-	<changeSet id="90" author="Vrushali">
+    <changeSet id="90" author="Vrushali">
                 <comment>execute pa_dev_26510_2.sql</comment>
                 <sqlFile path="@db-upgrade.run.dir@/3.2/pa_dev_26510_2.sql"/>
     </changeSet>
-	<changeSet id="91" author="Vrushali">
+    <changeSet id="91" author="Vrushali">
                 <comment>execute pa_dev_26510_3.sql</comment>
                 <sqlFile path="@db-upgrade.run.dir@/3.2/pa_dev_26510_3.sql"/>
     </changeSet>
-		<changeSet id="92" author="Vrushali">
+        <changeSet id="92" author="Vrushali">
         <comment>execute pa_dev_26510.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/pa_dev_26510.sql"/>
     </changeSet>
     <changeSet id="93" author="Kalpana">
-    	<comment>execute PO-1688.sql</comment>
+        <comment>execute PO-1688.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1688.sql"/>
     </changeSet>
-	<changeSet id="94" author="Vrushali">
+    <changeSet id="94" author="Vrushali">
         <comment>execute PO-1694.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1694.sql"/>
     </changeSet>
     <changeSet id="95" author="Kalpana">
-    	<comment>execute PO-1695.sql</comment>
+        <comment>execute PO-1695.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1695.sql"/>
     </changeSet>
     <changeSet id="PO-1687" author="kkanchinadam">
@@ -395,7 +395,7 @@
        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-1687_migration_to_4.2.sql"/>
     </changeSet>
     <changeSet id="PO-1730" author="Naveen">
-    	<comment>PO-1730 increase the size of the dose_regimen field in planned_activity table to 1000 chars</comment>
+        <comment>PO-1730 increase the size of the dose_regimen field in planned_activity table to 1000 chars</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1730.sql"/>
     </changeSet>
     <changeSet id="PO-1758" author="Anu">
@@ -407,7 +407,7 @@
        <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1758_1.sql"/>
     </changeSet>
     <changeSet id="PO-1726" author="Kalpana">
-    	<comment>PO-1726 updating the text of pa_properties values</comment>
+        <comment>PO-1726 updating the text of pa_properties values</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-1726.sql"/>
     </changeSet>
     <changeSet id="PO-1666" author="aevansel">
@@ -478,8 +478,8 @@
         <comment>Adding missing owners to trials.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.2/PO-2241.sql"/>
     </changeSet>
-	<changeSet id="PO-2298" author="Kalpana">
-		<comment>Updating ctgovxml_indicator in study_disease when it is null.</comment>
+    <changeSet id="PO-2298" author="Kalpana">
+        <comment>Updating ctgovxml_indicator in study_disease when it is null.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2298.sql"/>
     </changeSet>
     <changeSet id="PO-1985b" author="moweis">
@@ -493,6 +493,10 @@
     <changeSet id="PO-2344" author="kkanchinadam">
         <comment>PO 2344: Minor modification to the letter contents (letters 5, 6, 7 and 8).</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.2/PO-2344.sql"/>
+    </changeSet>
+    <changeSet id="PO-2890" author="slustbader">
+        <comment>PO-2890: Make sure there are no records in the registry_user table that are missing csm_user entries to prepare to add the FK</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2890.sql"/>
     </changeSet>
     <changeSet id="PO-2262" author="moweis">
         <comment>PO-2262: Add FK between csm_user and registry_user tables</comment>
@@ -538,7 +542,7 @@
         <comment>PO-2223 Modify purpose recording and reporting</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2223.sql"/>
     </changeSet>
-	<changeSet id="PO-2222-1" author="vrushali">
+    <changeSet id="PO-2222-1" author="vrushali">
         <comment>Data re-assignment for Phase.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/PO-2222-1.sql"/>
     </changeSet>
@@ -546,26 +550,26 @@
         <comment>PO-1972 - Add Description to Outcome Measure</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-1972.sql"/>
     </changeSet>
-    <changeSet id="PO-2596" author="vrushali"> 
-        <comment>Add ExemptIndicator to model.</comment> 
-        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2596.sql"/> 
-     </changeSet> 
-     <changeSet id="PO-1922" author="vrushali"> 
-        <comment>Collect Reason for Admin request rejection.</comment> 
-        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-1922.sql"/> 
+    <changeSet id="PO-2596" author="vrushali">
+        <comment>Add ExemptIndicator to model.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2596.sql"/>
      </changeSet>
-     <changeSet id="PO-2211" author="aevansel"> 
-        <comment>Updating length of comment_text field from 200 to 2000 in the study_overall_status table.</comment> 
-        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2211.sql"/> 
-     </changeSet> 
-     <changeSet id="PO-2487" author="ludetc"> 
-        <comment>Set caDSR public ID. </comment> 
-        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2487.sql"/> 
-     </changeSet> 
-     <changeSet id="PO-2290" author="mshestopalov"> 
-        <comment>Set caDSR public ID. </comment> 
-        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2290.sql"/> 
-     </changeSet> 
+     <changeSet id="PO-1922" author="vrushali">
+        <comment>Collect Reason for Admin request rejection.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-1922.sql"/>
+     </changeSet>
+     <changeSet id="PO-2211" author="aevansel">
+        <comment>Updating length of comment_text field from 200 to 2000 in the study_overall_status table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2211.sql"/>
+     </changeSet>
+     <changeSet id="PO-2487" author="ludetc">
+        <comment>Set caDSR public ID. </comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2487.sql"/>
+     </changeSet>
+     <changeSet id="PO-2290" author="mshestopalov">
+        <comment>Set caDSR public ID. </comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2290.sql"/>
+     </changeSet>
       <changeSet id="PO-2643" author="vrushali">
         <comment>Modification to Primary Purpose recording.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.3/PO-2643.sql"/>
