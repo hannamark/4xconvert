@@ -179,11 +179,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <available file="${pdq.upload.filepath.loc}" property="pdq.upload.filepath.exists" />
       <fail unless="pdq.upload.filepath.exists" message="The pdq upload dir at ${pdq.upload.filepath.loc} has not been created." />
 
-      <!-- Create the tooltips directory -->
-      <mkdir dir="${tooltips.filepath.loc}" />
-      <available file="${tooltips.filepath.loc}" property="tooltips.filepath.exists" />
-      <fail unless="tooltips.filepath.exists" message="The tooltips dir at ${tooltips.filepath.loc} has not been created." />
-      <!-- End creating the tooltips directory -->
+      <runtarget target="copy-tooltips"/>
 
       <!-- added to ensure working.dirs are fresh for our install -->
       <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
@@ -206,6 +202,26 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <runtarget target="install:pa-ear-jboss:accrual-ear"/>
   </target>
 
+  <target name="prepare-tooltips">
+      <available file="${tooltips.filepath.loc}/RegWebTooltips.properties" type="file"
+          property="tooltips.file.present" value="true"/>
+      <condition property="copy.tooltips.file" value="true">
+        <or>
+            <isfalse value="${tooltips.file.present}" />
+            <istrue value="${tooltips.file.overwrite}" />
+        </or>
+      </condition>  
+  </target>
+    
+  <target name="copy-tooltips-file" if="copy.tooltips.file">
+    <echo message="Copying ${temp.dir}/reg-web-war/WEB-INF/classes/RegWebTooltips.properties to ${tooltips.filepath.loc}" />
+    <delete dir="${temp.dir}/reg-web-war" />
+    <unzip src="${temp.dir}/pa-ear/reg-web.war" dest="${temp.dir}/reg-web-war" />
+    <copy file="${temp.dir}/reg-web-war/WEB-INF/classes/RegWebTooltips.properties" todir="${tooltips.filepath.loc}" overwrite="true" />      
+  </target>
+    
+  <target name="copy-tooltips"  depends="prepare-tooltips, copy-tooltips-file"/>
+    
   <target name="install:pa-ear-jboss:app:configure" description="Configure pa-ear application" unless="exclude.pa-ear">
       <copy file="${jboss-conf.dir.dest}/${pa-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
       <configure-grid-log4j log.level="${app.log.level}" log.level.default="${app.log.level.default}" config.dir="${jboss.home}/server/${jboss.server.name}/conf"/>
