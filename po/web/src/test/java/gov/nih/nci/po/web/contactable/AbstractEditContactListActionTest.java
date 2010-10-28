@@ -106,7 +106,7 @@ import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.Action;
 
 /**
- * 
+ *
  * @author gax
  */
 public class AbstractEditContactListActionTest extends AbstractPoTest {
@@ -177,6 +177,23 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
         instance.remove();
         assertEquals(1, ci.getEmail().size());
         assertFalse(v.equals(ci.getEmail().get(0).getValue()));
+
+        // make sure you can remove a value with leading or trailing spaces (PO-2693)
+        v = " bar@example.com ";
+        ActionHelper.getMessages().clear();
+        instance.getEntry().setValue(v);
+        instance.add();
+        assertTrue(ActionHelper.getMessages().isEmpty());
+        assertEquals(2, ci.getEmail().size());
+        assertEquals(v, ci.getEmail().get(1).getValue());
+
+        String valueNoSpaces = "bar@example.com";
+        instance.getEntry().setValue(valueNoSpaces);
+        instance.remove();
+        assertEquals(1, ci.getEmail().size());
+        assertFalse(v.equals(ci.getEmail().get(0).getValue()));
+        assertFalse(valueNoSpaces.equals(ci.getEmail().get(0).getValue()));
+        assertTrue(ActionHelper.getMessages().isEmpty());
     }
 
     @Test
@@ -278,7 +295,7 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
         instance.setTtyEntry(e);
         assertEquals(e, instance.getTtyEntry());
         assertFalse(instance.isUsOrCanadaFormat());
-        
+
     }
 
     @Test

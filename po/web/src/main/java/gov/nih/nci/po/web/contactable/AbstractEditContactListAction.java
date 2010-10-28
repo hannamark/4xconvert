@@ -214,7 +214,7 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
     public String remove() {
         boolean removed = false;
         for (Entry e : getList()) {
-            if (e.getValue().equals(entry.getValue())) {
+            if (e.getValue().trim().equals(entry.getValue())) {
                 removed = getList().remove(e);
                 entry = newEntry();
                 break;
