@@ -231,6 +231,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                     paServiceUtil.getOrCreatePAOrganizationByIi(dupId);
                     try {
                         updateRegistryUsers(ii, dupId);
+                        updateStudyResourcing(ii, dupId); 
                     } catch (NullifiedEntityException e) {
                         LOG.error("Org was nullified with nullified duplicate.");
                     }
@@ -266,6 +267,18 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             session.saveOrUpdate(ru);
         }
         session.flush();
+    }
+    
+    private void updateStudyResourcing(Ii identifier, Ii dupId) throws NullifiedEntityException, PAException {
+        
+        Organization oldPaOrg = cUtils.getPAOrganizationByIi(identifier);
+        Organization newPaOrg = cUtils.getPAOrganizationByIi(dupId);
+        Session session = HibernateUtil.getCurrentSession();
+        session.createQuery("update StudyResourcing set organizationIdentifier = :newPaOrgId " 
+                + "where organizationIdentifier = :oldPaOrgId")
+        .setString("newPaOrgId", String.valueOf(newPaOrg.getId()))
+        .setString("oldPaOrgId", String.valueOf(oldPaOrg.getId()))
+        .executeUpdate();
     }
 
     private void updateResearchOrganization(final Ii roIdentifier, final ResearchOrganizationDTO roDto)
