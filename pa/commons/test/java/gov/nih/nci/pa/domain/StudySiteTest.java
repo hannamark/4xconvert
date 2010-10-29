@@ -205,7 +205,7 @@ public class StudySiteTest  {
 
 
     }
-    public static StudySite createStudySiteObj(StudyProtocol sp , HealthCareFacility hcp ) {
+    public static StudySite createStudySiteObj(StudyProtocol sp , HealthCareFacility hcf ) {
         StudySite create = new StudySite();
         create.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
         create.setLocalStudyProtocolIdentifier("Ecog1");
@@ -215,7 +215,7 @@ public class StudySiteTest  {
         create.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         create.setStatusDateRangeLow(now);
         create.setStudyProtocol(sp);
-        create.setHealthCareFacility(hcp);
+        create.setHealthCareFacility(hcf);
         return create;
     }
 

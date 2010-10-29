@@ -521,8 +521,10 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
         if (StringUtils.isNotEmpty(crit.getLeadOrganizationId())) {
             StudySite ss = new StudySite();
+            Organization organization = new Organization();
+            organization.setId(Long.valueOf(crit.getLeadOrganizationId()));
             ResearchOrganization ro = new ResearchOrganization();
-            ro.setId(Long.valueOf(crit.getLeadOrganizationId()));
+            ro.setOrganization(organization);
             ss.setResearchOrganization(ro);
             ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
             sp.getStudySites().add(ss);

@@ -351,6 +351,12 @@ public class ProtocolQueryServiceTest {
         otherCriteria.setSubmissionType("Update");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 2, results.size());
+        
+        createStudyProtocol("11", false, Boolean.FALSE, false, false, false, true);
+        otherCriteria = new StudyProtocolQueryCriteria();
+        otherCriteria.setLeadOrganizationId("11");
+        results = localEjb.getStudyProtocolByCriteria(otherCriteria);
+        assertEquals("Size does not match.", 1, results.size());
     }
 
     @Test
