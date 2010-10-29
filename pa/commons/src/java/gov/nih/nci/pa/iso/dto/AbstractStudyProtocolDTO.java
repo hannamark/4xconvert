@@ -103,12 +103,12 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
     private Bl section801Indicator;
     private Cd phaseCode;
     private Cd phaseAdditionalQualifierCode;
-    private St primaryPurposeOtherText;
     private Cd primaryCompletionDateTypeCode;
-    private Cd primaryPurposeCode;
     private Cd startDateTypeCode;
     private St officialTitle;
+    private Cd primaryPurposeCode;
     private Cd primaryPurposeAdditionalQualifierCode;
+    private St primaryPurposeOtherText;
     private St programCodeText;
     private St studyProtocolType;
     private St userLastCreated;

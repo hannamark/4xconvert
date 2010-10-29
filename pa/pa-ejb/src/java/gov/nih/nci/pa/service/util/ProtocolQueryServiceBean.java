@@ -461,7 +461,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             throw new PAException("An error has occurred when searching for trials.", e);
         }
         if (results.size() > PAConstants.MAX_SEARCH_RESULTS) {
-            throw new PAException("Results exceed more than 500, Please redefine the seacrh criteria");
+            throw new PAException("Results exceed more than 500, Please redefine the search criteria");
         }
         return results;
     }
