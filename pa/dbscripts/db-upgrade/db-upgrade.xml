@@ -590,4 +590,8 @@
         <comment>Update version number to 3.3</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2893.sql"/>
      </changeSet>
+     <changeSet id="PO-2211-1" author="vrushali">
+        <comment>Updating length of comment_text field from 200 to 2000 in the study_protocol_stage table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2211-1.sql"/>
+    </changeSet>
 </databaseChangeLog>

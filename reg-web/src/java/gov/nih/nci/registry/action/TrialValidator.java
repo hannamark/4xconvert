@@ -88,6 +88,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
@@ -186,6 +187,9 @@ public class TrialValidator {
         if (StringUtils.isNotEmpty(trialDto.getStatusCode())
               && TRIAL_STATUS_REQ_SET.contains(trialDto.getStatusCode())) {
               addErrors(trialDto.getReason(), "trialDTO.reason", "error.submit.trialStatusReason", addFieldError);
+        }
+        if (StringUtils.length(trialDto.getReason()) > PAAttributeMaxLen.LEN_2000) {
+           addFieldError.put("trialDTO.reason", getText("error.reason.maxLength"));
         }
         validateXMLReqElement(trialDto, addFieldError);
         validateSummaryFourInfo(trialDto, addFieldError);
@@ -318,8 +322,7 @@ public class TrialValidator {
      */
     private void validateCompletionDateType(TrialDTO trialDto, StudyStatusCode newCode,
           Collection<String> addActionError) {
-       if ((!StudyStatusCode.COMPLETE.getCode().equals(newCode.getCode())
-          || !StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(newCode.getCode()))
+       if (!(StudyStatusCode.COMPLETE == newCode || StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newCode)
               && !trialDto.getCompletionDateType().equals(anticipatedString)) {
                 addActionError.add("Trial completion date must be 'Anticipated' when the status is "
                   + "not 'Complete' or 'Administratively Complete'.");
@@ -345,7 +348,7 @@ public class TrialValidator {
      */
     private void validateStudyStatusForCompleteOrAdminComplete(TrialDTO trialDto, Collection<String> addActionError,
             StudyStatusCode newCode) throws PAException {
-        if (StudyStatusCode.COMPLETE.equals(newCode) || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(newCode)) {
+        if (StudyStatusCode.COMPLETE == newCode || StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newCode) {
             StudyOverallStatusDTO oldStatusDto = PaRegistry.getStudyOverallStatusService()
                  .getCurrentByStudyProtocol(IiConverter.convertToIi(trialDto.getIdentifier()));
             if (trialDto.getCompletionDateType().equals(anticipatedString)) {
@@ -667,9 +670,10 @@ public class TrialValidator {
         Set<String> statusCode = new HashSet<String>();
         statusCode.add(TrialStatusCode.COMPLETE.getCode());
         statusCode.add(TrialStatusCode.ADMINISTRATIVELY_COMPLETE.getCode());
-          if (statusCode.contains(trialDto.getStatusCode())
-                && !trialDto.getCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                 addFieldError.put("trialDTO.completionDateType", getText("error.submit.invalidCompletionDateType"));
+          if (statusCode.contains(trialDto.getStatusCode())) {
+                if (!trialDto.getCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
+                   addFieldError.put("trialDTO.completionDateType", getText("error.submit.invalidCompletionDateType"));
+                }
           } else {
               if (StringUtils.isNotEmpty(trialDto.getCompletionDateType()) && !trialDto.getCompletionDateType().equals(
                   ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {

@@ -31,6 +31,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Type;
+import org.hibernate.validator.Length;
 
 /**
  * A draft StudyProtocol.
@@ -41,6 +42,7 @@ import org.hibernate.annotations.Type;
 @Table(name = "STUDY_PROTOCOL_STAGE")
 public class StudyProtocolStage extends AbstractStudyProtocol {
     private static final long serialVersionUID = 1L;
+    private static final int MAX_COMMENT_LENGTH = 2000;
     private String localProtocolIdentifier;
     private String nctIdentifier;
     private String trialType;
@@ -265,6 +267,7 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
      * @return the reason
      */
     @Column (name = "STATUS_REASON")
+    @Length(max = MAX_COMMENT_LENGTH)
     public String getReason() {
         return reason;
     }

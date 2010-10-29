@@ -95,7 +95,6 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -105,7 +104,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.Action;
@@ -315,7 +313,7 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
      * @param statusReason the statusReason to set
      */
     public void setStatusReason(String statusReason) {
-        this.statusReason = StringUtils.left(statusReason, PAAttributeMaxLen.LONG_TEXT_LENGTH);
+        this.statusReason = statusReason;
     }
 
     /**

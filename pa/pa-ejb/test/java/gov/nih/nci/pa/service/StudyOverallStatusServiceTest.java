@@ -98,6 +98,7 @@ import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -106,6 +107,7 @@ import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,8 +117,8 @@ import org.junit.Test;
  *
  */
 public class StudyOverallStatusServiceTest {
-    private StudyOverallStatusServiceBean bean = new StudyOverallStatusServiceBean();
-    private StudyOverallStatusServiceRemote remoteEjb = bean;
+    private final StudyOverallStatusServiceBean bean = new StudyOverallStatusServiceBean();
+    private final StudyOverallStatusServiceRemote remoteEjb = bean;
     Ii pid;
 
     @Before
@@ -292,5 +294,32 @@ public class StudyOverallStatusServiceTest {
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_OVERALL_STATUS_ROOT);
         assertTrue(StringUtils.isNotEmpty(dto.getIdentifier().getIdentifierName()));
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
+    @Test
+    public void createWithReasonTextTest() throws Exception {
+        // simulate creating new protocol using registry
+        StudyProtocol spNew = StudyProtocolTest.createStudyProtocolObj();
+        spNew.setOfficialTitle("New Protocol");
+        TestSchema.addUpdObject(spNew);
+
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ADMINISTRATIVELY_COMPLETE));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/1999")));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
+        Ii initialIi = null;
+        dto.setIdentifier(initialIi);
+        try {
+             remoteEjb.create(dto);
+        } catch(PAException e) {
+            assertTrue(StringUtils.startsWith(e.getMessage(), "A reason must be entered when the study status "));
+        }
+        dto.setReasonText(StConverter.convertToSt(RandomStringUtils.random(2001)));
+        try {
+            remoteEjb.create(dto);
+        } catch(PAException e) {
+           assertTrue(StringUtils.startsWith(e.getMessage(), "Reason must be less than 2000 characters."));
+        }
+        dto.setReasonText(StConverter.convertToSt(RandomStringUtils.random(2000)));
+        remoteEjb.create(dto);
     }
 }

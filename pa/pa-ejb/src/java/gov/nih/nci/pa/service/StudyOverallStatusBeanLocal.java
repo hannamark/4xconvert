@@ -93,14 +93,18 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -123,6 +127,14 @@ public class StudyOverallStatusBeanLocal extends
 
     /** Standard error message for empty methods to be overridden. */
     private static final String ERR_MSG_METHOD_NOT_IMPLEMENTED = "Method not yet implemented.";
+    private static final Set<String> REASON_REQ_STATUS = new HashSet<String>();
+    static {
+        REASON_REQ_STATUS.add(StudyStatusCode.WITHDRAWN.getCode());
+        REASON_REQ_STATUS.add(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode());
+        REASON_REQ_STATUS.add(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode());
+        REASON_REQ_STATUS.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode());
+    }
+
 
     /**
      * Method used to update the StudyOverallStatus and StudyRecruitmentStatus.
@@ -156,19 +168,10 @@ public class StudyOverallStatusBeanLocal extends
         Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
 
         validateStatusCodeAndDate(oldCode, newCode, oldDate, newDate);
+        validateReasonText(dto);
+
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
         StudyOverallStatus bo = statusConverter.convertFromDtoToDomain(dto);
-        if (StudyStatusCode.WITHDRAWN.equals(bo.getStatusCode())
-                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
-                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
-                || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(bo.getStatusCode())) {
-            if (StringUtils.isBlank(bo.getCommentText())) {
-                throw new PAException("A reason must be entered when the study status is set to "
-                        + bo.getStatusCode().getCode() + ".");
-            }
-        } else {
-            bo.setCommentText(null);
-        }
 
         //Create intermediate status if we're transitioning directly from In-Review to Active or from Active to
         //Closed to Accrual and Intervention
@@ -270,19 +273,11 @@ public class StudyOverallStatusBeanLocal extends
         if (IntConverter.convertToInteger(studyProtocolDto.getSubmissionNumber()) > 1) {
             throw new PAException("Study status Cannot be updated.  ");
         }
+        validateReasonText(dto);
+
         session = HibernateUtil.getCurrentSession();
         StudyOverallStatus bo = Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
-        if (StudyStatusCode.WITHDRAWN.equals(bo.getStatusCode())
-                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
-                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
-                || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(bo.getStatusCode())) {
-            if (StringUtils.isBlank(bo.getCommentText())) {
-                throw new PAException("A reason must be entered when the study status is set to "
-                        + bo.getStatusCode().getCode() + ".");
-            }
-        } else {
-            bo.setCommentText(null);
-        }
+
         session.merge(bo);
         resultDto = Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
         return resultDto;
@@ -345,9 +340,31 @@ public class StudyOverallStatusBeanLocal extends
             errorMsg.append(enforceBusniessRuleForUpdate(statusDto, studyProtocolDTO));
         }
         errorMsg.append(validateTrialDates(studyProtocolDTO, statusDto));
+        validateReasonText(statusDto);
         if (errorMsg.length() > 0) {
             throw new PAException("Validation Exception " + errorMsg);
         }
+    }
+
+    private void validateReasonText(StudyOverallStatusDTO statusDto) throws PAException {
+        StringBuffer errorMsg = new StringBuffer();
+        if (!PAUtil.isCdNull(statusDto.getStatusCode())
+                && REASON_REQ_STATUS.contains(CdConverter.convertCdToString(statusDto.getStatusCode()))) {
+            if (PAUtil.isStNull(statusDto.getReasonText())) {
+                errorMsg.append("A reason must be entered when the study status is set to "
+                        + CdConverter.convertCdToString(statusDto.getStatusCode()) + ".");
+            }
+            if (StringUtils.length(StConverter.convertToString(statusDto.getReasonText()))
+                    > PAAttributeMaxLen.LEN_2000) {
+                errorMsg.append("Reason must be less than 2000 characters.");
+             }
+        } else {
+            statusDto.setReasonText(StConverter.convertToSt(null));
+        }
+        if (StringUtils.isNotEmpty(errorMsg.toString())) {
+            throw new PAException(errorMsg.toString());
+        }
+
     }
 
     /**
