@@ -5,7 +5,9 @@ package gov.nih.nci.pa.enums;
 
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
-import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author vrushali
@@ -13,11 +15,14 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum PhaseAdditionalQualifierCode implements CodedEnum<String> {
     /*** Pilot.  */
-    PILOT("Pilot");
+    PILOT("Pilot","Yes");
 
     private String code;
-    private PhaseAdditionalQualifierCode(String code) {
+    private String displayName;
+    
+    private PhaseAdditionalQualifierCode(String code, String displayName) {
         this.code = code;
+        this.displayName = displayName;
         register(this);
     }
     /**
@@ -31,7 +36,7 @@ public enum PhaseAdditionalQualifierCode implements CodedEnum<String> {
      * @return name
      */
     public String getDisplayName() {
-        return sentenceCasedName(this);
+        return this.displayName;
     }
 
     /**
@@ -60,11 +65,10 @@ public enum PhaseAdditionalQualifierCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
-        int i = 0;
-        String[] result = new String[PhaseAdditionalQualifierCode.values().length];
+    public static Map<String, String> getDisplayNames() {
+        Map<String, String> result = new HashMap<String, String>();
         for (PhaseAdditionalQualifierCode value : PhaseAdditionalQualifierCode.values()) {
-            result[i++] = value.getCode();
+            result.put(value.getCode(), value.getDisplayName());
         }
         return result;
     }

@@ -32,7 +32,7 @@ function displayPhaseAdditonalCode(){
                 </td>
                 <td>
                     <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
-                    <s:select headerKey="" headerValue="" name="trialDTO.phaseAdditionalQualifier" list="#phaseAdditionlQualiefierCodeValues"
+                    <s:select headerKey="" headerValue="No" name="trialDTO.phaseAdditionalQualifier" list="#phaseAdditionlQualiefierCodeValues"
                     value="trialDTO.phaseAdditionalQualifier" cssStyle="width:120px" />
                 </td>
           </tr>

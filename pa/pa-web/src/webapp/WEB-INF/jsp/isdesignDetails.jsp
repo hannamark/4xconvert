@@ -197,7 +197,8 @@ function displayPrimaryPurposeOtherText(){
     </tr>
     <tr id ="phaseOtherDiv" style="display:'none'">
 		<td   scope="row" class="label"><label>
-	 		If Phase equals 'N/A': </label></td>
+	 		<fmt:message key="isdesign.details.phase.comment"/>
+            </label></td>
 		<td>
 		<s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
         <s:select headerKey="" headerValue="" name="webDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 

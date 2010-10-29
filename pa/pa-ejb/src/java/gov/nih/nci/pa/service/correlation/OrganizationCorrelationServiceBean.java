@@ -183,7 +183,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         hcfDTO.getIdentifier().setItem(new HashSet<Ii>());
         hcfDTO.getIdentifier().getItem().add(poHcfIdentifier);
         List<HealthCareFacilityDTO> list = PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
-        if (list == null) {
+        if (CollectionUtils.isEmpty(list)) {
             throw new PAException("HealthCareFacility not found for identifier: " + poHcfIdentifier);
         } else if (list.size() > 1) {
             throw new PAException("Multiple HealthCareFacilities found for identifier: " + poHcfIdentifier);

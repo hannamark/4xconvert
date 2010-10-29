@@ -2,6 +2,8 @@ package gov.nih.nci.pa.enums;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Map;
+
 import org.junit.Test;
 
 
@@ -341,8 +343,8 @@ public class EnumTest {
 
         }
         if (clazz.getName().equals("gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode")) {
-             String[] x = PhaseAdditionalQualifierCode.getDisplayNames();
-             assertEquals(PhaseAdditionalQualifierCode.values().length, x.length);
+             Map<String, String> x = PhaseAdditionalQualifierCode.getDisplayNames();
+             assertEquals(PhaseAdditionalQualifierCode.values().length, x.size());
              assertEquals("PILOT", PhaseAdditionalQualifierCode.PILOT.getName());
         }
         if (clazz.getName().equals("gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode")) {

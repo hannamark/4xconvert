@@ -48,7 +48,7 @@ function displayPrimaryPurposeOtherText() {
         <td   scope="row" class="label"><label><fmt:message key="isdesign.details.phase.comment"/></label></td>
         <td>
         <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
-        <s:select headerKey="" headerValue="" name="gtdDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
+        <s:select headerKey="" headerValue="No" name="gtdDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
                 value="gtdDTO.phaseAdditionalQualifierCode" cssStyle="width:120px" />
         </td>
     </tr>
