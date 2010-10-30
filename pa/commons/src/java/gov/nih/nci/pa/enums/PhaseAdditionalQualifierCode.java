@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public enum PhaseAdditionalQualifierCode implements CodedEnum<String> {
     /*** Pilot.  */
-    PILOT("Pilot","Yes");
+    PILOT("Pilot", "Yes");
 
     private String code;
     private String displayName;

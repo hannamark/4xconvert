@@ -264,7 +264,7 @@ public class TSRReportLabelText {
     /**
      * phase comment.
      */
-    public static final String GTD_PHASE_ADDITIONAL_QUALIFIER = "Is trial a Pilot";
+    public static final String GTD_PHASE_ADDITIONAL_QUALIFIER = "Pilot Trial?";
 
     // Status Dates
     /**
@@ -461,7 +461,7 @@ public class TSRReportLabelText {
     /**
      * Trial Design Phase comment.
      */
-    public static final String TD_PHASE_ADDITIONAL_QUALIFIER = "Is trial a Pilot";
+    public static final String TD_PHASE_ADDITIONAL_QUALIFIER = "Pilot Trial?";
     /**
      * Trial Design Intervention Model.
      */

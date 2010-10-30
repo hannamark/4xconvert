@@ -46,7 +46,7 @@ public enum BatchStringConstants implements CodedEnum<String> {
      /** */
      PHASE("Phase", "setPhase"),
     /** */
-     PHASE_ADDITIONAL_QUALIFIER("Is trial a Pilot", "setPhaseAdditionalQualifierCode"),
+     PHASE_ADDITIONAL_QUALIFIER("Pilot Trial?", "setPhaseAdditionalQualifierCode"),
     /** */
      SPONSOR_ORG_NAME("[Sponsor] Organization Name", "setSponsorOrgName"),
     /** */
