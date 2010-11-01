@@ -222,19 +222,19 @@ public class NCISpecificInformationAction extends ActionSupport {
             // Step3: update studyprotocol
             spDTO = PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
             // Step 4: check if we have an organization for PO id
-            String poIdentifer = nciSpecificInformationWebDTO.getOrganizationIi();
+            String poIdentifier = nciSpecificInformationWebDTO.getOrganizationIi();
             Long orgId = null;
-            if (StringUtils.isNotEmpty(poIdentifer)) {
+            if (StringUtils.isNotEmpty(poIdentifier)) {
                 Organization o = new Organization();
-                o.setIdentifier(poIdentifer);
+                o.setIdentifier(poIdentifier);
                 Organization org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(o);
                 if (org == null) {
                     OrganizationCorrelationServiceBean ocsb = new OrganizationCorrelationServiceBean();
                     OrganizationDTO oDto = PoRegistry.getOrganizationEntityService().getOrganization(
-                            IiConverter.convertToPoOrganizationIi(poIdentifer));
+                            IiConverter.convertToPoOrganizationIi(poIdentifier));
                     // create a new org if its null
 //                    org = new Organization();
-//                    org.setIdentifier(poIdentifer);
+//                    org.setIdentifier(poIdentifier);
 //                    org.setName(nciSpecificInformationWebDTO.getOrganizationName());
 //                    Organization crOrg = PaRegistry.getPAOrganizationService().createOrganization(org);
 //                    ocsb.createPAOrganizationUsingPO(oDto);

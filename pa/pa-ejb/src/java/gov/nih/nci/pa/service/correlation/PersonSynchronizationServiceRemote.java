@@ -96,30 +96,30 @@ public interface PersonSynchronizationServiceRemote {
 
     /**
      * 
-     * @param perIdentifer ii of Person
+     * @param perIdentifier ii of Person
      * @throws PAException on error
      */
-    void synchronizePerson(Ii perIdentifer) throws PAException;
+    void synchronizePerson(Ii perIdentifier) throws PAException;
 
     /***
      * 
-     * @param crsIdentifer po ClinicalResearchStaff identifier
+     * @param crsIdentifier po ClinicalResearchStaff identifier
      * @throws PAException on error
      */
-    void synchronizeClinicalResearchStaff(Ii crsIdentifer) throws PAException;
+    void synchronizeClinicalResearchStaff(Ii crsIdentifier) throws PAException;
     
     /***
      * 
-     * @param hcpIdentifer po HealthCareProvider identifier
+     * @param hcpIdentifier po HealthCareProvider identifier
      * @throws PAException on error
      */
-    void synchronizeHealthCareProvider(Ii hcpIdentifer) throws PAException;
+    void synchronizeHealthCareProvider(Ii hcpIdentifier) throws PAException;
 
     /***
      * OrganizationalContact.
-     * @param ocIdentifer oc HealthCareProvider identifier
+     * @param ocIdentifier oc HealthCareProvider identifier
      * @throws PAException on error
      */
-    void synchronizeOrganizationalContact(Ii ocIdentifer) throws PAException;
+    void synchronizeOrganizationalContact(Ii ocIdentifier) throws PAException;
     
 }

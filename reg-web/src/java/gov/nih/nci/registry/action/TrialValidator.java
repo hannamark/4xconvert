@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -452,9 +453,17 @@ public class TrialValidator {
         ServletActionContext.getRequest().getSession().removeAttribute(
                 DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getShortName());
     }
+
     /**
-     *
-     * @param tDTO dto
+     * Add trial information to the session.  Elements (possibly) added:
+     * <ul>
+     * <li>IND/IDEs
+     * <li>Grants
+     * <li>Secondary Identifiers
+     * <li>protocol documents
+     * <li>study protocol II
+     * </ul>
+     * @param tDTO trial DTO from which to populate the session
      */
     public static void addSessionAttributes(TrialDTO tDTO) {
         if (tDTO == null) {
@@ -464,28 +473,30 @@ public class TrialValidator {
         addToSession(tDTO.getFundingDtos(), Constants.GRANT_LIST);
         if (StringUtils.isNotEmpty(tDTO.getAssignedIdentifier())) {
             addToSession(tDTO.getSecondaryIdentifierAddList(), Constants.SECONDARY_IDENTIFIERS_LIST);
-        }
-        if (StringUtils.isEmpty(tDTO.getAssignedIdentifier())) {
+        } else {
             addToSession(tDTO.getSecondaryIdentifierList(), Constants.SECONDARY_IDENTIFIERS_LIST);
         }
-        List<DocumentDTO> documentISOList;
-        try {
-            documentISOList = PaRegistry.getDocumentService()
-            .getDocumentsByStudyProtocol(IiConverter.convertToIi(tDTO.getIdentifier()));
-            if (!(documentISOList.isEmpty())) {
-                ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
+
+        final Ii spII = IiConverter.convertToIi(tDTO.getIdentifier());
+        if (PAUtil.isIiNotNull(spII)) {
+            try {
+                List<DocumentDTO> documentISOList = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(spII);
+                if (!documentISOList.isEmpty()) {
+                    ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
+                }
+            } catch (PAException e) {
+                LOG.info("Swallowed an exception adding trial session attributes", e);
             }
-            ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults",
-                    IiConverter.convertToIi(tDTO.getIdentifier()));
-        } catch (PAException e) {
-            LOG.error("exception in edit" + e.getMessage());
+            ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", spII);
         }
     }
-    private static void addToSession(List list, String sessionAttributeName) {
-       if (!list.isEmpty()) {
+
+    private static void addToSession(List<?> list, String sessionAttributeName) {
+        if (!list.isEmpty()) {
             ServletActionContext.getRequest().getSession().setAttribute(sessionAttributeName, list);
         }
     }
+
     /**
      *
      * @param tDTO dto
@@ -504,16 +515,17 @@ public class TrialValidator {
         addToSession(tDTO.getParticipatingSites(), Constants.PARTICIPATING_SITES_LIST);
         addToSession(tDTO.getSecondaryIdentifierAddList(), Constants.SECONDARY_IDENTIFIERS_LIST);
         List<DocumentDTO> documentISOList;
-        try {
-            documentISOList = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(
-                 IiConverter.convertToIi(tDTO.getIdentifier()));
-            if (!(documentISOList.isEmpty())) {
-                ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
+        final Ii spII = IiConverter.convertToIi(tDTO.getIdentifier());
+        if (!PAUtil.isIiNotNull(spII)) {
+            try {
+                documentISOList = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(spII);
+                if (!(documentISOList.isEmpty())) {
+                    ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
+                }
+            } catch (PAException e) {
+                LOG.info("Swallowed an exception adding trial session attributes for update", e);
             }
-            ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults",
-                    IiConverter.convertToIi(tDTO.getIdentifier()));
-        } catch (PAException e) {
-            LOG.error("exception in edit" + e.getMessage());
+            ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", spII);
         }
     }
     /**

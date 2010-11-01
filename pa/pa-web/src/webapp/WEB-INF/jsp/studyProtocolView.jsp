@@ -15,19 +15,19 @@
         setFocusToFirstControl();
     }
     function tooltip() {
-		BubbleTips.activateTipOn("acronym");
-		BubbleTips.activateTipOn("dfn");
-	}
-	function handleAction(){
-	var studyProtocolId;
-	studyProtocolId='${sessionScope.trialSummary.studyProtocolId }';
-	input_box=confirm("Click OK to save changes or Cancel to Abort.");
-	if (input_box==true){
-	 		document.forms[0].action="studyProtocolcheckout.action?studyProtocolId="+studyProtocolId;
-	 		document.forms[0].submit();
-	 }
+        BubbleTips.activateTipOn("acronym");
+        BubbleTips.activateTipOn("dfn");
+    }
+    function handleAction(){
+    var studyProtocolId;
+    studyProtocolId='${sessionScope.trialSummary.studyProtocolId }';
+    input_box=confirm("Click OK to save changes or Cancel to Abort.");
+    if (input_box==true){
+             document.forms[0].action="studyProtocolcheckout.action?studyProtocolId="+studyProtocolId;
+             document.forms[0].submit();
+     }
 }
-	</SCRIPT>
+    </SCRIPT>
 </head>
 
 <body>
@@ -42,7 +42,7 @@
   <div class="box">
   <pa:sucessMessage/>
     <s:form ><s:actionerror/>
-	<h2>Trial Identification</h2>
+    <h2>Trial Identification</h2>
 
         <table class="form">
             <tr>
@@ -57,7 +57,7 @@
             </tr>
             <tr>
             <td scope="row" class="label">
-                <label for="localProtocolIdentifer">
+                <label for="localProtocolIdentifier">
                     <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>
                 </label>
             </td>
@@ -127,24 +127,24 @@
             </tr>
             </table>
         <c:if test="${(sessionScope.trialSummary.studyCheckoutBy == null)
-        					|| (sessionScope.trialSummary.studyCheckoutBy == sessionScope.loggedUserName)
-        					|| (sessionScope.role == 'SuAbstractor')}">
+                            || (sessionScope.trialSummary.studyCheckoutBy == sessionScope.loggedUserName)
+                            || (sessionScope.role == 'SuAbstractor')}">
  <div class="actionsrow">
-	<del class="btnwrapper">
-		<ul class="btnrow">
+    <del class="btnwrapper">
+        <ul class="btnrow">
             <c:choose>
                 <c:when test="${(sessionScope.trialSummary.studyCheckoutBy == null)}">
                          <c:set var="saveButtonName" value="Check Out"/>
                          <s:hidden name="checkoutStatus" value="true" />
-                </c:when>         
+                </c:when>
                 <c:otherwise>
                          <c:set var="saveButtonName" value="Check In"/>
                          <s:hidden name="checkoutStatus" value="false" />
-                </c:otherwise>   
-            </c:choose>      
-			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">${saveButtonName}</span></span></s:a></li>
-		</ul>
-	</del>
+                </c:otherwise>
+            </c:choose>
+            <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">${saveButtonName}</span></span></s:a></li>
+        </ul>
+    </del>
 </div>
 </c:if>
 

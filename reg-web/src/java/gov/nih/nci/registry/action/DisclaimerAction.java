@@ -90,7 +90,6 @@ import com.opensymphony.xwork2.ActionSupport;
 /**
  *
  * @author Vrushali
- *
  */
 public class DisclaimerAction extends ActionSupport {
 
@@ -100,8 +99,7 @@ public class DisclaimerAction extends ActionSupport {
     private String failureMessage;
 
     /**
-     *
-     * @return s
+     * {@inheritDoc}
      */
     @Override
     public String execute() {
@@ -134,7 +132,7 @@ public class DisclaimerAction extends ActionSupport {
         if ("".equals(actionName)) {
             actionName = "searchTrial.action";
         }
-        LOG.info("redirect to" + actionName);
+        LOG.info("redirect to " + actionName);
         return "redirect_to";
     }
 

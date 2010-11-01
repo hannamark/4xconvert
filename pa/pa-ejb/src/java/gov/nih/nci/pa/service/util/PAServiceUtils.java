@@ -579,11 +579,11 @@ public class PAServiceUtils {
     public void managePrincipalInvestigator(Ii studyProtocolIi, OrganizationDTO leadOrganizationDto,
             PersonDTO principalInvestigatorDto, StudyTypeCode studyTypeCode) throws PAException {
         String orgPoIdentifier = leadOrganizationDto.getIdentifier().getExtension();
-        String personPoIdentifer = principalInvestigatorDto.getIdentifier().getExtension();
+        String personPoIdentifier = principalInvestigatorDto.getIdentifier().getExtension();
         if (orgPoIdentifier == null) {
             throw new PAException(" Organization PO Identifier is null");
         }
-        if (personPoIdentifer == null) {
+        if (personPoIdentifier == null) {
             throw new PAException(" Person PO Identifier is null");
         }
         if (studyProtocolIi == null) {
@@ -597,10 +597,10 @@ public class PAServiceUtils {
         Long crsId = null;
         Long hcpId = null;
         try {
-            crsId = crs.createClinicalResearchStaffCorrelations(orgPoIdentifier, personPoIdentifer);
+            crsId = crs.createClinicalResearchStaffCorrelations(orgPoIdentifier, personPoIdentifier);
 
             if (StudyTypeCode.INTERVENTIONAL.equals(studyTypeCode)) {
-                hcpId = hcp.createHealthCareProviderCorrelationBeans(orgPoIdentifier, personPoIdentifer);
+                hcpId = hcp.createHealthCareProviderCorrelationBeans(orgPoIdentifier, personPoIdentifier);
             }
         } catch (PAException pae) {
             if (pae.getMessage().contains(PAExceptionConstants.NULLIFIED_PERSON)) {

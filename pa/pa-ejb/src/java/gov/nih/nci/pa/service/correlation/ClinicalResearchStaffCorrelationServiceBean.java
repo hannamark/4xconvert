@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.logging.api.util.StringUtils;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -116,17 +117,17 @@ public class ClinicalResearchStaffCorrelationServiceBean {
     /**
      * This method assumes Organization and Person record exists in PO.
      * @param orgPoIdentifier po primary org id
-     * @param personPoIdentifer po primary person id
+     * @param personPoIdentifier po primary person id
      * @return long id
      * @throws PAException pe
      */
-    public Long createClinicalResearchStaffCorrelations(String orgPoIdentifier, String personPoIdentifer)
+    public Long createClinicalResearchStaffCorrelations(String orgPoIdentifier, String personPoIdentifier)
             throws PAException {
-        
-        if (orgPoIdentifier == null && !("").equals(orgPoIdentifier)) {
+
+        if (StringUtils.isBlank(orgPoIdentifier)) {
             throw new PAException(PAExceptionConstants.NULL_II_ORG);
         }
-        if (personPoIdentifer == null && !("").equals(personPoIdentifer)) {
+        if (StringUtils.isBlank(personPoIdentifier)) {
             throw new PAException(PAExceptionConstants.NULL_II_PERSON);
         }
 
@@ -143,8 +144,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         // Step 2 : get the PO Person
         PersonDTO poPer = null;
         try {
-            poPer = PoRegistry.getPersonEntityService().
-                getPerson(IiConverter.convertToPoPersonIi(personPoIdentifer));
+            poPer = PoRegistry.getPersonEntityService().getPerson(IiConverter.convertToPoPersonIi(personPoIdentifier));
         } catch (NullifiedEntityException e) {
             String message = this.paServiceUtils.handleNullifiedPerson(e);
             throw new PAException(message, e);
@@ -155,7 +155,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         ClinicalResearchStaffDTO crsDTO = new ClinicalResearchStaffDTO();
         List<ClinicalResearchStaffDTO> crsDTOs = null;
         crsDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
-        crsDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi(personPoIdentifer));
+        crsDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi(personPoIdentifier));
         crsDTOs = PoRegistry.getClinicalResearchStaffCorrelationService().search(crsDTO);
         if (crsDTOs != null && crsDTOs.size() > 1) {
             throw new PAException("PO CRS Correlation should not have more than 1  ");
@@ -181,7 +181,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
             paOrg = corrUtils.createPAOrganization(poOrg);
         }
         // Step 4 : check for pa person, if not create one
-        Person paPer = corrUtils.getPAPersonByIi(IiConverter.convertToPoPersonIi(personPoIdentifer));
+        Person paPer = corrUtils.getPAPersonByIi(IiConverter.convertToPoPersonIi(personPoIdentifier));
         if (paPer == null) {
             paPer = corrUtils.createPAPerson(poPer);
         }
@@ -199,7 +199,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         }
         return crs.getId();
     }
-    
+
     /**
      * createClinicalResearchStaffCorrelationsWithExistingPoCrs.
      * @param poCrsIdentifier po crs id
@@ -215,12 +215,12 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         }
         ClinicalResearchStaff crs = corrUtils.getStructuralRoleByIi(poCrsIdentifier);
         if (crs == null) {
-            
+
             PersonDTO poPersonDTO;
             OrganizationDTO poOrganizationDTO;
             try {
                 poPersonDTO = PoRegistry.getPersonEntityService().getPerson(crsDTO.getPlayerIdentifier());
-                poOrganizationDTO = 
+                poOrganizationDTO =
                     PoRegistry.getOrganizationEntityService().getOrganization(crsDTO.getScoperIdentifier());
             } catch (NullifiedEntityException e) {
                 throw new PAException(PAUtil.handleNullifiedEntityException(e), e);

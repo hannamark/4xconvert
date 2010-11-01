@@ -225,7 +225,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<AbstractionCompletionDTO> validateAbstractionCompletion(Ii studyProtocolIi) throws PAException {
         if (studyProtocolIi == null) {
-            throw new PAException("Study Protocol Identifer is null");
+            throw new PAException("Study Protocol Identifier is null");
         }
         List<AbstractionCompletionDTO> abstractionList = new ArrayList<AbstractionCompletionDTO>();
         List<AbstractionCompletionDTO> abstractionWarnList = new ArrayList<AbstractionCompletionDTO>();

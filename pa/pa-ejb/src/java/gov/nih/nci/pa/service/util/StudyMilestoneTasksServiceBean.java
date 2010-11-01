@@ -135,11 +135,11 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         Calendar milestoneDate = Calendar.getInstance();
         try {
             List<StudyMilestoneDTO> studyMilestoneDTOList = smRemote.search(studyMilestoneDTO, limit);
-            LOG.debug("The Search results returned" + studyMilestoneDTOList.size());
+            LOG.debug("The Search results returned " + studyMilestoneDTOList.size());
             for (StudyMilestoneDTO smdto : studyMilestoneDTOList) {
                 milestoneDate.setTime(smdto.getMilestoneDate().getValue());
                 if (isMoreThan5Businessdays(milestoneDate) && !checkMilestoneExists(smdto)) {
-                    LOG.debug("Creating a new milestone with code - initial abstration verify"
+                    LOG.debug("Creating a new milestone with code - initial abstraction verify"
                             + smdto.getStudyProtocolIdentifier());
                     StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
                     newDTO.setCommentText(StConverter.convertToSt(
@@ -151,14 +151,14 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                     try {
                         smRemote.create(newDTO);
                     } catch (PAException e) {
-                        // swallowing the exception in oder to continue processing of rest of records
+                        // swallowing the exception in order to continue processing the rest of the records
                         LOG.error("Error occurred in a quartz job while creating INITIAL_ABSTRACTION_VERIFY "
                                 + " milestone based on Non-Response within 5 days" + e);
                     }
                 }
             }
         } catch (TooManyResultsException e) {
-            throw new PAException("ToomanyReusltsException occured", e);
+            throw new PAException("ToomanyReusltsException occurred", e);
         }
     }
 

@@ -139,7 +139,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Organization getOrganizationByIndetifers(Organization organization) throws PAException {
         if (organization.getId() == null && organization.getIdentifier() == null) {
-            throw new PAException("Id or poIdentifer should not be null");
+            throw new PAException("Id or poIdentifier should not be null");
         }
         Session session = HibernateUtil.getCurrentSession();
 
@@ -158,7 +158,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
         try {
             return (Organization) query.uniqueResult();
         } catch (NonUniqueResultException e) {
-            throw new PAException("Organization should not be more than 1 record for a Po Indetifer = "
+            throw new PAException("Organization should not be more than 1 record for a PO Identifier = "
                     + organization.getIdentifier(), e);
         }
     }

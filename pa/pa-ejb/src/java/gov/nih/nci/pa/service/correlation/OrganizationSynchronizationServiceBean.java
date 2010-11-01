@@ -149,52 +149,50 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     }
 
     /**
-     *
-     * @param orgIdentifer ii of organization
+     * @param orgIdentifier ii of organization
      * @throws PAException on error
      */
-    public void synchronizeOrganization(final Ii orgIdentifer) throws PAException {
-
+    public void synchronizeOrganization(final Ii orgIdentifier) throws PAException {
         OrganizationDTO orgDto = null;
         try {
-            orgDto = PoRegistry.getOrganizationEntityService().getOrganization(orgIdentifer);
-            updateOrganization(orgIdentifer, orgDto);
+            orgDto = PoRegistry.getOrganizationEntityService().getOrganization(orgIdentifier);
+            updateOrganization(orgIdentifier, orgDto);
         } catch (NullifiedEntityException e) {
-            LOG.info("This organization is nullified " + orgIdentifer.getExtension());
-            updateOrganization(orgIdentifer, null);
+            LOG.info("This organization is nullified " + orgIdentifier.getExtension());
+            updateOrganization(orgIdentifier, null);
         }
     }
 
     /***
      *
-     * @param hcfIdentifer po HealthCareFacility identifier
+     * @param hcfIdentifier po HealthCareFacility identifier
      * @throws PAException on error
      */
-    public void synchronizeHealthCareFacility(final Ii hcfIdentifer) throws PAException {
+    public void synchronizeHealthCareFacility(final Ii hcfIdentifier) throws PAException {
 
         HealthCareFacilityDTO hcfDto = null;
         try {
-            hcfDto = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(hcfIdentifer);
-            updateHealthCareFacility(hcfIdentifer, hcfDto);
+            hcfDto = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(hcfIdentifier);
+            updateHealthCareFacility(hcfIdentifier, hcfDto);
         } catch (NullifiedRoleException e) {
-            LOG.info("This HealthCareFacility is nullified " + hcfIdentifer.getExtension());
-            updateHealthCareFacility(hcfIdentifer, null);
+            LOG.info("This HealthCareFacility is nullified " + hcfIdentifier.getExtension());
+            updateHealthCareFacility(hcfIdentifier, null);
         }
     }
 
     /***
      *
-     * @param oscIdentifer po OversightCommittee identifier
+     * @param oscIdentifier po OversightCommittee identifier
      * @throws PAException on error
      */
-    public void synchronizeOversightCommittee(final Ii oscIdentifer) throws PAException {
+    public void synchronizeOversightCommittee(final Ii oscIdentifier) throws PAException {
         OversightCommitteeDTO oscDto = null;
         try {
-            oscDto = PoRegistry.getOversightCommitteeCorrelationService().getCorrelation(oscIdentifer);
-            updateOversightCommittee(oscIdentifer, oscDto);
+            oscDto = PoRegistry.getOversightCommitteeCorrelationService().getCorrelation(oscIdentifier);
+            updateOversightCommittee(oscIdentifier, oscDto);
         } catch (NullifiedRoleException e) {
-            LOG.info("This OversightCommittee is nullified " + oscIdentifer.getExtension());
-            updateOversightCommittee(oscIdentifer, null);
+            LOG.info("This OversightCommittee is nullified " + oscIdentifier.getExtension());
+            updateOversightCommittee(oscIdentifier, null);
         }
     }
 
@@ -231,7 +229,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                     paServiceUtil.getOrCreatePAOrganizationByIi(dupId);
                     try {
                         updateRegistryUsers(ii, dupId);
-                        updateStudyResourcing(ii, dupId); 
+                        updateStudyResourcing(ii, dupId);
                     } catch (NullifiedEntityException e) {
                         LOG.error("Org was nullified with nullified duplicate.");
                     }
@@ -268,13 +266,13 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
         }
         session.flush();
     }
-    
+
     private void updateStudyResourcing(Ii identifier, Ii dupId) throws NullifiedEntityException, PAException {
-        
+
         Organization oldPaOrg = cUtils.getPAOrganizationByIi(identifier);
         Organization newPaOrg = cUtils.getPAOrganizationByIi(dupId);
         Session session = HibernateUtil.getCurrentSession();
-        session.createQuery("update StudyResourcing set organizationIdentifier = :newPaOrgId " 
+        session.createQuery("update StudyResourcing set organizationIdentifier = :newPaOrgId "
                 + "where organizationIdentifier = :oldPaOrgId")
         .setString("newPaOrgId", String.valueOf(newPaOrg.getId()))
         .setString("oldPaOrgId", String.valueOf(oldPaOrg.getId()))

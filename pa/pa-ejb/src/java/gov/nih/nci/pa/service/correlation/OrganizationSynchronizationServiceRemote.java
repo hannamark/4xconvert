@@ -96,31 +96,31 @@ public interface OrganizationSynchronizationServiceRemote {
     
     /**
      * 
-     * @param orgIdentifer ii of organization
+     * @param orgIdentifier ii of organization
      * @throws PAException on error
      */
-    void synchronizeOrganization(Ii orgIdentifer) throws PAException;
+    void synchronizeOrganization(Ii orgIdentifier) throws PAException;
 
     /***
      * 
-     * @param hcfIdentifer po hcf identifier
+     * @param hcfIdentifier po hcf identifier
      * @throws PAException on error
      */
-    void synchronizeHealthCareFacility(Ii hcfIdentifer) throws PAException;
+    void synchronizeHealthCareFacility(Ii hcfIdentifier) throws PAException;
     
     /***
      * 
-     * @param oscIdentifer po osc identifier
+     * @param oscIdentifier po osc identifier
      * @throws PAException on error
      */
-    void synchronizeOversightCommittee(Ii oscIdentifer) throws PAException;
+    void synchronizeOversightCommittee(Ii oscIdentifier) throws PAException;
     
     /***
      * 
-     * @param roIdentifer po ResearchOrganization identifier
+     * @param roIdentifier po ResearchOrganization identifier
      * @throws PAException on error
      */
-    void synchronizeResearchOrganization(Ii roIdentifer) throws PAException;
+    void synchronizeResearchOrganization(Ii roIdentifier) throws PAException;
     
 
 }

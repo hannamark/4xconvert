@@ -216,8 +216,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return trialRegistrationService;
     }
 
-    public Organization getPAOrganizationByIndetifers(Long paIdentifer,
-            String poIdentifer) throws PAException {
+    public Organization getPAOrganizationByIndetifers(Long paIdentifier,
+            String poIdentifier) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -246,7 +246,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    public Person getPAPersonByIndetifers(Long paIdentifer, String poIdentifer)
+    public Person getPAPersonByIndetifers(Long paIdentifier, String poIdentifier)
             throws PAException {
         // TODO Auto-generated method stub
         return null;

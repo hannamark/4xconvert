@@ -129,8 +129,7 @@ public class StudyResourcingBeanLocal extends
     private SessionContext ejbContext;
 
     /**
-     * Set the invocation context.
-     * @param ctx EJB context
+     * {@inheritDoc}
      */
     @Override
     @Resource
@@ -139,14 +138,12 @@ public class StudyResourcingBeanLocal extends
     }
 
     /**
-     * @param studyProtocolIi Ii
-     * @return StudyProtocolDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyResourcingDTO getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
-            throw new PAException("studyProtocol Identifer should not be null");
+            throw new PAException("studyProtocol Identifier should not be null");
         }
 
         StudyResourcing criteria = new StudyResourcing();
@@ -158,16 +155,13 @@ public class StudyResourcingBeanLocal extends
         List<StudyResourcing> results = search(new AnnotatedBeanSearchCriteria<StudyResourcing>(criteria));
 
         if (results.size() > 1) {
-            throw new PAException(" Summary 4 Reported Sourcing should not be more than 1 record ");
+            throw new PAException("Summary 4 Reported Sourcing should not be more than 1 record");
         }
         return results.isEmpty() ? null : convertFromDomainToDto(results.get(0));
     }
 
     /**
-     *
-     * @param studyResourcingDTO StudyResourcingDTO
-     * @return StudyProtocolDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     public StudyResourcingDTO updateStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
         if (studyResourcingDTO == null) {
@@ -199,10 +193,7 @@ public class StudyResourcingBeanLocal extends
     }
 
     /**
-     *
-     * @param studyResourcingDTO StudyResourcingDTO
-     * @return StudyProtocolDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     public StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
 
@@ -228,15 +219,12 @@ public class StudyResourcingBeanLocal extends
     }
 
     /**
-     * @param studyProtocolIi Ii
-     * @return StudyResourcingDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudyResourcingDTO> getStudyResourcingByStudyProtocol(Ii studyProtocolIi)
-    throws PAException {
+    public List<StudyResourcingDTO> getStudyResourcingByStudyProtocol(Ii studyProtocolIi) throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
-            throw new PAException("studyProtocol Identifer should not be null.");
+            throw new PAException("studyProtocol Identifier should not be null.");
         }
 
         StudyResourcing criteria = new StudyResourcing();
@@ -251,9 +239,7 @@ public class StudyResourcingBeanLocal extends
     }
 
     /**
-     * @param studyResourceIi Ii
-     * @return StudyResourcingDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyResourcingDTO getStudyResourcingById(Ii studyResourceIi) throws PAException {
@@ -261,10 +247,7 @@ public class StudyResourcingBeanLocal extends
     }
 
     /**
-     *
-     * @param studyResourcingDTO StudyResourcingDTO
-     * @return StudyResourcingDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     public Boolean deleteStudyResourcingById(StudyResourcingDTO studyResourcingDTO) throws PAException {
         if (studyResourcingDTO == null) {
@@ -315,9 +298,7 @@ public class StudyResourcingBeanLocal extends
     }
 
     /**
-     * @param studyResourcingDTO dto
-     * @return
-     * @throws PAException e
+     * {@inheritDoc}
      */
     @Override
     public void validate(StudyResourcingDTO studyResourcingDTO) throws PAException {
@@ -325,9 +306,7 @@ public class StudyResourcingBeanLocal extends
     }
 
     /**
-     * @param dto StudyResourcingDTO to create
-     * @return the created StudyResourcingDTO
-     * @throws PAException exception.
+     * {@inheritDoc}
      */
     @Override
     public StudyResourcingDTO create(StudyResourcingDTO dto) throws PAException {
@@ -342,9 +321,7 @@ public class StudyResourcingBeanLocal extends
     }
 
     /**
-     * @param dto StudyResourcingDTO to update
-     * @return the updated StudyResourcingDTO
-     * @throws PAException exception.
+     * {@inheritDoc}
      */
     @Override
     public StudyResourcingDTO update(StudyResourcingDTO dto) throws PAException {
@@ -366,7 +343,7 @@ public class StudyResourcingBeanLocal extends
         if (!PAUtil.isBlNull(studyResourcingDTO.getSummary4ReportedResourceIndicator())
                 && BlConverter.convertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator())
                 .equals(Boolean.FALSE)) {
-            //check if nih institute code exists
+            //check if NIH institute code exists
             if (!PAUtil.isCdNull(studyResourcingDTO.getNihInstitutionCode())) {
                 boolean nihExists =
                     PADomainUtils.checkIfValueExists(studyResourcingDTO.getNihInstitutionCode().getCode(),

@@ -111,25 +111,25 @@ public class PARelationServiceBean {
     /**
      *
      * @param orgPoIdentifier orgPoIdentifier
-     * @param personPoIdentifer personPoIdentifer
+     * @param personPoIdentifier personPoIdentifier
      * @param studyProtocolId studyProtocolId
      * @param email as String
      * @param phone as String
      * @throws PAException pe
      */
-    public void createPIAsResponsiblePartyRelations(String orgPoIdentifier, String personPoIdentifer,
+    public void createPIAsResponsiblePartyRelations(String orgPoIdentifier, String personPoIdentifier,
             Long studyProtocolId, String email, String phone) throws PAException {
         if (orgPoIdentifier == null) {
             throw new PAException(" Organization PO Identifier is null");
         }
-        if (personPoIdentifer == null) {
+        if (personPoIdentifier == null) {
             throw new PAException(" Person PO Identifier is null");
         }
         if (studyProtocolId == null) {
-            throw new PAException("Study Protocol Identifer is null");
+            throw new PAException("Study Protocol Identifier is null");
         }
         ClinicalResearchStaffCorrelationServiceBean crs = new ClinicalResearchStaffCorrelationServiceBean();
-        Long crsId = crs.createClinicalResearchStaffCorrelations(orgPoIdentifier, personPoIdentifer);
+        Long crsId = crs.createClinicalResearchStaffCorrelations(orgPoIdentifier, personPoIdentifier);
         StudyContactDTO scDTO = new StudyContactDTO();
         scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(crsId));
         scDTO.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
@@ -161,7 +161,7 @@ public class PARelationServiceBean {
             throw new PAException(" Person or Title PO Identifier is null");
         }
         if (PAUtil.isIiNull(contactDto.getStudyProtocolIdentifier())) {
-            throw new PAException("Study Protocol Identifer is null");
+            throw new PAException("Study Protocol Identifier is null");
         }
         OrganizationCorrelationServiceBean ocs = new OrganizationCorrelationServiceBean();
         Long roId = ocs.createResearchOrganizationCorrelations(contactDto.getOrganizationIdentifier().getExtension());

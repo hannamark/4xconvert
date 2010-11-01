@@ -216,7 +216,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
     private static final String UPDATE = "Update";
     private static final String REJECTION = "Reject";
     private static PAServiceUtils paServiceUtils = new PAServiceUtils();
-    private static final String PROTOCOL_ID_NULL = "Study Protocol Identifer is null";
+    private static final String PROTOCOL_ID_NULL = "Study Protocol Identifier is null";
     private static final String NO_PROTOCOL_FOUND = "No Study Protocol found for = ";
     private static final String EMAIL_NOT_NULL = "Email cannot be null, ";
     private static final String PHONE_NOT_NULL = "Phone cannot be null, ";
@@ -852,7 +852,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
     private void createSponsor(Ii studyProtocolIi, OrganizationDTO sponsorOrganizationDto) throws PAException {
         String orgPoIdentifier = sponsorOrganizationDto.getIdentifier().getExtension();
         if (orgPoIdentifier == null) {
-            throw new PAException("Organization Identifer is null");
+            throw new PAException("Organization Identifier is null");
         }
         if (studyProtocolIi == null) {
             throw new PAException(PROTOCOL_ID_NULL);

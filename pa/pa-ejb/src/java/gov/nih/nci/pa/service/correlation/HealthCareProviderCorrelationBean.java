@@ -120,17 +120,17 @@ public class HealthCareProviderCorrelationBean {
     /**
      * This method assumes Organization and Person record exists in PO.
      * @param orgPoIdentifier po primary org id
-     * @param personPoIdentifer po primary person id
+     * @param personPoIdentifier po primary person id
      * @return long id
      * @throws PAException pe
      */
-    public Long createHealthCareProviderCorrelationBeans(String orgPoIdentifier, String personPoIdentifer)
+    public Long createHealthCareProviderCorrelationBeans(String orgPoIdentifier, String personPoIdentifier)
             throws PAException {
-        
+
         if (orgPoIdentifier == null) {
             throw new PAException(PAExceptionConstants.NULL_II_ORG);
         }
-        if (personPoIdentifer == null) {
+        if (personPoIdentifier == null) {
             throw new PAException(PAExceptionConstants.NULL_II_PERSON);
         }
 
@@ -148,21 +148,19 @@ public class HealthCareProviderCorrelationBean {
         PersonDTO poPer = null;
         try {
             poPer = PoRegistry.getPersonEntityService().
-                getPerson(IiConverter.convertToPoPersonIi(personPoIdentifer));
+                getPerson(IiConverter.convertToPoPersonIi(personPoIdentifier));
         } catch (NullifiedEntityException e) {
             String message = this.paServiceUtils.handleNullifiedPerson(e);
             throw new PAException(message, e);
          }
 
-
         // Step 2 : check if PO has hcp correlation if not create one
         HealthCareProviderDTO hcpDTO = new HealthCareProviderDTO();
         List<HealthCareProviderDTO> hcpDTOs = null;
         hcpDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
-        hcpDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi(personPoIdentifer));
+        hcpDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi(personPoIdentifier));
         hcpDTOs = PoRegistry.getHealthCareProviderCorrelationService().search(hcpDTO);
         if (hcpDTOs != null && hcpDTOs.size() > 1) {
-            LOG.error("PO HealthCareProvider Correlation should not have more than 1 role for a given org and person ");
             throw new PAException(
                     "PO HealthCareProvider Correlation should not have more than 1 role for a given org and person ");
         }
@@ -187,7 +185,7 @@ public class HealthCareProviderCorrelationBean {
             paOrg = corrUtils.createPAOrganization(poOrg);
         }
         // Step 4 : check for pa person, if not create one
-        Person paPer = corrUtils.getPAPersonByIi(IiConverter.convertToPoPersonIi(personPoIdentifer));
+        Person paPer = corrUtils.getPAPersonByIi(IiConverter.convertToPoPersonIi(personPoIdentifier));
         if (paPer == null) {
             paPer = corrUtils.createPAPerson(poPer);
         }
@@ -205,7 +203,7 @@ public class HealthCareProviderCorrelationBean {
         }
         return hcp.getId();
     }
-    
+
     /**
      * createHealthCareProviderCorrelationsWithExistingPoCrs.
      * @param poHcpIdentifier ii
@@ -225,7 +223,7 @@ public class HealthCareProviderCorrelationBean {
             OrganizationDTO poOrganizationDTO;
             try {
                 poPersonDTO = PoRegistry.getPersonEntityService().getPerson(hcpDTO.getPlayerIdentifier());
-                poOrganizationDTO = 
+                poOrganizationDTO =
                     PoRegistry.getOrganizationEntityService().getOrganization(hcpDTO.getScoperIdentifier());
             } catch (NullifiedEntityException e) {
                 throw new PAException(PAUtil.handleNullifiedEntityException(e), e);

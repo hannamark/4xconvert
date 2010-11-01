@@ -206,8 +206,8 @@ public class AbstractBaseParticipatingSiteEjbBean {
         throws EntityValidationException, CurationException, PAException, 
         NullifiedRoleException, NullifiedEntityException {
 
-        Ii someCrsIi = extractIdentifer(crsDTO); 
-        Ii someHcpIi = extractIdentifer(hcpDTO);
+        Ii someCrsIi = extractIdentifier(crsDTO); 
+        Ii someHcpIi = extractIdentifier(hcpDTO);
         
         Map<String, Ii> myMap = new HashMap<String, Ii>();
         myMap.put(IiConverter.ORG_ROOT, orgIi);
@@ -227,7 +227,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
         return myMap;
         
     }
-    private Ii extractIdentifer(AbstractRoleDTO abstractRoleDTO) {
+    private Ii extractIdentifier(AbstractRoleDTO abstractRoleDTO) {
         Ii ii = null;
         if (abstractRoleDTO != null) {
             ii = DSetConverter.convertToIi(abstractRoleDTO.getIdentifier());

@@ -132,8 +132,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     private SessionContext ejbContext;
 
     /**
-     * Set the invocation context.
-     * @param ctx EJB context
+     * {@inheritDoc}
      */
     @Override
     @Resource
@@ -142,14 +141,12 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     }
 
     /**
-     * @param studyProtocolIi Ii
-     * @return DocumentDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
-            throw new PAException(" studyProtocol Identifer should not be null.");
+            throw new PAException("studyProtocol Identifier should not be null.");
         }
 
         Document criteria = new Document();
@@ -163,9 +160,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     }
 
     /**
-     * @param docDTO DocumentDTO
-     * @return DocumentDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
     public DocumentDTO create(DocumentDTO docDTO) throws PAException {
@@ -187,9 +182,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     }
 
     /**
-     * @param id Ii
-     * @return DocumentDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @Override
@@ -206,9 +199,9 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
                 File downloadFile = new File(sb.toString());
                 docDTO.setText(EdConverter.convertToEd(PAUtil.readInputStream(new FileInputStream(downloadFile))));
             } catch (FileNotFoundException fe) {
-                throw new PAException(" File Not found " + fe.getLocalizedMessage(), fe);
+                throw new PAException("File Not found " + fe.getLocalizedMessage(), fe);
             } catch (IOException io) {
-                throw new PAException(" IO Exception" + io.getLocalizedMessage(), io);
+                throw new PAException("IO Exception" + io.getLocalizedMessage(), io);
             }
 
         }
@@ -216,10 +209,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     }
 
     /**
-     *
-     * @param docDTO DocumentDTO
-     * @return DocumentDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
     public DocumentDTO update(DocumentDTO docDTO) throws PAException {
@@ -231,9 +221,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     }
 
     /**
-     *
-     * @param documentIi documentIi
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
     public void delete(Ii documentIi) throws PAException {
@@ -246,12 +234,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     }
 
     /**
-     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
-     *
-     * @param fromStudyProtocolIi from where the study protocol objects to be copied
-     * @param toStudyProtocolIi to where the study protocol objects to be copied
-     * @return map
-     * @throws PAException on error
+     * {@inheritDoc}
      */
     @Override
     public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
@@ -300,11 +283,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         session.flush();
     }
 
-    /**
-     * @param docDTO DocumentDTO
-     * @return Boolean
-     * @throws PAException PAException rename to
-     */
     private Boolean enforceDuplicateDocument(DocumentDTO docDTO) throws PAException {
         Boolean result = false;
         List<DocumentDTO> resultList = new ArrayList<DocumentDTO>();
@@ -326,13 +304,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         return result;
     }
 
-    /**
-     * Check type codes for delete.
-     *
-     * @param docDTO the doc dto
-     * @return the boolean
-     * @throws PAException the PA exception
-     */
     private void checkTypeCodesForDelete(DocumentDTO docDTO) throws PAException {
         if (docDTO.getTypeCode().getCode().equals(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode())
                 || docDTO.getTypeCode().getCode().equals(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode())
