@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.util.report;
 
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.service.PAException;
 
 import java.awt.Color;
@@ -432,14 +433,9 @@ public abstract class AbstractTsrReportGenerator {
                         getGeneralTrialDetails().getCentralContact());
             } else {
                 addTableRow(table, TSRReportLabelText.TYPE, getGeneralTrialDetails().getType());
-                addTableRow(table, TSRReportLabelText.GTD_PRIMARY_PURPOSE,
-                        getGeneralTrialDetails().getPrimaryPurpose());
-                addTableRow(table, TSRReportLabelText.GTD_PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER, getGeneralTrialDetails()
-                        .getPrimaryPurposeAdditonalQualifier());
-                addTableRow(table, TSRReportLabelText.GTD_PRIMARY_PURPOSE_OTHER_TEXT,
-                        getGeneralTrialDetails().getPrimaryPurposeOtherText());
-                addTableRow(table, TSRReportLabelText.GTD_PHASE, getGeneralTrialDetails().getPhase());
-                addTableRow(table, TSRReportLabelText.GTD_PHASE_ADDITIONAL_QUALIFIER,
+                addPrimaryPurposeRow(table, TSRReportLabelText.GTD_PRIMARY_PURPOSE, getGeneralTrialDetails()
+                        .getPrimaryPurpose(), getGeneralTrialDetails().getPrimaryPurposeOtherText());
+                addPhaseRow(table, TSRReportLabelText.GTD_PHASE, getGeneralTrialDetails().getPhase(),
                         getGeneralTrialDetails().getPhaseAdditonalQualifier());
 
             }
@@ -582,14 +578,10 @@ public abstract class AbstractTsrReportGenerator {
         if (getTrialDesign() != null) {
             Table table = getOuterTable(TSRReportLabelText.TABLE_TRIAL_DESIGN, false);
             addTableRow(table, TSRReportLabelText.TYPE, getTrialDesign().getType());
-            addTableRow(table, TSRReportLabelText.TD_PRIMARY_PURPOSE, getTrialDesign().getPrimaryPurpose());
-            addTableRow(table, TSRReportLabelText.TD_PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER,
-                    getTrialDesign().getPrimaryPurposeAdditonalQualifier());
-            addTableRow(table, TSRReportLabelText.TD_PRIMARY_PURPOSE_OTHER_TEXT,
+            addPrimaryPurposeRow(table, TSRReportLabelText.TD_PRIMARY_PURPOSE, getTrialDesign().getPrimaryPurpose(),
                     getTrialDesign().getPrimaryPurposeOtherText());
-            addTableRow(table, TSRReportLabelText.TD_PHASE, getTrialDesign().getPhase());
-            addTableRow(table, TSRReportLabelText.TD_PHASE_ADDITIONAL_QUALIFIER,
-                    getTrialDesign().getPhaseAdditonalQualifier());
+            addPhaseRow(table, TSRReportLabelText.TD_PHASE, getTrialDesign().getPhase(), getTrialDesign()
+                    .getPhaseAdditonalQualifier());
             addTableRow(table, TSRReportLabelText.TD_INTERVENTION_MODEL, getTrialDesign().getInterventionModel());
             addTableRow(table, TSRReportLabelText.TD_NUM_OF_ARMS, getTrialDesign().getNumberOfArms());
             addTableRow(table, TSRReportLabelText.TD_MASKING, getTrialDesign().getMasking());
@@ -750,6 +742,29 @@ public abstract class AbstractTsrReportGenerator {
             table.insertTable(siteTable);
             reportDocument.add(table);
             reportDocument.add(getLineBreak());
+        }
+    }
+
+    private void addPrimaryPurposeRow(Table table, String label, String primaryPurpose, String primaryPurposeOtherText)
+            throws BadElementException {
+        if (!StringUtils.isEmpty(primaryPurpose)) {
+            StringBuffer primaryPurposeBuffer = new StringBuffer(primaryPurpose);
+            if (StringUtils.isNotEmpty(primaryPurposeOtherText)) {
+                primaryPurposeBuffer.append(", ").append(primaryPurposeOtherText);
+            }
+            addTableRow(table, label, primaryPurposeBuffer.toString());
+        }
+    }
+
+    private void addPhaseRow(Table table, String label, String phase, String additionalQualifier)
+            throws BadElementException {
+        if (!StringUtils.isEmpty(phase)) {
+            StringBuffer primaryPurposeBuffer = new StringBuffer(phase);
+            if (StringUtils.isNotEmpty(additionalQualifier)
+                    && PhaseAdditionalQualifierCode.PILOT.getCode().equals(additionalQualifier)) {
+                primaryPurposeBuffer.append(", ").append(additionalQualifier);
+            }
+            addTableRow(table, label, primaryPurposeBuffer.toString());
         }
     }
 

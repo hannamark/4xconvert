@@ -96,36 +96,30 @@ function handleAction(){
   document.forms[0].submit();
  } 
 } 
-function tooltip() {
-		BubbleTips.activateTipOn("acronym");
-		BubbleTips.activateTipOn("dfn"); 
-	}
 
-function displayPrimaryPurposeOtherCode(){
-    var valSelect  = document.getElementById('webDTO.primaryPurposeCode').value;
-    if (valSelect == 'Other') {
-          document.getElementById('purposeOtherCodeDiv').style.display='';
-    } else {
-        document.getElementById('purposeOtherCodeDiv').style.display='none';
-        document.getElementById('purposeOtherTextDiv').style.display='none';
-    }
+function tooltip() {
+	BubbleTips.activateTipOn("acronym");
+	BubbleTips.activateTipOn("dfn"); 
 }
+
 function displayPrimaryPurposeOtherText(){
-   var valSelect  = document.getElementById('webDTO.primaryPurposeAdditionalQualifierCode').value;
-   if (valSelect == 'Other') {
-        document.getElementById('purposeOtherTextDiv').style.display='';
+   if ($('webDTO.primaryPurposeCode').value == 'Other') {
+        $('purposeOtherTextDiv').show();
    } else {
-    document.getElementById('purposeOtherTextDiv').style.display='none';
+        $('purposeOtherTextDiv').hide();
   }
 }
-   function displayPhaseAdditonalCode(){
-       var valSelect  = document.getElementById('webDTO.phaseCode').value;
-       if (valSelect == 'NA') {
-             document.getElementById('phaseOtherDiv').style.display='';
-       } else {
-           document.getElementById('phaseOtherDiv').style.display='none';
-       }
+function displayPhaseAdditonalCode(){
+   if ($('webDTO.phaseCode').value == 'NA') {
+         $('phaseOtherDiv').show();
+   } else {
+       $('phaseOtherDiv').hide();
    }
+}
+function initialize() {
+    displayPrimaryPurposeOtherText();
+    displayPhaseAdditonalCode();
+}
 </SCRIPT>
 <body>
 <h1><fmt:message key="isdesign.details.title"/></h1>
@@ -144,7 +138,7 @@ function displayPrimaryPurposeOtherText(){
      	<s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
         <td>
           <s:select headerKey="" headerValue="" name="webDTO.primaryPurposeCode" id="webDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
-                   value="webDTO.primaryPurposeCode" cssStyle="width:150px" onchange="activate();displayPrimaryPurposeOtherCode()"/>
+                   value="webDTO.primaryPurposeCode" cssStyle="width:150px" onchange="activate();displayPrimaryPurposeOtherText()"/>
           <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.primaryPurposeCode</s:param>
@@ -152,24 +146,9 @@ function displayPrimaryPurposeOtherText(){
           </span>
         </td>
     </tr>
-    <tr id="purposeOtherCodeDiv" style="display:'none'">
-		<td   scope="row" class="label"><label>
-	 		Primary Purpose Additionl Qualiefier Code </label></td>
-		<td>
-            <s:set name="primaryPurposeAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode@getDisplayNames()" />
-            <s:select headerKey="" headerValue="" name="webDTO.primaryPurposeAdditionalQualifierCode" list="#primaryPurposeAdditionlQualiefierCodeValues" 
-                value="webDTO.primaryPurposeAdditionalQualifierCode" id="webDTO.primaryPurposeAdditionalQualifierCode"
-                cssStyle="width:120px" onchange="displayPrimaryPurposeOtherText()"/>
-             <span class="formErrorMsg"> 
-               <s:fielderror>
-               <s:param>webDTO.primaryPurposeAdditionalQualifierCode</s:param>
-               </s:fielderror>                            
-             </span>
-		</td>
-	</tr>
     <tr id="purposeOtherTextDiv" style="display:'none'">
          <td scope="row" class="label">
-            <label> Primary Purpose Other Text</label>
+            <label><fmt:message key="isdesign.details.primary.purpose.otherText"/></label>
          </td>
          <td>
                <s:textarea name="webDTO.primaryPurposeOtherText"  cols="50" rows="2" />
@@ -201,7 +180,7 @@ function displayPrimaryPurposeOtherText(){
             </label></td>
 		<td>
 		<s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
-        <s:select headerKey="" headerValue="" name="webDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
+        <s:select headerKey="" headerValue="No" name="webDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
                 value="webDTO.phaseAdditionalQualifierCode" cssStyle="width:120px" />
 	           <span class="formErrorMsg"> 
              <s:fielderror>
@@ -310,14 +289,13 @@ function displayPrimaryPurposeOtherText(){
 								|| (sessionScope.role == 'SuAbstractor')}">		
 			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
 			</c:if>
-			<!-- 
-			<li><a href="trialDescriptionquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-			<li><a href="interventionalStudyDesignoutcomeQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-			 -->			
 		</ul>	
 	</del>
 </div>
 </s:form>
 </div>
+<SCRIPT LANGUAGE="JavaScript">
+initialize();
+</SCRIPT>
 </body>
 </html>

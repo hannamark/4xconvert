@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
+import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.util.CreateIfNull;
 import com.opensymphony.xwork2.util.Element;
 
@@ -59,7 +60,7 @@ import com.opensymphony.xwork2.util.Element;
  * @author Vrushali
  */
 @SuppressWarnings("unchecked")
-public class UpdateTrialAction extends ManageFileAction implements ServletResponseAware {
+public class UpdateTrialAction extends ManageFileAction implements ServletResponseAware, Preparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -919,5 +920,16 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
    */
   public void setIndIdeUpdateDtosLen(int indIdeUpdateDtosLen) {
      this.indIdeUpdateDtosLen = indIdeUpdateDtosLen;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+  public void prepare() throws Exception {
+      if (this.trialDTO != null) {
+          this.trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
+                  .lookupPrimaryPurposeAdditionalQualifierCode(this.trialDTO.getPrimaryPurposeCode()));
+      }
   }
 }

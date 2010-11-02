@@ -94,6 +94,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.CommonsConstant;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
@@ -119,6 +120,8 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
+import com.opensymphony.xwork2.Preparable;
+
 /**
  *
  * @author Bala Nair
@@ -126,7 +129,8 @@ import org.apache.struts2.interceptor.ServletResponseAware;
  *
  */
 @SuppressWarnings("unchecked")
-public class SubmitTrialAction extends ManageFileAction implements ServletResponseAware {
+public class SubmitTrialAction extends ManageFileAction implements ServletResponseAware, Preparable {
+    private static final long serialVersionUID = -7644860242308952142L;
     private static final String REDIRECT_TO_SEARCH = "redirect_to_search";
     private static final Logger LOG = Logger.getLogger(SubmitTrialAction.class);
     private Long cbValue;
@@ -143,6 +147,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
     private final TrialUtil  trialUtil = new TrialUtil();
     private String sum4FundingCatCode;
 
+    
     /**
      *
      * @return res
@@ -549,4 +554,14 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
          return sum4FundingCatCode;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public void prepare() throws Exception {
+        if (this.trialDTO != null) {
+            this.trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
+                    .lookupPrimaryPurposeAdditionalQualifierCode(this.trialDTO.getPrimaryPurposeCode()));
+        }
+    }
 }

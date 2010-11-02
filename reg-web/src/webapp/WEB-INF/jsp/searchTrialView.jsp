@@ -25,9 +25,6 @@
  <h1><fmt:message key="search.trial.view.page.title" /></h1>
  <c:set var="topic" scope="request" value="view_result"/>
 
-<!--Help Content-->
-   <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
-
   <div class="box">
      <c:if test="${param.trialAction == 'submit'}">
         <div class="confirm_msg">
@@ -250,19 +247,7 @@
           			<c:out value="${requestScope.trialSummary.primaryPurposeCode.code }"/>
           		</td>
           </tr>
-          <c:if test="${requestScope.trialDTO.primaryPurposeAdditionalQualifierCode  != null}">
-	          <tr>
-	                <td scope="row" class="label">
-	                    <label for="Other Purpose Text">
-	                        <fmt:message key="view.trial.otherPurposeCode"/>
-	                    </label>
-	                </td>
-	                <td class="value">
-	                    <c:out value="${requestScope.trialDTO.primaryPurposeAdditionalQualifierCode }"/>
-	                </td>
-	          </tr>
-          </c:if>
-            <c:if test="${trialDTO.primaryPurposeOtherText != null}">
+          <c:if test="${trialDTO.primaryPurposeCode == 'Other'}">
               <tr>     
                     <td scope="row" class="label">
                         <label for="Other Purpose Text">

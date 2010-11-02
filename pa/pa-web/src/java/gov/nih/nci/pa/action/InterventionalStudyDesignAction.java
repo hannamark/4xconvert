@@ -112,11 +112,12 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 /**
  * @author Kalpana Guthikonda
  * @since 10/20/2008
  */
-public class InterventionalStudyDesignAction extends ActionSupport {
+public class InterventionalStudyDesignAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = -8139821069851279621L;
     private static final String OUTCOME = "outcome";
@@ -635,4 +636,15 @@ public class InterventionalStudyDesignAction extends ActionSupport {
         return false;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public void prepare() throws Exception {
+        if (this.webDTO != null) {
+            this.webDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
+                    .lookupPrimaryPurposeAdditionalQualifierCode(this.webDTO.getPrimaryPurposeCode()));
+        }
+    }
 }

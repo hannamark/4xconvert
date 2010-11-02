@@ -1277,6 +1277,20 @@ public class PAUtil {
         String simpleDate = sdf.format(new Date());
         return new Timestamp(sdf.parse(simpleDate).getTime());
     }
+    
+    /**
+     * Returns the proper Primary Purpose Additional Qualifier Code based on the passed Primary Purpose Code.
+     * @param primaryPurposeCode the Primary Purpose Code 
+     * @return 'Other' if Primary Purpose Code is 'Other', and null otherwise.
+     */
+    public static String lookupPrimaryPurposeAdditionalQualifierCode(String primaryPurposeCode) {
+        String retVal = null;
+        if (StringUtils.isNotEmpty(primaryPurposeCode) && PAUtil.isPrimaryPurposeCodeOther(primaryPurposeCode)) {
+            retVal = PrimaryPurposeAdditionalQualifierCode.OTHER.getCode();
+        }
+        return retVal;
+    }
+    
     /**
      * primaryPurposeOtherCode is req or not.
      * @param primaryPurposeCode primaryPurposeCode

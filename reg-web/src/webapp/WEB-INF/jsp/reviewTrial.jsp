@@ -226,19 +226,7 @@ var winprint=window.open("","",sOption);
                     <c:out value="${trialDTO.primaryPurposeCode}"/>
                 </td>
           </tr>
-          <c:if test="${trialDTO.primaryPurposeAdditionalQualifierCode != ''}">
-              <tr>     
-                    <td scope="row" class="label">
-                        <label for="Other Purpose Text">
-                            <fmt:message key="view.trial.otherPurposeCode"/>                
-                        </label>
-                    </td>
-                    <td class="value">
-                        <c:out value="${trialDTO.primaryPurposeAdditionalQualifierCode}"/>
-                    </td>
-              </tr>
-          </c:if>
-          <c:if test="${trialDTO.primaryPurposeOtherText != ''}">
+          <c:if test="${trialDTO.primaryPurposeCode == 'Other'}">
               <tr>     
                     <td scope="row" class="label">
                         <label for="Other Purpose Text">

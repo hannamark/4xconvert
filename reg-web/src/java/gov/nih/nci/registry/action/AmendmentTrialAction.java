@@ -121,11 +121,13 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
+import com.opensymphony.xwork2.Preparable;
+
 /**
  *
  * @author Vrushali
  */
-public class AmendmentTrialAction extends ManageFileAction implements ServletResponseAware {
+public class AmendmentTrialAction extends ManageFileAction implements ServletResponseAware, Preparable {
     private static final long serialVersionUID = 1L;
     private HttpServletResponse servletResponse;
     private static final Logger LOG = Logger.getLogger(AmendmentTrialAction.class);
@@ -456,4 +458,15 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         this.studyProtocolId = studyProtocolId;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public void prepare() throws Exception {
+        if (this.trialDTO != null) {
+            this.trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
+                    .lookupPrimaryPurposeAdditionalQualifierCode(this.trialDTO.getPrimaryPurposeCode()));
+        }
+    }
 }

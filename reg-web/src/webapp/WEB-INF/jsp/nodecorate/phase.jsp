@@ -1,14 +1,4 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<SCRIPT LANGUAGE="JavaScript">
-function displayPhaseAdditonalCode(){
-        var valSelect  = document.getElementById('trialDTO.phaseCode').value;
-        if (valSelect == 'NA') {
-              document.getElementById('phaseOtherDiv').style.display='';
-        } else {
-            document.getElementById('phaseOtherDiv').style.display='none';
-        }
-    }
-</SCRIPT>
           <tr>
                 <td  scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.phase">
@@ -32,7 +22,20 @@ function displayPhaseAdditonalCode(){
                 </td>
                 <td>
                     <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
-                    <s:select headerKey="" headerValue="No" name="trialDTO.phaseAdditionalQualifier" list="#phaseAdditionlQualiefierCodeValues"
+                    <s:select headerKey="" headerValue="No" id="trialDTO.phaseAdditionalQualifier" name="trialDTO.phaseAdditionalQualifier" list="#phaseAdditionlQualiefierCodeValues"
                     value="trialDTO.phaseAdditionalQualifier" cssStyle="width:120px" />
                 </td>
           </tr>
+<SCRIPT LANGUAGE="JavaScript">
+displayPhaseAdditonalCode();
+function displayPhaseAdditonalCode(){
+        if ($('trialDTO.phaseCode').value == 'NA') {
+            $('phaseOtherDiv').show();
+            document.getElementById('trialDTO.phaseAdditionalQualifier').disabled = false;
+        } else {
+            $('phaseOtherDiv').hide();
+            document.getElementById('trialDTO.phaseAdditionalQualifier').disabled = true;
+        }
+    }
+</SCRIPT>
+          

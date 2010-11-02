@@ -256,7 +256,7 @@ public class TSRReportLabelText {
     /**
      * primary purpose comment.
      */
-    public static final String GTD_PRIMARY_PURPOSE_OTHER_TEXT = "Primary Purpose Other Text";
+    public static final String GTD_PRIMARY_PURPOSE_OTHER_TEXT = "If Primary Purpose is 'Other', describe";
     /**
      * phase.
      */
@@ -453,7 +453,7 @@ public class TSRReportLabelText {
     /**
      * Trial Design primary purpose Other text.
      */
-    public static final String TD_PRIMARY_PURPOSE_OTHER_TEXT = "Primary Purpose Other Text";
+    public static final String TD_PRIMARY_PURPOSE_OTHER_TEXT = "If Primary Purpose is 'Other', describe";
     /**
      * Trial Design phase.
      */

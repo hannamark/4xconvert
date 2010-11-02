@@ -111,12 +111,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
 * @author Naveen AMiruddin
 *
 */
-public class TrialValidationAction extends ActionSupport {
+public class TrialValidationAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -6587531774808791496L;
     private static final String EDIT = "edit";
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
@@ -354,7 +355,7 @@ public class TrialValidationAction extends ActionSupport {
         if (PAUtil.isPrimaryPurposeOtherTextReq(gtdDTO.getPrimaryPurposeCode(),
                 gtdDTO.getPrimaryPurposeAdditionalQualifierCode(), gtdDTO.getPrimaryPurposeOtherText())) {
             addFieldError("gtdDTO.primaryPurposeOtherText",
-                    getText("Primary Purpose Other text must be entered"));
+                    getText("If Primary Purpose is \"Other\", description must be entered"));
         }
         if (StringUtils.length(gtdDTO.getPrimaryPurposeOtherText()) > MAXIMUM_CHAR) {
             addFieldError("gtdDTO.primaryPurposeOtherText", getText("error.spType.other.maximumChar"));
@@ -601,5 +602,16 @@ public class TrialValidationAction extends ActionSupport {
     private void populateOtherIdentifiers() {
         ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST,
                 gtdDTO.getOtherIdentifiers());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public void prepare() throws Exception {
+        if (this.gtdDTO != null) {
+            this.gtdDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
+                    .lookupPrimaryPurposeAdditionalQualifierCode(this.gtdDTO.getPrimaryPurposeCode()));
+        }
     }
 }
