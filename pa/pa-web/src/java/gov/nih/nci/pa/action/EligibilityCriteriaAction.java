@@ -140,6 +140,8 @@ import com.opensymphony.xwork2.ActionSupport;
 public class EligibilityCriteriaAction extends ActionSupport {
 
     private static final String STRUCTURED = "Structured";
+    private static final String LAB_TEST_VALUES = "labTestNameValues";
+    private static final String LAB_TEST_UOM_VALUES = "labTestUoMValues";
     private static final long serialVersionUID = -5307419735675359757L;
     private static final String ELIGIBILITY = "eligibility";
     private static final String ELIGIBILITYADD = "eligibilityAdd";
@@ -172,8 +174,6 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static final String REQUEST_TO_CREATE_CDE = "requestToCreateCDE";
     private DataElement cdeResult;
     private static List<String> permValues;
-    private List<String> labTestNameValues;
-    private List<String> labTestUoMValues;
     private static String cdeDatatype;
     private static final String DISPLAY_CDE = "displaycde";
     private static String cdeCategoryCode;
@@ -191,7 +191,6 @@ public class EligibilityCriteriaAction extends ActionSupport {
      * @return String
      */
     public String query() {
-
         try {
             retrieveFromPaProperties();
             getClassSchemeItems();
@@ -386,8 +385,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
 
           webDTO.setCriterionName(getPreferredQuestionText(cdeResult));
           permValues = null;
-          labTestNameValues = null;
-          labTestUoMValues = null;
+          List<String> labTestNameValues = null;
+          List<String> labTestUoMValues = null;
           ValueDomain vd = cdeResult.getValueDomain();
             if (vd instanceof EnumeratedValueDomain) {
                 EnumeratedValueDomain evd = (EnumeratedValueDomain) vd;
@@ -410,6 +409,10 @@ public class EligibilityCriteriaAction extends ActionSupport {
             webDTO.setCdePublicIdentifier(Long.toString(vd.getPublicID()));
             webDTO.setCdeVersionNumber(Float.toString(vd.getVersion()));
             webDTO.setCdeCategoryCode(getCdeCategoryCode());
+            ServletActionContext.getRequest().getSession()
+                .setAttribute(LAB_TEST_VALUES, labTestNameValues);
+            ServletActionContext.getRequest().getSession()
+                .setAttribute(LAB_TEST_UOM_VALUES, labTestUoMValues);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
@@ -552,6 +555,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
      */
     @Override
     public String input() {
+        ServletActionContext.getRequest().getSession().setAttribute(LAB_TEST_VALUES, null);
+        ServletActionContext.getRequest().getSession().setAttribute(LAB_TEST_UOM_VALUES, null);
         return ELIGIBILITYADD;
     }
 
@@ -663,7 +668,6 @@ public class EligibilityCriteriaAction extends ActionSupport {
      * @return result
      */
     public String create() {
-
         try {
             enforceEligibilityBusinessRules();
             if (hasFieldErrors()) {
@@ -684,6 +688,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
      * @return result
      */
     public String edit() {
+        ServletActionContext.getRequest().getSession().setAttribute(LAB_TEST_VALUES, null);
+        ServletActionContext.getRequest().getSession().setAttribute(LAB_TEST_UOM_VALUES, null);
         try {
             PlannedEligibilityCriterionDTO sgDTO = PaRegistry.getPlannedActivityService()
                 .getPlannedEligibilityCriterion(IiConverter.convertToIi(id));
@@ -1348,17 +1354,4 @@ public class EligibilityCriteriaAction extends ActionSupport {
         this.maxValueUnit = maxValueUnit;
     }
 
-    /**
-     * @return the labTestValues
-     */
-    public List<String> getLabTestNameValues() {
-        return labTestNameValues;
-    }
-
-    /**
-     * @return the labTestUoMValues
-     */
-    public List<String> getLabTestUoMValues() {
-        return labTestUoMValues;
-    }
  }
