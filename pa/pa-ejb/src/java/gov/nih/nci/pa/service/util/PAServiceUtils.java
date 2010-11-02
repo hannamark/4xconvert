@@ -978,7 +978,8 @@ public class PAServiceUtils {
             retValue = false;
             return retValue;
         }
-        if (IiConverter.ORG_IDENTIFIER_NAME.equals(poIi.getIdentifierName())) {
+        if (IiConverter.ORG_IDENTIFIER_NAME.equals(poIi.getIdentifierName())
+                || IiConverter.ORG_ROOT.equalsIgnoreCase(poIi.getRoot())) {
             OrganizationDTO poOrg = getPOOrganizationEntity(IiConverter.convertToPoOrganizationIi(poIi.getExtension()));
             if (poOrg != null) {
                 retValue = true;

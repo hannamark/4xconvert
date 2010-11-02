@@ -1,10 +1,10 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.action;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -24,13 +24,13 @@ import org.junit.Test;
 public class TrialHelperTest  extends AbstractPaActionTest {
 
 	TrialHelper trialHelper;
-	
+
 	 @Before
 	    public void setup() throws Exception {
 		 trialHelper = new TrialHelper();
 	     getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
 	     }
-	 
+
 	/**
 	 * Test method for {@link gov.nih.nci.pa.action.TrialHelper#getTrialDTO(gov.nih.nci.iso21090.Ii, java.lang.String)}.
 	 */
@@ -51,9 +51,10 @@ public class TrialHelperTest  extends AbstractPaActionTest {
 		gtdDTO.setLeadOrganizationIdentifier("1");
 		gtdDTO.setLocalProtocolIdentifier("1");
 		gtdDTO.setNctIdentifier("test");
-		
+		gtdDTO.setSubmissionNumber(1);
+		gtdDTO.setProprietarytrialindicator("false");
 		trialHelper.saveTrial(IiConverter.convertToIi(1L),gtdDTO ,"Abstraction");
-		
+
 	}
 
 	/**
@@ -69,7 +70,7 @@ public class TrialHelperTest  extends AbstractPaActionTest {
 		gtdDTO.setLocalProtocolIdentifier("1");
 		gtdDTO.setNctIdentifier("test");
 		trialHelper.createOrUpdateCentralContact(IiConverter.convertToIi(1L),gtdDTO);
-		
+
 	}
 
 	/**
