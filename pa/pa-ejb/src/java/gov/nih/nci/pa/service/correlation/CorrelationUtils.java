@@ -115,10 +115,13 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -137,7 +140,24 @@ import org.hibernate.criterion.Example;
 @SuppressWarnings("unchecked")
 public class CorrelationUtils implements CorrelationUtilsRemote {
     private static final Logger LOG = Logger.getLogger(CorrelationUtils.class);
-
+    private static final Map<String, String> SR_II_ROOT_MAP = new HashMap<String, String>();
+    static {
+        SR_II_ROOT_MAP.put(IiConverter.HEALTH_CARE_FACILITY_ROOT, "HealthCareFacility ");
+        SR_II_ROOT_MAP.put(IiConverter.RESEARCH_ORG_ROOT, "ResearchOrganization ");
+        SR_II_ROOT_MAP.put(IiConverter.OVERSIGHT_COMMITTEE_ROOT, "OversightCommittee ");
+        SR_II_ROOT_MAP.put(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT, "ClinicalResearchStaff ");
+        SR_II_ROOT_MAP.put(IiConverter.HEALTH_CARE_PROVIDER_ROOT, "HealthCareProvider ");
+        SR_II_ROOT_MAP.put(IiConverter.ORGANIZATIONAL_CONTACT_ROOT, "OrganizationalContact ");
+    }
+    private static final Map<String, String> SR_II_IDENTIFIER_NAME_MAP = new HashMap<String, String>();
+    static {
+        SR_II_IDENTIFIER_NAME_MAP.put(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME, "HealthCareFacility ");
+        SR_II_IDENTIFIER_NAME_MAP.put(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME, "ResearchOrganization ");
+        SR_II_IDENTIFIER_NAME_MAP.put(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME, "OversightCommittee ");
+        SR_II_IDENTIFIER_NAME_MAP.put(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME, "ClinicalResearchStaff ");
+        SR_II_IDENTIFIER_NAME_MAP.put(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME, "HealthCareProvider ");
+        SR_II_IDENTIFIER_NAME_MAP.put(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME, "OrganizationalContact ");
+    }
     /**
      * @param poOrganizationalContactId id
      * @return Person
@@ -277,22 +297,8 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
 
     public <T extends StructuralRole> T getStructuralRoleByIi(Ii isoIi) throws PAException {
 
-        StringBuffer hql = new StringBuffer("select role from ");
-        if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("HealthCareFacility role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("ResearchOrganization role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("OversightCommittee role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("ClinicalResearchStaff role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("HealthCareProvider role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("OrganizationalContact role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else {
-            throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
-        }
+        StringBuffer hql = new StringBuffer("select role from ").append(getObjectName(isoIi))
+            .append(" role where role.identifier = '" + isoIi.getExtension() + "'");
         Session session = HibernateUtil.getCurrentSession();
         List<T> queryList = session.createQuery(hql.toString()).list();
         T sr = null;
@@ -306,6 +312,25 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
         session.flush();
         return sr;
+    }
+
+    /**
+     * This method returns the bo name based on Identifier name or root.
+     * @param isoIi ii
+     * @return object name based on ii's identifier name or root. Ideally it should just check root
+     * @throws PAException when Ii's identifier name and root is null.
+     */
+    private String getObjectName(Ii isoIi) throws PAException {
+        String objectName = "";
+        if (StringUtils.isNotEmpty(isoIi.getRoot())) {
+            objectName = SR_II_ROOT_MAP.get(isoIi.getRoot());
+        } else {
+            objectName = SR_II_IDENTIFIER_NAME_MAP.get(isoIi.getIdentifierName());
+        }
+        if (StringUtils.isEmpty(objectName)) {
+            throw new PAException("Unknown identifier name or root provided.");
+        }
+        return objectName;
     }
 
     /**
@@ -512,7 +537,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         session.flush();
         return returnVal;
     }
-    
+
     /**
      * getGenericContactIiFromCtepId.
      * @param contactDTO person dto
@@ -521,7 +546,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @throws CurationException when error
      * @throws PAException when error
      */
-    public Ii getGenericContactIiFromCtepId(OrganizationalContactDTO contactDTO) 
+    public Ii getGenericContactIiFromCtepId(OrganizationalContactDTO contactDTO)
         throws EntityValidationException, CurationException, PAException {
         Ii contactIi = null;
         Ii passedInIi = DSetConverter
@@ -539,13 +564,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             contactIi = getPoOrgContactByCtepId(
                     passedInIi);
         } else {
-            throw new PAException("Could not determine root of investigator. Root passed in was: " 
+            throw new PAException("Could not determine root of investigator. Root passed in was: "
                     + passedInIi.getRoot());
         }
         return contactIi;
     }
-    
-    
+
+
     /**
      * getPoHcfByCtepId.
      * @param ctepHcfIi ii
@@ -555,22 +580,22 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     public Ii getPoHcfByCtepId(Ii ctepHcfIi) throws PAException {
         HealthCareFacilityDTO criteria = new HealthCareFacilityDTO();
         criteria.setIdentifier(DSetConverter.convertIiToDset(ctepHcfIi));
-        List<HealthCareFacilityDTO> hcfs = 
+        List<HealthCareFacilityDTO> hcfs =
             PoRegistry.getHealthCareFacilityCorrelationService().search(criteria);
         if (hcfs.isEmpty()) {
-            throw new PAException("Provided Hcf ctep id: " 
+            throw new PAException("Provided Hcf ctep id: "
                     + ctepHcfIi.getExtension()
                     + " but did not find a corresponding HCF in PO.");
         } else if (hcfs.size() > 1) {
-            throw new PAException("more than 1 HCF found for given ctep id: " 
+            throw new PAException("more than 1 HCF found for given ctep id: "
                     + ctepHcfIi.getExtension());
-        }   
-        
+        }
+
         return DSetConverter.convertToIi(hcfs.get(0).getIdentifier());
     }
-    
 
-    
+
+
     /**
      * getPoOrgContactByCtepId.
      * @param ctepOrgContactIi ii
@@ -580,21 +605,21 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     public Ii getPoOrgContactByCtepId(Ii ctepOrgContactIi) throws PAException {
         OrganizationalContactDTO criteria = new OrganizationalContactDTO();
         criteria.setIdentifier(DSetConverter.convertIiToDset(ctepOrgContactIi));
-        List<OrganizationalContactDTO> orgContacts = 
+        List<OrganizationalContactDTO> orgContacts =
             PoRegistry.getOrganizationalContactCorrelationService().search(criteria);
         if (orgContacts.isEmpty()) {
-            throw new PAException("Provided Org Contact ctep id: " 
+            throw new PAException("Provided Org Contact ctep id: "
                     + ctepOrgContactIi.getExtension()
                     + "but did not find a corresponding "
                     + "OrgContact in PO.");
         } else if (orgContacts.size() > 1) {
-            throw new PAException("more than 1 OrgContact found for given ctep id: " 
+            throw new PAException("more than 1 OrgContact found for given ctep id: "
                     + ctepOrgContactIi.getExtension());
-        }   
-        
+        }
+
         return DSetConverter.convertToIi(orgContacts.get(0).getIdentifier());
     }
-    
+
     /**
      * getPoCrsByCtepId.
      * @param crsDTO dto
@@ -606,12 +631,12 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @throws EntityValidationException when error
      * @throws CurationException when error
      */
-    public Ii getPoCrsByCtepId(ClinicalResearchStaffDTO crsDTO, Ii ctepCrsIi, Ii scoperOrg) 
+    public Ii getPoCrsByCtepId(ClinicalResearchStaffDTO crsDTO, Ii ctepCrsIi, Ii scoperOrg)
         throws PAException, NullifiedRoleException, EntityValidationException, CurationException {
-        
-        IdentifiedPersonDTO idP = new IdentifiedPersonDTO(); 
+
+        IdentifiedPersonDTO idP = new IdentifiedPersonDTO();
         idP.setAssignedId(ctepCrsIi);
-        List<IdentifiedPersonDTO> idps = 
+        List<IdentifiedPersonDTO> idps =
             PoRegistry.getIdentifiedPersonEntityService().search(idP);
         if (idps.isEmpty()) {
             throw new PAException(
@@ -621,10 +646,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         } else if (idps.size() > 1) {
             throw new PAException("more than 1 Identified Person found for given ctep id: "
                     + ctepCrsIi.getExtension());
-        }   
-        
+        }
+
         Ii poPersonIi = idps.get(0).getPlayerIdentifier();
-        List<ClinicalResearchStaffDTO> crss = 
+        List<ClinicalResearchStaffDTO> crss =
             PoRegistry.getClinicalResearchStaffCorrelationService()
             .getCorrelationsByPlayerIds(new Ii[]{poPersonIi});
         if (crss.isEmpty()) {
@@ -641,14 +666,14 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         } else if (crss.size() > 1) {
             throw new PAException("more than 1 CRS found for given person id:"
                     + poPersonIi.getExtension());
-        }   
-        
+        }
+
         return DSetConverter.convertToIi(crss.get(0).getIdentifier());
     }
-    
+
     /**
      * Given a pa hcf structural role get PO Org ID.
-     * @param hcfIi pa ii.  
+     * @param hcfIi pa ii.
      * @return po org ii.
      * @throws PAException when error.
      */
@@ -656,7 +681,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         HealthCareFacility hcf = getStructuralRoleByIi(hcfIi);
         return IiConverter.convertToPoOrganizationIi(hcf.getOrganization().getIdentifier());
     }
-    
+
     /**
      * getPoHcpByCtepId.
      * @param hcpDTO dto
@@ -668,12 +693,12 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @throws EntityValidationException when error
      * @throws CurationException when error
      */
-    public Ii getPoHcpByCtepId(HealthCareProviderDTO hcpDTO, Ii ctepHcpIi, 
-            Ii scoperOrg) throws PAException, NullifiedRoleException, 
+    public Ii getPoHcpByCtepId(HealthCareProviderDTO hcpDTO, Ii ctepHcpIi,
+            Ii scoperOrg) throws PAException, NullifiedRoleException,
             EntityValidationException, CurationException {
-        IdentifiedPersonDTO idP = new IdentifiedPersonDTO(); 
+        IdentifiedPersonDTO idP = new IdentifiedPersonDTO();
         idP.setAssignedId(ctepHcpIi);
-        List<IdentifiedPersonDTO> idps = 
+        List<IdentifiedPersonDTO> idps =
             PoRegistry.getIdentifiedPersonEntityService().search(idP);
         if (idps.isEmpty()) {
             throw new PAException(
@@ -683,10 +708,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         } else if (idps.size() > 1) {
             throw new PAException("more than 1 Identified Person found for given ctep id:"
                     + ctepHcpIi.getExtension());
-        }   
-        
+        }
+
         Ii poPersonIi = idps.get(0).getPlayerIdentifier();
-        List<HealthCareProviderDTO> hcps = 
+        List<HealthCareProviderDTO> hcps =
             PoRegistry.getHealthCareProviderCorrelationService()
             .getCorrelationsByPlayerIds(new Ii[]{poPersonIi});
         if (hcps.isEmpty()) {
@@ -702,10 +727,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             return PoRegistry.getHealthCareProviderCorrelationService()
                 .createCorrelation(toStoreHcpDTO);
         } else if (hcps.size() > 1) {
-            throw new PAException("more than 1 HCP found for given person id:" 
+            throw new PAException("more than 1 HCP found for given person id:"
                     + poPersonIi.getExtension());
-        }   
-        
+        }
+
         return DSetConverter.convertToIi(hcps.get(0).getIdentifier());
     }
 
