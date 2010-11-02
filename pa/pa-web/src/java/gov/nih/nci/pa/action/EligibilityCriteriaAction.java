@@ -304,18 +304,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
                 cadsrWebDTO.setId(de.getId());
                 cadsrWebDTO.setPublicId(Long.toString(de.getPublicID()));
                 cadsrWebDTO.setVersion(Float.toString(de.getVersion()));
-                if (CollectionUtils.isNotEmpty(de.getReferenceDocumentCollection())) {
-                    for (ReferenceDocument refDoc : de.getReferenceDocumentCollection()) {
-                        if (refDoc.getType().equals("Preferred Question Text")) {
-                            cadsrWebDTO.setPreferredQuestion(refDoc.getDoctext());
-                        }
-                    }
-
-                } else {
-                    if (de.getDataElementConcept() != null && de.getDataElementConcept().getLongName() != null) {
-                        cadsrWebDTO.setPreferredQuestion(de.getDataElementConcept().getLongName());
-                    }
-                }
+                cadsrWebDTO.setPreferredQuestion(getPreferredQuestionText(de));
                 cadsrResult.add(cadsrWebDTO);
             }
             if (cadsrResult.size() > MAX_CADSR_RESULT) {
@@ -332,6 +321,21 @@ public class EligibilityCriteriaAction extends ActionSupport {
         return CDES_BY_CSI;
     }
 
+    private String getPreferredQuestionText(DataElement de) {
+        // defaults to the DEC long name in case this CDE does not have reference documents
+        String result = de.getDataElementConcept().getLongName();
+
+        if (CollectionUtils.isNotEmpty(de.getReferenceDocumentCollection())) {
+            for (ReferenceDocument refDoc : de.getReferenceDocumentCollection()) {
+                if (refDoc.getType().equals("Preferred Question Text")) {
+                    result = refDoc.getDoctext();
+                }
+            }
+
+        }
+        return result;
+    }
+
     /**
      * Gets the classified cd es display tag.
      *
@@ -341,19 +345,19 @@ public class EligibilityCriteriaAction extends ActionSupport {
         this.getClassifiedCDEs();
         return "cdeDisplayTag";
     }
-    
+
     private DataElement getCdeByPublicID(Long publicId) throws PAException {
-        
+
         ApplicationService appService;
         try {
             appService = ApplicationServiceProvider.getApplicationService();
-        
+
             DataElement de = new DataElement();
             de.setPublicID(publicId);
             de.setLatestVersionIndicator("Yes");
             Collection<Object> collResult = appService.search(DataElement.class, de);
-    
-            return (DataElement) collResult.iterator().next();      
+
+            return (DataElement) collResult.iterator().next();
         } catch (Exception e) {
             throw new PAException(e);
         }
@@ -364,30 +368,30 @@ public class EligibilityCriteriaAction extends ActionSupport {
      * @return String
      */
     public String displaycde() {
-        
+
         String cdeid = ServletActionContext.getRequest().getParameter("cdeid");
         boolean isSpecialLabTestCase = false;
         try {
           ApplicationService appService = ApplicationServiceProvider.getApplicationService();
           DataElement de = new DataElement();
           de.setId(cdeid);
-          
+
           Collection<Object> collResult = appService.search(DataElement.class, de);
 
           cdeResult = (DataElement) collResult.iterator().next();
-          
+
           if (labTestPubId.equals(cdeResult.getPublicID())) {
               isSpecialLabTestCase = true;
           }
-          
-          webDTO.setCriterionName(cdeResult.getDataElementConcept().getLongName());
+
+          webDTO.setCriterionName(getPreferredQuestionText(cdeResult));
           permValues = null;
           labTestNameValues = null;
           labTestUoMValues = null;
           ValueDomain vd = cdeResult.getValueDomain();
             if (vd instanceof EnumeratedValueDomain) {
                 EnumeratedValueDomain evd = (EnumeratedValueDomain) vd;
-                
+
                 if (isSpecialLabTestCase) {
                     labTestNameValues = getPermValues(evd);
                     DataElement uOfMdE = getCdeByPublicID(labTestUofMPubId);
@@ -395,12 +399,12 @@ public class EligibilityCriteriaAction extends ActionSupport {
                 } else {
                     permValues = getPermValues(evd);
                 }
-                
-            } 
-            
+
+            }
+
             if (isSpecialLabTestCase) {
                 cdeDatatype = "NUMBER";
-            } else { 
+            } else {
                 cdeDatatype = vd.getDatatypeName();
             }
             webDTO.setCdePublicIdentifier(Long.toString(vd.getPublicID()));
@@ -412,7 +416,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
 
         return DISPLAY_CDE;
     }
-    
+
     private List<String> getPermValues(EnumeratedValueDomain evd) {
         List<String> returnValues = new ArrayList<String>();
         Collection<ValueDomainPermissibleValue> vdPvList = evd.getValueDomainPermissibleValueCollection();
@@ -614,10 +618,10 @@ public class EligibilityCriteriaAction extends ActionSupport {
      */
     public String generate() throws PAException {
         StringBuffer generatedName = new StringBuffer();
-        
+
         generatedName.append(appendGenName());
         generatedName.append(appendGenOp());
-        
+
         if (StringUtils.isNotEmpty(webDTO.getValueIntegerMin())) {
             generatedName.append(webDTO.getValueIntegerMin());
             if (StringUtils.isNotEmpty(webDTO.getValueIntegerMax())) {
@@ -633,7 +637,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
         webDTO.setOperator(webDTO.getOperator());
         return ELIGIBILITYADD;
     }
-    
+
     private String appendGenName() {
         StringBuffer generatedName = new StringBuffer();
         if (StringUtils.isNotEmpty(webDTO.getLabTestNameValueText())) {
@@ -643,7 +647,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
         }
         return generatedName.toString();
     }
-    
+
     private String appendGenOp() {
         StringBuffer generatedName = new StringBuffer();
         if (StringUtils.isNotEmpty(webDTO.getOperator()) && webDTO.getOperator().equalsIgnoreCase("In")) {
