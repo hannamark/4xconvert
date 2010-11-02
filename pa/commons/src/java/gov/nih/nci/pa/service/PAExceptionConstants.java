@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service;
 
+
 /**
  * @author mshestopalov
  *
@@ -96,6 +97,47 @@ public class PAExceptionConstants {
      * NULLIFIED_ORG.
      */
     public static final String NULLIFIED_ORG = "This Organization is no longer available";
+    
+    /**
+     * NULLIFIED_HCF.
+     */
+    public static final String NULLIFIED_HCF = "The Health Care Facility is no longer available";
+    
+    /**
+     * NULLIFIED_CRS.
+     */
+    public static final String NULLIFIED_CRS = "The Clinical Research Staff is no longer available";
+    
+    /**
+     * NULLIFIED_HCP.
+     */
+    public static final String NULLIFIED_HCP = "The Health Care Provider is no longer available";
+    
+    /**
+     * NULLIFIED_OC.
+     */
+    public static final String NULLIFIED_OC = "The Oversight Committee is no longer available";
+    
+    /**
+     * NULLIFIED_IO.
+     */
+    public static final String NULLIFIED_IO = "The Identified Organization is no longer available";
+    
+    /**
+     * NULLIFIED_RO.
+     */
+    public static final String NULLIFIED_RO = "The Research Organization is no longer available";
+    
+    /**
+     * NULLIFIED_IP.
+     */
+    public static final String NULLIFIED_IP = "The Identified Person is no longer available";
+    
+    /**
+     * NULLIFIED_OCT.
+     */
+    public static final String NULLIFIED_OCT = "The Organizational Contact is no longer available";
+    
     /**
      * NULL_II_PERSON.
      */

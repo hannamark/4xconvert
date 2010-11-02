@@ -101,13 +101,18 @@ import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PAExceptionConstants;
 import gov.nih.nci.pa.util.ISOUtil.ValidDateFormat;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -123,6 +128,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -135,6 +141,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.log4j.Logger;
 
 /**
  * This is a selection of utilities, useful for PA. This set of utilities is safe to use in the grid services. Do
@@ -151,7 +158,22 @@ public class PAUtil {
     private static final int MAXF = 1024;
     private static final String EXTN = "extn";
     private static final int EXTN_COUNT = 4;
-
+    private static final Logger LOG  = Logger.getLogger(PAUtil.class);
+    private static final String ID_OPEN_PAREN = " (id = ";
+    private static final Map<String, String> ROOT_TO_NULLIFIED_ERROR_MAP = new HashMap<String, String>();
+    
+    static {
+        ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.HEALTH_CARE_FACILITY_ROOT, PAExceptionConstants.NULLIFIED_HCF);
+        ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.HEALTH_CARE_PROVIDER_ROOT, PAExceptionConstants.NULLIFIED_HCP);
+        ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT, PAExceptionConstants.NULLIFIED_CRS);
+        ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.OVERSIGHT_COMMITTEE_ROOT, PAExceptionConstants.NULLIFIED_OC);
+        ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.IDENTIFIED_ORG_ROOT, PAExceptionConstants.NULLIFIED_IO);
+        ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.RESEARCH_ORG_ROOT, PAExceptionConstants.NULLIFIED_RO);
+        ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.IDENTIFIED_PERSON_ROOT, PAExceptionConstants.NULLIFIED_IP);
+        ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.ORGANIZATIONAL_CONTACT_ROOT, PAExceptionConstants.NULLIFIED_OCT);
+    }
+    
+    
     /**
      * checks if Ii is null.
      * @param ii ii
@@ -1128,21 +1150,118 @@ public class PAUtil {
             message = new StringBuffer("");
             for (Ii key : e.getNullifiedEntities().keySet()) {
                 if (IiConverter.ORG_ROOT.equals(key.getRoot())) {
-                    message.append("The Organization with id ");
+                    message.append(handleNullifiedOrganization(key, e.getNullifiedEntities().get(key)));
                 } else if (IiConverter.PERSON_ROOT.equals(key.getRoot())) {
-                    message.append("The Person with id ");
+                    message.append(handleNullifiedPerson(key, e.getNullifiedEntities().get(key)));
                 } else {
                     continue;
                 }
-
-                message.append(key.getExtension());
-                message.append(" is no longer available.");
-                Ii value = e.getNullifiedEntities().get(key);
-                if (PAUtil.isIiNotNull(value)) {
-                    message.append("Switch to id ");
-                    message.append(value.getExtension());
+            }
+        }
+        return message.toString();
+    }
+    
+    /**
+     * Handle error message when nullified org exception happens.
+     * @param oldIi nullified org ii.
+     * @param newIi dup org ii.
+     * @return string message.
+     */
+    public static String handleNullifiedOrganization(Ii oldIi, Ii newIi) {
+        StringBuilder message = new StringBuilder();
+        message.append(PAExceptionConstants.NULLIFIED_ORG);
+        message.append(ID_OPEN_PAREN + oldIi.getExtension() + ")");
+        OrganizationDTO poOrg = null;
+    
+          if (isIiNotNull(newIi)) {
+                try {
+                    poOrg = PoRegistry.getOrganizationEntityService().
+                    getOrganization(newIi);
+                    
+                } catch (NullifiedEntityException e) {
+                    LOG.info("handleNullifiedOrganization: " + e.getMessage());
+                } catch (PAException e) {
+                    LOG.info("handleNullifiedOrganization: " + e.getMessage());
                 }
-
+                if (poOrg == null) {
+                    LOG.info("handleNullifiedOrganization failed to find a PO org");
+                } else {
+                    message.append(" , instead use ");
+                    message.append(EnOnConverter.convertEnOnToString(poOrg.getName()));
+                    message.append(ID_OPEN_PAREN + newIi.getExtension() + ")");
+                }
+            }
+      
+        return message.toString();
+    }
+    
+    /**
+     * Given a NullifiedRoleException pull out a useful error message.
+     * @param e NRE.
+     * @return message
+     */
+    public static String handleNullifiedRoleException(NullifiedRoleException e) {
+        StringBuffer message = new StringBuffer("The entity is no longer available.");
+        if (e.getNullifiedEntities().size() > 0) {
+            message = new StringBuffer("");
+            for (Ii key : e.getNullifiedEntities().keySet()) {
+                message.append(handleNullifiedSR(key, e));
+            }
+        }
+        return message.toString();
+    }
+    
+    private static String handleNullifiedSR(Ii key, NullifiedRoleException e) {
+        StringBuffer message = new StringBuffer("");
+        String errorMsg = ROOT_TO_NULLIFIED_ERROR_MAP.get(key.getRoot());
+        if (StringUtils.isEmpty(errorMsg)) {
+            message.append("The structural role is not available.");
+        } else {
+            message.append(handleNullifiedSR(
+                    errorMsg, key, e.getNullifiedEntities().get(key)));
+        }
+        return message.toString();
+    }
+    
+    private static String handleNullifiedSR(String errorMsg, Ii oldIi, Ii newIi) {
+        StringBuilder message = new StringBuilder();
+        message.append(errorMsg);
+        message.append(ID_OPEN_PAREN + oldIi.getExtension() + ")");
+       
+        if (isIiNotNull(newIi)) {
+            message.append(" , instead use id = ");
+            message.append(newIi.getExtension());
+        }
+        
+        return message.toString();
+    }
+    
+    /**
+     * Handle error message when nullified org exception happens.
+     * @param oldIi nullified org ii.
+     * @param newIi dup org ii.
+     * @return string message.
+     */
+    public static String handleNullifiedPerson(Ii oldIi, Ii newIi) {
+        StringBuilder message = new StringBuilder();
+        message.append(PAExceptionConstants.NULLIFIED_PERSON);
+        message.append(ID_OPEN_PAREN + oldIi.getExtension() + ")");
+        PersonDTO poPer = null;
+        if (isIiNotNull(newIi)) {
+            try {
+               poPer = PoRegistry.getPersonEntityService().getPerson(newIi);             
+            } catch (NullifiedEntityException e) {
+                LOG.info("handleNullifiedPerson: " + e.getMessage());
+            } catch (PAException e) {
+                LOG.info("handleNullifiedPerson: " + e.getMessage());
+            }
+    
+            if (poPer == null) {
+                LOG.info("handleNullifiedPerson failed to find a PO org");
+            } else {
+                message.append(" , instead use ");
+                message.append(PADomainUtils.convertToPaPersonDTO(poPer).getFullName());
+                message.append(ID_OPEN_PAREN + newIi.getExtension() + ")");
             }
         }
         return message.toString();

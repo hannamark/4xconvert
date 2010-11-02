@@ -627,12 +627,11 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @param scoperOrg org
      * @return cr ii
      * @throws PAException when error
-     * @throws NullifiedRoleException when error
      * @throws EntityValidationException when error
      * @throws CurationException when error
      */
     public Ii getPoCrsByCtepId(ClinicalResearchStaffDTO crsDTO, Ii ctepCrsIi, Ii scoperOrg)
-        throws PAException, NullifiedRoleException, EntityValidationException, CurationException {
+        throws PAException, EntityValidationException, CurationException {
 
         IdentifiedPersonDTO idP = new IdentifiedPersonDTO();
         idP.setAssignedId(ctepCrsIi);
@@ -649,9 +648,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
 
         Ii poPersonIi = idps.get(0).getPlayerIdentifier();
-        List<ClinicalResearchStaffDTO> crss =
-            PoRegistry.getClinicalResearchStaffCorrelationService()
+        List<ClinicalResearchStaffDTO> crss;
+        try {
+            crss = PoRegistry.getClinicalResearchStaffCorrelationService()
             .getCorrelationsByPlayerIds(new Ii[]{poPersonIi});
+        } catch (NullifiedRoleException e) {
+            throw new PAException(PAUtil.handleNullifiedRoleException(e));
+        }
         if (crss.isEmpty()) {
             ClinicalResearchStaffDTO toStoreCrsDTO = null;
             if (crsDTO == null) {
@@ -689,12 +692,11 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @param scoperOrg org
      * @return ii
      * @throws PAException when error
-     * @throws NullifiedRoleException when error
      * @throws EntityValidationException when error
      * @throws CurationException when error
      */
-    public Ii getPoHcpByCtepId(HealthCareProviderDTO hcpDTO, Ii ctepHcpIi,
-            Ii scoperOrg) throws PAException, NullifiedRoleException,
+    public Ii getPoHcpByCtepId(HealthCareProviderDTO hcpDTO, Ii ctepHcpIi, 
+            Ii scoperOrg) throws PAException, 
             EntityValidationException, CurationException {
         IdentifiedPersonDTO idP = new IdentifiedPersonDTO();
         idP.setAssignedId(ctepHcpIi);
@@ -711,9 +713,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
 
         Ii poPersonIi = idps.get(0).getPlayerIdentifier();
-        List<HealthCareProviderDTO> hcps =
-            PoRegistry.getHealthCareProviderCorrelationService()
+        List<HealthCareProviderDTO> hcps;
+        try {
+            hcps = PoRegistry.getHealthCareProviderCorrelationService()
             .getCorrelationsByPlayerIds(new Ii[]{poPersonIi});
+        } catch (NullifiedRoleException e) {
+            throw new PAException(PAUtil.handleNullifiedRoleException(e));
+        }
         if (hcps.isEmpty()) {
             HealthCareProviderDTO toStoreHcpDTO = null;
             if (hcpDTO == null) {

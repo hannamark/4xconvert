@@ -141,7 +141,6 @@ import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -1617,51 +1616,7 @@ public class PAServiceUtils {
         }
         return EnOnConverter.convertEnOnToString(orgDto.getName());
     }
-
-      /**
-       * Handle error message when nullified org exception happens.
-       * @param e nullified entity exception.
-       * @return string message.
-       */
-      public String handleNullifiedOrganization(NullifiedEntityException e) {
-          StringBuilder message = new StringBuilder();
-          message.append(PAExceptionConstants.NULLIFIED_ORG);
-          OrganizationDTO poOrg = null;
-          try {
-            if (e.getNullifiedEntities() != null && !e.getNullifiedEntities().values().isEmpty()) {
-                  poOrg = PoRegistry.getOrganizationEntityService().
-                  getOrganization((e.getNullifiedEntities().values().iterator().next()));
-                  message.append(" , instead use ");
-                  message.append(EnOnConverter.convertEnOnToString(poOrg.getName()));
-              }
-          } catch (Exception anyE) {
-              LOG.info("handleNullifiedOrganization failed to find a PO org or no org was supplied.");
-          }
-          return message.toString();
-      }
-
-      /**
-       * Handle error message when nullified org exception happens.
-       * @param e nullified entity exception.
-       * @return string message.
-       */
-      public String handleNullifiedPerson(NullifiedEntityException e) {
-          StringBuilder message = new StringBuilder();
-          message.append(PAExceptionConstants.NULLIFIED_PERSON);
-          PersonDTO poPer = null;
-          try {
-              if (e.getNullifiedEntities() != null
-                      && !e.getNullifiedEntities().values().isEmpty()) {
-                  poPer = PoRegistry.getPersonEntityService().
-                  getPerson((e.getNullifiedEntities().values().iterator().next()));
-                  message.append(" , instead use ");
-                  message.append(PADomainUtils.convertToPaPersonDTO(poPer).getFullName());
-              }
-          } catch (Exception anyE) {
-            LOG.info("handleNullifiedPerson failed to find a PO person or no person was supplied.");
-          }
-          return message.toString();
-      }
+    
       /**
        *
        * @param poOrgId orgId

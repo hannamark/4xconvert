@@ -82,7 +82,7 @@ public class OrganizationCorrelationServiceBeanTest {
             bean.createHealthCareFacilityCorrelations("2");
             fail("Nullified org");
         } catch (PAException e) {
-            assertEquals("This Organization is no longer available instead use ", e.getMessage());
+            assertEquals("This Organization is no longer available (id = 2) , instead use OrgName (id = 22)", e.getMessage());
         }
         setUpCorrSvcMock();
         bean.createHealthCareFacilityCorrelations("1");
@@ -105,13 +105,13 @@ public class OrganizationCorrelationServiceBeanTest {
         when(poHcfSvc.search(any(HealthCareFacilityDTO.class))).thenReturn(hcfDTOList);
         bean.createHealthCareFacilityCorrelations("1");
         when(poHcfSvc.search(any(HealthCareFacilityDTO.class))).thenReturn(null);
-        NullifiedRoleException nRE = new NullifiedRoleException(IiConverter.convertToIi("1"));
+        NullifiedRoleException nRE = new NullifiedRoleException(IiConverter.convertToPoClinicalResearchStaffIi("1"));  
         when(poHcfSvc.getCorrelation(any(Ii.class))).thenThrow(nRE);
         try {
             bean.createHealthCareFacilityCorrelations("1");
             fail("NullifiedRoleException exception during get ClinicalResearchStaff");
         } catch (PAException e) {
-            assertEquals("NullifiedRoleException exception during get ClinicalResearchStaff ", e.getMessage());
+            assertEquals("The Clinical Research Staff is no longer available (id = 1)", e.getMessage());
         }
         setupPoSvcLocMock();
         setupCorSvcMockForHCF();
@@ -152,7 +152,7 @@ public class OrganizationCorrelationServiceBeanTest {
             bean.createResearchOrganizationCorrelations("2");
             fail("Nullified org");
         } catch (PAException e) {
-            assertEquals("This Organization is no longer available , instead use OrgName", e.getMessage());
+            assertEquals("This Organization is no longer available (id = 2) , instead use OrgName (id = 22)", e.getMessage());
         }
         try {
             bean.createResearchOrganizationCorrelations("12");
@@ -178,13 +178,13 @@ public class OrganizationCorrelationServiceBeanTest {
         when(poRoSvc.search(any(ResearchOrganizationDTO.class))).thenReturn(roDTOList);
         bean.createResearchOrganizationCorrelations("1");
         when(poRoSvc.search(any(ResearchOrganizationDTO.class))).thenReturn(null);
-        NullifiedRoleException nRE = new NullifiedRoleException(IiConverter.convertToIi("1"));
+        NullifiedRoleException nRE = new NullifiedRoleException(IiConverter.convertToPoClinicalResearchStaffIi("1"));
         when(poRoSvc.getCorrelation(any(Ii.class))).thenThrow(nRE);
         try {
             bean.createResearchOrganizationCorrelations("1");
             fail("NullifiedRoleException exception during research org");
         } catch (PAException e) {
-            assertEquals("Validation exception during get ClinicalResearchStaff ", e.getMessage());
+            assertEquals("The Clinical Research Staff is no longer available (id = 1)", e.getMessage());
         }
         setupPoSvcLocMock();
         Map<String, String[]> errors = new HashMap<String, String[]>();
@@ -314,7 +314,7 @@ public class OrganizationCorrelationServiceBeanTest {
             bean.createOversightCommitteeCorrelations("2");
             fail("Nullified org");
         } catch (PAException e) {
-            assertEquals("This Organization is no longer available instead use ", e.getMessage());
+            assertEquals("This Organization is no longer available (id = 2) , instead use OrgName (id = 22)", e.getMessage());
         }
         try {
             bean.createOversightCommitteeCorrelations("12");
@@ -355,13 +355,13 @@ public class OrganizationCorrelationServiceBeanTest {
         when(poOcSvc.getCorrelation(any(Ii.class))).thenReturn(ocDTO);
         when(corrUtils.getStructuralRoleByIi(any(Ii.class))).thenReturn(null);
         assertNull(bean.createOversightCommitteeCorrelations("1"));
-        NullifiedRoleException nRE = new NullifiedRoleException(IiConverter.convertToIi("1"));
+        NullifiedRoleException nRE = new NullifiedRoleException(IiConverter.convertToPoOversightCommitteeIi("1"));
         when(poOcSvc.getCorrelation(any(Ii.class))).thenThrow(nRE);
         try {
             bean.createOversightCommitteeCorrelations("1");
             fail("NullifiedRoleException exception during oversight commotte");
         } catch (PAException e) {
-            assertEquals("Validation exception during get PO OversightCommittee.  ", e.getMessage());
+            assertEquals("The Oversight Committee is no longer available (id = 1)", e.getMessage());
         }
         setupPoSvcLocMock();
         Map<String, String[]> errors = new HashMap<String, String[]>();

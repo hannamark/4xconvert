@@ -95,7 +95,6 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -138,7 +137,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 
     private static final Logger LOG  = Logger.getLogger(OrganizationCorrelationServiceBean.class);
     private static final String IRB_CODE = "Institutional Review Board (IRB)";
-    private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     private CorrelationUtils corrUtils = new CorrelationUtils();
 
     /**
@@ -150,7 +148,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         try {
             hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(poHcfIdentifier);
         } catch (NullifiedRoleException e) {
-            throw new PAException("This HealthCareFacility is no longer available.", e);
+            throw new PAException(PAUtil.handleNullifiedRoleException(e));
         }
         if (hcfDTO == null) {
             hcfDTO = getHcfByOtherId(poHcfIdentifier);
@@ -167,6 +165,12 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             } catch (NullifiedEntityException e) {
                 throw new PAException(PAUtil.handleNullifiedEntityException(e), e);
             }
+            
+            if (poOrgDTO == null) {
+                throw new PAException("Unable to find Organization for identifier: " 
+                        + hcfDTO.getPlayerIdentifier().getExtension());
+            }
+            
             Organization paOrg = getCorrUtils().createPAOrganization(poOrgDTO);
             hcf = new HealthCareFacility();
             hcf.setOrganization(paOrg);
@@ -208,8 +212,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             poOrg = PoRegistry.getOrganizationEntityService().
                 getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
-           LOG.error("This Organization is no longer available instead use ");
-           throw new PAException("This Organization is no longer available instead use ", e);
+           throw new PAException(PAUtil.handleNullifiedEntityException(e), e);
         }
         if (poOrg == null) {
             throw new PAException("PO and PA databases out of synchronization.  Error getting "
@@ -255,7 +258,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
                 Ii ii = PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
                 hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
-                throw new PAException("NullifiedRoleException exception during get ClinicalResearchStaff " , e);
+                throw new PAException(PAUtil.handleNullifiedRoleException(e));
             } catch (EntityValidationException e) {
                 throw new PAException("Validation exception during create ClinicalResearchStaff " , e);
             } catch (CurationException e) {
@@ -287,9 +290,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             poOrg = PoRegistry.getOrganizationEntityService().
                 getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
-           String message = paServiceUtils.handleNullifiedOrganization(e);
-           LOG.error(message);
-           throw new PAException(message, e);
+            throw new PAException(PAUtil.handleNullifiedEntityException(e), e);
 
         }
         if (poOrg == null) {
@@ -337,7 +338,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             poOrg = PoRegistry.getOrganizationEntityService().
                 getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         } catch (NullifiedEntityException e) {
-            throw new PAException("This Organization is no longer available instead use ", e);
+            throw new PAException(PAUtil.handleNullifiedEntityException(e), e);
         }
         if (poOrg == null) {
             throw new PAException("PO and PA databases out of synchronization.  Error getting "
@@ -386,7 +387,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
                 Ii ii = PoRegistry.getOversightCommitteeCorrelationService().createCorrelation(ocDTO);
                 ocDTO = PoRegistry.getOversightCommitteeCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
-                throw new PAException("Validation exception during get PO OversightCommittee.  " , e);
+                throw new PAException(PAUtil.handleNullifiedRoleException(e));
             } catch (EntityValidationException e) {
                 throw new PAException("Validation exception during create PO OversightCommittee.  " , e);
             } catch (Exception e) {
@@ -416,7 +417,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
                 Ii ii = PoRegistry.getResearchOrganizationCorrelationService().createCorrelation(roDTO);
                 roDTO = PoRegistry.getResearchOrganizationCorrelationService().getCorrelation(ii);
             } catch (NullifiedRoleException e) {
-                throw new PAException("Validation exception during get ClinicalResearchStaff " , e);
+                throw new PAException(PAUtil.handleNullifiedRoleException(e));
             } catch (EntityValidationException e) {
                 throw new PAException("Validation exception during create ClinicalResearchStaff " , e);
             } catch (CurationException e) {

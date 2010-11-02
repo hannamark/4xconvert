@@ -198,36 +198,66 @@ public class AbstractBaseParticipatingSiteEjbBean {
      * @throws EntityValidationException when error
      * @throws CurationException when error
      * @throws PAException when error
-     * @throws NullifiedRoleException when error
-     * @throws NullifiedEntityException when error
      */
     protected Map<String, Ii> generateCrsAndHcpFromCtepIdOrNewPerson(PersonDTO investigatorDTO,
             ClinicalResearchStaffDTO crsDTO, HealthCareProviderDTO hcpDTO, Ii orgIi) 
-        throws EntityValidationException, CurationException, PAException, 
-        NullifiedRoleException, NullifiedEntityException {
+        throws EntityValidationException, CurationException, PAException {
 
-        Ii someCrsIi = extractIdentifier(crsDTO); 
-        Ii someHcpIi = extractIdentifier(hcpDTO);
+        Ii someCrsIi = extractIdentifer(crsDTO); 
+        Ii someHcpIi = extractIdentifer(hcpDTO);
         
         Map<String, Ii> myMap = new HashMap<String, Ii>();
         myMap.put(IiConverter.ORG_ROOT, orgIi);
-        if (findPoHcpIi(hcpDTO, someHcpIi, myMap)) {
-            myMap.put(IiConverter.PERSON_ROOT, PoRegistry.getHealthCareProviderCorrelationService()
-                .getCorrelation(myMap.get(IiConverter.HEALTH_CARE_PROVIDER_ROOT)).getPlayerIdentifier());
-        } 
         
-        if (findPoCrsIi(crsDTO, someCrsIi, myMap)) {       
-           myMap.put(IiConverter.PERSON_ROOT, PoRegistry.getClinicalResearchStaffCorrelationService()
-                    .getCorrelation(myMap.get(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT))
-                    .getPlayerIdentifier());
-        }
+        loadPersonInMapByHcp(hcpDTO, someHcpIi, myMap);
+        loadPersonInMapByCrs(crsDTO, someCrsIi, myMap);
+        
         boolean isSrEmpty = (someCrsIi == null && someHcpIi == null);
         loadOrCreatePerson(myMap, crsDTO, hcpDTO, investigatorDTO, isSrEmpty); 
         
         return myMap;
         
     }
-    private Ii extractIdentifier(AbstractRoleDTO abstractRoleDTO) {
+    
+    private void loadPersonInMapByHcp(HealthCareProviderDTO hcpDTO, Ii someHcpIi, Map<String, Ii> myMap) 
+        throws PAException, EntityValidationException, CurationException {
+        if (findPoHcpIi(hcpDTO, someHcpIi, myMap)) {    
+            try {
+                HealthCareProviderDTO freshHcpDTO = PoRegistry.getHealthCareProviderCorrelationService()
+                .getCorrelation(myMap.get(IiConverter.HEALTH_CARE_PROVIDER_ROOT));
+                if (freshHcpDTO != null) {
+                    myMap.put(IiConverter.PERSON_ROOT, freshHcpDTO.getPlayerIdentifier());
+                } else {
+                    throw new PAException("Could not find a Health Care Provider with id = " 
+                            + myMap.get(IiConverter.HEALTH_CARE_PROVIDER_ROOT).getExtension()
+                            + " in PO db.");
+                }
+            } catch (NullifiedRoleException e) {
+                throw new PAException(PAUtil.handleNullifiedRoleException(e));
+            }
+        } 
+    }
+    
+    private void loadPersonInMapByCrs(ClinicalResearchStaffDTO crsDTO, Ii someCrsIi, Map<String, Ii> myMap) 
+        throws PAException, EntityValidationException, CurationException {
+        if (findPoCrsIi(crsDTO, someCrsIi, myMap)) {       
+            try {
+                ClinicalResearchStaffDTO freshCrsDTO = PoRegistry.getClinicalResearchStaffCorrelationService()
+                .getCorrelation(myMap.get(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT));
+                if (freshCrsDTO != null) {
+                    myMap.put(IiConverter.PERSON_ROOT, freshCrsDTO.getPlayerIdentifier());
+                } else {
+                    throw new PAException("Could not find a Clinical Research Staff with id = " 
+                            + myMap.get(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT).getExtension()
+                            + " in PO db.");
+                }
+             } catch (NullifiedRoleException e) {
+                 throw new PAException(PAUtil.handleNullifiedRoleException(e));
+             }
+         }
+    }
+    
+    private Ii extractIdentifer(AbstractRoleDTO abstractRoleDTO) {
         Ii ii = null;
         if (abstractRoleDTO != null) {
             ii = DSetConverter.convertToIi(abstractRoleDTO.getIdentifier());
@@ -240,7 +270,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
     
     private void loadOrCreatePerson(Map<String, Ii> myMap, ClinicalResearchStaffDTO crsDTO, 
             HealthCareProviderDTO hcpDTO, PersonDTO investigatorDTO, boolean isSrEmpty) 
-    throws EntityValidationException, CurationException, PAException, NullifiedEntityException {
+    throws EntityValidationException, CurationException, PAException {
        
         if (isSrEmpty && investigatorDTO != null) {
             Ii poPersonIi = getPoPersonIiFromPoPersonDTO(investigatorDTO);
@@ -255,12 +285,20 @@ public class AbstractBaseParticipatingSiteEjbBean {
     }
     
     private Ii getPoPersonIiFromPoPersonDTO(PersonDTO investigatorDTO) 
-    throws EntityValidationException, CurationException, PAException, NullifiedEntityException {
+    throws EntityValidationException, CurationException, PAException {
         Ii poPersonIi = null;
         if (PAUtil.isIiNotNull(investigatorDTO.getIdentifier()) 
                 && IiConverter.PERSON_ROOT.equals(investigatorDTO.getIdentifier().getRoot())) {
-            PersonDTO personDTO = 
-                PoRegistry.getPersonEntityService().getPerson(investigatorDTO.getIdentifier());
+            PersonDTO personDTO = null;
+            try {
+                personDTO = PoRegistry.getPersonEntityService().getPerson(investigatorDTO.getIdentifier());
+            } catch (NullifiedEntityException e) {
+                throw new PAException(PAUtil.handleNullifiedEntityException(e));
+            }
+            if (personDTO == null) {
+                throw new PAException("Unable to find Person for identifier: " 
+                        + investigatorDTO.getIdentifier().getExtension());
+            }
             poPersonIi = personDTO.getIdentifier();
         } else {
             poPersonIi = PoRegistry.getPersonEntityService().createPerson(investigatorDTO);    
@@ -270,7 +308,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
     
     private boolean findPoCrsIi(ClinicalResearchStaffDTO crsDTO, 
             Ii someCrsIi, Map<String, Ii> myMap) 
-        throws PAException, NullifiedRoleException, EntityValidationException, CurationException {
+        throws PAException, EntityValidationException, CurationException {
         
         boolean isCrs = false;
         if (someCrsIi != null && IiConverter.CLINICAL_RESEARCH_STAFF_ROOT.equals(someCrsIi.getRoot())) {
@@ -286,7 +324,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
     
     private boolean findPoHcpIi(HealthCareProviderDTO hcpDTO, 
             Ii someHcpIi, Map<String, Ii> myMap) 
-        throws PAException, NullifiedRoleException, EntityValidationException, CurationException {
+        throws PAException, EntityValidationException, CurationException {
         boolean isHcp = false;
         if (someHcpIi != null && IiConverter.HEALTH_CARE_PROVIDER_ROOT.equals(someHcpIi.getRoot())) {
             myMap.put(IiConverter.HEALTH_CARE_PROVIDER_ROOT, someHcpIi);
@@ -313,7 +351,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
         try {
                 poCrsIi = checkExistingCrs(crsDTO); 
         } catch (NullifiedRoleException e) {
-                throw new PAException("NullifiedRoleException exception during get ClinicalResearchStaff " , e);
+                throw new PAException(PAUtil.handleNullifiedRoleException(e));
         } catch (EntityValidationException e) {
                 throw new PAException("Validation exception during create ClinicalResearchStaff " , e);
         } catch (CurationException e) {
@@ -377,7 +415,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
         try {
                 poHcpIi = checkExistingHcp(hcpDTO); 
         } catch (NullifiedRoleException e) {
-                throw new PAException("NullifiedRoleException exception during get HealthCareProvider " , e);
+                throw new PAException(PAUtil.handleNullifiedRoleException(e));
         } catch (EntityValidationException e) {
                 throw new PAException("Validation exception during create HealthCareProvider " , e);
         } catch (CurationException e) {
