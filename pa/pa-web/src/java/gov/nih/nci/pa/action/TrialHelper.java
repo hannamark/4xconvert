@@ -98,12 +98,11 @@ public class TrialHelper {
                 copyCentralContact(studyProtocolIi, gtdDTO);
             }
         }
-        copyOtherIdentifiers(spDTO, gtdDTO);
         if (VALIDATION.equalsIgnoreCase(operation)) {
             copySummaryFour(PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi),
                     gtdDTO);
         }
-        copyOtherTrialIdentifiers(studyProtocolIi, gtdDTO);
+        copyOtherTrialIdentifiers(spDTO, gtdDTO);
         return gtdDTO;
     }
     /**
@@ -207,13 +206,6 @@ public class TrialHelper {
                 throw new PAException(e);
             }
         }
-    }
-
-    private void copyOtherIdentifiers(StudyProtocolDTO spDTO, GeneralTrialDesignWebDTO gtdDTO) {
-        List<Ii> otherIdentifiers = PAUtil.getOtherIdentifiers(spDTO);
-        Ii assignedIdentifier = PAUtil.getAssignedIdentifier(spDTO);
-        gtdDTO.setOtherIdentifiers(otherIdentifiers);
-        gtdDTO.setNonOtherIdentifiers(assignedIdentifier);
     }
 
     private void copy(StudyProtocolDTO spDTO, GeneralTrialDesignWebDTO gtdDTO) {
@@ -321,19 +313,23 @@ public class TrialHelper {
         }
 
     }
-    private void copyOtherTrialIdentifiers(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException {
-        String nctNumber = new PAServiceUtils().getStudyIdentifier(studyProtocolIi, PAConstants.NCT_IDENTIFIER_TYPE);
+    private void copyOtherTrialIdentifiers(StudyProtocolDTO spDTO, GeneralTrialDesignWebDTO gtdDTO) throws PAException {
+        String nctNumber = paServUtil.getStudyIdentifier(spDTO.getIdentifier(), PAConstants.NCT_IDENTIFIER_TYPE);
         if (StringUtils.isNotEmpty(nctNumber)) {
             gtdDTO.setNctIdentifier(nctNumber);
         }
-        String ctepId = new PAServiceUtils().getStudyIdentifier(studyProtocolIi, PAConstants.CTEP_IDENTIFIER_TYPE);
+        String ctepId = paServUtil.getStudyIdentifier(spDTO.getIdentifier(), PAConstants.CTEP_IDENTIFIER_TYPE);
         if (StringUtils.isNotEmpty(ctepId)) {
             gtdDTO.setCtepIdentifier(ctepId);
         }
-        String dcpId = new PAServiceUtils().getStudyIdentifier(studyProtocolIi, PAConstants.DCP_IDENTIFIER_TYPE);
+        String dcpId = paServUtil.getStudyIdentifier(spDTO.getIdentifier(), PAConstants.DCP_IDENTIFIER_TYPE);
         if (StringUtils.isNotEmpty(dcpId)) {
             gtdDTO.setDcpIdentifier(dcpId);
         }
+        List<Ii> otherIdentifiers = PAUtil.getOtherIdentifiers(spDTO);
+        Ii assignedIdentifier = PAUtil.getAssignedIdentifier(spDTO);
+        gtdDTO.setOtherIdentifiers(otherIdentifiers);
+        gtdDTO.setNonOtherIdentifiers(assignedIdentifier);
     }
 
     private void copyCentralContact(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException,
