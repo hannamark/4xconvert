@@ -123,10 +123,10 @@ import org.apache.commons.lang.time.DateUtils;
  */
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Local(PDQUpdateGeneratorTaskServiceLocal.class)
 public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTaskServiceLocal {
-    private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd-", Locale.US);
+    private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     private final SimpleDateFormat time = new SimpleDateFormat("-HH-mm-ss", Locale.US);
     private static final String ZIP_ARCHIVE_NAME = "CTRP-TRIALS-";
     private static final int MAX_FILE_AGE = -30;
@@ -139,53 +139,53 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
      */
     public void performTask() throws PAException {
         String folderPath = PaEarPropertyReader.getPDQUploadPath();
-
         //First, delete all files older than 30 days.
         Date thirtyDaysAgo = DateUtils.addDays(new Date(), MAX_FILE_AGE);
         @SuppressWarnings("unchecked")
         Collection<File> filesToDelete =
             FileUtils.listFiles(new File(folderPath), FileFilterUtils.ageFileFilter(thirtyDaysAgo, true), null);
-
         for (File f : filesToDelete) {
             FileUtils.deleteQuietly(f);
         }
-
         //Name of the file will be CTRP-TRIALS-YYYY-MM-DD-T-HH-mm-ss.zip
         Date now = new Date();
-        String zipFilePath = folderPath + File.separator + ZIP_ARCHIVE_NAME + date.format(now) + "T"
-            + time.format(now) + ".zip";
-        File zipArchive = new File(zipFilePath);
+        String zipFilePath = folderPath + File.separator + ZIP_ARCHIVE_NAME + date.format(now) +  "-T"
+        + time.format(now) + ".zip";
+        //Using the temp path to ensure locking is correctly working.
+        String tempZipFilePath = folderPath + File.separator + ZIP_ARCHIVE_NAME + date.format(now) + ".zip";
+        File zipArchive = new File(tempZipFilePath);
+        //Delete the temporary archive if it exists
+        FileUtils.deleteQuietly(zipArchive);
         //Then get all collaborative trials and generate the xml for it, adding it as an entry in the zip archive.
         List<StudyProtocolDTO> collaborativeTrials = PaRegistry.getStudyProtocolService().getCollaborativeTrials();
         ZipOutputStream zipOutput = null;
         try {
             zipOutput = new ZipOutputStream(new BufferedOutputStream(FileUtils.openOutputStream(zipArchive)));
-
             FileChannel channel = new RandomAccessFile(zipArchive, "rw").getChannel();
             FileLock lock = channel.lock();
             for (StudyProtocolDTO sp : collaborativeTrials) {
                 String pdqXml = xmlGeneratorService.generatePdqXml(sp.getIdentifier());
                 String fileName = PAUtil.getAssignedIdentifierExtension(sp) + ".xml";
                 File xmlFile = new File(folderPath + File.separator + fileName);
-
                 //Write xml to temporary file.
                 FileUtils.writeStringToFile(xmlFile, pdqXml);
-
                 //Create new zip entry and write file date to archive
                 ZipEntry entry = new ZipEntry(fileName);
                 zipOutput.putNextEntry(entry);
                 IOUtils.write(FileUtils.readFileToByteArray(xmlFile), zipOutput);
-
                 //After file has been written to zip archive, delete it.
                 FileUtils.deleteQuietly(xmlFile);
             }
             lock.release();
+            //Finally move the generic file to the more specific path.
+            FileUtils.moveFile(zipArchive, new File(zipFilePath));
         } catch (IOException e) {
             throw new PAException("Error attempting to create PDQ XML Archive.", e);
         } finally {
             IOUtils.closeQuietly(zipOutput);
         }
     }
+
     /**
      * Returns the list of file names.
      * @return listOfFilesNames
@@ -208,7 +208,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
      */
     public  String getRequestedFileName(String requestedFileName) throws PAException {
         StringBuffer filePath = new StringBuffer();
-        filePath.append(PaEarPropertyReader.getDocUploadPath()).append(File.separator);
+        filePath.append(PaEarPropertyReader.getPDQUploadPath()).append(File.separator);
         String fileRequested = "";
         if (StringUtils.contains(requestedFileName, ZIP_ARCHIVE_NAME)) {
             fileRequested = requestedFileName;

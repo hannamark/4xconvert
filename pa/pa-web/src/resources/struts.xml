@@ -64,7 +64,7 @@
         </action>
         <action name="pdq*" class="gov.nih.nci.pa.action.PDQAction" method="{1}">
             <result>/WEB-INF/jsp/pdqExport.jsp</result>
-            <result name = "message">/WEB-INF/jsp/pdqExportMsg.jsp</result>
+            <result name="error">/WEB-INF/jsp/pdqExport.jsp</result>
         </action>
     </package>
 

@@ -100,12 +100,14 @@ public interface PDQUpdateGeneratorTaskServiceLocal {
      * @throws PAException on error
      */
     void performTask() throws PAException;
+
     /**
      * Returns the list of file names.
      * @return listOfFilesNames
      * @throws PAException on error
      */
     List<String> getListOfFileNames() throws PAException;
+
     /**
      * Returns the file name.
      * @param requestedFileName requestedFileName
@@ -113,5 +115,4 @@ public interface PDQUpdateGeneratorTaskServiceLocal {
      * @throws PAException on error
      */
     String getRequestedFileName(String requestedFileName) throws PAException;
-
 }
