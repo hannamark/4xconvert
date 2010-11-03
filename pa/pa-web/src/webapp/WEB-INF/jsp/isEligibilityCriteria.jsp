@@ -230,10 +230,6 @@ BubbleTips.activateTipOn("dfn");
                         -<s:textfield  name="eligibilityList[%{#stat.index}].valueIntegerMax" value="%{valueIntegerMax}" cssStyle="width:35px;border: 1px solid #FFFFFF" readonly="true"/>
                         </s:if>
                        </s:elseif>
-                       <s:else>
-                        <s:textfield  name="eligibilityList[%{#stat.index}].value" value="%{value}" cssStyle="width:38px;border: 1px solid #FFFFFF" readonly="true"/>
-                       </s:else> 
-                       
                        </td>
                        <td class="tdBoxed">
                         <s:textfield  name="eligibilityList[%{#stat.index}].unit" value="%{unit}" cssStyle="width:55px;border: 1px solid #FFFFFF" readonly="true"/>
