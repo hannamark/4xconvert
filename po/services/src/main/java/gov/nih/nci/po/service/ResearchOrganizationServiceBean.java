@@ -84,19 +84,12 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
-import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.PoHibernateUtil;
-
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
-
-import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
 
 /**
  * Implementation of interface.
@@ -108,7 +101,6 @@ public class ResearchOrganizationServiceBean extends AbstractCuratableServiceBea
 
     /**
      * {@inheritDoc}
-     * @throws JMSException
      */
     @Override
     public long create(ResearchOrganization obj) throws EntityValidationException, JMSException {
@@ -123,34 +115,4 @@ public class ResearchOrganizationServiceBean extends AbstractCuratableServiceBea
         return super.getHotRoleCount(org.getId(), ResearchOrganization.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public void migrateFundingMechanism() {
-        Session session = PoHibernateUtil.getCurrentSession();
-        List<ResearchOrganization> roList = session
-        .createCriteria(ResearchOrganization.class)
-        .add(Expression.isNotNull("fundingMechanismEmbedded"))
-        .add(Expression.isNull("fundingMechanism"))
-        .list();
-
-        for (ResearchOrganization ro : roList) {
-            ro.setFundingMechanism(ro.getFundingMechanismEmbedded());
-            ro.setFundingMechanismEmbedded(null);
-            session.saveOrUpdate(ro);
-        }
-
-        List<ResearchOrganizationCR> roCrList = session
-        .createCriteria(ResearchOrganizationCR.class)
-        .add(Expression.isNotNull("fundingMechanismEmbedded"))
-        .add(Expression.isNull("fundingMechanism"))
-        .list();
-
-        for (ResearchOrganizationCR roCr : roCrList) {
-            roCr.setFundingMechanism(roCr.getFundingMechanismEmbedded());
-            roCr.setFundingMechanismEmbedded(null);
-            session.saveOrUpdate(roCr);
-        }
-    }
 }

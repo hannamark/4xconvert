@@ -107,29 +107,9 @@ public abstract class AbstractResearchOrganization extends AbstractEnhancedOrgan
 
     private static final long serialVersionUID = 1L;
 
-    private FundingMechanism fundingMechanismEmbedded;
     private FundingMechanism fundingMechanism;
     private ResearchOrganizationType typeCode;
 
-    /**
-     * @return the fundingMechanism
-     * @deprecated this method was refactored. It is only used by LiquiBase Updater, should
-     *  not be used otherwise, and will be removed in a future version.
-     */
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
-    public FundingMechanism getFundingMechanismEmbedded() {
-        return fundingMechanismEmbedded;
-    }
-
-    /**
-     * @param fundingMechanismEmbedded funding mechanism
-     * @deprecated this method was refactored. It is only used by LiquiBase Updater, should
-     *  not be used otherwise, and will be removed in a future version.   
-    */
-    public void setFundingMechanismEmbedded(FundingMechanism fundingMechanismEmbedded) {
-        this.fundingMechanismEmbedded = fundingMechanismEmbedded;
-    }
-    
     /**
      * @return the fundingMechanism
      * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Cd"
@@ -149,7 +129,7 @@ public abstract class AbstractResearchOrganization extends AbstractEnhancedOrgan
      */
     public void setFundingMechanism(FundingMechanism fundingMechanism) {
         this.fundingMechanism = fundingMechanism;
-    }    
+    }
 
     /**
      * @return the type

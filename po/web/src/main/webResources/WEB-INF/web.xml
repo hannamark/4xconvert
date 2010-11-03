@@ -7,13 +7,6 @@
 
     <display-name>PO</display-name>
 
-    
-    <!--  This Servlet used in lieu of a LiquiBase Update because of difficulty in 
-            using custom task with BDA -->
-    <listener>
-        <listener-class>gov.nih.nci.po.web.util.PO1129UpdaterListener</listener-class>
-    </listener>
-    
     <!-- This servlet handles the syncing of GridGrouper groups to CSM.  -->
     <listener>
         <listener-class>gov.nih.nci.coppa.web.CSMSyncListener</listener-class>
@@ -40,7 +33,7 @@
         <param-name>appTagRevision</param-name>
         <param-value>${buildNumber}</param-value>
     </context-param>
-    
+
     <!-- Filters -->
     <filter>
         <filter-name>usernameFilter</filter-name>
@@ -70,7 +63,7 @@
         <filter-name>csmUserFilter</filter-name>
         <filter-class>gov.nih.nci.po.web.filter.CsmUserFilter</filter-class>
     </filter>
-    
+
      <filter-mapping>
         <filter-name>sessionFixation</filter-name>
         <url-pattern>*.action</url-pattern>
@@ -86,7 +79,7 @@
         <url-pattern>*.action</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>    
+    </filter-mapping>
     <filter-mapping>
         <filter-name>struts2-cleanup</filter-name>
         <url-pattern>/*</url-pattern>
@@ -115,7 +108,7 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
-    
+
     <!-- Welcome file lists -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

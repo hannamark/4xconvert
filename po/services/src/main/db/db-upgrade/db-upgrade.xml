@@ -120,7 +120,7 @@
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.2/PO-1492.sql"/>
     </changeSet>
     <changeSet id="PO-1501" author="ludetc">
-       <comment>Upgrade to CSM 4.2.</comment>       
+       <comment>Upgrade to CSM 4.2.</comment>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.2/PO-1501.MigrationScript4.1.sql"/>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.2/PO-1501.MigrationScript4.2.sql"/>
     </changeSet>
@@ -131,5 +131,9 @@
     <changeSet id="PO-2339" author="aevansel">
        <comment>PO-2339: Updating CSM table structures to mirror those found in the PA database.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.3/PO-2339.sql"/>
+    </changeSet>
+    <changeSet id="PO-1458" author="slustbader">
+       <comment>PO-1458: Final cleanup of RO funding mechanism</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.4/PO-1458.sql"/>
     </changeSet>
 </databaseChangeLog>

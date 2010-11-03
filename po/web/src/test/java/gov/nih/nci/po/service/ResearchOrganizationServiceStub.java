@@ -60,7 +60,4 @@ public class ResearchOrganizationServiceStub implements ResearchOrganizationServ
         return null;
     }
 
-    public void migrateFundingMechanism() {
-    }
-
 }
