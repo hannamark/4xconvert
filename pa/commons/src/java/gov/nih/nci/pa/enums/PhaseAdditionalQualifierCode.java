@@ -19,7 +19,7 @@ public enum PhaseAdditionalQualifierCode implements CodedEnum<String> {
 
     private String code;
     private String displayName;
-    
+
     private PhaseAdditionalQualifierCode(String code, String displayName) {
         this.code = code;
         this.displayName = displayName;
