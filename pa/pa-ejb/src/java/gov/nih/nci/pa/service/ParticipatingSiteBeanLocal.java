@@ -378,8 +378,12 @@ implements ParticipatingSiteServiceLocal {
             studySiteDTO = getStudySiteService().update(siteDTO);
         }
         createStudySiteAccrualStatus(studySiteDTO.getIdentifier(), currentStatus);
+        return getStudySite(studySiteDTO.getIdentifier());
+    }
+
+    private StudySite getStudySite(Ii studySiteIi) {
         return (StudySite) HibernateUtil.getCurrentSession().get(StudySite.class,
-                IiConverter.convertToLong(studySiteDTO.getIdentifier()));
+                IiConverter.convertToLong(studySiteIi));
     }
 
     /**
@@ -393,7 +397,7 @@ implements ParticipatingSiteServiceLocal {
             this.createStudySiteParticipant(studySiteDTO, currentStatusDTO,
                 orgDTO, hcfDTO);
         addStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
-        return participatingSiteDTO;
+        return getParticipatingSite(participatingSiteDTO.getIdentifier());
     }
 
     /**
@@ -407,7 +411,7 @@ implements ParticipatingSiteServiceLocal {
             this.createStudySiteParticipant(studySiteDTO, currentStatusDTO,
                 poHcfIi);
         addStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
-        return participatingSiteDTO;
+        return getParticipatingSite(participatingSiteDTO.getIdentifier());
     }
 
     /**
@@ -422,7 +426,7 @@ implements ParticipatingSiteServiceLocal {
         ParticipatingSiteDTO participatingSiteDTO = 
             this.updateStudySiteParticipant(studySiteDTO, currentStatusDTO);
         addStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
-        return participatingSiteDTO;
+        return getParticipatingSite(participatingSiteDTO.getIdentifier());
     }
 
     private void addStudySiteContacts(List<ParticipatingSiteContactDTO> participatingSiteContactDTOList,
@@ -458,6 +462,15 @@ implements ParticipatingSiteServiceLocal {
             this.addStudySiteGenericContact(participatingSiteDTO.getIdentifier(),
                     (OrganizationalContactDTO) personRoleDTO, isPrimary, studySiteContactDTO.getTelecomAddresses());
         }
+    }
+
+    private ParticipatingSiteDTO getParticipatingSite(Ii studySiteIi) throws PAException {
+        ParticipatingSiteDTO participatingSiteDTO = new ParticipatingSiteConverter()
+                .convertFromDomainToDto(getStudySite(studySiteIi));
+        // we should be able just to do a participatingSiteDTO.getStudySiteContacts() to fetch the StudySiteContactlist,
+        // but it doesn't appear to be working properly. PO-2911 created to address that.
+        participatingSiteDTO.setStudySiteContacts(getStudySiteContactService().getByStudySite(studySiteIi));
+        return participatingSiteDTO;
     }
 
 }
