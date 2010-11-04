@@ -158,6 +158,7 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -648,19 +649,15 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             ss.setLocalStudyProtocolIdentifier(dto.getIdentifier().getExtension());
 
             if (StringUtils.equals(dto.getIdentifier().getRoot(), IiConverter.CTEP_STUDY_PROTOCOL_ROOT)) {
-                Organization org = new Organization();
-                org.setName(PAConstants.CTEP_ORG_NAME);
-                ResearchOrganization ro = new ResearchOrganization();
-                ro.setOrganization(org);
-                ss.setResearchOrganization(ro);
+                ss.setResearchOrganization(populateResearchOrganization(PAConstants.CTEP_ORG_NAME));
             }
 
             if (StringUtils.equals(dto.getIdentifier().getRoot(), IiConverter.DCP_STUDY_PROTOCOL_ROOT)) {
-                Organization org = new Organization();
-                org.setName(PAConstants.DCP_ORG_NAME);
-                ResearchOrganization ro = new ResearchOrganization();
-                ro.setOrganization(org);
-                ss.setResearchOrganization(ro);
+                ss.setResearchOrganization(populateResearchOrganization(PAConstants.DCP_ORG_NAME));
+            }
+
+            if (StringUtils.equals(dto.getIdentifier().getRoot(), IiConverter.NCT_STUDY_PROTOCOL_ROOT)) {
+                ss.setResearchOrganization(populateResearchOrganization(PAConstants.CTGOV_ORG_NAME));
             }
 
             criteria.getStudySites().add(ss);
@@ -672,6 +669,14 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(criteria);
         List<StudyProtocol> results = search(crit, params);
         return convertFromDomainToDTO(results);
+    }
+
+    private ResearchOrganization populateResearchOrganization(String orgName) {
+        Organization org = new Organization();
+        org.setName(orgName);
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setOrganization(org);
+        return ro;
     }
 
     /**
@@ -766,7 +771,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                         + studyProtocolIi.getExtension());
             }
             studyProtocolDTO = spList.get(0);
-        } else {
+        } else if (NumberUtils.isNumber(studyProtocolIi.getExtension())) {
             studyProtocolDTO = getStudyProtocolById(Long.valueOf(studyProtocolIi.getExtension()));
         }
 
@@ -796,8 +801,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         && (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.DCP_STUDY_PROTOCOL_ROOT)
         || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.CTEP_STUDY_PROTOCOL_ROOT)
         || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.NCT_STUDY_PROTOCOL_ROOT)
-        || (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT))
-                && StringUtils.startsWith(studyProtocolIi.getExtension(), "NCI"));
+        || (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT)
+                && StringUtils.startsWith(studyProtocolIi.getExtension(), "NCI")));
     }
 
     /**

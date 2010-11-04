@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -502,20 +503,38 @@ public class StudyProtocolServiceBeanTest {
     @Test
     public void testGetStudyProtocol() throws Exception {
         createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-1");
-        createStudyProtocols(1, null, "NCT-1");
+        createStudyProtocols(1, PAConstants.CTGOV_ORG_NAME, "NCT-1");
         createStudyProtocols(1, PAConstants.CTEP_ORG_NAME, "CTEP-1");
 
         Ii ii = new Ii();
-        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         ii.setExtension("DCP-1");
         StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
+        assertNull(spDTO);
+
+        ii = new Ii();
+        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("DCP-1");
+        spDTO = remoteEjb.getStudyProtocol(ii);
         assertNotNull(spDTO);
+
+        ii = new Ii();
+        ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        ii.setExtension("NCT-1");
+        spDTO = remoteEjb.getStudyProtocol(ii);
+        assertNull(spDTO);
 
         ii = new Ii();
         ii.setRoot(IiConverter.NCT_STUDY_PROTOCOL_ROOT);
         ii.setExtension("NCT-1");
         spDTO = remoteEjb.getStudyProtocol(ii);
         assertNotNull(spDTO);
+
+        ii = new Ii();
+        ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        ii.setExtension("CTEP-1");
+        spDTO = remoteEjb.getStudyProtocol(ii);
+        assertNull(spDTO);
 
         ii = new Ii();
         ii.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
