@@ -334,12 +334,11 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     studyProtocolDto.setStudyCheckoutBy(studyCheckout.getUserIdentifier());
                     studyProtocolDto.setStudyCheckoutId(studyCheckout.getId());
                 }
-
-                if (potentialOwner != null && myTrialsOnly) {
-                    if (registryUserService.hasTrialAccess(potentialOwner, studyProtocol.getId())) {
-                        studyProtocolDtos.add(studyProtocolDto);
-                    }
-                } else {
+                if (potentialOwner != null) {
+                    studyProtocolDto.setSearcherTrialOwner(registryUserService.hasTrialAccess(potentialOwner,
+                            studyProtocol.getId()));
+                }
+                if ((myTrialsOnly && studyProtocolDto.isSearcherTrialOwner()) || !myTrialsOnly) {
                     studyProtocolDtos.add(studyProtocolDto);
                 }
             }

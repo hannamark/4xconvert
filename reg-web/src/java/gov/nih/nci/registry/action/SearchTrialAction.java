@@ -115,6 +115,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -140,6 +141,13 @@ public class SearchTrialAction extends ActionSupport {
     private Long studyProtocolId = null;
     private final TrialUtil trialUtil = new TrialUtil();
     private static final String SPID = "studyProtocolId";
+    private static final Set<StudyStatusCode> UPDATEABLE_STATUS = new HashSet<StudyStatusCode>();
+    static {
+        UPDATEABLE_STATUS.add(StudyStatusCode.DISAPPROVED);
+        UPDATEABLE_STATUS.add(StudyStatusCode.WITHDRAWN);
+        UPDATEABLE_STATUS.add(StudyStatusCode.COMPLETE);
+        UPDATEABLE_STATUS.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
+    }
 
     /**
      * @return res
@@ -197,10 +205,11 @@ public class SearchTrialAction extends ActionSupport {
     private void checkToShowSendXml() throws PAException {
         for (StudyProtocolQueryDTO queryDto : records) {
             String dwfs = queryDto.getDocumentWorkflowStatusCode().getCode();
-            if (!queryDto.isProprietaryTrial()
-                    && (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
-                            || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode()))
-                            && queryDto.getCtgovXmlRequiredIndicator()) {
+            List<String> abstractedCodes =
+                Arrays.asList(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode(),
+                        DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode());
+            if (!queryDto.isProprietaryTrial() && abstractedCodes.contains(dwfs)
+                        && queryDto.getCtgovXmlRequiredIndicator() && queryDto.isSearcherTrialOwner()) {
                 queryDto.setShowSendXml(true);
             }
         }
@@ -210,27 +219,19 @@ public class SearchTrialAction extends ActionSupport {
         for (StudyProtocolQueryDTO queryDto : records) {
             DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
             StudyStatusCode statusCode = queryDto.getStudyStatusCode();
-            if (dwfs == null) {
+            if (dwfs == null || statusCode == null) {
                 queryDto.setUpdate("");
             }
-            if (statusCode == null) {
-                queryDto.setUpdate("");
-            }
-
-            Set<StudyStatusCode> updatableStatuses = new HashSet<StudyStatusCode>();
-            updatableStatuses.add(StudyStatusCode.DISAPPROVED);
-            updatableStatuses.add(StudyStatusCode.WITHDRAWN);
-            updatableStatuses.add(StudyStatusCode.COMPLETE);
-            updatableStatuses.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
 
             if (statusCode != null && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
-                    && !updatableStatuses.contains(statusCode)) {
+                        && queryDto.isSearcherTrialOwner() && !UPDATEABLE_STATUS.contains(statusCode)) {
                 queryDto.setUpdate("Update");
             } else  {
                 queryDto.setUpdate("");
             }
 
-            if (queryDto.isProprietaryTrial() && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)) {
+            if (queryDto.isProprietaryTrial() && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
+                    && queryDto.isSearcherTrialOwner()) {
                 queryDto.setUpdate("Update");
             }
         }
@@ -262,8 +263,7 @@ public class SearchTrialAction extends ActionSupport {
                 queryCriteria.setOtherIdentifier(criteria.getIdentifier());
             }
         }
-        if (criteria.getOrganizationId() != null
-                && criteria.getOrganizationId().trim().length() > 0) {
+        if (StringUtils.isNotEmpty(criteria.getOrganizationId())) {
             queryCriteria.setLeadOrganizationId(criteria.getOrganizationId().toString());
         }
         if (criteria.getParticipatingSiteId() != null

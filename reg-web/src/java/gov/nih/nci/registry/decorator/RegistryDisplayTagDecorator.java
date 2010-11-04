@@ -119,10 +119,11 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     public String getAmend() {
         StudyProtocolQueryDTO row = (StudyProtocolQueryDTO) this.getCurrentRowObject();
         boolean isProprietaryTrial = row.isProprietaryTrial();
+        boolean isOwner = row.isSearcherTrialOwner();
         DocumentWorkflowStatusCode dwfs = row.getDocumentWorkflowStatusCode();
-        StudyStatusCode statusCode = row.getStudyStatusCode();
+        StudyStatusCode studyStatusCode = row.getStudyStatusCode();
 
-        if (!isProprietaryTrial && isAmendDWFS(dwfs) && isAmendStatus(statusCode)) {
+        if (!isProprietaryTrial && isAmendDWFS(dwfs) && isOwner && isAmendStatus(studyStatusCode)) {
             return "Amend";
         }
         return "";
@@ -154,6 +155,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     }
 
     /**
+     *
      * @return masked processing status
      */
     public DocumentWorkflowStatusCode getDocumentWorkflowStatusCode() {
@@ -232,10 +234,10 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
      * @return st
      */
     public String getCompletePartialSubmission() {
-        StudyProtocolQueryDTO row = (StudyProtocolQueryDTO) this.getCurrentRowObject();
-        String nciNumber =  row.getNciIdentifier();
+        boolean isOwner = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).isSearcherTrialOwner();
+        String nciNumber =  ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getNciIdentifier();
         String retComplete = "";
-        if (StringUtils.isEmpty(nciNumber)) {
+        if (isOwner && StringUtils.isEmpty(nciNumber)) {
             retComplete = "Complete";
         }
         return retComplete;
@@ -246,10 +248,10 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
      * @return st
      */
     public String getDeletePartialSubmission() {
-        StudyProtocolQueryDTO row = (StudyProtocolQueryDTO) this.getCurrentRowObject();
-        String nciNumber =  row.getNciIdentifier();
+        boolean isOwner = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).isSearcherTrialOwner();
+        String nciNumber =  ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getNciIdentifier();
         String retComplete = "";
-        if (StringUtils.isEmpty(nciNumber)) {
+        if (isOwner && StringUtils.isEmpty(nciNumber)) {
             retComplete = "Delete";
         }
         return retComplete;

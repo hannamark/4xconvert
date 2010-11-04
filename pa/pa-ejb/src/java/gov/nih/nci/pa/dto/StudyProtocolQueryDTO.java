@@ -144,6 +144,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Boolean ctgovXmlRequiredIndicator;
     private Boolean showSendXml = false;
     private List<String> otherIdentifiers = new ArrayList<String>();
+    private boolean searcherTrialOwner = false;
 
     /**
      * @return the trialCategory
@@ -721,5 +722,21 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public void setSponsorOrganizationName(String sponsorOrganizationName) {
         this.sponsorOrganizationName = sponsorOrganizationName;
+    }
+
+    /**
+     * This field is set to true if and only if the person performing the search is
+     * considered a trial owner.
+     * @return the isSearcherTrialOwner
+     */
+    public boolean isSearcherTrialOwner() {
+        return searcherTrialOwner;
+    }
+
+    /**
+     * @param isSearcherTrialOwner the isSearcherTrialOwner to set
+     */
+    public void setSearcherTrialOwner(boolean isSearcherTrialOwner) {
+        this.searcherTrialOwner = isSearcherTrialOwner;
     }
 }
