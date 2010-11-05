@@ -52,7 +52,7 @@ public class CTEPPerServiceStubBuilder {
         hcp.setStatus(statusPending);
         hcp.setPostalAddress(getAds());
         hcp.setPlayerIdentifier(getId1());
-        hcp.setScoperIdentifier(getId2());
+        hcp.setScoperIdentifier(getCtepOrgId());
         hcp.setTelecomAddress(new DSet<Tel>());
         hcp.getTelecomAddress().setItem(new LinkedHashSet<Tel>());
         Tel tel = new Tel();
@@ -71,9 +71,9 @@ public class CTEPPerServiceStubBuilder {
         return id;
     }
     
-    private Ii getId2() {
+    private Ii getCtepOrgId() {
         Ii id2 = new Ii();
-        id2.setExtension("CTEP IO ORG");
+        id2.setExtension("CTEP");
         id2.setIdentifierName("CTEP ID");
         id2.setRoot(CtepOrganizationImporterTest.CTEP_ORG_ROOT);
         return id2;

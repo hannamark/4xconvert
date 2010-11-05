@@ -70,10 +70,10 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
             }
         };
        
-        createCTEPPer();
+        createCTEPOrg();
     }
     
-    private void createCTEPPer() throws Exception {
+    private void createCTEPOrg() throws Exception {
 
         affOrg = new Organization();
         affOrg.setName("Cancer Therapy Evaluation Program");
@@ -98,7 +98,7 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
         io.setScoper(affOrg);
         io.setAssignedIdentifier(new Ii());
         io.getAssignedIdentifier().setDisplayable(true);
-        io.getAssignedIdentifier().setExtension("CTEP IO ORG");
+        io.getAssignedIdentifier().setExtension("CTEP");
         io.getAssignedIdentifier().setIdentifierName("CTEP ID");
         io.getAssignedIdentifier().setReliability(IdentifierReliability.VRF);
         io.getAssignedIdentifier().setRoot(CtepOrganizationImporterTest.CTEP_ORG_ROOT);
