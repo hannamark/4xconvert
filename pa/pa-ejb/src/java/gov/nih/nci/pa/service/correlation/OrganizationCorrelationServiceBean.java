@@ -146,12 +146,15 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         throws PAException {
         HealthCareFacilityDTO hcfDTO = null;
         try {
-            hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(poHcfIdentifier);
+            if (IiConverter.HEALTH_CARE_FACILITY_ROOT
+                    .equals(poHcfIdentifier.getRoot())) {
+                hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService()
+                    .getCorrelation(poHcfIdentifier);
+            } else {
+                hcfDTO = getHcfByOtherId(poHcfIdentifier);
+            }
         } catch (NullifiedRoleException e) {
             throw new PAException(PAUtil.handleNullifiedRoleException(e));
-        }
-        if (hcfDTO == null) {
-            hcfDTO = getHcfByOtherId(poHcfIdentifier);
         }
         if (hcfDTO == null) {
             throw new PAException("Unable to find HealthCareFacility for identifier: " + poHcfIdentifier);
@@ -165,12 +168,12 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             } catch (NullifiedEntityException e) {
                 throw new PAException(PAUtil.handleNullifiedEntityException(e), e);
             }
-            
+
             if (poOrgDTO == null) {
-                throw new PAException("Unable to find Organization for identifier: " 
+                throw new PAException("Unable to find Organization for identifier: "
                         + hcfDTO.getPlayerIdentifier().getExtension());
             }
-            
+
             Organization paOrg = getCorrUtils().createPAOrganization(poOrgDTO);
             hcf = new HealthCareFacility();
             hcf.setOrganization(paOrg);
