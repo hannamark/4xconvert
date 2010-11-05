@@ -20,9 +20,9 @@
     <property name="pa-ear.build.testResourceDir.0" value="${pa.dir}/pa-ear/test/resources"/>
     <property name="pa-ear.build.finalName" value="pa"/>
     <property name="pa-ear.ear" value="${pa-ear.build.finalName}.ear"/>
-    <property name="pa-ejb.output.dir" value="${pa.dir}//pa-ejb/target"/>
+    <property name="pa-ejb.output.dir" value="${pa.dir}/pa-ejb/target"/>
     <property name="pa-ejb.package" value="${pa-ejb.output.dir}/pa-ejb.jar"/>
-	<property name="pa-commons.output.dir" value="${pa.dir}//commons/target"/>
+	<property name="pa-commons.output.dir" value="${pa.dir}/commons/target"/>
 	<property name="pa-commons.package" value="${pa-commons.output.dir}/pa-commons.jar"/>
     <property name="pa-web.output.dir" value="${pa.dir}/pa-web/target"/>
     <property name="pa-web.package" value="${pa-web.output.dir}/pa-web.war"/>
@@ -33,7 +33,7 @@
     <property name="viewer.jar.output.dir" value="${software.dir}/viewer/services/target"/>
     <property name="viewer.jar.package" value="${viewer.jar.output.dir}/viewer-services.jar"/>
     <property file="${software.dir}/viewer/resources/deployment.descriptor.properties"/>
-    <property name="serverName" value="default"/>
+    <property name="serverName" value="paear"/>
 
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
@@ -41,8 +41,8 @@
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
     <property name="ivy.def.file" location="ivy-pa-ear.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-
-
+    <property name="selenium.port" value="4443"/>
+    
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
@@ -54,7 +54,7 @@
 
     <property name="runtime.jar.dir" location="${lib.dir}/pa-ear/runtime" />
     <property name="container.jar.dir" location="${lib.dir}/pa-ear/container" />
-
+    
     <property name="test.jar.dir" location="${lib.dir}/pa-ear/test" />
     <path id="test.classpath">
         <fileset dir="${test.jar.dir}">
@@ -65,6 +65,13 @@
     <property name="test-junit.jar.dir" location="${lib.dir}/pa-ear/test-junit" />
     <path id="test-junit.classpath">
         <fileset dir="${test-junit.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    
+    <property name="selenium.jar.dir" location="${lib.dir}/pa-ear/selenium" />
+    <path id="selenium.classpath">
+        <fileset dir="${selenium.jar.dir}">
             <include name="*.jar"/>
         </fileset>
     </path>
@@ -101,7 +108,7 @@
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${pa.report.dir}/pa-ear"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
-
+    
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
@@ -312,54 +319,49 @@
     <!-- called only for selenium tests                                         -->
     <!-- ====================================================================== -->
 
-    <target name="start_jboss" depends="package, deploy, configure.tests"
-            description="starts the jboss to run selenium test">
-        <jboss-start-jboss jboss.home="${jboss.deploy.directory}/../../../" jboss.server.name="${serverName}"/>
+    <target name="run-selenium-tests" depends="package, deploy, configure.tests" description="Starts jboss instance, runs the selenium tests and then shuts the jboss instance down.">
+        <ant target="start-jboss-server"/>
+        <ant target="start-selenium-server"/>
+        <!--<ant target="test-selenium-class" dir="../pa-web"/>-->
+        <ant target="stop-selenium-server"/>
+        <ant target="stop-jboss-server"/>
     </target>
-
-    <!--
-    jboss-start-jboss macro will start the jboss instance
-    usage: <jboss-start-jboss jboss.home="${jboss.home}"/>
-                jboss.home is the location where Jboss is installed
-    -->
-    <macrodef name="jboss-start-jboss" description="Starts a local JBoss instance">
-         <attribute name="jboss.home" default="${jboss.home}" />
-         <attribute name="jboss.server.name" default="${jboss.server.name}" />
-              <sequential>
-                     <available file="@{jboss.home}/bin" property="jboss.bin.exists"/>
-                         <if>
-                             <isset property="jboss.bin.exists"/>
-                                <then>
-                                    <echo message="Starting JBoss instance at @{jboss.home} and @{jboss.server.name} with start_jboss" />
-                                    <exec os="Windows XP, Windows 2000, Windows 2003" executable="cmd" dir="@{jboss.home}/bin" spawn="true" >
-                                           <env key="NOPAUSE" value="true" />
-                                           <arg line="/c run.bat" />
-                                    </exec>
-                                </then>
-                              <else>
-                                    <echo message="Starting JBoss instance at @{jboss.home} with run.sh" />
-                                    <exec os="Linux" executable="chmod" spawn="true">
-                                           <arg value="+x" />
-                                           <arg file="@{jboss.home}/bin/run.sh" />
-                                           <arg file="@{jboss.home}/bin/shutdown.sh" />
-                                    </exec>
-                                    <exec executable="sh" os="Linux" dir="@{jboss.home}/bin" spawn="true">
-                                           <env key="NOPAUSE" value="true" />
-                                           <arg line="run.sh" />
-                                    </exec>
-                                    <exec os="Windows_NT, Windows 2000, Windows 2003" executable="cmd" dir="@{jboss.home}/bin" spawn="true" >
-                                           <env key="NOPAUSE" value="true" />
-                                           <arg line="/c run.bat" />
-                                    </exec>
-                                    <sleep seconds="15" />
-                              </else>
-                         </if>
-                <ant target="waitfor-jboss"/>
-                <ant target="start-selenium-server"/>
-                <ant target="test-selenium-class" dir="../pa-web"/>
-                <ant target="stop-jboss"/>
-                </sequential>
-    </macrodef>
+    
+    <target name="start-jboss-server" description="Starts a local JBoss instance">
+        <property name="jboss.home" value="${jboss.deploy.directory}/../../../"/>
+        <sequential>
+            <echo>Starting JBoss config ${serverName} in ${jboss.home}...</echo>
+            <java dir="${jboss.home}" classname="org.jboss.Main" fork="true" spawn="true">
+                <arg line="-c ${serverName}"/>
+                <jvmarg value="-Xms256m"/>
+                <jvmarg value="-Xmx512m"/>
+                <jvmarg value="-XX:MaxPermSize=128m"/>
+                <classpath>
+                    <pathelement path="${jboss.home}/bin/run.jar"/>
+                </classpath>
+            </java>
+            <echo>JBOSS startup please wait..............................</echo>
+            <waitfor maxwait="300" maxwaitunit="second" checkevery="20" checkeveryunit="second">
+                <http url="http://localhost:${jboss.port}/pa"/>
+            </waitfor>
+        </sequential>
+    </target>
+    
+    <target name="stop-jboss-server">
+        <property name="jboss.home" value="${jboss.deploy.directory}/../../../"/>
+        <sequential>
+            <java classname="org.jboss.Shutdown" fork="true" failonerror="false" resultproperty="shutdown.rc">
+                <arg line="--shutdown"/>
+                <classpath>
+                    <pathelement path="${jboss.home}/bin/shutdown.jar"/>
+                </classpath>
+            </java>
+            <condition property="shutdown.okay">
+                <equals arg1="${shutdown.rc}" arg2="0"/>
+            </condition>
+            <fail unless="shutdown.okay" message="Unable to shut down JBoss (maybe it hasn't fully started yet?)."/>
+        </sequential>
+    </target>
     <!-- ====================================================================== -->
     <!-- A target to build and deploy the package                               -->
     <!-- ====================================================================== -->
@@ -369,35 +371,28 @@
     <!-- ====================================================================== -->
     <!-- Start the selenium server                                              -->
     <!-- ====================================================================== -->
-
     <target name="start-selenium-server">
-        <java jar="${pa-ear.lib.dir}/main/selenium-server-1.0-beta-1-standalone.jar" fork="true" spawn="true">
-            <arg line="-timeout 30"/>
-            <jvmarg value="-Dhttp.proxyHost=proxy.corporate.com"/>
-            <jvmarg value="-Dhttp.proxyPort=3128"/>
-        </java>
+        <sequential>
+            <java classname="org.openqa.selenium.server.SeleniumServer" fork="true" spawn="true">
+                <arg line="-timeout 30"/>
+                <arg line="-port ${selenium.port}"/> 
+                <classpath>
+                    <path refid="selenium.classpath"/>
+                </classpath>
+            </java>
+            <waitfor maxwait="120" maxwaitunit="second" checkevery="5" checkeveryunit="second">
+                <http url="http://localhost:${selenium.port}/selenium-server/driver/?cmd=testComplete"/>
+            </waitfor>
+        </sequential>
     </target>
-
+    
     <!-- ====================================================================== -->
-    <!-- Wait for jboss to start                                                -->
+    <!-- Start the selenium server                                              -->
     <!-- ====================================================================== -->
-
-    <target name="waitfor-jboss">
-        <echo>JBOSS startup please wait..............................</echo>
-        <waitfor maxwait="120" maxwaitunit="second" checkevery="20" checkeveryunit="second">
-            <http url="http://localhost:${jboss.port}/pa"/>
+    <target name="stop-selenium-server">
+        <waitfor maxwait="120" maxwaitunit="second" checkevery="5" checkeveryunit="second">
+            <http url="http://localhost:${selenium.port}/selenium-server/driver/?cmd=shutDownSeleniumServer"/>
         </waitfor>
-    </target>
-
-    <!-- ====================================================================== -->
-    <!-- Stop the jboss server                                                  -->
-    <!-- ====================================================================== -->
-
-    <target name="stop-jboss" description="Stop the JBoss server">
-        <exec dir="${jboss.deploy.directory}/../../../bin" executable="cmd.exe" os="Windows XP, Windows_NT">
-            <arg line="/c shutdown.bat -S"/>
-            <env key="NOPAUSE" value="true"/>
-        </exec>
     </target>
 
     <!-- ====================================================================== -->
@@ -422,6 +417,10 @@
             <ivy:resolve refresh="true" conf="test" />
             <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision].[ext]" conf="test" />
     </target>
+    <target name="ivy-selenium" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="selenium" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision].[ext]" conf="selenium" />
+    </target>
     <target name="ivy-runtime" depends="init:ivy">
         <ivy:resolve refresh="true" conf="runtime" />
         <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
@@ -431,7 +430,7 @@
         <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision].[ext]" conf="container" />
     </target>
     <target name="ivy-get"
-            depends="init:ivy,ivy-runtime,ivy-container"
+            depends="init:ivy,ivy-runtime,ivy-container,ivy-selenium"
             description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">

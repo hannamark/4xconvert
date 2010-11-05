@@ -11,6 +11,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <conf name="compile"/>
     <conf name="runtime"/>
     <conf name="container"/>
+    <conf name="selenium"/>
     <conf name="test" extends="runtime"/>
     <conf name="test-junit"/>
   </configurations>
@@ -114,5 +115,8 @@ This is the definition of a virtual module called bda-download that has a depend
 
     <!-- other test targets -->
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test-junit->runtime"/>
+    
+    <dependency org="org.seleniumhq.selenium.server" name="selenium-server-coreless" rev="1.0.1"           conf="selenium->compile,master"/>
+    <dependency org="org.seleniumhq.selenium.client-drivers" name="selenium-java-client-driver"    rev="1.0.1" conf="selenium->master"/>
   </dependencies>
 </ivy-module>

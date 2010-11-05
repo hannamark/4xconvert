@@ -112,7 +112,7 @@
     	<ant target="package" dir="commons" inheritAll="false"/>
         <ant target="package" dir="pa-ejb" inheritAll="false"/>
         <ant target="package" dir="pa-web" inheritAll="false"/>
-        <ant target="start_jboss" dir="pa-ear" inheritAll="false"/>
+        <ant target="run-selenium-tests" dir="pa-ear" inheritAll="false"/>
     </target>
 
     <!-- ====================================================================== -->
