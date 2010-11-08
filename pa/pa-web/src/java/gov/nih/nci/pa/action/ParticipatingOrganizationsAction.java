@@ -225,8 +225,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         try {
         loadForm();
 
-        if (proprietaryTrialIndicator != null
-                && proprietaryTrialIndicator.equalsIgnoreCase("true")) {
+        if (StringUtils.equalsIgnoreCase(proprietaryTrialIndicator, "true")) {
             retString =  "proprietaryList";
         }
         } catch (PAException e) {
@@ -320,50 +319,48 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     }
 
     private StudySiteDTO saveNonPropWithCurrentSite(StudySiteAccrualStatusDTO ssas,
-            ParticipatingOrganizationsTabWebDTO tab,
-            String errorOrgName) throws PAException {
-        StudySiteDTO sp = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
-
-
-        boolean spUpdated = isUpdated(sp);
-
+            ParticipatingOrganizationsTabWebDTO tab, String errorOrgName) throws PAException {
+        Ii studySiteIi = IiConverter.convertToIi(tab.getStudyParticipationId());
+        StudySiteDTO studySite = sPartService.get(studySiteIi);
+        StudySiteAccrualStatusDTO studySiteAccrualStatus =
+            ssasService.getCurrentStudySiteAccrualStatusByStudySite(studySite.getIdentifier());
+        boolean spUpdated = isSiteUpdated(studySite, studySiteAccrualStatus);
         if (spUpdated) {
             try {
-                partSiteService.updateStudySiteParticipant(sp, ssas);
+                partSiteService.updateStudySiteParticipant(studySite, ssas);
             } catch (PADuplicateException e) {
                 addFieldError(errorOrgName, e.getMessage());
             }
         }
-        return sp;
+        return studySite;
     }
 
-    private boolean isUpdated(StudySiteDTO sp) {
-        String prgCode = (getProgramCode() == null) ? null : getProgramCode();
+    private boolean isSiteUpdated(StudySiteDTO studySite, StudySiteAccrualStatusDTO ssas) {
+        String prgCode = getProgramCode();
         Integer iTargetAccrual = (targetAccrualNumber == null) ? null : Integer.parseInt(targetAccrualNumber);
-        String localId = (getSiteLocalTrialIdentifier() == null) ? null : getSiteLocalTrialIdentifier();
-        boolean spUpdated =
-            isUpdated1(sp, prgCode, iTargetAccrual) && isUpdated2(sp, localId);
-
-
-        return spUpdated;
+        String localId = getSiteLocalTrialIdentifier();
+        return isProgramCodeOrTargetAccrualNumberUpdated(studySite, prgCode, iTargetAccrual)
+                   || isLocalStudyProtocolIdentifierUpdated(studySite, localId) || isRecruitmentStatusUpdated(ssas);
     }
 
-    private boolean isUpdated1(StudySiteDTO sp, String prgCode, Integer iTargetAccrual) {
+
+    private boolean isProgramCodeOrTargetAccrualNumberUpdated(StudySiteDTO sp, String prgCode, Integer iTargetAccrual) {
         boolean spUpdated = false;
-        if (IntConverter.convertToInteger(sp.getTargetAccrualNumber()) != iTargetAccrual) {
+        Integer oldTargetAccrualNumber = IntConverter.convertToInteger(sp.getTargetAccrualNumber());
+        if (oldTargetAccrualNumber != null && !oldTargetAccrualNumber.equals(iTargetAccrual)) {
             sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
             spUpdated = true;
         }
         if (PAUtil.isStNull(sp.getProgramCodeText())
-            || (!PAUtil.isStNull(sp.getProgramCodeText())
-                && !StConverter.convertToString(sp.getProgramCodeText()).equalsIgnoreCase(prgCode))) {
+                || !StConverter.convertToString(sp.getProgramCodeText()).equalsIgnoreCase(prgCode)) {
            sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
            spUpdated = true;
         }
+
         return spUpdated;
     }
 
-    private boolean isUpdated2(StudySiteDTO sp, String localId) {
+    private boolean isLocalStudyProtocolIdentifierUpdated(StudySiteDTO sp, String localId) {
         boolean spUpdated = false;
         if (PAUtil.isStNull(sp.getLocalStudyProtocolIdentifier()) || (!PAUtil.isStNull(
                 sp.getLocalStudyProtocolIdentifier()) && !StConverter.convertToString(
@@ -372,6 +369,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             spUpdated = true;
         }
         return spUpdated;
+    }
+
+    private boolean isRecruitmentStatusUpdated(StudySiteAccrualStatusDTO ssas) {
+        String statusDate = TsConverter.convertToString(ssas.getStatusDate());
+        return ssas != null && (!StringUtils.equalsIgnoreCase(ssas.getStatusCode().getCode(), recStatus)
+                || !StringUtils.equalsIgnoreCase(statusDate, recStatusDate));
     }
 
     private ParticipatingSiteDTO saveNonPropWithNewSite(StudySiteDTO sp, StudySiteAccrualStatusDTO ssas,
