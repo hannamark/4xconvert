@@ -100,13 +100,6 @@
         </fileset>
     </path>
 
-    <property name="test-selenium.jar.dir" location="${lib.dir}/pa-web/test-selenium" />
-    <path id="test-selenium.classpath">
-        <fileset dir="${test-selenium.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-
     <path id="ejb.package.classpath">
         <fileset dir="${pa.dir}/pa-ejb/target">
             <include name="*.jar"/>
@@ -248,7 +241,6 @@
                 <pathelement location="${pa-web.build.outputDir}"/>
                 <path refid="test.classpath"/>
                 <path refid="test-junit.classpath"/>
-                <path refid="test-selenium.classpath"/>
                 <path refid="compile.classpath"/>
                 <path refid="ejb.package.classpath"/>
                 <path refid="common.package.classpath"/>
@@ -387,7 +379,6 @@
                 <fileset dir="${pa-web.build.testDir.0}">
                 <include name="**/*Test.java"/>
                 <exclude name="**/*Abstract*Test.java"/>
-                <exclude name="**/*SeleniumTest.java"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -426,7 +417,6 @@
                 <fileset dir="${pa-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
                     <exclude name="**/*Abstract*Test.java"/>
-                    <exclude name="**/*SeleniumTest.java"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -476,16 +466,12 @@
         <ivy:resolve refresh="true" conf="test-simian" />
         <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test-simian" />
     </target>
-    <target name="ivy-test-selenium" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-selenium" />
-        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test-selenium" />
-    </target>
     <target name="ivy-compile" depends="init:ivy">
         <ivy:resolve refresh="true" conf="compile" />
         <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="compile" />
     </target>
     <target name="ivy-test"
-            depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-selenium">
+            depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian">
             <ivy:resolve refresh="true" conf="test" />
             <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test" />
     </target>

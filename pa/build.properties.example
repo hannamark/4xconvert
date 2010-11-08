@@ -14,6 +14,7 @@ cteprss.user=/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=ctep-rss
 jboss.deploy.directory=${application.base.path}/paear/jboss-4.0.5.GA-jems-ejb3/server/paear/deploy
 jboss.server.jndi.port=31499
 jboss.port=39480
+selenium.server.port=4444
 
 db.type=postgresql
 db.server=localhost

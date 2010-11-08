@@ -6,27 +6,27 @@
 	<ul>
 	 <c:choose>
         <c:when test="${requestScope.topic == 'search_trial'}">
-            <li><a href="studyProtocolexecute.action" class="selected">Trial Search</a></li>
+            <li><a id="trialSearch" href="studyProtocolexecute.action" class="selected">Trial Search</a></li>
         </c:when>
         <c:otherwise>
-            <li><a href="studyProtocolexecute.action" >Trial Search</a></li>
+            <li><a id="trialSearch" href="studyProtocolexecute.action" >Trial Search</a></li>
         </c:otherwise>
      </c:choose>
 		<c:choose>
         <c:when test="${requestScope.topic == 'inbox_process'}">
-     		<li><a href="inboxProcessingexecute.action" class="selected" >Inbox</a></li>
+     		<li><a id="inboxProcessing" href="inboxProcessingexecute.action" class="selected" >Inbox</a></li>
      	</c:when>
      	<c:when test="${requestScope.topic == 'inbox_access'}">
-            <li><a href="inboxProcessingexecute.action" class="selected" >Inbox</a></li>
+            <li><a id="inboxProcessing" href="inboxProcessingexecute.action" class="selected" >Inbox</a></li>
         </c:when>
      	<c:otherwise>
-     	  <li><a href="inboxProcessingexecute.action" >Inbox</a></li>
+     	  <li><a id="inboxProcessing" href="inboxProcessingexecute.action" >Inbox</a></li>
      	</c:otherwise>	
      	</c:choose>
 		<c:if test="${pageContext.request.remoteUser != null}">	
-			<li><a href="logout.action">Logout</a></li>
+			<li><a id="logout" href="logout.action">Logout</a></li>
 		</c:if>	
-		<li><a href="about.action">About</a></li>
+		<li><a id="about" href="about.action">About</a></li>
 	</ul>
 </li>
 

@@ -4,7 +4,7 @@
 <!-- pa-ear ant script for COPPA PA                                         -->
 <!-- ====================================================================== -->
 
-<project name="pa-ear" default="test-all" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="pa-ear" default="run-selenium-tests" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
@@ -41,7 +41,6 @@
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
     <property name="ivy.def.file" location="ivy-pa-ear.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-    <property name="selenium.port" value="4443"/>
     
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -54,24 +53,10 @@
 
     <property name="runtime.jar.dir" location="${lib.dir}/pa-ear/runtime" />
     <property name="container.jar.dir" location="${lib.dir}/pa-ear/container" />
-    
-    <property name="test.jar.dir" location="${lib.dir}/pa-ear/test" />
-    <path id="test.classpath">
-        <fileset dir="${test.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-
-    <property name="test-junit.jar.dir" location="${lib.dir}/pa-ear/test-junit" />
-    <path id="test-junit.classpath">
-        <fileset dir="${test-junit.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-    
-    <property name="selenium.jar.dir" location="${lib.dir}/pa-ear/selenium" />
+        
+    <property name="selenium.dir" location="${lib.dir}/pa-ear/selenium" />
     <path id="selenium.classpath">
-        <fileset dir="${selenium.jar.dir}">
+        <fileset dir="${selenium.dir}">
             <include name="*.jar"/>
         </fileset>
     </path>
@@ -82,17 +67,7 @@
         </fileset>
     </path>
 
-
     <path id="build.test.classpath">
-        <fileset dir="${test.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
-        <fileset dir="${test-junit.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
-        <fileset dir="${compile.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
         <fileset dir="${pa-ejb.output.dir}">
             <include name="pa-ejb.jar"/>
         </fileset>
@@ -134,12 +109,12 @@
     <!-- ====================================================================== -->
 
     <target name="configure.tests">
-        <copy file="${pa.resourceDir}/test.properties.pa-ear"
-              tofile="${pa-ear.build.testResourceDir.0}/test.properties"
-              overwrite="true">
+        <copy file="${pa.resourceDir}/test.properties.pa-ear" tofile="${pa-ear.build.testResourceDir.0}/test.properties" overwrite="true">
             <filterset>
-                <filter token="test.java.naming.provider"
-                        value="${test.java.naming.provider}"/>
+                <filter token="test.java.naming.provider" value="${test.java.naming.provider}"/>
+                <filter token="pa.server.name" value="${pa.server.name}"/>
+                <filter token="jboss.port" value="${jboss.port}" />
+                <filter token="selenium.server.port" value="${selenium.server.port}"/>
             </filterset>
         </copy>
     </target>
@@ -148,24 +123,16 @@
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests"
-            depends="configure.tests"
-            description="Compile the test code" >
+    <target name="compile-selenium-tests" depends="configure.tests" description="Compile the selenium test code." >
         <mkdir dir="${pa-ear.build.testOutputDir}"/>
-        <javac destdir="${pa-ear.build.testOutputDir}"
-            nowarn="false"
-            debug="true"
-            optimize="false"
-            deprecation="true"
-            target="1.5"
-            verbose="false"
-            fork="false"
-            source="1.5">
+        <javac destdir="${pa-ear.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true" 
+            target="1.5" verbose="false" fork="false" source="1.5">
             <src>
                 <pathelement location="${pa-ear.build.testDir.0}"/>
             </src>
             <classpath>
                 <path refid="build.test.classpath"/>
+                <path refid="selenium.classpath"/>
             </classpath>
         </javac>
         <copy todir="${pa-ear.build.testOutputDir}">
@@ -177,15 +144,16 @@
     <!-- Run JUnit Integration Tests                                            -->
     <!-- ====================================================================== -->
 
-    <target name="test-all" depends="compile-tests"
-            description="Run JUnit integration tests">
-
+    <target name="run-selenium-tests" depends="compile-selenium-tests" description="Run integration tests">
         <mkdir dir="${pa-ear.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
-            <classpath location="${pa-ear.build.testOutputDir}"/>
-            <classpath refid="build.test.classpath"/>
+            <classpath>
+                <path location="${pa-ear.build.testOutputDir}"/>
+                <path refid="build.test.classpath"/>
+                <path refid="selenium.classpath"/>
+            </classpath>
             <batchtest todir="${pa-ear.test.reports}">
                 <fileset dir="${pa-ear.build.testDir.0}">
                     <include name="**/*Test.java"/>
@@ -319,10 +287,10 @@
     <!-- called only for selenium tests                                         -->
     <!-- ====================================================================== -->
 
-    <target name="run-selenium-tests" depends="package, deploy, configure.tests" description="Starts jboss instance, runs the selenium tests and then shuts the jboss instance down.">
+    <target name="selenium" depends="package, deploy, configure.tests" description="Starts jboss instance, runs the selenium tests and then shuts the jboss instance down.">
         <ant target="start-jboss-server"/>
         <ant target="start-selenium-server"/>
-        <!--<ant target="test-selenium-class" dir="../pa-web"/>-->
+        <ant target="run-selenium-tests"/>
         <ant target="stop-selenium-server"/>
         <ant target="stop-jboss-server"/>
     </target>
@@ -375,13 +343,13 @@
         <sequential>
             <java classname="org.openqa.selenium.server.SeleniumServer" fork="true" spawn="true">
                 <arg line="-timeout 30"/>
-                <arg line="-port ${selenium.port}"/> 
+                <arg line="-port ${selenium.server.port}"/>
                 <classpath>
                     <path refid="selenium.classpath"/>
                 </classpath>
             </java>
             <waitfor maxwait="120" maxwaitunit="second" checkevery="5" checkeveryunit="second">
-                <http url="http://localhost:${selenium.port}/selenium-server/driver/?cmd=testComplete"/>
+                <http url="http://localhost:${selenium.server.port}/selenium-server/driver/?cmd=testComplete"/>
             </waitfor>
         </sequential>
     </target>
@@ -391,7 +359,7 @@
     <!-- ====================================================================== -->
     <target name="stop-selenium-server">
         <waitfor maxwait="120" maxwaitunit="second" checkevery="5" checkeveryunit="second">
-            <http url="http://localhost:${selenium.port}/selenium-server/driver/?cmd=shutDownSeleniumServer"/>
+            <http url="http://localhost:${selenium.server.port}/selenium-server/driver/?cmd=shutDownSeleniumServer"/>
         </waitfor>
     </target>
 

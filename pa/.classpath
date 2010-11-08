@@ -52,9 +52,6 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/struts2-core-2.1.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/xwork-2.1.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test-junit/junit-4.4.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-1.0-beta-2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-coreless-1.0-beta-2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-core-1.0-beta-2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/iso-datatypes-2.0.0-alpha1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/po-services-client-3.2.0-m10.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
@@ -96,9 +93,10 @@
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/commons-beanutils-1.8.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/commons/test/antlr-2.7.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/mockito-all-1.8.4.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-java-client-driver-1.0-beta-2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/nci-commons-core-1.2.16.jar" sourcepath="/PA_LIB/pa-ejb/compile/nci-commons-core-1.2.16.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/itext-rtf-2.1.7.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/commons-io-1.4.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ear/selenium/selenium-java-client-driver-1.0.2.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ear/selenium/selenium-server-coreless-1.0.3.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
