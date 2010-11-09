@@ -9,7 +9,6 @@ import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteContactManagementTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteManagementTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.ClinicalResearchStaff;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.HealthCareProvider;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.PersonType;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudyProtocol;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite;
@@ -49,7 +48,10 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 
+import org.iso._21090.DSETTEL;
 import org.iso._21090.II;
+import org.iso._21090.ST;
+import org.iso._21090.TEL;
 
 /**
  * Simple client to call the StudySiteParticipationService.
@@ -341,5 +343,58 @@ public class StudySiteParticipationServiceSimpleClient {
         client.updateParticipatingSite(studySiteIi, ssXml);
 
     }
+    
+    private static void updatePropSiteWithGenericContactAsPrimary(StudySiteParticipationServiceClient client) throws DtoTransformException,
+    PAFault, RemoteException, URISyntaxException {
+
+        StudySiteDTO studySiteDTO = new StudySiteDTO();
+        studySiteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(
+                new Timestamp(new Date().getTime() - Long.valueOf("300000000")), null));
+        studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("CHANGED SP ID"));
+        studySiteDTO.setProgramCodeText(StConverter.convertToSt("PROGRAM CODE"));
+        
+        StudySite ssXml = StudySiteManagementTransformer.INSTANCE.toXml(studySiteDTO);
+        
+        StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
+        currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
+        currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime()
+                - Long.valueOf("300000000"))));
+        
+        StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusManagementTransformer.INSTANCE.toXml(currentStatus);
+        ssXml.setAccrualStatus(ssasXml);
+        
+        StudySiteContact ssContact = new StudySiteContact();
+        PersonType personType = new PersonType();
+        gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.OrganizationalContact 
+            orgC = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.OrganizationalContact();
+        ST title = new ST();
+        title.setValue("Doctors Assistant 4");
+        orgC.setTitle(title);
+        orgC.setTypeCode(CDTransformer.INSTANCE.toXml(CdConverter.convertStringToCd("Responsible Party")));
+        
+        personType.getContent().add(orgC);
+        ssContact.setPersonRole(personType);
+        ssContact.setPostalAddress(ADTransformer.INSTANCE.toXml(AddressConverterUtil.create("1000 Some St.",
+                "1000 Some St.", "Rockville", "MD", "20855", "USA")));
+        ssContact.setPrimaryIndicator(BLTransformer.INSTANCE.toXml(BlConverter.convertToBl(true)));
+        
+        TEL tel = new TEL();
+        tel.setValue("tel:111-111-2222");
+        TEL email = new TEL();
+        email.setValue("mailto:test@test.com");
+        
+        DSETTEL dsetTel = new DSETTEL();
+        dsetTel.getItem().add(tel);
+        dsetTel.getItem().add(email);
+        
+        ssContact.setTelecomAddresses(dsetTel);
+        ssXml.getStudySiteContacts().add(ssContact);
+        
+        Id studySiteIi = new Id();
+        studySiteIi.setExtension("69525625");
+        studySiteIi.setRoot(IiConverter.STUDY_SITE_ROOT);
+        studySiteIi.setIdentifierName(IiConverter.STUDY_SITE_IDENTIFIER_NAME);
+        client.updateParticipatingSite(studySiteIi, ssXml);
+}
 
 }

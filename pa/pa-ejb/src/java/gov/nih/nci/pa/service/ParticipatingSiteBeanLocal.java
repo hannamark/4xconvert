@@ -87,6 +87,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -235,6 +236,8 @@ implements ParticipatingSiteServiceLocal {
             DSet<Tel> telecom) throws PAException {
         try {
             StudySiteDTO studySiteDTO = PaRegistry.getStudySiteService().get(studySite);
+            Organization paOrg = getCorrUtils().getPAOrganizationByIi(studySiteDTO.getHealthcareFacilityIi());
+            contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(paOrg.getIdentifier()));
             Ii genericContactIi = getCorrUtils().getGenericContactIiFromCtepId(contactDTO);
             Ii orgIi = getCorrUtils().getPoOrgIiFromPaHcfIi(studySiteDTO.getHealthcareFacilityIi());
             Map<String, Ii> myMap = new HashMap<String, Ii>();
