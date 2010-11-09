@@ -10,6 +10,7 @@ This is the definition of a virtual module called bda-download that has a depend
   <configurations>
     <conf name="runtime"/>
     <conf name="compile" extends="runtime"/>
+    <conf name="selenium"/>
     <conf name="test" extends="compile" />
     <conf name="test-pmd"/>
     <conf name="test-junit"/>
@@ -88,5 +89,15 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="junit"                     name="junit"                   rev="4.4"             conf="test-junit->master,runtime"/>
     <dependency org="pmd"                       name="pmd"                     rev="4.2.5"           conf="test-pmd->master,runtime"/>
     <dependency org="redhill"                   name="simian"                  rev="2.2.4"           conf="test-simian->master,runtime"/>
+    
+    <dependency org="junit"                  name="junit"                   rev="4.4"             conf="selenium->master"/>
+    <dependency org="org.seleniumhq.selenium.client-drivers" name="selenium-java-client-driver"    rev="1.0.2" conf="selenium->master"/>
+    <dependency org="org.seleniumhq.selenium.server" name="selenium-server-coreless" rev="1.0.3"               conf="selenium->compile,master">
+        <artifact name="selenium-server-coreless" type="jar"/>
+    </dependency>
+    <dependency org="org.seleniumhq.selenium.server" name="selenium-server" rev="1.0.3"               conf="selenium->master">
+        <artifact name="selenium-server" type="jar" 
+        url="https://ncisvn.nci.nih.gov/svn/maven-mirror/trunk/org/seleniumhq/selenium/server/selenium-server/1.0.3/selenium-server-1.0.3-standalone.jar"/>
+    </dependency>
   </dependencies>
 </ivy-module>

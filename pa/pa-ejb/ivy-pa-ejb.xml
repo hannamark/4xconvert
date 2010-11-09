@@ -14,7 +14,6 @@ This is the definition of a virtual module called bda-download that has a depend
     <conf name="test-cobertura"/>
     <conf name="test-checkstyle"/>
     <conf name="test-simian"/>
-    <conf name="test-selenium"/>
   </configurations>
 
   <dependencies>
@@ -110,9 +109,6 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="checkstyle"                name="checkstyle"              rev="5.0"             conf="test-checkstyle->master,runtime"/>
     <dependency org="net.sourceforge.cobertura" name="cobertura"               rev="1.9.4.1"         conf="test-cobertura->master,runtime"/>
     <dependency org="junit"                     name="junit"                   rev="4.4"             conf="test-junit->master,runtime"/>
-    <dependency org="org.seleniumhq.selenium.server" name="selenium-server"    rev="1.0-beta-2"      conf="test-selenium->runtime">
-        <exclude module="commons-logging"/>
-    </dependency>
     <dependency org="pmd"                       name="pmd"                     rev="4.2.5"           conf="test-pmd->master,runtime"/>
     <dependency org="redhill"                   name="simian"                  rev="2.2.4"           conf="test-simian->master,runtime"/>
   </dependencies>

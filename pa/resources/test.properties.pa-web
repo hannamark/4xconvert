@@ -2,3 +2,6 @@
 # Properties for test cases.
 #
 test.java.security.login.config=@test.java.security.login.config@
+server.hostname=@pa.server.name@
+server.port=@jboss.port@
+selenium.server.port=@selenium.server.port@

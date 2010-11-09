@@ -45,7 +45,7 @@
 
     <path id="common.package.classpath">
         <fileset dir="${pa.dir}/commons/target">
-            <include name="pa-commons.jar"/>
+            <include name="*.jar"/>
         </fileset>
     </path>
 
@@ -57,7 +57,14 @@
     </path>
 
     <property name="runtime.jar.dir" location="${lib.dir}/pa-web/runtime" />
-
+    
+    <property name="selenium.dir" location="${lib.dir}/pa-web/selenium" />
+    <path id="selenium.classpath">
+        <fileset dir="${selenium.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    
     <property name="test.jar.dir" location="${lib.dir}/pa-web/test" />
     <path id="test.classpath">
         <fileset dir="${test.jar.dir}">
@@ -188,18 +195,15 @@
     <!-- ====================================================================== -->
 
     <target name="configure-tests">
-        <copy file="${pa.resourceDir}/test.properties.pa-web"
-              tofile="${pa-web.build.testResourceDir.0}/test.properties"
-              overwrite="true">
+        <copy file="${pa.resourceDir}/test.properties.pa-web" tofile="${pa-web.build.testResourceDir.0}/test.properties" overwrite="true">
             <filterset>
-                <filter token="test.java.security.login.config"
-                        value="${pa-web.build.testOutputDir}/login.config"/>
+                <filter token="test.java.security.login.config" value="${pa-web.build.testOutputDir}/login.config"/>
+                <filter token="pa.server.name" value="${pa.server.name}"/>
+                <filter token="jboss.port" value="${jboss.port}" />
+                <filter token="selenium.server.port" value="${selenium.server.port}"/>
             </filterset>
         </copy>
-        <replaceregexp file="${pa-web.build.testResourceDir.0}/test.properties"
-                       match="\\"
-                       replace="/"
-                       flags="g"/>
+        <replaceregexp file="${pa-web.build.testResourceDir.0}/test.properties" match="\\" replace="/" flags="g"/>
     </target>
 
     <!-- ====================================================================== -->
@@ -215,25 +219,14 @@
         <copy file="${pa.resourceDir}/login.config" todir="${pa-web.build.testResourceDir.0}" filtering="true" />
     </target>
 
-
-
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests"
-      depends="compile,configure-tests,create-artifacts"
-      description="Compile the test code">
+    <target name="compile-tests" depends="compile,configure-tests,create-artifacts" description="Compile the test code">
         <mkdir dir="${pa-web.build.testOutputDir}"/>
-        <javac destdir="${pa-web.build.testOutputDir}"
-               nowarn="false"
-               debug="true"
-               optimize="false"
-               deprecation="true"
-               target="1.5"
-               verbose="false"
-               fork="false"
-               source="1.5">
+        <javac destdir="${pa-web.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
+               target="1.5" verbose="false" fork="false" source="1.5">
             <src>
                 <pathelement location="${pa-web.build.testDir.0}"/>
             </src>
@@ -241,6 +234,7 @@
                 <pathelement location="${pa-web.build.outputDir}"/>
                 <path refid="test.classpath"/>
                 <path refid="test-junit.classpath"/>
+                <path refid="selenium.classpath"/>
                 <path refid="compile.classpath"/>
                 <path refid="ejb.package.classpath"/>
                 <path refid="common.package.classpath"/>
@@ -299,6 +293,55 @@
             <formatter type="xml" toFile="${pa.report.dir}/pa-web/simian.xml"/>
             <formatter type="plain"/>
         </simian>
+    </target>
+    
+    <!-- ====================================================================== -->
+    <!-- Start the selenium server                                              -->
+    <!-- ====================================================================== -->
+    <target name="start-selenium-server">
+        <sequential>
+            <java classname="org.openqa.selenium.server.SeleniumServer" fork="true" spawn="true">
+                <arg line="-timeout 30"/>
+                <arg line="-port ${selenium.server.port}"/>
+                <classpath>
+                    <path refid="selenium.classpath"/>
+                </classpath>
+            </java>
+            <waitfor maxwait="120" maxwaitunit="second" checkevery="5" checkeveryunit="second">
+                <http url="http://${pa.server.name}:${selenium.server.port}/selenium-server/driver/?cmd=testComplete"/>
+            </waitfor>
+        </sequential>
+    </target>
+                
+    <!-- ====================================================================== -->
+    <!-- Stop the selenium server                                              -->
+    <!-- ====================================================================== -->
+    <target name="stop-selenium-server">
+        <waitfor maxwait="120" maxwaitunit="second" checkevery="5" checkeveryunit="second">
+            <http url="http://${pa.server.name}:${selenium.server.port}/selenium-server/driver/?cmd=shutDownSeleniumServer"/>
+        </waitfor>
+     </target>
+    
+    <!-- ====================================================================== -->
+    <!-- Run JUnit Integration Tests                                            -->
+    <!-- ====================================================================== -->
+
+    <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
+        <mkdir dir="${pa-web.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath>
+                <path location="${pa-web.build.testOutputDir}"/>
+                <path refid="selenium.classpath"/>
+                <path refid="common.package.classpath"/>
+            </classpath>
+            <batchtest todir="${pa-web.test.reports}">
+                <fileset dir="${pa-web.build.testDir.0}">
+                    <include name="**/integration/*Test.java"/>
+                </fileset>
+            </batchtest>
+         </junit>
     </target>
 
     <!-- ====================================================================== -->
@@ -377,8 +420,9 @@
             <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
             <batchtest todir="${pa-web.test.reports}" fork="yes" unless="test">
                 <fileset dir="${pa-web.build.testDir.0}">
-                <include name="**/*Test.java"/>
-                <exclude name="**/*Abstract*Test.java"/>
+                    <include name="**/*Test.java"/>
+                    <exclude name="**/*Abstract*Test.java"/>
+                    <exclude name="**/integration/*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -417,23 +461,16 @@
                 <fileset dir="${pa-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
                     <exclude name="**/*Abstract*Test.java"/>
+                    <exclude name="**/integration/*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>
 
-        <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser"
-                          destdir="${pa-web.coverage.reports}"
+        <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser" destdir="${pa-web.coverage.reports}"
                           srcdir="${pa-web.build.srcDir.0}" />
-
-        <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser"
-                          format="xml"
-                          destdir="${pa-web.coverage.reports}"
+        <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser" format="xml" destdir="${pa-web.coverage.reports}"
                           srcdir="${pa-web.build.srcDir.0}" />
-
-        <cobertura-check datafile="${pa-web.build.dir}/cobertura.ser"
-                         totalbranchrate="42"
-                         totallinerate="55"
-                         haltonfailure="true"/>
+        <cobertura-check datafile="${pa-web.build.dir}/cobertura.ser" totalbranchrate="42" totallinerate="55" haltonfailure="true"/>
      </target>
 
 
@@ -470,6 +507,10 @@
         <ivy:resolve refresh="true" conf="compile" />
         <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="compile" />
     </target>
+    <target name="ivy-selenium" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="selenium" />
+        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="selenium" />
+    </target>
     <target name="ivy-test"
             depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian">
             <ivy:resolve refresh="true" conf="test" />
@@ -479,9 +520,8 @@
         <ivy:resolve refresh="true" conf="runtime" />
         <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
     </target>
-    <target name="ivy-get"
-            depends="init:ivy,ivy-compile,ivy-test,ivy-runtime"
-            description="Updates the local ivy repository">
+    <target name="ivy-get" depends="init:ivy,ivy-compile,ivy-test,ivy-runtime,ivy-selenium" 
+        description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/pa-web"/>

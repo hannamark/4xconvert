@@ -82,71 +82,17 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import org.junit.Test;
 
-import gov.nih.nci.pa.test.integration.util.TestProperties;
 
-import com.thoughtworks.selenium.SeleneseTestCase;
-
-/**
- * Base selenium class. Should probably be moved to coppa-commons at some point.
- *
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
- */
-public abstract class AbstractSeleneseTestCase extends SeleneseTestCase {
-    private static final int PAGE_TIMEOUT_SECONDS = 180;
-
-    @Override
-    public void setUp() throws Exception {
-        System.setProperty("selenium.port", "" + TestProperties.getSeleniumServerPort());
-        int port = TestProperties.getServerPort();
-        String hostname = TestProperties.getServerHostname();
-        String browser = TestProperties.getSeleniumBrowser();
-        if (port == 0) {
-            super.setUp("http://" + hostname , browser);
-        } else {
-            super.setUp("http://" + hostname + ":" + port, browser);
-
-        }
-        selenium.setTimeout(toMillisecondsString(PAGE_TIMEOUT_SECONDS));
-    }
-
-    protected static String toMillisecondsString(long seconds) {
-        return String.valueOf(seconds * 1000);
-    }
-
-    protected void waitForPageToLoad() {
-        selenium.waitForPageToLoad(toMillisecondsString(PAGE_TIMEOUT_SECONDS));
-    }
-
-    protected void waitForElementById(String id, int timeoutSeconds) {
-        selenium.waitForCondition("selenium.browserbot.getCurrentWindow().document.getElementById('"+ id + "');",
-                toMillisecondsString(timeoutSeconds));
-    }
+public class LoginTest extends AbstractPaSeleniumTest {
 
     /**
-     * Click and wait for a page to load.
-     * @param locator the locator of the element to click
+     * Tests logging in as abstractor.
+     * @throws Exception on error
      */
-    protected void clickAndWait(String locator) {
-        selenium.click(locator);
-        waitForPageToLoad();
-    }
-
-    /**
-     * Click and pause to allow for ajax to complete
-     * @param locator the locator of the element to click
-     */
-    protected void clickAndWaitAjax(String locator) {
-        selenium.click(locator);
-        //This pause is to allow for any js associated with an anchor to complete execution
-        //before moving on.
-        pause(500);
-    }
-
-    /**
-     * Click the save button and wait for the resulting page to load.
-     */
-    protected void clickAndWaitSaveButton() {
-        clickAndWait("save_button");
+    @Test
+    public void testLogin() throws Exception {
+        loginAsAbstractor();
     }
 }

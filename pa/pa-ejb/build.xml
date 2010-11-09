@@ -96,13 +96,6 @@
         </fileset>
     </path>
 
-    <property name="test-selenium.jar.dir" location="${lib.dir}/pa-ejb/test-selenium" />
-    <path id="test-selenium.classpath">
-        <fileset dir="${test-selenium.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-
     <path id="ivy.classpath">
         <fileset dir="${lib.dir}">
             <include name="${ivy.file}" />
@@ -258,7 +251,6 @@
                 <path refid="test.classpath"/>
                 <path refid="common.package.classpath"/>
                 <path refid="test-junit.classpath"/>
-                <path refid="test-selenium.classpath"/>
             </classpath>
         </javac>
         <copy todir="${pa-ejb.build.testOutputDir}">
@@ -483,16 +475,12 @@
         <ivy:resolve refresh="true" conf="test-simian" />
         <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="test-simian" />
     </target>
-    <target name="ivy-test-selenium" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-selenium" />
-        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="test-selenium" />
-    </target>
     <target name="ivy-compile" depends="init:ivy">
         <ivy:resolve refresh="true" conf="compile" />
         <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="compile" />
     </target>
     <target name="ivy-test"
-            depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-selenium">
+            depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian">
             <ivy:resolve refresh="true" conf="test" />
             <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="test" />
     </target>

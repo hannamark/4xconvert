@@ -99,28 +99,36 @@
         <ant target="package" dir="pa-web" inheritAll="false"/>
         <ant target="ear" dir="pa-ear" inheritAll="false"/>
     </target>
-
-    <!-- ====================================================================== -->
-    <!-- Deploy locally                                                         -->
-    <!-- ====================================================================== -->
-
-    <target name="run-selenium" depends="clean" description="Deploys the application">
-        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
-        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
-        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
-
-    	<ant target="package" dir="commons" inheritAll="false"/>
-        <ant target="package" dir="pa-ejb" inheritAll="false"/>
-        <ant target="package" dir="pa-web" inheritAll="false"/>
-        <ant target="selenium" dir="pa-ear" inheritAll="false"/>
-    </target>
-
+    
     <!-- ====================================================================== -->
     <!-- Run integration tests                                                  -->
     <!-- ====================================================================== -->
+        
 
-    <target name="test-integration" description="Tests the deployed application">
-        <ant target="test-all" dir="pa-ear" inheritAll="false"/>
+    <target name="run-selenium-tests" description="Runs integration tests against an already deployed application">
+        <ant target="run-selenium-tests" dir="pa-web" inheritAll="false"/>
+    </target>
+            
+    <target name="start-selenium-server" description="Starts the selenium server">
+        <ant target="start-selenium-server" dir="pa-web" inheritAll="false"/>
+    </target>
+        
+    <target name="stop-selenium-server" description="Stops the selenium server">
+        <ant target="stop-selenium-server" dir="pa-web" inheritAll="false"/>
+    </target>
+    
+    <target name="test-integration" depends="clean" description="Runs integration tests against the automatically deploy application.">
+        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
+        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
+        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
+        <ant target="package" dir="commons" inheritAll="false"/>
+        <ant target="package" dir="pa-ejb" inheritAll="false"/>
+        <ant target="package" dir="pa-web" inheritAll="false"/>
+        <ant target="start-jboss-server" dir="pa-ear" inheritAll="false"/>
+        <ant target="start-selenium-server" dir="pa-web" inheritAll="false"/>
+        <ant target="run-selenium-tests" dir="pa-web" inheritAll="false"/>
+        <ant target="stop-selenium-server" dir="pa-web" inheritAll="false"/>
+        <ant target="stop-jboss-server" dir="pa-ear" inheritAll="false"/>
     </target>
 
     <!-- ====================================================================== -->

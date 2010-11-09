@@ -82,12 +82,15 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import org.junit.Ignore;
+
 /**
  * Abstract base class for selenium tests.
  *
  * @author Abraham J. Evans-EL <aevanse@5amsolutions.com>
  */
-public abstract class AbstractPaWebTest extends AbstractSeleneseTestCase {
+@Ignore
+public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
 
     @Override
     public void setUp() throws Exception {
@@ -117,10 +120,10 @@ public abstract class AbstractPaWebTest extends AbstractSeleneseTestCase {
         selenium.type("j_password", password);
         clickAndWait("id=loginLink");
         assertTrue(selenium.isElementPresent("link=Logout"));
-        assertTrue(selenium.isElementPresent("id=trialSearch"));
-        assertTrue(selenium.isElementPresent("id=inboxProcessing"));
-        assertTrue(selenium.isElementPresent("id=logout"));
-        assertTrue(selenium.isElementPresent("id=about"));
+        assertTrue(selenium.isElementPresent("id=trialSearchMenuOption"));
+        assertTrue(selenium.isElementPresent("id=inboxProcessingMenuOption"));
+        assertTrue(selenium.isElementPresent("id=logoutMenuOption"));
+        assertTrue(selenium.isElementPresent("id=aboutMenuOption"));
     }
 
     public void loginAsAbstractor() {

@@ -80,14 +80,18 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.test.integration;
+package gov.nih.nci.registry.test.integration;
+
+import org.junit.Test;
 
 
-public class LoginTest extends AbstractPaWebTest {
+public class LoginTest extends AbstractRegistrySeleniumTest {
+
     /**
      * Tests logging in as abstractor.
      * @throws Exception on error
      */
+    @Test
     public void testLogin() throws Exception {
         loginAsAbstractor();
     }
