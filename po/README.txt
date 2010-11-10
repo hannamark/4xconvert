@@ -39,11 +39,11 @@
 
   * Install JBoss
     Installation of JBoss is handled by build-po.
-    Please read build-po/readme.txt for setup instructions. 
+    Please read build-po/readme.txt for setup instructions.
     From build-po, run: ant deploy:local:install
     Note location of jboss install. If the jboss location in build-po has been changed from the default,
-    set the jboss.home property in profiles.xml files to match. 
-    
+    set the jboss.home property in profiles.xml files to match.
+
   * Eclipse
 
     Install Eclipse maven plugin: http://m2eclipse.sonatype.org/update/
@@ -52,7 +52,7 @@
         * PMD - http://pmd.sourceforge.net/eclipse
         * Checkstyle - http://eclipse-cs.sourceforge.net/update
   * Initial DB setup
-    
+
     The build-po install will handle the creation of a db. You may create a different db for use by unit tests, selenium tests,
     etc. The db settings set by default can be overwritten in your profiles.xml. For example you may set up a db profile such as:
     <profile>
@@ -75,7 +75,7 @@
             <maven.surefire.debug>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8787 -Xnoagent -Djava.compiler=NONE</maven.surefire.debug>
         </properties>
     </profile>
-    
+
 
     From the services/ directory, run:
         mvn -Plocal,init-db sql:execute
@@ -90,7 +90,7 @@
     mvn -Plocal,init-db sql:execute
     mvn -Plocal clean install
     mvn -Pci,local integration-test
-    mvn -Plocal site verify
+    mvn -Plocal site
 
 1.4 Useful, non standard mvn targets
 
@@ -136,6 +136,5 @@
     Verify everything is working properly by running 'mvn -Plocal,nuke-db sql:execute && mvn -Plocal clean install sql:execute && mvn -Pci,local integration-test'
 
 1.8 Logging into applications:
-	Username/passwords use grid based authentication. Users must have a grid account to access any app.
-	For testing default account it: curator/Coppa#12345
-    
+    Username/passwords use grid based authentication. Users must have a grid account to access any app.
+    For testing default account it: curator/Coppa#12345
