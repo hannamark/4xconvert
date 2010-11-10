@@ -88,6 +88,7 @@ import gov.nih.nci.coppa.common.LimitOffset;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
 
+import org.iso._21090.CD;
 import org.junit.Test;
 
 /**
@@ -98,17 +99,22 @@ public class XMLUnmarshallerTest {
 
     @Test
     public void testLoadObject() throws JAXBException {
-        LimitOffset lo = (LimitOffset) XMLUnmarshaller.unmarshal(LimitOffset.class, 
+        LimitOffset lo = XMLUnmarshaller.unmarshal(LimitOffset.class, 
                 "src/test/resources/limitOffset.xml");
         assertEquals(lo.getLimit(), 3);
         assertEquals(lo.getOffset(), 4);
     }
     
     @Test (expected=UnmarshalException.class)
+    public void testLoadWrongObject() throws JAXBException {
+        CD cd = XMLUnmarshaller.unmarshal(CD.class, 
+                "src/test/resources/limitOffset.xml");
+    }
+    
+    @Test (expected=UnmarshalException.class)
     public void testBadLoadObject() throws JAXBException {
         XMLUnmarshaller bar = new XMLUnmarshaller();
-        LimitOffset lo = (LimitOffset) bar.unmarshal(LimitOffset.class, 
-                "foo.xml");
+        LimitOffset lo = bar.unmarshal(LimitOffset.class, "foo.xml");
         
     }
 }

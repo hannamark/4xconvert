@@ -108,16 +108,17 @@ public final class XMLUnmarshaller {
      
     /**
      * Unmarshal xml into object.
+     * @param <T> java object to create
      * @param docClass type of object to create.
      * @param fileName name of xml file.
      * @return unmarshalled object
      * @throws JAXBException when error
      */
-    public static Object unmarshal(Class docClass, String fileName)
+    public static <T> T unmarshal(Class<T> docClass, String fileName)
     throws JAXBException {
         
         JAXBContext jc = JAXBContext.newInstance(docClass);
         Unmarshaller u = jc.createUnmarshaller();
-        return u.unmarshal(new File(fileName));
+        return (T) u.unmarshal(new File(fileName));
     }
 }
