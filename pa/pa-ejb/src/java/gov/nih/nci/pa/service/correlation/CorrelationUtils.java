@@ -648,13 +648,12 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
 
         Ii poPersonIi = idps.get(0).getPlayerIdentifier();
-        List<ClinicalResearchStaffDTO> crss;
-        try {
-            crss = PoRegistry.getClinicalResearchStaffCorrelationService()
-            .getCorrelationsByPlayerIds(new Ii[]{poPersonIi});
-        } catch (NullifiedRoleException e) {
-            throw new PAException(PAUtil.handleNullifiedRoleException(e));
-        }
+
+        ClinicalResearchStaffDTO criteria = new ClinicalResearchStaffDTO();
+        criteria.setPlayerIdentifier(poPersonIi);
+        criteria.setScoperIdentifier(scoperOrg);
+        List<ClinicalResearchStaffDTO> crss = PoRegistry.getClinicalResearchStaffCorrelationService().search(criteria);
+            
         if (crss.isEmpty()) {
             ClinicalResearchStaffDTO toStoreCrsDTO = null;
             if (crsDTO == null) {
@@ -713,13 +712,12 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
 
         Ii poPersonIi = idps.get(0).getPlayerIdentifier();
-        List<HealthCareProviderDTO> hcps;
-        try {
-            hcps = PoRegistry.getHealthCareProviderCorrelationService()
-            .getCorrelationsByPlayerIds(new Ii[]{poPersonIi});
-        } catch (NullifiedRoleException e) {
-            throw new PAException(PAUtil.handleNullifiedRoleException(e));
-        }
+
+        HealthCareProviderDTO criteria = new HealthCareProviderDTO();
+        criteria.setPlayerIdentifier(poPersonIi);
+        criteria.setScoperIdentifier(scoperOrg);
+        List<HealthCareProviderDTO> hcps = PoRegistry.getHealthCareProviderCorrelationService().search(criteria);
+        
         if (hcps.isEmpty()) {
             HealthCareProviderDTO toStoreHcpDTO = null;
             if (hcpDTO == null) {
