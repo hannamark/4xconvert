@@ -155,19 +155,11 @@ public abstract class AbstractTrialRegistrationBean {
     /**
      * @param studyProtocolDTO dto
      * @param returnStudyProtocolDTO  dto
-     */
+     */ 
     protected void setPrimaryPurposeCode(StudyProtocolDTO studyProtocolDTO,
             StudyProtocolDTO returnStudyProtocolDTO) {
         returnStudyProtocolDTO.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
         if (PAUtil.isPrimaryPurposeCodeOther(CdConverter.convertCdToString(studyProtocolDTO.getPrimaryPurposeCode()))) {
-            returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(
-                    studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode());
-        } else {
-            returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertStringToCd(null));
-        }
-        if (PAUtil.isPrimaryPurposeAdditionQualifierCodeOther(CdConverter.convertCdToString(studyProtocolDTO
-             .getPrimaryPurposeCode()), CdConverter.convertCdToString(
-                     studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode()))) {
             returnStudyProtocolDTO.setPrimaryPurposeOtherText(studyProtocolDTO.getPrimaryPurposeOtherText());
         } else {
             returnStudyProtocolDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(null));

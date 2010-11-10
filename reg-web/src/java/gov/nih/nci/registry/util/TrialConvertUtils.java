@@ -244,12 +244,7 @@ public class TrialConvertUtils {
         isoDto.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
              PrimaryPurposeAdditionalQualifierCode.getByCode(trialDTO.getPrimaryPurposeAdditionalQualifierCode())));
 
-        if (StringUtils.isNotEmpty(trialDTO.getPrimaryPurposeCode())
-                && PrimaryPurposeCode.OTHER.getCode().equals(trialDTO.getPrimaryPurposeCode())
-                && StringUtils.isNotEmpty(trialDTO.getPrimaryPurposeAdditionalQualifierCode())
-                && PrimaryPurposeAdditionalQualifierCode.OTHER.getCode().equals(
-                      trialDTO.getPrimaryPurposeAdditionalQualifierCode())
-                && StringUtils.isNotEmpty(trialDTO.getPrimaryPurposeOtherText())) {
+        if (StringUtils.equals(trialDTO.getPrimaryPurposeCode(), PrimaryPurposeCode.OTHER.getCode())) {
             isoDto.setPrimaryPurposeOtherText(
                     StConverter.convertToSt(trialDTO.getPrimaryPurposeOtherText()));
         } else {
