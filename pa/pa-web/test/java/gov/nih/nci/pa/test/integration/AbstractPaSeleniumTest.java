@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
+import gov.nih.nci.pa.test.integration.util.TestProperties;
+
 import org.junit.Ignore;
 
 /**
@@ -94,6 +97,10 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
 
     @Override
     public void setUp() throws Exception {
+        super.setSeleniumPort(TestProperties.getServerHostname());
+        super.setServerHostname(TestProperties.getServerHostname());
+        super.setServerPort(TestProperties.getServerPort());
+        super.setBrowser(TestProperties.getSeleniumBrowser());
         super.setUp();
     }
 

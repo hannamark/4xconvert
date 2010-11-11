@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.test.TstProperties;
+import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -119,6 +121,10 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
 
     @Override
     public void setUp() throws Exception {
+        super.setSeleniumPort(TstProperties.getServerHostname());
+        super.setServerHostname(TstProperties.getServerHostname());
+        super.setServerPort(TstProperties.getServerPort());
+        super.setBrowser(TstProperties.getSeleniumBrowser());
         super.setUp();
     }
 
