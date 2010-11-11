@@ -895,8 +895,7 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             data.append("Exclusion Criteria: \n").append(exCrit).append('\n');
         }
         if (data.length() > 1) {
-            XmlGenHelper.createCdataBlock("criteria",
-                    StConverter.convertToSt(data.toString()), PAAttributeMaxLen.LEN_15000, doc,
+            createTextBlock("criteria", StringUtils.substring(data.toString(), 0, PAAttributeMaxLen.LEN_15000), doc,
                     eligibility);
         }
         XmlGenHelper.appendElement(eligibility,
@@ -1102,9 +1101,8 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
                                 StringUtils.substring(smDTO.getName().getValue(), 0,
                         PAAttributeMaxLen.LEN_254), doc));
                 if (!PAUtil.isStNull(smDTO.getDescription())) {
-                    XmlGenHelper.appendElement(po, XmlGenHelper.createElement("outcome_description",
-                            StringUtils.substring(smDTO.getDescription().getValue(), 0,
-                                    PAAttributeMaxLen.LEN_600), doc));
+                    createTextBlock("outcome_description", StringUtils.substring(smDTO.getDescription().getValue(), 0,
+                            PAAttributeMaxLen.LEN_600), doc,po);
                 }
                 XmlGenHelper.appendElement(po,
                         XmlGenHelper.createElement("outcome_safety_issue", BlConverter.convertBLToString(smDTO
@@ -1186,13 +1184,14 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         String resPartyContactName = null;
         Organization sponsor = null;
         if (CollectionUtils.isNotEmpty(scDtos)) {
+            scDto = scDtos.get(0);
             dset = scDto.getTelecomAddresses();
-            person = getCorUtils().getPAPersonByIi(scDtos.get(0).getClinicalResearchStaffIi());
+            person = getCorUtils().getPAPersonByIi(scDto.getClinicalResearchStaffIi());
             resPartyContactName = person.getFullName();
             StudySiteDTO spartDTO = new StudySiteDTO();
             spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
             List<StudySiteDTO> sParts = getStudySiteService().getByStudyProtocol(studyProtocolIi, spartDTO);
-            for (StudySiteDTO spart : sParts) {
+            for (StudySiteDTO spart : sParts) { 
                 sponsor = getCorUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
             }
         } else {

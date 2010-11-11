@@ -52,7 +52,7 @@
     <table class="form">
          <tr> 
                 <td/>
-                <td class="info" colspan="2">Madatory at Abstraction Validation</td>
+                <td class="info" colspan="2">Mandatory at Abstraction Validation</td>
        </tr>
         <tr>
             <td class="label">
@@ -65,7 +65,7 @@
         </tr> 
         <tr> 
                 <td/>
-                <td class="info" colspan="2">Madatory at Abstraction Validation</td>
+                <td class="info" colspan="2">Mandatory at Abstraction Validation</td>
        </tr>
           <tr>
             <td class="label">
