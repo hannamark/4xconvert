@@ -19,6 +19,7 @@
     <property name="reg-web.build.finalName" value="reg-web"/>
     <property name="reg-web.build.dir" value="${software.dir}/reg-web/target"/>
     <property name="reg-web.build.outputDir" value="${reg-web.build.dir}/classes"/>
+    <property name="reg-web.build.javadoc" value="${reg-web.build.dir}/javadoc"/>
     <property name="reg-web.build.srcDir.0" value="${software.dir}/reg-web/src/java"/>
     <property name="reg-web.build.resourceDir.0" value="${software.dir}/reg-web/src/resources"/>
     <property name="reg-web.build.testOutputDir" value="${reg-web.build.dir}/test-classes"/>
@@ -557,6 +558,26 @@
               </sequential>
             </for>
       </target>
+
+    <!-- ====================================================================== -->
+    <!-- Generate Javadoc                                                       -->
+    <!-- ====================================================================== -->
+        
+    <target name="generate-javadoc">
+		<javadoc destdir="${reg-web.build.javadoc}"
+		    sourcepath="${reg-web.build.srcDir.0}"
+		    windowtitle="CTRP Registry">
+		    <doctitle><![CDATA[<h1>CTRP Trial Registration</h1>]]></doctitle>
+            <classpath>
+                <path refid="compile.classpath"/>
+                <path refid="common.package.classpath" />
+            </classpath>
+		</javadoc> 
+        <mkdir dir="javadoc"/>
+        <zip destfile="javadoc/reg-web-javadoc.zip">
+            <fileset dir="${reg-web.build.javadoc}" />
+        </zip>
+    </target>
 
     <!--  ======================================================================
                The emptySessionPath must be false to avoid Session Fixation Appscan issues and be compatible with the

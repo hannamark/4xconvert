@@ -29,6 +29,7 @@
     <property name="pa-web.reporting.outputDirectory" value="${pa.report.dir}/pa-web/site"/>
     <property name="pa-web.war" value="${pa-web.build.finalName}.war"/>
     <property name="pa-web.build.coberturaOutputDir" value="${pa-web.build.dir}/generated-classes"/>
+    <property name="pa-web.build.javadoc" value="${pa-web.build.dir}/javadoc"/>
 
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
@@ -525,6 +526,23 @@
     </target>
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/pa-web"/>
+    </target>
+    
+    
+    <!-- ====================================================================== -->
+    <!-- Generate Javadoc                                                       -->
+    <!-- ====================================================================== -->
+        
+    <target name="generate-javadoc">
+		<javadoc destdir="${pa-web.build.javadoc}"
+		    sourcepath="${pa-web.build.srcDir.0}"
+		    windowtitle="CTRP PA WEB">
+		    <doctitle><![CDATA[<h1>CTRP PA Abstraction Web Layer</h1>]]></doctitle>
+            <classpath>
+                <path refid="compile.classpath"/>
+                <path refid="common.package.classpath" />
+            </classpath>
+		</javadoc>    
     </target>
 
 </project>

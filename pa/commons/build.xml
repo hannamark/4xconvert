@@ -30,6 +30,7 @@
     <property name="commons.jar" value="${commons.build.finalName}.jar"/>
     <property name="commons-test.jar" value="${commons.build.finalName}-test.jar"/>
     <property name="commons.build.coberturaOutputDir" value="${commons.build.dir}/generated-classes"/>
+    <property name="commons.build.javadoc" value="${commons.build.dir}/javadoc"/>
 
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
@@ -441,5 +442,22 @@
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/commons"/>
     </target>
+    
+    <!-- ====================================================================== -->
+    <!-- Generate Javadoc                                                       -->
+    <!-- ====================================================================== -->
+        
+    <target name="generate-javadoc">
+        <mkdir dir="${commons.build.javadoc}"/>
+		<javadoc destdir="${commons.build.javadoc}"
+		    sourcepath="${commons.build.srcDir.0}"
+		    windowtitle="CTRP PA Commons">
+		    <doctitle><![CDATA[<h1>CTRP PA Commons</h1>]]></doctitle>
+            <classpath>
+                <path refid="compile.classpath"/>
+            </classpath>
+		</javadoc>    
+    </target>
+   
 
 </project>

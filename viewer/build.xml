@@ -116,4 +116,27 @@
         <ant target="copy-jsp" dir="${webDir}"/>
     </target> 
     
+	    
+	<!-- ====================================================================== -->
+	<!-- Generate Javadoc                                                       -->
+	<!-- ====================================================================== -->
+	<target name="generate-javadoc" description="Generate Javadoc">
+        <delete dir="javadoc"/>
+        <mkdir dir="javadoc"/>
+
+	    <ant target="generate-javadoc" dir="web" inheritAll="false"/>
+        <copy todir="javadoc/web">
+          	<fileset dir="web/target/javadoc/"/>
+        </copy>
+
+	    <ant target="generate-javadoc" dir="services" inheritAll="false"/>
+        <copy todir="javadoc/services">
+          	<fileset dir="services/target/javadoc/"/>
+        </copy>
+	    
+        <zip destfile="javadoc/viewer-javadoc.zip">
+            <fileset dir="javadoc"/>
+        </zip>
+	</target> 
+    
 </project>

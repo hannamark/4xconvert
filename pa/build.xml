@@ -4,7 +4,7 @@
 <!-- Main ant script for COPPA PA                                           -->
 <!-- ====================================================================== -->
 
-    <project name="pa" default="package" basedir=".">
+<project name="pa" default="package" basedir=".">
     <property file="${basedir}/build.properties"/>
     <property name="bda-utils" value="${basedir}/../target/pa/bda-utils" />
 
@@ -21,10 +21,10 @@
     <!-- ====================================================================== -->
 
     <target name="clean" description="Clean the output directory">
-	        <ant target="clean" dir="commons" inheritAll="false"/>
-            <ant target="clean" dir="pa-ejb" inheritAll="false"/>
-            <ant target="clean" dir="pa-ear" inheritAll="false"/>
-            <ant target="clean" dir="pa-web" inheritAll="false"/>
+        <ant target="clean" dir="commons" inheritAll="false"/>
+        <ant target="clean" dir="pa-ejb" inheritAll="false"/>
+        <ant target="clean" dir="pa-ear" inheritAll="false"/>
+        <ant target="clean" dir="pa-web" inheritAll="false"/>
     </target>
 
     <!-- ====================================================================== -->
@@ -32,10 +32,10 @@
     <!-- ====================================================================== -->
 
     <target name="compile" description="Compile the code">
-    	<ant target="compile" dir="commons" inheritAll="false"/>
+        <ant target="compile" dir="commons" inheritAll="false"/>
         <ant target="compile" dir="pa-ejb" inheritAll="false"/>
         <ant target="compile" dir="pa-web" inheritAll="false"/>
-    	<ant target="compile-tests" dir="commons" inheritAll="false"/>
+        <ant target="compile-tests" dir="commons" inheritAll="false"/>
         <ant target="compile-tests" dir="pa-ejb" inheritAll="false"/>
         <ant target="compile-tests" dir="pa-web" inheritAll="false"/>
     </target>
@@ -44,9 +44,9 @@
     <!-- run PMD / Checkstyle                                                    -->
     <!-- ====================================================================== -->
     <target name="test-static-analysis" description="Runs PMD / Checkstyle">
-    	<ant target="test-static-analysis" dir="commons" inheritAll="false"/>
-    	<ant target="test-static-analysis" dir="commons" inheritAll="false"/>
-    	<ant target="test-static-analysis" dir="commons" inheritAll="false"/>
+        <ant target="test-static-analysis" dir="commons" inheritAll="false"/>
+        <ant target="test-static-analysis" dir="commons" inheritAll="false"/>
+        <ant target="test-static-analysis" dir="commons" inheritAll="false"/>
     </target>
 
     <!-- ====================================================================== -->
@@ -54,7 +54,7 @@
     <!-- ====================================================================== -->
 
     <target name="test" description="Run all tests">
-    	<ant target="test-all" dir="commons" inheritAll="false"/>
+        <ant target="test-all" dir="commons" inheritAll="false"/>
         <ant target="test-all" dir="pa-ejb" inheritAll="false"/>
         <ant target="test-all" dir="pa-web" inheritAll="false"/>
     </target>
@@ -68,7 +68,7 @@
     <!-- ====================================================================== -->
 
     <target name="package" description="Package the application">
-    	<ant target="package" dir="commons" inheritAll="false"/>
+        <ant target="package" dir="commons" inheritAll="false"/>
         <ant target="package" dir="pa-ejb" inheritAll="false"/>
         <ant target="package" dir="pa-web" inheritAll="false"/>
         <ant target="package" dir="pa-ear" inheritAll="false"/>
@@ -83,7 +83,7 @@
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
 
-    	<ant target="package-notest-noivy" dir="commons" inheritAll="false"/>
+        <ant target="package-notest-noivy" dir="commons" inheritAll="false"/>
         <ant target="package-notest-noivy" dir="pa-ejb" inheritAll="false"/>
         <ant target="package-notest-noivy" dir="pa-web" inheritAll="false"/>
         <ant target="ear" dir="pa-ear"  inheritAll="false"/>
@@ -94,29 +94,29 @@
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
 
-    	<ant target="package" dir="commons" inheritAll="false"/>
+        <ant target="package" dir="commons" inheritAll="false"/>
         <ant target="package" dir="pa-ejb" inheritAll="false"/>
         <ant target="package" dir="pa-web" inheritAll="false"/>
         <ant target="ear" dir="pa-ear" inheritAll="false"/>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Run integration tests                                                  -->
     <!-- ====================================================================== -->
-        
+
 
     <target name="run-selenium-tests" description="Runs integration tests against an already deployed application">
         <ant target="run-selenium-tests" dir="pa-web" inheritAll="false"/>
     </target>
-            
+
     <target name="start-selenium-server" description="Starts the selenium server">
         <ant target="start-selenium-server" dir="pa-web" inheritAll="false"/>
     </target>
-        
+
     <target name="stop-selenium-server" description="Stops the selenium server">
         <ant target="stop-selenium-server" dir="pa-web" inheritAll="false"/>
     </target>
-    
+
     <target name="test-integration" depends="clean" description="Runs integration tests against the automatically deploy application.">
         <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
@@ -144,17 +144,17 @@
     <!-- ====================================================================== -->
 
     <target name="ivy-get">
-   	 	 <ant target="ivy-get" dir="./commons" inheritAll="false"/>
-         <ant target="ivy-get" dir="./pa-ejb" inheritAll="false"/>
-         <ant target="ivy-get" dir="./pa-web" inheritAll="false"/>
-         <ant target="ivy-get" dir="./pa-ear" inheritAll="false"/>
+        <ant target="ivy-get" dir="./commons" inheritAll="false"/>
+        <ant target="ivy-get" dir="./pa-ejb" inheritAll="false"/>
+        <ant target="ivy-get" dir="./pa-web" inheritAll="false"/>
+        <ant target="ivy-get" dir="./pa-ear" inheritAll="false"/>
     </target>
 
     <target name="ivy-clean">
-    	 <ant target="ivy-clean" dir="commons" inheritAll="false"/>
-         <ant target="ivy-clean" dir="pa-ejb" inheritAll="false"/>
-         <ant target="ivy-clean" dir="pa-web" inheritAll="false"/>
-         <ant target="ivy-clean" dir="pa-ear" inheritAll="false"/>
+        <ant target="ivy-clean" dir="commons" inheritAll="false"/>
+        <ant target="ivy-clean" dir="pa-ejb" inheritAll="false"/>
+        <ant target="ivy-clean" dir="pa-web" inheritAll="false"/>
+        <ant target="ivy-clean" dir="pa-ear" inheritAll="false"/>
     </target>
 
     <!-- ====================================================================== -->
@@ -162,19 +162,47 @@
     <!-- ====================================================================== -->
 
     <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
-            <for param="toDir">
-              <path>
+        <for param="toDir">
+            <path>
                 <dirset dir="${jboss.deploy.directory}/../tmp/deploy" includes="tmp*pa.ear-contents/pa-web-exp.war"/>
-              </path>
-              <sequential>
-                  <copy todir="@{toDir}">
-                      <fileset dir="${basedir}/pa-web/src/webapp">
-                          <include name="WEB-INF/jsp/*.jsp"/>
-                          <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
-                      	  <include name="WEB-INF/decorators/*.jsp"/>
-                      </fileset>
-                  </copy>
-              </sequential>
-            </for>
-      </target>
+            </path>
+            <sequential>
+                <copy todir="@{toDir}">
+                    <fileset dir="${basedir}/pa-web/src/webapp">
+                        <include name="WEB-INF/jsp/*.jsp"/>
+                        <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
+                        <include name="WEB-INF/decorators/*.jsp"/>
+                    </fileset>
+                </copy>
+            </sequential>
+        </for>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Generate Javadoc                                                       -->
+    <!-- ====================================================================== -->
+    <target name="generate-javadoc" description="Generate Javadoc">
+        <delete dir="javadoc"/>
+        <mkdir dir="javadoc"/>
+
+        <ant target="generate-javadoc" dir="commons" inheritAll="false" />
+        <copy todir="javadoc/commons">
+          	<fileset dir="commons/target/javadoc/"/>
+        </copy>
+
+        <ant target="generate-javadoc" dir="pa-ejb" inheritAll="false" />
+        <copy todir="javadoc/pa-ejb">
+          	<fileset dir="pa-ejb/target/javadoc/"/>
+        </copy>
+
+        <ant target="generate-javadoc" dir="pa-web" inheritAll="false" />
+        <copy todir="javadoc/pa-web">
+          	<fileset dir="pa-web/target/javadoc/"/>
+        </copy>
+
+        <zip destfile="javadoc/pa-javadoc.zip">
+            <fileset dir="javadoc" />
+        </zip>
+    </target>
+
 </project>

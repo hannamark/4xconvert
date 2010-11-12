@@ -19,6 +19,7 @@
     <property name="web.build.outputDir" value="${web.build.dir}/classes"/>
     <property name="web.build.webappDir" value="${web.build.dir}/webapp"/>
     <property name="web.build.srcDir" value="${basedir}/src/java"/>
+    <property name="web.build.javadoc" value="${basedir}/javadoc"/>
     <property name="web.build.resourceDir" value="${basedir}/src/resources"/>
     <property name="web.war" value="accrual.war"/>
     <property name="web.build.testSrcDir" value="${basedir}/test/java"/>
@@ -384,6 +385,21 @@
         <delete dir="${lib.dir}/accrual-web"/>
     </target>
 
+    <!-- ====================================================================== -->
+    <!-- Generate Javadoc                                                       -->
+    <!-- ====================================================================== -->
+        
+    <target name="generate-javadoc">
+		<javadoc destdir="${web.build.javadoc}"
+		    sourcepath="${web.build.srcDir}"
+		    windowtitle="CTRP Accrual Web">
+		    <doctitle><![CDATA[<h1>CTRP Accrual Web Layer</h1>]]></doctitle>
+            <classpath>
+                <path refid="compile.classpath"/>
+            </classpath>
+		</javadoc>    
+    </target>
+   
 
     <!-- ====================================================================== -->
     <!-- Copies JSP to the tmp folder                                           -->

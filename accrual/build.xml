@@ -242,5 +242,27 @@
 
     <target name="clean" description="Clean the ear, jar and war" depends="accrual-web-clean, accrual-services-clean, accrual-ear-clean">
     </target>
+    
+    <!-- ====================================================================== -->
+    <!-- Generate Javadoc                                                       -->
+    <!-- ====================================================================== -->
+    <target name="generate-javadoc" description="Generate Javadoc">
+		<delete dir="javadoc"/>
+        <mkdir dir="javadoc"/>
+        
+        <ant target="generate-javadoc" dir="accrual-web" inheritAll="false"/>
+        <copy todir="javadoc/accrual-web">
+            <fileset dir="accrual-web/javadoc" />
+        </copy>
+        
+        <ant target="generate-javadoc" dir="services" inheritAll="false"/>
+        <copy todir="javadoc/services">
+            <fileset dir="services/javadoc" />
+        </copy>
+        
+        <zip destfile="javadoc/accrual-javadoc.zip">
+            <fileset dir="javadoc"/>
+        </zip>
+    </target> 
 
 </project>

@@ -17,6 +17,7 @@
     <property name="services.build.dir" value="${basedir}/target"/>
     <property name="services.build.outputDir" value="${services.build.dir}/classes"/>
     <property name="services.build.srcDir" value="${basedir}/src/java"/>
+    <property name="services.build.javadoc" value="${basedir}/javadoc"/>
     <property name="services.build.domainDir" value="${services.build.srcDir}/gov/nih/nci/pa"/>
     <property name="services.build.resourceDir" value="${basedir}/src/resources"/>
     <property name="services.jar" value="accrual-services.jar"/>
@@ -432,5 +433,21 @@
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/services"/>
     </target>
+    
+    <!-- ====================================================================== -->
+    <!-- Generate Javadoc                                                       -->
+    <!-- ====================================================================== -->
+        
+    <target name="generate-javadoc">
+		<javadoc destdir="${services.build.javadoc}"
+		    sourcepath="${services.build.srcDir}"
+		    windowtitle="CTRP Accrual EJB">
+		    <doctitle><![CDATA[<h1>CTRP Accrual Service Layer</h1>]]></doctitle>
+            <classpath>
+                <path refid="compile.classpath"/>
+            </classpath>
+		</javadoc>    
+    </target>
+   
 
 </project>

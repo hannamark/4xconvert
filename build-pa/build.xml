@@ -86,6 +86,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <!-- Properties that relate to how to call build targets from sub-projects-->
     <!-- Working directory passed to Ant tasks -->
+    <property name="pa.base.dir" location="${software.dir}/pa"/>
+    <property name="viewer.base.dir" location="${software.dir}/viewer"/>
     <property name="pa-ear.base.dir" location="${software.dir}/pa/pa-ear"/>
     <property name="pa-commons.base.dir" location="${software.dir}/pa/commons"/>
     <property name="pa-resources.base.dir" location="${software.dir}/pa/resources"/>
@@ -97,6 +99,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="accrual-ear.base.dir" location="${software.dir}/accrual"/>
 
     <!-- Build file names relative working dir above, if the basedir of the sub-project ant script is ".." you should set the *.basdir to and the build file should include the dir and build file name from the *.base.dir -->
+    <property name="pa.build.file" value="build.xml"/>
     <property name="pa-ear.build.file" value="build.xml"/>
     <property name="pa-commons.build.file" value="build.xml"/>
     <property name="pa-ejb.build.file" value="build.xml"/>
@@ -112,6 +115,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="accrual-clean.build.target" value="clean"/>
     <property name="pa-ivy-clean.build.target" value="ivy-clean"/>
     <property name="pa-ear.build.target" value="package"/>
+    <property name="pa.javadoc.target" value="generate-javadoc"/>
     <property name="pa-commons.build.target" value="package-notest"/>
     <property name="pa-ejb.build.target" value="package-notest"/>
     <property name="pa-web.build.target" value="package-notest"/>
@@ -124,6 +128,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Distribution Structure properties, used to copy files into the distribution area.
             Use project.properties relative dir names becasue they are used by install also-->
     <property name="dist.exploded.dir" location="${dist.dir}/exploded" />
+    <property name="dist.javadoc.dir" location="${dist.dir}/javadoc"/>
     <property name="pa-ear.dist.dir" location="${dist.exploded.dir}/${pa-ear.dist.relative.dir}" />
     <property name="pa-commons.dist.dir" location="${dist.exploded.dir}/${pa-commons.dist.relative.dir}" />
     <property name="pa-ejb.dist.dir" location="${dist.exploded.dir}/${pa-ejb.dist.relative.dir}" />
@@ -137,7 +142,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="jboss-conf.dist.dir" location="${dist.exploded.dir}/${jboss-conf.dist.relative.dir}" />
     <property name="db-install.dist.dir" location="${dist.exploded.dir}/${db-install.dist.relative.dir}" />
     <property name="db-upgrade.dist.dir" location="${dist.exploded.dir}/${db-upgrade.dist.relative.dir}" />
-
+	<property name="pa.javadoc.file" location="${pa.base.dir}/javadoc/pa-javadoc.zip"/>
+	<property name="accrual.javadoc.file" location="${accrual-ear.base.dir}/javadoc/accrual-javadoc.zip"/>
+	<property name="viewer.javadoc.file" location="${viewer.base.dir}/javadoc/viewer-javadoc.zip"/>
+	<property name="reg-web.javadoc.file" location="${reg-web.base.dir}/javadoc/reg-web-javadoc.zip"/>
+    
     <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
     <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
 
@@ -377,7 +386,34 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <target name="ivy-get"/>
         </ant>
     </target>
-
+    
+    <target name="javadoc:all" description="Generates Javadoc for accrual, pa, registry, accrual and viewer">
+	    <ant inheritAll="false" inheritRefs="false" antfile="${pa.build.file}"
+	               dir="${pa.base.dir}" >
+		    <target name="${pa.javadoc.target}"/>
+	    </ant>	
+        <copy file="${pa.javadoc.file}" todir="${dist.javadoc.dir}"/>
+        
+	    <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
+	               dir="${accrual-ear.base.dir}" >
+		    <target name="${pa.javadoc.target}"/> 
+	    </ant>
+        <copy file="${accrual.javadoc.file}" todir="${dist.javadoc.dir}"/>
+        
+	    <ant inheritAll="false" inheritRefs="false"
+	               dir="${viewer.base.dir}" >
+		    <target name="${pa.javadoc.target}"/>
+	    </ant>	
+    	<copy file="${viewer.javadoc.file}" todir="${dist.javadoc.dir}"/>
+        
+	    <ant inheritAll="false" inheritRefs="false"
+	               dir="${reg-web.base.dir}" >
+		    <target name="${pa.javadoc.target}"/>
+	    </ant>	
+        <copy file="${reg-web.javadoc.file}" todir="${dist.javadoc.dir}"/>
+        
+    </target>
+    
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="build:all" description="Builds all the sub projects, putting artifacts in the project level target directory, used by distribution targets to make distributions"
         depends="

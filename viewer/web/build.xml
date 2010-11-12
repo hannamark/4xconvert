@@ -23,6 +23,7 @@
     <property name="viewer.build.resourceDir.0" value="${basedir}/src/resources"/>
     <property name="viewer.build.testOutputDir" value="${viewer.build.dir}/test-classes"/>
     <property name="viewer.build.testDir.0" value="${basedir}/test/java"/>
+    <property name="viewer.build.javadoc" value="${viewer.build.dir}/javadoc"/>
     <property name="viewer.build.testResourceDir.0" value="${basedir}/test/resources"/>
     <property name="viewer.test.reports" value="${reportDir}/test-reports"/>
     <property name="viewer.coverage.reports" value="${reportDir}/coverage-reports"/>
@@ -421,5 +422,22 @@
               </sequential>
             </for>
       </target>
+    
+    <!-- ====================================================================== -->
+    <!-- Generate Javadoc                                                       -->
+    <!-- ====================================================================== -->
+        
+    <target name="generate-javadoc">
+		<javadoc destdir="${viewer.build.javadoc}"
+		    sourcepath="${viewer.build.srcDir.0}"
+		    windowtitle="CTRP Viewer Web">
+		    <doctitle><![CDATA[<h1>CTRP Viewer Web Layer</h1>]]></doctitle>
+            <classpath>
+                <path refid="compile.classpath"/>
+                <path refid="common.package.classpath" />
+            </classpath>
+		</javadoc>    
+    </target>
+   
 
 </project>
