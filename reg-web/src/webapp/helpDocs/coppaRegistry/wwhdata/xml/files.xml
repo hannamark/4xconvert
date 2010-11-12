@@ -42,120 +42,117 @@
     <Document title="Using the Online Help" href="welcome.1.2.html" />
     <Document title="Getting Started" href="gettingStarted.2.1.html" />
     <Document title="About the CTRP Registration Site" href="gettingStarted.2.2.html" />
-    <Document title="What’s New in This Release" href="gettingStarted.2.3.html" />
-    <Document title="Creating and Updating CTRP Registration Site Accounts" href="gettingStarted.2.4.html" />
-    <Document title="Creating New CTRP Registration Site Accounts" href="gettingStarted.2.5.html" />
-    <Document title="Updating Current CTRP Registration Site Accounts" href="gettingStarted.2.6.html" />
+    <Document title="About Clinical Trial Details" href="gettingStarted.2.3.html" />
+    <Document title="What’s New in This Release" href="gettingStarted.2.4.html" />
+    <Document title="Creating and Updating CTRP Registration Site Accounts" href="gettingStarted.2.5.html" />
+    <Document title="Creating New CTRP Registration Site Accounts" href="gettingStarted.2.6.html" />
     <Document title="Creating New CTRP Registration Site Accounts Using caGrid or NCI Credentials" href="gettingStarted.2.7.html" />
     <Document title="Logging In to the CTRP Registration Site" href="gettingStarted.2.8.html" />
     <Document title="Using CTRP Registration Templates and Resources" href="gettingStarted.2.9.html" />
     <Document title="Downloading Trial Registration Templates" href="gettingStarted.2.10.html" />
-    <Document title="Using the Proprietary Trial Template" href="gettingStarted.2.11.html" />
+    <Document title="Using the Abbreviated Trial Template" href="gettingStarted.2.11.html" />
     <Document title="Using the Participating Sites Template" href="gettingStarted.2.12.html" />
-    <Document title="Searching For Trials" href="searchTrials.3.1.html" />
-    <Document title="About Clinical Trial Details" href="searchTrials.3.2.html" />
+    <Document title="Accessing Registered Trials" href="searchTrials.3.1.html" />
+    <Document title="Conducting Searches in the CTRP Registration Site" href="searchTrials.3.2.html" />
     <Document title="Searching For Trials" href="searchTrials.3.3.html" />
     <Document title="Working with Search Results" href="searchTrials.3.4.html" />
-    <Document title="Navigating Through the Search Results List" href="searchTrials.3.5.html" />
-    <Document title="Viewing Trial Details" href="searchTrials.3.6.html" />
-    <Document title="Viewing Trial-Related Documents" href="searchTrials.3.7.html" />
-    <Document title="Requesting Trial Summary Reports and XML Documents" href="searchTrials.3.8.html" />
-    <Document title="Registering New Trials" href="register.4.1.html" />
-    <Document title="Registering Trials in the CTRP Registration Site" href="register.4.2.html" />
-    <Document title="Registering Non-Proprietary Trials" href="register.4.3.html" />
-    <Document title="Editing Trial Details" href="register.4.4.html" />
-    <Document title="Completing and Deleting Saved Drafts" href="register.4.5.html" />
-    <Document title="Printing Trial Information" href="register.4.6.html" />
-    <Document title="Completing the Trial Identifiers Section" href="register.4.7.html" />
-    <Document title="Completing the Trial Details Section" href="register.4.8.html" />
-    <Document title="Completing the Lead Organization/Principal Investigator Section" href="register.4.9.html" />
-    <Document title="Completing the Sponsor/Responsible Party Section" href="register.4.10.html" />
-    <Document title="Completing the Summary 4 Information Section" href="register.4.11.html" />
-    <Document title="Completing the NIH Grant Information Section" href="register.4.12.html" />
-    <Document title="Completing the Trial Status/Dates Section" href="register.4.13.html" />
-    <Document title="Completing the IND/IDE Information Section" href="register.4.14.html" />
-    <Document title="Registering IND Trials" href="register.4.15.html" />
-    <Document title="Registering IDE Trials" href="register.4.16.html" />
-    <Document title="Completing Regulatory Information" href="register.4.17.html" />
-    <Document title="Completing the Trial Related Documents Section" href="register.4.18.html" />
-    <Document title="Registering Proprietary Trials" href="register.4.19.html" />
-    <Document title="Completing the Trial Identification Section for Proprietary Trials" href="register.4.20.html" />
-    <Document title="Completing the Trial Details Section for Proprietary Trials" href="register.4.21.html" />
-    <Document title="Completing Summary 4 Information for Proprietary Trials" href="register.4.22.html" />
-    <Document title="Completing the Trial Status/Dates Section for Proprietary Trials" href="register.4.23.html" />
-    <Document title="Completing the Trial Related Documents Section for Proprietary Trials" href="register.4.24.html" />
-    <Document title="Registering Organizations" href="register.4.25.html" />
-    <Document title="Searching for Registered Organizations" href="register.4.26.html" />
-    <Document title="Adding Organizations" href="register.4.27.html" />
-    <Document title="Registering Persons" href="register.4.28.html" />
-    <Document title="Searching for Principal Investigators" href="register.4.29.html" />
-    <Document title="Adding Principal Investigators" href="register.4.30.html" />
-    <Document title="Registering Multiple Trials in a Batch" href="register.4.31.html" />
-    <Document title="Data Requirements for Batch Uploads" href="register.4.32.html" />
-    <Document title="Updating and AmendingRegistered Trials" href="amendTrial.5.1.html" />
-    <Document title="About Trial Updates" href="amendTrial.5.2.html" />
-    <Document title="Updating Accepted Trials" href="amendTrial.5.3.html" />
-    <Document title="About Trial Amendments" href="amendTrial.5.4.html" />
-    <Document title="Amendment Process Life Cycle" href="amendTrial.5.5.html" />
-    <Document title="Amending Verified Trials" href="amendTrial.5.6.html" />
-    <Document title="Amending Trial Details" href="amendTrial.5.7.html" />
-    <Document title="Amending Lead Organization and Principal Investigator Details" href="amendTrial.5.8.html" />
-    <Document title="Amending Sponsor and Summary 4 Details" href="amendTrial.5.9.html" />
-    <Document title="Amending NIH Grant Details" href="amendTrial.5.10.html" />
-    <Document title="Amending Trial Status Dates" href="amendTrial.5.11.html" />
-    <Document title="Amending IND/IDE Details" href="amendTrial.5.12.html" />
-    <Document title="Amending Regulatory Information" href="amendTrial.5.13.html" />
-    <Document title="Uploading Amendment-Specific Documents" href="amendTrial.5.14.html" />
-    <Document title="Reviewing and Submitting Trial Amendments and Updates" href="amendTrial.5.15.html" />
-    <Document title="Editing Amended and Updated Details" href="amendTrial.5.16.html" />
-    <Document title="Printing Amended and Updated Trial Information" href="amendTrial.5.17.html" />
-    <Document title="Managing Your Account" href="userAccount.6.1.html" />
-    <Document title="Managing Your User Account Profile" href="userAccount.6.2.html" />
-    <Document title="Changing Your Password" href="userAccount.6.3.html" />
-    <Document title="Resetting Your Account" href="userAccount.6.4.html" />
-    <Document title="Managing Organizational Access" href="orgAccess.7.1.html" />
-    <Document title="Managing Site Administration Within Your Organization" href="orgAccess.7.2.html" />
-    <Document title="Granting and Revoking Administrative Authority" href="orgAccess.7.3.html" />
-    <Document title="Displaying and Removing Trial Ownership" href="orgAccess.7.4.html" />
-    <Document title="Managing Organizational Access Through Trial Ownership" href="orgAccess.7.5.html" />
-    <Document title="Batch Upload Data Specifications" href="batchUpload.8.1.html" />
-    <Document title="Preparing the Trial Data File for Non-Proprietary Trials" href="batchUpload.8.2.html" />
-    <Document title="Preparing Trial-Related Documents" href="batchUpload.8.3.html" />
-    <Document title="Trial Data Element Specifications For Non-Proprietary Trials" href="batchUpload.8.4.html" />
-    <Document title="Preparing the Trial Data File for Proprietary Trials" href="batchUpload.8.5.html" />
-    <Document title="Trial Specification Rules For Proprietary Trials" href="batchUpload.8.6.html" />
-    <Document title="Participating Sites Document Specifications" href="participatingSites.9.1.html" />
-    <Document title="Participating Sites Document Rules" href="participatingSites.9.2.html" />
-    <Document title="Participating Site Data Element Specifications" href="participatingSites.9.3.html" />
-    <Document title="Funding Mechanism Codes" href="fundingMechanism.10.1.html" />
-    <Document title="Institute Codes" href="instituteCode.11.1.html" />
-    <Document title="Application Support" href="appSupport.12.1.html" />
+    <Document title="Viewing Trial Details" href="searchTrials.3.5.html" />
+    <Document title="Viewing Trial-Related Documents" href="searchTrials.3.6.html" />
+    <Document title="Registering New Trials" href="register_completeTrials.4.1.html" />
+    <Document title="Main Steps for Registering Complete Trials" href="register_completeTrials.4.2.html" />
+    <Document title="Recording Trial Identifiers" href="register_completeTrials.4.3.html" />
+    <Document title="Recording Trial Details" href="register_completeTrials.4.4.html" />
+    <Document title="Recording Lead Organizations/Principal Investigators" href="register_completeTrials.4.5.html" />
+    <Document title="Recording Sponsors/Responsible Parties" href="register_completeTrials.4.6.html" />
+    <Document title="Recording Summary 4 Information for NIH-Funded Trials" href="register_completeTrials.4.7.html" />
+    <Document title="Recording NIH Grant Information" href="register_completeTrials.4.8.html" />
+    <Document title="Recording Trial Statuses/Dates" href="register_completeTrials.4.9.html" />
+    <Document title="Recording IND/IDE Information" href="register_completeTrials.4.10.html" />
+    <Document title="Recording Regulatory Information" href="register_completeTrials.4.11.html" />
+    <Document title="Recording Trial Related Documents" href="register_completeTrials.4.12.html" />
+    <Document title="Editing Trial Details" href="register_completeTrials.4.13.html" />
+    <Document title="Printing Trial Information" href="register_completeTrials.4.14.html" />
+    <Document title="Completing and Deleting Saved Drafts" href="register_completeTrials.4.15.html" />
+    <Document title="Registering Multiple Trials in a Batch" href="register_completeTrials.4.16.html" />
+    <Document title="Data Requirements for Batch Uploads" href="register_completeTrials.4.17.html" />
+    <Document title="Registering New Industrial Trials" href="register_abbreviatedTrials.5.1.html" />
+    <Document title="Main Steps for Registering Abbreviated Trials" href="register_abbreviatedTrials.5.2.html" />
+    <Document title="Recording Trial Identification Information" href="register_abbreviatedTrials.5.3.html" />
+    <Document title="Recording Trial Details" href="register_abbreviatedTrials.5.4.html" />
+    <Document title="Recording Summary 4 Information" href="register_abbreviatedTrials.5.5.html" />
+    <Document title="Recording Site Recruitment Statuses/Dates" href="register_abbreviatedTrials.5.6.html" />
+    <Document title="Recording Trial-Related Documents" href="register_abbreviatedTrials.5.7.html" />
+    <Document title="Updating Trials" href="updateTrial.6.1.html" />
+    <Document title="About Trial Updates" href="updateTrial.6.2.html" />
+    <Document title="Updating Trials" href="updateTrial.6.3.html" />
+    <Document title="Reviewing and Submitting Trial Updates" href="updateTrial.6.4.html" />
+    <Document title="Editing Updated Details" href="updateTrial.6.5.html" />
+    <Document title="Printing Updated Trial Information" href="updateTrial.6.6.html" />
+    <Document title="Amending Trials" href="amendTrial.7.1.html" />
+    <Document title="About Trial Amendments" href="amendTrial.7.2.html" />
+    <Document title="Amendment Process Life Cycle" href="amendTrial.7.3.html" />
+    <Document title="Amending Trials" href="amendTrial.7.4.html" />
+    <Document title="Reviewing and Submitting Trial Amendments" href="amendTrial.7.5.html" />
+    <Document title="Editing Amended Details" href="amendTrial.7.6.html" />
+    <Document title="Printing Amended Trial Information" href="amendTrial.7.7.html" />
+    <Document title="Managing Organizational Access" href="orgAccess.8.1.html" />
+    <Document title="Managing Organizational Access Through Trial Ownership" href="orgAccess.8.2.html" />
+    <Document title="Displaying and Removing Trial Ownership" href="orgAccess.8.3.html" />
+    <Document title="Managing Site Administration Within Your Organization" href="orgAccess.8.4.html" />
+    <Document title="Granting and Revoking Administrative Authority" href="orgAccess.8.5.html" />
+    <Document title="Managing Your Account" href="userAccount.9.1.html" />
+    <Document title="Managing Your User Account Profile" href="userAccount.9.2.html" />
+    <Document title="Changing Your Password" href="userAccount.9.3.html" />
+    <Document title="Resetting Your Account" href="userAccount.9.4.html" />
+    <Document title="Working With Persons andOrganizations" href="personsOrgs.10.1.html" />
+    <Document title="Looking Up Registered Persons" href="personsOrgs.10.2.html" />
+    <Document title="Adding Persons to CTRP" href="personsOrgs.10.3.html" />
+    <Document title="Looking Up Registered Organizations" href="personsOrgs.10.4.html" />
+    <Document title="Adding Organizations" href="personsOrgs.10.5.html" />
+    <Document title="Common Tasks and DataElement Formats" href="commonTasks.11.1.html" />
+    <Document title="CTRP Registration Site Icons" href="commonTasks.11.2.html" />
+    <Document title="Navigating Search Results Lists" href="commonTasks.11.3.html" />
+    <Document title="Entering Phone and Fax Numbers" href="commonTasks.11.4.html" />
+    <Document title="Selecting and Entering Dates" href="commonTasks.11.5.html" />
+    <Document title="Requesting Trial Summary Reports and XML Documents" href="commonTasks.11.6.html" />
+    <Document title="Batch Upload Data Specifications" href="batchUpload.12.1.html" />
+    <Document title="Preparing the Trial Data File for Complete Trials" href="batchUpload.12.2.html" />
+    <Document title="Preparing Trial-Related Documents" href="batchUpload.12.3.html" />
+    <Document title="Trial Data Element Specifications for Complete Trials" href="batchUpload.12.4.html" />
+    <Document title="Preparing the Trial Data File for Abbreviated Trials" href="batchUpload.12.5.html" />
+    <Document title="Trial Specification Rules for Abbreviated Trials" href="batchUpload.12.6.html" />
+    <Document title="Participating Sites Document Specifications" href="participatingSites.13.1.html" />
+    <Document title="Participating Sites Document Rules" href="participatingSites.13.2.html" />
+    <Document title="Participating Site Data Element Specifications" href="participatingSites.13.3.html" />
+    <Document title="Funding Mechanism Codes" href="fundingMechanism.14.1.html" />
+    <Document title="Institute Codes" href="instituteCode.15.1.html" />
+    <Document title="NIH/NCI Division/Program Codes" href="divisionCode.16.1.html" />
+    <Document title="Trial Processing Statuses" href="processStatus.17.1.html" />
+    <Document title="Application Support" href="appSupport.18.1.html" />
   </DocumentInfo>
   <TopicMap>
     <Topic name="welcome" href="welcome.1.1.html#1078008" />
-    <Topic name="create_account" href="gettingStarted.2.4.html#1122689" />
+    <Topic name="create_account" href="gettingStarted.2.5.html#1137177" />
     <Topic name="register" href="gettingStarted.2.7.html#1117801" />
     <Topic name="login" href="gettingStarted.2.8.html#1112068" />
-    <Topic name="search_trials" href="searchTrials.3.3.html#1078002" />
-    <Topic name="search_results" href="searchTrials.3.4.html#1078195" />
-    <Topic name="view_result" href="searchTrials.3.6.html#1078432" />
-    <Topic name="tooltip_ct.gov_xml" href="register.4.2.html#1254142" />
-    <Topic name="submit_trial" href="register.4.3.html#1185737" />
-    <Topic name="non-proprietary_trials:registering" href="register.4.3.html#1190762" />
-    <Topic name="edit_trial" href="register.4.4.html#1222517" />
-    <Topic name="tooltip_trial_id" href="register.4.7.html#1182358" />
-    <Topic name="tooltip_phases" href="register.4.8.html#1078117" />
-    <Topic name="tooltip_lead_org" href="register.4.9.html#1183079" />
-    <Topic name="tooltip_principal_invest" href="register.4.9.html#1078324" />
-    <Topic name="tooltip_sponsor" href="register.4.10.html#1106975" />
-    <Topic name="tooltip_responsible__party" href="register.4.10.html#1167748" />
-    <Topic name="tooltip_summary_4" href="register.4.11.html#1078466" />
-    <Topic name="tooltip_summary_4_fund" href="register.4.11.html#1184258" />
-    <Topic name="submit_trial_proprietary" href="register.4.19.html#1100834" />
-    <Topic name="amend_trial" href="amendTrial.5.4.html#1089306" />
-    <Topic name="my_account" href="userAccount.6.2.html#1089507" />
-    <Topic name="site_admin" href="orgAccess.7.3.html#1083826" />
-    <Topic name="display_ownership" href="orgAccess.7.4.html#1083333" />
-    <Topic name="manage_ownership" href="orgAccess.7.5.html#1089944" />
+    <Topic name="search_trials" href="searchTrials.3.3.html#1137750" />
+    <Topic name="search_results" href="searchTrials.3.4.html#1138020" />
+    <Topic name="view_result" href="searchTrials.3.5.html#1078432" />
+    <Topic name="submit_trial" href="register_completeTrials.4.2.html#1077971" />
+    <Topic name="tooltip_ct.gov_xml" href="register_completeTrials.4.2.html#1279979" />
+    <Topic name="tooltip_trial_id" href="register_completeTrials.4.3.html#1281477" />
+    <Topic name="tooltip_lead_org" href="register_completeTrials.4.5.html#1183079" />
+    <Topic name="tooltip_principal_invest" href="register_completeTrials.4.5.html#1299443" />
+    <Topic name="tooltip_sponsor" href="register_completeTrials.4.6.html#1303673" />
+    <Topic name="tooltip_responsible__party" href="register_completeTrials.4.6.html#1167748" />
+    <Topic name="tooltip_summary_4" href="register_completeTrials.4.7.html#1303552" />
+    <Topic name="edit_trial" href="register_completeTrials.4.13.html#1280960" />
+    <Topic name="submit_trial_abrv" href="register_abbreviatedTrials.5.2.html#1185737" />
+    <Topic name="update_trial" href="updateTrial.6.3.html#1085370" />
+    <Topic name="amend_trial" href="amendTrial.7.2.html#1089306" />
+    <Topic name="manage_ownership" href="orgAccess.8.2.html#1094868" />
+    <Topic name="display_ownership" href="orgAccess.8.3.html#1094987" />
+    <Topic name="site_admin" href="orgAccess.8.5.html#1083826" />
+    <Topic name="my_account" href="userAccount.9.2.html#1089507" />
   </TopicMap>
 </WebWorksHelpBook>
