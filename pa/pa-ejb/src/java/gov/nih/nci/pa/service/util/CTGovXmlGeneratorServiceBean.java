@@ -1102,7 +1102,7 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
                         PAAttributeMaxLen.LEN_254), doc));
                 if (!PAUtil.isStNull(smDTO.getDescription())) {
                     createTextBlock("outcome_description", StringUtils.substring(smDTO.getDescription().getValue(), 0,
-                            PAAttributeMaxLen.LEN_600), doc,po);
+                            PAAttributeMaxLen.LEN_600), doc, po);
                 }
                 XmlGenHelper.appendElement(po,
                         XmlGenHelper.createElement("outcome_safety_issue", BlConverter.convertBLToString(smDTO
