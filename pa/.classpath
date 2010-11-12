@@ -27,6 +27,7 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/freemarker-2.3.13.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/hibernate-annotations-3.2.0.ga.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/hibernate-validator-3.0.0.GA.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/compile/javax.servlet-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jboss-annotations-ejb3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jericho-html-2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jstl-1.1.2.jar"/>
