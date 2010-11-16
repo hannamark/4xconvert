@@ -23,6 +23,7 @@
     <property name="pa-web.build.resourceDir.0" value="${pa.dir}/pa-web/src/resources"/>
     <property name="pa-web.build.testOutputDir" value="${pa-web.build.dir}/test-classes"/>
     <property name="pa-web.build.testDir.0" value="${pa.dir}/pa-web/test/java"/>
+    <property name="pa-web.build.integrationTestDir.0" value="${pa.dir}/pa-web/test-integration/java"/>
     <property name="pa-web.build.testResourceDir.0" value="${pa.dir}/pa-web/test/resources"/>
     <property name="pa-web.test.reports" value="${pa.report.dir}/pa-web/test-reports"/>
     <property name="pa-web.coverage.reports" value="${pa.report.dir}/pa-web/coverage-reports"/>
@@ -230,6 +231,7 @@
                target="1.5" verbose="false" fork="false" source="1.5">
             <src>
                 <pathelement location="${pa-web.build.testDir.0}"/>
+                <pathelement location="${pa-web.build.integrationTestDir.0}"/>
             </src>
             <classpath>
                 <pathelement location="${pa-web.build.outputDir}"/>
@@ -338,9 +340,7 @@
                 <path refid="common.package.classpath"/>
             </classpath>
             <batchtest todir="${pa-web.test.reports}">
-                <fileset dir="${pa-web.build.testDir.0}">
-                    <include name="**/integration/*Test.java"/>
-                </fileset>
+                <fileset dir="${pa-web.build.integrationTestDir.0}" />
             </batchtest>
          </junit>
     </target>
@@ -423,7 +423,6 @@
                 <fileset dir="${pa-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
                     <exclude name="**/*Abstract*Test.java"/>
-                    <exclude name="**/integration/*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -462,7 +461,6 @@
                 <fileset dir="${pa-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
                     <exclude name="**/*Abstract*Test.java"/>
-                    <exclude name="**/integration/*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>

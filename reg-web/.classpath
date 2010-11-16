@@ -3,6 +3,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/pa"/>
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="test/java"/>
+	<classpathentry kind="src" path="test-integration/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/ajaxtags-1.3-beta-rc7.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/commons-collections-3.2.1.jar"/>
