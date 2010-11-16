@@ -230,6 +230,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                     try {
                         updateRegistryUsers(ii, dupId);
                         updateStudyResourcing(ii, dupId);
+                        updateStudyProtocolStage(ii, dupId);
                     } catch (NullifiedEntityException e) {
                         LOG.error("Org was nullified with nullified duplicate.");
                     }
@@ -271,14 +272,29 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
 
         Organization oldPaOrg = cUtils.getPAOrganizationByIi(identifier);
         Organization newPaOrg = cUtils.getPAOrganizationByIi(dupId);
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();          
         session.createQuery("update StudyResourcing set organizationIdentifier = :newPaOrgId "
                 + "where organizationIdentifier = :oldPaOrgId")
         .setString("newPaOrgId", String.valueOf(newPaOrg.getId()))
         .setString("oldPaOrgId", String.valueOf(oldPaOrg.getId()))
         .executeUpdate();
     }
-
+    
+    private void updateStudyProtocolStage(Ii identifier, Ii dupId) throws NullifiedEntityException, PAException {
+        Organization oldPaOrg = cUtils.getPAOrganizationByIi(identifier);
+        Organization newPaOrg = cUtils.getPAOrganizationByIi(dupId);
+        cUtils.updateItemIdForStudyProtocolStage("leadOrganizationIdentifier", oldPaOrg.getIdentifier(), 
+                newPaOrg.getIdentifier());
+        cUtils.updateItemIdForStudyProtocolStage("sponsorIdentifier", 
+                oldPaOrg.getIdentifier(), newPaOrg.getIdentifier());
+        cUtils.updateItemIdForStudyProtocolStage("summaryFourOrgIdentifier", 
+                oldPaOrg.getIdentifier(), newPaOrg.getIdentifier());
+        cUtils.updateItemIdForStudyProtocolStage("siteSummaryFourOrgIdentifier", oldPaOrg.getIdentifier(), 
+                newPaOrg.getIdentifier());
+        cUtils.updateItemIdForStudyProtocolStage("submitterOrganizationIdentifier", oldPaOrg.getIdentifier(), 
+                newPaOrg.getIdentifier());
+    }
+    
     private void updateResearchOrganization(final Ii roIdentifier, final ResearchOrganizationDTO roDto)
             throws PAException {
         Session session = null;

@@ -144,6 +144,7 @@ import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyRelationship;
@@ -277,6 +278,7 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(LesionLocationAnatomicSite.class).
         addAnnotatedClass(ProcedureName.class).
         addAnnotatedClass(TumorMarker.class).
+        addAnnotatedClass(StudyProtocolStage.class).
 
         // hibernate properties
         setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").

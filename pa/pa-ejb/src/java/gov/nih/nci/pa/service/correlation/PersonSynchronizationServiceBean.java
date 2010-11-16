@@ -237,6 +237,16 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             if (perDto == null) {
                 // its nullified
                 person.setStatusCode(EntityStatusCode.NULLIFIED);
+                final Ii dupId = paServiceUtil.getDuplicatePersonIi(ii);
+                
+                if (dupId != null) { 
+                    paServiceUtil.getOrCreatePAPersonByPoIi(dupId);
+                    try {
+                        updateStudyProtocolStage(ii, dupId);
+                    } catch (NullifiedEntityException e) {
+                        LOG.error("Org was nullified with nullified duplicate.");
+                    }
+                }
             } else {
                 // that means its not nullified
                 paPer = cUtils.convertPOToPAPerson(perDto);
@@ -251,6 +261,17 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             session.update(person);
             session.flush();
         }
+    }
+    
+    private void updateStudyProtocolStage(Ii identifier, Ii dupId) throws NullifiedEntityException, PAException {
+        Person oldPaPer = cUtils.getPAPersonByIi(identifier);
+        Person newPaPer = cUtils.getPAPersonByIi(dupId);
+        cUtils.updateItemIdForStudyProtocolStage("piIdentifier", oldPaPer.getIdentifier(), 
+                newPaPer.getIdentifier());
+        cUtils.updateItemIdForStudyProtocolStage("responsibleIdentifier", oldPaPer.getIdentifier(), 
+                newPaPer.getIdentifier());
+        cUtils.updateItemIdForStudyProtocolStage("sitePiIdentifier", oldPaPer.getIdentifier(), 
+                newPaPer.getIdentifier());
     }
 
     private void updateClinicalResearchStaff(final Ii crsIdentifier, final ClinicalResearchStaffDTO crsDto)

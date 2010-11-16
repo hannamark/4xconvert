@@ -48,6 +48,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -260,7 +261,30 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
             sp.setDateLastUpdated(new Timestamp((new Date()).getTime()));
             session.update(sp);
         }
+        PAServiceUtils paServiceUtil  = new PAServiceUtils();
+        createPAOrganizationByPoId(paServiceUtil, sp.getLeadOrganizationIdentifier());
+        createPAOrganizationByPoId(paServiceUtil, sp.getSiteSummaryFourOrgIdentifier());
+        createPAOrganizationByPoId(paServiceUtil, sp.getSummaryFourOrgIdentifier());
+        createPAOrganizationByPoId(paServiceUtil, sp.getSponsorIdentifier());
+        createPAOrganizationByPoId(paServiceUtil, sp.getSubmitterOrganizationIdentifier());
+        createPAPersonByPoId(paServiceUtil, sp.getPiIdentifier());
+        createPAPersonByPoId(paServiceUtil, sp.getResponsibleIdentifier());
+        createPAPersonByPoId(paServiceUtil, sp.getSitePiIdentifier());
         return IiConverter.convertToStudyProtocolIi(sp.getId());
+    }
+    
+    private void createPAOrganizationByPoId(PAServiceUtils paServiceUtil, String id) throws PAException {
+        if (!StringUtils.isEmpty(id)) {
+            paServiceUtil.getOrCreatePAOrganizationByIi(IiConverter
+                    .convertToPoOrganizationIi(id));
+        }
+    }
+    
+    private void createPAPersonByPoId(PAServiceUtils paServiceUtil, String id) throws PAException {
+        if (!StringUtils.isEmpty(id)) {
+            paServiceUtil.getOrCreatePAPersonByPoIi(IiConverter
+                    .convertToPoPersonIi(id));
+        }
     }
 
     private List<StudyProtocolStageDTO> convertFromDomainToDTO(List<StudyProtocolStage> studyProtocolList) {

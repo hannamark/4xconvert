@@ -256,6 +256,7 @@ public class TestSchema {
                     statement.executeUpdate("delete from DISEASE");
                     statement.executeUpdate("delete from STUDY_OBJECTIVE");
                     statement.executeUpdate("delete from REGULATORY_AUTHORITY");
+                    statement.executeUpdate("delete from STUDY_PROTOCOL_STAGE");
                     connection.commit();
                     statement.close();
                 } catch (HibernateException e) {

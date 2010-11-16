@@ -93,6 +93,7 @@ import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalStructuralRole;
 import gov.nih.nci.pa.domain.OversightCommittee;
+import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.dto.PAContactDTO;
@@ -1351,12 +1352,37 @@ public class PAServiceUtils {
             try {
                 poOrg = PoRegistry.getOrganizationEntityService().getOrganization(isoIi);
             } catch (NullifiedEntityException e) {
-                throw new PAException("This Organization is no longer available instead use ", e);
+                throw new PAException(PAUtil.handleNullifiedEntityException(e));
             }
             org = cUtils.createPAOrganization(poOrg);
         }
         return org;
     }
+    
+    /**
+    *
+    * @param isoIi iso Identifier
+    * @return Person
+    * @throws PAException on error
+    */
+   public Person getOrCreatePAPersonByPoIi(Ii isoIi) throws PAException {
+       CorrelationUtils cUtils = new CorrelationUtils();
+       Person per = cUtils.getPAPersonByIi(isoIi);
+       if (per == null) {
+           PersonDTO poPer = null;
+           try {
+               poPer = PoRegistry.getPersonEntityService().getPerson(isoIi);
+           } catch (NullifiedEntityException e) {
+               throw new PAException(PAUtil.handleNullifiedEntityException(e));
+           }
+           if (poPer != null) {
+               per = cUtils.createPAPerson(poPer);
+           } else {
+               throw new PAException("PO ii: " + isoIi.getExtension() + " cannot be found");
+           }
+       }
+       return per;
+   }
 
     /**
      *
@@ -1639,6 +1665,29 @@ public class PAServiceUtils {
           }
           return null;
       }
+      
+      /**
+       * Get Ii of duplicate person.
+       * @param poPerId poPerId
+       * @return ii
+       * @throws PAException on error
+       */
+      public Ii getDuplicatePersonIi(Ii poPerId) throws PAException {
+          try {
+              PoRegistry.getPersonEntityService().getPerson(poPerId);
+              // we get here if the org is NOT nullified
+          } catch (NullifiedEntityException e) {
+              // we get in here if the org WAS nullified.
+              Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+              for (Map.Entry<Ii, Ii> entry : nullifiedEntities.entrySet()) {
+                  if (entry.getKey().getExtension().equals(poPerId.getExtension())) {
+                      return entry.getValue();
+                  }
+              }
+          }
+          return null;
+      }
+      
       /**
        *Read an input stream in its entirety into a byte array.
        *@param inputStream input stream

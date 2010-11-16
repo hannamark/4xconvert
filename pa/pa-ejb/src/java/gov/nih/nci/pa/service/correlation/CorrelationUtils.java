@@ -112,6 +112,7 @@ import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -343,7 +344,6 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
        return createPAOrganization(convertPOToPAOrganization(poOrg));
    }
 
-
     <T extends StructuralRole> T getStructuralRole(T sr) throws PAException {
 
         Session s = HibernateUtil.getCurrentSession();
@@ -386,11 +386,11 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      *
      * method to create pa person from po.
      *
-     * @param poOrg
-     * @return
-     * @throws PAException
+     * @param poPerson person dto
+     * @return person
+     * @throws PAException on error
      */
-    Person createPAPerson(PersonDTO poPerson) throws PAException {
+    public Person createPAPerson(PersonDTO poPerson) throws PAException {
         return createPAPerson(convertPOToPAPerson(poPerson));
     }
 
@@ -736,6 +736,28 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
 
         return DSetConverter.convertToIi(hcps.get(0).getIdentifier());
+    }
+    
+    /**
+     * Batch update the study protocol stage object/table replacing the 
+     * po id or orgs or persons w/ new ids as a result of nullifciation with
+     * duplicates.
+     * @param item field name
+     * @param oldPoId old id
+     * @param newPoId new id
+     * @throws NullifiedEntityException on error
+     * @throws PAException on error
+     */
+    public void updateItemIdForStudyProtocolStage(String item, String oldPoId, 
+            String newPoId) throws NullifiedEntityException, PAException {
+
+        Session session = HibernateUtil.getCurrentSession();
+        session.createQuery("update StudyProtocolStage set "
+                + item + " = :newPoId "
+                + "where " + item + " = :oldPoId")
+        .setString("newPoId", newPoId)
+        .setString("oldPoId", oldPoId)
+        .executeUpdate();
     }
 
 

@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service.correlation;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
@@ -9,6 +10,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
+import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.StudyContactBeanLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
@@ -21,18 +23,20 @@ import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
 public class PersonSynchronizationServiceBeanTest {
 
-    private PersonSynchronizationServiceBean bean = new PersonSynchronizationServiceBean();
-    private PersonSynchronizationServiceRemote remoteEjb = bean;
+    private final PersonSynchronizationServiceBean bean = new PersonSynchronizationServiceBean();
+    private final PersonSynchronizationServiceRemote remoteEjb = bean;
     StudySiteContactServiceLocal spcService = new StudySiteContactBeanLocal();
     StudyContactServiceLocal scService = new StudyContactBeanLocal();
 
     Ii pid;
     Long personId = Long.valueOf(1);
+    Session session = null;
 
     @Before
     public void setUp() throws Exception {
@@ -43,7 +47,7 @@ public class PersonSynchronizationServiceBeanTest {
         TestSchema.reset();
         TestSchema.reset();
         // TestSchema.primeData();
-
+        session  = HibernateUtil.getCurrentSession();
         createTestData();
     }
 
@@ -58,11 +62,27 @@ public class PersonSynchronizationServiceBeanTest {
 
     @Test
     public void synchronizePersonNullifiy() throws Exception {
-        Ii roIi = IiConverter.convertToPoPersonIi("abc");
-        roIi.setNullFlavor(NullFlavor.NA);
-        remoteEjb.synchronizePerson(roIi);
-        // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
-        // do assert with the changed values
+        Ii poIi = IiConverter.convertToPoPersonIi("abc");
+        poIi.setNullFlavor(NullFlavor.NA);
+        CorrelationUtils cUtils = new CorrelationUtils();
+        Person paPer = cUtils.getPAPersonByIi(poIi);
+        StudyProtocolStage sps = new StudyProtocolStage();
+        sps.setPiIdentifier(String.valueOf(paPer.getIdentifier()));
+        sps.setResponsibleIdentifier(String.valueOf(paPer.getIdentifier()));
+        sps.setSitePiIdentifier(String.valueOf(paPer.getIdentifier()));
+        Long spsId = (Long)session.save(sps);
+        session.flush();
+        StudyProtocolStage dbSps = (StudyProtocolStage) session.load(StudyProtocolStage.class, spsId);
+        assertTrue("Person was not set properly", dbSps.getPiIdentifier().equals("abc"));
+        remoteEjb.synchronizePerson(poIi);
+        session.flush();
+        session.clear();
+        
+        dbSps = (StudyProtocolStage) session.load(StudyProtocolStage.class, spsId);
+        assertTrue("PiIdentifier was not updated", dbSps.getPiIdentifier().equals("2"));
+        assertTrue("ResponsibleIdentifier was not updated", dbSps.getResponsibleIdentifier().equals("2"));
+        assertTrue("SitePiIdentifier was not updated", dbSps.getSitePiIdentifier().equals("2"));
+        
     }
 
     @Test
