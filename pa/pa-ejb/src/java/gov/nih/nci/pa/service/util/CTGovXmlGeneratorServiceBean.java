@@ -1079,9 +1079,8 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         XmlGenHelper.appendElement(obsDesign,
                 XmlGenHelper.createElement("biospecimen_retention", convertToCtValues(ospDTO
                 .getBiospecimenRetentionCode()), doc));
-        XmlGenHelper.appendElement(obsDesign,
-                XmlGenHelper.createElement("biospecimen_description", StConverter.convertToString(ospDTO
-                .getBiospecimenDescription()), doc));
+        createTextBlock("biospecimen_description", StConverter.convertToString(ospDTO
+                .getBiospecimenDescription()), doc, obsDesign);
         XmlGenHelper.appendElement(obsDesign,
                 XmlGenHelper.createElement("number_of_groups", IntConverter.convertToString(ospDTO
                 .getNumberOfGroups()), doc));
@@ -1191,7 +1190,7 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             StudySiteDTO spartDTO = new StudySiteDTO();
             spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
             List<StudySiteDTO> sParts = getStudySiteService().getByStudyProtocol(studyProtocolIi, spartDTO);
-            for (StudySiteDTO spart : sParts) { 
+            for (StudySiteDTO spart : sParts) {
                 sponsor = getCorUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
             }
         } else {
@@ -1373,9 +1372,10 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
 
     private void createTextBlock(final String elementName, final String st, Document doc, Element root)
             throws PAException {
+
         XmlGenHelper
             .appendElement(doc.createElement(elementName),
-                    XmlGenHelper.createElement(XmlGenHelper.TEXT_BLOCK, st, doc), root);
+                    XmlGenHelper.createTextblockElement(st, doc), root);
     }
 
     private StudyProtocolDTO getStudyProtocol(Ii studyProtocolIi) throws PAException {
