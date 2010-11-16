@@ -135,7 +135,8 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         Calendar milestoneDate = Calendar.getInstance();
         try {
             List<StudyMilestoneDTO> studyMilestoneDTOList = smRemote.search(studyMilestoneDTO, limit);
-            LOG.debug("The Search results returned " + studyMilestoneDTOList.size());
+            LOG.info("StudyMilestoneTasksServiceBean searching for studies; search results returned "
+                    + studyMilestoneDTOList.size());
             for (StudyMilestoneDTO smdto : studyMilestoneDTOList) {
                 milestoneDate.setTime(smdto.getMilestoneDate().getValue());
                 if (isMoreThan5Businessdays(milestoneDate) && !checkMilestoneExists(smdto)) {
