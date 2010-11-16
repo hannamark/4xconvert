@@ -24,3 +24,4 @@ po.pass=pass
 po.port.number=31099
 po.server.name=localhost
 application.url=http://${jboss.server.hostname}:${jboss.server.port}/registry
+selenium.server.port=4444

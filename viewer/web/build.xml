@@ -23,6 +23,7 @@
     <property name="viewer.build.resourceDir.0" value="${basedir}/src/resources"/>
     <property name="viewer.build.testOutputDir" value="${viewer.build.dir}/test-classes"/>
     <property name="viewer.build.testDir.0" value="${basedir}/test/java"/>
+    <property name="viewer.build.integrationTestDir.0" value="${basedir}/test-integration/java"/>
     <property name="viewer.build.javadoc" value="${viewer.build.dir}/javadoc"/>
     <property name="viewer.build.testResourceDir.0" value="${basedir}/test/resources"/>
     <property name="viewer.test.reports" value="${reportDir}/test-reports"/>
@@ -46,9 +47,9 @@
     <!-- ====================================================================== -->
 
     <path id="common.package.classpath">
-              <fileset dir="${pa.dir}/commons/target">
-                        <include name="*.jar"/>
-               </fileset>
+        <fileset dir="${pa.dir}/commons/target">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <path id="ejb.package.classpath">
@@ -63,6 +64,11 @@
     <property name="compile.jar.dir" location="${lib.dir}/compile"/>
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}"/>
+    </path>
+    
+    <property name="selenium.jar.dir" location="${lib.dir}/selenium"/>
+    <path id="selenium.classpath">
+        <fileset dir="${selenium.jar.dir}"/>
     </path>
 
     <property name="test.jar.dir" location="${lib.dir}/test"/>
@@ -151,40 +157,64 @@
             <fileset dir="${viewer.build.resourceDir.0}"/>
         </copy>
     </target>
-
+    
+    <!-- ====================================================================== -->
+    <!-- Configure test compilation target                                      -->
+    <!-- ====================================================================== -->
+    <target name="configure-tests">
+        <copy file="${resourceDir}/test.properties.viewer" tofile="${viewer.build.testResourceDir.0}/test.properties"
+                overwrite="true">
+            <filterset>
+                <filter token="pa.server.name" value="${pa.server.name}"/>
+                <filter token="jboss.port" value="${jboss.port}" />
+                <filter token="selenium.server.port" value="${selenium.server.port}"/>
+            </filterset>
+        </copy>
+    </target>
 
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests"
-      depends="compile"
-      description="Compile the test code">
+    <target name="compile-tests" depends="compile,configure-tests" description="Compile the test code">
         <mkdir dir="${viewer.build.testOutputDir}"/>
-        <javac destdir="${viewer.build.testOutputDir}"
-               nowarn="false"
-               debug="true"
-               optimize="false"
-               deprecation="true"
-               target="1.5"
-               verbose="false"
-               fork="false"
-               source="1.5">
+        <javac destdir="${viewer.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
+               target="1.5" verbose="false" fork="false" source="1.5">
             <src>
                 <pathelement location="${viewer.build.testDir.0}"/>
+                <pathelement location="${viewer.build.integrationTestDir.0}"/>
             </src>
             <classpath>
                 <pathelement location="${viewer.build.outputDir}"/>
                 <path refid="ejb.package.classpath"/>
                 <path refid="common.package.classpath"/>
                 <path refid="test.classpath"/>
+                <path refid="selenium.classpath"/>
             </classpath>
         </javac>
         <copy todir="${viewer.build.testOutputDir}">
             <fileset dir="${viewer.build.testResourceDir.0}"/>
         </copy>
     </target>
-
+    
+    <!-- ====================================================================== -->
+    <!-- Run Selenium Tests                                                       -->
+    <!-- ====================================================================== -->
+    <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
+        <mkdir dir="${viewer.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath>
+                <path location="${viewer.build.testOutputDir}"/>
+                <path refid="selenium.classpath"/>
+                <path refid="common.package.classpath"/>
+            </classpath>
+            <batchtest todir="${viewer.test.reports}">
+                <fileset dir="${viewer.build.integrationTestDir.0}"/>
+            </batchtest>
+        </junit>
+    </target>
 
     <!-- ====================================================================== -->
     <!-- Run checkstyle                                                         -->
@@ -379,6 +409,11 @@
         <ivy:resolve refresh="true" conf="runtime"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="runtime"/>
     </target>
+    
+    <target name="ivy-selenium" depends="init:ivy" description="Resolves and retrieves the JARs needed to run the subproject">
+        <ivy:resolve refresh="true" conf="selenium"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="selenium"/>
+    </target>
 
     <target name="ivy-test"
             depends="ivy-test-cobertura,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian"
@@ -388,7 +423,7 @@
     </target>
 
     <target name="ivy-get"
-            depends="ivy-compile, ivy-runtime, ivy-test"
+            depends="ivy-compile, ivy-runtime, ivy-test, ivy-selenium"
             description="Updates the local ivy repository">
     </target>
 

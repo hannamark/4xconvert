@@ -92,6 +92,10 @@
     <target name="deploy-notest" depends="package-notest-noivy, ear, deploy-ear, echoTime" 
             description="Build and deploy without testing or getting dependencies.">
     </target>
+    
+    <target name="run-selenium-tests" depends="package-notest-noivy" description="Runs integration tests against an already deployed application">
+        <ant target="run-selenium-tests" dir="web" inheritAll="false"/>
+    </target>
 
     <!-- ====================================================================== -->
     <!-- Ivy targets                                                            -->

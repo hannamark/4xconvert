@@ -23,7 +23,9 @@
     <property name="web.build.resourceDir" value="${basedir}/src/resources"/>
     <property name="web.war" value="accrual.war"/>
     <property name="web.build.testSrcDir" value="${basedir}/test/java"/>
+    <property name="web.build.integrationTestSrcDir" value="${basedir}/test-integration/java"/>
     <property name="web.build.testOutputDir" value="${web.build.dir}/test-classes"/>
+    <property name="web.build.testResourceDir" value="${web.build.dir}/test/resources"/>
     <property name="web.build.coberturaOutputDir" value="${web.build.dir}/generated-classes"/>
     <property name="web.test.reports" value="${web.report.dir}/test-reports"/>
 
@@ -80,7 +82,14 @@
             <include name="*.jar"/>
         </fileset>
     </path>
-
+    
+    <property name="selenium.jar.dir" location="${lib.dir}/accrual-web/selenium"/>
+    <path id="selenium.classpath">
+        <fileset dir="${selenium.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    
     <path id="ivy.classpath">
         <fileset dir="${lib.dir}">
             <include name="${ivy.file}"/>
@@ -119,15 +128,8 @@
     <target name="compile"  depends="pre-clean" description="Compiles the subproject">
         <fail unless="jboss.deploy.dir" message="Property jboss.deploy.dir not set.  Check build.properties file."/>
         <mkdir dir="${web.build.outputDir}"/>
-        <javac destdir="${web.build.outputDir}"
-               nowarn="false"
-               debug="true"
-               optimize="false"
-               deprecation="true"
-               target="1.5"
-               verbose="false"
-               fork="false"
-               source="1.5">
+        <javac destdir="${web.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
+               target="1.5" verbose="false" fork="false" source="1.5">
             <src>
                 <pathelement location="${web.build.srcDir}"/>
             </src>
@@ -149,28 +151,24 @@
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests"
-      depends="compile"
-      description="Compile the test code">
+    <target name="compile-tests" depends="compile, configure-tests" description="Compile the test code">
         <mkdir dir="${web.build.testOutputDir}"/>
-        <javac destdir="${web.build.testOutputDir}"
-               nowarn="false"
-               debug="true"
-               optimize="false"
-               deprecation="true"
-               target="1.5"
-               verbose="false"
-               fork="false"
-               source="1.5">
+        <javac destdir="${web.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
+               target="1.5" verbose="false" fork="false" source="1.5">
             <src>
                 <pathelement location="${web.build.testSrcDir}"/>
+                <pathelement location="${web.build.integrationTestSrcDir}"/>
             </src>
             <classpath>
                 <pathelement location="${web.build.outputDir}"/>
                 <path refid="compile.classpath"/>
                 <path refid="test.classpath"/>
+                <path refid="selenium.classpath"/>
             </classpath>
         </javac>
+        <copy todir="${web.build.testOutputDir}">
+            <fileset dir="${web.build.testResourceDir}"/>
+        </copy>
     </target>
 
 
@@ -179,11 +177,8 @@
     <!-- ====================================================================== -->
 
     <target name="test-cobertura" depends="compile-tests">
-
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties"/>
-
         <delete file="${web.build.dir}/cobertura.ser"/>
-
         <cobertura-instrument datafile="${web.build.dir}/cobertura.ser" toDir="${web.build.coberturaOutputDir}">
             <fileset dir="${web.build.outputDir}">
                 <include name="**/*.class"/>
@@ -193,8 +188,7 @@
         <mkdir dir="${web.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
             <sysproperty key="basedir" value="."/>
-            <sysproperty key="net.sourceforge.cobertura.datafile"
-                    file="${web.build.dir}/cobertura.ser"/>
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${web.build.dir}/cobertura.ser"/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
             <classpath location="${web.build.coberturaOutputDir}"/>
@@ -225,6 +219,40 @@
                          totallinerate="87"
                          haltonfailure="true"/>
      </target>
+    
+    
+    <!-- ====================================================================== -->
+    <!-- Configure tests target                                                 -->
+    <!-- ====================================================================== -->
+    <target name="configure-tests">
+        <copy file="${resource.dir}/test.properties.accrual-web" tofile="${web.build.testResourceDir}/test.properties" overwrite="true">
+            <filterset>
+                <filter token="pa.server.name" value="${jboss.server.hostname}"/>
+                <filter token="jboss.port" value="${jboss.server.port}" />
+                <filter token="selenium.server.port" value="${selenium.server.port}"/>
+            </filterset>
+        </copy>
+    </target>
+    
+    <!-- ====================================================================== -->
+    <!-- Run JUnit Integration Tests                                            -->
+    <!-- ====================================================================== -->
+    <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
+        <mkdir dir="${web.build.testOutputDir}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath>
+                <path location="${web.build.testOutputDir}"/>
+                <path refid="selenium.classpath"/>
+                <path refid="compile.classpath"/>
+                <path refid="test.classpath"/>
+            </classpath>
+            <batchtest todir="${web.test.reports}">
+                <fileset dir="${web.build.integrationTestSrcDir}"/>
+            </batchtest>
+        </junit>
+    </target>
 
 
     <!-- ====================================================================== -->
@@ -375,9 +403,14 @@
         <ivy:resolve refresh="true" conf="test"/>
         <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test"/>
     </target>
-
+    
+    <target name="ivy-selenium" depends="init:ivy"  description="Resolves and retrieves the JARs needed to run the subproject">
+        <ivy:resolve refresh="true" conf="selenium"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="selenium"/>
+    </target>
+    
     <target name="ivy-get"
-            depends="ivy-compile, ivy-runtime, ivy-test"
+            depends="ivy-compile, ivy-runtime, ivy-test, ivy-selenium"
             description="Updates the local ivy repository">
     </target>
 

@@ -105,6 +105,10 @@
             <target name="test-dynamic-analysis"/>
         </ant>
     </target>
+    
+    <target name="run-selenium-tests" depends="build-notest" description="Runs integration tests against an already deployed application">
+        <ant target="run-selenium-tests" dir="accrual-web" inheritAll="false"/>
+    </target>
 
     <!-- The emptySessionPath must be false to avoid Session Fixation Appscan issues and be compatible with the
         security-config.xml login-module definitions. This is duplicated in the install.xml to support BDA
