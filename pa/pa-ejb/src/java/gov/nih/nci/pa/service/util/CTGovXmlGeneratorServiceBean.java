@@ -240,9 +240,8 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             createOversightInfo(spDTO, doc, root);
             createTextBlock("brief_summary", StringUtils.substring(StConverter.convertToString(
                     spDTO.getPublicDescription()), 0, PAAttributeMaxLen.LEN_MIN_1), doc, root);
-            XmlGenHelper.createCdataBlock("detailed_description",
-                    spDTO.getScientificDescription(), PAAttributeMaxLen.LEN_32000,
-                    doc, root);
+            createTextBlock("detailed_description", StringUtils.substring(StConverter.convertToString(
+                    spDTO.getScientificDescription()), 0, PAAttributeMaxLen.LEN_32000), doc, root);
             createOverallStatus(spDTO, doc, root);
             createTrialFunding(spDTO, doc, root);
             XmlGenHelper.appendElement(root, createStudyDesign(spDTO, doc));
