@@ -7,33 +7,39 @@
     <i t="About the CTRP Accrual Site" l="3" />
     <i t="Requesting an Accrual Site Account" l="4">
       <i t="Creating New CTRP Accrual Accounts" l="5" />
-      <i t="Updating Current CTRP Accrual Accounts" l="6" />
-      <i t="Creating New CTRP Accrual Accounts Using caGrid or NCI Credentials" l="7" />
+      <i t="Creating New CTRP Accrual Accounts Using caGrid or NCI Credentials" l="6" />
     </i>
-    <i t="Logging In to the CTRP Accrual Site" l="8" />
+    <i t="Logging In to the CTRP Accrual Site" l="7" />
   </i>
-  <i t="Accessing Your Trials" l="9">
-    <i t="Selecting Listed Trials" l="10" />
-    <i t="Searching for Trials" l="11" />
-    <i t="Navigating Trial Lists" l="12" />
-    <i t="Viewing Trial Details" l="13" />
+  <i t="Accessing Your Trials" l="8">
+    <i t="Selecting Listed Trials" l="9" />
+    <i t="Searching for Trials" l="10" />
+    <i t="Viewing Trial Details" l="11" />
   </i>
-  <i t="Working With Accrual Submissions" l="14">
-    <i t="Reviewing Accrual Records" l="15" />
-    <i t="Creating and Submitting New Accrual Submission Records" l="16" />
-    <i t="Completing Accrual Submissions" l="17" />
+  <i t="Working With Accrual Submissions" l="12">
+    <i t="Reviewing Accrual Records" l="13" />
+    <i t="Creating and Submitting New Accrual Submission Records" l="14" />
+    <i t="Completing Accrual Submissions" l="15" />
   </i>
-  <i t="Working With Study Subjects" l="18">
-    <i t="Reviewing Study Subject Records" l="19" />
-    <i t="Searching for Study Subjects" l="20" />
-    <i t="Adding Study Subjects" l="21" />
-    <i t="Updating Study Subject Records" l="22" />
-    <i t="Deleting Study Subject Records" l="23" />
+  <i t="Working With Study Subjects" l="16">
+    <i t="Reviewing Study Subject Records" l="17" />
+    <i t="Searching for Study Subjects" l="18" />
+    <i t="Adding Study Subjects" l="19">
+      <i t="Searching for Diseases" l="20" />
+    </i>
+    <i t="Updating Study Subject Records" l="21" />
+    <i t="Deleting Study Subject Records" l="22" />
   </i>
-  <i t="Managing Your Account" l="24">
-    <i t="Managing Your User Account Profile" l="25" />
-    <i t="Changing Your Password" l="26" />
-    <i t="Resetting Your Account" l="27" />
+  <i t="Managing Your Account" l="23">
+    <i t="Managing Your User Account Profile" l="24" />
+    <i t="Changing Your Password" l="25" />
+    <i t="Resetting Your Account" l="26" />
   </i>
-  <i t="Application Support" l="28" />
+  <i t="Common Tasks and DataElement Formats" l="27">
+    <i t="CTRP Accrual Icons" l="28" />
+    <i t="Navigating Trial Lists" l="29" />
+    <i t="Entering Phone and Fax Numbers" l="30" />
+    <i t="Selecting and Entering Dates" l="31" />
+  </i>
+  <i t="Application Support" l="32" />
 </WebWorksHelpTOC>
