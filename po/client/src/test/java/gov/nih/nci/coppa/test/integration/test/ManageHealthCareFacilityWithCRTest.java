@@ -82,13 +82,13 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.TelUrl;
-import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -241,15 +241,15 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         dto.setTelecomAddress(telco);
 
         TelPhone phone = new TelPhone();
-        phone.setValue(new URI("tel:1122334455"));
+        phone.setValue(new URI("tel:123-123-6543"));
         dto.getTelecomAddress().getItem().add(phone);
 
         TelPhone fax = new TelPhone();
-        fax.setValue(new URI("x-text-fax:1122334455"));
+        fax.setValue(new URI("x-text-fax:123-123-6543"));
         dto.getTelecomAddress().getItem().add(fax);
 
         TelPhone tty = new TelPhone();
-        tty.setValue(new URI("x-text-tel:1122334455"));
+        tty.setValue(new URI("x-text-tel:123-123-6543"));
         dto.getTelecomAddress().getItem().add(tty);
 
         TelEmail email = new TelEmail();

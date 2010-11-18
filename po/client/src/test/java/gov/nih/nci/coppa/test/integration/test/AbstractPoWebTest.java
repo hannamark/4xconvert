@@ -121,7 +121,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
 
     @Override
     public void setUp() throws Exception {
-        super.setSeleniumPort(TstProperties.getServerHostname());
+        super.setSeleniumPort(TstProperties.getSeleniumServerPort());
         super.setServerHostname(TstProperties.getServerHostname());
         super.setServerPort(TstProperties.getServerPort());
         super.setBrowser(TstProperties.getSeleniumBrowser());

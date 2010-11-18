@@ -133,8 +133,8 @@ public final class TstProperties {
         return Integer.parseInt(properties.getProperty(SERVER_JNDI_PORT_KEY, SERVER_JNDI_PORT_DEFAULT));
     }
 
-    public static int getSeleniumServerPort() {
-        return Integer.parseInt(properties.getProperty(SELENIUM_SERVER_PORT_KEY, SELENIUM_SERVER_PORT_DEFAULT));
+    public static String getSeleniumServerPort() {
+        return properties.getProperty(SELENIUM_SERVER_PORT_KEY, SELENIUM_SERVER_PORT_DEFAULT);
     }
 
     public static String getSeleniumBrowser() {

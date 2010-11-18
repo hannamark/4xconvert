@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.test.DataGeneratorUtil;
+import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -90,8 +92,6 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.TelUrl;
-import gov.nih.nci.coppa.test.DataGeneratorUtil;
-import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.TestConvertHelper;
@@ -455,7 +455,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         hcf.getTelecomAddress().setItem(new HashSet<Tel>());
 
         TelPhone ph1 = new TelPhone();
-        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
+        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-6543"));
         hcf.getTelecomAddress().getItem().add(ph1);
         return hcf;
     }
