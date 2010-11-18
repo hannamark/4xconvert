@@ -84,6 +84,7 @@ package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.po.data.bo.Email;
@@ -334,7 +335,7 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         Map<String, String[]> errors = getService().validate(obj);
         assertEquals(1, errors.size());
         assertEquals(1, errors.get("").length);
-        assertEquals(0, errors.get(null).length);
+        assertNull(errors.get(null));
     }
 
     @Override

@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
@@ -212,6 +213,6 @@ public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
         Map<String, String[]> errors = EjbTestHelper.getHealthCareProviderServiceBean().validate(obj);
         assertEquals(1, errors.size());
         assertEquals(1, errors.get("").length);
-        assertEquals(0, errors.get(null).length);
+        assertNull(errors.get(null));
    }
 }

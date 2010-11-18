@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
@@ -204,7 +205,7 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
         Map<String, String[]> errors = getService().validate(obj);
         assertEquals(1, errors.size());
         assertEquals(1, errors.get("").length);
-        assertEquals(0, errors.get(null).length);
+        assertNull(errors.get(null));
    }
 
     @Override
