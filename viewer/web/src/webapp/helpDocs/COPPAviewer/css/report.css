@@ -7,11 +7,11 @@ div.Anchor_Para
   font-variant: normal;
   font-weight: normal;
   margin-bottom: 0.0pt;
-  margin-left: 0pt;
+  margin-left: 18pt;
   margin-right: 0pt;
   margin-top: 0.0pt;
   text-align: Left;
-  text-indent: 18pt;
+  text-indent: 0pt;
   text-transform: none;
   vertical-align: baseline;
 }
@@ -143,7 +143,7 @@ div.Appendix_nameTOC
   margin-bottom: 4.0pt;
   margin-left: 0pt;
   margin-right: 0pt;
-  margin-top: 6.0pt;
+  margin-top: 7.0pt;
   text-align: Left;
   text-indent: 0pt;
   text-transform: none;
@@ -154,7 +154,7 @@ div.Appendix_nameTOC
 {
   margin-bottom: 4.0pt;
   margin-right: 0pt;
-  margin-top: 6.0pt;
+  margin-top: 7.0pt;
 }
 
 .Appendix_nameTOC_inner
@@ -303,6 +303,52 @@ div.AppendixNameTOC
   font-style: normal;
   font-variant: normal;
   font-weight: bold;
+  text-align: Left;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.AppendixTOC
+{
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 12.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 0.0pt;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+  text-align: Left;
+  text-indent: 0pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.AppendixTOC_outer
+{
+  margin-bottom: 0.0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+}
+
+.AppendixTOC_inner
+{
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 12.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
   text-align: Left;
   text-transform: none;
   vertical-align: baseline;
@@ -1347,7 +1393,7 @@ div.Caption
   margin-bottom: 13.0pt;
   margin-left: 18pt;
   margin-right: 0pt;
-  margin-top: 7.0pt;
+  margin-top: 3.0pt;
   text-align: Left;
   text-indent: 0pt;
   text-transform: none;
@@ -1358,7 +1404,7 @@ div.Caption
 {
   margin-bottom: 13.0pt;
   margin-right: 0pt;
-  margin-top: 7.0pt;
+  margin-top: 3.0pt;
 }
 
 .Caption_inner
@@ -1393,7 +1439,7 @@ div.Caption_Indent
   margin-bottom: 13.0pt;
   margin-left: 36pt;
   margin-right: 0pt;
-  margin-top: 7.0pt;
+  margin-top: 3.0pt;
   text-align: Left;
   text-indent: 0pt;
   text-transform: none;
@@ -1404,7 +1450,7 @@ div.Caption_Indent
 {
   margin-bottom: 13.0pt;
   margin-right: 0pt;
-  margin-top: 7.0pt;
+  margin-top: 3.0pt;
 }
 
 .Caption_Indent_inner
@@ -1625,7 +1671,7 @@ div.Chapter_NameTOC
   margin-bottom: 4.0pt;
   margin-left: 0pt;
   margin-right: 0pt;
-  margin-top: 6.0pt;
+  margin-top: 7.0pt;
   text-align: Left;
   text-indent: 0pt;
   text-transform: none;
@@ -1636,7 +1682,7 @@ div.Chapter_NameTOC
 {
   margin-bottom: 4.0pt;
   margin-right: 0pt;
-  margin-top: 6.0pt;
+  margin-top: 7.0pt;
 }
 
 .Chapter_NameTOC_inner
@@ -1739,6 +1785,52 @@ div.Chapter_NumberTOC
   font-style: normal;
   font-variant: normal;
   font-weight: bold;
+  text-align: Left;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.ChapterTOC
+{
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 12.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 0.0pt;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+  text-align: Left;
+  text-indent: 0pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.ChapterTOC_outer
+{
+  margin-bottom: 0.0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+}
+
+.ChapterTOC_inner
+{
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 12.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
   text-align: Left;
   text-transform: none;
   vertical-align: baseline;
@@ -2166,6 +2258,52 @@ div.Code_Indent_8
   padding-bottom: 0pt;
 }
 
+div.Company_Name
+{
+  color: #000000;
+  font-family: Arial;
+  font-size: 9.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 2.0pt;
+  margin-left: 7.2pt;
+  margin-right: 0pt;
+  margin-top: 2.0pt;
+  text-align: Left;
+  text-indent: -7.2pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.Company_Name_outer
+{
+  margin-bottom: 2.0pt;
+  margin-right: 0pt;
+  margin-top: 2.0pt;
+}
+
+.Company_Name_inner
+{
+  color: #000000;
+  font-family: Arial;
+  font-size: 9.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: Left;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
 div.Cover_title
 {
   color: #515186;
@@ -2198,6 +2336,98 @@ div.Cover_title
   font-style: normal;
   font-weight: bold;
   text-align: Right;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.CoverDateRight
+{
+  color: #000000;
+  font-family: Arial;
+  font-size: 11.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 9.0pt;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+  text-align: Right;
+  text-indent: 0pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.CoverDateRight_outer
+{
+  margin-bottom: 9.0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+}
+
+.CoverDateRight_inner
+{
+  color: #000000;
+  font-family: Arial;
+  font-size: 11.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: Right;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.CoverText
+{
+  color: #000000;
+  font-family: Arial;
+  font-size: 12.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 0.0pt;
+  margin-left: 18pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+  text-align: justify;
+  text-indent: 0pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.CoverText_outer
+{
+  margin-bottom: 0.0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+}
+
+.CoverText_inner
+{
+  color: #000000;
+  font-family: Arial;
+  font-size: 12.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: justify;
   text-transform: none;
   vertical-align: baseline;
   margin-left: 0pt;
@@ -2486,16 +2716,16 @@ div.Glossary
 
 div.GlossaryTOC
 {
-  color: #515186;
-  font-family: "Palatino Linotype";
-  font-size: 14.0pt;
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 12.0pt;
   font-style: normal;
   font-variant: normal;
-  font-weight: bold;
-  margin-bottom: 4.0pt;
+  font-weight: normal;
+  margin-bottom: 0.0pt;
   margin-left: 0pt;
   margin-right: 0pt;
-  margin-top: 6.0pt;
+  margin-top: 0.0pt;
   text-align: Left;
   text-indent: 0pt;
   text-transform: none;
@@ -2504,19 +2734,19 @@ div.GlossaryTOC
 
 .GlossaryTOC_outer
 {
-  margin-bottom: 4.0pt;
+  margin-bottom: 0.0pt;
   margin-right: 0pt;
-  margin-top: 6.0pt;
+  margin-top: 0.0pt;
 }
 
 .GlossaryTOC_inner
 {
-  color: #515186;
-  font-family: "Palatino Linotype";
-  font-size: 14.0pt;
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 12.0pt;
   font-style: normal;
   font-variant: normal;
-  font-weight: bold;
+  font-weight: normal;
   text-align: Left;
   text-transform: none;
   vertical-align: baseline;
@@ -2563,6 +2793,52 @@ div.GraphicIndent
   font-style: normal;
   font-variant: normal;
   font-weight: normal;
+  text-align: Left;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.GroupTitlesIX
+{
+  color: #515186;
+  font-family: "Palatino Linotype";
+  font-size: 13.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: bold;
+  margin-bottom: 5.0pt;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 12.0pt;
+  text-align: Left;
+  text-indent: 0pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.GroupTitlesIX_outer
+{
+  margin-bottom: 5.0pt;
+  margin-right: 0pt;
+  margin-top: 12.0pt;
+}
+
+.GroupTitlesIX_inner
+{
+  color: #515186;
+  font-family: "Palatino Linotype";
+  font-size: 13.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: bold;
   text-align: Left;
   text-transform: none;
   vertical-align: baseline;
@@ -3044,6 +3320,52 @@ div.Heading4TOC
   padding-bottom: 0pt;
 }
 
+div.Heading5
+{
+  color: #000000;
+  font-family: "Palatino Linotype";
+  font-size: 12.0pt;
+  font-style: italic;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 0.0pt;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 12.0pt;
+  text-align: Left;
+  text-indent: 0pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.Heading5_outer
+{
+  margin-bottom: 0.0pt;
+  margin-right: 0pt;
+  margin-top: 12.0pt;
+}
+
+.Heading5_inner
+{
+  color: #000000;
+  font-family: "Palatino Linotype";
+  font-size: 12.0pt;
+  font-style: italic;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: Left;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
 div.How_To
 {
   color: #000000;
@@ -3090,6 +3412,50 @@ div.How_To
   padding-bottom: 0pt;
 }
 
+div.Index_Title
+{
+  color: #515186;
+  font-family: "Palatino Linotype";
+  font-size: 27.0pt;
+  font-style: normal;
+  font-weight: bold;
+  margin-bottom: 13.0pt;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+  text-align: Right;
+  text-indent: 0pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.Index_Title_outer
+{
+  margin-bottom: 13.0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+}
+
+.Index_Title_inner
+{
+  color: #515186;
+  font-family: "Palatino Linotype";
+  font-size: 27.0pt;
+  font-style: normal;
+  font-weight: bold;
+  text-align: Right;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
 div.Index_TitleTOC
 {
   color: #515186;
@@ -3101,7 +3467,7 @@ div.Index_TitleTOC
   margin-bottom: 0.0pt;
   margin-left: 0pt;
   margin-right: 0pt;
-  margin-top: 7.0pt;
+  margin-top: 0.0pt;
   text-align: Left;
   text-indent: 0pt;
   text-transform: none;
@@ -3112,7 +3478,7 @@ div.Index_TitleTOC
 {
   margin-bottom: 0.0pt;
   margin-right: 0pt;
-  margin-top: 7.0pt;
+  margin-top: 0.0pt;
 }
 
 .Index_TitleTOC_inner
@@ -3123,6 +3489,52 @@ div.Index_TitleTOC
   font-style: normal;
   font-variant: normal;
   font-weight: bold;
+  text-align: Left;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.IndexIX
+{
+  color: #000000;
+  font-family: Arial;
+  font-size: 9.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 0.0pt;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+  text-align: Left;
+  text-indent: 0pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.IndexIX_outer
+{
+  margin-bottom: 0.0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+}
+
+.IndexIX_inner
+{
+  color: #000000;
+  font-family: Arial;
+  font-size: 9.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
   text-align: Left;
   text-transform: none;
   vertical-align: baseline;
@@ -3212,6 +3624,144 @@ div.Lettered_List_1
   color: #000000;
   font-family: Arial;
   font-size: 11.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: Left;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.Level1IX
+{
+  color: #000000;
+  font-family: "Palatino Linotype";
+  font-size: 11.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 0.0pt;
+  margin-left: 9pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+  text-align: Left;
+  text-indent: -9pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.Level1IX_outer
+{
+  margin-bottom: 0.0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+}
+
+.Level1IX_inner
+{
+  color: #000000;
+  font-family: "Palatino Linotype";
+  font-size: 11.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: Left;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.Level2IX
+{
+  color: #000000;
+  font-family: "Palatino Linotype";
+  font-size: 10.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 0.0pt;
+  margin-left: 36pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+  text-align: Left;
+  text-indent: -21.024pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.Level2IX_outer
+{
+  margin-bottom: 0.0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+}
+
+.Level2IX_inner
+{
+  color: #000000;
+  font-family: "Palatino Linotype";
+  font-size: 10.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: Left;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.Level3IX
+{
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 10.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 0.0pt;
+  margin-left: 36pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+  text-align: Left;
+  text-indent: -9pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.Level3IX_outer
+{
+  margin-bottom: 0.0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+}
+
+.Level3IX_inner
+{
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 10.0pt;
   font-style: normal;
   font-variant: normal;
   font-weight: normal;
@@ -3556,6 +4106,52 @@ div.Note_Main_Body
   padding-bottom: 0pt;
 }
 
+div.Note_Main_Top
+{
+  color: #000000;
+  font-family: "Palatino Linotype";
+  font-size: 11.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 6.0pt;
+  margin-left: 64.8pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+  text-align: Left;
+  text-indent: -36pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.Note_Main_Top_outer
+{
+  margin-bottom: 6.0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+}
+
+.Note_Main_Top_inner
+{
+  color: #000000;
+  font-family: "Palatino Linotype";
+  font-size: 11.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: Left;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
 div.Numbered_List
 {
   color: #000000;
@@ -3840,10 +4436,10 @@ div.Popup_Text
   font-style: normal;
   font-variant: normal;
   font-weight: normal;
-  margin-bottom: 3.0pt;
+  margin-bottom: 0.0pt;
   margin-left: 0pt;
   margin-right: 0pt;
-  margin-top: 3.0pt;
+  margin-top: 0.0pt;
   text-align: left;
   text-indent: 0pt;
   text-transform: none;
@@ -3852,9 +4448,9 @@ div.Popup_Text
 
 .Popup_Text_outer
 {
-  margin-bottom: 3.0pt;
+  margin-bottom: 0.0pt;
   margin-right: 0pt;
-  margin-top: 3.0pt;
+  margin-top: 0.0pt;
 }
 
 .Popup_Text_inner
@@ -3866,6 +4462,52 @@ div.Popup_Text
   font-variant: normal;
   font-weight: normal;
   text-align: left;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.ProcIntro
+{
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 12.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 2.0pt;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 2.0pt;
+  text-align: Left;
+  text-indent: 0pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.ProcIntro_outer
+{
+  margin-bottom: 2.0pt;
+  margin-right: 0pt;
+  margin-top: 2.0pt;
+}
+
+.ProcIntro_inner
+{
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 12.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: Left;
   text-transform: none;
   vertical-align: baseline;
   margin-left: 0pt;
@@ -4016,6 +4658,52 @@ div.Run-In
   padding-bottom: 0pt;
 }
 
+div.SeparatorsIX
+{
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 11.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 0.0pt;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+  text-align: justify;
+  text-indent: 0pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.SeparatorsIX_outer
+{
+  margin-bottom: 0.0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+}
+
+.SeparatorsIX_inner
+{
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 11.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: justify;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
 div.SideWords
 {
   color: #000000;
@@ -4050,6 +4738,52 @@ div.SideWords
   font-variant: normal;
   font-weight: bold;
   text-align: Right;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.SortOrderIX
+{
+  color: #000000;
+  font-family: Arial;
+  font-size: 10.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 0.0pt;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+  text-align: justify;
+  text-indent: 0pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.SortOrderIX_outer
+{
+  margin-bottom: 0.0pt;
+  margin-right: 0pt;
+  margin-top: 0.0pt;
+}
+
+.SortOrderIX_inner
+{
+  color: #000000;
+  font-family: Arial;
+  font-size: 10.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: justify;
   text-transform: none;
   vertical-align: baseline;
   margin-left: 0pt;
@@ -4655,6 +5389,52 @@ div.Table_Title
   font-family: "Palatino Linotype";
   font-size: 11.0pt;
   font-style: italic;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: Left;
+  text-transform: none;
+  vertical-align: baseline;
+  margin-left: 0pt;
+  margin-right: 0pt;
+  margin-top: 0pt;
+  margin-bottom: 0pt;
+  padding-left: 0pt;
+  padding-right: 0pt;
+  padding-top: 0pt;
+  padding-bottom: 0pt;
+}
+
+div.TableFootnote
+{
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 10.0pt;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  margin-bottom: 0.0pt;
+  margin-left: 18pt;
+  margin-right: 18pt;
+  margin-top: 0.0pt;
+  text-align: Left;
+  text-indent: 0pt;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.TableFootnote_outer
+{
+  margin-bottom: 0.0pt;
+  margin-right: 18pt;
+  margin-top: 0.0pt;
+}
+
+.TableFootnote_inner
+{
+  color: #000000;
+  font-family: "Times New Roman";
+  font-size: 10.0pt;
+  font-style: normal;
   font-variant: normal;
   font-weight: normal;
   text-align: Left;

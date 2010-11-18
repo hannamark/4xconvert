@@ -40,27 +40,33 @@
   <DocumentInfo>
     <Document title="NCI Clinical Trials Reporting Program Viewer Online Help" href="Welcome.1.1.html" />
     <Document title="Using the Online Help" href="Welcome.1.2.html" />
-    <Document title="Using Navigation Tools" href="Welcome.1.3.html" />
-    <Document title="Getting Started" href="GettingStarted.2.1.html" />
-    <Document title="About the CTRP Viewer" href="GettingStarted.2.2.html" />
-    <Document title="Creating an Account" href="GettingStarted.2.3.html" />
-    <Document title="Logging In to the CTRP Viewer" href="GettingStarted.2.4.html" />
+    <Document title="Getting Started" href="GettingStartedViewer.2.1.html" />
+    <Document title="About the CTRP Viewer" href="GettingStartedViewer.2.2.html" />
+    <Document title="Creating CTRP Viewer Accounts" href="GettingStartedViewer.2.3.html" />
+    <Document title="Creating New CTRP Viewer Accounts" href="GettingStartedViewer.2.4.html" />
+    <Document title="Creating New CTRP Viewer Accounts Using caGrid or NCI Credentials" href="GettingStartedViewer.2.5.html" />
+    <Document title="Logging In to the CTRP Viewer" href="GettingStartedViewer.2.6.html" />
     <Document title="CTRO Reporting" href="report.3.1.html" />
     <Document title="About CTRO Reporting" href="report.3.2.html" />
     <Document title="Running CTRO Reports" href="report.3.3.html" />
     <Document title="Running Summary of Submission Reports" href="report.3.4.html" />
     <Document title="Running Trial Processing Reports" href="report.3.5.html" />
     <Document title="Running Portfolio Average Milestone Reports" href="report.3.6.html" />
-    <Document title="Running Trial Submitted by Date Reports" href="report.3.7.html" />
-    <Document title="Running Trial Submitted by Institution Reports" href="report.3.8.html" />
+    <Document title="Running Trials Submitted by Date Reports" href="report.3.7.html" />
+    <Document title="Running Trials Submitted by Institution Reports" href="report.3.8.html" />
     <Document title="Running Current Milestone Reports" href="report.3.9.html" />
-    <Document title="Exporting Report Data" href="report.3.10.html" />
-    <Document title="Metadata Definitions" href="metadata.4.1.html" />
+    <Document title="Running Summary 4 Type Reports" href="report.3.10.html" />
+    <Document title="Exporting Report Data" href="report.3.11.html" />
+    <Document title="Managing Your Account" href="userAccount.4.1.html" />
+    <Document title="Managing Your User Account Profile" href="userAccount.4.2.html" />
+    <Document title="Changing Your Password" href="userAccount.4.3.html" />
+    <Document title="Resetting Your Account" href="userAccount.4.4.html" />
     <Document title="Application Support" href="appSupport.5.1.html" />
   </DocumentInfo>
   <TopicMap>
-    <Topic name="welcome" href="Welcome.1.1.html#1052621" />
-    <Topic name="login" href="GettingStarted.2.4.html#1079060" />
+    <Topic name="Welcome" href="Welcome.1.1.html#1078027" />
+    <Topic name="register" href="GettingStartedViewer.2.5.html#1096048" />
+    <Topic name="login" href="GettingStartedViewer.2.6.html#1079060" />
     <Topic name="ctro_report" href="report.3.2.html#1127590" />
     <Topic name="run_reports" href="report.3.3.html#1140753" />
     <Topic name="run_summary_submission" href="report.3.4.html#1142198" />
@@ -69,5 +75,8 @@
     <Topic name="run_submitted_date" href="report.3.7.html#1133398" />
     <Topic name="run_submitted_institution" href="report.3.8.html#1133399" />
     <Topic name="run_current_milestone" href="report.3.9.html#1135604" />
+    <Topic name="run_summ4_types" href="report.3.10.html#1133377" />
+    <Topic name="reports:exporting;exporting_reports;report_data,_exporting_to_Excel" href="report.3.11.html#1145213" />
+    <Topic name="my_account" href="userAccount.4.2.html#1089507" />
   </TopicMap>
 </WebWorksHelpBook>
