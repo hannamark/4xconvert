@@ -154,4 +154,11 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyProtocolDTO> getCollaborativeTrials() throws PAException {
+        throw new UnsupportedOperationException("method not supported");
+    }
 }

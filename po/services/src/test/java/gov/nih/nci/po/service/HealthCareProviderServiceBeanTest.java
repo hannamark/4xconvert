@@ -211,6 +211,7 @@ public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
         obj.getPhone().clear();
         Map<String, String[]> errors = EjbTestHelper.getHealthCareProviderServiceBean().validate(obj);
         assertEquals(1, errors.size());
-        assertEquals(1, errors.get(null).length);
-    }
+        assertEquals(1, errors.get("").length);
+        assertEquals(0, errors.get(null).length);
+   }
 }

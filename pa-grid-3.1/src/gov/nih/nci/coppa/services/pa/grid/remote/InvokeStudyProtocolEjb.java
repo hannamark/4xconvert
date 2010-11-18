@@ -148,4 +148,11 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     public void changeOwnership(StudyProtocolDTO arg0) throws PAException {
         throw new UnsupportedOperationException("method not supported");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyProtocolDTO> getCollaborativeTrials() throws PAException {
+        throw new UnsupportedOperationException("method not supported");
+    }
 }

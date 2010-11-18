@@ -87,6 +87,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
@@ -147,7 +148,7 @@ public class PoHibernateUtil {
         ClassValidator<PersistentObject> classValidator = getClassValidator(entity);
         InvalidValue[] validationMessages = classValidator.getInvalidValues(entity);
         for (InvalidValue validationMessage : validationMessages) {
-            String path = validationMessage.getPropertyPath();
+            String path = StringUtils.defaultString(validationMessage.getPropertyPath());
             List<String> m = messageMap.get(path);
             if (m == null) {
                 m = new ArrayList<String>();

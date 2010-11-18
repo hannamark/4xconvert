@@ -203,8 +203,9 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
         obj.getPhone().clear();
         Map<String, String[]> errors = getService().validate(obj);
         assertEquals(1, errors.size());
-        assertEquals(1, errors.get(null).length);
-    }
+        assertEquals(1, errors.get("").length);
+        assertEquals(0, errors.get(null).length);
+   }
 
     @Override
     ClinicalResearchStaff getNewStructuralRole() {
