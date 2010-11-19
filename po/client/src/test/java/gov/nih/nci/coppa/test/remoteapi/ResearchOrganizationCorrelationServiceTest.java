@@ -130,7 +130,7 @@ public class ResearchOrganizationCorrelationServiceTest
         dto.getTelecomAddress().setItem(new HashSet<Tel>());
 
         TelPhone ph1 = new TelPhone();
-        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
+        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-6543"));
         dto.getTelecomAddress().getItem().add(ph1);
         return dto;
     }

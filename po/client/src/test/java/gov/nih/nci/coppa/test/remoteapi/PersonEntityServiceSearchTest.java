@@ -151,7 +151,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
 
     @BeforeClass
     public static void initData() throws Exception {
-        List<String> tels = Arrays.asList(new String[] { "+1 703.123.4567", "+1 571.239.1234", "+1 866.526.6042",
+        List<String> tels = Arrays.asList(new String[] { "703-123-4567", "571-239-1234", "866-526-6042",
                 "703-123-1234", "703-123-1235" });
         List<String> urls = Arrays.asList(new String[] { "http://www.example.com", "ftp://ftp.example.com",
                 "http://demos.example.com", "https://mail.example.com", "http://gal.example.com" });

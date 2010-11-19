@@ -98,7 +98,7 @@ import org.apache.commons.collections.set.ListOrderedSet;
 import org.junit.Assert;
 
 
-public class HealthCareFacilityCorrelationServiceTest 
+public class HealthCareFacilityCorrelationServiceTest
         extends CorrelationTestBase<HealthCareFacilityDTO, HealthCareFacilityCorrelationServiceRemote> {
 
     public HealthCareFacilityCorrelationServiceTest() {
@@ -111,20 +111,20 @@ public class HealthCareFacilityCorrelationServiceTest
         HealthCareFacilityDTO dto = new HealthCareFacilityDTO();
         super.orgId = null;
         dto.setPlayerIdentifier(getOrgId());
-        
+
         dto.setName(TestConvertHelper.convertToEnOn("my name"));
-        
+
         DSet<Ad> addys = new DSet<Ad>();
         Set<Ad> set = new ListOrderedSet();
         addys.setItem(set);
         addys.getItem().add(TestConvertHelper.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
         dto.setPostalAddress(addys);
-        
+
         dto.setTelecomAddress(new DSet<Tel>());
         dto.getTelecomAddress().setItem(new HashSet<Tel>());
-        
+
         TelPhone ph1 = new TelPhone();
-        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
+        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-6543"));
         dto.getTelecomAddress().getItem().add(ph1);
         return dto;
     }

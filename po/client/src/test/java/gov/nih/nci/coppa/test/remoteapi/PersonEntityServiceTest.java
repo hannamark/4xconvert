@@ -215,7 +215,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             patDto.getTelecomAddress().setItem(new HashSet<Tel>());
 
             TelPhone ph1 = new TelPhone();
-            ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
+            ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-6543"));
             patDto.getTelecomAddress().getItem().add(ph1);
 
             patientId = getPatientService().createCorrelation(patDto);
@@ -387,7 +387,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         n.setValue("IV");
         dto.getName().getPart().add(n);
         TelPhone e = new TelPhone();
-        e.setValue(new URI("tel:+123-123-654"));
+        e.setValue(new URI("tel:123-123-6543"));
         dto.getTelecomAddress().getItem().add(e);
         getPersonService().updatePerson(dto);
 

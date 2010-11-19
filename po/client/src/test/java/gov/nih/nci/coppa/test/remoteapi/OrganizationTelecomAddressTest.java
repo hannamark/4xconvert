@@ -146,8 +146,8 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
         if (!testDataLoaded) {
             DSet<Tel> telecomAddress =
                     TestConvertHelper.convertToDSetTel(Arrays.asList(new String[] {"myorgtestI@mygor.com"}), Arrays
-                            .asList(new String[] {"+1 342 fax"}), Arrays
-                            .asList(new String[] {"+1 603 telephone with ext"}), Arrays
+                            .asList(new String[] {"123-456-6789"}), Arrays
+                            .asList(new String[] {"603-123-4567"}), Arrays
                             .asList(new String[] {"http://testurl.org"}), null);
 
             String state = "WY";
@@ -155,8 +155,8 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
                     "mycity", state, "12345", "USA"), telecomAddress));
             DSet<Tel> telecomAddress1 =
                     TestConvertHelper.convertToDSetTel(Arrays.asList(new String[] {"myorg@mygor.com"}), Arrays
-                            .asList(new String[] {"+1 342 453 5655"}), Arrays
-                            .asList(new String[] {"+1 603.123.4567 ext 204"}), Arrays
+                            .asList(new String[] {"342-453-5655"}), Arrays
+                            .asList(new String[] {"603-123-4567x204"}), Arrays
                             .asList(new String[] {"http://testmail.org.com"}), null);
             remoteCreateAndCatalog(createOrgDTO("ZEE Org Inc. I", TestConvertHelper.createAd("123 abc ave.", null,
                     "mycity", state, "12345", "USA"), telecomAddress1));
@@ -166,7 +166,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
 
     @Test
     public void findByTelcomAddressByPhoneEmailUrl() {
-        List<String> tels = Arrays.asList(new String[] {"+1 603.123.4567 ext 204"});
+        List<String> tels = Arrays.asList(new String[] {"603-123-4567x204"});
         List<String> urls = Arrays.asList(new String[] {"http://testmail.org.com"});
         List<String> email = Arrays.asList(new String[] {"myorg@mygor.com"});
 
@@ -229,7 +229,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
 
     @Test
     public void findTelcomAddressOnlyByPhoneExact() {
-        List<String> tels = Arrays.asList(new String[] {"+1 603.123.4567 ext 204"});
+        List<String> tels = Arrays.asList(new String[] {"603-123-4567x204"});
         DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(null, null, tels, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
@@ -239,7 +239,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
 
     @Test
     public void findTelcomAddressOnlyByPhoneContains() {
-        List<String> tels = Arrays.asList(new String[] {"+1 603"});
+        List<String> tels = Arrays.asList(new String[] {"603"});
         DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(null, null, tels, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
@@ -259,7 +259,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
 
     @Test
     public void findTelcomAddressOnlyByFaxExact() {
-        List<String> fax = Arrays.asList(new String[] {"+1 342 453 5655"});
+        List<String> fax = Arrays.asList(new String[] {"342-453-5655"});
         DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(null, fax, null, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
@@ -269,12 +269,12 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
 
     @Test
     public void findTelcomAddressOnlyByFaxContains() {
-        List<String> fax = Arrays.asList(new String[] {"+1 342"});
+        List<String> fax = Arrays.asList(new String[] {"342"});
         DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(null, fax, null, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
-        assertEquals(2, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -284,7 +284,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
-        assertEquals(2, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test
