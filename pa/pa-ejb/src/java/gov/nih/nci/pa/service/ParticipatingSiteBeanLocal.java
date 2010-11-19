@@ -224,6 +224,8 @@ implements ParticipatingSiteServiceLocal {
             hcfDTO.setIdentifier(DSetConverter.convertIiToDset(someHcfIi));
             Ii poHcfIi = generateHcfIiFromCtepIdOrNewOrg(null, hcfDTO);
             return getStudySiteService().getStudySiteIiByTrialAndPoHcfIi(studyProtocolDTO.getIdentifier(), poHcfIi);
+        } catch (PAException e) {
+            throw e;
         } catch (Exception e) {
             throw new PAException(e);
         }
@@ -244,6 +246,9 @@ implements ParticipatingSiteServiceLocal {
             myMap.put(IiConverter.ORGANIZATIONAL_CONTACT_ROOT, genericContactIi);
             myMap.put(IiConverter.ORG_ROOT, orgIi);
             createStudyParticationContactRecord(studySiteDTO, myMap, isPrimaryContact, null, telecom);
+        } catch (PAException e) {
+            ejbContext.setRollbackOnly();
+            throw e;
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
@@ -260,6 +265,9 @@ implements ParticipatingSiteServiceLocal {
             Ii orgIi = getCorrUtils().getPoOrgIiFromPaHcfIi(studySiteDTO.getHealthcareFacilityIi());
             Map<String, Ii> myMap = generateCrsAndHcpFromCtepIdOrNewPerson(investigatorDTO, poCrsDTO, poHcpDTO, orgIi);
             createStudyParticationContactRecord(studySiteDTO, myMap, false, roleCode, null);
+        } catch (PAException e) {
+            ejbContext.setRollbackOnly();
+            throw e;
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
@@ -276,6 +284,9 @@ implements ParticipatingSiteServiceLocal {
             Ii orgIi = getCorrUtils().getPoOrgIiFromPaHcfIi(studySiteDTO.getHealthcareFacilityIi());
             Map<String, Ii> myMap = generateCrsAndHcpFromCtepIdOrNewPerson(personDTO, poCrsDTO, poHcpDTO, orgIi);
             createStudyParticationContactRecord(studySiteDTO, myMap, true, null, telecom);
+        } catch (PAException e) {
+            ejbContext.setRollbackOnly();
+            throw e;
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
@@ -292,6 +303,9 @@ implements ParticipatingSiteServiceLocal {
         try {
             Ii poHcfIi = generateHcfIiFromCtepIdOrNewOrg(orgDTO, hcfDTO);
             return createStudySiteParticipant(studySiteDTO, currentStatusDTO, poHcfIi);
+        } catch (PAException e) {
+            ejbContext.setRollbackOnly();
+            throw e;
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
@@ -317,6 +331,9 @@ implements ParticipatingSiteServiceLocal {
             }
             StudySite ss = saveOrUpdateStudySiteHelper(true, studySiteDTO, poHcfIi, currentStatusDTO);
             return new ParticipatingSiteConverter().convertFromDomainToDto(ss);
+        } catch (PAException e) {
+            ejbContext.setRollbackOnly();
+            throw e;
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
@@ -332,15 +349,7 @@ implements ParticipatingSiteServiceLocal {
         try {
             // check business rules based on trial type.
             StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteDTO.getIdentifier());
-            if (PAUtil.isIiNotNull(studySiteDTO.getStudyProtocolIdentifier())) {
-                StudyProtocolDTO spDto = getStudyProtocolService()
-                    .getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
-                if (spDto == null || !currentSite.getStudyProtocolIdentifier().getExtension()
-                        .equals(spDto.getIdentifier().getExtension())) {
-                    throw new PAException("Trial identifier provided with this update, does not match"
-                            + " participating site trial identifier.");
-                }
-            }
+            validateStudySite(studySiteDTO, currentSite);
             studySiteDTO.setStudyProtocolIdentifier(currentSite.getStudyProtocolIdentifier());
             studySiteDTO.setHealthcareFacilityIi(currentSite.getHealthcareFacilityIi());
             studySiteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
@@ -354,9 +363,24 @@ implements ParticipatingSiteServiceLocal {
             }
             StudySite ss = saveOrUpdateStudySiteHelper(false, studySiteDTO, null, currentStatusDTO);
             return new ParticipatingSiteConverter().convertFromDomainToDto(ss);
+        } catch (PAException e) {
+            ejbContext.setRollbackOnly();
+            throw e;
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
+        }
+    }
+
+    private void validateStudySite(StudySiteDTO studySiteDTO, StudySiteDTO currentSite) throws PAException {
+        if (PAUtil.isIiNotNull(studySiteDTO.getStudyProtocolIdentifier())) {
+            StudyProtocolDTO spDto = getStudyProtocolService()
+                .getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
+            if (spDto == null || !currentSite.getStudyProtocolIdentifier().getExtension()
+                    .equals(spDto.getIdentifier().getExtension())) {
+                throw new PAException("Trial identifier provided with this update, does not match"
+                        + " participating site trial identifier.");
+            }
         }
     }
 
