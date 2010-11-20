@@ -217,7 +217,7 @@ implements ParticipatingSiteServiceLocal {
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to all throwing PAExceptions without additional wrapping.
+    @SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
     public Ii getParticipatingSiteIi(Ii studyProtocolIi, Ii someHcfIi) throws PAException {
         try {
             StudyProtocolDTO studyProtocolDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
