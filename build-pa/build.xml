@@ -1477,6 +1477,38 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         "/>
 
 
+    <macrodef name="run-selenium" description="Macro that starts selenium server, runs test, then stops Selenium server">
+    	<attribute name="runDir"/>
+        <attribute name="runTarget" default="run-selenium-tests"/>
+        <sequential>
+            <ant inheritAll="false" inheritRefs="false" target="start-selenium-server" dir="${pa.base.dir}" />
+            
+            <ant inheritAll="false" inheritRefs="false" target="@{runTarget}" dir="@{runDir}" />
+
+            <ant inheritAll="false" inheritRefs="false" target="stop-selenium-server" dir="${pa.base.dir}" />            
+        </sequential>
+    </macrodef>
+    
+    <target name="run-selenium:paear" description="Runs Selenium for pa" depends="build:pa-web">
+        <run-selenium runDir="${pa.base.dir}"/>
+    </target>
+
+    <target name="run-selenium:reg-web" description="Runs Selenium for registry" depends="build:reg-web">
+        <run-selenium runDir="${reg-web.base.dir}"/>		
+    </target>
+
+    <target name="run-selenium:accrual" description="Runs Selenium for Accrual" depends="build:accrual-ear" unless="exclude.accrual">
+        <run-selenium runDir="${accrual-ear.base.dir}"/>		
+    </target>
+
+    <target name="run-selenium:viewer" description="Runs Selenium for Viewer" depends="build:viewer-web" unless="exclude.viewer">
+        <run-selenium runDir="${viewer.base.dir}"/>		
+    </target>
+    
+    <target name="run-selenium:all" description="Runs Selenium tests for pa, registry, viewer and accrual"
+        depends="run-selenium:paear, run-selenium:viewer, run-selenium:accrual, run-selenium:reg-web">
+    </target>
+    
     <target name="init:ivy">
         <mkdir dir="${local.repo.dir}"/>
         <property name="ivy.dep.file" value="${bda-download.dir}/ivy-bda-2.0.0.xml"/>
