@@ -241,7 +241,6 @@ public class PDQTrialRegistrationServiceTest {
         mailManagerSerivceLocal = mock(MailManagerServiceLocal.class);
 
         trialRegistrationSvc = new TrialRegistrationBeanLocal();
-        trialRegistrationSvc.setSessionContext(mock(SessionContext.class));
         trialRegistrationSvc.setStudyOverallStatusService(new StudyOverallStatusBeanLocal());
         trialRegistrationSvc.setStudyIndldeService(new StudyIndldeBeanLocal());
         trialRegistrationSvc.setStudyProtocolService(new MockStudyProtocolService());

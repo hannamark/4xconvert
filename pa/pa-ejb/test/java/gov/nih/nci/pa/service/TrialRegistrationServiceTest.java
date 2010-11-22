@@ -189,7 +189,6 @@ public class TrialRegistrationServiceTest {
         when(studySiteSrv.search(any(StudySiteDTO.class), any(LimitOffset.class))).thenReturn(
                 Arrays.asList(studySiteDTO));
         setupPoSvc();
-        bean.setSessionContext(mock(SessionContext.class));
     }
     private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException {
         poSvcLoc = mock(PoServiceLocator.class);
@@ -231,7 +230,6 @@ public class TrialRegistrationServiceTest {
     }
     @Test
     public void updateTest() throws Exception {
-        bean.setSessionContext(mock(SessionContext.class));
         StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(spIi);
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);

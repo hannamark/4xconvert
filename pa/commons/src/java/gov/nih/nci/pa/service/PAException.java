@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.service;
 
+import javax.ejb.ApplicationException;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -85,6 +87,7 @@ import org.apache.log4j.Logger;
  *
  * @author Naveen Amiruddin
  */
+@ApplicationException(rollback = true)
 public class PAException extends Exception {
 
     private static final long serialVersionUID = -412014421822871391L;

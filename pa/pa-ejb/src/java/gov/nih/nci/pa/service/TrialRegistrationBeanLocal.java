@@ -161,9 +161,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -221,7 +219,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
     private static final String EMAIL_NOT_NULL = "Email cannot be null, ";
     private static final String PHONE_NOT_NULL = "Phone cannot be null, ";
     private static final String SQL_APPEND = " AND FUNCTIONAL_CODE IN ";
-    private SessionContext ejbContext;
     private static final String VALIDATION_EXCEPTION = "Validation Exception ";
     private TrialRegistrationHelper trialRegistrationHelper = null;
 
@@ -645,7 +642,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
                     summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO, null, null, null,
                     AMENDMENT, isBatchMode);
         } catch (Exception e) {
-            ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
 
@@ -732,7 +728,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
                     studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
                     responsiblePartyContactIi, studyRegAuthDTO, CREATE, isBatchMode);
         } catch (Exception e) {
-            ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
         return studyProtocolIi;
@@ -824,7 +819,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
                     studyTypeCode);
             assignOwnershipAndSendMail(CREATE, studyProtocolDTO, isBatchMode, studyProtocolIi);
         } catch (Exception e) {
-            ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
         return studyProtocolIi;
@@ -1524,7 +1518,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
                 paServiceUtils.executeSql(deleteAndReplace(sourceSpIi, targetSpIi));
             }
         } catch (Exception e) {
-            ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
     }
@@ -1545,14 +1538,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
                 mailManagerSerivceLocal.sendNotificationMail(studyProtocolIi);
             }
         }
-    }
-
-    /**
-     * @param ctx the context to set
-     */
-    @Resource
-    public void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
     }
 
     /**
@@ -1643,7 +1628,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(studyProtocolDTO.getIdentifier());
             sendTSRXML(studyProtocolDTO.getIdentifier(), smDto.getMilestoneCode(), inbox);
         } catch (Exception e) {
-            ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
     }

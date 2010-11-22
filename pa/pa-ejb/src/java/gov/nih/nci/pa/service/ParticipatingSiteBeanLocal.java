@@ -150,6 +150,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors(HibernateSessionInterceptor.class)
 @SecurityDomain("pa")
 @RolesAllowed({ "client", "Abstractor" })
+@SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
 public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean 
 implements ParticipatingSiteServiceLocal {
     private SessionContext ejbContext;
@@ -217,7 +218,6 @@ implements ParticipatingSiteServiceLocal {
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
     public Ii getParticipatingSiteIi(Ii studyProtocolIi, Ii someHcfIi) throws PAException {
         try {
             StudyProtocolDTO studyProtocolDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
@@ -248,10 +248,8 @@ implements ParticipatingSiteServiceLocal {
             myMap.put(IiConverter.ORG_ROOT, orgIi);
             createStudyParticationContactRecord(studySiteDTO, myMap, isPrimaryContact, null, telecom);
         } catch (PAException e) {
-            ejbContext.setRollbackOnly();
             throw e;
         } catch (Exception e) {
-            ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
     }
@@ -267,10 +265,8 @@ implements ParticipatingSiteServiceLocal {
             Map<String, Ii> myMap = generateCrsAndHcpFromCtepIdOrNewPerson(investigatorDTO, poCrsDTO, poHcpDTO, orgIi);
             createStudyParticationContactRecord(studySiteDTO, myMap, false, roleCode, null);
         } catch (PAException e) {
-            ejbContext.setRollbackOnly();
             throw e;
         } catch (Exception e) {
-            ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
     }
@@ -286,10 +282,8 @@ implements ParticipatingSiteServiceLocal {
             Map<String, Ii> myMap = generateCrsAndHcpFromCtepIdOrNewPerson(personDTO, poCrsDTO, poHcpDTO, orgIi);
             createStudyParticationContactRecord(studySiteDTO, myMap, true, null, telecom);
         } catch (PAException e) {
-            ejbContext.setRollbackOnly();
             throw e;
         } catch (Exception e) {
-            ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
     }
@@ -305,10 +299,8 @@ implements ParticipatingSiteServiceLocal {
             Ii poHcfIi = generateHcfIiFromCtepIdOrNewOrg(orgDTO, hcfDTO);
             return createStudySiteParticipant(studySiteDTO, currentStatusDTO, poHcfIi);
         } catch (PAException e) {
-            ejbContext.setRollbackOnly();
             throw e;
         } catch (Exception e) {
-            ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
     }
@@ -333,10 +325,8 @@ implements ParticipatingSiteServiceLocal {
             StudySite ss = saveOrUpdateStudySiteHelper(true, studySiteDTO, poHcfIi, currentStatusDTO);
             return new ParticipatingSiteConverter().convertFromDomainToDto(ss);
         } catch (PAException e) {
-            ejbContext.setRollbackOnly();
             throw e;
         } catch (Exception e) {
-            ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
     }
@@ -365,10 +355,8 @@ implements ParticipatingSiteServiceLocal {
             StudySite ss = saveOrUpdateStudySiteHelper(false, studySiteDTO, null, currentStatusDTO);
             return new ParticipatingSiteConverter().convertFromDomainToDto(ss);
         } catch (PAException e) {
-            ejbContext.setRollbackOnly();
             throw e;
         } catch (Exception e) {
-            ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
     }

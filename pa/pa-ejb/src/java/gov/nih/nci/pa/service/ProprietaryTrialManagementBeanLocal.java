@@ -107,9 +107,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -132,7 +130,6 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
     implements ProprietaryTrialManagementServiceLocal {
 
     private static final String VALIDATION_EXCEPTION = "Validation Exception ";
-    private SessionContext ejbContext;
     private static PAServiceUtils paServiceUtils = new PAServiceUtils();
 
     @EJB
@@ -153,11 +150,6 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
     private StudyMilestoneServicelocal studyMilestoneService;
     @EJB
     private RegistryUserServiceLocal userServiceLocal;
-
-    @Resource
-    void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
 
     /**
      * update a proprietary trial.
@@ -237,7 +229,6 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(studyProtocolIi);
             sendTSRXML(studyProtocolDTO.getIdentifier(), smDto.getMilestoneCode(), inbox);
         } catch (Exception e) {
-            ejbContext.setRollbackOnly();
             throw new PAException(e);
         }
     }
