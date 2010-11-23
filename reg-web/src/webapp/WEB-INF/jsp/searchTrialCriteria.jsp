@@ -188,7 +188,7 @@ function getMyPartialTrial() {
 			<s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getPAPersonService().getAllPrincipalInvestigators()" />
              <tr>
                 <td  scope="row" class="label">
-                    <label for="principalInvestigator"> <fmt:message key="studyProtocol.principalInvestigator"/></label>
+                    <label for="principalInvestigator"> <fmt:message key="search.trial.principalInvestigator"/></label>
                 </td>
 
                 <td align=left>

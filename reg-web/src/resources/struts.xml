@@ -30,7 +30,12 @@
                 <interceptor-ref name="i18n" />
                 <interceptor-ref name="chain" />
                 <interceptor-ref name="fileUpload"/>
-                <interceptor-ref name="params"/>
+                <interceptor-ref name="params">
+                    <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
                 <interceptor-ref name="conversionError" />
                 <interceptor-ref name="validation">
                     <param name="excludeMethods">input,back,cancel,reviewUpdate</param>
