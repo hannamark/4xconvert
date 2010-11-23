@@ -593,9 +593,13 @@
      <changeSet id="PO-2211-1" author="vrushali">
         <comment>Updating length of comment_text field from 200 to 2000 in the study_protocol_stage table.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.3/PO-2211-1.sql"/>
-    </changeSet>
+     </changeSet>
      <changeSet id="PO-2968" author="moweis">
         <comment>Update version number to 3.4.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.4/PO-2968.sql"/>
-    </changeSet>
+     </changeSet>
+     <changeSet id="PO-2940" author="moweis">
+        <comment>Update textual references to proprietary/non-proprietary.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.4/PO-2940.sql"/>
+     </changeSet>
 </databaseChangeLog>
