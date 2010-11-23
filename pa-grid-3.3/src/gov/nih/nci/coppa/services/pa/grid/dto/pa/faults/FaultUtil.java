@@ -45,12 +45,12 @@ public final class FaultUtil {
             } else if (cause instanceof TooManyResultsException) {
                 TooManyResultsException e = (TooManyResultsException) cause;
                 return TooManyResultsFaultTransformer.INSTANCE.toXml(e);
-            } else if (input instanceof PAException) {
-                PAException e = (PAException) input;
-                return PAFaultTransformer.INSTANCE.toXml(e);
             } else if (input instanceof DuplicateParticipatingSiteException) { 
                 DuplicateParticipatingSiteException e = (DuplicateParticipatingSiteException) input;
                 return DuplicateParticipatingSiteTransformer.INSTANCE.toXml(e);
+            } else if (input instanceof PAException) {
+                PAException e = (PAException) input;
+                return PAFaultTransformer.INSTANCE.toXml(e);
             } else if (input instanceof RemoteException) { /* default */
                 return (RemoteException) input;
             } else {
