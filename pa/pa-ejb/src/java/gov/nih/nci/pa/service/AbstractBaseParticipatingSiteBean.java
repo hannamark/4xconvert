@@ -83,6 +83,8 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -187,16 +189,25 @@ public abstract class AbstractBaseParticipatingSiteBean extends
             StudySiteAccrualStatusDTO currentStatus, 
             Timestamp currentTime) throws PAException {
         
-        boolean openDateAvail = studySiteDTO.getAccrualDateRange().getLow() != null
-        && studySiteDTO.getAccrualDateRange().getLow().getValue() != null;
-    
-        boolean closedDateAvail = studySiteDTO.getAccrualDateRange().getHigh() != null
-            && studySiteDTO.getAccrualDateRange().getHigh().getValue() != null;
+        boolean openDateAvail = isAccrualRangeLowAvailable(studySiteDTO.getAccrualDateRange());
+        boolean closedDateAvail = isAccrualRangeHighAvailable(studySiteDTO.getAccrualDateRange());
     
         enforceBusinessDateRulesForProprietary(openDateAvail, closedDateAvail, studySiteDTO, currentTime);
         
         enforceBusinessRecruitmentRules1ForProprietary(openDateAvail, currentStatus);
         enforceBusinessRecruitmentRules2ForProprietary(closedDateAvail, currentStatus);
+    }
+    
+    private boolean isAccrualRangeLowAvailable(Ivl<Ts> accrualDateRange) {
+        return accrualDateRange != null 
+        && accrualDateRange.getLow() != null
+        && accrualDateRange.getLow().getValue() != null;
+    }
+    
+    private boolean isAccrualRangeHighAvailable(Ivl<Ts> accrualDateRange) {
+        return accrualDateRange != null 
+        && accrualDateRange.getHigh() != null
+        && accrualDateRange.getHigh().getValue() != null;
     }
     
     /**

@@ -57,9 +57,7 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
         super();
     }
 
-    public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite createParticipatingSite(
-            gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite studySite)
-            throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite createParticipatingSite(gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite studySite) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.services.pa.faults.DuplicateParticipatingSiteFault {
         try {
             StudySiteDTO studySiteDTO = StudySiteManagementTransformer.INSTANCE.toDto(studySite);
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO = StudySiteAccrualStatusManagementTransformer.INSTANCE
@@ -88,10 +86,7 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
         }
     }
 
-    public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite updateParticipatingSite(
-            gov.nih.nci.iso21090.extensions.Id studySiteId,
-            gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite studySite)
-            throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite updateParticipatingSite(gov.nih.nci.iso21090.extensions.Id studySiteId,gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite studySite) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             StudySiteDTO studySiteDTO = StudySiteManagementTransformer.INSTANCE.toDto(studySite);
             studySiteDTO.setIdentifier(IITransformer.INSTANCE.toDto(studySiteId));
@@ -141,9 +136,7 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
 
     }
 
-    public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite[] getParticipatingSitesByStudyProtocol(
-            gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException,
-            gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite[] getParticipatingSitesByStudyProtocol(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii ii = IITransformer.INSTANCE.toDto(studyProtocolId);
             List<ParticipatingSiteDTO> sites = service.getParticipatingSitesByStudyProtocol(ii);

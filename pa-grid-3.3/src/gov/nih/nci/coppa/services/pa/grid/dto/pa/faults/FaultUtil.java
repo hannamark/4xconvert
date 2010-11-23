@@ -7,6 +7,7 @@ import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.TooManyResultsFaultTran
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -47,6 +48,9 @@ public final class FaultUtil {
             } else if (input instanceof PAException) {
                 PAException e = (PAException) input;
                 return PAFaultTransformer.INSTANCE.toXml(e);
+            } else if (input instanceof DuplicateParticipatingSiteException) { 
+                DuplicateParticipatingSiteException e = (DuplicateParticipatingSiteException) input;
+                return DuplicateParticipatingSiteTransformer.INSTANCE.toXml(e);
             } else if (input instanceof RemoteException) { /* default */
                 return (RemoteException) input;
             } else {

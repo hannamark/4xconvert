@@ -4,6 +4,7 @@
 	xmlns:COPPA-PA-FAULTS="http://faults.pa.services.coppa.nci.nih.gov"
 	xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
 	xmlns:COPPA-COMMON-FAULTS="http://faults.common.coppa.nci.nih.gov"
+	xmlns:ISO="uri:iso.org:21090"
 	targetNamespace="http://faults.pa.services.coppa.nci.nih.gov"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<import
@@ -11,6 +12,7 @@
 		schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
 	<import namespace="http://faults.common.coppa.nci.nih.gov"
 		schemaLocation="CoppaCommonsFaults.xsd" />
+	<import schemaLocation="ISO_datatypes_Narrative.xsd" namespace="uri:iso.org:21090" />
 	<element name="TooManyResultsFault" type="COPPA-COMMON-FAULTS:TooManyResultsFault" />
 	<element name="PAFault">
 		<complexType>
@@ -19,4 +21,16 @@
 			</complexContent>
 		</complexType>
 	</element>
+	<element name="DuplicateParticipatingSiteFault">
+        <complexType>
+            <complexContent>
+                <extension base="wsrbf:BaseFaultType" >
+	               <xs:sequence>
+	                   <xs:element name="trialId" type="ISO:II" />
+	                   <xs:element name="hcfId" type="ISO:II" />
+	               </xs:sequence>
+                </extension>
+            </complexContent>
+        </complexType>
+    </element>
 </schema>

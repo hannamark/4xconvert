@@ -80,12 +80,15 @@ package gov.nih.nci.pa.service.exception;
 
 import gov.nih.nci.pa.service.PAException;
 
+import javax.ejb.ApplicationException;
+
 /**
  * PA Exception for error handling.
  * 
  * @author Hugh Reinhart
  * @since 01/13/2009
  */
+@ApplicationException(rollback = true) 
 public class PADuplicateException extends PAException {
     static final long serialVersionUID = 1234509090L;
 

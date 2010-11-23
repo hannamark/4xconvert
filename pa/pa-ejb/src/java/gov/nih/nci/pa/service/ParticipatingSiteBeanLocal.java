@@ -104,6 +104,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
@@ -377,7 +378,13 @@ implements ParticipatingSiteServiceLocal {
             StudySiteAccrualStatusDTO currentStatus) throws PAException, EntityValidationException, CurationException {
         if (isCreate && poHcfIi != null) {
             Long paHealthCareFacilityId = getOcsr().createHcfWithExistingPoHcf(poHcfIi);
-            siteDTO.setHealthcareFacilityIi(IiConverter.convertToIi(paHealthCareFacilityId));
+            // check that we are not creating another part site w/ same trial and hcf ids.
+            Ii paHcfIi = IiConverter.convertToIi(paHealthCareFacilityId);
+            if (isDuplicate(siteDTO.getStudyProtocolIdentifier(), paHcfIi)) {
+                throw new DuplicateParticipatingSiteException(
+                        siteDTO.getStudyProtocolIdentifier(), poHcfIi);
+            }
+            siteDTO.setHealthcareFacilityIi(paHcfIi);
         }
         siteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
 
@@ -395,6 +402,21 @@ implements ParticipatingSiteServiceLocal {
         }
         createStudySiteAccrualStatus(studySiteDTO.getIdentifier(), currentStatus);
         return getStudySite(studySiteDTO.getIdentifier());
+    }
+    
+    private boolean isDuplicate(Ii trialIi, Ii paHcfIi) throws PAException {
+        StudySiteDTO ssDto = new StudySiteDTO();
+        ssDto.setStudyProtocolIdentifier(trialIi);
+        ssDto.setHealthcareFacilityIi(paHcfIi);
+        ssDto.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE.getCode()));
+        
+        List<StudySiteDTO> ssDtoList;
+        try {
+            ssDtoList = this.getStudySiteService().search(ssDto, new LimitOffset(1, 0));
+        } catch (TooManyResultsException e) {
+            return true;
+        }
+        return CollectionUtils.isNotEmpty(ssDtoList);
     }
 
     private StudySite getStudySite(Ii studySiteIi) {
