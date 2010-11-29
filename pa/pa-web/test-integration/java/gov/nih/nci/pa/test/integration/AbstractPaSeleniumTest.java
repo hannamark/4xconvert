@@ -134,7 +134,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
     }
 
     public void loginAsAbstractor() {
-        login("abstractor", "Coppa#12345");
+        login("abstractor-ci", "Coppa#12345");
     }
 
     protected boolean isLoggedIn() {

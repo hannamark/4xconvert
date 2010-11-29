@@ -128,7 +128,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
     }
 
     public void loginAsAbstractor() {
-        login("abstractor", "Coppa#12345");
+        login("abstractor-ci", "Coppa#12345");
     }
 
     protected boolean isLoggedIn() {

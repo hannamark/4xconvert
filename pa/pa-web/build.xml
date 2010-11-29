@@ -40,11 +40,18 @@
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
     <property name="jboss.server.jndi.port" value="1099" />
+    <property name="bda-utils" value="${basedir}/../../target/pa/bda-utils" />
+    <property name="database.upgrades.dir" value="${basedir}/../dbscripts/db-upgrade"/>
 
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
-
+    <path id="bda-utils-classpath">
+        <fileset dir="${bda-utils}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+    
     <path id="common.package.classpath">
         <fileset dir="${pa.dir}/commons/target">
             <include name="*.jar"/>
@@ -128,7 +135,8 @@
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${pa.report.dir}/pa-web"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
-
+    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="bda-utils-classpath"/>
+    <taskdef resource="liquibasetasks.properties" classpathref="bda-utils-classpath"/>
 
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
@@ -206,6 +214,11 @@
             </filterset>
         </copy>
         <replaceregexp file="${pa-web.build.testResourceDir.0}/test.properties" match="\\" replace="/" flags="g"/>
+        <copy file="${database.upgrades.dir}/db-upgrade.xml" tofile="${pa-web.build.testResourceDir.0}/db-upgrade.xml" overwrite="true">
+            <filterset>
+                <filter token="db-upgrade.run.dir" value="${database.upgrades.dir}/postgresql"/>
+            </filterset>
+        </copy>
     </target>
 
     <!-- ====================================================================== -->
@@ -344,7 +357,55 @@
             </batchtest>
          </junit>
     </target>
-
+    
+    <!-- ====================================================================== -->
+    <!--   Recreates the database that tests will be run against                --> 
+    <!-- ====================================================================== -->
+    <target name="init-test-db" depends="configure-tests" description="Recreates the testing database from scratch">
+        <sequential>
+            <sql driver="${jdbc.driver}" url="${jdbc.base}/template1" userid="${db.username}" password="${db.password}"
+                expandproperties="true" onerror="continue" autocommit="true">
+                <classpath>
+                    <path refid="compile.classpath"/>
+                </classpath>
+                drop database if exists ${db.name};
+                create database ${db.name};
+                grant all on database ${db.name} to ${db.username};
+            </sql>
+            <for list="${ci.schema.files}" param="schema.file">
+                <sequential>
+                    <sql driver="${jdbc.driver}" url="${jdbc.url}" userid="${db.username}" password="${db.password}" 
+                        src="../dbscripts/db-install/postgresql/@{schema.file}" delimiter="/" delimitertype="row" onerror="abort" autocommit="true" keepformat="true">
+                        <classpath>
+                            <pathelement location="${compile.classpath}" />
+                        </classpath>
+                    </sql>
+                </sequential>
+            </for>
+            <updateDatabase driver="${jdbc.driver}" url="${jdbc.url}" username="${db.username}" password="${db.password}" 
+                            classpathref="compile.classpath" changeLogFile="${pa-web.build.testResourceDir.0}/db-upgrade.xml" />
+        </sequential>
+    </target>
+    
+    <!-- ====================================================================== -->
+    <!--   Recreates the database that tests will be run against                --> 
+    <!-- ====================================================================== -->
+    <target name="populate-test-db" depends="configure-tests" description="Populates the testing db with baseline date">
+        <sequential>
+            <sql driver="${jdbc.driver}" url="${jdbc.url}" userid="${db.username}" password="${db.password}"
+                expandproperties="true" onerror="continue" autocommit="true">
+                <fileset dir="..">
+                    <include name="pdq/scripts/disease000.sql"/>
+                    <include name="pdq/scripts/intervention000.sql"/>
+                    <include name="dbscripts/db-integration/postgresql/paCiBootstrapData.sql"/>
+                </fileset>
+                <classpath>
+                    <path refid="compile.classpath"/>
+                </classpath>
+            </sql>
+        </sequential>
+    </target>
+    
     <!-- ====================================================================== -->
     <!-- Run all tests                                                          -->
     <!-- ====================================================================== -->

@@ -266,7 +266,7 @@
             description="Makes services jar">
     </target>
 
-    <target name="jar-notest" depends="ivy-compile, compile, create-jar"
+    <target name="jar-notest" depends="ivy-get, compile, create-jar"
             description="Makes services jar, doesn't run tests">
     </target>
 

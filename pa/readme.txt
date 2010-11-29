@@ -108,15 +108,16 @@ Build and deploy applications:
     
 To run selenium tests:
 ----------------------
-Change the jboss port number in the build.properties
-Install Selenium IDE in Firefox as addon.
-Execute a workflow
-Save it as a java file with 'MANDATORY' name  xxxxSeleniumxxx.java
-use ant clean run-selenium
-    - The jboss will start
-    - Selenium server will start
-    - Browser window(s) open (Wait for the tests to execute)
-    
+Ensure that selenium.server.port is set in build.properties and change the db.name property if you want to preserve
+your old data.
+
+- Change db.name to point to db you wish the selenium tests to run against.
+- Run the following ant command if you wish to initialize the db anew: ant init-test-db populate-test-db
+- Ensure that the pa jboss instance is up and running; Running ant start-jboss-server will start it for you.
+- Run the selenium tests with the following: ant start-selenium-server run-selenium-tests stop-selenium-tests
+- Shutdown the pa jboss instance with: ant stop-jboss-server
+- Alternately, you can run ant test-integration if you want to automatic the initialization of the db, starting of jboss,
+  running of the tests and stopping the jboss instance.
     
 Logging into applications:
 --------------------------

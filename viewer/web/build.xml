@@ -306,7 +306,7 @@
 
     <target name="war" depends="ivy-get, compile, inspect, test, create-war"/>
 
-    <target name="war-notest" depends="ivy-compile, ivy-runtime, compile, create-war"
+    <target name="war-notest" depends="ivy-get, compile, create-war"
             description="Package the application.  Do not run tests."/>
 
     <target name="war-notest-noivy" depends="compile, create-war"/>

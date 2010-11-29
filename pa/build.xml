@@ -7,6 +7,7 @@
 <project name="pa" default="package" basedir=".">
     <property file="${basedir}/build.properties"/>
     <property name="bda-utils" value="${basedir}/../target/pa/bda-utils" />
+    <property name="jdbc.base" value="jdbc:${db.type}://${db.server}:${db.port}"/>
 
     <!-- PATHS -->
     <path id="macrodef">
@@ -104,7 +105,14 @@
     <!-- Run integration tests                                                  -->
     <!-- ====================================================================== -->
 
-
+    <target name="init-test-db" description="Drops and recreates the ci db.">
+        <ant target="init-test-db" dir="pa-web" inheritAll="false"/>
+    </target>
+    
+    <target name="populate-test-db" description="Populates the ci db with test data.">
+        <ant target="populate-test-db" dir="pa-web" inheritAll="false"/>
+    </target>
+    
     <target name="run-selenium-tests" description="Runs integration tests against an already deployed application">
         <ant target="run-selenium-tests" dir="pa-web" inheritAll="false"/>
     </target>
@@ -118,12 +126,9 @@
     </target>
 
     <target name="test-integration" depends="clean" description="Runs integration tests against the automatically deploy application.">
-        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
-        <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
-        <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
-        <ant target="package" dir="commons" inheritAll="false"/>
-        <ant target="package" dir="pa-ejb" inheritAll="false"/>
-        <ant target="package" dir="pa-web" inheritAll="false"/>
+        <ant target="init-test-db" dir="pa-web" inheritAll="false"/>
+        <ant target="populate-test-db" dir="pa-web" inheritAll="false"/>
+        <ant target="deploy"/>
         <ant target="start-jboss-server" dir="pa-ear" inheritAll="false"/>
         <ant target="start-selenium-server" dir="pa-web" inheritAll="false"/>
         <ant target="run-selenium-tests" dir="pa-web" inheritAll="false"/>

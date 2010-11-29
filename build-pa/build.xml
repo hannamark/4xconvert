@@ -175,12 +175,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="pa-grid-3.1.dist.dir" value="${dist.exploded.dir}/${pa-grid-3.1.dist.relative.dir}"/>
 
     <!-- Selenium settings -->
-    <property name="selenium.jar" location="${lib.dir}/test-selenium/selenium-server-1.0-beta-1.jar"/>
-    <property name="selenium.browser" value="*firefox"/>
+    <property name="selenium.browser" value="*chrome"/>
     <!--  What you would need for a ci server, recommend setting in local.properties
     <property name="selenium.browser" value="*firefox /usr/lib64/firefox-1.5.0.12/firefox-bin"/>
     -->
     <property name="selenium.proxy.port" value="4444"/>
+    <property name="selenium.jboss.port" value="39480"/>
     <property name="selenium.report.dir" location="${reports.dir}/selenium"/>
     <property name="selenium.report.file" value="selenium-rpt.html"/>
     <property name="selenium.test.dir" location="${software.dir}/test/selenium"/>
@@ -1326,11 +1326,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         "/>
 
     <target name="test:pa-web" depends="init">
-        <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
-            target="test-dynamic-analysis"
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}" target="test-dynamic-analysis"
             dir="${pa-web.base.dir}" >
             <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-            <property name="jboss.port" value="${jboss.server.port}"/>
+            <property name="jboss.port" value="${selenium.jboss.port}"/>
             <property name="hibernate.dialect" value="${database.dialect}"/>
             <property name="db.username" value="${database.user}"/>
             <property name="db.password" value="${database.password}"/>
@@ -1338,6 +1337,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jdbc.url" value="${database.url}"/>
             <property name="test.schema.showsql" value="false"/>
             <property name="test.java.naming.provider" value="localhost"/>
+            <property name="pa.server.name" value="${jboss.server.hostname}"/>
+            <property name="selenium.server.port" value="${selenium.proxy.port}"/>
         </ant>
     </target>
     <target name="test:reg-web" depends="init">
@@ -1470,24 +1471,41 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
 
     <target name="continuous-integration" description="calls wrapper targets for continuous integration build"
-        depends="
-        build:all,
-        static-analysis:all,
-        test:all
-        "/>
+        depends="build:all, static-analysis:all, test:all"/>
 
 
     <macrodef name="run-selenium" description="Macro that starts selenium server, runs test, then stops Selenium server">
     	<attribute name="runDir"/>
         <attribute name="runTarget" default="run-selenium-tests"/>
         <sequential>
-            <ant inheritAll="false" inheritRefs="false" target="start-selenium-server" dir="${pa.base.dir}" />
+            <ant inheritAll="false" inheritRefs="false" target="start-selenium-server" dir="${pa.base.dir}">
+                <property name="pa.server.name" value="${jboss.server.hostname}"/>
+                <property name="jboss.port" value="${selenium.jboss.port}"/>
+                <property name="selenium.server.port" value="${selenium.proxy.port}"/>
+            </ant>
             
-            <ant inheritAll="false" inheritRefs="false" target="@{runTarget}" dir="@{runDir}" />
+            <ant inheritAll="false" inheritRefs="false" target="@{runTarget}" dir="@{runDir}">
+                <property name="pa.server.name" value="${jboss.server.hostname}"/>
+                <property name="jboss.port" value="${selenium.jboss.port}"/>
+                <property name="selenium.server.port" value="${selenium.proxy.port}"/>
+                <property name="jboss.deploy.directory" value="${jboss.deploy.dir}"/>
+           </ant>
 
-            <ant inheritAll="false" inheritRefs="false" target="stop-selenium-server" dir="${pa.base.dir}" />            
+            <ant inheritAll="false" inheritRefs="false" target="stop-selenium-server" dir="${pa.base.dir}">
+                <property name="pa.server.name" value="${jboss.server.hostname}"/>
+                <property name="selenium.server.port" value="${selenium.proxy.port}"/>
+            </ant>
         </sequential>
     </macrodef>
+    
+    <target name="populate-ci-db" description="Populates the CI db with data necessary for testing.">
+        <ant inheritAll="false" inheritRefs="false" target="populate-test-db" dir="${pa.base.dir}">
+            <property name="db.username" value="${database.user}"/>
+            <property name="db.password" value="${database.password}"/>
+            <property name="jdbc.driver" value="${database.driver}"/>
+            <property name="jdbc.url" value="${database.url}"/>    
+        </ant>
+    </target>
     
     <target name="run-selenium:paear" description="Runs Selenium for pa" depends="build:pa-web">
         <run-selenium runDir="${pa.base.dir}"/>
@@ -1501,7 +1519,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <run-selenium runDir="${accrual-ear.base.dir}"/>		
     </target>
 
-    <target name="run-selenium:viewer" description="Runs Selenium for Viewer" depends="build:viewer-web" unless="exclude.viewer">
+    <target name="run-selenium:viewer" description="Runs Selenium for Viewer" depends="build:viewer-services,build:viewer-web" unless="exclude.viewer">
         <run-selenium runDir="${viewer.base.dir}"/>		
     </target>
     
@@ -1554,16 +1572,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         />
 
     <target name="test:selenium:run">
-        <!--
-        <java jar="${selenium.jar}" fork="true">
-            <arg line=" -htmlSuite &quot;${selenium.browser}&quot;"/>
-            <arg line=" &quot;${selenium.url}&quot;"/>
-            <arg line=" &quot;${selenium.test.suite}&quot;"/>
-            <arg line=" &quot;${selenium.report.dir}/${selenium.report.file}&quot;"/>
-            <arg line=" -timeout 30"/>
-            <arg line=" -log ${temp.dir}/selenium-debug.log"/>
-        </java>
-        -->
         <osfamily property="os.family"/>
         <if>
             <equals arg1="${os.family}" arg2="unix"/>
@@ -1579,7 +1587,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             suite="${selenium.test.suite}"
             browser="${selenium.browser}"
             results="${selenium.report.dir}/${selenium.report.file}"
-            multiWindow="falsE"
+            multiWindow="false"
             timeoutInSeconds="60"
             port="${selenium.proxy.port}"
             startURL="${selenium.url}"

@@ -24,8 +24,10 @@ jdbc.driver=org.postgresql.Driver
 hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 db.username=pauser
 db.password=pauser
-jdbc.url=jdbc:${db.type}://${db.server}:${db.port}/${db.name}
+jdbc.url=${jdbc.base}/${db.name}
 test.schema.showsql=false
+
+ci.schema.files=csmCreateSchema.sql,csmBootstrapData.sql,PG_CTODS_PA.sql,country.sql,regulatoryAuthority.sql,FUNDING_MECHANISM.SQL,PA_PROPERTIES.SQL
 
 test.java.naming.provider=localhost
 doc.upload.filepath.loc=${application.base.path}/${doc.upload.filepath.relative.dir}

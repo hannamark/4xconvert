@@ -42,6 +42,11 @@
         <ant target="jar-notest-noivy" dir="${servicesDir}"/>
         <ant target="war-notest-noivy" dir="${webDir}"/>
     </target>
+    
+    <target name="package-notest" depends="pre-clean">
+        <ant target="jar-notest" dir="${servicesDir}"/>
+        <ant target="war-notest" dir="${webDir}"/>
+    </target>
 
     <!-- ====================================================================== -->
     <!-- Deploy targets                                                         -->
@@ -93,7 +98,7 @@
             description="Build and deploy without testing or getting dependencies.">
     </target>
     
-    <target name="run-selenium-tests" depends="package-notest-noivy" description="Runs integration tests against an already deployed application">
+    <target name="run-selenium-tests" depends="package-notest" description="Runs integration tests against an already deployed application">
         <ant target="run-selenium-tests" dir="web" inheritAll="false"/>
     </target>
 
