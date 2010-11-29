@@ -134,11 +134,11 @@ public final class InterventionScript extends BaseScript {
         if (!ExistingIds.getInterventions().containsKey(inter.getPdqTermIdentifier())) {
             id = ExistingIds.getNextInterventionSqn();
             sql.append("INSERT INTO intervention (identifier,name,type_code,description_text,pdq_term_identifier,"
-                    + "nt_term_identifier,status_code,status_date_range_low,date_last_created,user_last_created,ctgov_type_code)");
+                    + "nt_term_identifier,status_code,status_date_range_low,date_last_created,ctgov_type_code)");
             sql.append("VALUES (" + id + "," + fixString(inter.getName()) + "," + fixCode(inter.getTypeCode())
                     + "," + fixString(inter.getDescriptionText(), Intervention.DESCRIPTION_TEXT_LENGTH)
                     + "," + fixString(inter.getPdqTermIdentifier()) + "," + fixString(inter.getNtTermIdentifier())
-                    + ",'" + ActiveInactivePendingCode.ACTIVE.getName() + "',now(),'" + PDQConstants.DATA_DUMP_DATE + "','" + user
+                    + ",'" + ActiveInactivePendingCode.ACTIVE.getName() + "',now(),'" + PDQConstants.DATA_DUMP_DATE 
                     + "'," + fixCode(inter.getCtGovTypeCode()) + ");");
         } else {
             id = ExistingIds.getInterventions().get(inter.getPdqTermIdentifier()).longValue();
@@ -150,7 +150,6 @@ public final class InterventionScript extends BaseScript {
             sql.append(",status_code='" + ActiveInactivePendingCode.ACTIVE.getName() + "'");
             sql.append(",status_date_range_low=now()");
             sql.append(",date_last_updated='" +  PDQConstants.DATA_DUMP_DATE + "'");
-            sql.append(",user_last_updated='" + user + "'");
             sql.append(",ctgov_type_code=" + fixCode(inter.getCtGovTypeCode()));
             sql.append(" WHERE identifier=" + id + ";");
         }
@@ -163,7 +162,6 @@ public final class InterventionScript extends BaseScript {
     }
 
     public void close() {
-        out.println("UPDATE intervention_alternate_name ia SET user_last_created=(SELECT user_last_created FROM intervention ii WHERE ii.identifier = ia.intervention_identifier);");
         out.println("UPDATE intervention_alternate_name SET date_last_created='" + PDQConstants.DATA_DUMP_DATE + "';");
         out.println("DELETE FROM intervention WHERE status_code = '" + ActiveInactivePendingCode.INACTIVE.getName()
                 + "' AND identifier NOT IN (SELECT intervention_identifier FROM planned_activity) "

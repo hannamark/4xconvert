@@ -141,13 +141,13 @@ public class DiseaseScript extends BaseScript {
         if (!ExistingIds.getDiseases().containsKey(dis.getDiseaseCode())) {
             id = ExistingIds.getNextDiseaseSqn();
             sql.append("INSERT INTO disease (identifier,disease_code,nt_term_identifier,preferred_name,menu_display_name,"
-                    + "status_code,status_date_range_low,date_last_created,user_last_created) ");
+                    + "status_code,status_date_range_low,date_last_created) ");
             sql.append("VALUES (" + id);
             sql.append("," + fixString(dis.getDiseaseCode()));
             sql.append("," + fixString(dis.getNtTermIdentifier()));
             sql.append("," + fixString(dis.getPreferredName()));
             sql.append("," + fixString(dis.getMenuDisplayName()));
-            sql.append(",'" + ActiveInactivePendingCode.ACTIVE.getName() + "',now(),'" + PDQConstants.DATA_DUMP_DATE  + "','" + user + "');");
+            sql.append(",'" + ActiveInactivePendingCode.ACTIVE.getName() + "',now(),'" + PDQConstants.DATA_DUMP_DATE + "');");
         } else {
             id = ExistingIds.getDiseases().get(dis.getDiseaseCode()).longValue();
             sql.append("UPDATE disease SET ");
@@ -155,7 +155,7 @@ public class DiseaseScript extends BaseScript {
             sql.append("preferred_name=" + fixString(dis.getPreferredName()) + ",");
             sql.append("menu_display_name=" + fixString(dis.getMenuDisplayName()) + ",");
             sql.append("status_code='" + ActiveInactivePendingCode.ACTIVE.getName() +"',");
-            sql.append("status_date_range_low=now(),date_last_updated='" + PDQConstants.DATA_DUMP_DATE + "',user_last_updated='" + user + "'");
+            sql.append("status_date_range_low=now(),date_last_updated='" + PDQConstants.DATA_DUMP_DATE + "' ");
             sql.append("WHERE identifier=" + id + ";");
         }
         out.println(sql.toString());
@@ -195,9 +195,7 @@ public class DiseaseScript extends BaseScript {
 
     public void close() throws PDQException {
         parentsAdd();
-        out.println("UPDATE disease_altername da SET user_last_created = (SELECT user_last_created FROM disease dd WHERE dd.identifier = da.disease_identifier);");
         out.println("UPDATE disease_altername SET date_last_created = '" + PDQConstants.DATA_DUMP_DATE + "';");
-        out.println("UPDATE disease_parent dp SET user_last_created = (SELECT user_last_created FROM disease dd WHERE dd.identifier = dp.disease_identifier);");
         out.println("UPDATE disease_parent SET date_last_created = '" + PDQConstants.DATA_DUMP_DATE + "';");
         out.println("DELETE FROM disease WHERE status_code = '" + ActiveInactivePendingCode.INACTIVE.getName()
                 + "' AND identifier NOT IN (SELECT disease_identifier FROM study_disease) "
