@@ -21,5 +21,6 @@
         <sqlFile path="${db-install.run.dir}/postgresql/csmBootstrapData.sql" />
         <sqlFile path="${db-install.run.dir}/postgresql/${csm.users.file}" />
         <sqlFile path="${db-install.run.dir}/postgresql/extraCreateSchema.sql" />
+        <sqlFile path="${db-install.run.dir}/postgresql/${org.bootstrap.file}" />
     </changeSet>
 </databaseChangeLog>

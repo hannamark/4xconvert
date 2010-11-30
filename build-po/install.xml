@@ -270,6 +270,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                 <property name="csm.replace.file" value="${database.csm.sample.empty}"/>
             </else>
         </if>
+        <if>
+            <and>
+                <isset property="database.org.sample"/>
+                <not>
+                    <equals arg1="${database.org.sample}" arg2=""/>
+                </not>
+            </and>
+            <then>
+                <property name="org.replace.file" value="${database.org.sample}"/>
+            </then>
+            <else>
+                <property name="org.replace.file" value="${database.org.sample.empty}"/>
+            </else>
+        </if>
         <mkdir dir="${db.dir.temp}"/>
         <copy todir="${db.dir.dest}" filtering="true">
             <fileset dir="${db.dir.src}">
@@ -293,6 +307,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                 <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}"/>
                 <filter token="db-install.run.dir" value="${db-install.dir.dest}"/>
                 <filter token="csm.users.file" value="${csm.replace.file}"/>
+                <filter token="org.bootstrap.file" value="${org.replace.file}"/>
             </filterset>
         </copy>
     </target>

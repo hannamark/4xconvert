@@ -335,7 +335,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
         PersonDTO p = new PersonDTO();
         p.setName(TestConvertHelper.convertToEnPn("e", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
     }
 
     @Test
@@ -343,7 +343,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
         PersonDTO p = new PersonDTO();
         p.setName(TestConvertHelper.convertToEnPn("E", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
     }
 
     @Test
@@ -351,7 +351,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
         PersonDTO p = new PersonDTO();
         p.setName(TestConvertHelper.convertToEnPn("b", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(2, results.size());
+        assertEquals(4, results.size());
     }
 
     @Test
@@ -359,7 +359,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
         PersonDTO p = new PersonDTO();
         p.setName(TestConvertHelper.convertToEnPn("B", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(2, results.size());
+        assertEquals(4, results.size());
     }
 
     @Test
@@ -447,7 +447,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
         PersonDTO p = new PersonDTO();
         p.setName(TestConvertHelper.convertToEnPn(null, null, null, "r", null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(10, results.size());
+        assertEquals(13, results.size());
     }
 
     @Test
@@ -455,7 +455,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
         PersonDTO p = new PersonDTO();
         p.setName(TestConvertHelper.convertToEnPn(null, null, null, "R", null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(10, results.size());
+        assertEquals(13, results.size());
     }
 
     @Test
@@ -575,7 +575,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress("Rs", null, null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(2, results.size());
+        assertEquals(5, results.size());
     }
 
     @Test
@@ -583,7 +583,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
         PersonDTO p = new PersonDTO();
         p.setPostalAddress(createPostalAddress("rS", null, null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
-        assertEquals(2, results.size());
+        assertEquals(5, results.size());
     }
 
     @Test
