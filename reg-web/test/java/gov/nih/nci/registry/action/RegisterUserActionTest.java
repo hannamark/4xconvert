@@ -108,7 +108,6 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             action = new RegisterUserAction();
             MockHttpServletRequest request = new MockHttpServletRequest();
             HttpSession sess = new MockHttpSession();
-            sess.setAttribute("disclaimer", "accept");
             request.setRemoteUser("firstName");
             request.setSession(sess);
             ServletActionContext.setRequest(request);
@@ -117,7 +116,6 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             assertEquals(0, lst.size());
             request = new MockHttpServletRequest();
             sess = new MockHttpSession();
-            sess.setAttribute("disclaimer", "accept");
             request.setRemoteUser("affiliated Org");
             request.setSession(sess);
             ServletActionContext.setRequest(request);

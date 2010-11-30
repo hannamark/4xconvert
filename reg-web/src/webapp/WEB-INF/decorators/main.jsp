@@ -33,10 +33,12 @@
 			</div>
            	<div id="leftnav">
            		<ul class="menu">
+                    <c:if test="${sessionScope.disclaimerAccepted}">
               	 	<jsp:include page="/WEB-INF/jsp/common/registrymenu.jsp"/> 
+                    </c:if> 
 					<jsp:include page="/WEB-INF/jsp/common/quicklinks.jsp"/> 
 				</ul>
-			</div> 
+			</div>
          </div> 
          <div class="clear"><br /></div>
          

@@ -154,11 +154,6 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      */
     @Override
     public String execute() {
-        //check if users accepted the desclaimer if not show one
-        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
-        if (StringUtils.isEmpty(strDesclaimer) || !"accept".equals(strDesclaimer)) {
-            return "show_Disclaimer_Page";
-        }
         if (StringUtils.isEmpty(sum4FundingCatCode)) {
             setTrialAction("");
             ServletActionContext.getRequest().setAttribute(

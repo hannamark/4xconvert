@@ -161,19 +161,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         session.setAttribute("protocolId", "1");
-        session.setAttribute("disclaimer", "noaccept");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        assertEquals("show_Disclaimer_Page", action.execute());
-        action = new SearchTrialAction();
-        request = new MockHttpServletRequest();
-        session = new MockHttpSession();
-        session.setAttribute("protocolId", "1");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        assertEquals("show_Disclaimer_Page", action.execute());
-        session.setAttribute("protocolId", "1");
-        session.setAttribute("disclaimer", "accept");
         request.setSession(session);
         request.setupAddParameter("trialAction", "submit");
         ServletActionContext.setRequest(request);
@@ -186,24 +173,22 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         session.setAttribute("protocolId", "1");
-        session.setAttribute("disclaimer", "accept");
         request.setupAddParameter("trialAction", "amend");
         request.setSession(session);
         ServletActionContext.setRequest(request);
         try {
-            action.execute();
+            assertEquals("success", action.execute());
         } catch (Exception e) {
 
         }
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         session.setAttribute("protocolId", "1");
-        session.setAttribute("disclaimer", "accept");
         request.setupAddParameter("trialAction", "");
         request.setSession(session);
         ServletActionContext.setRequest(request);
         try {
-            action.execute();
+            assertEquals("success", action.execute());
         } catch (Exception e) {
 
         }
@@ -211,12 +196,11 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         session.setAttribute("protocolId", "1");
-        session.setAttribute("disclaimer", "accept");
         request.setupAddParameter("trialAction", "view");
         request.setSession(session);
         ServletActionContext.setRequest(request);
         try {
-            action.execute();
+            assertEquals("success", action.execute());
         } catch (Exception e) {
 
         }

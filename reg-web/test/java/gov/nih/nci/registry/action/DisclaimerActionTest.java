@@ -6,6 +6,7 @@ package gov.nih.nci.registry.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.MockCSMUserService;
 
@@ -62,7 +63,7 @@ public class DisclaimerActionTest extends AbstractRegWebTest {
         request.setSession(session);
         ServletActionContext.setRequest(request);
         action.accept();
-        assertEquals("accept", ServletActionContext.getRequest().getSession().getAttribute("disclaimer"));
+        assertTrue((Boolean)ServletActionContext.getRequest().getSession().getAttribute("disclaimerAccepted"));
         assertEquals("searchTrial.action", action.getActionName());
 
         request = new MockHttpServletRequest();
@@ -71,7 +72,7 @@ public class DisclaimerActionTest extends AbstractRegWebTest {
         request.setSession(session);
         ServletActionContext.setRequest(request);
         action.accept();
-        assertEquals("accept", ServletActionContext.getRequest().getSession().getAttribute("disclaimer"));
+        assertTrue((Boolean)ServletActionContext.getRequest().getSession().getAttribute("disclaimerAccepted"));
         assertEquals("submitTrial.action", action.getActionName());
     }
 
@@ -83,7 +84,7 @@ public class DisclaimerActionTest extends AbstractRegWebTest {
         request.setSession(session);
         ServletActionContext.setRequest(request);
         action.accept();
-        assertEquals("accept", ServletActionContext.getRequest().getSession().getAttribute("disclaimer"));
+        assertEquals(Boolean.TRUE, ServletActionContext.getRequest().getSession().getAttribute("disclaimerAccepted"));
         assertEquals("Test", action.getActionName());
     }
 

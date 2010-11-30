@@ -35,9 +35,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testExcute() throws Exception {
         submitAction = new SubmitTrialAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("disclaimer", "accept");
-        request.setSession(session);
+        request.setSession(new MockHttpSession());
         ServletActionContext.setRequest(request);
         submitAction.execute();
         assertEquals("redirect_to_search",submitAction.execute());
@@ -53,21 +51,6 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("edit", submitAction.edit());
-        submitAction = new SubmitTrialAction();
-        request = new MockHttpServletRequest();
-        submitAction = new SubmitTrialAction();
-        session.setAttribute("protocolId", "1");
-        session.setAttribute("disclaimer", "noaccept");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        assertEquals("show_Disclaimer_Page",submitAction.execute());
-        submitAction = new SubmitTrialAction();
-        request = new MockHttpServletRequest();
-        session = new MockHttpSession();
-        session.setAttribute("protocolId", "1");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        assertEquals("show_Disclaimer_Page",submitAction .execute());
     }
     @Test
     public void testCancle() {

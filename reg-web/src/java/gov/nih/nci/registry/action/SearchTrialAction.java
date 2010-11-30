@@ -154,11 +154,6 @@ public class SearchTrialAction extends ActionSupport {
      */
     @Override
     public String execute() {
-        //check if users accepted the disclaimer if not show one
-        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
-        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
-            return "show_Disclaimer_Page";
-        }
         String trialAction = ServletActionContext.getRequest().getParameter("trialAction");
         if (StringUtils.isNotEmpty(trialAction) && (trialAction.equalsIgnoreCase("submit")
                 || trialAction.equalsIgnoreCase("amend") || trialAction.equalsIgnoreCase("update"))) {

@@ -123,7 +123,7 @@ public class DisclaimerAction extends ActionSupport {
      * @return string
      */
     public String accept() {
-        ServletActionContext.getRequest().getSession().setAttribute("disclaimer", "accept");
+        ServletActionContext.getRequest().getSession().setAttribute("disclaimerAccepted", Boolean.TRUE);
         String strActionName = (String) ServletActionContext.getRequest().getSession().getAttribute("actionName");
         ServletActionContext.getRequest().getSession().removeAttribute("actionName");
         if (StringUtils.isNotEmpty(strActionName)) {

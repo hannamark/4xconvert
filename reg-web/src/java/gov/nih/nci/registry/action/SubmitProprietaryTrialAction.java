@@ -81,10 +81,6 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
      * @return String st
      */
     public String selectTypeOfTrial() {
-        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
-        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
-            return "show_Disclaimer_Page";
-        }
         return SUCCESS;
     }
     /**

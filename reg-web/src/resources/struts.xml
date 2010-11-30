@@ -8,6 +8,10 @@
  <constant name="struts.devMode" value="true" />
     <package name="default" extends="struts-default">
         <interceptors>
+            <interceptor name="showDisclaimer" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ShowSplashPageInterceptor">
+                <param name="splashPageActionName">show_Disclaimer_Page</param>
+                <param name="sessionFlagName">disclaimerAccepted</param>
+            </interceptor>
             <interceptor name="parameterTrim"
                 class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
             <interceptor name="maliciousInput"
@@ -17,6 +21,7 @@
             </interceptor>
 
             <interceptor-stack name="methodValidationStack">
+                <interceptor-ref name="showDisclaimer" />
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
                 <interceptor-ref name="params">

@@ -84,30 +84,7 @@ public class BatchUploadActionTest extends AbstractRegWebTest {
     }
     @Test 
     public void testExecute(){
-        action = new BatchUploadAction();
-        assertEquals("show_Disclaimer_Page",action.execute());
-        action = new BatchUploadAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("disclaimer", "noaccept");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        assertEquals("show_Disclaimer_Page",action.execute());
-        
-        action = new BatchUploadAction();
-        request = new MockHttpServletRequest();
-        session = new MockHttpSession();
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        assertEquals("show_Disclaimer_Page",action.execute());
-        
-        action = new BatchUploadAction();
-        request = new MockHttpServletRequest();
-        session = new MockHttpSession();
-        session.setAttribute("disclaimer", "accept");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        assertEquals("success",action.execute());
+        assertEquals("success",new BatchUploadAction().execute());
     }
     @Test 
     public void testProcessWithValidationErr(){

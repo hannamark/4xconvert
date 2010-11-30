@@ -45,7 +45,6 @@ public class SiteAdministrationActionTest extends AbstractRegWebTest {
         action = new SiteAdministrationAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         HttpSession sess = new MockHttpSession();
-        sess.setAttribute("disclaimer", "accept");
         request.setRemoteUser("RegUser");
         request.setSession(sess);
         ServletActionContext.setRequest(request);
@@ -74,7 +73,6 @@ public class SiteAdministrationActionTest extends AbstractRegWebTest {
         testSearch();
         MockHttpServletRequest request = new MockHttpServletRequest();
         HttpSession sess = new MockHttpSession();
-        sess.setAttribute("disclaimer", "accept");
         request.setRemoteUser("RegUser");
         request.setSession(sess);
         ServletActionContext.setRequest(request);

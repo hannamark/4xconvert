@@ -89,17 +89,7 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         MockHttpSession session = new MockHttpSession();
         request.setSession(session);
         ServletActionContext.setRequest(request);
-        assertEquals("show_Disclaimer_Page", action.selectTypeOfTrial());
-        session = new MockHttpSession();
-        session.setAttribute("disclaimer", "accept");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        assertEquals("success",action.selectTypeOfTrial());
-        session = new MockHttpSession();
-        session.setAttribute("disclaimer", "test");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        assertEquals("show_Disclaimer_Page",action.selectTypeOfTrial());
+        assertEquals("success", action.selectTypeOfTrial());
     }
     @Test
     public void testExcute(){
