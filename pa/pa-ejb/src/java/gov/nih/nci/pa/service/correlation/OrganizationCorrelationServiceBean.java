@@ -177,7 +177,8 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             Organization paOrg = getCorrUtils().createPAOrganization(poOrgDTO);
             hcf = new HealthCareFacility();
             hcf.setOrganization(paOrg);
-            hcf.setIdentifier(poHcfIdentifier.getExtension());
+            // supply the po db id to the pa hcf assigned_identifier field.
+            hcf.setIdentifier(DSetConverter.convertToIi(hcfDTO.getIdentifier()).getExtension());
             hcf.setStatusCode(getCorrUtils().convertPORoleStatusToPARoleStatus(hcfDTO.getStatus()));
             getCorrUtils().createPADomain(hcf);
         }
