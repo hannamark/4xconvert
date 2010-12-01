@@ -24,6 +24,7 @@ jdbc.driver=org.postgresql.Driver
 hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 db.username=pauser
 db.password=pauser
+jdbc.base=jdbc:${db.type}://${db.server}:${db.port}
 jdbc.url=${jdbc.base}/${db.name}
 test.schema.showsql=false
 

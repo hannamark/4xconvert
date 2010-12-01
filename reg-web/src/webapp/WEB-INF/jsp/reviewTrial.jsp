@@ -61,7 +61,8 @@ var winprint=window.open("","",sOption);
  <h1><fmt:message key="review.trial.view.page.title" /></h1>
  
 <div class="box">
-    <s:form > <s:actionerror/>
+    <s:form id="reviewTrialForm"> 
+    <s:actionerror/>
     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>  
     <s:hidden name="pageFrom" id="pageFrom"/>            
     <c:if test="${requestScope.protocolId != null && requestScope.partialSubmission != null && requestScope.partialSubmission == 'submit'}">

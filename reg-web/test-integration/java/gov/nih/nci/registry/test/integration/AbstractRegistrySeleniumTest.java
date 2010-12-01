@@ -85,6 +85,8 @@ package gov.nih.nci.registry.test.integration;
 import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 
+import java.text.SimpleDateFormat;
+
 import org.junit.Ignore;
 
 /**
@@ -94,6 +96,7 @@ import org.junit.Ignore;
  */
 @Ignore
 public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestCase {
+    protected SimpleDateFormat monthDayYearFormat = new SimpleDateFormat("MM/dd/yyyy");
 
     @Override
     public void setUp() throws Exception {
@@ -125,14 +128,16 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         clickAndWait("link=Log In");
         selenium.type("j_username", username);
         selenium.type("j_password", password);
+        clickAndWait("id=loginButton");
     }
 
     public void loginAsAbstractor() {
         login("abstractor-ci", "Coppa#12345");
+        clickAndWait("//form[@id='disClaimerAction']/div[2]/del/ul/li[1]/a");
     }
 
     protected boolean isLoggedIn() {
-        return selenium.isElementPresent("link=Logout") && !selenium.isElementPresent("link=Login");
+        return selenium.isElementPresent("link=Log Out") && !selenium.isElementPresent("link=Login");
     }
 
     protected void openAndWait(String url) {

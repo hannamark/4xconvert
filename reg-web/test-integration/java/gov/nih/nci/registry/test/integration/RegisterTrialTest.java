@@ -82,22 +82,121 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import java.io.File;
+import java.util.Date;
+
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 /**
- * Tests logging the abstractor-ci user into registry.
+ * Tests the trial registration process.
  *
- * @author Abraham J. Evans-EL <aevansle@5amsolutions.com>
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class LoginTest extends AbstractRegistrySeleniumTest {
+public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
+    private static final String PROTOCOL_DOCUMENT = "ProtocolDoc.doc";
+    private static final String IRB_DOCUMENT = "IrbDoc.doc";
 
     /**
-     * Tests logging in as abstractor.
+     * Tests registering a trial.
      * @throws Exception on error
      */
     @Test
-    public void testLogin() throws Exception {
+    public void testRegisterTrial() throws Exception {
+        String today = monthDayYearFormat.format(new Date());
+        String tommorrow = monthDayYearFormat.format(DateUtils.addDays(new Date(), 1));
+        String oneYearFromToday = monthDayYearFormat.format(DateUtils.addYears(new Date(), 1));
+
         loginAsAbstractor();
         isLoggedIn();
+
+        //Select register trial and choose trial type
+        clickAndWaitAjax("registerTrialMenuOption");
+        selenium.selectFrame("popupFrame");
+        selenium.select("summaryFourFundingCategoryCode", "label=Institutional");
+        clickAndWaitAjax("link=Submit");
+        waitForPageToLoad();
+
+        selenium.selectFrame("relative=up");
+        waitForElementById("submitTrial_trialDTO_leadOrgTrialIdentifier", 15);
+        selenium.type("submitTrial_trialDTO_leadOrgTrialIdentifier", "LEAD-ORG");
+        selenium.type("submitTrial_trialDTO_officialTitle", "Test Trial created by Selenium.");
+        selenium.select("trialDTO.phaseCode", "label=0");
+        selenium.select("trialDTO.primaryPurposeCode", "label=Treatment");
+
+        //Select Lead Organization
+        clickAndWaitAjax("link=Look Up Org");
+        selenium.selectFrame("popupFrame");
+        waitForElementById("poOrganizations", 15);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        waitForPageToLoad();
+
+        //Select Principal Investigator
+        selenium.selectFrame("relative=up");
+        clickAndWaitAjax("link=Look Up Person");
+        selenium.selectFrame("popupFrame");
+        waitForElementById("poOrganizations", 15);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[6]/a");
+        waitForPageToLoad();
+
+        //Select Sponsor
+        selenium.selectFrame("relative=up");
+        clickAndWaitAjax("//div[@id='loadSponsorField']/table/tbody/tr/td[2]/ul/li/a");
+        selenium.selectFrame("popupFrame");
+        waitForElementById("poOrganizations", 15);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        waitForPageToLoad();
+
+        selenium.selectFrame("relative=up");
+        selenium.type("trialDTO.contactEmail", "selenium@example.com");
+        selenium.type("trialDTO.contactPhone", "123-456-7890");
+
+        //Select Funding Sponsor
+        clickAndWaitAjax("//div[@id='loadSummary4FundingSponsorField']/table/tbody/tr/td[2]/ul/li/a");
+        selenium.selectFrame("popupFrame");
+        waitForElementById("poOrganizations", 15);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        waitForPageToLoad();
+
+        //Trial Status Information
+        selenium.selectFrame("relative=up");
+        selenium.select("submitTrial_trialDTO_statusCode", "label=In Review");
+        selenium.type("submitTrial_trialDTO_statusDate", today);
+        selenium.type("submitTrial_trialDTO_startDate", tommorrow);
+        selenium.click("submitTrial_trialDTO_startDateTypeAnticipated");
+        selenium.click("submitTrial_trialDTO_completionDateTypeAnticipated");
+        selenium.type("submitTrial_trialDTO_completionDate", oneYearFromToday);
+
+        //Regulator Information
+        selenium.select("countries", "label=United States");
+        selenium.click("//option[@value='1026']");
+        selenium.select("trialDTO.fdaRegulatoryInformationIndicator", "label=Yes");
+        selenium.select("trialDTO.section801Indicator", "label=Yes");
+        selenium.select("trialDTO.delayedPostingIndicator", "label=Yes");
+        selenium.select("trialDTO.dataMonitoringCommitteeAppointedIndicator", "label=Yes");
+
+        //Add Protocol and IRB Document
+        String protocolDocPath = (new File(ClassLoader.getSystemResource(PROTOCOL_DOCUMENT).toURI()).toString());
+        String irbDocPath = (new File(ClassLoader.getSystemResource(IRB_DOCUMENT).toURI()).toString());
+        selenium.type("submitTrial_protocolDoc", protocolDocPath);
+        selenium.type("submitTrial_irbApproval", irbDocPath);
+        clickAndWaitAjax("link=Review Trial");
+        waitForElementById("reviewTrialForm", 15);
+        clickAndWaitAjax("link=Submit");
+        waitForPageToLoad();
+
+        //Verify that we end up back on the search trials page.
+        selenium.isElementPresent("link=Search My Trials");
+        selenium.isElementPresent("link=Search All Trials");
+        selenium.isElementPresent("link=Reset");
+        selenium.isElementPresent("link=Search Saved Drafts");
     }
 }

@@ -120,7 +120,7 @@
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li>
-                        <s:submit type="image" src="../images/btn_login.gif" cssClass="btn" title="Log In" value="Log In" align="center" />
+                        <s:submit id="loginButton" type="image" src="../images/btn_login.gif" cssClass="btn" title="Log In" value="Log In" align="center" />
                     </li>
 
                 </ul>
