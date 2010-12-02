@@ -655,13 +655,11 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         List<ClinicalResearchStaffDTO> crss = PoRegistry.getClinicalResearchStaffCorrelationService().search(criteria);
             
         if (crss.isEmpty()) {
-            ClinicalResearchStaffDTO toStoreCrsDTO = null;
-            if (crsDTO == null) {
-                toStoreCrsDTO = new ClinicalResearchStaffDTO();
-            } else {
-                toStoreCrsDTO = crsDTO;
-            }
-            toStoreCrsDTO.setIdentifier(null);
+            ClinicalResearchStaffDTO toStoreCrsDTO = new ClinicalResearchStaffDTO();
+            if (crsDTO != null) {
+                toStoreCrsDTO.setPostalAddress(crsDTO.getPostalAddress());
+                toStoreCrsDTO.setTelecomAddress(crsDTO.getTelecomAddress());
+            } 
             toStoreCrsDTO.setPlayerIdentifier(poPersonIi);
             toStoreCrsDTO.setScoperIdentifier(scoperOrg);
             return PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(toStoreCrsDTO);
@@ -719,13 +717,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         List<HealthCareProviderDTO> hcps = PoRegistry.getHealthCareProviderCorrelationService().search(criteria);
         
         if (hcps.isEmpty()) {
-            HealthCareProviderDTO toStoreHcpDTO = null;
-            if (hcpDTO == null) {
+            HealthCareProviderDTO toStoreHcpDTO = new HealthCareProviderDTO();
+            if (hcpDTO != null) {
                 toStoreHcpDTO = new HealthCareProviderDTO();
-            } else {
-                toStoreHcpDTO = hcpDTO;
+                toStoreHcpDTO.setTelecomAddress(hcpDTO.getTelecomAddress());
+                toStoreHcpDTO.setCertificateLicenseText(hcpDTO.getCertificateLicenseText());
+                toStoreHcpDTO.setPostalAddress(hcpDTO.getPostalAddress());
             }
-            toStoreHcpDTO.setIdentifier(null);
             toStoreHcpDTO.setPlayerIdentifier(poPersonIi);
             toStoreHcpDTO.setScoperIdentifier(scoperOrg);
             return PoRegistry.getHealthCareProviderCorrelationService()
