@@ -94,6 +94,7 @@ import org.hibernate.validator.InvalidValue;
 
 import com.fiveamsolutions.nci.commons.audit.AuditLogInterceptor;
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.util.CsmEnabledHibernateHelper;
 import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 
 /**
@@ -101,9 +102,10 @@ import com.fiveamsolutions.nci.commons.util.HibernateHelper;
  */
 public class PoHibernateUtil {
     private static final AuditLogInterceptor AUDIT_LOG_INTERCEPTOR = new AuditLogInterceptor(null);
-    private static final HibernateHelper HIBERNATE_HELPER = new HibernateHelper(null, null, new CompositeInterceptor(
-            new CurationStatusInterceptor(), AUDIT_LOG_INTERCEPTOR));
+    private static final HibernateHelper HIBERNATE_HELPER = new CsmEnabledHibernateHelper(null, 
+            new CompositeInterceptor(new CurationStatusInterceptor(), AUDIT_LOG_INTERCEPTOR), null);
     static {
+        HIBERNATE_HELPER.initialize();
         AUDIT_LOG_INTERCEPTOR.setHibernateHelper(HIBERNATE_HELPER);
     }
 
