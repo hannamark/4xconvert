@@ -8,6 +8,10 @@
  <constant name="struts.devMode" value="true" />
     <package name="default" extends="struts-default">
         <interceptors>
+            <interceptor name="showDisclaimer" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ShowSplashPageInterceptor">
+                <param name="splashPageActionName">disclaimerAction</param>
+                <param name="sessionFlagName">disclaimerAccepted</param>
+            </interceptor>
             <interceptor name="parameterTrim"
                class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
             <interceptor name="maliciousInput"
@@ -16,6 +20,7 @@
                <param name="filterControlChars">true</param>
             </interceptor>
             <interceptor-stack name="methodValidationStack">
+                <interceptor-ref name="showDisclaimer"/>
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
                 <interceptor-ref name="params">
@@ -52,7 +57,7 @@
                 <param name="namespace">/</param>
                 <param name="actionName">logout</param>
             </result>
-            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
+            <result name="disclaimerAction">disClaimerAction.action</result>
         </global-results>
         <action name="login">
            <result>/WEB-INF/jsp/login.jsp</result>
@@ -63,21 +68,25 @@
         <action name="home">
             <result>/WEB-INF/jsp/accrualHome.jsp</result>
         </action>
-         <action name="contact">
+        <action name="contact">
            <result>/WEB-INF/jsp/accrualContact.jsp</result>
         </action>
     </package>
 
     <package name="protected" namespace="/protected" extends="default">
+        <default-interceptor-ref name="methodValidationStack"/>
+        
         <action name="welcome" class="gov.nih.nci.accrual.accweb.action.WelcomeAction">
-            <result name="show_Disclaimer_Page">disClaimerAction.action</result>
+            <interceptor-ref name="defaultStack"/>
+            <result>viewTrials.action</result>
         </action>
 
         <action name="disClaimerAction*" class="gov.nih.nci.accrual.accweb.action.DisclaimerAction" method="{1}">
-            <result>viewTrials.action</result>
-            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
+            <interceptor-ref name="defaultStack"/>
+            <result>/WEB-INF/jsp/disclaimer.jsp</result>
+            <result name="acceptView" type="redirectAction">viewTrials.action</result>
         </action>
-
+        
         <action name="viewTrials*" class="gov.nih.nci.accrual.accweb.action.ViewTrialsAction">
             <result>/WEB-INF/jsp/searchTrials.jsp</result>
         </action>
@@ -100,6 +109,5 @@
         <action name="popup*" class="gov.nih.nci.accrual.accweb.action.PopUpAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
         </action>
-
     </package>
 </struts>

@@ -7,12 +7,19 @@
 <struts>
  <constant name="struts.devMode" value="true" />
     <package name="default" extends="struts-default">
+        <interceptors>
+            <interceptor name="showDisclaimer" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ShowSplashPageInterceptor">
+                <param name="splashPageActionName">disclaimerAction</param>
+                <param name="sessionFlagName">disclaimerAccepted</param>
+            </interceptor>
+        </interceptors>
         <global-results>
             <result name="applicationError">error.jsp</result>
             <result name="logout" type="redirectAction">
                 <param name="namespace">/</param>
                 <param name="actionName">logout</param>
             </result>
+            <result name="disclaimerAction">disClaimerAction.action</result>
         </global-results> 
         <action name="login">
            <result>/WEB-INF/jsp/login.jsp</result>
@@ -23,8 +30,14 @@
         <action name="home">
             <result>/WEB-INF/jsp/viewerHome.jsp</result>
         </action>
+        <action name="disClaimerAction*" class="gov.nih.nci.pa.viewer.action.DisclaimerAction" method="{1}">
+            <interceptor-ref name="defaultStack"/>
+            <result>/WEB-INF/jsp/disclaimer.jsp</result>
+            <result name="acceptView" type="redirectAction">ctro/welcome.action</result>
+        </action>
     </package>
     <package name="public" namespace="/public" extends="default">
+        <default-interceptor-ref name="showDisclaimer"/>
         <action name="welcome" class="gov.nih.nci.pa.viewer.action.WelcomeAction">
             <result name="publicWelcome">/WEB-INF/jsp/publicWelcome.jsp</result>
             <result name="ctroWelcome" type="redirectAction">
@@ -46,7 +59,7 @@
         
     </package>
     
-     <package name="ctroajax" namespace="/ctro/ajax" extends="public">
+    <package name="ctroajax" namespace="/ctro/ajax" extends="public">
         <action name="refreshAncCorResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
             <result>/WEB-INF/jsp/nodecorate/summ4RepAncillaryCorrelativeResult.jsp</result> 
         </action>
@@ -63,6 +76,4 @@
             <result>/WEB-INF/jsp/nodecorate/summ4RepAutoCompleteResult.jsp</result> 
         </action>
     </package>
-    
-    
 </struts>

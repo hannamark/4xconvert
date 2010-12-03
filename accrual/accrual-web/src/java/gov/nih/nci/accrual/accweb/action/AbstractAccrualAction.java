@@ -151,12 +151,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         if (getUserRole() == null || !getUserRole().equals(AccrualConstants.ROLE_PUBLIC)) {
             return AccrualConstants.AR_LOGOUT;
         }
-        //check if users accepted the disclaimer if not show one
-        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_DISCLAIMER);
-        if (strDesclaimer == null || !strDesclaimer.equals(AccrualConstants.DISCLAIMER_ACCEPTED)) {
-            return AccrualConstants.AR_DISCLAIMER;
-        }
         return SUCCESS;
     }
     /**

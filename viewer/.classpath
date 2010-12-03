@@ -16,7 +16,7 @@
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/ejb-api-3.0.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/freemarker-2.3.13.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/jstl-1.1.2.jar"/>
-	<classpathentry kind="var" path="VIEWER_LIB/web/compile/nci-commons-struts2-1.0.7.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/web/compile/nci-commons-struts2-1.2.18.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/poi-3.2-FINAL.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/postgresql-8.4-701.jdbc3.jar"/>

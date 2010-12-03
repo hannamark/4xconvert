@@ -76,91 +76,27 @@
  *
  *
  */
-package gov.nih.nci.registry.action;
+package gov.nih.nci.pa.action;
 
-import gov.nih.nci.registry.dto.RegistryUserWebDTO;
-import gov.nih.nci.registry.util.RegistryUtil;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
+ * Handles displaying and setting the disclaimer session variable if accepted.
  *
- * @author Vrushali
+ * @author moweis
  */
 public class DisclaimerAction extends ActionSupport {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOG = Logger.getLogger(DisclaimerAction.class);
-    private String actionName;
-    private String failureMessage;
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public String execute() {
-        actionName = ServletActionContext.getRequest().getParameter("actionName");
-        String returnString = "show_Disclaimer_Page";
-        String loginName = ServletActionContext.getRequest().getRemoteUser();
-        RegistryUserWebDTO regUserWebDto = RegistryUtil.getRegistryUserWebDto(loginName);
-        if (regUserWebDto == null) {
-             ServletActionContext.getRequest().getSession().invalidate();
-             actionName = "home.action";
-             returnString = "redirect_to";
-             failureMessage = "noUser";
-             ServletActionContext.getRequest().setAttribute("failureMessage", failureMessage);
-        } else {
-             ServletActionContext.getRequest().getSession().setAttribute("regUserWebDto", regUserWebDto);
-        }
-        return returnString;
-    }
-
-    /**
-     * @return string
-     */
     public String accept() {
         ServletActionContext.getRequest().getSession().setAttribute("disclaimerAccepted", true);
-        String strActionName = (String) ServletActionContext.getRequest().getSession().getAttribute("actionName");
-        ServletActionContext.getRequest().getSession().removeAttribute("actionName");
-        if (StringUtils.isNotEmpty(strActionName)) {
-            actionName = strActionName;
-        }
-        if ("".equals(actionName)) {
-            actionName = "searchTrial.action";
-        }
-        LOG.info("redirect to " + actionName);
-        return "redirect_to";
-    }
-
-    /**
-     * @return the actionName
-     */
-    public String getActionName() {
-        return actionName;
-    }
-
-    /**
-     * @param actionName the actionName to set
-     */
-    public void setActionName(String actionName) {
-        this.actionName = actionName;
-    }
-
-    /**
-     * @param failureMessage the failureMessage to set
-     */
-    public void setFailureMessage(String failureMessage) {
-         this.failureMessage = failureMessage;
-    }
-
-    /**
-     * @return the failureMessage
-     */
-    public String getFailureMessage() {
-        return failureMessage;
+        return "acceptView";
     }
 }

@@ -25,7 +25,7 @@
     <dependency org="net.htmlparser.jericho" name="jericho-html"            rev="2.4"             conf="runtime->master"/>
 
     <dependency org="org.freemarker"         name="freemarker"              rev="2.3.13"          conf="runtime->default"/>
-    <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.0.7"           conf="runtime->master"/>
+    <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.2.18"           conf="runtime->default"/>
     <dependency org="ognl"                   name="ognl"                    rev="2.7"             conf="runtime->default"/>
     <dependency org="opensymphony"           name="sitemesh"                rev="2.3"             conf="runtime->default"/>
     <dependency org="com.opensymphony"       name="xwork"                   rev="2.1.2"           conf="runtime->default">

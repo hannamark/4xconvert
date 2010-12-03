@@ -78,12 +78,8 @@ package gov.nih.nci.accrual.accweb.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.accweb.util.AccrualConstants;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -102,25 +98,23 @@ public class ViewTrialsActionTest extends AbstractAccrualActionTest {
 
     ViewTrialsAction action;
     private SearchTrialCriteriaDto criteria;
-    private List<SearchTrialResultDto> listOfTrials;
 
     @Before
     public void initAction() {
         action = new ViewTrialsAction();
     	HttpSession session = ServletActionContext.getRequest().getSession();
-        session.setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER, AccrualConstants.DISCLAIMER_ACCEPTED);
+        session.setAttribute("disclaimerAccepted", true);
 
         criteria = new SearchTrialCriteriaDto();
-        listOfTrials = new ArrayList<SearchTrialResultDto>();
     }
 
     @Override
     @Test
     public void executeTest() throws Exception {
-        String strDisclaimer = (String) ServletActionContext.getRequest().getSession().
-            getAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
-        assertNotNull(strDisclaimer);
-        assertEquals(AccrualConstants.DISCLAIMER_ACCEPTED, strDisclaimer);
+        Boolean disclaimerFlag = (Boolean) ServletActionContext.getRequest().getSession().
+            getAttribute("disclaimerAccepted");
+        assertNotNull(disclaimerFlag);
+        assertTrue(disclaimerFlag);
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 

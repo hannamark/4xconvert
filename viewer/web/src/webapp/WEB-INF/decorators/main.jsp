@@ -28,7 +28,9 @@
        </div>
        <div id="leftnav">
            <ul class="menu">
+                <c:if test="${sessionScope.disclaimerAccepted}">
                <jsp:include page="/WEB-INF/jsp/common/viewermenu.jsp"/> 
+               </c:if>
                <jsp:include page="/WEB-INF/jsp/common/quicklinks.jsp"/> 
            </ul>
        </div> 

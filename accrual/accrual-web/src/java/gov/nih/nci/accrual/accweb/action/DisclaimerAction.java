@@ -76,8 +76,6 @@
 */
 
 package gov.nih.nci.accrual.accweb.action;
-import gov.nih.nci.accrual.accweb.util.AccrualConstants;
-
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -92,8 +90,7 @@ public class DisclaimerAction extends AbstractAccrualAction {
      * {@inheritDoc}
      */
     public String accept() {
-        ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER,
-                AccrualConstants.DISCLAIMER_ACCEPTED);
-        return super.execute();
+        ServletActionContext.getRequest().getSession().setAttribute("disclaimerAccepted", true);
+        return "acceptView";
     }
 }

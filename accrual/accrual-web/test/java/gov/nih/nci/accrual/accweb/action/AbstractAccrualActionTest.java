@@ -240,10 +240,10 @@ public class AbstractAccrualActionTest {
 
     public void setDisclaimer(boolean value) {
         if (value) {
-            ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER,
-                    AccrualConstants.DISCLAIMER_ACCEPTED);
+            ServletActionContext.getRequest().getSession().setAttribute("disclaimerAccepted",
+                    true);
         } else {
-            ServletActionContext.getRequest().getSession().removeAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
+            ServletActionContext.getRequest().getSession().removeAttribute("disclaimerAccepted");
         }
     }
 

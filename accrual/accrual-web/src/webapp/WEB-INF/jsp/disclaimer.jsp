@@ -2,18 +2,15 @@
 <c:set var="topic" scope="request" value="disclaimer"/> 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title><fmt:message key="disclaimer.page.title"/></title>   
 
 <script type="text/javascript" language="javascript">
-function bodyOnLoad() {
-    alert('hi');
-}
 function submitForm(btnSelected){
 
 	 if(btnSelected == 'accept') {
-        document.forms[0].action = "disClaimerActionaccept.action";
         document.forms[0].submit();
     } else{
-        document.forms[0].action="logout.action";
+        document.forms[0].action="<%=request.getContextPath()%>/logout.action";
         document.forms[0].submit();
     } 
     
@@ -25,7 +22,7 @@ function submitForm(btnSelected){
 
 
 <body onload="bodyOnLoad()">
-<s:form name="disclaimer" method="POST">
+<s:form name="disclaimer" method="POST" action="disClaimerActionaccept.action">
 
 <!-- main content begins-->
 <br>
@@ -35,17 +32,16 @@ function submitForm(btnSelected){
 <tr>
 <td align="left">
 <br>
-<center><b>NCI CLINICAL TRIALS REPORTING PROGRAM (CTRP) SYSTEM </b></center><br> 
+<center><b><fmt:message key="disclaimer.page.ctrp"/></b></center><br> 
+<hr><br>
+<fmt:message key="disclaimer.page.ctrp.systemmsg"/>
+<br/>
+<br/>
 <hr>
-<p align="right">OMB#: 0925-0600 EXP. DATE: 3/31/2013 </p>
-<center><b>NOTIFICATION TO RESPONDENT OF ESTIMATED BURDEN </b></center><br><br>
-Public reporting burden for this collection of information is estimated to average fifteen (15) minutes for this questionnaire, 
-including the time to review instructions, search existing data sources, gather and maintain the data needed, and complete and review 
-the collection of information.  An agency may not conduct or sponsor, and a person is not required to respond to, a collection of 
-information unless it displays a current, valid OMB control number.  <br>Send comments regarding this burden estimate or any other aspect 
-of this collection of information, including suggestions for reducing the burden to <br>
-NIH, Project Clearance Branch, 6705 Rockledge Drive, MSC 7974, Bethesda, MD 20892-7974, ATTN: PRA (0925-0600).  <br>
-Do not return the completed form to this address.<br>
+<p align="right"><fmt:message key="disclaimer.page.ctrp.burden.omb"/></p>
+<center><b><fmt:message key="disclaimer.page.ctrp.burden.title"/></b></center><br><br>
+<fmt:message key="disclaimer.page.ctrp.burden.text"/>
+<br>
 <hr>
 </td>
 </tr>

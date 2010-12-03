@@ -11,10 +11,9 @@
 <SCRIPT LANGUAGE="JavaScript">
 function submitForm(btnSelected){
     if(btnSelected == 'accept') {
-        document.forms[0].action = "disClaimerActionaccept.action";
         document.forms[0].submit();
     } else{
-        document.forms[0].action="logout.action";
+        document.forms[0].action="<%=request.getContextPath()%>/logout.action";
         document.forms[0].submit();
     } 
     
@@ -22,7 +21,7 @@ function submitForm(btnSelected){
 </SCRIPT>
 
 <body>
-<s:form name="disclaimer" method="POST">
+<s:form name="disclaimer" method="POST" action="disClaimerActionaccept.action">
 <!-- main content begins-->
 <br>
 <br>
@@ -37,11 +36,6 @@ function submitForm(btnSelected){
 <br/>
 <br/>
 <hr>
-<p align="right"><fmt:message key="disclaimer.page.ctrp.burden.omb"/></p>
-<center><b><fmt:message key="disclaimer.page.ctrp.burden.title"/></b></center><br><br>
-<fmt:message key="disclaimer.page.ctrp.burden.text"/>
-<hr>
-  
 </td>
 </tr>
 </table>
@@ -50,8 +44,8 @@ function submitForm(btnSelected){
  <div class="actionsrow">
  <del class="btnwrapper">
                                         <ul class="btnrow">            
-<li><a href="#" class="btn" onclick="submitForm('accept');"><span class="btn_img"><span class="accept">Accept</span></span></a></li> 
-<li><a href="#" class="btn" onclick="submitForm('decline');"><span class="btn_img"><span class="decline">Reject</span></span></a></li>
+<li><a href="#" class="btn" onclick="submitForm('accept');"><span class="btn_img"><span class="confirm">Accept</span></span></a></li> 
+<li><a href="#" class="btn" onclick="submitForm('decline');"><span class="btn_img"><span class="cancel">Reject</span></span></a></li>
                                         </ul>    
                                     </del>
                                 </div>

@@ -84,6 +84,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
+import com.opensymphony.xwork2.Action;
 
 /**
  * @author Hugh Reinhart
@@ -102,14 +103,14 @@ public class WelcomeActionTest extends AbstractAccrualActionTest {
     @Test
     public void submitterRoleTest() {
         ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(AccrualConstants.ROLE_PUBLIC, true);
-        assertEquals(AccrualConstants.AR_DISCLAIMER, action.execute());
+        assertEquals(Action.SUCCESS, action.execute());
         assertEquals(AccrualConstants.ROLE_PUBLIC, ServletActionContext.getRequest().getSession().
         		getAttribute(AccrualConstants.SESSION_ATTR_ROLE));
     }
 
     @Test
     public void nullRoleTest() {
-        assertEquals(AccrualConstants.AR_DISCLAIMER, action.execute());
+        assertEquals(Action.SUCCESS, action.execute());
     }
 
 }

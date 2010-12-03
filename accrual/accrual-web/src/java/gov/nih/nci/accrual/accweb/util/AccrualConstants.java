@@ -92,9 +92,7 @@ public final class AccrualConstants {
     /** Role-name for the public role. */
     public static final String ROLE_PUBLIC = "Submitter";
     /** Attribute used to store the role in session. */
-    public static final String SESSION_ATTR_DISCLAIMER = "accrualDisclaimer";
-    /** Role-name for the public role. */
-    public static final String DISCLAIMER_ACCEPTED = "Accepted";
+    public static final String SESSION_ATTR_DISCLAIMER = "disclaimerAccepted";
     /** Role-name for the public role. */
     public static final String SESSION_ATTR_SPII = "studyProtocolIi";
     /** Attribute to check if there is a submission opened. */

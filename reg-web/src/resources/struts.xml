@@ -9,7 +9,7 @@
     <package name="default" extends="struts-default">
         <interceptors>
             <interceptor name="showDisclaimer" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ShowSplashPageInterceptor">
-                <param name="splashPageActionName">show_Disclaimer_Page</param>
+                <param name="splashPageActionName">disclaimerAction</param>
                 <param name="sessionFlagName">disclaimerAccepted</param>
             </interceptor>
             <interceptor name="parameterTrim"
@@ -58,7 +58,7 @@
         </interceptors>
         <global-results>
             <result name="applicationError">/WEB-INF/jsp/registryError.jsp</result>
-            <result name="show_Disclaimer_Page">/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>
+            <result name="disclaimerAction">disClaimerAction.action</result>
         </global-results>
         <action name="logout" class="gov.nih.nci.registry.action.Logout" method="logout">
             <result>/index.jsp</result>
