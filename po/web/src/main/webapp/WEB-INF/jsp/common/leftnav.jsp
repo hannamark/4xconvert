@@ -6,7 +6,7 @@
 <ul class="menu">
     <li class="liheader">PO Curation Portal</li>
     <c:choose>
-        <c:when test="${pageContext.request.remoteUser != null}">
+        <c:when test="${pageContext.request.remoteUser != null and sessionScope.disclaimerAccepted}">
             <li><a href="<c:url value="/login/logout.action"/>">Logout</a></li>
             <li class="lisubheader">Organization</li>
 	            <li><a id="EntityInboxOrganization" href="<c:url value="/protected/curate/search/listOrgs.action"/>">Inbox</a></li>

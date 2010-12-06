@@ -10,6 +10,11 @@
     <package name="default" extends="struts-default">
         <interceptors>
 
+            <interceptor name="showDisclaimer" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ShowSplashPageInterceptor">
+                <param name="splashPageActionName">disclaimerAction</param>
+                <param name="sessionFlagName">disclaimerAccepted</param>
+            </interceptor>
+
             <interceptor name="nullCollectionElements"
                 class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.NullCollectionElementInterceptor" />
 
@@ -19,7 +24,8 @@
             <interceptor name="maliciousInput"
                 class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor" />
 
-            <interceptor-stack name="poParamsPrepareParamsStack">
+            <interceptor-stack name="poDefaultStack">
+                <interceptor-ref name="showDisclaimer"/>
                 <interceptor-ref name="logger"/>
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
@@ -61,16 +67,22 @@
                 </interceptor-ref>
            </interceptor-stack>
 
-            <interceptor-stack name="poDefaultStack">
+            <interceptor-stack name="poNoDisclaimerStack">
                 <interceptor-ref name="logger"/>
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
+                <interceptor-ref name="params">
+                    <!--
+                        Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                    -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
                 <interceptor-ref name="prepare" />
                 <interceptor-ref name="i18n" />
                 <interceptor-ref name="chain" />
-                <interceptor-ref name="debugging" />
-                <interceptor-ref name="profiling" />
                 <interceptor-ref name="fileUpload" />
                 <interceptor-ref name="checkbox" />
                 <interceptor-ref name="staticParams" />
@@ -98,6 +110,7 @@
            </interceptor-stack>
 
            <interceptor-stack name="poPerMethodValidationStack">
+                <interceptor-ref name="showDisclaimer"/>
                 <interceptor-ref name="logger"/>
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
@@ -140,84 +153,8 @@
                 </interceptor-ref>
            </interceptor-stack>
 
-            <!-- BEGIN : Special interceptors designed to NOT trim leading whitespace -->
-            <interceptor-stack name="poSearchParamsPrepareParamsStack">
-                <interceptor-ref name="logger"/>
-                <interceptor-ref name="exception" />
-                <interceptor-ref name="alias" />
-                <interceptor-ref name="params">
-                    <!--
-                Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
-                -->
-                    <param name="excludeParams">
-                        _,d-\d+?-[sop]
-                    </param>
-                </interceptor-ref>
-                <interceptor-ref name="servletConfig" />
-                <interceptor-ref name="prepare" />
-                <interceptor-ref name="i18n" />
-                <interceptor-ref name="chain" />
-                <interceptor-ref name="fileUpload" />
-                <interceptor-ref name="checkbox" />
-                <interceptor-ref name="staticParams" />
-                <interceptor-ref name="params">
-                    <!--
-                Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
-                -->
-                    <param name="excludeParams">
-                        _,d-\d+?-[sop]
-                    </param>
-                </interceptor-ref>
-                <interceptor-ref name="conversionError" />
-                <interceptor-ref name="nullCollectionElements" />
-                <interceptor-ref name="parameterTrim">
-                    <param name="trimToNull">true</param>
-                </interceptor-ref>
-                <interceptor-ref name="maliciousInput" />
-                <interceptor-ref name="validation">
-                    <param name="excludeMethods">input,back,cancel</param>
-                </interceptor-ref>
-                <interceptor-ref name="workflow">
-                    <param name="excludeMethods">input,back,cancel</param>
-                </interceptor-ref>
-            </interceptor-stack>
-
-            <interceptor-stack name="poSearchDefaultStack">
-                <interceptor-ref name="logger"/>
-                <interceptor-ref name="exception" />
-                <interceptor-ref name="alias" />
-                <interceptor-ref name="servletConfig" />
-                <interceptor-ref name="prepare" />
-                <interceptor-ref name="i18n" />
-                <interceptor-ref name="chain" />
-                <interceptor-ref name="debugging" />
-                <interceptor-ref name="profiling" />
-                <interceptor-ref name="fileUpload" />
-                <interceptor-ref name="checkbox" />
-                <interceptor-ref name="staticParams" />
-                <interceptor-ref name="params">
-                    <!--
-                Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
-                -->
-                    <param name="excludeParams">
-                        _,d-\d+?-[sop]
-                    </param>
-                </interceptor-ref>
-                <interceptor-ref name="conversionError" />
-                <interceptor-ref name="nullCollectionElements" />
-                <interceptor-ref name="parameterTrim">
-                    <param name="trimToNull">true</param>
-                </interceptor-ref>
-                <interceptor-ref name="maliciousInput" />
-                <interceptor-ref name="validation">
-                    <param name="excludeMethods">input,back,cancel</param>
-                </interceptor-ref>
-                <interceptor-ref name="workflow">
-                    <param name="excludeMethods">input,back,cancel</param>
-                </interceptor-ref>
-            </interceptor-stack>
-
-            <interceptor-stack name="poSearchPerMethodValidationStack">
+           <interceptor-stack name="poSearchPerMethodValidationStack">
+                <interceptor-ref name="showDisclaimer"/>
                 <interceptor-ref name="logger"/>
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
@@ -261,31 +198,31 @@
             <!-- END : Special interceptors designed to NOT trim leading whitespace -->
         </interceptors>
 
-        <default-interceptor-ref name="poParamsPrepareParamsStack" />
+        <default-interceptor-ref name="poDefaultStack" />
 
         <global-results>
             <result name="error">/error.jsp</result>
             <result name="notYetImplemented">/notYetImplemented.jsp</result>
+            <result name="disclaimerAction">/protected/disclaimerAction.action</result>
         </global-results>
 
         <global-exception-mappings>
             <exception-mapping result="error" exception="java.lang.Throwable" />
         </global-exception-mappings>
 
-        <action name="home">
-            <result>/WEB-INF/jsp/home.jsp</result>
-        </action>
-
         <action name="login/login">
+            <interceptor-ref name="poNoDisclaimerStack"/>
             <result>/WEB-INF/jsp/login/login.jsp</result>
         </action>
         <action name="login/loginFailed">
+            <interceptor-ref name="poNoDisclaimerStack"/>
             <result>/WEB-INF/jsp/login/loginFailed.jsp</result>
         </action>
 
         <action name="login/logout" class="com.fiveamsolutions.nci.commons.web.struts2.action.LogoutAction" method="logout">
+            <interceptor-ref name="poNoDisclaimerStack"/>
             <result name="success" type="redirectAction">
-                <param name="namespace">/</param>
+                <param name="namespace">/protected</param>
                 <param name="actionName">home</param>
             </result>
         </action>
@@ -331,6 +268,16 @@
     </package>
 
     <package name="protected" namespace="/protected" extends="common">
+        <action name="home">
+            <result>/WEB-INF/jsp/home.jsp</result>
+        </action>
+
+        <action name="disclaimerAction*" class="gov.nih.nci.po.web.DisclaimerAction" method="{1}">
+            <interceptor-ref name="poNoDisclaimerStack"/>
+            <result>/WEB-INF/jsp/login/disclaimer.jsp</result>
+            <result name="acceptView" type="redirectAction">home.action</result>
+        </action>
+        
         <!-- Organization -> Inbox && Person -> Inbox -->
         <action name="curate/search/*" class="gov.nih.nci.po.web.curation.CurateAction" method="{1}">
             <result name="success">/WEB-INF/jsp/curate/{1}.jsp</result>

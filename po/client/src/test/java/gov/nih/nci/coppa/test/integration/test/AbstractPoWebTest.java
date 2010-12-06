@@ -146,6 +146,9 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         selenium.type("j_password", password);
         clickAndWait("id=enableEnterSubmit");
         assertTrue(selenium.isElementPresent("link=Logout"));
+        assertTrue(selenium.isElementPresent("id=accept_disclaimer"));
+        assertTrue(selenium.isElementPresent("id=reject_disclaimer"));
+        clickAndWait("id=accept_disclaimer");
         assertTrue(selenium.isElementPresent("id=EntityInboxOrganization"));
         assertTrue(selenium.isElementPresent("id=SearchOrganization"));
         assertTrue(selenium.isElementPresent("id=CreateOrganization"));

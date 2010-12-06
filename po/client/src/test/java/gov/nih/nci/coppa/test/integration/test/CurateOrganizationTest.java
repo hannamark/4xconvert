@@ -147,7 +147,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         loginAsCurator();
 
-        openEntityInboxOrganization();
+        searchForOrgByPoId(id);
 
         // click on item to curate
         clickAndWait("org_id_" + id.getExtension());
@@ -162,6 +162,12 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyTelecom();
 
         saveAsActive(id);
+    }
+
+    private void searchForOrgByPoId(Ii id) {
+        openSearchOrganization();
+        selenium.type("searchOrganizationForm_criteria_organization_id", id.getExtension());
+        clickAndWait("submitSearchOrganizationForm");
     }
 
     private void verifyRequiredIndicators(boolean expectedValue) {
@@ -197,7 +203,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         loginAsCurator();
 
-        openEntityInboxOrganization();
+        searchForOrgByPoId(id);
 
         // click on item to curate
         clickAndWait("org_id_" + id.getExtension());
@@ -297,7 +303,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
             loginAsCurator();
         }
 
-        openEntityInboxOrganization();
+        searchForOrgByPoId(id);
 
         // click on item to curate
         clickAndWait("org_id_" + id.getExtension());
@@ -322,7 +328,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
             loginAsCurator();
         }
 
-        openEntityInboxOrganization();
+        searchForOrgByPoId(id);
 
         // click on item to curate
         clickAndWait("org_id_" + id.getExtension());
@@ -346,7 +352,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         proposedState.setName(TestConvertHelper.convertToEnOn(newCrName));
         remoteUpdate(proposedState);
 
-        openEntityInboxOrganization();
+        searchForOrgByPoId(id);
 
         // click on item to curate
         clickAndWait("org_id_" + id.getExtension());
@@ -356,11 +362,6 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         assertEquals("PO: Persons and Organizations - Organization Details - Comparison", selenium.getTitle());
 
         return id;
-    }
-
-    private void openEntityInboxOrganization() {
-        selenium.open("/po-web/protected/curate/search/listOrgs.action");
-        clickAndWait("id=EntityInboxOrganization");
     }
 
     private void saveAsActive(Ii id) {
