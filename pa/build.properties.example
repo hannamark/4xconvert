@@ -28,7 +28,7 @@ jdbc.base=jdbc:${db.type}://${db.server}:${db.port}
 jdbc.url=${jdbc.base}/${db.name}
 test.schema.showsql=false
 
-ci.schema.files=csmCreateSchema.sql,csmBootstrapData.sql,PG_CTODS_PA.sql,country.sql,regulatoryAuthority.sql,FUNDING_MECHANISM.SQL,PA_PROPERTIES.SQL
+ci.schema.files=csmCreateSchema.sql,csmBootstrapData.sql,PG_CTODS_PA.sql,country.sql,regulatoryAuthority.sql,FUNDING_MECHANISM.SQL,PA_PROPERTIES.SQL,organizationBootstrapData.sql
 
 test.java.naming.provider=localhost
 doc.upload.filepath.loc=${application.base.path}/${doc.upload.filepath.relative.dir}

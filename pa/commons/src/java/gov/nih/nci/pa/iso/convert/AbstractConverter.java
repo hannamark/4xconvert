@@ -84,6 +84,7 @@ import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PAInvalidStateException;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -146,7 +147,8 @@ public abstract class AbstractConverter<DTO extends BaseDTO, BO extends Abstract
     }
 
 
-    /** this method get the equivalent pa identifier for a given po identifier.
+    /**
+     * this method get the equivalent pa identifier for a given po identifier.
      *
      * @param poIdentifier
      * @return ii
@@ -161,8 +163,9 @@ public abstract class AbstractConverter<DTO extends BaseDTO, BO extends Abstract
         }
         StructuralRole sr = getStructuralRoleByIi(poIdentifier);
         if (sr == null) {
-            // no structural role exist in PA, create a new one
-            throw new PAException(" Not yet implemented, This scenario will not happen ");
+            //No structural role cached in PA. This should never happen and as such is an invalid state.
+            throw new PAInvalidStateException("No " + poIdentifier.getIdentifierName() + " with the Ii of "
+                    + poIdentifier.getExtension() + " exists.");
         }
         return sr.getId();
     }
