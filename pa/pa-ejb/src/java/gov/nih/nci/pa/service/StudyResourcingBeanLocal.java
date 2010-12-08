@@ -102,8 +102,6 @@ import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -112,6 +110,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.Session;
 
 /**
@@ -284,19 +284,6 @@ public class StudyResourcingBeanLocal extends
         return duplicateExists;
     }
 
-    private boolean isNumeric(String number) {
-        boolean isValid = false;
-        // Initialize reg ex for numeric data.
-        String expression = "^[0-9]*[0-9]+$";
-        CharSequence inputStr = number;
-        Pattern pattern = Pattern.compile(expression);
-        Matcher matcher = pattern.matcher(inputStr);
-        if (matcher.matches()) {
-            isValid = true;
-        }
-        return isValid;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -311,10 +298,10 @@ public class StudyResourcingBeanLocal extends
     @Override
     public StudyResourcingDTO create(StudyResourcingDTO dto) throws PAException {
         if (PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())) {
-            throw new PAException("The summary4ReportedResourceIndicator is not set");
+            throw new PAException("The summary4ReportedResourceIndicator is not set.");
         }
-        if (!PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())
-                && BlConverter.convertToBoolean(dto.getSummary4ReportedResourceIndicator()).equals(Boolean.FALSE)) {
+        if (!BooleanUtils.toBooleanDefaultIfNull(
+                BlConverter.convertToBoolean(dto.getSummary4ReportedResourceIndicator()), true)) {
             return createStudyResourcing(dto);
         }
         return super.create(dto);
@@ -326,23 +313,38 @@ public class StudyResourcingBeanLocal extends
     @Override
     public StudyResourcingDTO update(StudyResourcingDTO dto) throws PAException {
         if (PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())) {
-            throw new PAException("The summary4ReportedResourceIndicator is not set");
+            throw new PAException("The summary4ReportedResourceIndicator is not set.");
         }
-        if (!PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())
-                && BlConverter.convertToBoolean(dto.getSummary4ReportedResourceIndicator()).equals(Boolean.FALSE)) {
+        if (!BooleanUtils.toBooleanDefaultIfNull(
+                BlConverter.convertToBoolean(dto.getSummary4ReportedResourceIndicator()), true)) {
             return updateStudyResourcing(dto);
         }
         return super.update(dto);
 
     }
 
+    private void validateGrantInformation(StudyResourcingDTO dto) throws PAException {
+        if (PAUtil.isCdNull(dto.getFundingMechanismCode())) {
+            throw new PAException("The funding mechanism code is not set.");
+        }
+        if (PAUtil.isCdNull(dto.getNihInstitutionCode())) {
+            throw new PAException("The NIH Institution code is not set.");
+        }
+        if (PAUtil.isStNull(dto.getSerialNumber())) {
+            throw new PAException("The serial number is not set.");
+        }
+        if (PAUtil.isCdNull(dto.getNciDivisionProgramCode())) {
+            throw new PAException("The NCI Division/Program code is not set.");
+        }
+    }
+
     private void enforceValidation(StudyResourcingDTO studyResourcingDTO) throws PAException {
         StringBuffer errorBuffer =  new StringBuffer();
         final int serialNumMin = 5;
         final int serialNumMax = 6;
-        if (!PAUtil.isBlNull(studyResourcingDTO.getSummary4ReportedResourceIndicator())
-                && BlConverter.convertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator())
-                .equals(Boolean.FALSE)) {
+        if (!BooleanUtils.toBooleanDefaultIfNull(
+                BlConverter.convertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator()), true)) {
+            validateGrantInformation(studyResourcingDTO);
             //check if NIH institute code exists
             if (!PAUtil.isCdNull(studyResourcingDTO.getNihInstitutionCode())) {
                 boolean nihExists =
@@ -366,13 +368,12 @@ public class StudyResourcingBeanLocal extends
                     .append(" from table FUNDING_MECHANISM\n");
                 }
             }
-            if (studyResourcingDTO.getSerialNumber() != null
-                    && studyResourcingDTO.getSerialNumber().getValue() != null) {
-                String snValue = studyResourcingDTO.getSerialNumber().getValue().toString();
+            if (!PAUtil.isStNull(studyResourcingDTO.getSerialNumber())) {
+                String snValue = studyResourcingDTO.getSerialNumber().getValue();
                 if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
                     errorBuffer.append("Serial number can be numeric with 5 or 6 digits\n");
                 }
-                if (!isNumeric(snValue)) {
+                if (NumberUtils.isDigits(snValue)) {
                     errorBuffer.append("Serial number should have numbers from [0-9]\n");
                 }
             }
