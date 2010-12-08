@@ -113,29 +113,66 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         super.tearDown();
     }
 
-    private void logoutUser() {
+    protected void logoutUser() {
         openAndWait("/registry/login/logout.action");
     }
 
     protected void login(String username, String password) {
         selenium.open("/registry");
+        verifyLoginPage();
+        clickAndWait("link=Log In");
+        selenium.type("j_username", username);
+        selenium.type("j_password", password);
+        clickAndWait("id=loginButton");
+        verifyDisclaimerPage();
+    }
+
+    public void loginAsAbstractor() {
+        login("abstractor-ci", "Coppa#12345");
+    }
+
+    public void verifyDisclaimer() {
+        loginAsAbstractor();
+        disclaimer(false);
+        loginAsAbstractor();
+        disclaimer(true);
+    }
+    
+    protected void disclaimer(boolean accept) {
+        verifyDisclaimerPage();
+        if (accept) {
+            clickAndWait("id=acceptDisclaimer");
+            verifySearchPage();
+        } else {
+            clickAndWait("id=rejectDisclaimer");
+            verifyLoginPage();
+        }
+        
+    }
+
+    protected void verifySearchPage() {
+        assertTrue(selenium.isElementPresent("id=homeMenuOption"));
+        assertTrue(selenium.isElementPresent("id=myAccountMenuOption"));
+        assertTrue(selenium.isElementPresent("id=registerTrialMenuOption"));
+        assertTrue(selenium.isElementPresent("id=searchTrialsMenuOption"));
+        assertTrue(selenium.isElementPresent("id=logoutMenuOption"));
+        assertTrue(selenium.isElementPresent("id=helpMenuOption"));
+    }
+
+    protected void verifyLoginPage() {
         assertTrue(selenium.isTextPresent("Log In"));
         assertTrue(selenium.isTextPresent("CONTACT US"));
         assertTrue(selenium.isTextPresent("PRIVACY NOTICE"));
         assertTrue(selenium.isTextPresent("DISCLAIMER"));
         assertTrue(selenium.isTextPresent("ACCESSIBILITY"));
         assertTrue(selenium.isTextPresent("SUPPORT"));
-        clickAndWait("link=Log In");
-        selenium.type("j_username", username);
-        selenium.type("j_password", password);
-        clickAndWait("id=loginButton");
     }
 
-    public void loginAsAbstractor() {
-        login("abstractor-ci", "Coppa#12345");
-        clickAndWait("//form[@id='disClaimerAction']/div[2]/del/ul/li[1]/a");
+    protected void verifyDisclaimerPage() {
+        assertTrue(selenium.isElementPresent("id=acceptDisclaimer"));
+        assertTrue(selenium.isElementPresent("id=rejectDisclaimer"));
     }
-
+    
     protected boolean isLoggedIn() {
         return selenium.isElementPresent("link=Log Out") && !selenium.isElementPresent("link=Login");
     }

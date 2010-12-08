@@ -53,8 +53,8 @@ function submitForm(btnSelected){
             <del class="btnwrapper">
                <ul class="btnrow">
                 <li>
-                <s:a href="#" cssClass="btn" onclick="submitForm('accept')"><span class="btn_img"><span class="confirm">Accept</span></span></s:a>
-                <s:a href="#" cssClass="btn" onclick="submitForm('decline');"><span class="btn_img"><span class="cancel">Reject</span></span></s:a>
+                <s:a href="#" cssClass="btn" onclick="submitForm('accept')" id="acceptDisclaimer"><span class="btn_img"><span class="confirm">Accept</span></span></s:a>
+                <s:a href="#" cssClass="btn" onclick="submitForm('decline');" id="rejectDisclaimer"><span class="btn_img"><span class="cancel">Reject</span></span></s:a>
                 </li>
                </ul>
             </del>

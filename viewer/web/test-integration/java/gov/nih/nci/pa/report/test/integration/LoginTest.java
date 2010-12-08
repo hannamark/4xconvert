@@ -95,5 +95,8 @@ public class LoginTest extends AbstractViewerSeleniumTest {
     @Test
     public void testLogin() throws Exception {
         loginAsAbstractor();
+        disclaimer(false);
+        loginAsAbstractor();
+        disclaimer(true);
     }
 }

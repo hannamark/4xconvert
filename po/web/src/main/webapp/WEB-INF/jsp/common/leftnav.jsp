@@ -6,8 +6,9 @@
 <ul class="menu">
     <li class="liheader">PO Curation Portal</li>
     <c:choose>
-        <c:when test="${pageContext.request.remoteUser != null and sessionScope.disclaimerAccepted}">
+        <c:when test="${pageContext.request.remoteUser != null}">
             <li><a href="<c:url value="/login/logout.action"/>">Logout</a></li>
+            <c:if test="${sessionScope.disclaimerAccepted}">
             <li class="lisubheader">Organization</li>
 	            <li><a id="EntityInboxOrganization" href="<c:url value="/protected/curate/search/listOrgs.action"/>">Inbox</a></li>
 	            <li><a id="SearchOrganization" href="<c:url value="/protected/search/organization/start.action"/>">Search</a></li>
@@ -17,7 +18,8 @@
 	            <li><a id="EntityInboxPerson" href="<c:url value="/protected/curate/search/listPersons.action"/>">Inbox</a></li>
                 <li><a id="SearchPerson" href="<c:url value="/protected/search/person/start.action"/>">Search</a></li>
                 <li><a id="CreatePerson" href="<c:url value="/protected/create/person/start.action"/>">Create</a></li>
-                <li><a id="ImportCtepPeople" href="<c:url value="/protected/import/ctep/person/start.action"/>">CTEP Import</a></li>	            
+                <li><a id="ImportCtepPeople" href="<c:url value="/protected/import/ctep/person/start.action"/>">CTEP Import</a></li>
+            </c:if>	            
         </c:when>
         <c:otherwise>
             <li><a href="<c:url value="/protected/home.action"/>">Login</a></li>

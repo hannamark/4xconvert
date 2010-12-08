@@ -116,19 +116,39 @@ public abstract class AbstractAccrualSeleniumTest extends AbstractSeleneseTestCa
 
     protected void login(String username, String password) {
         selenium.open("/accrual");
+        verifyHomePage();
+        clickAndWait("link=Log In");
+        selenium.type("j_username", username);
+        selenium.type("j_password", password);
+        clickAndWait("id=loginButton");
+        verifyDisclaimerPage();
+    }
+
+    protected void verifyDisclaimerPage() {
+        assertTrue(selenium.isElementPresent("id=acceptDisclaimer"));
+        assertTrue(selenium.isElementPresent("id=rejectDisclaimer"));
+    }
+
+    protected void verifyHomePage() {
         assertTrue(selenium.isTextPresent("Log In"));
         assertTrue(selenium.isTextPresent("CONTACT US"));
         assertTrue(selenium.isTextPresent("PRIVACY NOTICE"));
         assertTrue(selenium.isTextPresent("DISCLAIMER"));
         assertTrue(selenium.isTextPresent("ACCESSIBILITY"));
         assertTrue(selenium.isTextPresent("SUPPORT"));
-        clickAndWait("link=Log In");
-        selenium.type("j_username", username);
-        selenium.type("j_password", password);
+    }
+
+    protected void disclaimer(boolean accept) {
+        if (accept) {
+            clickAndWait("id=acceptDisclaimer");
+        } else {
+            clickAndWait("id=rejectDisclaimer");
+            verifyHomePage();
+        }
     }
 
     public void loginAsAbstractor() {
-        login("abstractor", "Coppa#12345");
+        login("abstractor-ci", "Coppa#12345");
     }
 
     protected boolean isLoggedIn() {

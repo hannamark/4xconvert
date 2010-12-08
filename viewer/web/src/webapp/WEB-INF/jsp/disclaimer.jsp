@@ -44,8 +44,8 @@ function submitForm(btnSelected){
  <div class="actionsrow">
  <del class="btnwrapper">
                                         <ul class="btnrow">            
-<li><a href="#" class="btn" onclick="submitForm('accept');"><span class="btn_img"><span class="confirm">Accept</span></span></a></li> 
-<li><a href="#" class="btn" onclick="submitForm('decline');"><span class="btn_img"><span class="cancel">Reject</span></span></a></li>
+<li><a href="#" class="btn" onclick="submitForm('accept');" id="acceptDisclaimer"><span class="btn_img"><span class="confirm">Accept</span></span></a></li> 
+<li><a href="#" class="btn" onclick="submitForm('decline');" id="rejectDisclaimer"><span class="btn_img"><span class="cancel">Reject</span></span></a></li>
                                         </ul>    
                                     </del>
                                 </div>

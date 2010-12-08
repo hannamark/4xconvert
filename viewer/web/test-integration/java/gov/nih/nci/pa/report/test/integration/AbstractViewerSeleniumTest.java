@@ -117,15 +117,35 @@ public abstract class AbstractViewerSeleniumTest extends AbstractSeleneseTestCas
 
     protected void login(String username, String password) {
         selenium.open("/viewer");
+        verifyHomePage();
+        clickAndWait("link=Log In");
+        selenium.type("j_username", username);
+        selenium.type("j_password", password);
+        clickAndWait("id=loginButton");
+        verifyDisclaimerPage();
+    }
+
+    private void verifyDisclaimerPage() {
+        assertTrue(selenium.isElementPresent("id=acceptDisclaimer"));
+        assertTrue(selenium.isElementPresent("id=rejectDisclaimer"));
+    }
+
+    private void verifyHomePage() {
         assertTrue(selenium.isTextPresent("Log In"));
         assertTrue(selenium.isTextPresent("CONTACT US"));
         assertTrue(selenium.isTextPresent("PRIVACY NOTICE"));
         assertTrue(selenium.isTextPresent("DISCLAIMER"));
         assertTrue(selenium.isTextPresent("ACCESSIBILITY"));
         assertTrue(selenium.isTextPresent("SUPPORT"));
-        clickAndWait("link=Log In");
-        selenium.type("j_username", username);
-        selenium.type("j_password", password);
+    }
+    
+    protected void disclaimer(boolean accept) {
+        if (accept) {
+            clickAndWait("id=acceptDisclaimer");
+        } else {
+            clickAndWait("id=rejectDisclaimer");
+            verifyHomePage();
+        }
     }
 
     public void loginAsAbstractor() {

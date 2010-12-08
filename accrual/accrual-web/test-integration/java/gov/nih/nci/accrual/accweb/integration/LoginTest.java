@@ -94,5 +94,8 @@ public class LoginTest extends AbstractAccrualSeleniumTest {
     @Test
     public void testLogin() throws Exception {
         loginAsAbstractor();
+        disclaimer(false);
+        loginAsAbstractor();
+        disclaimer(true);
     }
 }

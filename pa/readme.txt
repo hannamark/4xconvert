@@ -114,7 +114,7 @@ your old data.
 - Change db.name to point to db you wish the selenium tests to run against.
 - Run the following ant command if you wish to initialize the db anew: ant init-test-db populate-test-db
 - Ensure that the pa jboss instance is up and running; Running ant start-jboss-server will start it for you.
-- Run the selenium tests with the following: ant start-selenium-server run-selenium-tests stop-selenium-tests
+- Run the selenium tests with the following: ant start-selenium-server run-selenium-tests stop-selenium-server
 - Shutdown the pa jboss instance with: ant stop-jboss-server
 - Alternately, you can run ant test-integration if you want to automatic the initialization of the db, starting of jboss,
   running of the tests and stopping the jboss instance.

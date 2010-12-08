@@ -76,7 +76,7 @@
         <del class="btnwrapper">
             <ul class="btnrow">
                 <li>
-                    <s:submit type="image" src="../images/btn_login.gif" cssClass="btn" title="Log In" value="Log In" align="center" />
+                    <s:submit type="image" src="../images/btn_login.gif" cssClass="btn" title="Log In" value="Log In" id="loginButton" align="center" />
                 </li>
             </ul>
         </del>

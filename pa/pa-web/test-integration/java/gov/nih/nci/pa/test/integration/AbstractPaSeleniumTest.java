@@ -116,6 +116,15 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
 
     protected void login(String username, String password) {
         selenium.open("/pa");
+        verifyLoginPage();
+        selenium.type("j_username", username);
+        selenium.type("j_password", password);
+        clickAndWait("id=loginLink");
+        assertTrue(selenium.isElementPresent("link=Logout"));
+        verifyDisclaimerPage();
+    }
+
+    private void verifyLoginPage() {
         assertTrue(selenium.isTextPresent("Login"));
         assertTrue(selenium.isTextPresent("CONTACT US"));
         assertTrue(selenium.isTextPresent("PRIVACY NOTICE"));
@@ -123,9 +132,26 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isTextPresent("ACCESSIBILITY"));
         assertTrue(selenium.isTextPresent("SUPPORT"));
         clickAndWait("link=Login");
-        selenium.type("j_username", username);
-        selenium.type("j_password", password);
-        clickAndWait("id=loginLink");
+    }
+
+    protected void verifyDisclaimerPage() {
+        assertTrue(selenium.isElementPresent("id=acceptDisclaimer"));
+        assertTrue(selenium.isElementPresent("id=rejectDisclaimer"));
+    }
+    
+    protected void disclaimer(boolean accept) {
+        verifyDisclaimerPage();
+        if (accept) {
+            clickAndWait("id=acceptDisclaimer");
+            verifyHomePage();
+        } else {
+            clickAndWait("id=rejectDisclaimer");
+            verifyLoginPage();
+        }
+        
+    }
+    
+    protected void verifyHomePage() {
         assertTrue(selenium.isElementPresent("link=Logout"));
         assertTrue(selenium.isElementPresent("id=trialSearchMenuOption"));
         assertTrue(selenium.isElementPresent("id=inboxProcessingMenuOption"));
@@ -135,6 +161,9 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
 
     public void loginAsAbstractor() {
         login("abstractor-ci", "Coppa#12345");
+        disclaimer(false);
+        login("abstractor-ci", "Coppa#12345");
+        disclaimer(true);
     }
 
     protected boolean isLoggedIn() {

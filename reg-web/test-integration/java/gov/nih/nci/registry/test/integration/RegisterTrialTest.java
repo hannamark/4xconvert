@@ -109,6 +109,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         loginAsAbstractor();
         isLoggedIn();
+        disclaimer(true);
 
         //Select register trial and choose trial type
         clickAndWaitAjax("registerTrialMenuOption");
