@@ -509,6 +509,23 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             StudySite ss = new StudySite();
             ss.setLocalStudyProtocolIdentifier(crit.getNctNumber());
             ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+            ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.CTGOV_ORG_NAME));
+            sp.getStudySites().add(ss);
+        }
+
+        if (StringUtils.isNotEmpty(crit.getCtepIdentifier())) {
+            StudySite ss = new StudySite();
+            ss.setLocalStudyProtocolIdentifier(crit.getCtepIdentifier());
+            ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+            ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.CTEP_ORG_NAME));
+            sp.getStudySites().add(ss);
+        }
+
+        if (StringUtils.isNotEmpty(crit.getDcpIdentifier())) {
+            StudySite ss = new StudySite();
+            ss.setLocalStudyProtocolIdentifier(crit.getDcpIdentifier());
+            ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+            ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.DCP_ORG_NAME));
             sp.getStudySites().add(ss);
         }
 
@@ -561,6 +578,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getStudyMilestone())
                 && StringUtils.isEmpty(criteria.getOtherIdentifier())
                 && StringUtils.isEmpty(criteria.getNctNumber())
+                && StringUtils.isEmpty(criteria.getDcpIdentifier())
+                && StringUtils.isEmpty(criteria.getCtepIdentifier())
                 && StringUtils.isEmpty(criteria.getParticipatingSiteId())
                 && !criteria.isSearchOnHold()
                 && !criteria.isStudyLockedBy()

@@ -93,10 +93,16 @@ public enum IdentifierType implements CodedEnum<String> {
 
     /** NCI.*/
     NCI("NCI"),
-    /** Lead Organizaton.*/
-    LEAD_ORG("Lead Organization"),
+    /** NCT. */
+    NCT("NCT"),
+    /** CTEP. */
+    CTEP("CTEP"),
+    /** DCP.*/
+    DCP("DCP"),
     /** Other Identifier.*/
-    OTHER_IDENTIFIER("Other Identifier");
+    OTHER_IDENTIFIER("Other Identifier"),
+    /** Lead Organization.*/
+    LEAD_ORG("Lead Organization");
 
     private String code;
 

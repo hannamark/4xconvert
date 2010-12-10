@@ -91,7 +91,9 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
@@ -357,4 +359,18 @@ public class PADomainUtils {
         }
         return countryName;
     }
+
+    /**
+     * Creates a research organization example object with an organization with the given name.
+     * @param orgName the name of the organization to create the research organization with
+     * @return the research organization with an organization with the given name
+     */
+    public static ResearchOrganization createROExampleObjectByOrgName(String orgName) {
+        Organization org = new Organization();
+        org.setName(orgName);
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setOrganization(org);
+        return ro;
+    }
+
 }

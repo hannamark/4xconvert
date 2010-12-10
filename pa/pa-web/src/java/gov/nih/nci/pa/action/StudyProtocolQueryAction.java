@@ -200,6 +200,12 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         if (criteria.getIdentifierType() != null && StringUtils.isNotEmpty(getIdentifier())) {
             if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.NCI.getCode())) {
                 criteria.setNciIdentifier(getIdentifier());
+            } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.DCP.getCode())) {
+                criteria.setDcpIdentifier(getIdentifier());
+            } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.CTEP.getCode())) {
+                criteria.setCtepIdentifier(getIdentifier());
+            } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.NCT.getCode())) {
+                criteria.setNctNumber(getIdentifier());
             } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.LEAD_ORG.getCode())) {
                 criteria.setLeadOrganizationTrialIdentifier(getIdentifier());
             } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.OTHER_IDENTIFIER.getCode())) {

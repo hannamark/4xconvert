@@ -124,6 +124,7 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
@@ -204,7 +205,17 @@ public class ProtocolQueryServiceTest {
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
 
-        criteria.setNctNumber("NCT1");
+        criteria.setNctNumber("NCT-1");
+        results = localEjb.getStudyProtocolByCriteria(criteria);
+        assertEquals("Size does not match.", 1, results.size());
+
+        criteria.setNctNumber(null);
+        criteria.setCtepIdentifier("CTEP-1");
+        results = localEjb.getStudyProtocolByCriteria(criteria);
+        assertEquals("Size does not match.", 1, results.size());
+
+        criteria.setCtepIdentifier(null);
+        criteria.setDcpIdentifier("DCP-1");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
 
@@ -224,6 +235,7 @@ public class ProtocolQueryServiceTest {
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertTrue(results.isEmpty());
 
+        criteria.setDcpIdentifier(null);
         criteria.setLeadOrganizationId(leadOrgId.toString());
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
@@ -351,10 +363,10 @@ public class ProtocolQueryServiceTest {
         otherCriteria.setSubmissionType("Update");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 2, results.size());
-        
+
         createStudyProtocol("11", false, Boolean.FALSE, false, false, false, true);
         otherCriteria = new StudyProtocolQueryCriteria();
-        otherCriteria.setLeadOrganizationId("11");
+        otherCriteria.setLeadOrganizationId(leadOrgId.toString());
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
     }
@@ -413,26 +425,41 @@ public class ProtocolQueryServiceTest {
         TestSchema.addUpdObject(sp);
         spId = sp.getId();
 
-        Organization o = OrganizationTest.createOrganizationObj();
-        o.setIdentifier(orgId);
-        TestSchema.addUpdObject(o);
-        leadOrgId = o.getId();
+        Organization org = OrganizationTest.createOrganizationObj();
+        org.setIdentifier(orgId);
+        TestSchema.addUpdObject(org);
+        leadOrgId = org.getId();
+
+        Organization nctOrg = OrganizationTest.createOrganizationObj();
+        nctOrg.setIdentifier(orgId);
+        nctOrg.setName(PAConstants.CTGOV_ORG_NAME);
+        TestSchema.addUpdObject(nctOrg);
+
+        Organization dcpOrg = OrganizationTest.createOrganizationObj();
+        dcpOrg.setIdentifier(orgId);
+        dcpOrg.setName(PAConstants.DCP_ORG_NAME);
+        TestSchema.addUpdObject(dcpOrg);
+
+        Organization ctepOrg = OrganizationTest.createOrganizationObj();
+        ctepOrg.setIdentifier(orgId);
+        ctepOrg.setName(PAConstants.CTEP_ORG_NAME);
+        TestSchema.addUpdObject(ctepOrg);
 
         Person p = PersonTest.createPersonObj();
         p.setIdentifier("11");
         TestSchema.addUpdObject(p);
         principalInvestigator = p.getId();
 
-        HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(o);
+        HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(org);
         TestSchema.addUpdObject(hcf);
 
-        HealthCareProvider hcp = HealthCareProviderTest.createHealthCareProviderObj(p, o);
+        HealthCareProvider hcp = HealthCareProviderTest.createHealthCareProviderObj(p, org);
         TestSchema.addUpdObject(hcp);
 
         Country c = CountryTest.createCountryObj();
         TestSchema.addUpdObject(c);
 
-        ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o, p);
+        ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(org, p);
         TestSchema.addUpdObject(crs);
 
         StudyContact sc = StudyContactTest.createStudyContactObj(sp, c, hcp, crs);
@@ -445,10 +472,28 @@ public class ProtocolQueryServiceTest {
         sp.getStudyContacts().add(sc2);
 
         ResearchOrganization ro = new ResearchOrganization();
-        ro.setOrganization(o);
+        ro.setOrganization(org);
         ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         ro.setIdentifier("abc");
         TestSchema.addUpdObject(ro);
+
+        ResearchOrganization dcpRo = new ResearchOrganization();
+        dcpRo.setOrganization(dcpOrg);
+        dcpRo.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        dcpRo.setIdentifier("abc");
+        TestSchema.addUpdObject(dcpRo);
+
+        ResearchOrganization nctRo = new ResearchOrganization();
+        nctRo.setOrganization(nctOrg);
+        nctRo.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        nctRo.setIdentifier("abc");
+        TestSchema.addUpdObject(nctRo);
+
+        ResearchOrganization ctepRo = new ResearchOrganization();
+        ctepRo.setOrganization(ctepOrg);
+        ctepRo.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        ctepRo.setIdentifier("abc");
+        TestSchema.addUpdObject(ctepRo);
 
         StudySite spc = StudySiteTest.createStudySiteObj(sp, hcf);
         spc.setLocalStudyProtocolIdentifier("Local" + orgId);
@@ -457,11 +502,25 @@ public class ProtocolQueryServiceTest {
         sp.getStudySites().add(spc);
 
         StudySite spc2 = StudySiteTest.createStudySiteObj(sp, hcf);
-        spc2.setLocalStudyProtocolIdentifier("NCT" + orgId);
+        spc2.setLocalStudyProtocolIdentifier("NCT-" + orgId);
         spc2.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
-        spc2.setResearchOrganization(ro);
+        spc2.setResearchOrganization(nctRo);
         TestSchema.addUpdObject(spc2);
         sp.getStudySites().add(spc2);
+
+        StudySite spc3 = StudySiteTest.createStudySiteObj(sp, hcf);
+        spc3.setLocalStudyProtocolIdentifier("DCP-" + orgId);
+        spc3.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        spc3.setResearchOrganization(dcpRo);
+        TestSchema.addUpdObject(spc3);
+        sp.getStudySites().add(spc3);
+
+        StudySite spc4 = StudySiteTest.createStudySiteObj(sp, hcf);
+        spc4.setLocalStudyProtocolIdentifier("CTEP-" + orgId);
+        spc4.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        spc4.setResearchOrganization(ctepRo);
+        TestSchema.addUpdObject(spc4);
+        sp.getStudySites().add(spc4);
 
         Date now = new Date();
         StudyOverallStatus sos = new StudyOverallStatus();

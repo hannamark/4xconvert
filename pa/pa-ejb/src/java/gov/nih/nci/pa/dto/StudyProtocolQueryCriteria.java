@@ -104,6 +104,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
 
     private Long studyProtocolId;
     private String nciIdentifier;
+    private String dcpIdentifier;
+    private String ctepIdentifier;
     private String nctNumber;
     private String officialTitle;
     private String leadOrganizationId;
@@ -472,4 +474,31 @@ public class StudyProtocolQueryCriteria implements Serializable {
         return phaseAdditionalQualifierCode;
     }
 
+    /**
+     * @return the dcpIdentifier
+     */
+    public String getDcpIdentifier() {
+        return dcpIdentifier;
+    }
+
+    /**
+     * @param dcpIdentifier the dcpIdentifier to set
+     */
+    public void setDcpIdentifier(String dcpIdentifier) {
+        this.dcpIdentifier = dcpIdentifier;
+    }
+
+    /**
+     * @return the ctepIdentifier
+     */
+    public String getCtepIdentifier() {
+        return ctepIdentifier;
+    }
+
+    /**
+     * @param ctepIdentifier the ctepIdentifier to set
+     */
+    public void setCtepIdentifier(String ctepIdentifier) {
+        this.ctepIdentifier = ctepIdentifier;
+    }
 }
