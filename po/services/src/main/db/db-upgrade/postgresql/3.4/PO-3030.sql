@@ -1,0 +1,1 @@
+update identifiedperson set assigned_identifier_root = trim(assigned_identifier_root);

@@ -136,4 +136,8 @@
        <comment>PO-1458: Final cleanup of RO funding mechanism</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.4/PO-1458.sql"/>
     </changeSet>
+    <changeSet id="PO-3030" author="aevansel">
+       <comment>PO-3030: Removing leading spaces from the CTEP root of older Idenfied Persons.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.4/PO-3030.sql"/>
+    </changeSet>
 </databaseChangeLog>
