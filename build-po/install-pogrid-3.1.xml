@@ -157,13 +157,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
   <target name="install:po-grid-3.1-jboss:binaries" unless="exclude.po-grid-3.1">
       <jboss-install-binaries
-          application.base.path="${application.base.path}/pogrid-3.1"
+          application.base.path="${application.base.path}"
           jems.install.option="default"
           jboss.home="${po-grid-3.1-jboss.home}"
           jboss.server.name="${po-grid-3.1-jboss.server.name}"
           />
       <jboss-nci-customizations
-          application.base.path="${application.base.path}/pogrid-3.1"
+          application.base.path="${application.base.path}"
           jboss.home="${po-grid-3.1-jboss.home}"
           jboss.server.name="${po-grid-3.1-jboss.server.name}"
           jboss.server.jndi.port="${po-grid-3.1-jboss.server.jndi.port}"
