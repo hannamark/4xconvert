@@ -89,6 +89,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 
 /**
  * Individuals who are employed and/or involved in any aspect of clinical research.
@@ -117,6 +119,7 @@ public class ClinicalResearchStaff  extends StructuralRole {
     @ManyToOne
     @JoinColumn(name = "PERSON_IDENTIFIER", updatable = false)
     @NotNull
+    @Searchable
     public Person getPerson() {
         return person;
     }

@@ -94,6 +94,7 @@ import java.io.Serializable;
  * phaseCode                     domain.StudyProtocol.phaseCode
  * studyStatusCode               domain.StudyOverallStatus
  * documentWrokflowStatus        domain.DocumentWorkflowStatus
+ * principalInvestigatorId       domain.StudyContact.clinicalResearchStaff.person.id
  * </pre>
  *
  * @author Hugh Reinhart

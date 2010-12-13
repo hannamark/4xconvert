@@ -95,7 +95,6 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
@@ -383,7 +382,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
     private Ii saveNonPropWithNewSite(StudySiteDTO sp, StudySiteAccrualStatusDTO ssas,
             ParticipatingOrganizationsTabWebDTO tab, String errorOrgName) throws PAException {
-        ParticipatingSiteDTO psDTO = null;
         String poOrgId = tab.getFacilityOrganization().getIdentifier();
         Ii poHcfIi = paServiceUtil.getPoHcfIi(poOrgId);
 
@@ -395,13 +393,13 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
         sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
         sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt(siteLocalTrialIdentifier));
-
+        
         try {
-            psDTO = partSiteService.createStudySiteParticipant(sp, ssas, poHcfIi);
+            return partSiteService.createStudySiteParticipant(sp, ssas, poHcfIi).getIdentifier();
         } catch (DuplicateParticipatingSiteException e) {
             addFieldError(errorOrgName, e.getMessage());
+            return null;
         }
-        return psDTO.getIdentifier();
     }
     
     private void handleSetMethodForEdit(StudySiteDTO spDto, StudySiteAccrualStatusDTO status) {

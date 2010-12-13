@@ -464,14 +464,24 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
         return results;
     }
-
-    private void populateExample(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
+    
+    private void populateExampleStudyProtocol(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         sp.setId(crit.getStudyProtocolId());
         sp.setOfficialTitle(crit.getOfficialTitle());
         sp.setPhaseCode(PhaseCode.getByCode(crit.getPhaseCode()));
         sp.setPhaseAdditionalQualifierCode(
                 PhaseAdditionalQualifierCode.getByCode(crit.getPhaseAdditionalQualifierCode()));
+        if (StringUtils.equalsIgnoreCase(crit.getTrialCategory(), "p")) {
+            sp.setProprietaryTrialIndicator(Boolean.TRUE);
+        } else if (StringUtils.equalsIgnoreCase(crit.getTrialCategory(), "n")) {
+            sp.setProprietaryTrialIndicator(Boolean.FALSE);
+        }
 
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(crit.getPrimaryPurposeCode()));
+    }
+    
+    private void populateExampleSpOtherIdentifiers(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         if (StringUtils.isNotEmpty(crit.getNciIdentifier())) {
             Ii nciId = new Ii();
             nciId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
@@ -485,26 +495,32 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             otherId.setExtension(crit.getOtherIdentifier());
             sp.getOtherIdentifiers().add(otherId);
         }
-
+    }
+    
+    private void populateExampleStudyOverallStatus(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         if (StringUtils.isNotEmpty(crit.getStudyStatusCode())) {
             StudyOverallStatus sos = new StudyOverallStatus();
             sos.setStatusCode(StudyStatusCode.getByCode(crit.getStudyStatusCode()));
             sp.getStudyOverallStatuses().add(sos);
         }
-
+    }
+     
+    private void populateExampleDocumentWork(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         if (StringUtils.isNotEmpty(crit.getDocumentWorkflowStatusCode())) {
             DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
             dws.setStatusCode(DocumentWorkflowStatusCode.getByCode(crit.getDocumentWorkflowStatusCode()));
             sp.getDocumentWorkflowStatuses().add(dws);
         }
-
+    }
+    
+    private void populateExampleStudySites(StudyProtocolQueryCriteria crit, StudyProtocol sp) {        
         if (StringUtils.isNotEmpty(crit.getLeadOrganizationTrialIdentifier())) {
             StudySite ss = new StudySite();
             ss.setLocalStudyProtocolIdentifier(crit.getLeadOrganizationTrialIdentifier());
             ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
             sp.getStudySites().add(ss);
         }
-
+    
         if (StringUtils.isNotEmpty(crit.getNctNumber())) {
             StudySite ss = new StudySite();
             ss.setLocalStudyProtocolIdentifier(crit.getNctNumber());
@@ -520,7 +536,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.CTEP_ORG_NAME));
             sp.getStudySites().add(ss);
         }
-
+    
         if (StringUtils.isNotEmpty(crit.getDcpIdentifier())) {
             StudySite ss = new StudySite();
             ss.setLocalStudyProtocolIdentifier(crit.getDcpIdentifier());
@@ -528,13 +544,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.DCP_ORG_NAME));
             sp.getStudySites().add(ss);
         }
-
-        if (StringUtils.isNotEmpty(crit.getStudyMilestone())) {
-            StudyMilestone sm = new StudyMilestone();
-            sm.setMilestoneCode(MilestoneCode.getByCode(crit.getStudyMilestone()));
-            sp.getStudyMilestones().add(sm);
-        }
-
+        
         if (StringUtils.isNotEmpty(crit.getLeadOrganizationId())) {
             StudySite ss = new StudySite();
             Organization organization = new Organization();
@@ -545,24 +555,37 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
             sp.getStudySites().add(ss);
         }
+    }
+    
+    private void populateExampleStudyMilestones(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
+        if (StringUtils.isNotEmpty(crit.getStudyMilestone())) {
+            StudyMilestone sm = new StudyMilestone();
+            sm.setMilestoneCode(MilestoneCode.getByCode(crit.getStudyMilestone()));
+            sp.getStudyMilestones().add(sm);
+        }
+    }   
 
+    private void populateExampleStudyContacts(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         if (StringUtils.isNotEmpty(crit.getPrincipalInvestigatorId())) {
             StudyContact sc = new StudyContact();
             ClinicalResearchStaff crs = new ClinicalResearchStaff();
-            crs.setId(Long.valueOf(crit.getPrincipalInvestigatorId()));
+            Person person = new Person();
+            person.setId(Long.valueOf(crit.getPrincipalInvestigatorId()));
+            crs.setPerson(person);
             sc.setClinicalResearchStaff(crs);
             sc.setRoleCode(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
             sp.getStudyContacts().add(sc);
         }
-
-        if (StringUtils.equalsIgnoreCase(crit.getTrialCategory(), "p")) {
-            sp.setProprietaryTrialIndicator(Boolean.TRUE);
-        } else if (StringUtils.equalsIgnoreCase(crit.getTrialCategory(), "n")) {
-            sp.setProprietaryTrialIndicator(Boolean.FALSE);
-        }
-
-        sp.setStatusCode(ActStatusCode.ACTIVE);
-        sp.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(crit.getPrimaryPurposeCode()));
+    }
+ 
+    private void populateExample(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
+        populateExampleStudyProtocol(crit, sp);
+        populateExampleSpOtherIdentifiers(crit, sp);
+        populateExampleStudyOverallStatus(crit, sp);
+        populateExampleDocumentWork(crit, sp);
+        populateExampleStudySites(crit, sp);
+        populateExampleStudyMilestones(crit, sp);    
+        populateExampleStudyContacts(crit, sp);
     }
 
     private boolean isCriteriaEmpty(StudyProtocolQueryCriteria criteria) {
