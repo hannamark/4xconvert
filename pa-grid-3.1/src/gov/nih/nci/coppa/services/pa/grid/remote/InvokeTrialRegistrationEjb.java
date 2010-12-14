@@ -171,7 +171,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             Bl trueCt = new Bl();
             trueCt.setValue(true);
             studyProtocolDTO.setCtgovXmlRequiredIndicator(trueCt);
-
+            //If no study researching is provided we're defaulting to Industrial
             StudyResourcingDTO resourcing =
                 getSummaryStudyResourcing(summary4StudyResourcingDTO, SummaryFourFundingCategoryCode.INDUSTRIAL);
             OrganizationDTO org = getSummaryOrganization(summary4OrganizationDTO);
@@ -220,9 +220,9 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
                 noFda.setValue(Boolean.FALSE);
                 studyProtocolDTO.setFdaRegulatedIndicator(noFda);
             }
-
+            //If no study researching is provided we're defaulting to National
             StudyResourcingDTO resourcing =
-                getSummaryStudyResourcing(summary4studyResourcingDTO, SummaryFourFundingCategoryCode.INSTITUTIONAL);
+                getSummaryStudyResourcing(summary4studyResourcingDTO, SummaryFourFundingCategoryCode.NATIONAL);
             OrganizationDTO org = getSummaryOrganization(summary4organizationDTO);
 
             return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
@@ -300,7 +300,6 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             SummaryFourFundingCategoryCode categoryCode) {
         StudyResourcingDTO resourcing = summary4StudyResourcingDTO;
         if (resourcing == null) {
-            //If the study resourcing not provided, we're defaulting to institutional for non-proprietary trials.
             resourcing = new StudyResourcingDTO();
             Cd typeCode = new Cd();
             typeCode.setCode(categoryCode.getCode());

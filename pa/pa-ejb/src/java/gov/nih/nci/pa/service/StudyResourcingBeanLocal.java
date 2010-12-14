@@ -373,7 +373,7 @@ public class StudyResourcingBeanLocal extends
                 if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
                     errorBuffer.append("Serial number can be numeric with 5 or 6 digits\n");
                 }
-                if (NumberUtils.isDigits(snValue)) {
+                if (!NumberUtils.isDigits(snValue)) {
                     errorBuffer.append("Serial number should have numbers from [0-9]\n");
                 }
             }
