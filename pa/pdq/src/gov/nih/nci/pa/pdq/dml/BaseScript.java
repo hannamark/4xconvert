@@ -114,7 +114,7 @@ public class BaseScript {
             result = revised;
         }
         if (result.length() > length) {
-            throw new RuntimeException("Bad length " + original + " should be max of " + Integer.toString(length));
+            throw new IllegalArgumentException("Bad length " + original + " should be max of " + Integer.toString(length));
         }
         return "'" + result + "'";
     }

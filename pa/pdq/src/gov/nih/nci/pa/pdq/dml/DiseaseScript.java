@@ -83,7 +83,6 @@ import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.pdq.PDQConstants;
 import gov.nih.nci.pa.pdq.PDQException;
 import gov.nih.nci.pa.pdq.jdbc.ExistingIds;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -93,6 +92,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.log4j.Logger;
 
@@ -111,7 +112,8 @@ public class DiseaseScript extends BaseScript {
         String parentCode;
         String parentType;
     }
-    private static ArrayList<DisPar> parents = new ArrayList<DisPar>();
+
+    private static List<DisPar> parents = new ArrayList<DisPar>();
 
     public static DiseaseScript get() {
         return script;
@@ -131,7 +133,7 @@ public class DiseaseScript extends BaseScript {
           }
     }
     public void add(Disease dis, List<DiseaseAltername> danList, String user) throws PDQException {
-        if (PAUtil.isEmpty(dis.getPreferredName())) {
+        if (StringUtils.isEmpty(dis.getPreferredName())) {
             LOG.error("Tried to create a disease with no name.  ");
             System.exit(1);
         }
@@ -141,8 +143,8 @@ public class DiseaseScript extends BaseScript {
         if (!ExistingIds.getDiseases().containsKey(dis.getDiseaseCode())) {
             id = ExistingIds.getNextDiseaseSqn();
             sql.append("INSERT INTO disease (identifier,disease_code,nt_term_identifier,preferred_name,menu_display_name,"
-                    + "status_code,status_date_range_low,date_last_created) ");
-            sql.append("VALUES (" + id);
+                    + "status_code,status_date_range_low,date_last_created) VALUES (" );
+            sql.append(id);
             sql.append("," + fixString(dis.getDiseaseCode()));
             sql.append("," + fixString(dis.getNtTermIdentifier()));
             sql.append("," + fixString(dis.getPreferredName()));
@@ -150,13 +152,13 @@ public class DiseaseScript extends BaseScript {
             sql.append(",'" + ActiveInactivePendingCode.ACTIVE.getName() + "',now(),'" + PDQConstants.DATA_DUMP_DATE + "');");
         } else {
             id = ExistingIds.getDiseases().get(dis.getDiseaseCode()).longValue();
-            sql.append("UPDATE disease SET ");
-            sql.append("nt_term_identifier=" + fixString(dis.getNtTermIdentifier()) + ",");
-            sql.append("preferred_name=" + fixString(dis.getPreferredName()) + ",");
-            sql.append("menu_display_name=" + fixString(dis.getMenuDisplayName()) + ",");
-            sql.append("status_code='" + ActiveInactivePendingCode.ACTIVE.getName() +"',");
-            sql.append("status_date_range_low=now(),date_last_updated='" + PDQConstants.DATA_DUMP_DATE + "' ");
-            sql.append("WHERE identifier=" + id + ";");
+            sql.append("UPDATE disease SET nt_term_identifier=");
+            sql.append(fixString(dis.getNtTermIdentifier()) + ",");
+            sql.append("preferred_name=" + fixString(dis.getPreferredName()));
+            sql.append(", menu_display_name=" + fixString(dis.getMenuDisplayName()));
+            sql.append(", status_code='" + ActiveInactivePendingCode.ACTIVE.getName());
+            sql.append("', status_date_range_low=now(),date_last_updated='" + PDQConstants.DATA_DUMP_DATE);
+            sql.append("' WHERE identifier=" + id + ";");
         }
         out.println(sql.toString());
         codeMap.put(dis.getDiseaseCode(), id);
@@ -187,7 +189,7 @@ public class DiseaseScript extends BaseScript {
                         + " VALUES (" + codeMap.get(dp.childCode) + "," + codeMap.get(dp.parentCode) + "," + fixString(dp.parentType) + ",'"
                         + ActiveInactiveCode.ACTIVE.getName() + "',now());");
             } else {
-                
+
                 LOG.warn("Bad parent child relationship ignored." + dp.childCode + " - " + dp.parentCode + " - " + dp.parentType);
             }
         }

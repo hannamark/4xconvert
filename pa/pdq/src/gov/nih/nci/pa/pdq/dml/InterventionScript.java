@@ -83,7 +83,6 @@ import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.pdq.PDQConstants;
 import gov.nih.nci.pa.pdq.PDQException;
 import gov.nih.nci.pa.pdq.jdbc.ExistingIds;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -92,6 +91,9 @@ import java.io.PrintStream;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * @author Hugh Reinhart
@@ -123,7 +125,7 @@ public final class InterventionScript extends BaseScript {
     }
 
     public void add(Intervention inter, List<InterventionAlternateName> ianList, String user) throws PDQException {
-        if (PAUtil.isEmpty(inter.getName())) {
+        if (StringUtils.isEmpty(inter.getName())) {
             throw new PDQException("Tried to create an intervention with no name.");
         }
         if (inter.getTypeCode() == null) {

@@ -18,7 +18,6 @@ public class DownloadTerminology {
     private static String filename = "Terminology.tar.gz";
 
     public static void process() throws IOException {
-
         preCheck();
         LOG.info("Completed Pre Check ...........");
         cleanUp();
@@ -34,9 +33,8 @@ public class DownloadTerminology {
       FTPClient client = new FTPClient();
       try {
           client.connect("cipsftp.nci.nih.gov");
-          boolean login = client.login("scenpro", "UO8cbV^");
-          if (!login) {
-              System.out.println("Unable to login to PDQ");
+          if (!client.login("scenpro", "UO8cbV^")) {
+              LOG.error("Unable to login to PDQ");
               System.exit(0);
           }
           FileOutputStream fos = null;

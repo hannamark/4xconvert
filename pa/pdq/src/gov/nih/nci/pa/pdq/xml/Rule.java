@@ -78,6 +78,7 @@ package gov.nih.nci.pa.pdq.xml;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -123,7 +124,7 @@ public enum Rule {
     @SuppressWarnings("unchecked")
     public Class clazz;
 
-    public static ArrayList<String> diseaseList;
+    public static List<String> diseaseList;
     static {
         diseaseList = new ArrayList<String>();
 

@@ -177,8 +177,9 @@ public final class ExistingIds {
             System.exit(1);
         }
         try {
-            postGresConn = DriverManager.getConnection(PDQProperties.getDatabaseUrl()
-                            , PDQProperties.getDatabaseUsername(), PDQProperties.getDatabasePassword());
+            PDQProperties pdqProp = new PDQProperties();
+            postGresConn = DriverManager.getConnection(pdqProp.getDatabaseUrl()
+                            , pdqProp.getDatabaseUsername(), pdqProp.getDatabasePassword());
         } catch (SQLException se) {
             LOG.error("Couldn't connect to database.");
             System.exit(1);

@@ -85,6 +85,7 @@ import gov.nih.nci.pa.pdq.xml.Rule;
 import gov.nih.nci.pa.pdq.xml.XMLFileParser;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -101,12 +102,16 @@ import org.w3c.dom.Node;
 public class Loader {
     private static final Logger LOG = Logger.getLogger(Loader.class);
 
+    private Loader() {
+
+    }
+
     /**
      * @param args
-     * @throws IOException 
+     * @throws IOException
      */
-    public static void main(String[] args) throws PDQException, IOException {
-        
+    public static void main(final String[] args) throws PDQException, IOException {
+
         DownloadTerminology.process();
         ArrayList<String> invalid = new ArrayList<String>();
         SortedMap<Rule, Integer> counts = new TreeMap<Rule, Integer>();
@@ -114,9 +119,13 @@ public class Loader {
             counts.put(r, 0);
         }
         LOG.info("Starting load of PDQ data...");
-        File dir = new File(PDQConstants.DIRECTORY_NAME);
+        final File dir = new File(PDQConstants.DIRECTORY_NAME);
 
-        String[] children = dir.list();
+        String[] children = dir.list(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return !name.endsWith(".svn");
+            }
+        });
         if (children == null) {
             throw new PDQException("Either dir " + PDQConstants.DIRECTORY_NAME + " does not exist or is not a directory.  ");
         } else {
@@ -124,11 +133,7 @@ public class Loader {
             PDQDisease pd = new PDQDisease();
             for (String filename : children) {
                 // Get filename of file or directory
-                boolean ok = true;
                 Document doc;
-                if (filename.equals(".svn")) {
-                    continue;
-                }
                 doc = XMLFileParser.getParser().parseFile(PDQConstants.DIRECTORY_NAME + "/"+ filename);
                 try {
                     Rule rule = Interpret.getInterpreter().process(doc);
@@ -146,9 +151,6 @@ public class Loader {
                     }
                 } catch (PDQException e) {
                     LOG.error(e);
-                    ok = false;
-                }
-                if (!ok) {
                     Node root = doc.getDocumentElement();
                     XMLFileParser.getParser().writeDocumentToOutput(root, 0);
                     System.exit(0);

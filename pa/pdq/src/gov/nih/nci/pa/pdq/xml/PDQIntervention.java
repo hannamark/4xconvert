@@ -81,16 +81,20 @@ import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.pdq.PDQException;
 import gov.nih.nci.pa.pdq.dml.InterventionScript;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * @author Hugh Reinhart
@@ -139,7 +143,7 @@ public class PDQIntervention extends AbstractPDQProcessor {
 //                }
 //            }
 //        }
-//        if (PAUtil.isEmpty(i.getName())) {
+//        if (StringUtils.isEmpty(i.getName())) {
 //            LOG.error("Error determining name from: ");
 //            XMLFileParser.getParser().writeDocumentToOutput(doc.getDocumentElement(), 0);
 //            System.exit(0);
@@ -188,19 +192,19 @@ public class PDQIntervention extends AbstractPDQProcessor {
                 for (int y = 0; y < others.getLength(); y++) {
                     Node other = others.item(y);
                     if(other.getNodeName().equals(Rule.NODE_NAME_OTHER_TERM_NAME)) {
-                        if (!PAUtil.isEmpty(ian.getName())) {
-                            throw new RuntimeException("Data error in XML");
+                        if (!StringUtils.isEmpty(ian.getName())) {
+                            throw new IllegalArgumentException("Data error in XML");
                         }
                         ian.setName(other.getTextContent());
                     }
                     if(other.getNodeName().equals(Rule.NODE_NAME_OTHER_NAME_TYPE) ) {
-                        if (!PAUtil.isEmpty(ian.getNameTypeCode())) {
-                            throw new RuntimeException("Data error in XML");
+                        if (!StringUtils.isEmpty(ian.getNameTypeCode())) {
+                            throw new IllegalArgumentException("Data error in XML");
                         }
                         ian.setNameTypeCode(other.getTextContent());
                     }
                 }
-                if (!PAUtil.isEmpty(ian.getName())) {
+                if (!StringUtils.isEmpty(ian.getName())) {
                     ianList.add(ian);
                 }
             }
@@ -211,7 +215,7 @@ public class PDQIntervention extends AbstractPDQProcessor {
                 i.setCtGovTypeCode(decodeCtGovType(child.getTextContent()));
             }
         }
-        if (PAUtil.isEmpty(i.getName())) {
+        if (StringUtils.isEmpty(i.getName())) {
             LOG.error("Error determining name from: ");
             XMLFileParser.getParser().writeDocumentToOutput(doc.getDocumentElement(), 0);
             System.exit(0);
@@ -232,45 +236,30 @@ public class PDQIntervention extends AbstractPDQProcessor {
 
     private InterventionTypeCode decodeInterventionType(String value) {
         InterventionTypeCode cd = null;
-        if (PAUtil.isNotEmpty(value)) {
-            if(value.equals("Drug/agent")) {
-                cd = InterventionTypeCode.DRUG;
-            }
-            if(value.equals("Drug/agent category")) {
-                cd = InterventionTypeCode.DRUG;
-            }
-            if(value.equals("Gene")) {
-                cd = InterventionTypeCode.GENETIC;
-            }
-            if(value.equals("Drug/agent combination")) {
-                cd = InterventionTypeCode.DRUG;
-            }
-            if(value.equals("Research activity")) {
-                cd = InterventionTypeCode.OTHER;
-            }
-            if(value.equals("Classification")) {
-                cd = InterventionTypeCode.OTHER;
-            }
-            if(value.equals("Cancer therapy modality")) {
-                cd = InterventionTypeCode.OTHER;
-            }
-            if(value.equals("Other health status")) {
-                cd = InterventionTypeCode.OTHER;
-            }
-            if(value.equals("Intervention or procedure")) {
-                cd = InterventionTypeCode.PROCEDURE_SURGERY;
-            }
-            if (cd == null) {
-                LOG.error("Unexpected semantic type found.  ");
-            }
+        Map<String, InterventionTypeCode> cdMap = new HashMap<String, InterventionTypeCode>();
+        cdMap.put("Drug/agent", InterventionTypeCode.DRUG);
+        cdMap.put("Drug/agent category", InterventionTypeCode.DRUG);
+        cdMap.put("Drug/agent combination", InterventionTypeCode.DRUG);
+        cdMap.put("Research activity", InterventionTypeCode.OTHER);
+        cdMap.put("Classification", InterventionTypeCode.OTHER);
+        cdMap.put("Cancer therapy modality", InterventionTypeCode.OTHER);
+        cdMap.put("Other health status", InterventionTypeCode.OTHER);
+        cdMap.put("Gene", InterventionTypeCode.GENETIC);
+        cdMap.put("Intervention or procedure", InterventionTypeCode.PROCEDURE_SURGERY);
 
+        cd = cdMap.get(value);
+
+        if (cd == null) {
+            LOG.error("Unexpected semantic type found.  ");
+            cd = InterventionTypeCode.OTHER;
         }
-        return cd == null ? InterventionTypeCode.OTHER : cd;
+
+        return cd;
     }
 
     private InterventionTypeCode decodeCtGovType(String value) {
         InterventionTypeCode cd = null;
-        if (PAUtil.isNotEmpty(value)) {
+        if (StringUtils.isNotEmpty(value)) {
             try {
                 cd = InterventionTypeCode.getByCode(value);
             } catch (Exception e) {

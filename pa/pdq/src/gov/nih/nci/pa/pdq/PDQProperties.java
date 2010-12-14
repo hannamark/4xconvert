@@ -81,10 +81,15 @@ package gov.nih.nci.pa.pdq;
 
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.MissingResourceException;
+
+import org.apache.log4j.Logger;
 
 public class PDQProperties {
 
     private static Properties properties = new Properties();
+    private static String MISSING_PROP = "Error: @1 must be set in build.properties";
+    private static final Logger LOG = Logger.getLogger(PDQProperties.class);
 
     static {
         boolean loaded = false;
@@ -102,18 +107,39 @@ public class PDQProperties {
                 InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("build.properties");;
                 properties.load(stream);
             } catch (Exception e) {
-                throw new RuntimeException("Error reading build.properties file", e);
+                LOG.error("Error reading build.properties file", e);
+                System.exit(1);
             }
         }
     }
 
-    public static String getDatabaseUrl() {
-        return properties.getProperty("database.url", "Error:  database.url not set in build.properties.");
+    public String getDatabaseUrl() {
+        return getProperty("database.url");
     }
-    public static String getDatabaseUsername() {
-        return properties.getProperty("database.username", "Error:  database.username not set in build.properties.");
+    public String getDatabaseUsername() {
+        return getProperty("database.username");
     }
-    public static String getDatabasePassword() {
-        return properties.getProperty("database.password", "Error:  database.password not set in build.properties.");
+    public String getDatabasePassword() {
+        return getProperty("database.password");
+    }
+    public String getTrialDataDir() {
+        return getProperty("trial.data.dir");
+    }
+    public String getTrialLoaderUsername() {
+        return getProperty("trial.loader.username");
+    }
+    public String getPaServer() {
+        return getProperty("pa.server");
+    }
+    public String getPaPort() {
+        return getProperty("pa.port");
+    }
+
+    private String getProperty(String property) {
+        String result = properties.getProperty(property);
+        if (result == null) {
+            throw new MissingResourceException(MISSING_PROP.replaceAll("@1", property), "PDQProperties", property);
+        }
+        return result;
     }
 }

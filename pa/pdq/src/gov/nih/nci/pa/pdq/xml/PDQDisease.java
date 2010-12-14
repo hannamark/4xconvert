@@ -81,7 +81,6 @@ import gov.nih.nci.pa.domain.DiseaseAltername;
 import gov.nih.nci.pa.pdq.PDQConstants;
 import gov.nih.nci.pa.pdq.PDQException;
 import gov.nih.nci.pa.pdq.dml.DiseaseScript;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +90,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * @author Hugh Reinhart
@@ -163,7 +165,7 @@ public class PDQDisease extends AbstractPDQProcessor {
                         }
                     }
                 }
-                if(PAUtil.isEmpty(d.getMenuDisplayName())) {
+                if(StringUtils.isEmpty(d.getMenuDisplayName())) {
                     d.setMenuDisplayName(d.getPreferredName());
 //                    LOG.info("Had to use preferred name for menu display name.");
                 }
@@ -196,7 +198,7 @@ public class PDQDisease extends AbstractPDQProcessor {
                         }
                     }
                 }
-                if(PAUtil.isNotEmpty(parentCode) && PAUtil.isNotEmpty(childCode)) {
+                if(StringUtils.isNotEmpty(parentCode) && StringUtils.isNotEmpty(childCode)) {
                     DiseaseScript.get().addParent(childCode, parentCode, type);
                 }
             }
@@ -213,10 +215,10 @@ public class PDQDisease extends AbstractPDQProcessor {
                 }
             }
         }
-        if(PAUtil.isEmpty(d.getMenuDisplayName())) {
+        if(StringUtils.isEmpty(d.getMenuDisplayName())) {
             d.setMenuDisplayName(PDQConstants.NOT_MENU);
         }
-        if (PAUtil.isEmpty(d.getPreferredName())) {
+        if (StringUtils.isEmpty(d.getPreferredName())) {
             LOG.error("Error determining name from: ");
             XMLFileParser.getParser().writeDocumentToOutput(doc.getDocumentElement(), 0);
             System.exit(0);

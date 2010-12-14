@@ -91,6 +91,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -108,44 +109,20 @@ public class XMLFileParser {
 
     public static XMLFileParser getParser() { return parser; }
 
-    /** Creates a new instance of ParseXMLFile */
-    public void test(String xmlFileName, String targetFileName) {
-        // parse XML file -> XML document will be build
-        Document doc = parseFile(xmlFileName);
-        // get root node of xml tree structure
-        Node root = doc.getDocumentElement();
-        // write node and its child nodes into System.out
-        LOG.info("Statement of XML document...");
-        writeDocumentToOutput(root,0);
-        LOG.info("... end of statement");
-        // write Document into XML file
-        saveXMLDocument(targetFileName, doc);
-    }
-
     /** Returns element value
      * @param elem element (it is XML tag)
      * @return Element value otherwise empty String
      */
-    public final static String getElementValue( Node elem ) {
+    public final static String getElementValue(Node elem) {
         Node kid;
-        if( elem != null){
-            if (elem.hasChildNodes()){
-                for( kid = elem.getFirstChild(); kid != null; kid = kid.getNextSibling() ){
-                    if( kid.getNodeType() == Node.TEXT_NODE  ){
-                        return kid.getNodeValue();
-                    }
+        if (elem != null && elem.hasChildNodes()) {
+            for (kid = elem.getFirstChild(); kid != null; kid = kid.getNextSibling()) {
+                if (kid.getNodeType() == Node.TEXT_NODE) {
+                    return kid.getNodeValue();
                 }
             }
         }
         return "";
-    }
-
-    private String getIndentSpaces(int indent) {
-        StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < indent; i++) {
-            buffer.append(" ");
-        }
-        return buffer.toString();
     }
 
     /** Writes node and all child nodes into System.out
@@ -159,10 +136,10 @@ public class XMLFileParser {
         String nodeValue = getElementValue(node);
         // get attributes of element
         NamedNodeMap attributes = node.getAttributes();
-        LOG.debug(getIndentSpaces(indent) + "NodeName: " + nodeName + ", NodeValue: " + nodeValue);
+        LOG.debug(StringUtils.leftPad("", indent) + "NodeName: " + nodeName + ", NodeValue: " + nodeValue);
         for (int i = 0; i < attributes.getLength(); i++) {
             Node attribute = attributes.item(i);
-            LOG.debug(getIndentSpaces(indent + 2) + "AttributeName: " + attribute.getNodeName() + ", attributeValue: " + attribute.getNodeValue());
+            LOG.debug(StringUtils.leftPad("", indent + 2) + "AttributeName: " + attribute.getNodeName() + ", attributeValue: " + attribute.getNodeValue());
         }
         // write all child nodes recursively
         NodeList children = node.getChildNodes();
@@ -219,7 +196,6 @@ public class XMLFileParser {
      * @return XML document or <B>null</B> if error occured
      */
     public Document parseFile(String fileName) {
-//        LOG.info("Parsing XML file... " + fileName);
         DocumentBuilder docBuilder;
         Document doc = null;
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -242,7 +218,6 @@ public class XMLFileParser {
         catch (IOException e) {
             LOG.error("Could not read source file: " + e.getMessage());
         }
-//        LOG.info("XML file parsed");
         return doc;
     }
 }
