@@ -25,6 +25,7 @@
             <interceptor-stack name="paDefaultInterceptor">
                 <interceptor-ref name="showDisclaimer"/>
                 <interceptor-ref name="exception"/>
+                <interceptor-ref name="checkbox"/>
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
@@ -33,7 +34,6 @@
                 </interceptor-ref>
                 <interceptor-ref name="servletConfig"/>
                 <interceptor-ref name="prepare"/>
-                <interceptor-ref name="checkbox"/>
                 <interceptor-ref name="i18n" />
                 <interceptor-ref name="conversionError"/>
                 <interceptor-ref name="fileUpload" />

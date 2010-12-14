@@ -29,6 +29,7 @@
                 <interceptor-ref name="logger"/>
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
+                <interceptor-ref name="checkbox" />
                 <interceptor-ref name="params">
                     <!--
                         Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
@@ -42,7 +43,6 @@
                 <interceptor-ref name="i18n" />
                 <interceptor-ref name="chain" />
                 <interceptor-ref name="fileUpload" />
-                <interceptor-ref name="checkbox" />
                 <interceptor-ref name="staticParams" />
                 <interceptor-ref name="params">
                     <!--
@@ -71,6 +71,7 @@
                 <interceptor-ref name="logger"/>
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
+                <interceptor-ref name="checkbox" />
                 <interceptor-ref name="params">
                     <!--
                         Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
@@ -84,7 +85,6 @@
                 <interceptor-ref name="i18n" />
                 <interceptor-ref name="chain" />
                 <interceptor-ref name="fileUpload" />
-                <interceptor-ref name="checkbox" />
                 <interceptor-ref name="staticParams" />
                 <interceptor-ref name="params">
                     <!--
@@ -114,6 +114,7 @@
                 <interceptor-ref name="logger"/>
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
+                <interceptor-ref name="checkbox" />
                 <interceptor-ref name="params">
                     <!--
                         Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
@@ -127,7 +128,6 @@
                 <interceptor-ref name="i18n" />
                 <interceptor-ref name="chain" />
                 <interceptor-ref name="fileUpload" />
-                <interceptor-ref name="checkbox" />
                 <interceptor-ref name="staticParams" />
                 <interceptor-ref name="params">
                     <!--
@@ -158,6 +158,7 @@
                 <interceptor-ref name="logger"/>
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
+                <interceptor-ref name="checkbox" />
                 <interceptor-ref name="params">
                     <!--
                 Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
@@ -171,7 +172,6 @@
                 <interceptor-ref name="i18n" />
                 <interceptor-ref name="chain" />
                 <interceptor-ref name="fileUpload" />
-                <interceptor-ref name="checkbox" />
                 <interceptor-ref name="staticParams" />
                 <interceptor-ref name="params">
                     <!--
