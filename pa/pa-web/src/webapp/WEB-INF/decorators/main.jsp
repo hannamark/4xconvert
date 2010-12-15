@@ -17,6 +17,7 @@
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/Help.js"/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/wwhapi.js"/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/wwhbaseurl.js"/>"></script> 
+        <!-- Version: ${initParam["appTagVersion"]}, revision: ${initParam["appTagRevision"]} -->
         <decorator:head/>
     </head>
     <body onload="callOnloadFunctions();">

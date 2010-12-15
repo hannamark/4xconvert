@@ -55,6 +55,7 @@
     <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.18"          conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="compile->master"/>
     <dependency org="javax.servlet"          name="jstl"                    rev="1.1.2"           conf="compile->master"/>
+    <dependency org="ant-contrib"            name="ant-contrib"             rev="1.0b3"           conf="compile->master"/>
 
 
     <!-- test -->

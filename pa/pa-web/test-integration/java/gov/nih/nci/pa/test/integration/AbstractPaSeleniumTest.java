@@ -138,7 +138,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isElementPresent("id=acceptDisclaimer"));
         assertTrue(selenium.isElementPresent("id=rejectDisclaimer"));
     }
-    
+
     protected void disclaimer(boolean accept) {
         verifyDisclaimerPage();
         if (accept) {
@@ -148,15 +148,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
             clickAndWait("id=rejectDisclaimer");
             verifyLoginPage();
         }
-        
+
     }
-    
+
     protected void verifyHomePage() {
         assertTrue(selenium.isElementPresent("link=Logout"));
         assertTrue(selenium.isElementPresent("id=trialSearchMenuOption"));
         assertTrue(selenium.isElementPresent("id=inboxProcessingMenuOption"));
         assertTrue(selenium.isElementPresent("id=logoutMenuOption"));
-        assertTrue(selenium.isElementPresent("id=aboutMenuOption"));
     }
 
     public void loginAsAbstractor() {

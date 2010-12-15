@@ -54,10 +54,10 @@
 
     <path id="ejb.package.classpath">
         <fileset dir="${pa.dir}/pa-ejb/target">
-           <include name="*.jar"/>
+            <include name="*.jar"/>
         </fileset>
         <fileset dir="${software.dir}/viewer/services/target">
-           <include name="*.jar"/>
+            <include name="*.jar"/>
         </fileset>
     </path>
 
@@ -65,7 +65,7 @@
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}"/>
     </path>
-    
+
     <property name="selenium.jar.dir" location="${lib.dir}/selenium"/>
     <path id="selenium.classpath">
         <fileset dir="${selenium.jar.dir}"/>
@@ -116,7 +116,7 @@
         </fileset>
     </path>
     <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
-
+    <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="macrodef"/>
 
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
@@ -157,7 +157,7 @@
             <fileset dir="${viewer.build.resourceDir.0}"/>
         </copy>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Configure test compilation target                                      -->
     <!-- ====================================================================== -->
@@ -196,7 +196,7 @@
             <fileset dir="${viewer.build.testResourceDir.0}"/>
         </copy>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Run Selenium Tests                                                       -->
     <!-- ====================================================================== -->
@@ -248,7 +248,7 @@
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>
-         </pmd>
+        </pmd>
     </target>
 
 
@@ -257,8 +257,8 @@
     <!-- ====================================================================== -->
 
     <target name="test-simian">
-       <taskdef resource="simiantask.properties" classpathref="test-simian.classpath"/>
-       <simian>
+        <taskdef resource="simiantask.properties" classpathref="test-simian.classpath"/>
+        <simian>
             <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain" toFile="${reportDir}/simian.txt"/>
             <formatter type="xml" toFile="${reportDir}/simian.xml"/>
@@ -289,14 +289,23 @@
     <!-- Package target                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="create-war">
+    <target name="create-war" depends="determine-build-version">
         <mkdir dir="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF/lib"/>
         <copy todir="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF/lib">
             <fileset dir="${lib.dir}/runtime"/>
         </copy>
+        
+        <copy todir="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF" file="${basedir}/src/webapp/WEB-INF/web.xml" 
+            filtering="true">
+            <filterset>
+                <filter token="project.version" value="${project.version}"/>
+                <filter token="project.revision" value="${project.revision}"/>
+            </filterset>
+        </copy>
+            
         <war destfile="${viewer.build.dir}/${viewer.war}"
              compress="false"
-             webxml="${basedir}/src/webapp/WEB-INF/web.xml">
+             webxml="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF/web.xml">
             <lib dir="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF/lib"/>
             <classes dir="${viewer.build.outputDir}"/>
             <webinf dir="${basedir}/src/webapp/WEB-INF" excludes="web.xml"/>
@@ -365,7 +374,7 @@
                          totalbranchrate="72"
                          totallinerate="73"
                          haltonfailure="true"/>
-     </target>
+    </target>
 
 
     <!-- ====================================================================== -->
@@ -409,7 +418,7 @@
         <ivy:resolve refresh="true" conf="runtime"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="runtime"/>
     </target>
-    
+
     <target name="ivy-selenium" depends="init:ivy" description="Resolves and retrieves the JARs needed to run the subproject">
         <ivy:resolve refresh="true" conf="selenium"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" conf="selenium"/>
@@ -437,42 +446,74 @@
     <!-- ====================================================================== -->
 
     <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
-            <for param="toDir">
-              <path>
+        <for param="toDir">
+            <path>
                 <dirset dir="${jboss.deploy.directory}/../tmp/deploy" includes="tmp*pa.ear-contents/viewer-exp.war"/>
-              </path>
-              <sequential>
-                  <copy todir="@{toDir}">
-                      <fileset dir="${basedir}/src/webapp">
-                            <include name="*.jsp"/>
-                            <include name="WEB-INF/jsp/*.jsp"/>
-                            <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
-                            <include name="WEB-INF/jsp/common/*.jsp"/>
-                            <include name="WEB-INF/tags/*.tag"/>
-                            <include name="styles/*.css"/>
-                            <include name="scripts/js/*.js"/>
-                            <include name="scripts/ajax/*.js"/>
-                      </fileset>
-                  </copy>
-              </sequential>
-            </for>
-      </target>
-    
+            </path>
+            <sequential>
+                <copy todir="@{toDir}">
+                    <fileset dir="${basedir}/src/webapp">
+                        <include name="*.jsp"/>
+                        <include name="WEB-INF/jsp/*.jsp"/>
+                        <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
+                        <include name="WEB-INF/jsp/common/*.jsp"/>
+                        <include name="WEB-INF/tags/*.tag"/>
+                        <include name="styles/*.css"/>
+                        <include name="scripts/js/*.js"/>
+                        <include name="scripts/ajax/*.js"/>
+                    </fileset>
+                </copy>
+            </sequential>
+        </for>
+    </target>
+
     <!-- ====================================================================== -->
     <!-- Generate Javadoc                                                       -->
     <!-- ====================================================================== -->
-        
+
     <target name="generate-javadoc">
-		<javadoc destdir="${viewer.build.javadoc}"
+        <javadoc destdir="${viewer.build.javadoc}"
 		    sourcepath="${viewer.build.srcDir.0}"
 		    windowtitle="CTRP Viewer Web">
-		    <doctitle><![CDATA[<h1>CTRP Viewer Web Layer</h1>]]></doctitle>
-            <classpath>
-                <path refid="compile.classpath"/>
-                <path refid="common.package.classpath" />
-            </classpath>
-		</javadoc>    
-    </target>
-   
+            <doctitle>
+                <![CDATA[<h1>CTRP Viewer Web Layer</h1>]]></doctitle>
+        <classpath>
+            <path refid="compile.classpath"/>
+            <path refid="common.package.classpath" />
+        </classpath>
+    </javadoc>
+</target>
+
+    <!-- ====================================================================== -->
+    <!-- Determines build version and revision                                  -->
+    <!-- ====================================================================== -->
+    <target name="determine-build-version">
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="compile.classpath"/>
+        <svn>
+            <status path="." revisionproperty="project.revision" urlproperty="project.url" />
+        </svn>
+        <propertyregex property="project.base" input="${project.url}" casesensitive="false" 
+            select="\1" regexp="coppa\/([^/]*)\/"/>
+        <if>
+            <equals arg1="${project.base}" arg2="trunk"/>
+            <then>
+                <property name="project.version" value="${project.base}"/>
+                </then>
+            <elseif>
+                <!-- We're expecting tags to be in the tags/pa-[version]-code format-->
+                <equals arg1="${project.base}" arg2="tags"/>
+                <then>
+                    <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
+                        select="\2" regexp="coppa\/([^/]*)\/pa-([^/]*)-code\/"/>
+                    <property name="project.version" value="${project.base}"/>
+                </then>
+            </elseif>
+            <else>
+                <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
+                        select="\2" regexp="coppa\/([^/]*)\/([^/]*)\/"/>
+                <property name="project.version" value="${project.base}"/>
+            </else>
+       </if>
+   </target>
 
 </project>

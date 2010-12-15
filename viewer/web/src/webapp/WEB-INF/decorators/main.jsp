@@ -8,6 +8,7 @@
     <title><decorator:title default="NCI CTRP Viewer"/></title>    
     <%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
     <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
+    <!-- Version: ${initParam["appTagVersion"]}, revision: ${initParam["appTagRevision"]} -->
     <decorator:head/>
 </head>
 <style type="text/css">

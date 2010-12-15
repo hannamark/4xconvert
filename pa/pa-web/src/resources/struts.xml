@@ -107,10 +107,6 @@
             <interceptor-ref name="paNoDisclaimerDefaultInterceptor"/>
             <result>/WEB-INF/jsp/login.jsp</result>
         </action>
-        <action name="about">
-           <interceptor-ref name="paNoDisclaimerDefaultInterceptor"/>
-          <result>/WEB-INF/jsp/aboutpa.jsp</result>
-        </action>
         <action name="pdq*" class="gov.nih.nci.pa.action.PDQAction" method="{1}">
             <interceptor-ref name="paNoDisclaimerDefaultInterceptor"/>
             <result>/WEB-INF/jsp/pdqExport.jsp</result>

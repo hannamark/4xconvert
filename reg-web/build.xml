@@ -141,7 +141,8 @@
         </fileset>
     </path>
     <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
-
+    <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="macrodef"/>
+    
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
@@ -321,15 +322,23 @@
     <!-- Package target                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="war" depends="copy-tooltips">
+    <target name="war" depends="copy-tooltips, determine-build-version">
         <mkdir dir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib"/>
         <copy todir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib">
             <fileset dir="${runtime.jar.dir}"/>
         </copy>
+        
+        <copy todir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF" file="${software.dir}/reg-web/src/webapp/WEB-INF/web.xml" 
+            filtering="true">
+            <filterset>
+                <filter token="project.version" value="${project.version}"/>
+                <filter token="project.revision" value="${project.revision}"/>
+            </filterset>
+        </copy>
 
         <war destfile="${reg-web.build.dir}/${reg-web.war}"
              compress="false"
-             webxml="${software.dir}/reg-web/src/webapp/WEB-INF/web.xml">
+             webxml="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/web.xml">
             <lib dir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib"/>
             <classes dir="${reg-web.build.outputDir}"/>
             <webinf dir="${software.dir}/reg-web/src/webapp/WEB-INF" excludes="web.xml"/>
@@ -595,4 +604,37 @@
                         </filterchain>
                     </copy>
                 </target>
+    
+    
+    <!-- ====================================================================== -->
+    <!-- Determines build version and revision                                  -->
+    <!-- ====================================================================== -->
+    <target name="determine-build-version">
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="compile.classpath"/>
+        <svn>
+            <status path="." revisionproperty="project.revision" urlproperty="project.url" />
+        </svn>
+        <propertyregex property="project.base" input="${project.url}" casesensitive="false" 
+            select="\1" regexp="coppa\/([^/]*)\/"/>
+        <if>
+            <equals arg1="${project.base}" arg2="trunk"/>
+            <then>
+                <property name="project.version" value="${project.base}"/>
+            </then>
+            <elseif>
+                <!-- We're expecting tags to be in the tags/pa-[version]-code format-->
+                <equals arg1="${project.base}" arg2="tags"/>
+                <then>
+                    <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
+                        select="\2" regexp="coppa\/([^/]*)\/pa-([^/]*)-code\/"/>
+                    <property name="project.version" value="${project.base}"/>
+                </then>
+           </elseif>
+           <else>
+               <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
+                   select="\2" regexp="coppa\/([^/]*)\/([^/]*)\/"/>
+               <property name="project.version" value="${project.base}"/>
+           </else>
+       </if>
+   </target>
 </project>

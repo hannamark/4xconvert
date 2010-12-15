@@ -26,7 +26,6 @@
 		<c:if test="${pageContext.request.remoteUser != null}">	
 			<li><a id="logoutMenuOption" href="logout.action">Logout</a></li>
 		</c:if>	
-		<li><a id="aboutMenuOption" href="about.action">About</a></li>
 	</ul>
 </li>
 

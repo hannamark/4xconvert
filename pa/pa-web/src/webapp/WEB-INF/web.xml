@@ -24,6 +24,14 @@
         <param-name>showErrorStackTraces</param-name>
         <param-value>${showErrorStackTraces}</param-value>
     </context-param>
+    <context-param>
+        <param-name>appTagVersion</param-name>
+        <param-value>@project.version@</param-value>
+    </context-param>
+    <context-param>
+        <param-name>appTagRevision</param-name>
+        <param-value>@project.revision@</param-value>
+    </context-param>
 
     <context-param>
         <param-name>contextConfigLocation</param-name>

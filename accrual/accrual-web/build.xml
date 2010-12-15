@@ -110,7 +110,7 @@
         </fileset>
     </path>
     <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
-
+    <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="macrodef"/>
 
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
@@ -125,7 +125,7 @@
     <!-- Compile target                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="compile"  depends="pre-clean" description="Compiles the subproject">
+    <target name="compile"  depends="pre-clean, determine-build-version" description="Compiles the subproject">
         <fail unless="jboss.deploy.dir" message="Property jboss.deploy.dir not set.  Check build.properties file."/>
         <mkdir dir="${web.build.outputDir}"/>
         <javac destdir="${web.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
@@ -141,8 +141,12 @@
         <copy todir="${web.build.outputDir}">
             <fileset dir="${web.build.resourceDir}"/>
         </copy>
-        <copy todir="${web.build.webappDir}">
+        <copy todir="${web.build.webappDir}" filtering="true">
             <fileset dir="${basedir}/src/webapp"/>
+            <filterset>
+                <filter token="project.version" value="${project.version}"/>
+                <filter token="project.revision" value="${project.revision}"/>
+            </filterset>   
         </copy>
     </target>
 
@@ -459,6 +463,37 @@
             </sequential>
         </for>
     </target>
-
+    
+    <!-- ====================================================================== -->
+    <!-- Determines build version and revision                                  -->
+    <!-- ====================================================================== -->
+    <target name="determine-build-version">
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="compile.classpath"/>
+        <svn>
+            <status path="." revisionproperty="project.revision" urlproperty="project.url" />
+        </svn>
+        <propertyregex property="project.base" input="${project.url}" casesensitive="false" 
+            select="\1" regexp="coppa\/([^/]*)\/"/>
+        <if>
+            <equals arg1="${project.base}" arg2="trunk"/>
+            <then>
+                <property name="project.version" value="${project.base}"/>
+            </then>
+            <elseif>
+                <!-- We're expecting tags to be in the tags/pa-[version]-code format-->
+                <equals arg1="${project.base}" arg2="tags"/>
+                <then>
+                    <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
+                        select="\2" regexp="coppa\/([^/]*)\/pa-([^/]*)-code\/"/>
+                    <property name="project.version" value="${project.base}"/>
+                </then>
+            </elseif>
+            <else>
+                <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
+                    select="\2" regexp="coppa\/([^/]*)\/([^/]*)\/"/>
+                <property name="project.version" value="${project.base}"/>
+            </else>
+        </if>
+    </target>
 </project>
 
