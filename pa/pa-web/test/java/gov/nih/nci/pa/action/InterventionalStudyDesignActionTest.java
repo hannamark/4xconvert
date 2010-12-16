@@ -24,6 +24,7 @@ import org.junit.Test;
  */
 public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
     InterventionalStudyDesignAction action ;
+    private final String TEN_CHARACTERS = "abcdefghij";
     @Before
     public void prepare(){
         action = new InterventionalStudyDesignAction();
@@ -117,6 +118,54 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         assertEquals("outcomeAdd",action.outcomecreate());
     }
     @Test
+    public void testOutcomecreateErrTooLong() {
+        getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
+        ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
+        OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
+        webDTO.setOutcomeMeasure(omDto);
+        webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
+        StringBuilder longString = new StringBuilder();
+        while (longString.length() < InterventionalStudyDesignAction.MAXIMUM_CHAR_OUTCOME_NAME ) {
+            longString.append(TEN_CHARACTERS);
+        }
+        webDTO.getOutcomeMeasure().setName(longString.toString());
+        webDTO.getOutcomeMeasure().setDescription("Description");
+        webDTO.getOutcomeMeasure().setTimeFrame("designConfigurationCode");
+        webDTO.getOutcomeMeasure().setSafetyIndicator(true);
+        action.setWebDTO(webDTO);
+        assertEquals("outcomeAdd",action.outcomecreate());
+
+        webDTO = new ISDesignDetailsWebDTO();
+        omDto = new OutcomeMeasureWebDTO();
+        webDTO.setOutcomeMeasure(omDto);
+        webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
+        webDTO.getOutcomeMeasure().setName("Name");
+        longString = new StringBuilder();
+        while (longString.length() < InterventionalStudyDesignAction.MAXIMUM_CHAR_OUTCOME_DESC ) {
+            longString.append(TEN_CHARACTERS);
+        }
+        webDTO.getOutcomeMeasure().setDescription(longString.toString());
+        webDTO.getOutcomeMeasure().setTimeFrame("designConfigurationCode");
+        webDTO.getOutcomeMeasure().setSafetyIndicator(true);
+        action.setWebDTO(webDTO);
+        assertEquals("outcomeAdd",action.outcomecreate());
+
+        webDTO = new ISDesignDetailsWebDTO();
+        omDto = new OutcomeMeasureWebDTO();
+        webDTO.setOutcomeMeasure(omDto);
+        webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
+        webDTO.getOutcomeMeasure().setName("Name");
+        webDTO.getOutcomeMeasure().setDescription("Description");
+        longString = new StringBuilder();
+        while (longString.length() < InterventionalStudyDesignAction.MAXIMUM_CHAR_OUTCOME_DESC ) {
+            longString.append(TEN_CHARACTERS);
+        }
+        webDTO.getOutcomeMeasure().setTimeFrame(longString.toString());
+        webDTO.getOutcomeMeasure().setSafetyIndicator(true);
+        action.setWebDTO(webDTO);
+        assertEquals("outcomeAdd",action.outcomecreate());
+    }
+    @Test
     public void testOutcomecreate() {
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
@@ -124,6 +173,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setOutcomeMeasure(omDto);
         webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
         webDTO.getOutcomeMeasure().setName("Name");
+        webDTO.getOutcomeMeasure().setDescription("Description");
         webDTO.getOutcomeMeasure().setTimeFrame("designConfigurationCode");
         webDTO.getOutcomeMeasure().setSafetyIndicator(true);
         action.setWebDTO(webDTO);

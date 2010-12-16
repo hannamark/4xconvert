@@ -119,11 +119,18 @@ import com.opensymphony.xwork2.Preparable;
  */
 public class InterventionalStudyDesignAction extends ActionSupport implements Preparable {
 
+    /**
+     * Maximum length for Outcome name and time frame. 
+     */
+    public static final int MAXIMUM_CHAR_OUTCOME_NAME = 254;
+    /**
+     * Maximum length for Outcome description. 
+     */
+    public static final int MAXIMUM_CHAR_OUTCOME_DESC = 600;
     private static final long serialVersionUID = -8139821069851279621L;
     private static final String OUTCOME = "outcome";
     private static final String FALSE = "false";
     private static final String OUTCOMEADD = "outcomeAdd";
-    private static final int MAXIMUM_CHAR_OUTCOME = 254;
     private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
     private String subject;
     private String investigator;
@@ -441,13 +448,17 @@ public class InterventionalStudyDesignAction extends ActionSupport implements Pr
         if (webDTO.getOutcomeMeasure().getPrimaryIndicator() == null) {
             addFieldError("webDTO.primaryIndicator", getText("error.outcome.primary"));
         }
-        addErrors(webDTO.getOutcomeMeasure().getName(), "webDTO.name", "error.outcome.description");
-        if (StringUtils.length(webDTO.getOutcomeMeasure().getName()) > MAXIMUM_CHAR_OUTCOME) {
-          addFieldError("webDTO.name", getText("error.outcome.maximumChar"));
+        addErrors(webDTO.getOutcomeMeasure().getName(), "webDTO.outcomeMeasure.name", "error.outcome.title");
+        if (StringUtils.length(webDTO.getOutcomeMeasure().getName()) > MAXIMUM_CHAR_OUTCOME_NAME) {
+          addFieldError("webDTO.outcomeMeasure.name", getText("error.maximumChar.254"));
         }
-        addErrors(webDTO.getOutcomeMeasure().getTimeFrame(), "webDTO.timeFrame", "error.outcome.timeFrame");
-        if (StringUtils.length(webDTO.getOutcomeMeasure().getTimeFrame()) > MAXIMUM_CHAR_OUTCOME) {
-          addFieldError("webDTO.timeFrame", getText("error.outcome.maximumChar"));
+        if (StringUtils.length(webDTO.getOutcomeMeasure().getDescription()) > MAXIMUM_CHAR_OUTCOME_DESC) {
+          addFieldError("webDTO.outcomeMeasure.description", getText("error.maximumChar.600"));
+        }
+        addErrors(webDTO.getOutcomeMeasure().getTimeFrame(), "webDTO.outcomeMeasure.timeFrame", 
+                "error.outcome.timeFrame");
+        if (StringUtils.length(webDTO.getOutcomeMeasure().getTimeFrame()) > MAXIMUM_CHAR_OUTCOME_NAME) {
+          addFieldError("webDTO.outcomeMeasure.timeFrame", getText("error.maximumChar.254"));
         }
         if (webDTO.getOutcomeMeasure().getSafetyIndicator() == null) {
             addFieldError("webDTO.safetyIndicator", getText("error.outcome.safety"));

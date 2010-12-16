@@ -80,7 +80,7 @@
 				</div>
 				</c:if>
 				<div class="row">
-					<span class="label"><fmt:message key="studyProtocol.documentWorkflowStatus"/></span>
+					<span class="label"><fmt:message key="studyProtocol.documentWorkflowStatus"/>:</span>
 					<span class="value"><c:out value="${sessionScope.trialSummary.documentWorkflowStatusCode.code }"/></span>
 				</div>
 			    <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null}">

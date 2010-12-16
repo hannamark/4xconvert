@@ -915,8 +915,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         List<ArmDTO> arms = armService.getByStudyProtocol(studyProtocolDto.getIdentifier());
         for (ArmDTO armDto : arms) {
             TSRReportArmGroup armGroup = new TSRReportArmGroup();
-            armGroup.setType(getValue(armDto.getName()));
-            armGroup.setLabel(getValue(armDto.getTypeCode()));
+            armGroup.setType(getValue(armDto.getTypeCode()));
+            armGroup.setLabel(getValue(armDto.getName()));
             armGroup.setDescription(getValue(armDto.getDescriptionText()));
             List<PlannedActivityDTO> paList = plannedActivityService.getByArm(armDto.getIdentifier());
             for (PlannedActivityDTO paDto : paList) {
