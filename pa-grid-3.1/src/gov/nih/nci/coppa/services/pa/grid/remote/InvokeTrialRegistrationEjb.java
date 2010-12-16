@@ -301,6 +301,8 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
         StudyResourcingDTO resourcing = summary4StudyResourcingDTO;
         if (resourcing == null) {
             resourcing = new StudyResourcingDTO();
+        }
+        if (resourcing.getTypeCode() == null) {
             Cd typeCode = new Cd();
             typeCode.setCode(categoryCode.getCode());
             resourcing.setTypeCode(typeCode);
