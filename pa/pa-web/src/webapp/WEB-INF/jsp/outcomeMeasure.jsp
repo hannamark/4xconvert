@@ -40,11 +40,15 @@
     <s:hidden name="id" />
 	<s:set name="outcomeList" value="outcomeList" scope="request"/>
 	<display:table name="outcomeList" id="row" class="data" sort="list"  pagesize="200" requestURI="interventionalStudyDesignoutcomeQuery.action" export="false">
-	    <display:column escapeXml="true" titleKey="osdesign.outcome.primary" property="outcomeMeasure.primaryIndicator" sortable="true" headerClass="sortable" />
+	    <display:column escapeXml="true" titleKey="osdesign.outcome.primary" sortable="true" headerClass="sortable">
+            <pa:displayBoolean value="${row.outcomeMeasure.primaryIndicator}"/>
+        </display:column>
 	    <display:column escapeXml="true" titleKey="osdesign.outcome.name" property="outcomeMeasure.name" sortable="true" headerClass="sortable" />
 	    <display:column escapeXml="true" titleKey="osdesign.outcome.timeFrame" property="outcomeMeasure.timeFrame"  sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="osdesign.outcome.description" property="outcomeMeasure.description"  sortable="true" headerClass="sortable" />
-	    <display:column escapeXml="true" titleKey="osdesign.outcome.safety" property="outcomeMeasure.safetyIndicator" sortable="true" headerClass="sortable" />
+	    <display:column escapeXml="true" titleKey="osdesign.outcome.safety" sortable="true" headerClass="sortable">
+            <pa:displayBoolean value="${row.outcomeMeasure.safetyIndicator}"/>
+        </display:column>
 	    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
 	    					|| (sessionScope.role == 'SuAbstractor')}">
 	    <display:column title="Edit" class="action">

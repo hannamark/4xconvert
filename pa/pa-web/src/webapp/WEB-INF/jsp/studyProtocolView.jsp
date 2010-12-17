@@ -101,8 +101,8 @@
             <tr>
                 <td scope="row" class="label"> <label for="ctGovXml"> ClinicalTrials.gov XML required?</label></td>
                 <td class="value">
-                <c:out value="${sessionScope.trialSummary.ctgovXmlRequiredIndicator }"/>
-            </td>
+                    <pa:displayBoolean value="${sessionScope.trialSummary.ctgovXmlRequiredIndicator}"/>
+                </td>
             </tr>
             </c:if>
             <tr>
@@ -112,7 +112,7 @@
                 </label>
             </td>
             <td class="value">
-                <c:out value="${sessionScope.trialSummary.proprietaryTrial }"/>
+                <pa:displayBoolean value="${sessionScope.trialSummary.proprietaryTrial}"/>
             </td>
             </tr>
             <tr>
