@@ -97,7 +97,6 @@ import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
-import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
@@ -139,15 +138,10 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
     private HttpServletResponse servletResponse;
     private String trialAction = "submit";
     private static String sessionTrialDTO = "trialDTO";
-    /**
-     * Adding new members for PO integration and additional Use cases.
-     */
-    // Collection for holding the ideInd information
     private TrialDTO trialDTO;
     private final TrialUtil  trialUtil = new TrialUtil();
     private String sum4FundingCatCode;
 
-    
     /**
      *
      * @return res
@@ -266,8 +260,9 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
 
     /**
      * validate the submit trial form elements.
+     * @throws IOException on document errors
      */
-    private void validateForm() {
+    private void validateForm() throws IOException {
         TrialValidator validator = new TrialValidator();
         Map<String, String> err = new HashMap<String, String>();
         err = validator.validateTrialDTO(trialDTO);
@@ -367,7 +362,6 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         try {
             clearErrorsAndMessages();
             validateForm();
-            List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
             if (hasFieldErrors()) {
                 ServletActionContext.getRequest().setAttribute("failureMessage",
                                                                "The form has errors and could not be submitted, "
@@ -376,11 +370,8 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
                 trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
             }
-
-            populateList(docDTOList);
-
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
-            trialDTO.setDocDtos(docDTOList);
+            trialDTO.setDocDtos(getTrialDocuments());
             // add the IndIde,FundingList
             List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
                 .getAttribute(Constants.INDIDE_LIST);

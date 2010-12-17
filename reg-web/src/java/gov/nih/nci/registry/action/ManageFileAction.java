@@ -86,6 +86,7 @@ import gov.nih.nci.registry.util.TrialUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -133,6 +134,8 @@ public class ManageFileAction extends ActionSupport {
     private static final String PROTOCOLHIGHDOC = DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getShortName();
     private static final String OTHERDOC = DocumentTypeCode.OTHER.getShortName();
 
+    private final TrialUtil trialUtils = new TrialUtil();
+
     /**
      * Delete document.
      *
@@ -160,150 +163,141 @@ public class ManageFileAction extends ActionSupport {
 
     /**
      * validate the submit trial form elements.
+     * @throws IOException on document error
      */
-    public void validateDocuments() {
+    public void validateDocuments() throws IOException {
         TrialValidator validator = new TrialValidator();
         HttpSession session = ServletActionContext.getRequest().getSession();
-        Map<String, String> err = new HashMap<String, String>();
+        Map<String, String> documentValidationErrors = new HashMap<String, String>();
 
-        checkProtocolDoc(validator, session, err);
-        checkIrbApprovalDoc(validator, session, err);
-        if (session.getAttribute(PARTICIPATINGSITESDOC) == null) {
-            err.putAll(validator.validateDocument(participatingSitesFileName, participatingSites,
-                                                  "trialDTO.participatingSitesFileName", ""));
-        }
-        if (session.getAttribute(INFORMEDCONSENTDOC) == null) {
-            err.putAll(validator.validateDocument(informedConsentDocumentFileName, informedConsentDocument,
-                                                  "trialDTO.informedConsentDocumentFileName", ""));
-        }
-        if (session.getAttribute(OTHERDOC) == null) {
-            err.putAll(validator.validateDocument(otherDocumentFileName, otherDocument,
-                                                  "trialDTO.otherDocumentFileName", ""));
-        }
-        if (session.getAttribute(PROTOCOLHIGHDOC) == null) {
-            err.putAll(validator.validateDocument(protocolHighlightDocumentFileName, protocolHighlightDocument,
-                                                  "trialDTO.protocolHighlightDocumentFileName", ""));
-        }
-        checkChangeMemoDoc(validator, session, err);
-        addErrors(err);
+        validateProtocolDoc(validator, session, documentValidationErrors);
+        validateIrbApprovalDoc(validator, session, documentValidationErrors);
+        validateParticipatingSiteDoc(validator, session, documentValidationErrors);
+        validateInformedConsentDoc(validator, session, documentValidationErrors);
+        validateOtherDoc(validator, session, documentValidationErrors);
+        validateProtocolHighlightDoc(validator, session, documentValidationErrors);
+        validateChangeMemoDoc(validator, session, documentValidationErrors);
+        addErrors(documentValidationErrors);
     }
 
-    private void checkChangeMemoDoc(TrialValidator validator, HttpSession session, Map<String, String> err) {
-        if (session.getAttribute(CHANGEMEMODOC) == null && "amendTrial".equals(pageFrom)) {
-            err.putAll(validator.validateDocument(changeMemoDocFileName, changeMemoDoc,
-                                                  "trialDTO.changeMemoDocFileName", "error.submit.changeMemo"));
+    private void validateProtocolDoc(TrialValidator validator, HttpSession session, Map<String, String> err)
+        throws IOException {
+        Map<String, String> errors = new HashMap<String, String>();
+        List<String> fromPages = Arrays.asList("amendTrial", "submitTrial");
+        if (session.getAttribute(PROTOCOLDOC) == null && fromPages.contains(pageFrom)) {
+            errors = validator.validateDocument(protocolDocFileName, protocolDoc,
+                    "trialDTO.protocolDocFileName", "error.submit.protocolDocument");
+            err.putAll(errors);
         }
-    }
 
-    private void checkProtocolDoc(TrialValidator validator, HttpSession session, Map<String, String> err) {
-        if (session.getAttribute(PROTOCOLDOC) == null && "amendTrial".equals(pageFrom)
-                || session.getAttribute(PROTOCOLDOC) == null && "submitTrial".equals(pageFrom)) {
-            err.putAll(validator.validateDocument(protocolDocFileName, protocolDoc, "trialDTO.protocolDocFileName",
-                                                  "error.submit.protocolDocument"));
+        if (errors.isEmpty() && StringUtils.isNotEmpty(getProtocolDocFileName())
+                && session.getAttribute(PROTOCOLDOC) == null) {
+            TrialDocumentWebDTO document = trialUtils.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(),
+                    protocolDocFileName, protocolDoc);
+            session.setAttribute(PROTOCOLHIGHDOC, document);
         }
     }
 
-    private void checkIrbApprovalDoc(TrialValidator validator, HttpSession session, Map<String, String> err) {
-        if (session.getAttribute(IRBAPPROVALDOC) == null && "amendTrial".equals(pageFrom)
-                || session.getAttribute(IRBAPPROVALDOC) == null && "submitTrial".equals(pageFrom)) {
-            err.putAll(validator.validateDocument(irbApprovalFileName, irbApproval, "trialDTO.irbApprovalFileName",
-                                                  "error.submit.irbApproval"));
+    private void validateIrbApprovalDoc(TrialValidator validator, HttpSession session, Map<String, String> err)
+        throws IOException {
+        Map<String, String> errors = new HashMap<String, String>();
+        List<String> fromPages = Arrays.asList("amendTrial", "submitTrial", "updateTrial");
+        if (session.getAttribute(IRBAPPROVALDOC) == null && fromPages.contains(pageFrom)) {
+            errors = validator.validateDocument(irbApprovalFileName, irbApproval, "trialDTO.irbApprovalFileName",
+            "error.submit.irbApproval");
+            err.putAll(errors);
         }
-    }
 
-    /**
-     * Adds the doc dto to list.
-     *
-     * @return the list< trial document web dt o>
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    public List<TrialDocumentWebDTO> addDocDTOToList() throws IOException {
-        TrialUtil util = new TrialUtil();
-        List<TrialDocumentWebDTO> docDTOList = new ArrayList<TrialDocumentWebDTO>();
-        HttpSession session = ServletActionContext.getRequest().getSession();
-        getProtocolDoc(util, docDTOList, session);
-        getIrbApprovalDoc(util, docDTOList, session);
-        getInformedConsentDoc(util, docDTOList, session);
-        getParticipatingSitesDoc(util, docDTOList, session);
-        getOtherDoc(util, docDTOList, session);
-        getChangeMemoDoc(util, docDTOList, session);
-        getProtocolHighlightDoc(util, docDTOList, session);
-        return docDTOList;
-    }
-
-    private void getProtocolHighlightDoc(TrialUtil util, List<TrialDocumentWebDTO> docDTOList, HttpSession session)
-            throws IOException {
-        if (StringUtils.isNotEmpty(protocolHighlightDocumentFileName)
-                && session.getAttribute(PROTOCOLHIGHDOC) == null) {
+        if (errors.isEmpty() && StringUtils.isNotEmpty(getIrbApprovalFileName())
+                && session.getAttribute(IRBAPPROVALDOC) == null) {
             TrialDocumentWebDTO webDto =
-                util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getCode(),
-                                                                   protocolHighlightDocumentFileName,
-                                                                   protocolHighlightDocument);
-            docDTOList.add(webDto);
-            session.setAttribute(PROTOCOLHIGHDOC, webDto);
-        }
-    }
-
-    private void getChangeMemoDoc(TrialUtil util, List<TrialDocumentWebDTO> docDTOList, HttpSession session)
-            throws IOException {
-        if (StringUtils.isNotEmpty(changeMemoDocFileName) && session.getAttribute(CHANGEMEMODOC) == null) {
-            TrialDocumentWebDTO webDto = util.convertToDocumentDTO(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode(),
-                                                                   changeMemoDocFileName, changeMemoDoc);
-            docDTOList.add(webDto);
-            session.setAttribute(CHANGEMEMODOC, webDto);
-        }
-    }
-
-    private void getOtherDoc(TrialUtil util, List<TrialDocumentWebDTO> docDTOList, HttpSession session)
-            throws IOException {
-        if (StringUtils.isNotEmpty(otherDocumentFileName) && session.getAttribute(OTHERDOC) == null) {
-            TrialDocumentWebDTO webDto = util.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(),
-                                                                   otherDocumentFileName, otherDocument);
-            docDTOList.add(webDto);
-            session.setAttribute(OTHERDOC, webDto);
-        }
-    }
-
-    private void getParticipatingSitesDoc(TrialUtil util, List<TrialDocumentWebDTO> docDTOList, HttpSession session)
-            throws IOException {
-        if (StringUtils.isNotEmpty(participatingSitesFileName) && session.getAttribute(PARTICIPATINGSITESDOC) == null) {
-            TrialDocumentWebDTO webDto = util.convertToDocumentDTO(DocumentTypeCode.PARTICIPATING_SITES.getCode(),
-                                                                   participatingSitesFileName, participatingSites);
-            docDTOList.add(webDto);
-            session.setAttribute(PARTICIPATINGSITESDOC, webDto);
-        }
-    }
-
-    private void getInformedConsentDoc(TrialUtil util, List<TrialDocumentWebDTO> docDTOList, HttpSession session)
-            throws IOException {
-        if (StringUtils.isNotEmpty(informedConsentDocumentFileName)
-                && session.getAttribute(INFORMEDCONSENTDOC) == null) {
-            TrialDocumentWebDTO webDto = util.convertToDocumentDTO(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getCode(),
-                                                                   informedConsentDocumentFileName,
-                                                                   informedConsentDocument);
-            docDTOList.add(webDto);
-            session.setAttribute(INFORMEDCONSENTDOC, webDto);
-        }
-    }
-
-    private void getIrbApprovalDoc(TrialUtil util, List<TrialDocumentWebDTO> docDTOList, HttpSession session)
-            throws IOException {
-        if (StringUtils.isNotEmpty(irbApprovalFileName) && session.getAttribute(IRBAPPROVALDOC) == null) {
-            TrialDocumentWebDTO webDto = util.convertToDocumentDTO(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode(),
-                                                                   irbApprovalFileName, irbApproval);
-            docDTOList.add(webDto);
+                trialUtils.convertToDocumentDTO(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode(), irbApprovalFileName,
+                        irbApproval);
             session.setAttribute(IRBAPPROVALDOC, webDto);
         }
     }
 
-    private void getProtocolDoc(TrialUtil util, List<TrialDocumentWebDTO> docDTOList, HttpSession session)
-            throws IOException {
-        if (StringUtils.isNotEmpty(protocolDocFileName) && session.getAttribute(PROTOCOLDOC) == null) {
-            TrialDocumentWebDTO webDto = util.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(),
-                                                                   protocolDocFileName, protocolDoc);
-            docDTOList.add(webDto);
-            session.setAttribute(PROTOCOLDOC, webDto);
+    private void validateProtocolHighlightDoc(TrialValidator validator, HttpSession session,
+            Map<String, String> documentValidationErrors) throws IOException {
+        Map<String, String> errors = new HashMap<String, String>();
+        if (session.getAttribute(PROTOCOLHIGHDOC) == null) {
+            errors = validator.validateDocument(protocolHighlightDocumentFileName, protocolHighlightDocument,
+                    "trialDTO.protocolHighlightDocumentFileName", "");
+            documentValidationErrors.putAll(errors);
+        }
+        if (errors.isEmpty() && StringUtils.isNotEmpty(getProtocolHighlightDocumentFileName())
+                && session.getAttribute(PROTOCOLHIGHDOC) == null) {
+            TrialDocumentWebDTO webDto =
+                trialUtils.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getCode(),
+                        protocolHighlightDocumentFileName, protocolHighlightDocument);
+            session.setAttribute(PROTOCOLHIGHDOC, webDto);
+        }
+    }
+
+    private void validateOtherDoc(TrialValidator validator, HttpSession session,
+            Map<String, String> documentValidationErrors) throws IOException {
+        Map<String, String> errors = new HashMap<String, String>();
+        if (session.getAttribute(OTHERDOC) == null) {
+            errors = validator.validateDocument(otherDocumentFileName, otherDocument,
+                    "trialDTO.otherDocumentFileName", "");
+            documentValidationErrors.putAll(errors);
+        }
+        if (errors.isEmpty() && StringUtils.isNotEmpty(getOtherDocumentFileName())
+                && session.getAttribute(OTHERDOC) == null) {
+            TrialDocumentWebDTO webDto = trialUtils.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(),
+                    otherDocumentFileName, otherDocument);
+            session.setAttribute(OTHERDOC, webDto);
+        }
+    }
+
+    private void validateInformedConsentDoc(TrialValidator validator, HttpSession session,
+            Map<String, String> documentValidationErrors) throws IOException {
+        Map<String, String> errors = new HashMap<String, String>();
+        if (session.getAttribute(INFORMEDCONSENTDOC) == null) {
+            errors = validator.validateDocument(informedConsentDocumentFileName, informedConsentDocument,
+                    "trialDTO.informedConsentDocumentFileName", "");
+            documentValidationErrors.putAll(errors);
+        }
+        if (errors.isEmpty() && StringUtils.isNotEmpty(getInformedConsentDocumentFileName())
+                && session.getAttribute(INFORMEDCONSENTDOC) == null) {
+            TrialDocumentWebDTO webDto =
+                trialUtils.convertToDocumentDTO(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getCode(),
+                    informedConsentDocumentFileName, informedConsentDocument);
+            session.setAttribute(INFORMEDCONSENTDOC, webDto);
+        }
+    }
+
+    private void validateParticipatingSiteDoc(TrialValidator validator, HttpSession session,
+            Map<String, String> documentValidationErrors) throws IOException {
+        Map<String, String> errors = new HashMap<String, String>();
+        if (session.getAttribute(PARTICIPATINGSITESDOC) == null) {
+            errors = validator.validateDocument(participatingSitesFileName, participatingSites,
+                    "trialDTO.participatingSitesFileName", "");
+            documentValidationErrors.putAll(errors);
+        }
+
+        if (errors.isEmpty() && StringUtils.isNotEmpty(getParticipatingSitesFileName())
+                && session.getAttribute(PARTICIPATINGSITESDOC) == null) {
+            TrialDocumentWebDTO webDto = trialUtils.convertToDocumentDTO(DocumentTypeCode.PARTICIPATING_SITES.getCode(),
+                    participatingSitesFileName, participatingSites);
+            session.setAttribute(PARTICIPATINGSITESDOC, webDto);
+        }
+    }
+
+    private void validateChangeMemoDoc(TrialValidator validator, HttpSession session, Map<String, String> err)
+        throws IOException {
+        Map<String, String> errors = new HashMap<String, String>();
+        if (session.getAttribute(CHANGEMEMODOC) == null && "amendTrial".equals(pageFrom)) {
+            errors = validator.validateDocument(changeMemoDocFileName, changeMemoDoc,
+                    "trialDTO.changeMemoDocFileName", "error.submit.changeMemo");
+            err.putAll(errors);
+        }
+        if (errors.isEmpty() && StringUtils.isNotEmpty(getChangeMemoDocFileName())
+                && session.getAttribute(CHANGEMEMODOC) == null) {
+            TrialDocumentWebDTO webDto =
+                trialUtils.convertToDocumentDTO(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode(), changeMemoDocFileName,
+                        changeMemoDoc);
+            session.setAttribute(CHANGEMEMODOC, webDto);
         }
     }
 
@@ -324,12 +318,10 @@ public class ManageFileAction extends ActionSupport {
     }
 
     /**
-     * Populate the documents List.
-     *
-     * @param docDTOList the doc dto list
-     *
+     * Gets all uploaded trial documents.
+     * @return a list of all uploaded trial documents
      */
-    public void populateList(List<TrialDocumentWebDTO> docDTOList) {
+    public List<TrialDocumentWebDTO> getTrialDocuments() {
         final HttpSession session = ServletActionContext.getRequest().getSession();
         TrialDocumentWebDTO protocolDocument = (TrialDocumentWebDTO) session.getAttribute(PROTOCOLDOC);
         TrialDocumentWebDTO irbApprovalDocument = (TrialDocumentWebDTO) session.getAttribute(IRBAPPROVALDOC);
@@ -340,27 +332,30 @@ public class ManageFileAction extends ActionSupport {
         TrialDocumentWebDTO changeMemoDocument = (TrialDocumentWebDTO) session.getAttribute(CHANGEMEMODOC);
         TrialDocumentWebDTO protocolHighlightDoc = (TrialDocumentWebDTO) session.getAttribute(PROTOCOLHIGHDOC);
 
-        docDTOList.add(protocolDocument);
-        docDTOList.add(irbApprovalDocument);
-        docDTOList.add(informedConsentDoc);
-        docDTOList.add(participatingSitesDocument);
-        docDTOList.add(otherDoc);
-        docDTOList.add(changeMemoDocument);
-        docDTOList.add(protocolHighlightDoc);
+        List<TrialDocumentWebDTO> documents = new ArrayList<TrialDocumentWebDTO>();
+        documents.add(protocolDocument);
+        documents.add(irbApprovalDocument);
+        documents.add(informedConsentDoc);
+        documents.add(participatingSitesDocument);
+        documents.add(otherDoc);
+        documents.add(changeMemoDocument);
+        documents.add(protocolHighlightDoc);
 
-        Set<TrialDocumentWebDTO> set = new HashSet<TrialDocumentWebDTO>(docDTOList);
+        Set<TrialDocumentWebDTO> set = new HashSet<TrialDocumentWebDTO>(documents);
         set.remove(null);
-        docDTOList.clear();
-        docDTOList.addAll(set);
+        documents.clear();
+        documents.addAll(set);
+        return documents;
     }
 
     /**
-     * Check other doc.
+     * Validate other document for updates.
      * @param session the session
      * @param validator the validator
+     * @throws IOException on document conversion error
      */
-    public void checkOtherDoc(HttpSession session, TrialValidator validator) {
-        Map<String, String> errMap;
+    public void validateOtherDocUpdate(HttpSession session, TrialValidator validator) throws IOException {
+        Map<String, String> errMap = new HashMap<String, String>();
         if (StringUtils.isNotEmpty(otherDocumentFileName)
                 && session.getAttribute(DocumentTypeCode.OTHER.getShortName()) == null) {
             errMap = new HashMap<String, String>();
@@ -368,20 +363,34 @@ public class ManageFileAction extends ActionSupport {
                                                 "");
             addErrors(errMap);
         }
+        if (errMap.isEmpty() && StringUtils.isNotEmpty(getOtherDocumentFileName())
+                && session.getAttribute(OTHERDOC) == null) {
+            TrialDocumentWebDTO webDto = trialUtils.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(),
+                    otherDocumentFileName, otherDocument);
+            session.setAttribute(OTHERDOC, webDto);
+        }
     }
 
     /**
-     * Check protocol doc.
+     * Validate protocol document for updates.
      * @param session the session
      * @param validator the validator
+     * @throws IOException on document conversion error
      */
-    public void checkProtocolDoc(HttpSession session, TrialValidator validator) {
-        Map<String, String> errMap;
+    public void validateProtocolDocUpdate(HttpSession session, TrialValidator validator) throws IOException {
+        Map<String, String> errMap = new HashMap<String, String>();
         if (StringUtils.isNotEmpty(protocolDocFileName)
                 && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
             errMap = new HashMap<String, String>();
             errMap = validator.validateDocument(protocolDocFileName, protocolDoc, "trialDTO.protocolDocFileName", "");
             addErrors(errMap);
+        }
+
+        if (errMap.isEmpty() && StringUtils.isNotEmpty(getProtocolDocFileName())
+                && session.getAttribute(PROTOCOLDOC) == null) {
+            TrialDocumentWebDTO document = trialUtils.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(),
+                    protocolDocFileName, protocolDoc);
+            session.setAttribute(PROTOCOLHIGHDOC, document);
         }
     }
 

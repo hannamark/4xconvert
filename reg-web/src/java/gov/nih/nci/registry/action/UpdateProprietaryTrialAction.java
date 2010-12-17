@@ -125,8 +125,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
  * @author Kalpana Guthikonda
  * @since May 18 2010
  */
-public class UpdateProprietaryTrialAction extends ManageFileAction implements
-        ServletResponseAware {
+public class UpdateProprietaryTrialAction extends ManageFileAction implements ServletResponseAware {
 
     private static final Logger LOG = Logger.getLogger(UpdateProprietaryTrialAction.class);
     private static final long serialVersionUID = 1L;
@@ -167,9 +166,8 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
      */
     public String review() {
         clearErrorsAndMessages();
-        enforceBusinessRules();
         try {
-            List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
+            enforceBusinessRules();
             if (hasFieldErrors()) {
                 ServletActionContext.getRequest().setAttribute(
                         "failureMessage" , "The form has errors and could not be submitted, "
@@ -179,9 +177,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
             if (hasActionErrors()) {
                 return ERROR;
             }
-            populateList(docDTOList);
-
-            trialDTO.setDocDtos(docDTOList);
+            trialDTO.setDocDtos(getTrialDocuments());
         } catch (IOException e) {
             addActionError(e.getMessage());
             return ERROR;
@@ -265,18 +261,18 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
         setTrialAction("update");
         return "redirect_to_search";
     }
+
     /**
      * Enforce business rules.
      */
-    private void enforceBusinessRules() {
+    private void enforceBusinessRules() throws IOException {
         HttpSession session = ServletActionContext.getRequest().getSession();
         if (StringUtils.isEmpty(trialDTO.getOfficialTitle())) {
             addFieldError("trialDTO.officialTitle", getText("error.submit.trialTitle"));
         } else if (trialDTO.getOfficialTitle().length() > TRIAL_TITLE_MAX_LENGTH) {
             addFieldError("trialDTO.officialTitle", getText("error.submit.trialTitleLength"));
         }
-        if (StringUtils.isEmpty(trialDTO.getNctIdentifier())
-                && StringUtils.isEmpty(trialDTO.getPhaseCode())
+        if (StringUtils.isEmpty(trialDTO.getNctIdentifier()) && StringUtils.isEmpty(trialDTO.getPhaseCode())
                 && StringUtils.isEmpty(trialDTO.getPrimaryPurposeCode())) {
             //if the nct Number is not present throw error phase code and primary purpose codes
             addFieldError("trialDTO.phaseCode", getText("error.submit.trialPhase"));
@@ -284,9 +280,10 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements
         }
         checkSummary4Funding();
         checkNctAndDoc(session);
+        validateDocuments();
         TrialValidator validator = new TrialValidator();
-        checkProtocolDoc(session, validator);
-        checkOtherDoc(session, validator);
+        validateProtocolDocUpdate(session, validator);
+        validateOtherDocUpdate(session, validator);
         checkSubmittingOrgRules();
     }
 

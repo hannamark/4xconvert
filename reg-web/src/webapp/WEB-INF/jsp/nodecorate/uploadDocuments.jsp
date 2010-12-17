@@ -160,7 +160,12 @@
 	             	<input type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.irbApprovalDoc.typeCode}'/>')"/>
 	             </s:if>
 	             <s:else>
-                 <s:file name="irbApproval" id="irbApproval" cssStyle="width:270px"/>
+                    <s:file name="irbApproval" id="irbApproval" cssStyle="width:270px"/>
+                    <span class="formErrorMsg">
+                        <s:fielderror>
+                            <s:param>trialDTO.irbApprovalFileName</s:param>
+                       </s:fielderror>
+                    </span>
                  </s:else>
              </td>
          </tr>

@@ -22,30 +22,19 @@ import java.util.Date;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpSession;
-
-
-
 
 /**
  * @author Vrushali
  *
  */
 public class AmendmentTrialActionTest extends AbstractRegWebTest {
-
     private AmendmentTrialAction trialAction;
     private static final String FILE_NAME = "ProtocolDoc.doc";
-    //private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
-    @Before
-    public void setup(){
-        //HibernateUtil.testHelper = testHelper;
-        //Session session = HibernateUtil.getCurrentSession();
-        //session.clear();
-    }
+
     @Test
     public void testView() throws Exception {
         trialAction = new AmendmentTrialAction();
@@ -54,6 +43,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         //primeData();
         //assertEquals("success",trialAction.view());
     }
+
     @Test
     public void testViewWithIdInRequest() throws Exception {
         trialAction = new AmendmentTrialAction();
@@ -75,6 +65,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         ServletActionContext.setRequest(request);
         assertEquals("edit", trialAction.edit());
     }
+
     @Test
     public void testReview() throws Exception{
         trialAction = new AmendmentTrialAction();
@@ -83,6 +74,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         File f = new File(fileUrl.toURI());
 
         trialAction.setProtocolDoc(f);
+
         trialAction.setIrbApproval(f);
         trialAction.setChangeMemoDoc(f);
 

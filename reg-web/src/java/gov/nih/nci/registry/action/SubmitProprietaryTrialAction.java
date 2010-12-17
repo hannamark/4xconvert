@@ -30,7 +30,6 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,24 +110,16 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
     public String review() {
         clearErrorsAndMessages();
         enforceBusinessRules();
-        try {
-            List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
-            if (hasFieldErrors()) {
-                ServletActionContext.getRequest().setAttribute(
-                        "failureMessage" , "The form has errors and could not be submitted, "
-                        + "please check the fields highlighted below");
-                return ERROR;
-            }
-            if (hasActionErrors()) {
-                return ERROR;
-            }
-            populateList(docDTOList);
-
-            trialDTO.setDocDtos(docDTOList);
-        } catch (IOException e) {
-            addActionError(e.getMessage());
+        if (hasFieldErrors()) {
+            ServletActionContext.getRequest().setAttribute(
+                    "failureMessage" , "The form has errors and could not be submitted, "
+                    + "please check the fields highlighted below");
             return ERROR;
         }
+        if (hasActionErrors()) {
+            return ERROR;
+        }
+        trialDTO.setDocDtos(getTrialDocuments());
 
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.INDIDE_LIST);
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.GRANT_LIST);

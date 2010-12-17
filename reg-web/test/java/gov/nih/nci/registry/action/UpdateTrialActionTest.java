@@ -223,6 +223,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.getTrialDTO().setLst("");
         action.getTrialDTO().setSelectedRegAuth("");
         assertEquals("error", action.reviewUpdate());
+
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         session.setAttribute(Constants.COUNTRY_LIST, new ArrayList<CountryRegAuthorityDTO>());
@@ -243,6 +244,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("review", action.reviewUpdate());
+
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         session.setAttribute(Constants.COUNTRY_LIST, new ArrayList<CountryRegAuthorityDTO>());
@@ -250,7 +252,6 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         session.setAttribute(Constants.GRANT_ADD_LIST, new ArrayList<TrialFundingWebDTO>());
         session.setAttribute(Constants.INDIDE_ADD_LIST, new ArrayList<TrialIndIdeDTO>());
         request.setSession(session);
-
         action.getTrialDTO().setSelectedRegAuth("2");
         action.getTrialDTO().setLst("3");
         action.setIrbApprovalFileName("ProtocolDoc.doc");

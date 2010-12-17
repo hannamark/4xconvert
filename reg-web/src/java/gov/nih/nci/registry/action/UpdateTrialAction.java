@@ -27,7 +27,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
-import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
@@ -465,7 +464,6 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
         try {
             clearErrorsAndMessages();
             enforceBusinessRules();
-            List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
             if (hasFieldErrors()) {
                 ServletActionContext.getRequest().setAttribute(
                         "failureMessage" , "The form has errors and could not be submitted, "
@@ -481,8 +479,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
                 trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
             }
-            populateList(docDTOList);
-            trialDTO.setDocDtos(docDTOList);
+            trialDTO.setDocDtos(getTrialDocuments());
             //add the IndIde,FundingList
             List<TrialIndIdeDTO> indAddList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
            .getSession().getAttribute(Constants.INDIDE_ADD_LIST);
@@ -677,8 +674,9 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
      * validate the submit trial form elements.
      *
      * @throws PAException the PA exception
+     * @throws IOException on document error
      */
-    private void enforceBusinessRules() throws PAException {
+    private void enforceBusinessRules() throws PAException, IOException {
         TrialValidator validator = new TrialValidator();
         Map<String, String> err = new HashMap<String, String>();
         err = validator.validateTrialDTO(trialDTO);
@@ -688,6 +686,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
         validateParticipatingSite();
         validateGrantsInfo();
         validateIndIdeInfo();
+        validateDocuments();
     }
 
     /**

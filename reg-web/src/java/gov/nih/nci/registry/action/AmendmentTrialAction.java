@@ -96,7 +96,6 @@ import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
-import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
@@ -211,14 +210,12 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         try {
             clearErrorsAndMessages();
             enforceBusinessRules();
-            List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
             String errorReturn = handleErrors();
             if (errorReturn != null) {
                 return errorReturn;
             }
-            populateList(docDTOList);
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
-            trialDTO.setDocDtos(docDTOList);
+            trialDTO.setDocDtos(getTrialDocuments());
             // get the document and put in list add the IndIde,FundingList
             populateIndIdes();
             populateGrantList();
@@ -390,8 +387,9 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
      * validate the submit trial form elements.
      *
      * @throws PAException
+     * @throws IOException
      */
-    private void enforceBusinessRules() throws PAException {
+    private void enforceBusinessRules() throws PAException, IOException {
         if (StringUtils.isBlank(trialDTO.getAmendmentDate())) {
             addFieldError("trialDTO.amendmentDate", getText("error.submit.amendmentDate"));
         }
