@@ -162,7 +162,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         session = new MockHttpSession();
         session.setAttribute("protocolId", "1");
         request.setSession(session);
-        request.setupAddParameter("trialAction", "submit");
+        action.setTrialAction("submit");
         ServletActionContext.setRequest(request);
         // primeData();
         try {
@@ -173,7 +173,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         session.setAttribute("protocolId", "1");
-        request.setupAddParameter("trialAction", "amend");
+        action.setTrialAction("amend");
         request.setSession(session);
         ServletActionContext.setRequest(request);
         try {
@@ -184,7 +184,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         session.setAttribute("protocolId", "1");
-        request.setupAddParameter("trialAction", "");
+        action.setTrialAction("");
         request.setSession(session);
         ServletActionContext.setRequest(request);
         try {
@@ -196,7 +196,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         session.setAttribute("protocolId", "1");
-        request.setupAddParameter("trialAction", "view");
+        action.setTrialAction("view");
         request.setSession(session);
         ServletActionContext.setRequest(request);
         try {
@@ -209,11 +209,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     @Test
     public void testView() {
         action = new SearchTrialAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
-        request.setupAddParameter("studyProtocolId", "1");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
+        action.setStudyProtocolId(1L);
         try {
             action.view();
         } catch (Exception e) {
@@ -224,12 +220,8 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     @Test
     public void testViewUsercreated() {
         action = new SearchTrialAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
-        request.setupAddParameter("studyProtocolId", "1");
-        request.setupAddParameter("usercreated", "1");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
+        action.setStudyProtocolId(1L);
+        action.setUsercreated("1");
         try {
             action.view();
         } catch (Exception e) {
@@ -242,7 +234,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         action = new SearchTrialAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
-        request.setupAddParameter("identifier", "1");
+        action.setIdentifier(1L);
         session.setAttribute("spidfromviewresults", IiConverter.convertToIi("1"));
         request.setSession(session);
         ServletActionContext.setRequest(request);
@@ -257,22 +249,14 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setOfficialTitle("officialTitle");
         action.setCriteria(criteria);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
-        request.setupAddParameter("usercreated", "1");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
+        action.setUsercreated("1");
         assertEquals("success", action.getMyPartiallySavedTrial());
 
         action = new SearchTrialAction();
         criteria = new SearchProtocolCriteria();
         criteria.setOfficialTitle("ThrowException");
         action.setCriteria(criteria);
-        request = new MockHttpServletRequest();
-        session = new MockHttpSession();
-        request.setupAddParameter("usercreated", "1");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
+        action.setUsercreated("1");
         assertEquals("success", action.getMyPartiallySavedTrial());
         assertNotNull(action.getActionErrors());
     }
@@ -280,18 +264,10 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     @Test
     public void testPartiallySubmittedView() {
         action = new SearchTrialAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
-        request.setupAddParameter("studyProtocolId", "1");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
+        action.setStudyProtocolId(1L);
         assertEquals("partialView", action.partiallySubmittedView());
 
         action = new SearchTrialAction();
-        request = new MockHttpServletRequest();
-        session = new MockHttpSession();
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
         assertEquals("error", action.partiallySubmittedView());
     }
 

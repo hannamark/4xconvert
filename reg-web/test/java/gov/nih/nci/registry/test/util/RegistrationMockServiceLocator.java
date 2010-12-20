@@ -50,7 +50,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
@@ -110,7 +110,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final OrganizationalContactCorrelationServiceRemote orgContactCorrelationService = new MockOrganizationalContactCorrelationService();
     private final StudyContactServiceLocal studyContactService = new MockStudyContactService();
     private final StudySiteContactServiceLocal studySiteContactService = new MockStudySiteContactService();
-    private final RegistryUserServiceRemote registryUserService = new MockRegistryUserService();
+    private final RegistryUserServiceLocal registryUserService = new MockRegistryUserService();
     private final RegulatoryInformationServiceRemote regulatoryInfoService = new MockRegulatoryInformationService();
     private final StudyRegulatoryAuthorityServiceLocal studyRegulatorAuthService = new MockStudyRegulatoryAuthorityService();
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
@@ -330,7 +330,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    public RegistryUserServiceRemote getRegisterUserService() {
+    public RegistryUserServiceLocal getRegistryUserService() {
         return registryUserService;
     }
 

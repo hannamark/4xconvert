@@ -133,7 +133,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceBean;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
@@ -204,7 +204,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final StudyMilestoneServicelocal studyMilestoneService = new MockStudyMilestoneService();
     private final StudyResourcingServiceLocal studyResourcingService = new MockStudyResourcingService();
     private final RegulatoryInformationServiceRemote regulatoryInformationService = new MockRegulatoryInformationService();
-    private final RegistryUserServiceRemote registryUserService = new MockRegistryUserService();
+    private final RegistryUserServiceLocal registryUserService = new MockRegistryUserService();
     private final StudyOutcomeMeasureServiceLocal studyOutcomeMService = new MockStudyOutcomeMeasureService();
     private final StudyObjectiveServiceLocal studyObjectiveService = new MockStudyObjectiveService();
     private final RegulatoryAuthorityServiceLocal regulatoryAuthorityService = new RegulatoryAuthorityBeanLocal();
@@ -473,7 +473,7 @@ public class MockServiceLocator implements ServiceLocator {
        return tsrReportGeneratorService;
     }
 
-    public RegistryUserServiceRemote getRegisterUserService() {
+    public RegistryUserServiceLocal getRegistryUserService() {
         return registryUserService;
     }
 

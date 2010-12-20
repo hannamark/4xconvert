@@ -55,7 +55,51 @@ public class RegisterUserAction extends ActionSupport {
     private String selectedIdentityProvider;
     private static final int MIN_UN = 4;
     private static final int MAX_UN = 15;
+    private String emailAddress;
+    private String affiliatedOrgId;
+    private String action;
 
+    /**
+     * @return the action
+     */
+    public String getAction() {
+        return action;
+    }
+
+    /**
+     * @param action the action to set
+     */
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    /**
+     * @return the affOrgId
+     */
+    public String getAffiliatedOrgId() {
+        return affiliatedOrgId;
+    }
+
+    /**
+     * @param affOrgId the affOrgId to set
+     */
+    public void setAffiliatedOrgId(String affOrgId) {
+        this.affiliatedOrgId = affOrgId;
+    }
+
+    /**
+     * @return the emailAddress
+     */
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    /**
+     * @param emailAddress the emailAddress to set
+     */
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
 
     /**
      * Send e-mail to the registering user.
@@ -82,20 +126,18 @@ public class RegisterUserAction extends ActionSupport {
     public String activate() {
         String decodedEmailAddress = null;
 
-        String emailAddress = ServletActionContext.getRequest().getParameter("emailAddress");
-
         // decode only if the value is not null, since user can select my account link
         EncoderDecoder encoderDecoder = new gov.nih.nci.registry.util.EncoderDecoder();
         if (emailAddress != null) {
             decodedEmailAddress =  encoderDecoder.decodeString(emailAddress);
-            ServletActionContext.getRequest().setAttribute("emailAddress" , decodedEmailAddress);
+            setEmailAddress(decodedEmailAddress);
         }
 
         RegistryUser registryUser = null;
         User csmUser = null;
         try {
             // check if user already exists
-            registryUser = PaRegistry.getRegisterUserService().getUser(decodedEmailAddress);
+            registryUser = PaRegistry.getRegistryUserService().getUser(decodedEmailAddress);
 
             if (registryUser != null && registryUser.getCsmUserId() != null) {
                 csmUser = CSMUserService.getInstance().getCSMUserById(registryUser.getCsmUserId());
@@ -131,7 +173,7 @@ public class RegisterUserAction extends ActionSupport {
         try {
             loginName =  ServletActionContext.getRequest().getRemoteUser();
             // retrieve user info
-            registryUser = PaRegistry.getRegisterUserService().getUser(loginName);
+            registryUser = PaRegistry.getRegistryUserService().getUser(loginName);
             csmUser = CSMUserService.getInstance().getCSMUser(loginName);
         } catch (Exception ex) {
             LOG.error("error while displaying My Account page for user :" + loginName);
@@ -197,7 +239,7 @@ public class RegisterUserAction extends ActionSupport {
         boolean adminAccessRequested = registryUserWebDTO.isRequestAdminAccess();
         if (isExistingUser) {
             try {
-                registryUser = PaRegistry.getRegisterUserService().getUserById(registryUserWebDTO.getId());
+                registryUser = PaRegistry.getRegistryUserService().getUserById(registryUserWebDTO.getId());
                 if (registryUser != null) {
                     currentUserOrgType = registryUser.getAffiliatedOrgUserType();
                     affiliatedOrgUpdated = !registryUserWebDTO.getAffiliatedOrganizationId()
@@ -249,7 +291,7 @@ public class RegisterUserAction extends ActionSupport {
                 CSMUserService.getInstance().updateCSMUser(registryUser, registryUserWebDTO.getUsername(),
                         null);
                 //now update the RegistryUser
-                PaRegistry.getRegisterUserService().updateUser(registryUser);
+                PaRegistry.getRegistryUserService().updateUser(registryUser);
             } catch (PAInvalidPasswordException e) {
                 addFieldError("registryUserWebDTO.oldPassword", getText("error.register.invalidPassword"));
                 return Constants.MY_ACCOUNT_ERROR;
@@ -296,7 +338,7 @@ public class RegisterUserAction extends ActionSupport {
                 //Then add the user to the correct grid grouper group.
                 gridService.addGridUserToGroup(username, GridAccountServiceBean.GRIDGROUPER_SUBMITTER_GROUP);
                 //now create the RegistryUser
-                registryUser =  PaRegistry.getRegisterUserService().createUser(registryUser);
+                registryUser =  PaRegistry.getRegistryUserService().createUser(registryUser);
             } catch (Exception e) {
                 LOG.error("error while creating user info", e);
                 return Constants.APPLICATION_ERROR;
@@ -341,7 +383,7 @@ public class RegisterUserAction extends ActionSupport {
         if (userInfo.isEmpty()) {
             addActionError(getText("errors.password.mismatch"));
             return Constants.EXISTING_GRID_ACCOUNT;
-        } else if (PaRegistry.getRegisterUserService().doesRegistryUserExist(fullyQualifiedUsername)) {
+        } else if (PaRegistry.getRegistryUserService().doesRegistryUserExist(fullyQualifiedUsername)) {
             userAction = "existingAccount";
             return Constants.REDIRECT_TO_LOGIN;
         }
@@ -378,7 +420,6 @@ public class RegisterUserAction extends ActionSupport {
         if (isMyAccountPage) {
             ClassValidator<RegistryUserWebDTO> classValidator = new ClassValidator(registryUserWebDTO.getClass());
             boolean allowPasswordEditing = registryUserWebDTO.isPasswordEditingAllowed();
-
             invalidValues = classValidator.getInvalidValues(registryUserWebDTO);
             for (int i = 0; i < invalidValues.length; i++) {
                 addFieldError.put("registryUserWebDTO." + invalidValues[i].getPropertyName(),
@@ -394,11 +435,9 @@ public class RegisterUserAction extends ActionSupport {
                    registryUserWebDTO.setAffiliateOrg("");
                    addFieldError("registryUserWebDTO.affiliateOrg", getText("error.register.affiliateOrg"));
             }
-
             if (isAccountEdit) {
                 validateOldPassword(allowPasswordEditing);
             }
-
             validateNewPassword(allowPasswordEditing);
             validateRetypePassword(allowPasswordEditing);
             validatePasswordMatch(allowPasswordEditing);
@@ -542,26 +581,24 @@ public class RegisterUserAction extends ActionSupport {
      * @return s
      */
     public String loadAdminUsers() {
-        String affOrgId = ServletActionContext.getRequest().getParameter("affiliatedOrgId");
         ServletActionContext.getRequest().getSession().removeAttribute("adminUsers");
-        if (StringUtils.isNotEmpty(affOrgId)) {
-            loadAdminUsers(Long.parseLong(affOrgId));
+        if (StringUtils.isNotEmpty(affiliatedOrgId)) {
+            loadAdminUsers(Long.parseLong(affiliatedOrgId));
         }
         String retResult = "loadAdminList";
-        String action = ServletActionContext.getRequest().getParameter("action");
         if ("viewUsers".equals(action)) {
             retResult =  "viewAdminUser";
         }
         return retResult;
     }
-    private void loadAdminUsers(Long affOrgId) {
+    private void loadAdminUsers(Long affilOrgId) {
         RegistryUser criteriaUser = new RegistryUser();
         criteriaUser.setAffiliatedOrgUserType(UserOrgType.ADMIN);
-        criteriaUser.setAffiliatedOrganizationId(affOrgId);
+        criteriaUser.setAffiliatedOrganizationId(affilOrgId);
         try {
-             List<RegistryUser> adminUsers = PaRegistry.getRegisterUserService().search(criteriaUser);
+             List<RegistryUser> adminUsers = PaRegistry.getRegistryUserService().search(criteriaUser);
              ServletActionContext.getRequest().getSession().setAttribute("adminUsers", adminUsers);
-             ServletActionContext.getRequest().setAttribute("orgSelected", affOrgId);
+             ServletActionContext.getRequest().setAttribute("orgSelected", affilOrgId);
         } catch (PAException e) {
             LOG.error(e.getMessage());
         }

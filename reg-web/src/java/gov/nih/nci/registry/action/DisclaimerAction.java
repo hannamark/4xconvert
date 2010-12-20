@@ -103,7 +103,6 @@ public class DisclaimerAction extends ActionSupport {
      */
     @Override
     public String execute() {
-        actionName = ServletActionContext.getRequest().getParameter("actionName");
         String returnString = "show_Disclaimer_Page";
         String loginName = ServletActionContext.getRequest().getRemoteUser();
         RegistryUserWebDTO regUserWebDto = RegistryUtil.getRegistryUserWebDto(loginName);

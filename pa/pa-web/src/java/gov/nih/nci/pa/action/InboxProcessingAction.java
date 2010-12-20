@@ -240,7 +240,7 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
      */
     public String getPendingAdminUserRole() {
         try {
-            pendingAdminUsers = PaRegistry.getRegisterUserService().getUserByUserOrgType(UserOrgType.PENDING_ADMIN);
+            pendingAdminUsers = PaRegistry.getRegistryUserService().getUserByUserOrgType(UserOrgType.PENDING_ADMIN);
         } catch (PAException e) {
             LOG.error("Exception while getting pending admin request:-" + e.getMessage());
         }
@@ -270,7 +270,7 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
             return SUCCESS;
         }
         try {
-            RegistryUser pendingUsr = PaRegistry.getRegisterUserService().getUserById(Long.parseLong(userId));
+            RegistryUser pendingUsr = PaRegistry.getRegistryUserService().getUserById(Long.parseLong(userId));
             ServletActionContext.getRequest().setAttribute("user", pendingUsr);
         } catch (Exception e) {
             LOG.error(e.getMessage());
@@ -307,12 +307,12 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
      */
     private void updateUserRole(UserOrgType affiliatedOrgUserType, String userId, String rejectReason)
             throws PAException {
-        RegistryUser pendingUsr = PaRegistry.getRegisterUserService().getUserById(Long.parseLong(userId));
+        RegistryUser pendingUsr = PaRegistry.getRegistryUserService().getUserById(Long.parseLong(userId));
         if (pendingUsr == null) {
             throw new PAException("User not found");
         }
         pendingUsr.setAffiliatedOrgUserType(affiliatedOrgUserType);
-        PaRegistry.getRegisterUserService().updateUser(pendingUsr);
+        PaRegistry.getRegistryUserService().updateUser(pendingUsr);
         if (pendingUsr.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)) {
             PaRegistry.getMailManagerService().sendAdminAcceptanceEmail(pendingUsr.getId());
         } else {

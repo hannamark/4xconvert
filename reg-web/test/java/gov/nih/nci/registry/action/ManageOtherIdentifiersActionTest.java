@@ -43,7 +43,7 @@ public class ManageOtherIdentifiersActionTest extends AbstractRegWebTest{
         action = new ManageOtherIdentifiersAction();
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setupAddParameter("uuid", "1");
+        action.setUuid(1);
         List<Ii> sessionList = new ArrayList<Ii>();
         sessionList.add(IiConverter.convertToIi("testing"));
         sess.setAttribute("secondaryIdentifiersList", sessionList);
@@ -57,7 +57,7 @@ public class ManageOtherIdentifiersActionTest extends AbstractRegWebTest{
         action = new ManageOtherIdentifiersAction();
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setupAddParameter("uuid", "1");
+        action.setUuid(1);
         List<Ii> sessionList = new ArrayList<Ii>();
         sessionList.add(IiConverter.convertToIi("testing"));
         sess.setAttribute("secondaryIdentifiersList", sessionList);

@@ -158,10 +158,6 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         // clear the session
         TrialValidator.removeSessionAttributes();
         try {
-            String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
-            if (studyProtocolId == null) {
-                studyProtocolId = pId;
-            }
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
             TrialUtil util = new TrialUtil();
             trialDTO = new TrialDTO();

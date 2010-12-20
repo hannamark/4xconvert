@@ -139,12 +139,12 @@ public class SiteAdministrationAction extends ActionSupport {
         ServletActionContext.getRequest().getSession().removeAttribute(SiteAdministrationAction.REG_USERS_LIST);
         try {
             loginName =  ServletActionContext.getRequest().getRemoteUser();
-            RegistryUser loggedInUser = PaRegistry.getRegisterUserService().getUser(loginName);
+            RegistryUser loggedInUser = PaRegistry.getRegistryUserService().getUser(loginName);
             regUserCriteria.setFirstName(criteria.getFirstName());
             regUserCriteria.setLastName(criteria.getLastName());
             regUserCriteria.setEmailAddress(criteria.getEmailAddress());
             regUserCriteria.setAffiliatedOrganizationId(loggedInUser.getAffiliatedOrganizationId());
-            registryUsers = PaRegistry.getRegisterUserService().search(regUserCriteria);
+            registryUsers = PaRegistry.getRegistryUserService().search(regUserCriteria);
             ServletActionContext.getRequest().getSession().setAttribute(
                     SiteAdministrationAction.REG_USERS_LIST, registryUsers);
 

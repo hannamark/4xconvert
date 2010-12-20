@@ -93,9 +93,7 @@ public class OrganizationContactActionTest extends AbstractRegWebTest {
      @Test
      public void testGetOrganizationContactsException() throws Exception{
          action = new OrganizationContactAction();
-         MockHttpServletRequest request = new MockHttpServletRequest();
-         request.setupAddParameter("orgContactIdentifier", "2");
-         ServletActionContext.setRequest(request);
+         action.setOrgContactIdentifier("2");
          assertEquals("display_org_contacts",action.getOrganizationContacts());
          assertTrue(action.hasActionErrors());
      }

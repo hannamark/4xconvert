@@ -109,6 +109,36 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
     private static final String VIEW_RESULTS = "viewResults";
     private static final String SUCCESS_MSG = "successMessage";
     private static final String FAILURE_MSG = "failureMessage";
+    private Long userId;
+    private Long trialId;
+
+    /**
+     * @return the userId
+     */
+    public Long getUserId() {
+        return userId;
+    }
+
+    /**
+     * @param userId the userId to set
+     */
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    /**
+     * @return the trialId
+     */
+    public Long getTrialId() {
+        return trialId;
+    }
+
+    /**
+     * @param trialId the trialId to set
+     */
+    public void setTrialId(Long trialId) {
+        this.trialId = trialId;
+    }
 
     /**
      * load initial view.
@@ -139,9 +169,7 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
      */
     public String removeOwnership() throws PAException {
         try {
-            String userId = ServletActionContext.getRequest().getParameter("userId");
-            String trialId = ServletActionContext.getRequest().getParameter("trialId");
-            PaRegistry.getRegisterUserService().removeOwnership(Long.parseLong(userId), Long.parseLong(trialId));
+            PaRegistry.getRegistryUserService().removeOwnership(userId, trialId);
             ServletActionContext.getRequest().setAttribute(SUCCESS_MSG, "Trial ownership successfully removed");
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(FAILURE_MSG, e.getMessage());
@@ -154,9 +182,9 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
         try {
             ServletActionContext.getRequest().getSession().removeAttribute(DisplayTrialOwnershipAction.TRIAL_INFO);
             String loginName = ServletActionContext.getRequest().getRemoteUser();
-            RegistryUser loggedInUser = PaRegistry.getRegisterUserService().getUser(loginName);
+            RegistryUser loggedInUser = PaRegistry.getRegistryUserService().getUser(loginName);
             trialOwnershipInfo =
-                    PaRegistry.getRegisterUserService().searchTrialOwnership(criteria,
+                    PaRegistry.getRegistryUserService().searchTrialOwnership(criteria,
                             loggedInUser.getAffiliatedOrganizationId());
             ServletActionContext.getRequest().getSession().setAttribute(DisplayTrialOwnershipAction.TRIAL_INFO,
                     trialOwnershipInfo);

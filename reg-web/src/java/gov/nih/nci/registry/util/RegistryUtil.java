@@ -167,7 +167,7 @@ public class RegistryUtil {
             String submissionMailBodyHeader = PaRegistry.getLookUpTableService()
                 .getPropertyValue("trial.batchUpload.bodyHeader");
 
-            RegistryUser registryUser = PaRegistry.getRegisterUserService().getUser(userName);
+            RegistryUser registryUser = PaRegistry.getRegistryUserService().getUser(userName);
 
             submissionMailBodyHeader = submissionMailBodyHeader.replace("${SubmitterName}", registryUser.getFirstName()
                     + " " + registryUser.getLastName());
@@ -232,7 +232,7 @@ public class RegistryUtil {
       RegistryUser registryUser = null;
       User csmUser = null;
       try {
-          registryUser = PaRegistry.getRegisterUserService().getUser(loginName);
+          registryUser = PaRegistry.getRegistryUserService().getUser(loginName);
           csmUser = CSMUserService.getInstance().getCSMUser(loginName);
           if (registryUser != null && csmUser != null) {
               regUserWebDto = new RegistryUserWebDTO(registryUser, loginName, csmUser.getPassword());

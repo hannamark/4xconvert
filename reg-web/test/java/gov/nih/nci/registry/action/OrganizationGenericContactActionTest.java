@@ -29,9 +29,9 @@ public class OrganizationGenericContactActionTest extends AbstractRegWebTest {
 
     @Test
     public void testOrgContactIdProperty() {
-        assertNull(action.getOrgContactId());
-        action.setOrgContactId("orgContactId");
-        assertNotNull(action.getOrgContactId());
+        assertNull(action.getOrgGenericContactIdentifier());
+        action.setOrgGenericContactIdentifier("orgContactId");
+        assertNotNull(action.getOrgGenericContactIdentifier());
     }
 
     @Test
@@ -50,16 +50,13 @@ public class OrganizationGenericContactActionTest extends AbstractRegWebTest {
     public void testDisplayTitleList() {
         assertEquals("success", action.displayTitleList());
         assertTrue(action.getActionErrors().contains("Please enter at least one search criteria"));
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setupAddParameter("orgGenericContactIdentifier", "");
-        ServletActionContext.setRequest(request);
+        //MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setOrgGenericContactIdentifier("");
         assertEquals("success", action.displayTitleList());
         assertTrue(action.getActionErrors().contains("Please select a Sponsor."));
         action = new OrganizationGenericContactAction();
-        request = new MockHttpServletRequest();
-        request.setupAddParameter("orgGenericContactIdentifier", "1");
-        request.setupAddParameter("title", "title");
-        ServletActionContext.setRequest(request);
+        action.setOrgGenericContactIdentifier("1");
+        action.setTitle("title");
         assertEquals("success", action.displayTitleList());
     }
 

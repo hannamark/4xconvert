@@ -21,7 +21,7 @@ function updateOwnership(assignOwnership) {
 function updateRegUser(regUserId) {
     var  url = '/registry/protected/manageTrialOwnershipsetRegUser.action?regUserId='+regUserId;
     var isOwner = document.getElementById("chk" + regUserId).checked ? "true" : "false";
-    url += "&isOwner=" + isOwner;
+    url += "&owner=" + isOwner;
     var aj = new Ajax.Request(url, {
         asynchronous: true,
         method: 'get',
@@ -33,7 +33,7 @@ function updateRegUser(regUserId) {
 function updateTrial(trialId) {
     var  url = '/registry/protected/manageTrialOwnershipsetTrial.action?trialId='+trialId;
     var isChecked = document.getElementById("chk" + trialId).checked ? "true" : "false";
-    url += "&isSelected=" + isChecked;
+    url += "&selected=" + isChecked;
     var aj = new Ajax.Request(url, {
         asynchronous: true,
         method: 'get',

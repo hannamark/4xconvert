@@ -127,7 +127,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
@@ -302,7 +302,7 @@ public class MockPaServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public RegistryUserServiceRemote getRegisterUserService() {
+    public RegistryUserServiceLocal getRegistryUserService() {
         return registryUserService;
     }
 

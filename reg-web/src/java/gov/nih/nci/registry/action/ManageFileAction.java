@@ -133,8 +133,23 @@ public class ManageFileAction extends ActionSupport {
     private static final String CHANGEMEMODOC = DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getShortName();
     private static final String PROTOCOLHIGHDOC = DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getShortName();
     private static final String OTHERDOC = DocumentTypeCode.OTHER.getShortName();
+    private String typeCode;
+    
+    /**
+     * @return the typeCode
+     */
+    public String getTypeCode() {
+        return typeCode;
+    }
 
     private final TrialUtil trialUtils = new TrialUtil();
+
+    /**
+     * @param typeCode the typeCode to set
+     */
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
 
     /**
      * Delete document.
@@ -142,7 +157,6 @@ public class ManageFileAction extends ActionSupport {
      * @return the string
      */
     public String deleteDocument() {
-        String typeCode = ServletActionContext.getRequest().getParameter("typeCode");
         ServletActionContext.getRequest().getSession()
                             .removeAttribute(DocumentTypeCode.getByCode(typeCode).getShortName());
         return SUCCESS;

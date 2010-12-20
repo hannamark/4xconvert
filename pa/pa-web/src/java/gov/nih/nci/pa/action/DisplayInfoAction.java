@@ -124,7 +124,7 @@ public class DisplayInfoAction extends ActionSupport implements Preparable {
             StudyProtocolQueryDTO studyProtocolQueryDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.TRIAL_SUMMARY);
             String user = studyProtocolQueryDTO.getUserLastCreated();
-            RegistryUser userInfo = PaRegistry.getRegisterUserService().getUser(user);
+            RegistryUser userInfo = PaRegistry.getRegistryUserService().getUser(user);
             persWebDTO.setFirstName(userInfo.getFirstName());
             persWebDTO.setLastName(userInfo.getLastName());
             persWebDTO.setEmail(userInfo.getEmailAddress());
@@ -171,7 +171,7 @@ public class DisplayInfoAction extends ActionSupport implements Preparable {
             StudyProtocolQueryDTO studyProtocolQueryDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.TRIAL_SUMMARY);
 
-            RegistryUser userInfo = PaRegistry.getRegisterUserService()
+            RegistryUser userInfo = PaRegistry.getRegistryUserService()
                                     .getUser(studyProtocolQueryDTO.getStudyCheckoutBy());
             persWebDTO.setFirstName(userInfo.getFirstName());
             persWebDTO.setLastName(userInfo.getLastName());

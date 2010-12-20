@@ -94,7 +94,6 @@ import gov.nih.nci.registry.util.SelectedStudyProtocol;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -115,7 +114,65 @@ public class ManageTrialOwnershipAction extends ActionSupport {
     private List<SelectedRegistryUser> registryUsers = new ArrayList<SelectedRegistryUser>();
     private static final String SUCCESS_MSG = "successMessage";
     private static final String FAILURE_MSG = "failureMessage";
+    private Long regUserId = null;
+    private boolean owner;
+    private Long trialId = null;
+    private boolean selected;
+    /**
+     * @return the trialId
+     */
+    public Long getTrialId() {
+        return trialId;
+    }
 
+    /**
+     * @param trialId the trialId to set
+     */
+    public void setTrialId(Long trialId) {
+        this.trialId = trialId;
+    }
+
+    /**
+     * @return the isSelected
+     */
+    public boolean isSelected() {
+        return selected;
+    }
+
+    /**
+     * @param isSelected the isSelected to set
+     */
+    public void setSelected(boolean isSelected) {
+        this.selected = isSelected;
+    }
+
+    /**
+     * @return the regUserId
+     */
+    public Long getRegUserId() {
+        return regUserId;
+    }
+
+    /**
+     * @param regUserId the regUserId to set
+     */
+    public void setRegUserId(Long regUserId) {
+        this.regUserId = regUserId;
+    }
+
+    /**
+     * @return the isOwner
+     */
+    public boolean isOwner() {
+        return owner;
+    }
+
+    /**
+     * @param isOwner the isOwner to set
+     */
+    public void setOwner(boolean isOwner) {
+        this.owner = isOwner;
+    }
 
     /**
      * load initial view.
@@ -134,7 +191,7 @@ public class ManageTrialOwnershipAction extends ActionSupport {
 
         try {
             loginName =  ServletActionContext.getRequest().getRemoteUser();
-            RegistryUser loggedInUser = PaRegistry.getRegisterUserService().getUser(loginName);
+            RegistryUser loggedInUser = PaRegistry.getRegistryUserService().getUser(loginName);
             Long affiliatedOrgId = loggedInUser.getAffiliatedOrganizationId();
             getOrgMembers(affiliatedOrgId);
             getOrgTrials(affiliatedOrgId);
@@ -147,7 +204,7 @@ public class ManageTrialOwnershipAction extends ActionSupport {
     private void getOrgMembers(Long affiliatedOrgId) throws PAException {
         RegistryUser criteria = new RegistryUser();
         criteria.setAffiliatedOrganizationId(affiliatedOrgId);
-        List<RegistryUser> regUsers = PaRegistry.getRegisterUserService().search(criteria);
+        List<RegistryUser> regUsers = PaRegistry.getRegistryUserService().search(criteria);
         registryUsers.clear();
         for (RegistryUser user : regUsers) {
             SelectedRegistryUser selectedRegUser = new SelectedRegistryUser();
@@ -177,24 +234,22 @@ public class ManageTrialOwnershipAction extends ActionSupport {
      * @throws PAException the pa exception
      */
     public void setRegUser() throws PAException {
-        String regUserId = ServletActionContext.getRequest().getParameter("regUserId");
-        boolean isOwner = "true".equals(ServletActionContext.getRequest().getParameter("isOwner"));
-        if (StringUtils.isNotEmpty(regUserId)) {
-            SelectedRegistryUser regUser = getRegUser(Long.parseLong(regUserId));
+        if (regUserId != null) {
+            SelectedRegistryUser regUser = getRegUser(regUserId);
             if (regUser != null) {
-                regUser.setSelected(isOwner);
+                regUser.setSelected(owner);
                 ServletActionContext.getRequest().getSession().setAttribute(
                         ManageTrialOwnershipAction.REG_USERS_LIST, registryUsers);
             }
         }
     }
 
-    private SelectedRegistryUser getRegUser(Long regUserId) {
+    private SelectedRegistryUser getRegUser(Long rUserId) {
         SelectedRegistryUser regUser = null;
         registryUsers = (List<SelectedRegistryUser>) ServletActionContext.getRequest().getSession().
         getAttribute(ManageTrialOwnershipAction.REG_USERS_LIST);
         for (SelectedRegistryUser srUser : registryUsers) {
-            if (regUserId.equals(srUser.getRegistryUser().getId())) {
+            if (rUserId.equals(srUser.getRegistryUser().getId())) {
                 regUser = srUser;
             }
         }
@@ -206,24 +261,22 @@ public class ManageTrialOwnershipAction extends ActionSupport {
      * @throws PAException the pa exception
      */
     public void setTrial() throws PAException {
-        String trialId = ServletActionContext.getRequest().getParameter("trialId");
-        boolean isSelected = "true".equals(ServletActionContext.getRequest().getParameter("isSelected"));
-        if (StringUtils.isNotEmpty(trialId)) {
-            SelectedStudyProtocol studyProtocol = getStudyProtocol(Long.parseLong(trialId));
+        if (trialId != null) {
+            SelectedStudyProtocol studyProtocol = getStudyProtocol(trialId);
             if (studyProtocol != null) {
-                studyProtocol.setSelected(isSelected);
+                studyProtocol.setSelected(selected);
                 ServletActionContext.getRequest().getSession().setAttribute(
                         ManageTrialOwnershipAction.STUDY_PROTOCOLS_LIST, studyProtocols);
             }
         }
     }
 
-    private SelectedStudyProtocol getStudyProtocol(Long trialId) {
+    private SelectedStudyProtocol getStudyProtocol(Long tId) {
         SelectedStudyProtocol sp = null;
         studyProtocols = (List<SelectedStudyProtocol>) ServletActionContext.getRequest().getSession().
         getAttribute(ManageTrialOwnershipAction.STUDY_PROTOCOLS_LIST);
         for (SelectedStudyProtocol selSP : studyProtocols) {
-            if (trialId.equals(selSP.getStudyProtocol().getId())) {
+            if (tId.equals(selSP.getStudyProtocol().getId())) {
                 sp = selSP;
             }
         }
@@ -255,8 +308,8 @@ public class ManageTrialOwnershipAction extends ActionSupport {
             List<Long> selectedTrialIds = getSelectedTrialIds();
             if (!selectedUserIds.isEmpty() && !selectedTrialIds.isEmpty()) {
                 for (Long userId : selectedUserIds) {
-                    for (Long trialId : selectedTrialIds) {
-                        updateOwnership(userId, trialId, true);
+                    for (Long tId : selectedTrialIds) {
+                        updateOwnership(userId, tId, true);
                     }
                 }
                 ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
@@ -284,8 +337,8 @@ public class ManageTrialOwnershipAction extends ActionSupport {
             List<Long> selectedTrialIds = getSelectedTrialIds();
             if (!selectedUserIds.isEmpty() && !selectedTrialIds.isEmpty()) {
                 for (Long userId : selectedUserIds) {
-                    for (Long trialId : selectedTrialIds) {
-                        updateOwnership(userId, trialId, false);
+                    for (Long tId : selectedTrialIds) {
+                        updateOwnership(userId, tId, false);
                     }
                 }
                 ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
@@ -302,15 +355,15 @@ public class ManageTrialOwnershipAction extends ActionSupport {
         return view();
     }
 
-    private void updateOwnership(Long userId, Long trialId, boolean assign) throws PAException {
+    private void updateOwnership(Long userId, Long tId, boolean assign) throws PAException {
         // check if currently owner or not.
-        boolean isOwner = PaRegistry.getRegisterUserService().isTrialOwner(userId, trialId);
+        boolean isOwner = PaRegistry.getRegistryUserService().isTrialOwner(userId, tId);
         if (assign && !isOwner) {
-            PaRegistry.getRegisterUserService().assignOwnership(userId, trialId);
+            PaRegistry.getRegistryUserService().assignOwnership(userId, trialId);
         }
 
         if (!assign && isOwner) {
-            PaRegistry.getRegisterUserService().removeOwnership(userId, trialId);
+            PaRegistry.getRegistryUserService().removeOwnership(userId, trialId);
         }
     }
 

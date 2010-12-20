@@ -56,7 +56,7 @@ public class AssignOwnershipAction extends ActionSupport {
            .getAttribute(Constants.STUDY_PROTOCOL_II);
        try {
            if (StringUtils.isNotEmpty(userId) && PAUtil.isIiNotNull(spIi)) {
-               PaRegistry.getRegisterUserService().assignOwnership(Long.parseLong(userId),
+               PaRegistry.getRegistryUserService().assignOwnership(Long.parseLong(userId),
                        IiConverter.convertToLong(spIi));
            } else {
                addActionError("Please select user to change ownership.");
@@ -83,12 +83,12 @@ public class AssignOwnershipAction extends ActionSupport {
                     regUser.setLastName(criteria.getLastName());
                     regUser.setEmailAddress(criteria.getEmailAddress());
                     users = new ArrayList<TrialOwner>();
-                    List<RegistryUser> regUserList = PaRegistry.getRegisterUserService().search(regUser);
+                    List<RegistryUser> regUserList = PaRegistry.getRegistryUserService().search(regUser);
                     TrialOwner owner = null;
                     for (RegistryUser rUsr : regUserList) {
                         owner = new TrialOwner();
                         owner.setRegUser(rUsr);
-                        owner.setOwner(PaRegistry.getRegisterUserService().hasTrialAccess(rUsr,
+                        owner.setOwner(PaRegistry.getRegistryUserService().hasTrialAccess(rUsr,
                                 Long.parseLong(spIi.getExtension())));
                         users.add(owner);
                     }

@@ -96,16 +96,30 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings("unchecked")
 public class ManageGrantsAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
+    private String fundingMechanismCode;
+    private String nihInstitutionCode;
+    private String serialNumber;
+    private String nciDivisionProgramCode;
+    private String uuid;
+    /**
+     * @return the uuid
+     */
+    public String getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     /**
      *
      * @return s
      */
     public String addGrant() {
-        String fundingMechanismCode = ServletActionContext.getRequest().getParameter("fundingMechanismCode");
-        String nihInstitutionCode = ServletActionContext.getRequest().getParameter("nihInstitutionCode");
-        String serialNumber = ServletActionContext.getRequest().getParameter("serialNumber");
-        String nciDivisionProgramCode = ServletActionContext.getRequest().getParameter("nciDivisionProgramCode");
         TrialFundingWebDTO grantHolder = new TrialFundingWebDTO();
         grantHolder.setFundingMechanismCode(fundingMechanismCode);
         grantHolder.setNihInstitutionCode(nihInstitutionCode);
@@ -128,18 +142,73 @@ public class ManageGrantsAction extends ActionSupport {
     }
 
     /**
+     * @return the fundingMechanismCode
+     */
+    public String getFundingMechanismCode() {
+        return fundingMechanismCode;
+    }
+
+    /**
+     * @param fundingMechanismCode the fundingMechanismCode to set
+     */
+    public void setFundingMechanismCode(String fundingMechanismCode) {
+        this.fundingMechanismCode = fundingMechanismCode;
+    }
+
+    /**
+     * @return the nihInstitutionCode
+     */
+    public String getNihInstitutionCode() {
+        return nihInstitutionCode;
+    }
+
+    /**
+     * @param nihInstitutionCode the nihInstitutionCode to set
+     */
+    public void setNihInstitutionCode(String nihInstitutionCode) {
+        this.nihInstitutionCode = nihInstitutionCode;
+    }
+
+    /**
+     * @return the serialNumber
+     */
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    /**
+     * @param serialNumber the serialNumber to set
+     */
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    /**
+     * @return the nciDivisionProgramCode
+     */
+    public String getNciDivisionProgramCode() {
+        return nciDivisionProgramCode;
+    }
+
+    /**
+     * @param nciDivisionProgramCode the nciDivisionProgramCode to set
+     */
+    public void setNciDivisionProgramCode(String nciDivisionProgramCode) {
+        this.nciDivisionProgramCode = nciDivisionProgramCode;
+    }
+
+    /**
      *
      * @return result
      */
     public String deleteGrant() {
-        String rowid = ServletActionContext.getRequest().getParameter("uuid");
         TrialFundingWebDTO holder;
         List<TrialFundingWebDTO> sessionList =
                 (List<TrialFundingWebDTO>) ServletActionContext.getRequest().getSession().getAttribute(
                         Constants.GRANT_LIST);
         for (int i = 0; i < sessionList.size(); i++) {
             holder = sessionList.get(i);
-            if (holder.getRowId().equals(rowid)) {
+            if (holder.getRowId().equals(uuid)) {
                 sessionList.remove(i);
             }
         }
@@ -161,10 +230,6 @@ public class ManageGrantsAction extends ActionSupport {
      * @return s
      */
     public String addGrantForUpdate() {
-        String fundingMechanismCode = ServletActionContext.getRequest().getParameter("fundingMechanismCode");
-        String nihInstitutionCode = ServletActionContext.getRequest().getParameter("nihInstitutionCode");
-        String serialNumber = ServletActionContext.getRequest().getParameter("serialNumber");
-        String nciDivisionProgramCode = ServletActionContext.getRequest().getParameter("nciDivisionProgramCode");
         TrialFundingWebDTO grantHolder = new TrialFundingWebDTO();
         grantHolder.setFundingMechanismCode(fundingMechanismCode);
         grantHolder.setNihInstitutionCode(nihInstitutionCode);
@@ -191,14 +256,13 @@ public class ManageGrantsAction extends ActionSupport {
      * @return result
      */
     public String deleteGrantForUpdate() {
-        String rowid = ServletActionContext.getRequest().getParameter("uuid");
         TrialFundingWebDTO holder;
         List<TrialFundingWebDTO> sessionList =
                 (List<TrialFundingWebDTO>) ServletActionContext.getRequest().getSession().getAttribute(
                         Constants.GRANT_ADD_LIST);
         for (int i = 0; i < sessionList.size(); i++) {
             holder = sessionList.get(i);
-            if (holder.getRowId().equals(rowid)) {
+            if (holder.getRowId().equals(uuid)) {
                 sessionList.remove(i);
             }
         }

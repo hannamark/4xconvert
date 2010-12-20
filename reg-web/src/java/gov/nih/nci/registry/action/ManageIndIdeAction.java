@@ -109,6 +109,21 @@ public class ManageIndIdeAction extends ActionSupport {
     private String holderType;
     private String indIde;
     private Boolean exemptIndicator;
+    private String uuid;
+
+    /**
+     * @return the uuid
+     */
+    public String getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     /**
      * Sets the ind ide information in the collection.
@@ -188,14 +203,13 @@ public class ManageIndIdeAction extends ActionSupport {
      *
      * @return result
      */
-    public String deleteIndIde() {
-        String rowid = ServletActionContext.getRequest().getParameter("uuid");
+    public String deleteIndIde() {       
         List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.INDIDE_LIST);
         TrialIndIdeDTO holder;
         for (int i = 0; i < sessionList.size(); i++) {
             holder = sessionList.get(i);
-            if (holder.getRowId().equals(rowid)) {
+            if (holder.getRowId().equals(uuid)) {
                 sessionList.remove(i);
             }
         }
@@ -208,13 +222,12 @@ public class ManageIndIdeAction extends ActionSupport {
      * @return result
      */
     public String deleteIndIdeForUpdate() {
-        String rowid = ServletActionContext.getRequest().getParameter("uuid");
         List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.INDIDE_ADD_LIST);
         TrialIndIdeDTO holder;
         for (int i = 0; i < sessionList.size(); i++) {
             holder = sessionList.get(i);
-            if (holder.getRowId().equals(rowid)) {
+            if (holder.getRowId().equals(uuid)) {
                 sessionList.remove(i);
             }
         }

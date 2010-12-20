@@ -6,7 +6,7 @@ package gov.nih.nci.registry.service;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author Vrushali
  *
  */
-public class MockRegistryUserService implements RegistryUserServiceRemote {
+public class MockRegistryUserService implements RegistryUserServiceLocal {
     static List<RegistryUser> userList;
     static {
         userList = new ArrayList<RegistryUser>();

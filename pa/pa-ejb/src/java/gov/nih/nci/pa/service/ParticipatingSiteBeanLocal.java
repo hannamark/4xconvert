@@ -171,8 +171,8 @@ implements ParticipatingSiteServiceLocal {
         if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
             throw new PAException("Trial id " + studyProtocolIi.getExtension() + " does not exist.");
         }
-        RegistryUser userId = PaRegistry.getRegisterUserService().getUser(user.getLoginName());
-        if (!PaRegistry.getRegisterUserService().isTrialOwner(userId.getId(), 
+        RegistryUser userId = PaRegistry.getRegistryUserService().getUser(user.getLoginName());
+        if (!PaRegistry.getRegistryUserService().isTrialOwner(userId.getId(), 
                 Long.valueOf(spDTO.getIdentifier().getExtension()))) {
             throw new PAException("User " + user.getLoginName() + "is not a trial owner for trial id "
                     + Long.valueOf(spDTO.getIdentifier().getExtension()));

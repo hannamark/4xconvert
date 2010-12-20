@@ -113,14 +113,41 @@ public class OrganizationGenericContactAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private List<PAOrganizationalContactDTO> orgContactList = new ArrayList<PAOrganizationalContactDTO>();
     private String title;
-    private String orgContactId;
+    private String orgGenericContactIdentifier;
+    private String email;
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    /**
+     * @return the phone
+     */
+    public String getPhone() {
+        return phone;
+    }
+    /**
+     * @param phone the phone to set
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    private String phone;
+    
 
     /**
      *
      * @return res
      */
     public String lookupByTitle() {
-        orgContactId = ServletActionContext.getRequest().getParameter("orgGenericContactIdentifier");
         return SUCCESS;
     }
     /**
@@ -128,15 +155,14 @@ public class OrganizationGenericContactAction extends ActionSupport {
      * @return res
      */
     public String displayTitleList() {
-        orgContactId = ServletActionContext.getRequest().getParameter("orgGenericContactIdentifier");
-        title = ServletActionContext.getRequest().getParameter("title");
+       
         if (handleErrors()) {
             return SUCCESS;
         }
 
         try {
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
-            contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgContactId));
+            contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(this.orgGenericContactIdentifier));
             contactDTO.setTitle(StConverter.convertToSt(title));
             contactDTO.setTypeCode(CdConverter.convertStringToCd("Responsible Party"));
             List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
@@ -173,7 +199,8 @@ public class OrganizationGenericContactAction extends ActionSupport {
     }
 
     private boolean isMissingSponsor() {
-        return orgContactId != null && (orgContactId.equals("undefined") || orgContactId.equals(""));
+        return orgGenericContactIdentifier != null && (orgGenericContactIdentifier.equals("undefined") 
+                || orgGenericContactIdentifier.equals(""));
     }
 
     /**
@@ -181,11 +208,6 @@ public class OrganizationGenericContactAction extends ActionSupport {
      * @return s
      */
     public String create() {
-        String email = ServletActionContext.getRequest().getParameter("email");
-        String phone = ServletActionContext.getRequest().getParameter("phone");
-        title = ServletActionContext.getRequest().getParameter("title");
-        orgContactId = ServletActionContext.getRequest().getParameter("orgGenericContactIdentifier");
-
         validateForCreate(email, phone);
         if (hasActionErrors()) {
             StringBuffer errMsg = new StringBuffer();
@@ -197,7 +219,7 @@ public class OrganizationGenericContactAction extends ActionSupport {
         }
         try {
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
-            contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgContactId));
+            contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgGenericContactIdentifier));
             contactDTO.setTitle(StConverter.convertToSt(title));
             DSet<Tel> list = new DSet<Tel>();
             list.setItem(new HashSet<Tel>());
@@ -227,19 +249,19 @@ public class OrganizationGenericContactAction extends ActionSupport {
         return "create_org_contact_response";
     }
 
-    private void validateForCreate(String email, String phone) {
-        if (StringUtils.isEmpty(orgContactId)) {
+    private void validateForCreate(String myEmail, String myPhone) {
+        if (StringUtils.isEmpty(orgGenericContactIdentifier)) {
             addActionError("Sponsor is a required field");
         }
         if (StringUtils.isEmpty(title)) {
             addActionError("Title is a required field");
         }
-        if (StringUtils.isEmpty(email)) {
+        if (StringUtils.isEmpty(myEmail)) {
             addActionError("Email is a required field");
-        } else if (!PAUtil.isValidEmail(email)) {
+        } else if (!PAUtil.isValidEmail(myEmail)) {
             addActionError("Email address is invalid");
         }
-        if (StringUtils.isEmpty(phone)) {
+        if (StringUtils.isEmpty(myPhone)) {
             addActionError("Phone is a required field");
         }
     }
@@ -302,15 +324,15 @@ public class OrganizationGenericContactAction extends ActionSupport {
     /**
      * @return the orgContactId
      */
-    public String getOrgContactId() {
-        return orgContactId;
+    public String getOrgGenericContactIdentifier() {
+        return orgGenericContactIdentifier;
     }
 
     /**
      * @param orgContactId the orgContactId to set
      */
-    public void setOrgContactId(String orgContactId) {
-        this.orgContactId = orgContactId;
+    public void setOrgGenericContactIdentifier(String orgContactId) {
+        this.orgGenericContactIdentifier = orgContactId;
     }
 
 }

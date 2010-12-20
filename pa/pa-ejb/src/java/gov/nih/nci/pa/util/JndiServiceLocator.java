@@ -125,7 +125,7 @@ import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
@@ -362,10 +362,10 @@ public class JndiServiceLocator implements ServiceLocator {
     }
 
     /**
-     * @return RegistryUserServiceRemote
+     * @return RegistryUserServiceLocal
      */
-    public RegistryUserServiceRemote getRegisterUserService() {
-        return (RegistryUserServiceRemote) JNDIUtil.lookup("/pa/RegistryUserServiceBean/remote");
+    public RegistryUserServiceLocal getRegistryUserService() {
+        return (RegistryUserServiceLocal) JNDIUtil.lookup("/pa/RegistryUserBeanLocal/local");
     }
 
     /**

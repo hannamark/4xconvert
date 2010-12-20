@@ -29,6 +29,21 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
     private List<PersonDTO> persons = new ArrayList<PersonDTO>();
     private List<Country> countryList = new ArrayList<Country>();
     private String personName;
+    private String orgContactIdentifier;
+
+    /**
+     * @return the orgContactIdentifier
+     */
+    public String getOrgContactIdentifier() {
+        return orgContactIdentifier;
+    }
+
+    /**
+     * @param orgContactIdentifier the orgContactIdentifier to set
+     */
+    public void setOrgContactIdentifier(String orgContactIdentifier) {
+        this.orgContactIdentifier = orgContactIdentifier;
+    }
 
     /**
      * {@inheritDoc}
@@ -43,7 +58,6 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
      * @return res
      */
     public String getOrganizationContacts() {
-        String orgContactIdentifier = ServletActionContext.getRequest().getParameter("orgContactIdentifier");
         try {
             if (orgContactIdentifier != null && orgContactIdentifier.equals("undefined")) {
                 return DISPLAY_ORG_CONTACTS;

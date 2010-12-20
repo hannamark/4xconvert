@@ -94,7 +94,7 @@ import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -144,7 +144,7 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     private DocumentServiceLocal documentSvc;
     private StudySiteAccrualAccessServiceLocal accrualAccessSvc;
     private StudySiteAccrualStatusServiceLocal accrualStatusSvc;
-    private RegistryUserServiceRemote registryUserSvc;
+    private RegistryUserServiceLocal registryUserSvc;
 
     /**
      * @throws PAException exception
@@ -166,7 +166,7 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
         spDTO = (StudyProtocolQueryDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
-        registryUserSvc = PaRegistry.getRegisterUserService();
+        registryUserSvc = PaRegistry.getRegistryUserService();
     }
 
     /**
@@ -483,14 +483,14 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     /**
      * @return the registryUserSvc
      */
-    public RegistryUserServiceRemote getRegistryUserSvc() {
+    public RegistryUserServiceLocal getRegistryUserSvc() {
         return registryUserSvc;
     }
 
     /**
      * @param registryUserSvc the registryUserSvc to set
      */
-    public void setRegistryUserSvc(RegistryUserServiceRemote registryUserSvc) {
+    public void setRegistryUserSvc(RegistryUserServiceLocal registryUserSvc) {
         this.registryUserSvc = registryUserSvc;
     }
 

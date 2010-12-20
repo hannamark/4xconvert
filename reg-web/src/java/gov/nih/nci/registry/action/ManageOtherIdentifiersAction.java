@@ -96,13 +96,41 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings("unchecked")
 public class ManageOtherIdentifiersAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
+    private int uuid;
+    private String otherIdentifier;
+    /**
+     * @return the uuid
+     */
+    public int getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(int uuid) {
+        this.uuid = uuid;
+    }
+
+    /**
+     * @return the otherIdentifier
+     */
+    public String getOtherIdentifier() {
+        return otherIdentifier;
+    }
+
+    /**
+     * @param otherIdentifier the otherIdentifier to set
+     */
+    public void setOtherIdentifier(String otherIdentifier) {
+        this.otherIdentifier = otherIdentifier;
+    }
 
     /**
      *
      * @return s
      */
     public String addOtherIdentifier() {
-        String otherIdentifier = ServletActionContext.getRequest().getParameter("otherIdentifier");
         List<Ii> sessionList =
                 (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(
                         Constants.SECONDARY_IDENTIFIERS_LIST);
@@ -127,11 +155,10 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
      * @return result
      */
     public String deleteOtherIdentifier() {
-        int rowid = Integer.parseInt(ServletActionContext.getRequest().getParameter("uuid"));
         List<Ii> sessionList =
                 (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(
                         Constants.SECONDARY_IDENTIFIERS_LIST);
-        sessionList.remove(rowid - 1);
+        sessionList.remove(uuid - 1);
 
         ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST, sessionList);
         return "display_otherIdentifiers";
@@ -142,11 +169,10 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
      * @return result
      */
     public String deleteOtherIdentifierUpdate() {
-        int rowid = Integer.parseInt(ServletActionContext.getRequest().getParameter("uuid"));
         List<Ii> sessionList =
                 (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(
                         Constants.SECONDARY_IDENTIFIERS_LIST);
-        sessionList.remove(rowid - 1);
+        sessionList.remove(uuid - 1);
 
         ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST, sessionList);
         return "display_otherIdentifiersUpdate";

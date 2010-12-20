@@ -84,23 +84,17 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         @Test
         public void testActivateUserExist(){
             action = new RegisterUserAction();
-            HttpSession sess = new MockHttpSession();
-            MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setupAddParameter("emailAddress", "Zmlyc3ROYW1l");
-            request.setupAddParameter("password", "cGFzc3dvcmQ=");
-            request.setSession(sess);
-            ServletActionContext.setRequest(request);
+            action.setEmailAddress("Zmlyc3ROYW1l");
+            action.setAffiliatedOrgId("testOrg");
             assertEquals("myAccount", action.activate());
+            assertEquals("firstName", action.getEmailAddress());
+            assertEquals("testOrg", action.getAffiliatedOrgId());
+            assertNull(action.getAction());
         }
         @Test
         public void testActivateException(){
             action = new RegisterUserAction();
-            HttpSession sess = new MockHttpSession();
-            MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setupAddParameter("emailAddress", "dGhyb3dFeGNlcHRpb24=");
-            request.setupAddParameter("password", "cGFzc3dvcmQ=");
-            request.setSession(sess);
-            ServletActionContext.setRequest(request);
+            action.setEmailAddress("dGhyb3dFeGNlcHRpb24=");
             assertEquals("applicationError", action.activate());
         }
         @Test
@@ -143,6 +137,9 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             registryUserWebDTO.setPhone("phone");
             registryUserWebDTO.setAffiliatedOrganizationId(2L);
             action.setRegistryUserWebDTO(registryUserWebDTO);
+            assertEquals("myAccountError", action.updateAccount());
+            action.setAffiliatedOrgId("1");
+            action.clearFieldErrors();
             assertEquals("myAccountError", action.updateAccount());
         }
         @Test
@@ -188,7 +185,12 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
             action.setRegistryUserWebDTO(registryUserWebDTO);
             assertEquals("redirect_to_login", action.updateAccount());
+            // trying to update w/ no id but same info.
+            registryUserWebDTO.setId(null);
+            action.setRegistryUserWebDTO(registryUserWebDTO);
+            assertEquals("applicationError", action.updateAccount());            
         }
+        
         @Test
         public void testUpdateAccountErr(){
             action = new RegisterUserAction();
@@ -258,11 +260,15 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
-        request.setupAddParameter("affiliatedOrgId", "3");
-        request.setupAddParameter("action", "viewUsers");
+        action.setAffiliatedOrgId("3");
+        action.setAction("viewUsers");
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
         assertEquals("viewAdminUser", action.loadAdminUsers());
+        action.clearFieldErrors();
+        action.setAffiliatedOrgId(null);
+        action.setAction("nonViewUsers");
+        assertEquals("loadAdminList", action.loadAdminUsers());
     }
 
     @Test
@@ -274,6 +280,12 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         registryUserWebDTO.setLastName("lastName");
         action.setRegistryUserWebDTO(registryUserWebDTO);
         assertEquals("myAccount", action.registerExistingGridAccount());
+    }
+    
+    @Test
+    public void testExistingGridAccount() {
+        action = new RegisterUserAction();
+        assertEquals("existingGridAccount", action.existingGridAccount());
     }
 }
 

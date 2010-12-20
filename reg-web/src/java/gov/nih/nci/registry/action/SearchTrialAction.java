@@ -139,8 +139,22 @@ public class SearchTrialAction extends ActionSupport {
     private List<StudyProtocolQueryDTO> records = new ArrayList<StudyProtocolQueryDTO>();
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
     private Long studyProtocolId = null;
+    private String trialAction;
+    private Long identifier = null;
+    /**
+     * @return the identifier
+     */
+    public Long getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(Long identifier) {
+        this.identifier = identifier;
+    }
     private final TrialUtil trialUtil = new TrialUtil();
-    private static final String SPID = "studyProtocolId";
     private static final Set<StudyStatusCode> UPDATEABLE_STATUS = new HashSet<StudyStatusCode>();
     static {
         UPDATEABLE_STATUS.add(StudyStatusCode.DISAPPROVED);
@@ -148,17 +162,44 @@ public class SearchTrialAction extends ActionSupport {
         UPDATEABLE_STATUS.add(StudyStatusCode.COMPLETE);
         UPDATEABLE_STATUS.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
     }
+    
+    private String usercreated;
+    /**
+     * @return the usercreated
+     */
+    public String getUsercreated() {
+        return usercreated;
+    }
+
+    /**
+     * @param usercreated the usercreated to set
+     */
+    public void setUsercreated(String usercreated) {
+        this.usercreated = usercreated;
+    }
+    
+    /**
+     * @return the trialAction
+     */
+    public String getTrialAction() {
+        return trialAction;
+    }
+
+    /**
+     * @param trialAction the trialAction to set
+     */
+    public void setTrialAction(String trialAction) {
+        this.trialAction = trialAction;
+    }
 
     /**
      * @return res
      */
     @Override
     public String execute() {
-        String trialAction = ServletActionContext.getRequest().getParameter("trialAction");
         if (StringUtils.isNotEmpty(trialAction) && (trialAction.equalsIgnoreCase("submit")
                 || trialAction.equalsIgnoreCase("amend") || trialAction.equalsIgnoreCase("update"))) {
             String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
-            ServletActionContext.getRequest().setAttribute(SPID, pId);
             studyProtocolId = Long.valueOf(pId);
             getCriteria().setMyTrialsOnly(true);
             return view();
@@ -278,7 +319,7 @@ public class SearchTrialAction extends ActionSupport {
             queryCriteria.setPrincipalInvestigatorId(criteria.getPrincipalInvestigatorId());
         }
         String loginName =  ServletActionContext.getRequest().getRemoteUser();
-        RegistryUser loggedInUser = PaRegistry.getRegisterUserService().getUser(loginName);
+        RegistryUser loggedInUser = PaRegistry.getRegistryUserService().getUser(loginName);
         queryCriteria.setUserId(loggedInUser.getId());
 
         return queryCriteria;
@@ -323,6 +364,60 @@ public class SearchTrialAction extends ActionSupport {
     public void setStudyProtocolId(Long studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
     }
+    
+    private void loadPropTrial(Ii studyProtocolIi) throws PAException, NullifiedRoleException {
+        ProprietaryTrialDTO trialDTO = new ProprietaryTrialDTO();
+        trialUtil.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
+        ServletActionContext.getRequest().setAttribute("leadOrganizationName",
+                trialDTO.getLeadOrganizationName());
+        ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier",
+                trialDTO.getLeadOrgTrialIdentifier());
+        ServletActionContext.getRequest().setAttribute("nctIdentifier", trialDTO.getNctIdentifier());
+        ServletActionContext.getRequest().setAttribute("assignedIdentifier",
+                trialDTO.getAssignedIdentifier());
+        ServletActionContext.getRequest().setAttribute("summaryFourOrgName",
+                trialDTO.getSummaryFourOrgName());
+        ServletActionContext.getRequest().setAttribute("summaryFourFundingCategoryCode",
+                trialDTO.getSummaryFourFundingCategoryCode());
+        ServletActionContext.getRequest().setAttribute("participatingSitesList",
+                trialDTO.getParticipatingSitesList());
+    }
+    
+    private void loadNonPropTrial(Ii studyProtocolIi, boolean maskFields) throws PAException, NullifiedRoleException {
+        TrialDTO trialDTO = new TrialDTO();
+        trialUtil.getTrialDTOFromDb(studyProtocolIi, trialDTO);
+        if (trialDTO.getTrialType().equals("InterventionalStudyProtocol")) {
+           trialDTO.setTrialType("Interventional");
+        } else if (trialDTO.getTrialType().equals("ObservationalStudyProtocol")) {
+           trialDTO.setTrialType("Observational");
+        }
+        ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
+        getReponsibleParty(trialDTO, maskFields);
+        if (!maskFields && !(trialDTO.getFundingDtos().isEmpty())) {
+            // put an entry in the session and store TrialFunding
+             ServletActionContext.getRequest().setAttribute(Constants.TRIAL_FUNDING_LIST,
+                      trialDTO.getFundingDtos());
+        }
+        if (!maskFields && !(trialDTO.getIndIdeDtos().isEmpty())) {
+            // put an entry in the session and store TrialFunding
+            ServletActionContext.getRequest().setAttribute(Constants.STUDY_INDIDE, trialDTO.getIndIdeDtos());
+        }
+    }
+    
+    private StudyProtocolDTO loadTrial(Ii studyProtocolIi, boolean maskFields) 
+        throws PAException, NullifiedRoleException {
+        ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
+        StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+        if (!PAUtil.isBlNull(protocolDTO.getProprietaryTrialIndicator())
+                && BlConverter.convertToBoolean(protocolDTO.getProprietaryTrialIndicator())) {
+            // prop trial
+            loadPropTrial(studyProtocolIi);
+        } else {
+            // non prop trial
+            loadNonPropTrial(studyProtocolIi, maskFields);
+        }
+        return protocolDTO;
+    }
 
     /**
      * @return res
@@ -331,66 +426,13 @@ public class SearchTrialAction extends ActionSupport {
         boolean maskFields = false;
         try {
             // remove the session variables stored during a previous view if any
-
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
-            if (studyProtocolId == null) {
-                String pId = ServletActionContext.getRequest().getParameter(SPID);
-                studyProtocolIi = IiConverter.convertToIi(pId);
-            }
-            String usercreated = ServletActionContext.getRequest().getParameter("usercreated");
             if (usercreated != null && !usercreated.equals(ServletActionContext.getRequest().getRemoteUser())) {
-                    maskFields = true;
+                maskFields = true;
             }
-            ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
-            StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-            if (!PAUtil.isBlNull(protocolDTO.getProprietaryTrialIndicator())
-                    && BlConverter.convertToBoolean(protocolDTO.getProprietaryTrialIndicator())) {
-                // prop trial
-                ProprietaryTrialDTO trialDTO = new ProprietaryTrialDTO();
-                trialUtil.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
-                ServletActionContext.getRequest().setAttribute("leadOrganizationName",
-                        trialDTO.getLeadOrganizationName());
-                ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier",
-                        trialDTO.getLeadOrgTrialIdentifier());
-                ServletActionContext.getRequest().setAttribute("nctIdentifier", trialDTO.getNctIdentifier());
-                ServletActionContext.getRequest().setAttribute("assignedIdentifier",
-                        trialDTO.getAssignedIdentifier());
-                ServletActionContext.getRequest().setAttribute("summaryFourOrgName",
-                        trialDTO.getSummaryFourOrgName());
-                ServletActionContext.getRequest().setAttribute("summaryFourFundingCategoryCode",
-                        trialDTO.getSummaryFourFundingCategoryCode());
-                ServletActionContext.getRequest().setAttribute("participatingSitesList",
-                        trialDTO.getParticipatingSitesList());
-            } else {
-               // non prop trial
-                TrialDTO trialDTO = new TrialDTO();
-                trialUtil.getTrialDTOFromDb(studyProtocolIi, trialDTO);
-                if (trialDTO.getTrialType().equals("InterventionalStudyProtocol")) {
-                   trialDTO.setTrialType("Interventional");
-                } else if (trialDTO.getTrialType().equals("ObservationalStudyProtocol")) {
-                   trialDTO.setTrialType("Observational");
-                }
-                ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
-                getReponsibleParty(trialDTO, maskFields);
-                if (!maskFields && !(trialDTO.getFundingDtos().isEmpty())) {
-                    // put an entry in the session and store TrialFunding
-                     ServletActionContext.getRequest().setAttribute(Constants.TRIAL_FUNDING_LIST,
-                              trialDTO.getFundingDtos());
-                }
-                if (!maskFields && !(trialDTO.getIndIdeDtos().isEmpty())) {
-                    // put an entry in the session and store TrialFunding
-                    ServletActionContext.getRequest().setAttribute(Constants.STUDY_INDIDE, trialDTO.getIndIdeDtos());
-                }
-            }
-            ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO);
-            // query the trial documents
-            List<DocumentDTO> documentISOList = PaRegistry.getDocumentService()
-                    .getDocumentsByStudyProtocol(studyProtocolIi);
-            // List <TrialDocumentWebDTO> documentList;
-            if (!maskFields && !(documentISOList.isEmpty())) {
-                ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
-            }
+            StudyProtocolDTO protocolDTO = loadTrial(studyProtocolIi, maskFields);
+            queryTrialDocsAndSetAttributes(studyProtocolIi, protocolDTO, maskFields);
             LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
             return "view";
         } catch (PAException e) {
@@ -401,18 +443,27 @@ public class SearchTrialAction extends ActionSupport {
             return ERROR;
         }
     }
+    
+    private void queryTrialDocsAndSetAttributes(Ii studyProtocolIi, 
+            StudyProtocolDTO protocolDTO, boolean maskFields) throws PAException {
+        ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO);
+        // query the trial documents
+        List<DocumentDTO> documentISOList = PaRegistry.getDocumentService()
+                .getDocumentsByStudyProtocol(studyProtocolIi);
+        if (!maskFields && !(documentISOList.isEmpty())) {
+            ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
+        }
+    }
 
     /**
      * @return result
      */
     public String viewDoc() {
         try {
-            String docId = ServletActionContext.getRequest().getParameter("identifier");
-            //spidfromviewresults
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     "spidfromviewresults");
             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-            DocumentDTO docDTO = PaRegistry.getDocumentService().get(IiConverter.convertToIi(docId));
+            DocumentDTO docDTO = PaRegistry.getDocumentService().get(IiConverter.convertToIi(identifier));
             StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
             sb.append(File.separator).append(PAUtil.getAssignedIdentifier(spDTO)).append(File.separator)
             .append(docDTO.getIdentifier().getExtension()).append('-').append(docDTO.getFileName().getValue());
@@ -446,18 +497,29 @@ public class SearchTrialAction extends ActionSupport {
      * validate the search trial form elements.
      */
     private void validateForm() {
+        validateEmptyIdentifierType();
+        validateEmptyIdentifier();
+        validateOrganizationType();
+    }
+    
+    private void validateEmptyIdentifierType() {
         if (StringUtils.isNotEmpty(criteria.getIdentifierType()) && StringUtils.isEmpty(criteria.getIdentifier())) {
             addFieldError("criteria.identifier", getText("error.search.identifier"));
         }
+    }
+    
+    private void validateEmptyIdentifier() {
         if (StringUtils.isNotEmpty(criteria.getIdentifier()) && StringUtils.isEmpty(criteria.getIdentifierType())) {
             addFieldError("criteria.identifierType", getText("error.search.identifierType"));
         }
+    }
+    
+    private void validateOrganizationType() {
         if (StringUtils.isNotEmpty(criteria.getOrganizationType()) && (criteria.getOrganizationId() == null
                 && criteria.getParticipatingSiteId() == null)) {
             addFieldError("criteria.organizationId", getText("error.search.organization"));
 
         }
-
     }
 
     private void getReponsibleParty(TrialDTO trialDTO, boolean maskFields) throws PAException, NullifiedRoleException {
@@ -510,14 +572,13 @@ public class SearchTrialAction extends ActionSupport {
      * @return view
      */
     public String partiallySubmittedView() {
-        String pId = ServletActionContext.getRequest().getParameter(SPID);
-        if (StringUtils.isEmpty(pId)) {
+        if (studyProtocolId == null) {
             addActionError("study protocol id cannot null.");
             return ERROR;
         }
         BaseTrialDTO trialDTO = new BaseTrialDTO();
         try {
-            trialDTO =  trialUtil.getTrialDTOForPartiallySumbissionById(pId);
+            trialDTO =  trialUtil.getTrialDTOForPartiallySumbissionById(studyProtocolId.toString());
             if (trialDTO instanceof TrialDTO) {
                 if (StringUtils.isNotEmpty(((TrialDTO) trialDTO).getSelectedRegAuth())) {
                     String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
@@ -532,8 +593,6 @@ public class SearchTrialAction extends ActionSupport {
             }
             ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
             ServletActionContext.getRequest().setAttribute("partialSubmission", "search");
-            ServletActionContext.getRequest().setAttribute("protocolId", pId);
-
         } catch (PAException e) {
             addActionError(e.getMessage());
         } catch (NullifiedRoleException e) {
@@ -588,8 +647,7 @@ public class SearchTrialAction extends ActionSupport {
      * @return the string
      */
     public String sendXml() {
-        String pId = ServletActionContext.getRequest().getParameter(SPID);
-        Ii studyProtocolIi = IiConverter.convertToIi(pId);
+        Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
         String loginName = ServletActionContext.getRequest().getRemoteUser();
         RegistryUserWebDTO regUserWebDto = RegistryUtil.getRegistryUserWebDto(loginName);
         String fullName = regUserWebDto.getFirstName() + " " + regUserWebDto.getLastName();
