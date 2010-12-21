@@ -594,7 +594,8 @@ public class TestSchema {
             addUpdObject(studyMilestone);
             StudyMilestone studyMilestonetss1 = StudyMilestoneTest.createTrialSummarySentStudyMilestoneObj(sp);
             addUpdObject(studyMilestonetss1);
-
+            StudyMilestone studyMilestonetss2 = StudyMilestoneTest.createTrialSummarySentStudyMilestoneObjFiveDays(sp);
+            addUpdObject(studyMilestonetss2);
             RegulatoryAuthority rega = new RegulatoryAuthority();
             rega.setCountry(country);
             rega.setAuthorityName("Authority");

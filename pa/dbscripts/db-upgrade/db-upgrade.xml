@@ -602,4 +602,8 @@
         <comment>Update textual references to proprietary/non-proprietary.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.4/PO-2940.sql"/>
      </changeSet>
+     <changeSet id="PO-2972" author="vrushali">
+        <comment>Adding unspecifieduser in cms_user table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.4/PO-2972.sql"/>
+     </changeSet>
 </databaseChangeLog>

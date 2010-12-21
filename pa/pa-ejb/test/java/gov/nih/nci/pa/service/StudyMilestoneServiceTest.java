@@ -696,7 +696,7 @@ public class StudyMilestoneServiceTest {
         studyMilestone.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT));
 
         milestones = remote.search(studyMilestone, limitOffset);
-        assertEquals("There should only be one milestone present for TRIAL_SUMMARY_SENT", milestones.size(), 1);
+        assertEquals("There should only be one milestone present for TRIAL_SUMMARY_SENT", milestones.size(), 2);
         milestone = milestones.get(0);
         assertEquals(milestone.getMilestoneCode(), studyMilestone.getMilestoneCode());
         assertEquals(milestone.getStudyProtocolIdentifier(), studyMilestone.getStudyProtocolIdentifier());

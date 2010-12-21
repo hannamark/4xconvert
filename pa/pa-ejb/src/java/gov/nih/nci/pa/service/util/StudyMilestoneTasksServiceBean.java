@@ -79,17 +79,17 @@
 
 package gov.nih.nci.pa.service.util;
 
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -122,46 +122,40 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
 
     @EJB
     private StudyMilestoneServicelocal smRemote;
-
     /**
      * Perform task.
      * @throws PAException exception
      */
     public void performTask() throws PAException {
-        // create the criteria search object
-        StudyMilestoneDTO studyMilestoneDTO = new StudyMilestoneDTO();
-        studyMilestoneDTO.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT));
-        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
         Calendar milestoneDate = Calendar.getInstance();
-        try {
-            List<StudyMilestoneDTO> studyMilestoneDTOList = smRemote.search(studyMilestoneDTO, limit);
-            LOG.info("StudyMilestoneTasksServiceBean searching for studies; search results returned "
-                    + studyMilestoneDTOList.size());
-            for (StudyMilestoneDTO smdto : studyMilestoneDTOList) {
-                milestoneDate.setTime(smdto.getMilestoneDate().getValue());
-                if (isMoreThan5Businessdays(milestoneDate) && !checkMilestoneExists(smdto)) {
-                    LOG.debug("Creating a new milestone with code - initial abstraction verify"
-                            + smdto.getStudyProtocolIdentifier());
-                    StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
-                    newDTO.setCommentText(StConverter.convertToSt(
+        List<StudyMilestone> studyMilestoneList = getTrialSummarySentMilestone();
+        LOG.info("StudyMilestoneTasksServiceBean searching for studies; search results returned "
+                    + studyMilestoneList.size());
+
+        for (StudyMilestone smdto : studyMilestoneList) {
+            milestoneDate.setTime(smdto.getMilestoneDate());
+            if (isMoreThan5Businessdays(milestoneDate)) {
+                LOG.info("Creating a new milestone with code - initial abstraction verify"
+                            + smdto.getStudyProtocol().getId());
+                StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
+                newDTO.setCommentText(StConverter.convertToSt(
                             "Milestone auto-set based on Non-Response within 5 days"));
-                    newDTO.setMilestoneCode(CdConverter.convertStringToCd(
-                            MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode()));
-                    newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-                    newDTO.setStudyProtocolIdentifier(smdto.getStudyProtocolIdentifier());
-                    try {
+                newDTO.setMilestoneCode(CdConverter.convertStringToCd(
+                MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode()));
+                newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+                newDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
+                        smdto.getStudyProtocol().getId()));
+                try {
                         smRemote.create(newDTO);
-                    } catch (PAException e) {
-                        // swallowing the exception in order to continue processing the rest of the records
-                        LOG.error("Error occurred in a quartz job while creating INITIAL_ABSTRACTION_VERIFY "
+                } catch (PAException e) {
+                    // swallowing the exception in order to continue processing the rest of the records
+                    LOG.error("Error occurred in a quartz job while creating INITIAL_ABSTRACTION_VERIFY "
                                 + " milestone based on Non-Response within 5 days" + e);
-                    }
                 }
-            }
-        } catch (TooManyResultsException e) {
-            throw new PAException("ToomanyReusltsException occurred", e);
-        }
+             }
+         }
     }
+
 
     /**
      *
@@ -175,27 +169,21 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         if (milestoneDate.before(today)) {
             ret = true;
         }
+        LOG.info("StudyMilestoneTasksServiceBean: study's TSR sent date " + milestoneDate.getTime()
+                + " isMoreThan5Businessdays " + ret);
         return ret;
     }
-
     /**
-     * Check milestone exists.
-     *
-     * @param dto the dto
-     *
-     * @return true, if successful
-     *
-     * @throws PAException the PA exception
+     * Gets List of DTOs for which TSR is sent but not having to INITIAL_ABSTRACTION_VERIFY.
+     * @return list Of StudyMilestone
      */
-    private boolean checkMilestoneExists(StudyMilestoneDTO dto) throws PAException {
-        boolean milestoneExits = false;
-        List<StudyMilestoneDTO> existingDtoList = smRemote.getByStudyProtocol(dto.getStudyProtocolIdentifier());
-        for (StudyMilestoneDTO smdto : existingDtoList) {
-            if (smdto.getMilestoneCode().getCode().equals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode())) {
-                milestoneExits = true;
-            }
-        }
-        return milestoneExits;
+    private List<StudyMilestone> getTrialSummarySentMilestone() {
+        String hsql = "select sm from StudyMilestone sm where sm.milestoneCode='" + MilestoneCode.TRIAL_SUMMARY_SENT
+            + "' and sm.studyProtocol  in (select sm1.studyProtocol from StudyMilestone sm1 where "
+            + " sm1.milestoneCode='" + MilestoneCode.TRIAL_SUMMARY_SENT + "' and sm1.studyProtocol not in "
+            + " (select sm2.studyProtocol"
+            + " from StudyMilestone sm2 where sm2.milestoneCode='" + MilestoneCode.INITIAL_ABSTRACTION_VERIFY + "'))";
+        return HibernateUtil.getCurrentSession().createQuery(hsql).list();
     }
 
     /**

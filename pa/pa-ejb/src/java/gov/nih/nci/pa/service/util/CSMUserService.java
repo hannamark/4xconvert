@@ -110,7 +110,7 @@ public class CSMUserService implements CSMUserUtil {
     private static final Logger LOG  = Logger.getLogger(CSMUserService.class);
     private static CSMUserUtil registryUserService = null;
     /**
-     * Based on gridServicePrincipalSeparator used in security-config.xml.  Escaped for regular expression support. 
+     * Based on gridServicePrincipalSeparator used in security-config.xml.  Escaped for regular expression support.
      */
     private static final String PRINCIPAL_SEPARATOR = "\\|\\|";
 
@@ -272,9 +272,17 @@ public class CSMUserService implements CSMUserUtil {
     public User lookupUser(SessionContext ejbContext) throws PAException {
         User user = null;
         String userName = null;
-        if (ejbContext != null && ejbContext.getCallerPrincipal() != null) {
-            userName = ejbContext.getCallerPrincipal().getName();
-            user = CSMUserService.getInstance().getCSMUser(extractUserName(userName));
+        try {
+            if (ejbContext != null && ejbContext.getCallerPrincipal() != null) {
+                userName = ejbContext.getCallerPrincipal().getName();
+                user = CSMUserService.getInstance().getCSMUser(extractUserName(userName));
+            }
+        } catch (IllegalStateException e) {
+            //catching this exception in order to run quartz's milestone job successfully since job is not able to
+            //set callerPrincipal. Once the solution found we can remove this code
+            //remove this after fixing PO-3057
+            userName = PaEarPropertyReader.getProperties().getProperty("default.user.name");
+            user = CSMUserService.getInstance().getCSMUser(userName);
         }
         if (user == null) {
             throw new PAException("Unable to lookup user for: " + userName + " in SessionContext: " + ejbContext);
@@ -285,7 +293,7 @@ public class CSMUserService implements CSMUserUtil {
     /**
      * Extract the userName.  Used in case, there are multiple userNames passed in of the form:
      * 'userName1||userName2' or just 'userName'.  The first version userName1 is grid account userName,
-     * and userName2 is the actual userName of interest.  In both scenarios, we want to use the userName 
+     * and userName2 is the actual userName of interest.  In both scenarios, we want to use the userName
      * at the end (e.g. 'userName2','userName').
      * @param userName
      * @return

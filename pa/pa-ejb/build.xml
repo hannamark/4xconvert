@@ -164,6 +164,7 @@
                 <filter token="gridgrouper.url" value="${gridgrouper.url}"/>
                 <filter token="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
                 <filter token="cteprss.user" value="${cteprss.user}"/>
+                <filter token="default.user.name" value="${default.user.name}" />
             </filterset>
         </copy>
         <copy file="${pa.resourceDir}/ejb-jar.xml"
