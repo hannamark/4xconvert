@@ -196,16 +196,10 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         this.ejbContext = ctx;
     }
 
-
     private StudyProtocolDTO getStudyProtocolById(Long id) throws PAException {
-
         Session session = HibernateUtil.getCurrentSession();
-        StudyProtocol studyProtocol = (InterventionalStudyProtocol) session.get(InterventionalStudyProtocol.class,
-                                                                                id);
-        if (studyProtocol == null) {
-            studyProtocol = (ObservationalStudyProtocol) session.get(ObservationalStudyProtocol.class,
-                                                                     id);
-        }
+        StudyProtocol studyProtocol = (StudyProtocol) session.get(StudyProtocol.class, id);
+
         if (studyProtocol == null) {
             throw new PAException("No matching study protocol for Ii.extension " + id);
         }

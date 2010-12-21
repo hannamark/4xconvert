@@ -120,7 +120,7 @@ implements DocumentWorkflowStatusServiceLocal {
         if (!PAUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Update method should be used to modify existing.  ");
         }
-
+        DocumentWorkflowStatusDTO returnDto = new DocumentWorkflowStatusDTO();
         DocumentWorkflowStatus criteria = new DocumentWorkflowStatus();
         StudyProtocol sp = new StudyProtocol();
         sp.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
@@ -132,16 +132,16 @@ implements DocumentWorkflowStatusServiceLocal {
 
         dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp((new Date()).getTime()), null));
         if (CollectionUtils.isEmpty(results)) {
-            super.create(dto);
+            returnDto = super.create(dto);
         } else if (results.size() == 1) {
             dto.setIdentifier(IiConverter.convertToIi(results.get(0).getId()));
-            super.update(dto);
+            returnDto = super.update(dto);
         } else if (results.size() > 1) {
             throw new PAException("There cannot be more than 1 record for a given protocol and status "
                     + " protocol id = " + dto.getStudyProtocolIdentifier().getExtension() + " status code "
                     + dto.getStatusCode().getCode());
         }
-        return null;
+        return returnDto;
     }
 
 }

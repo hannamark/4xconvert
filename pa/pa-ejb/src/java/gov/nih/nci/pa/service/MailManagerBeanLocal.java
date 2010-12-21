@@ -222,13 +222,13 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 }
             }
             body = body.replace(CURRENT_DATE, getFormatedCurrentDate());
-            body = body.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier().toString());
+            body = body.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
             body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle().toString());
             body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getDateLastCreated()));
-            body = body.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier().toString());
-            body = body.replace("${fileName}", TSR + spDTO.getNciIdentifier().toString() + EXTENSION_RTF);
+            body = body.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
+            body = body.replace("${fileName}", TSR + spDTO.getNciIdentifier() + EXTENSION_RTF);
             if (!spDTO.isProprietaryTrial()) {
-                body = body.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
+                body = body.replace("${fileName2}", spDTO.getNciIdentifier() + ".xml");
             }
 
             body = body.replace(AMENDMENT_NUMBER, amendNumber);

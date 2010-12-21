@@ -76,14 +76,15 @@ public class StudyMilestoneBeanLocal
      */
     @Override
     public StudyMilestoneDTO create(StudyMilestoneDTO dto) throws PAException {
+        //PO-2961:The order of the below calls is significant.
+        //The emails must be sent after creation has happened. - aevansel, 12/21/2010.
         StudyMilestoneDTO workDto = businessRules(dto);
-        // Send TSR e-mail for the appropriate milestone
-        sendTSREmail(workDto);
         StudyMilestoneDTO resultDto = super.create(workDto);
         createDocumentWorkflowStatuses(resultDto);
         updateRecordVerificationDates(resultDto);
+        // Send TSR e-mail for the appropriate milestone
+        sendTSREmail(workDto);
         sendLateRejectionEmail(workDto);
-
         return resultDto;
     }
 
