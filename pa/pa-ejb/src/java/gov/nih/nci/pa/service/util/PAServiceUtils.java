@@ -723,27 +723,52 @@ public class PAServiceUtils {
         if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
             for (int i = 0; i < studyIndldeDTOs.size(); i++) {
                 StudyIndldeDTO sp = studyIndldeDTOs.get(i);
-                if (PAUtil.isIiNotNull(sp.getIdentifier()) && !isIiExistInPA(IiConverter.convertToStudyIndIdeIi(
-                        Long.valueOf(sp.getIdentifier().getExtension())))) {
-                    errorMsg.append("Ind/Ide id " + sp.getIdentifier().getExtension() + " does not exist");
-                }
+                isIndIdeUpdated(errorMsg, sp);
                 for (int j = ++i; j < studyIndldeDTOs.size(); j++) {
                     StudyIndldeDTO newType = studyIndldeDTOs.get(j);
-                    boolean sameType = newType.getIndldeTypeCode().getCode().equals(sp.getIndldeTypeCode().getCode());
-                    boolean sameNumber = newType.getIndldeNumber().getValue().equals(sp.getIndldeNumber().getValue());
-                    boolean sameGrantor = newType.getGrantorCode().getCode().equals(sp.getGrantorCode().getCode());
-                    if (sameType && sameNumber && sameGrantor) {
-                        throw new PADuplicateException("Duplicates Ind/Ide are not allowed.");
+                    if (isIndIdeDuplicate(sp, newType)) {
+                        errorMsg.append("Duplicates IND/IDEs are not allowed.");
                     }
                 }
             }
-            if (!BlConverter.convertToBool(studyProtocolDTO.getFdaRegulatedIndicator())) {
+            Boolean ctGovIndicator = BlConverter.convertToBoolean(studyProtocolDTO.getCtgovXmlRequiredIndicator());
+            if (BooleanUtils.isTrue(ctGovIndicator) && !BlConverter.convertToBool(
+                    studyProtocolDTO.getFdaRegulatedIndicator())) {
                 errorMsg.append("FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.");
             }
             if (errorMsg.length() > 1) {
-                new PAException(errorMsg.toString());
+                throw new PAException(errorMsg.toString());
             }
         }
+    }
+
+    /**
+     * @param errorMsg
+     * @param sp
+     * @throws PAException
+     */
+    private void isIndIdeUpdated(StringBuffer errorMsg, StudyIndldeDTO sp) throws  PAException {
+        if (PAUtil.isIiNotNull(sp.getIdentifier())) {
+            StudyPaService<StudyDTO> paService = getRemoteService(IiConverter.convertToStudyIndIdeIi(
+                    Long.valueOf(sp.getIdentifier().getExtension())));
+            StudyIndldeDTO dbDTO = (StudyIndldeDTO) paService.get(sp.getIdentifier());
+            if (dbDTO == null) {
+                errorMsg.append("IND/IDE ID " + sp.getIdentifier().getExtension() + " does not exist");
+            } else if (!isIndIdeDuplicate(sp, dbDTO)) {
+                errorMsg.append("Existing IND/IDEs cannot be modified.");
+            }
+        }
+    }
+
+    /**
+     * @param sp
+     * @param newType
+     */
+    private boolean isIndIdeDuplicate(StudyIndldeDTO sp, StudyIndldeDTO newType) {
+        boolean sameType = StringUtils.equals(newType.getIndldeTypeCode().getCode(), sp.getIndldeTypeCode().getCode());
+        boolean sameNumber = StringUtils.equals(newType.getIndldeNumber().getValue(), sp.getIndldeNumber().getValue());
+        boolean sameGrantor = StringUtils.equals(newType.getGrantorCode().getCode(), sp.getGrantorCode().getCode());
+        return sameType && sameNumber && sameGrantor;
     }
 
     /**
@@ -756,32 +781,55 @@ public class PAServiceUtils {
         if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
             for (int i = 0; i < studyResourcingDTOs.size(); i++) {
                 StudyResourcingDTO sp =  studyResourcingDTOs.get(i);
-                if (PAUtil.isIiNotNull(sp.getIdentifier()) && !isIiExistInPA(IiConverter.convertToStudyResourcingIi(
-                        Long.valueOf(sp.getIdentifier().getExtension())))) {
-                    errorMsg.append("Grant id " + sp.getIdentifier().getExtension() + " does not exist");
-                }
-
+                isGrantUpdated(sp, errorMsg);
                 for (int j = ++i; j < studyResourcingDTOs.size(); j++) {
                     StudyResourcingDTO newType =  studyResourcingDTOs.get(j);
-                    boolean sameFundingMech = newType.getFundingMechanismCode().getCode().
-                                   equals(sp.getFundingMechanismCode().getCode());
-                    boolean sameNih = newType.getNihInstitutionCode().getCode().
-                                   equals(sp.getNihInstitutionCode().getCode());
-                    boolean sameNci = newType.getNciDivisionProgramCode().getCode().
-                                    equals(sp.getNciDivisionProgramCode().getCode());
-                    boolean sameSerial = newType.getSerialNumber().getValue().
-                                    equals(sp.getSerialNumber().getValue());
-                    if (sameFundingMech && sameNih && sameNci && sameSerial) {
-                          throw new PADuplicateException("Duplicates Grants are not allowed.");
-                    }
-               }
-           }
-           if (errorMsg.length() > 1) {
-               new PAException(errorMsg.toString());
-           }
-       }
+                    if (isGrantDuplicate(sp, newType)) {
+                        errorMsg.append("Duplicates grants are not allowed.");
+                  }
+                }
+            }
+            if (errorMsg.length() > 1) {
+               throw new PAException(errorMsg.toString());
+            }
+        }
     }
 
+    /**
+     * @param sp
+     * @return
+     * @throws PAException
+     */
+    private void isGrantUpdated(StudyResourcingDTO sp, StringBuffer errorMsg) throws PAException {
+        if (PAUtil.isIiNotNull(sp.getIdentifier())) {
+            StudyPaService<StudyDTO> paService = getRemoteService(IiConverter.convertToStudyResourcingIi(
+                    Long.valueOf(sp.getIdentifier().getExtension())));
+            StudyResourcingDTO dbDTO = (StudyResourcingDTO) paService.get(sp.getIdentifier());
+            if (dbDTO == null) {
+                errorMsg.append("Grant ID " + sp.getIdentifier().getExtension() + " does not exist");
+            } else if (!isGrantDuplicate(sp, dbDTO)) {
+                errorMsg.append("Existing grants cannot be modified.");
+            }
+        }
+    }
+
+    /**
+     * @param grantOne
+     * @param grantTwo
+     * @throws PADuplicateException
+     */
+    private boolean isGrantDuplicate(StudyResourcingDTO grantOne, StudyResourcingDTO grantTwo)
+        throws PADuplicateException {
+        boolean sameFundingMech = StringUtils.equals(grantTwo.getFundingMechanismCode().getCode(),
+                       grantOne.getFundingMechanismCode().getCode());
+        boolean sameNih = StringUtils.equals(grantTwo.getNihInstitutionCode().getCode(),
+                       grantOne.getNihInstitutionCode().getCode());
+        boolean sameNci = StringUtils.equals(grantTwo.getNciDivisionProgramCode().getCode(),
+                        grantOne.getNciDivisionProgramCode().getCode());
+        boolean sameSerial = StringUtils.equals(grantTwo.getSerialNumber().getValue(),
+                        grantOne.getSerialNumber().getValue());
+        return sameFundingMech && sameNih && sameNci && sameSerial;
+    }
 
     /**
      *
@@ -1358,7 +1406,7 @@ public class PAServiceUtils {
         }
         return org;
     }
-    
+
     /**
     *
     * @param isoIi iso Identifier
@@ -1643,7 +1691,7 @@ public class PAServiceUtils {
         }
         return EnOnConverter.convertEnOnToString(orgDto.getName());
     }
-    
+
       /**
        *
        * @param poOrgId orgId
@@ -1665,7 +1713,7 @@ public class PAServiceUtils {
           }
           return null;
       }
-      
+
       /**
        * Get Ii of duplicate person.
        * @param poPerId poPerId
@@ -1687,7 +1735,7 @@ public class PAServiceUtils {
           }
           return null;
       }
-      
+
       /**
        *Read an input stream in its entirety into a byte array.
        *@param inputStream input stream
