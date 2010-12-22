@@ -39,6 +39,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -109,6 +110,10 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
     private void transformContacts(StudySite studySite, List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) 
     throws DtoTransformException, PAException {
         for (StudySiteContact studySiteContact : studySite.getStudySiteContacts()) {
+            if (studySiteContact.getPersonRole() == null 
+                    || CollectionUtils.isEmpty(studySiteContact.getPersonRole().getContent())) {
+                throw new PAException("PersonRole cannot be empty for StudySiteContact.");
+            }
             PersonRole personRole = (PersonRole) (studySiteContact.getPersonRole().getContent().get(0));
             ParticipatingSiteContactDTO participatingSiteContactDTO = new ParticipatingSiteContactDTO();
             participatingSiteContactDTO.setPersonDTO(PersonManagementTransformer.INSTANCE.toDto(personRole.getPlayer()));
