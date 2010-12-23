@@ -109,6 +109,10 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
     private void transformContacts(StudySite studySite, List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) 
     throws DtoTransformException, PAException {
         for (StudySiteContact studySiteContact : studySite.getStudySiteContacts()) {
+            if (studySiteContact.getPersonRole() == null 
+                    || studySiteContact.getPersonRole().getContent().isEmpty()) {
+                throw new PAException("PersonRole cannot be empty for StudySiteContact.");
+            }
             PersonRole personRole = (PersonRole) (studySiteContact.getPersonRole().getContent().get(0));
             ParticipatingSiteContactDTO participatingSiteContactDTO = new ParticipatingSiteContactDTO();
             participatingSiteContactDTO.setPersonDTO(PersonManagementTransformer.INSTANCE.toDto(personRole.getPlayer()));
