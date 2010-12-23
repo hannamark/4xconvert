@@ -6,7 +6,7 @@ P.fA("Getting Started","gettingStarted.2.1.html");
 P.fA("About the CTRP Registration Site","gettingStarted.2.2.html");
 P.fA("About Clinical Trial Details","gettingStarted.2.3.html");
 P.fA("What\u2019s New in This Release","gettingStarted.2.4.html");
-P.fA("Creating and Updating CTRP Registration Site Accounts","gettingStarted.2.5.html");
+P.fA("Creating CTRP Registration Site Accounts","gettingStarted.2.5.html");
 P.fA("Creating New CTRP Registration Site Accounts","gettingStarted.2.6.html");
 P.fA("Creating New CTRP Registration Site Accounts Using caGrid or NCI Credentials","gettingStarted.2.7.html");
 P.fA("Logging In to the CTRP Registration Site","gettingStarted.2.8.html");
