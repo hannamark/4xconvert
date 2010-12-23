@@ -144,7 +144,7 @@ import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author mshestopalov
- * 
+ *
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -152,7 +152,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @SecurityDomain("pa")
 @RolesAllowed({ "client", "Abstractor" })
 @SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
-public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean 
+public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
 implements ParticipatingSiteServiceLocal {
     private SessionContext ejbContext;
 
@@ -172,7 +172,7 @@ implements ParticipatingSiteServiceLocal {
             throw new PAException("Trial id " + studyProtocolIi.getExtension() + " does not exist.");
         }
         RegistryUser userId = PaRegistry.getRegistryUserService().getUser(user.getLoginName());
-        if (!PaRegistry.getRegistryUserService().isTrialOwner(userId.getId(), 
+        if (!PaRegistry.getRegistryUserService().isTrialOwner(userId.getId(),
                 Long.valueOf(spDTO.getIdentifier().getExtension()))) {
             throw new PAException("User " + user.getLoginName() + "is not a trial owner for trial id "
                     + Long.valueOf(spDTO.getIdentifier().getExtension()));
@@ -403,13 +403,13 @@ implements ParticipatingSiteServiceLocal {
         createStudySiteAccrualStatus(studySiteDTO.getIdentifier(), currentStatus);
         return getStudySite(studySiteDTO.getIdentifier());
     }
-    
+
     private boolean isDuplicate(Ii trialIi, Ii paHcfIi) throws PAException {
         StudySiteDTO ssDto = new StudySiteDTO();
         ssDto.setStudyProtocolIdentifier(trialIi);
         ssDto.setHealthcareFacilityIi(paHcfIi);
         ssDto.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE.getCode()));
-        
+
         List<StudySiteDTO> ssDtoList;
         try {
             ssDtoList = this.getStudySiteService().search(ssDto, new LimitOffset(1, 0));
@@ -431,10 +431,10 @@ implements ParticipatingSiteServiceLocal {
             StudySiteAccrualStatusDTO currentStatusDTO, OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
         checkValidUser(studySiteDTO.getStudyProtocolIdentifier());
-        ParticipatingSiteDTO participatingSiteDTO = 
+        ParticipatingSiteDTO participatingSiteDTO =
             this.createStudySiteParticipant(studySiteDTO, currentStatusDTO,
                 orgDTO, hcfDTO);
-        addStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
+        updateStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
         return getParticipatingSite(participatingSiteDTO.getIdentifier());
     }
 
@@ -445,10 +445,10 @@ implements ParticipatingSiteServiceLocal {
             StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
         checkValidUser(studySiteDTO.getStudyProtocolIdentifier());
-        ParticipatingSiteDTO participatingSiteDTO = 
+        ParticipatingSiteDTO participatingSiteDTO =
             this.createStudySiteParticipant(studySiteDTO, currentStatusDTO,
                 poHcfIi);
-        addStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
+        updateStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
         return getParticipatingSite(participatingSiteDTO.getIdentifier());
     }
 
@@ -458,19 +458,27 @@ implements ParticipatingSiteServiceLocal {
     public ParticipatingSiteDTO updateStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
-        
-        StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteDTO.getIdentifier());   
+
+        StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteDTO.getIdentifier());
         checkValidUser(currentSite.getStudyProtocolIdentifier());
-        ParticipatingSiteDTO participatingSiteDTO = 
+        ParticipatingSiteDTO participatingSiteDTO =
             this.updateStudySiteParticipant(studySiteDTO, currentStatusDTO);
-        addStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
+        updateStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
         return getParticipatingSite(participatingSiteDTO.getIdentifier());
     }
 
-    private void addStudySiteContacts(List<ParticipatingSiteContactDTO> participatingSiteContactDTOList,
+    private void updateStudySiteContacts(List<ParticipatingSiteContactDTO> participatingSiteContactDTOList,
             ParticipatingSiteDTO participatingSiteDTO) throws PAException {
+        deleteExistingStudySiteContants(participatingSiteDTO);
         for (ParticipatingSiteContactDTO participatingSiteContactDTO : participatingSiteContactDTOList) {
             addStudySiteContact(participatingSiteDTO, participatingSiteContactDTO);
+        }
+    }
+    private void deleteExistingStudySiteContants(ParticipatingSiteDTO participatingSiteDTO) throws PAException {
+        List<StudySiteContactDTO> dtos = getStudySiteContactService().getByStudySite(
+                participatingSiteDTO.getIdentifier());
+        for (StudySiteContactDTO dto : dtos) {
+            getStudySiteContactService().delete(dto.getIdentifier());
         }
     }
 

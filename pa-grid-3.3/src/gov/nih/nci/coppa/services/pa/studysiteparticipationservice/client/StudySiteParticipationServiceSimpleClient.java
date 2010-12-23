@@ -40,7 +40,7 @@ import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
-
+import org.apache.commons.collections.CollectionUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
@@ -52,6 +52,7 @@ import org.iso._21090.DSETTEL;
 import org.iso._21090.II;
 import org.iso._21090.ST;
 import org.iso._21090.TEL;
+import org.iso._21090.DSETII;
 
 /**
  * Simple client to call the StudySiteParticipationService.
@@ -71,10 +72,11 @@ public class StudySiteParticipationServiceSimpleClient {
             if (!(args.length < 2)) {
                 if (args[0].equals("-url")) {
                     StudySiteParticipationServiceClient client = new StudySiteParticipationServiceClient(args[1]);
-                    createCTEPSite(client);
+                    //createCTEPSite(client);
                     // createTestSite(client);
                     // createPropSite(client);
                     // updatePropSite(client);
+                    changePITest(client);
                 } else {
                     usage();
                     System.exit(1);
@@ -395,6 +397,113 @@ public class StudySiteParticipationServiceSimpleClient {
         studySiteIi.setRoot(IiConverter.STUDY_SITE_ROOT);
         studySiteIi.setIdentifierName(IiConverter.STUDY_SITE_IDENTIFIER_NAME);
         client.updateParticipatingSite(studySiteIi, ssXml);
+}
+private static void changePITest(StudySiteParticipationServiceClient client) throws DtoTransformException,
+    PAFault, RemoteException, URISyntaxException {
+    System.out.println("Change PI Test");
+    Id studyProtocolId = new Id();
+    studyProtocolId.setExtension("VRUSH-001");
+    studyProtocolId.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
+    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite[] results =
+        client.getParticipatingSitesByStudyProtocol(studyProtocolId);
+    for (gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite ss : results) {
+        System.out.println(ss.getIdentifier().getExtension());
+//        if ("444453".equals(ss.getIdentifier().getExtension()))
+//        {
+//            for (gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySiteContact ssc : ss.getStudySiteContacts()) {
+//                if ("Principal Investigator".equals(ssc.getRoleCode().getCode())) {
+//
+//                }
+//            }
+            StudySiteDTO studySiteDTO = new StudySiteDTO();
+            studySiteDTO.setAccrualDateRange(IvlConverter.convertTs()
+                                             .convertToIvl(new Timestamp(new Date().getTime() +
+                                                                         Long.valueOf("300000000")), null));
+            studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("CHANGED SP ID-c1"));
+            studySiteDTO.setProgramCodeText(StConverter.convertToSt("UPD CODE"));
+            StudySite ssXml = StudySiteManagementTransformer.INSTANCE.toXml(studySiteDTO);
+
+
+            StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
+            currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode()));
+            currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() -
+                                                                              Long.valueOf("300000000"))));
+            StudySiteAccrualStatus ssasXml =
+              StudySiteAccrualStatusManagementTransformer.INSTANCE.toXml(currentStatus);
+            ssXml.setAccrualStatus(ssasXml);
+            gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.HealthCareFacility
+                hcfXml = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.HealthCareFacility();
+            // following will reuse existing
+            //                hcfXml.setIdentifier(ss.getOrganizationRole().getIdentifier());
+            // Following will replace current ORG with "American College of Surgeons Oncology Trials Group"
+            DSETII hcfDsetId = new DSETII();
+            II hcfId = new II();
+            hcfId.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+            hcfId.setExtension("ACOSOG");
+            hcfDsetId.getItem().add(hcfId);
+            hcfXml.setIdentifier(hcfDsetId);
+            ssXml.setOrganizationRole(hcfXml);
+            // Replace PIs with this one:
+            StudySiteContactDTO studySiteContactDTO = new StudySiteContactDTO();
+            studySiteContactDTO.setPrimaryIndicator(BlConverter.convertToBl(false));
+            studySiteContactDTO.setPostalAddress(AddressConverterUtil.create("111", " Rockville Pike",
+                                                                             "Rockville", "MD", "20850",
+                                                                             "USA"));
+            // set the person as the PI
+            studySiteContactDTO.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR));
+            Tel email = new Tel();
+            URI uri = new URI(TelEmail.SCHEME_MAILTO + ":howard@orion.com");
+            email.setValue(uri);
+            studySiteContactDTO.setTelecomAddresses(new DSet<Tel>());
+            studySiteContactDTO.getTelecomAddresses().setItem(new HashSet<Tel>());
+            studySiteContactDTO.getTelecomAddresses().getItem().add(email);
+            gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteContact studySiteContact
+                = StudySiteContactManagementTransformer.INSTANCE.toXml(studySiteContactDTO);
+
+
+            // construct the person to link with that study site
+            Ii personIi = new Ii();
+//DEV            personIi.setExtension("1407731");
+            personIi.setExtension("1479");
+            personIi.setRoot(IiConverter.PERSON_ROOT);
+            //personIi.setExtension("11630");
+            //personIi.setRoot(IiConverter.CTEP_PERSON_IDENTIFIER_ROOT);
+            // contruct the person DTO
+            PersonDTO personDto = new PersonDTO();
+            personDto.setIdentifier(personIi);
+            // set the person as the CRS player
+            ClinicalResearchStaff crs = new ClinicalResearchStaff();
+            crs.setPlayer(PersonManagementTransformer.INSTANCE.toXml(personDto));
+            // add person type to the study site
+            PersonType personType = new PersonType();
+            personType.getContent().add(crs);
+            studySiteContact.setPersonRole(personType);
+            ssXml.getStudySiteContacts().add(studySiteContact);
+//            for (gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySiteContact ssc : ss.getStudySiteContacts()) {
+//                if (!"Principal Investigator".equals(ssc.getRoleCode().getCode())) {
+//                    StudySiteContactDTO studySiteContactDTO = new StudySiteContactDTO();
+//                    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteContact studySiteContact =
+//                        StudySiteContactManagementTransformer.INSTANCE.toXml(studySiteContactDTO);
+//
+//                    gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.ClinicalResearchStaff crs =
+//                        new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.ClinicalResearchStaff();
+//
+//
+//                    studySiteContact.setPersonRole(crs);
+//                }
+//
+//
+//
+//            }
+            Id studySiteIi = new Id();
+            studySiteIi.setExtension(ss.getIdentifier().getExtension());
+            studySiteIi.setRoot(IiConverter.STUDY_SITE_ROOT);
+            gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite ssResult =
+                client.updateParticipatingSite(studySiteIi, ssXml);
+            System.out.println("Update Result: " + ssResult.getIdentifier().getExtension());
+        }
+
+
 }
 
 }
