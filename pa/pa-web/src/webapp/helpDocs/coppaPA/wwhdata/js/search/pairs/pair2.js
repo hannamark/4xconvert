@@ -1,9 +1,12 @@
 function FileData_Pairs(x)
 {
 x.t("abstraction","instructions");
+x.t("abstraction","trial");
 x.t("abstraction","logging");
 x.t("instructions","logging");
+x.t("categories","logging");
 x.t("getting","started");
+x.t("trial","categories");
 x.t("overview","protocol");
 x.t("logging","application");
 x.t("logging","protocol");

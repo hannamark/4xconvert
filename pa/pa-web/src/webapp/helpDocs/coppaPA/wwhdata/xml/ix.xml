@@ -1,317 +1,333 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WebWorksHelpIX version="5.0" xmlns="urn:WebWorks-Help-Index-Schema">
   <g t="A" o="002">
+    <i t="abbreviated trials">
+      <i t="defined">
+        <j l="4#1089262" />
+      </i>
+      <i t="validating">
+        <j l="22#1147365" />
+      </i>
+    </i>
     <i t="abstracting">
       <i t="administrative details">
-        <j l="36" />
-        <j l="46" />
-      </i>
-      <i t="arms">
-        <j l="99#1079731" />
-      </i>
-      <i t="collaborator information">
-        <j l="67" />
-      </i>
-      <i t="contacts">
-        <j l="64" />
-      </i>
-      <i t="general trial details">
-        <j l="48" />
-      </i>
-      <i t="human subject safety information">
-        <j l="56" />
-      </i>
-      <i t="interventions">
-        <j l="94#1129001" />
-      </i>
-      <i t="investigators">
-        <j l="63" />
-      </i>
-      <i t="milestones">
         <j l="39" />
       </i>
+      <i t="arms">
+        <j l="81#1079731" />
+      </i>
+      <i t="collaborator information">
+        <j l="50" />
+      </i>
+      <i t="general trial details">
+        <j l="41" />
+      </i>
+      <i t="human subject safety information">
+        <j l="44" />
+      </i>
+      <i t="interventions">
+        <j l="76#1129001" />
+      </i>
+      <i t="milestones">
+        <j l="32" />
+      </i>
       <i t="NCI information">
-        <j l="54" />
+        <j l="42" />
       </i>
       <i t="on-hold information">
-        <j l="43" />
+        <j l="36" />
       </i>
       <i t="outcome measures">
-        <j l="78#1174470" />
+        <j l="60#1214504" />
       </i>
       <i t="participating site information">
-        <j l="60" />
+        <j l="48" />
       </i>
       <i t="regulatory information">
-        <j l="55" />
+        <j l="43" />
       </i>
-      <i t="trail descriptions">
-        <j l="75#1129286" />
+      <i t="trial descriptions">
+        <j l="58#1129286" />
       </i>
       <i t="trial design details">
-        <j l="77#1078077" />
+        <j l="59#1078077" />
       </i>
       <i t="trial funding information">
-        <j l="59" />
+        <j l="47" />
       </i>
       <i t="trial IND/IDE information">
-        <j l="57" />
+        <j l="45" />
       </i>
       <i t="trial status information">
-        <j l="58" />
+        <j l="46" />
       </i>
       <i t="trial-related documents">
-        <j l="70" />
+        <j l="53" />
       </i>
     </i>
     <i t="abstractions">
       <i t="completing">
-        <j l="111" />
+        <j l="93" />
       </i>
       <i t="validating">
-        <j l="108#1077996" />
-        <j l="111" />
+        <j l="90#1077996" />
+        <j l="93" />
       </i>
     </i>
     <i t="accepting trials">
-      <j l="35" />
+      <j l="21" />
+    </i>
+    <i t="account sources">
+      <j l="5#1084788" />
     </i>
     <i t="Accrual access">
-      <j l="113" />
+      <j l="97" />
       <i t="account setup">
-        <j l="114" />
+        <j l="98" />
       </i>
       <i t="activating and inactivating">
-        <j l="115" />
+        <j l="99" />
       </i>
       <i t="requirements for">
-        <j l="113#1077984" />
+        <j l="97#1077984" />
       </i>
     </i>
     <i t="administrative data">
+      <i t="abstracting">
+        <j l="39" />
+      </i>
       <i t="overview of">
-        <j l="37" />
-        <j l="47" />
+        <j l="30" />
+        <j l="40" />
       </i>
     </i>
-    <i t="administrative details, abstracting">
-      <j l="36" />
-      <j l="46" />
-    </i>
     <i t="Administrative Processing Completed Date, defined">
-      <j l="42#1095390" />
+      <j l="32#1106677" />
+      <j l="35#1107488" />
     </i>
     <i t="Administrative Processing Start Date, defined">
-      <j l="42#1095379" />
+      <j l="32#1106671" />
+      <j l="35#1107480" />
+    </i>
+    <i t="Amendment Reason codes, defined">
+      <j l="20#1145901" />
+      <j l="31#1089304" />
     </i>
     <i t="application number">
-      <j l="59#1079608" />
+      <j l="47#1079608" />
     </i>
     <i t="arms">
       <i t="abstracting">
-        <j l="99#1079731" />
+        <j l="81#1079731" />
       </i>
       <i t="adding">
-        <j l="100" />
+        <j l="82" />
       </i>
       <i t="deleting">
-        <j l="102#1079981" />
+        <j l="84#1079981" />
       </i>
       <i t="editing">
-        <j l="101" />
+        <j l="83" />
       </i>
     </i>
     <i t="assignment number">
-      <j l="59#1079608" />
+      <j l="47#1079608" />
     </i>
     <i t="award identification number">
-      <j l="59#1079608" />
+      <j l="47#1079608" />
     </i>
   </g>
   <g t="B" o="002">
     <i t="Becoming a registered user">
       <j l="1" />
     </i>
+    <i t="Board Approval Statuses, defined">
+      <j l="44#1178728" />
+    </i>
     <i t="browsers, supported">
-      <j l="4#1084226" />
+      <j l="3#1084226" />
     </i>
   </g>
   <g t="C" o="002">
-    <i t="central contacts, abstracting">
-      <j l="53" />
-    </i>
     <i t="collaborators">
       <i t="abstracting">
-        <j l="67" />
+        <j l="50" />
       </i>
       <i t="deleting">
-        <j l="68" />
-        <j l="69" />
+        <j l="51" />
+        <j l="52" />
       </i>
       <i t="linking">
-        <j l="67" />
+        <j l="50" />
+      </i>
+    </i>
+    <i t="complete trials">
+      <i t="defined">
+        <j l="4#1089312" />
+      </i>
+      <i t="National Cooperative Groups">
+        <j l="4#1089216" />
       </i>
     </i>
     <i t="completing trial abstractions">
-      <j l="108#1077996" />
-      <j l="111" />
+      <j l="90#1077996" />
+      <j l="93" />
     </i>
-    <i t="contacts">
-      <i t="abstracting">
-        <j l="64" />
-      </i>
-      <i t="adding">
-        <j l="64#1092593" />
-      </i>
-      <i t="linking">
-        <j l="64" />
-      </i>
+    <i t="condition data definitions">
+      <j l="71#1079045" />
     </i>
   </g>
   <g t="D" o="002">
     <i t="deleting">
       <i t="collaborators">
-        <j l="68" />
-        <j l="69" />
+        <j l="51" />
+        <j l="52" />
       </i>
       <i t="participating sites">
-        <j l="65" />
+        <j l="49" />
+      </i>
+      <i t="trial documents">
+        <j l="55" />
       </i>
     </i>
-    <i t="deleting trial documents">
-      <j l="72" />
+    <i t="disease data definitions">
+      <j l="71#1079045" />
     </i>
     <i t="diseases">
       <i t="abstracting">
-        <j l="89" />
+        <j l="71" />
       </i>
       <i t="adding">
-        <j l="91" />
+        <j l="73" />
       </i>
       <i t="deleting from trials">
-        <j l="93" />
+        <j l="75" />
       </i>
       <i t="viewing details">
-        <j l="90" />
+        <j l="72" />
       </i>
     </i>
     <i t="documents">
       <i t="abstracting">
-        <j l="70#1080593" />
+        <j l="53#1080593" />
       </i>
       <i t="adding">
-        <j l="71#1080657" />
+        <j l="54#1080657" />
+        <j l="112#1082772" />
       </i>
       <i t="deleting">
-        <j l="72#1080801" />
+        <j l="55#1080801" />
       </i>
       <i t="editing">
-        <j l="73" />
+        <j l="56" />
       </i>
       <i t="replacing">
-        <j l="73#1080919" />
+        <j l="56#1080919" />
+      </i>
+      <i t="uploading">
+        <j l="112" />
       </i>
     </i>
   </g>
   <g t="E" o="002">
     <i t="editing">
-      <i t="participating site information">
-        <j l="66" />
+      <i t="participating sites">
+        <j l="49" />
       </i>
       <i t="trial-related documents">
-        <j l="73" />
+        <j l="56" />
       </i>
     </i>
     <i t="eligibility criteria">
       <i t="adding">
-        <j l="83" />
+        <j l="65" />
       </i>
       <i t="editing">
-        <j l="87" />
+        <j l="69" />
       </i>
+    </i>
+    <i t="Externally Peer-Reviewed trials, defined">
+      <j l="4#1089229" />
     </i>
   </g>
   <g t="F" o="002">
     <i t="funding details, validating">
-      <j l="25" />
+      <j l="16" />
     </i>
   </g>
   <g t="G" o="002">
     <i t="general trial details, abstracting">
-      <j l="48" />
+      <j l="41" />
     </i>
     <i t="grant identification number">
-      <j l="59#1079608" />
+      <j l="47#1079608" />
       <i t="components of">
-        <j l="59#1079594" />
+        <j l="47#1079594" />
       </i>
       <i t="NIH">
-        <j l="59#1079594" />
+        <j l="47#1079594" />
       </i>
     </i>
   </g>
   <g t="H" o="002">
     <i t="human subject safety information, abstracting">
-      <j l="56" />
+      <j l="44" />
     </i>
   </g>
   <g t="I" o="002">
     <i t="IND/IDE details">
+      <i t="abstracting">
+        <j l="45" />
+      </i>
       <i t="validating">
-        <j l="26" />
+        <j l="17" />
       </i>
     </i>
     <i t="Initial Abstraction Verified Date, defined">
-      <j l="42#1095516" />
+      <j l="32#1106733" />
+      <j l="35#1107576" />
+    </i>
+    <i t="institute codes">
+      <j l="42#1185392" />
+    </i>
+    <i t="Institutional trials, defined">
+      <j l="4#1089230" />
+    </i>
+    <i t="intervention data definitions">
+      <j l="76#1079445" />
+    </i>
+    <i t="Intervention Model values, defined">
+      <j l="59#1210658" />
     </i>
     <i t="interventions">
       <i t="abstracting">
-        <j l="94#1129001" />
+        <j l="76#1129001" />
       </i>
       <i t="adding">
-        <j l="95" />
-        <j l="97" />
+        <j l="77" />
+        <j l="79" />
       </i>
       <i t="deleting from trials">
-        <j l="98" />
-      </i>
-    </i>
-    <i t="investigators">
-      <i t="abstracting">
-        <j l="63" />
-        <j l="63" />
-      </i>
-      <i t="linking to trials">
-        <j l="63" />
+        <j l="80" />
       </i>
     </i>
   </g>
   <g t="L" o="002">
     <i t="Late Rejection Date, defined">
-      <j l="42#1095555" />
+      <j l="32#1106747" />
+      <j l="35#1107609" />
     </i>
-    <i t="lead organization">
-      <i t="abstracting">
-        <j l="51" />
-      </i>
+    <i t="linking collaborators">
+      <j l="50" />
     </i>
-    <i t="linking">
-      <i t="collaborators">
-        <j l="67" />
-      </i>
-      <i t="organizations">
-        <j l="61" />
-        <j l="62" />
-      </i>
+    <i t="logging in">
+      <j l="5" />
     </i>
     <i t="logging out">
       <j l="6#1078099" />
     </i>
     <i t="Logout link">
       <j l="6#1078104" />
-    </i>
-    <i t="looking up">
-      <j l="119#1080940" />
     </i>
   </g>
   <g t="M" o="002">
@@ -320,55 +336,65 @@
     </i>
     <i t="milestones">
       <i t="abstracting">
-        <j l="39" />
+        <j l="32" />
       </i>
       <i t="adding">
-        <j l="42#1078401" />
+        <j l="35#1078401" />
+      </i>
+      <i t="defined">
+        <j l="32#1106281" />
+      </i>
+      <i t="relationship to processing statuses">
+        <j l="35#1107445" />
+        <j l="117#1103586" />
       </i>
       <i t="rules for recording">
-        <j l="41#1078305" />
+        <j l="34#1078305" />
       </i>
       <i t="viewing">
-        <j l="42" />
+        <j l="35" />
       </i>
     </i>
   </g>
   <g t="N" o="002">
+    <i t="National trials, defined">
+      <j l="4#1089216" />
+    </i>
     <i t="navigating the search results list">
-      <j l="9" />
+      <j l="110" />
     </i>
     <i t="NCI Clinical Protocol Abstraction Portal">
-      <i t="logging out">
-        <j l="6#1078099" />
+      <i t="logging in">
+        <j l="5" />
       </i>
-      <i t="overview of">
-        <j l="4" />
-      </i>
-      <i t="see also, Protocol Abstraction" />
     </i>
     <i t="NCI information, abstracting">
-      <j l="54" />
+      <j l="42" />
     </i>
     <i t="NCI/NIH divisions and programs">
-      <j l="57#1079257" />
+      <j l="115#1105246" />
     </i>
     <i t="NIH grant information, guides to">
-      <j l="59#1079612" />
+      <j l="47#1079612" />
+    </i>
+    <i t="NIH institute codes">
+      <j l="42#1185392" />
     </i>
   </g>
   <g t="O" o="002">
     <i t="On-going Abstraction Verified Date, defined">
-      <j l="42#1095537" />
+      <j l="32#1106741" />
+      <j l="35#1107593" />
     </i>
     <i t="on-hold information, abstracting">
-      <j l="43" />
+      <j l="36" />
     </i>
     <i t="on-hold records">
       <i t="adding">
-        <j l="44#1078755" />
+        <j l="37#1078755" />
       </i>
       <i t="editing">
-        <j l="45#1078873" />
+        <j l="38#1078873" />
       </i>
     </i>
     <i t="Online help">
@@ -383,330 +409,347 @@
       <j l="1" />
     </i>
     <i t="organizations">
-      <i t="">
-        <j l="119#1080940" />
-      </i>
-      <i t="abstracting">
-        <j l="61" />
-        <j l="62" />
-      </i>
-      <i t="linking to a trial">
-        <j l="61" />
-        <j l="62" />
+      <i t="looking up">
+        <j l="106#1081732" />
       </i>
       <i t="searching for">
-        <j l="119" />
-      </i>
-      <i t="working with">
-        <j l="118" />
+        <j l="106" />
       </i>
     </i>
     <i t="outcome measures">
       <i t="abstracting">
-        <j l="78#1174470" />
+        <j l="60#1214504" />
       </i>
       <i t="adding">
-        <j l="79" />
+        <j l="61" />
       </i>
       <i t="deleting">
-        <j l="81#1078713" />
+        <j l="63#1078713" />
       </i>
       <i t="editing">
-        <j l="80#1078664" />
+        <j l="62#1078664" />
       </i>
     </i>
     <i t="overview, administrative data">
-      <j l="37" />
-      <j l="47" />
+      <j l="30" />
+      <j l="40" />
     </i>
   </g>
   <g t="P" o="002">
     <i t="participating sites">
+      <i t="abstracting">
+        <j l="48" />
+      </i>
+      <i t="deleting">
+        <j l="49" />
+      </i>
       <i t="editing">
-        <j l="66" />
+        <j l="49" />
       </i>
     </i>
-    <i t="participating sites, abstracting">
-      <j l="60" />
-    </i>
-    <i t="participating sites, deleting">
-      <j l="65" />
-    </i>
     <i t="passwords">
+      <i t="account sources">
+        <j l="5#1084788" />
+      </i>
       <i t="resetting">
         <j l="5#1084424" />
       </i>
     </i>
     <i t="persons">
       <i t="looking up">
-        <j l="121#1077989" />
+        <j l="105#1077989" />
       </i>
       <i t="searching for">
-        <j l="121#1077984" />
-      </i>
-      <i t="working with">
-        <j l="120" />
+        <j l="105#1077984" />
       </i>
     </i>
-    <i t="phases">
-      <i t="trial">
-        <j l="29#1100701" />
-      </i>
+    <i t="PI, defined">
+      <j l="41#1164995" />
     </i>
     <i t="primary contacts, abstracting">
-      <j l="60#1130849" />
+      <j l="48#1130849" />
     </i>
     <i t="primary purpose values">
       <j l="8#1090928" />
     </i>
     <i t="principal investigator">
-      <j l="8#1090869" />
+      <i t="defined">
+        <j l="41#1164995" />
+      </i>
     </i>
     <i t="principal investigators">
-      <i t="abstracting">
-        <j l="51" />
+      <j l="8#1090869" />
+      <i t="searching for">
+        <j l="105#1077984" />
       </i>
     </i>
     <i t="processing status">
+      <i t="definitions">
+        <j l="117#1103645" />
+      </i>
       <i t="rules for recording">
-        <j l="41#1078305" />
+        <j l="34#1078305" />
+      </i>
+      <i t="values">
+        <j l="8#1090894" />
       </i>
     </i>
-    <i t="processing status values">
-      <j l="8#1090894" />
-    </i>
-    <i t="purpose">
-      <i t="valid values for">
-        <j l="29#1100769" />
+    <i t="Protocol Abstraction">
+      <i t="logging out of">
+        <j l="6#1078099" />
+      </i>
+      <i t="overview of">
+        <j l="3" />
       </i>
     </i>
   </g>
   <g t="Q" o="002">
     <i t="QC Completed Date, defined">
-      <j l="42#1095449" />
+      <j l="32#1106709" />
+      <j l="35#1107526" />
     </i>
     <i t="QC Start Date, defined">
-      <j l="42#1095451" />
+      <j l="32#1106711" />
     </i>
   </g>
   <g t="R" o="002">
     <i t="Ready for QC Date, defined">
-      <j l="42#1095437" />
+      <j l="32#1106703" />
+      <j l="35#1107516" />
     </i>
     <i t="Registration">
       <j l="1" />
     </i>
-    <i t="Regulatory information">
-      <i t="validating">
-        <j l="27" />
+    <i t="regulatory information">
+      <i t="abstracting">
+        <j l="43" />
       </i>
-    </i>
-    <i t="regulatory information, abstracting">
-      <j l="55" />
+      <i t="validating">
+        <j l="18" />
+      </i>
     </i>
     <i t="rejecting trials">
-      <j l="35" />
+      <j l="21" />
     </i>
     <i t="replacing trial-related documents">
-      <j l="73" />
+      <j l="56" />
     </i>
     <i t="reports">
-      <j l="110" />
+      <j l="92" />
     </i>
-    <i t="responsible parties, abstracting">
-      <j l="52" />
-    </i>
-    <i t="responsible party">
-      <i t="section, completing">
-        <j l="32" />
-      </i>
+    <i t="rules or trial status dates">
+      <j l="15#1146793" />
     </i>
   </g>
   <g t="S" o="002">
     <i t="Scientific Processing Completed Date, defined">
-      <j l="42#1095425" />
+      <j l="32#1106696" />
+      <j l="35#1107506" />
     </i>
     <i t="Scientific Processing Start Date, defined">
-      <j l="42#1095401" />
+      <j l="32#1106690" />
+      <j l="35#1107498" />
     </i>
     <i t="search results list, navigation">
-      <j l="9" />
+      <j l="110" />
     </i>
     <i t="searching for trials">
       <j l="7" />
       <j l="8" />
     </i>
-    <i t="sponsors, abstracting">
-      <j l="52" />
+    <i t="sponsor, defined">
+      <j l="41#1164997" />
     </i>
     <i t="status details, validating">
-      <j l="24" />
+      <j l="15" />
     </i>
     <i t="sub-groups">
       <i t="abstracting">
-        <j l="103#1080023" />
+        <j l="85#1129193" />
       </i>
       <i t="adding">
-        <j l="104" />
+        <j l="86" />
       </i>
       <i t="deleting">
-        <j l="106#1080208" />
+        <j l="88#1080208" />
       </i>
       <i t="editing">
-        <j l="105" />
+        <j l="87" />
       </i>
     </i>
     <i t="Submission Acceptance Date, defined">
-      <j l="42#1095347" />
+      <j l="32#1106659" />
+      <j l="35#1107463" />
     </i>
     <i t="Submission Rejection Date, defined">
-      <j l="42#1095369" />
+      <j l="32#1106665" />
+      <j l="35#1107472" />
     </i>
     <i t="Submitter Trial Summary Report Feedback Date, defined">
-      <j l="42#1095503" />
-    </i>
-    <i t="Summary 4">
-      <i t="section, completing">
-        <j l="33#1127887" />
-      </i>
-    </i>
-    <i t="Summary 4 funding category">
-      <j l="33#1101134" />
-    </i>
-    <i t="Summary 4 funding source">
-      <j l="33#1101167" />
+      <j l="32#1106727" />
+      <j l="35#1107565" />
     </i>
     <i t="supported browsers">
-      <j l="4#1084226" />
+      <j l="3#1084226" />
     </i>
     <i t="system time-out period">
       <j l="5#1084424" />
+      <j l="6#1087127" />
     </i>
   </g>
   <g t="T" o="002">
     <i t="time-out period">
       <j l="5#1084424" />
+      <j l="6#1087127" />
     </i>
-    <i t="trial">
-      <i t="phases of">
-        <j l="29#1100701" />
-      </i>
-    </i>
-    <i t="trial completion">
-      <i t="criteria for">
-        <j l="109#1078033" />
-      </i>
+    <i t="trial completion criteria">
+      <j l="91#1085090" />
     </i>
     <i t="trial descriptions, abstracting">
-      <j l="50" />
-      <j l="75#1129286" />
+      <j l="58#1129286" />
     </i>
     <i t="trial design">
-      <j l="76#1078046" />
+      <j l="59#1209574" />
       <i t="abstracting">
-        <j l="77#1078077" />
+        <j l="59#1078077" />
       </i>
     </i>
-    <i t="trial details, validating">
-      <j l="19" />
-    </i>
-    <i t="trial details, viewing">
-      <j l="10" />
+    <i t="trial details">
+      <i t="validating">
+        <j l="13" />
+        <j l="25" />
+      </i>
+      <i t="viewing">
+        <j l="9" />
+      </i>
     </i>
     <i t="trial documents">
       <i t="validating">
-        <j l="21" />
+        <j l="14" />
+        <j l="26" />
       </i>
       <i t="viewing">
-        <j l="21" />
+        <j l="14" />
+        <j l="26" />
       </i>
     </i>
     <i t="trial eligibility criteria, abstracting">
-      <j l="82#1131474" />
+      <j l="64#1131474" />
     </i>
     <i t="trial funding information, abstracting">
-      <j l="59" />
+      <j l="47" />
     </i>
     <i t="trial history, abstracting">
-      <j l="38" />
+      <j l="31" />
     </i>
-    <i t="trial IND/IDE information, abstracting">
-      <j l="57" />
+    <i t="trial ownership">
+      <i t="assigning">
+        <j l="101#1082510" />
+      </i>
     </i>
     <i t="trial phase values">
       <j l="8#1090878" />
     </i>
+    <i t="trial phases">
+      <j l="59#1196759" />
+      <i t="defined">
+        <j l="59#1196759" />
+      </i>
+    </i>
+    <i t="trial processing status definitions">
+      <j l="117#1103645" />
+    </i>
     <i t="trial reports">
-      <j l="110" />
+      <j l="92" />
     </i>
     <i t="trial status">
       <i t="abstracting">
-        <j l="58" />
+        <j l="46" />
+      </i>
+      <i t="date rules for">
+        <j l="15#1146793" />
+      </i>
+      <i t="equivalents in ClinicalTrials.gov">
+        <j l="15#1146627" />
       </i>
       <i t="valid values, defined">
-        <j l="58#1079406" />
+        <j l="15#1149057" />
+        <j l="46#1151073" />
+      </i>
+      <i t="values">
+        <j l="8#1090948" />
       </i>
     </i>
-    <i t="trial status values">
-      <j l="8#1090948" />
+    <i t="trial statuses">
+      <i t="defined">
+        <j l="15#1146621" />
+      </i>
+      <i t="relationship to ClinicalTrials.gov statuses">
+        <j l="15#1146621" />
+      </i>
+    </i>
+    <i t="trial summary report">
+      <i t="association with trial statuses">
+        <j l="117#1103653" />
+      </i>
     </i>
     <i t="trial summary report (TSR)">
-      <j l="110" />
+      <j l="92" />
       <i t="viewing">
-        <j l="111#1078135" />
+        <j l="93#1078132" />
       </i>
     </i>
     <i t="Trial Summary Report Sent Date, defined">
-      <j l="42#1095482" />
-    </i>
-    <i t="trial titles, abstracting">
-      <j l="49" />
+      <j l="32#1106721" />
+      <j l="35#1107546" />
     </i>
     <i t="trial validation criteria">
-      <j l="109#1078033" />
+      <j l="91#1085090" />
     </i>
     <i t="trial-related documents">
       <i t="abstracting">
-        <j l="70" />
+        <j l="53" />
       </i>
       <i t="adding">
-        <j l="71" />
+        <j l="54" />
       </i>
       <i t="deleting">
-        <j l="72" />
+        <j l="55" />
       </i>
       <i t="editing and replacing">
-        <j l="73" />
+        <j l="56" />
       </i>
     </i>
     <i t="trials">
       <i t="accepting">
-        <j l="35" />
+        <j l="21" />
       </i>
       <i t="rejecting">
-        <j l="35" />
+        <j l="21" />
       </i>
       <i t="searching for">
         <j l="8" />
       </i>
       <i t="validating">
-        <j l="16" />
-        <j l="19" />
-        <j l="35" />
+        <j l="10" />
+        <j l="13" />
+        <j l="21" />
+        <j l="22" />
+        <j l="25" />
       </i>
     </i>
     <i t="TSR">
       <i t="content of">
-        <j l="40#1078212" />
+        <j l="33#1078212" />
       </i>
       <i t="life cycle of">
-        <j l="40#1078212" />
+        <j l="33#1078212" />
       </i>
       <i t="see also, trial summary report">
-        <j l="110" />
+        <j l="92" />
       </i>
       <i t="viewing">
-        <j l="9#1084718" />
+        <j l="8#1105541" />
       </i>
     </i>
   </g>
@@ -717,47 +760,48 @@
   </g>
   <g t="V" o="002">
     <i t="validating">
+      <i t="abstractions">
+        <j l="93" />
+      </i>
       <i t="funding details">
-        <j l="25" />
+        <j l="16" />
       </i>
       <i t="IND/IDE details">
-        <j l="26" />
+        <j l="17" />
       </i>
-      <i t="Regulatory information">
-        <j l="27" />
+      <i t="regulatory information">
+        <j l="18" />
       </i>
       <i t="status details">
-        <j l="24" />
+        <j l="15" />
       </i>
       <i t="trial details">
-        <j l="19" />
+        <j l="13" />
+        <j l="25" />
       </i>
       <i t="trial documents">
-        <j l="21" />
+        <j l="14" />
+        <j l="26" />
       </i>
-    </i>
-    <i t="validating abstractions">
-      <j l="111" />
-    </i>
-    <i t="validating trials">
-      <j l="16" />
-      <j l="35" />
+      <i t="trials">
+        <j l="10" />
+        <j l="21" />
+        <j l="22" />
+      </i>
     </i>
     <i t="viewing">
       <i t="trial details">
-        <j l="10" />
+        <j l="9" />
       </i>
       <i t="trial documents">
-        <j l="21" />
+        <j l="14" />
+        <j l="26" />
       </i>
     </i>
   </g>
   <g t="X" o="002">
     <i t="xml report">
-      <j l="110" />
-      <i t="viewing">
-        <j l="111#1078133" />
-      </i>
+      <j l="92" />
     </i>
   </g>
 </WebWorksHelpIX>
