@@ -142,10 +142,11 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
 
             String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(IiConverter
                     .convertToIi(studyProtocolId));
+            byte[] xmlByteData = xmlData.getBytes();
             servletResponse.setContentType("application/xml;charset=ISO-8859-1");
-            servletResponse.setContentLength(xmlData.length());
+            servletResponse.setContentLength(xmlByteData.length);
             ServletOutputStream out = servletResponse.getOutputStream();
-            out.write(xmlData.getBytes());
+            out.write(xmlByteData);
             out.flush();
             out.close();
         } catch (Exception e) {
