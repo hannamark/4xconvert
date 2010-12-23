@@ -478,7 +478,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         Query queryObject = session.createSQLQuery(query);
         String maxValue = queryObject.uniqueResult().toString();
         String maxNumber = maxValue.substring(maxValue.lastIndexOf('-') + 1 , maxValue.length());
-        String nextNumber = String.valueOf(Integer.parseInt(maxNumber) + 1);
+        String nextNumber = String.valueOf(Integer.parseInt(maxNumber));
         nciIdentifier.append(StringUtils.leftPad(nextNumber, NCI_ID_SIZE, "0"));
 
         return nciIdentifier.toString();

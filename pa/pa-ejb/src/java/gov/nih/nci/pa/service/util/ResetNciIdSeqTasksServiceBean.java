@@ -97,7 +97,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
- * Implementation of job to reset nci id sequence every Jan 1st. 
+ * Implementation of job to reset nci id sequence every Jan 1st.
  * @author Max Shestopalov
  */
 @Stateless
@@ -107,24 +107,24 @@ import org.hibernate.Session;
 public class ResetNciIdSeqTasksServiceBean implements ResetNciIdSeqTasksServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(ResetNciIdSeqTasksServiceBean.class);
- 
+
     /**
      * {@inheritDoc}
      */
     public void performTask() throws PAException {
         Session session = HibernateUtil.getCurrentSession();
-        String queryCheckForExisting = 
-            "select cast(substring(max(extension),10) as int)+1 from study_otheridentifiers sp" 
+        String queryCheckForExisting =
+            "select cast(substring(max(extension),10) as int) from study_otheridentifiers sp"
             + " where sp.extension"
             + " like 'NCI-'||to_char(now(), 'YYYY')||'%' and sp.root = '2.16.840.1.113883.3.26.4.3'";
         Query queryObject = session.createSQLQuery(queryCheckForExisting);
         int resetValue = 1;
         Object currVal = queryObject.uniqueResult();
         if (currVal != null) {
-            resetValue = Integer.valueOf(currVal.toString()) + 1;
+            resetValue = Integer.valueOf(currVal.toString());
         }
         String query = "select setval ('nci_identifiers_seq', " + resetValue + ")";
-      
+
         queryObject = session.createSQLQuery(query);
         queryObject.uniqueResult();
         LOG.info("sequence nci_identifiers_seq reset to " + resetValue);
