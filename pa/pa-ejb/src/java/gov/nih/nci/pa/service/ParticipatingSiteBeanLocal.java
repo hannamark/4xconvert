@@ -489,6 +489,9 @@ implements ParticipatingSiteServiceLocal {
         AbstractPersonRoleDTO personRoleDTO = participatingSiteContactDTO.getAbstractPersonRoleDTO();
         String roleCode = CdConverter.convertCdToString(studySiteContactDTO.getRoleCode());
         Boolean isPrimary = BlConverter.convertToBoolean(studySiteContactDTO.getPrimaryIndicator());
+        
+        checkStudySiteContactTelecom(studySiteContactDTO);
+        
         if (personRoleDTO instanceof ClinicalResearchStaffDTO) {
             this.addStudySiteInvestigator(participatingSiteDTO.getIdentifier(),
                     (ClinicalResearchStaffDTO) personRoleDTO, null, personDTO, roleCode);
@@ -507,6 +510,13 @@ implements ParticipatingSiteServiceLocal {
         } else if (personRoleDTO instanceof OrganizationalContactDTO) {
             this.addStudySiteGenericContact(participatingSiteDTO.getIdentifier(),
                     (OrganizationalContactDTO) personRoleDTO, isPrimary, studySiteContactDTO.getTelecomAddresses());
+        }
+    }
+    
+    private void checkStudySiteContactTelecom(StudySiteContactDTO studySiteContactDTO) throws PAException {
+        if (studySiteContactDTO.getTelecomAddresses() == null 
+                || CollectionUtils.isEmpty(studySiteContactDTO.getTelecomAddresses().getItem())) {
+            throw new PAException("Study Site Contacts must have telecom address info.");
         }
     }
 

@@ -550,7 +550,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         throws EntityValidationException, CurationException, PAException {
         Ii contactIi = null;
         Ii passedInIi = DSetConverter
-        .convertToIi(contactDTO.getIdentifier());
+        .getFirstInDSet(contactDTO.getIdentifier());
         if (PAUtil.isIiNull(passedInIi)) {
             // if we get a generic contact dto w/ no id we store it
             contactIi = PoRegistry.getOrganizationalContactCorrelationService()
