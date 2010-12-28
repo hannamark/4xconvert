@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
@@ -92,7 +93,7 @@ public class ParticipatingSiteServiceTest {
         bean.setOcsr(ocsr);
         bean.setSessionContext(new MockStatelessContext());
         localBean = bean;
-        
+
         rBean.setStudyProtocolService(studyProtocolService);
         rBean.setStudySiteService(studySiteService);
         rBean.setStudySiteContactService(studySiteContactService);
@@ -308,7 +309,7 @@ public class ParticipatingSiteServiceTest {
 
         contList = studySiteContactService.getByStudySite(dto.getIdentifier());
         assertEquals(2, contList.size());
-        
+
         List<ParticipatingSiteDTO> sites = remoteBean.getParticipatingSitesByStudyProtocol(spSecId);
         assertTrue(sites.size() == 1);
         assertEquals(oldIi.getExtension(), sites.get(0).getIdentifier().getExtension());
@@ -384,8 +385,18 @@ public class ParticipatingSiteServiceTest {
         // check that the primary contact has been overwritten w/ generic data.
         OrganizationalContactDTO orgDTO = new OrganizationalContactDTO();
         orgDTO.setTitle(StConverter.convertToSt("titleOrgContact"));
-        localBean.addStudySiteGenericContact(oldIi, orgDTO,
-                true, null);
+
+        List<String> emailList = new ArrayList<String>();
+        List<String> telList = new ArrayList<String>();
+        emailList.add("test@example.com");
+        telList.add("123-456-7890");
+        DSet<Tel> phoneAndEmail = new DSet<Tel>();
+        phoneAndEmail = DSetConverter.convertListToDSet(emailList, "EMAIL", phoneAndEmail);
+        phoneAndEmail = DSetConverter.convertListToDSet(telList, "PHONE", phoneAndEmail);
+
+        orgDTO.setTelecomAddress(phoneAndEmail);
+        orgDTO.setTypeCode(CdConverter.convertStringToCd("Site"));
+        localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
         contList = studySiteContactService.getByStudySite(dto.getIdentifier());
         assertEquals(3, contList.size());
         for (StudySiteContactDTO item : contList) {
@@ -395,6 +406,84 @@ public class ParticipatingSiteServiceTest {
                 assertNotNull(item.getOrganizationalContactIi());
             }
         }
+    }
+
+    /**
+     * Tests validation of generic contacts
+     * @throws Exception on error
+     */
+    @Test
+    public void testGenericContactValidation() throws Exception {
+        Ii spSecId = prepareStudyProtocol("NCI-2010-00100", false);
+        OrganizationDTO org = getOrg1();
+        PersonDTO person = getPerson1();
+        PersonDTO person2 = getPerson2();
+        StudySiteDTO studySiteDTO = getBasicStudySiteDTO(spSecId);
+        StudySiteAccrualStatusDTO currentStatus = getStatusDTO();
+
+        ParticipatingSiteDTO dto = localBean.createStudySiteParticipant(studySiteDTO, currentStatus, org, null);
+        //localBean.addStudySiteInvestigator(dto.getIdentifier(), null, null,
+        //        person, StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode());
+
+        //localBean.addStudySiteInvestigator(dto.getIdentifier(), null, null, person2, StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode());
+        //List<ClinicalResearchStaffDTO> crsDTOs =
+        //    PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelationsByPlayerIds(new Ii[]{person2.getIdentifier()});
+        //List<HealthCareProviderDTO> hcpDTOs =
+        //    PoRegistry.getHealthCareProviderCorrelationService().getCorrelationsByPlayerIds(new Ii[]{person2.getIdentifier()});
+        //localBean.addStudySitePrimaryContact(dto.getIdentifier(), crsDTOs.get(0), hcpDTOs.get(0), null, person2.getTelecomAddress());
+
+        StudySiteDTO freshSiteDTO = studySiteService.get(dto.getIdentifier());
+        Ii ctepIdForOrg = mimicCtepSynch(freshSiteDTO.getHealthcareFacilityIi(), "TEST_CTEP_ORG3");
+        Ii oldIi = localBean.getParticipatingSiteIi(spSecId, ctepIdForOrg);
+
+        OrganizationalContactDTO orgDTO = new OrganizationalContactDTO();
+        orgDTO.setTitle(StConverter.convertToSt("Generic Contact"));
+        orgDTO.setTypeCode(CdConverter.convertStringToCd("Responsible Party"));
+
+        try {
+            localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
+            fail();
+        } catch (PAException e) {
+            //expected
+        }
+
+        orgDTO.setTypeCode(CdConverter.convertStringToCd("Site"));
+        try {
+            localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
+            fail();
+        } catch (PAException e) {
+            //expected
+        }
+
+        List<String> emailList = new ArrayList<String>();
+        emailList.add("test@example.com");
+        DSet<Tel> phoneAndEmail = new DSet<Tel>();
+        phoneAndEmail = DSetConverter.convertListToDSet(emailList, "EMAIL", phoneAndEmail);
+        orgDTO.setTelecomAddress(phoneAndEmail);
+        try {
+            localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
+            fail();
+        } catch (PAException e) {
+            //expected
+        }
+
+        phoneAndEmail = new DSet<Tel>();
+        List<String> telList = new ArrayList<String>();
+        telList.add("123-456-7890");
+        phoneAndEmail = DSetConverter.convertListToDSet(telList, "PHONE", phoneAndEmail);
+        orgDTO.setTelecomAddress(phoneAndEmail);
+        try {
+            localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
+            fail();
+        } catch (PAException e) {
+            //expected
+        }
+
+        phoneAndEmail = new DSet<Tel>();
+        phoneAndEmail = DSetConverter.convertListToDSet(emailList, "EMAIL", phoneAndEmail);
+        phoneAndEmail = DSetConverter.convertListToDSet(telList, "PHONE", phoneAndEmail);
+        orgDTO.setTelecomAddress(phoneAndEmail);
+        localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
     }
 
 }

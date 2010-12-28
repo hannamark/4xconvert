@@ -104,6 +104,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -138,6 +139,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.jboss.annotation.security.SecurityDomain;
@@ -239,6 +241,7 @@ implements ParticipatingSiteServiceLocal {
     public void addStudySiteGenericContact(Ii studySite, OrganizationalContactDTO contactDTO, boolean isPrimaryContact,
             DSet<Tel> telecom) throws PAException {
         try {
+            validateGenericContact(contactDTO);
             StudySiteDTO studySiteDTO = PaRegistry.getStudySiteService().get(studySite);
             Organization paOrg = getCorrUtils().getPAOrganizationByIi(studySiteDTO.getHealthcareFacilityIi());
             contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(paOrg.getIdentifier()));
@@ -252,6 +255,24 @@ implements ParticipatingSiteServiceLocal {
             throw e;
         } catch (Exception e) {
             throw new PAException(e);
+        }
+    }
+
+    private void validateGenericContact(OrganizationalContactDTO contactDTO) throws PAException {
+        String email = DSetConverter.getFirstElement(contactDTO.getTelecomAddress(), "EMAIL");
+        String phone = DSetConverter.getFirstElement(contactDTO.getTelecomAddress(), "PHONE");
+        if (StringUtils.isEmpty(email)) {
+            throw new PAException("Generic contact '" + StConverter.convertToString(contactDTO.getTitle())
+                    + "' must have an email address specified.");
+        }
+        if (StringUtils.isEmpty(phone)) {
+            throw new PAException("Generic contact '" + StConverter.convertToString(contactDTO.getTitle())
+                    + "' must have a phone number specified.");
+        }
+        String typeCode = CdConverter.convertCdToString(contactDTO.getTypeCode());
+        if (!StringUtils.equalsIgnoreCase(typeCode, "Site")) {
+            throw new PAException("Generic contact '" + StConverter.convertToString(contactDTO.getTitle())
+                    + "' can only have a type of 'Site' not " + typeCode);
         }
     }
 
@@ -489,9 +510,9 @@ implements ParticipatingSiteServiceLocal {
         AbstractPersonRoleDTO personRoleDTO = participatingSiteContactDTO.getAbstractPersonRoleDTO();
         String roleCode = CdConverter.convertCdToString(studySiteContactDTO.getRoleCode());
         Boolean isPrimary = BlConverter.convertToBoolean(studySiteContactDTO.getPrimaryIndicator());
-        
+
         checkStudySiteContactTelecom(studySiteContactDTO);
-        
+
         if (personRoleDTO instanceof ClinicalResearchStaffDTO) {
             this.addStudySiteInvestigator(participatingSiteDTO.getIdentifier(),
                     (ClinicalResearchStaffDTO) personRoleDTO, null, personDTO, roleCode);
@@ -512,9 +533,9 @@ implements ParticipatingSiteServiceLocal {
                     (OrganizationalContactDTO) personRoleDTO, isPrimary, studySiteContactDTO.getTelecomAddresses());
         }
     }
-    
+
     private void checkStudySiteContactTelecom(StudySiteContactDTO studySiteContactDTO) throws PAException {
-        if (studySiteContactDTO.getTelecomAddresses() == null 
+        if (studySiteContactDTO.getTelecomAddresses() == null
                 || CollectionUtils.isEmpty(studySiteContactDTO.getTelecomAddresses().getItem())) {
             throw new PAException("Study Site Contacts must have telecom address info.");
         }

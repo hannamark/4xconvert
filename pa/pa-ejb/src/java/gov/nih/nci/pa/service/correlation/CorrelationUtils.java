@@ -204,6 +204,8 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
                 .getCorrelation(IiConverter.convertToPoOrganizationalContactIi(oc.getIdentifier()));
                 returnDto.setTitle(StConverter.convertToString(isoDto.getTitle()));
                 returnDto.setSrIdentifier(DSetConverter.convertToIi(isoDto.getIdentifier()));
+                returnDto.setPhone(DSetConverter.getFirstElement(isoDto.getTelecomAddress(), "PHONE"));
+                returnDto.setEmail(DSetConverter.getFirstElement(isoDto.getTelecomAddress(), "EMAIL"));
             }
         }
 
@@ -653,13 +655,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         criteria.setPlayerIdentifier(poPersonIi);
         criteria.setScoperIdentifier(scoperOrg);
         List<ClinicalResearchStaffDTO> crss = PoRegistry.getClinicalResearchStaffCorrelationService().search(criteria);
-            
+
         if (crss.isEmpty()) {
             ClinicalResearchStaffDTO toStoreCrsDTO = new ClinicalResearchStaffDTO();
             if (crsDTO != null) {
                 toStoreCrsDTO.setPostalAddress(crsDTO.getPostalAddress());
                 toStoreCrsDTO.setTelecomAddress(crsDTO.getTelecomAddress());
-            } 
+            }
             toStoreCrsDTO.setPlayerIdentifier(poPersonIi);
             toStoreCrsDTO.setScoperIdentifier(scoperOrg);
             return PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(toStoreCrsDTO);
@@ -692,8 +694,8 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @throws EntityValidationException when error
      * @throws CurationException when error
      */
-    public Ii getPoHcpByCtepId(HealthCareProviderDTO hcpDTO, Ii ctepHcpIi, 
-            Ii scoperOrg) throws PAException, 
+    public Ii getPoHcpByCtepId(HealthCareProviderDTO hcpDTO, Ii ctepHcpIi,
+            Ii scoperOrg) throws PAException,
             EntityValidationException, CurationException {
         IdentifiedPersonDTO idP = new IdentifiedPersonDTO();
         idP.setAssignedId(ctepHcpIi);
@@ -715,7 +717,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         criteria.setPlayerIdentifier(poPersonIi);
         criteria.setScoperIdentifier(scoperOrg);
         List<HealthCareProviderDTO> hcps = PoRegistry.getHealthCareProviderCorrelationService().search(criteria);
-        
+
         if (hcps.isEmpty()) {
             HealthCareProviderDTO toStoreHcpDTO = new HealthCareProviderDTO();
             if (hcpDTO != null) {
@@ -735,9 +737,9 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
 
         return DSetConverter.convertToIi(hcps.get(0).getIdentifier());
     }
-    
+
     /**
-     * Batch update the study protocol stage object/table replacing the 
+     * Batch update the study protocol stage object/table replacing the
      * po id or orgs or persons w/ new ids as a result of nullifciation with
      * duplicates.
      * @param item field name
@@ -746,7 +748,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @throws NullifiedEntityException on error
      * @throws PAException on error
      */
-    public void updateItemIdForStudyProtocolStage(String item, String oldPoId, 
+    public void updateItemIdForStudyProtocolStage(String item, String oldPoId,
             String newPoId) throws NullifiedEntityException, PAException {
 
         Session session = HibernateUtil.getCurrentSession();

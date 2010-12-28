@@ -393,7 +393,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
         sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
         sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt(siteLocalTrialIdentifier));
-        
+
         try {
             return partSiteService.createStudySiteParticipant(sp, ssas, poHcfIi).getIdentifier();
         } catch (DuplicateParticipatingSiteException e) {
@@ -401,7 +401,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             return null;
         }
     }
-    
+
     private void handleSetMethodForEdit(StudySiteDTO spDto, StudySiteAccrualStatusDTO status) {
         if (status != null) {
             this.setRecStatus(status.getStatusCode().getCode());
@@ -767,10 +767,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                    if (paDto.getTitle() != null)  {
                        personContactWebDTO = new PaPersonDTO();
                        personContactWebDTO.setTitle(paDto.getTitle());
-                       personContactWebDTO.setTelephone(DSetConverter.getFirstElement(
-                               siteConDto.getTelecomAddresses(), "PHONE"));
-                       personContactWebDTO.setEmail(DSetConverter.getFirstElement(
-                               siteConDto.getTelecomAddresses(), "EMAIL"));
+                       personContactWebDTO.setTelephone(paDto.getPhone());
+                       personContactWebDTO.setEmail(paDto.getEmail());
+                       personContactWebDTO.setSelectedPersId(Long.valueOf(paDto.getSrIdentifier().getExtension()));
                        personContactWebDTO.setId(Long.valueOf(paDto.getSrIdentifier().getExtension()));
                        personContactWebDTO.setStatusCode(FunctionalRoleStatusCode.
                                getByCode(CdConverter.convertCdToString(siteConDto.getStatusCode())));
@@ -840,7 +839,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         String email = ServletActionContext.getRequest().getParameter("email");
         String telephone = ServletActionContext.getRequest().getParameter("tel");
 
-        if (persId == null || "".equals(persId)) {
+        if (StringUtils.isEmpty(persId)) {
             addFieldError("personContactWebDTO.firstName", getText("Please lookup and select person"));
         }
         if (StringUtils.isEmpty(email)) {
@@ -856,7 +855,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             personContactWebDTO = new PaPersonDTO();
             personContactWebDTO.setEmail(email);
             personContactWebDTO.setTelephone(telephone);
-            if (persId != null && !persId.equals("")) {
+            if (StringUtils.isNotEmpty(persId)) {
                 personContactWebDTO.setSelectedPersId(Long.valueOf(persId));
             }
             if (selectedPersTO != null && selectedPersTO.getName() != null) {
@@ -886,8 +885,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             Ii ssIi = IiConverter.convertToStudySiteIi(tab.getStudyParticipationId());
             String poOrgId = tab.getFacilityOrganization().getIdentifier();
             telephone = telephone.replaceAll(" ", "");
-            ArrayList<String> emailList = new ArrayList<String>();
-            ArrayList<String> telList = new ArrayList<String>();
+            List<String> emailList = new ArrayList<String>();
+            List<String> telList = new ArrayList<String>();
             emailList.add(email);
             telList.add(telephone);
             DSet<Tel> list = new DSet<Tel>();
@@ -1429,7 +1428,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             } catch (DuplicateParticipatingSiteException e) {
                 addFieldError(EDIT_ORG_NAME, e.getMessage());
                 return;
-            }   
+            }
         } else {
            siteDTO.setIdentifier(ssIi);
            partSiteService.updateStudySiteParticipant(siteDTO, ssas);
