@@ -767,8 +767,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                    if (paDto.getTitle() != null)  {
                        personContactWebDTO = new PaPersonDTO();
                        personContactWebDTO.setTitle(paDto.getTitle());
-                       personContactWebDTO.setTelephone(paDto.getPhone());
-                       personContactWebDTO.setEmail(paDto.getEmail());
+                       personContactWebDTO.setTelephone(DSetConverter.getFirstElement(
+                               siteConDto.getTelecomAddresses(), "PHONE"));
+                       personContactWebDTO.setEmail(DSetConverter.getFirstElement(
+                               siteConDto.getTelecomAddresses(), "EMAIL"));
                        personContactWebDTO.setSelectedPersId(Long.valueOf(paDto.getSrIdentifier().getExtension()));
                        personContactWebDTO.setId(Long.valueOf(paDto.getSrIdentifier().getExtension()));
                        personContactWebDTO.setStatusCode(FunctionalRoleStatusCode.
