@@ -84,6 +84,8 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -241,7 +243,7 @@ implements ParticipatingSiteServiceLocal {
     public void addStudySiteGenericContact(Ii studySite, OrganizationalContactDTO contactDTO, boolean isPrimaryContact,
             DSet<Tel> telecom) throws PAException {
         try {
-            validateGenericContact(contactDTO);
+            validateGenericContact(contactDTO, telecom);
             StudySiteDTO studySiteDTO = PaRegistry.getStudySiteService().get(studySite);
             Organization paOrg = getCorrUtils().getPAOrganizationByIi(studySiteDTO.getHealthcareFacilityIi());
             contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(paOrg.getIdentifier()));
@@ -258,9 +260,9 @@ implements ParticipatingSiteServiceLocal {
         }
     }
 
-    private void validateGenericContact(OrganizationalContactDTO contactDTO) throws PAException {
-        String email = DSetConverter.getFirstElement(contactDTO.getTelecomAddress(), "EMAIL");
-        String phone = DSetConverter.getFirstElement(contactDTO.getTelecomAddress(), "PHONE");
+    private void validateGenericContact(OrganizationalContactDTO contactDTO, DSet<Tel> telecom) throws PAException {
+        String email = DSetConverter.getFirstElement(telecom, "EMAIL");
+        String phone = DSetConverter.getFirstElement(telecom, "PHONE");
         if (StringUtils.isEmpty(email)) {
             throw new PAException("Generic contact '" + StConverter.convertToString(contactDTO.getTitle())
                     + "' must have an email address specified.");
@@ -299,6 +301,7 @@ implements ParticipatingSiteServiceLocal {
     public void addStudySitePrimaryContact(Ii studySiteIi, ClinicalResearchStaffDTO poCrsDTO,
             HealthCareProviderDTO poHcpDTO, PersonDTO personDTO, DSet<Tel> telecom) throws PAException {
         try {
+            checkStudySiteContactTelecom(telecom);
             StudySiteDTO studySiteDTO = PaRegistry.getStudySiteService().get(studySiteIi);
             Ii orgIi = getCorrUtils().getPoOrgIiFromPaHcfIi(studySiteDTO.getHealthcareFacilityIi());
             Map<String, Ii> myMap = generateCrsAndHcpFromCtepIdOrNewPerson(personDTO, poCrsDTO, poHcpDTO, orgIi);
@@ -361,7 +364,7 @@ implements ParticipatingSiteServiceLocal {
         // assume that siteDTO has a real Ii for studyProtocol
         try {
             // check business rules based on trial type.
-            StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteDTO.getIdentifier());
+            StudySiteDTO currentSite = getStudySiteDTO(studySiteDTO.getIdentifier());   
             validateStudySite(studySiteDTO, currentSite);
             studySiteDTO.setStudyProtocolIdentifier(currentSite.getStudyProtocolIdentifier());
             studySiteDTO.setHealthcareFacilityIi(currentSite.getHealthcareFacilityIi());
@@ -479,13 +482,24 @@ implements ParticipatingSiteServiceLocal {
     public ParticipatingSiteDTO updateStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
-
-        StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteDTO.getIdentifier());
+        StudySiteDTO currentSite = getStudySiteDTO(studySiteDTO.getIdentifier());      
         checkValidUser(currentSite.getStudyProtocolIdentifier());
         ParticipatingSiteDTO participatingSiteDTO =
             this.updateStudySiteParticipant(studySiteDTO, currentStatusDTO);
         updateStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
         return getParticipatingSite(participatingSiteDTO.getIdentifier());
+    }
+    
+    private StudySiteDTO getStudySiteDTO(Ii studySiteIi) throws PAException {
+        if (PAUtil.isIiNull(studySiteIi)) {
+            throw new PAException("Study site identifier must be provided for update.");
+        }
+        StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteIi);
+        if (currentSite == null) {
+            throw new PAException("No participating site found by identifier" 
+                    + studySiteIi.getExtension());
+        }
+        return currentSite;
     }
 
     private void updateStudySiteContacts(List<ParticipatingSiteContactDTO> participatingSiteContactDTOList,
@@ -503,16 +517,30 @@ implements ParticipatingSiteServiceLocal {
         }
     }
 
+    private Boolean getPrimaryIndicator(Bl primInd) throws PAException {
+        Boolean isPrimary = BlConverter.convertToBoolean(primInd);
+        if (isPrimary == null) {
+            throw new PAException("Primary indicator must be set on all study site contacts.");
+        }
+        return isPrimary;
+    }
+    
+    private String getRoleCode(Cd cdCode) throws PAException {
+        String code = CdConverter.convertCdToString(cdCode);
+        if (code == null) {
+            throw new PAException("Role Code must be set on all study site contacts.");
+        }
+        return code;
+    }
+    
     private void addStudySiteContact(ParticipatingSiteDTO participatingSiteDTO,
             ParticipatingSiteContactDTO participatingSiteContactDTO) throws PAException {
         StudySiteContactDTO studySiteContactDTO = participatingSiteContactDTO.getStudySiteContactDTO();
         PersonDTO personDTO = participatingSiteContactDTO.getPersonDTO();
         AbstractPersonRoleDTO personRoleDTO = participatingSiteContactDTO.getAbstractPersonRoleDTO();
-        String roleCode = CdConverter.convertCdToString(studySiteContactDTO.getRoleCode());
-        Boolean isPrimary = BlConverter.convertToBoolean(studySiteContactDTO.getPrimaryIndicator());
-
-        checkStudySiteContactTelecom(studySiteContactDTO);
-
+        String roleCode = getRoleCode(studySiteContactDTO.getRoleCode());
+        Boolean isPrimary = getPrimaryIndicator(studySiteContactDTO.getPrimaryIndicator());
+        
         if (personRoleDTO instanceof ClinicalResearchStaffDTO) {
             this.addStudySiteInvestigator(participatingSiteDTO.getIdentifier(),
                     (ClinicalResearchStaffDTO) personRoleDTO, null, personDTO, roleCode);
@@ -534,10 +562,10 @@ implements ParticipatingSiteServiceLocal {
         }
     }
 
-    private void checkStudySiteContactTelecom(StudySiteContactDTO studySiteContactDTO) throws PAException {
-        if (studySiteContactDTO.getTelecomAddresses() == null
-                || CollectionUtils.isEmpty(studySiteContactDTO.getTelecomAddresses().getItem())) {
-            throw new PAException("Study Site Contacts must have telecom address info.");
+    private void checkStudySiteContactTelecom(DSet<Tel> telecom) throws PAException {
+        if (telecom == null || CollectionUtils.isEmpty(telecom.getItem())) {
+            throw new PAException("Study Site Contacts must have telecom address info " 
+                    + "for primary contact.");
         }
     }
 

@@ -55,6 +55,8 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.net.URI;
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -292,12 +294,26 @@ public class ParticipatingSiteServiceTest {
         currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.COMPLETED.getCode()));
 
         PersonDTO person2 = getPerson2();
-
+        DSet<Tel> dsetTel = new DSet<Tel>();
+        Tel phone1 = new Tel();
+        phone1.setValue(new URI("tel:" + URLEncoder.encode("111-111-1111", "UTF-8")));
+        dsetTel.setItem(new HashSet<Tel>());
+        dsetTel.getItem().add(phone1);
+        Tel mail1 = new Tel();
+        mail1.setValue(new URI("mailto:" + URLEncoder.encode("aaa@example.com", "UTF-8")));
+        dsetTel.getItem().add(mail1);
+        
         Ii oldIi = localBean.getParticipatingSiteIi(spSecId, ctepIdForOrg);
         studySiteDTO.setIdentifier(oldIi);
 
         localBean.updateStudySiteParticipant(studySiteDTO, currentStatus);
-        localBean.addStudySitePrimaryContact(oldIi, null, null, person2, null);
+        try {
+            localBean.addStudySitePrimaryContact(oldIi, null, null, person2, null);
+            fail();
+        } catch (PAException e) {
+            //expected
+        }
+        localBean.addStudySitePrimaryContact(oldIi, null, null, person2, dsetTel);
 
 
         StudySiteDTO fresherSiteDTO = studySiteService.get(dto.getIdentifier());
@@ -368,9 +384,16 @@ public class ParticipatingSiteServiceTest {
 
         Ii oldIi = localBean.getParticipatingSiteIi(spSecId, ctepIdForOrg);
         studySiteDTO.setIdentifier(oldIi);
-
+        DSet<Tel> dsetTel = new DSet<Tel>();
+        Tel phone1 = new Tel();
+        phone1.setValue(new URI("tel:" + URLEncoder.encode("111-111-1111", "UTF-8")));
+        dsetTel.setItem(new HashSet<Tel>());
+        dsetTel.getItem().add(phone1);
+        Tel mail1 = new Tel();
+        mail1.setValue(new URI("mailto:" + URLEncoder.encode("aaa@example.com", "UTF-8")));
+        dsetTel.getItem().add(mail1);
         localBean.updateStudySiteParticipant(studySiteDTO, currentStatus);
-        localBean.addStudySitePrimaryContact(oldIi, null, null, person, null);
+        localBean.addStudySitePrimaryContact(oldIi, null, null, person, dsetTel);
 
 
         StudySiteDTO fresherSiteDTO = studySiteService.get(dto.getIdentifier());
@@ -396,7 +419,7 @@ public class ParticipatingSiteServiceTest {
 
         orgDTO.setTelecomAddress(phoneAndEmail);
         orgDTO.setTypeCode(CdConverter.convertStringToCd("Site"));
-        localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
+        localBean.addStudySiteGenericContact(oldIi, orgDTO, true, phoneAndEmail);
         contList = studySiteContactService.getByStudySite(dto.getIdentifier());
         assertEquals(3, contList.size());
         for (StudySiteContactDTO item : contList) {
@@ -407,6 +430,17 @@ public class ParticipatingSiteServiceTest {
             }
         }
     }
+    
+    @Test(expected = PAException.class)
+    public void testNoIiForLocalUpdate() throws PAException { 
+        localBean.updateStudySiteParticipant(new StudySiteDTO(), new StudySiteAccrualStatusDTO());
+    }
+    
+    @Test(expected = PAException.class)
+    public void testNoIiForRemoteUpdate() throws PAException {
+        remoteBean.updateStudySiteParticipant(new StudySiteDTO(), new StudySiteAccrualStatusDTO(), null);
+    }
+    
 
     /**
      * Tests validation of generic contacts
@@ -483,7 +517,14 @@ public class ParticipatingSiteServiceTest {
         phoneAndEmail = DSetConverter.convertListToDSet(emailList, "EMAIL", phoneAndEmail);
         phoneAndEmail = DSetConverter.convertListToDSet(telList, "PHONE", phoneAndEmail);
         orgDTO.setTelecomAddress(phoneAndEmail);
-        localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
+        try {
+            localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
+            fail();
+        } catch (PAException e) {
+            //expected
+        }
+        localBean.addStudySiteGenericContact(oldIi, orgDTO, true, phoneAndEmail);
+        
     }
 
 }
