@@ -98,6 +98,7 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 
+import org.iso._21090.CD;
 /**
  * Transforms StudyProtocol instances.
  *
@@ -165,6 +166,11 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setPrimaryPurposeCode(CDTransformer.INSTANCE.toDto(input.getPrimaryPurposeCode()));
         result.setStartDateTypeCode(CDTransformer.INSTANCE.toDto(input.getStartDateTypeCode()));
         result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
+        if (input.getPhaseOtherText() != null) {
+             CD phaseOtherText = new CD();
+             phaseOtherText.setCode(input.getPhaseOtherText().getValue());
+             result.setPhaseAdditionalQualifierCode(CDTransformer.INSTANCE.toDto(phaseOtherText));
+        }
         result.setPrimaryPurposeAdditionalQualifierCode(
              CDTransformer.INSTANCE.toDto(input.getPrimaryPurposeAdditionalQualifierCode()));
         // II
