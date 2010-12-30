@@ -56,6 +56,8 @@ import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderServiceBean;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
+import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -511,6 +513,22 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
      * @see gov.nih.nci.pa.util.ServiceLocator#getPDQUpdateGeneratorTaskService()
      */
     public PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getPDQTrialAbstractionServiceRemote()
+     */
+    public PDQTrialAbstractionServiceBeanRemote getPDQTrialAbstractionServiceRemote() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.util.ServiceLocator#getPDQTrialRegistrationServiceRemote()
+     */
+    public PDQTrialRegistrationServiceBeanRemote getPDQTrialRegistrationServiceRemote() {
         // TODO Auto-generated method stub
         return null;
     }

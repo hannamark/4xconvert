@@ -83,6 +83,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.test.util.MockPoServiceLocator;
 import gov.nih.nci.pa.test.util.MockServiceLocator;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 
@@ -138,7 +139,7 @@ public abstract class AbstractPaActionTest {
         ActionContext.setContext(new ActionContext(stack.getContext()));
 
         assertNotNull(ActionContext.getContext());
-        
+
         protocolSessionBean = new StudyProtocolQueryDTO();
         protocolSessionBean.setStudyProtocolId(1L);
 
@@ -148,10 +149,10 @@ public abstract class AbstractPaActionTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         ServletActionContext.setResponse(response);
-        
+
     }
 
     /**
@@ -175,10 +176,10 @@ public abstract class AbstractPaActionTest {
     protected MockHttpSession getSession() {
         return (MockHttpSession) ServletActionContext.getRequest().getSession();
     }
-    
+
     /**
      * Gets the response.
-     * 
+     *
      * @return the response
      */
     protected MockHttpServletResponse  getResponse() {

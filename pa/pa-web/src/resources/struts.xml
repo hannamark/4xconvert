@@ -414,5 +414,8 @@
         <action name="ajaxcollectRejectReason">
             <result>/WEB-INF/jsp/nodecorate/collectRejectReason.jsp</result>
         </action>
+        <action name="pdqTrialLoad" class="gov.nih.nci.pa.action.PDQTrialLoadAction">
+            <result>/WEB-INF/jsp/pdqTrialLoad.jsp</result>
+        </action>
     </package>
 </struts>

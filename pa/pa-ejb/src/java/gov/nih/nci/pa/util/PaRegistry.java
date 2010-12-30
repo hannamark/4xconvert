@@ -120,6 +120,8 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
+import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -154,6 +156,20 @@ public final class PaRegistry {
      */
     public static PaRegistry getInstance() {
         return PA_REGISTRY;
+    }
+
+    /**
+     * @return PDQ Trial Registration Remote
+     */
+    public static PDQTrialRegistrationServiceBeanRemote getPDQTrialRegistrationServiceRemote() {
+        return getInstance().getServiceLocator().getPDQTrialRegistrationServiceRemote();
+    }
+
+    /**
+     * @return PDQ Trial Abstraction Remote
+     */
+    public static PDQTrialAbstractionServiceBeanRemote getPDQTrialAbstractionServiceRemote() {
+        return getInstance().getServiceLocator().getPDQTrialAbstractionServiceRemote();
     }
 
     /**

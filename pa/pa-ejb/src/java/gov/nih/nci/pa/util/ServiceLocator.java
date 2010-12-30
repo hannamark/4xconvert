@@ -122,6 +122,8 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
+import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -139,6 +141,16 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
  *
  */
 public interface ServiceLocator {
+
+    /**
+     * @return pdq trial registration bean.
+     */
+    PDQTrialRegistrationServiceBeanRemote getPDQTrialRegistrationServiceRemote();
+
+    /**
+     * @return pdq trial abstraction bean.
+     */
+    PDQTrialAbstractionServiceBeanRemote getPDQTrialAbstractionServiceRemote();
 
     /**
      *

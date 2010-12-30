@@ -122,6 +122,8 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
+import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -138,6 +140,21 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
  *
  */
 public class JndiServiceLocator implements ServiceLocator {
+
+    /**
+     * @return pdq trial registration bean.
+     */
+    public PDQTrialRegistrationServiceBeanRemote getPDQTrialRegistrationServiceRemote() {
+        return (PDQTrialRegistrationServiceBeanRemote) JNDIUtil.lookup("/pa/PDQTrialRegistrationServiceBean/remote");
+    }
+
+    /**
+     * @return pdq trial abstraction bean.
+     */
+    public PDQTrialAbstractionServiceBeanRemote getPDQTrialAbstractionServiceRemote() {
+        return (PDQTrialAbstractionServiceBeanRemote) JNDIUtil.lookup("/pa/PDQTrialAbstractionServiceBean/remote");
+    }
+
     /**
      * @return protocol service
      */
