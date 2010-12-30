@@ -150,6 +150,16 @@ public class PDQTrialLoadAction extends ActionSupport {
             return SUCCESS;
         } 
 
+        process(reportMap, username);
+
+        String emailSubject = "PDQ Load Report : "
+            + new SimpleDateFormat("MM / dd / yy", Locale.US).format(new Date());
+        mailSvc.sendMailWithAttachment(email, emailSubject, generateEmailBody(reportMap), new File[0]);
+
+        return SUCCESS;
+    }
+
+    private void process(Map<File, List<String>> reportMap, String username) {
         File tempFile = null;
         List<File> xmlFiles = null;
         try {
@@ -169,12 +179,6 @@ public class PDQTrialLoadAction extends ActionSupport {
                 }
             }
         }
-
-        String emailSubject = "PDQ Load Report : "
-            + new SimpleDateFormat("MM / dd / yy", Locale.US).format(new Date());
-        mailSvc.sendMailWithAttachment(email, emailSubject, generateEmailBody(reportMap), new File[0]);
-
-        return SUCCESS;
     }
 
     private void processFiles(String username, List<File> xmlFiles, Map<File, List<String>> reportMap) {
