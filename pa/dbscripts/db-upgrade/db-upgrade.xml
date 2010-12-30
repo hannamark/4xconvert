@@ -606,4 +606,8 @@
         <comment>Adding unspecifieduser in cms_user table.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.4/PO-2972.sql"/>
      </changeSet>
+     <changeSet id="PO-3087" author="mshestopalov">
+        <comment>Clone planning_activity records for amendments and update arm_intervention.</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.4/PO-3087.sql"/>
+     </changeSet>
 </databaseChangeLog>
