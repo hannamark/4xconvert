@@ -238,8 +238,8 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 // its nullified
                 person.setStatusCode(EntityStatusCode.NULLIFIED);
                 final Ii dupId = paServiceUtil.getDuplicatePersonIi(ii);
-                
-                if (dupId != null) { 
+
+                if (dupId != null) {
                     paServiceUtil.getOrCreatePAPersonByPoIi(dupId);
                     try {
                         updateStudyProtocolStage(ii, dupId);
@@ -262,15 +262,15 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             session.flush();
         }
     }
-    
+
     private void updateStudyProtocolStage(Ii identifier, Ii dupId) throws NullifiedEntityException, PAException {
         Person oldPaPer = cUtils.getPAPersonByIi(identifier);
         Person newPaPer = cUtils.getPAPersonByIi(dupId);
-        cUtils.updateItemIdForStudyProtocolStage("piIdentifier", oldPaPer.getIdentifier(), 
+        cUtils.updateItemIdForStudyProtocolStage("piIdentifier", oldPaPer.getIdentifier(),
                 newPaPer.getIdentifier());
-        cUtils.updateItemIdForStudyProtocolStage("responsibleIdentifier", oldPaPer.getIdentifier(), 
+        cUtils.updateItemIdForStudyProtocolStage("responsibleIdentifier", oldPaPer.getIdentifier(),
                 newPaPer.getIdentifier());
-        cUtils.updateItemIdForStudyProtocolStage("sitePiIdentifier", oldPaPer.getIdentifier(), 
+        cUtils.updateItemIdForStudyProtocolStage("sitePiIdentifier", oldPaPer.getIdentifier(),
                 newPaPer.getIdentifier());
     }
 
@@ -413,6 +413,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
     private void updateOrganizationalContact(final Ii ocIdentifier, final OrganizationalContactDTO ocDto)
             throws PAException {
         OrganizationalContact oc = getPAOrganizationalContact(ocIdentifier.getExtension());
+
         Session session = null;
         StructuralRoleStatusCode newRoleCode = null;
         if (oc != null) {
@@ -430,7 +431,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                     correlationService = paServiceUtil.getPoService(ocIdentifier);
                     correlationService.getCorrelation(ocIdentifier);
                 } catch (NullifiedRoleException e) {
-                  LOG.info("Nullified Role exception for Organizational Contatc for id" + oc.getIdentifier());
+                  LOG.info("Nullified Role exception for Organizational Contact for id " + oc.getIdentifier());
                   // SR is nullified, find out if it has any duplicates
                   Ii nullfiedIi = null;
                   Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
@@ -441,7 +442,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                   }
                   if (nullfiedIi != null) {
                       srIi = nullifiedEntities.get(nullfiedIi);
-                      //srIi = IiConverter.converToPoOrganizationalContactIi("12897");
                   }
                   PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO ,
                   OrganizationalContact , OrganizationalContactConverter> ocBean = new
@@ -453,7 +453,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                   if (PAUtil.isIiNotNull(srIi)) {
                       //nullified with Duplicate
                       OrganizationalContactDTO poOrgContactDto = (OrganizationalContactDTO)
-                          paServiceUtil.getCorrelationByIi(srIi);
+                      paServiceUtil.getCorrelationByIi(srIi);
                       PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
                       orgContacPaDto.setOrganizationIdentifier(poOrgContactDto.getScoperIdentifier());
                       if (PAUtil.isIiNotNull(poOrgContactDto.getPlayerIdentifier())) {
@@ -463,44 +463,30 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                       duplicateOcId = ocBean.create(orgContacPaDto);
                       replaceStudyContactIdentifiers(IiConverter.convertToPoOrganizationalContactIi(
                               oc.getId().toString()), IiConverter.convertToPoOrganizationalContactIi(
-                              duplicateOcId.toString()), STUDY_SITE_CONTACT);
+                                      duplicateOcId.toString()), STUDY_SITE_CONTACT);
                       oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                   } else {
-                    String poOrgId = oc.getOrganization().getIdentifier();
-                    PersonDTO personDto = null;
-                    String poPerId = null;
-                    OrganizationDTO organizationDto = getPoOrganization(poOrgId);
+                      String poOrgId = oc.getOrganization().getIdentifier();
+                      PersonDTO personDto = null;
+                      String poPerId = null;
+                      OrganizationDTO organizationDto = getPoOrganization(poOrgId);
 
-                    if (oc.getPerson() != null && StringUtils.isNotEmpty(oc.getPerson().getIdentifier())) {
+                      if (oc.getPerson() != null && StringUtils.isNotEmpty(oc.getPerson().getIdentifier())) {
                           poPerId = oc.getPerson().getIdentifier();
                           personDto = getPoPerson(poPerId);
-                    }
-                    if (organizationDto != null && personDto != null) {
-                        //This means Oc is having player as person
-                      // create a new crs
-
-                      PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
-                      orgContacPaDto.setOrganizationIdentifier(organizationDto.getIdentifier());
-                      orgContacPaDto.setPersonIdentifier(personDto.getIdentifier());
-                      duplicateOcId = ocBean.create(orgContacPaDto);
-                      OrganizationalContact dupOc = new OrganizationalContact();
-                      dupOc = getPAOrganizationalContact(duplicateOcId.toString());
-                      newRoleCode = dupOc.getStatusCode();
-                      // replace the old, with the new change identifiers
-                      replaceStudyContactIdentifiers(
-                             IiConverter.convertToPoOrganizationalContactIi(oc.getId().toString()),
-                             IiConverter.convertToPoOrganizationalContactIi(duplicateOcId.toString()) ,
-                                    STUDY_SITE_CONTACT);
-                                // nullify the current
-                      oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-                  } else {
-                      // this is nullified scenario with no org or person associated, in that case nullify the role
-                      // or this can also mean the Player was SR
-                            oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-                            newRoleCode = StructuralRoleStatusCode.NULLIFIED;
-                        }
-                    }
-                  } //end if (ocDto == null)
+                      }
+                      if (organizationDto != null && personDto != null) {
+                          //We're just going to nullify the current OC and let the places that previously showed it
+                          //show up as Nullified.
+                          oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                      } else {
+                          // this is nullified scenario with no org or person associated, in that case nullify the role
+                          // or this can also mean the Player was SR
+                          oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                          newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+                      }
+                  }
+                } //end if (ocDto == null)
             } else {
                 String poOrgIi = ocDto.getScoperIdentifier().getExtension();
                 String paOrgAssignedId = oc.getOrganization().getIdentifier();
