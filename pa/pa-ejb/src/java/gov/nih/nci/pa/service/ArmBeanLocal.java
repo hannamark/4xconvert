@@ -88,6 +88,7 @@ import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.interceptor.ProprietaryTrialInterceptor;
 import gov.nih.nci.pa.iso.convert.ArmConverter;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
+import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -96,10 +97,16 @@ import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.ArmSortCriterion;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -110,6 +117,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
@@ -122,9 +130,8 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConverter> implements ArmServiceLocal {
 
-    @EJB
-    private PlannedActivityServiceLocal plannedActivityService;
-
+    @EJB private PlannedActivityServiceLocal plannedActivityService = null;
+    
     /**
      * @param ii index of planned activity
      * @return list of arms associated w/planned activity
@@ -179,6 +186,49 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
         return super.update(dto);
     }
 
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
+        List<ArmDTO> dtos = getByStudyProtocol(fromStudyProtocolIi);
+        Map<Ii , Ii> map = new HashMap<Ii , Ii>();
+        Session session = HibernateUtil.getCurrentSession();
+        Ii from = null;
+        Ii to = new Ii();
+        for (ArmDTO dto : dtos) {
+            from = dto.getIdentifier();
+            to = new Ii();
+            to.setIdentifierName(from.getIdentifierName());
+            to.setRoot(from.getRoot());
+            dto.setIdentifier(null);
+            dto.setStudyProtocolIdentifier(toStudyProtocolIi);
+            copyInterventions(toStudyProtocolIi, dto);
+            Arm bo = convertFromDtoToDomain(dto);
+            session.save(bo);
+            to.setExtension(bo.getId().toString());
+            map.put(from, to);
+        }
+        createMappingIdentifier(map , toStudyProtocolIi);
+        return map;
+    }
+
+    private void copyInterventions(Ii toStudyProtocolIi, ArmDTO dto) throws PAException {
+        Collection<Ii> paIiSet = new ArrayList<Ii>();
+        Set<Ii> newPaIiSet = new HashSet<Ii>();
+        if ((dto.getInterventions() != null) && (dto.getInterventions().getItem() != null)) {
+            paIiSet = dto.getInterventions().getItem();
+        }
+        for (Ii paIi : paIiSet) {
+             PlannedActivityDTO activityDTO = getPlannedActivityService().get(paIi);
+             activityDTO.setStudyProtocolIdentifier(toStudyProtocolIi);
+             activityDTO.setIdentifier(null);
+             newPaIiSet.add(getPlannedActivityService().create(activityDTO).getIdentifier());
+        }
+        dto.getInterventions().setItem(newPaIiSet);
+    }
+
     private void enforceNoDuplicate(ArmDTO dto) throws PAException {
         List<ArmDTO> armList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
         for (ArmDTO armDbDTO : armList) {
@@ -218,4 +268,16 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
         return ((sameType && sameDesc && sameInterventions) || sameLabel);
     }
 
+    /**
+     * @return the plannedActivityService
+     */
+    public PlannedActivityServiceLocal getPlannedActivityService() {
+        return plannedActivityService;
+    }
+    /**
+     * @param plannedActivityService the plannedActivityService to set
+     */
+    public void setPlannedActivityService(PlannedActivityServiceLocal plannedActivityService) {
+        this.plannedActivityService = plannedActivityService;
+    }
 }

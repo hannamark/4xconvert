@@ -203,7 +203,13 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
 
     }
 
-    private void createMappingIdentifier(Map<Ii, Ii> map, Ii studyProtocolIi) {
+    /**
+     * Create Mapping Identifier when copying.
+     *  
+     * @param map Map where key is the fromIi and value is the toIi.
+     * @param studyProtocolIi the new Study Protocol Ii.
+     */
+    protected void createMappingIdentifier(Map<Ii, Ii> map, Ii studyProtocolIi) {
         Session session = HibernateUtil.getCurrentSession();
         Ii value = null;
         MappingIdentifier mi = null;

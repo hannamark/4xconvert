@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.DSet;
@@ -99,8 +100,10 @@ import gov.nih.nci.pa.util.TestSchema;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -110,8 +113,8 @@ import org.junit.Test;
  *
  */
 public class ArmServiceTest {
-    private ArmServiceLocal remoteEjb = new ArmBeanLocal();
-    private PlannedActivityServiceLocal paRemoteEjb = new PlannedActivityBeanLocal();
+    private ArmBeanLocal remoteEjb = new ArmBeanLocal();
+    private PlannedActivityBeanLocal paRemoteEjb = new PlannedActivityBeanLocal();
     private Ii ii;
     private Ii spIi;
     private Ii intIi;
@@ -121,6 +124,8 @@ public class ArmServiceTest {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         remoteEjb = new ArmBeanLocal();
         paRemoteEjb = new PlannedActivityBeanLocal();
+        paRemoteEjb.setInterventionSrv(new InterventionServiceBean());
+        remoteEjb.setPlannedActivityService(paRemoteEjb);
         TestSchema.reset();
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.armIds.get(0));
@@ -265,5 +270,27 @@ public class ArmServiceTest {
         dto.setStudyProtocolIdentifier(spIi);
         dto.setInterventions(DSetConverter.convertIiSetToDset(new HashSet<Ii>()));
         remoteEjb.create(dto);
+    }
+    @Test
+    public void testCopy() throws PAException {
+        Ii toStudyProtocolIi = TestSchema.createAmendStudyProtocol();
+        Map<Ii, Ii> map = remoteEjb.copy(spIi, toStudyProtocolIi);
+        assertNotNull(map);
+        assertTrue(map.size() == 1);
+        Ii fromIi = map.keySet().iterator().next();
+        Ii toIi = map.get(fromIi);
+        ArmDTO fromDto = remoteEjb.get(fromIi);
+        ArmDTO toDto = remoteEjb.get(toIi);
+        assertNotNull(fromDto.getInterventions().getItem());
+        assertNotNull(toDto.getInterventions().getItem());
+        
+        Ii fromPAIi = fromDto.getInterventions().getItem().iterator().next();
+        Ii toPAIi = toDto.getInterventions().getItem().iterator().next();
+        
+        PlannedActivityDTO fromPADTO = paRemoteEjb.get(fromPAIi);
+        PlannedActivityDTO toPADTO = paRemoteEjb.get(toPAIi);
+        
+        assertEquals(fromPADTO.getInterventionIdentifier(), toPADTO.getInterventionIdentifier());
+        assertNotSame(fromPADTO.getIdentifier(), toPADTO.getIdentifier());
     }
 }
