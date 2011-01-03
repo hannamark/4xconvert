@@ -16,6 +16,8 @@
 
         <s:file name="upload" label="File" /> <br/>
         <s:label>Email address to send report to: </s:label><s:textfield name="mailDestination"></s:textfield><br/>
+        <s:property value="uploadContentType" />
+        <s:property value="uploadFileName" />
         <s:submit />
     </s:form>
   </body>

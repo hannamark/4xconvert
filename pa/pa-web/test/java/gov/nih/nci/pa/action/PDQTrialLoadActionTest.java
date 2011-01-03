@@ -155,8 +155,9 @@ public class PDQTrialLoadActionTest extends AbstractPaActionTest {
     }
 
     @Test
-    public void testBadInputMime() throws Exception {
+    public void testBadInputType() throws Exception {
         action.setUpload(new File(this.getClass().getResource("/test.properties").toURI()));
+        action.setUploadFileName("/test.properties");
         action.execute();
         Collection<String> errors = action.getActionErrors();
         assert(errors.contains("Please select a valid ZIP file to upload"));

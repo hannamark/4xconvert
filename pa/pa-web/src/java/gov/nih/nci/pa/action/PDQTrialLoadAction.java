@@ -105,6 +105,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -124,11 +125,12 @@ public class PDQTrialLoadAction extends ActionSupport {
     private MailManagerServiceLocal mailSvc = null;
     private PDQTrialRegistrationServiceBeanRemote pdqRegistrationService = null;
     private PDQTrialAbstractionServiceBeanRemote pdqAbstractionService = null;
+    private String uploadFileName = null;
 
     private static final Logger LOG  = Logger.getLogger(PDQTrialLoadAction.class);
 
-    private static final String HTML_BODY = "<html><body><table><tr><th>File</th>"
-        + "<th>Report</th></tr>$1</table></body></html>";
+    private static final String HTML_BODY = "<html><body><table border=1><tr><th>File</th>"
+        + "<th>Report</th></tr>KEY</table></body></html>";
 
     private void initServices() {
         mailSvc = PaRegistry.getMailManagerService();
@@ -145,16 +147,27 @@ public class PDQTrialLoadAction extends ActionSupport {
         Map<File, List<String>> reportMap = new HashMap<File, List<String>>();
         String username = ServletActionContext.getRequest().getRemoteUser();
 
-        if (upload == null || !upload.getName().endsWith(".zip")) {
+        if (upload == null || !StringUtils.endsWith(uploadFileName, ".zip")) {
             addActionError("Please select a valid ZIP file to upload");
             return SUCCESS;
-        } 
+        }
 
         process(reportMap, username);
 
         String emailSubject = "PDQ Load Report : "
             + new SimpleDateFormat("MM / dd / yy", Locale.US).format(new Date());
-        mailSvc.sendMailWithAttachment(email, emailSubject, generateEmailBody(reportMap), new File[0]);
+
+        try {
+            File reportFile = File.createTempFile("report-", ".html");
+            FileUtils.writeStringToFile(reportFile, generateEmailBody(reportMap));
+            File[] attachments = new File[1];
+            attachments[0] = reportFile;
+
+            mailSvc.sendMailWithAttachment(email, emailSubject, "Your load report is attached", attachments);
+        } catch (IOException e) {
+            addActionError("Unable to write report file before sending to user.");
+            LOG.error(e.getMessage(), e);
+        }
 
         return SUCCESS;
     }
@@ -215,7 +228,7 @@ public class PDQTrialLoadAction extends ActionSupport {
             }
             sb.append("</td></tr>\n");
         }
-        return HTML_BODY.replaceAll("$1", sb.toString());
+        return HTML_BODY.replaceAll("KEY", sb.toString());
     }
 
     private List<File> extractZip(File input) throws IOException, PAException {
@@ -254,6 +267,14 @@ public class PDQTrialLoadAction extends ActionSupport {
         }
         zipinputstream.close();
         return extractedFiles;
+    }
+
+    /**
+     * The uploaded file name.
+     * @param uploadFileName file name.
+     */
+    public void setUploadFileName(String uploadFileName) {
+        this.uploadFileName = uploadFileName;
     }
 
     /**
