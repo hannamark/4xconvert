@@ -12,6 +12,41 @@
                 <param name="splashPageActionName">disclaimerAction</param>
                 <param name="sessionFlagName">disclaimerAccepted</param>
             </interceptor>
+            <interceptor name="parameterTrim"
+                class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
+            <interceptor name="maliciousInput"
+                class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor">
+               <param name="filterSymbols">false</param>
+               <param name="filterControlChars">true</param>
+            </interceptor>
+            <interceptor-stack name="methodValidationStack">
+                <interceptor-ref name="showDisclaimer" />
+                <interceptor-ref name="exception" />
+                <interceptor-ref name="alias" />
+                <interceptor-ref name="servletConfig" />
+                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="i18n" />
+                <interceptor-ref name="chain" />
+                <interceptor-ref name="fileUpload"/>
+                <interceptor-ref name="params">
+                    <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
+                </interceptor-ref>
+                <interceptor-ref name="conversionError" />
+                <interceptor-ref name="validation">
+                    <param name="excludeMethods">input,back,cancel,reviewUpdate</param>
+                </interceptor-ref>
+                <interceptor-ref name="workflow">
+                    <param name="excludeMethods">input,back,cancel,reviewUpdate</param>
+                </interceptor-ref>
+                <interceptor-ref name="maliciousInput" />
+                <interceptor-ref name="parameterTrim">
+                    <param name="trimToNull">true</param>
+                    <param name="trimFromFront">true</param>
+                </interceptor-ref>
+            </interceptor-stack>
         </interceptors>
         <global-results>
             <result name="applicationError">error.jsp</result>
@@ -51,28 +86,34 @@
             <result name="ctroWelcome">/WEB-INF/jsp/ctroWelcome.jsp</result>
         </action>
         <action name="criteria*" class="gov.nih.nci.pa.viewer.action.{1}Action">
+            <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/{1}.jsp</result> 
         </action>
         <action name="results*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="getReport">
+            <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/{1}.jsp</result> 
-        </action>
-        
+        </action>    
     </package>
     
     <package name="ctroajax" namespace="/ctro/ajax" extends="public">
         <action name="refreshAncCorResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/summ4RepAncillaryCorrelativeResult.jsp</result> 
         </action>
         <action name="refreshEpidemResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/summ4RepEpidemOutcomeResult.jsp</result> 
         </action>
         <action name="refreshAgencyDeviceResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceResult.jsp</result> 
         </action>
         <action name="refreshOtherIntResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionResult.jsp</result> 
         </action>
         <action name="refreshAutocompleteResults*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="getAutoComplete">
+            <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/summ4RepAutoCompleteResult.jsp</result> 
         </action>
     </package>
