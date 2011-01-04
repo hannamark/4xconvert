@@ -94,6 +94,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -105,6 +106,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -127,10 +129,11 @@ public class PDQTrialLoadAction extends ActionSupport {
     private PDQTrialAbstractionServiceBeanRemote pdqAbstractionService = null;
     private String uploadFileName = null;
 
-    private static final Logger LOG  = Logger.getLogger(PDQTrialLoadAction.class);
+    private MessageFormat htmlBody = null;
+    private MessageFormat item = null;
+    private MessageFormat line = null;
 
-    private static final String HTML_BODY = "<html><body><table border=1><tr><th>File</th>"
-        + "<th>Report</th></tr>KEY</table></body></html>";
+    private static final Logger LOG  = Logger.getLogger(PDQTrialLoadAction.class);
 
     private void initServices() {
         mailSvc = PaRegistry.getMailManagerService();
@@ -142,6 +145,10 @@ public class PDQTrialLoadAction extends ActionSupport {
     public String execute() {
         if (mailSvc == null) {
             initServices();
+        }
+
+        if (htmlBody == null) {
+            initMessages();
         }
 
         Map<File, List<String>> reportMap = new HashMap<File, List<String>>();
@@ -170,6 +177,17 @@ public class PDQTrialLoadAction extends ActionSupport {
         }
 
         return SUCCESS;
+    }
+
+    private void initMessages() {
+        try {
+            htmlBody = new MessageFormat(getText("pdq.html.template"));
+            item = new MessageFormat(getText("pdq.html.reportItem"));
+            line = new MessageFormat(getText("pdq.html.line"));
+        } catch (Exception e) {
+            // Junit will always get there. Swallow.
+            LOG.error(e);
+        }
     }
 
     private void process(Map<File, List<String>> reportMap, String username) {
@@ -206,6 +224,12 @@ public class PDQTrialLoadAction extends ActionSupport {
                 pdqAbstractionService.loadAbstractionElementFromPDQXml(xmlFile.toURL(), studyProtocolIi);
                 LOG.info("Abstraction Complete");
                 report.add("Abstraction Complete");
+            } catch (PAException e) {
+                String prettyErrorMessage = "Unable to load file: " + xmlFile.getPath();
+                addActionError(prettyErrorMessage);
+                report.add(prettyErrorMessage);
+                report.add(e.getMessage());
+                LOG.error(prettyErrorMessage, e);
             } catch (Exception e) {
                 String prettyErrorMessage = "Unable to load file: " + xmlFile.getPath();
                 addActionError(prettyErrorMessage);
@@ -219,16 +243,16 @@ public class PDQTrialLoadAction extends ActionSupport {
     private String generateEmailBody(Map<File, List<String>> report) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<File, List<String>> entry : report.entrySet()) {
-            sb.append("<tr>\n<td>");
-            sb.append(entry.getKey().getName());
-            sb.append("</td>\n<td>");
+            StringBuilder lineSb = new StringBuilder();
             for (String s : entry.getValue()) {
-                sb.append(s);
-                sb.append("<br/>");
+                lineSb.append(item.format(ArrayUtils.add(new String[0], s)));
             }
-            sb.append("</td></tr>\n");
+            String[] params = new String[2];
+            params[0] = entry.getKey().getName();
+            params[1] = lineSb.toString();
+            sb.append(line.format(params));
         }
-        return HTML_BODY.replaceAll("KEY", sb.toString());
+        return htmlBody.format(ArrayUtils.add(new String[0], sb.toString()));
     }
 
     private List<File> extractZip(File input) throws IOException, PAException {
