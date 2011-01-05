@@ -236,4 +236,12 @@ public interface PlannedActivityService  extends StudyPaService<PlannedActivityD
      * @throws PAException the PA exception
      */
     PlannedProcedureDTO getPlannedProcedure(Ii ii) throws PAException;
+    
+    /**
+     * Checks if Planned Activity that is duplicate of the parameter exists. 
+     * @param dto Planned Activity to check if duplicate exists
+     * @return Ii of the duplicate Planned Activity, null if a duplicate does not exist.
+     * @throws PAException the PA exception
+     */
+    Ii getDuplicateIi(PlannedActivityDTO dto) throws PAException;
 }

@@ -19,6 +19,7 @@ import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PlannedActivitySortCriterion;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -594,47 +595,73 @@ public class PlannedActivityBeanLocal extends
             if (PAUtil.isIiNull(dto.getInterventionIdentifier())) {
                 throw new PAException("An Intervention must be selected.");
             }
-            if (checkDuplicate(dto)) {
-                throw new PAException("Redundancy error:  This trial already includes the selected intervention.");
+            if (getDuplicateIi(dto) != null) {
+                throw new PADuplicateException("This trial already includes the selected intervention.");
             }
         }
     }
 
-    private boolean checkDuplicate(PlannedActivityDTO dto) throws PAException {
-        boolean duplicate = false;
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Ii getDuplicateIi(PlannedActivityDTO dto) throws PAException {
         InterventionDTO iDto = interventionSrv.get(dto.getInterventionIdentifier());
         String interventionName = iDto.getName().getValue();
 
         List<PlannedActivityDTO> paList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
         for (PlannedActivityDTO padto : paList) {
-            if (!PAUtil.isIiNull(padto.getInterventionIdentifier())) {
-                InterventionDTO interDto = interventionSrv.get(padto.getInterventionIdentifier());
-                String interName = interDto.getName().getValue();
-                if (interName.equals(interventionName)
-                    && padto.getSubcategoryCode().getCode().equals(dto.getSubcategoryCode().getCode())
-                    && ((padto.getTextDescription().getValue() == null && dto.getTextDescription().getValue() == null)
-                        || (padto.getTextDescription().getValue() != null && dto.getTextDescription().getValue() != null
-                            && padto.getTextDescription().getValue().equals(dto.getTextDescription().getValue())))
-                    && ((PAUtil.isBlNull(dto.getLeadProductIndicator())
-                        && PAUtil.isBlNull(padto.getLeadProductIndicator()))
-                        || (!PAUtil.isBlNull(dto.getLeadProductIndicator())
-                            && !PAUtil.isBlNull(padto.getLeadProductIndicator())
-                            && padto.getLeadProductIndicator().getValue().equals(dto.getLeadProductIndicator()
-                                                                                 .getValue())))) {
-                    duplicate = true;
-                    if (PAUtil.isIiNotNull(dto.getIdentifier())) {
-                        String comp1 = padto.getIdentifier().getExtension();
-                        String comp2 = dto.getIdentifier().getExtension();
-                        if (comp1.equals(comp2)) {
-                            // skip if the id is same, this will happen during update
-                            duplicate = false;
-                        }
-                    }
+            Ii duplicateIi = comparePlannedActivities(dto, interventionName, padto);
+            if (duplicateIi != null) {
+                return duplicateIi;
+            }
+        }
+        return null;
+    }
 
+    private Ii comparePlannedActivities(PlannedActivityDTO dto, String interventionName, PlannedActivityDTO padto)
+            throws PAException {
+        boolean duplicate = false;
+        if (!PAUtil.isIiNull(padto.getInterventionIdentifier())) {
+            InterventionDTO interDto = interventionSrv.get(padto.getInterventionIdentifier());
+            String interName = interDto.getName().getValue();
+            if (isDuplicate(dto, interventionName, padto, interName)) {
+                duplicate = true;
+                if (isSameIdentifier(dto, padto)) {
+                    duplicate = false;
                 }
             }
         }
-        return duplicate;
+        if (duplicate) {
+            return padto.getIdentifier();
+        }
+        return null;
+    }
+
+    private boolean isDuplicate(PlannedActivityDTO dto, String interventionName, PlannedActivityDTO padto,
+            String interName) {
+        return interName.equals(interventionName)
+                && padto.getSubcategoryCode().getCode().equals(dto.getSubcategoryCode().getCode())
+                && ((padto.getTextDescription().getValue() == null && dto.getTextDescription().getValue() == null) 
+                        || (padto.getTextDescription().getValue() != null
+                        && dto.getTextDescription().getValue() != null && padto.getTextDescription().getValue().equals(
+                        dto.getTextDescription().getValue())))
+                && ((PAUtil.isBlNull(dto.getLeadProductIndicator()) && PAUtil.isBlNull(padto.getLeadProductIndicator())
+                        ) || (!PAUtil.isBlNull(dto.getLeadProductIndicator())
+                        && !PAUtil.isBlNull(padto.getLeadProductIndicator()) && padto.getLeadProductIndicator()
+                        .getValue().equals(dto.getLeadProductIndicator().getValue())));
+    }
+
+    private boolean isSameIdentifier(PlannedActivityDTO dto, PlannedActivityDTO padto) {
+        if (PAUtil.isIiNotNull(dto.getIdentifier())) {
+            String comp1 = padto.getIdentifier().getExtension();
+            String comp2 = dto.getIdentifier().getExtension();
+            if (comp1.equals(comp2)) {
+                // skip if the id is same, this will happen during update
+                return true;
+            }
+        }
+        return false;
     }
 
     private void drugBusinessRules(PlannedSubstanceAdministrationDTO dto) throws PAException {

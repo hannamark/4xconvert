@@ -224,7 +224,15 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
              PlannedActivityDTO activityDTO = getPlannedActivityService().get(paIi);
              activityDTO.setStudyProtocolIdentifier(toStudyProtocolIi);
              activityDTO.setIdentifier(null);
-             newPaIiSet.add(getPlannedActivityService().create(activityDTO).getIdentifier());
+             
+             //Check if Planned Activity already created from previous arm, if so, 
+             //associate new Arm with previously created Planned Activity.
+             Ii newPaIi = getPlannedActivityService().getDuplicateIi(activityDTO);
+             if (newPaIi != null) {
+                 newPaIiSet.add(newPaIi);
+             } else {
+                 newPaIiSet.add(getPlannedActivityService().create(activityDTO).getIdentifier());
+             }
         }
         dto.getInterventions().setItem(newPaIiSet);
     }
