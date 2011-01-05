@@ -81,9 +81,8 @@ package gov.nih.nci.pa.domain;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * The Class PlannedSubstanceAdministration.
@@ -92,7 +91,7 @@ import javax.persistence.Entity;
  * @since 21/10/2009
  */
 @Entity
-@DiscriminatorColumn(name = "PlannedSubstanceAdministration", discriminatorType = DiscriminatorType.STRING)
+@Table(name = "PLANNED_SUBSTANCE_ADMINISTRATION")
 public class PlannedSubstanceAdministration extends PlannedActivity {
 
     private static final long serialVersionUID = 1L;

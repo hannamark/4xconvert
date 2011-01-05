@@ -83,18 +83,17 @@ import gov.nih.nci.pa.enums.EligibleGenderCode;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Table;
 
 /**
  * @author Hugh Reinhart
  * @since 11/07/2008
  */
 @Entity
-@DiscriminatorColumn(name = "PlannedEligibilityCriterion", discriminatorType = DiscriminatorType.STRING)
+@Table(name = "PLANNED_ELIGIBILITY_CRITERION")
 public class PlannedEligibilityCriterion extends PlannedActivity {
     private static final long serialVersionUID = 4586185578199985945L;
     private Boolean inclusionIndicator;
@@ -105,15 +104,15 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
     private Integer displayOrder;
     private Boolean structuredIndicator;
     private String textValue;
-    
-    private BigDecimal minValue;    
+
+    private BigDecimal minValue;
     private String minUnit;
-    private BigDecimal maxValue;    
+    private BigDecimal maxValue;
     private String maxUnit;
     private Long cdePublicIdentifier;
     private String cdeVersionNumber;
-    
-    
+
+
     /**
      * @return inclusionIndicator
      */
@@ -189,7 +188,7 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
         return minUnit;
      }
      /**
-      * @param minUnit the minUnit to set 
+      * @param minUnit the minUnit to set
       */
      public void setMinUnit(String minUnit) {
        this.minUnit = minUnit;

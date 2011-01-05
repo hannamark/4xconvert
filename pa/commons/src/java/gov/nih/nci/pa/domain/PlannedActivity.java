@@ -82,8 +82,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -99,8 +97,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @since 10/28/2008
  */
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "PLANNED_ACTIVITY_TYPE", discriminatorType = DiscriminatorType.STRING)
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "PLANNED_ACTIVITY")
 public class PlannedActivity extends Activity {
     private static final long serialVersionUID = 1239781890L;

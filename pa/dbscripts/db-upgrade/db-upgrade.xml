@@ -610,4 +610,8 @@
         <comment>Clone planning_activity records for amendments and update arm_intervention.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.4/PO-3087.sql"/>
      </changeSet>
+     <changeSet id="PO-3092" author="aevansel">
+        <comment>Refactoring the database structure of planned activities and its subclasses.</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.4/PO-3092.sql"/>
+     </changeSet>
 </databaseChangeLog>

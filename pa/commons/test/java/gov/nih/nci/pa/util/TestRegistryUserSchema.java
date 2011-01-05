@@ -152,6 +152,9 @@ public class TestRegistryUserSchema {
                     statement.executeUpdate("delete from REGULATORY_AUTHORITY");
                     statement.executeUpdate("delete from DOCUMENT_WORKFLOW_STATUS");
                     statement.executeUpdate("delete from ARM_INTERVENTION");
+                    statement.executeUpdate("delete from PLANNED_PROCEDURE");
+                    statement.executeUpdate("delete from PLANNED_ELIGIBILITY_CRITERION");
+                    statement.executeUpdate("delete from PLANNED_SUBSTANCE_ADMINISTRATION");
                     statement.executeUpdate("delete from PLANNED_ACTIVITY");
                     statement.executeUpdate("delete from ARM");
                     statement.executeUpdate("delete from STUDY_OUTCOME_MEASURE");
