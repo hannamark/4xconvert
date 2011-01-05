@@ -429,4 +429,9 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
 		return null;
 	}
 
+    public Ii getDuplicateIi(PlannedActivityDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
