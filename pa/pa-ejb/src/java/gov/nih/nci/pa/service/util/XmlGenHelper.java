@@ -256,7 +256,7 @@ public class XmlGenHelper {
         appendElement(address, createElement("country",
                 PADomainUtils.getCountryNameUsingAlpha3Code(addressBo.get(AdxpCnt.class.getName())), doc));
         appendElement(lead, address);
-        if (PAUtil.isDSetTelNull(telecom)) {
+        if (PAUtil.isDSetTelAndEmailNull(telecom)) {
             return;
         }
         List<String> phones = DSetConverter.getTelByType(telecom, "tel:");

@@ -34,9 +34,9 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -259,7 +259,7 @@ public class PAUtilTest {
 	@Test
 	public void testConvertTsToFormarttedDate() {
 		String date =
-			PAUtil.convertTsToFormarttedDate(TsConverter.convertToTs(new Timestamp(new Date("11/16/2009").getTime())), "yyyy-MM");
+			PAUtil.convertTsToFormattedDate(TsConverter.convertToTs(new Timestamp(new Date("11/16/2009").getTime())), "yyyy-MM");
 		assertEquals("2009-11",date);
 	}
 
@@ -597,6 +597,7 @@ public class PAUtilTest {
         st.add("email:n.n.com");
         DSetConverter.convertListToDSet(st, "EMAIL", telecomAddresses);
         assertTrue(PAUtil.isDSetTelNull(telecomAddresses));
+        assertFalse(PAUtil.isDSetTelAndEmailNull(telecomAddresses));
         st = new ArrayList<String>();
         st.add("tel:111-111-1111");
         DSetConverter.convertListToDSet(st, "PHONE", telecomAddresses);

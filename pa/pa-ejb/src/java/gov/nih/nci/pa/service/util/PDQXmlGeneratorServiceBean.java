@@ -83,12 +83,17 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -98,8 +103,10 @@ import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -107,6 +114,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -123,6 +131,10 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean
     implements PDQXmlGeneratorServiceRemote {
 
     private static final String NAME = "name";
+    private static final String SEC_ID = "secondary_id";
+    private static final String ID = "id";
+    private static final String ID_TYPE = "id_type";
+    private static final String ID_DOMAIN = "id_domain";
     
     /**
      * {@inheritDoc}
@@ -134,18 +146,34 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean
             if (IiConverter.STUDY_PROTOCOL_ROOT.equals(item.getRoot())) {
                 continue;
             }
-            Element secId = doc.createElement("secondary_id");
-            XmlGenHelper.appendElement(secId, XmlGenHelper.createElement("id", item.getExtension(), doc));
+            Element secId = doc.createElement(SEC_ID);
+            XmlGenHelper.appendElement(secId, XmlGenHelper.createElement(ID, item.getExtension(), doc));
             XmlGenHelper.appendElement(idInfoNode, secId);
         }
         String ctepId = new PAServiceUtils()
-            .getStudyIdentifier(spDTO.getIdentifier(), PAConstants.CTEP_IDENTIFIER_TYPE);
+            .getStudyIdentifier(spDTO.getIdentifier(), PAConstants.CTEP_IDENTIFIER_TYPE);        
         if (StringUtils.isNotEmpty(ctepId)) {
-            XmlGenHelper.appendElement(idInfoNode, XmlGenHelper.createElement("ctep_id", ctepId, doc));
+            Element secCtepId = doc.createElement(SEC_ID);
+            XmlGenHelper.appendElement(secCtepId, XmlGenHelper.createElement(ID, ctepId, doc));
+            XmlGenHelper.appendElement(secCtepId, XmlGenHelper.createElement(ID_TYPE, "ctep-id", doc));
+            XmlGenHelper.appendElement(secCtepId, XmlGenHelper.createElement(ID_DOMAIN, "CTEP", doc));
+            XmlGenHelper.appendElement(idInfoNode, secCtepId);
         }
         String dcpId = new PAServiceUtils().getStudyIdentifier(spDTO.getIdentifier(), PAConstants.DCP_IDENTIFIER_TYPE);
         if (StringUtils.isNotEmpty(dcpId)) {
-            XmlGenHelper.appendElement(idInfoNode, XmlGenHelper.createElement("dcp_id", dcpId, doc));
+            Element secDcpId = doc.createElement(SEC_ID);
+            XmlGenHelper.appendElement(secDcpId, XmlGenHelper.createElement(ID, dcpId, doc));
+            XmlGenHelper.appendElement(secDcpId, XmlGenHelper.createElement(ID_TYPE, "dcp-id", doc));
+            XmlGenHelper.appendElement(secDcpId, XmlGenHelper.createElement(ID_DOMAIN, "DCP", doc));
+            XmlGenHelper.appendElement(idInfoNode, secDcpId);
+        }
+        String nctId = new PAServiceUtils().getStudyIdentifier(spDTO.getIdentifier(), PAConstants.NCT_IDENTIFIER_TYPE);
+        if (StringUtils.isNotEmpty(nctId)) {
+            Element secNctId = doc.createElement(SEC_ID);
+            XmlGenHelper.appendElement(secNctId, XmlGenHelper.createElement(ID, nctId, doc));
+            XmlGenHelper.appendElement(secNctId, XmlGenHelper.createElement(ID_TYPE, "nct-id", doc));
+            XmlGenHelper.appendElement(secNctId, XmlGenHelper.createElement(ID_DOMAIN, "NCT", doc));
+            XmlGenHelper.appendElement(idInfoNode, secNctId);
         }
     }
     
@@ -276,5 +304,103 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean
         return super.generateCTGovXml(studyProtocolIi);
     }
     
-  
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected List<Element> createCollaborators(Ii studyProtocolIi, Document doc) throws PAException {
+       List<Element> collaborators = new ArrayList<Element>();
+            
+       StudySiteDTO spartDTO = new StudySiteDTO();
+       List<StudySiteDTO> sParts = new ArrayList<StudySiteDTO>();
+       spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.FUNDING_SOURCE));
+       sParts.addAll(getStudySiteService().getByStudyProtocol(studyProtocolIi, spartDTO));
+       spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LABORATORY));
+       sParts.addAll(getStudySiteService().getByStudyProtocol(studyProtocolIi, spartDTO));
+       spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.AGENT_SOURCE));
+       sParts.addAll(getStudySiteService().getByStudyProtocol(studyProtocolIi, spartDTO));
+       
+       if (CollectionUtils.isNotEmpty(sParts)) {
+           for (StudySiteDTO sPart : sParts) { 
+               Element collaborator = doc.createElement("collaborator");
+               PdqXmlGenHelper.addPoOrganizationByPaRoIi(collaborator, 
+                        null, sPart.getResearchOrganizationIi(), doc, this.getCorUtils()); 
+               collaborators.add(collaborator);
+           }
+       }
+       return collaborators;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void addInterventionCdrValue(InterventionDTO iDto, Element root, Document doc) {
+        root.setAttribute("cdr-id", StringUtils.substring(StConverter
+                .convertToString(iDto.getPdqTermIdentifier()), 0, PAAttributeMaxLen.LEN_160));   
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void addOverallOfficialPerson(StudyContactDTO scDTO, Element overallofficial, Document doc) 
+        throws PAException {
+        PdqXmlGenHelper.addPoPersonByPaCrsIi(overallofficial, 
+                null, scDTO.getClinicalResearchStaffIi(), doc, this.getCorUtils());     
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void addOverallOfficialAffiliation(Ii roIi, Element overallofficial, Document doc) throws PAException {
+        PdqXmlGenHelper.addPoOrganizationByPaRoIi(overallofficial, 
+                "affiliation", roIi, doc, this.getCorUtils()); 
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createFacility(StudySiteDTO sp, Element location, Document doc) throws PAException {      
+       PdqXmlGenHelper.addPoOrganizationByPaHcfIi(location, 
+               "facility", sp.getHealthcareFacilityIi(), doc, this.getCorUtils()); 
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createContact(List<StudySiteContactDTO> spcDTOs, Element location, Document doc)
+            throws PAException, NullifiedRoleException {
+        for (StudySiteContactDTO sscDTO : spcDTOs) {
+            if (!StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(sscDTO.getRoleCode().getCode())) {
+                continue;
+            }
+            PdqXmlGenHelper.addPoPersonByPaCrsIi(location, 
+                    "contact", sscDTO.getClinicalResearchStaffIi(), doc, this.getCorUtils()); 
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createInvestigators(List<StudySiteContactDTO> spcDTOs, Element location, Document doc)
+            throws PAException {
+        for (StudySiteContactDTO spcDTO : spcDTOs) {
+            if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(spcDTO.getRoleCode().getCode())) {
+                continue;
+            }
+            Element investigator = doc.createElement("investigator");
+            PdqXmlGenHelper.addPoPersonByPaCrsIi(investigator, 
+                    null, spcDTO.getClinicalResearchStaffIi(), doc, this.getCorUtils());
+            XmlGenHelper.appendElement(investigator,
+                    XmlGenHelper.createElement("role", convertToCtValues(spcDTO.getRoleCode()), doc));
+            if (investigator.hasChildNodes()) {
+                XmlGenHelper.appendElement(location, investigator);
+            }
+        }
+    }
 }

@@ -145,12 +145,10 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -191,7 +189,10 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
     implements CTGovXmlGeneratorServiceRemote {
 
     private static final Logger LOG = Logger.getLogger(CTGovXmlGeneratorServiceBean.class);
-
+    private static final String MMDDYYYY = "MM/dd/yyyy";
+    private static final String YYYYMMDD = "yyyy-MM-dd";
+    private static final String YYYYMM = "yyyy-MM";
+    
     static {
         createCtGovValues();
     }
@@ -273,7 +274,7 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
                         dto.getStatusDateRange()));
             }
             XmlGenHelper.appendElement(root,
-                    XmlGenHelper.createElement("verification_date", PAUtil.convertTsToFormarttedDate(tsVerificationDate,
+                    XmlGenHelper.createElement("verification_date", PAUtil.convertTsToFormattedDate(tsVerificationDate,
                     "yyyy-MM"), doc));
 
             DOMSource domSource = new DOMSource(doc);
@@ -369,9 +370,9 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         }
         XmlGenHelper.appendElement(root,
                 XmlGenHelper.createElement("start_date",
-                        convertTsToYYYYMMFormart(spDTO.getStartDate()), doc));
+                        convertTsToYYYYMMFormat(spDTO.getStartDate()), doc));
         XmlGenHelper.appendElement(root,
-                XmlGenHelper.createElement("primary_compl_date", convertTsToYYYYMMFormart(spDTO
+                XmlGenHelper.createElement("primary_compl_date", convertTsToYYYYMMFormat(spDTO
                 .getPrimaryCompletionDate()), doc));
         XmlGenHelper.appendElement(root,
                 XmlGenHelper.createElement("primary_compl_date_type", convertToCtValues(spDTO
@@ -465,6 +466,36 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         }
 
     }
+    
+    /**
+     * addOverallOfficialPerson.
+     * @param scDTO dto.
+     * @param overallofficial element
+     * @param doc document
+     * @throws PAException when error.
+     */
+    protected void addOverallOfficialPerson(StudyContactDTO scDTO, Element overallofficial, Document doc) 
+        throws PAException {
+        Person p = getCorUtils().getPAPersonByIi(scDTO.getClinicalResearchStaffIi());
+        
+        XmlGenHelper.appendElement(overallofficial,
+                XmlGenHelper.createElement(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
+        XmlGenHelper.appendElement(overallofficial,
+                XmlGenHelper.createElement(XmlGenHelper.LAST_NAME, p.getLastName(), doc));     
+    }
+    
+    /**
+     * addOverallOfficialAffiliation.
+     * @param roIi research org ii
+     * @param overallofficial element
+     * @param doc document
+     * @throws PAException when error.
+     */
+    protected void addOverallOfficialAffiliation(Ii roIi, Element overallofficial, Document doc) throws PAException {
+        Organization o = getCorUtils().getPAOrganizationByIi(roIi);
+        XmlGenHelper.appendElement(overallofficial,
+                XmlGenHelper.createElement("affiliation", o.getName(), doc));
+    }
 
     private void createOverallOfficial(Ii studyProtocolIi, Document doc, Element root) throws PAException {
         StudyContactDTO scDto = new StudyContactDTO();
@@ -472,12 +503,8 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         List<StudyContactDTO> scDTOs = getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
         for (StudyContactDTO scDTO : scDTOs) {
             if (StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode().equals(scDTO.getRoleCode().getCode())) {
-                Person p = getCorUtils().getPAPersonByIi(scDTO.getClinicalResearchStaffIi());
                 Element overallofficial = doc.createElement("overall_official");
-                XmlGenHelper.appendElement(overallofficial,
-                        XmlGenHelper.createElement(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
-                XmlGenHelper.appendElement(overallofficial,
-                        XmlGenHelper.createElement(XmlGenHelper.LAST_NAME, p.getLastName(), doc));
+                addOverallOfficialPerson(scDTO, overallofficial, doc); 
                 XmlGenHelper.appendElement(overallofficial,
                         XmlGenHelper.createElement("role", "Principal Investigator", doc));
 
@@ -486,9 +513,7 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
                 List<StudySiteDTO> sParts = getStudySiteService().getByStudyProtocol(studyProtocolIi, spartDTO);
 
                 if (CollectionUtils.isNotEmpty(sParts)) {
-                    Organization o = getCorUtils().getPAOrganizationByIi(sParts.get(0).getResearchOrganizationIi());
-                    XmlGenHelper.appendElement(overallofficial,
-                            XmlGenHelper.createElement("affiliation", o.getName(), doc));
+                    addOverallOfficialAffiliation(sParts.get(0).getResearchOrganizationIi(), overallofficial, doc);
                 }
 
                 XmlGenHelper.appendElement(root, overallofficial);
@@ -931,6 +956,16 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         }
     }
 
+    /**
+     * addInterventionCdrValue.
+     * @param iDto intervention dto.
+     * @param root root element
+     * @param doc document
+     */
+    protected void addInterventionCdrValue(InterventionDTO iDto, Element root, Document doc) {
+        //NOOP
+    }
+    
     private void createIntervention(Ii studyProtocolIi, Document doc, Element root) throws PAException {
         List<PlannedActivityDTO> paList = getPlannedActivityService().getByStudyProtocol(studyProtocolIi);
 
@@ -945,11 +980,11 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
                 }
                 XmlGenHelper.appendElement(intervention,
                         XmlGenHelper.createElement("intervention_name", StringUtils.substring(StConverter
-                        .convertToString(iDto.getName()), 0, PAAttributeMaxLen.LEN_160), doc));
+                        .convertToString(iDto.getName()), 0, PAAttributeMaxLen.LEN_160), doc));        
+                addInterventionCdrValue(iDto, intervention, doc);
                 createTextBlock("intervention_description", StringUtils.substring(
                         StConverter.convertToString(pa.getTextDescription()), 0, PAAttributeMaxLen.LEN_1000), doc,
-                        intervention);
-
+                        intervention);                
                 Iterator<InterventionAlternateNameDTO> ianIt =
                     getInterventionAlternateNameService().getByIntervention(iDto
                         .getIdentifier()).iterator();
@@ -1139,6 +1174,15 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             }
         }
     }
+    
+    private void addCollaborators(Element sponsors, Ii studyProtocolIi, Document doc) throws PAException {
+        List<Element> collaborators = createCollaborators(studyProtocolIi, doc);
+        for (Element collaborator : collaborators) {
+            if (collaborator.hasChildNodes()) {
+                XmlGenHelper.appendElement(sponsors, collaborator);
+            }
+        }
+    }
 
     private void createSponsors(Ii studyProtocolIi, Document doc, Element root, StudyProtocolDTO spDTO)
             throws PAException, NullifiedRoleException {
@@ -1153,10 +1197,8 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
                 XmlGenHelper.appendElement(sponsors, rp);
             }
         }
-        Element collaborator = createCollaborator(studyProtocolIi, doc);
-        if (collaborator != null && collaborator.hasChildNodes()) {
-            XmlGenHelper.appendElement(sponsors, collaborator);
-        }
+        addCollaborators(sponsors, studyProtocolIi, doc);
+        
         if (sponsors.hasChildNodes()) {
             XmlGenHelper.appendElement(root, sponsors);
         }
@@ -1254,18 +1296,50 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         return lead;
     }
 
-    private Element createCollaborator(Ii studyProtocolIi, Document doc) throws PAException {
+    /**
+     * createCollaborators.
+     * @param studyProtocolIi trial ii.
+     * @param doc doc obj
+     * @return element
+     * @throws PAException when error
+     */
+    protected List<Element> createCollaborators(Ii studyProtocolIi, Document doc) throws PAException {
+        List<Element> collaborators = new ArrayList<Element>();
         List<Organization> orgs = getOrgCorrelationService().getOrganizationByStudySite(Long.valueOf(studyProtocolIi
                 .getExtension()), StudySiteFunctionalCode.COLLABORATORS);
 
-        if (orgs == null || orgs.isEmpty()) {
-            return null;
+        if (CollectionUtils.isNotEmpty(orgs)) {
+            Element collaborator = doc.createElement("collaborator");
+            XmlGenHelper.appendElement(collaborator,
+                    XmlGenHelper.createElement("agency", StringUtils.substring(orgs.get(0).getName(), 0,
+                        PAAttributeMaxLen.LEN_160), doc));
+            collaborators.add(collaborator);
         }
-        Element collaborator = doc.createElement("collaborator");
-        XmlGenHelper.appendElement(collaborator,
-                XmlGenHelper.createElement("agency", StringUtils.substring(orgs.get(0).getName(), 0,
-                    PAAttributeMaxLen.LEN_160), doc));
-        return collaborator;
+        return collaborators;
+    }
+    
+    /***
+     * createFacility.
+     * @param sp StudySiteDTO.
+     * @param location element.
+     * @param doc Document
+     * @throws PAException when error.
+     */
+    protected void createFacility(StudySiteDTO sp, Element location, Document doc) throws PAException {
+        Element facility = doc.createElement("facility");
+        Element address = doc.createElement("address");
+
+        Organization orgBo = getCorUtils().getPAOrganizationByIi(sp.getHealthcareFacilityIi());
+
+        XmlGenHelper.appendElement(facility, XmlGenHelper.createElement("name", orgBo.getName(), doc));
+        XmlGenHelper.appendElement(address, XmlGenHelper.createElement("city", orgBo.getCity(), doc));
+        XmlGenHelper.appendElement(address, XmlGenHelper.createElement("state", orgBo.getState(), doc));
+        XmlGenHelper.appendElement(address, XmlGenHelper.createElement("zip", orgBo.getPostalCode(), doc));
+        XmlGenHelper.appendElement(address,
+                XmlGenHelper.createElement("country", PADomainUtils.getCountryNameUsingAlpha3Code(orgBo
+                .getCountryName()), doc));
+        XmlGenHelper.appendElement(facility, address);
+        XmlGenHelper.appendElement(location, facility);
     }
 
     private void createLocation(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException,
@@ -1276,23 +1350,9 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         List<StudySiteDTO> spList = getStudySiteService().getByStudyProtocol(spDTO.getIdentifier(), srDTO);
         for (StudySiteDTO sp : spList) {
             Element location = doc.createElement("location");
-            Element facility = doc.createElement("facility");
-            Element address = doc.createElement("address");
-
+            createFacility(sp, location, doc);
             StudySiteAccrualStatusDTO ssas = getStudySiteAccrualStatusService()
-                    .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
-
-            Organization orgBo = getCorUtils().getPAOrganizationByIi(sp.getHealthcareFacilityIi());
-
-            XmlGenHelper.appendElement(facility, XmlGenHelper.createElement("name", orgBo.getName(), doc));
-            XmlGenHelper.appendElement(address, XmlGenHelper.createElement("city", orgBo.getCity(), doc));
-            XmlGenHelper.appendElement(address, XmlGenHelper.createElement("state", orgBo.getState(), doc));
-            XmlGenHelper.appendElement(address, XmlGenHelper.createElement("zip", orgBo.getPostalCode(), doc));
-            XmlGenHelper.appendElement(address,
-                    XmlGenHelper.createElement("country", PADomainUtils.getCountryNameUsingAlpha3Code(orgBo
-                    .getCountryName()), doc));
-            XmlGenHelper.appendElement(facility, address);
-            XmlGenHelper.appendElement(location, facility);
+            .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
             if (ssas != null) {
                 XmlGenHelper.appendElement(location,
                         XmlGenHelper.createElement("status", convertToCtValues(ssas.getStatusCode()), doc));
@@ -1305,7 +1365,14 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         }
     }
 
-    private void createInvestigators(List<StudySiteContactDTO> spcDTOs, Element location, Document doc)
+    /**
+     * createInvestigators.
+     * @param spcDTOs list of site contacts.
+     * @param location element
+     * @param doc document
+     * @throws PAException when error.
+     */
+    protected void createInvestigators(List<StudySiteContactDTO> spcDTOs, Element location, Document doc)
             throws PAException {
         for (StudySiteContactDTO spcDTO : spcDTOs) {
             if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(spcDTO.getRoleCode().getCode())) {
@@ -1328,7 +1395,15 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         }
     }
 
-    private void createContact(List<StudySiteContactDTO> spcDTOs, Element location, Document doc)
+    /**
+     * createContact.
+     * @param spcDTOs list of site contacts
+     * @param location element
+     * @param doc document
+     * @throws PAException when error
+     * @throws NullifiedRoleException when error.
+     */
+    protected void createContact(List<StudySiteContactDTO> spcDTOs, Element location, Document doc)
             throws PAException, NullifiedRoleException {
         for (StudySiteContactDTO sscDTO : spcDTOs) {
             if (!StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(sscDTO.getRoleCode().getCode())) {
@@ -1367,8 +1442,6 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         }
     }
 
-
-
     private void createTextBlock(final String elementName, final String st, Document doc, Element root)
             throws PAException {
 
@@ -1390,23 +1463,27 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
      * @param isoTs ts
      * @return string
      */
-    protected static String convertTsToYYYYMMFormart(Ts isoTs) {
-        String yyyyMM = "";
+    protected static String convertTsToYYYYMMFormat(Ts isoTs) {
         Timestamp ts = TsConverter.convertToTimestamp(isoTs);
         if (ts == null) {
             return null;
         }
-        String dateStr = PAUtil.normalizeDateString(ts.toString());
-        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-        DateFormat formatter1 = new SimpleDateFormat("yyyy-MM", Locale.getDefault());
-        Date date;
-        try {
-            date = formatter.parse(dateStr);
-            yyyyMM = formatter1.format(date);
-        } catch (ParseException e) {
-            // cannot happen
-            yyyyMM = "";
+       
+        DateFormat formatter1 = new SimpleDateFormat(YYYYMM, Locale.getDefault());
+        return formatter1.format(ts);
+    }
+    
+    /**
+     * convertTsToYYYYMMFormart.
+     * @param isoTs ts
+     * @return string
+     */
+    protected static String convertTsToYYYYMMDDFormat(Ts isoTs) {
+        Timestamp ts = TsConverter.convertToTimestamp(isoTs);
+        if (ts == null) {
+            return null;
         }
-        return yyyyMM;
+        DateFormat formatter1 = new SimpleDateFormat(YYYYMMDD, Locale.getDefault());
+        return formatter1.format(ts); 
     }
 }

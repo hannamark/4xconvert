@@ -147,7 +147,7 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBean {
                 XmlGenHelper.createElement("current_trial_status", overStatusCode.getCode(), doc));
         XmlGenHelper.appendElement(trialStatusElement, 
                 XmlGenHelper.createElement("current_trial_status_date", 
-                        convertTsToYYYYMMFormart(sosDTO.getStatusDate()), doc));
+                        convertTsToYYYYMMDDFormat(sosDTO.getStatusDate()), doc));
         
         if (StudyStatusCode.WITHDRAWN.equals(overStatusCode)
                 || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(overStatusCode)
@@ -158,13 +158,13 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBean {
         }
         XmlGenHelper.appendElement(trialStatusElement, 
                 XmlGenHelper.createElement("current_trial_start_date", 
-                        convertTsToYYYYMMFormart(spDTO.getStatusDate()), doc));
+                        convertTsToYYYYMMDDFormat(spDTO.getStatusDate()), doc));
         XmlGenHelper.appendElement(trialStatusElement, 
                 XmlGenHelper.createElement("current_trial_start_date_type", 
                         spDTO.getStartDateTypeCode().getCode(), doc));
         XmlGenHelper.appendElement(trialStatusElement, 
                 XmlGenHelper.createElement("current_trial_completion_date", 
-                        convertTsToYYYYMMFormart(spDTO.getPrimaryCompletionDate()), doc));
+                        convertTsToYYYYMMDDFormat(spDTO.getPrimaryCompletionDate()), doc));
         XmlGenHelper.appendElement(trialStatusElement, 
                 XmlGenHelper.createElement("current_trial_completion_date_type", 
                         spDTO.getPrimaryCompletionDateTypeCode().getCode(), doc));         
@@ -381,4 +381,5 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBean {
      
         return responsibleParty;
     }
+   
 }

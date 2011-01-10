@@ -86,6 +86,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
+import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.ResearchOrganization;
@@ -103,6 +104,8 @@ import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
@@ -122,58 +125,8 @@ import org.w3c.dom.Element;
  * @author mshestopalov
  *
  */
+@SuppressWarnings({ "PMD.TooManyMethods" })
 public class PdqXmlGenHelper {
-    /**
-     * getMaxAge.
-     * @param pq list
-     * @return BigDecimal
-     */
-    protected static BigDecimal getMaxAge(Ivl<Pq> pq) {
-        if (pq.getHigh() != null) {
-            return pq.getHigh().getValue();
-        } else {
-            return BigDecimal.ZERO;
-        }
-    }
-    
-    /**
-     * getMaxUnit.
-     * @param pq list
-     * @return string
-     */
-    protected static String getMaxUnit(Ivl<Pq> pq) {
-        if (pq.getHigh() != null) {
-            return pq.getHigh().getUnit();
-        } else {
-            return "";
-        }
-    }
-    
-    /**
-     * getMinAge.
-     * @param pq list
-     * @return BigDecimal
-     */
-    protected static BigDecimal getMinAge(Ivl<Pq> pq) {
-        if (pq.getHigh() != null) {
-            return pq.getLow().getValue();
-        } else {
-            return BigDecimal.ZERO;
-        }
-    }
-    
-    /**
-     * getMinUnit.
-     * @param pq list
-     * @return string
-     */
-    protected static String getMinUnit(Ivl<Pq> pq) {
-        if (pq.getHigh() != null) {
-            return pq.getLow().getUnit();
-        } else {
-            return "";
-        }
-    }
     
     /**
      * Get Po RO dto by Pa RO ii.
@@ -194,6 +147,27 @@ public class PdqXmlGenHelper {
         }
         return roDTO;
     }
+    
+    /**
+     * Get Po HCF dto by Pa HCF ii.
+     * @param paHcfIi pa org ii
+     * @param corrUtils CorrelationUtils
+     * @return po org dto
+     * @throws PAException when error.
+     */
+    protected static HealthCareFacilityDTO getPoHCFDTOByPaHcfIi(Ii paHcfIi, CorrelationUtils corrUtils) 
+        throws PAException {
+        HealthCareFacility paHcf = corrUtils.getStructuralRoleByIi(paHcfIi);
+        Ii poHcfIi = IiConverter.convertToPoHealthCareFacilityIi(paHcf.getIdentifier());
+        HealthCareFacilityDTO hcfDTO;
+        try {
+            hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(poHcfIi);
+        } catch (NullifiedRoleException e) {
+            throw new PAException(e);
+        }
+        return hcfDTO;
+    }
+    
     /**
      * Get Po Org dto by Pa Org ii.
      * @param paOrgIi pa org ii
@@ -279,6 +253,38 @@ public class PdqXmlGenHelper {
         }
         Ii roCtepId = DSetConverter
             .getFirstInDSetByRoot(roDTO.getIdentifier(), IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+        loadOrgParts(childName, root, doc, roCtepId, orgDTO);
+    }
+    
+    /**
+     * addPoOrganizationByPaHcfIi.
+     * @param root Element
+     * @param childName of element
+     * @param paHcfIi pa ro ii
+     * @param doc Document
+     * @param corrUtils utility
+     * @throws PAException when error
+     */
+    protected static void addPoOrganizationByPaHcfIi(Element root, String childName, 
+            Ii paHcfIi, Document doc, CorrelationUtils corrUtils) 
+        throws PAException {
+        HealthCareFacilityDTO hcfDTO = PdqXmlGenHelper.getPoHCFDTOByPaHcfIi(paHcfIi, corrUtils);
+        if (hcfDTO == null) {
+            return;
+        }
+        OrganizationDTO orgDTO;
+        try {
+            orgDTO = PoRegistry.getOrganizationEntityService()
+                .getOrganization(hcfDTO.getPlayerIdentifier());
+        } catch (NullifiedEntityException e) {
+            throw new PAException(e);
+        }
+        Ii hcfCtepId = DSetConverter
+            .getFirstInDSetByRoot(hcfDTO.getIdentifier(), IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+        loadOrgParts(childName, root, doc, hcfCtepId, orgDTO);
+    }
+    
+    private static void loadOrgParts(String childName, Element root, Document doc, Ii ctepId, OrganizationDTO orgDTO) {
         Element child = null;
         if (StringUtils.isEmpty(childName)) {
             child = root;
@@ -288,7 +294,7 @@ public class PdqXmlGenHelper {
         XmlGenHelper.appendElement(child, XmlGenHelper.createElement("name", StringUtils.substring(EnOnConverter
                 .convertEnOnToString(orgDTO.getName()), 0,
                 PAAttributeMaxLen.LEN_160), doc));
-        XmlGenHelper.loadPoOrganization(orgDTO, child, doc, roCtepId);
+        XmlGenHelper.loadPoOrganization(orgDTO, child, doc, ctepId);
         if (!StringUtils.isEmpty(childName)) {
            XmlGenHelper.appendElement(root, child);
         }
@@ -316,8 +322,33 @@ public class PdqXmlGenHelper {
         } catch (NullifiedEntityException e) {
             throw new PAException(e);
         }
-        Ii crsCtepId = DSetConverter
-        .getFirstInDSetByRoot(crsDTO.getIdentifier(), IiConverter.CTEP_PERSON_IDENTIFIER_ROOT);
+        List<IdentifiedPersonDTO> ipDtos;
+        try {
+            ipDtos = 
+                PoRegistry.getIdentifiedPersonEntityService().getCorrelationsByPlayerIds(
+                        new Ii[]{crsDTO.getPlayerIdentifier()});
+        } catch (NullifiedRoleException e) {
+            throw new PAException(e);
+        }
+        loadPersonParts(childName, root, doc, findCtepIdForPerson(ipDtos), perDTO);
+        
+    }
+    
+    private static Ii findCtepIdForPerson(List<IdentifiedPersonDTO> ipDtos) {
+        Ii ctepId =  null;
+        if (!CollectionUtils.isEmpty(ipDtos)) {
+            for (IdentifiedPersonDTO ipDto : ipDtos) {
+                if (PAUtil.isIiNotNull(ipDto.getAssignedId()) && IiConverter.CTEP_PERSON_IDENTIFIER_ROOT.equals(
+                        ipDto.getAssignedId().getRoot())) {
+                    ctepId = ipDto.getAssignedId();
+                    break;
+                }
+            }
+        }    
+        return ctepId;
+    }
+    
+    private static void loadPersonParts(String childName, Element root, Document doc, Ii ctepId, PersonDTO perDTO) {
         Element child = null;
         if (StringUtils.isEmpty(childName)) {
             child = root;
@@ -327,7 +358,7 @@ public class PdqXmlGenHelper {
         XmlGenHelper.appendElement(child, XmlGenHelper.createElement("name", StringUtils.substring(EnPnConverter
                 .convertToLastCommaFirstName(perDTO.getName()), 0,
                 PAAttributeMaxLen.LEN_160), doc));
-        XmlGenHelper.loadPoPerson(perDTO, child, doc, crsCtepId);
+        XmlGenHelper.loadPoPerson(perDTO, child, doc, ctepId);
         if (!StringUtils.isEmpty(childName)) {
            XmlGenHelper.appendElement(root, child);
         }
@@ -366,25 +397,56 @@ public class PdqXmlGenHelper {
         }
     }
     
-    private static void loadEligCritDescTxt(Boolean incIndicator, String descriptionText, 
-            StringBuffer incCrit, StringBuffer nullCrit, StringBuffer exCrit) {
-
-            if (incIndicator == null) {
-                nullCrit.append(XmlGenHelper.TAB);
-                nullCrit.append(XmlGenHelper.DASH);
-                nullCrit.append(descriptionText);
-                nullCrit.append('\n');
-            } else if (incIndicator) {
-                incCrit.append(XmlGenHelper.TAB);
-                incCrit.append(XmlGenHelper.DASH);
-                incCrit.append(descriptionText);
-                incCrit.append('\n');
-            } else {
-                exCrit.append(XmlGenHelper.TAB);
-                exCrit.append(XmlGenHelper.DASH);
-                exCrit.append(descriptionText);
-                exCrit.append('\n');
-            }
+    /**
+     * getMaxAge.
+     * @param pq list
+     * @return BigDecimal
+     */
+    protected static BigDecimal getMaxAge(Ivl<Pq> pq) {
+        if (pq.getHigh() != null) {
+            return pq.getHigh().getValue();
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+    
+    /**
+     * getMaxUnit.
+     * @param pq list
+     * @return string
+     */
+    protected static String getMaxUnit(Ivl<Pq> pq) {
+        if (pq.getHigh() != null) {
+            return pq.getHigh().getUnit();
+        } else {
+            return "";
+        }
+    }
+    
+    /**
+     * getMinAge.
+     * @param pq list
+     * @return BigDecimal
+     */
+    protected static BigDecimal getMinAge(Ivl<Pq> pq) {
+        if (pq.getHigh() != null) {
+            return pq.getLow().getValue();
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+    
+    /**
+     * getMinUnit.
+     * @param pq list
+     * @return string
+     */
+    protected static String getMinUnit(Ivl<Pq> pq) {
+        if (pq.getHigh() != null) {
+            return pq.getLow().getUnit();
+        } else {
+            return "";
+        }
     }
     
     private static void loadEligCritNoAgeOrGenderOrDescTxt(PlannedEligibilityCriterionDTO paEC, Ivl<Pq> pq, 
@@ -459,10 +521,10 @@ public class PdqXmlGenHelper {
                 && paEC.getEligibleGenderCode() != null) {
             eligHelper.setGenderCode(paEC.getEligibleGenderCode().getCode());
         } else if ("AGE".equalsIgnoreCase(criterionName)) {
-            eligHelper.setMaxAge(PdqXmlGenHelper.getMaxAge(pq));
-            eligHelper.setMaxUnit(PdqXmlGenHelper.getMaxUnit(pq));
-            eligHelper.setMinAge(PdqXmlGenHelper.getMinAge(pq));
-            eligHelper.setMinUnit(PdqXmlGenHelper.getMinUnit(pq));
+            eligHelper.setMaxAge(getMaxAge(pq));
+            eligHelper.setMaxUnit(getMaxUnit(pq));
+            eligHelper.setMinAge(getMinAge(pq));
+            eligHelper.setMinUnit(getMinUnit(pq));
             
         } else if (descriptionText != null) {
             loadEligCritDescTxt(incIndicator, descriptionText, 
@@ -507,5 +569,26 @@ public class PdqXmlGenHelper {
             
             XmlGenHelper.appendElement(root, diseaseConditionElement);
         }
+    }
+    
+    private static void loadEligCritDescTxt(Boolean incIndicator, String descriptionText, 
+            StringBuffer incCrit, StringBuffer nullCrit, StringBuffer exCrit) {
+
+            if (incIndicator == null) {
+                nullCrit.append(XmlGenHelper.TAB);
+                nullCrit.append(XmlGenHelper.DASH);
+                nullCrit.append(descriptionText);
+                nullCrit.append('\n');
+            } else if (incIndicator) {
+                incCrit.append(XmlGenHelper.TAB);
+                incCrit.append(XmlGenHelper.DASH);
+                incCrit.append(descriptionText);
+                incCrit.append('\n');
+            } else {
+                exCrit.append(XmlGenHelper.TAB);
+                exCrit.append(XmlGenHelper.DASH);
+                exCrit.append(descriptionText);
+                exCrit.append('\n');
+            }
     }
 }

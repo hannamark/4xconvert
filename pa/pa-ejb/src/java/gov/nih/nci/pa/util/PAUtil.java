@@ -89,6 +89,7 @@ import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -161,6 +162,7 @@ public class PAUtil {
     private static final Logger LOG  = Logger.getLogger(PAUtil.class);
     private static final String ID_OPEN_PAREN = " (id = ";
     private static final Map<String, String> ROOT_TO_NULLIFIED_ERROR_MAP = new HashMap<String, String>();
+    private static final String UTF_8 = "UTF-8"; 
     
     static {
         ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.HEALTH_CARE_FACILITY_ROOT, PAExceptionConstants.NULLIFIED_HCF);
@@ -420,7 +422,7 @@ public class PAUtil {
      * @param format data format
      * @return String
      */
-    public static String convertTsToFormarttedDate(Ts isoTs , String format) {
+    public static String convertTsToFormattedDate(Ts isoTs , String format) {
         Timestamp ts = TsConverter.convertToTimestamp(isoTs);
         if (ts == null) {
             return  null;
@@ -437,7 +439,7 @@ public class PAUtil {
     * @return String
     */
    public static String convertTsToFormattedDate(Ts isoTs) {
-       return convertTsToFormarttedDate(isoTs, ValidDateFormat.getDateFormats().get(0).getPattern());
+       return convertTsToFormattedDate(isoTs, ValidDateFormat.getDateFormats().get(0).getPattern());
    }
 
     /**
@@ -870,46 +872,67 @@ public class PAUtil {
         }
         return isValidPhoneNumber;
     }
+    
     /**
-     *
+     * isDSetTelAndEmailNull.
      * @param telecomAddresses tel
      * @return boolean
      */
-    public static boolean isDSetTelNull(DSet<Tel> telecomAddresses) {
-        boolean isNull = true;
-        if (telecomAddresses == null || telecomAddresses.getItem() == null) {
-            isNull = true;
-        } else {
-            for (Tel t : telecomAddresses.getItem()) {
-                if (t.getNullFlavor() != null) {
-                    continue;
-                }
-                String phone = "";
-                if (t instanceof TelPhone) {
-                    try {
-                        phone = URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        continue;
-                    }
-                } else {
-                    String url = t.getValue().toString();
-                    if (url != null && url.startsWith("tel")) {
-                        try {
-                            phone = URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            continue;
-                        }
-                    }
-                }
-                if (StringUtils.isNotEmpty(phone)) {
-                    isNull = false;
-                }
-            }
-
-        }
-        return isNull;
+    public static boolean isDSetTelAndEmailNull(DSet<Tel> telecomAddresses) {       
+        return telecomAddresses == null || telecomAddresses.getItem() == null 
+            || isDsetItemsEmpty(telecomAddresses, true, true);
     }
-
+    
+    private static boolean isDsetItemsEmpty(DSet<Tel> telecomAddresses, boolean checkPhone, boolean checkEmail) {
+        for (Tel t : telecomAddresses.getItem()) {
+            if (t.getNullFlavor() != null) {
+                    continue;
+            }
+            
+            try {
+                if (StringUtils.isNotEmpty(getSchemeSpecificPart(t, checkPhone, checkEmail))) {
+                    return false;
+                }
+            } catch (UnsupportedEncodingException e) {
+                    continue;
+            }
+        }
+        return true;
+    }
+    
+    /**
+    *
+    * @param telecomAddresses tel
+    * @return boolean
+    */
+   public static boolean isDSetTelNull(DSet<Tel> telecomAddresses) {
+       return telecomAddresses == null || telecomAddresses.getItem() == null 
+           || isDsetItemsEmpty(telecomAddresses, true, false);
+   }
+    
+    private static String getSchemeSpecificPart(Tel t, boolean checkPhone, boolean checkEmail) 
+        throws UnsupportedEncodingException {
+        String data = "";
+        if (checkPhone && t instanceof TelPhone) {
+            data = URLDecoder.decode(t.getValue().getSchemeSpecificPart(), UTF_8);
+        } else if (checkEmail && t instanceof TelEmail) {
+            data = URLDecoder.decode(t.getValue().getSchemeSpecificPart(), UTF_8);
+        } else {
+            data = getSchemeSpecificPartByUrl(t, checkPhone, checkEmail);
+        }
+        return data;
+    }
+    
+    private static String getSchemeSpecificPartByUrl(Tel t, boolean checkPhone, boolean checkEmail) 
+    throws UnsupportedEncodingException {
+        String url = t.getValue().toString();
+        if (url != null && ((checkPhone
+                && url.startsWith("tel")) || (checkEmail && url.startsWith("mailto")))) {
+            return URLDecoder.decode(t.getValue().getSchemeSpecificPart(), UTF_8);
+        }
+        return "";
+    }
+    
     /**
      * @param dset telecom address
      * @return email the email

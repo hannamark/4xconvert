@@ -89,8 +89,11 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.service.PAException;
+
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -159,6 +162,7 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
         assertTrue(getBean().generateCTGovXml(spId).contains("<lead_org>\n"
                 + "<name>some org name</name>\n"
                 + "<po_id>1</po_id>\n"
+                + "<ctep_id>ctep org id</ctep_id>\n"
                 + "<address>\n"
                 + "<street>street</street>\n"
                 + "<city>city</city>\n"
@@ -173,6 +177,39 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
     public void testOrgNameNull() throws PAException {
         orgDto.setName(null);
         assertFalse(getBean().generateCTGovXml(spId).contains("<lead_sponsor>"));
+    }
+    
+    @Override
+    @Test
+    public void testOrgBySSNull() throws PAException {
+        when(studySiteSvc.getByStudyProtocol(any(Ii.class), any(StudySiteDTO.class))).thenReturn(null);
+        assertFalse(getBean().generateCTGovXml(spId).contains("<collaborator>"));
+    }
+    
+    @Override
+    @Test
+    public void testOrgBySsEmpty() throws PAException {
+        when(studySiteSvc.getByStudyProtocol(any(Ii.class), any(StudySiteDTO.class)))
+           .thenReturn(new ArrayList<StudySiteDTO>());
+        assertFalse(getBean().generateCTGovXml(spId).contains("<collaborator>"));
+    }
+    
+    @Test
+    public void testPoAndCtepIds() throws PAException {
+        assertTrue(getBean().generateCTGovXml(spId).contains("<facility>\n<name>some org name</name>\n"
+                + "<po_id>1</po_id>\n<ctep_id>ctep org id</ctep_id>"));
+   
+        assertTrue(getBean().generateCTGovXml(spId).contains("<contact>\n<name>3, 1 2</name>\n<po_id>1</po_id>\n"
+                + "<ctep_id>ctep</ctep_id>"));
+        
+        assertTrue(getBean().generateCTGovXml(spId).contains("<investigator>\n<name>3, 1 2</name>\n"
+                + "<po_id>1</po_id>\n<ctep_id>ctep</ctep_id>"));
+        
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_official>\n<name>3, 1 2</name>\n"
+                + "<po_id>1</po_id>\n<ctep_id>ctep</ctep_id>"));
+        
+        assertTrue(getBean().generateCTGovXml(spId).contains("<affiliation>\n<name>some org name</name>\n"
+                + "<po_id>1</po_id>\n<ctep_id>ctep org id</ctep_id>"));
     }
 
 }
