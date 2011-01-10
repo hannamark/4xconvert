@@ -114,6 +114,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         //Select register trial and choose trial type
         clickAndWaitAjax("registerTrialMenuOption");
         selenium.selectFrame("popupFrame");
+        waitForElementById("summaryFourFundingCategoryCode", 60);
         selenium.select("summaryFourFundingCategoryCode", "label=Institutional");
         clickAndWaitAjax("link=Submit");
         waitForPageToLoad();
@@ -128,6 +129,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         //Select Lead Organization
         clickAndWaitAjax("link=Look Up Org");
         selenium.selectFrame("popupFrame");
+        waitForPageToLoad();
         waitForElementById("poOrganizations", 15);
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
@@ -138,6 +140,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         selenium.selectFrame("relative=up");
         clickAndWaitAjax("link=Look Up Person");
         selenium.selectFrame("popupFrame");
+        waitForPageToLoad();
         waitForElementById("poOrganizations", 15);
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
@@ -189,6 +192,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         String irbDocPath = (new File(ClassLoader.getSystemResource(IRB_DOCUMENT).toURI()).toString());
         selenium.type("submitTrial_protocolDoc", protocolDocPath);
         selenium.type("submitTrial_irbApproval", irbDocPath);
+        pause(5000);
         clickAndWaitAjax("link=Review Trial");
         waitForElementById("reviewTrialForm", 15);
         clickAndWaitAjax("link=Submit");
