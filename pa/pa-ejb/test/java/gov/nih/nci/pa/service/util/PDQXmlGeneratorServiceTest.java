@@ -199,13 +199,15 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
         assertTrue(getBean().generateCTGovXml(spId).contains("<facility>\n<name>some org name</name>\n"
                 + "<po_id>1</po_id>\n<ctep_id>ctep org id</ctep_id>"));
    
-        assertTrue(getBean().generateCTGovXml(spId).contains("<contact>\n<name>3, 1 2</name>\n<po_id>1</po_id>\n"
-                + "<ctep_id>ctep</ctep_id>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<contact>\n<first_name>first name</first_name>\n"
+                + "<last_name>last Name</last_name>\n<po_id>1</po_id>\n<ctep_id>ctep</ctep_id>"));
         
-        assertTrue(getBean().generateCTGovXml(spId).contains("<investigator>\n<name>3, 1 2</name>\n"
+        assertTrue(getBean().generateCTGovXml(spId).contains("<investigator>\n<first_name>first name</first_name>\n"
+                + "<last_name>last Name</last_name>\n"
                 + "<po_id>1</po_id>\n<ctep_id>ctep</ctep_id>"));
         
-        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_official>\n<name>3, 1 2</name>\n"
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_official>\n<first_name>first name</first_name>\n"
+                + "<last_name>last Name</last_name>\n"
                 + "<po_id>1</po_id>\n<ctep_id>ctep</ctep_id>"));
         
         assertTrue(getBean().generateCTGovXml(spId).contains("<affiliation>\n<name>some org name</name>\n"
