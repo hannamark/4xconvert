@@ -112,8 +112,12 @@ import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
+import gov.nih.nci.pa.enums.AssayPurposeCode;
+import gov.nih.nci.pa.enums.AssayTypeCode;
+import gov.nih.nci.pa.enums.AssayUseCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
@@ -122,6 +126,8 @@ import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
+import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -131,6 +137,7 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
@@ -162,6 +169,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
@@ -253,6 +261,7 @@ public class AbstractMockitoTest {
     protected HealthCareFacilityCorrelationServiceRemote poHcfSvc;
     protected IdentifiedPersonCorrelationServiceRemote poIpSvc;
     protected StratumGroupServiceLocal stratumGroupSvc;
+    protected PlannedMarkerServiceLocal plannedMarkerSvc;
 
     protected Ii spId;
     protected StudyProtocolDTO spDto;
@@ -303,9 +312,10 @@ public class AbstractMockitoTest {
     protected List<InterventionAlternateNameDTO> interventionAltNameDtoList;
     protected ObservationalStudyProtocolDTO observationalSPDto;
     protected List<StudyResourcingDTO> studyResourcingDtoList;
+    protected PlannedMarkerDTO plannedMarkerDto;
+    protected List<PlannedMarkerDTO> plannedMarkerDtoList;
     protected List<IdentifiedPersonDTO> identifiedPersonDtoList;
     protected IdentifiedPersonDTO identifiedPersonDto;
-    
 
     @Before
     public void setUp() throws Exception {
@@ -324,7 +334,7 @@ public class AbstractMockitoTest {
        setupPerson(telAd);
 
        setupSraDto();
-       
+
        setupSubGroup();
 
        ra = new RegulatoryAuthority();
@@ -345,6 +355,8 @@ public class AbstractMockitoTest {
        setupArmDto();
 
        setupPlActDto();
+
+       setupPlannedMarkerDto();
 
        setupDwsDto();
 
@@ -367,37 +379,37 @@ public class AbstractMockitoTest {
        setupStudyResDtos();
 
        observationalSPDto = new ObservationalStudyProtocolDTO();
-       
+
        researchOrg = new ResearchOrganization();
        researchOrg.setId(1L);
        researchOrg.setOrganization(org);
-       
+
        clinicalReStaff = new ClinicalResearchStaff();
        clinicalReStaff.setId(1L);
        clinicalReStaff.setPerson(person);
        clinicalReStaff.setOrganization(org);
-       
+
        healthCareFacility = new HealthCareFacility();
        healthCareFacility.setId(1L);
        healthCareFacility.setOrganization(org);
        Ii ctepOrgIi = new Ii();
        ctepOrgIi.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
        ctepOrgIi.setExtension("ctep org id");
-       
+
        researchOrgDto = new ResearchOrganizationDTO();
        researchOrgDto.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoResearchOrganizationIi("1")));
        researchOrgDto.getIdentifier().getItem().add(ctepOrgIi);
        researchOrgDto.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-       
+
        clinicalReStaffDto = new ClinicalResearchStaffDTO();
        clinicalReStaffDto.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoClinicalResearchStaffIi("1")));
        clinicalReStaffDto.setPlayerIdentifier(IiConverter.convertToPoPersonIi("1"));
-       
+
        healthCareFacilityDto = new HealthCareFacilityDTO();
        healthCareFacilityDto.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealthCareFacilityIi("1")));
        healthCareFacilityDto.getIdentifier().getItem().add(ctepOrgIi);
        healthCareFacilityDto.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-       
+
        identifiedPersonDto = new IdentifiedPersonDTO();
        Ii assignedIi = new Ii();
        assignedIi.setExtension("ctep");
@@ -405,10 +417,10 @@ public class AbstractMockitoTest {
        identifiedPersonDto.setAssignedId(assignedIi);
        identifiedPersonDtoList = new ArrayList<IdentifiedPersonDTO>();
        identifiedPersonDtoList.add(identifiedPersonDto);
-       
+
        setupMocks();
      }
-    
+
     private void setupSubGroup() {
         stratumGroupDtoList = new ArrayList<StratumGroupDTO>();
         StratumGroupDTO sgDto = new StratumGroupDTO();
@@ -515,6 +527,23 @@ public class AbstractMockitoTest {
         plannedActDtoList.add(plannedActDto);
     }
 
+    private void setupPlannedMarkerDto() {
+        plannedMarkerDtoList = new ArrayList<PlannedMarkerDTO>();
+        plannedMarkerDto = new PlannedMarkerDTO();
+        plannedMarkerDto.setName(StConverter.convertToSt("Biomarker"));
+        plannedMarkerDto.setLongName(StConverter.convertToSt("Biomarker long name"));
+        plannedMarkerDto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO Biomarker Code"));
+        plannedMarkerDto.setAssayTypeCode(CdConverter.convertToCd(AssayTypeCode.OTHER));
+        plannedMarkerDto.setAssayTypeOtherText(StConverter.convertToSt("Assay Type Other Text"));
+        plannedMarkerDto.setAssayUseCode(CdConverter.convertToCd(AssayUseCode.RESEARCH));
+        plannedMarkerDto.setAssayPurposeCode(CdConverter.convertToCd(AssayPurposeCode.OTHER));
+        plannedMarkerDto.setAssayPurposeOtherText(StConverter.convertToSt("Assay Purpose Other Text"));
+        plannedMarkerDto.setTissueSpecimenTypeCode(CdConverter.convertToCd(TissueSpecimenTypeCode.TISSUE));
+        plannedMarkerDto.setTissueCollectionMethodCode(CdConverter.convertToCd(TissueCollectionMethodCode.MANDATORY));
+        plannedMarkerDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING));
+        plannedMarkerDtoList.add(plannedMarkerDto);
+    }
+
     private void setupArmDto() {
         armDto = new ArmDTO();
         armDto.setName(StConverter.convertToSt("some name"));
@@ -585,7 +614,7 @@ public class AbstractMockitoTest {
         person = new Person();
         person.setFirstName("first name");
         person.setLastName("last Name");
-        
+
         personDto = new PersonDTO();
         personDto.setIdentifier(IiConverter.convertToPoPersonIi("1"));
         personDto.setName(EnPnConverter.convertToEnPn("1", "2", "3", "4", "5"));
@@ -593,8 +622,8 @@ public class AbstractMockitoTest {
         personDto.setPostalAddress(adr);
         personDto.setTelecomAddress(telAd);
     }
-        
-        
+
+
 
     private DSet<Tel> setupScDto() throws URISyntaxException {
         studyContactDto = new StudyContactDTO();
@@ -731,6 +760,7 @@ public class AbstractMockitoTest {
         setupSdSvc();
         setupArmSvc();
         setupPlActSvc();
+        setupPlannedMarkerSvc();
         setupDwsSvc();
         setupDisSvc();
         setupSsasSvc();
@@ -751,12 +781,12 @@ public class AbstractMockitoTest {
         when(orgCorSvc.getOrganizationByFunctionRole(any(Ii.class), any(Cd.class))).thenReturn(org);
         when(orgCorSvc.getPOOrgIdentifierByIdentifierType(any(String.class))).thenReturn(new String("1"));
         when(orgCorSvc.getPoResearchOrganizationByEntityIdentifier(any(Ii.class))).thenReturn(new Ii());
-        
+
         stratumGroupSvc = mock(StratumGroupServiceLocal.class);
         when(stratumGroupSvc.getByStudyProtocol(any(Ii.class))).thenReturn(stratumGroupDtoList);
-        
+
         PAOrganizationServiceRemote paOrgSvc = mock(PAOrganizationServiceRemote.class);
-        
+
         lookupSvc = mock(LookUpTableServiceRemote.class);
         List<Country> countryList = new ArrayList<Country>();
         Country cnt = new Country();
@@ -793,14 +823,14 @@ public class AbstractMockitoTest {
         poCrsSvc = mock(ClinicalResearchStaffCorrelationServiceRemote.class);
         poIpSvc = mock(IdentifiedPersonCorrelationServiceRemote.class);
         poHcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
-        
+
         when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(orgDto);
         when(poRoSvc.getCorrelation(any(Ii.class))).thenReturn(researchOrgDto);
         when(poCrsSvc.getCorrelation(any(Ii.class))).thenReturn(clinicalReStaffDto);
         when(poIpSvc.getCorrelationsByPlayerIds(any(Ii[].class))).thenReturn(identifiedPersonDtoList);
         when(poHcfSvc.getCorrelation(any(Ii.class))).thenReturn(healthCareFacilityDto);
         when(poPerSvc.getPerson(any(Ii.class))).thenReturn(personDto);
-        
+
         when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
         when(poSvcLoc.getResearchOrganizationCorrelationService()).thenReturn(poRoSvc);
         when(poSvcLoc.getClinicalResearchStaffCorrelationService()).thenReturn(poCrsSvc);
@@ -851,6 +881,12 @@ public class AbstractMockitoTest {
         when(plannedActSvc.getPlannedEligibilityCriterionByStudyProtocol(any(Ii.class))).thenReturn(plannedEcDtoList);
     }
 
+    private void setupPlannedMarkerSvc() throws PAException {
+        plannedMarkerSvc = mock(PlannedMarkerServiceLocal.class);
+        when(plannedMarkerSvc.getByStudyProtocol(any(Ii.class))).thenReturn(plannedMarkerDtoList);
+        when(plannedMarkerSvc.get(any(Ii.class))).thenReturn(plannedMarkerDto);
+    }
+
     private void setupArmSvc() throws PAException {
         armSvc = mock(ArmServiceLocal.class);
         when(armSvc.getByStudyProtocol(any(Ii.class))).thenReturn(armDtoList);
@@ -893,7 +929,7 @@ public class AbstractMockitoTest {
         when(corUtils.getPAPersonByIi(any(Ii.class))).thenReturn(person);
         when(corUtils.getContactByPAOrganizationalContactId(anyLong())).thenReturn(paContactDto);
         when(corUtils.getPAOrganizationByIi(any(Ii.class))).thenReturn(org);
-       
+
         when(corUtils.getStructuralRoleByIi(any(Ii.class))).thenAnswer(new Answer<StructuralRole>() {
             public StructuralRole answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
@@ -905,7 +941,7 @@ public class AbstractMockitoTest {
                 } else if (IiConverter.HEALTH_CARE_FACILITY_ROOT.equals(input.getRoot())) {
                     return healthCareFacility;
                 }
-                
+
                 return null;
             }});
     }
@@ -920,7 +956,7 @@ public class AbstractMockitoTest {
         when(orgSvc.getOrganizationByFunctionRole(any(Ii.class), any(Cd.class))).thenReturn(org);
         when(orgSvc.getOrganizationByStudySite(anyLong(), any(StudySiteFunctionalCode.class))).thenReturn(orgList);
         when(orgSvc.getROByFunctionRole(any(Ii.class), any(Cd.class)))
-            .thenReturn(IiConverter.convertToPoResearchOrganizationIi("1"));  
+            .thenReturn(IiConverter.convertToPoResearchOrganizationIi("1"));
     }
 
     private void setupSIndSvcMock() throws PAException {

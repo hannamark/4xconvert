@@ -79,6 +79,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.TargetSite" />
         <mapping class="gov.nih.nci.pa.domain.MethodCode" />
         <mapping class="gov.nih.nci.pa.domain.PlannedProcedure" />
+        <mapping class="gov.nih.nci.pa.domain.PlannedMarker" />
 
         <mapping class="gov.nih.nci.pa.domain.ActivityRelationship" />
         <mapping class="gov.nih.nci.pa.domain.StudyProtocolStage" />

@@ -263,6 +263,7 @@ public class PAServiceUtils {
         executeCopy(getRemoteService(IiConverter.convertToStudyOutcomeMeasureIi(null)) , fromStudyProtocolIi, toIi);
         executeCopy(getRemoteService(IiConverter.convertToStudyRegulatoryAuthorityIi(null)), fromStudyProtocolIi, toIi);
         executeCopy(getRemoteService(IiConverter.convertToDocumentIi(null)) , fromStudyProtocolIi, toIi);
+        executeCopy(PaRegistry.getPlannedMarkerService(), fromStudyProtocolIi, toIi);
         return toIi;
 
     }

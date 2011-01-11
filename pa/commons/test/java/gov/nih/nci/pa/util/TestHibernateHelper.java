@@ -123,6 +123,7 @@ import gov.nih.nci.pa.domain.PerformedSubstanceAdministration;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
+import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.domain.PlannedProcedure;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.domain.ProcedureName;
@@ -228,6 +229,7 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(ResearchOrganization.class).
         addAnnotatedClass(PlannedActivity.class).
         addAnnotatedClass(PlannedEligibilityCriterion.class).
+        addAnnotatedClass(PlannedMarker.class).
         addAnnotatedClass(Intervention.class).
         addAnnotatedClass(InterventionAlternateName.class).
         addAnnotatedClass(ObservationalStudyProtocol.class).

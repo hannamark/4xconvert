@@ -84,6 +84,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -104,6 +105,7 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -124,6 +126,7 @@ import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
@@ -210,6 +213,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private InterventionServiceLocal interventionSvc;
     @EJB
     private RegistryUserServiceLocal registryUserSvc;
+    @EJB
+    private PlannedMarkerServiceLocal plannedMarkerSvc;
 
     private static final String YES = "Yes";
     private static final String NO = "No";
@@ -302,8 +307,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             enforceArmInterventional(studyProtocolIi, abstractionList);
             enforceEligibility(studyProtocolIi, abstractionList);
             enforceCollaborator(studyProtocolIi, abstractionList);
-            enforceSummary4OrgNullfication(studyProtocolIi, abstractionWarnList);
+            enforceSummary4OrgNullification(studyProtocolIi, abstractionWarnList);
             enforceRssOwnershipOfCollaborativeTrials(studyProtocolIi, abstractionList);
+            enforcePlannedMarkerStatus(studyProtocolIi, abstractionWarnList);
         }
         abstractionList.addAll(abstractionWarnList);
         return abstractionList;
@@ -364,7 +370,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         enforceStudySiteContactNullification(studyProtocolIi, abstractionWarnList, abstractionList);
         enforceTrialFunding(studyProtocolIi, abstractionList);
         enforceDisease(studyProtocolDTO, abstractionList);
-        enforceSummary4OrgNullfication(studyProtocolIi, abstractionWarnList);
+        enforceSummary4OrgNullification(studyProtocolIi, abstractionWarnList);
+        enforcePlannedMarkerStatus(studyProtocolIi, abstractionWarnList);
         // check duplicate for IND
         /*
          * List<StudyIndldeDTO> siList = studyIndldeService.getByStudyProtocol(studyProtocolIi); if
@@ -1335,6 +1342,48 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
     }
 
+    /**
+     * @param studyProtocolIi
+     * @param abstractionWarnList
+     * @throws PAException on err
+     */
+    private void enforceSummary4OrgNullification(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList)
+        throws PAException  {
+        StudyResourcingDTO studyResourcingDTO = studyResourcingService.getSummary4ReportedResourcing(
+                studyProtocolIi);
+        if (studyResourcingDTO != null && PAUtil.isIiNotNull(studyResourcingDTO.getOrganizationIdentifier())) {
+            Long paOrgId = IiConverter.convertToLong(studyResourcingDTO.getOrganizationIdentifier());
+            Organization org = correlationUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(
+                    paOrgId));
+            if (org != null && EntityStatusCode.NULLIFIED.getCode().equals(org.getStatusCode().getCode())) {
+                abstractionWarnList.add(createError("Warning",
+                        "Select NCI Specific Information from Administrative Data menu.",
+                        " Summary 4 Funding Sponsor  status has been set to nullified, "
+                                + "Please select another Summary 4 Funding Sponsor"));
+            }
+        }
+    }
+
+    /**
+     * Checks for the planned markers with the pending status.
+     * @param studyProtocolIi the ii of the study protocol
+     * @param abstractionWarningList the current list of warnings
+     * @throws PAException on error
+     */
+    private void enforcePlannedMarkerStatus(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarningList)
+        throws PAException {
+            List<PlannedMarkerDTO> plannedMarkers = plannedMarkerSvc.getByStudyProtocol(studyProtocolIi);
+            for (PlannedMarkerDTO marker : plannedMarkers) {
+                if (ActiveInactivePendingCode.getByCode(marker.getStatusCode().getCode())
+                        == ActiveInactivePendingCode.PENDING) {
+                    abstractionWarningList.add(createError("Warning",
+                            "At least one pending biomarker exists on the trial.", "Use Marker menu-option."));
+                    break;
+                }
+            }
+
+    }
+
     private AbstractionCompletionDTO createError(String errorType, String comment, String errorDescription) {
         AbstractionCompletionDTO acDto = new AbstractionCompletionDTO();
         acDto.setErrorType(errorType);
@@ -1491,27 +1540,6 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     public void setInterventionSvc(InterventionServiceLocal interventionSvc) {
         this.interventionSvc = interventionSvc;
     }
-    /**
-     * @param studyProtocolIi
-     * @param abstractionWarnList
-     * @throws PAException on err
-     */
-    private void enforceSummary4OrgNullfication(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList)
-        throws PAException  {
-        StudyResourcingDTO studyResourcingDTO = studyResourcingService.getSummary4ReportedResourcing(
-                studyProtocolIi);
-        if (studyResourcingDTO != null && PAUtil.isIiNotNull(studyResourcingDTO.getOrganizationIdentifier())) {
-            Long paOrgId = IiConverter.convertToLong(studyResourcingDTO.getOrganizationIdentifier());
-            Organization org = correlationUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(
-                    paOrgId));
-            if (org != null && EntityStatusCode.NULLIFIED.getCode().equals(org.getStatusCode().getCode())) {
-                abstractionWarnList.add(createError("Warning",
-                        "Select NCI Specific Information from Administrative Data menu.",
-                        " Summary 4 Funding Sponsor  status has been set to nullified, "
-                                + "Please select another Summary 4 Funding Sponsor"));
-            }
-        }
-    }
 
     /**
      * @param paServiceUtil the paServiceUtil to set
@@ -1533,6 +1561,20 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
      */
     public void setCorrelationUtils(CorrelationUtils corUtils) {
         this.correlationUtils = corUtils;
+    }
+
+    /**
+     * @return the plannedMarkerSvc
+     */
+    public PlannedMarkerServiceLocal getPlannedMarkerSvc() {
+        return plannedMarkerSvc;
+    }
+
+    /**
+     * @param plannedMarkerSvc the plannedMarkerSvc to set
+     */
+    public void setPlannedMarkerSvc(PlannedMarkerServiceLocal plannedMarkerSvc) {
+        this.plannedMarkerSvc = plannedMarkerSvc;
     }
 
 }

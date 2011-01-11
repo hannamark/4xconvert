@@ -88,6 +88,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
@@ -145,6 +146,7 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     private StudySiteAccrualAccessServiceLocal accrualAccessSvc;
     private StudySiteAccrualStatusServiceLocal accrualStatusSvc;
     private RegistryUserServiceLocal registryUserSvc;
+    private PlannedMarkerServiceLocal plannedMarkerService;
 
     /**
      * @throws PAException exception
@@ -167,6 +169,7 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
                 .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
         registryUserSvc = PaRegistry.getRegistryUserService();
+        plannedMarkerService = PaRegistry.getPlannedMarkerService();
     }
 
     /**
@@ -494,4 +497,17 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
         this.registryUserSvc = registryUserSvc;
     }
 
+    /**
+     * @return the plannedMarkerService
+     */
+    public PlannedMarkerServiceLocal getPlannedMarkerService() {
+        return plannedMarkerService;
+    }
+
+    /**
+     * @param plannedMarkerService the plannedMarkerService to set
+     */
+    public void setPlannedMarkerService(PlannedMarkerServiceLocal plannedMarkerService) {
+        this.plannedMarkerService = plannedMarkerService;
+    }
 }

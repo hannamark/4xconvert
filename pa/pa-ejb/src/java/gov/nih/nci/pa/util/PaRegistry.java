@@ -87,6 +87,7 @@ import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
@@ -571,5 +572,12 @@ public final class PaRegistry {
      */
     public static PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService() {
         return getInstance().getServiceLocator().getPDQUpdateGeneratorTaskService();
+    }
+
+    /**
+     * @return the planned marker service
+     */
+    public static PlannedMarkerServiceLocal getPlannedMarkerService() {
+        return getInstance().getServiceLocator().getPlannedMarkerService();
     }
 }

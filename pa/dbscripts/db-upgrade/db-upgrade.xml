@@ -614,4 +614,8 @@
         <comment>Refactoring the database structure of planned activities and its subclasses.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.4/PO-3092.sql"/>
      </changeSet>
+     <changeSet id="PO-3071" author="aevansel">
+        <comment>Adding biomarkers table to the db structure.</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.4/PO-3071.sql"/>
+     </changeSet>
 </databaseChangeLog>

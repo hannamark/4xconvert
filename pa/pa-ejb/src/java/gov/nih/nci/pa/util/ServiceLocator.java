@@ -89,6 +89,7 @@ import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
@@ -426,5 +427,10 @@ public interface ServiceLocator {
     * @return service for PDQ Update Generator Task Service
     */
    PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService();
+
+   /**
+    * @return the planned marker service
+    */
+   PlannedMarkerServiceLocal getPlannedMarkerService();
 }
 

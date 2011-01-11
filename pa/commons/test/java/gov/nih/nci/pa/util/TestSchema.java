@@ -224,6 +224,7 @@ public class TestSchema {
                     statement.executeUpdate("delete from REGULATORY_AUTHORITY");
                     statement.executeUpdate("delete from DOCUMENT_WORKFLOW_STATUS");
                     statement.executeUpdate("delete from ARM_INTERVENTION");
+                    statement.executeUpdate("delete from PLANNED_MARKER");
                     statement.executeUpdate("delete from PLANNED_PROCEDURE");
                     statement.executeUpdate("delete from PLANNED_ELIGIBILITY_CRITERION");
                     statement.executeUpdate("delete from PLANNED_SUBSTANCE_ADMINISTRATION");

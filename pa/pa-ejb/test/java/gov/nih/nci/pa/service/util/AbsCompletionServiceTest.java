@@ -84,9 +84,9 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.anyLong;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
@@ -111,6 +111,7 @@ public class AbsCompletionServiceTest extends AbstractMockitoTest {
         bean.setStudyResourcingService(studyResourcingSvc);
         bean.setStudySiteContactService(studySiteContactSvc);
         bean.setPlannedActivityService(plannedActSvc);
+        bean.setPlannedMarkerSvc(plannedMarkerSvc);
         bean.setArmService(armSvc);
         bean.setStudyDiseaseService(studyDiseaseSvc);
         bean.setStudyOutcomeMeasureService(studyOutcomeMeasureSvc);

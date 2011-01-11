@@ -14,6 +14,7 @@ import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
@@ -70,6 +71,7 @@ import gov.nih.nci.registry.service.MockOrganizationEntityService;
 import gov.nih.nci.registry.service.MockOrganizationalContactCorrelationService;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
 import gov.nih.nci.registry.service.MockPersonEntityService;
+import gov.nih.nci.registry.service.MockPlannedMarkerService;
 import gov.nih.nci.registry.service.MockProprietaryTrialManagementService;
 import gov.nih.nci.registry.service.MockProtocolQueryService;
 import gov.nih.nci.registry.service.MockRegistryUserService;
@@ -120,6 +122,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final GridAccountServiceRemote gridAccountService = new MockGridAccountService();
     private final ProprietaryTrialManagementServiceLocal proprietaryTrialService = new MockProprietaryTrialManagementService();
     private final AbstractionCompletionServiceRemote abstractionCompletionService = new MockAbstractionCompletionService();
+    private final PlannedMarkerServiceLocal plannedMarkerService = new MockPlannedMarkerService();
+
     public DocumentServiceLocal getDocumentService() {
         return documentService;
     }
@@ -459,6 +463,13 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     public PDQTrialRegistrationServiceBeanRemote getPDQTrialRegistrationServiceRemote() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PlannedMarkerServiceLocal getPlannedMarkerService() {
+        return plannedMarkerService;
     }
 
 }

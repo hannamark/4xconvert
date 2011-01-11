@@ -46,6 +46,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteBeanLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
@@ -62,14 +63,14 @@ import org.junit.Test;
  * @author asharma
  *
  */
-public class StudyMilestoneTasksServiceBeanTest {
+public class StudyMilestoneTasksServiceBeanTest extends AbstractMockitoTest {
 
     Session sess;
     StudyMilestoneBeanLocal result = new StudyMilestoneBeanLocal();
     StudyMilestoneTasksServiceBean taskBean = new StudyMilestoneTasksServiceBean();
 
     @Before
-    public void setUp() throws Exception {
+    public void setup() throws Exception {
         TestSchema.reset();
         TestSchema.primeData();
         sess = HibernateUtil.getCurrentSession();
@@ -77,6 +78,7 @@ public class StudyMilestoneTasksServiceBeanTest {
         result.setStudyOnholdService(new StudyOnholdBeanLocal());
         result.setStudyInboxService(new StudyInboxServiceBean());
         AbstractionCompletionServiceBean abstractionBean = new AbstractionCompletionServiceBean();
+        abstractionBean.setPlannedMarkerSvc(plannedMarkerSvc);
         result.setAbstractionCompletionService(abstractionBean);
         abstractionBean.setStudyProtocolService(new StudyProtocolBeanLocal());
         abstractionBean.setStudySiteService(new StudySiteBeanLocal());

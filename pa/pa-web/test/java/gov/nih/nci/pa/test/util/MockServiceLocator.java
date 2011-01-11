@@ -90,6 +90,7 @@ import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceBean;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
@@ -154,6 +155,7 @@ import gov.nih.nci.service.MockMailManagerService;
 import gov.nih.nci.service.MockOrganizationCorrelationService;
 import gov.nih.nci.service.MockPAHealthCareProviderService;
 import gov.nih.nci.service.MockPlannedActivityService;
+import gov.nih.nci.service.MockPlannedMarkerService;
 import gov.nih.nci.service.MockProtocolQueryService;
 import gov.nih.nci.service.MockRegistryUserService;
 import gov.nih.nci.service.MockRegulatoryInformationService;
@@ -227,6 +229,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final DocumentServiceLocal documentService = new MockDocumentService();
     private final MailManagerServiceLocal mailManagerService = new MockMailManagerService();
     private final GridAccountServiceRemote gridAccountService = new MockGridAccountService();
+    private final PlannedMarkerServiceLocal plannedMarkerService = new MockPlannedMarkerService();
 
     /**
      * @return mock service
@@ -584,36 +587,44 @@ public class MockServiceLocator implements ServiceLocator {
         // TODO Auto-generated method stub
         return null;
     }
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getPDQXmlGeneratorService()
+
+    /**
+     * {@inheritDoc}
      */
     public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /** (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getPDQUpdateGeneratorTaskService()
+    /**
+     * {@inheritDoc}
      */
     public PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getPDQTrialAbstractionServiceRemote()
+    /**
+     * {@inheritDoc}
      */
     public PDQTrialAbstractionServiceBeanRemote getPDQTrialAbstractionServiceRemote() {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getPDQTrialRegistrationServiceRemote()
+    /**
+     * {@inheritDoc}
      */
     public PDQTrialRegistrationServiceBeanRemote getPDQTrialRegistrationServiceRemote() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PlannedMarkerServiceLocal getPlannedMarkerService() {
+        return plannedMarkerService;
     }
 
 }
