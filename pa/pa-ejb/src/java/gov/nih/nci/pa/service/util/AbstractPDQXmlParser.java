@@ -145,8 +145,9 @@ public abstract class AbstractPDQXmlParser {
 
     /**
      * parse the xml.
+     * @throws PAException Thrown if parsing failed.
      */
-    protected void parse() {
+    protected void parse() throws PAException {
         if (url == null) {
             throw new IllegalStateException("URL is not set, call setUrl first.");
         }

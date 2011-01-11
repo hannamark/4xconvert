@@ -153,13 +153,13 @@ public class PDQRegistrationXMLParserTest {
     }
 
     @Test(expected=IllegalStateException.class)
-    public void testIForgotToCallSetURL() {
+    public void testIForgotToCallSetURL() throws PAException {
         rXMLParser.parse();
         rXMLParser.getStudyProtocolDTO();
     }
 
     @Test
-    public void testGetStudyProtocolDTO() {
+    public void testGetStudyProtocolDTO() throws PAException {
         rXMLParser.setUrl(testXMLUrl);
         rXMLParser.parse();
 
@@ -194,7 +194,7 @@ public class PDQRegistrationXMLParserTest {
 
     }
     @Test
-    public void testNewXml() {
+    public void testNewXml() throws PAException {
         rXMLParser.setUrl(this.getClass().getResource("/CDR65658.xml"));
         rXMLParser.parse();
         assertEquals("Actual", CdConverter.convertCdToString(rXMLParser.getStudyProtocolDTO().getStartDateTypeCode()));
@@ -202,8 +202,15 @@ public class PDQRegistrationXMLParserTest {
                 , "Southwest Oncology Group"));
         assertEquals("12/15/2007", TsConverter.convertToString(rXMLParser.getStudyOverallStatusDTO().getStatusDate()));
     }
+
+    @Test(expected=PAException.class)
+    public void testMissingPrimCompletionDate() throws PAException {
+        rXMLParser.setUrl(this.getClass().getResource("/sample-missing-prim-completion-date.xml"));
+        rXMLParser.parse();
+    }
+
     @Test
-    public void testStudyInd() {
+    public void testStudyInd() throws PAException {
         when(identifierPersonSvc.search(any(IdentifiedPersonDTO.class))).thenReturn(new ArrayList<IdentifiedPersonDTO>());
         rXMLParser.setUrl(this.getClass().getResource("/sample-with-ind.xml"));
         rXMLParser.parse();

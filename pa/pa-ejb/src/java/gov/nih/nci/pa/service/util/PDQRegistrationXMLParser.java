@@ -17,6 +17,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -76,7 +77,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
      * {@inheritDoc}
      */
     @Override
-    public void parse() {
+    public void parse() throws PAException {
         super.parse();
         Element clinicalStudy = getDocument().getRootElement();
         doStudyOverallStatus(clinicalStudy);
@@ -108,10 +109,11 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
                 leadOrgStatusElmt.getAttributeValue("status_date")));
         }
     }
-    private void readStudyDesign(Element parent) {
+    private void readStudyDesign(Element parent) throws PAException {
         if (parent == null) {
             return;
         }
+        validateStudyDesign(parent);
         Element studyDesignElt = parent.getChild("study_design");
         String studyType = getText(studyDesignElt, "study_type");
         if (StringUtils.endsWithIgnoreCase("interventional", studyType)) {
@@ -135,6 +137,24 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         doIds(parent.getChild("id_info"));
         doFda(parent);
     }
+
+    /**
+     * @param parent
+     */
+    private void validateStudyDesign(Element parent) throws PAException {
+        StringBuilder sb = new StringBuilder();
+        if (StringUtils.isEmpty(getText(parent, "primary_compl_date"))) {
+            sb.append("Primary Completion Date cannot be empty\n");
+        }
+        if (StringUtils.isEmpty(getText(parent, "primary_compl_date_type"))) {
+            sb.append("Primary Completion Date Type cannot be empty\n");
+        }
+        if (sb.length() > 0) {
+            throw new PAException(sb.toString());
+        }
+
+    }
+
     @SuppressWarnings("unchecked")
     private void doIds(Element parent) {
         DSet<Ii> otherIds = new DSet<Ii>();

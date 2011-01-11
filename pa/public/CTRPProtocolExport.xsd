@@ -51,6 +51,20 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:group name="person_name_group">
+    <xs:sequence>
+        <xs:element minOccurs="0" ref="first_name"/>
+        <xs:element minOccurs="0" ref="middle_initial"/>
+        <xs:element ref="last_name"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="telecom_group">
+    <xs:sequence>
+        <xs:element minOccurs="0" ref="phone"/>
+        <xs:element minOccurs="0" ref="fax"/>
+        <xs:element minOccurs="0" ref="email"/>
+    </xs:sequence>
+  </xs:group>
   <xs:element name="org_study_id" type="xs:string"/>
   <xs:element name="secondary_id">
     <xs:complexType>
@@ -134,18 +148,13 @@
   </xs:element>
   <xs:element name="resp_party_person">
     <xs:complexType>
-      <xs:complexContent>
-        <xs:extension base="name">
-          <xs:sequence>
-            <xs:element ref="po_id"/>
-            <xs:element minOccurs="0" ref="ctep_id"/>            
-            <xs:element ref="address"/>
-            <xs:element ref="phone"/>
-            <xs:element minOccurs="0" ref="fax"/>
-            <xs:element ref="email"/>
-          </xs:sequence>
-        </xs:extension>
-      </xs:complexContent>
+      <xs:sequence>
+        <xs:group ref="person_name_group"/>
+        <xs:element ref="po_id"/>
+        <xs:element minOccurs="0" ref="ctep_id"/>            
+        <xs:element ref="address"/>
+        <xs:group ref="telecom_group"/>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="fax" type="xs:string"/>
@@ -153,7 +162,11 @@
   <xs:element name="collaborator">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="agency"/>
+        <xs:element name="name" type="text_block_type"/>
+        <xs:element minOccurs="0" name="po_id" type="xs:integer"/>
+        <xs:element minOccurs="0" name="ctep_id" type="xs:string"/>
+        <xs:element ref="address"/>
+        <xs:group ref="telecom_group"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -356,6 +369,7 @@
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="intervention_other_name"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="arm_group_label"/>
       </xs:sequence>
+      <xs:attribute name="cdr-id" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="intervention_type" type="xs:string"/>
@@ -396,14 +410,27 @@
   <xs:element name="overall_official">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="first_name"/>
-        <xs:element ref="last_name"/>
+        <xs:group ref="person_name_group"/>
+        <xs:element minOccurs="0" name="po_id" type="xs:integer"/>
+        <xs:element minOccurs="0" name="ctep_id" type="xs:string"/>
+        <xs:element ref="address"/>
+        <xs:group ref="telecom_group"/>
         <xs:element ref="role"/>
         <xs:element ref="affiliation"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="affiliation" type="text_block_type"/>
+  <xs:element name="affiliation">
+    <xs:complexType>
+        <xs:sequence>
+           <xs:element name="name" type="xs:string"/>
+           <xs:element minOccurs="0" name="po_id" type="xs:integer"/>
+           <xs:element minOccurs="0" name="ctep_id" type="xs:string"/>
+           <xs:element ref="address"/>
+           <xs:group ref="telecom_group"/>
+        </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="location">
     <xs:complexType>
       <xs:sequence>
@@ -419,7 +446,10 @@
       <xs:complexContent>
         <xs:extension base="name">
           <xs:sequence>
+            <xs:element minOccurs="0" name="po_id" type="xs:integer"/>
+            <xs:element minOccurs="0" name="ctep_id" type="xs:string"/>
             <xs:element ref="address"/>
+            <xs:group ref="telecom_group"/>
           </xs:sequence>
         </xs:extension>
       </xs:complexContent>
@@ -431,9 +461,11 @@
   <xs:element name="investigator">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="first_name"/>
-        <xs:element ref="middle_name"/>
-        <xs:element ref="last_name"/>
+        <xs:group ref="person_name_group"/>
+        <xs:element minOccurs="0" name="po_id" type="xs:integer"/>
+        <xs:element minOccurs="0" name="ctep_id" type="xs:string"/>
+        <xs:element ref="address"/>
+        <xs:group ref="telecom_group"/>
         <xs:element minOccurs="0" ref="role"/>
       </xs:sequence>
     </xs:complexType>
@@ -474,6 +506,7 @@
   <xs:element name="arm_group_label" type="xs:string"/>
   <xs:element name="first_name" type="xs:string"/>
   <xs:element name="last_name" type="xs:string"/>
+  <xs:element name="middle_initial" type="xs:string"/>
   <xs:element name="role" type="xs:string"/>
   <xs:element name="middle_name" type="xs:string"/>
   <xs:complexType name="name_type">
@@ -488,20 +521,18 @@
             <xs:element ref="po_id"/>
             <xs:element minOccurs="0" ref="ctep_id"/>
             <xs:element ref="address"/>
-            <xs:element minOccurs="0" maxOccurs="unbounded" ref="phone"/>
-            <xs:element minOccurs="0" ref="fax"/>
-            <xs:element minOccurs="0" ref="email"/>
+            <xs:group ref="telecom_group"/>
           </xs:sequence>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="contact_type">
       <xs:sequence>
-        <xs:element minOccurs="0" ref="first_name"/>
-        <xs:element minOccurs="0" ref="middle_name"/>
-        <xs:element ref="last_name"/>
-        <xs:element minOccurs="0" ref="phone"/>
-        <xs:element minOccurs="0" ref="email"/>
+        <xs:group ref="person_name_group"/>
+        <xs:element minOccurs="0" name="po_id" type="xs:integer"/>
+        <xs:element minOccurs="0" name="ctep_id" type="xs:string"/>
+        <xs:element ref="address"/>
+        <xs:group ref="telecom_group"/>
       </xs:sequence>
     </xs:complexType>
     <xs:complexType name="text_block_type" mixed="true">

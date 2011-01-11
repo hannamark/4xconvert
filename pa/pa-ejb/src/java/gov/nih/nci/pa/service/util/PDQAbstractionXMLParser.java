@@ -26,6 +26,7 @@ import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -62,7 +63,8 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * parse the xml.
      */
-    public void parse() {
+    @Override
+    public void parse() throws PAException {
         super.parse();
         Element clinicalStudy = getDocument().getRootElement();
         readOutcomes(clinicalStudy);
@@ -446,12 +448,14 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * @param paServiceUtils the paServiceUtils to set
      */
+    @Override
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
     }
     /**
      * @return the paServiceUtils
      */
+    @Override
     public PAServiceUtils getPaServiceUtils() {
         return paServiceUtils;
     }
