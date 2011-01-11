@@ -165,6 +165,7 @@
                 <filter token="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
                 <filter token="cteprss.user" value="${cteprss.user}"/>
                 <filter token="default.user.name" value="${default.user.name}" />
+                <filter token="mock.po" value="${mock.po}" />
             </filterset>
         </copy>
         <copy file="${pa.resourceDir}/ejb-jar.xml"

@@ -12,6 +12,8 @@ import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRe
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
+import org.apache.commons.lang.BooleanUtils;
+
 
 /**
  * A class for all Po look-ups.
@@ -23,40 +25,44 @@ public final class PoRegistry {
 
     private static final PoRegistry PO_REGISTRY = new PoRegistry();
     private PoServiceLocator poServiceLocator;
-    
+
     /**
      * @return the PO_REGISTRY
      */
     public static PoRegistry getInstance() {
         return PO_REGISTRY;
     }
-    
+
 
     /**
      * Constructor for the singleton instance.
      */
     private PoRegistry() {
-        this.poServiceLocator = new PoJndiServiceLocator();
+        if (BooleanUtils.isTrue(BooleanUtils.toBoolean(PaEarPropertyReader.getProperties().getProperty("mock.po")))) {
+            this.poServiceLocator = new MockPoJndiServiceLocator();
+        } else {
+            this.poServiceLocator = new PoJndiServiceLocator();
+        }
     }
-    
+
     /**
-     * 
+     *
      * @return OrganizationEntityServiceRemote
      * @throws PAException on error
      */
     public static OrganizationEntityServiceRemote getOrganizationEntityService() throws PAException {
         return getInstance().getPoServiceLocator().getOrganizationEntityService();
     }
-    
+
     /**
      * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error 
+     * @throws PAException on error
      */
-    public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() 
+    public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService()
         throws PAException {
         return getInstance().getPoServiceLocator().getHealthCareProverService();
     }
-    
+
     /**
      * @return HealthCareFacilityCorrelationServiceRemote
      * @throws PAException on error
@@ -64,7 +70,7 @@ public final class PoRegistry {
     public static ResearchOrganizationCorrelationServiceRemote
         getResearchOrganizationCorrelationService() throws PAException {
         return getInstance().getPoServiceLocator().getResearchOrganizationCorrelationService();
-    } 
+    }
 
     /**
      * @return HealthCareFacilityCorrelationServiceRemote
@@ -73,7 +79,7 @@ public final class PoRegistry {
     public static OversightCommitteeCorrelationServiceRemote
         getOversightCommitteeCorrelationService() throws PAException {
         return getInstance().getPoServiceLocator().getOversightCommitteeCorrelationService();
-    } 
+    }
 
     /**
      * @return the serviceLocator
@@ -81,20 +87,20 @@ public final class PoRegistry {
     public PoServiceLocator getPoServiceLocator() {
         return this.poServiceLocator;
     }
-    
+
     /**
-     * 
+     *
      * @param poServiceLocator poServiceLocator
      */
     public void setPoServiceLocator(PoServiceLocator poServiceLocator) {
         this.poServiceLocator  = poServiceLocator;
     }
     /**
-     * 
+     *
      * @return PersonEntityServiceRemote
      * @throws PAException e
      */
-    public static PersonEntityServiceRemote getPersonEntityService() 
+    public static PersonEntityServiceRemote getPersonEntityService()
         throws PAException {
         return getInstance().getPoServiceLocator().getPersonEntityService();
     }
@@ -102,43 +108,43 @@ public final class PoRegistry {
      * @return ClinicalResearchStaffCorrelationServiceRemote
      * @throws PAException e
      */
-    public static ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService()  
-    throws PAException { 
+    public static ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService()
+    throws PAException {
         return getInstance().getPoServiceLocator().getClinicalResearchStaffCorrelationService();
     }
     /**
-     * 
+     *
      * @return HealthCareProviderCorrelationServiceRemote
      * @throws PAException e
      */
-    public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() 
-    throws PAException { 
+    public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService()
+    throws PAException {
         return getInstance().getPoServiceLocator().getHealthCareProviderCorrelationService();
     }
     /**
-     * 
+     *
      * @return OrganizationalContactCorrelationServiceRemote
      * @throws PAException e
      */
-    public static OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() 
+    public static OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService()
     throws PAException {
-       return getInstance().getPoServiceLocator().getOrganizationalContactCorrelationService(); 
+       return getInstance().getPoServiceLocator().getOrganizationalContactCorrelationService();
     }
     /**
      * @throws PAException e
      * @return IdentifiedOrganizationCorrelationServiceRemote
-     */    
-    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() 
+     */
+    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService()
         throws PAException {
         return getInstance().getPoServiceLocator().getIdentifiedOrganizationEntityService();
     }
-    
+
     /**
      * @throws PAException e
      * @return IdentifiedOrganizationCorrelationServiceRemote
-     */    
-    public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() 
-        throws PAException {    
+     */
+    public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService()
+        throws PAException {
         return getInstance().getPoServiceLocator().getIdentifiedPersonEntityService();
     }
 }
