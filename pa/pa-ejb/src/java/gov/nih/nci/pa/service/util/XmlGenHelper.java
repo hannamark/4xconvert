@@ -144,6 +144,10 @@ public class XmlGenHelper {
      */
     public static final String FIRST_NAME = "first_name";
     /**
+     * MIDDLE_INITIAL.
+     */
+    public static final String MIDDLE_INITIAL = "middle_initial";
+    /**
      * LAST_NAME.
      */
     public static final String LAST_NAME = "last_name";

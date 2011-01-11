@@ -189,7 +189,6 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
     implements CTGovXmlGeneratorServiceRemote {
 
     private static final Logger LOG = Logger.getLogger(CTGovXmlGeneratorServiceBean.class);
-    private static final String MMDDYYYY = "MM/dd/yyyy";
     private static final String YYYYMMDD = "yyyy-MM-dd";
     private static final String YYYYMM = "yyyy-MM";
     

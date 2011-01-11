@@ -89,13 +89,13 @@ import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
+import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -312,8 +312,9 @@ public class PdqXmlGenHelper {
     protected static void addPoPersonByPaCrsIi(Element root, String childName,
             Ii paCrsIi, Document doc, CorrelationUtils corrUtils) 
         throws PAException {
+        Person p = corrUtils.getPAPersonByIi(paCrsIi);  
         ClinicalResearchStaffDTO crsDTO = PdqXmlGenHelper.getPoCrsDTOByPaCrsIi(paCrsIi, corrUtils);
-        if (crsDTO == null) {
+        if (p == null || crsDTO == null) {
             return;
         }
         PersonDTO perDTO;
@@ -330,8 +331,25 @@ public class PdqXmlGenHelper {
         } catch (NullifiedRoleException e) {
             throw new PAException(e);
         }
-        loadPersonParts(childName, root, doc, findCtepIdForPerson(ipDtos), perDTO);
         
+        if (StringUtils.isEmpty(childName)) {
+            loadPoPerson(root, doc, p, findCtepIdForPerson(ipDtos), perDTO);
+        } else {
+            Element child = doc.createElement(childName);
+            loadPoPerson(child, doc, p, findCtepIdForPerson(ipDtos), perDTO);
+            XmlGenHelper.appendElement(root, child);
+        }
+    }
+    
+    private static void loadPoPerson(Element child, Document doc, Person p, Ii ctepId, PersonDTO perDTO) {
+        XmlGenHelper.appendElement(child,
+                XmlGenHelper.createElement(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
+        XmlGenHelper.appendElement(child,
+                XmlGenHelper.createElement(XmlGenHelper.MIDDLE_INITIAL, 
+                        StringUtils.substring(p.getMiddleName(), 0 , 1), doc));
+        XmlGenHelper.appendElement(child,
+                XmlGenHelper.createElement(XmlGenHelper.LAST_NAME, p.getLastName(), doc)); 
+        XmlGenHelper.loadPoPerson(perDTO, child, doc, ctepId);
     }
     
     private static Ii findCtepIdForPerson(List<IdentifiedPersonDTO> ipDtos) {
@@ -347,23 +365,7 @@ public class PdqXmlGenHelper {
         }    
         return ctepId;
     }
-    
-    private static void loadPersonParts(String childName, Element root, Document doc, Ii ctepId, PersonDTO perDTO) {
-        Element child = null;
-        if (StringUtils.isEmpty(childName)) {
-            child = root;
-        } else {
-            child = doc.createElement(childName);
-        }
-        XmlGenHelper.appendElement(child, XmlGenHelper.createElement("name", StringUtils.substring(EnPnConverter
-                .convertToLastCommaFirstName(perDTO.getName()), 0,
-                PAAttributeMaxLen.LEN_160), doc));
-        XmlGenHelper.loadPoPerson(perDTO, child, doc, ctepId);
-        if (!StringUtils.isEmpty(childName)) {
-           XmlGenHelper.appendElement(root, child);
-        }
-    }
-    
+     
     /**
      * addPoOrganizationalContactByPaOcIi.
      * @param root element
