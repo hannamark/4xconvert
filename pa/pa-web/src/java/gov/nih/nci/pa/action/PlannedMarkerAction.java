@@ -254,7 +254,7 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
         marker.setName(StConverter.convertToSt(getPlannedMarker().getName()));
         marker.setAssayTypeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayType()));
         if (StringUtils.equals(getPlannedMarker().getAssayType(), AssayTypeCode.OTHER.getCode())) {
-            marker.setAssayTypeOtherText(StConverter.convertToSt(getPlannedMarker().getAssayPurposeOtherText()));
+            marker.setAssayTypeOtherText(StConverter.convertToSt(getPlannedMarker().getAssayTypeOtherText()));
         }
         marker.setAssayUseCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayUse()));
         marker.setAssayPurposeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayPurpose()));

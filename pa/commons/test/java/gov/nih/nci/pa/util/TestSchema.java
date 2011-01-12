@@ -108,6 +108,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
+import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
@@ -139,6 +140,9 @@ import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
+import gov.nih.nci.pa.enums.AssayPurposeCode;
+import gov.nih.nci.pa.enums.AssayTypeCode;
+import gov.nih.nci.pa.enums.AssayUseCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
@@ -154,6 +158,8 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
+import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -179,21 +185,21 @@ import org.hibernate.Transaction;
  *
  */
 public class TestSchema {
-        public static ArrayList<Long> studyProtocolIds;
-        public static ArrayList<Long> studySiteIds;
-        public static ArrayList<Long> studySiteContactIds;
-        public static ArrayList<Long> healthCareFacilityIds;
-        public static ArrayList<Long> healthCareProviderIds;
-        public static ArrayList<Long> clinicalResearchStaffIds;
-        public static ArrayList<Long> plannedActivityIds;
-        public static ArrayList<Long> interventionIds;
-        public static ArrayList<Long> armIds;
-        public static ArrayList<Long> researchOrganizationIds;
-        public static ArrayList<Long> oversightCommitteeIds;
-        public static ArrayList<Long> diseaseIds;
-        public static ArrayList<Long> outcomeIds;
-        public static ArrayList<Long> regAuthIds;
-        public static ArrayList<Long> personIds;
+        public static List<Long> studyProtocolIds;
+        public static List<Long> studySiteIds;
+        public static List<Long> studySiteContactIds;
+        public static List<Long> healthCareFacilityIds;
+        public static List<Long> healthCareProviderIds;
+        public static List<Long> clinicalResearchStaffIds;
+        public static List<Long> plannedActivityIds;
+        public static List<Long> interventionIds;
+        public static List<Long> armIds;
+        public static List<Long> researchOrganizationIds;
+        public static List<Long> oversightCommitteeIds;
+        public static List<Long> diseaseIds;
+        public static List<Long> outcomeIds;
+        public static List<Long> regAuthIds;
+        public static List<Long> personIds;
         public static List<Country> countries;
 
         private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
@@ -626,6 +632,30 @@ public class TestSchema {
             psa.setCategoryCode(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION);
             psa.setStudyProtocol(sp);
             addUpdObject(psa);
+
+            PlannedMarker marker01 = new PlannedMarker();
+            marker01.setStudyProtocol(sp);
+            marker01.setName("Marker #1");
+            marker01.setAssayTypeCode(AssayTypeCode.PCR);
+            marker01.setAssayUseCode(AssayUseCode.RESEARCH);
+            marker01.setAssayPurposeCode(AssayPurposeCode.RESEARCH);
+            marker01.setTissueCollectionMethodCode(TissueCollectionMethodCode.MANDATORY);
+            marker01.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.PLASMA);
+            marker01.setStatusCode(ActiveInactivePendingCode.PENDING);
+            addUpdObject(marker01);
+
+            PlannedMarker marker02 = new PlannedMarker();
+            marker02.setStudyProtocol(sp);
+            marker02.setName("Marker #2");
+            marker02.setAssayTypeCode(AssayTypeCode.OTHER);
+            marker02.setAssayTypeOtherText("Assay Type Other Text");
+            marker02.setAssayUseCode(AssayUseCode.RESEARCH);
+            marker02.setAssayPurposeCode(AssayPurposeCode.OTHER);
+            marker02.setAssayPurposeOtherText("Assay Purpose Other Text");
+            marker02.setTissueCollectionMethodCode(TissueCollectionMethodCode.MANDATORY);
+            marker02.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.PLASMA);
+            marker02.setStatusCode(ActiveInactivePendingCode.PENDING);
+            addUpdObject(marker02);
 
             HibernateUtil.getCurrentSession().clear();
         }

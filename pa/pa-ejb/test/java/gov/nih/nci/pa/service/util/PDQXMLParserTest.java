@@ -93,13 +93,13 @@ public class PDQXMLParserTest {
     }
 
     @Test(expected=IllegalStateException.class)
-    public void testIForgotToCallSetURL() {
+    public void testIForgotToCallSetURL() throws PAException {
         abstractionElementParser.parse();
         abstractionElementParser.getIspDTO();
     }
 
     @Test
-    public void testReadStudyDesign() {
+    public void testReadStudyDesign() throws PAException {
         setURLAndParse();
         assertEquals(3, abstractionElementParser.getIspDTO().getNumberOfInterventionGroups().getValue().intValue());
         assertEquals("Randomized", abstractionElementParser.getIspDTO().getAllocationCode().getCode());
@@ -119,7 +119,7 @@ public class PDQXMLParserTest {
 
     }
     @Test
-    public void testReadOutcomes() {
+    public void testReadOutcomes() throws PAException {
         setURLAndParse();
         assertEquals(2, abstractionElementParser.getOutcomeMeasureDTOs().size());
         List <StudyOutcomeMeasureDTO> outList = abstractionElementParser.getOutcomeMeasureDTOs();
@@ -128,12 +128,12 @@ public class PDQXMLParserTest {
 
 
     @Test
-    public void testReadIntervention() {
+    public void testReadIntervention() throws PAException {
         setURLAndParse();
         assertEquals(2, abstractionElementParser.getListOfInterventionsDTOS().size());
         Map<InterventionDTO, List<ArmDTO>> map = abstractionElementParser.getArmInterventionMap();
         for (Iterator<InterventionDTO> iter = map.keySet().iterator(); iter.hasNext();) {
-            InterventionDTO interventionDTO = (InterventionDTO) iter.next();
+            InterventionDTO interventionDTO = iter.next();
             assertEquals("Biological/Vaccine", interventionDTO.getTypeCode().getCode());
             List<ArmDTO> armList = map.get(interventionDTO);
             for (ArmDTO armDTO: armList){
@@ -145,21 +145,21 @@ public class PDQXMLParserTest {
       }
     }
     @Test
-    public void testReadCondition() {
+    public void testReadCondition() throws PAException {
         setURLAndParse();
         assertEquals(2,abstractionElementParser.getListOfDiseaseDTOs().size());
         assertEquals(abstractionElementParser.getListOfDiseaseDTOs().get(0).getDiseaseCode().getValue(),"CDR0000038837");
     }
 
     @Test
-    public void testArmGroup() {
+    public void testArmGroup() throws PAException {
         setURLAndParse();
         assertEquals(3,abstractionElementParser.getListOfArmDTOS().size());
         assertEquals(abstractionElementParser.getListOfArmDTOS().get(0).getName().getValue(),"Arm I");
         assertEquals(abstractionElementParser.getListOfArmDTOS().get(0).getTypeCode().getCode(),"Experimental");
     }
     @Test
-    public void testReadLocations() {
+    public void testReadLocations() throws PAException {
         setURLAndParse();
         Map<OrganizationDTO, Map<StudySiteAccrualStatusDTO,Map<PoDto, String>>> location
             = abstractionElementParser.getLocationsMap();
@@ -175,12 +175,12 @@ public class PDQXMLParserTest {
         }
     }
     @Test
-    public void testReadIrbInfo() {
+    public void testReadIrbInfo() throws PAException {
         setURLAndParse();
         assertNotNull(abstractionElementParser.getIrbOrgDTO());
     }
     @Test
-    public void testReadEligibility() {
+    public void testReadEligibility() throws PAException {
         setURLAndParse();
         PlannedEligibilityCriterionDTO  eligibleCriterionDTO = abstractionElementParser.getEligibilityList().get(0);
         assertNotNull(eligibleCriterionDTO);
@@ -191,7 +191,7 @@ public class PDQXMLParserTest {
         assertEquals("no", abstractionElementParser.getHealthyVolunteers());
     }
     @Test
-    public void testReadCollaborators() {
+    public void testReadCollaborators() throws PAException {
         setURLAndParse();
         assertNotNull(abstractionElementParser.getCollaboratorOrgDTOs());
         OrganizationDTO orgDTO = abstractionElementParser.getCollaboratorOrgDTOs().get(0);
@@ -200,7 +200,7 @@ public class PDQXMLParserTest {
     /**
      *
      */
-    private void setURLAndParse() {
+    private void setURLAndParse() throws PAException {
         abstractionElementParser.setUrl(testXMLUrl);
         abstractionElementParser.parse();
     }

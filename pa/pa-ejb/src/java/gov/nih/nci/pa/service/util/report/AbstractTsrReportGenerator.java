@@ -163,6 +163,7 @@ public abstract class AbstractTsrReportGenerator {
         new ArrayList<TSRReportSubGroupStratificationCriteria>();
     private List<TSRReportParticipatingSite> participatingSites = new ArrayList<TSRReportParticipatingSite>();
     private List<TSRReportIntervention> interventions = new ArrayList<TSRReportIntervention>();
+    private List<TSRReportPlannedMarker> plannedMarkers = new ArrayList<TSRReportPlannedMarker>();
 
     /**
      * @param tsrReport basic information about the report.
@@ -252,12 +253,14 @@ public abstract class AbstractTsrReportGenerator {
             addPrimaryOutcomesMeasuresTable();
             addSecondaryOutcomesMeasuresTable();
             addSubGroupsStratificationCriteriaTable();
+            addPlannedMarkers();
             addParticipatingSitesTable();
         } else {
             addTrialIdentificationTable();
             addGeneralTrialDetailsTable();
             addDiseaseConditionTable();
             addInterventionsTable();
+            addPlannedMarkers();
             addParticipatingSitesTable();
         }
         getReportDocument().close();
@@ -729,6 +732,28 @@ public abstract class AbstractTsrReportGenerator {
                 sgscTable.addCell(getItemValueCell(sgsc.getDescription()));
             }
             table.insertTable(sgscTable);
+            reportDocument.add(table);
+            reportDocument.add(getLineBreak());
+        }
+    }
+
+    private void addPlannedMarkers() throws DocumentException {
+        if (CollectionUtils.isNotEmpty(getPlannedMarkers())) {
+            Table table = getOuterTable(TSRReportLabelText.TABLE_PLANNED_MARKERS, true);
+            Table markerTable = getInnerTable(Arrays.asList(TSRReportLabelText.PLANNED_MARKER_NAME,
+                    TSRReportLabelText.PLANNED_MARKER_ASSAY_TYPE, TSRReportLabelText.PLANNED_MARKER_ASSAY_USE,
+                    TSRReportLabelText.PLANNED_MARKER_ASSAY_PURPOSE,
+                    TSRReportLabelText.PLANNED_MARKER_TISSUE_SPECIMEN_TYPE,
+                    TSRReportLabelText.PLANNED_MARKER_TISSUE_COLLECTION_METHOD));
+            for (TSRReportPlannedMarker marker : getPlannedMarkers()) {
+                markerTable.addCell(getItemValueCell(marker.getName()));
+                markerTable.addCell(getItemValueCell(marker.getAssayType()));
+                markerTable.addCell(getItemValueCell(marker.getAssayUse()));
+                markerTable.addCell(getItemValueCell(marker.getAssayPurpose()));
+                markerTable.addCell(getItemValueCell(marker.getTissueSpecimenType()));
+                markerTable.addCell(getItemValueCell(marker.getTissueCollectionMethod()));
+            }
+            table.insertTable(markerTable);
             reportDocument.add(table);
             reportDocument.add(getLineBreak());
         }
@@ -1239,6 +1264,20 @@ public abstract class AbstractTsrReportGenerator {
      */
     public void setReportDocument(Document reportDoc) {
         this.reportDocument = reportDoc;
+    }
+
+    /**
+     * @return the markers
+     */
+    public List<TSRReportPlannedMarker> getPlannedMarkers() {
+        return plannedMarkers;
+    }
+
+    /**
+     * @param markers the markers to set
+     */
+    public void setPlannedMarkers(List<TSRReportPlannedMarker> markers) {
+        this.plannedMarkers = markers;
     }
 
 }

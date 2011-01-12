@@ -141,7 +141,7 @@ public class PlannedActivityServiceTest {
     @Test
     public void getByStudyProtocolTest() throws Exception {
         List<PlannedActivityDTO> dtoList = remoteEjb.getByStudyProtocol(spIi);
-        assertEquals(3, dtoList.size());
+        assertEquals(5, dtoList.size());
     }
 
     @Test

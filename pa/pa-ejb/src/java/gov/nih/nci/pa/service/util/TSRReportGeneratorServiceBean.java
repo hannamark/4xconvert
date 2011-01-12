@@ -94,6 +94,8 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.PAContactDTO;
+import gov.nih.nci.pa.enums.AssayPurposeCode;
+import gov.nih.nci.pa.enums.AssayTypeCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
@@ -107,6 +109,7 @@ import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
@@ -134,6 +137,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
@@ -165,6 +169,7 @@ import gov.nih.nci.pa.service.util.report.TSRReportInvestigator;
 import gov.nih.nci.pa.service.util.report.TSRReportNihGrant;
 import gov.nih.nci.pa.service.util.report.TSRReportOutcomeMeasure;
 import gov.nih.nci.pa.service.util.report.TSRReportParticipatingSite;
+import gov.nih.nci.pa.service.util.report.TSRReportPlannedMarker;
 import gov.nih.nci.pa.service.util.report.TSRReportRegulatoryInformation;
 import gov.nih.nci.pa.service.util.report.TSRReportStatusDate;
 import gov.nih.nci.pa.service.util.report.TSRReportSubGroupStratificationCriteria;
@@ -249,6 +254,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private PAOrganizationServiceRemote paOrganizationService;
     @EJB
     private StratumGroupServiceLocal stratumGroupService;
+    @EJB
+    private PlannedMarkerServiceLocal plannedMarkerService;
 
     private final CorrelationUtils correlationUtils = new CorrelationUtils();
 
@@ -352,6 +359,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         setDiseases(studyProtocolDto);
         setInterventions(studyProtocolDto);
         setParticipatingSites(studyProtocolDto, true);
+        setPlannedMarkers(studyProtocolDto);
     }
 
     private void setNonProprietaryTrialReportDetails(StudyProtocolDTO studyProtocolDto) throws PAException,
@@ -372,6 +380,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         setPrimaryAndSecondaryOutcomeMeasures(studyProtocolDto);
         setSubGroupStratificationCriteria(studyProtocolDto);
         setParticipatingSites(studyProtocolDto, false);
+        setPlannedMarkers(studyProtocolDto);
     }
 
     private void setInterventions(StudyProtocolDTO studyProtocolDto) throws PAException {
@@ -951,6 +960,32 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         }
     }
 
+    private void setPlannedMarkers(StudyProtocolDTO studyProtocolDto) throws PAException {
+        List<PlannedMarkerDTO> plannedMarkers =
+            plannedMarkerService.getByStudyProtocol(studyProtocolDto.getIdentifier());
+        List<TSRReportPlannedMarker> tsrMarkers = new ArrayList<TSRReportPlannedMarker>();
+        for (PlannedMarkerDTO marker : plannedMarkers) {
+            TSRReportPlannedMarker tsrMarker = new TSRReportPlannedMarker();
+            tsrMarker.setName(getValue(marker.getName()));
+            String assayType = getValue(marker.getAssayTypeCode());
+            if (AssayTypeCode.getByCode(assayType) == AssayTypeCode.OTHER) {
+                assayType = StringUtils.join(new Object[] {assayType, ": ", getValue(marker.getAssayTypeOtherText())});
+            }
+            tsrMarker.setAssayType(assayType);
+            tsrMarker.setAssayUse(getValue(marker.getAssayUseCode()));
+            String assayPurpose = getValue(marker.getAssayPurposeCode());
+            if (AssayPurposeCode.getByCode(assayPurpose) == AssayPurposeCode.OTHER) {
+                assayPurpose =
+                    StringUtils.join(new Object[] {assayPurpose, ": ", getValue(marker.getAssayPurposeOtherText())});
+            }
+            tsrMarker.setAssayPurpose(assayPurpose);
+            tsrMarker.setTissueSpecimenType(getValue(marker.getTissueSpecimenTypeCode()));
+            tsrMarker.setTissueCollectionMethod(getValue(marker.getTissueCollectionMethodCode()));
+            tsrMarkers.add(tsrMarker);
+        }
+        tsrReportGenerator.setPlannedMarkers(tsrMarkers);
+    }
+
     private void setSubGroupStratificationCriteria(StudyProtocolDTO studyProtocolDto) throws PAException {
         List<StratumGroupDTO> stratumGrpDtos = stratumGroupService.getByStudyProtocol(studyProtocolDto.getIdentifier());
         if (!stratumGrpDtos.isEmpty()) {
@@ -1274,4 +1309,17 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         this.ocsr = ocsr;
     }
 
+    /**
+     * @return the plannedMarkerService
+     */
+    public PlannedMarkerServiceLocal getPlannedMarkerService() {
+        return plannedMarkerService;
+    }
+
+    /**
+     * @param plannedMarkerService the plannedMarkerService to set
+     */
+    public void setPlannedMarkerService(PlannedMarkerServiceLocal plannedMarkerService) {
+        this.plannedMarkerService = plannedMarkerService;
+    }
 }

@@ -154,8 +154,9 @@ public class PDQEligibilityCriteriaParserTest {
         idOrgDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("2"));
         when(identifierOrgSvc.search(any(IdentifiedOrganizationDTO.class))).thenReturn(orgList);
     }
+
     @Test
-    public void testEligiblityCriteria() {
+    public void testEligiblityCriteria() throws PAException {
         PDQEligibilityCriteriaParser eligibilityCriteria = new PDQEligibilityCriteriaParser();
         abstractionElementParser.setUrl(this.getClass().getResource("/sample-with-location.xml"));
         abstractionElementParser.parse();

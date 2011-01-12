@@ -80,82 +80,102 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.service;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
-import gov.nih.nci.pa.enums.AssayPurposeCode;
-import gov.nih.nci.pa.enums.AssayTypeCode;
-import gov.nih.nci.pa.enums.AssayUseCode;
-import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
-import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
-import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.TestSchema;
-
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
+package gov.nih.nci.pa.service.util.report;
 
 /**
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ * TSR Representation of a planned marker.
+ *
+ * @author Abraham J. Evans-EL
  */
-public class PlannedMarkerServiceTest {
-    private PlannedMarkerServiceLocal bean = new PlannedMarkerServiceBean();
-    private Ii spIi;
+public class TSRReportPlannedMarker {
+    private String name;
+    private String assayType;
+    private String assayUse;
+    private String assayPurpose;
+    private String tissueSpecimenType;
+    private String tissueCollectionMethod;
 
-    @Before
-    public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
-        TestSchema.primeData();
-        spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
-     }
-
-    @Test
-    public void managePlannedMarker()  throws Exception {
-        //Checking to make sure the 2 primed planned markers are present.
-        List<PlannedMarkerDTO> dtos = bean.getByStudyProtocol(spIi);
-        assertEquals(2, dtos.size());
-
-        PlannedMarkerDTO markerDTO = bean.create(constructPlannedMarker());
-        assertNotNull(markerDTO);
-        assertNotNull(markerDTO.getIdentifier());
-
-        dtos = bean.getByStudyProtocol(spIi);
-        assertEquals(3, dtos.size());
-
-        try {
-            bean.create(constructPlannedMarker());
-            fail();
-        } catch (PAException e) {
-           //expected, testing duplication
-        }
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
     }
 
-    private PlannedMarkerDTO constructPlannedMarker() {
-        PlannedMarkerDTO markerDTO = new PlannedMarkerDTO();
-        markerDTO.setStudyProtocolIdentifier(spIi);
-        markerDTO.setName(StConverter.convertToSt("Biomarker"));
-        markerDTO.setLongName(StConverter.convertToSt("Biomarker long name"));
-        markerDTO.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO Biomarker Code"));
-        markerDTO.setAssayTypeCode(CdConverter.convertToCd(AssayTypeCode.OTHER));
-        markerDTO.setAssayTypeOtherText(StConverter.convertToSt("Assay Type Other Text"));
-        markerDTO.setAssayUseCode(CdConverter.convertToCd(AssayUseCode.RESEARCH));
-        markerDTO.setAssayPurposeCode(CdConverter.convertToCd(AssayPurposeCode.OTHER));
-        markerDTO.setAssayPurposeOtherText(StConverter.convertToSt("Assay Purpose Other Text"));
-        markerDTO.setTissueSpecimenTypeCode(CdConverter.convertToCd(TissueSpecimenTypeCode.TISSUE));
-        markerDTO.setTissueCollectionMethodCode(CdConverter.convertToCd(TissueCollectionMethodCode.MANDATORY));
-        markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING));
-        return markerDTO;
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
+    /**
+     * @return the assayType
+     */
+    public String getAssayType() {
+        return assayType;
+    }
+
+    /**
+     * @param assayType the assayType to set
+     */
+    public void setAssayType(String assayType) {
+        this.assayType = assayType;
+    }
+
+    /**
+     * @return the assayUse
+     */
+    public String getAssayUse() {
+        return assayUse;
+    }
+
+    /**
+     * @param assayUse the assayUse to set
+     */
+    public void setAssayUse(String assayUse) {
+        this.assayUse = assayUse;
+    }
+
+    /**
+     * @return the assayPurpose
+     */
+    public String getAssayPurpose() {
+        return assayPurpose;
+    }
+
+    /**
+     * @param assayPurpose the assayPurpose to set
+     */
+    public void setAssayPurpose(String assayPurpose) {
+        this.assayPurpose = assayPurpose;
+    }
+
+    /**
+     * @return the tissueSpecimenType
+     */
+    public String getTissueSpecimenType() {
+        return tissueSpecimenType;
+    }
+
+    /**
+     * @param tissueSpecimenType the tissueSpecimenType to set
+     */
+    public void setTissueSpecimenType(String tissueSpecimenType) {
+        this.tissueSpecimenType = tissueSpecimenType;
+    }
+
+    /**
+     * @return the tissueCollectionMethod
+     */
+    public String getTissueCollectionMethod() {
+        return tissueCollectionMethod;
+    }
+
+    /**
+     * @param tissueCollectionMethod the tissueCollectionMethod to set
+     */
+    public void setTissueCollectionMethod(String tissueCollectionMethod) {
+        this.tissueCollectionMethod = tissueCollectionMethod;
+    }
 }

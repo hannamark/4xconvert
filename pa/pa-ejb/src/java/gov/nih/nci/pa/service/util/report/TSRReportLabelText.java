@@ -89,8 +89,8 @@ package gov.nih.nci.pa.service.util.report;
  * @author kkanchinadam
  */
 public class TSRReportLabelText {
-    
-    private static final String DESCRIPTION = "Description"; 
+
+    private static final String DESCRIPTION = "Description";
     /**
      * Information not provided.
      */
@@ -654,4 +654,39 @@ public class TSRReportLabelText {
      * Summary 4 sponsor or source.
      */
     public static final String PS_SUMMARY4_SPONSOR = "Summary 4 Sponsor/Source";
+
+    /**
+     * Planned Markers.
+     */
+    public static final String TABLE_PLANNED_MARKERS = "Markers";
+
+    /**
+     * Marker Name.
+     */
+    public static final String PLANNED_MARKER_NAME = "Marker Name";
+
+    /**
+     * Assay Type.
+     */
+    public static final String PLANNED_MARKER_ASSAY_TYPE = "Assay Type";
+
+    /**
+     * Assay Use.
+     */
+    public static final String PLANNED_MARKER_ASSAY_USE = "Assay Use";
+
+    /**
+     * Assay Purpose.
+     */
+    public static final String PLANNED_MARKER_ASSAY_PURPOSE = "Assay Purpose";
+
+    /**
+     * Tissue Specimen Type.
+     */
+    public static final String PLANNED_MARKER_TISSUE_SPECIMEN_TYPE = "Tissue Specimen Type";
+
+    /**
+     * Tissue Collection Method.
+     */
+    public static final String PLANNED_MARKER_TISSUE_COLLECTION_METHOD = "Tissue Collection Method";
 }

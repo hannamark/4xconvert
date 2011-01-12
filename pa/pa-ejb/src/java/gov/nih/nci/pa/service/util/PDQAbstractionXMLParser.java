@@ -61,7 +61,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
     /**
-     * parse the xml.
+     * {@inheritDoc}
      */
     @Override
     public void parse() throws PAException {

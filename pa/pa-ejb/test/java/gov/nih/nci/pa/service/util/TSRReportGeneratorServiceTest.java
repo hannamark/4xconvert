@@ -97,6 +97,8 @@ import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityBeanLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerServiceBean;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupBeanLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyContactBeanLocal;
@@ -140,6 +142,7 @@ import gov.nih.nci.pa.service.util.report.TSRReportInvestigator;
 import gov.nih.nci.pa.service.util.report.TSRReportNihGrant;
 import gov.nih.nci.pa.service.util.report.TSRReportOutcomeMeasure;
 import gov.nih.nci.pa.service.util.report.TSRReportParticipatingSite;
+import gov.nih.nci.pa.service.util.report.TSRReportPlannedMarker;
 import gov.nih.nci.pa.service.util.report.TSRReportRegulatoryInformation;
 import gov.nih.nci.pa.service.util.report.TSRReportStatusDate;
 import gov.nih.nci.pa.service.util.report.TSRReportSubGroupStratificationCriteria;
@@ -214,6 +217,8 @@ public class TSRReportGeneratorServiceTest {
 
     PAOrganizationServiceRemote  paOrganizationService = new PAOrganizationServiceBean();
 
+    private PlannedMarkerServiceLocal plannedMarkerService = new PlannedMarkerServiceBean();
+
     private ServiceLocator paSvcLoc;
 
     @Before
@@ -241,6 +246,7 @@ public class TSRReportGeneratorServiceTest {
         bean.setInterventionService(interventionService);
         bean.setStudyResourcingService(studyResourcingService);
         bean.setPaOrganizationService(paOrganizationService);
+        bean.setPlannedMarkerService(plannedMarkerService);
 
         TestSchema.reset();
         TestSchema.primeData();
@@ -336,7 +342,7 @@ public class TSRReportGeneratorServiceTest {
         os.writeTo(fos);
     }
 
-    private void setupDataForTsrGenerationTest(AbstractTsrReportGenerator pdfTsrReportGenerator) throws Exception {
+    private void setupDataForTsrGenerationTest(AbstractTsrReportGenerator tsrReportGenerator) throws Exception {
         // Trial Identification Data
         TSRReportTrialIdentification trialIdentification = new TSRReportTrialIdentification();
         trialIdentification.setTrialCategory("Proprietary. Unité de Fabrication et Contrôles Hospitaliers");
@@ -349,7 +355,7 @@ public class TSRReportGeneratorServiceTest {
         trialIdentification.getOtherIdentifiers().add("OID - 1");
         trialIdentification.getOtherIdentifiers().add("OID - 2");
         trialIdentification.getOtherIdentifiers().add("OID - 3");
-        pdfTsrReportGenerator.setTrialIdentification(trialIdentification);
+        tsrReportGenerator.setTrialIdentification(trialIdentification);
 
         // General Trial Details Data
         TSRReportGeneralTrialDetails generalTrialDetails = new TSRReportGeneralTrialDetails();
@@ -366,7 +372,7 @@ public class TSRReportGeneratorServiceTest {
         generalTrialDetails.setResponsibleParty("Name/Official Title: PartyName, email: example@example.org, 123-222-2222 x9878");
         generalTrialDetails.setOverallOfficial("Steve M. Anderson affiliated with Mayo Clinic in the role of Principal Investigator");
         generalTrialDetails.setCentralContact("Clinical Research Department, email: email@example.org, phone: 232-232-2323");
-        pdfTsrReportGenerator.setGeneralTrialDetails(generalTrialDetails);
+        tsrReportGenerator.setGeneralTrialDetails(generalTrialDetails);
 
         // Status Date.
         TSRReportStatusDate statusDate = new TSRReportStatusDate();
@@ -374,7 +380,7 @@ public class TSRReportGeneratorServiceTest {
         statusDate.setReasonText("Some Reason");
         statusDate.setTrialStartDate("12/17/2009 - Actual");
         statusDate.setPrimaryCompletionDate("01/28/2010 - Anticipated");
-        pdfTsrReportGenerator.setStatusDate(statusDate);
+        tsrReportGenerator.setStatusDate(statusDate);
 
         // Regulatory Information
         TSRReportRegulatoryInformation regulatoryInformation = new TSRReportRegulatoryInformation();
@@ -384,7 +390,7 @@ public class TSRReportGeneratorServiceTest {
         regulatoryInformation.setSection801("Yes");
         regulatoryInformation.setIndIdeStudy("Yes");
         regulatoryInformation.setDelayedPosting("No");
-        pdfTsrReportGenerator.setRegulatoryInformation(regulatoryInformation);
+        tsrReportGenerator.setRegulatoryInformation(regulatoryInformation);
 
         // Human Subject Study
         TSRReportHumanSubjectSafety humanSubjectSafety = new TSRReportHumanSubjectSafety();
@@ -392,7 +398,7 @@ public class TSRReportGeneratorServiceTest {
         humanSubjectSafety.setBoardApprovalNumber("Information Not Provided");
         humanSubjectSafety.setBoard("ORGANIZATION Name");
         humanSubjectSafety.setAffiliation("Board Affiliated with NCI, 123 Main Street, Fairfax VA 22033, phone: 000-111-2222, email: email@example.org");
-        pdfTsrReportGenerator.setHumanSubjectSafety(humanSubjectSafety);
+        tsrReportGenerator.setHumanSubjectSafety(humanSubjectSafety);
 
         // IND/IDES
         List<TSRReportIndIde> indIdes = new ArrayList<TSRReportIndIde>();
@@ -413,7 +419,7 @@ public class TSRReportGeneratorServiceTest {
         indIde.setExpandedAccess("Yes");
         indIde.setExpandedAccessStatus("Available");
         indIdes.add(indIde);
-        pdfTsrReportGenerator.setIndIdes(indIdes);
+        tsrReportGenerator.setIndIdes(indIdes);
 
         // Nih Grants
         List<TSRReportNihGrant> nihGrants = new ArrayList<TSRReportNihGrant>();
@@ -430,14 +436,14 @@ public class TSRReportGeneratorServiceTest {
         nihGrant.setSerialNumber("23432423");
         nihGrant.setProgramCode("DCCPS");
         nihGrants.add(nihGrant);
-        pdfTsrReportGenerator.setNihGrants(nihGrants);
+        tsrReportGenerator.setNihGrants(nihGrants);
 
         // Summary 4 Information
         TSRReportSummary4Information summaryInfo = new TSRReportSummary4Information();
         summaryInfo.setFundingCategory("Industrial");
         summaryInfo.setFundingSponsor("Cancer Therapy Evaluation Program");
         summaryInfo.setProgramCode("Summary4_123");
-        pdfTsrReportGenerator.setSummary4Information(summaryInfo);
+        tsrReportGenerator.setSummary4Information(summaryInfo);
 
         // Collaborators
         List<TSRReportCollaborator> collaborators = new ArrayList<TSRReportCollaborator>();
@@ -455,7 +461,7 @@ public class TSRReportGeneratorServiceTest {
         colab.setName("NCI Division of Cancer Prevention");
         colab.setRole("Laboratory");
         collaborators.add(colab);
-        pdfTsrReportGenerator.setCollaborators(collaborators);
+        tsrReportGenerator.setCollaborators(collaborators);
 
         // Disease Conditions
         List<TSRReportDiseaseCondition> diseaseConditions = new ArrayList<TSRReportDiseaseCondition>();
@@ -466,7 +472,7 @@ public class TSRReportGeneratorServiceTest {
         disease = new TSRReportDiseaseCondition();
         disease.setName("Adult Disease 2");
         diseaseConditions.add(disease);
-        pdfTsrReportGenerator.setDiseaseConditions(diseaseConditions);
+        tsrReportGenerator.setDiseaseConditions(diseaseConditions);
 
         // Trial Design
         TSRReportTrialDesign trialDesign = new TSRReportTrialDesign();
@@ -479,7 +485,7 @@ public class TSRReportGeneratorServiceTest {
         trialDesign.setAllocation("Randomized Controlled Trial");
         trialDesign.setStudyClassification("Efficacy");
         trialDesign.setTargetEnrollment("2");
-        pdfTsrReportGenerator.setTrialDesign(trialDesign);
+        tsrReportGenerator.setTrialDesign(trialDesign);
 
         // Eligibility Criteria
         TSRReportEligibilityCriteria eligibilityCriteria = new TSRReportEligibilityCriteria();
@@ -494,7 +500,7 @@ public class TSRReportGeneratorServiceTest {
         eligibilityCriteria.getInclusionCriteria().add("Inclusion Criteria 2");
         eligibilityCriteria.getExclusionCriteria().add("Exclusion Criteria 1");
         eligibilityCriteria.getExclusionCriteria().add("Exclusion Criteria 2");
-        pdfTsrReportGenerator.setEligibilityCriteria(eligibilityCriteria);
+        tsrReportGenerator.setEligibilityCriteria(eligibilityCriteria);
 
         // ARM Groups
         List<TSRReportArmGroup> armGroups = new ArrayList<TSRReportArmGroup>();
@@ -536,7 +542,7 @@ public class TSRReportGeneratorServiceTest {
         armIntervention.setDescription("20.0-50.0 Jcm2, GUM for 23.0 mBq, Every two months, 32 total dose; 23.0-12.0 Unit/mL Approach site; Abdomen");
         ag.getInterventions().add(armIntervention);
         armGroups.add(ag);
-        pdfTsrReportGenerator.setArmGroups(armGroups);
+        tsrReportGenerator.setArmGroups(armGroups);
 
         // Prop Trial Interventions
         TSRReportIntervention inter = new TSRReportIntervention();
@@ -544,14 +550,14 @@ public class TSRReportGeneratorServiceTest {
         inter.setName("3 Dimensional Conformal Radiation Therapy");
         inter.setAlternateName("3-D CRT, Conformal Radiation");
         inter.setDescription("10.0-50.0 Jcm2, GUM for 23.0 mBq, Every two months, 32 total dose; 23.0-12.0 Unit/mL Approach site; abdomen/pelvis");
-        pdfTsrReportGenerator.getInterventions().add(inter);
+        tsrReportGenerator.getInterventions().add(inter);
 
         inter = new TSRReportIntervention();
         inter.setType("Intervention 1");
         inter.setName("Radiation Therapy");
         inter.setAlternateName("3-D CRT intervention 1");
         inter.setDescription("20.0-50.0 Jcm2, GUM for 23.0 mBq, Every two months, 32 total dose; 23.0-12.0 Unit/mL Approach site; Abdomen");
-        pdfTsrReportGenerator.getInterventions().add(inter);
+        tsrReportGenerator.getInterventions().add(inter);
 
         // Primary Outcome Measures
         List<TSRReportOutcomeMeasure> primaryOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
@@ -566,7 +572,7 @@ public class TSRReportGeneratorServiceTest {
         pom.setTimeFrame("Primary Time Frame 2");
         pom.setSafetyIssue("no");
         primaryOutcomeMeasures.add(pom);
-        pdfTsrReportGenerator.setPrimaryOutcomeMeasures(primaryOutcomeMeasures);
+        tsrReportGenerator.setPrimaryOutcomeMeasures(primaryOutcomeMeasures);
 
         // Secondary Outcome Measures
         List<TSRReportOutcomeMeasure> secondaryOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
@@ -581,7 +587,7 @@ public class TSRReportGeneratorServiceTest {
         som.setTimeFrame("Secondary Time Frame 2");
         som.setSafetyIssue("YES");
         secondaryOutcomeMeasures.add(som);
-        pdfTsrReportGenerator.setSecondaryOutcomeMeasures(secondaryOutcomeMeasures);
+        tsrReportGenerator.setSecondaryOutcomeMeasures(secondaryOutcomeMeasures);
 
         // Sub Groups Stratification Criteria
         List<TSRReportSubGroupStratificationCriteria> sgsCrits = new ArrayList<TSRReportSubGroupStratificationCriteria>();
@@ -594,7 +600,28 @@ public class TSRReportGeneratorServiceTest {
         crit.setLabel("Label 2");
         crit.setDescription("This is a description for label 2.....");
         sgsCrits.add(crit);
-        pdfTsrReportGenerator.setSgsCriterias(sgsCrits);
+        tsrReportGenerator.setSgsCriterias(sgsCrits);
+
+        //Planned Markers
+        List<TSRReportPlannedMarker> plannedMarkers = new ArrayList<TSRReportPlannedMarker>();
+        TSRReportPlannedMarker marker = new TSRReportPlannedMarker();
+        marker.setName("Marker #1");
+        marker.setAssayType("PCR");
+        marker.setAssayUse("Research");
+        marker.setAssayPurpose("Research");
+        marker.setTissueSpecimenType("Plasma");
+        marker.setTissueCollectionMethod("Mandatory");
+        plannedMarkers.add(marker);
+
+        marker = new TSRReportPlannedMarker();
+        marker.setName("Marker #2");
+        marker.setAssayType("Other: Assay Type Other Text");
+        marker.setAssayUse("Research");
+        marker.setAssayPurpose("Other: Assay Purpose Other Text");
+        marker.setTissueSpecimenType("Plasma");
+        marker.setTissueCollectionMethod("Mandatory");
+        plannedMarkers.add(marker);
+        tsrReportGenerator.setPlannedMarkers(plannedMarkers);
 
         // Participating Sites
         List<TSRReportParticipatingSite> participatingSites = new ArrayList<TSRReportParticipatingSite>();
@@ -623,6 +650,6 @@ public class TSRReportGeneratorServiceTest {
         site.getInvestigators().add(new TSRReportInvestigator("John", "M.", "Guisti", "PI"));
         site.setProgramCode("SITE1_CODE_2");
         participatingSites.add(site);
-        pdfTsrReportGenerator.setParticipatingSites(participatingSites);
+        tsrReportGenerator.setParticipatingSites(participatingSites);
     }
 }
