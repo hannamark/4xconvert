@@ -733,7 +733,8 @@ public class PAServiceUtils {
                 }
             }
             Boolean ctGovIndicator = BlConverter.convertToBoolean(studyProtocolDTO.getCtgovXmlRequiredIndicator());
-            if (BooleanUtils.isTrue(ctGovIndicator) && !BlConverter.convertToBool(
+            if (containsNonExemptInds(studyIndldeDTOs) && BooleanUtils.isTrue(ctGovIndicator)
+                    && !BlConverter.convertToBool(
                     studyProtocolDTO.getFdaRegulatedIndicator())) {
                 errorMsg.append("FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.");
             }
