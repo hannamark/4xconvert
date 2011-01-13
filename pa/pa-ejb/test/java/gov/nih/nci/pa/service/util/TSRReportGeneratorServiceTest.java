@@ -80,50 +80,15 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.ArmBeanLocal;
-import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseBeanLocal;
-import gov.nih.nci.pa.service.DiseaseServiceLocal;
-import gov.nih.nci.pa.service.DocumentWorkflowStatusBeanLocal;
-import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceBean;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
-import gov.nih.nci.pa.service.InterventionBeanLocal;
-import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedActivityBeanLocal;
-import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
-import gov.nih.nci.pa.service.PlannedMarkerServiceBean;
-import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
-import gov.nih.nci.pa.service.StratumGroupBeanLocal;
-import gov.nih.nci.pa.service.StratumGroupServiceLocal;
-import gov.nih.nci.pa.service.StudyContactBeanLocal;
-import gov.nih.nci.pa.service.StudyContactServiceLocal;
-import gov.nih.nci.pa.service.StudyDiseaseBeanLocal;
-import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
-import gov.nih.nci.pa.service.StudyIndldeBeanLocal;
-import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureBeanLocal;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
-import gov.nih.nci.pa.service.StudyOverallStatusBeanLocal;
-import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StratumGroupServiceBean;
+import gov.nih.nci.pa.service.StudyContactServiceBean;
 import gov.nih.nci.pa.service.StudyProtocolServiceBean;
-import gov.nih.nci.pa.service.StudyRegulatoryAuthorityBeanLocal;
-import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
-import gov.nih.nci.pa.service.StudyResourcingBeanLocal;
-import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
-import gov.nih.nci.pa.service.StudySiteAccrualStatusBeanLocal;
-import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.service.StudySiteBeanLocal;
-import gov.nih.nci.pa.service.StudySiteContactBeanLocal;
-import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
-import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceBean;
+import gov.nih.nci.pa.service.StudySiteServiceBean;
 import gov.nih.nci.pa.service.util.report.AbstractTsrReportGenerator;
 import gov.nih.nci.pa.service.util.report.HtmlTsrReportGenerator;
 import gov.nih.nci.pa.service.util.report.PdfTsrReportGenerator;
@@ -149,9 +114,9 @@ import gov.nih.nci.pa.service.util.report.TSRReportSubGroupStratificationCriteri
 import gov.nih.nci.pa.service.util.report.TSRReportSummary4Information;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialDesign;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialIdentification;
+import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.ByteArrayOutputStream;
@@ -172,81 +137,35 @@ import com.lowagie.text.DocumentException;
  * @author NAmiruddin, kkanchinadam
  *
  */
-public class TSRReportGeneratorServiceTest {
+public class TSRReportGeneratorServiceTest extends AbstractMockitoTest {
 
     private final TSRReportGeneratorServiceBean bean = new TSRReportGeneratorServiceBean();
 
-
-    StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
-
-    StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeBeanLocal();
-
-    StudyDiseaseServiceLocal studyDiseaseService = new StudyDiseaseBeanLocal();
-
-    ArmServiceLocal armService = new ArmBeanLocal() ;
-
-    PlannedActivityServiceLocal plannedActivityService = new PlannedActivityBeanLocal();
-
-    StratumGroupServiceLocal subGroupsService = new StratumGroupBeanLocal();
-
-    StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
-
-    StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
-
-    StudyContactServiceLocal studyContactService = new StudyContactBeanLocal();
-
-    StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
-
-    StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
-
-    StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
-
-    OrganizationCorrelationServiceRemote ocsr = new OrganizationCorrelationServiceBean();
-
-    DocumentWorkflowStatusServiceLocal documentWorkflowStatusService = new DocumentWorkflowStatusBeanLocal();
-
-    RegulatoryInformationServiceRemote regulatoryInformationService = new RegulatoryInformationBean();
-
-    DiseaseServiceLocal diseaseService = new DiseaseBeanLocal();
-
-    InterventionServiceLocal interventionService = new InterventionBeanLocal();
-
-    InterventionAlternateNameServiceRemote interventionAlternateNameService = new InterventionAlternateNameServiceBean();
-
-    StudyResourcingServiceLocal  studyResourcingService = new StudyResourcingBeanLocal();
-
-    PAOrganizationServiceRemote  paOrganizationService = new PAOrganizationServiceBean();
-
-    private PlannedMarkerServiceLocal plannedMarkerService = new PlannedMarkerServiceBean();
-
-    private ServiceLocator paSvcLoc;
-
     @Before
-    public void setUp() throws Exception {
+    public void setup() throws Exception {
 
-        paSvcLoc = mock (ServiceLocator.class);
-        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
-        when(paSvcLoc.getStudyProtocolService()).thenReturn(new StudyProtocolServiceBean());
+        when(PaRegistry.getStudyProtocolService()).thenReturn(new StudyProtocolServiceBean());
 
-        bean.setArmService(armService);
-        bean.setOcsr(ocsr);
-        bean.setPlannedActivityService(plannedActivityService);
-        bean.setStudyContactService(studyContactService);
-        bean.setStudyDiseaseService(studyDiseaseService);
-        bean.setStudyIndldeService(studyIndldeService);
-        bean.setStudySiteService(studySiteService);
-        bean.setStudyOutcomeMeasureService(studyOutcomeMeasureService);
-        bean.setStudyOverallStatusService(studyOverallStatusService);
-        bean.setStudySiteContactService(studySiteContactService);
-        bean.setStudyRegulatoryAuthorityService(studyRegulatoryAuthorityService);
-        bean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
-        bean.setRegulatoryInformationService(regulatoryInformationService);
-        bean.setDiseaseService(diseaseService);
-        bean.setInterventionAlternateNameService(interventionAlternateNameService);
-        bean.setInterventionService(interventionService);
-        bean.setStudyResourcingService(studyResourcingService);
-        bean.setPaOrganizationService(paOrganizationService);
-        bean.setPlannedMarkerService(plannedMarkerService);
+        bean.setArmService(armSvc);
+        bean.setOcsr(orgSvc);
+        bean.setPlannedActivityService(plannedActSvc);
+        bean.setStudyDiseaseService(studyDiseaseSvc);
+        bean.setStudyIndldeService(studyIndIdeSvc);
+        bean.setStudyOutcomeMeasureService(studyOutcomeMeasureSvc);
+        bean.setStudyOverallStatusService(studyOverallStatusSvc);
+        bean.setStudySiteContactService(studySiteContactSvc);
+        bean.setStudySiteAccrualStatusService(studySiteAccrualStatusSvc);
+        bean.setRegulatoryInformationService(regulInfoSvc);
+        bean.setDiseaseService(diseaseSvc);
+        bean.setInterventionAlternateNameService(interventionAltNameSvc);
+        bean.setInterventionService(interventionSvc);
+        bean.setStudyResourcingService(studyResourcingSvc);
+        bean.setPlannedMarkerService(plannedMarkerSvc);
+        bean.setStudyRegulatoryAuthorityService(new StudyRegulatoryAuthorityServiceBean());
+        bean.setStudySiteService(new StudySiteServiceBean());
+        bean.setPaOrganizationService(PaRegistry.getPAOrganizationService());
+        bean.setStratumGroupService(new StratumGroupServiceBean());
+        bean.setStudyContactService(new StudyContactServiceBean());
 
         TestSchema.reset();
         TestSchema.primeData();
