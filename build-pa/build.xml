@@ -1526,7 +1526,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
     
     <target name="run-selenium:all" description="Runs Selenium tests for pa, registry, viewer and accrual"
-        depends="run-selenium:paear, run-selenium:viewer, run-selenium:accrual, run-selenium:reg-web">
+        depends="run-selenium:reg-web,run-selenium:paear, run-selenium:viewer, run-selenium:accrual">
     </target>
     
     <target name="init:ivy">
