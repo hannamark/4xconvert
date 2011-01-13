@@ -34,7 +34,7 @@
                     <tr>
                         <td colspan="2">
                             <s:set name="plannedMarkerList" value="plannedMarkerList" scope="request"/>
-                            <display:table name="plannedMarkerList" id="row" class="data" sort="list" pagesize="200" requestURI="plannedMarker.action">
+                            <display:table name="plannedMarkerList" htmlId="plannedMarkerTable" id="row" class="data" sort="list" pagesize="200" requestURI="plannedMarker.action">
                                 <display:column escapeXml="true" property="name" sortable="true" titleKey="plannedMarker.name" headerClass="sortable"/>
                                 <display:column escapeXml="true" property="assayType" sortable="true" titleKey="plannedMarker.assayType" headerClass="sortable"/>
                                 <display:column escapeXml="true" property="assayUse" sortable="true" titleKey="plannedMarker.assayUse" headerClass="sortable"/>

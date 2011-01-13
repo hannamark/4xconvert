@@ -158,6 +158,117 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isElementPresent("id=logoutMenuOption"));
     }
 
+    /**
+     * Verifies that the trial search page has been loaded.
+     */
+    protected void verifyTrialSearchPage() {
+        assertTrue(selenium.isElementPresent("id=officialTitle"));
+        assertTrue(selenium.isElementPresent("id=leadOrganizationId"));
+        assertTrue(selenium.isElementPresent("id=identifierType"));
+        assertTrue(selenium.isElementPresent("id=identifier"));
+        assertTrue(selenium.isElementPresent("id=principalInvestigatorId"));
+        assertTrue(selenium.isElementPresent("id=primaryPurpose"));
+        assertTrue(selenium.isElementPresent("id=phaseCode"));
+        assertTrue(selenium.isElementPresent("id=studyStatusCode"));
+        assertTrue(selenium.isElementPresent("id=documentWorkflowStatusCode"));
+        assertTrue(selenium.isElementPresent("id=studyMilestone"));
+        assertTrue(selenium.isElementPresent("id=searchOnHold"));
+        assertTrue(selenium.isElementPresent("id=studyLockedBy"));
+        assertTrue(selenium.isElementPresent("id=submissionType"));
+        assertTrue(selenium.isElementPresent("id=trialCategory"));
+        assertTrue(selenium.isElementPresent("link=Search"));
+        assertTrue(selenium.isElementPresent("link=Reset"));
+    }
+
+    /**
+     * Verifies that a trial has been selected from the search results.
+     * @param nciTrialIdentifier the NCI trial identifier i.e. NCI-2010-00001
+     */
+    protected void verifyTrialSelected(String nciTrialIdentifier) {
+        assertTrue(selenium.isTextPresent(nciTrialIdentifier));
+        assertTrue(selenium.isTextPresent("Trial Overview"));
+        assertTrue(selenium.isElementPresent("link=Trial Identification"));
+        assertTrue(selenium.isElementPresent("link=Trial History"));
+        assertTrue(selenium.isElementPresent("link=Trial Milestones"));
+        assertTrue(selenium.isElementPresent("link=On-hold Information"));
+        assertTrue(selenium.isElementPresent("link=Manage Accrual Access"));
+        assertTrue(selenium.isElementPresent("link=View TSR"));
+        assertTrue(selenium.isElementPresent("link=Assign Ownership"));
+        assertTrue(selenium.isTextPresent("Validation"));
+        assertTrue(selenium.isElementPresent("link=Trial Related Documents"));
+        assertTrue(selenium.isElementPresent("link=Trial Status"));
+        assertTrue(selenium.isElementPresent("link=Trial Funding"));
+        assertTrue(selenium.isElementPresent("link=Trial IND/IDE"));
+        assertTrue(selenium.isElementPresent("link=Regulatory Information"));
+        assertTrue(selenium.isElementPresent("link=Trial Validation"));
+    }
+
+    /**
+     * Checks a trial out. Assumes that the trial has already been selected.
+     */
+    protected void checkOutTrial() {
+        assertTrue(selenium.isElementPresent("link=Trial Identification"));
+        clickAndWait("link=Trial Identification");
+        assertTrue(selenium.isElementPresent("link=Check Out"));
+        assertFalse(selenium.isElementPresent("link=Check In"));
+        clickAndWait("link=Check Out");
+        selenium.getConfirmation();
+        assertTrue(selenium.isElementPresent("link=Check In"));
+        assertFalse(selenium.isElementPresent("link=Check Out"));
+    }
+
+    /**
+     * Accepts a trial. Assumes that the trial has already been checked out.
+     */
+    protected void acceptTrial() {
+        clickAndWait("link=Trial Validation");
+        assertTrue(selenium.isElementPresent("link=Save"));
+        assertTrue(selenium.isElementPresent("link=Accept"));
+        assertTrue(selenium.isElementPresent("link=Reject"));
+        clickAndWait("link=Accept");
+    }
+
+    /**
+     * Verifies that the trial has been accepted.
+     */
+    protected void verifyTrialAccepted() {
+        assertTrue(selenium.isTextPresent("Trial Overview"));
+        assertTrue(selenium.isElementPresent("link=Trial Identification"));
+        assertTrue(selenium.isElementPresent("link=Trial History"));
+        assertTrue(selenium.isElementPresent("link=Trial Milestones"));
+        assertTrue(selenium.isElementPresent("link=On-hold Information"));
+        assertTrue(selenium.isElementPresent("link=Manage Accrual Access"));
+        assertTrue(selenium.isElementPresent("link=View TSR"));
+        assertTrue(selenium.isElementPresent("link=Assign Ownership"));
+
+        assertTrue(selenium.isTextPresent("Administrative Data"));
+        assertTrue(selenium.isElementPresent("link=General Trial Details"));
+        assertTrue(selenium.isElementPresent("link=NCI Specific Information"));
+        assertTrue(selenium.isElementPresent("link=Regulatory Information"));
+        assertTrue(selenium.isElementPresent("link=Human Subject Safety"));
+        assertTrue(selenium.isElementPresent("link=Trial IND/IDE"));
+        assertTrue(selenium.isElementPresent("link=Trial Status"));
+        assertTrue(selenium.isElementPresent("link=Trial Funding"));
+        assertTrue(selenium.isElementPresent("link=Participating Sites"));
+        assertTrue(selenium.isElementPresent("link=Collaborators"));
+        assertTrue(selenium.isElementPresent("link=Trial Related Documents"));
+
+        assertTrue(selenium.isTextPresent("Scientific Data"));
+        assertTrue(selenium.isElementPresent("link=Trial Description"));
+        assertTrue(selenium.isElementPresent("link=Design Details"));
+        assertTrue(selenium.isElementPresent("link=Outcome Measures"));
+        assertTrue(selenium.isElementPresent("link=Eligibility Criteria"));
+        assertTrue(selenium.isElementPresent("link=Disease/Condition"));
+        assertTrue(selenium.isElementPresent("link=Markers"));
+        assertTrue(selenium.isElementPresent("link=Interventions"));
+        assertTrue(selenium.isElementPresent("link=Arms"));
+        assertTrue(selenium.isElementPresent("link=Sub-groups"));
+
+        assertTrue(selenium.isTextPresent("Completion"));
+        assertTrue(selenium.isElementPresent("link=Abstraction Validation"));
+    }
+
+
     public void loginAsAbstractor() {
         login("abstractor-ci", "Coppa#12345");
         disclaimer(false);

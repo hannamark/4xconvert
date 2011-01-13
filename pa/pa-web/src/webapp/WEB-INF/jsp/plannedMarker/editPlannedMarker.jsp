@@ -65,7 +65,7 @@
                                         <s:label for="plannedMarker.name"><fmt:message key="plannedMarker.name"/>:</s:label><span class="required">*</span>
                                     </td>
                                     <td>
-                                        <s:textfield name="plannedMarker.name" maxlength="200" size="200" cssStyle="width:280px"/>
+                                        <s:textfield name="plannedMarker.name" id="name" maxlength="200" size="200" cssStyle="width:280px"/>
                                         <span class="formErrorMsg">
                                             <s:fielderror>
                                                 <s:param>plannedMarker.name</s:param>
@@ -93,7 +93,7 @@
                                         <s:label for="plannedMarker.assayTypeOtherText"><fmt:message key="plannedMarker.assayTypeOtherText"/>:</s:label><span class="required">*</span>
                                     </td>
                                     <td>
-                                        <s:textfield name="plannedMarker.assayTypeOtherText" maxlength="200" size="200" cssStyle="width:280px"/>
+                                        <s:textfield name="plannedMarker.assayTypeOtherText" id="assayTypeOtherText" maxlength="200" size="200" cssStyle="width:280px"/>
                                         <span class="formErrorMsg">
                                             <s:fielderror>
                                                 <s:param>plannedMarker.assayTypeOtherText</s:param>
@@ -107,7 +107,7 @@
                                     </td>
                                     <td>
                                         <s:set name="assayUseValues" value="@gov.nih.nci.pa.enums.AssayUseCode@getDisplayNames()" />
-                                        <s:select headerKey="" headerValue="" name="plannedMarker.assayUse"
+                                        <s:select headerKey="" headerValue="" name="plannedMarker.assayUse" id="assayUse"
                                             list="#assayUseValues"/> 
                                         <span class="formErrorMsg">
                                             <s:fielderror>
@@ -136,7 +136,7 @@
                                         <s:label for="plannedMarker.assayPurposeOtherText"><fmt:message key="plannedMarker.assayPurposeOtherText"/>:</s:label><span class="required">*</span>
                                     </td>
                                     <td>
-                                        <s:textfield name="plannedMarker.assayPurposeOtherText" maxlength="200" size="200" cssStyle="width:280px"/>
+                                        <s:textfield name="plannedMarker.assayPurposeOtherText" id="assayPurposeOtherText" maxlength="200" size="200" cssStyle="width:280px"/>
                                         <span class="formErrorMsg">
                                             <s:fielderror>
                                                 <s:param>plannedMarker.assayPurposeOtherText</s:param>
@@ -150,7 +150,7 @@
                                     </td>
                                     <td>
                                         <s:set name="tissueSpecimenTypeValues" value="@gov.nih.nci.pa.enums.TissueSpecimenTypeCode@getDisplayNames()" />
-                                        <s:select headerKey="" headerValue="" name="plannedMarker.tissueSpecimenType"
+                                        <s:select headerKey="" headerValue="" name="plannedMarker.tissueSpecimenType" id="tissueSpecimenType"
                                             list="#tissueSpecimenTypeValues"/>
                                         <span class="formErrorMsg">
                                             <s:fielderror>
@@ -165,7 +165,7 @@
                                     </td>
                                     <td>
                                         <s:set name="tissueCollectionMethodValues" value="@gov.nih.nci.pa.enums.TissueCollectionMethodCode@getDisplayNames()" />
-                                        <s:select headerKey="" headerValue="" name="plannedMarker.tissueCollectionMethod"
+                                        <s:select headerKey="" headerValue="" name="plannedMarker.tissueCollectionMethod" id="tissueCollectionMethod"
                                             list="#tissueCollectionMethodValues"/>
                                         <span class="formErrorMsg">
                                             <s:fielderror>
@@ -179,7 +179,7 @@
                                         <s:label for="plannedMarker.status"><fmt:message key="plannedMarker.status"/>:</s:label>
                                     </td>
                                     <td>
-                                        <s:textfield name="plannedMarker.status" cssClass="readonly" readonly="true" />
+                                        <s:textfield name="plannedMarker.status" id="status" cssClass="readonly" readonly="true" />
                                     </td>
                                 </tr>
                             </table>
