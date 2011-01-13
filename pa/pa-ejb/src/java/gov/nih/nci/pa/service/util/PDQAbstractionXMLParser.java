@@ -40,6 +40,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
+import org.apache.log4j.Logger;
 import org.jdom.Element;
 
 /**
@@ -59,6 +60,9 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     private Map<OrganizationDTO, Map<StudySiteAccrualStatusDTO, Map<PoDto, String>>> locationsMap;
     private String healthyVolunteers;
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
+
+    private static final Logger LOG  = Logger.getLogger(PDQAbstractionXMLParser.class);
+
 
     /**
      * {@inheritDoc}
@@ -139,14 +143,10 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             contactMap.put(contactDTO, StringUtils.equalsIgnoreCase(contactElmt.getAttributeValue("role"),
                     "Principal investigator")? "PI" : "");
         }
-        if (contactElmt.getChild("last_name") != null) {
-            OrganizationDTO contactDTO = new OrganizationDTO();
-            contactDTO.setName(EnOnConverter.convertToEnOn(getText(contactElmt, "last_name")));
-            List<String> phoneList = new ArrayList<String>();
-            phoneList.add(getText(contactElmt, "phone"));
-            contactDTO.setTelecomAddress(DSetConverter.convertListToDSet(phoneList, "PHONE", null));
-            contactMap.put(contactDTO, "");
-        }
+
+      if (contactElmt.getChild("last_name") != null) {
+          LOG.info("No Generic Contact created for last_name: " + contactElmt.getChild("last_name"));
+      }
         return contactMap;
     }
 
