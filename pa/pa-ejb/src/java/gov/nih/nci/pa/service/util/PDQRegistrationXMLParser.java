@@ -6,7 +6,6 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -116,10 +115,10 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         validateStudyDesign(parent);
         Element studyDesignElt = parent.getChild("study_design");
         String studyType = getText(studyDesignElt, "study_type");
-        if (StringUtils.endsWithIgnoreCase("interventional", studyType)) {
+        if (StringUtils.equalsIgnoreCase("interventional", studyType)) {
             studyProtocolDTO = new InterventionalStudyProtocolDTO();
         } else {
-            studyProtocolDTO = new ObservationalStudyProtocolDTO();
+            throw new PAException("Study_type can only be interventional.");
         }
         studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt(studyType));
         studyProtocolDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(getText(studyDesignElt.getChild(

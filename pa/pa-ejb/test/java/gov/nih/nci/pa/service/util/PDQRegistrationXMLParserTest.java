@@ -209,6 +209,12 @@ public class PDQRegistrationXMLParserTest {
         rXMLParser.parse();
     }
 
+    @Test(expected=PAException.class)
+    public void testObservationalStudyType() throws PAException {
+        rXMLParser.setUrl(this.getClass().getResource("/sample-pdq-input-observational.xml"));
+        rXMLParser.parse();
+    }
+    
     @Test
     public void testStudyInd() throws PAException {
         when(identifierPersonSvc.search(any(IdentifiedPersonDTO.class))).thenReturn(new ArrayList<IdentifiedPersonDTO>());
