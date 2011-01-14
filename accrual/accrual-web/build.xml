@@ -141,8 +141,15 @@
         <copy todir="${web.build.outputDir}">
             <fileset dir="${web.build.resourceDir}"/>
         </copy>
-        <copy todir="${web.build.webappDir}" filtering="true">
-            <fileset dir="${basedir}/src/webapp"/>
+        <copy todir="${web.build.webappDir}">
+            <fileset dir="${basedir}/src/webapp">
+                <exclude name="**/web.xml"/>
+            </fileset>
+        </copy>
+        <copy todir="${web.build.webappDir}/WEB-INF" filtering="true">
+            <fileset dir="${basedir}/src/webapp/WEB-INF">
+                <include name="**/web.xml"/>
+            </fileset>
             <filterset>
                 <filter token="project.version" value="${project.version}"/>
                 <filter token="project.revision" value="${project.revision}"/>
