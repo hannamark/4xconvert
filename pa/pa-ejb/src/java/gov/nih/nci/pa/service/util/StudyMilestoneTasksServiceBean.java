@@ -93,8 +93,10 @@ import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -104,6 +106,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.log4j.Logger;
 
 /**
@@ -124,11 +127,13 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     private StudyMilestoneServicelocal smRemote;
     /**
      * Perform task.
+     * if we run into more problems, we should look into making the query protocol-focused,
+     * rather than milestone-focused, which may simplify the code a bit (at the cost of a more complex query)
      * @throws PAException exception
      */
     public void performTask() throws PAException {
         Calendar milestoneDate = Calendar.getInstance();
-        List<StudyMilestone> studyMilestoneList = getTrialSummarySentMilestone();
+        Set<StudyMilestone> studyMilestoneList = getTrialSummarySentMilestones();
         LOG.info("StudyMilestoneTasksServiceBean searching for studies; search results returned "
                     + studyMilestoneList.size());
 
@@ -177,20 +182,39 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
      * Gets List of DTOs for which TSR is sent but not having to INITIAL_ABSTRACTION_VERIFY.
      * @return list Of StudyMilestone
      */
-    private List<StudyMilestone> getTrialSummarySentMilestone() {
+    private Set<StudyMilestone> getTrialSummarySentMilestones() {
         String hsql = "select sm from StudyMilestone sm where sm.milestoneCode='" + MilestoneCode.TRIAL_SUMMARY_SENT
             + "' and sm.studyProtocol  in (select sm1.studyProtocol from StudyMilestone sm1 where "
             + " sm1.milestoneCode='" + MilestoneCode.TRIAL_SUMMARY_SENT + "' and sm1.studyProtocol not in "
             + " (select sm2.studyProtocol"
             + " from StudyMilestone sm2 where sm2.milestoneCode='" + MilestoneCode.INITIAL_ABSTRACTION_VERIFY + "'))";
-        return HibernateUtil.getCurrentSession().createQuery(hsql).list();
-    }
 
+        Set<StudyMilestone> mileStoneList = new TreeSet<StudyMilestone>(new MilestoneComparator());
+        mileStoneList.addAll(HibernateUtil.getCurrentSession().createQuery(hsql).list());
+        return mileStoneList;
+    }
     /**
      * @param smRemote the smRemote to set
      */
     public void setSmRemote(StudyMilestoneServicelocal smRemote) {
         this.smRemote = smRemote;
+    }
+    /**
+     * this will compare the milestone object based on study protocol id.
+     * @author vrushali
+     *
+     */
+    public class MilestoneComparator implements Comparator {
+
+        /**
+         * {@inheritDoc}
+         */
+        public int compare(Object milestone0, Object milestone1) {
+            Long studyId0 = ((StudyMilestone) milestone0).getStudyProtocol().getId();
+            Long studyId1 = ((StudyMilestone) milestone1).getStudyProtocol().getId();
+            return new CompareToBuilder().append(studyId0, studyId1).toComparison();
+       }
+
     }
 
 }
