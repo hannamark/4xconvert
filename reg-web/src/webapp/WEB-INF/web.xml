@@ -5,17 +5,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-	<display-name>PA</display-name>
+    <display-name>PA</display-name>
 
     <!-- Define the basename for a resource bundle for I18N -->
     <context-param>
         <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
         <param-value>ApplicationResources</param-value>
     </context-param>
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath*:applicationContext*.xml</param-value>
-	</context-param>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath*:applicationContext*.xml</param-value>
+    </context-param>
     <context-param>
         <param-name>appTagVersion</param-name>
         <param-value>@project.version@</param-value>
@@ -25,8 +25,8 @@
         <param-value>@project.revision@</param-value>
     </context-param>
 
-	<!-- Filters -->
-	<filter>
+    <!-- Filters -->
+    <filter>
         <filter-name>action2-cleanup</filter-name>
         <filter-class>org.apache.struts2.dispatcher.ActionContextCleanUp</filter-class>
     </filter>
@@ -51,16 +51,23 @@
         <filter-name>csmUserFilter</filter-name>
         <filter-class>gov.nih.nci.pa.filter.CsmUserFilter</filter-class>
     </filter>
+    <!--  See http://displaytag.sourceforge.net/1.2/export_filter.html -->
+    <filter>
+        <filter-name>ResponseOverrideFilter</filter-name>
+        <filter-class>org.displaytag.filter.ResponseOverrideFilter</filter-class>
+    </filter>
     <filter>
         <filter-name>cgmmAuthSrcMapHelper</filter-name>
         <filter-class>gov.nih.nci.pa.filter.CGMMAuthSourceRequestFilter</filter-class>
     </filter>
+
     <filter-mapping>
         <filter-name>cgmmAuthSrcMapHelper</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>sessionFixation</filter-name>
         <url-pattern>*.action</url-pattern>
@@ -73,24 +80,31 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
-	<filter-mapping>
+    <filter-mapping>
         <filter-name>action2-cleanup</filter-name>
         <url-pattern>/*</url-pattern>
                 <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
-
     </filter-mapping>
+
+    <!--  This filter has to be before the sitemesh filter or sitemesh will try to decorate the file exported from displaytag -->
+    <filter-mapping>
+        <filter-name>ResponseOverrideFilter</filter-name>
+        <url-pattern>*.action</url-pattern>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>sitemesh</filter-name>
         <url-pattern>/*</url-pattern>
-
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>action2</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>csmUserFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -105,19 +119,19 @@
         </session-timeout>
     </session-config>
 
-	<!-- Listeners
-	<listener>
+    <!-- Listeners
+    <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>-->
- 
+
   <!--   <listener>
         <listener-class>gov.nih.nci.pa.filter.CSMSyncListener</listener-class>
     </listener>  -->
     <!-- Servlets -->
     <servlet>
-    	<servlet-name>jspSupportServlet</servlet-name>
-    	<servlet-class>org.apache.struts2.views.JspSupportServlet</servlet-class>
-    	<load-on-startup>5</load-on-startup>
+        <servlet-name>jspSupportServlet</servlet-name>
+        <servlet-class>org.apache.struts2.views.JspSupportServlet</servlet-class>
+        <load-on-startup>5</load-on-startup>
     </servlet>
 
     <!-- Welcome file lists -->

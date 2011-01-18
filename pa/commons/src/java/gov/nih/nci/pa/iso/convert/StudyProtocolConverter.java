@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
-
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;

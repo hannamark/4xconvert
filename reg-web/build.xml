@@ -87,7 +87,7 @@
             <include name="*.jar"/>
         </fileset>
     </path>
-    
+
     <property name="selenium.jar.dir" location="${lib.dir}/reg-web/selenium" />
     <path id="selenium.classpath">
         <fileset dir="${selenium.jar.dir}">
@@ -121,7 +121,7 @@
             <include name="${ivy.file}" />
         </fileset>
     </path>
-    
+
     <path id="ejb.package.classpath">
          <fileset dir="${pa.dir}/pa-ejb/target">
             <include name="*.jar"/>
@@ -142,7 +142,7 @@
     </path>
     <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
     <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="macrodef"/>
-    
+
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
@@ -191,7 +191,7 @@
               </filterset>
         </copy>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Configure test compilation target                                      -->
     <!-- ====================================================================== -->
@@ -206,7 +206,7 @@
             </filterset>
         </copy>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
@@ -232,7 +232,7 @@
             <fileset dir="${reg-web.build.testResourceDir.0}"/>
         </copy>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Run Selenium Tests                                                       -->
     <!-- ====================================================================== -->
@@ -251,7 +251,7 @@
             </batchtest>
          </junit>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Run checkstyle                                                         -->
     <!-- ====================================================================== -->
@@ -327,8 +327,8 @@
         <copy todir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib">
             <fileset dir="${runtime.jar.dir}"/>
         </copy>
-        
-        <copy todir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF" file="${software.dir}/reg-web/src/webapp/WEB-INF/web.xml" 
+
+        <copy todir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF" file="${software.dir}/reg-web/src/webapp/WEB-INF/web.xml"
             filtering="true">
             <filterset>
                 <filter token="project.version" value="${project.version}"/>
@@ -336,9 +336,7 @@
             </filterset>
         </copy>
 
-        <war destfile="${reg-web.build.dir}/${reg-web.war}"
-             compress="false"
-             webxml="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/web.xml">
+        <war destfile="${reg-web.build.dir}/${reg-web.war}" compress="false" webxml="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/web.xml">
             <lib dir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib"/>
             <classes dir="${reg-web.build.outputDir}"/>
             <webinf dir="${software.dir}/reg-web/src/webapp/WEB-INF" excludes="web.xml"/>
@@ -569,17 +567,17 @@
     <!-- ====================================================================== -->
     <!-- Generate Javadoc                                                       -->
     <!-- ====================================================================== -->
-        
+
     <target name="generate-javadoc">
-		<javadoc destdir="${reg-web.build.javadoc}"
-		    sourcepath="${reg-web.build.srcDir.0}"
-		    windowtitle="CTRP Registry">
-		    <doctitle><![CDATA[<h1>CTRP Trial Registration</h1>]]></doctitle>
+        <javadoc destdir="${reg-web.build.javadoc}"
+            sourcepath="${reg-web.build.srcDir.0}"
+            windowtitle="CTRP Registry">
+            <doctitle><![CDATA[<h1>CTRP Trial Registration</h1>]]></doctitle>
             <classpath>
                 <path refid="compile.classpath"/>
                 <path refid="common.package.classpath" />
             </classpath>
-		</javadoc> 
+        </javadoc>
         <mkdir dir="javadoc"/>
         <zip destfile="javadoc/reg-web-javadoc.zip">
             <fileset dir="${reg-web.build.javadoc}" />
@@ -604,8 +602,8 @@
                         </filterchain>
                     </copy>
                 </target>
-    
-    
+
+
     <!-- ====================================================================== -->
     <!-- Determines build version and revision                                  -->
     <!-- ====================================================================== -->
@@ -614,7 +612,7 @@
         <svn>
             <status path="." revisionproperty="project.revision" urlproperty="project.url" />
         </svn>
-        <propertyregex property="project.base" input="${project.url}" casesensitive="false" 
+        <propertyregex property="project.base" input="${project.url}" casesensitive="false"
             select="\1" regexp="coppa\/([^/]*)\/"/>
         <if>
             <equals arg1="${project.base}" arg2="trunk"/>

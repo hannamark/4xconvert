@@ -131,7 +131,7 @@ public class DisclaimerAction extends ActionSupport {
         if ("".equals(actionName)) {
             actionName = "searchTrial.action";
         }
-        LOG.info("redirect to " + actionName);
+        LOG.debug("redirect to " + actionName);
         return "redirect_to";
     }
 

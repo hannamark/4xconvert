@@ -9,13 +9,13 @@
         <pattern>/images/*</pattern>
         <pattern>/dojo/*</pattern>
         <pattern>/struts/*</pattern>
-        <pattern>*popup*</pattern>  
-         <pattern>*orgPop*</pattern>  
-        <pattern>*Ajax.action*</pattern>  
+        <pattern>*popup*</pattern>
+        <pattern>*orgPop*</pattern>
+        <pattern>*Ajax.action*</pattern>
         <pattern>*ajax*</pattern>
-        <pattern>*nodecor*</pattern>   
+        <pattern>*nodecor*</pattern>
         <pattern>*lookup*</pattern>
-        <pattern>/helpDocs/*</pattern> 
+        <pattern>/helpDocs/*</pattern>
     </excludes>
 
     <decorator name="popup" page="popup.jsp">

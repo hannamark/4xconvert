@@ -27,7 +27,7 @@
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop]
+                        _,d-\d+?-[sope]
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
@@ -38,7 +38,7 @@
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop]
+                        _,d-\d+?-[sope]
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="conversionError" />
@@ -117,7 +117,7 @@
               Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
            -->
           <param name="excludeParams">
-            _,d-\d+?-[sop]
+            _,d-\d+?-[sope]
          </param>
         </interceptor-ref>
 
@@ -129,7 +129,6 @@
     <package name="protected" namespace="/protected" extends="global">
         <action name="searchTrial*" class="gov.nih.nci.registry.action.SearchTrialAction" method="{1}">
             <interceptor-ref name="methodValidationStack" />
-
             <result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>
             <result name="view">/WEB-INF/jsp/searchTrialView.jsp</result>
             <result name="error">/WEB-INF/jsp/searchTrialCriteria.jsp</result>
@@ -198,7 +197,7 @@
         <interceptor-ref name="params">
             <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
             <param name="excludeParams">
-                _,d-\d+?-[sop]
+                _,d-\d+?-[sope]
             </param>
         </interceptor-ref>
         <interceptor-ref name="methodValidationStack" />
@@ -246,7 +245,7 @@
               Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
            -->
           <param name="excludeParams">
-            _,d-\d+?-[sop]
+            _,d-\d+?-[sope]
          </param>
         </interceptor-ref>
         <result name="success">/WEB-INF/jsp/siteAdministration.jsp</result>
@@ -272,7 +271,7 @@
               Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
            -->
           <param name="excludeParams">
-            _,d-\d+?-[sop]
+            _,d-\d+?-[sope]
          </param>
         </interceptor-ref>
         <result name="success">/WEB-INF/jsp/manageTrialOwnership.jsp</result>
@@ -285,7 +284,7 @@
               Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
            -->
           <param name="excludeParams">
-            _,d-\d+?-[sop]
+            _,d-\d+?-[sope]
          </param>
         </interceptor-ref>
         <result name="success">/WEB-INF/jsp/displayTrialOwnership.jsp</result>

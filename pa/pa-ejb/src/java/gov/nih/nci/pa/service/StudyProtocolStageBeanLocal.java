@@ -242,7 +242,6 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
 
     private Ii createOrUpdateStudyProtocol(StudyProtocolStageDTO isoDTO, String operation)
             throws PAException {
-        LOG.info("inside create...");
         StudyProtocolStage sp = StudyProtocolStageConverter.convertFromDTOToDomain(isoDTO);
         Session session = HibernateUtil.getCurrentSession();
         if ("Create".equalsIgnoreCase(operation)) {
@@ -272,14 +271,14 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         createPAPersonByPoId(paServiceUtil, sp.getSitePiIdentifier());
         return IiConverter.convertToStudyProtocolIi(sp.getId());
     }
-    
+
     private void createPAOrganizationByPoId(PAServiceUtils paServiceUtil, String id) throws PAException {
         if (!StringUtils.isEmpty(id)) {
             paServiceUtil.getOrCreatePAOrganizationByIi(IiConverter
                     .convertToPoOrganizationIi(id));
         }
     }
-    
+
     private void createPAPersonByPoId(PAServiceUtils paServiceUtil, String id) throws PAException {
         if (!StringUtils.isEmpty(id)) {
             paServiceUtil.getOrCreatePAPersonByPoIi(IiConverter
@@ -324,7 +323,6 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         Session session = HibernateUtil.getCurrentSession();
         StringBuffer sql = new StringBuffer("DELETE FROM STUDY_FUNDING_STAGE WHERE STUDY_PROTOCOL_STAGE_IDENTIFIER  = ")
             .append(IiConverter.convertToString(studyProtocolStageIi));
-        LOG.debug(QUERY + sql);
         session.createSQLQuery(sql.toString()).executeUpdate();
     }
 
@@ -353,7 +351,6 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         Session session = HibernateUtil.getCurrentSession();
         StringBuffer sql = new StringBuffer("DELETE FROM STUDY_INDIDE_STAGE WHERE STUDY_PROTOCOL_STAGE_IDENTIFIER  = ")
             .append(IiConverter.convertToString(studyProtocolStageIi));
-        LOG.debug(QUERY + sql);
         session.createSQLQuery(sql.toString()).executeUpdate();
 
     }

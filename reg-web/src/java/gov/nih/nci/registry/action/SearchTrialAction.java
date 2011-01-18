@@ -162,7 +162,7 @@ public class SearchTrialAction extends ActionSupport {
         UPDATEABLE_STATUS.add(StudyStatusCode.COMPLETE);
         UPDATEABLE_STATUS.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
     }
-    
+
     private String usercreated;
     /**
      * @return the usercreated
@@ -177,7 +177,7 @@ public class SearchTrialAction extends ActionSupport {
     public void setUsercreated(String usercreated) {
         this.usercreated = usercreated;
     }
-    
+
     /**
      * @return the trialAction
      */
@@ -364,7 +364,7 @@ public class SearchTrialAction extends ActionSupport {
     public void setStudyProtocolId(Long studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
     }
-    
+
     private void loadPropTrial(Ii studyProtocolIi) throws PAException, NullifiedRoleException {
         ProprietaryTrialDTO trialDTO = new ProprietaryTrialDTO();
         trialUtil.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
@@ -382,7 +382,7 @@ public class SearchTrialAction extends ActionSupport {
         ServletActionContext.getRequest().setAttribute("participatingSitesList",
                 trialDTO.getParticipatingSitesList());
     }
-    
+
     private void loadNonPropTrial(Ii studyProtocolIi, boolean maskFields) throws PAException, NullifiedRoleException {
         TrialDTO trialDTO = new TrialDTO();
         trialUtil.getTrialDTOFromDb(studyProtocolIi, trialDTO);
@@ -403,8 +403,8 @@ public class SearchTrialAction extends ActionSupport {
             ServletActionContext.getRequest().setAttribute(Constants.STUDY_INDIDE, trialDTO.getIndIdeDtos());
         }
     }
-    
-    private StudyProtocolDTO loadTrial(Ii studyProtocolIi, boolean maskFields) 
+
+    private StudyProtocolDTO loadTrial(Ii studyProtocolIi, boolean maskFields)
         throws PAException, NullifiedRoleException {
         ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
         StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
@@ -443,8 +443,8 @@ public class SearchTrialAction extends ActionSupport {
             return ERROR;
         }
     }
-    
-    private void queryTrialDocsAndSetAttributes(Ii studyProtocolIi, 
+
+    private void queryTrialDocsAndSetAttributes(Ii studyProtocolIi,
             StudyProtocolDTO protocolDTO, boolean maskFields) throws PAException {
         ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO);
         // query the trial documents
@@ -501,19 +501,19 @@ public class SearchTrialAction extends ActionSupport {
         validateEmptyIdentifier();
         validateOrganizationType();
     }
-    
+
     private void validateEmptyIdentifierType() {
         if (StringUtils.isNotEmpty(criteria.getIdentifierType()) && StringUtils.isEmpty(criteria.getIdentifier())) {
             addFieldError("criteria.identifier", getText("error.search.identifier"));
         }
     }
-    
+
     private void validateEmptyIdentifier() {
         if (StringUtils.isNotEmpty(criteria.getIdentifier()) && StringUtils.isEmpty(criteria.getIdentifierType())) {
             addFieldError("criteria.identifierType", getText("error.search.identifierType"));
         }
     }
-    
+
     private void validateOrganizationType() {
         if (StringUtils.isNotEmpty(criteria.getOrganizationType()) && (criteria.getOrganizationId() == null
                 && criteria.getParticipatingSiteId() == null)) {

@@ -96,7 +96,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 /**
@@ -111,7 +110,6 @@ import org.hibernate.Session;
 public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends AbstractEntity,
                                         CONVERTER extends AbstractConverter<DTO, BO>>
         extends AbstractBaseIsoService<DTO, BO, CONVERTER> implements StudyPaService<DTO> {
-    private static final Logger LOG = Logger.getLogger(AbstractStudyIsoService.class);
 
     /**
      * @param ii index of object
@@ -135,7 +133,6 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
             + "join alias.studyProtocol sp "
             + "where sp.id = :studyProtocolId "
             + "order by alias.id ";
-        LOG.debug("query " +  getTypeArgument().getName() + " = " + hql + ".  ");
 
         // step 2: construct query object
         query = session.createQuery(hql);
@@ -205,7 +202,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
 
     /**
      * Create Mapping Identifier when copying.
-     *  
+     *
      * @param map Map where key is the fromIi and value is the toIi.
      * @param studyProtocolIi the new Study Protocol Ii.
      */
@@ -224,6 +221,5 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
            mi.setStudyProtocol(sp);
            session.save(mi);
         }
-
     }
 }

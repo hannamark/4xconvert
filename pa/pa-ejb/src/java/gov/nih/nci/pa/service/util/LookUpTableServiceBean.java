@@ -101,14 +101,10 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 /**
-* Bean implementation for providing access to look up tables.
-*
-* @author Naveen Amiruddin
-* @since 06/26/2008
-* copyright NCI 2007.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
-*/
+ * Bean implementation for providing access to look up tables.
+ *
+ * @author Naveen Amiruddin
+ */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
@@ -189,18 +185,19 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         Query query = session.createQuery("select p from PAProperties p where p.name = '" + name + "'");
         paProperties =  query.list();
         if (paProperties == null || paProperties.isEmpty()) {
-            throw new PAException(" PA_PROPERTIES does not have entry for  " + name);
+            throw new PAException("PA_PROPERTIES does not have entry for  " + name);
         }
         value = paProperties.get(0).getValue();
         return value;
     }
+
     /**
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<Country> searchCountry(Country country) throws PAException {
         if (country == null) {
-            throw new PAException("country connot be null");
+            throw new PAException("country cannot be null");
         }
         List<Country> countryList = new ArrayList<Country>();
         Session session = HibernateUtil.getCurrentSession();

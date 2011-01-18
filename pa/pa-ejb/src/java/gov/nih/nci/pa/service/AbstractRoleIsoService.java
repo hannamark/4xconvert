@@ -103,7 +103,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -154,8 +153,6 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
             roleAssociationMap.get(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME),
             roleAssociationMap.get(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME)});
     }
-
-    private static final Logger LOG = Logger.getLogger(AbstractRoleIsoService.class);
 
     /**
      * Get list of StudySites for a given protocol having
@@ -209,7 +206,6 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
             hql.append(')');
         }
         hql.append(" order by spart.id ");
-        LOG.info(" query  = " + hql);
 
         Query query = session.createQuery(hql.toString());
         query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));

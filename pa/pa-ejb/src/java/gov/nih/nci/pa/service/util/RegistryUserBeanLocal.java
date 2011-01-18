@@ -141,7 +141,6 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return user;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -201,12 +200,9 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public RegistryUser getUser(String loginName) throws PAException {
         RegistryUser registryUser = null;
-        Session session = null;
-        List<RegistryUser> queryList = new ArrayList<RegistryUser>();
         try {
             // /first get the CSM user
             UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
@@ -214,31 +210,22 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
 
             // if csm user exists retrieve the registry user
             if (csmUser != null) {
-                LOG.info(" CSM User ID = " + csmUser.getUserId());
-                session = HibernateUtil.getCurrentSession();
+                Session session = HibernateUtil.getCurrentSession();
 
-                Query query = null;
                 // HQL query
                 String hql = "select reguser from RegistryUser reguser where reguser.csmUserId = :csmuserId ";
-                LOG.info("query RegistryUser = " + hql);
 
                 // construct query object
-                query = session.createQuery(hql);
+                Query query = session.createQuery(hql);
                 query.setParameter("csmuserId", csmUser.getUserId());
-                queryList = query.list();
-                // there should only one user with the login name
-                if (queryList != null && !queryList.isEmpty()) {
-                    registryUser = queryList.get(0);
-                }
+                registryUser = (RegistryUser) query.uniqueResult();
             }
 
         } catch (Exception cse) {
-            LOG.error("CSM Exception while retrieving user: " + loginName, cse);
             throw new PAException("CSM exception while retrieving user: " + loginName, cse);
         }
 
         return registryUser;
-
     }
 
     /**
@@ -246,13 +233,11 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      */
     public RegistryUser getUserById(Long userId) throws PAException {
         RegistryUser registryUser = null;
-        Session session;
         if (userId != null) {
             try {
-                session = HibernateUtil.getCurrentSession();
+                Session session = HibernateUtil.getCurrentSession();
                 registryUser = (RegistryUser) session.get(RegistryUser.class, userId);
             } catch (Exception e) {
-                LOG.error(" CSM Exception while retrieving user with id: " + userId, e);
                 throw new PAException(" CSM exception while retrieving  user with id: " + userId, e);
             }
         }
@@ -262,18 +247,17 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException {
         if (userType == null) {
             throw new PAException("UserOrgType cannot be null.");
         }
-        Session session = null;
-        List<RegistryUser> registryUserList = new ArrayList<RegistryUser>();
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         Criteria criteria = session.createCriteria(RegistryUser.class, "regUser")
             .add(Property.forName("regUser.affiliatedOrganizationId").isNotNull())
             .add(Restrictions.eq("regUser.affiliatedOrgUserType", userType));
 
-        registryUserList = criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        List<RegistryUser> registryUserList = criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
         for (RegistryUser usr : registryUserList) {
             PAServiceUtils servUtil = new PAServiceUtils();
             usr.setAffiliateOrg(servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(
@@ -301,10 +285,9 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * @return list of user
      * @throws PAException on error
      */
+    @SuppressWarnings("unchecked")
     public List<RegistryUser> search(RegistryUser regUser) throws PAException {
-        Session session = null;
-        List<RegistryUser> registryUserList = new ArrayList<RegistryUser>();
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         Criteria criteria = session.createCriteria(RegistryUser.class, "regUser");
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
@@ -324,8 +307,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             addCriteria(criteria, regUser.getFirstName(), "regUser.firstName");
             addCriteria(criteria, regUser.getLastName(), "regUser.lastName");
         }
-        registryUserList = criteria.list();
-        return registryUserList;
+        return criteria.list();
     }
 
     /**
@@ -334,6 +316,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * @return list of trial ownership information objects.
      * @throws PAException on error.
      */
+    @SuppressWarnings("unchecked")
     public List<DisplayTrialOwnershipInformation> searchTrialOwnership(DisplayTrialOwnershipInformation
             trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
         List<DisplayTrialOwnershipInformation> lst = new ArrayList<DisplayTrialOwnershipInformation>();
@@ -364,8 +347,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
 
         Session session = HibernateUtil.getCurrentSession();
         Query query = session.createQuery(hql.toString());
-        for (Iterator iter = query.iterate(); iter.hasNext();) {
-            Object[] row = (Object[]) iter.next();
+        for (Iterator<Object[]> iter = query.iterate(); iter.hasNext();) {
+            Object[] row = iter.next();
             DisplayTrialOwnershipInformation trialInfo = new DisplayTrialOwnershipInformation();
             trialInfo.setUserId(ObjectUtils.toString(row[INDEX_USER_ID]));
             trialInfo.setFirstName(ObjectUtils.toString(row[INDEX_FIRST_NAME]));
@@ -404,8 +387,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private String addCriteria(String criteriaName, String criteriaValue) {
         StringBuffer retVal = new StringBuffer();
         if (StringUtils.isNotEmpty(criteriaValue)) {
-            retVal.append(" and (lower(").append(criteriaName).append(") like lower('")
-            .append(criteriaValue).append("%')) ");
+            retVal.append(" and (lower(").append(criteriaName).append(") like lower('").append(criteriaValue)
+                .append("%')) ");
         }
         return retVal.toString();
     }
@@ -443,6 +426,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         HibernateUtil.getCurrentSession().saveOrUpdate(usr);
         HibernateUtil.getCurrentSession().flush();
     }
+
     private RegistryUser getUser(Long userId, Long studyProtocolId) throws PAException {
         // to assign the ownership add a record to study_owner
         if (userId == null) {
@@ -458,7 +442,6 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return usr;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -473,6 +456,5 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
 
         return names;
     }
-
 
 }
