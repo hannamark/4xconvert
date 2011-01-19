@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AnatomicSite;
+import gov.nih.nci.pa.domain.AnatomicSiteTest;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
@@ -197,6 +199,7 @@ public class TestSchema {
         public static List<Long> researchOrganizationIds;
         public static List<Long> oversightCommitteeIds;
         public static List<Long> diseaseIds;
+        public static List<Long> anatomicSiteIds;
         public static List<Long> outcomeIds;
         public static List<Long> regAuthIds;
         public static List<Long> personIds;
@@ -264,6 +267,7 @@ public class TestSchema {
                     statement.executeUpdate("delete from DISEASE_PARENT");
                     statement.executeUpdate("delete from DISEASE_ALTERNAME");
                     statement.executeUpdate("delete from DISEASE");
+                    statement.executeUpdate("delete from ANATOMIC_SITES");
                     statement.executeUpdate("delete from STUDY_OBJECTIVE");
                     statement.executeUpdate("delete from REGULATORY_AUTHORITY");
                     statement.executeUpdate("delete from STUDY_PROTOCOL_STAGE");
@@ -324,6 +328,7 @@ public class TestSchema {
             regAuthIds = new ArrayList<Long>();
             personIds = new ArrayList<Long>();
             countries = new ArrayList<Country>();
+            anatomicSiteIds = new ArrayList<Long>();
 
             User curator = getUser();
             addUpdObject(curator);
@@ -586,6 +591,16 @@ public class TestSchema {
             Disease dis04 = DiseaseTest.createDiseaseObj("Leg Cancer");
             addUpdObject(dis04);
             diseaseIds.add(dis04.getId());
+            
+            AnatomicSite as01 = AnatomicSiteTest.createAnatomicSiteObj("Lung");
+            addUpdObject(as01);
+            anatomicSiteIds.add(as01.getId());
+            AnatomicSite as02 = AnatomicSiteTest.createAnatomicSiteObj("Kidney");
+            addUpdObject(as02);
+            anatomicSiteIds.add(as02.getId());
+            AnatomicSite as03 = AnatomicSiteTest.createAnatomicSiteObj("Heart");
+            addUpdObject(as03);
+            anatomicSiteIds.add(as03.getId());
 
             DiseaseParent disPar1 = DiseaseParentTest.createDiseaseParentObj(dis01, dis03);
             addUpdObject(disPar1);

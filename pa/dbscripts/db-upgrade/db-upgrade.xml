@@ -618,4 +618,8 @@
         <comment>Adding biomarkers table to the db structure.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.4/PO-3071.sql"/>
      </changeSet>
+     <changeSet id="PO-3109" author="mshestopalov">
+        <comment>Adding study_anatomic_site table to the db structure.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.4/PO-3109.sql"/>
+     </changeSet>
 </databaseChangeLog>

@@ -3,6 +3,9 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.domain.AbstractLookUpEntity;
+import gov.nih.nci.pa.domain.AnatomicSite;
+import gov.nih.nci.pa.domain.AnatomicSiteTest;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
@@ -91,8 +94,8 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
             return value;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.LookUpTableServiceRemote#searchCountry(gov.nih.nci.pa.domain.Country)
+    /**
+     * {@inheritDoc}
      */
     public List<Country> searchCountry(Country country) throws PAException {
         List<Country> retList = new ArrayList<Country>();
@@ -102,5 +105,26 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
             }
         }
         return retList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<AnatomicSite> getAnatomicSites() throws PAException {
+        List<AnatomicSite> returnVal = new ArrayList<AnatomicSite>();
+        returnVal.add(AnatomicSiteTest.createAnatomicSiteObj("Lung"));
+        returnVal.add(AnatomicSiteTest.createAnatomicSiteObj("Kidney"));
+        returnVal.add(AnatomicSiteTest.createAnatomicSiteObj("Heart"));
+        return returnVal;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException {
+        if (AnatomicSite.class.getName().equals(clazz.getName())) {
+            return (T) AnatomicSiteTest.createAnatomicSiteObj(code);
+        }
+        return null;
     }
 }

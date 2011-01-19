@@ -170,6 +170,35 @@ public class StudyProtocolTest  {
         TestSchema.addUpdObject(dfs2);
         assertNotNull(dfs2.getId());
     }
+    
+    /**
+     * @throws PAException
+     *
+     */
+    @Test
+    public void createStudyProtocolWithAnatomicSitesTest() {
+        Session session  = HibernateUtil.getCurrentSession();
+        
+        AnatomicSite as1 = AnatomicSiteTest.createAnatomicSiteObj("Lung");
+        TestSchema.addUpdObject(as1);
+        AnatomicSite as2 = AnatomicSiteTest.createAnatomicSiteObj("Kidney");
+        TestSchema.addUpdObject(as2);
+        AnatomicSite as3 = AnatomicSiteTest.createAnatomicSiteObj("Heart");
+        TestSchema.addUpdObject(as3);
+        
+        StudyProtocol sp = createStudyProtocolObj();
+        TestSchema.addUpdObject(sp);
+        assertNotNull(sp.getId());
+        sp.setSummary4AnatomicSites(new HashSet<AnatomicSite>());
+        sp.getSummary4AnatomicSites().add(as1);
+        sp.getSummary4AnatomicSites().add(as2);
+        sp.getSummary4AnatomicSites().add(as3);
+        
+        StudyProtocol saved =
+            (StudyProtocol) session.load(StudyProtocol.class, sp.getId());
+        assertStudyProtocol(sp , saved);
+
+    }
 
     @Test
     public void createInterventionalStudyProtocolTest() {
@@ -247,6 +276,12 @@ public class StudyProtocolTest  {
         Ii spSecId = new Ii();
         spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         spSecId.setExtension("NCI-2009-00001");
+        AnatomicSite as = new AnatomicSite();
+        as.setCode("Lung");
+        as.setCodingSystem("Summary 4 Anatomic Sites");
+        TestSchema.addUpdObject(as);
+        sp.setSummary4AnatomicSites(new HashSet<AnatomicSite>());
+        sp.getSummary4AnatomicSites().add(as);
         studySecondaryIdentifiers.add(spSecId);
         sp.setOtherIdentifiers(studySecondaryIdentifiers);
         sp.setKeywordText("keywordText");
@@ -281,7 +316,7 @@ public class StudyProtocolTest  {
         addOwners(sp);
         return sp;
     }
-
+    
     private static void addOwners(StudyProtocol sp) {
         RegistryUser newUser = getRegistryUserObj();
         TestSchema.addUpdObject(newUser);
@@ -400,5 +435,7 @@ public class StudyProtocolTest  {
         for (RegistryUser regUser : saved.getStudyOwners()) {
             assertEquals("firstname", regUser.getFirstName());
         }
+        assertEquals(create.getSummary4AnatomicSites().size(), saved.getSummary4AnatomicSites().size());
+        
     }
 }

@@ -124,6 +124,7 @@ import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.NotNull;
+import org.hibernate.validator.Valid;
 
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
@@ -177,6 +178,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     private List<PlannedActivity> plannedActivities = new ArrayList<PlannedActivity>();
     private List<Arm> arms = new ArrayList<Arm>();
     private List<StudyDisease> studyDiseases = new ArrayList<StudyDisease>();
+    private Set<AnatomicSite> summary4AnatomicSites = new HashSet<AnatomicSite>();
     private Set<StudyMilestone> studyMilestones = new TreeSet<StudyMilestone>(new LastCreatedComparator());
     private List<StudyOnhold> studyOnholds = new ArrayList<StudyOnhold>();
     private List<StudySubject> studySubjects = new ArrayList<StudySubject>();
@@ -540,6 +542,30 @@ public class StudyProtocol extends AbstractStudyProtocol {
      */
     public void setStudyDiseases(List<StudyDisease> studyDiseases) {
         this.studyDiseases = studyDiseases;
+    }
+    
+    /**
+     * @return the StudyAnatomicSites
+     */
+    @ManyToMany
+    @JoinTable(
+            name = "study_anatomic_site",
+            joinColumns = @JoinColumn(name = "study_protocol_identifier"),
+            inverseJoinColumns = @JoinColumn(name = "anatomic_sites_identifier")
+    )
+    @ForeignKey(name = "FK_STUDY_ANATOMIC_SITE_STUDY_PROTOCOL", inverseName = "FK_STUDY_ANATOMIC_SITE_ANATOMIC_SITES")
+    @Valid
+    @Searchable(nested = true)
+    public Set<AnatomicSite> getSummary4AnatomicSites() {
+        return summary4AnatomicSites;
+    }
+
+    /**
+     * @param myStudyAnatomicSites
+     *            the StudyAnatomicSites to set
+     */
+    public void setSummary4AnatomicSites(Set<AnatomicSite> myStudyAnatomicSites) {
+        this.summary4AnatomicSites = myStudyAnatomicSites;
     }
 
     /**

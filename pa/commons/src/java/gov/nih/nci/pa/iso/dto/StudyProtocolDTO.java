@@ -101,6 +101,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     //TODO - as part of PO-2434 this should be moved to the AbstractStudyProtocolDTO
     //once the AbstractStudyProtocolDTO owns the SecondaryIdentifiers.
     private DSet<Ii> secondaryIdentifiers;
+    private DSet<Cd> summary4AnatomicSites;
     private Bl expandedAccessIndicator;
     private Bl reviewBoardApprovalRequiredIndicator;
     private St publicDescription;
@@ -383,6 +384,20 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setSecondaryIdentifiers(DSet<Ii> secondaryIdentifiers) {
         this.secondaryIdentifiers = secondaryIdentifiers;
+    }
+
+    /**
+     * @param summary4AnatomicSites the summary4AnatomicSites to set
+     */
+    public void setSummary4AnatomicSites(DSet<Cd> summary4AnatomicSites) {
+        this.summary4AnatomicSites = summary4AnatomicSites;
+    }
+
+    /**
+     * @return the summary4AnatomicSites
+     */
+    public DSet<Cd> getSummary4AnatomicSites() {
+        return summary4AnatomicSites;
     }
 
 }

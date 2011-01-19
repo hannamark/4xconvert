@@ -59,6 +59,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.Disease" />
         <mapping class="gov.nih.nci.pa.domain.DiseaseAltername" />
         <mapping class="gov.nih.nci.pa.domain.DiseaseParent" />
+        <mapping class="gov.nih.nci.pa.domain.AnatomicSite" />
         <mapping class="gov.nih.nci.pa.domain.PAProperties" />
         <mapping class="gov.nih.nci.pa.domain.MessageLog" />
         <mapping class="gov.nih.nci.pa.domain.StudyMilestone" />
@@ -107,7 +108,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.PerformedImage" />
         <mapping class="gov.nih.nci.pa.domain.PerformedLesionDescription" />
         <mapping class="gov.nih.nci.pa.domain.PerformedMedicalHistoryResult" />
-        <mapping class="gov.nih.nci.pa.domain.AnatomicSites" />
         <mapping class="gov.nih.nci.pa.domain.AssessmentType" />
         <mapping class="gov.nih.nci.pa.domain.LesionLocationAnatomicSite" />
         <mapping class="gov.nih.nci.pa.domain.ProcedureName" />

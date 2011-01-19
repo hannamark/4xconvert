@@ -88,6 +88,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AnatomicSite;
+import gov.nih.nci.pa.domain.AnatomicSiteTest;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
@@ -116,8 +118,11 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
@@ -143,6 +148,15 @@ public class StudyProtocolServiceBeanTest {
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
+        AnatomicSite as = new AnatomicSite();
+        as.setCode("Lung");
+        as.setCodingSystem("Summary 4 Anatomic Sites");
+        TestSchema.addUpdObject(as);
+        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
+        LookUpTableServiceRemote lookupSvc = mock(LookUpTableServiceRemote.class);
+        when(lookupSvc.getLookupEntityByCode(any(Class.class), any(String.class))).thenReturn(as);
+        when(paRegSvcLoc.getLookUpTableService()).thenReturn(lookupSvc);
+        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
     }
 
     @Test(expected=PAException.class)
@@ -390,6 +404,8 @@ public class StudyProtocolServiceBeanTest {
         assertEquals(create.getFdaRegulatedIndicator().getValue(),saved.getFdaRegulatedIndicator().getValue());
         assertEquals(create.getOfficialTitle().getValue(),saved.getOfficialTitle().getValue());
         assertEquals(create.getPhaseCode().getCode(),saved.getPhaseCode().getCode());
+        assertEquals(create.getSummary4AnatomicSites().getItem().iterator().next().getCode(),
+                saved.getSummary4AnatomicSites().getItem().iterator().next().getCode());
         assertNotNull(saved.getIdentifier().getExtension());
     }
 
@@ -599,6 +615,12 @@ public class StudyProtocolServiceBeanTest {
             dws.setCommentText("Accepted");
             dws.setUserLastUpdated(sp.getUserLastUpdated());
             TestSchema.addUpdObject(dws);
+            
+            AnatomicSite as1 = AnatomicSiteTest.createAnatomicSiteObj("Lung");
+            TestSchema.addUpdObject(as1);         
+            sp.setSummary4AnatomicSites(new HashSet<AnatomicSite>());
+            sp.getSummary4AnatomicSites().add(as1);
+            TestSchema.addUpdObject(sp);
 
             if (StringUtils.isNotEmpty(sponsorName)) {
                 Organization org = OrganizationTest.createOrganizationObj();

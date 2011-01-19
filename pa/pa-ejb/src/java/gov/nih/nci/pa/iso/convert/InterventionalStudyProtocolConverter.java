@@ -78,76 +78,116 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
-import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
-import gov.nih.nci.pa.enums.SamplingMethodCode;
-import gov.nih.nci.pa.enums.StudyModelCode;
-import gov.nih.nci.pa.enums.TimePerspectiveCode;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.enums.AllocationCode;
+import gov.nih.nci.pa.enums.BlindingRoleCode;
+import gov.nih.nci.pa.enums.BlindingSchemaCode;
+import gov.nih.nci.pa.enums.DesignConfigurationCode;
+import gov.nih.nci.pa.enums.StudyClassificationCode;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
 /**
-*
-* @author Kalpana Guthikonda
-* @since 10/23/2008
-*/
-public class ObservationalStudyProtocolConverter extends StudyProtocolConverter {
+ * Convert InterventionalStudyProtocol domain to DTO.
+ *
+ * @author Naveen Amiruddin
+ * @since 08/26/2008
+ * copyright NCI 2008.  All rights reserved.
+ * This code may not be used without the express written permission of the
+ * copyright holder, NCI.
+ */
+public class InterventionalStudyProtocolConverter extends StudyProtocolConverter {
 
     /**
      *
-     * @param osp ObservationalStudyProtocol
-     * @return ObservationalStudyProtocolDTO ObservationalStudyProtocolDTO
+     * @param isp InterventionalStudyProtocol
+     * @return InterventionalStudyProtocolDTO InterventionalStudyProtocolDTO
      */
-    public static ObservationalStudyProtocolDTO convertFromDomainToDTO(ObservationalStudyProtocol osp) {
-        ObservationalStudyProtocolDTO ospDTO = (ObservationalStudyProtocolDTO)
-        StudyProtocolConverter.convertFromDomainToDTO(
-                osp, new ObservationalStudyProtocolDTO());
-
-        ospDTO.setBiospecimenDescription(StConverter.convertToSt(osp.getBiospecimenDescription()));
-        ospDTO.setBiospecimenRetentionCode(CdConverter.convertToCd(osp.getBiospecimenRetentionCode()));
-        ospDTO.setNumberOfGroups(IntConverter.convertToInt(osp.getNumberOfGroups()));
-        ospDTO.setSamplingMethodCode(CdConverter.convertToCd(osp.getSamplingMethodCode()));
-        ospDTO.setStudyModelCode(CdConverter.convertToCd(osp.getStudyModelCode()));
-        ospDTO.setStudyModelOtherText(StConverter.convertToSt(osp.getStudyModelOtherText()));
-        ospDTO.setTimePerspectiveCode(CdConverter.convertToCd(osp.getTimePerspectiveCode()));
-        ospDTO.setTimePerspectiveOtherText(StConverter.convertToSt(osp.getTimePerspectiveOtherText()));
-        ospDTO.setStudyPopulationDescription(StConverter.convertToSt(osp.getStudyPopulationDescription()));
-        return ospDTO;
+    public static InterventionalStudyProtocolDTO convertFromDomainToDTO(InterventionalStudyProtocol isp) {
+        InterventionalStudyProtocolDTO ispDTO = (InterventionalStudyProtocolDTO)
+                StudyProtocolConverter.convertFromDomainToDTO(isp, new InterventionalStudyProtocolDTO());
+        ispDTO.setAllocationCode(CdConverter.convertToCd(isp.getAllocationCode()));
+        ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(isp.getBlindingSchemaCode()));
+        ispDTO.setDesignConfigurationCode(CdConverter.convertToCd(isp.getDesignConfigurationCode()));
+        ispDTO.setNumberOfInterventionGroups(IntConverter.convertToInt(isp.getNumberOfInterventionGroups()));
+        ispDTO.setStudyClassificationCode(CdConverter.convertToCd(isp.getStudyClassificationCode()));
+        // convert to dset
+        List<Cd> cds = new ArrayList<Cd>();
+        if (isp.getBlindingRoleCodeCaregiver() != null) {
+            cds.add(CdConverter.convertToCd(isp.getBlindingRoleCodeCaregiver()));
+        }
+        if (isp.getBlindingRoleCodeInvestigator() != null) {
+            cds.add(CdConverter.convertToCd(isp.getBlindingRoleCodeInvestigator()));
+        }
+        if (isp.getBlindingRoleCodeOutcome() != null) {
+            cds.add(CdConverter.convertToCd(isp.getBlindingRoleCodeOutcome()));
+        }
+        if (isp.getBlindingRoleCodeSubject() != null) {
+            cds.add(CdConverter.convertToCd(isp.getBlindingRoleCodeSubject()));
+        }
+        ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(cds));
+        return ispDTO;
     }
+
     /**
      *
-     * @param ospDTO ObservationalStudyProtocolDTO
-     * @return ObservationalStudyProtocol ObservationalStudyProtocol
+     * @param ispDTO InterventionalStudyProtocolDTO
+     * @return InterventionalStudyProtocol InterventionalStudyProtocol
+     * @throws PAException when error.
      */
-    public static ObservationalStudyProtocol convertFromDTOToDomain(ObservationalStudyProtocolDTO ospDTO) {
-        ObservationalStudyProtocol osp =  (ObservationalStudyProtocol) StudyProtocolConverter.convertFromDTOToDomain(
-                ospDTO , new ObservationalStudyProtocol());
+    public static InterventionalStudyProtocol convertFromDTOToDomain(InterventionalStudyProtocolDTO ispDTO) 
+    throws PAException {
+        InterventionalStudyProtocol isp =  (InterventionalStudyProtocol) StudyProtocolConverter.convertFromDTOToDomain(
+                    ispDTO , new InterventionalStudyProtocol());
+        if (ispDTO.getAllocationCode() != null) {
+            isp.setAllocationCode(AllocationCode.getByCode(ispDTO.getAllocationCode().getCode()));
+        }
+        if (ispDTO.getBlindingSchemaCode() != null) {
+            isp.setBlindingSchemaCode(BlindingSchemaCode.getByCode(ispDTO.getBlindingSchemaCode().getCode()));
+        }
+        if (ispDTO.getDesignConfigurationCode() != null) {
+            isp.setDesignConfigurationCode(
+                    DesignConfigurationCode.getByCode(ispDTO.getDesignConfigurationCode().getCode()));
+        }
+        isp.setNumberOfInterventionGroups(IntConverter.convertToInteger(ispDTO.getNumberOfInterventionGroups()));
+        List<Cd> cds =  DSetConverter.convertDsetToCdList(ispDTO.getBlindedRoleCode());
+        updateBlindingRoleCodes(isp, cds);
+        if (ispDTO.getStudyClassificationCode() != null) {
+            isp.setStudyClassificationCode(
+                    StudyClassificationCode.getByCode(ispDTO.getStudyClassificationCode().getCode()));
+        }
 
-        osp.setBiospecimenDescription(StConverter.convertToString(ospDTO.getBiospecimenDescription()));
-        if (ospDTO.getBiospecimenRetentionCode() != null) {
-            osp.setBiospecimenRetentionCode(BiospecimenRetentionCode.getByCode(
-                    ospDTO.getBiospecimenRetentionCode().getCode()));
-        }
-        if (ospDTO.getNumberOfGroups() != null) {
-            osp.setNumberOfGroups(ospDTO.getNumberOfGroups().getValue());
-        }
-        if (ospDTO.getSamplingMethodCode() != null) {
-            osp.setSamplingMethodCode(SamplingMethodCode.getByCode(ospDTO.getSamplingMethodCode().getCode()));
-        }
-        if (ospDTO.getStudyModelCode() != null) {
-            osp.setStudyModelCode(StudyModelCode.getByCode(ospDTO.getStudyModelCode().getCode()));
-        }
-        osp.setStudyModelOtherText(StConverter.convertToString(ospDTO.getStudyModelOtherText()));
-        if (ospDTO.getTimePerspectiveCode() != null) {
-            osp.setTimePerspectiveCode(TimePerspectiveCode.getByCode(ospDTO.getTimePerspectiveCode().getCode()));
-        }
-        if (ospDTO.getTimePerspectiveOtherText() != null) {
-            osp.setTimePerspectiveOtherText(StConverter.convertToString(ospDTO.getTimePerspectiveOtherText()));
-        }
-        if (ospDTO.getStudyPopulationDescription() != null) {
-          osp.setStudyPopulationDescription(StConverter.convertToString(ospDTO.getStudyPopulationDescription()));
-        }
-        return osp;
+        return isp;
     }
+
+    private static void updateBlindingRoleCodes(InterventionalStudyProtocol isp, List<Cd> cds) {
+        for (Cd cd : cds) {
+            if (BlindingRoleCode.CAREGIVER.getCode().equals(cd.getCode())) {
+               isp.setBlindingRoleCodeCaregiver(BlindingRoleCode.CAREGIVER);
+               continue;
+            }
+            if (BlindingRoleCode.INVESTIGATOR.getCode().equals(cd.getCode())) {
+                isp.setBlindingRoleCodeInvestigator(BlindingRoleCode.INVESTIGATOR);
+                continue;
+            }
+            if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(cd.getCode())) {
+                isp.setBlindingRoleCodeOutcome(BlindingRoleCode.OUTCOMES_ASSESSOR);
+                continue;
+            }
+            if (BlindingRoleCode.SUBJECT.getCode().equals(cd.getCode())) {
+                isp.setBlindingRoleCodeSubject(BlindingRoleCode.SUBJECT);
+                continue;
+            }
+
+        }
+    }
+
 }

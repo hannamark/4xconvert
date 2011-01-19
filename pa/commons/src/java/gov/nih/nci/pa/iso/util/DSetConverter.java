@@ -124,48 +124,73 @@ public class DSetConverter {
      */
     public static DSet<Tel> convertListToDSet(List<String> list, String type, DSet<Tel> dsetList) {
         Set<Tel> telSet = new HashSet<Tel>();
+        DSet<Tel> dSet = getCurrentDSet(dsetList);
+        telSet.addAll(addCurrentItems(dSet));
+        if (list == null || list.isEmpty()) {
+            return dSet;
+        }
+        if ("PHONE".equalsIgnoreCase(type)) {
+            telSet.addAll(addPhone(list));
+        } else if ("EMAIL".equalsIgnoreCase(type)) {
+            telSet.addAll(addEmail(list));
+        }
+        dSet.setItem(telSet);
+        return dSet;
+    }
+    
+    private static Set<Tel> addCurrentItems(DSet<Tel> dsetList) {
+        Set<Tel> telSet = new HashSet<Tel>();
+        
+        if (dsetList.getItem() != null && dsetList.getItem().size() > 0) {
+                Iterator<Tel> val = dsetList.getItem().iterator();
+                while (val.hasNext()) {
+                    telSet.add(val.next());
+                }
+        }
+        return telSet;
+    }
+    
+    private static DSet<Tel> getCurrentDSet(DSet<Tel> dsetList) {
         DSet<Tel> dSet = null;
         if (dsetList == null) {
             dSet = new DSet<Tel>();
         } else {
             dSet = dsetList;
-            if (dsetList.getItem() != null && dsetList.getItem().size() > 0) {
-                Iterator<Tel> val = dsetList.getItem().iterator();
-                while (val.hasNext()) {
-                    telSet.add(val.next());
-                }
-            }
+            
         }
-        if (list == null || list.isEmpty()) {
-            return dSet;
-        }
-        if ("PHONE".equalsIgnoreCase(type)) {
-            TelPhone t = null;
-            for (String phone : list) {
-                if (phone == null) {
-                    continue;
-                }
-                t = new TelPhone();
-                try {
-                    t.setValue(URI.create("tel:" + URLEncoder.encode(phone, "UTF-8")));
-                } catch (UnsupportedEncodingException e) {
-                    continue;
-                }
-                telSet.add(t);
-            }
-        } else if ("EMAIL".equalsIgnoreCase(type)) {
-            TelEmail t = null;
-            for (String email : list) {
-                t = new TelEmail();
-                if (email != null) {
-                    email = email.trim();
-                }
-                t.setValue(URI.create("mailto:" + email));
-                telSet.add(t);
-            }
-        }
-        dSet.setItem(telSet);
         return dSet;
+    }
+     
+    private static Set<Tel> addEmail(List<String> list) {
+        Set<Tel> returnVal = new HashSet<Tel>();
+        TelEmail t = null;
+        for (String email : list) {
+            t = new TelEmail();
+            if (email != null) {
+                email = email.trim();
+            }
+            t.setValue(URI.create("mailto:" + email));
+            returnVal.add(t);
+        }
+        return returnVal;
+    }
+    
+    private static Set<Tel> addPhone(List<String> list) {
+        Set<Tel> telSet = new HashSet<Tel>();
+        TelPhone t = null;
+        for (String phone : list) {
+            if (phone == null) {
+                continue;
+            }
+            t = new TelPhone();
+            try {
+                t.setValue(URI.create("tel:" + URLEncoder.encode(phone, "UTF-8")));
+            } catch (UnsupportedEncodingException e) {
+                continue;
+            }
+            telSet.add(t);
+        }
+        return telSet;
     }
 
     /**
@@ -179,44 +204,61 @@ public class DSetConverter {
             return retList;
         }
         if (type.equalsIgnoreCase("PHONE")) {
-            for (Tel t : dSet.getItem()) {
-                if (t.getNullFlavor() != null) {
-                    continue;
-                }
-                if (t instanceof TelPhone) {
-                    try {
-                        retList.add((URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8")));
-                    } catch (UnsupportedEncodingException e) {
-                        continue;
-                    }
-                } else {
-                    String url = t.getValue().toString();
-                    if (url != null && url.startsWith("tel")) {
-                        try {
-                            retList.add((URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8")));
-                        } catch (UnsupportedEncodingException e) {
-                            continue;
-                        }
-                    }
-                }
-            }
+            retList.addAll(convertTeltoStrings(dSet));
         }
         if (type.equalsIgnoreCase("EMAIL")) {
-            for (Tel t : dSet.getItem()) {
-                if (t.getNullFlavor() != null) {
-                    continue;
-                }
-                if (t instanceof TelEmail) {
+            retList.addAll(convertEmailToStrings(dSet));
+        }
+        return retList;
+    }
+    
+    
+    private static List<String> convertEmailToStrings(DSet<Tel> dSet) {
+        List<String> retList = new ArrayList<String>();
+        for (Tel t : dSet.getItem()) {
+            if (t.getNullFlavor() != null) {
+                continue;
+            }
+            if (t instanceof TelEmail) {
+                retList.add((t.getValue().getSchemeSpecificPart()));
+            } else {
+                String url = t.getValue().toString();
+                if (url != null && url.startsWith("mailto")) {
                     retList.add((t.getValue().getSchemeSpecificPart()));
-                } else {
-                    String url = t.getValue().toString();
-                    if (url != null && url.startsWith("mailto")) {
-                        retList.add((t.getValue().getSchemeSpecificPart()));
-                    }
                 }
             }
         }
         return retList;
+    }
+    
+    private static List<String> convertTeltoStrings(DSet<Tel> dSet) {
+        List<String> retList = new ArrayList<String>();
+        for (Tel t : dSet.getItem()) {
+            if (t.getNullFlavor() != null) {
+                continue;
+            }
+            String value = convertPhonePart(t);
+            if (value != null) {
+                retList.add(value);
+            }
+        }
+        return retList;
+    }
+    
+    private static String convertPhonePart(Tel t) {
+        try {
+            if (t instanceof TelPhone) {
+                return (URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8"));
+            } else {
+                String url = t.getValue().toString();
+                if (url != null && url.startsWith("tel")) {
+                        return (URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8"));       
+                }
+            }
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+        return null;
     }
 
     /**
@@ -420,6 +462,6 @@ public class DSetConverter {
         }
         
         return returnList;
-
     }
+    
 }

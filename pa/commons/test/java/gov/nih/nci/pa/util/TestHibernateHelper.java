@@ -77,7 +77,7 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.domain.ActivityRelationship;
-import gov.nih.nci.pa.domain.AnatomicSites;
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.AssessmentType;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
@@ -275,7 +275,7 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(PerformedImage.class).
         addAnnotatedClass(PerformedLesionDescription.class).
         addAnnotatedClass(PerformedMedicalHistoryResult.class).
-        addAnnotatedClass(AnatomicSites.class).
+        addAnnotatedClass(AnatomicSite.class).
         addAnnotatedClass(AssessmentType.class).
         addAnnotatedClass(LesionLocationAnatomicSite.class).
         addAnnotatedClass(ProcedureName.class).

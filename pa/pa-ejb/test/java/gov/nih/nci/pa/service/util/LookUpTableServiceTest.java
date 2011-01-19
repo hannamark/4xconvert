@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.pa.domain.AnatomicSite;
+import gov.nih.nci.pa.domain.AnatomicSiteTest;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.CountryTest;
 import gov.nih.nci.pa.domain.FundingMechanism;
@@ -100,8 +102,8 @@ import org.junit.Test;
  */
 public class LookUpTableServiceTest {
 
-    private LookUpTableServiceBean bean = new LookUpTableServiceBean();
-    private LookUpTableServiceRemote remoteEjb = bean;
+    private final LookUpTableServiceBean bean = new LookUpTableServiceBean();
+    private final LookUpTableServiceRemote remoteEjb = bean;
 
     @Before
     public void setUp() throws Exception {
@@ -146,6 +148,20 @@ public class LookUpTableServiceTest {
         Country country = CountryTest.createCountryObj();
         TestSchema.addUpdObject(country);
         assertEquals(remoteEjb.searchCountry(country).size(), 1);
+    }
+    @Test
+    public void getAnatomicSiteUsingCode() throws PAException {
+        AnatomicSite as = AnatomicSiteTest.createAnatomicSiteObj("Lung");
+        TestSchema.addUpdObject(as);
+        assertEquals(remoteEjb.getLookupEntityByCode(AnatomicSite.class, "Lung").getCode(), "Lung");
+    }
+    
+    @Test
+    public void getAnatomicSitesTest () throws Exception {
+        AnatomicSite as = AnatomicSiteTest.createAnatomicSiteObj("Lung");
+        TestSchema.addUpdObject(as);
+        List<AnatomicSite> asList = remoteEjb.getAnatomicSites();
+        assertEquals("Size does not match  " , asList.size(), 1);
     }
 
 }

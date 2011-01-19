@@ -78,6 +78,10 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
+
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -93,6 +97,14 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaRegistry;
+
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Convert StudyProtocol domain to DTO.
@@ -118,8 +130,9 @@ public class StudyProtocolConverter {
     *
     * @param studyProtocolDTO studyProtocolDTO
     * @return StudyProtocol StudyProtocol
+    * @throws PAException  when error.
     */
-   public static StudyProtocol convertFromDTOToDomain(StudyProtocolDTO studyProtocolDTO) {
+   public static StudyProtocol convertFromDTOToDomain(StudyProtocolDTO studyProtocolDTO) throws PAException {
        return convertFromDTOToDomain(studyProtocolDTO , new StudyProtocol());
    }
 
@@ -142,7 +155,7 @@ public class StudyProtocolConverter {
           studyProtocolDTO.setSecondaryIdentifiers(
             DSetConverter.convertIiSetToDset(studyProtocol.getOtherIdentifiers()));
         }
-
+        studyProtocolDTO.setSummary4AnatomicSites(convertToDSet(studyProtocol.getSummary4AnatomicSites()));
         studyProtocolDTO.setExpandedAccessIndicator(
                 BlConverter.convertToBl(studyProtocol.getExpandedAccessIndicator()));
         studyProtocolDTO.setReviewBoardApprovalRequiredIndicator(
@@ -186,14 +199,16 @@ public class StudyProtocolConverter {
     * @param studyProtocolDTO studyProtocolDTO
     * @param studyProtocol studyProtocol
     * @return StudyProtocol StudyProtocol
+    * @throws PAException when error.
     */
    public static StudyProtocol convertFromDTOToDomain(StudyProtocolDTO studyProtocolDTO ,
-           StudyProtocol studyProtocol) {
+           StudyProtocol studyProtocol) throws PAException {
 
        AbstractStudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, studyProtocol);
        studyProtocol.setId(IiConverter.convertToLong(studyProtocolDTO.getIdentifier()));
        studyProtocol.setAcronym(StConverter.convertToString(studyProtocolDTO.getAcronym()));
        setSecondaryIdentifiers(studyProtocolDTO, studyProtocol);
+       studyProtocol.setSummary4AnatomicSites(convertToList(studyProtocolDTO.getSummary4AnatomicSites()));
        if (studyProtocolDTO.getAccrualReportingMethodCode() != null) {
            studyProtocol.setAccrualReportingMethodCode(
                    AccrualReportingMethodCode.getByCode(studyProtocolDTO.getAccrualReportingMethodCode().getCode()));
@@ -260,6 +275,52 @@ public class StudyProtocolConverter {
         if (studyProtocolDTO.getAmendmentDate() != null) {
             studyProtocol.setAmendmentDate(TsConverter.convertToTimestamp(studyProtocolDTO.getAmendmentDate()));
         }
+    }
+    
+    /**
+     * convert DSet Cd to list of StudyAnatomicSite bos.
+     * @param studyAnatList list
+     * @return DSet
+     */
+    public static DSet<Cd> convertToDSet(Set<AnatomicSite> studyAnatList) {
+      
+        DSet<Cd> dset = new DSet<Cd>();
+        Set<Cd> set = new LinkedHashSet<Cd>();
+        dset.setItem(set);
+        if (CollectionUtils.isNotEmpty(studyAnatList)) {
+            for (AnatomicSite sas : studyAnatList) {
+                Cd c = new Cd();
+                c.setCodeSystem(sas.getCodingSystem());
+                c.setCode(sas.getCode());
+                c.setDisplayName(StConverter.convertToSt(sas.getDisplayName()));
+                set.add(c);
+            }
+        }
+        return dset;
+    }
+    
+    /**
+     * Convert Dset Cd to study anatomic sites list.
+     * @param siteCodes Dset Cd.
+     * @return list study anatomic sites.
+     * @throws PAException when error.
+     */
+    public static Set<AnatomicSite> convertToList(DSet<Cd> siteCodes) throws PAException {
+        Set<AnatomicSite> returnVal = new HashSet<AnatomicSite>();
+        
+        if (siteCodes != null && CollectionUtils.isNotEmpty(siteCodes.getItem())) {
+            for (Cd c : siteCodes.getItem()) {
+                AnatomicSite as = PaRegistry.getLookUpTableService()
+                    .getLookupEntityByCode(AnatomicSite.class, c.getCode());
+                if (as == null) {
+                    throw new PAException("The anatomic site with code " + c.getCode() + " does not exist.");
+                } else {
+                    returnVal.add(as);
+                }
+                     
+            }
+        }
+        return returnVal;
     }
 
 }

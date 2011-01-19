@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.domain.AbstractLookUpEntity;
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
@@ -141,4 +143,21 @@ public interface LookUpTableServiceRemote {
      * @throws PAException on error
      */
     List<Country> searchCountry(Country country) throws PAException;
+    
+    /**
+     * Get all anatomic sites.
+     * @return list of anatomic sites.
+     * @throws PAException on error
+     */
+    List<AnatomicSite> getAnatomicSites() throws PAException;
+    
+    /**
+     * Get a lookup entity class by code.
+     * @param <T> lookup entity class
+     * @param clazz type of lookup entity class
+     * @param code code
+     * @return lookup entity item.
+     * @throws PAException when error.
+     */
+    <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException;
 }

@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.domain.AbstractLookUpEntity;
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
@@ -213,5 +215,40 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         }
         countryList = criteria.list();
         return countryList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<AnatomicSite> getAnatomicSites() throws PAException {
+        Session session = null;
+        List<AnatomicSite> asList = new ArrayList<AnatomicSite>();
+        session = HibernateUtil.getCurrentSession();
+        Query query = session.createQuery("select items from AnatomicSite items order by code");
+        asList = query.list();
+        return asList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException {
+        StringBuffer hql = new StringBuffer("select item from ").append(clazz.getName())
+        .append(" item where item.code = '" + code + "'");
+        Session session = HibernateUtil.getCurrentSession();
+        List<T> queryList = session.createQuery(hql.toString()).list();
+        T le = null;
+        if (queryList.size() > 1) {
+            throw new PAException(" More than 1 " + clazz.getName() + " found for a given code "
+                        + code);
+        }
+    
+        if (!queryList.isEmpty()) {
+            le = queryList.get(0);
+        }
+        session.flush();
+        return le;
     }
 }

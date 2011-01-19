@@ -81,7 +81,7 @@ import gov.nih.nci.accrual.service.MockPoPersonEntityService;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ActivityRelationship;
-import gov.nih.nci.pa.domain.AnatomicSites;
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.AssessmentType;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Disease;
@@ -862,7 +862,7 @@ public class TestSchema {
         llas.setDescription("Mammary Gland");
         addUpdObject(llas);
 
-        AnatomicSites as = new AnatomicSites();
+        AnatomicSite as = new AnatomicSite();
         as.setCode("Abdomen");
         as.setDisplayName("Abdomen");
         as.setDescription("Abdomen");

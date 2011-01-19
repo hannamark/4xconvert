@@ -80,6 +80,10 @@ package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
@@ -87,8 +91,12 @@ import gov.nih.nci.pa.enums.SamplingMethodCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -136,10 +144,11 @@ public class ObservationalStudyProtocolConverterTest   {
     }
 
     /**
+     * @throws PAException 
      * 
      */
     @Test
-    public void convertFromDTOToDomainTest() {
+    public void convertFromDTOToDomainTest() throws PAException {
         Session session  = HibernateUtil.getCurrentSession();
 
         ObservationalStudyProtocol osp = (ObservationalStudyProtocol) 
@@ -158,6 +167,14 @@ public class ObservationalStudyProtocolConverterTest   {
         assertNotNull(osp.getId());
         ObservationalStudyProtocolDTO ospDTO = ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
         AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
+        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
+        LookUpTableServiceRemote lookupSvc = mock(LookUpTableServiceRemote.class);
+        AnatomicSite as = new AnatomicSite();
+        as.setCode("Lung");
+        as.setCodingSystem("Summary 4 Anatomic Sites");
+        when(lookupSvc.getLookupEntityByCode(any(Class.class), any(String.class))).thenReturn(as);
+        when(paRegSvcLoc.getLookUpTableService()).thenReturn(lookupSvc);
+        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
         osp = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
         assertObservationalStudyProtocol(osp , ospDTO);
     }
@@ -169,7 +186,7 @@ public class ObservationalStudyProtocolConverterTest   {
      */
     public void assertObservationalStudyProtocol(
             ObservationalStudyProtocol osp , ObservationalStudyProtocolDTO ospDTO) {
-        new StudyProtocolConverterTest().assertStudyProtocol(osp , ospDTO);
+        new BaseStudyProtocolConverterTest().assertStudyProtocol(osp , ospDTO);
         assertEquals(osp.getBiospecimenDescription() , ospDTO.getBiospecimenDescription().getValue());
         assertEquals(osp.getBiospecimenRetentionCode().getCode() , ospDTO.getBiospecimenRetentionCode().getCode());
         assertEquals(osp.getNumberOfGroups() , ospDTO.getNumberOfGroups().getValue());

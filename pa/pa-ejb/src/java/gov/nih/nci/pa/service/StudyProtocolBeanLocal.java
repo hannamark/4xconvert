@@ -203,7 +203,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         if (studyProtocol == null) {
             throw new PAException("No matching study protocol for Ii.extension " + id);
         }
-        return StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
+        StudyProtocolDTO returnVal = StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
+        return returnVal;
     }
 
     /**
@@ -249,7 +250,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         Session session = HibernateUtil.getCurrentSession();
         InterventionalStudyProtocol isp = (InterventionalStudyProtocol) session.load(InterventionalStudyProtocol.class,
                     Long.valueOf(ii.getExtension()));
-        return InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+        InterventionalStudyProtocolDTO returnVal = InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+        return returnVal;
     }
 
 
@@ -282,7 +284,6 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         session.merge(isp);
         ispRetDTO =  InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
         return ispRetDTO;
-
     }
 
     private void checkBlindingSchemaCode(InterventionalStudyProtocolDTO ispDTO, int totBlindCodes)
@@ -344,7 +345,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         Session  session = HibernateUtil.getCurrentSession();
         ObservationalStudyProtocol osp = (ObservationalStudyProtocol) session.load(ObservationalStudyProtocol.class,
                 Long.valueOf(ii.getExtension()));
-        return ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
+        ObservationalStudyProtocolDTO returnVal = ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
+        return returnVal;
     }
 
     /**
@@ -368,7 +370,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         setDefaultValues(osp, ospDTO, session, UPDATE);
         osp = upd;
         session.merge(osp);
-        return ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
+        ObservationalStudyProtocolDTO returnVal = ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
+        return returnVal;
     }
 
     /**
@@ -440,6 +443,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             session.createSQLQuery("DELETE from study_otheridentifiers where study_protocol_id = "
                     + spId).executeUpdate();
             session.createSQLQuery("DELETE from study_owner where study_id = " + spId).executeUpdate();
+            session.createSQLQuery("DELETE from study_anatomic_site where study_protocol_identifier = " 
+                    + spId).executeUpdate();
 
             for (String hql : hqls) {
                 session.createQuery(hql).setParameter("id", spId).executeUpdate();
@@ -636,7 +641,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         criteria.setPublicTitle(StConverter.convertToString(dto.getPublicTitle()));
         criteria.setStatusCode(ActStatusCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         criteria.setOtherIdentifiers(DSetConverter.convertDsetToIiSet(dto.getSecondaryIdentifiers()));
-
+        criteria.setSummary4AnatomicSites(StudyProtocolConverter.convertToList(dto.getSummary4AnatomicSites()));
         if (isNonDbStudyProtocolIdentifier(dto.getIdentifier())) {
             StudySite ss = new StudySite();
             ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);

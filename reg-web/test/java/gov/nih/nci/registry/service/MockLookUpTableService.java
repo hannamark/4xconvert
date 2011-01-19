@@ -3,6 +3,8 @@
  */
 package gov.nih.nci.registry.service;
 
+import gov.nih.nci.pa.domain.AbstractLookUpEntity;
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
@@ -89,9 +91,28 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
         return map.get(name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
 	public List<Country> searchCountry(Country country) throws PAException {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/**
+     * {@inheritDoc}
+     */
+    public List<AnatomicSite> getAnatomicSites() throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.iso.dto;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -93,6 +95,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
 
 import org.junit.Test;
 
@@ -111,6 +114,7 @@ public class InterventionalStudyProtocolDTOTest {
         assertEquals(ispDTO.getPhaseCode().getCode(),PhaseCode.I.getCode());
         assertEquals(ispDTO.getStatusCode().getCode(),ActStatusCode.ACTIVE.getCode());
         assertEquals(ispDTO.getAmendmentReasonCode().getCode(),AmendmentReasonCode.BOTH.getCode());
+        assertEquals(ispDTO.getSummary4AnatomicSites().getItem().iterator().next().getCode(), "Lung");
     }
     
     public static InterventionalStudyProtocolDTO createInterventionalStudyProtocolDTOObj() {
@@ -132,6 +136,13 @@ public class InterventionalStudyProtocolDTOTest {
         ispDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));
         ispDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
         ispDTO.setSubmissionNumber(IntConverter.convertToInt(Integer.valueOf(1)));
+        DSet<Cd> dsetSa = new DSet<Cd>();
+        dsetSa.setItem(new HashSet<Cd>());
+        Cd cdSas = new Cd();
+        cdSas.setCode("Lung");
+        cdSas.setCodeSystem("Summary 4 Anatomic Sites");
+        dsetSa.getItem().add(cdSas);
+        ispDTO.setSummary4AnatomicSites(dsetSa);
         return ispDTO;
     }
 

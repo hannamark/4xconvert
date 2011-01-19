@@ -81,15 +81,31 @@ package gov.nih.nci.pa.iso.convert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.junit.Before;
@@ -109,6 +125,14 @@ public class StudyProtocolConverterTest  {
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
+        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
+        LookUpTableServiceRemote lookupSvc = mock(LookUpTableServiceRemote.class);
+        AnatomicSite as = new AnatomicSite();
+        as.setCode("Lung");
+        as.setCodingSystem("Summary 4 Anatomic Sites");
+        when(lookupSvc.getLookupEntityByCode(any(Class.class), any(String.class))).thenReturn(as);
+        when(paRegSvcLoc.getLookUpTableService()).thenReturn(lookupSvc);
+        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
     }
 
     /**
@@ -145,10 +169,11 @@ public class StudyProtocolConverterTest  {
     }
 
     /**
+     * @throws PAException 
      *
      */
     @Test
-    public void convertFromDtoToDomainTest() {
+    public void convertFromDtoToDomainTest() throws PAException {
         Session session  = HibernateUtil.getCurrentSession();
         StudyProtocol create = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
         session.save(create);
@@ -168,7 +193,7 @@ public class StudyProtocolConverterTest  {
     }
 
     @Test
-    public void convertFromDtoToDomainTest1() {
+    public void convertFromDtoToDomainTest1() throws PAException {
         Session session  = HibernateUtil.getCurrentSession();
         StudyProtocol create = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
         session.save(create);
@@ -192,33 +217,41 @@ public class StudyProtocolConverterTest  {
      * @param spDTO spDTO
      */
     public void assertStudyProtocol(StudyProtocol sp, StudyProtocolDTO spDTO) {
+        new BaseStudyProtocolConverterTest().assertStudyProtocol(sp, spDTO);
         assertEquals(sp.getAcronym(), spDTO.getAcronym().getValue());
         assertEquals(sp.getAccrualReportingMethodCode().getCode(), spDTO.getAccrualReportingMethodCode().getCode());
-        assertEquals(sp.getDataMonitoringCommitteeAppointedIndicator(),
-                spDTO.getDataMonitoringCommitteeAppointedIndicator().getValue());
-        assertEquals(sp.getDelayedpostingIndicator(), spDTO.getDelayedpostingIndicator().getValue());
         assertEquals(sp.getExpandedAccessIndicator(), spDTO.getExpandedAccessIndicator().getValue());
-        assertEquals(sp.getFdaRegulatedIndicator(), spDTO.getFdaRegulatedIndicator().getValue());
-        assertEquals(sp.getId().toString() , spDTO.getIdentifier().getExtension());
-        assertEquals(sp.getOfficialTitle() , spDTO.getOfficialTitle().getValue());
-        assertEquals(sp.getPhaseCode().getCode(), spDTO.getPhaseCode().getCode());
-        assertEquals(sp.getPhaseAdditionalQualifierCode().getCode(), spDTO.getPhaseAdditionalQualifierCode().getCode());
-        assertEquals(sp.getPrimaryCompletionDate(), TsConverter.convertToTimestamp(spDTO.getPrimaryCompletionDate()));
-        assertEquals(sp.getPrimaryCompletionDateTypeCode().getCode(),
-                spDTO.getPrimaryCompletionDateTypeCode().getCode());
-        assertEquals(sp.getPrimaryPurposeCode().getCode(), spDTO.getPrimaryPurposeCode().getCode());
-        assertEquals(sp.getPrimaryPurposeAdditionalQualifierCode().getCode(),
-                spDTO.getPrimaryPurposeAdditionalQualifierCode().getCode());
-        assertEquals(sp.getPrimaryPurposeOtherText(), spDTO.getPrimaryPurposeOtherText().getValue());
         assertEquals(sp.getPublicDescription(), spDTO.getPublicDescription().getValue());
         assertEquals(sp.getPublicTitle(), spDTO.getPublicTitle().getValue());
         assertEquals(sp.getRecordVerificationDate() ,
                 TsConverter.convertToTimestamp(spDTO.getRecordVerificationDate()));
         assertEquals(sp.getScientificDescription(), spDTO.getScientificDescription().getValue());
-        assertEquals(sp.getSection801Indicator(), spDTO.getSection801Indicator().getValue());
-        assertEquals(sp.getStartDate() , TsConverter.convertToTimestamp(spDTO.getStartDate()));
-        assertEquals(sp.getStartDateTypeCode().getCode() , spDTO.getStartDateTypeCode().getCode());
         assertEquals(sp.getAmendmentReasonCode().getCode() ,spDTO.getAmendmentReasonCode().getCode());
         assertEquals(sp.getStatusCode().getCode() ,spDTO.getStatusCode().getCode());
+    }
+    
+    @Test
+    public void convertToDSetCd() throws PAException {
+        Set<AnatomicSite> sasList = new HashSet<AnatomicSite>();
+        AnatomicSite as1 = new AnatomicSite();
+        as1.setCode("Lung");
+        as1.setCodingSystem("Summary 4 Anatomic Sites");
+       
+        sasList.add(as1);
+        
+        DSet<Cd> dset = StudyProtocolConverter.convertToDSet(sasList);
+        List<String> sites = new ArrayList<String>();
+        for (Cd cd : dset.getItem()) {
+            sites.add(cd.getCode());
+            assertEquals("Summary 4 Anatomic Sites", cd.getCodeSystem());
+        }
+        assertTrue(sites.contains("Lung"));
+        Set<AnatomicSite> freshSites = StudyProtocolConverter.convertToList(dset);
+        sites = new ArrayList<String>();
+        for (AnatomicSite site : freshSites) {
+            sites.add(site.getCode());
+            assertEquals("Summary 4 Anatomic Sites", site.getCodingSystem());
+        }
+        assertTrue(sites.contains("Lung"));
     }
 }
