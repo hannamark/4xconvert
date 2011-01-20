@@ -626,4 +626,8 @@
         <comment>Save uploaded docs as part of Save as Draft.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.4/PO-2980.sql"/>
      </changeSet>
+     <changeSet id="PO-2972-1" author="vrushali">
+        <comment>Sending email on Abstraction Verified No Response Script Failure.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.4/PO-2972-1.sql"/>
+     </changeSet>
 </databaseChangeLog>

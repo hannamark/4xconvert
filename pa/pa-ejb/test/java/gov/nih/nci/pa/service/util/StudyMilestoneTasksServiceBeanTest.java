@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
@@ -134,6 +135,8 @@ public class StudyMilestoneTasksServiceBeanTest extends AbstractMockitoTest {
         when(mockStudyRecruitBean.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(recruitDto);
         when(mockStudyRecruitBean.getByStudyProtocol(any(Ii.class))).thenReturn(Arrays.asList(recruitDto));
         abstractionBean.setStudyRecruitmentStatusServiceLocal(mockStudyRecruitBean);
+        when(paRegSvcLoc.getLookUpTableService()).thenReturn(lookupSvc);
+        when(lookupSvc.getPropertyValue(anyString())).thenReturn("");
     }
 
     /**

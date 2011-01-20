@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
@@ -90,11 +91,13 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -140,25 +143,60 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         for (StudyMilestone smdto : studyMilestoneList) {
             milestoneDate.setTime(smdto.getMilestoneDate());
             if (isMoreThan5Businessdays(milestoneDate)) {
-                LOG.info("Creating a new milestone with code - initial abstraction verify"
-                            + smdto.getStudyProtocol().getId());
-                StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
-                newDTO.setCommentText(StConverter.convertToSt(
-                            "Milestone auto-set based on Non-Response within 5 days"));
-                newDTO.setMilestoneCode(CdConverter.convertStringToCd(
-                MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode()));
-                newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-                newDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
-                        smdto.getStudyProtocol().getId()));
                 try {
-                        smRemote.create(newDTO);
+                    createMilestone(smdto);
                 } catch (PAException e) {
                     // swallowing the exception in order to continue processing the rest of the records
-                    LOG.error("Error occurred in a quartz job while creating INITIAL_ABSTRACTION_VERIFY "
-                                + " milestone based on Non-Response within 5 days" + e);
+                    sendFailureNotification(smdto, e);
                 }
              }
          }
+    }
+
+
+    /**
+     * @param smdto
+     * @throws PAException
+     */
+    private void createMilestone(StudyMilestone smdto) throws PAException {
+        LOG.info("Creating a new milestone with code - initial abstraction verify" + smdto.getStudyProtocol().getId());
+        StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
+        newDTO.setCommentText(StConverter.convertToSt("Milestone auto-set based on Non-Response within 5 days"));
+        newDTO.setMilestoneCode(CdConverter.convertStringToCd(
+        MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode()));
+        newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        newDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
+                smdto.getStudyProtocol().getId()));
+        smRemote.create(newDTO);
+    }
+
+
+    /**
+     * @param mailSubject
+     * @param mailTo
+     * @param smdto
+     * @param e
+     * @throws PAException
+     */
+    private void sendFailureNotification(StudyMilestone smdto, PAException e) throws PAException {
+        String trialID = "";
+        for (Iterator<Ii> iter = smdto.getStudyProtocol().getOtherIdentifiers().iterator();
+            iter.hasNext();) {
+            Ii ii = iter.next();
+            if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+                trialID = ii.getExtension();
+            }
+        }
+        String mailBody = " An error occurred while running the Abstraction Verified No Response Script."
+            + " The trial ID is " + trialID + " and the error is " + e.getMessage();
+        LOG.error(mailBody, e);
+        try {
+            String mailSubject = PaRegistry.getLookUpTableService().getPropertyValue("abstraction.script.subject");
+            String mailTo = PaRegistry.getLookUpTableService().getPropertyValue("abstraction.script.mailTo");
+            PaRegistry.getMailManagerService().sendMailWithAttachment(mailTo, mailSubject, mailBody, null);
+        } catch (Exception e1) {
+            LOG.error("error-- ", e1);
+        }
     }
 
 
@@ -214,7 +252,5 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
             Long studyId1 = ((StudyMilestone) milestone1).getStudyProtocol().getId();
             return new CompareToBuilder().append(studyId0, studyId1).toComparison();
        }
-
     }
-
 }

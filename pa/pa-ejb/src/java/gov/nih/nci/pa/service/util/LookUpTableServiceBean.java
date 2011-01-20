@@ -178,7 +178,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      * @return value  val
      * @throws PAException PAException
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String getPropertyValue(String name) throws PAException {
         Session session = null;
         String value = "";
