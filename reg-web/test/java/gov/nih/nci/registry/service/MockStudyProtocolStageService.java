@@ -23,6 +23,7 @@ import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.StudyFundingStageConverter;
 import gov.nih.nci.pa.iso.convert.StudyIndIdeStageConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolStageConverter;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
@@ -157,12 +158,6 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
 
     }
 
-    public Ii create(StudyProtocolStageDTO ispDTO,
-            List<StudyFundingStageDTO> fundDTOs,
-            List<StudyIndIdeStageDTO> indDTOs) throws PAException {
-        return IiConverter.convertToIi("1");
-    }
-
     public StudyProtocolStageDTO get(Ii ii) throws PAException {
         for (StudyProtocolStage tsp: list) {
             if(tsp.getId().equals(IiConverter.convertToLong(ii))) {
@@ -215,9 +210,20 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
         return returnList;
     }
 
-    public StudyProtocolStageDTO update(StudyProtocolStageDTO isoDTO,
-            List<StudyFundingStageDTO> fundDTOs,
-            List<StudyIndIdeStageDTO> indDTOs) throws PAException {
+    public Ii create(StudyProtocolStageDTO ispDTO, List<StudyFundingStageDTO> fundDTOs,
+          List<StudyIndIdeStageDTO> indDTOs, List<DocumentDTO> docDTOs) throws PAException {
+        // TODO Auto-generated method stub
+        return IiConverter.convertToIi("1");
+    }
+
+    public List<DocumentDTO> getDocumentsByStudyProtocolStage(Ii studyProtocolStageIi) throws PAException {
+        // TODO Auto-generated method stub
+        return new ArrayList<DocumentDTO>();
+    }
+
+    public StudyProtocolStageDTO update(StudyProtocolStageDTO isoDTO, List<StudyFundingStageDTO> fundDTOs,
+            List<StudyIndIdeStageDTO> indDTOs, List<DocumentDTO> docDTOs)
+    throws PAException {
         StudyProtocolStageDTO isoDto = new StudyProtocolStageDTO();
         isoDto.setIdentifier(IiConverter.convertToIi("1"));
         return isoDto;

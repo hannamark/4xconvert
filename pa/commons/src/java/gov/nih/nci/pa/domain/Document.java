@@ -78,12 +78,10 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.DocumentTypeCode;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
@@ -96,32 +94,31 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name =  "DOCUMENT")
-public class Document extends AbstractStudyEntity {
+public class Document extends AbstractDocument {
 
     private static final long serialVersionUID = 8042681583974060450L;
-    private DocumentTypeCode typeCode;
     private Boolean activeIndicator;
-    private String fileName;
     private String inactiveCommentText;
+    private StudyProtocol studyProtocol;
 
     /**
-     *
-     * @return typeCode
+     * @return studyProtocol
      */
-    @Column(name = "TYPE_CODE")
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
     @NotNull
-    public DocumentTypeCode getTypeCode() {
-        return typeCode;
+    @Searchable(nested = true)
+    public StudyProtocol getStudyProtocol() {
+        return studyProtocol;
     }
 
     /**
-     *
-     * @param typeCode typeCode
+     * @param studyProtocol studyProtocol
      */
-    public void setTypeCode(DocumentTypeCode typeCode) {
-        this.typeCode = typeCode;
+    public void setStudyProtocol(StudyProtocol studyProtocol) {
+        this.studyProtocol = studyProtocol;
     }
+
     /**
      *
      * @return activeIndicator
@@ -140,25 +137,6 @@ public class Document extends AbstractStudyEntity {
     public void setActiveIndicator(Boolean activeIndicator) {
         this.activeIndicator = activeIndicator;
     }
-
-    /**
-     *
-     * @return fileName
-     */
-    @Column(name = "FILE_NAME")
-    @NotNull
-    public String getFileName() {
-        return fileName;
-    }
-
-
-    /**
-     * @param fileName fileName
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     /**
      *
      * @return inactiveCommentText

@@ -622,4 +622,8 @@
         <comment>Adding study_anatomic_site table to the db structure.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.4/PO-3109.sql"/>
      </changeSet>
+       <changeSet id="PO-2980" author="vrushali">
+        <comment>Save uploaded docs as part of Save as Draft.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.4/PO-2980.sql"/>
+     </changeSet>
 </databaseChangeLog>

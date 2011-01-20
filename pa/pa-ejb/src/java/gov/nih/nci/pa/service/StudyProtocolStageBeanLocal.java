@@ -8,19 +8,23 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyDocumentStage;
 import gov.nih.nci.pa.domain.StudyFundingStage;
 import gov.nih.nci.pa.domain.StudyIndIdeStage;
 import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.iso.convert.StudyDocumentStageConverter;
 import gov.nih.nci.pa.iso.convert.StudyFundingStageConverter;
 import gov.nih.nci.pa.iso.convert.StudyIndIdeStageConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolStageConverter;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
@@ -34,8 +38,13 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +57,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -66,7 +76,6 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyProtocolStage>
     implements StudyProtocolStageServiceLocal {
 
-    private static final String QUERY = " query  = ";
     private static final String II_CAN_NOT_BE_NULL = "Ii cannot be null";
     private static final Logger LOG  = Logger.getLogger(StudyProtocolStageBeanLocal.class);
     @EJB
@@ -132,6 +141,22 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         StudyProtocolStage tempSp = (StudyProtocolStage)
             session.load(StudyProtocolStage.class, Long.valueOf(ii.getExtension()));
         session.delete(tempSp);
+        deleteDocumentsFromFileSystem(ii);
+    }
+
+    /**
+     * @param studyProtocolStageii
+     * @throws PAException
+     */
+    private void deleteDocumentsFromFileSystem(Ii studyProtocolStageii) throws PAException {
+        String folderPath = PaEarPropertyReader.getDocUploadPath();
+        StringBuffer fileName = new StringBuffer(studyProtocolStageii.getExtension());
+        File dirToDelete = new File(folderPath + File.separator + fileName);
+        try {
+            FileUtils.deleteDirectory(dirToDelete);
+        } catch (IOException e) {
+            throw new PAException(e);
+        }
     }
 
     /**
@@ -165,14 +190,9 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
         List<StudyFundingStageDTO> resultList = new ArrayList<StudyFundingStageDTO>();
-        Session session = HibernateUtil.getCurrentSession();
         StringBuffer hql = new StringBuffer("select spart from ");
         hql.append(" StudyFundingStage spart join spart.studyProtocolStage spro where spro.id = :studyProtocolId");
-        LOG.debug(QUERY + hql);
-        List<? extends AbstractEntity> queryList = new ArrayList<AbstractEntity>();
-        Query query = session.createQuery(hql.toString());
-        query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolStageIi));
-        queryList = query.list();
+        List<? extends AbstractEntity> queryList = getResultList(studyProtocolStageIi, hql);
         for (AbstractEntity bo : queryList) {
             resultList.add(StudyFundingStageConverter.convertFromDomainToDTO((StudyFundingStage) bo));
         }
@@ -190,14 +210,9 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
         List<StudyIndIdeStageDTO> resultList = new ArrayList<StudyIndIdeStageDTO>();
-        Session session = HibernateUtil.getCurrentSession();
         StringBuffer hql = new StringBuffer("select spart from ");
         hql.append(" StudyIndIdeStage spart join spart.studyProtocolStage spro where spro.id = :studyProtocolId");
-        LOG.debug(QUERY + hql);
-        List<? extends AbstractEntity> queryList = new ArrayList<AbstractEntity>();
-        Query query = session.createQuery(hql.toString());
-        query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolStageIi));
-        queryList = query.list();
+        List<? extends AbstractEntity> queryList = getResultList(studyProtocolStageIi, hql);
         for (AbstractEntity bo : queryList) {
             resultList.add(StudyIndIdeStageConverter.convertFromDomainToDTO((StudyIndIdeStage) bo));
         }
@@ -208,34 +223,62 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
      * @param ispDTO dto
      * @param fundDTOs dto
      * @param indDTOs dto
+     * @param docDTOs for document
      * @return ii
      * @throws PAException on err
      */
-    public Ii create(StudyProtocolStageDTO ispDTO,
-            List<StudyFundingStageDTO> fundDTOs, List<StudyIndIdeStageDTO> indDTOs)
-            throws PAException {
+    public Ii create(StudyProtocolStageDTO ispDTO, List<StudyFundingStageDTO> fundDTOs,
+            List<StudyIndIdeStageDTO> indDTOs, List<DocumentDTO> docDTOs) throws PAException {
         Ii studyProtocolStageIi = createOrUpdateStudyProtocol(ispDTO, "Create");
         createGrants(fundDTOs, studyProtocolStageIi);
         createIndIde(indDTOs, studyProtocolStageIi);
+        createDocuments(docDTOs, studyProtocolStageIi);
         sendPartialSubmissionMail(studyProtocolStageIi);
         return studyProtocolStageIi;
+    }
+
+    /**
+     * @param docDTOs
+     * @param studyProtocolStageIi
+     * @throws PAException on err
+     */
+    private void createDocuments(List<DocumentDTO> docDTOs, Ii studyProtocolStageIi) throws PAException {
+        if (CollectionUtils.isNotEmpty(docDTOs)) {
+            if (PAUtil.isIiNull(studyProtocolStageIi)) {
+                throw new PAException("StudyProtocolStageIi can not be null");
+            }
+            Session session = HibernateUtil.getCurrentSession();
+            for (DocumentDTO docDTO : docDTOs) {
+                docDTO.setStudyProtocolIdentifier(studyProtocolStageIi);
+                StudyDocumentStage docStage = new StudyDocumentStageConverter().convertFromDtoToDomain(docDTO);
+                docStage.setDateLastCreated(new Timestamp((new Date()).getTime()));
+                session.save(docStage);
+                docDTO.setIdentifier(IiConverter.convertToDocumentIi(docStage.getId()));
+                saveFile(docDTO, studyProtocolStageIi);
+
+            }
+        }
+
+
     }
 
     /**
      * @param isoDTO  for spStage
      *  @param fundDTOs for funding
      *  @param indDTOs for ind
+     *  @param docDTOs for document
      *  @return dto
      *  @throws PAException on err
      */
-    public StudyProtocolStageDTO update(StudyProtocolStageDTO isoDTO,
-            List<StudyFundingStageDTO> fundDTOs, List<StudyIndIdeStageDTO> indDTOs)
-            throws PAException {
+    public StudyProtocolStageDTO update(StudyProtocolStageDTO isoDTO, List<StudyFundingStageDTO> fundDTOs,
+            List<StudyIndIdeStageDTO> indDTOs, List<DocumentDTO> docDTOs) throws PAException {
         Ii spIi = createOrUpdateStudyProtocol(isoDTO, "update");
         deleteGrants(spIi);
         deleteIndIdesForStudyProtocolStage(spIi);
+        deleteDocuments(spIi);
         createGrants(fundDTOs, spIi);
         createIndIde(indDTOs, spIi);
+        createDocuments(docDTOs, spIi);
         return get(spIi);
 
     }
@@ -320,10 +363,9 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         if (PAUtil.isIiNull(studyProtocolStageIi)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
-        Session session = HibernateUtil.getCurrentSession();
         StringBuffer sql = new StringBuffer("DELETE FROM STUDY_FUNDING_STAGE WHERE STUDY_PROTOCOL_STAGE_IDENTIFIER  = ")
             .append(IiConverter.convertToString(studyProtocolStageIi));
-        session.createSQLQuery(sql.toString()).executeUpdate();
+        HibernateUtil.getCurrentSession().createSQLQuery(sql.toString()).executeUpdate();
     }
 
     private void createIndIde(List<StudyIndIdeStageDTO> studyIndIdeStageDTOs, Ii studyProtocolStageIi)
@@ -348,10 +390,9 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         if (PAUtil.isIiNull(studyProtocolStageIi)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
-        Session session = HibernateUtil.getCurrentSession();
         StringBuffer sql = new StringBuffer("DELETE FROM STUDY_INDIDE_STAGE WHERE STUDY_PROTOCOL_STAGE_IDENTIFIER  = ")
             .append(IiConverter.convertToString(studyProtocolStageIi));
-        session.createSQLQuery(sql.toString()).executeUpdate();
+        HibernateUtil.getCurrentSession().createSQLQuery(sql.toString()).executeUpdate();
 
     }
 
@@ -388,4 +429,71 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
           }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public List<DocumentDTO> getDocumentsByStudyProtocolStage(Ii studyProtocolStageIi) throws PAException {
+        if (PAUtil.isIiNull(studyProtocolStageIi)) {
+            throw new PAException(II_CAN_NOT_BE_NULL);
+        }
+        List<DocumentDTO> resultList = new ArrayList<DocumentDTO>();
+
+        StringBuffer hql = new StringBuffer("select doc from ");
+        hql.append(" StudyDocumentStage doc join doc.studyProtocolStage spro where spro.id = :studyProtocolId");
+        List<? extends AbstractEntity> queryList = getResultList(studyProtocolStageIi, hql);
+        for (AbstractEntity bo : queryList) {
+            DocumentDTO docDTO = new StudyDocumentStageConverter().convertFromDomainToDto((StudyDocumentStage) bo);
+            if (docDTO != null) {
+                try {
+                    StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
+                    sb.append(File.separator).append(studyProtocolStageIi.getExtension()).append(File.separator)
+                      .append(docDTO.getIdentifier().getExtension()).append('-')
+                      .append(StConverter.convertToString(docDTO.getFileName()));
+                    File downloadFile = new File(sb.toString());
+                    docDTO.setText(EdConverter.convertToEd(PAUtil.readInputStream(new FileInputStream(downloadFile))));
+                } catch (FileNotFoundException fe) {
+                    throw new PAException("File Not found " + fe.getLocalizedMessage(), fe);
+                } catch (IOException io) {
+                    throw new PAException("IO Exception" + io.getLocalizedMessage(), io);
+                }
+                resultList.add(docDTO);
+            }
+        }
+        return resultList;
+    }
+
+    private void deleteDocuments(Ii studyProtocolStageIi) throws PAException {
+        if (PAUtil.isIiNull(studyProtocolStageIi)) {
+            throw new PAException(II_CAN_NOT_BE_NULL);
+        }
+       StringBuffer sql = new StringBuffer("DELETE FROM STUDY_DOCUMENT_STAGE WHERE STUDY_PROTOCOL_STAGE_IDENTIFIER  = ")
+            .append(IiConverter.convertToString(studyProtocolStageIi));
+        HibernateUtil.getCurrentSession().createSQLQuery(sql.toString()).executeUpdate();
+        deleteDocumentsFromFileSystem(studyProtocolStageIi);
+    }
+    /**
+     * @param studyProtocolStageIi
+     * @param hql
+     * @return
+     */
+    private List<? extends AbstractEntity> getResultList(Ii studyProtocolStageIi, StringBuffer hql) {
+        Session session = HibernateUtil.getCurrentSession();
+        Query query = session.createQuery(hql.toString());
+        query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolStageIi));
+        return query.list();
+    }
+
+    private void saveFile(DocumentDTO docDTO, Ii studyProtocolIi) throws PAException {
+        String folderPath = PaEarPropertyReader.getDocUploadPath();
+        StringBuffer fileName = new StringBuffer(studyProtocolIi.getExtension());
+        fileName.append(File.separator).append(docDTO.getIdentifier().getExtension()).append('-').append(
+                docDTO.getFileName().getValue());
+        File fileToUpload = new File(folderPath + File.separator + fileName);
+        try {
+            FileUtils.deleteQuietly(fileToUpload);
+            FileUtils.writeStringToFile(fileToUpload, docDTO.getText().getData().toString());
+        } catch (IOException e) {
+                throw new PAException("save draft - Error during uploading file.", e);
+        }
+    }
 }

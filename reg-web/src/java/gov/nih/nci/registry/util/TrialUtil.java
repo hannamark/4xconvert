@@ -12,6 +12,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
@@ -44,6 +45,7 @@ import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
+import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -340,16 +342,12 @@ public class TrialUtil extends TrialConvertUtils {
        } else {
            trialDTO.setReason(null);
        }
-
        //get the regulatory information.
         copyRegulatoryInformation(studyProtocolIi, trialDTO);
-
        //get the collaborators information.
        copyCollaborators(studyProtocolIi, trialDTO);
-
        //get the participating sites information.
        copyParticipatingSites(studyProtocolIi, trialDTO);
-
        //Copy IND's to update list
        trialDTO.setIndIdeUpdateDtos(trialDTO.getIndIdeDtos());
        //copy Dcp
@@ -617,6 +615,14 @@ public class TrialUtil extends TrialConvertUtils {
                     || trialDTO.getPropritaryTrialIndicator().equalsIgnoreCase(CommonsConstant.NO)) {
                 populateRegulatoryList((TrialDTO) trialDTO);
             }
+            //populate doc
+            List <DocumentDTO> docDTOs = PaRegistry.getStudyProtocolStageService()
+               .getDocumentsByStudyProtocolStage(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
+            List<TrialDocumentWebDTO> webDocList = new ArrayList<TrialDocumentWebDTO>();
+            for (DocumentDTO docDTO : docDTOs) {
+                 webDocList.add(new TrialDocumentWebDTO(docDTO));
+            }
+            trialDTO.setDocDtos(webDocList);
         return trialDTO;
     }
     /**
@@ -658,13 +664,14 @@ public class TrialUtil extends TrialConvertUtils {
         }
 
         StudyProtocolStageDTO spStageDto = convertToStudyProtocolStageDTO(trialDTO);
+        List<DocumentDTO> docDTOS = convertToISODocumentList(trialDTO.getDocDtos());
         if (StringUtils.isNotEmpty(trialDTO.getStudyProtocolId())) {
             StudyProtocolStageDTO dto = PaRegistry.getStudyProtocolStageService().update(
-                    spStageDto, fundingDTOS, indDTOS);
+                    spStageDto, fundingDTOS, indDTOS, docDTOS);
             tempStudyProtocolIi =  dto.getIdentifier();
         } else {
             tempStudyProtocolIi = PaRegistry.getStudyProtocolStageService().create(
-                    spStageDto, fundingDTOS, indDTOS);
+                    spStageDto, fundingDTOS, indDTOS, docDTOS);
         }
        ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");
        ServletActionContext.getRequest().getSession().removeAttribute("grantList");

@@ -189,6 +189,9 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
                     .getRequest().getRemoteUser()));
             StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
+            for (DocumentDTO dto : documentDTOs) {
+               dto.setIdentifier(null);
+            }
             OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
             PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
             OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
@@ -464,13 +467,19 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             if (otherIdsList != null) {
                 trialDTO.setSecondaryIdentifierList(otherIdsList);
             }
+            validateDocuments();
+            trialDTO.setDocDtos(getTrialDocuments());
             trialDTO = (TrialDTO) trialUtil.saveDraft(trialDTO);
             ServletActionContext.getRequest().setAttribute("protocolId", trialDTO.getStudyProtocolId());
             ServletActionContext.getRequest().setAttribute("partialSubmission", "submit");
             ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
         } catch (PAException e) {
-            LOG.error(e.getLocalizedMessage());
+            LOG.error(e.getMessage());
+            addActionError(e.getMessage());
+            return ERROR;
+        } catch (IOException e) {
+            LOG.error(e.getMessage());
             addActionError(e.getMessage());
             return ERROR;
         }
@@ -497,6 +506,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST,
                     trialDTO.getSecondaryIdentifierList());
             setPageFrom("submitTrial");
+            setDocumentsInSession(trialDTO);
         } catch (PAException e) {
             addActionError(e.getMessage());
         } catch (NullifiedRoleException e) {

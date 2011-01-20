@@ -80,22 +80,17 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.ISOUtil;
-
-import java.util.Date;
 /**
  * Convert Document from domain to DTO.
  *
  * @author Kalpana Guthikonda
  * @since 09/30/2008
  */
-public class DocumentConverter extends AbstractConverter<DocumentDTO, Document> {
+public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Document> {
 
     /**
      * @param doc Document
@@ -104,12 +99,9 @@ public class DocumentConverter extends AbstractConverter<DocumentDTO, Document> 
     @Override
     public  DocumentDTO convertFromDomainToDto(Document doc) {
         DocumentDTO docDTO = new DocumentDTO();
-        docDTO.setIdentifier(IiConverter.convertToDocumentIi(doc.getId()));
-        docDTO.setTypeCode(CdConverter.convertToCd(doc.getTypeCode()));
-        docDTO.setFileName(StConverter.convertToSt(doc.getFileName()));
+        super.convertFromDomainToDto(doc, docDTO);
         docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(doc.getStudyProtocol().getId()));
         docDTO.setActiveIndicator(BlConverter.convertToBl(doc.getActiveIndicator()));
-
         return docDTO;
     }
 
@@ -121,21 +113,16 @@ public class DocumentConverter extends AbstractConverter<DocumentDTO, Document> 
     @Override
     public  Document convertFromDtoToDomain(DocumentDTO docDTO) {
         Document doc = new Document();
+        super.convertFromDtoToDomain(docDTO, doc);
+
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIdentifier()));
+
         doc.setActiveIndicator(BlConverter.convertToBoolean(docDTO.getActiveIndicator()));
-        doc.setDateLastUpdated(new Date());
         doc.setStudyProtocol(spBo);
-        if (docDTO.getTypeCode() != null) {
-            doc.setTypeCode(DocumentTypeCode.getByCode(docDTO.getTypeCode().getCode()));
-        }
-        if (docDTO.getFileName() != null) {
-            doc.setFileName(docDTO.getFileName().getValue());
-        }
         if (ISOUtil.isBlNull(docDTO.getActiveIndicator())) {
             doc.setActiveIndicator(Boolean.TRUE);
         }
-
         return doc;
     }
 

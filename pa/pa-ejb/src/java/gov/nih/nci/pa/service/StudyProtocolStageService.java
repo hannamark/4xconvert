@@ -3,6 +3,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
@@ -28,11 +29,12 @@ public interface StudyProtocolStageService {
      * @param ispDTO  for spStage
      * @param fundDTOs for funding
      * @param indDTOs for ind
+     * @param docDTOs for document
      * @return ii ii
      * @throws PAException exception
      */
-    Ii create(StudyProtocolStageDTO ispDTO, List<StudyFundingStageDTO> fundDTOs, List<StudyIndIdeStageDTO> indDTOs)
-        throws PAException;
+    Ii create(StudyProtocolStageDTO ispDTO, List<StudyFundingStageDTO> fundDTOs, List<StudyIndIdeStageDTO> indDTOs,
+            List<DocumentDTO> docDTOs) throws PAException;
     /**
      *
      * @param dto criteria
@@ -48,11 +50,12 @@ public interface StudyProtocolStageService {
      * @param isoDTO  for spStage
      * @param fundDTOs for funding
      * @param indDTOs for ind
+     * @param docDTOs for document
      * @return dto
      * @throws PAException e
      */
     StudyProtocolStageDTO update(StudyProtocolStageDTO isoDTO, List<StudyFundingStageDTO> fundDTOs,
-            List<StudyIndIdeStageDTO> indDTOs)
+            List<StudyIndIdeStageDTO> indDTOs, List<DocumentDTO> docDTOs)
     throws PAException;
     /**
      *
@@ -75,4 +78,12 @@ public interface StudyProtocolStageService {
      * @throws PAException on err
      */
     List <StudyIndIdeStageDTO> getIndIdesByStudyProtocolStage(Ii studyProtocolStageIi) throws PAException;
+
+    /**
+     *
+     * @param studyProtocolStageIi ii
+     * @return list of documents
+     * @throws PAException on err
+     */
+    List<DocumentDTO> getDocumentsByStudyProtocolStage(Ii studyProtocolStageIi) throws PAException;
 }
