@@ -16,10 +16,6 @@ ON DELETE RESTRICT;
 
 delete from anatomic_sites;
 
-DROP SEQUENCE IF EXISTS anatomic_sites_identifier_seq;
-
-CREATE SEQUENCE anatomic_sites_identifier_seq INCREMENT 1 START 1;
-
 INSERT INTO anatomic_sites(identifier, code, display_name) VALUES (nextval('anatomic_sites_identifier_seq'), 'lip, oral cavity and pharynx', '');
 
 INSERT INTO anatomic_sites(identifier, code, display_name) VALUES (nextval('anatomic_sites_identifier_seq'), 'esophagus', '');
