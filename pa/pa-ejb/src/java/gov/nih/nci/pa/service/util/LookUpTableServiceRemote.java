@@ -145,7 +145,7 @@ public interface LookUpTableServiceRemote {
     List<Country> searchCountry(Country country) throws PAException;
     
     /**
-     * Get all anatomic sites.
+     * Get all anatomic sites. Ordered by code. 
      * @return list of anatomic sites.
      * @throws PAException on error
      */

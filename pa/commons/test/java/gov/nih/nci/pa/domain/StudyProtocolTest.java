@@ -199,6 +199,23 @@ public class StudyProtocolTest  {
         assertStudyProtocol(sp , saved);
 
     }
+    
+    /**
+     * @throws PAException
+     *
+     */
+    @Test
+    public void createStudyProtocolWoutAnatomicSitesTest() {
+        Session session  = HibernateUtil.getCurrentSession();
+        
+        StudyProtocol sp = createStudyProtocolObj();
+        sp.setSummary4AnatomicSites(new HashSet<AnatomicSite>());
+        TestSchema.addUpdObject(sp);
+        assertNotNull(sp.getId());
+        StudyProtocol saved =
+            (StudyProtocol) session.load(StudyProtocol.class, sp.getId());
+        assertStudyProtocol(sp , saved);
+    }
 
     @Test
     public void createInterventionalStudyProtocolTest() {

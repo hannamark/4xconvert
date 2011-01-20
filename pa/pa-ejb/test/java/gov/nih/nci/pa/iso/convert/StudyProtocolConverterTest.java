@@ -239,14 +239,14 @@ public class StudyProtocolConverterTest  {
        
         sasList.add(as1);
         
-        DSet<Cd> dset = StudyProtocolConverter.convertToDSet(sasList);
+        DSet<Cd> dset = AnatomicSiteConverter.convertToDSet(sasList);
         List<String> sites = new ArrayList<String>();
         for (Cd cd : dset.getItem()) {
             sites.add(cd.getCode());
             assertEquals("Summary 4 Anatomic Sites", cd.getCodeSystem());
         }
         assertTrue(sites.contains("Lung"));
-        Set<AnatomicSite> freshSites = StudyProtocolConverter.convertToList(dset);
+        Set<AnatomicSite> freshSites = AnatomicSiteConverter.convertToSet(dset);
         sites = new ArrayList<String>();
         for (AnatomicSite site : freshSites) {
             sites.add(site.getCode());

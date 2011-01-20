@@ -115,6 +115,7 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.convert.AnatomicSiteConverter;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
@@ -203,8 +204,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         if (studyProtocol == null) {
             throw new PAException("No matching study protocol for Ii.extension " + id);
         }
-        StudyProtocolDTO returnVal = StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
-        return returnVal;
+        return StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
     }
 
     /**
@@ -220,18 +220,15 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
 
         enForceBusinessRules(studyProtocolDTO);
-
-        StudyProtocolDTO  spDTO = null;
         Session session = HibernateUtil.getCurrentSession();
         StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class,
                 Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
 
         StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, sp);
 
-        setDefaultValues(sp, spDTO, session, UPDATE);
+        setDefaultValues(sp, null, session, UPDATE);
         session.update(sp);
-        spDTO =  StudyProtocolConverter.convertFromDomainToDTO(sp);
-        return spDTO;
+        return StudyProtocolConverter.convertFromDomainToDTO(sp);
     }
 
 
@@ -250,8 +247,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         Session session = HibernateUtil.getCurrentSession();
         InterventionalStudyProtocol isp = (InterventionalStudyProtocol) session.load(InterventionalStudyProtocol.class,
                     Long.valueOf(ii.getExtension()));
-        InterventionalStudyProtocolDTO returnVal = InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
-        return returnVal;
+        return InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
     }
 
 
@@ -274,7 +270,6 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             totBlindCodes = ispDTO.getBlindedRoleCode().getItem().size();
         }
         checkBlindingSchemaCode(ispDTO, totBlindCodes);
-        InterventionalStudyProtocolDTO  ispRetDTO = null;
         Session session = HibernateUtil.getCurrentSession();
         InterventionalStudyProtocol isp = (InterventionalStudyProtocol)
         session.load(InterventionalStudyProtocol.class, Long.valueOf(ispDTO.getIdentifier().getExtension()));
@@ -282,8 +277,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         setDefaultValues(upd , ispDTO , session , UPDATE);
         isp = upd;
         session.merge(isp);
-        ispRetDTO =  InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
-        return ispRetDTO;
+        return InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
     }
 
     private void checkBlindingSchemaCode(InterventionalStudyProtocolDTO ispDTO, int totBlindCodes)
@@ -345,8 +339,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         Session  session = HibernateUtil.getCurrentSession();
         ObservationalStudyProtocol osp = (ObservationalStudyProtocol) session.load(ObservationalStudyProtocol.class,
                 Long.valueOf(ii.getExtension()));
-        ObservationalStudyProtocolDTO returnVal = ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
-        return returnVal;
+        return ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
     }
 
     /**
@@ -641,7 +634,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         criteria.setPublicTitle(StConverter.convertToString(dto.getPublicTitle()));
         criteria.setStatusCode(ActStatusCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         criteria.setOtherIdentifiers(DSetConverter.convertDsetToIiSet(dto.getSecondaryIdentifiers()));
-        criteria.setSummary4AnatomicSites(StudyProtocolConverter.convertToList(dto.getSummary4AnatomicSites()));
+        criteria.setSummary4AnatomicSites(AnatomicSiteConverter.convertToSet(dto.getSummary4AnatomicSites()));
         if (isNonDbStudyProtocolIdentifier(dto.getIdentifier())) {
             StudySite ss = new StudySite();
             ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);

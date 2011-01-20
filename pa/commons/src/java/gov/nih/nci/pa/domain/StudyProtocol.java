@@ -120,6 +120,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Type;
@@ -555,6 +556,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     )
     @ForeignKey(name = "FK_STUDY_ANATOMIC_SITE_STUDY_PROTOCOL", inverseName = "FK_STUDY_ANATOMIC_SITE_ANATOMIC_SITES")
     @Valid
+    @OrderBy(clause = "code")
     @Searchable(nested = true)
     public Set<AnatomicSite> getSummary4AnatomicSites() {
         return summary4AnatomicSites;

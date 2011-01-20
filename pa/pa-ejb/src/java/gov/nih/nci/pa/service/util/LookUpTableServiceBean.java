@@ -103,10 +103,10 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 /**
- * Bean implementation for providing access to look up tables.
- *
- * @author Naveen Amiruddin
- */
+* Bean implementation for providing access to look up tables.
+*
+* @author Naveen Amiruddin
+*/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(HibernateSessionInterceptor.class)
@@ -192,7 +192,6 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         value = paProperties.get(0).getValue();
         return value;
     }
-
     /**
      * {@inheritDoc}
      */
@@ -222,12 +221,8 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<AnatomicSite> getAnatomicSites() throws PAException {
-        Session session = null;
-        List<AnatomicSite> asList = new ArrayList<AnatomicSite>();
-        session = HibernateUtil.getCurrentSession();
-        Query query = session.createQuery("select items from AnatomicSite items order by code");
-        asList = query.list();
-        return asList;
+        return HibernateUtil.getCurrentSession()
+            .createQuery("select items from AnatomicSite items order by code").list();
     }
 
     /**
@@ -237,18 +232,6 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     public <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException {
         StringBuffer hql = new StringBuffer("select item from ").append(clazz.getName())
         .append(" item where item.code = '" + code + "'");
-        Session session = HibernateUtil.getCurrentSession();
-        List<T> queryList = session.createQuery(hql.toString()).list();
-        T le = null;
-        if (queryList.size() > 1) {
-            throw new PAException(" More than 1 " + clazz.getName() + " found for a given code "
-                        + code);
-        }
-    
-        if (!queryList.isEmpty()) {
-            le = queryList.get(0);
-        }
-        session.flush();
-        return le;
+        return (T) HibernateUtil.getCurrentSession().createQuery(hql.toString()).uniqueResult();
     }
 }
