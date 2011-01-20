@@ -5,8 +5,8 @@ package gov.nih.nci.pa.decorator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.action.AbstractPaActionTest;
+import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.service.PAException;
@@ -71,7 +71,7 @@ public class PADisplayTagDecoratorTest extends AbstractPaActionTest {
 	@Test
 	public void testGetViewPublicId() {
 		CaDSRWebDTO de = new CaDSRWebDTO();
-		de.setPublicId("1");
+		de.setPublicId(1L);
 		de.setVersion("1");
 		tab.initRow(de, 1, 1);
 		assertNotNull(tab.getViewPublicId());

@@ -144,7 +144,7 @@ public class TrialHelper {
     }
 
     private void manageCtGovElement(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException {
-        if (!BooleanUtils.toBoolean(gtdDTO.getProprietarytrialindicator()) && gtdDTO.getCtGovXmlRequired()) {
+        if (!BooleanUtils.toBoolean(gtdDTO.getProprietarytrialindicator()) && gtdDTO.isCtGovXmlRequired()) {
             OrganizationDTO sponsorOrgDto = new OrganizationDTO();
             sponsorOrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi(gtdDTO.getSponsorIdentifier()));
             paServUtil.manageSponsor(studyProtocolIi, sponsorOrgDto);
@@ -158,7 +158,7 @@ public class TrialHelper {
                     principalInvestigatorDto, StudyTypeCode.INTERVENTIONAL);
             paServUtil.removeResponsibleParty(studyProtocolIi);
             createSponorContact(studyProtocolIi, gtdDTO);
-        } else if (!BooleanUtils.toBoolean(gtdDTO.getProprietarytrialindicator()) && !gtdDTO.getCtGovXmlRequired()) {
+        } else if (!BooleanUtils.toBoolean(gtdDTO.getProprietarytrialindicator()) && !gtdDTO.isCtGovXmlRequired()) {
             paServUtil.removeSponsor(studyProtocolIi);
             paServUtil.removeResponsibleParty(studyProtocolIi);
         }
@@ -380,7 +380,7 @@ public class TrialHelper {
         }
         if (gtdDTO.getProprietarytrialindicator() != null) {
             if (!StringUtils.equalsIgnoreCase(gtdDTO.getProprietarytrialindicator(), "true")) {
-                spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(gtdDTO.getCtGovXmlRequired()));
+                spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(gtdDTO.isCtGovXmlRequired()));
             }
             setPhaseAndPurpose(gtdDTO, spDTO);
             Set<Ii> allIdentifiers = new HashSet<Ii>();

@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<c:url value="/protected/popupPlannedMarker.action" var="lookupUrl" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <title><fmt:message key="plannedMarker.details.title" /></title>
@@ -31,6 +32,20 @@
             		$('assayPurposeOtherTextRow').hide();
             	}	
             }
+            function cadsrLookup(){
+                showPopWin('${lookupUrl}', 1200, 600, '', 'Marker Search in caDSR');
+            }
+            function loadDiv(markerId) {
+                window.top.hidePopWin(true);
+                var url = '/pa/protected/ajaxptpPlannedMarkerdisplaySelectedCDE.action?cdeId='+markerId;
+                var div = $('plannedMarkerDetails');
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+                var aj = new Ajax.Updater(div, url, {
+                   asynchronous: true,
+                   method: 'get',
+                   evalScripts: false
+                });
+            }           
         </script>
     </head>
     <body>
@@ -57,132 +72,9 @@
                 <tr>
                     <td colspan="2">
                         <s:form id="plannedMarkerForm" action="%{#submitUrl}">
-                            <table class="form">
-                                <s:hidden name="currentAction"/>
-                                <s:hidden name="plannedMarker.id"/>
-                                <tr>
-                                    <td class="label">
-                                        <s:label for="plannedMarker.name"><fmt:message key="plannedMarker.name"/>:</s:label><span class="required">*</span>
-                                    </td>
-                                    <td>
-                                        <s:textfield name="plannedMarker.name" id="name" maxlength="200" size="200" cssStyle="width:280px"/>
-                                        <span class="formErrorMsg">
-                                            <s:fielderror>
-                                                <s:param>plannedMarker.name</s:param>
-                                            </s:fielderror>
-                                         </span>
-                                    </td>                                        
-                                </tr>
-                                <tr>
-                                    <td class="label">
-                                        <s:label for="plannedMarker.assayType"><fmt:message key="plannedMarker.assayType"/>:</s:label><span class="required">*</span>
-                                    </td>
-                                    <td>
-                                        <s:set name="assayTypeValues" value="@gov.nih.nci.pa.enums.AssayTypeCode@getDisplayNames()" />
-                                        <s:select headerKey="" headerValue="" name="plannedMarker.assayType" id="assayType"
-                                            list="#assayTypeValues"  onchange="toggleAssayTypeOtherText();"/>
-                                        <span class="formErrorMsg">
-                                            <s:fielderror>
-                                                <s:param>plannedMarker.assayType</s:param>
-                                            </s:fielderror>
-                                         </span>
-                                    </td>
-                                </tr>
-                                <tr id="assayTypeOtherTextRow">
-                                    <td class="label">
-                                        <s:label for="plannedMarker.assayTypeOtherText"><fmt:message key="plannedMarker.assayTypeOtherText"/>:</s:label><span class="required">*</span>
-                                    </td>
-                                    <td>
-                                        <s:textfield name="plannedMarker.assayTypeOtherText" id="assayTypeOtherText" maxlength="200" size="200" cssStyle="width:280px"/>
-                                        <span class="formErrorMsg">
-                                            <s:fielderror>
-                                                <s:param>plannedMarker.assayTypeOtherText</s:param>
-                                            </s:fielderror>
-                                         </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label">
-                                        <s:label for="plannedMarker.assayUse"><fmt:message key="plannedMarker.assayUse"/>:</s:label><span class="required">*</span>
-                                    </td>
-                                    <td>
-                                        <s:set name="assayUseValues" value="@gov.nih.nci.pa.enums.AssayUseCode@getDisplayNames()" />
-                                        <s:select headerKey="" headerValue="" name="plannedMarker.assayUse" id="assayUse"
-                                            list="#assayUseValues"/> 
-                                        <span class="formErrorMsg">
-                                            <s:fielderror>
-                                                <s:param>plannedMarker.assayUse</s:param>
-                                            </s:fielderror>
-                                         </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label">
-                                        <s:label for="plannedMarker.assayPurpose"><fmt:message key="plannedMarker.assayPurpose"/>:</s:label><span class="required">*</span>
-                                    </td>
-                                    <td>
-                                        <s:set name="assayPurposeValues" value="@gov.nih.nci.pa.enums.AssayPurposeCode@getDisplayNames()" />
-                                        <s:select headerKey="" headerValue="" name="plannedMarker.assayPurpose" id="assayPurpose"
-                                            list="#assayPurposeValues" onchange="toggleAssayPurposeOtherText()"/>
-                                        <span class="formErrorMsg">
-                                            <s:fielderror>
-                                                <s:param>plannedMarker.assayPurpose</s:param>
-                                            </s:fielderror>
-                                         </span> 
-                                     </td>
-                                </tr>
-                                <tr id="assayPurposeOtherTextRow">
-                                    <td class="label">
-                                        <s:label for="plannedMarker.assayPurposeOtherText"><fmt:message key="plannedMarker.assayPurposeOtherText"/>:</s:label><span class="required">*</span>
-                                    </td>
-                                    <td>
-                                        <s:textfield name="plannedMarker.assayPurposeOtherText" id="assayPurposeOtherText" maxlength="200" size="200" cssStyle="width:280px"/>
-                                        <span class="formErrorMsg">
-                                            <s:fielderror>
-                                                <s:param>plannedMarker.assayPurposeOtherText</s:param>
-                                            </s:fielderror>
-                                         </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label">
-                                        <s:label for="plannedMarker.tissueSpecimenType"><fmt:message key="plannedMarker.tissueSpecimenType"/>:</s:label><span class="required">*</span>
-                                    </td>
-                                    <td>
-                                        <s:set name="tissueSpecimenTypeValues" value="@gov.nih.nci.pa.enums.TissueSpecimenTypeCode@getDisplayNames()" />
-                                        <s:select headerKey="" headerValue="" name="plannedMarker.tissueSpecimenType" id="tissueSpecimenType"
-                                            list="#tissueSpecimenTypeValues"/>
-                                        <span class="formErrorMsg">
-                                            <s:fielderror>
-                                                <s:param>plannedMarker.tissueSpecimenType</s:param>
-                                            </s:fielderror>
-                                         </span> 
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label">
-                                        <s:label for="plannedMarker.tissueCollectionMethod"><fmt:message key="plannedMarker.tissueCollectionMethod"/>:</s:label><span class="required">*</span>
-                                    </td>
-                                    <td>
-                                        <s:set name="tissueCollectionMethodValues" value="@gov.nih.nci.pa.enums.TissueCollectionMethodCode@getDisplayNames()" />
-                                        <s:select headerKey="" headerValue="" name="plannedMarker.tissueCollectionMethod" id="tissueCollectionMethod"
-                                            list="#tissueCollectionMethodValues"/>
-                                        <span class="formErrorMsg">
-                                            <s:fielderror>
-                                                <s:param>plannedMarker.tissueCollectionMethod</s:param>
-                                            </s:fielderror>
-                                         </span> 
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label">
-                                        <s:label for="plannedMarker.status"><fmt:message key="plannedMarker.status"/>:</s:label>
-                                    </td>
-                                    <td>
-                                        <s:textfield name="plannedMarker.status" id="status" cssClass="readonly" readonly="true" />
-                                    </td>
-                                </tr>
-                            </table>
+                            <div id="plannedMarkerDetails">
+                                <%@ include file="/WEB-INF/jsp/plannedMarker/selectedPlannedMarker.jsp"%>
+                            </div>
                             <div class="actionsrow">
                                 <del class="btnwrapper">
                                     <ul class="btnrow">
@@ -191,7 +83,7 @@
                                                 <span class="btn_img"><span class="add">Save</span></span>
                                             </s:a>
                                             <s:a href="%{cancelUrl}" cssClass="btn">
-                                                <span class="btn_img"><span class="add">Cancel</span></span>
+                                                <span class="btn_img"><span class="cancel">Cancel</span></span>
                                             </s:a>
                                         </li>
                                     </ul>

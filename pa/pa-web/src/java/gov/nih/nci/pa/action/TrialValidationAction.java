@@ -329,7 +329,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     }
 
     private void validateCtGovReqElement() {
-        if (BooleanUtils.isTrue(gtdDTO.getCtGovXmlRequired())) {
+        if (BooleanUtils.isTrue(gtdDTO.isCtGovXmlRequired())) {
             addErrors(gtdDTO.getSponsorIdentifier(), "gtdDTO.sponsorName", "Sponsor must be entered");
             if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
                 && StringUtils.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
@@ -578,7 +578,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
 
     @SuppressWarnings("unchecked")
     private void getCountriesList() throws PAException {
-        countryList = (List) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
+        countryList = (List<Country>) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
         if (countryList == null) {
             countryList = PaRegistry.getLookUpTableService().getCountries();
             ServletActionContext.getRequest().getSession().setAttribute("countrylist", countryList);

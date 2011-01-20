@@ -91,10 +91,9 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -112,255 +111,221 @@ public class TrialFundingAction extends ActionSupport {
     private Long cbValue;
     private String page;
 
-  /**
-   * @return result
-   */
-  public String displayJs() {
-    return SUCCESS;
-  }
+    /**
+     * @return result
+     */
+    public String displayJs() {
+        return SUCCESS;
+    }
 
-  /**
-   * @return result
-   */
-  public String query()  {
-    try {
-      Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-      getAttribute(Constants.STUDY_PROTOCOL_II);
-      List<StudyResourcingDTO> isoList = PaRegistry.getStudyResourcingService().
-      getStudyResourcingByStudyProtocol(studyProtocolIi);
-      if (!(isoList.isEmpty())) {
-        trialFundingList = new ArrayList<TrialFundingWebDTO>();
-        for (StudyResourcingDTO dto : isoList) {
-          trialFundingList.add(new TrialFundingWebDTO(dto));
+    /**
+     * @return result
+     */
+    public String query()  {
+        try {
+            Ii studyProtocolIi =
+                (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+            List<StudyResourcingDTO> isoList =
+                PaRegistry.getStudyResourcingService().getStudyResourcingByStudyProtocol(studyProtocolIi);
+            if (!isoList.isEmpty()) {
+                trialFundingList = new ArrayList<TrialFundingWebDTO>();
+                for (StudyResourcingDTO dto : isoList) {
+                    trialFundingList.add(new TrialFundingWebDTO(dto));
+                }
+            } else {
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
+                        getText("error.trialFunding.noRecords"));
+            }
+            return QUERY_RESULT;
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return QUERY_RESULT;
         }
-      } else {
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
-            getText("error.trialFunding.noRecords"));
-      }
-      return QUERY_RESULT;
-
-    } catch (Exception e) {
-      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-      return QUERY_RESULT;
     }
-  }
 
-  /**
-   * @return result
-   */
-  public String create()  {
-    enforceBusinessRules();
-    if (hasFieldErrors()) {
-      return ERROR;
-    }
-    try {
-      Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-      getAttribute(Constants.STUDY_PROTOCOL_II);
-      StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
-
-      studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
-      studyResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.FALSE));
-      studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
-          trialFundingWebDTO.getFundingMechanismCode()));
-
-      studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
-              NciDivisionProgramCode.getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
-      studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
-          trialFundingWebDTO.getNihInstitutionCode()));
-      studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
-      PaRegistry.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
-
-      query();
-      ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
-      return QUERY_RESULT;
-
-    } catch (Exception e) {
-      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-      return ERROR;
-    }
-  }
-  /**
-   * @return result
-   */
-  public String update()  {
-    enforceBusinessRules();
-    if (hasFieldErrors()) {
-      return ERROR;
-    }
-    try {
-      Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
-      getAttribute(Constants.STUDY_PROTOCOL_II);
-      StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
-
-      studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourcingById(
-          IiConverter.convertToIi(cbValue));
-      studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
-      studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
-          trialFundingWebDTO.getFundingMechanismCode()));
-
-      studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
-              NciDivisionProgramCode.getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
-      studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
-          trialFundingWebDTO.getNihInstitutionCode()));
-      studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
-      PaRegistry.getStudyResourcingService().updateStudyResourcing(studyResoureDTO);
-
-      query();
-      ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-      return QUERY_RESULT;
-
-    } catch (Exception e) {
-      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-      return ERROR;
-    }
-  }
-  /**
-   * @return result
-   */
-  public String delete()  {
-    if (StringUtils.isEmpty(trialFundingWebDTO.getInactiveCommentText())) {
-      addFieldError("trialFundingWebDTO.inactiveCommentText",
-          getText("error.trialFunding.delete.reason"));
-    }
-    if (hasFieldErrors()) {
-      return DELETE_RESULT;
-    }
-    try {
-      StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
-
-      studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourcingById(
-          IiConverter.convertToIi(cbValue));
-      studyResoureDTO.setInactiveCommentText(StConverter.convertToSt(
-          trialFundingWebDTO.getInactiveCommentText()));
-      PaRegistry.getStudyResourcingService().deleteStudyResourcingById(studyResoureDTO);
-
-      query();
-      ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
-      return QUERY_RESULT;
-
-    } catch (Exception e) {
-      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-      return DELETE_RESULT;
-    }
-  }
-  /**
-   * @return result
-   */
-  public String edit()  {
-    try {
-      StudyResourcingDTO studyR = PaRegistry.getStudyResourcingService().getStudyResourcingById(
-          IiConverter.convertToIi(cbValue));
-      trialFundingWebDTO = new TrialFundingWebDTO(studyR);
-      return SUCCESS;
-
-    } catch (Exception e) {
-      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-      return ERROR;
-    }
-  }
-
-  private void enforceBusinessRules() {
-    if (StringUtils.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
-      addFieldError("trialFundingWebDTO.fundingMechanismCode",
-          getText("error.trialFunding.funding.mechanism"));
-    }
-    if (StringUtils.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
-      addFieldError("trialFundingWebDTO.nihInstitutionCode",
-          getText("error.trialFunding.institution.code"));
-    }
-    if (StringUtils.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
-      addFieldError("trialFundingWebDTO.nciDivisionProgramCode",
-          getText("error.studyProtocol.monitorCode"));
-    }
-    if (StringUtils.isEmpty(trialFundingWebDTO.getSerialNumber())) {
-      addFieldError("trialFundingWebDTO.serialNumber",
-          getText("error.trialFunding.serial.number"));
-    }
-    if (StringUtils.isNotEmpty(trialFundingWebDTO.getSerialNumber())) {
-      try {
-        Integer.valueOf(trialFundingWebDTO.getSerialNumber());
-        boolean flag = isNumeric(trialFundingWebDTO.getSerialNumber());
-        if (!flag) {
-            addFieldError("trialFundingWebDTO.serialNumber",
-            "Please Enter a numeric value");
+    /**
+     * @return result
+     */
+    public String create()  {
+        enforceBusinessRules();
+        if (hasFieldErrors()) {
+            return ERROR;
         }
+        try {
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+            getAttribute(Constants.STUDY_PROTOCOL_II);
+            StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
 
-      } catch (NumberFormatException e) {
-        addFieldError("trialFundingWebDTO.serialNumber",
-        "Please Enter a numeric value");
-      }
+            studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            studyResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.FALSE));
+            studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
+                    trialFundingWebDTO.getFundingMechanismCode()));
 
+            studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
+                    NciDivisionProgramCode.getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
+            studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
+                    trialFundingWebDTO.getNihInstitutionCode()));
+            studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
+            PaRegistry.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
+
+            query();
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
+            return QUERY_RESULT;
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return ERROR;
+        }
     }
-  }
+    /**
+     * @return result
+     */
+    public String update()  {
+        enforceBusinessRules();
+        if (hasFieldErrors()) {
+            return ERROR;
+        }
+        try {
+            Ii studyProtocolIi =
+                (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+            StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
 
+            studyResoureDTO =
+                PaRegistry.getStudyResourcingService().getStudyResourcingById(IiConverter.convertToIi(cbValue));
+            studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
+                    trialFundingWebDTO.getFundingMechanismCode()));
 
+            studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(
+                    NciDivisionProgramCode.getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
+            studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
+                    trialFundingWebDTO.getNihInstitutionCode()));
+            studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
+            PaRegistry.getStudyResourcingService().updateStudyResourcing(studyResoureDTO);
 
- private boolean isNumeric(String number) {
-  boolean isValid = false;
-  //Initialize reg ex for numeric data.
-  String expression = "^[0-9]*[0-9]+$";
-  CharSequence inputStr = number;
-  Pattern pattern = Pattern.compile(expression);
-  Matcher matcher = pattern.matcher(inputStr);
-  if (matcher.matches()) {
-      isValid = true;
-  }
-  return isValid;
-}
-  /**
-   * @return cbValue
-   */
-  public Long getCbValue() {
-    return cbValue;
-  }
+            query();
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            return QUERY_RESULT;
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return ERROR;
+        }
+    }
 
-  /**
-   * @param cbValue cbValue
-   */
-  public void setCbValue(Long cbValue) {
-    this.cbValue = cbValue;
-  }
+    /**
+     * @return result
+     */
+    public String delete()  {
+        if (StringUtils.isEmpty(trialFundingWebDTO.getInactiveCommentText())) {
+            addFieldError("trialFundingWebDTO.inactiveCommentText", getText("error.trialFunding.delete.reason"));
+        }
+        if (hasFieldErrors()) {
+            return DELETE_RESULT;
+        }
+        try {
+            StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
 
-  /**
-   * @return page
-   */
-  public String getPage() {
-    return page;
-  }
+            studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourcingById(
+                    IiConverter.convertToIi(cbValue));
+            studyResoureDTO.setInactiveCommentText(StConverter.convertToSt(
+                    trialFundingWebDTO.getInactiveCommentText()));
+            PaRegistry.getStudyResourcingService().deleteStudyResourcingById(studyResoureDTO);
 
-  /**
-   * @param page page
-   */
-  public void setPage(String page) {
-    this.page = page;
-  }
+            query();
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
+            return QUERY_RESULT;
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return DELETE_RESULT;
+        }
+    }
+    /**
+     * @return result
+     */
+    public String edit()  {
+        try {
+            StudyResourcingDTO studyR =
+                PaRegistry.getStudyResourcingService().getStudyResourcingById(IiConverter.convertToIi(cbValue));
+            trialFundingWebDTO = new TrialFundingWebDTO(studyR);
+            return SUCCESS;
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return ERROR;
+        }
+    }
 
-  /**
-   * @return trialFundingWebDTO
-   */
-  public TrialFundingWebDTO getTrialFundingWebDTO() {
-    return trialFundingWebDTO;
-  }
+    private void enforceBusinessRules() {
+        if (StringUtils.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
+            addFieldError("trialFundingWebDTO.fundingMechanismCode", getText("error.trialFunding.funding.mechanism"));
+        }
+        if (StringUtils.isEmpty(trialFundingWebDTO.getNihInstitutionCode())) {
+            addFieldError("trialFundingWebDTO.nihInstitutionCode", getText("error.trialFunding.institution.code"));
+        }
+        if (StringUtils.isEmpty(trialFundingWebDTO.getNciDivisionProgramCode())) {
+            addFieldError("trialFundingWebDTO.nciDivisionProgramCode", getText("error.studyProtocol.monitorCode"));
+        }
+        if (StringUtils.isEmpty(trialFundingWebDTO.getSerialNumber())) {
+            addFieldError("trialFundingWebDTO.serialNumber", getText("error.trialFunding.serial.number"));
+        }
+        if (StringUtils.isNotEmpty(trialFundingWebDTO.getSerialNumber())
+                && !NumberUtils.isDigits(trialFundingWebDTO.getSerialNumber())) {
+            addFieldError("trialFundingWebDTO.serialNumber", "Please Enter a numeric value");
+        }
+    }
 
-  /**
-   * @param trialFundingWebDTO trialFundingWebDTO
-   */
-  public void setTrialFundingWebDTO(TrialFundingWebDTO trialFundingWebDTO) {
-    this.trialFundingWebDTO = trialFundingWebDTO;
-  }
+    /**
+     * @return cbValue
+     */
+    public Long getCbValue() {
+        return cbValue;
+    }
 
-  /**
-   * @return trialFundingList
-   */
-  public List<TrialFundingWebDTO> getTrialFundingList() {
-    return trialFundingList;
-  }
+    /**
+     * @param cbValue cbValue
+     */
+    public void setCbValue(Long cbValue) {
+        this.cbValue = cbValue;
+    }
 
-  /**
-   * @param trialFundingList trialFundingList
-   */
-  public void setTrialFundingList(List<TrialFundingWebDTO> trialFundingList) {
-    this.trialFundingList = trialFundingList;
-  }
+    /**
+     * @return page
+     */
+    public String getPage() {
+        return page;
+    }
+
+    /**
+     * @param page page
+     */
+    public void setPage(String page) {
+        this.page = page;
+    }
+
+    /**
+     * @return trialFundingWebDTO
+     */
+    public TrialFundingWebDTO getTrialFundingWebDTO() {
+        return trialFundingWebDTO;
+    }
+
+    /**
+     * @param trialFundingWebDTO trialFundingWebDTO
+     */
+    public void setTrialFundingWebDTO(TrialFundingWebDTO trialFundingWebDTO) {
+        this.trialFundingWebDTO = trialFundingWebDTO;
+    }
+
+    /**
+     * @return trialFundingList
+     */
+    public List<TrialFundingWebDTO> getTrialFundingList() {
+        return trialFundingList;
+    }
+
+    /**
+     * @param trialFundingList trialFundingList
+     */
+    public void setTrialFundingList(List<TrialFundingWebDTO> trialFundingList) {
+        this.trialFundingList = trialFundingList;
+    }
 
 }

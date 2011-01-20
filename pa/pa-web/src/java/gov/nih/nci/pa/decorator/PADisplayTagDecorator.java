@@ -144,7 +144,7 @@ public class PADisplayTagDecorator extends TableDecorator {
      * @return formated String
      */
     public String getViewPublicId() {
-        String publicId = ((CaDSRWebDTO) this.getCurrentRowObject()).getPublicId();
+        String publicId = ((CaDSRWebDTO) this.getCurrentRowObject()).getPublicId().toString();
         String version = ((CaDSRWebDTO) this.getCurrentRowObject()).getVersion();
         String link = "https://cdebrowser.nci.nih.gov/CDEBrowser/search?dataElementDetails=9/&cdeId=" + publicId
         + "&version=" + version + "&PageId=DataElementsGroup&queryDE=yes&FirstTimer=yes";

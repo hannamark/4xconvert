@@ -211,7 +211,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
       }
       if (gtdDTO.getProprietarytrialindicator() == null
               || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
-           if (gtdDTO.getCtGovXmlRequired()) {
+           if (gtdDTO.isCtGovXmlRequired()) {
               if (StringUtils.isEmpty(gtdDTO.getSponsorIdentifier())) {
                 addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
               }

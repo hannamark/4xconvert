@@ -749,7 +749,7 @@ public class GeneralTrialDesignWebDTO {
     /**
      * @return the ctGovXmlRequired
      */
-     public boolean getCtGovXmlRequired() {
+     public boolean isCtGovXmlRequired() {
        return ctGovXmlRequired;
      }
      /**

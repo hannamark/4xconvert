@@ -91,6 +91,8 @@ public class PlannedMarkerWebDTO {
 
     private Long id;
     private String name;
+    private String meaning;
+    private String description;
     private String assayType;
     private String assayTypeOtherText;
     private String assayUse;
@@ -99,6 +101,13 @@ public class PlannedMarkerWebDTO {
     private String tissueSpecimenType;
     private String tissueCollectionMethod;
     private String status;
+
+    private String hugoCode;
+    private boolean foundInHugo = false;
+    private String toEmail;
+    private String fromEmail;
+    private String subject;
+    private String message;
 
     /**
      * @return the id
@@ -126,6 +135,34 @@ public class PlannedMarkerWebDTO {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return the meaning
+     */
+    public String getMeaning() {
+        return meaning;
+    }
+
+    /**
+     * @param meaning the meaning to set
+     */
+    public void setMeaning(String meaning) {
+        this.meaning = meaning;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
@@ -238,5 +275,89 @@ public class PlannedMarkerWebDTO {
      */
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    /**
+     * @return the hugoCode
+     */
+    public String getHugoCode() {
+        return hugoCode;
+    }
+
+    /**
+     * @param hugoCode the hugoCode to set
+     */
+    public void setHugoCode(String hugoCode) {
+        this.hugoCode = hugoCode;
+    }
+
+    /**
+     * @return the foundInHugo
+     */
+    public boolean isFoundInHugo() {
+        return foundInHugo;
+    }
+
+    /**
+     * @param foundInHugo the foundInHugo to set
+     */
+    public void setFoundInHugo(boolean foundInHugo) {
+        this.foundInHugo = foundInHugo;
+    }
+
+    /**
+     * @return the toEmail
+     */
+    public String getToEmail() {
+        return toEmail;
+    }
+
+    /**
+     * @param toEmail the toEmail to set
+     */
+    public void setToEmail(String toEmail) {
+        this.toEmail = toEmail;
+    }
+
+    /**
+     * @return the fromEmail
+     */
+    public String getFromEmail() {
+        return fromEmail;
+    }
+
+    /**
+     * @param fromEmail the fromEmail to set
+     */
+    public void setFromEmail(String fromEmail) {
+        this.fromEmail = fromEmail;
+    }
+
+    /**
+     * @return the message
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * @param message the message to set
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    /**
+     * @return the subject
+     */
+    public String getSubject() {
+        return subject;
+    }
+
+    /**
+     * @param subject the subject to set
+     */
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 }

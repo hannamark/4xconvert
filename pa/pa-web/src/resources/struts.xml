@@ -200,6 +200,9 @@
         <action name="ajaxptpIntervention*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
             <result name="edit">/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>
         </action>
+        <action name="ajaxptpPlannedMarker*" class="gov.nih.nci.pa.action.PlannedMarkerAction" method="{1}">
+            <result name="edit">/WEB-INF/jsp/plannedMarker/selectedPlannedMarker.jsp</result>
+        </action>
          <action name="ajaxptpTypeIntervention*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
             <result name="loadDoseUOMDetails">/WEB-INF/jsp/nodecorate/displayDoseUOM.jsp</result>
             <result name="loadDoseFormDetails">/WEB-INF/jsp/nodecorate/displayDoseForm.jsp</result>
@@ -282,6 +285,11 @@
         <action name="popupTypeIntervention*" class="gov.nih.nci.pa.action.PopUpTypeInterventionAction" method="{1}">
            <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
            <result name="lookUp">/WEB-INF/jsp/nodecorate/lookUpInterventionTypes.jsp</result>
+        </action>
+        <action name="popupPlannedMarker*" class="gov.nih.nci.pa.action.popup.PlannedMarkerPopupAction" method="{1}">
+            <result>/WEB-INF/jsp/plannedMarker/cadsrLookup.jsp</result>
+            <result name="results">/WEB-INF/jsp/plannedMarker/cadsrLookupResults.jsp</result>
+            <result name="email">/WEB-INF/jsp/plannedMarker/requestEmail.jsp</result>
         </action>
         <action name="popup*" class="gov.nih.nci.pa.action.PopUpAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>

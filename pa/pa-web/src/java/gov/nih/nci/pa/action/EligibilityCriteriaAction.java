@@ -301,7 +301,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
                 CaDSRWebDTO cadsrWebDTO = new CaDSRWebDTO();
                 DataElement de = (DataElement) obj;
                 cadsrWebDTO.setId(de.getId());
-                cadsrWebDTO.setPublicId(Long.toString(de.getPublicID()));
+                cadsrWebDTO.setPublicId(de.getPublicID());
                 cadsrWebDTO.setVersion(Float.toString(de.getVersion()));
                 cadsrWebDTO.setPreferredQuestion(getPreferredQuestionText(de));
                 cadsrResult.add(cadsrWebDTO);

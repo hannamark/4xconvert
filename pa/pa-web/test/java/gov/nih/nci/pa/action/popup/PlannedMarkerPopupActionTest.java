@@ -80,108 +80,70 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.action;
+package gov.nih.nci.pa.action.popup;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.action.AbstractPaActionTest;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * Test cases for testing the various caDSR related actions for markers.
+ *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class PlannedMarkerActionTest extends AbstractPaActionTest {
-    private PlannedMarkerAction plannedMarkerAction;
+public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
+    private PlannedMarkerPopupAction plannedMarkerAction;
 
     @Before
     public void setUp() throws PAException {
-        plannedMarkerAction = new PlannedMarkerAction();
-        getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
+        plannedMarkerAction = new PlannedMarkerPopupAction();
         plannedMarkerAction.prepare();
     }
 
     @Test
-    public void testAdd() throws PAException {
-        plannedMarkerAction.add();
-        assertTrue(plannedMarkerAction.hasFieldErrors());
-        plannedMarkerAction.clearErrorsAndMessages();
+    public void testLookup() {
+       assertEquals(plannedMarkerAction.lookup(), "results");
+       assertNotNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
 
-        PlannedMarkerWebDTO webDTO = new PlannedMarkerWebDTO();
-        webDTO.setName("Marker #1");
-        webDTO.setAssayType("Other");
-        webDTO.setAssayUse("Correlative");
-        webDTO.setAssayPurpose("Other");
-        webDTO.setTissueSpecimenType("Serum");
-        webDTO.setTissueCollectionMethod("Unspecified");
-        plannedMarkerAction.setPlannedMarker(webDTO);
+       getRequest().clearAttributes();
+       plannedMarkerAction.setPublicId("foo");
+       assertEquals(plannedMarkerAction.lookup(), "results");
+       assertNotNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
 
-        plannedMarkerAction.add();
-        assertTrue(plannedMarkerAction.hasFieldErrors());
-        plannedMarkerAction.clearErrorsAndMessages();
+       getRequest().clearAttributes();
+       plannedMarkerAction.setPublicId(null);
+       plannedMarkerAction.setName("lyco");
+       assertEquals(plannedMarkerAction.lookup(), "results");
+       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
 
-        webDTO.setAssayTypeOtherText("More Text");
-        webDTO.setAssayPurposeOtherText("More Text");
-        plannedMarkerAction.setPlannedMarker(webDTO);
-        assertEquals("list", plannedMarkerAction.add());
-    }
+       getRequest().clearAttributes();
+       plannedMarkerAction.setName(null);
+       plannedMarkerAction.setMeaning("lyco");
+       assertEquals(plannedMarkerAction.lookup(), "results");
+       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
 
-    @Test
-    public void testEdit() throws PAException {
-        plannedMarkerAction.setSelectedRowIdentifier("1");
-        assertEquals("edit", plannedMarkerAction.edit());
+       getRequest().clearAttributes();
+       plannedMarkerAction.setMeaning(null);
+       plannedMarkerAction.setDescription("lyco");
+       assertEquals(plannedMarkerAction.lookup(), "results");
+       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
 
-        PlannedMarkerWebDTO webDTO = new PlannedMarkerWebDTO();
-        webDTO.setId(1L);
-        webDTO.setName("Marker #1");
-        webDTO.setAssayType("Other");
-        webDTO.setAssayUse("Correlative");
-        webDTO.setAssayPurpose("Other");
-        webDTO.setTissueSpecimenType("Serum");
-        webDTO.setTissueCollectionMethod("Unspecified");
-        webDTO.setStatus("Pending");
-        plannedMarkerAction.setPlannedMarker(webDTO);
-
-        assertEquals("edit", plannedMarkerAction.update());
-        assertTrue(plannedMarkerAction.hasFieldErrors());
-        plannedMarkerAction.clearErrorsAndMessages();
-
-        webDTO.setAssayTypeOtherText("More Text");
-        webDTO.setAssayPurposeOtherText("More Text");
-        plannedMarkerAction.setPlannedMarker(webDTO);
-        assertEquals("list", plannedMarkerAction.update());
-    }
-
-    @Test
-    public void testExecute() throws PAException {
-        assertEquals(plannedMarkerAction.execute(), "list");
-        assertNotNull(plannedMarkerAction.getPlannedMarkerList());
-    }
-
-    @Test
-    public void testDelete() throws PAException {
-        plannedMarkerAction.setSelectedRowIdentifier("1");
-        assertEquals(plannedMarkerAction.delete(), "list");
-    }
-
-    @Test
-    public void testDisplaySelectedCDE() {
-        //CDE ID for the N-Cadherin Marker
-        plannedMarkerAction.setCdeId("6C28341E-9EF6-6D9E-E040-BB89AD435B0F");
-        assertNull(plannedMarkerAction.getPlannedMarker().getName());
-        assertNull(plannedMarkerAction.getPlannedMarker().getDescription());
-        assertNull(plannedMarkerAction.getPlannedMarker().getMeaning());
-
-        assertEquals(plannedMarkerAction.displaySelectedCDE(), "edit");
-        assertEquals(plannedMarkerAction.getPlannedMarker().getName(), "N-Cadherin");
-        assertEquals(plannedMarkerAction.getPlannedMarker().getMeaning(), "N-Cadherin");
-        assertTrue(StringUtils.contains(plannedMarkerAction.getPlannedMarker().getDescription(), "cadherin"));
+       getRequest().clearAttributes();
+       //Public ID for Lycopene
+       plannedMarkerAction.setDescription(null);
+       plannedMarkerAction.setPublicId("2578250");
+       assertEquals(plannedMarkerAction.lookup(), "results");
+       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
     }
 }

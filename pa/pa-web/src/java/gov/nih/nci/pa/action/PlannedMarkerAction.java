@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.AssayPurposeCode;
@@ -91,12 +92,17 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.system.applicationservice.ApplicationService;
+import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.Preparable;
 
@@ -109,6 +115,7 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
     private static final long serialVersionUID = 1L;
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private List<PlannedMarkerWebDTO> plannedMarkerList;
+    private String cdeId;
 
     /**
      * {@inheritDoc}
@@ -118,7 +125,12 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
         enforceBusinessRules();
         if (!hasFieldErrors()) {
             PlannedMarkerDTO marker = populateDTO();
-            marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING));
+            if (StringUtils.isNotEmpty(getPlannedMarker().getMeaning())) {
+                marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+            } else {
+                marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING));
+            }
+
             try {
                 getPlannedMarkerService().create(marker);
             } catch (PAException e) {
@@ -169,6 +181,30 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
     public String delete() throws PAException {
         getPlannedMarkerService().delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
         return super.delete();
+    }
+
+    /**
+     * Loads and sets the various properties from caDSR.
+     * @return edit
+     */
+    public String displaySelectedCDE() {
+        try {
+            ApplicationService appService = ApplicationServiceProvider.getApplicationService();
+            ValueDomainPermissibleValue vdpv = new ValueDomainPermissibleValue();
+            vdpv.setId(getCdeId());
+            Collection<Object> results = appService.search(ValueDomainPermissibleValue.class, vdpv);
+            ValueDomainPermissibleValue result = (ValueDomainPermissibleValue) results.iterator().next();
+
+            PlannedMarkerWebDTO dto = new PlannedMarkerWebDTO();
+            dto.setName(result.getPermissibleValue().getValue());
+            dto.setDescription(result.getPermissibleValue().getValueMeaning().getDescription());
+            dto.setMeaning(result.getPermissibleValue().getValueMeaning().getLongName());
+            setPlannedMarker(dto);
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        }
+        return AR_EDIT;
+
     }
 
     /**
@@ -237,6 +273,8 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
         webDTO = new PlannedMarkerWebDTO();
         webDTO.setId(IiConverter.convertToLong(markerDTO.getIdentifier()));
         webDTO.setName(StConverter.convertToString(markerDTO.getName()));
+        webDTO.setMeaning(StConverter.convertToString(markerDTO.getLongName()));
+        webDTO.setDescription(StConverter.convertToString(markerDTO.getTextDescription()));
         webDTO.setAssayType(CdConverter.convertCdToString(markerDTO.getAssayTypeCode()));
         webDTO.setAssayTypeOtherText(StConverter.convertToString(markerDTO.getAssayTypeOtherText()));
         webDTO.setAssayUse(CdConverter.convertCdToString(markerDTO.getAssayUseCode()));
@@ -252,6 +290,8 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
         PlannedMarkerDTO marker = new PlannedMarkerDTO();
         marker.setIdentifier(IiConverter.convertToIi(getPlannedMarker().getId()));
         marker.setName(StConverter.convertToSt(getPlannedMarker().getName()));
+        marker.setLongName(StConverter.convertToSt(getPlannedMarker().getMeaning()));
+        marker.setTextDescription(StConverter.convertToSt(getPlannedMarker().getDescription()));
         marker.setAssayTypeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayType()));
         if (StringUtils.equals(getPlannedMarker().getAssayType(), AssayTypeCode.OTHER.getCode())) {
             marker.setAssayTypeOtherText(StConverter.convertToSt(getPlannedMarker().getAssayTypeOtherText()));
@@ -295,5 +335,19 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
      */
     public void setPlannedMarkerList(List<PlannedMarkerWebDTO> plannedMarkerList) {
         this.plannedMarkerList = plannedMarkerList;
+    }
+
+    /**
+     * @return the cdeId
+     */
+    public String getCdeId() {
+        return cdeId;
+    }
+
+    /**
+     * @param cdeId the cdeId to set
+     */
+    public void setCdeId(String cdeId) {
+        this.cdeId = cdeId;
     }
 }

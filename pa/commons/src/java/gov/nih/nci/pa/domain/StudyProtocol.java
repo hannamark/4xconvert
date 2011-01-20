@@ -120,12 +120,10 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
 
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
@@ -544,7 +542,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     public void setStudyDiseases(List<StudyDisease> studyDiseases) {
         this.studyDiseases = studyDiseases;
     }
-    
+
     /**
      * @return the StudyAnatomicSites
      */
@@ -555,8 +553,6 @@ public class StudyProtocol extends AbstractStudyProtocol {
             inverseJoinColumns = @JoinColumn(name = "anatomic_sites_identifier")
     )
     @ForeignKey(name = "FK_STUDY_ANATOMIC_SITE_STUDY_PROTOCOL", inverseName = "FK_STUDY_ANATOMIC_SITE_ANATOMIC_SITES")
-    @Valid
-    @OrderBy(clause = "code")
     @Searchable(nested = true)
     public Set<AnatomicSite> getSummary4AnatomicSites() {
         return summary4AnatomicSites;

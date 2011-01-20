@@ -113,6 +113,7 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -457,16 +458,12 @@ public class IrbAction extends ActionSupport implements Preparable {
             ct.setEmail(null);
            } else {
             List<StudySiteDTO> partList = sPartService.getByStudyProtocol(spIdIi);
+            List<String> allowedCodes = Arrays.asList(ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode(),
+                    ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode(),
+                    ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode(),
+                    ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode());
             for (StudySiteDTO part : partList) {
-                if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().equals(
-                        part.getReviewBoardApprovalStatusCode().getCode())
-                    || ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().equals(
-                            part.getReviewBoardApprovalStatusCode().getCode())
-                    || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode().equals(
-                            part.getReviewBoardApprovalStatusCode().getCode())
-                    || ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode().equals(
-                                    part.getReviewBoardApprovalStatusCode().getCode())) {
-
+                if (allowedCodes.contains(part.getReviewBoardApprovalStatusCode().getCode())) {
                   setApprovalStatus(part.getReviewBoardApprovalStatusCode().getCode());
                   setApprovalNumber(StConverter.convertToString(part.getReviewBoardApprovalNumber()));
                   setContactAffiliation(StConverter.convertToString(part.getReviewBoardOrganizationalAffiliation()));
