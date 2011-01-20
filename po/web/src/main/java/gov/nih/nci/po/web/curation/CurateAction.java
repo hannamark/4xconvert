@@ -119,8 +119,6 @@ public class CurateAction extends ActionSupport {
      * @return success
      */
     public String listAll() {
-        LOG.debug("listAll");
-
         listOrgs();
         listPersons();
 
@@ -131,8 +129,6 @@ public class CurateAction extends ActionSupport {
      * @return success
      */
     public String listOrgs() {
-        LOG.debug("listOrgs");
-
         GenericSearchServiceUtil.search(PoRegistry.getOrganizationService(),
                 new CurateOrganizationSearchCriteria(), getOrgs(), OrganizationSortCriterion.class);
         return SUCCESS;
@@ -142,8 +138,6 @@ public class CurateAction extends ActionSupport {
      * @return success
      */
     public String listPersons() {
-        LOG.debug("listPersons");
-
         GenericSearchServiceUtil.search(PoRegistry.getPersonService(), new CuratePersonSearchCriteria(),
                 getPersons(), PersonSortCriterion.class);
         return SUCCESS;
