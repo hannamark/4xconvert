@@ -327,7 +327,7 @@
                           srcdir="${pa-ejb.build.srcDir.0}" />
         <cobertura-check datafile="${pa-ejb.build.dir}/cobertura.ser"
                          totalbranchrate="52"
-                         totallinerate="67"
+                         totallinerate="66"
                          haltonfailure="true"/>
      </target>
 
