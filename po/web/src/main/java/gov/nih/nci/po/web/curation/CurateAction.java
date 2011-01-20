@@ -93,7 +93,6 @@ import gov.nih.nci.po.web.GenericSearchServiceUtil;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
 import org.displaytag.properties.SortOrderEnum;
 
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
@@ -104,7 +103,6 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class CurateAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
-    private static final Logger LOG = Logger.getLogger(CurateAction.class);
 
     private final PaginatedList<Person> persons = new PaginatedList<Person>(0, new ArrayList<Person>(),
             PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, PersonSortCriterion.PERSON_ID.name(),
