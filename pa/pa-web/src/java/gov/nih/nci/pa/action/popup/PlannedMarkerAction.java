@@ -219,9 +219,9 @@ public class PlannedMarkerAction extends ActionSupport implements Preparable {
             CaDSRWebDTO dto = new CaDSRWebDTO();
             ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
             dto.setId(vdpv.getId());
-            dto.setName(vdpv.getPermissibleValue().getValue());
-            dto.setMeaning(vm.getLongName());
-            dto.setDescription(vm.getDescription());
+            dto.setVmName(vdpv.getPermissibleValue().getValue());
+            dto.setVmMeaning(vm.getLongName());
+            dto.setVmDescription(vm.getDescription());
             dto.setPublicId(vm.getPublicID());
             results.add(dto);
         }
