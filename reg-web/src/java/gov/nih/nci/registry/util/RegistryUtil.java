@@ -31,6 +31,8 @@ import org.apache.struts2.ServletActionContext;
  *
  */
 public class RegistryUtil {
+    private static final String VALIDATION_EXCEPTION_STRING = "Validation Exception";
+    private static final String PA_EXCEPTION_STRING = "gov.nih.nci.pa.service.PAException:";
     private static final Logger LOG = Logger.getLogger(RegistryUtil.class);
 
     /**
@@ -251,9 +253,18 @@ public class RegistryUtil {
        if (e != null && e.getMessage() != null) {
            String exceptionStr = e.getLocalizedMessage().
                substring(e.getLocalizedMessage().indexOf(":") + 1);
-           ServletActionContext.getRequest().setAttribute("failureMessage", exceptionStr);
+           ServletActionContext.getRequest().setAttribute("failureMessage", removeExceptionFromErrMsg(exceptionStr));
            return true;
        }
        return false;
+  }
+  /**
+   *
+   * @param errMsg errMsg
+   * @return errorMsg
+   */
+  public static String removeExceptionFromErrMsg(String errMsg) {
+     String removePAException = StringUtils.remove(errMsg, PA_EXCEPTION_STRING);
+     return  StringUtils.remove(removePAException, VALIDATION_EXCEPTION_STRING).trim();
   }
 }

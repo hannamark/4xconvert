@@ -25,6 +25,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.util.Constants;
+import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -279,7 +280,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
         } catch (PAException e) {
             LOG.error(e);
             setDocumentsInSession();
-            addActionError(e.getMessage());
+            addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
             return ERROR;
         }
         return "review";
@@ -356,7 +357,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
             ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
         } catch (PAException e) {
             LOG.error(e.getLocalizedMessage());
-            addActionError(e.getMessage());
+            addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
             return ERROR;
         }
         return "review";
@@ -381,7 +382,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
                     trialDTO.getFundingDtos());
             setPageFrom("proprietaryTrial");
         } catch (PAException e) {
-            addActionError(e.getMessage());
+            addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
         } catch (NullifiedRoleException e) {
             addActionError(e.getMessage());
         }

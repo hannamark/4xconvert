@@ -230,7 +230,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
             return ERROR;
         } catch (PAException e) {
             LOG.error(e.getMessage());
-            addActionError(e.getMessage());
+            addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
             return ERROR;
         }
         TrialValidator.removeSessionAttributes();

@@ -104,6 +104,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
+import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -255,7 +256,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
         } catch (PAException e) {
             LOG.error(e);
             setDocumentsInSession();
-            addActionError(e.getMessage());
+            addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
             return ERROR;
         }
         setTrialAction("update");

@@ -401,7 +401,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             return ERROR;
         } catch (PAException e) {
             LOG.error(e);
-            addActionError(e.getMessage());
+            addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
             return ERROR;
         }
         TrialValidator.removeSessionAttributes();
@@ -476,7 +476,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
         } catch (PAException e) {
             LOG.error(e.getMessage());
-            addActionError(e.getMessage());
+            addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
             return ERROR;
         } catch (IOException e) {
             LOG.error(e.getMessage());
@@ -508,7 +508,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             setPageFrom("submitTrial");
             setDocumentsInSession(trialDTO);
         } catch (PAException e) {
-            addActionError(e.getMessage());
+            addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
         } catch (NullifiedRoleException e) {
             addActionError(e.getMessage());
         }
@@ -528,7 +528,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         try {
             PaRegistry.getStudyProtocolStageService().delete(IiConverter.convertToIi(pId));
         } catch (PAException e) {
-            addActionError(e.getMessage());
+            addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
         }
         setTrialAction("deletePartialSubmission");
         return REDIRECT_TO_SEARCH;
