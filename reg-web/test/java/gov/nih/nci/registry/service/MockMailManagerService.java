@@ -1,9 +1,10 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 
@@ -67,7 +68,7 @@ public class MockMailManagerService implements MailManagerServiceLocal {
 
     public void sendAcceptEmail(Ii studyProtocolIi) throws PAException {
         // TODO Auto-generated method stub
-        
+
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.MailManagerService#sendUpdateNotificationMail(gov.nih.nci.iso21090.Ii)
@@ -84,24 +85,24 @@ public class MockMailManagerService implements MailManagerServiceLocal {
 	public void sendCDERequestMail(String mailFrom, String mailBody)
 			throws PAException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
     public void sendChangeOwnershipMail(String prevOwnerMailId,
             Ii studyProtocolIi) {
         // TODO Auto-generated method stub
-        
+
     }
 
 	public void sendMailWithAttachment(String mailTo, String subject,
 			String mailBody, File[] attachments) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
     public void sendXMLAndTSREmail(String fullName, String emailAddress, Ii studyProtocolIi) throws PAException {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void sendAdminAcceptanceEmail(Long userId) {
@@ -110,5 +111,13 @@ public class MockMailManagerService implements MailManagerServiceLocal {
 
     public void sendAdminRejectionEmail(Long userId, String reason) {
          // TODO Auto-generated method stub
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void sendMarkerCDERequestMail(Ii studyProtocolIi, String from, PlannedMarkerDTO marker,
+            String markerText) throws PAException {
+        // TODO Auto-generated method stub
     }
 }

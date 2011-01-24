@@ -118,7 +118,10 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceBean;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
@@ -298,6 +301,31 @@ public class MailManagerServiceTest {
         prop = new PAProperties();
         prop.setName("noxml.tsr.amend.body");
         prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("CDE_MARKER_REQUEST_BODY");
+        prop.setValue("${markerName} ${foundInHugo} ${hugoCodeClause} ${markerTextClause}");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("CDE_MARKER_REQUEST_SUBJECT");
+        prop.setValue("CDE Marker Request");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("CDE_MARKER_REQUEST_HUGO_CLAUSE");
+        prop.setValue("${hugoCode}");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("CDE_MARKER_REQUEST_MARKER_TEXT_CLAUSE");
+        prop.setValue("${markerText}");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("CDE_REQUEST_TO_EMAIL");
+        prop.setValue("to@example.com");
         TestSchema.addUpdObject(prop);
     }
 
@@ -479,6 +507,13 @@ public class MailManagerServiceTest {
     @Test (expected=PAException.class)
     public void testSendTSREmailProprietary() throws PAException {
         bean.sendTSREmail(proprietaryTrialIi);
+    }
+
+    public void testSendMarkerCDERequestEmail() throws PAException {
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setName(StConverter.convertToSt("Marker #1"));
+        dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
+        bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com", dto, "Marker Text");
     }
 
     private StudyProtocol createProprietaryStudyProtocolObj() {

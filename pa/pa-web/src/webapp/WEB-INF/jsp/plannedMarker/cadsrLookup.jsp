@@ -95,6 +95,9 @@
                             <s:a href="#" cssClass="btn" onclick="reset();">
                                 <span class="btn_img"><span class="cancel"><fmt:message key="plannedMarker.lookup.reset"/></span></span>
                             </s:a>
+                            <s:a href="#" cssClass="btn" onclick="loadRequestEmail();">
+                                <span class="btn_img"><span class="search"><fmt:message key="plannedMarker.lookup.createRequest"/></span></span>
+                            </s:a>
                             <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin();">
                                 <span class="btn_img"><span class="cancel"><fmt:message key="plannedMarker.lookup.cancel"/></span></span>
                             </s:a>

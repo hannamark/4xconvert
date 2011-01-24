@@ -86,10 +86,26 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.cadsr.domain.DataElement;
+import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
+import gov.nih.nci.cadsr.domain.PermissibleValue;
+import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
+import gov.nih.nci.cadsr.domain.ValueMeaning;
 import gov.nih.nci.pa.action.AbstractPaActionTest;
+import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.system.applicationservice.ApplicationService;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.criterion.DetachedCriteria;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -102,11 +118,46 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
     private PlannedMarkerPopupAction plannedMarkerAction;
 
     @Before
-    public void setUp() throws PAException {
+    public void setUp() throws Exception {
         plannedMarkerAction = new PlannedMarkerPopupAction();
         plannedMarkerAction.prepare();
+
+        EnumeratedValueDomain vd = new EnumeratedValueDomain();
+        vd.setId("1");
+
+        DataElement de = new DataElement();
+        de.setValueDomain(vd);
+
+        List<Object> deResults = new ArrayList<Object>();
+        deResults.add(de);
+
+        ApplicationService appService = mock(ApplicationService.class);
+        when(appService.search(eq(DataElement.class), any(DataElement.class))).thenReturn(deResults);
+
+        PermissibleValue pv = new PermissibleValue();
+        pv.setValue("N-Cadherin");
+
+        ValueMeaning vm = new ValueMeaning();
+        vm.setLongName("N-Cadherin");
+        vm.setDescription("cadherin");
+        vm.setPublicID(2578250L);
+        pv.setValueMeaning(vm);
+
+        ValueDomainPermissibleValue vdpv = new ValueDomainPermissibleValue();
+        vdpv.setPermissibleValue(pv);
+        vdpv.setId("1");
+
+        List<Object> results = new ArrayList<Object>();
+        results.add(vdpv);
+
+        when(appService.query(any(DetachedCriteria.class))).thenReturn(results);
+
+        plannedMarkerAction.setAppService(appService);
     }
 
+    /**
+     * Tests lookup of marker's via caDSR
+     */
     @Test
     public void testLookup() {
        assertEquals(plannedMarkerAction.lookup(), "results");
@@ -139,11 +190,51 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        assertFalse(plannedMarkerAction.getMarkers().isEmpty());
 
        getRequest().clearAttributes();
-       //Public ID for Lycopene
        plannedMarkerAction.setDescription(null);
        plannedMarkerAction.setPublicId("2578250");
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
        assertFalse(plannedMarkerAction.getMarkers().isEmpty());
+    }
+
+    /**
+     * Test initialization of the marker request email form.
+     * @throws PAException on error
+     */
+    @Test
+    public void testSetupEmailRequest() throws PAException {
+        assertEquals(plannedMarkerAction.setupEmailRequest(), "email");
+        assertNotNull(plannedMarkerAction.getToEmail());
+        assertNotNull(plannedMarkerAction.getPlannedMarker().getFromEmail());
+        assertNotNull(plannedMarkerAction.getSubject());
+    }
+
+    /**
+     * Tests sending of cde marker request.
+     */
+    @Test
+    public void testSendEmailRequest() {
+        assertEquals(plannedMarkerAction.sendEmailRequest(), "email");
+        assertTrue(plannedMarkerAction.hasFieldErrors());
+        assertFalse(plannedMarkerAction.isPassedValidation());
+        plannedMarkerAction.clearErrorsAndMessages();
+
+        PlannedMarkerWebDTO dto = new PlannedMarkerWebDTO();
+        dto.setFromEmail("from@example.com");
+        dto.setName("Name");
+        dto.setFoundInHugo(true);
+
+        plannedMarkerAction.setToEmail("to@example.com");
+        plannedMarkerAction.setSubject("subject");
+        plannedMarkerAction.setPlannedMarker(dto);
+        assertEquals(plannedMarkerAction.sendEmailRequest(), "email");
+        assertTrue(plannedMarkerAction.hasFieldErrors());
+        assertFalse(plannedMarkerAction.isPassedValidation());
+        plannedMarkerAction.clearErrorsAndMessages();
+
+        dto.setHugoCode("HUGO");
+        assertEquals(plannedMarkerAction.sendEmailRequest(), "email");
+        assertFalse(plannedMarkerAction.hasFieldErrors());
+        assertTrue(plannedMarkerAction.isPassedValidation());
     }
 }

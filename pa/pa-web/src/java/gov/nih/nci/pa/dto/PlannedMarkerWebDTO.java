@@ -104,9 +104,7 @@ public class PlannedMarkerWebDTO {
 
     private String hugoCode;
     private boolean foundInHugo = false;
-    private String toEmail;
     private String fromEmail;
-    private String subject;
     private String message;
 
     /**
@@ -306,20 +304,6 @@ public class PlannedMarkerWebDTO {
     }
 
     /**
-     * @return the toEmail
-     */
-    public String getToEmail() {
-        return toEmail;
-    }
-
-    /**
-     * @param toEmail the toEmail to set
-     */
-    public void setToEmail(String toEmail) {
-        this.toEmail = toEmail;
-    }
-
-    /**
      * @return the fromEmail
      */
     public String getFromEmail() {
@@ -345,19 +329,5 @@ public class PlannedMarkerWebDTO {
      */
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    /**
-     * @return the subject
-     */
-    public String getSubject() {
-        return subject;
-    }
-
-    /**
-     * @param subject the subject to set
-     */
-    public void setSubject(String subject) {
-        this.subject = subject;
     }
 }

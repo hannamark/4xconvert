@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.service.PAException;
 
 import java.io.File;
@@ -153,6 +154,18 @@ public interface MailManagerService {
      * @throws PAException the PA exception
      */
     void sendCDERequestMail(String mailFrom, String mailBody) throws PAException;
+
+    /**
+     * Sends a CDE request mail for markers.
+     * @param studyProtocolIi The ii of the study protocol this marker is meant for
+     * @param from the from address
+     * @param marker the marker containing the name and HUGO code if specified
+     * @param markerText the marker text as written in the proposal
+     * @throws PAException on error
+     */
+    void sendMarkerCDERequestMail(Ii studyProtocolIi, String from, PlannedMarkerDTO marker,
+            String markerText) throws PAException;
+
     /**
      *
      * @param mailTo to

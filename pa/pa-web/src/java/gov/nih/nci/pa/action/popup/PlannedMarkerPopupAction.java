@@ -86,10 +86,15 @@ import gov.nih.nci.cadsr.domain.DataElement;
 import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
@@ -100,6 +105,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
@@ -120,12 +126,18 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     private static final Long CDE_PUBLIC_ID = 5473L;
     private static final String CADSR_RESULTS = "results";
+    private static final String EMAIL = "email";
     private String name;
     private String meaning;
     private String description;
     private String publicId;
+    private String subject;
+    private String toEmail;
     private List<CaDSRWebDTO> markers;
     private PlannedMarkerWebDTO plannedMarker;
+    private boolean passedValidation = false;
+    private ApplicationService appService;
+    private static final Logger LOG = Logger.getLogger(PlannedMarkerPopupAction.class);
 
     /**
      * {@inheritDoc}
@@ -133,6 +145,11 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     public void prepare() {
         markers = new ArrayList<CaDSRWebDTO>();
         plannedMarker = new PlannedMarkerWebDTO();
+        try {
+            appService = ApplicationServiceProvider.getApplicationService();
+        } catch (Exception e) {
+            LOG.error("Error attempting to instantiate caDSR Application Service.", e);
+        }
     }
 
     /**
@@ -144,8 +161,6 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             return CADSR_RESULTS;
         }
         try {
-            ApplicationService appService = ApplicationServiceProvider.getApplicationService();
-
             DataElement dataElement = new DataElement();
             dataElement.setPublicID(CDE_PUBLIC_ID);
             dataElement.setLatestVersionIndicator("Yes");
@@ -157,7 +172,8 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             List<CaDSRWebDTO> values = getSearchResults(permissibleValues);
             markers.addAll(values);
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
+                    getText("error.plannedMarker.request.caDSRLookup"));
         }
         return CADSR_RESULTS;
     }
@@ -168,13 +184,11 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      * @throws PAException on error
      */
     public String setupEmailRequest() throws PAException {
-        getPlannedMarker().setToEmail(
-                PaRegistry.getLookUpTableService().getPropertyValue("CDE_MARKER_REQUEST_TO_EMAIL"));
+        setSubject(PaRegistry.getLookUpTableService().getPropertyValue("CDE_MARKER_REQUEST_SUBJECT"));
+        setToEmail(PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL"));
         getPlannedMarker().setFromEmail(
                 PaRegistry.getLookUpTableService().getPropertyValue("CDE_MARKER_REQUEST_FROM_EMAIL"));
-        getPlannedMarker().setSubject(
-                PaRegistry.getLookUpTableService().getPropertyValue("CDE_MARKER_REQUEST_SUBJECT"));
-        return "email";
+        return EMAIL;
     }
 
     /**
@@ -182,7 +196,39 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      * @return email
      */
     public String sendEmailRequest() {
-        return "email";
+        validateEmailRequest();
+        if (hasFieldErrors()) {
+            return EMAIL;
+        }
+        Ii studyProtocolIi =
+            (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setName(StConverter.convertToSt(getPlannedMarker().getName()));
+        if (getPlannedMarker().isFoundInHugo()) {
+            dto.setHugoBiomarkerCode(CdConverter.convertStringToCd(getPlannedMarker().getHugoCode()));
+        }
+        try {
+            PaRegistry.getMailManagerService().sendMarkerCDERequestMail(studyProtocolIi,
+                    getPlannedMarker().getFromEmail(), dto, getPlannedMarker().getMessage());
+            passedValidation = true;
+        } catch (Exception e) {
+            passedValidation = false;
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
+                    getText("error.plannedMarker.request.sendEmail"));
+        }
+        return EMAIL;
+    }
+
+    private void validateEmailRequest() {
+        if (StringUtils.isEmpty(getPlannedMarker().getName())) {
+            addFieldError("plannedMarker.name", getText("error.plannedMarker.request.name"));
+        }
+        if (!PAUtil.isValidEmail(getPlannedMarker().getFromEmail())) {
+            addFieldError("plannedMarker.fromEmail", getText("error.plannedMarker.request.fromEmail"));
+        }
+        if (getPlannedMarker().isFoundInHugo() && StringUtils.isEmpty(getPlannedMarker().getHugoCode())) {
+            addFieldError("plannedMarker.hugoCode", getText("error.plannedMarker.request.hugoCode"));
+        }
     }
 
     /**
@@ -330,5 +376,61 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     public void setPlannedMarker(PlannedMarkerWebDTO plannedMarker) {
         this.plannedMarker = plannedMarker;
+    }
+
+    /**
+     * @return the passedValidation
+     */
+    public boolean isPassedValidation() {
+        return passedValidation;
+    }
+
+    /**
+     * @param passedValidation the passedValidation to set
+     */
+    public void setPassedValidation(boolean passedValidation) {
+        this.passedValidation = passedValidation;
+    }
+
+    /**
+     * @return the appService
+     */
+    public ApplicationService getAppService() {
+        return appService;
+    }
+
+    /**
+     * @param appService the appService to set
+     */
+    public void setAppService(ApplicationService appService) {
+        this.appService = appService;
+    }
+
+    /**
+     * @return the subject
+     */
+    public String getSubject() {
+        return subject;
+    }
+
+    /**
+     * @param subject the subject to set
+     */
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    /**
+     * @return the toEmail
+     */
+    public String getToEmail() {
+        return toEmail;
+    }
+
+    /**
+     * @param toEmail the toEmail to set
+     */
+    public void setToEmail(String toEmail) {
+        this.toEmail = toEmail;
     }
 }

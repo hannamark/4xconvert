@@ -630,4 +630,8 @@
         <comment>Sending email on Abstraction Verified No Response Script Failure.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.4/PO-2972-1.sql"/>
      </changeSet>
+     <changeSet id="PO-3149" author="aevansel">
+        <comment>Adding pa properties to support email request of new markers.</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.4/PO-3149.sql"/>
+     </changeSet>
 </databaseChangeLog>

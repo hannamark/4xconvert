@@ -102,20 +102,34 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-
-import com.opensymphony.xwork2.Preparable;
 
 /**
  * Action class for listing/manipulating planned markers.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class PlannedMarkerAction extends AbstractListEditAction implements Preparable {
+public class PlannedMarkerAction extends AbstractListEditAction {
     private static final long serialVersionUID = 1L;
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private List<PlannedMarkerWebDTO> plannedMarkerList;
     private String cdeId;
+    private ApplicationService appService;
+    private static final Logger LOG = Logger.getLogger(PlannedMarkerAction.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() throws PAException {
+        try {
+            appService = ApplicationServiceProvider.getApplicationService();
+        } catch (Exception e) {
+            LOG.error("Error attempting to instatiate caDSR Application Service.", e);
+        }
+        super.prepare();
+    }
 
     /**
      * {@inheritDoc}
@@ -189,7 +203,6 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
      */
     public String displaySelectedCDE() {
         try {
-            ApplicationService appService = ApplicationServiceProvider.getApplicationService();
             ValueDomainPermissibleValue vdpv = new ValueDomainPermissibleValue();
             vdpv.setId(getCdeId());
             Collection<Object> results = appService.search(ValueDomainPermissibleValue.class, vdpv);
@@ -205,6 +218,14 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
         }
         return AR_EDIT;
 
+    }
+
+    /**
+     * Reloads the planned marker screen with the requested marker name and hugo code.
+     * @return edit
+     */
+    public String displayRequestedCDE() {
+        return AR_EDIT;
     }
 
     /**
@@ -233,20 +254,20 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
 
     private void enforceBusinessRules() {
         if (StringUtils.isEmpty(getPlannedMarker().getName())) {
-            addFieldError("plannedMarker.name", getText("error.plannedMarker.name", new String[] {}));
+            addFieldError("plannedMarker.name", getText("error.plannedMarker.name"));
         }
         if (StringUtils.isEmpty(getPlannedMarker().getAssayType())) {
-            addFieldError("plannedMarker.assayType", getText("error.plannedMarker.assayType", new String[] {}));
+            addFieldError("plannedMarker.assayType", getText("error.plannedMarker.assayType"));
         }
         if (StringUtils.isEmpty(getPlannedMarker().getAssayUse())) {
-            addFieldError("plannedMarker.assayUse", getText("error.plannedMarker.assayUse", new String[] {}));
+            addFieldError("plannedMarker.assayUse", getText("error.plannedMarker.assayUse"));
         }
         if (StringUtils.isEmpty(getPlannedMarker().getAssayPurpose())) {
-            addFieldError("plannedMarker.assayPurpose", getText("error.plannedMarker.assayPurpose", new String[] {}));
+            addFieldError("plannedMarker.assayPurpose", getText("error.plannedMarker.assayPurpose"));
         }
         if (StringUtils.isEmpty(getPlannedMarker().getTissueCollectionMethod())) {
             addFieldError("plannedMarker.tissueCollectionMethod",
-                    getText("error.plannedMarker.tissueCollectionMethod", new String[] {}));
+                    getText("error.plannedMarker.tissueCollectionMethod"));
         }
         enforceAdditionalBusinessRules();
     }
@@ -254,17 +275,14 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
     private void enforceAdditionalBusinessRules() {
         if (StringUtils.equals(getPlannedMarker().getAssayType(), AssayTypeCode.OTHER.getCode())
                 && StringUtils.isEmpty(getPlannedMarker().getAssayTypeOtherText())) {
-            addFieldError("plannedMarker.assayTypeOtherText",
-                    getText("error.plannedMarker.assayTypeOtherText", new String[] {}));
+            addFieldError("plannedMarker.assayTypeOtherText", getText("error.plannedMarker.assayTypeOtherText"));
         }
         if (StringUtils.equals(getPlannedMarker().getAssayPurpose(), AssayPurposeCode.OTHER.getCode())
                 && StringUtils.isEmpty(getPlannedMarker().getAssayPurposeOtherText())) {
-            addFieldError("plannedMarker.assayPurposeOtherText",
-                    getText("error.plannedMarker.assayPurposeOtherText", new String[] {}));
+            addFieldError("plannedMarker.assayPurposeOtherText", getText("error.plannedMarker.assayPurposeOtherText"));
         }
         if (StringUtils.isEmpty(getPlannedMarker().getTissueSpecimenType())) {
-            addFieldError("plannedMarker.tissueSpecimenType",
-                    getText("error.plannedMarker.tissueSpecimenType", new String[] {}));
+            addFieldError("plannedMarker.tissueSpecimenType", getText("error.plannedMarker.tissueSpecimenType"));
         }
     }
 
@@ -275,6 +293,8 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
         webDTO.setName(StConverter.convertToString(markerDTO.getName()));
         webDTO.setMeaning(StConverter.convertToString(markerDTO.getLongName()));
         webDTO.setDescription(StConverter.convertToString(markerDTO.getTextDescription()));
+        webDTO.setHugoCode(CdConverter.convertCdToString(markerDTO.getHugoBiomarkerCode()));
+        webDTO.setFoundInHugo(StringUtils.isNotEmpty(CdConverter.convertCdToString(markerDTO.getHugoBiomarkerCode())));
         webDTO.setAssayType(CdConverter.convertCdToString(markerDTO.getAssayTypeCode()));
         webDTO.setAssayTypeOtherText(StConverter.convertToString(markerDTO.getAssayTypeOtherText()));
         webDTO.setAssayUse(CdConverter.convertCdToString(markerDTO.getAssayUseCode()));
@@ -292,6 +312,9 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
         marker.setName(StConverter.convertToSt(getPlannedMarker().getName()));
         marker.setLongName(StConverter.convertToSt(getPlannedMarker().getMeaning()));
         marker.setTextDescription(StConverter.convertToSt(getPlannedMarker().getDescription()));
+        if (getPlannedMarker().isFoundInHugo()) {
+            marker.setHugoBiomarkerCode(CdConverter.convertStringToCd(getPlannedMarker().getHugoCode()));
+        }
         marker.setAssayTypeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayType()));
         if (StringUtils.equals(getPlannedMarker().getAssayType(), AssayTypeCode.OTHER.getCode())) {
             marker.setAssayTypeOtherText(StConverter.convertToSt(getPlannedMarker().getAssayTypeOtherText()));
@@ -349,5 +372,19 @@ public class PlannedMarkerAction extends AbstractListEditAction implements Prepa
      */
     public void setCdeId(String cdeId) {
         this.cdeId = cdeId;
+    }
+
+    /**
+     * @return the appService
+     */
+    public ApplicationService getAppService() {
+        return appService;
+    }
+
+    /**
+     * @param appService the appService to set
+     */
+    public void setAppService(ApplicationService appService) {
+        this.appService = appService;
     }
 }

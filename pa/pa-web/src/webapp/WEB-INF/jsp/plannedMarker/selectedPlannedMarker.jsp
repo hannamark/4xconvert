@@ -3,6 +3,7 @@
 <table class="form">
     <s:hidden name="currentAction" />
     <s:hidden name="plannedMarker.id" />
+    <s:hidden id="foundInHugo" name="plannedMarker.foundInHugo" />
     <tr>
         <td class="label">
             <s:label for="plannedMarker.name"><fmt:message key="plannedMarker.name" />:</s:label><span class="required">*</span>
@@ -36,6 +37,12 @@
             <s:label for="plannedMarker.description"><fmt:message key="plannedMarker.description" />:</s:label>
         </td>
         <td><s:textfield name="plannedMarker.description" id="description" cssClass="readonly" readonly="true" /></td>
+    </tr>
+    <tr id="hugoCodeRow" style="display:none">
+        <td class="label">
+            <s:label for="plannedMarker.hugoCode"><fmt:message key="plannedMarker.hugoCode"/>:</s:label>
+        </td>
+        <td><s:textfield name="plannedMarker.hugoCode" id="hugoCode" cssClass="readonly" readonly="true" /></td>
     </tr>
     <tr>
         <td class="label">

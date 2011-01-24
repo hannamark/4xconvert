@@ -17,7 +17,16 @@
                 setFocusToFirstControl();
                 toggleAssayTypeOtherText();
                 toggleAssayPurposeOtherText();
+                toggleHugoCode();
             }
+            function toggleHugoCode() {
+            	if ($('foundInHugo').value == 'true') {
+                    $('hugoCodeRow').show();
+                } else {
+                    $('hugoCodeRow').hide();
+                }
+            }
+            
             function toggleAssayTypeOtherText() {
             	if ($('assayType').value == 'Other') {
                     $('assayTypeOtherTextRow').show();
@@ -45,7 +54,23 @@
                    method: 'get',
                    evalScripts: false
                 });
-            }           
+            }      
+            function loadMarkerWithRequestedCDE(markerName, foundInHugo, hugoCode) {
+            	window.top.hidePopWin(true);
+            	var url = '/pa/protected/ajaxptpPlannedMarkerdisplayRequestedCDE.action?plannedMarker.name='+ markerName
+            			+ '&plannedMarker.hugoCode=' + hugoCode + '&plannedMarker.foundInHugo=' + foundInHugo;
+                var div = $('plannedMarkerDetails');
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+                var aj = new Ajax.Updater(div, url, {
+                   asynchronous: true,
+                   method: 'get',
+                   evalScripts: false,
+                   onComplete: function(transport) {
+                	   toggleHugoCode();
+                   }
+                });
+            }
+            
         </script>
     </head>
     <body>

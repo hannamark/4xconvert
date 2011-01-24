@@ -90,8 +90,11 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -317,14 +320,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         return xmlFile;
     }
 
-    /**
-     *
-     * @param mailTo mailTo
-     * @param subject subject
-     * @param mailBody mailBody
-     * @param attachments File attachments
-     */
-    public void sendMailWithAttachment(String mailTo, String subject, String mailBody, File[] attachments) {
+    private void sendMailWithAttachment(String mailTo, String mailFrom, String subject, String mailBody,
+            File[] attachments) {
         try {
             // get system properties
             Properties props = System.getProperties();
@@ -339,7 +336,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             // body
             Multipart multipart = new MimeMultipart();
 
-            message.setFrom(new InternetAddress(lookUpTableService.getPropertyValue("fromaddress")));
+            message.setFrom(new InternetAddress(mailFrom));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
             message.setSentDate(new java.util.Date());
             message.setSubject(subject);
@@ -361,7 +358,23 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             Transport.send(message);
         } catch (Exception e) {
             LOG.error("Send Mail error", e);
-        } // catch
+        }
+    }
+
+    /**
+     *
+     * @param mailTo mailTo
+     * @param subject subject
+     * @param mailBody mailBody
+     * @param attachments File attachments
+     */
+    public void sendMailWithAttachment(String mailTo, String subject, String mailBody, File[] attachments) {
+        try {
+            String mailFrom = lookUpTableService.getPropertyValue("fromaddress");
+            sendMailWithAttachment(mailTo, mailFrom, subject, mailBody, attachments);
+        } catch (Exception e) {
+            LOG.error("Send Mail error", e);
+        }
     }
 
     /**
@@ -661,6 +674,45 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         } catch (Exception e) {
             LOG.error("Send Mail error", e);
         } // catch
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void sendMarkerCDERequestMail(Ii studyProtocolIi, String from, PlannedMarkerDTO marker,
+            String markerText) throws PAException {
+        try {
+            StudyProtocolQueryDTO spDTO =
+                protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+
+            boolean foundInHugo = StringUtils.isNotEmpty(CdConverter.convertCdToString(marker.getHugoBiomarkerCode()));
+
+            String body = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_BODY");
+            body = body.replace("${trialIdentifier}", spDTO.getNciIdentifier());
+            body = body.replace("${markerName}", StConverter.convertToString(marker.getName()));
+            body = body.replace("${foundInHugo}", BooleanUtils.toStringYesNo(foundInHugo));
+
+            String hugoClause = "";
+            if (foundInHugo) {
+                hugoClause = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_HUGO_CLAUSE");
+                hugoClause = hugoClause.replace("${hugoCode}",
+                        CdConverter.convertCdToString(marker.getHugoBiomarkerCode()));
+            }
+            body = body.replace("${hugoCodeClause}", hugoClause);
+
+            String markerTextClause = "";
+            if (StringUtils.isNotEmpty(markerText)) {
+                markerTextClause = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_MARKER_TEXT_CLAUSE");
+                markerTextClause = markerTextClause.replace("${markerText}", markerText);
+            }
+            body = body.replace("${markerTextClause}", markerTextClause);
+
+            String toAddress = lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL");
+            String subject = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_SUBJECT");
+            sendMailWithAttachment(toAddress, from, subject, body, null);
+        } catch (Exception e) {
+            throw new PAException("An error occured while sending a request for a new CDE", e);
+        }
     }
 
     /**

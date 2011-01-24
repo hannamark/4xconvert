@@ -86,10 +86,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.cadsr.domain.PermissibleValue;
+import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
+import gov.nih.nci.cadsr.domain.ValueMeaning;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.system.applicationservice.ApplicationService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -102,10 +113,29 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
     private PlannedMarkerAction plannedMarkerAction;
 
     @Before
-    public void setUp() throws PAException {
+    public void setUp() throws Exception {
         plannedMarkerAction = new PlannedMarkerAction();
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         plannedMarkerAction.prepare();
+
+        PermissibleValue pv = new PermissibleValue();
+        pv.setValue("N-Cadherin");
+
+        ValueMeaning vm = new ValueMeaning();
+        vm.setLongName("N-Cadherin");
+        vm.setDescription("cadherin");
+        pv.setValueMeaning(vm);
+
+        ValueDomainPermissibleValue vdpv = new ValueDomainPermissibleValue();
+        vdpv.setPermissibleValue(pv);
+
+        List<Object> results = new ArrayList<Object>();
+        results.add(vdpv);
+
+        ApplicationService appService = mock(ApplicationService.class);
+        when(appService.search(eq(ValueDomainPermissibleValue.class), any(ValueDomainPermissibleValue.class))).thenReturn(results);
+
+        plannedMarkerAction.setAppService(appService);
     }
 
     @Test
