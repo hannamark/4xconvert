@@ -7,13 +7,7 @@
 <head>
 <title><fmt:message key="anatomicSite.details.title" /></title>
 <s:head />
-<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
-<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
-<script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
-<script type="text/javascript" src="<c:url value='/scripts/js/scriptaculous.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+<%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
 
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 // this function is called from body onload in main.jsp (decorator)
@@ -50,7 +44,6 @@ function handleCreate(){
         <fmt:message key="anatomicSite.details.title"/>
     </h2>
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td colspan="2">
             <s:set name="anatomicSiteList" value="anatomicSiteList" scope="request"/>

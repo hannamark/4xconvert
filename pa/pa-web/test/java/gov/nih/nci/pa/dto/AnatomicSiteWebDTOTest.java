@@ -82,8 +82,11 @@
  */
 package gov.nih.nci.pa.dto;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.pa.dto.AnatomicSiteWebDTO;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.pa.domain.AnatomicSite;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -97,7 +100,7 @@ public class AnatomicSiteWebDTOTest {
 
     @Before
     public void initDto() {
-        anatomicSiteWebDTO = new AnatomicSiteWebDTO();
+        anatomicSiteWebDTO = new AnatomicSiteWebDTO(new Cd());
         anatomicSiteWebDTO.setDisplayName("alternames");
         anatomicSiteWebDTO.setCode("code");
     }
@@ -110,5 +113,25 @@ public class AnatomicSiteWebDTOTest {
    @Test
    public void codePropertyTest() {
        assertNotNull(anatomicSiteWebDTO.getCode());
+   }
+   
+   @Test
+   public void populateFromCd() {
+       Cd cd = new Cd();
+       cd.setCode("cdCode");
+       cd.setDisplayName(StConverter.convertToSt("stDisplayName"));
+       anatomicSiteWebDTO = new AnatomicSiteWebDTO(cd);
+       assertEquals("cdCode", anatomicSiteWebDTO.getCode());
+       assertEquals("stDisplayName", anatomicSiteWebDTO.getDisplayName());
+   }
+   
+   @Test
+   public void populateFromAnatomicSite() {
+       AnatomicSite as = new AnatomicSite();
+       as.setCode("asCode");
+       as.setDisplayName("asDisplayName");
+       anatomicSiteWebDTO = new AnatomicSiteWebDTO(as);
+       assertEquals("asCode", anatomicSiteWebDTO.getCode());
+       assertEquals("asDisplayName", anatomicSiteWebDTO.getDisplayName());
    }
 }

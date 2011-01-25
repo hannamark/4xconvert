@@ -107,7 +107,7 @@ public class AnatomicSiteComparator implements Comparator<AnatomicSite>, Seriali
         } else if (c2 == null) {
             return -1;
         } else {
-            return c1.compareTo(c2);
+            return c1.compareToIgnoreCase(c2);
         }
     }
 }

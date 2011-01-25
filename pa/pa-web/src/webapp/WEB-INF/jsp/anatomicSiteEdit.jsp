@@ -7,13 +7,7 @@
 <head>
 <title><fmt:message key="anatomicSite.details.title" /></title>
 <s:head />
-<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
-<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
-<script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
-<script type="text/javascript" src="<c:url value='/scripts/js/scriptaculous.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+<%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
 <c:url value="/protected/popupDis.action" var="lookupUrl" />
 
 <script type="text/javascript">
@@ -22,8 +16,12 @@
         setFocusToFirstControl();         
     }
     function anatomicSiteAdd(){
-        document.anatomicSiteForm.action="anatomicSiteadd.action";
-        document.anatomicSiteForm.submit();
+    	if ($('anatomicSite_code').value == '') {
+            alert("An Anatomic Site value must be selected.");    
+        } else {
+        	document.anatomicSiteForm.action="anatomicSiteadd.action";
+            document.anatomicSiteForm.submit();
+        }
     }   
 </script>
 </head>
@@ -33,6 +31,7 @@
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
     <pa:sucessMessage /> 
+    <s:url id="cancelUrl" namespace="/protected" action="anatomicSite"/>
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <s:form name="anatomicSiteForm">
     <h2>
@@ -40,13 +39,12 @@
     </h2>
 
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td colspan="2">
             <s:set name="anatomicSiteList" value="anatomicSiteList" scope="request"/>
             
             <s:select name="anatomicSite.code" id="anatomicSite_code" list="anatomicSiteList" listKey="code"
-                        listValue="code"/>
+                        listValue="code" headerKey="" headerValue="--Select Item--" />
         </td>
         </tr>
         <tr>
@@ -56,6 +54,9 @@
                 <li>
                     <s:a href="#" cssClass="btn" onclick="anatomicSiteAdd();">
                         <span class="btn_img"> <span class="save">Save</span></span>
+                    </s:a>
+                    <s:a href="%{cancelUrl}" cssClass="btn">
+                        <span class="btn_img"><span class="cancel">Cancel</span></span>
                     </s:a>
                 </li>
             </ul>

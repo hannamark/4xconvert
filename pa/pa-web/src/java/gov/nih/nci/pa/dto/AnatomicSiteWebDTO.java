@@ -82,6 +82,10 @@
  */
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.pa.domain.AnatomicSite;
+import gov.nih.nci.pa.iso.util.StConverter;
+
 /**
  * Web dto for anatomic site.
  * @author mshestopalov
@@ -91,6 +95,31 @@ public class AnatomicSiteWebDTO {
     
     private String displayName;
     private String code;
+    
+    /**
+     * Const empty. Needed for action use.
+     */
+    public AnatomicSiteWebDTO() {
+        //NOOP
+    }
+    
+    /**
+     * Const for Cd to anatomic site web dto.
+     * @param cd cd
+     */
+    public AnatomicSiteWebDTO(Cd cd) {
+        displayName = StConverter.convertToString(cd.getDisplayName());
+        code = cd.getCode();
+    }
+    
+    /**
+     * Const for AnatomicSite to anatomic site web dto.
+     * @param as anatomic site
+     */
+    public AnatomicSiteWebDTO(AnatomicSite as) {
+        displayName = as.getDisplayName();
+        code = as.getCode();
+    }
     
     /**
      * @return the displayName

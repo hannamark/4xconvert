@@ -87,7 +87,6 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.dto.AnatomicSiteWebDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -95,6 +94,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import com.opensymphony.xwork2.Preparable;
@@ -158,6 +158,12 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
         
         return super.delete();
     }
+    
+    private void enforceBusinessRules() throws PAException {
+        if (StringUtils.isEmpty(anatomicSite.getCode())) {
+            addActionError("Please select an Anatomic Site to add to the trial.");
+        }
+    }
 
     /**
      * @return result
@@ -165,18 +171,23 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
      */
     @Override
     public String add() throws PAException {
-        StudyProtocolDTO studyProtocolDto = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
-        if (studyProtocolDto.getSummary4AnatomicSites() == null 
-                || CollectionUtils.isEmpty(studyProtocolDto.getSummary4AnatomicSites().getItem())) {
-            DSet<Cd> dSet = new DSet<Cd>();
-            dSet.setItem(new HashSet<Cd>());
-            studyProtocolDto.setSummary4AnatomicSites(dSet);
-        }
-        Cd c = new Cd();
-        c.setCode(getAnatomicSite().getCode());
-        studyProtocolDto.getSummary4AnatomicSites().getItem().add(c);
-        PaRegistry.getStudyProtocolService().updateStudyProtocol(studyProtocolDto);
-        return super.add();
+        enforceBusinessRules();
+        if (!hasActionErrors()) {
+            StudyProtocolDTO studyProtocolDto = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
+            if (studyProtocolDto.getSummary4AnatomicSites() == null 
+                    || CollectionUtils.isEmpty(studyProtocolDto.getSummary4AnatomicSites().getItem())) {
+                DSet<Cd> dSet = new DSet<Cd>();
+                dSet.setItem(new HashSet<Cd>());
+                studyProtocolDto.setSummary4AnatomicSites(dSet);
+            }
+            Cd c = new Cd();
+            c.setCode(getAnatomicSite().getCode());
+            studyProtocolDto.getSummary4AnatomicSites().getItem().add(c);
+            PaRegistry.getStudyProtocolService().updateStudyProtocol(studyProtocolDto);
+            return super.add();
+       } else {
+           return super.create();
+       }
     }
     
     /**
@@ -184,19 +195,17 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
      */
     @Override
     protected void loadListForm() throws PAException {
-        List<AnatomicSiteWebDTO> nl = new ArrayList<AnatomicSiteWebDTO>();
+        anatomicSiteList = new ArrayList<AnatomicSiteWebDTO>();
         StudyProtocolDTO studyProtocolDto = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
         if (studyProtocolDto.getSummary4AnatomicSites() != null 
                 && !CollectionUtils.isEmpty(studyProtocolDto.getSummary4AnatomicSites().getItem())) {
             
             for (Cd as : studyProtocolDto.getSummary4AnatomicSites().getItem()) {
-                AnatomicSiteWebDTO n = new AnatomicSiteWebDTO();
-                n.setCode(as.getCode());
-                n.setDisplayName(StConverter.convertToString(as.getDisplayName()));
-                nl.add(n);
+                AnatomicSiteWebDTO n = new AnatomicSiteWebDTO(as);
+                anatomicSiteList.add(n);
             }
         }
-        setAnatomicSiteList(nl);
+        setAnatomicSiteList(anatomicSiteList);
     }
 
     /**
@@ -204,15 +213,13 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
      */
     @Override
     protected void loadEditForm() throws PAException {
-        List<AnatomicSiteWebDTO> nl = new ArrayList<AnatomicSiteWebDTO>();
+        anatomicSiteList = new ArrayList<AnatomicSiteWebDTO>();
         List<AnatomicSite> siteList = PaRegistry.getLookUpTableService().getAnatomicSites();
         for (AnatomicSite as : siteList) {
-                AnatomicSiteWebDTO n = new AnatomicSiteWebDTO();
-                n.setCode(as.getCode());
-                n.setDisplayName(as.getDisplayName());
-                nl.add(n);
+                AnatomicSiteWebDTO n = new AnatomicSiteWebDTO(as);
+                anatomicSiteList.add(n);
         }
-        setAnatomicSiteList(nl);
+        setAnatomicSiteList(anatomicSiteList);
     }
     
 }

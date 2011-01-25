@@ -87,11 +87,12 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -159,7 +160,7 @@ public class AnatomicSiteConverter {
      * @throws PAException when error.
      */
     public static Set<AnatomicSite> convertToSet(DSet<Cd> siteCodes) throws PAException {
-        Set<AnatomicSite> returnVal = new HashSet<AnatomicSite>();
+        Set<AnatomicSite> returnVal = new TreeSet<AnatomicSite>(new AnatomicSiteComparator());
         
         if (siteCodes != null && CollectionUtils.isNotEmpty(siteCodes.getItem())) {
             for (Cd c : siteCodes.getItem()) {
