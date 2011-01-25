@@ -85,8 +85,12 @@ package gov.nih.nci.registry.test.integration;
 import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 
-import java.text.SimpleDateFormat;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Ignore;
 
 /**
@@ -96,7 +100,10 @@ import org.junit.Ignore;
  */
 @Ignore
 public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestCase {
-    protected SimpleDateFormat monthDayYearFormat = new SimpleDateFormat("MM/dd/yyyy");
+    protected static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat.getInstance("MM/dd/yyyy");
+    private static final String PROTOCOL_DOCUMENT = "ProtocolDoc.doc";
+    private static final String IRB_DOCUMENT = "IrbDoc.doc";
+    private static boolean firstRun = true;
 
     @Override
     public void setUp() throws Exception {
@@ -133,12 +140,12 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
 
     public void verifyDisclaimer() {
         loginAsAbstractor();
-        disclaimer(false);
+        handleDisclaimer(false);
         loginAsAbstractor();
-        disclaimer(true);
+        handleDisclaimer(true);
     }
-    
-    protected void disclaimer(boolean accept) {
+
+    protected void handleDisclaimer(boolean accept) {
         verifyDisclaimerPage();
         if (accept) {
             clickAndWait("id=acceptDisclaimer");
@@ -147,7 +154,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
             clickAndWait("id=rejectDisclaimer");
             verifyLoginPage();
         }
-        
+
     }
 
     protected void verifySearchPage() {
@@ -172,7 +179,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         assertTrue(selenium.isElementPresent("id=acceptDisclaimer"));
         assertTrue(selenium.isElementPresent("id=rejectDisclaimer"));
     }
-    
+
     protected boolean isLoggedIn() {
         return selenium.isElementPresent("link=Log Out") && !selenium.isElementPresent("link=Login");
     }
@@ -181,4 +188,213 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         selenium.open(url);
         waitForPageToLoad();
     }
+
+    protected void registerTrial(String trialName, String leadOrgTrialId) throws URISyntaxException {
+        String today = MONTH_DAY_YEAR_FMT.format(new Date());
+        String tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
+        String oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(new Date(), 1));
+
+        //Select register trial and choose trial type
+        clickAndWaitAjax("registerTrialMenuOption");
+        selenium.selectFrame("popupFrame");
+        waitForElementById("summaryFourFundingCategoryCode", 60);
+        selenium.select("summaryFourFundingCategoryCode", "label=Institutional");
+        clickAndWaitAjax("link=Submit");
+        waitForPageToLoad();
+
+        selenium.selectFrame("relative=up");
+        waitForElementById("submitTrial_trialDTO_leadOrgTrialIdentifier", 15);
+        selenium.type("submitTrial_trialDTO_leadOrgTrialIdentifier", leadOrgTrialId);
+        selenium.type("submitTrial_trialDTO_officialTitle", trialName);
+        selenium.select("trialDTO.phaseCode", "label=0");
+        selenium.select("trialDTO.primaryPurposeCode", "label=Treatment");
+
+        //Select Lead Organization
+        clickAndWaitAjax("link=Look Up Org");
+        waitForElementById("popupFrame", 60);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("search_organization_btn", 15);
+        if (firstRun) {
+            // compiling the popup jsp the first time screws up selenium, so give it some time
+            System.out.println("Waiting on first run - org");
+            pause(2000);
+        }
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        waitForPageToLoad();
+
+        //Select Principal Investigator
+        selenium.selectFrame("relative=up");
+        clickAndWaitAjax("link=Look Up Person");
+        waitForElementById("popupFrame", 60);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("search_person_btn", 15);
+        if (firstRun) {
+            // compiling the popup jsp the first time screws up selenium, so give it some time
+            System.out.println("Waiting on first run - pers");
+            pause(2000);
+        }
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[6]/a");
+        waitForPageToLoad();
+
+        //Select Sponsor
+        selenium.selectFrame("relative=up");
+        clickAndWaitAjax("//div[@id='loadSponsorField']/table/tbody/tr/td[2]/ul/li/a");
+        selenium.selectFrame("popupFrame");
+        waitForElementById("search_organization_btn", 15);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        waitForPageToLoad();
+
+        selenium.selectFrame("relative=up");
+        selenium.type("trialDTO.contactEmail", "selenium@example.com");
+        selenium.type("trialDTO.contactPhone", "123-456-7890");
+
+        //Select Funding Sponsor
+        clickAndWaitAjax("//div[@id='loadSummary4FundingSponsorField']/table/tbody/tr/td[2]/ul/li/a");
+        selenium.selectFrame("popupFrame");
+        waitForElementById("search_organization_btn", 15);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        waitForPageToLoad();
+
+        //Trial Status Information
+        selenium.selectFrame("relative=up");
+        selenium.select("submitTrial_trialDTO_statusCode", "label=In Review");
+        selenium.type("submitTrial_trialDTO_statusDate", today);
+        selenium.type("submitTrial_trialDTO_startDate", tommorrow);
+        selenium.click("submitTrial_trialDTO_startDateTypeAnticipated");
+        selenium.click("submitTrial_trialDTO_completionDateTypeAnticipated");
+        selenium.type("submitTrial_trialDTO_completionDate", oneYearFromToday);
+
+        //Regulator Information
+        selenium.select("countries", "label=United States");
+        selenium.click("//option[@value='1026']");
+        selenium.select("trialDTO.fdaRegulatoryInformationIndicator", "label=Yes");
+        selenium.select("trialDTO.section801Indicator", "label=Yes");
+        selenium.select("trialDTO.delayedPostingIndicator", "label=Yes");
+        selenium.select("trialDTO.dataMonitoringCommitteeAppointedIndicator", "label=Yes");
+
+        //Add Protocol and IRB Document
+        String protocolDocPath = (new File(ClassLoader.getSystemResource(PROTOCOL_DOCUMENT).toURI()).toString());
+        String irbDocPath = (new File(ClassLoader.getSystemResource(IRB_DOCUMENT).toURI()).toString());
+        selenium.type("submitTrial_protocolDoc", protocolDocPath);
+        selenium.type("submitTrial_irbApproval", irbDocPath);
+
+        pause(5000);
+        clickAndWaitAjax("link=Review Trial");
+        waitForElementById("reviewTrialForm", 15);
+        clickAndWaitAjax("link=Submit");
+        waitForPageToLoad();
+        firstRun = false;
+    }
+
+    protected void registerDraftTrial(String trialName, String leadOrgTrialId) throws URISyntaxException {
+        String today = MONTH_DAY_YEAR_FMT.format(new Date());
+        String tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
+        String oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(new Date(), 1));
+
+        //Select register trial and choose trial type
+        clickAndWaitAjax("registerTrialMenuOption");
+        selenium.selectFrame("popupFrame");
+        waitForElementById("summaryFourFundingCategoryCode", 60);
+        selenium.select("summaryFourFundingCategoryCode", "label=Institutional");
+        clickAndWaitAjax("link=Submit");
+        waitForPageToLoad();
+
+        selenium.selectFrame("relative=up");
+        waitForElementById("submitTrial_trialDTO_leadOrgTrialIdentifier", 15);
+        selenium.type("submitTrial_trialDTO_leadOrgTrialIdentifier", leadOrgTrialId);
+        selenium.type("submitTrial_trialDTO_officialTitle", trialName);
+        selenium.select("trialDTO.phaseCode", "label=0");
+        selenium.select("trialDTO.primaryPurposeCode", "label=Treatment");
+
+        //Select Lead Organization
+        clickAndWaitAjax("link=Look Up Org");
+        waitForElementById("popupFrame", 60);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("search_organization_btn", 15);
+        if (firstRun) {
+            // compiling the popup jsp the first time screws up selenium, so give it some time
+            System.out.println("Waiting on first run - org");
+            pause(2000);
+        }
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        waitForPageToLoad();
+
+        //Select Principal Investigator
+        selenium.selectFrame("relative=up");
+        clickAndWaitAjax("link=Look Up Person");
+        waitForElementById("popupFrame", 60);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("search_person_btn", 15);
+        if (firstRun) {
+            // compiling the popup jsp the first time screws up selenium, so give it some time
+            System.out.println("Waiting on first run - pers");
+            pause(2000);
+        }
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[6]/a");
+        waitForPageToLoad();
+
+        //Select Sponsor
+        selenium.selectFrame("relative=up");
+        clickAndWaitAjax("//div[@id='loadSponsorField']/table/tbody/tr/td[2]/ul/li/a");
+        selenium.selectFrame("popupFrame");
+        waitForElementById("search_organization_btn", 15);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        waitForPageToLoad();
+
+        selenium.selectFrame("relative=up");
+        selenium.type("trialDTO.contactEmail", "selenium@example.com");
+        selenium.type("trialDTO.contactPhone", "123-456-7890");
+
+        //Select Funding Sponsor
+        clickAndWaitAjax("//div[@id='loadSummary4FundingSponsorField']/table/tbody/tr/td[2]/ul/li/a");
+        selenium.selectFrame("popupFrame");
+        waitForElementById("search_organization_btn", 15);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        waitForPageToLoad();
+
+        //Trial Status Information
+        selenium.selectFrame("relative=up");
+        selenium.select("submitTrial_trialDTO_statusCode", "label=In Review");
+        selenium.type("submitTrial_trialDTO_statusDate", today);
+        selenium.type("submitTrial_trialDTO_startDate", tommorrow);
+        selenium.click("submitTrial_trialDTO_startDateTypeAnticipated");
+        selenium.click("submitTrial_trialDTO_completionDateTypeAnticipated");
+        selenium.type("submitTrial_trialDTO_completionDate", oneYearFromToday);
+
+        //Regulator Information
+        selenium.select("countries", "label=United States");
+        selenium.click("//option[@value='1026']");
+        selenium.select("trialDTO.fdaRegulatoryInformationIndicator", "label=Yes");
+        selenium.select("trialDTO.section801Indicator", "label=Yes");
+        selenium.select("trialDTO.delayedPostingIndicator", "label=Yes");
+        selenium.select("trialDTO.dataMonitoringCommitteeAppointedIndicator", "label=Yes");
+
+        //Add Protocol and IRB Document
+        String protocolDocPath = (new File(ClassLoader.getSystemResource(PROTOCOL_DOCUMENT).toURI()).toString());
+        String irbDocPath = (new File(ClassLoader.getSystemResource(IRB_DOCUMENT).toURI()).toString());
+        selenium.type("submitTrial_protocolDoc", protocolDocPath);
+        selenium.type("submitTrial_irbApproval", irbDocPath);
+
+        pause(5000);
+        clickAndWaitAjax("link=Save as Draft");
+        waitForPageToLoad();
+        firstRun = false;
+    }
+
 }

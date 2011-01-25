@@ -63,7 +63,7 @@
         <filter-name>cgmmAuthSrcMapHelper</filter-name>
         <filter-class>gov.nih.nci.pa.filter.CGMMAuthSourceRequestFilter</filter-class>
     </filter>
-    
+
     <filter>
         <filter-name>csmUserFilter</filter-name>
         <filter-class>gov.nih.nci.pa.filter.CsmUserFilter</filter-class>
@@ -108,7 +108,7 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
-    
+
     <!-- Listeners -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -116,7 +116,7 @@
     <listener>
         <listener-class>gov.nih.nci.pa.filter.CSMSyncListener</listener-class>
     </listener>
-    
+
     <!-- Welcome file lists -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
@@ -156,6 +156,19 @@
             <role-name>SuAbstractor</role-name>
         </auth-constraint>
     </security-constraint>
+
+    <security-role>
+        <description>Abstracts trials registered in CTRP.</description>
+        <role-name>Abstractor</role-name>
+    </security-role>
+    <security-role>
+        <description>Non-abstractors who can view reports.</description>
+        <role-name>ReportViewer</role-name>
+    </security-role>
+    <security-role>
+        <description>Super abstractors who can break check-outs of trials.</description>
+        <role-name>SuAbstractor</role-name>
+    </security-role>
 
     <login-config>
         <auth-method>CAGRIDFORM</auth-method>

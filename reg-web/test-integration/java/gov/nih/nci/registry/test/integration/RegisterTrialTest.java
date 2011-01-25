@@ -82,10 +82,6 @@
  */
 package gov.nih.nci.registry.test.integration;
 
-import java.io.File;
-import java.util.Date;
-
-import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 /**
@@ -94,8 +90,6 @@ import org.junit.Test;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
-    private static final String PROTOCOL_DOCUMENT = "ProtocolDoc.doc";
-    private static final String IRB_DOCUMENT = "IrbDoc.doc";
 
     /**
      * Tests registering a trial.
@@ -105,105 +99,27 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
     public void testRegisterTrial() throws Exception {
         loginAsAbstractor();
         isLoggedIn();
-        disclaimer(true);        
-        helpTestRegisterTrial("Test Trial created by Selenium.", "LEAD-ORG");
-        helpTestRegisterTrial("Test Summ 4 Anatomic Site Trial created by Selenium.", "LEAD-ORG2");
+        handleDisclaimer(true);
+        // register a trial
+        registerTrial("Test Trial created by Selenium.", "LEAD-ORG");
+        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
+        assertTrue("No success message found",
+                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+
+        // try to register a trial with the same lead org trial ID and fail
+        registerTrial("Test Trial created by Selenium.", "LEAD-ORG");
+        assertFalse("A success message was found", selenium.isElementPresent("css=div.confirm_msg"));
+        assertFalse("A success message was found",
+                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+        assertTrue("No error message found", selenium.isElementPresent("css=div.error_msg"));
+        assertTrue("No error message found",
+                   selenium.isTextPresent("Duplicate Trial Submission: A trial exists in the system with the same Lead Organization Trial Identifier for the selected Lead Organization"));
+
+        // try to register a trial with the a new lead org trial ID (and title) and succeed
+        registerTrial("Test Summ 4 Anatomic Site Trial created by Selenium.", "LEAD-ORG2");
+        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
+        assertTrue("No success message found",
+                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
     }
-    
-    private void helpTestRegisterTrial(String trialName, String leadOrgId) throws Exception {
-        String today = monthDayYearFormat.format(new Date());
-        String tommorrow = monthDayYearFormat.format(DateUtils.addDays(new Date(), 1));
-        String oneYearFromToday = monthDayYearFormat.format(DateUtils.addYears(new Date(), 1));
 
-        //Select register trial and choose trial type
-        clickAndWaitAjax("registerTrialMenuOption");
-        selenium.selectFrame("popupFrame");
-        waitForElementById("summaryFourFundingCategoryCode", 60);
-        selenium.select("summaryFourFundingCategoryCode", "label=Institutional");
-        clickAndWaitAjax("link=Submit");
-        waitForPageToLoad();
-
-        selenium.selectFrame("relative=up");
-        waitForElementById("submitTrial_trialDTO_leadOrgTrialIdentifier", 15);
-        selenium.type("submitTrial_trialDTO_leadOrgTrialIdentifier", leadOrgId);
-        selenium.type("submitTrial_trialDTO_officialTitle", trialName);
-        selenium.select("trialDTO.phaseCode", "label=0");
-        selenium.select("trialDTO.primaryPurposeCode", "label=Treatment");
-
-        //Select Lead Organization
-        clickAndWaitAjax("link=Look Up Org");
-        selenium.selectFrame("popupFrame");
-        waitForElementById("poOrganizations", 15);
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
-        waitForPageToLoad();
-
-        //Select Principal Investigator
-        selenium.selectFrame("relative=up");
-        clickAndWaitAjax("link=Look Up Person");
-        selenium.selectFrame("popupFrame");
-        waitForElementById("poOrganizations", 15);
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[6]/a");
-        waitForPageToLoad();
-
-        //Select Sponsor
-        selenium.selectFrame("relative=up");
-        clickAndWaitAjax("//div[@id='loadSponsorField']/table/tbody/tr/td[2]/ul/li/a");
-        selenium.selectFrame("popupFrame");
-        waitForElementById("poOrganizations", 15);
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
-        waitForPageToLoad();
-
-        selenium.selectFrame("relative=up");
-        selenium.type("trialDTO.contactEmail", "selenium@example.com");
-        selenium.type("trialDTO.contactPhone", "123-456-7890");
-
-        //Select Funding Sponsor
-        clickAndWaitAjax("//div[@id='loadSummary4FundingSponsorField']/table/tbody/tr/td[2]/ul/li/a");
-        selenium.selectFrame("popupFrame");
-        waitForElementById("poOrganizations", 15);
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
-        waitForPageToLoad();
-
-        //Trial Status Information
-        selenium.selectFrame("relative=up");
-        selenium.select("submitTrial_trialDTO_statusCode", "label=In Review");
-        selenium.type("submitTrial_trialDTO_statusDate", today);
-        selenium.type("submitTrial_trialDTO_startDate", tommorrow);
-        selenium.click("submitTrial_trialDTO_startDateTypeAnticipated");
-        selenium.click("submitTrial_trialDTO_completionDateTypeAnticipated");
-        selenium.type("submitTrial_trialDTO_completionDate", oneYearFromToday);
-
-        //Regulator Information
-        selenium.select("countries", "label=United States");
-        selenium.click("//option[@value='1026']");
-        selenium.select("trialDTO.fdaRegulatoryInformationIndicator", "label=Yes");
-        selenium.select("trialDTO.section801Indicator", "label=Yes");
-        selenium.select("trialDTO.delayedPostingIndicator", "label=Yes");
-        selenium.select("trialDTO.dataMonitoringCommitteeAppointedIndicator", "label=Yes");
-
-        //Add Protocol and IRB Document
-        String protocolDocPath = (new File(ClassLoader.getSystemResource(PROTOCOL_DOCUMENT).toURI()).toString());
-        String irbDocPath = (new File(ClassLoader.getSystemResource(IRB_DOCUMENT).toURI()).toString());
-        selenium.type("submitTrial_protocolDoc", protocolDocPath);
-        selenium.type("submitTrial_irbApproval", irbDocPath);
-        pause(5000);
-        clickAndWaitAjax("link=Review Trial");
-        waitForElementById("reviewTrialForm", 15);
-        clickAndWaitAjax("link=Submit");
-        waitForPageToLoad();
-
-        //Verify that we end up back on the search trials page.
-        selenium.isElementPresent("link=Search My Trials");
-        selenium.isElementPresent("link=Search All Trials");
-        selenium.isElementPresent("link=Reset");
-        selenium.isElementPresent("link=Search Saved Drafts");
-    }
 }

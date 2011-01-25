@@ -14,60 +14,60 @@ function formReset(){
 </SCRIPT>
 </head>
 <p align="center" class="info">
-    Type a string of characters in any of the text fields in the upper frame 
+    Type a string of characters in any of the text fields in the upper frame
     or in CTEP Identifier field  in the lower frame.
     <br>
     Please do not use wildcard characters.<br>
-         
+
 </p>
-<table  class="form">  
-   	<tr> 	
- 		<td scope="row" class="label"><label for="poOrganizations_firstName">First Name:</label></td>
- 		<td><s:textfield name="personDTO.firstName" id="firstName" maxlength="200" size="100"  cssStyle="width:200px" /></td>
- 		<td scope="row" class="label"><label for="poOrganizations_lastName"> Last Name :</label></td>
- 		<td><s:textfield name="personDTO.lastName"  id="lastName" maxlength="200" size="100"  cssStyle="width:200px" /></td>
- 		<td scope="row" class="label"><label for="poOrganizations_email"> Email :</label></td>
+<table  class="form">
+       <tr>
+         <td scope="row" class="label"><label for="poOrganizations_firstName">First Name:</label></td>
+         <td><s:textfield name="personDTO.firstName" id="firstName" maxlength="200" size="100"  cssStyle="width:200px" /></td>
+         <td scope="row" class="label"><label for="poOrganizations_lastName"> Last Name :</label></td>
+         <td><s:textfield name="personDTO.lastName"  id="lastName" maxlength="200" size="100"  cssStyle="width:200px" /></td>
+         <td scope="row" class="label"><label for="poOrganizations_email"> Email :</label></td>
         <td><s:textfield name="personDTO.email" id="email" maxlength="200" size="100"  cssStyle="width:150px" /></td>
- 		 		
-	</tr>	
-   	<tr>
-   		<td scope="row" class="label"><label for="city">City:</label></td>
- 		<td><s:textfield name="personDTO.city"  id="city" maxlength="200" size="100"  cssStyle="width:200px" /></td>
+
+    </tr>
+       <tr>
+           <td scope="row" class="label"><label for="city">City:</label></td>
+         <td><s:textfield name="personDTO.city"  id="city" maxlength="200" size="100"  cssStyle="width:200px" /></td>
         <td scope="row" class="label"><label for="state">State:</label></td>
         <td><s:textfield name="personDTO.state"  id="state" maxlength="200" size="100"  cssStyle="width:200px" /><br><font size="1"><span class="info">please enter two letter identifier for US states<br> for ex: 'MD' for Maryland</span></font></td>
-		<td scope="row" class="label"><label for="zip">Zip:</label></td>
+        <td scope="row" class="label"><label for="zip">Zip:</label></td>
         <td><s:textfield name="personDTO.zip"  id="zip" maxlength="200" size="100"  cssStyle="width:150px" /></td>
-	</tr>	
-   	<tr>
-   		<td scope="row" class="label"><label for="country">Country:</label></td>
+    </tr>
+       <tr>
+           <td scope="row" class="label"><label for="country">Country:</label></td>
         <td>
-              	<s:select  
-                name="personDTO.country" 
-                list="countryList"  
+                  <s:select
+                name="personDTO.country"
+                list="countryList"
                 id = "country"
                 listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:206px" />
-        </td>	
-	</tr>		
-	<tr><td colspan="6"> <hr></td> </tr>
-		<tr>  
-  		<td scope="row" class="label">
+        </td>
+    </tr>
+    <tr><td colspan="6"> <hr></td> </tr>
+        <tr>
+          <td scope="row" class="label">
             <label for="poOrganizations_ctepId"> CTEP Identifier :</label>
         </td>
- 		<td> 			
- 			<s:textfield name="ctepId" id="ctepId" maxlength="200" size="100"  cssStyle="width:200px" />
- 		</td>
-	</tr>
-	
-	</table>
-	<div class="actionsrow">
-         <del class="btnwrapper">
+         <td>
+             <s:textfield name="ctepId" id="ctepId" maxlength="200" size="100"  cssStyle="width:200px" />
+         </td>
+    </tr>
+
+    </table>
+    <div class="actionsrow">
+        <div class="btnwrapper">
             <ul class="btnrow">
-               <li><li>            
-                   <s:a href="#" cssClass="btn" onclick="loadDiv();"><span class="btn_img"><span class="search">Search</span></span></s:a>  
-                   <s:a href="#" cssClass="btn" onclick="setCreateFormVisible();"><span class="btn_img"><span class="add">Add Person</span></span></s:a>
-                   <s:a href="#" cssClass="btn" onclick="formReset();"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>  
-                   <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin();"><span class="btn_img"><span class="close">Close</span></span></s:a>   
-                   </li>
-               </ul>   
-          </del>
-     </div> 
+                <li>
+                    <s:a href="#" cssClass="btn" onclick="loadDiv();" id="search_person_btn"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                    <s:a href="#" cssClass="btn" onclick="setCreateFormVisible();" id="add_person_btn"><span class="btn_img"><span class="add">Add Person</span></span></s:a>
+                    <s:a href="#" cssClass="btn" onclick="formReset();" id="search_person_reset_btn"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+                    <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin();" id="search_person_close_btn"><span class="btn_img"><span class="close">Close</span></span></s:a>
+                </li>
+            </ul>
+        </div>
+    </div>

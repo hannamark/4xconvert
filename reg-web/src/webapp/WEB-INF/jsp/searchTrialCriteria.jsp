@@ -57,10 +57,10 @@
                 document.getElementById("Lead").style.display = "none";
                 document.getElementById("Site").style.display = "";
                 document.getElementById("organizationId").value="";
-            }else {
-                   document.getElementById("Lead").style.display = "";
-                   document.getElementById("Site").style.display = "none";
-                   document.getElementById("participatingSiteId").value="";
+            } else {
+                document.getElementById("Lead").style.display = "";
+                document.getElementById("Site").style.display = "none";
+                document.getElementById("participatingSiteId").value="";
             }
     }
     function viewPartialProtocol(pId,user) {
@@ -206,10 +206,10 @@
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li>
-                        <s:a href="#" cssClass="btn" onclick="handleMyAction()"><span class="btn_img"><span class="search">Search My Trials</span></span></s:a>
-                        <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search All Trials</span></span></s:a>
-                        <s:a href="#" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
-                        <s:a href="#" cssClass="btn" onclick="getMyPartialTrial()"><span class="btn_img"><span class="search">Search  Saved Drafts</span></span></s:a>
+                        <s:a href="#" cssClass="btn" onclick="handleMyAction()" id="searchMyTrialsBtn"><span class="btn_img"><span class="search">Search My Trials</span></span></s:a>
+                        <s:a href="#" cssClass="btn" onclick="handleAction()" id="searchAllTrialsBtn"><span class="btn_img"><span class="search">Search All Trials</span></span></s:a>
+                        <s:a href="#" cssClass="btn" onclick="resetValues();return false" id="resetSearchBtn"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+                        <s:a href="#" cssClass="btn" onclick="getMyPartialTrial()" id="searchSavedDraftsBtn"><span class="btn_img"><span class="search">Search Saved Drafts</span></span></s:a>
                     </li>
                 </ul>
             </del>
