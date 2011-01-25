@@ -119,6 +119,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -131,6 +132,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -618,7 +620,7 @@ public class StudyProtocolServiceBeanTest {
             
             AnatomicSite as1 = AnatomicSiteTest.createAnatomicSiteObj("Lung");
             TestSchema.addUpdObject(as1);         
-            sp.setSummary4AnatomicSites(new HashSet<AnatomicSite>());
+            sp.setSummary4AnatomicSites(new TreeSet<AnatomicSite>(new AnatomicSiteComparator()));
             sp.getSummary4AnatomicSites().add(as1);
             TestSchema.addUpdObject(sp);
 

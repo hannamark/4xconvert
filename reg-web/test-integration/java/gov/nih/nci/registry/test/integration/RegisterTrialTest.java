@@ -103,13 +103,17 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
      */
     @Test
     public void testRegisterTrial() throws Exception {
+        loginAsAbstractor();
+        isLoggedIn();
+        disclaimer(true);        
+        helpTestRegisterTrial("Test Trial created by Selenium.", "LEAD-ORG");
+        helpTestRegisterTrial("Test Summ 4 Anatomic Site Trial created by Selenium.", "LEAD-ORG2");
+    }
+    
+    private void helpTestRegisterTrial(String trialName, String leadOrgId) throws Exception {
         String today = monthDayYearFormat.format(new Date());
         String tommorrow = monthDayYearFormat.format(DateUtils.addDays(new Date(), 1));
         String oneYearFromToday = monthDayYearFormat.format(DateUtils.addYears(new Date(), 1));
-
-        loginAsAbstractor();
-        isLoggedIn();
-        disclaimer(true);
 
         //Select register trial and choose trial type
         clickAndWaitAjax("registerTrialMenuOption");
@@ -121,15 +125,14 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         selenium.selectFrame("relative=up");
         waitForElementById("submitTrial_trialDTO_leadOrgTrialIdentifier", 15);
-        selenium.type("submitTrial_trialDTO_leadOrgTrialIdentifier", "LEAD-ORG");
-        selenium.type("submitTrial_trialDTO_officialTitle", "Test Trial created by Selenium.");
+        selenium.type("submitTrial_trialDTO_leadOrgTrialIdentifier", leadOrgId);
+        selenium.type("submitTrial_trialDTO_officialTitle", trialName);
         selenium.select("trialDTO.phaseCode", "label=0");
         selenium.select("trialDTO.primaryPurposeCode", "label=Treatment");
 
         //Select Lead Organization
         clickAndWaitAjax("link=Look Up Org");
         selenium.selectFrame("popupFrame");
-        waitForPageToLoad();
         waitForElementById("poOrganizations", 15);
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
@@ -140,7 +143,6 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         selenium.selectFrame("relative=up");
         clickAndWaitAjax("link=Look Up Person");
         selenium.selectFrame("popupFrame");
-        waitForPageToLoad();
         waitForElementById("poOrganizations", 15);
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);

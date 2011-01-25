@@ -216,6 +216,20 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isElementPresent("link=Check In"));
         assertFalse(selenium.isElementPresent("link=Check Out"));
     }
+    
+    /**
+     * Checks a trial out. Assumes that the trial has already been selected.
+     */
+    protected void checkInTrial() {
+        assertTrue(selenium.isElementPresent("link=Trial Identification"));
+        clickAndWait("link=Trial Identification");
+        assertFalse(selenium.isElementPresent("link=Check Out"));
+        assertTrue(selenium.isElementPresent("link=Check In"));
+        clickAndWait("link=Check In");
+        selenium.getConfirmation();
+        assertTrue(selenium.isElementPresent("link=Check Out"));
+        assertFalse(selenium.isElementPresent("link=Check In"));
+    }
 
     /**
      * Accepts a trial. Assumes that the trial has already been checked out.

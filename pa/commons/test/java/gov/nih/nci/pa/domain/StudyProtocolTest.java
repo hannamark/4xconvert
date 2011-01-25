@@ -100,6 +100,7 @@ import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -108,6 +109,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.hibernate.Session;
 import org.junit.Before;
@@ -189,7 +191,7 @@ public class StudyProtocolTest  {
         StudyProtocol sp = createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
-        sp.setSummary4AnatomicSites(new HashSet<AnatomicSite>());
+        sp.setSummary4AnatomicSites(new TreeSet<AnatomicSite>(new AnatomicSiteComparator()));
         sp.getSummary4AnatomicSites().add(as1);
         sp.getSummary4AnatomicSites().add(as2);
         sp.getSummary4AnatomicSites().add(as3);
@@ -199,6 +201,7 @@ public class StudyProtocolTest  {
         assertStudyProtocol(sp , saved);
 
     }
+
     
     /**
      * @throws PAException
@@ -209,7 +212,7 @@ public class StudyProtocolTest  {
         Session session  = HibernateUtil.getCurrentSession();
         
         StudyProtocol sp = createStudyProtocolObj();
-        sp.setSummary4AnatomicSites(new HashSet<AnatomicSite>());
+        sp.setSummary4AnatomicSites(new TreeSet<AnatomicSite>(new AnatomicSiteComparator()));
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
         StudyProtocol saved =
@@ -297,7 +300,7 @@ public class StudyProtocolTest  {
         as.setCode("Lung");
         as.setCodingSystem("Summary 4 Anatomic Sites");
         TestSchema.addUpdObject(as);
-        sp.setSummary4AnatomicSites(new HashSet<AnatomicSite>());
+        sp.setSummary4AnatomicSites(new TreeSet<AnatomicSite>());
         sp.getSummary4AnatomicSites().add(as);
         studySecondaryIdentifiers.add(spSecId);
         sp.setOtherIdentifiers(studySecondaryIdentifiers);

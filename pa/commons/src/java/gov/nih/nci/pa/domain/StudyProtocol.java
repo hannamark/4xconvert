@@ -83,6 +83,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.LastCreatedComparator;
 import gov.nih.nci.pa.util.NotEmptyIiExtension;
 import gov.nih.nci.pa.util.NotEmptyIiRoot;
@@ -177,7 +178,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     private List<PlannedActivity> plannedActivities = new ArrayList<PlannedActivity>();
     private List<Arm> arms = new ArrayList<Arm>();
     private List<StudyDisease> studyDiseases = new ArrayList<StudyDisease>();
-    private Set<AnatomicSite> summary4AnatomicSites = new HashSet<AnatomicSite>();
+    private Set<AnatomicSite> summary4AnatomicSites = new TreeSet<AnatomicSite>(new AnatomicSiteComparator());
     private Set<StudyMilestone> studyMilestones = new TreeSet<StudyMilestone>(new LastCreatedComparator());
     private List<StudyOnhold> studyOnholds = new ArrayList<StudyOnhold>();
     private List<StudySubject> studySubjects = new ArrayList<StudySubject>();

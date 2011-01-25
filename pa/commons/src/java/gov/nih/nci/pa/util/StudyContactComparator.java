@@ -101,7 +101,7 @@ public class StudyContactComparator implements Comparator<StudyContact>, Seriali
      */
     public int compare(StudyContact o1, StudyContact o2) {
         StudyContactRoleCode c1 = o1.getRoleCode();
-        StudyContactRoleCode c2 = o1.getRoleCode();
+        StudyContactRoleCode c2 = o2.getRoleCode();
 
         if (c1 == null) {
             return 1;

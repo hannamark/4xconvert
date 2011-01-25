@@ -355,6 +355,10 @@
             <result name="edit">/WEB-INF/jsp/diseaseedit.jsp</result>
             <result name="list">/WEB-INF/jsp/disease.jsp</result>
         </action>
+        <action name="anatomicSite*" class="gov.nih.nci.pa.action.AnatomicSiteAction" method="{1}">
+            <result name="edit">/WEB-INF/jsp/anatomicSiteEdit.jsp</result>
+            <result name="list">/WEB-INF/jsp/anatomicSite.jsp</result>
+        </action>
         <action name="plannedMarker*" class="gov.nih.nci.pa.action.PlannedMarkerAction" method="{1}">
             <result name="list">/WEB-INF/jsp/plannedMarker/plannedMarkers.jsp</result>
             <result name="edit">/WEB-INF/jsp/plannedMarker/editPlannedMarker.jsp</result>

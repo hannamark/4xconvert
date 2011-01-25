@@ -309,6 +309,14 @@
                             </c:otherwise>
                         </c:choose>
                         <c:choose>
+                            <c:when test="${requestScope.topic == 'anatomic_site'}">
+                                <li><a href="anatomicSite.action" class="selected">Summary 4 Anatomic Site</a></li>
+                            </c:when>
+                            <c:otherwise>
+                                <li><a href="anatomicSite.action" >Summary 4 Anatomic Site</a></li>
+                            </c:otherwise>
+                        </c:choose>
+                        <c:choose>
                             <c:when test="${requestScope.topic == 'planned_marker'}">
                                 <li><a href="plannedMarker.action" class="selected">Markers</a></li>
                             </c:when>
