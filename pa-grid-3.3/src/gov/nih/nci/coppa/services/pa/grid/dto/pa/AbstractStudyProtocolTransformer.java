@@ -90,6 +90,7 @@ import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETCDTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLINTTransformer;
@@ -173,6 +174,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         }
         result.setPrimaryPurposeAdditionalQualifierCode(
              CDTransformer.INSTANCE.toDto(input.getPrimaryPurposeAdditionalQualifierCode()));
+        result.setSummary4AnatomicSites(DSETCDTransformer.INSTANCE.toDto(input.getSummary4AnatomicSites()));
         // II
         result.setSecondaryIdentifiers(DSETIITransformer.INSTANCE.toDto(input.getSecondaryIdentifiers()));
         result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
@@ -238,6 +240,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
              input.getPrimaryPurposeAdditionalQualifierCode()));
         result.setStartDateTypeCode(CDTransformer.INSTANCE.toXml(input.getStartDateTypeCode()));
         result.setStatusCode(CDTransformer.INSTANCE.toXml(input.getStatusCode()));
+        result.setSummary4AnatomicSites(DSETCDTransformer.INSTANCE.toXml(input.getSummary4AnatomicSites()));
         // II
         result.setSecondaryIdentifiers(DSETIITransformer.INSTANCE.toXml(input.getSecondaryIdentifiers()));
         result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
