@@ -123,7 +123,7 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
     public CTGovXmlGeneratorServiceBean getBean() {
         return bean;
     }
-    
+
     @Before
     public void setup() throws Exception {
         getBean().setStudyResourcingService(studyResourcingSvc);

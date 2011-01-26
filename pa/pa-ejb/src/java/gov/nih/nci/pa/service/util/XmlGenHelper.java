@@ -90,11 +90,9 @@ import gov.nih.nci.iso21090.AdxpSta;
 import gov.nih.nci.iso21090.AdxpZip;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.DSetConverter;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
@@ -111,14 +109,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 /**
  * Helper class for basic level xml generation.
  * @author mshestopalov
  *
  */
-public class XmlGenHelper {
+public class XmlGenHelper extends BaseXmlGenHelper {
     /**
      * TEXT_BLOCK.
      */
@@ -183,11 +180,11 @@ public class XmlGenHelper {
         Map<String, String> addressBo = AddressConverterUtil.convertToAddressBo(orgDTO.getPostalAddress());
         DSet<Tel> telecom = orgDTO.getTelecomAddress();
 
-        appendElement(lead, createElement("po_id", StringUtils.substring(orgDTO.getIdentifier().getExtension(), 0,
-                PAAttributeMaxLen.LEN_160), doc));
+        appendElement(lead, createElementWithTextblock("po_id", StringUtils.substring(
+                orgDTO.getIdentifier().getExtension(), 0, PAAttributeMaxLen.LEN_160), doc));
 
         if (PAUtil.isIiNotNull(ctepId))  {
-            appendElement(lead, createElement("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
+            appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         }
 
@@ -205,11 +202,11 @@ public class XmlGenHelper {
         Map<String, String> addressBo = AddressConverterUtil.convertToAddressBo(perDTO.getPostalAddress());
         DSet<Tel> telecom = perDTO.getTelecomAddress();
 
-        appendElement(lead, createElement("po_id", StringUtils.substring(perDTO.getIdentifier().getExtension(), 0,
-                PAAttributeMaxLen.LEN_160), doc));
+        appendElement(lead, createElementWithTextblock("po_id", StringUtils.substring(
+                perDTO.getIdentifier().getExtension(), 0, PAAttributeMaxLen.LEN_160), doc));
 
         if (PAUtil.isIiNotNull(ctepId))  {
-            appendElement(lead, createElement("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
+            appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         }
 
@@ -231,12 +228,12 @@ public class XmlGenHelper {
         }
         DSet<Tel> telecom = ocDTO.getTelecomAddress();
 
-        appendElement(lead, createElement("po_id",
+        appendElement(lead, createElementWithTextblock("po_id",
                 StringUtils.substring(DSetConverter.convertToIi(ocDTO.getIdentifier()).getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
 
         if (PAUtil.isIiNotNull(ctepId))  {
-            appendElement(lead, createElement("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
+            appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         }
 
@@ -253,11 +250,11 @@ public class XmlGenHelper {
     public static void loadPoAddressTelecom(
             Map<String, String> addressBo, DSet<Tel> telecom, Element lead, Document doc) {
         Element address = doc.createElement("address");
-        appendElement(address, createElement("street", addressBo.get(AdxpAl.class.getName()), doc));
-        appendElement(address, createElement("city", addressBo.get(AdxpCty.class.getName()), doc));
-        appendElement(address, createElement("state", addressBo.get(AdxpSta.class.getName()), doc));
-        appendElement(address, createElement("zip", addressBo.get(AdxpZip.class.getName()), doc));
-        appendElement(address, createElement("country",
+        appendElement(address, createElementWithTextblock("street", addressBo.get(AdxpAl.class.getName()), doc));
+        appendElement(address, createElementWithTextblock("city", addressBo.get(AdxpCty.class.getName()), doc));
+        appendElement(address, createElementWithTextblock("state", addressBo.get(AdxpSta.class.getName()), doc));
+        appendElement(address, createElementWithTextblock("zip", addressBo.get(AdxpZip.class.getName()), doc));
+        appendElement(address, createElementWithTextblock("country",
                 PADomainUtils.getCountryNameUsingAlpha3Code(addressBo.get(AdxpCnt.class.getName())), doc));
         appendElement(lead, address);
         if (PAUtil.isDSetTelAndEmailNull(telecom)) {
@@ -265,130 +262,28 @@ public class XmlGenHelper {
         }
         List<String> phones = DSetConverter.getTelByType(telecom, "tel:");
         for (String phone : phones) {
-            appendElement(lead, createElement("phone", phone, doc));
+            appendElement(lead, createElementWithTextblock("phone", phone, doc));
         }
         List<String> faxes = DSetConverter.getTelByType(telecom, "x-text-fax:");
         for (String fax : faxes) {
-            appendElement(lead, createElement("fax", fax, doc));
+            appendElement(lead, createElementWithTextblock("fax", fax, doc));
         }
         List<String> ttyes = DSetConverter.getTelByType(telecom, "x-text-tel:");
         for (String tty : ttyes) {
-            appendElement(lead, createElement("tty", tty, doc));
+            appendElement(lead, createElementWithTextblock("tty", tty, doc));
         }
         List<String> emails = DSetConverter.getTelByType(telecom, "mailto:");
         for (String email : emails) {
-            appendElement(lead, createElement("email", email, doc));
+            appendElement(lead, createElementWithTextblock("email", email, doc));
         }
     }
 
-    /**
-     * createElement.
-     * @param elementName name
-     * @param data data
-     * @param doc doc
-     * @param root root
-     */
-    public static void createElement(final String elementName, String data, Document doc, Element root) {
-        Element element = createElement(elementName, data, doc);
-
-        if (element != null) {
-            root.appendChild(element);
-        }
-    }
-
-    /**
-     * appendElement.
-     * @param parent element
-     * @param child element
-     */
-    public static void appendElement(Element parent, Element child) {
-        if (parent != null && child != null) {
-            parent.appendChild(child);
-        }
-    }
-
-    /**
-     * appendElement.
-     * @param parent parent
-     * @param child child
-     * @param root root
-     */
-    public static void appendElement(Element parent, Element child, Element root) {
-        if (parent != null && child != null && root != null) {
-            parent.appendChild(child);
-            root.appendChild(parent);
-        }
-    }
-
-    /**
-     * Creates a textblock element.
-     * @param data data
-     * @param doc doc
-     * @return element
-     */
-    public static Element createTextblockElement(String data , Document doc) {
-        if (StringUtils.isEmpty(data)) {
-            return null;
-        }
-        Element element = doc.createElement(TEXT_BLOCK);
-        Text text = doc.createTextNode(data);
-        element.appendChild(text);
-        return element;
-    }
-
-    /**
-     * createElement.
-     * @param elementName name
-     * @param data data
-     * @param doc doc
-     * @return element
-     */
-    public static Element createElement(String elementName , String data , Document doc) {
-        if (StringUtils.isEmpty(elementName) || StringUtils.isEmpty(data)) {
-            return null;
-        }
-
-        Element element = null;
-        if (containsXmlChars(data)) {
-            Element elementTxt = doc.createElement(TEXT_BLOCK);
-            element = doc.createElement(elementName);
-            Text text = doc.createCDATASection(data);
-            elementTxt.appendChild(text);
-            element.appendChild(elementTxt);
-        } else {
-            element = doc.createElement(elementName);
-            Text text = doc.createTextNode(data);
-            element.appendChild(text);
-        }
-
-        return element;
-    }
-
-    private static boolean containsXmlChars(String data) {
+    static boolean containsXmlChars(String data) {
         boolean retVal = false;
         if (StringUtils.isNotEmpty(data)) {
             retVal = data.contains("<") || data.contains(">") || data.contains("&");
         }
         return retVal;
-    }
-
-    /**
-     * createCdataBlock.
-     * @param elementName element name
-     * @param data string data
-     * @param maxLen max length
-     * @param doc Document
-     * @param root Element
-     * @throws PAException when error
-     */
-    public static void createCdataBlock(final String elementName ,  final St data , int maxLen ,
-            Document doc , Element root) throws PAException {
-        if (data != null) {
-            Element element = XmlGenHelper.createElement(elementName, StringUtils.left(data.getValue(), maxLen), doc);
-            if (element != null) {
-                root.appendChild(element);
-            }
-        }
     }
 
     /**

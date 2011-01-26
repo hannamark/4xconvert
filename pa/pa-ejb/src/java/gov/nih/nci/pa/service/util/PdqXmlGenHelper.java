@@ -1,83 +1,83 @@
 /**
  * The software subject to this notice and license includes both human readable
  * source code form and machine readable, binary, object code form. The pa
- * Software was developed in conjunction with the National Cancer Institute 
- * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent 
- * government employees are authors, any rights in such works shall be subject 
- * to Title 17 of the United States Code, section 105. 
+ * Software was developed in conjunction with the National Cancer Institute
+ * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
+ * government employees are authors, any rights in such works shall be subject
+ * to Title 17 of the United States Code, section 105.
  *
- * This pa Software License (the License) is between NCI and You. You (or 
- * Your) shall mean a person or an entity, and all other entities that control, 
- * are controlled by, or are under common control with the entity. Control for 
- * purposes of this definition means (i) the direct or indirect power to cause 
+ * This pa Software License (the License) is between NCI and You. You (or
+ * Your) shall mean a person or an entity, and all other entities that control,
+ * are controlled by, or are under common control with the entity. Control for
+ * purposes of this definition means (i) the direct or indirect power to cause
  * the direction or management of such entity, whether by contract or otherwise,
- * or (ii) ownership of fifty percent (50%) or more of the outstanding shares, 
- * or (iii) beneficial ownership of such entity. 
+ * or (ii) ownership of fifty percent (50%) or more of the outstanding shares,
+ * or (iii) beneficial ownership of such entity.
  *
- * This License is granted provided that You agree to the conditions described 
- * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up, 
- * no-charge, irrevocable, transferable and royalty-free right and license in 
- * its rights in the pa Software to (i) use, install, access, operate, 
+ * This License is granted provided that You agree to the conditions described
+ * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
+ * no-charge, irrevocable, transferable and royalty-free right and license in
+ * its rights in the pa Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the pa Software; (ii) distribute and 
- * have distributed to and by third parties the pa Software and any 
- * modifications and derivative works thereof; and (iii) sublicense the 
- * foregoing rights set out in (i) and (ii) to third parties, including the 
- * right to license such rights to further third parties. For sake of clarity, 
- * and not by way of limitation, NCI shall have no right of accounting or right 
- * of payment from You or Your sub-licensees for the rights granted under this 
+ * and prepare derivative works of the pa Software; (ii) distribute and
+ * have distributed to and by third parties the pa Software and any
+ * modifications and derivative works thereof; and (iii) sublicense the
+ * foregoing rights set out in (i) and (ii) to third parties, including the
+ * right to license such rights to further third parties. For sake of clarity,
+ * and not by way of limitation, NCI shall have no right of accounting or right
+ * of payment from You or Your sub-licensees for the rights granted under this
  * License. This License is granted at no charge to You.
  *
- * Your redistributions of the source code for the Software must retain the 
- * above copyright notice, this list of conditions and the disclaimer and 
- * limitation of liability of Article 6, below. Your redistributions in object 
- * code form must reproduce the above copyright notice, this list of conditions 
- * and the disclaimer of Article 6 in the documentation and/or other materials 
- * provided with the distribution, if any. 
+ * Your redistributions of the source code for the Software must retain the
+ * above copyright notice, this list of conditions and the disclaimer and
+ * limitation of liability of Article 6, below. Your redistributions in object
+ * code form must reproduce the above copyright notice, this list of conditions
+ * and the disclaimer of Article 6 in the documentation and/or other materials
+ * provided with the distribution, if any.
  *
- * Your end-user documentation included with the redistribution, if any, must 
- * include the following acknowledgment: This product includes software 
- * developed by 5AM and the National Cancer Institute. If You do not include 
- * such end-user documentation, You shall include this acknowledgment in the 
+ * Your end-user documentation included with the redistribution, if any, must
+ * include the following acknowledgment: This product includes software
+ * developed by 5AM and the National Cancer Institute. If You do not include
+ * such end-user documentation, You shall include this acknowledgment in the
  * Software itself, wherever such third-party acknowledgments normally appear.
  *
- * You may not use the names "The National Cancer Institute", "NCI", or "5AM" 
- * to endorse or promote products derived from this Software. This License does 
+ * You may not use the names "The National Cancer Institute", "NCI", or "5AM"
+ * to endorse or promote products derived from this Software. This License does
  * not authorize You to use any trademarks, service marks, trade names, logos or
- * product names of either NCI or 5AM, except as required to comply with the 
- * terms of this License. 
+ * product names of either NCI or 5AM, except as required to comply with the
+ * terms of this License.
  *
- * For sake of clarity, and not by way of limitation, You may incorporate this 
- * Software into Your proprietary programs and into any third party proprietary 
- * programs. However, if You incorporate the Software into third party 
+ * For sake of clarity, and not by way of limitation, You may incorporate this
+ * Software into Your proprietary programs and into any third party proprietary
+ * programs. However, if You incorporate the Software into third party
  * proprietary programs, You agree that You are solely responsible for obtaining
- * any permission from such third parties required to incorporate the Software 
- * into such third party proprietary programs and for informing Your 
- * sub-licensees, including without limitation Your end-users, of their 
- * obligation to secure any required permissions from such third parties before 
- * incorporating the Software into such third party proprietary software 
- * programs. In the event that You fail to obtain such permissions, You agree 
- * to indemnify NCI for any claims against NCI by such third parties, except to 
- * the extent prohibited by law, resulting from Your failure to obtain such 
- * permissions. 
+ * any permission from such third parties required to incorporate the Software
+ * into such third party proprietary programs and for informing Your
+ * sub-licensees, including without limitation Your end-users, of their
+ * obligation to secure any required permissions from such third parties before
+ * incorporating the Software into such third party proprietary software
+ * programs. In the event that You fail to obtain such permissions, You agree
+ * to indemnify NCI for any claims against NCI by such third parties, except to
+ * the extent prohibited by law, resulting from Your failure to obtain such
+ * permissions.
  *
- * For sake of clarity, and not by way of limitation, You may add Your own 
- * copyright statement to Your modifications and to the derivative works, and 
- * You may provide additional or different license terms and conditions in Your 
- * sublicenses of modifications of the Software, or any derivative works of the 
+ * For sake of clarity, and not by way of limitation, You may add Your own
+ * copyright statement to Your modifications and to the derivative works, and
+ * You may provide additional or different license terms and conditions in Your
+ * sublicenses of modifications of the Software, or any derivative works of the
  * Software as a whole, provided Your use, reproduction, and distribution of the
  * Work otherwise complies with the conditions stated in this License.
  *
- * THIS SOFTWARE IS PROVIDED "AS IS," AND ANY EXPRESSED OR IMPLIED WARRANTIES, 
- * (INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, 
- * NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED. IN NO 
- * EVENT SHALL THE NATIONAL CANCER INSTITUTE, 5AM SOLUTIONS, INC. OR THEIR 
- * AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * THIS SOFTWARE IS PROVIDED "AS IS," AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * (INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+ * NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE NATIONAL CANCER INSTITUTE, 5AM SOLUTIONS, INC. OR THEIR
+ * AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package gov.nih.nci.pa.service.util;
@@ -127,7 +127,7 @@ import org.w3c.dom.Element;
  */
 @SuppressWarnings({ "PMD.TooManyMethods" })
 public class PdqXmlGenHelper {
-    
+
     /**
      * Get Po RO dto by Pa RO ii.
      * @param paRoIi pa org ii
@@ -135,7 +135,7 @@ public class PdqXmlGenHelper {
      * @return po org dto
      * @throws PAException when error.
      */
-    protected static ResearchOrganizationDTO getPoRODTOByPaRoIi(Ii paRoIi, CorrelationUtils corrUtils) 
+    protected static ResearchOrganizationDTO getPoRODTOByPaRoIi(Ii paRoIi, CorrelationUtils corrUtils)
         throws PAException {
         ResearchOrganization paRo = corrUtils.getStructuralRoleByIi(paRoIi);
         Ii poRoIi = IiConverter.convertToPoResearchOrganizationIi(paRo.getIdentifier());
@@ -147,7 +147,7 @@ public class PdqXmlGenHelper {
         }
         return roDTO;
     }
-    
+
     /**
      * Get Po HCF dto by Pa HCF ii.
      * @param paHcfIi pa org ii
@@ -155,7 +155,7 @@ public class PdqXmlGenHelper {
      * @return po org dto
      * @throws PAException when error.
      */
-    protected static HealthCareFacilityDTO getPoHCFDTOByPaHcfIi(Ii paHcfIi, CorrelationUtils corrUtils) 
+    protected static HealthCareFacilityDTO getPoHCFDTOByPaHcfIi(Ii paHcfIi, CorrelationUtils corrUtils)
         throws PAException {
         HealthCareFacility paHcf = corrUtils.getStructuralRoleByIi(paHcfIi);
         Ii poHcfIi = IiConverter.convertToPoHealthCareFacilityIi(paHcf.getIdentifier());
@@ -167,7 +167,7 @@ public class PdqXmlGenHelper {
         }
         return hcfDTO;
     }
-    
+
     /**
      * Get Po Org dto by Pa Org ii.
      * @param paOrgIi pa org ii
@@ -175,7 +175,7 @@ public class PdqXmlGenHelper {
      * @return po org dto
      * @throws PAException when error.
      */
-    protected static OrganizationDTO getPoOrgDTOByPaOrgIi(Ii paOrgIi, CorrelationUtils corrUtils) 
+    protected static OrganizationDTO getPoOrgDTOByPaOrgIi(Ii paOrgIi, CorrelationUtils corrUtils)
     throws PAException {
         Organization paOrg = corrUtils.getPAOrganizationByIi(paOrgIi);
         Ii poOrgIi = IiConverter.convertToPoOrganizationIi(paOrg.getIdentifier());
@@ -187,7 +187,7 @@ public class PdqXmlGenHelper {
         }
         return orgDTO;
     }
-    
+
     /**
      * Get Po Org Contact dto by Pa Org Contact ii.
      * @param paOcIi pa org contact ii
@@ -195,7 +195,7 @@ public class PdqXmlGenHelper {
      * @return po org dto
      * @throws PAException when error.
      */
-    protected static OrganizationalContactDTO getPoOCDTOByPaOcIi(Ii paOcIi, CorrelationUtils corrUtils) 
+    protected static OrganizationalContactDTO getPoOCDTOByPaOcIi(Ii paOcIi, CorrelationUtils corrUtils)
     throws PAException {
         OrganizationalContact paOc = corrUtils.getStructuralRoleByIi(paOcIi);
         Ii poOcIi = IiConverter.convertToPoOrganizationalContactIi(paOc.getIdentifier());
@@ -207,7 +207,7 @@ public class PdqXmlGenHelper {
         }
         return ocDTO;
     }
-    
+
     /**
      * Get Po Crs dto by Pa Crs ii.
      * @param paCrsIi pa crs ii
@@ -215,7 +215,7 @@ public class PdqXmlGenHelper {
      * @return po org dto
      * @throws PAException when error.
      */
-    protected static ClinicalResearchStaffDTO getPoCrsDTOByPaCrsIi(Ii paCrsIi, CorrelationUtils corrUtils) 
+    protected static ClinicalResearchStaffDTO getPoCrsDTOByPaCrsIi(Ii paCrsIi, CorrelationUtils corrUtils)
         throws PAException {
         ClinicalResearchStaff paCrs = corrUtils.getStructuralRoleByIi(paCrsIi);
         ClinicalResearchStaffDTO crsDTO;
@@ -227,7 +227,7 @@ public class PdqXmlGenHelper {
         }
         return crsDTO;
     }
-    
+
     /**
      * addPoOrganizationByPaRoIi.
      * @param root Element
@@ -237,8 +237,8 @@ public class PdqXmlGenHelper {
      * @param corrUtils utility
      * @throws PAException when error
      */
-    protected static void addPoOrganizationByPaRoIi(Element root, String childName, 
-            Ii paRoIi, Document doc, CorrelationUtils corrUtils) 
+    protected static void addPoOrganizationByPaRoIi(Element root, String childName,
+            Ii paRoIi, Document doc, CorrelationUtils corrUtils)
         throws PAException {
         ResearchOrganizationDTO roDTO = PdqXmlGenHelper.getPoRODTOByPaRoIi(paRoIi, corrUtils);
         if (roDTO == null) {
@@ -255,7 +255,7 @@ public class PdqXmlGenHelper {
             .getFirstInDSetByRoot(roDTO.getIdentifier(), IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
         loadOrgParts(childName, root, doc, roCtepId, orgDTO);
     }
-    
+
     /**
      * addPoOrganizationByPaHcfIi.
      * @param root Element
@@ -265,8 +265,8 @@ public class PdqXmlGenHelper {
      * @param corrUtils utility
      * @throws PAException when error
      */
-    protected static void addPoOrganizationByPaHcfIi(Element root, String childName, 
-            Ii paHcfIi, Document doc, CorrelationUtils corrUtils) 
+    protected static void addPoOrganizationByPaHcfIi(Element root, String childName,
+            Ii paHcfIi, Document doc, CorrelationUtils corrUtils)
         throws PAException {
         HealthCareFacilityDTO hcfDTO = PdqXmlGenHelper.getPoHCFDTOByPaHcfIi(paHcfIi, corrUtils);
         if (hcfDTO == null) {
@@ -283,7 +283,7 @@ public class PdqXmlGenHelper {
             .getFirstInDSetByRoot(hcfDTO.getIdentifier(), IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
         loadOrgParts(childName, root, doc, hcfCtepId, orgDTO);
     }
-    
+
     private static void loadOrgParts(String childName, Element root, Document doc, Ii ctepId, OrganizationDTO orgDTO) {
         Element child = null;
         if (StringUtils.isEmpty(childName)) {
@@ -291,15 +291,15 @@ public class PdqXmlGenHelper {
         } else {
             child = doc.createElement(childName);
         }
-        XmlGenHelper.appendElement(child, XmlGenHelper.createElement("name", StringUtils.substring(EnOnConverter
+        BaseXmlGenHelper.appendElement(child, BaseXmlGenHelper.createElement("name", StringUtils.substring(EnOnConverter
                 .convertEnOnToString(orgDTO.getName()), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         XmlGenHelper.loadPoOrganization(orgDTO, child, doc, ctepId);
         if (!StringUtils.isEmpty(childName)) {
-           XmlGenHelper.appendElement(root, child);
+           BaseXmlGenHelper.appendElement(root, child);
         }
     }
-    
+
     /**
      * addPoPersonByPaCrsIi.
      * @param root element
@@ -310,9 +310,9 @@ public class PdqXmlGenHelper {
      * @throws PAException when error.
      */
     protected static void addPoPersonByPaCrsIi(Element root, String childName,
-            Ii paCrsIi, Document doc, CorrelationUtils corrUtils) 
+            Ii paCrsIi, Document doc, CorrelationUtils corrUtils)
         throws PAException {
-        Person p = corrUtils.getPAPersonByIi(paCrsIi);  
+        Person p = corrUtils.getPAPersonByIi(paCrsIi);
         ClinicalResearchStaffDTO crsDTO = PdqXmlGenHelper.getPoCrsDTOByPaCrsIi(paCrsIi, corrUtils);
         if (p == null || crsDTO == null) {
             return;
@@ -325,33 +325,33 @@ public class PdqXmlGenHelper {
         }
         List<IdentifiedPersonDTO> ipDtos;
         try {
-            ipDtos = 
+            ipDtos =
                 PoRegistry.getIdentifiedPersonEntityService().getCorrelationsByPlayerIds(
                         new Ii[]{crsDTO.getPlayerIdentifier()});
         } catch (NullifiedRoleException e) {
             throw new PAException(e);
         }
-        
+
         if (StringUtils.isEmpty(childName)) {
             loadPoPerson(root, doc, p, findCtepIdForPerson(ipDtos), perDTO);
         } else {
             Element child = doc.createElement(childName);
             loadPoPerson(child, doc, p, findCtepIdForPerson(ipDtos), perDTO);
-            XmlGenHelper.appendElement(root, child);
+            BaseXmlGenHelper.appendElement(root, child);
         }
     }
-    
+
     private static void loadPoPerson(Element child, Document doc, Person p, Ii ctepId, PersonDTO perDTO) {
-        XmlGenHelper.appendElement(child,
-                XmlGenHelper.createElement(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
-        XmlGenHelper.appendElement(child,
-                XmlGenHelper.createElement(XmlGenHelper.MIDDLE_INITIAL, 
+        BaseXmlGenHelper.appendElement(child,
+                BaseXmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
+        BaseXmlGenHelper.appendElement(child,
+                BaseXmlGenHelper.createElementWithTextblock(XmlGenHelper.MIDDLE_INITIAL,
                         StringUtils.substring(p.getMiddleName(), 0 , 1), doc));
-        XmlGenHelper.appendElement(child,
-                XmlGenHelper.createElement(XmlGenHelper.LAST_NAME, p.getLastName(), doc)); 
+        BaseXmlGenHelper.appendElement(child,
+                BaseXmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME, p.getLastName(), doc));
         XmlGenHelper.loadPoPerson(perDTO, child, doc, ctepId);
     }
-    
+
     private static Ii findCtepIdForPerson(List<IdentifiedPersonDTO> ipDtos) {
         Ii ctepId =  null;
         if (!CollectionUtils.isEmpty(ipDtos)) {
@@ -362,10 +362,10 @@ public class PdqXmlGenHelper {
                     break;
                 }
             }
-        }    
+        }
         return ctepId;
     }
-     
+
     /**
      * addPoOrganizationalContactByPaOcIi.
      * @param root element
@@ -376,7 +376,7 @@ public class PdqXmlGenHelper {
      * @throws PAException when error.
      */
     protected static void addPoOrganizationalContactByPaOcIi(Element root, String childName,
-            Ii paOcIi, Document doc, CorrelationUtils corrUtils) 
+            Ii paOcIi, Document doc, CorrelationUtils corrUtils)
     throws PAException {
         OrganizationalContactDTO ocDTO = PdqXmlGenHelper.getPoOCDTOByPaOcIi(paOcIi, corrUtils);
         if (ocDTO == null) {
@@ -390,15 +390,15 @@ public class PdqXmlGenHelper {
         } else {
             child = doc.createElement(childName);
         }
-        XmlGenHelper.appendElement(child, XmlGenHelper.createElement("name", StringUtils.substring(
+        BaseXmlGenHelper.appendElement(child, BaseXmlGenHelper.createElementWithTextblock("name", StringUtils.substring(
                 StConverter.convertToString(ocDTO.getTitle()), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         XmlGenHelper.loadPoOrgContact(ocDTO, child, doc, ocCtepId);
         if (!StringUtils.isEmpty(childName)) {
-           XmlGenHelper.appendElement(root, child);
+           BaseXmlGenHelper.appendElement(root, child);
         }
     }
-    
+
     /**
      * getMaxAge.
      * @param pq list
@@ -411,7 +411,7 @@ public class PdqXmlGenHelper {
             return BigDecimal.ZERO;
         }
     }
-    
+
     /**
      * getMaxUnit.
      * @param pq list
@@ -424,7 +424,7 @@ public class PdqXmlGenHelper {
             return "";
         }
     }
-    
+
     /**
      * getMinAge.
      * @param pq list
@@ -437,7 +437,7 @@ public class PdqXmlGenHelper {
             return BigDecimal.ZERO;
         }
     }
-    
+
     /**
      * getMinUnit.
      * @param pq list
@@ -450,8 +450,8 @@ public class PdqXmlGenHelper {
             return "";
         }
     }
-    
-    private static void loadEligCritNoAgeOrGenderOrDescTxt(PlannedEligibilityCriterionDTO paEC, Ivl<Pq> pq, 
+
+    private static void loadEligCritNoAgeOrGenderOrDescTxt(PlannedEligibilityCriterionDTO paEC, Ivl<Pq> pq,
             StringBuffer incCrit, StringBuffer nullCrit, StringBuffer exCrit) {
 
         String criterionName = StConverter.convertToString(paEC.getCriterionName());
@@ -473,33 +473,31 @@ public class PdqXmlGenHelper {
                     operator).append(' ').append(unit).append('\n');
         }
     }
-    
-    private static  Element loadCriteriaElement(StringBuffer incCrit, StringBuffer nullCrit, 
+
+    private static  Element loadCriteriaElement(StringBuffer incCrit, StringBuffer nullCrit,
             StringBuffer exCrit, Document doc) throws PAException {
-        Element criteriaElement = doc.createElement("criteria");
+        Element criteriaElement = doc.createElement("criterion");
         if (nullCrit.length() > 1) {
-            XmlGenHelper.appendElement(criteriaElement, 
-                    XmlGenHelper.createElement("criteria_type", "Criteria", doc));
-            XmlGenHelper.createCdataBlock("criteria_data", 
+            BaseXmlGenHelper.createCdataBlock("data",
                     StConverter.convertToSt(nullCrit.toString()), PAAttributeMaxLen.LEN_15000, doc,
                     criteriaElement);
         } else if (incCrit.length() > 1) {
-            XmlGenHelper.appendElement(criteriaElement, 
-                    XmlGenHelper.createElement("criteria_type", "Inclusion Criteria", doc));
-            XmlGenHelper.createCdataBlock("criteria_data", 
+            BaseXmlGenHelper.appendElement(criteriaElement,
+                    BaseXmlGenHelper.createElementWithTextblock("type", "Inclusion Criteria", doc));
+            BaseXmlGenHelper.createCdataBlock("data",
                     StConverter.convertToSt(incCrit.toString()), PAAttributeMaxLen.LEN_15000, doc,
                     criteriaElement);
         } else if (exCrit.length() > 1) {
-            XmlGenHelper.appendElement(criteriaElement, 
-                    XmlGenHelper.createElement("criteria_type", "Exclusion Criteria", doc));
-            XmlGenHelper.createCdataBlock("criteria_data", 
+            BaseXmlGenHelper.appendElement(criteriaElement,
+                    BaseXmlGenHelper.createElementWithTextblock("type", "Exclusion Criteria", doc));
+            BaseXmlGenHelper.createCdataBlock("data",
                     StConverter.convertToSt(exCrit.toString()), PAAttributeMaxLen.LEN_15000, doc,
                     criteriaElement);
         }
         return criteriaElement;
 
     }
-      
+
     /**
      * handleEligCritTraversal.
      * @param paEC PlannedEligibilityCriterionDTO
@@ -508,13 +506,13 @@ public class PdqXmlGenHelper {
      * @param doc document
      * @throws PAException when error.
      */
-    protected static void handleEligCritTraversal(PlannedEligibilityCriterionDTO paEC, 
-            EligibilityComponentHelper eligHelper, Element eligibility, Document doc) 
+    protected static void handleEligCritTraversal(PlannedEligibilityCriterionDTO paEC,
+            EligibilityComponentHelper eligHelper, Element eligibility, Document doc)
         throws PAException {
         StringBuffer incCrit = new StringBuffer();
         StringBuffer nullCrit = new StringBuffer();
         StringBuffer exCrit = new StringBuffer();
-        
+
         String criterionName = StConverter.convertToString(paEC.getCriterionName());
         String descriptionText = StConverter.convertToString(paEC.getTextDescription());
         Boolean incIndicator = BlConverter.convertToBoolean(paEC.getInclusionIndicator());
@@ -527,53 +525,53 @@ public class PdqXmlGenHelper {
             eligHelper.setMaxUnit(getMaxUnit(pq));
             eligHelper.setMinAge(getMinAge(pq));
             eligHelper.setMinUnit(getMinUnit(pq));
-            
+
         } else if (descriptionText != null) {
-            loadEligCritDescTxt(incIndicator, descriptionText, 
+            loadEligCritDescTxt(incIndicator, descriptionText,
                     incCrit, nullCrit, exCrit);
         } else {
             loadEligCritNoAgeOrGenderOrDescTxt(paEC, pq, incCrit, nullCrit, exCrit);
         }
-               
-        XmlGenHelper.appendElement(eligibility, loadCriteriaElement(incCrit, nullCrit, 
+
+        BaseXmlGenHelper.appendElement(eligibility, loadCriteriaElement(incCrit, nullCrit,
                 exCrit, doc));
     }
-    
+
     /**
      * handleDiseaseCollection.
      * @param diseases list of diseases
-     * @param doc Document 
+     * @param doc Document
      * @param root element
      */
     protected static void handleDiseaseCollection(List<DiseaseDTO> diseases, Document doc, Element root) {
         if (!CollectionUtils.isEmpty(diseases)) {
-            Element diseaseConditionElement = doc.createElement("disease_condition");
-            Element conditionElement = doc.createElement("condition_info");
+            Element diseaseConditionElement = doc.createElement("disease_conditions");
             for (DiseaseDTO d : diseases) {
-                XmlGenHelper.appendElement(conditionElement, 
-                        XmlGenHelper.createElement("preferred_name", 
+                Element conditionElement = doc.createElement("condition_info");
+                BaseXmlGenHelper.appendElement(conditionElement,
+                        BaseXmlGenHelper.createElementWithTextblock("preferred_name",
                                 StringUtils.substring(StConverter.convertToString(d
                         .getPreferredName()), 0, PAAttributeMaxLen.LEN_160), doc));
-                XmlGenHelper.appendElement(conditionElement, 
-                        XmlGenHelper.createElement("disease_code", 
+                BaseXmlGenHelper.appendElement(conditionElement,
+                        BaseXmlGenHelper.createElementWithTextblock("disease_code",
                                 StringUtils.substring(StConverter.convertToString(d
                         .getDiseaseCode()), 0, PAAttributeMaxLen.LEN_160), doc));
-                XmlGenHelper.appendElement(conditionElement, 
-                        XmlGenHelper.createElement("nci_thesaurus_id", 
+                BaseXmlGenHelper.appendElement(conditionElement,
+                        BaseXmlGenHelper.createElementWithTextblock("nci_thesaurus_id",
                                 StringUtils.substring(StConverter.convertToString(d
                         .getNtTermIdentifier()), 0, PAAttributeMaxLen.LEN_160), doc));
-                XmlGenHelper.appendElement(conditionElement, 
-                        XmlGenHelper.createElement("menu_display_name", 
+                BaseXmlGenHelper.appendElement(conditionElement,
+                        BaseXmlGenHelper.createElementWithTextblock("menu_display_name",
                                 StringUtils.substring(StConverter.convertToString(d
                         .getMenuDisplayName()), 0, PAAttributeMaxLen.LEN_160), doc));
-                XmlGenHelper.appendElement(diseaseConditionElement, conditionElement);
+                BaseXmlGenHelper.appendElement(diseaseConditionElement, conditionElement);
             }
-            
-            XmlGenHelper.appendElement(root, diseaseConditionElement);
+
+            BaseXmlGenHelper.appendElement(root, diseaseConditionElement);
         }
     }
-    
-    private static void loadEligCritDescTxt(Boolean incIndicator, String descriptionText, 
+
+    private static void loadEligCritDescTxt(Boolean incIndicator, String descriptionText,
             StringBuffer incCrit, StringBuffer nullCrit, StringBuffer exCrit) {
 
             if (incIndicator == null) {
