@@ -127,6 +127,9 @@
         <copy todir="${services.build.domainDir}/service/correlation">
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/correlation/OrganizationCorrelationServiceRemote.java"/>
         </copy>
+        <copy todir="${services.build.outputDir}">
+            <fileset file="${software.dir}/pa/pa-ejb/src/resources/paear.properties"/>
+        </copy>
      </target>
 
 

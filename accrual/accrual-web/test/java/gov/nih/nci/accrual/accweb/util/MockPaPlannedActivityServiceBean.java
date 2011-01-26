@@ -204,4 +204,12 @@ public class MockPaPlannedActivityServiceBean implements PlannedActivityServiceR
         // TODO Auto-generated method stub
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Ii getDuplicateIi(PlannedActivityDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

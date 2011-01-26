@@ -141,6 +141,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <property name="register.mail.body.url" value="${jboss.application.external.url}/${register.mail.body.url.action}"/>
       <property name="doc.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}"/>
       <property name="pdq.upload.filepath.loc" value="${doc.upload.filepath.loc}/${pdq.upload.filepath.relative.dir}"/>
+      <property name="accrual.batch.upload.filepath.loc" value="${application.base.path}/${accrual.batch.upload.filepath.relative.dir}"/>
       <property name="tooltips.filepath.loc" value="${application.base.path}/${tooltips.filepath.relative.dir}"/>
       <available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
       <basename file="${jboss.ssl.keystore.location}" property="jboss.ssl.keystore.file"/>
@@ -178,7 +179,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <mkdir dir="${pdq.upload.filepath.loc}" />
       <available file="${pdq.upload.filepath.loc}" property="pdq.upload.filepath.exists" />
       <fail unless="pdq.upload.filepath.exists" message="The pdq upload dir at ${pdq.upload.filepath.loc} has not been created." />
-
+      
       <runtarget target="copy-tooltips"/>
 
       <!-- added to ensure working.dirs are fresh for our install -->
@@ -409,7 +410,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
       <delete dir="${jboss.home}/server/${jboss.server.name}/work" failonerror="false"/>
       <move file="${jboss.home}/server/${jboss.server.name}/log/server.log" tofile="${jboss.home}/server/${jboss.server.name}/log/server.log.${install.time}" failonerror="false"/>
-
+            
+      <mkdir dir="${accrual.batch.upload.filepath.loc}" />
+      <available file="${accrual.batch.upload.filepath.loc}" property="accrual.batch.upload.filepath.exists" />
+      <fail unless="accrual.batch.upload.filepath.exists" message="The accrual batch upload dir at ${accrual.batch.upload.filepath.loc} has not been created." />
 
       <copy file="${pa-ear.dir.dist}/${accrual-ear.ear.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
 

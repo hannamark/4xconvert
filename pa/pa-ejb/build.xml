@@ -141,6 +141,7 @@
                 <filter token="pdq.upload.filepath.loc" value="${pdq.upload.filepath.loc}" />
                 <filter token="tooltips.filepath.loc" value="${tooltips.filepath.loc}" />
                 <filter token="batch.upload.filepath.loc" value="${batch.upload.filepath.loc}" />
+                <filter token="accrual.batch.upload.filepath.loc" value="${accrual.batch.upload.filepath.loc}" />
                 <filter token="allowed.uploadfile.types" value="${allowed.uploadfile.types}" />
                 <filter token="mail.smtp.host" value="${mail.smtp.host}"/>
                 <filter token="mail.from.address" value="${mail.from.address}"/>

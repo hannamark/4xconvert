@@ -98,6 +98,7 @@ public class PaEarPropertyReader {
     private static Properties props = null;
     private static String docUploadPath = "doc.upload.path";
     private static String pdqUploadPath = "pdq.upload.path";
+    private static String accrualBatchUploadPath = "accrual.batch.upload.path";
     private static String lookUpServer = "po.server.name";
     private static String lookUpPort = "po.port.number";
     private static String csmSubmitterGroup = "csm.submitter.group";
@@ -105,6 +106,7 @@ public class PaEarPropertyReader {
     private static String batchUploadPath = "batch.upload.path";
     private static String tooltipsPath = "tooltips.path";
     private static String rssUser = "cteprss.user";
+    private static final String INVALID_DIRECTORY_ERROR_MSG = " is not a valid directory.";
 
     static {
         try {
@@ -128,7 +130,7 @@ public class PaEarPropertyReader {
       }
       File f = new File(tooltipsFolderPath);
       if (!f.isDirectory()) {
-          throw new PAException(tooltipsFolderPath + " is not a valid directory ");
+          throw new PAException(tooltipsFolderPath + INVALID_DIRECTORY_ERROR_MSG);
       }
       return tooltipsFolderPath;
     }
@@ -145,7 +147,7 @@ public class PaEarPropertyReader {
         }
         File f = new File(folderPath);
         if (!f.isDirectory()) {
-            throw new PAException(folderPath + " is not a valid directory ");
+            throw new PAException(folderPath + INVALID_DIRECTORY_ERROR_MSG);
         }
         return folderPath;
     }
@@ -162,7 +164,7 @@ public class PaEarPropertyReader {
        }
        File f = new File(folderPath);
        if (!f.isDirectory()) {
-           throw new PAException(folderPath + " is not a valid directory.");
+           throw new PAException(folderPath + INVALID_DIRECTORY_ERROR_MSG);
        }
        return folderPath;
    }
@@ -179,7 +181,23 @@ public class PaEarPropertyReader {
         }
         File f = new File(folderPath);
         if (!f.isDirectory()) {
-            throw new PAException(folderPath + " is not a valid directory ");
+            throw new PAException(folderPath + INVALID_DIRECTORY_ERROR_MSG);
+        }
+        return folderPath;
+    }
+
+    /**
+     * @return accrual batch upload docs folder path
+     * @throws PAException e
+     */
+    public static String getAccrualBatchUploadPath() throws PAException {
+        String folderPath = props.getProperty(accrualBatchUploadPath);
+        if (folderPath == null) {
+            throw new PAException("accrual.batch.upload.path does not have value in paear.properties");
+        }
+        File f = new File(folderPath);
+        if (!f.isDirectory()) {
+            throw new PAException(folderPath + INVALID_DIRECTORY_ERROR_MSG);
         }
         return folderPath;
     }

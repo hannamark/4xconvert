@@ -25,3 +25,6 @@ po.port.number=31099
 po.server.name=localhost
 application.url=http://${jboss.server.hostname}:${jboss.server.port}/registry
 selenium.server.port=4444
+
+accrual.batch.upload.filepath.relative.dir=accrual_batch
+accrual.batch.upload.filepath.loc=${application.base.path}/${accrual.batch.upload.filepath.relative.dir}

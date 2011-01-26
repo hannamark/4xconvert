@@ -37,6 +37,14 @@
                                 <li><a href="patients.action" >Study Subject Search</a></li>
                             </c:otherwise>
                         </c:choose>
+                        <c:choose>
+                            <c:when test="${requestScope.topic == 'batch_upload'}">
+                                <li><a href="batchUpload.action" class="selected">Batch Upload</a></li> 
+                            </c:when>
+                            <c:otherwise>
+                                <li><a href="batchUpload.action" >Batch Upload</a></li>
+                            </c:otherwise>
+                        </c:choose>
                     </c:when>
                 </c:choose>
                 <li><a href="/accrual/logout.action" >Log Out</a></li>

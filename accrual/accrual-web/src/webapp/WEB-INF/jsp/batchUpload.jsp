@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <c:set var="topic" scope="request" value="batch_upload"/>
+    <head>
+        <title><fmt:message key="accrual.batchUpload.title"/></title>
+        <s:head />
+    </head>
+    <body>
+        <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+        <s:if test="hasActionMessages()"><div class="confirm_msg"><s:actionmessage /></div></s:if>
+        <h1><fmt:message key="accrual.batchUpload.title"/></h1>
+        <s:form action="batchUploaddoUpload" method="POST" enctype="multipart/form-data">
+            <table class="form">
+                <tr>
+                   <td class="value" style="width:250px">
+                        <s:file name="upload" label="File"/>
+                   </td>
+                </tr>
+            </table>
+            <div class="actionsrow">
+                <div class="btnwrapper">
+                    <ul class="btnrow">
+                        <accrual:button labelKey="button.submit" href="#" style="save" onclick="document.forms[0].submit();"/>
+                    </ul>
+                </div>
+            </div>
+        </s:form>
+    </body>
+</html>

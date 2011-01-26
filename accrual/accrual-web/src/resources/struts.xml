@@ -23,6 +23,8 @@
                 <interceptor-ref name="showDisclaimer"/>
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
+                <!-- The fileUpload interceptor must occur before the params interceptor. -->
+                <interceptor-ref name="fileUpload"/>
                 <interceptor-ref name="params">
                 <!--
                   Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
@@ -36,7 +38,7 @@
                 <interceptor-ref name="prepare"/>
                 <interceptor-ref name="i18n" />
                 <interceptor-ref name="chain" />
-                <interceptor-ref name="fileUpload"/>
+
                 <interceptor-ref name="conversionError" />
                 <interceptor-ref name="validation">
                     <param name="excludeMethods">input,back,cancel</param>
@@ -100,6 +102,10 @@
         <action name="patients*" class="gov.nih.nci.accrual.accweb.action.PatientAction" method="{1}">
             <result>/WEB-INF/jsp/searchPatients.jsp</result>
             <result name="detail">/WEB-INF/jsp/searchPatientsDetail.jsp</result>
+        </action>
+        
+        <action name="batchUpload*" class="gov.nih.nci.accrual.accweb.action.BatchUploadAction" method="{1}">
+            <result name="success">/WEB-INF/jsp/batchUpload.jsp</result>
         </action>
 
         <action name="ajaxpatients*" class="gov.nih.nci.accrual.accweb.action.PatientAction" method="{1}">
