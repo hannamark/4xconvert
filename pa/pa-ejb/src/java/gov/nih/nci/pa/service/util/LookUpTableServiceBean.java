@@ -231,7 +231,10 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException {
         StringBuffer hql = new StringBuffer("select item from ").append(clazz.getName())
-        .append(" item where item.code = '" + code + "'");
-        return (T) HibernateUtil.getCurrentSession().createQuery(hql.toString()).uniqueResult();
+        .append(" item where item.code = :code");
+        return (T) HibernateUtil.getCurrentSession()
+            .createQuery(hql.toString())
+            .setString("code", code)
+            .uniqueResult();
     }
 }

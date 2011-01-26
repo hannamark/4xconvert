@@ -48,13 +48,13 @@ function handleCreate(){
             <td colspan="2">
             <s:set name="anatomicSiteList" value="anatomicSiteList" scope="request"/>
             <display:table name="anatomicSiteList" id="row" class="data" sort="list" 
-                pagesize="200" requestURI="anatomicSite.action" defaultorder="ascending" defaultsort="1">
+                pagesize="10" requestURI="anatomicSite.action" defaultorder="ascending" defaultsort="1">
                 <display:column escapeXml="true" property="code" sortable="true"
                     titleKey="anatomicSite.code" headerClass="sortable" />
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                 						|| (sessionScope.role == 'SuAbstractor')}">
                     <display:column titleKey="anatomicSite.delete" headerClass="centered" class="action">
-                        <s:a href="#" onclick="handleDelete('%{#attr.row.code}')">
+                        <s:a href="#" onclick="handleDelete(\"%{#attr.row.code}\")">
                             <img src="<%=request.getContextPath()%>/images/ico_delete.gif"
                                 alt="Delete" width="16" height="16" />
                         </s:a>
