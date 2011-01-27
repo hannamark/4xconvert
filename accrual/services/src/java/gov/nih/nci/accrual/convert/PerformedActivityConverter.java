@@ -103,16 +103,16 @@ public class PerformedActivityConverter extends AbstractConverter<PerformedActiv
      */
     @Override
     public PerformedActivityDto convertFromDomainToDto(PerformedActivity pa) {
-           return convertFromDomainToDTO(pa, new PerformedActivityDto());
-       }
+        return convertFromDomainToDTO(pa, new PerformedActivityDto());
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-      public PerformedActivity convertFromDtoToDomain(PerformedActivityDto paDto) {
-          return convertFromDTOToDomain(paDto , new PerformedActivity());
-      }
+    public PerformedActivity convertFromDtoToDomain(PerformedActivityDto paDto) {
+        return convertFromDTOToDomain(paDto, new PerformedActivity());
+    }
 
     /**
      * Convert from domain to dto.
@@ -124,13 +124,13 @@ public class PerformedActivityConverter extends AbstractConverter<PerformedActiv
      */
     public static PerformedActivityDto convertFromDomainToDTO(PerformedActivity bo, PerformedActivityDto dto) {
         dto.setActualDateRange(IvlConverter.convertTs().convertToIvl(bo.getActualDateRangeLow(),
-                bo.getActualDateRangeHigh()));
+                                                                     bo.getActualDateRangeHigh()));
         dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
         dto.setIdentifier(IiConverter.convertToActivityIi(bo.getId()));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
-                bo.getStudyProtocol() == null ? null : bo.getStudyProtocol().getId()));
-        dto.setStudySubjectIdentifier(IiConverter.convertToIi(
-                bo.getStudySubject() == null ? null : bo.getStudySubject().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol() == null ? null : bo
+            .getStudyProtocol().getId()));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(bo.getStudySubject() == null ? null : bo
+            .getStudySubject().getId()));
         dto.setSubcategoryCode(CdConverter.convertStringToCd(bo.getSubcategoryCode()));
         dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
         dto.setName(StConverter.convertToSt(bo.getName()));
@@ -147,15 +147,15 @@ public class PerformedActivityConverter extends AbstractConverter<PerformedActiv
         return dto;
     }
 
-   /**
-    * Convert from dto to domain.
-    *
-    * @param dto the dto
-    * @param bo the bo
-    *
-    * @return the performed activity
-    */
-   public static PerformedActivity convertFromDTOToDomain(PerformedActivityDto dto, PerformedActivity bo) {
+    /**
+     * Convert from dto to domain.
+     *
+     * @param dto the dto
+     * @param bo the bo
+     *
+     * @return the performed activity
+     */
+    public static PerformedActivity convertFromDTOToDomain(PerformedActivityDto dto, PerformedActivity bo) {
         if (dto.getActualDateRange() != null) {
             bo.setActualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getActualDateRange()));
             bo.setActualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getActualDateRange()));
@@ -170,18 +170,33 @@ public class PerformedActivityConverter extends AbstractConverter<PerformedActiv
             spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         }
         bo.setStudyProtocol(spBo);
-        StudySubject ssBo = null;
-        if (!PAUtil.isIiNull(dto.getStudySubjectIdentifier())) {
-            ssBo = new StudySubject();
-            ssBo.setId(IiConverter.convertToLong(dto.getStudySubjectIdentifier()));
-        }
-        bo.setStudySubject(ssBo);
+        convertStudySubject(dto, bo);
         bo.setSubcategoryCode(CdConverter.convertCdToString(dto.getSubcategoryCode()));
         bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
         bo.setName(StConverter.convertToString(dto.getName()));
         if (!PAUtil.isCdNull(dto.getNameCode())) {
             bo.setNameCode(ActivityNameCode.getByCode(dto.getNameCode().getCode()));
         }
+        convertActualDuration(dto, bo);
+        Intervention invBo = null;
+        if (!PAUtil.isIiNull(dto.getInterventionIdentifier())) {
+            invBo = new Intervention();
+            invBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
+        }
+        bo.setIntervention(invBo);
+        return bo;
+    }
+
+    private static void convertStudySubject(PerformedActivityDto dto, PerformedActivity bo) {
+        StudySubject ssBo = null;
+        if (!PAUtil.isIiNull(dto.getStudySubjectIdentifier())) {
+            ssBo = new StudySubject();
+            ssBo.setId(IiConverter.convertToLong(dto.getStudySubjectIdentifier()));
+        }
+        bo.setStudySubject(ssBo);
+    }
+
+    private static void convertActualDuration(PerformedActivityDto dto, PerformedActivity bo) {
         if (dto.getActualDuration() != null) {
             if (!PAUtil.isPqValueNull(dto.getActualDuration())) {
                 bo.setActualDurationValue(dto.getActualDuration().getValue());
@@ -190,12 +205,5 @@ public class PerformedActivityConverter extends AbstractConverter<PerformedActiv
                 bo.setActualDurationUnit(dto.getActualDuration().getUnit());
             }
         }
-        Intervention invBo = null;
-        if (!PAUtil.isIiNull(dto.getInterventionIdentifier())) {
-            invBo = new Intervention();
-            invBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
-        }
-        bo.setIntervention(invBo);
-        return bo;
     }
 }

@@ -181,6 +181,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
                 BooleanUtils.toBoolean(parent.getChildText("delayed_posting"))));
 
     }
+    @SuppressWarnings("unchecked")
     private void readIndInfo(Element parent) {
         Boolean isIndStudy = BooleanUtils.toBoolean(parent.getChildText("is_ind_study"));
         List<Element> indInfoList = parent.getChildren("ind_info");
@@ -255,6 +256,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
     /**
      * @param parent
      */
+    @SuppressWarnings("unchecked")
     private void readOverallOfficials(Element parent) {
         List<Element> overallOfficialElmtList = parent.getChildren("overall_official");
         for (Element overallOfficialElement : overallOfficialElmtList) {
@@ -275,13 +277,11 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
                     "affiliation")));
                 }
                 break;
-            } else {
-                //No multiple Overall official so pick whatever provided as PI
-                principalInvestigatorDTO =  readPrincipalInvestigatorInfo(overallOfficialElement);
-                //lead org
-                leadOrganizationDTO.setName(EnOnConverter.convertToEnOn(getText(overallOfficialElement,
-                        "affiliation")));
             }
+            //No multiple Overall official so pick whatever provided as PI
+            principalInvestigatorDTO =  readPrincipalInvestigatorInfo(overallOfficialElement);
+            //lead org
+            leadOrganizationDTO.setName(EnOnConverter.convertToEnOn(getText(overallOfficialElement, "affiliation")));
         }
     }
 

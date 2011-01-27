@@ -90,12 +90,12 @@ import org.apache.struts2.util.StrutsTypeConverter;
  * @author Hugh Reinhart
  * @since Oct 19, 2009
  */
+@SuppressWarnings("rawtypes")
 public class StrutsTsConverter extends StrutsTypeConverter {
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Object convertFromString(Map map, String[] strings, Class aClass) {
         if (strings.length != 1) {
@@ -107,7 +107,6 @@ public class StrutsTsConverter extends StrutsTypeConverter {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public String convertToString(Map map, Object object) {
         if (object == null) {

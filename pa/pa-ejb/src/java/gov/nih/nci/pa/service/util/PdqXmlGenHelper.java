@@ -407,9 +407,8 @@ public class PdqXmlGenHelper {
     protected static BigDecimal getMaxAge(Ivl<Pq> pq) {
         if (pq.getHigh() != null) {
             return pq.getHigh().getValue();
-        } else {
-            return BigDecimal.ZERO;
         }
+        return BigDecimal.ZERO;
     }
 
     /**
@@ -420,9 +419,8 @@ public class PdqXmlGenHelper {
     protected static String getMaxUnit(Ivl<Pq> pq) {
         if (pq.getHigh() != null) {
             return pq.getHigh().getUnit();
-        } else {
-            return "";
         }
+        return "";
     }
 
     /**
@@ -433,9 +431,8 @@ public class PdqXmlGenHelper {
     protected static BigDecimal getMinAge(Ivl<Pq> pq) {
         if (pq.getHigh() != null) {
             return pq.getLow().getValue();
-        } else {
-            return BigDecimal.ZERO;
         }
+        return BigDecimal.ZERO;
     }
 
     /**
@@ -446,9 +443,8 @@ public class PdqXmlGenHelper {
     protected static String getMinUnit(Ivl<Pq> pq) {
         if (pq.getHigh() != null) {
             return pq.getLow().getUnit();
-        } else {
-            return "";
         }
+        return "";
     }
 
     private static void loadEligCritNoAgeOrGenderOrDescTxt(PlannedEligibilityCriterionDTO paEC, Ivl<Pq> pq,

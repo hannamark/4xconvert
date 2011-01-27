@@ -104,7 +104,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MockPlannedActivityService.
  *
@@ -147,9 +146,8 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
      *
      * @throws PAException the PA exception
      */
-    public PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(
-            PlannedEligibilityCriterionDTO dto) throws PAException {
-        // TODO Auto-generated method stub
+    public PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(PlannedEligibilityCriterionDTO dto)
+            throws PAException {
         return null;
     }
 
@@ -161,7 +159,6 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
      * @throws PAException the PA exception
      */
     public void deletePlannedEligibilityCriterion(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
 
     }
 
@@ -175,7 +172,6 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
      * @throws PAException the PA exception
      */
     public List<PlannedActivityDTO> getByArm(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -188,9 +184,7 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
      *
      * @throws PAException the PA exception
      */
-    public PlannedEligibilityCriterionDTO getPlannedEligibilityCriterion(Ii ii)
-            throws PAException {
-        // TODO Auto-generated method stub
+    public PlannedEligibilityCriterionDTO getPlannedEligibilityCriterion(Ii ii) throws PAException {
         return null;
     }
 
@@ -205,8 +199,8 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
      */
     public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(
             Ii ii) throws PAException {
-    	List<PlannedEligibilityCriterionDTO> dtoList = new ArrayList<PlannedEligibilityCriterionDTO>();
-    	PlannedEligibilityCriterionDTO dto = new PlannedEligibilityCriterionDTO();
+        List<PlannedEligibilityCriterionDTO> dtoList = new ArrayList<PlannedEligibilityCriterionDTO>();
+        PlannedEligibilityCriterionDTO dto = new PlannedEligibilityCriterionDTO();
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
         dto.setCriterionName(StConverter.convertToSt("WHC"));
         dto.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
@@ -241,7 +235,6 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
      */
     public PlannedEligibilityCriterionDTO updatePlannedEligibilityCriterion(
             PlannedEligibilityCriterionDTO dto) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -277,14 +270,9 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
     }
 
     /**
-     * Creates the.
-     *
-     * @param dto the dto
-     *
-     * @return the planned activity dto
-     *
-     * @throws PAException the PA exception
+     * {@inheritDoc}
      */
+    @Override
     public PlannedActivityDTO create(PlannedActivityDTO dto) throws PAException {
         PlannedActivity bo = converter.convertFromDtoToDomain(dto);
         if (bo.getCategoryCode().getCode().equals(ActivityCategoryCode.INTERVENTION.getCode())
@@ -297,12 +285,9 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
     }
 
     /**
-     * Delete.
-     *
-     * @param ii the ii
-     *
-     * @throws PAException the PA exception
+     * {@inheritDoc}
      */
+    @Override
     public void delete(Ii ii) throws PAException {
         for (PlannedActivity item : list) {
             if (item.getId().equals(IiConverter.convertToLong(ii))) {
@@ -322,6 +307,7 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
      *
      * @throws PAException the PA exception
      */
+    @Override
     public PlannedActivityDTO get(Ii ii) throws PAException {
         for (PlannedActivity item : list) {
             if (item.getId().equals(IiConverter.convertToLong(ii))) {
@@ -340,6 +326,7 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
      *
      * @throws PAException the PA exception
      */
+    @Override
     public PlannedActivityDTO update(PlannedActivityDTO dto) throws PAException {
         for (PlannedActivity item : list) {
             if (item.getId().equals(IiConverter.convertToLong(dto.getIdentifier()))) {
@@ -360,9 +347,8 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
      *
      * @throws PAException exception.
      */
-    public void copyPlannedEligibilityStudyCriterions(Ii fromStudyProtocolIi , Ii toStudyProtocolIi)
-    throws PAException {
-     // TODO Auto-generated method stub
+    public void copyPlannedEligibilityStudyCriterions(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
+
     }
 
     /* (non-Javadoc)
@@ -370,67 +356,59 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
      */
     public Map<Ii, Ii> copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
             throws PAException {
-        // TODO Auto-generated method stub
         return null;
 
     }
 
-	public PlannedProcedureDTO createPlannedProcedure(PlannedProcedureDTO dto)
-			throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public PlannedProcedureDTO createPlannedProcedure(PlannedProcedureDTO dto)
+            throws PAException {
+        return null;
+    }
 
-	public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(
-			PlannedSubstanceAdministrationDTO dto) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(
+            PlannedSubstanceAdministrationDTO dto) throws PAException {
+        return null;
+    }
 
-	public PlannedProcedureDTO getPlannedProcedure(Ii ii) throws PAException {
-	    PlannedProcedureDTO dto = new PlannedProcedureDTO();
-	    dto.setInterventionIdentifier(IiConverter.convertToIi("1"));
-	    dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.PROCEDURE_SURGERY));
+    public PlannedProcedureDTO getPlannedProcedure(Ii ii) throws PAException {
+        PlannedProcedureDTO dto = new PlannedProcedureDTO();
+        dto.setInterventionIdentifier(IiConverter.convertToIi("1"));
+        dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.PROCEDURE_SURGERY));
         return dto;
-	}
+    }
 
-	public List<PlannedProcedureDTO> getPlannedProcedureByStudyProtocol(Ii ii)
-			throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public List<PlannedProcedureDTO> getPlannedProcedureByStudyProtocol(Ii ii)
+            throws PAException {
+        return null;
+    }
 
-	public PlannedSubstanceAdministrationDTO getPlannedSubstanceAdministration(
-			Ii ii) throws PAException {
-	    if (PAUtil.isIiNotNull(ii)) {
-	        PlannedSubstanceAdministrationDTO dto = new PlannedSubstanceAdministrationDTO();
-	        dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.DRUG));
-	        dto.setIdentifier(IiConverter.convertToIi("1"));
-	        return dto;
-	    }
-		return null;
-	}
+    public PlannedSubstanceAdministrationDTO getPlannedSubstanceAdministration(
+            Ii ii) throws PAException {
+        if (PAUtil.isIiNotNull(ii)) {
+            PlannedSubstanceAdministrationDTO dto = new PlannedSubstanceAdministrationDTO();
+            dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.DRUG));
+            dto.setIdentifier(IiConverter.convertToIi("1"));
+            return dto;
+        }
+        return null;
+    }
 
-	public List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(
-			Ii ii) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(
+            Ii ii) throws PAException {
+        return null;
+    }
 
-	public PlannedProcedureDTO updatePlannedProcedure(PlannedProcedureDTO dto)
-			throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public PlannedProcedureDTO updatePlannedProcedure(PlannedProcedureDTO dto)
+            throws PAException {
+        return null;
+    }
 
-	public PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(
-			PlannedSubstanceAdministrationDTO dto) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
+            throws PAException {
+        return null;
+    }
 
     public Ii getDuplicateIi(PlannedActivityDTO dto) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 

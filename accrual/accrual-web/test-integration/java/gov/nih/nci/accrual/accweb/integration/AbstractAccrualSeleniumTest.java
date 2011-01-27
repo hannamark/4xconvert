@@ -85,6 +85,8 @@ package gov.nih.nci.accrual.accweb.integration;
 import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 
 /**
@@ -96,6 +98,7 @@ import org.junit.Ignore;
 public abstract class AbstractAccrualSeleniumTest extends AbstractSeleneseTestCase {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setSeleniumPort(TestProperties.getServerHostname());
         super.setServerHostname(TestProperties.getServerHostname());
@@ -105,6 +108,7 @@ public abstract class AbstractAccrualSeleniumTest extends AbstractSeleneseTestCa
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         logoutUser();
         super.tearDown();

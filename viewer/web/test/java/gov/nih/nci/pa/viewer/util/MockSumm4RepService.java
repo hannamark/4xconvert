@@ -93,6 +93,7 @@ import java.util.List;
 
 public class MockSumm4RepService extends MockService implements Summ4RepLocal {
 
+    @SuppressWarnings("unused")
     public List<TrialListResultDto> get(AbstractStandardCriteriaDto criteria)
             throws PAException {
         List<TrialListResultDto> rList = new ArrayList<TrialListResultDto>();
@@ -127,10 +128,10 @@ public class MockSumm4RepService extends MockService implements Summ4RepLocal {
         dto.setTarget(IntConverter.convertToInt(TEST_INT));
         dto.setTitle(StConverter.convertToSt(TEST_STR));
         dto.setType(StConverter.convertToSt(TEST_STR));
-        
+
         return dto;
     }
-    
+
     public List<Summ4RepResultDto> get(Summ4RepCriteriaDto criteria) throws PAException {
         List<Summ4RepResultDto> rList = new ArrayList<Summ4RepResultDto>();
         rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, Summ4ReportBean.NATIONAL));

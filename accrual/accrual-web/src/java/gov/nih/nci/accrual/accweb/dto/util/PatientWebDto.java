@@ -171,6 +171,7 @@ public class PatientWebDto {
             }
         }
     }
+
     /**
      * Default constructor.
      */
@@ -196,25 +197,11 @@ public class PatientWebDto {
      * @param orgName organization name
      * @param psm registration date
      * @param listOfCountries country list
-     * @param dIsoDto disease iso dto
+     * @param dIsoDto disease ISO DTO
      */
     public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName,
-    PerformedSubjectMilestoneDto psm, List<Country> listOfCountries, DiseaseDTO dIsoDto) {
-        if (pIsoDto != null) {
-            patientId = IiConverter.convertToLong(pIsoDto.getIdentifier());
-            raceCode = DSetEnumConverter.convertDSetToSet(pIsoDto.getRaceCode());
-            genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
-            ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
-            birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
-            countryIdentifier = IiConverter.convertToLong(pIsoDto.getCountryIdentifier());
-            for (Country c : listOfCountries) {
-                if (countryIdentifier != null && countryIdentifier.equals(c.getId())) {
-                    countryName = c.getName();
-                }
-            }
-            zip = StConverter.convertToString(pIsoDto.getZip());
-            poIdentifier = IiConverter.convertToLong(pIsoDto.getAssignedIdentifier());
-        }
+            PerformedSubjectMilestoneDto psm, List<Country> listOfCountries, DiseaseDTO dIsoDto) {
+        setPatientData(pIsoDto, listOfCountries);
 
         if (ssIsoDto != null) {
             studySubjectId = IiConverter.convertToLong(ssIsoDto.getIdentifier());
@@ -236,6 +223,24 @@ public class PatientWebDto {
         if (dIsoDto != null) {
             diseasePreferredName = StConverter.convertToString(dIsoDto.getPreferredName());
             diseaseIdentifier = IiConverter.convertToLong(dIsoDto.getIdentifier());
+        }
+    }
+
+    private void setPatientData(PatientDto pIsoDto, List<Country> listOfCountries) {
+        if (pIsoDto != null) {
+            patientId = IiConverter.convertToLong(pIsoDto.getIdentifier());
+            raceCode = DSetEnumConverter.convertDSetToSet(pIsoDto.getRaceCode());
+            genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
+            ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
+            birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
+            countryIdentifier = IiConverter.convertToLong(pIsoDto.getCountryIdentifier());
+            for (Country c : listOfCountries) {
+                if (countryIdentifier != null && countryIdentifier.equals(c.getId())) {
+                    countryName = c.getName();
+                }
+            }
+            zip = StConverter.convertToString(pIsoDto.getZip());
+            poIdentifier = IiConverter.convertToLong(pIsoDto.getAssignedIdentifier());
         }
     }
 

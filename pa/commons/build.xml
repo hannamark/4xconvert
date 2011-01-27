@@ -280,7 +280,7 @@
 
         <cobertura-check datafile="${commons.build.dir}/cobertura.ser"
                          totalbranchrate="48"
-                         totallinerate="68"
+                         totallinerate="69"
                          haltonfailure="true"/>
      </target>
 
@@ -441,22 +441,21 @@
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/commons"/>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Generate Javadoc                                                       -->
     <!-- ====================================================================== -->
-        
+
     <target name="generate-javadoc">
         <mkdir dir="${commons.build.javadoc}"/>
-		<javadoc destdir="${commons.build.javadoc}"
-		    sourcepath="${commons.build.srcDir.0}"
-		    windowtitle="CTRP PA Commons">
-		    <doctitle><![CDATA[<h1>CTRP PA Commons</h1>]]></doctitle>
+        <javadoc destdir="${commons.build.javadoc}"
+            sourcepath="${commons.build.srcDir.0}"
+            windowtitle="CTRP PA Commons">
+            <doctitle><![CDATA[<h1>CTRP PA Commons</h1>]]></doctitle>
             <classpath>
                 <path refid="compile.classpath"/>
             </classpath>
-		</javadoc>    
+        </javadoc>
     </target>
-   
 
 </project>

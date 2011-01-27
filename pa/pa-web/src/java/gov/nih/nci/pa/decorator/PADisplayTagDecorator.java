@@ -135,10 +135,10 @@ public class PADisplayTagDecorator extends TableDecorator {
         Date updateDt = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUpdatedDate();
         if (updateDt != null) {
             return "Remove";
-        } else {
-            return "";
         }
+        return "";
     }
+
     /**
      *
      * @return formated String

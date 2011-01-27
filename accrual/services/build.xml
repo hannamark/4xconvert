@@ -260,8 +260,8 @@
                           srcdir="${services.build.srcDir}"/>
 
         <cobertura-check datafile="${services.build.dir}/cobertura.ser"
-                         totalbranchrate="2"
-                         totallinerate="2"
+                         totalbranchrate="78"
+                         totallinerate="75"
                          haltonfailure="true"/>
      </target>
 
@@ -291,7 +291,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pmdFile}" maxruleviolations="8">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pmdFile}" maxruleviolations="1">
             <classpath refid="compile.classpath"/>
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${services.report.dir}/pmd.txt"/>
@@ -439,21 +439,21 @@
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/services"/>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Generate Javadoc                                                       -->
     <!-- ====================================================================== -->
-        
+
     <target name="generate-javadoc">
-		<javadoc destdir="${services.build.javadoc}"
-		    sourcepath="${services.build.srcDir}"
-		    windowtitle="CTRP Accrual EJB">
-		    <doctitle><![CDATA[<h1>CTRP Accrual Service Layer</h1>]]></doctitle>
+        <javadoc destdir="${services.build.javadoc}"
+            sourcepath="${services.build.srcDir}"
+            windowtitle="CTRP Accrual EJB">
+            <doctitle><![CDATA[<h1>CTRP Accrual Service Layer</h1>]]></doctitle>
             <classpath>
                 <path refid="compile.classpath"/>
             </classpath>
-		</javadoc>    
+        </javadoc>
     </target>
-   
+
 
 </project>

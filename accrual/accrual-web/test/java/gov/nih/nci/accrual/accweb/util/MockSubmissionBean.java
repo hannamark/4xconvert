@@ -108,7 +108,7 @@ public class MockSubmissionBean implements SubmissionService {
     public static List<SubmissionDto> dtos;
     public static List<SearchTrialResultDto> trialDtos;
     public static final String SUBMISSIONID = "1";
-    
+
     static {
         dtos = new ArrayList<SubmissionDto>();
         SubmissionDto r = new SubmissionDto();
@@ -144,6 +144,7 @@ public class MockSubmissionBean implements SubmissionService {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unused")
     public Bl isAuthorized(Ii studyProtocolIi, St authorizedUser) throws RemoteException {
         return BlConverter.convertToBl(true);
     }
@@ -159,29 +160,29 @@ public class MockSubmissionBean implements SubmissionService {
         return result;
     }
 
-	public SubmissionDto create(SubmissionDto dto) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public SubmissionDto create(SubmissionDto dto) throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public void delete(Ii ii) throws RemoteException {
-		// TODO Auto-generated method stub
+    public void delete(Ii ii) throws RemoteException {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public SubmissionDto get(Ii ii) throws RemoteException {
-	    SubmissionDto result = new SubmissionDto();
-	    Long id = IiConverter.convertToLong(ii);
+    public SubmissionDto get(Ii ii) throws RemoteException {
+        SubmissionDto result = new SubmissionDto();
+        Long id = IiConverter.convertToLong(ii);
         for (SubmissionDto dto : dtos) {
             if (id.equals(IiConverter.convertToLong(dto.getIdentifier()))) {
                 result=dto;
             }
         }
         return result;
-	}
+    }
 
-	public SubmissionDto update(SubmissionDto dto) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public SubmissionDto update(SubmissionDto dto) throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

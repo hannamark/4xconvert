@@ -82,27 +82,23 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
-
-
 /**
  * @author Rajani Kumar
  * @since  Aug 13, 2009
  */
 public class SearchTrialResultDecorator extends AbstractStudyDecorator<SearchTrialResultDto> {
 
-
     /**
      *
      * @return assignedIdentifier as a String
      */
     public String getAssignedIdentifier() {
-        St assignedIdentifier = ((SearchTrialResultDto) this.getCurrentRowObject()).getAssignedIdentifier();
+        St assignedIdentifier = ((SearchTrialResultDto) getCurrentRowObject()).getAssignedIdentifier();
 
         if (assignedIdentifier != null) {
             return StConverter.convertToString(assignedIdentifier);
-        } else {
-            return "";
         }
+        return "";
     }
 
     /**
@@ -110,13 +106,12 @@ public class SearchTrialResultDecorator extends AbstractStudyDecorator<SearchTri
      * @return officialTitle as a String
      */
     public String getOfficialTitle() {
-        St officialTitle = ((SearchTrialResultDto) this.getCurrentRowObject()).getOfficialTitle();
+        St officialTitle = ((SearchTrialResultDto) getCurrentRowObject()).getOfficialTitle();
 
         if (officialTitle != null) {
             return StConverter.convertToString(officialTitle);
-        } else {
-            return "";
         }
+        return "";
     }
 
     /**
@@ -124,12 +119,11 @@ public class SearchTrialResultDecorator extends AbstractStudyDecorator<SearchTri
      * @return studyStatusCode as a String
      */
     public String getStudyStatusCode() {
-        Cd studyStatusCode = ((SearchTrialResultDto) this.getCurrentRowObject()).getStudyStatusCode();
+        Cd studyStatusCode = ((SearchTrialResultDto) getCurrentRowObject()).getStudyStatusCode();
 
         if (studyStatusCode != null) {
             return CdConverter.convertCdToString(studyStatusCode);
-        } else {
-            return "";
         }
+        return "";
     }
 }

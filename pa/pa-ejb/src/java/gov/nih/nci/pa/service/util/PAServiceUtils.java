@@ -661,6 +661,7 @@ public class PAServiceUtils {
      * @return list of StudySiteDtos
      * @throws PAException on error
      */
+    @SuppressWarnings("PMD.PreserveStackTrace") // TooManyResultsException stack trace isn't needed
     public List<StudySiteDTO> getStudySite(StudySiteDTO spDto, boolean isUnique) throws PAException {
         if (PAUtil.isIiNull(spDto.getStudyProtocolIdentifier())) {
             throw new PAException(" StudyProtocol Ii is null");
@@ -670,14 +671,14 @@ public class PAServiceUtils {
         try {
             spDtos = PaRegistry.getStudySiteService().search(spDto, pagingParams);
         } catch (TooManyResultsException e) {
-            throw new PAException(String.format(ERR_MSG, spDto.getStudyProtocolIdentifier().getExtension()
-                    , spDto.getFunctionalCode().getCode()));
+            throw new PAException(String.format(ERR_MSG, spDto.getStudyProtocolIdentifier().getExtension(),
+                                                spDto.getFunctionalCode().getCode()));
         }
         if (spDtos != null && spDtos.size() == 1) {
             return spDtos;
         } else if (spDtos != null && spDtos.size() > 1 && isUnique) {
-            throw new PAException(String.format(ERR_MSG, spDto.getStudyProtocolIdentifier().getExtension()
-                    , spDto.getFunctionalCode().getCode()));
+            throw new PAException(String.format(ERR_MSG, spDto.getStudyProtocolIdentifier().getExtension(),
+                                                spDto.getFunctionalCode().getCode()));
 
         }
         return spDtos;
@@ -1379,7 +1380,7 @@ public class PAServiceUtils {
                 try {
                     poCorrelationDto = corrService.getCorrelation(dupCorrelationIi);
                 } catch (NullifiedRoleException e2) {
-                    throw new PAException("This scenario is currrently not handled .... "
+                    throw new PAException("This scenario is currently not handled .... "
                             + "Duplicate Ii of nullified is also nullified", e2);
                 }
             }

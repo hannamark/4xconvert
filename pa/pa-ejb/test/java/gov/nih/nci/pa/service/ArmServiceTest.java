@@ -103,7 +103,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -283,13 +282,13 @@ public class ArmServiceTest {
         ArmDTO toDto = remoteEjb.get(toIi);
         assertNotNull(fromDto.getInterventions().getItem());
         assertNotNull(toDto.getInterventions().getItem());
-        
+
         Ii fromPAIi = fromDto.getInterventions().getItem().iterator().next();
         Ii toPAIi = toDto.getInterventions().getItem().iterator().next();
-        
+
         PlannedActivityDTO fromPADTO = paRemoteEjb.get(fromPAIi);
         PlannedActivityDTO toPADTO = paRemoteEjb.get(toPAIi);
-        
+
         assertEquals(fromPADTO.getInterventionIdentifier(), toPADTO.getInterventionIdentifier());
         assertNotSame(fromPADTO.getIdentifier(), toPADTO.getIdentifier());
     }

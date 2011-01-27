@@ -130,13 +130,11 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
             to.setExtension(bo.getId().toString());
             // create study contact
             spcDtos = PaRegistry.getStudySiteContactService().getByStudySite(from);
-            if (spcDtos != null && !spcDtos.isEmpty()) {
-                for (StudySiteContactDTO spcDto : spcDtos) {
-                    spcDto.setIdentifier(null);
-                    spcDto.setStudySiteIi(to);
-                    spcDto.setStudyProtocolIdentifier(toStudyProtocolIi);
-                    session.save(ssc.convertFromDtoToDomain(spcDto));
-                }
+            for (StudySiteContactDTO spcDto : spcDtos) {
+                spcDto.setIdentifier(null);
+                spcDto.setStudySiteIi(to);
+                spcDto.setStudyProtocolIdentifier(toStudyProtocolIi);
+                session.save(ssc.convertFromDtoToDomain(spcDto));
             }
             // create study accrual status
             if (StudySiteFunctionalCode.TREATING_SITE.getCode().equals(dto.getFunctionalCode().getCode())) {

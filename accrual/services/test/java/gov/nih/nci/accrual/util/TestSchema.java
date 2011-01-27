@@ -878,7 +878,7 @@ public class TestSchema {
     public static User createUser() {
         User user = null;
         Session session  = HibernateUtil.getCurrentSession();
-        Transaction t = session.beginTransaction();
+        session.beginTransaction();
         user = new User();
         user.setLoginName("Abstractor: " + new Date());
         user.setFirstName("Joe");

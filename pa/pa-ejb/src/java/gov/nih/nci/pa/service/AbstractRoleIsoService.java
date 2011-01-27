@@ -119,39 +119,39 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
     extends AbstractStudyIsoService<DTO, BO, CONVERTER>
     implements RolePaService<DTO> {
 
-    private final Map<String, String> roleAssociationMap = new HashMap<String, String>();
-    {
-        roleAssociationMap.put(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME, "healthCareFacility");
-        roleAssociationMap.put(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME, "researchOrganization");
-        roleAssociationMap.put(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME, "oversightCommittee");
-        roleAssociationMap.put(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME, "clinicalResearchStaff");
-        roleAssociationMap.put(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME, "healthCareProvider");
-        roleAssociationMap.put(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME, "organizationalContact");
+    private static final Map<String, String> ROLE_ASSOCIATION_MAP = new HashMap<String, String>();
+    static {
+        ROLE_ASSOCIATION_MAP.put(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME, "healthCareFacility");
+        ROLE_ASSOCIATION_MAP.put(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME, "researchOrganization");
+        ROLE_ASSOCIATION_MAP.put(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME, "oversightCommittee");
+        ROLE_ASSOCIATION_MAP.put(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME, "clinicalResearchStaff");
+        ROLE_ASSOCIATION_MAP.put(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME, "healthCareProvider");
+        ROLE_ASSOCIATION_MAP.put(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME, "organizationalContact");
     }
 
-    private final Map<String, String> roleClassMap = new HashMap<String, String>();
-    {
-        roleClassMap.put(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME, "HealthCareFacility");
-        roleClassMap.put(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME, "ResearchOrganization");
-        roleClassMap.put(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME, "OversightCommittee");
-        roleClassMap.put(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME, "ClinicalResearchStaff");
-        roleClassMap.put(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME, "HealthCareProvider");
-        roleClassMap.put(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME, "OrganizationalContact");
+    private static final Map<String, String> ROLE_CLASS_MAP = new HashMap<String, String>();
+    static {
+        ROLE_CLASS_MAP.put(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME, "HealthCareFacility");
+        ROLE_CLASS_MAP.put(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME, "ResearchOrganization");
+        ROLE_CLASS_MAP.put(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME, "OversightCommittee");
+        ROLE_CLASS_MAP.put(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME, "ClinicalResearchStaff");
+        ROLE_CLASS_MAP.put(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME, "HealthCareProvider");
+        ROLE_CLASS_MAP.put(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME, "OrganizationalContact");
     }
 
-    private final Map<String, String[]> classRoleMap = new HashMap<String, String[]>();
-    {
-    classRoleMap.put("StudySite", new String[] {
-            roleAssociationMap.get(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME),
-            roleAssociationMap.get(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME),
-                    roleAssociationMap.get(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME)});
-    classRoleMap.put("StudySiteContact", new String[] {
-            roleAssociationMap.get(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME),
-            roleAssociationMap.get(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME),
-            roleAssociationMap.get(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME)});
-    classRoleMap.put("StudyContact", new String[] {
-            roleAssociationMap.get(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME),
-            roleAssociationMap.get(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME)});
+    private static final Map<String, String[]> CLASS_ROLE_MAP = new HashMap<String, String[]>();
+    static {
+    CLASS_ROLE_MAP.put("StudySite", new String[] {
+            ROLE_ASSOCIATION_MAP.get(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME),
+            ROLE_ASSOCIATION_MAP.get(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME),
+                    ROLE_ASSOCIATION_MAP.get(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME)});
+    CLASS_ROLE_MAP.put("StudySiteContact", new String[] {
+            ROLE_ASSOCIATION_MAP.get(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME),
+            ROLE_ASSOCIATION_MAP.get(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME),
+            ROLE_ASSOCIATION_MAP.get(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME)});
+    CLASS_ROLE_MAP.put("StudyContact", new String[] {
+            ROLE_ASSOCIATION_MAP.get(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME),
+            ROLE_ASSOCIATION_MAP.get(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME)});
     }
 
     /**
@@ -162,6 +162,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
      * @return list StudySiteDTO
      * @throws PAException on error
      */
+    @SuppressWarnings("unchecked")
     public List<DTO> getByStudyProtocol(Ii studyProtocolIi, List<DTO> dtos) throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
             throw new PAException("Cannot call getByStudyProtocol method with a null identifier.");
@@ -243,7 +244,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
     public void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException {
         Session session = HibernateUtil.getCurrentSession();
 
-        String roleLink = roleAssociationMap.get(ii.getIdentifierName());
+        String roleLink = ROLE_ASSOCIATION_MAP.get(ii.getIdentifierName());
 
         checkCascadeRoleStatusInput(roleLink);
 
@@ -252,7 +253,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
             .append(" ss SET ss.statusCode = :newStatus where ss.")
             .append(roleLink)
             .append(" = (select role from ")
-            .append(roleClassMap.get(ii.getIdentifierName()))
+            .append(ROLE_CLASS_MAP.get(ii.getIdentifierName()))
             .append(" role where identifier = :myId)");
 
         session.createQuery(hql.toString())
@@ -280,7 +281,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
             throw new PAException("Error attempting to change status for role: " + getTypeArgument().getSimpleName());
         }
 
-        if (!ArrayUtils.contains(classRoleMap.get(getTypeArgument().getSimpleName()), roleLink)) {
+        if (!ArrayUtils.contains(CLASS_ROLE_MAP.get(getTypeArgument().getSimpleName()), roleLink)) {
             throw new PAException("Unable to update Role: " + roleLink
                    + " for class : " + getTypeArgument().getSimpleName());
         }
@@ -299,13 +300,14 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
         }
         return returnStatusCode;
     }
+
     /**
      *
      * @param roleStatusCode
      * @param actStatusCode
      * @return cd
      */
-    Cd getFunctionalRoleStatusCode(Cd roleStatusCode , ActStatusCode actStatusCode) {
+    Cd getFunctionalRoleStatusCode(Cd roleStatusCode, ActStatusCode actStatusCode) {
         return CdConverter.convertToCd(newFRStatusCode(roleStatusCode, actStatusCode));
     }
 }

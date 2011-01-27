@@ -357,7 +357,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="449">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="441">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/pa-ejb/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/pa-ejb/pmd.xml"/>
@@ -424,7 +424,7 @@
                        **/iso/util/En*Converter*
                        **/service/correlation/*
                        **/service/util/*Bean.class
-                       **/service/util/*BeanLocal.class 
+                       **/service/util/*BeanLocal.class
                        **/util/Hibernate*
                        **/util/TrialUtil*
                        **/util/PaEarPropertyReader*
@@ -496,21 +496,21 @@
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/pa-ejb"/>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Generate Javadoc                                                       -->
     <!-- ====================================================================== -->
-        
+
     <target name="generate-javadoc">
-		<javadoc destdir="${pa-ejb.build.javadoc}"
-		    sourcepath="${pa-ejb.build.srcDir.0}"
-		    windowtitle="CTRP PA EJB">
-		    <doctitle><![CDATA[<h1>CTRP PA Service Layer</h1>]]></doctitle>
+        <javadoc destdir="${pa-ejb.build.javadoc}"
+            sourcepath="${pa-ejb.build.srcDir.0}"
+            windowtitle="CTRP PA EJB">
+            <doctitle><![CDATA[<h1>CTRP PA Service Layer</h1>]]></doctitle>
             <classpath>
                 <path refid="compile.classpath"/>
                 <path refid="common.package.classpath" />
             </classpath>
-		</javadoc>    
+        </javadoc>
     </target>
-   
+
 </project>

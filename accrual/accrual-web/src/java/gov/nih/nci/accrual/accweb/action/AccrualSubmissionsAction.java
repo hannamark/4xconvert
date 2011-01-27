@@ -225,19 +225,8 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
 
             List<SubmissionDto> listOfSubmissions = getSubmissionSvc().getByStudyProtocol(getSpIi());
             if (!listOfSubmissions.isEmpty()) {
-                List<String> testList = new ArrayList<String>();
-                for (SubmissionDto sDto : listOfSubmissions) {
-                    testList.add(sDto.getIdentifier().getExtension());
-                }
-                String test =  Collections.max(testList);
-                Ts cutOffDate = null;
-                for (SubmissionDto sDto : listOfSubmissions) {
-                    if (test.equals(sDto.getIdentifier().getExtension())) {
-                        cutOffDate = sDto.getCutOffDate();
-                    }
-                }
-                if (!PAUtil.isTsNull(submission.getCutOffDate())
-                        && submission.getCutOffDate().getValue().before(cutOffDate.getValue())) {
+                Ts cutOffDate = getMaxCutOffDate(listOfSubmissions);
+                if (submission.getCutOffDate().getValue().before(cutOffDate.getValue())) {
                     addActionError("New Cut-off Date must be same or bigger than"
                             + " the Cut-off-Date of the previous submission");
                     return AR_NEW_SUBMISSION;
@@ -254,6 +243,21 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
             return AR_NEW_SUBMISSION;
         }
         return super.add();
+    }
+
+    private Ts getMaxCutOffDate(List<SubmissionDto> listOfSubmissions) {
+        List<String> testList = new ArrayList<String>();
+        for (SubmissionDto sDto : listOfSubmissions) {
+            testList.add(sDto.getIdentifier().getExtension());
+        }
+        String test = Collections.max(testList);
+        Ts cutOffDate = null;
+        for (SubmissionDto sDto : listOfSubmissions) {
+            if (test.equals(sDto.getIdentifier().getExtension())) {
+                cutOffDate = sDto.getCutOffDate();
+            }
+        }
+        return cutOffDate;
     }
 
     /**

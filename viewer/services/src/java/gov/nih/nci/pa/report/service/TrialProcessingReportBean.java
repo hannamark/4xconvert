@@ -148,8 +148,7 @@ public class TrialProcessingReportBean extends
         try {
             Session session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
-            StringBuffer sql = new StringBuffer(
-                    "SELECT cm.organization, cm.first_name, cm.last_name, oi.extension "
+            String sql = "SELECT cm.organization, cm.first_name, cm.last_name, oi.extension "
                     + "       , sp.official_title, dws.status_code, sp.identifier "
                     + "FROM study_protocol AS sp "
                     + "INNER JOIN document_workflow_status AS dws ON sp.identifier = dws.study_protocol_identifier "
@@ -157,10 +156,10 @@ public class TrialProcessingReportBean extends
                     + "LEFT OUTER JOIN study_otheridentifiers as oi ON sp.identifier = oi.study_protocol_id "
                     + "WHERE dws.identifier in  ( SELECT MAX(identifier) FROM document_workflow_status "
                     + "        GROUP BY study_protocol_identifier ) "
-                    + "  AND oi.extension =  :ASSIGNED_IDENTIFIER  ");
-            sql.append("  AND (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
-                    + "   and oi.identifier_name = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "')");
-            query = session.createSQLQuery(sql.toString());
+                    + "  AND oi.extension =  :ASSIGNED_IDENTIFIER  "
+                    + "  AND (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
+                    + "   and oi.identifier_name = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "')";
+            query = session.createSQLQuery(sql);
             setStParameter(query, "ASSIGNED_IDENTIFIER", criteria.getAssignedIdentifier());
             @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query.list();

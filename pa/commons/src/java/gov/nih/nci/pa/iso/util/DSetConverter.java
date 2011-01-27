@@ -137,10 +137,10 @@ public class DSetConverter {
         dSet.setItem(telSet);
         return dSet;
     }
-    
+
     private static Set<Tel> addCurrentItems(DSet<Tel> dsetList) {
         Set<Tel> telSet = new HashSet<Tel>();
-        
+
         if (dsetList.getItem() != null && dsetList.getItem().size() > 0) {
                 Iterator<Tel> val = dsetList.getItem().iterator();
                 while (val.hasNext()) {
@@ -149,18 +149,18 @@ public class DSetConverter {
         }
         return telSet;
     }
-    
+
     private static DSet<Tel> getCurrentDSet(DSet<Tel> dsetList) {
         DSet<Tel> dSet = null;
         if (dsetList == null) {
             dSet = new DSet<Tel>();
         } else {
             dSet = dsetList;
-            
+
         }
         return dSet;
     }
-     
+
     private static Set<Tel> addEmail(List<String> list) {
         Set<Tel> returnVal = new HashSet<Tel>();
         TelEmail t = null;
@@ -174,7 +174,7 @@ public class DSetConverter {
         }
         return returnVal;
     }
-    
+
     private static Set<Tel> addPhone(List<String> list) {
         Set<Tel> telSet = new HashSet<Tel>();
         TelPhone t = null;
@@ -211,8 +211,8 @@ public class DSetConverter {
         }
         return retList;
     }
-    
-    
+
+
     private static List<String> convertEmailToStrings(DSet<Tel> dSet) {
         List<String> retList = new ArrayList<String>();
         for (Tel t : dSet.getItem()) {
@@ -230,7 +230,7 @@ public class DSetConverter {
         }
         return retList;
     }
-    
+
     private static List<String> convertTeltoStrings(DSet<Tel> dSet) {
         List<String> retList = new ArrayList<String>();
         for (Tel t : dSet.getItem()) {
@@ -244,16 +244,15 @@ public class DSetConverter {
         }
         return retList;
     }
-    
+
     private static String convertPhonePart(Tel t) {
         try {
             if (t instanceof TelPhone) {
                 return (URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8"));
-            } else {
-                String url = t.getValue().toString();
-                if (url != null && url.startsWith("tel")) {
-                        return (URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8"));       
-                }
+            }
+            String url = t.getValue().toString();
+            if (url != null && url.startsWith("tel")) {
+                return (URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8"));
             }
         } catch (UnsupportedEncodingException e) {
             return null;
@@ -343,7 +342,7 @@ public class DSetConverter {
         }
         return null;
     }
-    
+
     /**
      * Extract CTEP Organization identifier form the set of identifiers.
      * @param identifier set of identifiers
@@ -372,10 +371,10 @@ public class DSetConverter {
         }
         return null;
     }
-    
+
     /**
      * getFirstInDSetByRoot.
-     * @param identifier identifier 
+     * @param identifier identifier
      * @param root root
      * @return ii
      */
@@ -438,7 +437,7 @@ public class DSetConverter {
         }
         return iiset;
     }
-    
+
     /**
      * Help get telecom info out of DSet.
      * @param dset dset
@@ -448,20 +447,20 @@ public class DSetConverter {
     public static List<String> getTelByType(DSet<Tel> dset, String type) {
 
         List<String> returnList = new ArrayList<String>();
-        
+
         if (dset == null || CollectionUtils.isEmpty(dset.getItem())) {
             return null;
         }
         Set<? extends Tel> telList = dset.getItem();
-        
+
         for (Tel item  : telList) {
                 String value = item.getValue().toString();
                 if (!StringUtils.isEmpty(value) && value.startsWith(type)) {
                     returnList.add(value.replaceFirst(type, ""));
                 }
         }
-        
+
         return returnList;
     }
-    
+
 }

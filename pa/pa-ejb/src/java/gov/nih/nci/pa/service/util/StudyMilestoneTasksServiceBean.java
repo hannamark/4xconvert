@@ -216,10 +216,12 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                 + " isMoreThan5Businessdays " + ret);
         return ret;
     }
+
     /**
      * Gets List of DTOs for which TSR is sent but not having to INITIAL_ABSTRACTION_VERIFY.
      * @return list Of StudyMilestone
      */
+    @SuppressWarnings("unchecked")
     private Set<StudyMilestone> getTrialSummarySentMilestones() {
         String hsql = "select sm from StudyMilestone sm where sm.milestoneCode='" + MilestoneCode.TRIAL_SUMMARY_SENT
             + "' and sm.studyProtocol  in (select sm1.studyProtocol from StudyMilestone sm1 where "
@@ -231,25 +233,26 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         mileStoneList.addAll(HibernateUtil.getCurrentSession().createQuery(hsql).list());
         return mileStoneList;
     }
+
     /**
      * @param smRemote the smRemote to set
      */
     public void setSmRemote(StudyMilestoneServicelocal smRemote) {
         this.smRemote = smRemote;
     }
+
     /**
      * this will compare the milestone object based on study protocol id.
      * @author vrushali
-     *
      */
-    public class MilestoneComparator implements Comparator {
+    public class MilestoneComparator implements Comparator<StudyMilestone> {
 
         /**
          * {@inheritDoc}
          */
-        public int compare(Object milestone0, Object milestone1) {
-            Long studyId0 = ((StudyMilestone) milestone0).getStudyProtocol().getId();
-            Long studyId1 = ((StudyMilestone) milestone1).getStudyProtocol().getId();
+        public int compare(StudyMilestone milestone0, StudyMilestone milestone1) {
+            Long studyId0 = milestone0.getStudyProtocol().getId();
+            Long studyId1 = milestone1.getStudyProtocol().getId();
             return new CompareToBuilder().append(studyId0, studyId1).toComparison();
        }
     }

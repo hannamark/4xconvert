@@ -80,11 +80,6 @@ package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
-import gov.nih.nci.pa.domain.Disease;
-import gov.nih.nci.pa.domain.Patient;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudySite;
-import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -97,7 +92,7 @@ import java.util.zip.DataFormatException;
  * @param <DTO> iso dto
  * @param <BO> domain object
  */
-public abstract class AbstractConverter <DTO extends BaseDTO, BO extends AbstractEntity> {
+public abstract class AbstractConverter<DTO extends BaseDTO, BO extends AbstractEntity> {
     /**
      * @param dto iso dto
      * @return domain object
@@ -117,24 +112,18 @@ public abstract class AbstractConverter <DTO extends BaseDTO, BO extends Abstrac
      * @param pkey the id
      * @return domain object
      */
-    @SuppressWarnings("unchecked")
     public <T extends AbstractEntity> T  fKeySetter(Class<T> clazz, Ii pkey) {
         if (PAUtil.isIiNull(pkey)) {
             return null;
         }
-        T result = null;
-        if (clazz.equals(StudyProtocol.class)) {
-            result = (T) new StudyProtocol();
-        } else if (clazz.equals(StudySite.class)) {
-            result = (T) new StudySite();
-        } else if (clazz.equals(Patient.class)) {
-            result = (T) new Patient();
-        } else if (clazz.equals(Disease.class)) {
-            result = (T) new Disease();
-        } else if (clazz.equals(StudySubject.class)) {
-            result = (T) new StudySubject();
+        try {
+            T result = clazz.newInstance();
+            result.setId(IiConverter.convertToLong(pkey));
+            return result;
+        } catch (InstantiationException e) {
+            throw new IllegalStateException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
         }
-        result.setId(IiConverter.convertToLong(pkey));
-        return result;
     }
 }

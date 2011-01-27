@@ -28,6 +28,7 @@ public class ProprietaryTrialInterceptor {
      * @throws Exception e
      */
     @AroundInvoke
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException") // InvocationContext.proceed throws Exception
     public Object checkIsProprietaryTrial(InvocationContext ctx) throws Exception {
         Object[] objs = ctx.getParameters();
         Ii ii = null;

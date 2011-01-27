@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.accrual.util;
 
@@ -30,7 +30,7 @@ public class MockPaLookupTableServiceBean implements LookUpTableServiceRemote {
         countries.add(c);
         return countries;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -41,21 +41,19 @@ public class MockPaLookupTableServiceBean implements LookUpTableServiceRemote {
     }
 
     public List<FundingMechanism> getFundingMechanisms() throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public List<NIHinstitute> getNihInstitutes() throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public String getPropertyValue(String name) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
-	/* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.LookUpTableServiceRemote#searchCountry(gov.nih.nci.pa.domain.Country)
+
+    /**
+     * {@inheritDoc}
      */
     public List<Country> searchCountry(Country country) throws PAException {
         List<Country> retList = new ArrayList<Country>();
@@ -81,12 +79,12 @@ public class MockPaLookupTableServiceBean implements LookUpTableServiceRemote {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException {
         if (AnatomicSite.class.getName().equals(clazz.getName())) {
             return (T) AnatomicSiteTest.createAnatomicSiteObj(code);
         }
         return null;
     }
-   
 
 }

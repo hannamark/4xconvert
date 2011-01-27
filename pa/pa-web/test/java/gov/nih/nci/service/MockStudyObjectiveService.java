@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.service;
 
@@ -18,62 +18,58 @@ import java.util.Map;
  */
 public class MockStudyObjectiveService extends MockAbstractBaseIsoService <StudyObjectiveDTO> implements StudyObjectiveServiceLocal {
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
     public Map<Ii, Ii>  copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
             throws PAException {
-        // TODO Auto-generated method stub
         return null;
 
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
     public List<StudyObjectiveDTO> getByStudyProtocol(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
         return new ArrayList<StudyObjectiveDTO>();
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
-    public StudyObjectiveDTO getCurrentByStudyProtocol(Ii studyProtocolIi)
-            throws PAException {
-        // TODO Auto-generated method stub
+    public StudyObjectiveDTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#create(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public StudyObjectiveDTO create(StudyObjectiveDTO dto) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public void delete(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
 
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#get(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public StudyObjectiveDTO get(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#update(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public StudyObjectiveDTO update(StudyObjectiveDTO dto) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 

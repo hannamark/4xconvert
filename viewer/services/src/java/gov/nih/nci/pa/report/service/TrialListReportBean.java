@@ -151,7 +151,7 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
         try {
             Session session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
-            StringBuffer sql = new StringBuffer(
+            String sqlStart =
                     "SELECT oi.extension, sp.submission_number, cm.organization, sp.date_last_created "
                     + "    , dws.status_code, dws.status_date_range_low "
                     + "    , sm.milestone_code, sm.milestone_date, sp.identifier "
@@ -162,7 +162,8 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
                     + "LEFT OUTER JOIN csm_user AS cm ON sp.user_last_created_id = cm.user_id "
                     + "WHERE dws.identifier in ( select max(identifier) from document_workflow_status "
                     + " group by study_protocol_identifier )  AND sm.identifier in  ( select max(identifier)"
-                    + " from study_milestone group by study_protocol_identifier ) ");
+                    + " from study_milestone group by study_protocol_identifier ) ";
+            StringBuffer sql = new StringBuffer(sqlStart);
             sql.append("  AND (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
                     + "   and oi.identifier_name = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "')");
             sql.append(dateRangeSql(criteria, "sp.date_last_created"));

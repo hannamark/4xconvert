@@ -280,26 +280,24 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         return InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
     }
 
-    private void checkBlindingSchemaCode(InterventionalStudyProtocolDTO ispDTO, int totBlindCodes)
-    throws PAException {
+    private void checkBlindingSchemaCode(InterventionalStudyProtocolDTO ispDTO, int totBlindCodes) throws PAException {
         if (ispDTO.getBlindingSchemaCode() != null) {
             if (BlindingSchemaCode.OPEN.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes > 0) {
-                throw new PAException("Open Blinding Schema code cannot have any Blinded codes ");
+                throw new PAException("Open Blinding Schema code cannot have any Blinded codes.");
             }
             if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes > 1) {
-               throw new PAException("Only one masking role must be specified for 'Single Blind' masking. ");
+               throw new PAException("Only one masking role must be specified for 'Single Blind' masking.");
             }
             if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                            && totBlindCodes < 1) {
-              throw new PAException("Single Blinding Schema code must have 1 Blinded code ");
+              throw new PAException("Single Blinding Schema code must have 1 Blinded code.");
             }
             if (BlindingSchemaCode.DOUBLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes < 2) {
-                throw new PAException("At least two masking roles must to be specified for ‘Double Blind’ masking. ");
+                throw new PAException("At least two masking roles must to be specified for \"Double Blind\" masking.");
             }
-
         }
     }
 
@@ -363,8 +361,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         setDefaultValues(osp, ospDTO, session, UPDATE);
         osp = upd;
         session.merge(osp);
-        ObservationalStudyProtocolDTO returnVal = ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
-        return returnVal;
+        return ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
     }
 
     /**
@@ -436,7 +433,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             session.createSQLQuery("DELETE from study_otheridentifiers where study_protocol_id = "
                     + spId).executeUpdate();
             session.createSQLQuery("DELETE from study_owner where study_id = " + spId).executeUpdate();
-            session.createSQLQuery("DELETE from study_anatomic_site where study_protocol_identifier = " 
+            session.createSQLQuery("DELETE from study_anatomic_site where study_protocol_identifier = "
                     + spId).executeUpdate();
 
             for (String hql : hqls) {

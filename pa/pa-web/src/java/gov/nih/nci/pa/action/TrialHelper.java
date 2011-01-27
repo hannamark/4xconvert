@@ -368,6 +368,7 @@ public class TrialHelper {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void updateStudyProtocol(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);

@@ -83,7 +83,6 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.test.util.MockPoServiceLocator;
 import gov.nih.nci.pa.test.util.MockServiceLocator;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 

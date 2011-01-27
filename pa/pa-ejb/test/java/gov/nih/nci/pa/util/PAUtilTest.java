@@ -65,13 +65,13 @@ import org.junit.Test;
  */
 public class PAUtilTest {
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNull(gov.nih.nci.iso21090.Ii)}.
-	 */
-	@Test
-	public void testIsIiNull() {
-		Ii ii = null;
-		assertTrue(PAUtil.isIiNull(ii));
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNull(gov.nih.nci.iso21090.Ii)}.
+     */
+    @Test
+    public void testIsIiNull() {
+        Ii ii = null;
+        assertTrue(PAUtil.isIiNull(ii));
         ii = new Ii();
         assertTrue(PAUtil.isIiNull(ii));
         ii.setExtension(null);
@@ -79,191 +79,191 @@ public class PAUtilTest {
         ii.setExtension("");
         assertTrue(PAUtil.isIiNull(ii));
 
-	}
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNotNull(gov.nih.nci.iso21090.Ii)}.
-	 */
-	@Test
-	public void testIsIiNotNull() {
-		assertTrue(PAUtil.isIiNotNull(IiConverter.convertToIi("1")));
-	}
-
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidIi(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)}.
-	 */
-	@Test
-	public void testIsValidIi1() throws  PAException {
-		assertTrue(PAUtil.isValidIi(IiConverter.convertToStudyProtocolIi(1L) , IiConverter.convertToStudyProtocolIi(null)));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNotNull(gov.nih.nci.iso21090.Ii)}.
+     */
+    @Test
+    public void testIsIiNotNull() {
+        assertTrue(PAUtil.isIiNotNull(IiConverter.convertToIi("1")));
+    }
 
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidIi(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)}.
      */
-	@Test(expected=PAException.class)
+    @Test
+    public void testIsValidIi1() throws  PAException {
+        assertTrue(PAUtil.isValidIi(IiConverter.convertToStudyProtocolIi(1L) , IiConverter.convertToStudyProtocolIi(null)));
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidIi(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)}.
+     */
+    @Test(expected=PAException.class)
     public void testIsValidIi2() throws  PAException {
         PAUtil.isValidIi(null , null);
     }
 
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isCdNull(gov.nih.nci.iso21090.Cd)}.
-	 */
-	@Test
-	public void testIsCdNull() {
-		Cd cd = null;
-		assertTrue(PAUtil.isCdNull(cd));
-		cd = new Cd();
-		assertTrue(PAUtil.isCdNull(cd));
-		cd.setCode(null);
-	    assertTrue(PAUtil.isCdNull(cd));
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isCdNull(gov.nih.nci.iso21090.Cd)}.
+     */
+    @Test
+    public void testIsCdNull() {
+        Cd cd = null;
+        assertTrue(PAUtil.isCdNull(cd));
+        cd = new Cd();
+        assertTrue(PAUtil.isCdNull(cd));
+        cd.setCode(null);
+        assertTrue(PAUtil.isCdNull(cd));
         cd.setCode("");
         assertTrue(PAUtil.isCdNull(cd));
 
-	}
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isStNull(gov.nih.nci.iso21090.St)}.
-	 */
-	@Test
-	public void testIsStNull() {
-		St st = null;
-		assertTrue(PAUtil.isStNull(st));
-		st = new St();
-		st.setValue(null);
-		assertTrue(PAUtil.isStNull(st));
-		st.setValue("");
-		assertTrue(PAUtil.isStNull(st));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isStNull(gov.nih.nci.iso21090.St)}.
+     */
+    @Test
+    public void testIsStNull() {
+        St st = null;
+        assertTrue(PAUtil.isStNull(st));
+        st = new St();
+        st.setValue(null);
+        assertTrue(PAUtil.isStNull(st));
+        st.setValue("");
+        assertTrue(PAUtil.isStNull(st));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isTsNull(gov.nih.nci.iso21090.Ts)}.
-	 */
-	@Test
-	public void testIsTsNull() {
-		Ts ts = null;
-		assertTrue(PAUtil.isTsNull(ts));
-		ts = new Ts();
-		ts.setValue(null);
-		assertTrue(PAUtil.isTsNull(ts));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isTsNull(gov.nih.nci.iso21090.Ts)}.
+     */
+    @Test
+    public void testIsTsNull() {
+        Ts ts = null;
+        assertTrue(PAUtil.isTsNull(ts));
+        ts = new Ts();
+        ts.setValue(null);
+        assertTrue(PAUtil.isTsNull(ts));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isBlNull(gov.nih.nci.iso21090.Bl)}.
-	 */
-	@Test
-	public void testIsBlNull() {
-		Bl bl = null;
-		assertTrue(PAUtil.isBlNull(bl));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isBlNull(gov.nih.nci.iso21090.Bl)}.
+     */
+    @Test
+    public void testIsBlNull() {
+        Bl bl = null;
+        assertTrue(PAUtil.isBlNull(bl));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIntNull(gov.nih.nci.iso21090.Int)}.
-	 */
-	@Test
-	public void testIsIntNull() {
-		Int in = null;
-		assertTrue(PAUtil.isIntNull(in));
-		in = new Int();
-		in.setValue(null);
-		assertTrue(PAUtil.isIntNull(in));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIntNull(gov.nih.nci.iso21090.Int)}.
+     */
+    @Test
+    public void testIsIntNull() {
+        Int in = null;
+        assertTrue(PAUtil.isIntNull(in));
+        in = new Int();
+        in.setValue(null);
+        assertTrue(PAUtil.isIntNull(in));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPqValueNull(gov.nih.nci.iso21090.Pq)}.
-	 */
-	@Test
-	public void testIsPqValueNull() {
-		Pq pq =null;
-		assertTrue(PAUtil.isPqValueNull(pq));
-		pq = new Pq();
-		pq.setValue(null);
-		assertTrue(PAUtil.isPqValueNull(pq));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPqValueNull(gov.nih.nci.iso21090.Pq)}.
+     */
+    @Test
+    public void testIsPqValueNull() {
+        Pq pq =null;
+        assertTrue(PAUtil.isPqValueNull(pq));
+        pq = new Pq();
+        pq.setValue(null);
+        assertTrue(PAUtil.isPqValueNull(pq));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPqUnitNull(gov.nih.nci.iso21090.Pq)}.
-	 */
-	@Test
-	public void testIsPqUnitNull() {
-		Pq pq =null;
-		assertTrue(PAUtil.isPqUnitNull(pq));
-		pq = new Pq();
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPqUnitNull(gov.nih.nci.iso21090.Pq)}.
+     */
+    @Test
+    public void testIsPqUnitNull() {
+        Pq pq =null;
+        assertTrue(PAUtil.isPqUnitNull(pq));
+        pq = new Pq();
         pq.setUnit(null);
         assertTrue(PAUtil.isPqUnitNull(pq));
-	}
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlHighNull(gov.nih.nci.iso21090.Ivl)}.
-	 */
-	@Test
-	public void testIsIvlHighNull() {
-	    Ivl<Pq> ivl = null;
-	    assertTrue(PAUtil.isIvlHighNull(ivl));
-	    ivl = new Ivl<Pq>();
-		Pq pqHigh = null;
-		ivl.setHigh(pqHigh);
-		assertTrue(PAUtil.isIvlHighNull(ivl));
-		pqHigh = new Pq();
-		pqHigh.setValue(null);
-		ivl.setHigh(pqHigh);
-		assertTrue(PAUtil.isIvlHighNull(ivl));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlHighNull(gov.nih.nci.iso21090.Ivl)}.
+     */
+    @Test
+    public void testIsIvlHighNull() {
+        Ivl<Pq> ivl = null;
+        assertTrue(PAUtil.isIvlHighNull(ivl));
+        ivl = new Ivl<Pq>();
+        Pq pqHigh = null;
+        ivl.setHigh(pqHigh);
+        assertTrue(PAUtil.isIvlHighNull(ivl));
+        pqHigh = new Pq();
+        pqHigh.setValue(null);
+        ivl.setHigh(pqHigh);
+        assertTrue(PAUtil.isIvlHighNull(ivl));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlLowNull(gov.nih.nci.iso21090.Ivl)}.
-	 */
-	@Test
-	public void testIsIvlLowNull() {
-	    Ivl<Pq> ivl = null;
-	    assertTrue(PAUtil.isIvlLowNull(ivl));
-		ivl = new Ivl<Pq>();
-		Pq pqLow = null;
-		ivl.setLow(pqLow);
-		assertTrue(PAUtil.isIvlLowNull(ivl));
-		pqLow = new Pq();
-		pqLow.setValue(null);
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlLowNull(gov.nih.nci.iso21090.Ivl)}.
+     */
+    @Test
+    public void testIsIvlLowNull() {
+        Ivl<Pq> ivl = null;
+        assertTrue(PAUtil.isIvlLowNull(ivl));
+        ivl = new Ivl<Pq>();
+        Pq pqLow = null;
         ivl.setLow(pqLow);
         assertTrue(PAUtil.isIvlLowNull(ivl));
-	}
+        pqLow = new Pq();
+        pqLow.setValue(null);
+        ivl.setLow(pqLow);
+        assertTrue(PAUtil.isIvlLowNull(ivl));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlUnitNull(gov.nih.nci.iso21090.Ivl)}.
-	 */
-	@Test
-	public void testIsIvlUnitNull() {
-	    Ivl<Pq> ivl = null;
-	    assertTrue(PAUtil.isIvlUnitNull(ivl));
-		ivl = new Ivl<Pq>();
-		Pq pqHigh = null;
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlUnitNull(gov.nih.nci.iso21090.Ivl)}.
+     */
+    @Test
+    public void testIsIvlUnitNull() {
+        Ivl<Pq> ivl = null;
+        assertTrue(PAUtil.isIvlUnitNull(ivl));
+        ivl = new Ivl<Pq>();
+        Pq pqHigh = null;
         ivl.setHigh(pqHigh);
         assertTrue(PAUtil.isIvlUnitNull(ivl));
         pqHigh = new Pq();
         ivl.setHigh(pqHigh);
         assertTrue(PAUtil.isIvlUnitNull(ivl));
-		pqHigh.setUnit(null);
-		Pq pqLow = new Pq();
-		ivl.setHigh(pqHigh);
-		ivl.setLow(pqLow);
-		assertTrue(PAUtil.isIvlUnitNull(ivl));
+        pqHigh.setUnit(null);
+        Pq pqLow = new Pq();
+        ivl.setHigh(pqHigh);
+        ivl.setLow(pqLow);
+        assertTrue(PAUtil.isIvlUnitNull(ivl));
         pqHigh.setUnit("");
         ivl.setHigh(pqHigh);
         pqLow.setUnit("");
         ivl.setLow(pqLow);
         assertFalse(PAUtil.isIvlUnitNull(ivl));
-	}
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertTsToFormarttedDate(gov.nih.nci.iso21090.Ts, java.lang.String)}.
-	 */
-	@Test
-	public void testConvertTsToFormarttedDate() {
-		String date =
-			PAUtil.convertTsToFormattedDate(TsConverter.convertToTs(new Timestamp(new Date("11/16/2009").getTime())), "yyyy-MM");
-		assertEquals("2009-11",date);
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertTsToFormarttedDate(gov.nih.nci.iso21090.Ts, java.lang.String)}.
+     */
+    @Test
+    public void testConvertTsToFormarttedDate() {
+        String date =
+            PAUtil.convertTsToFormattedDate(TsConverter.convertToTs(new Timestamp(new Date("11/16/2009").getTime())), "yyyy-MM");
+        assertEquals("2009-11",date);
+    }
 
-	/**
+    /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertTsToFormattedDate(gov.nih.nci.iso21090.Ts)}.
      */
     @Test
@@ -284,23 +284,23 @@ public class PAUtilTest {
     }
 
     /**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#normalizeDateString(java.lang.String)}.
-	 */
-	@Test
-	public void testNormalizeDateString() {
-		assertEquals("01/31/2001", PAUtil.normalizeDateString("1/31/2001abcdefg"));
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#normalizeDateString(java.lang.String)}.
+     */
+    @Test
+    public void testNormalizeDateString() {
+        assertEquals("01/31/2001", PAUtil.normalizeDateString("1/31/2001abcdefg"));
         assertEquals("01/31/2001", PAUtil.normalizeDateString("2001-01-31abcdefg"));
         assertNull(PAUtil.normalizeDateString("Tuesday"));
         assertNull(PAUtil.normalizeDateString(null));
-	}
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#normalizeDateStringWithTime(java.lang.String)}.
-	 */
-	@Test
-	public void testNormalizeDateStringWithTime() {
-		assertNull(PAUtil.normalizeDateStringWithTime(null));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#normalizeDateStringWithTime(java.lang.String)}.
+     */
+    @Test
+    public void testNormalizeDateStringWithTime() {
+        assertNull(PAUtil.normalizeDateStringWithTime(null));
+    }
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#dateStringToTimestamp(java.lang.String)}.
      */
@@ -310,22 +310,22 @@ public class PAUtilTest {
          assertTrue(now.after(PAUtil.dateStringToTimestamp(now.toString())));
     }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#today()}.
-	 */
-	@Test
-	public void testToday() {
-		assertNotNull(PAUtil.today());
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#today()}.
+     */
+    @Test
+    public void testToday() {
+        assertNotNull(PAUtil.today());
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidEmail(java.lang.String)}.
-	 */
-	@Test
-	public void testIsValidEmail() {
-		assertTrue(PAUtil.isValidEmail("a@a.com"));
-		assertFalse(PAUtil.isValidEmail(null));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidEmail(java.lang.String)}.
+     */
+    @Test
+    public void testIsValidEmail() {
+        assertTrue(PAUtil.isValidEmail("a@a.com"));
+        assertFalse(PAUtil.isValidEmail(null));
+    }
 
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidPhone(java.lang.String)}.
@@ -336,36 +336,36 @@ public class PAUtilTest {
         assertFalse(PAUtil.isValidPhone(null));
     }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#wildcardCriteria(java.lang.String)}.
-	 */
-	@Test
-	public void testWildcardCriteria() {
-		assertEquals("",PAUtil.wildcardCriteria(null));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#wildcardCriteria(java.lang.String)}.
+     */
+    @Test
+    public void testWildcardCriteria() {
+        assertEquals("",PAUtil.wildcardCriteria(null));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isGreaterThan(gov.nih.nci.iso21090.St, int)}.
-	 */
-	@Test
-	public void testIsGreaterThan() {
-		assertTrue(PAUtil.isGreaterThan(StConverter.convertToSt("hello"), 2));
-		assertFalse(PAUtil.isGreaterThan(null, 2));
-		St st = new St();
-		st.setValue(null);
-		assertFalse(PAUtil.isGreaterThan(st, 2));
-		st.setValue("hello");
-		assertTrue(PAUtil.isGreaterThan(st, 2));
-		assertFalse(PAUtil.isGreaterThan(st, 6));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isGreaterThan(gov.nih.nci.iso21090.St, int)}.
+     */
+    @Test
+    public void testIsGreaterThan() {
+        assertTrue(PAUtil.isGreaterThan(StConverter.convertToSt("hello"), 2));
+        assertFalse(PAUtil.isGreaterThan(null, 2));
+        St st = new St();
+        st.setValue(null);
+        assertFalse(PAUtil.isGreaterThan(st, 2));
+        st.setValue("hello");
+        assertTrue(PAUtil.isGreaterThan(st, 2));
+        assertFalse(PAUtil.isGreaterThan(st, 6));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isWithinRange(gov.nih.nci.iso21090.St, int, int)}.
-	 */
-	@Test
-	public void testIsWithinRange() {
-		assertTrue(PAUtil.isWithinRange(StConverter.convertToSt("hello"), 2 , 6));
-		assertTrue(PAUtil.isWithinRange(null, 2 , 6));
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isWithinRange(gov.nih.nci.iso21090.St, int, int)}.
+     */
+    @Test
+    public void testIsWithinRange() {
+        assertTrue(PAUtil.isWithinRange(StConverter.convertToSt("hello"), 2 , 6));
+        assertTrue(PAUtil.isWithinRange(null, 2 , 6));
         St st = new St();
         st.setValue(null);
         assertTrue(PAUtil.isWithinRange(st, 2 , 6));
@@ -373,16 +373,16 @@ public class PAUtilTest {
         assertFalse(PAUtil.isWithinRange(st, 2 , 3));
         assertTrue(PAUtil.isWithinRange(st, 2 , 10));
 
-	}
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#getIiExtension(gov.nih.nci.iso21090.Ii)}.
-	 */
-	@Test
-	public void testGetIiExtension() {
-		assertEquals("1", PAUtil.getIiExtension(IiConverter.convertToIi("1")));
-		assertEquals("", PAUtil.getIiExtension(null));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#getIiExtension(gov.nih.nci.iso21090.Ii)}.
+     */
+    @Test
+    public void testGetIiExtension() {
+        assertEquals("1", PAUtil.getIiExtension(IiConverter.convertToIi("1")));
+        assertEquals("", PAUtil.getIiExtension(null));
+    }
 
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#getErrorMsg(java.util.Map)}.
@@ -399,24 +399,24 @@ public class PAUtilTest {
 
     }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#containsIi(java.util.Map, gov.nih.nci.iso21090.Ii)}.
-	 */
-	@Test
-	public void testContainsIi() {
-		Map<Ii, Ii> iiMap = null;
-		Ii iiKey = null;
-		assertNull(PAUtil.containsIi(iiMap, iiKey));
-		iiMap = new HashMap<Ii, Ii>();
-		assertNull(PAUtil.containsIi(iiMap, iiKey));
-		iiKey = IiConverter.convertToIi("1");
-		assertNull(PAUtil.containsIi(iiMap, iiKey));
-		iiMap.put(IiConverter.convertToIi("1"), IiConverter.convertToIi("1"));
-		iiMap.put(IiConverter.convertToIi("2"), IiConverter.convertToIi("2"));
-		iiKey = IiConverter.convertToIi("1");
-		assertEquals(PAUtil.containsIi(iiMap, iiKey).getExtension(),"1");
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#containsIi(java.util.Map, gov.nih.nci.iso21090.Ii)}.
+     */
+    @Test
+    public void testContainsIi() {
+        Map<Ii, Ii> iiMap = null;
+        Ii iiKey = null;
+        assertNull(PAUtil.containsIi(iiMap, iiKey));
+        iiMap = new HashMap<Ii, Ii>();
+        assertNull(PAUtil.containsIi(iiMap, iiKey));
+        iiKey = IiConverter.convertToIi("1");
+        assertNull(PAUtil.containsIi(iiMap, iiKey));
+        iiMap.put(IiConverter.convertToIi("1"), IiConverter.convertToIi("1"));
+        iiMap.put(IiConverter.convertToIi("2"), IiConverter.convertToIi("2"));
+        iiKey = IiConverter.convertToIi("1");
+        assertEquals(PAUtil.containsIi(iiMap, iiKey).getExtension(),"1");
 
-	}
+    }
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#readInputStream(InputStream )}.
      * @throws FileNotFoundException
@@ -437,63 +437,63 @@ public class PAUtilTest {
     }
 
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#getFirstObj(java.util.List)}.
-	 */
-	@Test
-	public void testGetFirstObj() {
-		List<StudyDTO> studyList = null;
-		assertNull(PAUtil.getFirstObj(studyList));
-		StudyCheckoutDTO scDto = new StudyCheckoutDTO();
-		studyList = new ArrayList<StudyDTO>();
-		assertNull(PAUtil.getFirstObj(studyList));
-		studyList.add(scDto);
-		assertNotNull(PAUtil.getFirstObj(studyList));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#getFirstObj(java.util.List)}.
+     */
+    @Test
+    public void testGetFirstObj() {
+        List<StudyDTO> studyList = null;
+        assertNull(PAUtil.getFirstObj(studyList));
+        StudyCheckoutDTO scDto = new StudyCheckoutDTO();
+        studyList = new ArrayList<StudyDTO>();
+        assertNull(PAUtil.getFirstObj(studyList));
+        studyList.add(scDto);
+        assertNotNull(PAUtil.getFirstObj(studyList));
+    }
 /*
-	*//**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#getDocumentFilePath(java.lang.Long, java.lang.String, java.lang.String)}.
-	 *//*
-	@Test
-	public void testGetDocumentFilePath() throws PAException {
-		PAUtil.getDocumentFilePath(1L, "IRB.doc", "1");
-	}*/
+    *//**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#getDocumentFilePath(java.lang.Long, java.lang.String, java.lang.String)}.
+     *//*
+    @Test
+    public void testGetDocumentFilePath() throws PAException {
+        PAUtil.getDocumentFilePath(1L, "IRB.doc", "1");
+    }*/
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isDateCurrentOrPast(java.lang.String)}.
-	 */
-	@Test
-	public void testIsDateCurrentOrPastString() {
-		assertFalse(PAUtil.isDateCurrentOrPast("10/29/2009"));
-		assertTrue(PAUtil.isDateCurrentOrPast("10/29/2999"));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isDateCurrentOrPast(java.lang.String)}.
+     */
+    @Test
+    public void testIsDateCurrentOrPastString() {
+        assertFalse(PAUtil.isDateCurrentOrPast("10/29/2009"));
+        assertTrue(PAUtil.isDateCurrentOrPast("10/29/2999"));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isDateCurrentOrPast(java.sql.Timestamp)}.
-	 */
-	@Test
-	public void testIsDateCurrentOrPastTimestamp() {
-		assertFalse(PAUtil.isDateCurrentOrPast(new Timestamp(new Date().getTime())));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isDateCurrentOrPast(java.sql.Timestamp)}.
+     */
+    @Test
+    public void testIsDateCurrentOrPastTimestamp() {
+        assertFalse(PAUtil.isDateCurrentOrPast(new Timestamp(new Date().getTime())));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidDate(java.lang.String)}.
-	 */
-	@Test
-	public void testIsValidDate() {
-		assertFalse(PAUtil.isValidDate(""));
-		assertFalse(PAUtil.isValidDate("abcbs"));
-		assertTrue(PAUtil.isValidDate("01/01/2010"));
-		assertFalse(PAUtil.isValidDate("31/01/2010"));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidDate(java.lang.String)}.
+     */
+    @Test
+    public void testIsValidDate() {
+        assertFalse(PAUtil.isValidDate(""));
+        assertFalse(PAUtil.isValidDate("abcbs"));
+        assertTrue(PAUtil.isValidDate("01/01/2010"));
+        assertFalse(PAUtil.isValidDate("31/01/2010"));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isAbstractedAndAbove(gov.nih.nci.iso21090.Cd)}.
-	 */
-	@Test
-	public void testIsAbstractedAndAbove() {
-		assertTrue(
-	      PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(DocumentWorkflowStatusCode.ABSTRACTED.getCode())));
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isAbstractedAndAbove(gov.nih.nci.iso21090.Cd)}.
+     */
+    @Test
+    public void testIsAbstractedAndAbove() {
+        assertTrue(
+          PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(DocumentWorkflowStatusCode.ABSTRACTED.getCode())));
         assertTrue(
                 PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(
                         DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())));
@@ -503,77 +503,77 @@ public class PAUtilTest {
         assertTrue(
                 PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(
                         DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode())));
-		assertFalse(
-		          PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(
-		                  DocumentWorkflowStatusCode.ACCEPTED.getCode())));
-	}
+        assertFalse(
+                  PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(
+                          DocumentWorkflowStatusCode.ACCEPTED.getCode())));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#checkIfValueExists(java.lang.String, java.lang.String, java.lang.String)}.
-	 */
-	@Test(expected=Exception.class)
-	public void testCheckIfValueExists() throws PAException {
-		PADomainUtils.checkIfValueExists("GAS", "DoseForm", "code");
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#checkIfValueExists(java.lang.String, java.lang.String, java.lang.String)}.
+     */
+    @Test(expected=Exception.class)
+    public void testCheckIfValueExists() throws PAException {
+        PADomainUtils.checkIfValueExists("GAS", "DoseForm", "code");
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertStringToDecimal(java.lang.String)}.
-	 */
-	@Test
-	public void testConvertStringToDecimal() {
-		assertNotNull(PAUtil.convertStringToDecimal("2"));
-		assertNull(PAUtil.convertStringToDecimal(null));
-		assertNull(PAUtil.convertStringToDecimal("abc"));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertStringToDecimal(java.lang.String)}.
+     */
+    @Test
+    public void testConvertStringToDecimal() {
+        assertNotNull(PAUtil.convertStringToDecimal("2"));
+        assertNull(PAUtil.convertStringToDecimal(null));
+        assertNull(PAUtil.convertStringToDecimal("abc"));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertPqToUnit(gov.nih.nci.pa.iso.util.IvlConverter.JavaPq)}.
-	 */
-	@Test
-	public void testConvertPqToUnit() {
-		assertNull(PAUtil.convertPqToUnit(null));
-		JavaPq jPq = new JavaPq("kg", new BigDecimal("100"), new Integer(1));
-		assertNotNull(PAUtil.convertPqToUnit(jPq));
-		assertEquals(PAUtil.convertPqToUnit(jPq),"kg");
-		jPq = new JavaPq(null, new BigDecimal("100"), new Integer(1));
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertPqToUnit(gov.nih.nci.pa.iso.util.IvlConverter.JavaPq)}.
+     */
+    @Test
+    public void testConvertPqToUnit() {
+        assertNull(PAUtil.convertPqToUnit(null));
+        JavaPq jPq = new JavaPq("kg", new BigDecimal("100"), new Integer(1));
+        assertNotNull(PAUtil.convertPqToUnit(jPq));
+        assertEquals(PAUtil.convertPqToUnit(jPq),"kg");
+        jPq = new JavaPq(null, new BigDecimal("100"), new Integer(1));
         assertNull(PAUtil.convertPqToUnit(jPq));
-	}
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertPqToDecimal(gov.nih.nci.pa.iso.util.IvlConverter.JavaPq)}.
-	 */
-	@Test
-	public void testConvertPqToDecimal() {
-		assertNull(PAUtil.convertPqToDecimal(null));
-		JavaPq jPq = new JavaPq(null, null, new Integer(1));
-		assertNull(PAUtil.convertPqToDecimal(null));
-		jPq = new JavaPq("kg", new BigDecimal("100"), new Integer(1));
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertPqToDecimal(gov.nih.nci.pa.iso.util.IvlConverter.JavaPq)}.
+     */
+    @Test
+    public void testConvertPqToDecimal() {
+        assertNull(PAUtil.convertPqToDecimal(null));
+        JavaPq jPq = new JavaPq(null, null, new Integer(1));
+        assertNull(PAUtil.convertPqToDecimal(null));
+        jPq = new JavaPq("kg", new BigDecimal("100"), new Integer(1));
         assertNotNull(PAUtil.convertPqToDecimal(jPq));
         assertEquals(PAUtil.convertPqToDecimal(jPq),new BigDecimal("100"));
-	}
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertPqToPrecision(gov.nih.nci.pa.iso.util.IvlConverter.JavaPq)}.
-	 */
-	@Test
-	public void testConvertPqToPrecision() {
-		assertNull(PAUtil.convertPqToPrecision(null));
-	}
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertPqToPrecision(gov.nih.nci.pa.iso.util.IvlConverter.JavaPq)}.
+     */
+    @Test
+    public void testConvertPqToPrecision() {
+        assertNull(PAUtil.convertPqToPrecision(null));
+    }
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isTypeIntervention(gov.nih.nci.iso21090.Cd)}.
-	 */
-	@Test
-	public void testIsTypeIntervention() {
-		assertTrue(PAUtil.isTypeIntervention(CdConverter.convertStringToCd(ActivityCategoryCode.INTERVENTION.getCode())));
-		assertTrue(PAUtil.isTypeIntervention(CdConverter.convertStringToCd(
-		        ActivityCategoryCode.PLANNED_PROCEDURE.getCode())));
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isTypeIntervention(gov.nih.nci.iso21090.Cd)}.
+     */
+    @Test
+    public void testIsTypeIntervention() {
+        assertTrue(PAUtil.isTypeIntervention(CdConverter.convertStringToCd(ActivityCategoryCode.INTERVENTION.getCode())));
+        assertTrue(PAUtil.isTypeIntervention(CdConverter.convertStringToCd(
+                ActivityCategoryCode.PLANNED_PROCEDURE.getCode())));
         assertTrue(PAUtil.isTypeIntervention(CdConverter.convertStringToCd(
                 ActivityCategoryCode.SUBSTANCE_ADMINISTRATION.getCode())));
         assertFalse(PAUtil.isTypeIntervention(CdConverter.convertStringToCd(
                 ActivityCategoryCode.COURSE.getCode())));
 
-	}
+    }
 
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPhoneValidForUSA(String)}.

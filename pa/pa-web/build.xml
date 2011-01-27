@@ -51,7 +51,7 @@
             <include name="**/*.jar" />
         </fileset>
     </path>
-    
+
     <path id="common.package.classpath">
         <fileset dir="${pa.dir}/commons/target">
             <include name="*.jar"/>
@@ -66,14 +66,14 @@
     </path>
 
     <property name="runtime.jar.dir" location="${lib.dir}/pa-web/runtime" />
-    
+
     <property name="selenium.dir" location="${lib.dir}/pa-web/selenium" />
     <path id="selenium.classpath">
         <fileset dir="${selenium.dir}">
             <include name="*.jar"/>
         </fileset>
     </path>
-    
+
     <property name="test.jar.dir" location="${lib.dir}/pa-web/test" />
     <path id="test.classpath">
         <fileset dir="${test.jar.dir}">
@@ -138,7 +138,7 @@
     <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="bda-utils-classpath"/>
     <taskdef resource="liquibasetasks.properties" classpathref="bda-utils-classpath"/>
     <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="bda-utils-classpath"/>
-    
+
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
@@ -287,7 +287,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="148">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="147">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/pa-web/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/pa-web/pmd.xml"/>
@@ -311,7 +311,7 @@
             <formatter type="plain"/>
         </simian>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Start the selenium server                                              -->
     <!-- ====================================================================== -->
@@ -329,7 +329,7 @@
             </waitfor>
         </sequential>
     </target>
-                
+
     <!-- ====================================================================== -->
     <!-- Stop the selenium server                                              -->
     <!-- ====================================================================== -->
@@ -338,7 +338,7 @@
             <http url="http://${pa.server.name}:${selenium.server.port}/selenium-server/driver/?cmd=shutDownSeleniumServer"/>
         </waitfor>
      </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Run JUnit Integration Tests                                            -->
     <!-- ====================================================================== -->
@@ -358,9 +358,9 @@
             </batchtest>
          </junit>
     </target>
-    
+
     <!-- ====================================================================== -->
-    <!--   Recreates the database that tests will be run against                --> 
+    <!--   Recreates the database that tests will be run against                -->
     <!-- ====================================================================== -->
     <target name="init-test-db" depends="configure-tests" description="Recreates the testing database from scratch">
         <sequential>
@@ -375,7 +375,7 @@
             </sql>
             <for list="${ci.schema.files}" param="schema.file">
                 <sequential>
-                    <sql driver="${jdbc.driver}" url="${jdbc.url}" userid="${db.username}" password="${db.password}" 
+                    <sql driver="${jdbc.driver}" url="${jdbc.url}" userid="${db.username}" password="${db.password}"
                         src="../dbscripts/db-install/postgresql/@{schema.file}" delimiter="/" delimitertype="row" onerror="abort" autocommit="true" keepformat="true">
                         <classpath>
                             <pathelement location="${compile.classpath}" />
@@ -383,13 +383,13 @@
                     </sql>
                 </sequential>
             </for>
-            <updateDatabase driver="${jdbc.driver}" url="${jdbc.url}" username="${db.username}" password="${db.password}" 
+            <updateDatabase driver="${jdbc.driver}" url="${jdbc.url}" username="${db.username}" password="${db.password}"
                             classpathref="compile.classpath" changeLogFile="${pa-web.build.testResourceDir.0}/db-upgrade.xml" />
         </sequential>
     </target>
-    
+
     <!-- ====================================================================== -->
-    <!--   Recreates the database that tests will be run against                --> 
+    <!--   Recreates the database that tests will be run against                -->
     <!-- ====================================================================== -->
     <target name="populate-test-db" depends="configure-tests" description="Populates the testing db with baseline date">
         <sequential>
@@ -406,7 +406,7 @@
             </sql>
         </sequential>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Run all tests                                                          -->
     <!-- ====================================================================== -->
@@ -433,7 +433,7 @@
         <copy todir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF/lib">
             <fileset dir="${runtime.jar.dir}"/>
         </copy>
-        <copy todir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF" file="${pa.dir}/pa-web/src/webapp/WEB-INF/web.xml" 
+        <copy todir="${pa-web.build.dir}/${pa-web.build.finalName}/WEB-INF" file="${pa.dir}/pa-web/src/webapp/WEB-INF/web.xml"
             filtering="true">
             <filterset >
                 <filter token="project.version" value="${project.version}"/>
@@ -588,30 +588,30 @@
         <ivy:resolve refresh="true" conf="runtime" />
         <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
     </target>
-    <target name="ivy-get" depends="init:ivy,ivy-compile,ivy-test,ivy-runtime,ivy-selenium" 
+    <target name="ivy-get" depends="init:ivy,ivy-compile,ivy-test,ivy-runtime,ivy-selenium"
         description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/pa-web"/>
     </target>
-    
-    
+
+
     <!-- ====================================================================== -->
     <!-- Generate Javadoc                                                       -->
     <!-- ====================================================================== -->
-        
+
     <target name="generate-javadoc">
-		<javadoc destdir="${pa-web.build.javadoc}"
-		    sourcepath="${pa-web.build.srcDir.0}"
-		    windowtitle="CTRP PA WEB">
-		    <doctitle><![CDATA[<h1>CTRP PA Abstraction Web Layer</h1>]]></doctitle>
+        <javadoc destdir="${pa-web.build.javadoc}"
+            sourcepath="${pa-web.build.srcDir.0}"
+            windowtitle="CTRP PA WEB">
+            <doctitle><![CDATA[<h1>CTRP PA Abstraction Web Layer</h1>]]></doctitle>
             <classpath>
                 <path refid="compile.classpath"/>
                 <path refid="common.package.classpath" />
             </classpath>
-		</javadoc>    
+        </javadoc>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Determines build version and revision                                  -->
     <!-- ====================================================================== -->
@@ -620,7 +620,7 @@
         <svn>
             <status path="." revisionproperty="project.revision" urlproperty="project.url" />
         </svn>
-        <propertyregex property="project.base" input="${project.url}" casesensitive="false" 
+        <propertyregex property="project.base" input="${project.url}" casesensitive="false"
             select="\1" regexp="coppa\/([^/]*)\/"/>
         <if>
             <equals arg1="${project.base}" arg2="trunk"/>

@@ -376,8 +376,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
     private boolean isRecruitmentStatusUpdated(StudySiteAccrualStatusDTO ssas) {
         String statusDate = TsConverter.convertToString(ssas.getStatusDate());
-        return ssas != null && (!StringUtils.equalsIgnoreCase(ssas.getStatusCode().getCode(), recStatus)
-                || !StringUtils.equalsIgnoreCase(statusDate, recStatusDate));
+        return !StringUtils.equalsIgnoreCase(ssas.getStatusCode().getCode(), recStatus)
+                || !StringUtils.equalsIgnoreCase(statusDate, recStatusDate);
     }
 
     private Ii saveNonPropWithNewSite(StudySiteDTO sp, StudySiteAccrualStatusDTO ssas,
@@ -743,46 +743,47 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      */
     private String getStudyParticipationPrimContact() {
         clearErrorsAndMessages();
-        ParticipatingOrganizationsTabWebDTO orgsTabWebDTO = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
-                .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
+        ParticipatingOrganizationsTabWebDTO orgsTabWebDTO = (ParticipatingOrganizationsTabWebDTO)
+            ServletActionContext.getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         try {
-        List<PaPersonDTO> resultsList = PaRegistry.getPAHealthCareProviderService().getPersonsByStudySiteId(
-                orgsTabWebDTO.getStudyParticipationId(), StudySiteContactRoleCode.PRIMARY_CONTACT.getName());
-        if (resultsList != null && !resultsList.isEmpty()) {
-            personContactWebDTO = resultsList.get(0);
-        } else {
-           StudySiteContactDTO siteConDto = new StudySiteContactDTO();
-           List<StudySiteContactDTO> siteContactDtos = sPartContactService.getByStudySite(
-                   IiConverter.convertToIi(orgsTabWebDTO.getStudyParticipationId()));
-           for (StudySiteContactDTO cDto : siteContactDtos) {
-               if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().
-                       equalsIgnoreCase(cDto.getRoleCode().getCode())) {
-                   siteConDto = cDto;
-               }
-           }
-           if (siteConDto != null && !PAUtil.isIiNull(siteConDto.getOrganizationalContactIi())) {
+            List<PaPersonDTO> resultsList = PaRegistry.getPAHealthCareProviderService()
+                .getPersonsByStudySiteId(orgsTabWebDTO.getStudyParticipationId(),
+                                         StudySiteContactRoleCode.PRIMARY_CONTACT.getName());
+            if (resultsList != null && !resultsList.isEmpty()) {
+                personContactWebDTO = resultsList.get(0);
+            } else {
+                StudySiteContactDTO siteConDto = new StudySiteContactDTO();
+                List<StudySiteContactDTO> siteContactDtos = sPartContactService.getByStudySite(IiConverter
+                    .convertToIi(orgsTabWebDTO.getStudyParticipationId()));
+                for (StudySiteContactDTO cDto : siteContactDtos) {
+                    if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equalsIgnoreCase(cDto.getRoleCode()
+                                                                                                .getCode())) {
+                        siteConDto = cDto;
+                    }
+                }
+                if (!PAUtil.isIiNull(siteConDto.getOrganizationalContactIi())) {
 
-                   PAContactDTO paDto = correlationUtils.getContactByPAOrganizationalContactId((
-                            Long.valueOf(siteConDto.getOrganizationalContactIi().getExtension())));
-                   if (paDto.getTitle() != null)  {
-                       personContactWebDTO = new PaPersonDTO();
-                       personContactWebDTO.setTitle(paDto.getTitle());
-                       personContactWebDTO.setTelephone(DSetConverter.getFirstElement(
-                               siteConDto.getTelecomAddresses(), "PHONE"));
-                       personContactWebDTO.setEmail(DSetConverter.getFirstElement(
-                               siteConDto.getTelecomAddresses(), "EMAIL"));
-                       personContactWebDTO.setSelectedPersId(Long.valueOf(paDto.getSrIdentifier().getExtension()));
-                       personContactWebDTO.setId(Long.valueOf(paDto.getSrIdentifier().getExtension()));
-                       personContactWebDTO.setStatusCode(FunctionalRoleStatusCode.
-                               getByCode(CdConverter.convertCdToString(siteConDto.getStatusCode())));
-                   }
-           }
-         }
+                    PAContactDTO paDto = correlationUtils.getContactByPAOrganizationalContactId((Long
+                        .valueOf(siteConDto.getOrganizationalContactIi().getExtension())));
+                    if (paDto.getTitle() != null) {
+                        personContactWebDTO = new PaPersonDTO();
+                        personContactWebDTO.setTitle(paDto.getTitle());
+                        personContactWebDTO
+                            .setTelephone(DSetConverter.getFirstElement(siteConDto.getTelecomAddresses(), "PHONE"));
+                        personContactWebDTO.setEmail(DSetConverter.getFirstElement(siteConDto.getTelecomAddresses(),
+                                                                                   "EMAIL"));
+                        personContactWebDTO.setSelectedPersId(Long.valueOf(paDto.getSrIdentifier().getExtension()));
+                        personContactWebDTO.setId(Long.valueOf(paDto.getSrIdentifier().getExtension()));
+                        personContactWebDTO.setStatusCode(FunctionalRoleStatusCode.getByCode(CdConverter
+                            .convertCdToString(siteConDto.getStatusCode())));
+                    }
+                }
+            }
         } catch (NullifiedRoleException e) {
-            LOG.error("NullifiedRoleException while getting site contact Info" + e.getMessage());
+            LOG.error("NullifiedRoleException while getting site contact Info", e);
             addActionError("NullifiedRoleException while getting site contact Info: " + e.getMessage());
         } catch (PAException e) {
-            LOG.error("exception: " + e.getMessage());
+            LOG.error("exception: ", e);
             addActionError("Exception: " + e.getMessage());
         }
         return DISPLAY_SP_CONTACTS;

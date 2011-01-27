@@ -388,11 +388,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
         List<DocumentDTO> isoList = documentServiceLocal.getDocumentsByStudyProtocol(studyProtocolIi);
         String protocolDoc = null;
-        if (!(isoList.isEmpty())) {
-            for (DocumentDTO dto : isoList) {
-                if (dto.getTypeCode().getCode().equalsIgnoreCase(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode())) {
-                    protocolDoc = dto.getTypeCode().getCode().toString();
-                }
+        for (DocumentDTO dto : isoList) {
+            if (dto.getTypeCode().getCode().equalsIgnoreCase(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode())) {
+                protocolDoc = dto.getTypeCode().getCode().toString();
             }
         }
         PAServiceUtils paServiceUtils = new PAServiceUtils();
@@ -412,7 +410,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     + " or Select General Trial Details from Administrative Data menu.",
                     "Either one of NCT number or Proprietary Template document is mandatory"));
         }
-    } // method
+    }
 
     /**
      * @param abstractionList

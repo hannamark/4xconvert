@@ -323,7 +323,7 @@
                           srcdir="${viewer.build.srcDir.0}"/>
 
         <cobertura-check datafile="${viewer.build.dir}/cobertura.ser"
-                         totalbranchrate="67"
+                         totalbranchrate="68"
                          totallinerate="84"
                          haltonfailure="true"/>
      </target>
@@ -385,20 +385,20 @@
     <!-- ====================================================================== -->
     <!-- Generate Javadoc                                                       -->
     <!-- ====================================================================== -->
-        
+
     <target name="generate-javadoc">
-		<javadoc destdir="${viewer.build.javadoc}"
-		    sourcepath="${viewer.build.srcDir.0}"
-		    windowtitle="CTRP Viewer EJB">
-		    <doctitle><![CDATA[<h1>CTRP Viewer Service Layer</h1>]]></doctitle>
+        <javadoc destdir="${viewer.build.javadoc}"
+            sourcepath="${viewer.build.srcDir.0}"
+            windowtitle="CTRP Viewer EJB">
+            <doctitle><![CDATA[<h1>CTRP Viewer Service Layer</h1>]]></doctitle>
             <classpath>
                 <path refid="compile.classpath"/>
                 <path refid="common.package.classpath" />
             </classpath>
-		</javadoc>    
+        </javadoc>
     </target>
-   
-    
+
+
     <!-- ====================================================================== -->
     <!-- Run all tests                                                          -->
     <!-- ====================================================================== -->

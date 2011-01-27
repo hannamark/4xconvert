@@ -294,15 +294,15 @@
         <copy todir="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF/lib">
             <fileset dir="${lib.dir}/runtime"/>
         </copy>
-        
-        <copy todir="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF" file="${basedir}/src/webapp/WEB-INF/web.xml" 
+
+        <copy todir="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF" file="${basedir}/src/webapp/WEB-INF/web.xml"
             filtering="true">
             <filterset>
                 <filter token="project.version" value="${project.version}"/>
                 <filter token="project.revision" value="${project.revision}"/>
             </filterset>
         </copy>
-            
+
         <war destfile="${viewer.build.dir}/${viewer.war}"
              compress="false"
              webxml="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF/web.xml">
@@ -371,7 +371,7 @@
                           srcdir="${viewer.build.srcDir.0}"/>
 
         <cobertura-check datafile="${viewer.build.dir}/cobertura.ser"
-                         totalbranchrate="72"
+                         totalbranchrate="74"
                          totallinerate="73"
                          haltonfailure="true"/>
     </target>
@@ -473,8 +473,8 @@
 
     <target name="generate-javadoc">
         <javadoc destdir="${viewer.build.javadoc}"
-		    sourcepath="${viewer.build.srcDir.0}"
-		    windowtitle="CTRP Viewer Web">
+            sourcepath="${viewer.build.srcDir.0}"
+            windowtitle="CTRP Viewer Web">
             <doctitle>
                 <![CDATA[<h1>CTRP Viewer Web Layer</h1>]]></doctitle>
         <classpath>
@@ -492,7 +492,7 @@
         <svn>
             <status path="." revisionproperty="project.revision" urlproperty="project.url" />
         </svn>
-        <propertyregex property="project.base" input="${project.url}" casesensitive="false" 
+        <propertyregex property="project.base" input="${project.url}" casesensitive="false"
             select="\1" regexp="coppa\/([^/]*)\/"/>
         <if>
             <equals arg1="${project.base}" arg2="trunk"/>

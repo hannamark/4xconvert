@@ -91,12 +91,12 @@ import com.opensymphony.xwork2.conversion.TypeConversionException;
  * @author Hugh Reinhart
  * @since Oct 19, 2009
  */
+@SuppressWarnings("rawtypes")
 public class StrutsDateConverter extends StrutsTypeConverter {
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Object convertFromString(Map map, String[] strings, Class aClass) {
         if (strings.length != 1) {
@@ -116,7 +116,6 @@ public class StrutsDateConverter extends StrutsTypeConverter {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public String convertToString(Map map, Object object) {
         if (object == null) {

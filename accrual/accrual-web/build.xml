@@ -82,14 +82,14 @@
             <include name="*.jar"/>
         </fileset>
     </path>
-    
+
     <property name="selenium.jar.dir" location="${lib.dir}/accrual-web/selenium"/>
     <path id="selenium.classpath">
         <fileset dir="${selenium.jar.dir}">
             <include name="*.jar"/>
         </fileset>
     </path>
-    
+
     <path id="ivy.classpath">
         <fileset dir="${lib.dir}">
             <include name="${ivy.file}"/>
@@ -153,7 +153,7 @@
             <filterset>
                 <filter token="project.version" value="${project.version}"/>
                 <filter token="project.revision" value="${project.revision}"/>
-            </filterset>   
+            </filterset>
         </copy>
     </target>
 
@@ -226,12 +226,12 @@
                           srcdir="${web.build.srcDir}"/>
 
         <cobertura-check datafile="${web.build.dir}/cobertura.ser"
-                         totalbranchrate="78"
+                         totalbranchrate="79"
                          totallinerate="87"
                          haltonfailure="true"/>
      </target>
-    
-    
+
+
     <!-- ====================================================================== -->
     <!-- Configure tests target                                                 -->
     <!-- ====================================================================== -->
@@ -244,7 +244,7 @@
             </filterset>
         </copy>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Run JUnit Integration Tests                                            -->
     <!-- ====================================================================== -->
@@ -290,7 +290,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pmdFile}" maxruleviolations="7">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pmdFile}" maxruleviolations="3">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${web.report.dir}/pmd.txt"/>
             <formatter type="xml"  toFile="${web.report.dir}/pmd.xml"/>
@@ -414,12 +414,12 @@
         <ivy:resolve refresh="true" conf="test"/>
         <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test"/>
     </target>
-    
+
     <target name="ivy-selenium" depends="init:ivy"  description="Resolves and retrieves the JARs needed to run the subproject">
         <ivy:resolve refresh="true" conf="selenium"/>
         <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="selenium"/>
     </target>
-    
+
     <target name="ivy-get"
             depends="ivy-compile, ivy-runtime, ivy-test, ivy-selenium"
             description="Updates the local ivy repository">
@@ -432,18 +432,18 @@
     <!-- ====================================================================== -->
     <!-- Generate Javadoc                                                       -->
     <!-- ====================================================================== -->
-        
+
     <target name="generate-javadoc">
-		<javadoc destdir="${web.build.javadoc}"
-		    sourcepath="${web.build.srcDir}"
-		    windowtitle="CTRP Accrual Web">
-		    <doctitle><![CDATA[<h1>CTRP Accrual Web Layer</h1>]]></doctitle>
+        <javadoc destdir="${web.build.javadoc}"
+            sourcepath="${web.build.srcDir}"
+            windowtitle="CTRP Accrual Web">
+            <doctitle><![CDATA[<h1>CTRP Accrual Web Layer</h1>]]></doctitle>
             <classpath>
                 <path refid="compile.classpath"/>
             </classpath>
-		</javadoc>    
+        </javadoc>
     </target>
-   
+
 
     <!-- ====================================================================== -->
     <!-- Copies JSP to the tmp folder                                           -->
@@ -470,7 +470,7 @@
             </sequential>
         </for>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Determines build version and revision                                  -->
     <!-- ====================================================================== -->
@@ -479,7 +479,7 @@
         <svn>
             <status path="." revisionproperty="project.revision" urlproperty="project.url" />
         </svn>
-        <propertyregex property="project.base" input="${project.url}" casesensitive="false" 
+        <propertyregex property="project.base" input="${project.url}" casesensitive="false"
             select="\1" regexp="coppa\/([^/]*)\/"/>
         <if>
             <equals arg1="${project.base}" arg2="trunk"/>
