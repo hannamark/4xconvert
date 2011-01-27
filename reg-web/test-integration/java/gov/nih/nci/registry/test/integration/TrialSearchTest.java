@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The pa
+ * source code form and machine readable, binary, object code form. The reg-web
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This pa Software License (the License) is between NCI and You. You (or
+ * This reg-web Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the pa Software to (i) use, install, access, operate,
+ * its rights in the reg-web Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the pa Software; (ii) distribute and
- * have distributed to and by third parties the pa Software and any
+ * and prepare derivative works of the reg-web Software; (ii) distribute and
+ * have distributed to and by third parties the reg-web Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -85,57 +85,55 @@ package gov.nih.nci.registry.test.integration;
 import org.junit.Test;
 
 /**
- * Tests the trial registration process.
- *
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ * Tests trial search in Registry, as well as search-related functionality.
+ * @author Steve Lustbader
  */
-public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
+public class TrialSearchTest  extends AbstractRegistrySeleniumTest {
 
     /**
-     * Tests registering a trial.
-     * @throws Exception on error
+     * Tests exporting search results to CSV/Excel.
      */
     @Test
-    public void testRegisterTrial() throws Exception {
+    public void testExportSearchResults() {
         loginAsAbstractor();
         isLoggedIn();
         handleDisclaimer(true);
-        // register a trial
-        registerTrial("Test Trial created by Selenium.", "LEAD-ORG");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
 
-        // try to register a trial with the same lead org trial ID and fail
-        registerTrial("Test Trial created by Selenium.", "LEAD-ORG");
-        assertFalse("A success message was found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertFalse("A success message was found",
-                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-        assertTrue("No error message found", selenium.isElementPresent("css=div.error_msg"));
-        assertTrue("No error message found",
-                   selenium
-                       .isTextPresent("Duplicate Trial Submission: A trial exists in the system with the same Lead Organization Trial Identifier for the selected Lead Organization"));
+        clickAndWait("searchTrialsMenuOption");
+        waitForElementById("searchMyTrialsBtn", 5);
+        waitForElementById("searchAllTrialsBtn", 5);
 
-        // try to register a trial with the a new lead org trial ID (and title) and succeed
-        registerTrial("Test Summ 4 Anatomic Site Trial created by Selenium.", "LEAD-ORG2");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+        // search my trials, verify export links
+        clickAndWait("searchMyTrialsBtn");
+        assertTrue("Wrong search results returned", selenium.isTextPresent("2 items found"));
+        assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
+        assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
+
+        // verify no export links when no results found
+        selenium.type("officialTitle", "no trials with this title");
+        clickAndWait("searchMyTrialsBtn");
+        assertTrue("Wrong search results returned", selenium.isTextPresent("Nothing found to display."));
+        assertFalse("CSV link shouldn't be shown with no results", selenium.isElementPresent("link=CSV"));
+        assertFalse("Excel link shouldn't be shown with no results", selenium.isElementPresent("link=Excel"));
+
+        // search all trials, verify export links
+        selenium.type("officialTitle", "selenium");
+        clickAndWait("searchAllTrialsBtn");
+        assertTrue("Wrong search results returned", selenium.isTextPresent("2 items found"));
+
+        assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
+        assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
+
+        // search all trials, verify export links
+        selenium.type("officialTitle", "");
+        clickAndWait("searchSavedDraftsBtn");
+        assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
+        assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
+        assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
+
+        // TODO: actually download and verify the files.  Unfortunately, Selenium doesn't support this right now,
+        // but since this functionality comes from displaytag, we can assume it works.  It would be good to verify
+        // the file contents, though (eg, no html was exported, etc).
     }
 
-    /**
-     * Tests saving a draft trial.
-     * @throws Exception on error
-     */
-    @Test
-    public void testSaveDraftTrial() throws Exception {
-        loginAsAbstractor();
-        isLoggedIn();
-        handleDisclaimer(true);
-        // register a trial
-        registerDraftTrial("Test Trial Draft created by Selenium.", "LEAD-ORG");
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial draft has been successfully saved and assigned the Identifier"));
-
-    }
 }
