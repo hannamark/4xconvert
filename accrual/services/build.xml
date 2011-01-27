@@ -127,7 +127,10 @@
         <copy todir="${services.build.domainDir}/service/correlation">
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/correlation/OrganizationCorrelationServiceRemote.java"/>
         </copy>
-        <copy todir="${services.build.outputDir}">
+        <copy todir="${services.build.outputDir}" filtering="true" overwrite="true">
+            <filterset begintoken="$${" endtoken="}" >
+                <filter token="accrual.batch.upload.filepath.loc" value="${accrual.batch.upload.filepath.loc}"/>
+            </filterset>
             <fileset file="${software.dir}/pa/pa-ejb/src/resources/paear.properties"/>
         </copy>
      </target>

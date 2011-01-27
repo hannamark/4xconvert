@@ -97,6 +97,7 @@
         <ant inheritAll="false" inheritRefs="false" antfile="${services.build.file}" dir="${services.dir}" >
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
             <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
+            <property name="accrual.batch.upload.filepath.loc" value="${accrual.batch.upload.filepath.loc}"/>
             <target name="test-dynamic-analysis"/>
         </ant>
         <ant inheritAll="false" inheritRefs="false" antfile="${accrual-web.build.file}" dir="${accrual-web.dir}" >
