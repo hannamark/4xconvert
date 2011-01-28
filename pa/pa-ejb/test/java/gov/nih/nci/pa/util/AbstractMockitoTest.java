@@ -216,6 +216,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
+import org.mockito.ArgumentMatcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -342,6 +343,7 @@ public class AbstractMockitoTest {
 
        studyOverallStatusDto = new StudyOverallStatusDTO();
        studyOverallStatusDto.setStatusCode(CdConverter.convertStringToCd(StudyStatusCode.WITHDRAWN.getCode()));
+       studyOverallStatusDto.setStatusDate(TsConverter.convertToTs(new Timestamp(0)));
 
        studyRecruitmentStatusDto = new StudyRecruitmentStatusDTO();
        studyRecruitmentStatusDto.setStatusCode(CdConverter.convertToCd(StudyRecruitmentStatusCode.COMPLETED));
@@ -362,6 +364,9 @@ public class AbstractMockitoTest {
 
        diseaseDto = new DiseaseDTO();
        diseaseDto.setPreferredName(StConverter.convertToSt("some disease"));
+       diseaseDto.setDiseaseCode(StConverter.convertToSt("diseaseCode"));
+       diseaseDto.setMenuDisplayName(StConverter.convertToSt("menuDisplayName"));
+       diseaseDto.setNtTermIdentifier(StConverter.convertToSt("ntTerm"));
 
        paContactDto = new PAContactDTO();
        paContactDto.setTitle("some title");
@@ -420,6 +425,50 @@ public class AbstractMockitoTest {
 
        setupMocks();
      }
+    
+    class CentralContactMatcher extends ArgumentMatcher<StudyContactDTO> {
+        /* (non-Javadoc)
+         * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
+         */
+        @Override
+        public boolean matches(Object argument) {
+            if (argument instanceof StudyContactDTO) {
+                StudyContactDTO sc = (StudyContactDTO) argument;
+                return sc.getRoleCode().getCode().equals(StudyContactRoleCode.CENTRAL_CONTACT.getCode());
+            }
+            return false;
+        }
+    }
+
+    class StudySiteMatcher extends ArgumentMatcher<StudySiteDTO> {
+        /* (non-Javadoc)
+         * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
+         */
+        @Override
+        public boolean matches(Object o) {
+            if (o instanceof StudySiteDTO) {
+                StudySiteDTO ss = (StudySiteDTO)o;
+                String code = ss.getFunctionalCode().getCode();
+                return code.equals(StudySiteFunctionalCode.FUNDING_SOURCE.getCode())
+                    || code.equals(StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode());
+            }
+            return false;
+        }
+    }
+
+    class StudySiteWrongFCMatcher extends ArgumentMatcher<StudySiteDTO> {
+        /* (non-Javadoc)
+         * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
+         */
+        @Override
+        public boolean matches(Object o) {
+            if (o instanceof StudySiteDTO) {
+                StudySiteDTO ss = (StudySiteDTO)o;
+                return !ss.getFunctionalCode().getCode().equals(StudySiteFunctionalCode.FUNDING_SOURCE.getCode());
+            }
+            return false;
+        }
+    }
 
     private void setupSubGroup() {
         stratumGroupDtoList = new ArrayList<StratumGroupDTO>();
@@ -443,6 +492,8 @@ public class AbstractMockitoTest {
         interventionAltNameDtoList.add(interventionAltNameDto);
 
         interventionDto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+
+        interventionDto.setName(StConverter.convertToSt("interventionName"));
     }
 
     private void setupPlEcDto() {
@@ -591,9 +642,9 @@ public class AbstractMockitoTest {
         blindingRoles.add(CdConverter.convertStringToCd(BlindingRoleCode.SUBJECT.getCode()));
         blindingRoles.add(CdConverter.convertStringToCd("some unknown code"));
         interventionalSPDto.setBlindedRoleCode(DSetConverter.convertCdListToDSet(blindingRoles));
-        interventionalSPDto.setPrimaryPurposeCode(CdConverter.convertStringToCd(""));
+        interventionalSPDto.setPrimaryPurposeCode(CdConverter.convertStringToCd("PurposeCode"));
         interventionalSPDto.setPhaseCode(CdConverter.convertStringToCd(""));
-        interventionalSPDto.setDesignConfigurationCode(CdConverter.convertStringToCd(""));
+        interventionalSPDto.setDesignConfigurationCode(CdConverter.convertStringToCd("DesignCode"));
         interventionalSPDto.setNumberOfInterventionGroups(IntConverter.convertToInt(0));
         interventionalSPDto.setBlindingSchemaCode(CdConverter.convertStringToCd(""));
         interventionalSPDto.setAllocationCode(CdConverter.convertStringToCd(""));
@@ -662,7 +713,7 @@ public class AbstractMockitoTest {
         cd.setCode("CA");
         studyResDto.setNihInstitutionCode(cd);
         studyResDto.setNciDivisionProgramCode(cd);
-        studyResDto.setSerialNumber(StConverter.convertToSt("SR_SER"));
+        studyResDto.setSerialNumber(StConverter.convertToSt("177"));
         studyResourcingDtoList.add(studyResDto);
     }
 
@@ -699,6 +750,7 @@ public class AbstractMockitoTest {
         studySiteDto.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("1"));
         studySiteDto.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.SUSPENDED));
         studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+        studySiteDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LEAD_ORG_1"));
         studySiteDtoList.add(studySiteDto);
         StudySiteDTO leadOrgDTO = new StudySiteDTO();
         leadOrgDTO.setReviewBoardApprovalStatusCode(CdConverter
@@ -720,6 +772,7 @@ public class AbstractMockitoTest {
         spDto.setOfficialTitle(StConverter.convertToSt("off title"));
         spDto.setIdentifier(spId);
         spDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
+        spDto.setFdaRegulatedIndicator(BlConverter.convertToBl(true));
         spDto.setStudyProtocolType(StConverter.convertToSt("InterventionalStudyProtocol"));
         spDto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(true));
         spDto.setSection801Indicator(BlConverter.convertToBl(true));
@@ -728,10 +781,13 @@ public class AbstractMockitoTest {
         spDto.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp(0)));
         spDto.setAccrualReportingMethodCode(CdConverter.convertToCd(AccrualReportingMethodCode.ABBREVIATED));
         spDto.setStartDate(TsConverter.convertToTs(new Timestamp(0)));
-        spDto.setStartDateTypeCode(CdConverter.convertStringToCd(""));
+        spDto.setStartDateTypeCode(CdConverter.convertStringToCd("Actual"));
         spDto.setPrimaryCompletionDate(TsConverter.convertToTs(new Timestamp(0)));
-        spDto.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(""));
+        spDto.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd("Anticipated"));
         spDto.setPublicDescription(StConverter.convertToSt("public description"));
+        spDto.setDelayedpostingIndicator(BlConverter.convertToBl(true));
+        spDto.setPublicTitle(StConverter.convertToSt("public title"));
+        spDto.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBl(true));
 
 
         DSet<Ii> secondaryIdentifiers = new DSet<Ii>();
@@ -795,6 +851,8 @@ public class AbstractMockitoTest {
         cnt.setName("United States");
         countryList.add(cnt);
         when(lookupSvc.getCountries()).thenReturn(countryList);
+        when(lookupSvc.getCountryByName(anyString())).thenReturn(cnt);
+        when(lookupSvc.searchCountry(any(Country.class))).thenReturn(countryList);
         PDQXmlGeneratorServiceRemote pdqXmlGeneratorSvc = mock(PDQXmlGeneratorServiceRemote.class);
         when(pdqXmlGeneratorSvc.generatePdqXml(any(Ii.class))).thenReturn("<pdq></pdq>");
 
@@ -967,6 +1025,10 @@ public class AbstractMockitoTest {
     private void setupRegSvcMock() throws PAException {
         regUserSvc = mock(RegistryUserServiceLocal.class);
         when(regUserSvc.getUser(anyString())).thenReturn(regUser);
+
+        List<String> names = new ArrayList<String>();
+        names.add("I am a trial owner");
+        when(regUserSvc.getTrialOwnerNames(anyLong())).thenReturn(names);
     }
 
     private void setupSsSvcMock() throws PAException {
