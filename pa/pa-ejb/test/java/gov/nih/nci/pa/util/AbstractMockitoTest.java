@@ -216,7 +216,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
-import org.mockito.ArgumentMatcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -425,50 +424,6 @@ public class AbstractMockitoTest {
 
        setupMocks();
      }
-    
-    class CentralContactMatcher extends ArgumentMatcher<StudyContactDTO> {
-        /* (non-Javadoc)
-         * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
-         */
-        @Override
-        public boolean matches(Object argument) {
-            if (argument instanceof StudyContactDTO) {
-                StudyContactDTO sc = (StudyContactDTO) argument;
-                return sc.getRoleCode().getCode().equals(StudyContactRoleCode.CENTRAL_CONTACT.getCode());
-            }
-            return false;
-        }
-    }
-
-    class StudySiteMatcher extends ArgumentMatcher<StudySiteDTO> {
-        /* (non-Javadoc)
-         * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
-         */
-        @Override
-        public boolean matches(Object o) {
-            if (o instanceof StudySiteDTO) {
-                StudySiteDTO ss = (StudySiteDTO)o;
-                String code = ss.getFunctionalCode().getCode();
-                return code.equals(StudySiteFunctionalCode.FUNDING_SOURCE.getCode())
-                    || code.equals(StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode());
-            }
-            return false;
-        }
-    }
-
-    class StudySiteWrongFCMatcher extends ArgumentMatcher<StudySiteDTO> {
-        /* (non-Javadoc)
-         * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
-         */
-        @Override
-        public boolean matches(Object o) {
-            if (o instanceof StudySiteDTO) {
-                StudySiteDTO ss = (StudySiteDTO)o;
-                return !ss.getFunctionalCode().getCode().equals(StudySiteFunctionalCode.FUNDING_SOURCE.getCode());
-            }
-            return false;
-        }
-    }
 
     private void setupSubGroup() {
         stratumGroupDtoList = new ArrayList<StratumGroupDTO>();
