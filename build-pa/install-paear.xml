@@ -273,7 +273,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           </fileset>
           <filterset refid="embedded.filterset"/>
       </copy>
-
+      
       <echo message="Looking for jboss-service.xml in ${pa-ear.dir.dist}"/>
       <delete file="${temp.dir}/pa-ear/jboss-service.xml"/>
       <copy todir="${temp.dir}/pa-ear" filtering="true">
@@ -338,7 +338,29 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
       <unzip src="${pa-ear.dir.dist}/${accrual-ear.ear.file}" dest="${temp.dir}/accrual-ear"/>
       <unzip src="${temp.dir}/accrual-ear/accrual-services.jar" dest="${temp.dir}/accrual-services-jar"/>
-
+      <unzip src="${temp.dir}/accrual-ear/accrual.war" dest="${temp.dir}/accrual-war"/>
+      
+      <copy file="${temp.dir}/accrual-war/WEB-INF/classes/quartz_jobs.xml" todir="${temp.dir}/accrual-war"/>
+      <echo message="Looking for quartz_jobs.xml in ${temp.dir}/accrual-war"/>
+      <copy todir="${temp.dir}/accrual-war/WEB-INF/classes" filtering="true" overwrite="true">
+          <fileset dir="${temp.dir}/accrual-war">
+              <include name="quartz_jobs.xml"/>
+          </fileset>
+          <filterset begintoken="$${" endtoken="}">
+              <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
+          </filterset>
+      </copy>
+      <delete file="${temp.dir}/accrual-war/quartz_jobs.xml"/>
+      
+      <delete file="${temp.dir}/accrual-services-jar/paear.properties"/>
+      <echo message="Looking for paear.properties in ${pa-ear.dir.dist}"/>
+      <copy todir="${temp.dir}/accrual-services-jar" filtering="true">
+          <fileset dir="${pa-ear.dir.dist}">
+              <include name="paear.properties"/>
+          </fileset>
+          <filterset refid="embedded.filterset"/>
+      </copy>
+      
       <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
       <var name="file.list"
         value="accrual-services-jar/jndi.properties,accrual-services-jar/pa.jndi.properties,accrual-services-jar/po.jndi.properties,accrual-ear/META-INF/security-config.xml"/>
@@ -391,12 +413,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
       <move file="${pa-ear.dir.dist}/${accrual-ear.ear.file}" tofile="${pa-ear.dir.dist}/${accrual-ear.ear.file}.orig"/>
       <move file="${temp.dir}/accrual-ear/accrual-services.jar" tofile="${temp.dir}/accrual-services.jar.orig"/>
+      <move file="${temp.dir}/accrual-ear/accrual.war" tofile="${temp.dir}/accrual.war.orig"/>
 
       <jar jarfile="${temp.dir}/accrual-ear/accrual-services.jar"
            compress="true"
            index="false"
            basedir="${temp.dir}/accrual-services-jar"/>
-
+      
+      <war destfile="${temp.dir}/accrual-ear/accrual.war"
+           compress="true"
+           index="false"
+           basedir="${temp.dir}/accrual-war"/>
+      
       <ear destfile="${pa-ear.dir.dist}/${accrual-ear.ear.file}"
            basedir="${temp.dir}/accrual-ear"
            compress="false"

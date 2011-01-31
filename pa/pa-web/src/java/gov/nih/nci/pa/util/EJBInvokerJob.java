@@ -1,7 +1,5 @@
 package gov.nih.nci.pa.util;
 
-import gov.nih.nci.logging.api.util.StringUtils;
-
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 
@@ -10,6 +8,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobDataMap;

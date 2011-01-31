@@ -529,6 +529,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="gridgrouper.admin.user" value="%%gridgrouper.admin.user%%"/>
             <property name="gridgrouper.admin.password" value="%%gridgrouper.admin.password%%"/>
             <property name="idps.allow.password.editing" value="%%idps.allow.password.editing%%"/>
+            <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
 
             <target name="${accrual-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>

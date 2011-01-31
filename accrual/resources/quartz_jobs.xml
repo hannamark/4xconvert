@@ -1,0 +1,47 @@
+<quartz xmlns="http://www.quartzscheduler.org/ns/quartz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.quartzscheduler.org/ns/quartz http://www.quartzscheduler.org/ns/quartz/job_scheduling_data_1_5.xsd" version="1.1">
+    <job>
+        <job-detail>
+            <name>batchUploadProcessingJob</name>
+            <group>DEFAULT</group>
+            <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+            <volatility>false</volatility>
+            <durability>false</durability>
+            <recover>false</recover>
+            <job-data-map allows-transient-data="true">
+                <entry>
+                    <key>ejb</key>
+                    <value>accrual/BatchUploadProcessingTaskServiceBean/local</value>
+                </entry>
+                <entry>
+                    <key>interfaceName</key>
+                    <value>gov.nih.nci.accrual.service.BatchUploadProcessingTaskServiceLocal</value>
+                </entry>
+                <entry>
+                    <key>method</key>
+                    <value>processBatchUploads</value>
+                </entry>
+                <entry>
+                    <key>java.naming.factory.initial</key>
+                    <value>org.jnp.interfaces.NamingContextFactory</value>
+                </entry>
+                <entry>
+                    <key>java.naming.provider.url</key>
+                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
+                </entry>
+            </job-data-map>
+        </job-detail>
+        <trigger>
+            <cron>
+                <name>batchUploadProcessingJobTrigger</name>
+                <group>DailyTriggerGroup</group>
+                <description>Accrual Batch Upload Processing Trigger</description>
+                <job-name>batchUploadProcessingJob</job-name>
+                <job-group>DEFAULT</job-group>
+                <start-time>2011-01-27T00:00:00</start-time>
+                <!-- This job is run everyday at 7PM EST. -->
+                <cron-expression>0 0 19 ? * *</cron-expression>
+            </cron>
+        </trigger>
+    </job>
+</quartz> 
