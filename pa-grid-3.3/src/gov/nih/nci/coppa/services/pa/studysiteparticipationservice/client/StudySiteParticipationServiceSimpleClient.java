@@ -68,9 +68,9 @@ import org.iso._21090.TEL;
 
 /**
  * Simple client to call the StudySiteParticipationService.
- * 
+ *
  * @author moweis
- * 
+ *
  */
 public class StudySiteParticipationServiceSimpleClient {
 
@@ -84,12 +84,12 @@ public class StudySiteParticipationServiceSimpleClient {
             if (!(args.length < 2)) {
                 if (args[0].equals("-url")) {
                     StudySiteParticipationServiceClient client = new StudySiteParticipationServiceClient(args[1]);
-                    //createSiteWithPiAndPrimCont(client);
+                    createSiteWithPiAndPrimCont(client);
                     //createSiteWithPiAndGenCont(client);
                     //updateSiteWithXml(client);
                     //getByStudyProtocol(client);
                     //changePITest(client);
-                    changePIUsingCTEPIDTest(client);
+                    // changePIUsingCTEPIDTest(client);
                     //createPartSiteWithNoPI(client);
                 } else {
                     usage();
@@ -109,22 +109,22 @@ public class StudySiteParticipationServiceSimpleClient {
             PAFault, RemoteException, URISyntaxException, JAXBException {
 
         StudySite ssXml = XMLUnmarshaller.unmarshal(StudySite.class, "foo.xml");
-        
+
         System.out.println("****:" + ssXml.getOrganizationRole().getIdentifier().getItem().get(0).getExtension());
         gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite result = client
             .createParticipatingSite(ssXml);
-        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));   
+        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
-    
+
     private static StudySite getSiteHelper() throws DtoTransformException,
         PAFault, RemoteException, URISyntaxException, UnsupportedEncodingException {
      // create study protocol
         II studyProtocolIi = new II();
-        studyProtocolIi.setExtension("CTEP-1234");
+        studyProtocolIi.setExtension("CTEP1234");
         studyProtocolIi.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
         StudyProtocol studyProtocol = new StudyProtocol();
         studyProtocol.setIdentifier(studyProtocolIi);
-        
+
         StudySiteDTO studySiteDTO = new StudySiteDTO();
         studySiteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(
                 new Timestamp(new Date().getTime() + Long.valueOf("300000000")), null));
@@ -141,7 +141,7 @@ public class StudySiteParticipationServiceSimpleClient {
         ssXml.setAccrualStatus(ssasXml);
 
         Ii hcfIi = new Ii();
-        hcfIi.setExtension("SUPERCOOL2");
+        hcfIi.setExtension("76008");
         hcfIi.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
         DSet<Ii> hcfDSetIi = new DSet<Ii>();
         hcfDSetIi.setItem(new HashSet<Ii>());
@@ -150,20 +150,20 @@ public class StudySiteParticipationServiceSimpleClient {
         hcfDTO.setIdentifier(hcfDSetIi);
 
         ssXml.setOrganizationRole(HealthCareFacilityManagementTransformer.INSTANCE.toXml(hcfDTO));
-        
+
         ssXml.setStudyProtocol(studyProtocol);
         return ssXml;
     }
 
     private static void createSiteWithPiAndGenCont(StudySiteParticipationServiceClient client) throws DtoTransformException,
             PAFault, RemoteException, URISyntaxException, UnsupportedEncodingException {
-        
+
         StudySite ssXml = getSiteHelper();
         ssXml.getStudySiteContacts().add(createPrinInvStudySiteContact());
-        ssXml.getStudySiteContacts().add(createGenericContStudySiteContact()); 
+        ssXml.getStudySiteContacts().add(createGenericContStudySiteContact());
         client.createParticipatingSite(ssXml);
     }
-    
+
     private static void createSiteWithPiAndPrimCont(StudySiteParticipationServiceClient client) throws DtoTransformException,
     PAFault, RemoteException, URISyntaxException, UnsupportedEncodingException {
 
@@ -172,16 +172,16 @@ public class StudySiteParticipationServiceSimpleClient {
         ssXml.getStudySiteContacts().add(createPrimContStudySiteContact());
         client.createParticipatingSite(ssXml);
     }
-     
+
     private static StudySiteContact createPrinInvStudySiteContact() throws DtoTransformException, UnsupportedEncodingException {
         // principal investigator
         StudySiteContactDTO studySiteContactDTO = new StudySiteContactDTO();
         studySiteContactDTO.setRoleCode(CdConverter.convertStringToCd("Principal Investigator"));
         studySiteContactDTO.setPrimaryIndicator(BlConverter.convertToBl(false));
-        
+
         studySiteContactDTO.setPostalAddress(AddressConverterUtil.create("1000 Some St.", "1000 Some St.", "Rockville",
                 "MD", "20855", "USA"));
-           
+
         StudySiteContact ssCont = StudySiteContactManagementTransformer.INSTANCE.toXml(studySiteContactDTO);
         DSETTEL dsetTel = new DSETTEL();
         TEL phone1 = new TEL();
@@ -195,22 +195,12 @@ public class StudySiteParticipationServiceSimpleClient {
         ivlts.setLow(TSTransformer.INSTANCE.toXml(
                 TsConverter.convertToTs(new Timestamp((new Date()).getTime()))));
         ssCont.setStatusDateRange(ivlts);
-         
-        PersonType pt = new PersonType();
-        PersonRole pr = new ClinicalResearchStaff();
-        DSet<Ii> prnDSetIi = new DSet<Ii>();
-        prnDSetIi.setItem(new HashSet<Ii>());
-        Ii personIi = new Ii();
-        personIi.setExtension("MyCtepId1");
-        personIi.setRoot(IiConverter.CTEP_PERSON_IDENTIFIER_ROOT);
-        prnDSetIi.getItem().add(personIi);
-        pr.setIdentifier(DSETIITransformer.INSTANCE.toXml(prnDSetIi));
-        pt.getContent().add(pr);
-        ssCont.setPersonRole(pt);
-        
+
+        addCtepPersonToSSContact(ssCont, "11630");
+
         return ssCont;
     }
-    
+
     private static StudySiteContact createPrimContStudySiteContact() throws DtoTransformException, UnsupportedEncodingException {
         // principal investigator
         StudySiteContactDTO studySiteContactDTO = new StudySiteContactDTO();
@@ -218,7 +208,7 @@ public class StudySiteParticipationServiceSimpleClient {
         studySiteContactDTO.setPrimaryIndicator(BlConverter.convertToBl(true));
         studySiteContactDTO.setPostalAddress(AddressConverterUtil.create("1000 Some St.", "1000 Some St.", "Rockville",
                 "MD", "20855", "USA"));
-        
+
         StudySiteContact ssCont = StudySiteContactManagementTransformer.INSTANCE.toXml(studySiteContactDTO);
         DSETTEL dsetTel = new DSETTEL();
         TEL phone1 = new TEL();
@@ -232,21 +222,28 @@ public class StudySiteParticipationServiceSimpleClient {
         ivlts.setLow(TSTransformer.INSTANCE.toXml(
                 TsConverter.convertToTs(new Timestamp((new Date()).getTime()))));
         ssCont.setStatusDateRange(ivlts);
-        PersonType pt = new PersonType();
-        PersonRole pr = new ClinicalResearchStaff();
-        DSet<Ii> prnDSetIi = new DSet<Ii>();
-        prnDSetIi.setItem(new HashSet<Ii>());
-        Ii personIi = new Ii();
-        personIi.setExtension("MyCtepId2");
-        personIi.setRoot(IiConverter.CTEP_PERSON_IDENTIFIER_ROOT);
-        prnDSetIi.getItem().add(personIi);
-        pr.setIdentifier(DSETIITransformer.INSTANCE.toXml(prnDSetIi));
-        pt.getContent().add(pr);
-        ssCont.setPersonRole(pt);
-        
+
+        addCtepPersonToSSContact(ssCont, "11630");
+
         return ssCont;
     }
-    
+
+    private static void addCtepPersonToSSContact(StudySiteContact ssCont, String ctepID) throws DtoTransformException {
+        Ii personIi = new Ii();
+        personIi.setExtension(ctepID);
+        personIi.setRoot(IiConverter.CTEP_PERSON_IDENTIFIER_ROOT);
+        // construct the person DTO
+        PersonDTO personDto = new PersonDTO();
+        personDto.setIdentifier(personIi);
+        // set the person as the CRS player
+        ClinicalResearchStaff crs = new ClinicalResearchStaff();
+        crs.setPlayer(PersonManagementTransformer.INSTANCE.toXml(personDto));
+        // add person type to the study site
+        PersonType personType = new PersonType();
+        personType.getContent().add(crs);
+        ssCont.setPersonRole(personType);
+    }
+
     private static StudySiteContact createGenericContStudySiteContact() throws DtoTransformException, UnsupportedEncodingException {
         // principal investigator
         StudySiteContactDTO studySiteContactDTO = new StudySiteContactDTO();
@@ -254,7 +251,7 @@ public class StudySiteParticipationServiceSimpleClient {
         studySiteContactDTO.setPrimaryIndicator(BlConverter.convertToBl(true));
         studySiteContactDTO.setPostalAddress(AddressConverterUtil.create("1000 Some St.", "1000 Some St.", "Rockville",
                 "MD", "20855", "USA"));
-        
+
         StudySiteContact ssCont = StudySiteContactManagementTransformer.INSTANCE.toXml(studySiteContactDTO);
         DSETTEL dsetTel = new DSETTEL();
         TEL phone1 = new TEL();
@@ -276,20 +273,20 @@ public class StudySiteParticipationServiceSimpleClient {
         pr.setTelecomAddress(dsetTel);
         pt.getContent().add(pr);
         ssCont.setPersonRole(pt);
-        
+
         return ssCont;
     }
-    
+
     private static void getByStudyProtocol(StudySiteParticipationServiceClient client) throws DtoTransformException,
     PAFault, RemoteException, URISyntaxException {
-        
+
         Id studyProtocolId = new Id();
         studyProtocolId.setExtension("NCI-2009-01504");
         studyProtocolId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
-        gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite[] ssXmls 
+        gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite[] ssXmls
             = client.getParticipatingSitesByStudyProtocol(studyProtocolId);
         for (gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite ssXml : ssXmls) {
-            System.out.println(ToStringBuilder.reflectionToString(ssXml.getStudyProtocol().getIdentifier(), ToStringStyle.MULTI_LINE_STYLE)); 
+            System.out.println(ToStringBuilder.reflectionToString(ssXml.getStudyProtocol().getIdentifier(), ToStringStyle.MULTI_LINE_STYLE));
         }
 }
 
@@ -297,16 +294,16 @@ public class StudySiteParticipationServiceSimpleClient {
             PAFault, RemoteException, URISyntaxException, JAXBException {
 
         StudySite ssXml = XMLUnmarshaller.unmarshal(StudySite.class, "foo.xml");
-        Id ssId = 
+        Id ssId =
             XMLUnmarshaller.unmarshal(Id.class, "bar.xml");
         System.out.println("****:bar:" + ssId.getExtension());
         System.out.println("****:foo:" + ssXml.getOrganizationRole().getIdentifier().getItem().get(0).getExtension());
-        gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite ss 
+        gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite ss
         = client.updateParticipatingSite(ssId, ssXml);
         System.out.println("Update Result: " + ss.getIdentifier());
 
     }
-    
+
     private static void updatePropSiteWithGenericContactAsPrimary(StudySiteParticipationServiceClient client) throws DtoTransformException,
     PAFault, RemoteException, URISyntaxException {
 
@@ -315,51 +312,51 @@ public class StudySiteParticipationServiceSimpleClient {
                 new Timestamp(new Date().getTime() - Long.valueOf("300000000")), null));
         studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("CHANGED SP ID"));
         studySiteDTO.setProgramCodeText(StConverter.convertToSt("PROGRAM CODE"));
-        
+
         StudySite ssXml = StudySiteManagementTransformer.INSTANCE.toXml(studySiteDTO);
-        
+
         StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
         currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
         currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime()
                 - Long.valueOf("300000000"))));
-        
+
         StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusManagementTransformer.INSTANCE.toXml(currentStatus);
         ssXml.setAccrualStatus(ssasXml);
-        
+
         StudySiteContact ssContact = new StudySiteContact();
         PersonType personType = new PersonType();
-        gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.OrganizationalContact 
+        gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.OrganizationalContact
             orgC = new gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.OrganizationalContact();
         ST title = new ST();
         title.setValue("Doctors Assistant 4");
         orgC.setTitle(title);
         orgC.setTypeCode(CDTransformer.INSTANCE.toXml(CdConverter.convertStringToCd("Responsible Party")));
-        
+
         personType.getContent().add(orgC);
         ssContact.setPersonRole(personType);
         ssContact.setPostalAddress(ADTransformer.INSTANCE.toXml(AddressConverterUtil.create("1000 Some St.",
                 "1000 Some St.", "Rockville", "MD", "20855", "USA")));
         ssContact.setPrimaryIndicator(BLTransformer.INSTANCE.toXml(BlConverter.convertToBl(true)));
-        
+
         TEL tel = new TEL();
         tel.setValue("tel:111-111-2222");
         TEL email = new TEL();
         email.setValue("mailto:test@example.com");
-        
+
         DSETTEL dsetTel = new DSETTEL();
         dsetTel.getItem().add(tel);
         dsetTel.getItem().add(email);
-        
+
         ssContact.setTelecomAddresses(dsetTel);
         ssXml.getStudySiteContacts().add(ssContact);
-        
+
         Id studySiteIi = new Id();
         studySiteIi.setExtension("69525625");
         studySiteIi.setRoot(IiConverter.STUDY_SITE_ROOT);
         studySiteIi.setIdentifierName(IiConverter.STUDY_SITE_IDENTIFIER_NAME);
         client.updateParticipatingSite(studySiteIi, ssXml);
 }
-    
+
 private static void changePITest(StudySiteParticipationServiceClient client) throws DtoTransformException,
     PAFault, RemoteException, URISyntaxException {
     System.out.println("Change PI Test");
@@ -370,13 +367,7 @@ private static void changePITest(StudySiteParticipationServiceClient client) thr
         client.getParticipatingSitesByStudyProtocol(studyProtocolId);
     for (gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite ss : results) {
         System.out.println(ss.getIdentifier().getExtension());
-//        if ("444453".equals(ss.getIdentifier().getExtension()))
-//        {
-//            for (gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySiteContact ssc : ss.getStudySiteContacts()) {
-//                if ("Principal Investigator".equals(ssc.getRoleCode().getCode())) {
-//
-//                }
-//            }
+
             StudySiteDTO studySiteDTO = new StudySiteDTO();
             studySiteDTO.setAccrualDateRange(IvlConverter.convertTs()
                                              .convertToIvl(new Timestamp(new Date().getTime() +
@@ -422,24 +413,8 @@ private static void changePITest(StudySiteParticipationServiceClient client) thr
             gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteContact studySiteContact
                 = StudySiteContactManagementTransformer.INSTANCE.toXml(studySiteContactDTO);
 
+            addCtepPersonToSSContact(studySiteContact, "11630");
 
-            // construct the person to link with that study site
-            Ii personIi = new Ii();
-//DEV            personIi.setExtension("1407731");
-            personIi.setExtension("1479");
-            personIi.setRoot(IiConverter.PERSON_ROOT);
-            //personIi.setExtension("11630");
-            //personIi.setRoot(IiConverter.CTEP_PERSON_IDENTIFIER_ROOT);
-            // contruct the person DTO
-            PersonDTO personDto = new PersonDTO();
-            personDto.setIdentifier(personIi);
-            // set the person as the CRS player
-            ClinicalResearchStaff crs = new ClinicalResearchStaff();
-            crs.setPlayer(PersonManagementTransformer.INSTANCE.toXml(personDto));
-            // add person type to the study site
-            PersonType personType = new PersonType();
-            personType.getContent().add(crs);
-            studySiteContact.setPersonRole(personType);
             ssXml.getStudySiteContacts().add(studySiteContact);
 //            for (gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySiteContact ssc : ss.getStudySiteContacts()) {
 //                if (!"Principal Investigator".equals(ssc.getRoleCode().getCode())) {
@@ -538,7 +513,7 @@ private static void changePIUsingCTEPIDTest(StudySiteParticipationServiceClient 
             personType.getContent().add(crs);
             studySiteContact.setPersonRole(personType);
             ssXml.getStudySiteContacts().add(studySiteContact);
-            
+
             // construct the person to link with that study site
             // contruct the person DTO with CTEP ID
             StudySiteContactDTO studySiteContactDTO1 = new StudySiteContactDTO();
@@ -575,5 +550,5 @@ private static void changePIUsingCTEPIDTest(StudySiteParticipationServiceClient 
             System.out.println("Update Result: " + ssResult.getIdentifier().getExtension());
         }
 }
- 
+
 }
