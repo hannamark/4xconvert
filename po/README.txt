@@ -85,7 +85,10 @@
     (password: poadmin123 [default])
     podb=# update databasechangelog set filename='db-install.xml' where id = '1.0';
     podb=# update databasechangelog set filename='db-upgrade.xml' where filename like '%db-upgrade.xml';
-
+    (Running this sql command you may get the following error: duplicate key value violates unique constraint "pk_databasechangelog"
+     If so, run the following first:
+     podb=# delete from databasechangelog where filename='db-upgrade.xml';
+    ) 
 1.3 CI build (Maven 2.0.9)
     mvn -Plocal,init-db sql:execute
     mvn -Plocal clean install

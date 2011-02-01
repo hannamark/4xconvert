@@ -84,6 +84,7 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
+import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
@@ -98,6 +99,7 @@ import gov.nih.nci.po.service.PatientServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepImportService;
+import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
 
 /**
  * @author Scott Miller
@@ -114,6 +116,16 @@ public interface ServiceLocator {
      * @return the org service
      */
     OrganizationServiceLocal getOrganizationService();
+
+    /**
+     * @return the family service
+     */
+    FamilyServiceLocal getFamilyService();
+    
+    /**
+     * @return the family organization relationship service
+     */
+    FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService();
 
     /**
      * @return the person service

@@ -140,6 +140,9 @@ public class Organization extends AbstractOrganization
     private Set<ClinicalResearchStaff> clinicalResearchStaff = new HashSet<ClinicalResearchStaff>();
     private Set<IdentifiedPerson> identifiedPersons = new HashSet<IdentifiedPerson>();
     private Set<HealthCareProvider> healthCareProviders = new HashSet<HealthCareProvider>();
+    private Set<FamilyOrganizationRelationship> familyOrganizationRelationships = 
+        new HashSet<FamilyOrganizationRelationship>();
+    private Set<OrganizationRelationship> organizationRelationships = new HashSet<OrganizationRelationship>();
 
     private String comments;
 
@@ -452,6 +455,38 @@ public class Organization extends AbstractOrganization
         this.healthCareProviders = healthCareProviders;
     }
 
+    /**
+     * @return the familyOrganizationRelationships
+     */
+    @OneToMany(mappedBy = "organization")
+    public Set<FamilyOrganizationRelationship> getFamilyOrganizationRelationships() {
+        return familyOrganizationRelationships;
+    }
+
+    /**
+     * @param familyOrganizationRelationships the familyOrganizationRelationships to set
+     */
+    @SuppressWarnings("unused")
+    private void setFamilyOrganizationRelationships(
+            Set<FamilyOrganizationRelationship> familyOrganizationRelationships) {
+        this.familyOrganizationRelationships = familyOrganizationRelationships;
+    }
+
+    /**
+     * @return the organizationRelationships
+     */
+    @OneToMany(mappedBy = "organization")
+    public Set<OrganizationRelationship> getOrganizationRelationships() {
+        return organizationRelationships;
+    }
+
+    /**
+     * @param organizationRelationships the organizationRelationships to set
+     */
+    @SuppressWarnings("unused")
+    private void setOrganizationRelationships(Set<OrganizationRelationship> organizationRelationships) {
+        this.organizationRelationships = organizationRelationships;
+    }
 
     /**
      * @return comments

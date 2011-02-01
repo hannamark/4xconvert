@@ -1,0 +1,16 @@
+create table Family (id int8 not null, statusCode varchar(255), startDate timestamp, endDate timestamp, name varchar(160) not null, primary key (id));
+create table FamilyOrganizationRelationship (id int8 not null, startDate timestamp, endDate timestamp, functionalType varchar(255), family_id int8, organization_id int8, primary key (id));
+create table Family_FamilyOrganizationRelationship (Family_id int8 not null, familyOrganizationRelationships_id int8 not null, primary key (Family_id, familyOrganizationRelationships_id), unique (familyOrganizationRelationships_id));
+create table Family_OrganizationRelationship (Family_id int8 not null, organizationRelationships_id int8 not null, primary key (Family_id, organizationRelationships_id), unique (organizationRelationships_id));
+create table OrganizationRelationship (id int8 not null, startDate timestamp, endDate timestamp, hierarchicalType varchar(255), relatedOrganization_id int8, family_id int8, organization_id int8, primary key (id));
+create table Organization_FamilyOrganizationRelationship (Organization_id int8 not null, familyOrganizationRelationships_id int8 not null, primary key (Organization_id, familyOrganizationRelationships_id), unique (familyOrganizationRelationships_id));
+create index IX7CFD4784337A8B on Family (name);
+alter table FamilyOrganizationRelationship add constraint FK6FA1A2AFCF0920B foreign key (family_id) references Family;
+alter table FamilyOrganizationRelationship add constraint FK6FA1A2AFF55FEAEB foreign key (organization_id) references Organization;
+alter table Family_FamilyOrganizationRelationship add constraint FKEFFEBACACF0920B foreign key (Family_id) references Family;
+alter table Family_FamilyOrganizationRelationship add constraint FKEFFEBACA87B91596 foreign key (familyOrganizationRelationships_id) references FamilyOrganizationRelationship;
+alter table Family_OrganizationRelationship add constraint FKBD0DAF86CF0920B foreign key (Family_id) references Family;
+alter table Family_OrganizationRelationship add constraint FKBD0DAF86B728D56E foreign key (organizationRelationships_id) references OrganizationRelationship;
+alter table OrganizationRelationship add constraint FK4B61A72BCF0920B foreign key (family_id) references Family;
+alter table Organization_FamilyOrganizationRelationship add constraint FK47D0471BF55FEAEB foreign key (Organization_id) references Organization;
+alter table Organization_FamilyOrganizationRelationship add constraint FK47D0471B87B91596 foreign key (familyOrganizationRelationships_id) references FamilyOrganizationRelationship;

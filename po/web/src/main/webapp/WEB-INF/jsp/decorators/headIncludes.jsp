@@ -1,4 +1,5 @@
 <link href="<c:url value='/styles/po.css'/>" rel="stylesheet" type="text/css" media="all"/>
+<link href="<c:url value='/styles/v2.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <link href="<c:url value='/styles/curate.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <link href="<c:url value='/styles/submodal.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <link href="<c:url value='/styles/overwrites.css'/>" rel="stylesheet" type="text/css" media="all"/>

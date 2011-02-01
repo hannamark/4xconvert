@@ -82,10 +82,9 @@
  */
 package gov.nih.nci.po.util;
 
-import com.fiveamsolutions.nci.commons.util.JndiUtils;
-
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
+import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
@@ -100,6 +99,9 @@ import gov.nih.nci.po.service.PatientServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepImportService;
+import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
+
+import com.fiveamsolutions.nci.commons.util.JndiUtils;
 
 /**
  * @author Scott Miller
@@ -119,6 +121,13 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public OrganizationServiceLocal getOrganizationService() {
         return (OrganizationServiceLocal) JndiUtils.lookup("po/OrganizationServiceBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public FamilyServiceLocal getFamilyService() {
+        return (FamilyServiceLocal) JndiUtils.lookup("po/FamilyServiceBean/local");
     }
 
     /**
@@ -217,5 +226,13 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public OrganizationCRServiceLocal getOrganizationCRService() {
         return (OrganizationCRServiceLocal) JndiUtils.lookup("po/OrganizationCRServiceBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService() {
+        return (FamilyOrganizationRelationshipServiceLocal) JndiUtils
+            .lookup("po/FamilyOrganizationRelationshipServiceBean/local");
     }
 }

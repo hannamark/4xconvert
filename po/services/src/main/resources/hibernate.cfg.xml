@@ -23,6 +23,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.ClinicalResearchStaffCR" />
         <mapping class="gov.nih.nci.po.data.bo.Country" />
         <mapping class="gov.nih.nci.po.data.bo.Email"/>
+        <mapping class="gov.nih.nci.po.data.bo.Family"/>
+        <mapping class="gov.nih.nci.po.data.bo.FamilyOrganizationRelationship"/>
         <mapping class="gov.nih.nci.po.data.bo.FundingMechanism"/>
         <mapping class="gov.nih.nci.po.data.bo.HealthCareProvider"/>
         <mapping class="gov.nih.nci.po.data.bo.HealthCareProviderCR" />
@@ -34,9 +36,10 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.IdentifiedPersonCR" />
         <mapping class="gov.nih.nci.po.data.bo.Organization" />      
         <mapping class="gov.nih.nci.po.data.bo.OrganizationCR" />
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationRelationship" />   
         <mapping class="gov.nih.nci.po.data.bo.OrganizationalContactType" />  
         <mapping class="gov.nih.nci.po.data.bo.OrganizationalContact" />      
-        <mapping class="gov.nih.nci.po.data.bo.OrganizationalContactCR" />        
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationalContactCR" />
         <mapping class="gov.nih.nci.po.data.bo.OversightCommittee"/>
         <mapping class="gov.nih.nci.po.data.bo.OversightCommitteeCR" />
         <mapping class="gov.nih.nci.po.data.bo.OversightCommitteeType"/>

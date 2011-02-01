@@ -1,0 +1,88 @@
+/* Added Early 2011 */
+
+#org_family
+{ font-size:108%}
+
+#org_family TABLE.data TD TABLE, #org_family TABLE.data TD TABLE.subtable TD
+{ background:0; border:0; font-size:100%; padding:0; }
+#org_family TABLE.data TD TABLE.subtable TD
+{ padding:4px 5px; width:50%; border-bottom:1px solid #eee; }
+#org_family TD.title
+{ font-weight:bold; }
+#org_family TD.action
+{ white-space:nowrap; width:12.8em; }
+#org_family_list TD.action
+{ white-space:nowrap; width:12em; }
+#org_family TABLE.data TD TABLE.subtable TD.noborder
+{ border:0; }
+#org_family TABLE.data TD.emptytable
+{ text-align:center; padding:100px; }
+
+#org_family TD.action UL.btnrow LI
+{ padding-left:5px; }
+A.btn SPAN.edit
+{ background:url("../images/ico_edit.gif") no-repeat; }
+A.btn SPAN.delete
+{ background:url("../images/ico_delete.gif") no-repeat; }
+
+.createbtn
+{ width:105px; float:right; margin-top:-2.5em;}
+.addbtn
+{ width:70px; float:right; margin-top:-2.5em;}
+
+#numpage_display
+{ margin-left:10px; }
+
+
+#leftnav LI.liheader2
+{ background:#dcdcdc; color:#333; padding:3px 8px; border-bottom:1px solid #fff; font-weight:bold; }
+
+#org_family TABLE.data TD TABLE.subtable TD.last
+{ border-bottom:0; }
+#org_family LABEL
+{ display:block; padding:3px 0 1px 0;}
+
+.col_50
+{ float:left; width:50px; margin-right:10px;}
+.col_60
+{ float:left; width:60px; margin-right:10px;}
+.col_70
+{ float:left; width:70px; margin-right:10px;}
+.col_80
+{ float:left; width:80px; margin-right:10px;}
+.col_90
+{ float:left; width:90px; margin-right:10px;}
+.col_100
+{ float:left; width:100px; margin-right:10px;}
+.col_110
+{ float:left; width:110px; margin-right:10px;}
+.col_120
+{ float:left; width:120px; margin-right:10px;}
+.col_130
+{ float:left; width:130px; margin-right:10px;}
+.col_140
+{ float:left; width:140px; margin-right:10px;}
+.col_150
+{ float:left; width:150px; margin-right:10px;}
+.col_200
+{ float:left; width:200px; margin-right:10px;}
+
+.padtop10
+{ padding-top:10px; }
+.padtop15
+{ padding-top:15px; }
+.bold
+{ font-weight:bold; }
+.gray
+{ color:#6c6c6c; }
+
+#org_family .line
+{ margin:20px 0; clear:both}
+
+H1.withbacklink
+{ padding-top:20px; }
+.backtolist
+{ margin-top:-4.3em; padding:10px;  }
+
+.huge
+{ font-sie:180%;}

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.service.external.CtepImportService;
 import gov.nih.nci.po.service.external.CtepImportServiceBean;
 import gov.nih.nci.po.util.EjbInterceptorHandler;
@@ -90,6 +91,8 @@ import gov.nih.nci.po.util.jms.TopicConnectionFactoryStub;
 import gov.nih.nci.po.util.jms.TopicStub;
 import gov.nih.nci.services.BusinessServiceBean;
 import gov.nih.nci.services.BusinessServiceRemote;
+import gov.nih.nci.services.FamilyOrganizationRelationshipServiceBean;
+import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceBean;
@@ -113,6 +116,7 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceBean;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
+import javax.jms.JMSException;
 import javax.jms.Topic;
 import javax.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
@@ -403,6 +407,64 @@ public class EjbTestHelper {
         return svc;
     }
     
+    public static MessageProducerBean getNoPublishMessageProducer() {
+        try {
+            MessageProducerBean mp = new MessageProducerBean() {
+                private TopicConnectionFactory connectionFactory;
+                private Topic topic;
+        
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                protected TopicConnectionFactory getTopicConnectionFactory(InitialContext ic) {
+                    if (connectionFactory == null) {
+                        connectionFactory = new TopicConnectionFactoryStub();
+                    }
+                    return connectionFactory;
+                }
+        
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                protected Topic getTopic(InitialContext ic) {
+                    if (topic == null) {
+                        topic = new TopicStub(MessageProducerBean.TOPIC_NAME);
+                    }
+                    return topic;
+                }
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void sendCreate(Class c, Curatable entity) throws JMSException {
+                       throw new JMSException("operation is not supported");
+                }
+                /**
+                 * {@inheritDoc}
+                 */
+                 @Override
+                 public  void sendUpdate(Class c, Curatable entity) throws JMSException {
+                     throw new JMSException("operation is not supported.");
+                 }
+            };    
+            return mp;
+        } catch (Exception ex) {
+            throw new Error("bad test init", ex);
+        }
+    }
+    
+    public static FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService() {
+        FamilyOrganizationRelationshipServiceBean svc = new FamilyOrganizationRelationshipServiceBean();
+        try {
+            svc.setPublisher(getNoPublishMessageProducer());
+        } catch (Exception ex) {
+            throw new Error("bad test init", ex);
+        }
+        return svc;
+    }
+    
     public static BusinessServiceRemote getBusinessService() {
         BusinessServiceBean svc = new BusinessServiceBean();
         svc.setCrsService(getClinicalResearchStaffServiceBean());
@@ -427,5 +489,18 @@ public class EjbTestHelper {
         CtepImportServiceBean bean = new CtepImportServiceBean();
         return bean;
     }
-
+    /**
+     * Get a newly created family service.
+     *
+     * @return the service
+     */
+    public static FamilyServiceBean getFamilyServiceBean() {
+        FamilyServiceBean svc = new FamilyServiceBean();
+        try {
+            svc.setPublisher(getNoPublishMessageProducer());
+        } catch (Exception ex) {
+            throw new Error("bad test init", ex);
+        }
+        return svc;
+    }
 }

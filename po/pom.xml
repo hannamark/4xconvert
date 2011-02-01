@@ -375,7 +375,7 @@
                 <configuration>
                     <check>
                         <haltOnFailure>${cobertura.check.haltOnFailure}</haltOnFailure>
-                        <totalBranchRate>78</totalBranchRate>
+                        <totalBranchRate>81</totalBranchRate>
                         <totalLineRate>90</totalLineRate>
                     </check>
                     <formats>

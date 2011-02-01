@@ -80,166 +80,76 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceBean;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.FamilyServiceLocal;
-import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationCRServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.PatientServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.external.CtepImportService;
-import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
+import gov.nih.nci.po.data.bo.Family;
+
+import java.util.List;
+import java.util.Map;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
- * @author Scott Miller
  *
  */
-public class MockCountryServiceLocator implements ServiceLocator {
+public class MockFamilyService implements FamilyServiceLocal {
+
+    private long currentId = 0;
 
     /**
      * {@inheritDoc}
      */
-    public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
+    public Family getById(long id) {
+        Family o = new Family();
+        o.setId(id);
+        o.setName("name");
+        return o;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public long create(Family org) {
+        if (org.getId() == null) {
+            currentId++;
+            org.setId(currentId);
+        }
+        return currentId;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void update(Family org) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int count(SearchCriteria<Family> criteria) {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<Family> search(SearchCriteria<Family> criteria) {
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public CountryServiceLocal getCountryService() {
-        return new CountryServiceBean() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Country getCountryByAlpha3(String code) {
-                return new Country("test", "123", "??", code);
-            }
-        };
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public GenericServiceLocal getGenericService() {
+    public List<Family> search(SearchCriteria<Family> criteria, PageSortParams<Family> pageSortParams) {
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
+    public Map<String, String[]> validate(Family entity) {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationServiceLocal getOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PersonServiceLocal getPersonService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ResearchOrganizationServiceLocal getResearchOrganizationService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IdentifiedPersonServiceLocal getIdentifiedPersonService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationalContactServiceLocal getOrganizationalContactService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public GenericCodeValueServiceLocal getGenericCodeValueService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public CtepImportService getCtepImportService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PatientServiceLocal getPatientService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OrganizationCRServiceLocal getOrganizationCRService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public FamilyServiceLocal getFamilyService() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService() {
-        return null;
-    }
 }

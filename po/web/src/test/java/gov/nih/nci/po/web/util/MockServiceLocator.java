@@ -86,6 +86,7 @@ import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceStub;
 import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.CountryServiceStub;
+import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.GenericServiceStub;
@@ -98,6 +99,7 @@ import gov.nih.nci.po.service.IdentifiedOrganizationServiceStub;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceStub;
 import gov.nih.nci.po.service.MockCtepImportService;
+import gov.nih.nci.po.service.MockFamilyService;
 import gov.nih.nci.po.service.MockOrganizationService;
 import gov.nih.nci.po.service.MockPersonService;
 import gov.nih.nci.po.service.OrganizationCRServiceLocal;
@@ -113,6 +115,7 @@ import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceStub;
 import gov.nih.nci.po.service.external.CtepImportService;
 import gov.nih.nci.po.util.ServiceLocator;
+import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
 
 /**
  * The service locator for the test classes.
@@ -121,6 +124,7 @@ import gov.nih.nci.po.util.ServiceLocator;
  */
 public class MockServiceLocator implements ServiceLocator {
     private final OrganizationServiceLocal organizationService = new MockOrganizationService();
+    private final FamilyServiceLocal familyService = new MockFamilyService();
     private final PersonServiceLocal personService = new MockPersonService();
     private final GenericServiceLocal genericService = new GenericServiceStub();
     private final CountryServiceLocal cfgService = new CountryServiceStub();
@@ -141,6 +145,14 @@ public class MockServiceLocator implements ServiceLocator {
     public OrganizationServiceLocal getOrganizationService() {
         return organizationService;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public FamilyServiceLocal getFamilyService() {
+        return familyService;
+    }
+
 
     /**
      * {@inheritDoc}
@@ -244,6 +256,13 @@ public class MockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public OrganizationCRServiceLocal getOrganizationCRService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService() {
         return null;
     }
 }

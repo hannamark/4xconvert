@@ -287,6 +287,32 @@
             <result name="success">/WEB-INF/jsp/curate/{1}/list.jsp</result>
             <result name="list" type="redirectAction">listAll</result>
         </action>
+        
+        <!-- Family -> List/Search -->
+        <action name="search/family/*" class="gov.nih.nci.po.web.search.SearchFamilyAction" method="{1}">
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/search/family/list.jsp</result>
+        </action>
+        <action name="ajax/search/family/*" class="gov.nih.nci.po.web.search.SearchFamilyAction" method="{1}">
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/search/family/search.jsp</result>
+        </action>
+        <action name="ajax/search/family/results/*" class="gov.nih.nci.po.web.search.SearchFamilyAction" method="{1}">
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/search/family/results.jsp</result>
+        </action>
+        
+        <!-- Family -> Edit/Create -->
+        <action name="family/edit/*" class="gov.nih.nci.po.web.edit.EditFamilyAction" method="{1}">
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/edit/family.jsp</result>
+        </action>
+        <action name="family/create/*" class="gov.nih.nci.po.web.create.CreateFamilyAction" method="{1}">
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/edit/family.jsp</result>
+            <result name="input">/WEB-INF/jsp/edit/family.jsp</result>
+        </action>
+        
 
         <!-- Organization -> Edit/Curate -->
         <action name="organization/curate/curate/error" class="gov.nih.nci.po.web.curation.CurateEntityValidationAction" method="execute">

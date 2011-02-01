@@ -85,6 +85,7 @@ package gov.nih.nci.po.util;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
@@ -99,6 +100,7 @@ import gov.nih.nci.po.service.PatientServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepImportService;
+import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
 
 /**
  * @author Scott Miller
@@ -210,5 +212,19 @@ public class TestServiceLocator implements ServiceLocator {
 
     public OrganizationCRServiceLocal getOrganizationCRService() {
         return EjbTestHelper.getOrganizationCRServiceBean();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public FamilyServiceLocal getFamilyService() {
+        return EjbTestHelper.getFamilyServiceBean();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService() {
+        return EjbTestHelper.getFamilyOrganizationRelationshipService();
     }
 }

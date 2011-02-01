@@ -47,6 +47,10 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.ResearchOrganizationType"/>
         <mapping class="gov.nih.nci.po.data.bo.State" />
         <mapping class="gov.nih.nci.po.data.bo.URL"/>
+        <mapping class="gov.nih.nci.po.data.bo.Family"/>
+        <mapping class="gov.nih.nci.po.data.bo.FamilyOrganizationRelationship"/>
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationRelationship"/>
+        
 
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogRecord" />
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogDetail" />
