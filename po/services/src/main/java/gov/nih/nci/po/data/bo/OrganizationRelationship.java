@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.po.data.bo;
 
+
+import gov.nih.nci.po.util.UniqueOrganizationRelationship;
+
 import java.util.Date;
 
 import javax.persistence.EnumType;
@@ -102,6 +105,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *
  */
 @javax.persistence.Entity
+@UniqueOrganizationRelationship
 public class OrganizationRelationship implements Auditable, Entity, PersistentObject {
     private static final long serialVersionUID = -4061054861656983233L;
     private Long id;
@@ -129,6 +133,7 @@ public class OrganizationRelationship implements Auditable, Entity, PersistentOb
      * @return the family
      */
     @ManyToOne
+    @Searchable(nested = true)
     public Family getFamily() {
         return family;
     }
@@ -142,6 +147,7 @@ public class OrganizationRelationship implements Auditable, Entity, PersistentOb
      * @return the organization
      */
     @ManyToOne
+    @Searchable (nested = true)
     public Organization getOrganization() {
         return organization;
     }

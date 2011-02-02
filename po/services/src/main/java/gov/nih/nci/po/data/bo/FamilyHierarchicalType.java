@@ -150,10 +150,10 @@ public enum FamilyHierarchicalType {
 
     /**
      * Helper method that returns the pair value of a Hierarchical Type.
-     * 
+     * @param key FamilyHierarchicalType pair key
      * @return FamilyHierarchicalType pair value.
      */
-    public FamilyHierarchicalType getPairValue() {
-        return PAIR_LOOKUP.get(this);
+    public static FamilyHierarchicalType getPairValue(FamilyHierarchicalType key) {
+        return PAIR_LOOKUP.get(key);
     }
 }
