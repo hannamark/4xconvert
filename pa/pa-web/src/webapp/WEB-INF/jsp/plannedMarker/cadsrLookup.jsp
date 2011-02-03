@@ -7,10 +7,10 @@
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
         <script type="text/javascript">
              function reset() {
-            	 $('name').value = '';
-            	 $('meaning').value = '';
-            	 $('description').value = '';
-            	 $('publicId').value = '';
+            	 $('searchName').value = '';
+            	 $('searchMeaning').value = '';
+            	 $('searchDescription').value = '';
+            	 $('searchPublicId').value = '';
              }
              
              function loadResults() {     
