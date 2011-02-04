@@ -329,7 +329,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         famOrgRel.setOrganization(savedOrg);
         famOrgRel.setFamily(savedFam);
         famOrgRel.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
-        famOrgRel.setStartDate(new Date());
+        famOrgRel.setStartDate(cal.getTime());
 
         long famOrgRelId = familyOrgRelServiceLocal.create(famOrgRel);
         assertEquals(1, familyOrgRelServiceLocal.getActiveRelationships(id).size());
