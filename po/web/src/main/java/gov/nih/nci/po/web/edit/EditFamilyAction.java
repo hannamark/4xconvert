@@ -38,10 +38,10 @@ public class EditFamilyAction extends ActionSupport {
     /**
      * @return submit form
      */
-    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "family") })
+    @Validations(customValidators = {@CustomValidator(type = "hibernate", fieldName = "family") })
     public String submit() {
         PoRegistry.getFamilyService().update(family);
-        ActionHelper.saveMessage(getText("family.update.success"));
+        ActionHelper.saveMessage(getText("family.update.success", new String[] {family.getName()}));
         return SUCCESS;
     }
 

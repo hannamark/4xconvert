@@ -79,28 +79,40 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyStatus;
+
+import java.util.Date;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
-import gov.nih.nci.po.data.bo.FamilyStatus;
 /**
- * implementation CURD for Family.
+ * implementation CRUD for Family.
+ * 
  * @author vrushali
- *
+ * 
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implements FamilyServiceLocal {
-    
+
     /**
-     * {@inheritDoc}
+     * Create Family.
+     * @param family Family to create.
+     * @throws EntityValidationException if validation issues when creating.
+     * @return id of newly created Family. 
+     * @throws EntityValidationException 
      */
     public long create(Family family) throws EntityValidationException {
+        if (family.getStartDate() == null) {
+            family.setStartDate(new Date());
+        }
+        family.setEndDate(null);
         family.setStatusCode(FamilyStatus.ACTIVE);
         return super.createHelper(family);
     }

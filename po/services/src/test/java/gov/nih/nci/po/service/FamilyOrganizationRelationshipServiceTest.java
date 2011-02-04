@@ -101,6 +101,7 @@ import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -133,7 +134,9 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         // create test
         Family family = new Family();
         family.setName("FamilyName");
-        family.setStartDate(new Date());
+        Calendar cal = Calendar.getInstance();
+        cal.set(2010, 02, 02);
+        family.setStartDate(cal.getTime());
         family.setStatusCode(FamilyStatus.NULLIFIED);
         long id = EjbTestHelper.getFamilyServiceBean().create(family);
         PoHibernateUtil.getCurrentSession().flush();
@@ -161,7 +164,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         famOrgRel.setOrganization(savedOrg);
         famOrgRel.setFamily(savedFam);
         famOrgRel.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
-        famOrgRel.setStartDate(new Date());
+        famOrgRel.setStartDate(cal.getTime());
 
         long famOrgRelId = familyOrgRelServiceLocal.create(famOrgRel);
         FamilyOrganizationRelationship savedFamOrgRel = (FamilyOrganizationRelationship)
@@ -197,16 +200,16 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         famOrgRel2.setOrganization(savedOrg2);
         famOrgRel2.setFamily(savedFam);
         famOrgRel2.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
-        famOrgRel2.setStartDate(new Date());
+        famOrgRel2.setStartDate(cal.getTime());
 
-        long famOrgRelId2 = familyOrgRelServiceLocal.create(famOrgRel2);
+        familyOrgRelServiceLocal.create(famOrgRel2);
         assertEquals(2, ((Family) PoHibernateUtil.getCurrentSession().load(Family.class, savedFam.getId()))
                 .getFamilyOrganizationRelationships().size());
 
         // create second fam for test
         Family family2 = new Family();
         family2.setName("FamilyName2");
-        family2.setStartDate(new Date());
+        family2.setStartDate(cal.getTime());
         family2.setStatusCode(FamilyStatus.NULLIFIED);
         long famId2 = EjbTestHelper.getFamilyServiceBean().create(family2);
         PoHibernateUtil.getCurrentSession().flush();
@@ -218,9 +221,9 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         famOrgRel3.setOrganization(savedOrg2);
         famOrgRel3.setFamily(savedFam2);
         famOrgRel3.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
-        famOrgRel3.setStartDate(new Date());
+        famOrgRel3.setStartDate(cal.getTime());
 
-        long famOrgRelId3 = familyOrgRelServiceLocal.create(famOrgRel3);
+        familyOrgRelServiceLocal.create(famOrgRel3);
         assertEquals(2, ((Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, savedOrg2.getId()))
                 .getFamilyOrganizationRelationships().size());
     }
@@ -242,7 +245,9 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
     public void testEndDateValidation() throws EntityValidationException, JMSException {
         Family family = new Family();
         family.setName("FamilyName");
-        family.setStartDate(new Date());
+        Calendar cal = Calendar.getInstance();
+        cal.set(2010, 02, 02);
+        family.setStartDate(cal.getTime());
         family.setStatusCode(FamilyStatus.NULLIFIED);
         long id = EjbTestHelper.getFamilyServiceBean().create(family);
         PoHibernateUtil.getCurrentSession().flush();
@@ -285,7 +290,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
             familyOrgRelServiceLocal.create(famOrgRel);
             fail("EntityValidationException should have been thrown.");
         } catch (EntityValidationException eve) {
-            assertTrue(eve.getErrors().containsKey("endDate"));
+            assertTrue(eve.getErrors().containsKey("startDate"));
         }
     }
 
@@ -294,7 +299,9 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
      // create test
         Family family = new Family();
         family.setName("FamilyName");
-        family.setStartDate(new Date());
+        Calendar cal = Calendar.getInstance();
+        cal.set(2010, 02, 02);
+        family.setStartDate(cal.getTime());
         family.setStatusCode(FamilyStatus.NULLIFIED);
         long id = EjbTestHelper.getFamilyServiceBean().create(family);
         PoHibernateUtil.getCurrentSession().flush();

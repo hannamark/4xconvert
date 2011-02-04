@@ -118,6 +118,8 @@ public class EditFamilyActionTest extends AbstractPoTest {
 
     @Test
     public void testSubmit() {
+        action.setFamily(new Family());
+        action.getFamily().setId(1L);
         assertEquals(Action.SUCCESS, action.submit());
     }
     

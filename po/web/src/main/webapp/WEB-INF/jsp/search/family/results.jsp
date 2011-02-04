@@ -30,12 +30,8 @@
             <c:url var="editUrl" value="/protected/family/edit/start.action">
                 <c:param name="family.id" value="${row.id}"/>
             </c:url>
-            <c:url var="removeUrl" value="/protected/family/remove/start.action">
-                <c:param name="family.id" value="${row.id}"/>
-            </c:url>
             <po:buttonRow>
                 <po:button href="${editUrl}" style="edit" text="Edit" id="edit_family_id_${row.id}"/>
-                <po:button href="${removeUrl}" style="delete" text="Remove" id="remove_family_id_${row.id}"/>
             </po:buttonRow>
         </display:column>
     </display:table>

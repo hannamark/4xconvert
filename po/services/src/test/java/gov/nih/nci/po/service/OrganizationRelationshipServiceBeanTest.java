@@ -92,6 +92,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -175,7 +176,9 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
    @Test
     public void createOrgRelWithStartDate() throws EntityValidationException, JMSException {
         OrganizationRelationship orgRel = getBasicOrgRelation();
-        orgRel.setStartDate(new Date());
+        Calendar cal = Calendar.getInstance();
+        cal.set(2010, 02, 02);      
+        orgRel.setStartDate(cal.getTime());
         Date startDate = orgRel.getStartDate();
         orgRelServiceBean.create(orgRel);
         assertNotNull(orgRel.getStartDate());
@@ -184,18 +187,21 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
    @Test
    public void createOrgRelWithEndDate() throws EntityValidationException, JMSException {
        OrganizationRelationship orgRel = getBasicOrgRelation();
+       Calendar cal = Calendar.getInstance();
+       cal.set(2010, 02, 02);      
+       orgRel.setStartDate(cal.getTime());
        orgRel.setEndDate(DateUtils.addDays(new Date(), +2));
        try {
            orgRelServiceBean.create(orgRel);
        } catch(EntityValidationException e) {
-           assertEquals(e.getErrorMessages(),"endDate=[End date cannot be a future date.]");
+           assertEquals("endDate=[must be a past date]",e.getErrorMessages());
        }
-       orgRel.setStartDate(new Date());
+       orgRel.setStartDate(cal.getTime());
        orgRel.setEndDate(DateUtils.addDays(new Date(), -2));
        try {
            orgRelServiceBean.create(orgRel);
        } catch(EntityValidationException e) {
-           assertEquals(e.getErrorMessages(),"endDate=[End date cannot be earlier than start date.]");
+           assertEquals("=[(startFieldName) must be before (endFieldName).]",e.getErrorMessages());
        }
    }
    @Test
@@ -253,7 +259,9 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
    private long createFamily() throws EntityValidationException {
       Family family = new Family();
       family.setName("FamilyName");
-      family.setStartDate(new Date());
+      Calendar cal = Calendar.getInstance();
+      cal.set(2010, 02, 02);      
+      family.setStartDate(cal.getTime());
       return familyServiceBean.create(family);
    }
 

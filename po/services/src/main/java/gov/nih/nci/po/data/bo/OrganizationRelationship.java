@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 
 import gov.nih.nci.po.util.UniqueOrganizationRelationship;
+import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
 
 import java.util.Date;
 
@@ -96,8 +97,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.validator.Past;
+
 import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -106,7 +108,8 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @javax.persistence.Entity
 @UniqueOrganizationRelationship
-public class OrganizationRelationship implements Auditable, Entity, PersistentObject {
+@OrderedDate
+public class OrganizationRelationship implements Auditable {
     private static final long serialVersionUID = -4061054861656983233L;
     private Long id;
     private Family family;
@@ -188,6 +191,7 @@ public class OrganizationRelationship implements Auditable, Entity, PersistentOb
      * @return the startDate
      */
     @Temporal(TemporalType.TIMESTAMP)
+    @Past
     public Date getStartDate() {
         return startDate;
     }
@@ -201,6 +205,7 @@ public class OrganizationRelationship implements Auditable, Entity, PersistentOb
      * @return the endDate
      */
     @Temporal(TemporalType.TIMESTAMP)
+    @Past
     public Date getEndDate() {
         return endDate;
     }

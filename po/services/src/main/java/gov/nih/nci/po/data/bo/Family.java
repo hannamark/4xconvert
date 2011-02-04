@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -101,9 +102,9 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
+import org.hibernate.validator.Past;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -112,7 +113,8 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @author moweis
  */
 @javax.persistence.Entity
-public class Family implements Auditable, Entity, PersistentObject {
+@OrderedDate
+public class Family implements Auditable {
     private static final long serialVersionUID = 9142333411678327002L;
     private static final int DEFAULT_TEXT_COL_LENGTH = 160;
 
@@ -183,6 +185,7 @@ public class Family implements Auditable, Entity, PersistentObject {
      */
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
+    @Past
     public Date getStartDate() {
         return startDate;
     }
@@ -198,6 +201,7 @@ public class Family implements Auditable, Entity, PersistentObject {
      * @return the endDate
      */
     @Temporal(TemporalType.TIMESTAMP)
+    @Past
     public Date getEndDate() {
         return endDate;
     }

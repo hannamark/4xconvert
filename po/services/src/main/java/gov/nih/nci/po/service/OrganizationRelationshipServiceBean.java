@@ -86,15 +86,12 @@ import gov.nih.nci.po.data.bo.FamilyHierarchicalType;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-
-import org.apache.commons.lang.time.DateUtils;
 
 /**
  * Implements the CRUD.
@@ -127,35 +124,25 @@ public class OrganizationRelationshipServiceBean extends AbstractBaseServiceBean
      * @return err
      */
     @Override
+    //TODO - Change HierarchicalType to a Hibernate validation, and remove this method.
     public Map<String, String[]> validate(OrganizationRelationship entity) {
         Map<String, String[]> msg = PoHibernateUtil.validate(entity);
-        if (entity.getEndDate() != null && DateUtils.truncatedCompareTo(
-              entity.getEndDate(), new Date(), Calendar.DATE) > 0) {
-             msg.put("endDate", new String[]{"End date cannot be a future date."});
-        }
-        if (entity.getStartDate() != null && entity.getEndDate() != null && DateUtils.truncatedCompareTo(
-            entity.getEndDate(), entity.getStartDate(), Calendar.DATE) == -1) {
-            msg.put("endDate", new String[]{"End date cannot be earlier than start date."});
-        }
-        validateEntity(entity, msg);
-       return msg;
-    }
-    private void validateEntity(OrganizationRelationship entity, Map<String, String[]> msg) {
         if (entity.getId() != null) {
             OrganizationRelationship oentity =  getById(entity.getId());
             if (!(oentity.getHierarchicalType().compareTo(entity.getHierarchicalType()) == 0)) {
                 msg.put("hierarchicalType", new String[] {"Hierarchical Type cannot be updated."}); 
             }
         }
+        return msg;
     }
     /**
      * {@inheritDoc}
      */
-    public void updateEntity(OrganizationRelationship updatedEntity)throws EntityValidationException {
+    public void updateEntity(OrganizationRelationship updatedEntity) throws EntityValidationException {
         Map<String, String[]> errors = validate(updatedEntity);
         if (errors != null && !errors.isEmpty()) {
             throw new EntityValidationException(errors);
         }
-          super.update(updatedEntity);
+        super.update(updatedEntity);
     }
 }

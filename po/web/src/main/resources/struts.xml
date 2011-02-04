@@ -306,6 +306,8 @@
         <action name="family/edit/*" class="gov.nih.nci.po.web.edit.EditFamilyAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/edit/family.jsp</result>
+            <result name="input">/WEB-INF/jsp/edit/family.jsp</result>
+            <result name="list">/protected/search/family/list.action</result>
         </action>
         <action name="family/create/*" class="gov.nih.nci.po.web.create.CreateFamilyAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />

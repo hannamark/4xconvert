@@ -17,29 +17,19 @@
     <h2><s:text name="family"/> Information</h2>
 
     <s:if test="%{isCreate}">
-       <s:set name="formAction" value="'create.action'"/>
+       <s:set name="formAction" value="'family/create/save.action'"/>
     </s:if>
     <s:else>
-       <s:set name="formAction" value="'submit.action'"/>
+       <s:set name="formAction" value="'family/edit/submit.action'"/>
     </s:else>
-    <s:form action="%{formAction}" id="familyEntityForm" onsubmit="$('familyEntityForm.family.comments').value = $F('familyEntityForm.family.commentsText'); return isTelecomFieldsBlank() && confirmThenSubmit('familyEntityForm.family.statusCode',document.forms.familyEntityForm);">
-        <input id="enableEnterSubmit" type="submit"/>
-        <s:hidden key="rootKey"/>
-        <s:hidden key="family.id"/>
- 
+    <s:form action="%{formAction}" id="familyEntityForm">
         <div class="box_white">
         <s:if test="isCreate">
-            <s:select
-               label="%{getText('family.statusCode')}"
-               name="family.statusCode"
-               list="availableStatus"
-               listKey="name()"
-               listValue="name()"
-               value="family.statusCode"
-               required="true" cssClass="required"
-               id="familyEntityForm.family.statusCode"/>
+            <s:hidden key="family.statusCode"/>
+            <po:inputRowElement><po:field labelKey="family.statusCode">${family.statusCode}</po:field></po:inputRowElement>
         </s:if>
         <s:else>
+            <s:hidden key="family.id"/>
             <po:inputRow>
             <po:inputRowElement><po:field labelKey="family.id">${family.id}</po:field></po:inputRowElement>
             <po:inputRowElement>&nbsp;</po:inputRowElement>
@@ -57,18 +47,19 @@
                    required="true" cssClass="required"
                    id="familyEntityForm.family.statusCode"/>
         </s:else>
+            <s:textfield key="family.startDate" required="true" cssClass="required" size="10" />
             <s:textfield key="family.name" required="true" cssClass="required" size="70"/>
             <div class="clear"></div>
         </div>
     </s:form>
 </div>
 <div class="btnwrapper" style="margin-bottom:20px;">
-    <po:buttonRow>
-        <po:button id="save_button" href="javascript://noop/" onclick="$('familyEntityForm').submit();" style="save" text="Save"/>
-        <c:url var="listUrl" value="/protected/search/family/list.action" />
-        <s:set name="returnToPageTitle" value="%{'Return to ' + getText('family.search.title')}"/>
-        <po:button id="return_to_button" href="${listUrl}" style="continue" text="${returnToPageTitle}"/>
-    </po:buttonRow>
+        <po:buttonRow>
+            <po:button id="save_button" href="javascript://noop/" onclick="$('familyEntityForm').submit();" style="save" text="Save"/>
+            <c:url var="listUrl" value="/protected/search/family/list.action" />
+            <s:set name="returnToPageTitle" value="%{'Return to ' + getText('family.search.title')}"/>
+            <po:button id="return_to_button" href="${listUrl}" style="continue" text="${returnToPageTitle}"/>
+        </po:buttonRow>
 </div>
 
 <s:if test="isNotCreate">

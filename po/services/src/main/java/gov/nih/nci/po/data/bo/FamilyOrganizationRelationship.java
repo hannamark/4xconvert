@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
 import gov.nih.nci.po.util.UniqueFamilyOrganizationRelationship;
 
 import java.util.Date;
@@ -99,8 +100,7 @@ import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Past;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-
+   
 /**
  * A specific relationship of an organization to a family.
  *
@@ -110,7 +110,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @javax.persistence.Entity
 @UniqueFamilyOrganizationRelationship
-public class FamilyOrganizationRelationship implements Auditable, Entity, PersistentObject {
+@OrderedDate
+public class FamilyOrganizationRelationship implements Auditable {
     private static final long serialVersionUID = -6216515702533977571L;
     private Long id;
     private Family family;
