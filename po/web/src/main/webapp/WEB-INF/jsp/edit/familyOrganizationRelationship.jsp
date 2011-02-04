@@ -15,9 +15,11 @@
         });
         
         function orgSelectionCallback(returnValue) {
+        	<c:url value="/protected/ajax/family/organization/relationship/loadOrganizationInfo.action" var="loadOrgUrl">
+        	   <c:param name="rootKey" value="${rootKey}"/>
+        	</c:url>
             $('selectedOrgId').value = returnValue.id;
-            var url = contextPath + '/protected/ajax/family/organization/relationship/loadOrganizationInfo.action?selectedOrgId=' 
-            		+ returnValue.id + '&rootKey=' + $('rootKey').value;
+            var url = '${loadOrgUrl}' + '&selectedOrgId=' + returnValue.id;
             loadDiv(url, 'famOrgRelationshipOrgInfo', true, null, false);
         }
         </script>

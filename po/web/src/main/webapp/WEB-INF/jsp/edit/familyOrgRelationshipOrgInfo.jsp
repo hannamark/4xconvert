@@ -8,7 +8,7 @@
             <po:inputRowElement>
                 <c:url value="/protected/selector/organization/start.action" var="searchUrl"/>
                 <po:button href="#" style="add" text="Search Again" 
-                    onclick="showPopWin('/protected/selector/organization/start.action', 1000, 600, orgSelectionCallback);"/>
+                    onclick="showPopWin('${searchUrl}', 1000, 600, orgSelectionCallback);"/>
             </po:inputRowElement>
         </po:inputRow>
     </div>
