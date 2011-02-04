@@ -1,4 +1,4 @@
-package gov.nih.nci.po.web.edit;
+package gov.nih.nci.po.web.curation;
 
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
@@ -19,7 +19,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 /**
  * Action class to handle editing of Family entities.
  */
-public class EditFamilyAction extends ActionSupport {
+public class CurateFamilyAction extends ActionSupport {
     private static final long serialVersionUID = 1285712121733778829L;
 
     private Family family = new Family();

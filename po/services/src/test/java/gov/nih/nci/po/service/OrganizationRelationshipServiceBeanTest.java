@@ -169,15 +169,19 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
     
     public OrganizationRelationship createOrgRelationship() throws EntityValidationException, JMSException {
         OrganizationRelationship orgRel = getBasicOrgRelation();
+        Calendar cal = Calendar.getInstance();
+        cal.set(2011, 01, 02);      
+        orgRel.setStartDate(cal.getTime());
         orgRel.setHierarchicalType(FamilyHierarchicalType.PEER);
         orgRelServiceBean.create(orgRel);
         return orgRel;
     }
-   @Test
+    
+    @Test
     public void createOrgRelWithStartDate() throws EntityValidationException, JMSException {
         OrganizationRelationship orgRel = getBasicOrgRelation();
         Calendar cal = Calendar.getInstance();
-        cal.set(2010, 02, 02);      
+        cal.set(2011, 01, 02);      
         orgRel.setStartDate(cal.getTime());
         Date startDate = orgRel.getStartDate();
         orgRelServiceBean.create(orgRel);
@@ -188,7 +192,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
    public void createOrgRelWithEndDate() throws EntityValidationException, JMSException {
        OrganizationRelationship orgRel = getBasicOrgRelation();
        Calendar cal = Calendar.getInstance();
-       cal.set(2010, 02, 02);      
+       cal.set(2011, 01, 02);      
        orgRel.setStartDate(cal.getTime());
        orgRel.setEndDate(DateUtils.addDays(new Date(), +2));
        try {
@@ -260,7 +264,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
       Family family = new Family();
       family.setName("FamilyName");
       Calendar cal = Calendar.getInstance();
-      cal.set(2010, 02, 02);      
+      cal.set(2011, 01, 02);      
       family.setStartDate(cal.getTime());
       return familyServiceBean.create(family);
    }

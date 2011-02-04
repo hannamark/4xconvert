@@ -86,7 +86,7 @@ import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.web.edit.EditFamilyOrganizationRelationshipAction;
+import gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
 import java.util.Date;
@@ -101,7 +101,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class CreateFamilyOrganizationRelationshipAction extends EditFamilyOrganizationRelationshipAction
+public class CreateFamilyOrganizationRelationshipAction extends CurateFamilyOrganizationRelationshipAction
     implements Preparable {
     private static final long serialVersionUID = 1L;
 

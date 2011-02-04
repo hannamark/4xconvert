@@ -102,11 +102,7 @@ import javax.ejb.TransactionAttributeType;
 public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implements FamilyServiceLocal {
 
     /**
-     * Create Family.
-     * @param family Family to create.
-     * @throws EntityValidationException if validation issues when creating.
-     * @return id of newly created Family. 
-     * @throws EntityValidationException 
+     * {@inheritDoc}
      */
     public long create(Family family) throws EntityValidationException {
         if (family.getStartDate() == null) {

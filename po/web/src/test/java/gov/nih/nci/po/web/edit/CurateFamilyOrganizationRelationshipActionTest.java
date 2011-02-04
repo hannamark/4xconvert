@@ -87,6 +87,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -97,12 +98,12 @@ import com.opensymphony.xwork2.Action;
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class EditFamilyOrganizationRelationshipActionTest extends AbstractPoTest {
-    private EditFamilyOrganizationRelationshipAction action;
+public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTest {
+    private CurateFamilyOrganizationRelationshipAction action;
 
     @Before
     public void setUp() {
-        action = new EditFamilyOrganizationRelationshipAction();
+        action = new CurateFamilyOrganizationRelationshipAction();
     }
 
     @Test

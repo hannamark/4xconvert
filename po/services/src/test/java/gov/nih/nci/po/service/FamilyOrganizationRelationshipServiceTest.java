@@ -135,7 +135,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         Family family = new Family();
         family.setName("FamilyName");
         Calendar cal = Calendar.getInstance();
-        cal.set(2010, 02, 02);
+        cal.set(2010, 01, 02);
         family.setStartDate(cal.getTime());
         family.setStatusCode(FamilyStatus.NULLIFIED);
         long id = EjbTestHelper.getFamilyServiceBean().create(family);
@@ -246,7 +246,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         Family family = new Family();
         family.setName("FamilyName");
         Calendar cal = Calendar.getInstance();
-        cal.set(2010, 02, 02);
+        cal.set(2010, 01, 02);
         family.setStartDate(cal.getTime());
         family.setStatusCode(FamilyStatus.NULLIFIED);
         long id = EjbTestHelper.getFamilyServiceBean().create(family);
@@ -300,7 +300,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         Family family = new Family();
         family.setName("FamilyName");
         Calendar cal = Calendar.getInstance();
-        cal.set(2010, 02, 02);
+        cal.set(2010, 01, 02);
         family.setStartDate(cal.getTime());
         family.setStatusCode(FamilyStatus.NULLIFIED);
         long id = EjbTestHelper.getFamilyServiceBean().create(family);

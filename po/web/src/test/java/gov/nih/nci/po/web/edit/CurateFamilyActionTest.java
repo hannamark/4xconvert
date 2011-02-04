@@ -86,6 +86,7 @@ import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.po.web.curation.CurateFamilyAction;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -100,13 +101,13 @@ import com.opensymphony.xwork2.Action;
  * @author moweis
  *
  */
-public class EditFamilyActionTest extends AbstractPoTest {
+public class CurateFamilyActionTest extends AbstractPoTest {
 
-    private EditFamilyAction action;
+    private CurateFamilyAction action;
 
     @Before
     public void setUp() {
-        action = new EditFamilyAction();
+        action = new CurateFamilyAction();
     }
 
     @Test

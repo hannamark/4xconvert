@@ -80,7 +80,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.web.edit;
+package gov.nih.nci.po.web.curation;
 
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
@@ -100,7 +100,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class EditFamilyOrganizationRelationshipAction extends ActionSupport implements Preparable {
+public class CurateFamilyOrganizationRelationshipAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1L;
     private FamilyOrganizationRelationship familyOrgRelationship = new FamilyOrganizationRelationship();
     private String rootKey;

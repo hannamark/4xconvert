@@ -78,7 +78,13 @@ public class OrderedDateValidator implements Validator<OrderedDateValidator.Orde
             }
             return (startDate != null && endDate != null && DateUtils.truncatedCompareTo(startDate, endDate,
                     Calendar.DAY_OF_MONTH) <= 0);
-        } catch (Exception e) {
+        } catch (SecurityException e) {
+            return false;
+        } catch (NoSuchFieldException e) {
+            return false;
+        } catch (IllegalArgumentException e) {
+            return false;
+        } catch (IllegalAccessException e) {
             return false;
         }
     }
