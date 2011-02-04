@@ -80,74 +80,53 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services;
+package gov.nih.nci.po.web.create;
 
+import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.service.AbstractBaseServiceBean;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.edit.EditFamilyOrganizationRelationshipAction;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-
+import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
+import com.opensymphony.xwork2.Preparable;
+import com.opensymphony.xwork2.validator.annotations.CustomValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
- * @author mshestopalov
+ * Action to handle the creation of family organization entities.
  *
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class FamilyOrganizationRelationshipServiceBean  extends AbstractBaseServiceBean<FamilyOrganizationRelationship>
-    implements FamilyOrganizationRelationshipServiceLocal {
-
-    private static final String ENDDATE = "endDate";
+public class CreateFamilyOrganizationRelationshipAction extends EditFamilyOrganizationRelationshipAction
+    implements Preparable {
+    private static final long serialVersionUID = 1L;
 
     /**
-     * {@inheritDoc}
-     */
-    public long create(FamilyOrganizationRelationship famOrgRel) throws EntityValidationException {
-        return super.createHelper(famOrgRel);
-        //TODO figure out how publishing of Family entities will work w/ pa,
-        // and change methods to take other items than just curatable entities.
-        //getPublisher().sendCreate(getTypeArgument(), famOrgRel);
-        //return id;
-    }
-
-    /**
-     * {@inheritDoc}
+     * @return show the start page
      */
     @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Map<String, String[]> validate(FamilyOrganizationRelationship entity) {
-        Map<String, String[]> messages = PoHibernateUtil.validate(entity);
-        if (entity.getEndDate() != null && DateUtils.truncatedCompareTo(entity.getEndDate(),
-                new Date(), Calendar.DAY_OF_MONTH) > 0) {
-            messages.put(ENDDATE, new String[] {"End date cannot be a future date."});
-        } else if (entity.getEndDate() != null && DateUtils.truncatedCompareTo(entity.getEndDate(),
-                entity.getStartDate(), Calendar.DAY_OF_MONTH) < 0) {
-            messages.put(ENDDATE, new String[] {"End date cannot be before start date."});
-        }
-        return messages;
+    public String start() {
+        Family family = PoRegistry.getFamilyService().getById(getFamilyOrgRelationship().getFamily().getId());
+        setFamilyOrgRelationship(new FamilyOrganizationRelationship());
+        getFamilyOrgRelationship().setStartDate(new Date());
+        getFamilyOrgRelationship().setFamily(family);
+        setRootKey(PoHttpSessionUtil.addAttribute(getFamilyOrgRelationship()));
+        return INPUT;
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a family organization relationship.
+     * @return success
+     * @throws EntityValidationException if validation exception while creating a family organization relationship.
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @SuppressWarnings("unchecked")
-    public List<FamilyOrganizationRelationship> getActiveRelationships(Long familyId) {
-        Criteria criteria = PoHibernateUtil.getCurrentSession().createCriteria(FamilyOrganizationRelationship.class);
-        criteria.add(Restrictions.eq("family.id", familyId)).add(Restrictions.isNull("endDate"));
-        return criteria.list();
+    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "familyOrgRelationship") })
+    public String create() throws EntityValidationException {
+        PoRegistry.getFamilyOrganizationRelationshipService().create(getFamilyOrgRelationship());
+        ActionHelper.saveMessage(getText("familyOrgRelationship.create.success"));
+        return SUCCESS;
     }
 }

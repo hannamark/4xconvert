@@ -80,74 +80,117 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services;
+package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.service.AbstractBaseServiceBean;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
 
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
- * @author mshestopalov
+ * Mock implementation of the family organization relationship service
  *
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class FamilyOrganizationRelationshipServiceBean  extends AbstractBaseServiceBean<FamilyOrganizationRelationship>
-    implements FamilyOrganizationRelationshipServiceLocal {
-
-    private static final String ENDDATE = "endDate";
+public class MockFamilyOrganizationRelationshipService implements FamilyOrganizationRelationshipServiceLocal {
+    private long currentId = 0;
 
     /**
      * {@inheritDoc}
      */
     public long create(FamilyOrganizationRelationship famOrgRel) throws EntityValidationException {
-        return super.createHelper(famOrgRel);
-        //TODO figure out how publishing of Family entities will work w/ pa,
-        // and change methods to take other items than just curatable entities.
-        //getPublisher().sendCreate(getTypeArgument(), famOrgRel);
-        //return id;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Map<String, String[]> validate(FamilyOrganizationRelationship entity) {
-        Map<String, String[]> messages = PoHibernateUtil.validate(entity);
-        if (entity.getEndDate() != null && DateUtils.truncatedCompareTo(entity.getEndDate(),
-                new Date(), Calendar.DAY_OF_MONTH) > 0) {
-            messages.put(ENDDATE, new String[] {"End date cannot be a future date."});
-        } else if (entity.getEndDate() != null && DateUtils.truncatedCompareTo(entity.getEndDate(),
-                entity.getStartDate(), Calendar.DAY_OF_MONTH) < 0) {
-            messages.put(ENDDATE, new String[] {"End date cannot be before start date."});
+        if (famOrgRel.getId() == null) {
+            currentId++;
+            famOrgRel.setId(currentId);
         }
-        return messages;
+        return currentId;
     }
 
     /**
      * {@inheritDoc}
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @SuppressWarnings("unchecked")
+    public FamilyOrganizationRelationship getById(long id) {
+       FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
+       famOrgRel.setId(id);
+       famOrgRel.setStartDate(new Date());
+       famOrgRel.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
+
+       famOrgRel.setOrganization(new Organization());
+       famOrgRel.getOrganization().setName("Organization");
+       famOrgRel.getOrganization().setStatusCode(EntityStatus.ACTIVE);
+       famOrgRel.getOrganization().setId(id);
+
+       famOrgRel.setFamily(new Family());
+       famOrgRel.getFamily().setId(id);
+       famOrgRel.getFamily().setName("Family");
+       return famOrgRel;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void update(FamilyOrganizationRelationship updatedEntity) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<FamilyOrganizationRelationship> getFamilyOrganizationRelationshipsByOrgId(Long orgId) {
+        return new HashSet<FamilyOrganizationRelationship>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<FamilyOrganizationRelationship> getFamilyOrganizationRelationshipsByFamId(Long famId) {
+        return new HashSet<FamilyOrganizationRelationship>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<FamilyOrganizationRelationship> search(SearchCriteria<FamilyOrganizationRelationship> criteria) {
+        return new ArrayList<FamilyOrganizationRelationship>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<FamilyOrganizationRelationship> search(SearchCriteria<FamilyOrganizationRelationship> criteria,
+            PageSortParams<FamilyOrganizationRelationship> pageSortParams) {
+        return new ArrayList<FamilyOrganizationRelationship>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int count(SearchCriteria<FamilyOrganizationRelationship> criteria) {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, String[]> validate(FamilyOrganizationRelationship entity) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public List<FamilyOrganizationRelationship> getActiveRelationships(Long familyId) {
-        Criteria criteria = PoHibernateUtil.getCurrentSession().createCriteria(FamilyOrganizationRelationship.class);
-        criteria.add(Restrictions.eq("family.id", familyId)).add(Restrictions.isNull("endDate"));
-        return criteria.list();
+       return new ArrayList<FamilyOrganizationRelationship>();
     }
 }

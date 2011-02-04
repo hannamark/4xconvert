@@ -80,74 +80,44 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services;
+package gov.nih.nci.po.web.create;
 
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.service.AbstractBaseServiceBean;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.web.AbstractPoTest;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import org.junit.Before;
+import org.junit.Test;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-
+import com.opensymphony.xwork2.Action;
 
 /**
- * @author mshestopalov
- *
+ * @author Abraham J. Evans-EL <aevansle@5amsolutions.com>
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class FamilyOrganizationRelationshipServiceBean  extends AbstractBaseServiceBean<FamilyOrganizationRelationship>
-    implements FamilyOrganizationRelationshipServiceLocal {
+public class CreateFamilyOrganizationRelationshipActionTest extends AbstractPoTest {
+    private CreateFamilyOrganizationRelationshipAction action;
 
-    private static final String ENDDATE = "endDate";
-
-    /**
-     * {@inheritDoc}
-     */
-    public long create(FamilyOrganizationRelationship famOrgRel) throws EntityValidationException {
-        return super.createHelper(famOrgRel);
-        //TODO figure out how publishing of Family entities will work w/ pa,
-        // and change methods to take other items than just curatable entities.
-        //getPublisher().sendCreate(getTypeArgument(), famOrgRel);
-        //return id;
+    @Before
+    public void setUp() {
+        action = new CreateFamilyOrganizationRelationshipAction();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Map<String, String[]> validate(FamilyOrganizationRelationship entity) {
-        Map<String, String[]> messages = PoHibernateUtil.validate(entity);
-        if (entity.getEndDate() != null && DateUtils.truncatedCompareTo(entity.getEndDate(),
-                new Date(), Calendar.DAY_OF_MONTH) > 0) {
-            messages.put(ENDDATE, new String[] {"End date cannot be a future date."});
-        } else if (entity.getEndDate() != null && DateUtils.truncatedCompareTo(entity.getEndDate(),
-                entity.getStartDate(), Calendar.DAY_OF_MONTH) < 0) {
-            messages.put(ENDDATE, new String[] {"End date cannot be before start date."});
-        }
-        return messages;
+    @Test
+    public void testStart() {
+        Family family = new Family();
+        family.setId(1L);
+        FamilyOrganizationRelationship famOrgRelationship = new FamilyOrganizationRelationship();
+        famOrgRelationship.setFamily(family);
+        action.setFamilyOrgRelationship(famOrgRelationship);
+        action.setSelectedOrgId(2L);
+        assertEquals(Action.INPUT, action.start());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @SuppressWarnings("unchecked")
-    public List<FamilyOrganizationRelationship> getActiveRelationships(Long familyId) {
-        Criteria criteria = PoHibernateUtil.getCurrentSession().createCriteria(FamilyOrganizationRelationship.class);
-        criteria.add(Restrictions.eq("family.id", familyId)).add(Restrictions.isNull("endDate"));
-        return criteria.list();
+    @Test
+    public void testCreate() throws EntityValidationException {
+        action.setSelectedOrgId(1L);
+        assertEquals(Action.SUCCESS, action.create());
     }
 }

@@ -80,74 +80,126 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services;
+package gov.nih.nci.po.web.edit;
 
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.service.AbstractBaseServiceBean;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-
+import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
+import com.opensymphony.xwork2.validator.annotations.CustomValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
- * @author mshestopalov
+ * Action class for handling family organization relationships.
  *
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class FamilyOrganizationRelationshipServiceBean  extends AbstractBaseServiceBean<FamilyOrganizationRelationship>
-    implements FamilyOrganizationRelationshipServiceLocal {
-
-    private static final String ENDDATE = "endDate";
-
-    /**
-     * {@inheritDoc}
-     */
-    public long create(FamilyOrganizationRelationship famOrgRel) throws EntityValidationException {
-        return super.createHelper(famOrgRel);
-        //TODO figure out how publishing of Family entities will work w/ pa,
-        // and change methods to take other items than just curatable entities.
-        //getPublisher().sendCreate(getTypeArgument(), famOrgRel);
-        //return id;
-    }
+public class EditFamilyOrganizationRelationshipAction extends ActionSupport implements Preparable {
+    private static final long serialVersionUID = 1L;
+    private FamilyOrganizationRelationship familyOrgRelationship = new FamilyOrganizationRelationship();
+    private String rootKey;
+    private Long selectedOrgId;
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Map<String, String[]> validate(FamilyOrganizationRelationship entity) {
-        Map<String, String[]> messages = PoHibernateUtil.validate(entity);
-        if (entity.getEndDate() != null && DateUtils.truncatedCompareTo(entity.getEndDate(),
-                new Date(), Calendar.DAY_OF_MONTH) > 0) {
-            messages.put(ENDDATE, new String[] {"End date cannot be a future date."});
-        } else if (entity.getEndDate() != null && DateUtils.truncatedCompareTo(entity.getEndDate(),
-                entity.getStartDate(), Calendar.DAY_OF_MONTH) < 0) {
-            messages.put(ENDDATE, new String[] {"End date cannot be before start date."});
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public void prepare() throws Exception {
+        if (getRootKey() != null) {
+            setFamilyOrgRelationship(
+                    (FamilyOrganizationRelationship) PoHttpSessionUtil.getSession().getAttribute(getRootKey()));
         }
-        return messages;
     }
 
     /**
-     * {@inheritDoc}
+     * @return shows the initial page
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @SuppressWarnings("unchecked")
-    public List<FamilyOrganizationRelationship> getActiveRelationships(Long familyId) {
-        Criteria criteria = PoHibernateUtil.getCurrentSession().createCriteria(FamilyOrganizationRelationship.class);
-        criteria.add(Restrictions.eq("family.id", familyId)).add(Restrictions.isNull("endDate"));
-        return criteria.list();
+    public String start() {
+        setFamilyOrgRelationship(
+                PoRegistry.getFamilyOrganizationRelationshipService().getById(getFamilyOrgRelationship().getId()));
+        setRootKey(PoHttpSessionUtil.addAttribute(getFamilyOrgRelationship()));
+        return INPUT;
+    }
+
+    /**
+     * Updates the family organization relationship.
+     * @return success
+     */
+    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "familyOrgRelationship") })
+    public String submit() {
+        PoRegistry.getFamilyOrganizationRelationshipService().update(getFamilyOrgRelationship());
+        ActionHelper.saveMessage(getText("familyOrgRelationship.update.success"));
+        return SUCCESS;
+    }
+
+    /**
+     * Removes the family organization relationship by setting its end date.
+     * @return success
+     */
+    public String remove() {
+        setFamilyOrgRelationship(
+                PoRegistry.getFamilyOrganizationRelationshipService().getById(getFamilyOrgRelationship().getId()));
+        getFamilyOrgRelationship().setEndDate(new Date());
+        PoRegistry.getFamilyOrganizationRelationshipService().update(getFamilyOrgRelationship());
+        ActionHelper.saveMessage(getText("familyOrgRelationship.update.remove"));
+        return SUCCESS;
+    }
+
+    /**
+     * Loads the organization info based on the selected org id.
+     * @return orgInfo
+     */
+    public String loadOrganizationInfo() {
+        Organization org = PoRegistry.getOrganizationService().getById(getSelectedOrgId());
+        getFamilyOrgRelationship().setOrganization(org);
+        return "orgInfo";
+    }
+
+    /**
+     * @return the familyOrgRelationship
+     */
+    public FamilyOrganizationRelationship getFamilyOrgRelationship() {
+        return familyOrgRelationship;
+    }
+
+    /**
+     * @param familyOrgRelationship the familyOrgRelationship to set
+     */
+    public void setFamilyOrgRelationship(FamilyOrganizationRelationship familyOrgRelationship) {
+        this.familyOrgRelationship = familyOrgRelationship;
+    }
+
+    /**
+     * @return the rootKey
+     */
+    public String getRootKey() {
+        return rootKey;
+    }
+
+    /**
+     * @param rootKey the rootKey to set
+     */
+    public void setRootKey(String rootKey) {
+        this.rootKey = rootKey;
+    }
+
+    /**
+     * @return the selectedOrgId
+     */
+    public Long getSelectedOrgId() {
+        return selectedOrgId;
+    }
+
+    /**
+     * @param selectedOrgId the selectedOrgId to set
+     */
+    public void setSelectedOrgId(Long selectedOrgId) {
+        this.selectedOrgId = selectedOrgId;
     }
 }

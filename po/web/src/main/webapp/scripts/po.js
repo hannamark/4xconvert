@@ -14,11 +14,13 @@ function submitAjaxForm(formId, divId, options, showLoadingIcon) {
 }
 
 function submitDivAsForm(url, divId) {
-    var div = document.getElementById(divId);
+    var div = $(divId);
     var fields = div.getElementsByTagName("input");
     var params="";
     for (var i=0; i<fields.length; i++) {
-        params += fields[i].name + "=" + escape(fields[i].value) + "&";
+    	if (fields[i].name.length > 0 && fields[i].value.length > 0) {
+    		params += fields[i].name + "=" + escape(fields[i].value) + "&";
+    	}
     }
     var aj = new Ajax.Updater(div, url, {
         asynchronous: true,
@@ -228,8 +230,6 @@ function assembleAndSubmitPhoneNumber(type, url, divId) {
         }
         $(type + 'Entry_value').value = $(type + 'Entry_value').value + 'x' + $(type + 'Entry_part4').value;
     }
-
-
 
     submitDivAsForm(url, divId);
 

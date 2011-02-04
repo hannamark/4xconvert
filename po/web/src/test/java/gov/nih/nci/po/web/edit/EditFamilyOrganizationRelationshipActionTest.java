@@ -80,74 +80,80 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services;
+package gov.nih.nci.po.web.edit;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.service.AbstractBaseServiceBean;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.web.AbstractPoTest;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import org.junit.Before;
+import org.junit.Test;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
+import com.opensymphony.xwork2.Action;
 
 
 /**
- * @author mshestopalov
- *
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class FamilyOrganizationRelationshipServiceBean  extends AbstractBaseServiceBean<FamilyOrganizationRelationship>
-    implements FamilyOrganizationRelationshipServiceLocal {
+public class EditFamilyOrganizationRelationshipActionTest extends AbstractPoTest {
+    private EditFamilyOrganizationRelationshipAction action;
 
-    private static final String ENDDATE = "endDate";
-
-    /**
-     * {@inheritDoc}
-     */
-    public long create(FamilyOrganizationRelationship famOrgRel) throws EntityValidationException {
-        return super.createHelper(famOrgRel);
-        //TODO figure out how publishing of Family entities will work w/ pa,
-        // and change methods to take other items than just curatable entities.
-        //getPublisher().sendCreate(getTypeArgument(), famOrgRel);
-        //return id;
+    @Before
+    public void setUp() {
+        action = new EditFamilyOrganizationRelationshipAction();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Map<String, String[]> validate(FamilyOrganizationRelationship entity) {
-        Map<String, String[]> messages = PoHibernateUtil.validate(entity);
-        if (entity.getEndDate() != null && DateUtils.truncatedCompareTo(entity.getEndDate(),
-                new Date(), Calendar.DAY_OF_MONTH) > 0) {
-            messages.put(ENDDATE, new String[] {"End date cannot be a future date."});
-        } else if (entity.getEndDate() != null && DateUtils.truncatedCompareTo(entity.getEndDate(),
-                entity.getStartDate(), Calendar.DAY_OF_MONTH) < 0) {
-            messages.put(ENDDATE, new String[] {"End date cannot be before start date."});
-        }
-        return messages;
+    @Test
+    public void testPrepareNoRootKey() throws Exception {
+        FamilyOrganizationRelationship initial = action.getFamilyOrgRelationship();
+        action.prepare();
+        assertSame(initial, action.getFamilyOrgRelationship());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @SuppressWarnings("unchecked")
-    public List<FamilyOrganizationRelationship> getActiveRelationships(Long familyId) {
-        Criteria criteria = PoHibernateUtil.getCurrentSession().createCriteria(FamilyOrganizationRelationship.class);
-        criteria.add(Restrictions.eq("family.id", familyId)).add(Restrictions.isNull("endDate"));
-        return criteria.list();
+    @Test
+    public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
+        action.setRootKey("foo");
+        getSession().clearAttributes();
+        action.prepare();
+        assertNull(action.getFamilyOrgRelationship());
+    }
+
+    @Test
+    public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
+        FamilyOrganizationRelationship familyOrgRel = new FamilyOrganizationRelationship();
+        String rootKey = "foo";
+        getSession().setAttribute(rootKey, familyOrgRel);
+        action.setRootKey(rootKey);
+        action.prepare();
+        assertSame(familyOrgRel, action.getFamilyOrgRelationship());
+    }
+
+    @Test
+    public void testStart() {
+        action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
+        action.getFamilyOrgRelationship().setId(2L);
+        assertEquals(Action.INPUT, action.start());
+    }
+
+    @Test
+    public void testSubmit() {
+        action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
+        action.getFamilyOrgRelationship().setId(2L);
+        assertEquals(Action.SUCCESS, action.submit());
+    }
+
+    @Test
+    public void testLoadOrganizationInfo() {
+        action.setSelectedOrgId(1L);
+        assertEquals("orgInfo", action.loadOrganizationInfo());
+    }
+
+    @Test
+    public void testRemove() {
+        action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
+        action.getFamilyOrgRelationship().setId(1L);
+        assertEquals(Action.SUCCESS, action.remove());
     }
 }

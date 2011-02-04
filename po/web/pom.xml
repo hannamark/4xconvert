@@ -133,6 +133,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-dojo-plugin</artifactId>
+            <version>2.1.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.fiveamsolutions</groupId>
             <artifactId>nci-commons-struts2</artifactId>
             <version>${nci-commons.version}</version>

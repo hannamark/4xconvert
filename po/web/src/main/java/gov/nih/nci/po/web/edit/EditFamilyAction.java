@@ -1,9 +1,12 @@
 package gov.nih.nci.po.web.edit;
 
 import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.util.PoRegistry;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.set.ListOrderedSet;
@@ -18,8 +21,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  */
 public class EditFamilyAction extends ActionSupport {
     private static final long serialVersionUID = 1285712121733778829L;
-    
+
     private Family family = new Family();
+    private List<FamilyOrganizationRelationship> familyOrganizationRelationships =
+        new ArrayList<FamilyOrganizationRelationship>();
 
     /**
      * @return show start page
@@ -41,7 +46,8 @@ public class EditFamilyAction extends ActionSupport {
     }
 
     private void initializeCollections() {
-        getFamily().getFamilyOrganizationRelationships().size();
+       familyOrganizationRelationships =
+           PoRegistry.getFamilyOrganizationRelationshipService().getActiveRelationships(getFamily().getId());
     }
 
     /**
@@ -68,5 +74,20 @@ public class EditFamilyAction extends ActionSupport {
         set.add(FamilyStatus.INACTIVE);
         set.add(FamilyStatus.NULLIFIED);
         return set;
+    }
+
+    /**
+     * @return the familyOrganizationRelationships
+     */
+    public List<FamilyOrganizationRelationship> getFamilyOrganizationRelationships() {
+        return familyOrganizationRelationships;
+    }
+
+    /**
+     * @param familyOrganizationRelationships the familyOrganizationRelationships to set
+     */
+    public void setFamilyOrganizationRelationships(
+            List<FamilyOrganizationRelationship> familyOrganizationRelationships) {
+        this.familyOrganizationRelationships = familyOrganizationRelationships;
     }
 }
