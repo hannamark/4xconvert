@@ -303,7 +303,7 @@
         </action>
         
         <!-- Family -> Edit/Create -->
-        <action name="family/edit/*" class="gov.nih.nci.po.web.edit.CurateFamilyAction" method="{1}">
+        <action name="family/edit/*" class="gov.nih.nci.po.web.curation.CurateFamilyAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/edit/family.jsp</result>
             <result name="input">/WEB-INF/jsp/edit/family.jsp</result>
@@ -316,7 +316,7 @@
         </action>
         
         <!-- Family Organization Relationship -> Create/Edit -->
-        <action name="family/organization/relationship/edit/*" class="gov.nih.nci.po.web.edit.EditFamilyOrganizationRelationshipAction" method="{1}">
+        <action name="family/organization/relationship/edit/*" class="gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success" type="redirectAction">family/edit/start?family.id=${familyOrgRelationship.family.id}</result>
             <result name="input">/WEB-INF/jsp/edit/familyOrganizationRelationship.jsp</result>
@@ -326,7 +326,7 @@
             <result name="success" type="redirectAction">family/edit/start?family.id=${familyOrgRelationship.family.id}</result>
             <result name="input">/WEB-INF/jsp/edit/familyOrganizationRelationship.jsp</result>
         </action>
-        <action name="ajax/family/organization/relationship/*" class="gov.nih.nci.po.web.edit.EditFamilyOrganizationRelationshipAction" method="{1}">
+        <action name="ajax/family/organization/relationship/*" class="gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="orgInfo">/WEB-INF/jsp/edit/familyOrgRelationshipOrgInfo.jsp</result>
         </action>

@@ -233,6 +233,9 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
        //ensures that the bi-directional link is created
        //e.g. save A is Parent of B. Then confirm that a the link B is a child of A exists in the db.
        OrganizationRelationship orgRel = getBasicOrgRelation();
+       Calendar cal = Calendar.getInstance();
+       cal.set(2011, 01, 02);      
+       orgRel.setStartDate(cal.getTime());
        orgRel.setHierarchicalType(FamilyHierarchicalType.PARENT);
        long id = orgRelServiceBean.create(orgRel);
        
