@@ -8,7 +8,7 @@
                 <c:param name="familyOrgRelationship.family.id" value="${family.id}"/>
             </c:url>
             <li>
-                <a href="${createFamilyOrgRelationshipUrl}" class="btn"><span class="btn_img"><span class="add">Add</span></span></a>
+                <a href="${createFamilyOrgRelationshipUrl}" class="btn" id="add_family_member_id_${family.id}"><span class="btn_img"><span class="add">Add</span></span></a>
             </li>
         </ul>
     </div>
@@ -36,8 +36,8 @@
                     <c:param name="familyOrgRelationship.id" value="${row.id}" />
                 </c:url>
                 <po:buttonRow>
-                    <po:button href="${editUrl}" style="edit" text="Edit" id="org_id_${row.id}" />
-                    <po:button href="${removeUrl}" style="delete" text="Remove" id="org_id_${row.id}" />
+                    <po:button href="${editUrl}" style="edit" text="Edit" id="fam_org_relationship_edit_id_${row.id}" />
+                    <po:button href="${removeUrl}" style="delete" text="Remove" id="fam_org_relationship_remove_id_${row.id}" />
                 </po:buttonRow>
             </display:column>
         </display:table>

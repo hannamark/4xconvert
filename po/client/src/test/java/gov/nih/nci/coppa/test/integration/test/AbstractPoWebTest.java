@@ -171,6 +171,18 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         waitForTelecomFormsToLoad();
     }
 
+    protected void openOrganizationFamilyList() {
+        goHome();
+        clickAndWait("ListFamily");
+        waitForElementById("createNewFamily", 10);
+    }
+
+    protected void openOrganizationFamilyCreate() {
+        goHome();
+        clickAndWait("CreateFamily");
+        waitForElementById("save_button", 10);
+    }
+
     protected void waitForTelecomFormsToLoad() {
         waitForElementById("emailEntry_value", 10);
         waitForElementById("phoneEntry_value", 10);
