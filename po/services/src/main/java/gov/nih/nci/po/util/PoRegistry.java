@@ -88,7 +88,7 @@ import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
+import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 
 
 /**

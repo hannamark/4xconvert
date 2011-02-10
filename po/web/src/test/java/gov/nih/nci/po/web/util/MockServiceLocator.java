@@ -116,7 +116,7 @@ import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceStub;
 import gov.nih.nci.po.service.external.CtepImportService;
 import gov.nih.nci.po.util.ServiceLocator;
-import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
+import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 
 /**
  * The service locator for the test classes.

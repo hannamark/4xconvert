@@ -3,6 +3,7 @@ package gov.nih.nci.po.web.curation;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
 
 import java.util.ArrayList;
@@ -40,8 +41,14 @@ public class CurateFamilyAction extends ActionSupport {
      */
     @Validations(customValidators = {@CustomValidator(type = "hibernate", fieldName = "family") })
     public String submit() {
-        PoRegistry.getFamilyService().update(family);
-        ActionHelper.saveMessage(getText("family.update.success", new String[] {family.getName()}));
+        try {
+            PoRegistry.getFamilyService().updateEntity(family);
+            ActionHelper.saveMessage(getText("family.update.success", new String[] {family.getName()}));
+        } catch (EntityValidationException e) {
+           // this should never really occur during normal usage
+           // after implementing PO-3199 no need to swallow EntityValidationException
+           addActionError(e.getErrorMessages());
+        }
         return SUCCESS;
     }
 

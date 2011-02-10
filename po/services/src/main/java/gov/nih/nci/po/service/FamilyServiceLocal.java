@@ -119,6 +119,7 @@ public interface FamilyServiceLocal extends GenericSearchService<Family, SearchC
     /**
      * update the given family.
      * @param updatedEntity the entity to save.
+     * @throws EntityValidationException on error
      */
-    void update(Family updatedEntity);
+    void updateEntity(Family updatedEntity) throws EntityValidationException;
 }

@@ -84,6 +84,7 @@ package gov.nih.nci.po.web.curation;
 
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
@@ -133,8 +134,13 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "familyOrgRelationship") })
     public String submit() {
-        PoRegistry.getFamilyOrganizationRelationshipService().update(getFamilyOrgRelationship());
-        ActionHelper.saveMessage(getText("familyOrgRelationship.update.success"));
+        try {
+            PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(getFamilyOrgRelationship());
+            ActionHelper.saveMessage(getText("familyOrgRelationship.update.success"));
+        } catch (EntityValidationException  e) {
+            //after implementing PO-3199 no need to swallow EntityValidationException
+            addActionError(e.getErrorMessages());
+        }
         return SUCCESS;
     }
 
@@ -146,8 +152,14 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
         setFamilyOrgRelationship(
                 PoRegistry.getFamilyOrganizationRelationshipService().getById(getFamilyOrgRelationship().getId()));
         getFamilyOrgRelationship().setEndDate(new Date());
-        PoRegistry.getFamilyOrganizationRelationshipService().update(getFamilyOrgRelationship());
-        ActionHelper.saveMessage(getText("familyOrgRelationship.update.remove"));
+        try {
+            PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(getFamilyOrgRelationship());
+            ActionHelper.saveMessage(getText("familyOrgRelationship.update.remove"));
+        } catch (EntityValidationException e) {
+           //after implementing PO-3199 no need to swallow EntityValidationException
+            addActionError(e.getErrorMessages());
+        }
+        
         return SUCCESS;
     }
 

@@ -80,11 +80,9 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services;
+package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.GenericSearchService;
 
 import java.util.List;
 import java.util.Map;
@@ -123,8 +121,9 @@ public interface FamilyOrganizationRelationshipServiceLocal
     /**
      * Update Family Organization Relationship.
      * @param updatedEntity the entity to save.
+     * @throws EntityValidationException if validation fails
      */
-    void update(FamilyOrganizationRelationship updatedEntity);
+    void updateEntity(FamilyOrganizationRelationship updatedEntity) throws EntityValidationException;
 
     /**
      * Gets the list of active (i.e. no end date) family organization relationships by family id

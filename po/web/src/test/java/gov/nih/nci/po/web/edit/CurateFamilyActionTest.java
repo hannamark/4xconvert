@@ -83,11 +83,14 @@
 package gov.nih.nci.po.web.edit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.curation.CurateFamilyAction;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -121,6 +124,8 @@ public class CurateFamilyActionTest extends AbstractPoTest {
     public void testSubmit() {
         action.setFamily(new Family());
         action.getFamily().setId(1L);
+        action.setFamilyOrganizationRelationships(new ArrayList<FamilyOrganizationRelationship>());
+        assertNotNull(action.getFamilyOrganizationRelationships());
         assertEquals(Action.SUCCESS, action.submit());
     }
     

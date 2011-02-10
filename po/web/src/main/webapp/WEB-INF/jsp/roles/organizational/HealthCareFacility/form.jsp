@@ -140,7 +140,8 @@
 
 <div style="clear:left;"></div>
     <div class="btnwrapper" style="margin-bottom:20px;">
-    <%@include file="../../confirmThenSubmit.jsp" %>
+    <%@include file="../../../confirmThenSubmit.jsp" %>
+    <%@include file="../../defineMapToShowConfirm.jsp" %>
     <po:buttonRow>
        <s:if test="!#isReadonly">
        <po:button id="save_button" href="javascript://noop/" onclick="return ((isTelecomFieldsBlank()==true) ? confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm'):false);" style="save" text="Save"/>

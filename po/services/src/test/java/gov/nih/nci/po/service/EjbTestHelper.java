@@ -91,8 +91,6 @@ import gov.nih.nci.po.util.jms.TopicConnectionFactoryStub;
 import gov.nih.nci.po.util.jms.TopicStub;
 import gov.nih.nci.services.BusinessServiceBean;
 import gov.nih.nci.services.BusinessServiceRemote;
-import gov.nih.nci.services.FamilyOrganizationRelationshipServiceBean;
-import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceBean;

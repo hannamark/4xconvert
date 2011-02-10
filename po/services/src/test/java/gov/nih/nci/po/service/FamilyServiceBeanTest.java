@@ -84,11 +84,22 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyFunctionalType;
+import gov.nih.nci.po.data.bo.FamilyHierarchicalType;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.util.Calendar;
 import java.util.Date;
+
+import javax.jms.JMSException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -100,12 +111,14 @@ import org.junit.Test;
  */
 public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
     private FamilyServiceBean familyServiceBean;
+    OrganizationServiceBean orgLocal;
     public FamilyServiceBean getFamilyServiceBean() {
         return familyServiceBean;
     }
     @Before
     public void setUpData() {
         familyServiceBean = EjbTestHelper.getFamilyServiceBean();
+        orgLocal = EjbTestHelper.getOrganizationServiceBean();
     }
 
     @After
@@ -114,10 +127,8 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
     }
     @Test
     public void testFamily() throws EntityValidationException {
-        Family family = new Family();
-        family.setName("FamilyName");
-        family.setStartDate(new Date());
-        family.setStatusCode(FamilyStatus.NULLIFIED);
+        Family family = getFamily();
+        family.setStartDate(null);
         long id = getFamilyServiceBean().create(family);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
@@ -126,7 +137,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         Family toUpdate = familyServiceBean.getById(saved.getId());
         assertNotNull(toUpdate.getId());
         toUpdate.setName("UpdatedFamilyName");
-        getFamilyServiceBean().update(toUpdate);
+        getFamilyServiceBean().updateEntity(toUpdate);
         Family get = familyServiceBean.getById(toUpdate.getId());
         assertEquals(get.getName(),toUpdate.getName());
         Family tosearch = new Family();
@@ -134,4 +145,103 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         AnnotatedBeanSearchCriteria<Family> scriteria = new AnnotatedBeanSearchCriteria<Family>(tosearch);
         assertEquals(familyServiceBean.search(scriteria).size(),1);
     }
+    private Family getFamily() {
+        Family family = new Family();
+        family.setName("FamilyName");
+        Calendar cal = Calendar.getInstance();
+        cal.set(2011, 01, 02);
+        family.setStartDate(cal.getTime());
+        family.setStatusCode(FamilyStatus.NULLIFIED);
+        return family;
+    }
+    @Test
+    public void testFamilyStatusChangesToINACTVE() throws EntityValidationException, JMSException {
+        long id =getBasicFamily();
+        Family toUpdate = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
+        assertNull(toUpdate.getEndDate());
+        for (FamilyOrganizationRelationship updateFamOrgEntity : toUpdate.getFamilyOrganizationRelationships()) {
+            assertNull(updateFamOrgEntity.getEndDate());
+        }
+        for (OrganizationRelationship updateOrgRelEntity : toUpdate.getOrganizationRelationships()) {
+            assertNull(updateOrgRelEntity.getEndDate());
+        }
+        toUpdate.setStatusCode(FamilyStatus.INACTIVE);
+        toUpdate.setEndDate(new Date());
+        familyServiceBean.updateEntity(toUpdate);
+        Family updatedEntity = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
+        assertEquals(FamilyStatus.INACTIVE, updatedEntity.getStatusCode());
+        for (FamilyOrganizationRelationship updateFamOrgEntity : updatedEntity.getFamilyOrganizationRelationships()) {
+            assertNotNull(updateFamOrgEntity.getEndDate());
+            for (OrganizationRelationship updateOrgRelEntity : updateFamOrgEntity.getOrganization()
+                    .getOrganizationRelationships()) {
+                assertNotNull(updateOrgRelEntity.getEndDate());
+            }
+        }
+        
+    }
+    @Test
+    public void testFamilyStatusChangesToNULLIFIED() throws EntityValidationException, JMSException {
+        long id =getBasicFamily();
+        Family toUpdate = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
+        for (FamilyOrganizationRelationship updateFamOrgEntity : toUpdate.getFamilyOrganizationRelationships()) {
+            assertNull(updateFamOrgEntity.getEndDate());
+        }
+        for (OrganizationRelationship updateOrgRelEntity : toUpdate.getOrganizationRelationships()) {
+            assertNull(updateOrgRelEntity.getEndDate());
+        }
+        toUpdate.setStatusCode(FamilyStatus.NULLIFIED);
+        familyServiceBean.updateEntity(toUpdate);
+        Family updatedEntity = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
+        assertEquals(FamilyStatus.NULLIFIED, updatedEntity.getStatusCode());
+        for (FamilyOrganizationRelationship updateFamOrgEntity : updatedEntity.getFamilyOrganizationRelationships()) {
+            assertNotNull(updateFamOrgEntity.getEndDate());
+            for (OrganizationRelationship updateOrgRelEntity : updateFamOrgEntity.getOrganization()
+                    .getOrganizationRelationships()) {
+                assertNotNull(updateOrgRelEntity.getEndDate());
+            }
+        }
+        
+    }
+    private long getBasicFamily() throws EntityValidationException, JMSException {
+        FamilyOrganizationRelationshipServiceBean famOrgRelationBean = new FamilyOrganizationRelationshipServiceBean();
+        famOrgRelationBean.setOrgRelService(new OrganizationRelationshipServiceBean());
+        familyServiceBean.setFamilyOrgRelService(famOrgRelationBean);
+        long orgId = createOrg();
+        Family family = getFamily();
+        family.setStatusCode(FamilyStatus.ACTIVE);
+        long id = getFamilyServiceBean().create(family);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        FamilyOrganizationRelationship famOrgRelBo = new FamilyOrganizationRelationship();
+        famOrgRelBo.setFunctionalType(FamilyFunctionalType.AFFILIATION);
+        famOrgRelBo.setStartDate(new Date());
+        famOrgRelBo.setOrganization(orgLocal.getById(orgId));
+        famOrgRelBo.setFamily(getFamilyServiceBean().getById(id));
+        FamilyOrganizationRelationshipServiceBean famOrgService = new FamilyOrganizationRelationshipServiceBean();
+        famOrgService.create(famOrgRelBo);
+        
+        long newOrgId = createOrg();
+        PoHibernateUtil.getCurrentSession().flush();
+        
+        OrganizationRelationshipServiceBean orgRelService = new OrganizationRelationshipServiceBean();
+        OrganizationRelationship orgRel = new OrganizationRelationship();
+        orgRel.setOrganization(orgLocal.getById(orgId));
+        orgRel.setRelatedOrganization(orgLocal.getById(newOrgId));
+        orgRel.setFamily(familyServiceBean.getById(id));
+        orgRel.setHierarchicalType(FamilyHierarchicalType.PARENT);
+        orgRelService.create(orgRel);
+
+        PoHibernateUtil.getCurrentSession().flush();
+        return id;
+    }
+    private long createOrg() throws EntityValidationException, JMSException {
+        Organization org = new Organization();
+        Address a = new Address("streetAddressLine", "cityOrMunicipality", "MD", "postalCode",
+                  getDefaultCountry());
+        org.setPostalAddress(a);
+        org.setName("Some Org Name " + new Date());
+        org.getEmail().add(new Email("abc@example.com"));
+        return orgLocal.create(org);
+      }
 }

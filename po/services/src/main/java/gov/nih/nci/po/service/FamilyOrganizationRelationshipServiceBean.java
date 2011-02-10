@@ -80,15 +80,16 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services;
-
-import java.util.List;
+package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.service.AbstractBaseServiceBean;
-import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.util.List;
+import java.util.Set;
+
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -106,7 +107,8 @@ import org.hibernate.criterion.Restrictions;
 public class FamilyOrganizationRelationshipServiceBean 
     extends AbstractBaseServiceBean<FamilyOrganizationRelationship> 
     implements FamilyOrganizationRelationshipServiceLocal {
-
+    @EJB
+    private OrganizationRelationshipServiceLocal orgRelService;
     /**
      * {@inheritDoc}
      */
@@ -128,5 +130,32 @@ public class FamilyOrganizationRelationshipServiceBean
         criteria.add(Restrictions.eq("family.id", familyId)).add(Restrictions.isNull("endDate"));
         return criteria.list();
     }
-    
+    /**
+     * {@inheritDoc}
+     */
+    public void updateEntity(FamilyOrganizationRelationship updateEntity) throws EntityValidationException {
+        if (updateEntity.getEndDate() != null) {
+            //cascade the end date to all children
+           Set<OrganizationRelationship> orgRelationSet = updateEntity.getOrganization().getOrganizationRelationships();
+           for (OrganizationRelationship updateOrgRelationEntity : orgRelationSet) {
+               updateOrgRelationEntity.setEndDate(updateEntity.getEndDate());
+               getOrgRelService().updateEntity(updateOrgRelationEntity);
+            }
+        }
+       super.update(updateEntity);
+     }
+    /**
+     * 
+     * @param orgRelService OrganizationRelationshipServiceLocal
+     */
+    public void setOrgRelService(OrganizationRelationshipServiceLocal orgRelService) {
+        this.orgRelService = orgRelService;
+    }
+    /**
+     * 
+     * @return organizationRelationshipServiceLocal
+     */
+    public OrganizationRelationshipServiceLocal getOrgRelService() {
+        return orgRelService;
+    }
 }

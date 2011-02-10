@@ -83,10 +83,13 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -100,7 +103,8 @@ import javax.ejb.TransactionAttributeType;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implements FamilyServiceLocal {
-
+    @EJB
+    private FamilyOrganizationRelationshipServiceLocal familyOrgRelService;
     /**
      * {@inheritDoc}
      */
@@ -111,5 +115,44 @@ public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implement
         family.setEndDate(null);
         family.setStatusCode(FamilyStatus.ACTIVE);
         return super.createHelper(family);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public void updateEntity(Family updateFamilyEntity) throws EntityValidationException {
+        if (isNotActiveStatus(updateFamilyEntity)) {
+            if (updateFamilyEntity.getEndDate() == null) {
+                updateFamilyEntity.setEndDate(new Date());
+            }
+        } else {
+            updateFamilyEntity.setEndDate(null);
+        }
+        super.update(updateFamilyEntity);
+        cascadeEndDate(updateFamilyEntity);
+        
+    }
+
+    private boolean isNotActiveStatus(Family updateFamilyEntity) {
+        return FamilyStatus.INACTIVE.equals(updateFamilyEntity.getStatusCode()) 
+               || FamilyStatus.NULLIFIED.equals(updateFamilyEntity.getStatusCode());
+    }
+    private void cascadeEndDate(Family updateFamilyEntity) throws EntityValidationException {
+        if (isNotActiveStatus(updateFamilyEntity)) {
+            List<FamilyOrganizationRelationship> famOrgSet = familyOrgRelService.getActiveRelationships(
+                    updateFamilyEntity.getId());
+            for (FamilyOrganizationRelationship updateFamOrgEntity : famOrgSet) {
+                updateFamOrgEntity.setEndDate(updateFamilyEntity.getEndDate());
+                familyOrgRelService.updateEntity(updateFamOrgEntity);
+            }
+        }
+    }
+    /**
+     * 
+     * @param familyOrgRelService service to set
+     */
+    public void setFamilyOrgRelService(FamilyOrganizationRelationshipServiceLocal familyOrgRelService) {
+        this.familyOrgRelService = familyOrgRelService;
     }
 }

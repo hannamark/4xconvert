@@ -95,9 +95,10 @@ import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
-import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
+import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -177,7 +178,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         savedFamOrgRel.setFunctionalType(FamilyFunctionalType.CONTRACTUAL);
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
         savedFamOrgRel.setStartDate(sdf.parse("01/01/2009"));
-        familyOrgRelServiceLocal.update(savedFamOrgRel);
+        familyOrgRelServiceLocal.updateEntity(savedFamOrgRel);
         FamilyOrganizationRelationship freshFamOrgRel = familyOrgRelServiceLocal.getById(famOrgRelId);
         assertEquals(freshFamOrgRel.getFunctionalType(), FamilyFunctionalType.CONTRACTUAL);
         assertEquals(sdf.format(freshFamOrgRel.getStartDate()), "01/01/2009");
@@ -333,15 +334,20 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
 
         long famOrgRelId = familyOrgRelServiceLocal.create(famOrgRel);
         assertEquals(1, familyOrgRelServiceLocal.getActiveRelationships(id).size());
-        FamilyOrganizationRelationship savedFamOrgRel = (FamilyOrganizationRelationship)
-            PoHibernateUtil.getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-
+        FamilyOrganizationRelationship savedFamOrgRel = (FamilyOrganizationRelationship)
+            PoHibernateUtil.getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId);
         // update test, get test
         savedFamOrgRel.setEndDate(new Date());
-        familyOrgRelServiceLocal.update(savedFamOrgRel);
-
+        familyOrgRelServiceLocal.updateEntity(savedFamOrgRel);
+        FamilyOrganizationRelationship updatedFamOrgRel = (FamilyOrganizationRelationship)
+        PoHibernateUtil.getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId);
+        assertNotNull(updatedFamOrgRel.getEndDate());
+        for (OrganizationRelationship updateOrgRelEntity : updatedFamOrgRel.getOrganization()
+                    .getOrganizationRelationships()) {
+            assertNotNull(updateOrgRelEntity.getEndDate());
+        }
         assertEquals(0, familyOrgRelServiceLocal.getActiveRelationships(id).size());
     }
 }

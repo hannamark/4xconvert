@@ -87,7 +87,7 @@ import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
+import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -141,7 +141,7 @@ public class MockFamilyOrganizationRelationshipService implements FamilyOrganiza
     /**
      * {@inheritDoc}
      */
-    public void update(FamilyOrganizationRelationship updatedEntity) {
+    public void updateEntity(FamilyOrganizationRelationship updatedEntity) {
     }
 
     /**

@@ -99,7 +99,7 @@ import gov.nih.nci.po.service.PatientServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepImportService;
-import gov.nih.nci.services.FamilyOrganizationRelationshipServiceLocal;
+import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 
 /**
  * @author Scott Miller

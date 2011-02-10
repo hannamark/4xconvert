@@ -10,6 +10,15 @@
     <s:else>
        <title><s:text name="family.details.title"/></title>
     </s:else>
+    <script type="text/javascript">
+        function confirmThenSubmit(fieldId, formId){
+           var map = new Array();
+           map['NULLIFIED'] = '<s:text name="entity.edit.nullified.confirmation"/>';
+           map['INACTIVE'] = '<s:text name="entity.edit.inactive.confirmation"/>';
+           finalConfirmThenSubmit($(fieldId),$(formId),map);
+        }
+    </script>
+    <%@include file="../confirmThenSubmit.jsp" %>
 </head>
 <body> 
 <po:successMessages />
@@ -26,7 +35,7 @@
     <s:form action="%{formAction}" id="familyEntityForm">
         <div class="box_white">
         <s:if test="isCreate">
-            <s:hidden key="family.statusCode"/>
+            <s:hidden id="familyEntityForm.family.statusCode" key="family.statusCode"/>
             <po:inputRowElement><po:field labelKey="family.statusCode">${family.statusCode}</po:field></po:inputRowElement>
         </s:if>
         <s:else>
@@ -46,6 +55,7 @@
                    value="family.statusCode"
                    headerKey="" headerValue="--Select a Status--"
                    required="true" cssClass="required"
+                   onchange="handleEndDateDiv();"
                    id="familyEntityForm.family.statusCode"/>
         </s:else>
             <po:field labelKey="family.startDate" fieldRequired="true">
@@ -55,13 +65,39 @@
                 <sx:datetimepicker required="true" name="family.startDate" displayFormat="MM-dd-yyyy" labelposition="left" />
             </po:field>
             <s:textfield key="family.name" required="true" cssClass="required" size="70"/>
+            
+            <div id="endDateDiv" <s:if test="family.statusCode != @gov.nih.nci.po.data.bo.FamilyStatus@NULLIFIED">style="display:none;"</s:if>>
+                    <script type="text/javascript">
+                        function handleEndDateDiv() {
+                            $('endDateDiv')[$('familyEntityForm.family.statusCode').value == 'ACTIVE' ? 'hide':'show']();
+                            if ($('familyEntityForm.family.statusCode').value != 'NULLIFIED'
+                                && $('familyEntityForm.family.statusCode').value != 'INACTIVE') {
+                                $('familyEntityForm.family.endDate').value = '';
+                            }
+                            return true;
+                        }
+                    </script>
+                    <po:inputRow>
+                        <po:inputRowElement>
+                            <div class="wwgrp" id="wwgrp_familyEntityForm_endDate">
+                              <po:field labelKey="family.endDate"/>
+                                <label class="label" for="family.endDate">
+                                     <s:fielderror>
+                                     <s:param>family.endDate</s:param>
+                                     </s:fielderror>
+                                     <sx:datetimepicker required="true" name="family.endDate" displayFormat="MM-dd-yyyy" labelposition="left" />
+                                </label>
+                            </div>
+                        </po:inputRowElement>
+                    </po:inputRow>
+                </div>
             <div class="clear"></div>
         </div>
     </s:form>
 </div>
 <div class="btnwrapper" style="margin-bottom:20px;">
         <po:buttonRow>
-            <po:button id="save_button" href="javascript://noop/" onclick="$('familyEntityForm').submit();" style="save" text="Save"/>
+            <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('familyEntityForm.family.statusCode',document.forms.familyEntityForm);" style="save" text="Save"/>
             <c:url var="listUrl" value="/protected/search/family/list.action" />
             <s:set name="returnToPageTitle" value="%{'Return to ' + getText('family.search.title')}"/>
             <po:button id="return_to_button" href="${listUrl}" style="continue" text="${returnToPageTitle}"/>

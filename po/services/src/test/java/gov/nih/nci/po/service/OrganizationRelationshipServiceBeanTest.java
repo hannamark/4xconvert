@@ -118,7 +118,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
     public void teardown() {
     orgRelServiceBean = null;
     }
-    @Test
+    @Test 
     public void testOrganizationRelationship() throws EntityValidationException, JMSException {
         OrganizationRelationship orgRel = createOrgRelationship();
         long id = orgRel.getId();
@@ -149,7 +149,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
         scriteria  = new AnnotatedBeanSearchCriteria<OrganizationRelationship>(tosearch);
         assertEquals(orgRelServiceBean.search(scriteria).size(),1);
     }
-    @Test
+    @Test 
     public void testUpdateRelationship() throws EntityValidationException, JMSException {
         long id = createOrgRelationship().getId();
         OrganizationRelationship toUpdate = orgRelServiceBean.getById(id);
@@ -177,7 +177,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
         return orgRel;
     }
     
-    @Test
+    @Test 
     public void createOrgRelWithStartDate() throws EntityValidationException, JMSException {
         OrganizationRelationship orgRel = getBasicOrgRelation();
         Calendar cal = Calendar.getInstance();
@@ -208,7 +208,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
            assertEquals("=[(startFieldName) must be before (endFieldName).]",e.getErrorMessages());
        }
    }
-   @Test
+   @Test 
    public void testUniqueRelationship() throws EntityValidationException, JMSException {
       //ensures that the there will be only one Active relation
        OrganizationRelationship orgRel = getBasicOrgRelation();
@@ -229,7 +229,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
               e.getErrorMessages());
        }
    }
-   @Test
+   @Test 
    public void testCreateRelationship() throws EntityValidationException, JMSException {
        //ensures that the bi-directional link is created
        //e.g. save A is Parent of B. Then confirm that a the link B is a child of A exists in the db.

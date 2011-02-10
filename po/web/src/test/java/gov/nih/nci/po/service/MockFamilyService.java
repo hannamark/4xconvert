@@ -121,7 +121,7 @@ public class MockFamilyService implements FamilyServiceLocal {
     /**
      * {@inheritDoc}
      */
-    public void update(Family org) {
+    public void updateEntity(Family org) {
     }
 
     /**
