@@ -14,7 +14,6 @@
            <title><s:text name="organization.details.title"/></title>
         </c:if>
     </s:else>
-    <%@include file="../../confirmThenSubmit.jsp" %>
     <%@include file="../defineMapToShowConfirm.jsp" %>
 </head>
 <body>

@@ -184,7 +184,6 @@
 <div style="clear:left;">
 </div>
     <div class="btnwrapper" style="margin-bottom:20px;">
-    <%@include file="../../../confirmThenSubmit.jsp" %>
     <%@include file="../../defineMapToShowConfirm.jsp" %>
     <po:buttonRow>
        <s:if test="%{not isReadonly}">
