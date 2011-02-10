@@ -19,7 +19,7 @@
         <jboss.configuration>poear</jboss.configuration>
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
-        <nci-commons.version>1.2.18</nci-commons.version>
+        <nci-commons.version>1.2.19</nci-commons.version>
         <coppa-commons.version>1.3.4</coppa-commons.version>
         <iso-datatypes.version>2.0</iso-datatypes.version>
         <maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>

@@ -85,6 +85,8 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
@@ -94,8 +96,8 @@ import java.io.Serializable;
 /**
  * Criteria class to search for organizations.
  */
-public class StrutsOrganizationSearchCriteria extends AnnotatedBeanSearchCriteria<Organization> implements
-        Serializable {
+public class StrutsOrganizationSearchCriteria extends AnnotatedBeanSearchCriteria<Organization> 
+    implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private final Email emailEntry;
@@ -122,6 +124,9 @@ public class StrutsOrganizationSearchCriteria extends AnnotatedBeanSearchCriteri
         getOrganization().getTty().add(ttyEntry);
         urlEntry = new URL();
         getOrganization().getUrl().add(urlEntry);
+        FamilyOrganizationRelationship familyOrganizationRelationship = new FamilyOrganizationRelationship();
+        familyOrganizationRelationship.setFamily(new Family());
+        getOrganization().getFamilyOrganizationRelationships().add(familyOrganizationRelationship);
     }
 
     /**

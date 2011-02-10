@@ -459,6 +459,8 @@ public class Organization extends AbstractOrganization
      * @return the familyOrganizationRelationships
      */
     @OneToMany(mappedBy = "organization")
+    @Searchable(nested = true)
+    @Where(clause = "endDate is null")
     public Set<FamilyOrganizationRelationship> getFamilyOrganizationRelationships() {
         return familyOrganizationRelationships;
     }
@@ -476,6 +478,7 @@ public class Organization extends AbstractOrganization
      * @return the organizationRelationships
      */
     @OneToMany(mappedBy = "organization")
+    @Where(clause = "endDate is null")    
     public Set<OrganizationRelationship> getOrganizationRelationships() {
         return organizationRelationships;
     }

@@ -143,7 +143,6 @@ public class UniqueFamilyOrganizationRelationshipValidator
             LogicalExpression and = Restrictions.and(
                     Restrictions.eq("family", orgRel.getFamily()),
                     Restrictions.eq("organization", orgRel.getOrganization()));
-            and = Restrictions.and(and, Restrictions.eq("functionalType", orgRel.getFunctionalType()));
             and = Restrictions.and(and, Restrictions.isNull("endDate"));
             c.add(and);
             return (FamilyOrganizationRelationship) c.uniqueResult();

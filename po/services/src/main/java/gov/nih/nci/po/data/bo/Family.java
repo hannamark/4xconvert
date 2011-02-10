@@ -167,7 +167,7 @@ public class Family implements Auditable {
      * @return the statusCode
      */
     @Enumerated(EnumType.STRING)
-    @Searchable
+    @Searchable(matchMode = Searchable.MATCH_MODE_EXACT)
     @NotNull
     public FamilyStatus getStatusCode() {
         return statusCode;
@@ -183,7 +183,7 @@ public class Family implements Auditable {
     /**
      * @return the startDate
      */
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @NotNull
     @Past
     public Date getStartDate() {
@@ -200,7 +200,7 @@ public class Family implements Auditable {
     /**
      * @return the endDate
      */
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Past
     public Date getEndDate() {
         return endDate;

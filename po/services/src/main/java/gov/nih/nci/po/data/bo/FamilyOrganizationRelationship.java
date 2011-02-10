@@ -96,10 +96,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Past;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
+import com.fiveamsolutions.nci.commons.search.Searchable;
    
 /**
  * A specific relationship of an organization to a family.
@@ -134,11 +136,14 @@ public class FamilyOrganizationRelationship implements Auditable {
     public void setId(Long id) {
         this.id = id;
     }
+    
     /**
      * @return the family
      */
     @ManyToOne
     @NotNull
+    @Searchable(nested = true)
+    @Where(clause = "statusCode = 'ACTIVE'")
     public Family getFamily() {
         return family;
     }
@@ -179,7 +184,7 @@ public class FamilyOrganizationRelationship implements Auditable {
     /**
      * @return the startDate
      */
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @NotNull
     @Past
     public Date getStartDate() {
@@ -194,7 +199,7 @@ public class FamilyOrganizationRelationship implements Auditable {
     /**
      * @return the endDate
      */
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Past
     public Date getEndDate() {
         return endDate;

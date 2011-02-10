@@ -221,6 +221,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
        anotherSimilarOrg.setFamily(familyServiceBean.getById(famId));
        anotherSimilarOrg.setRelatedOrganization(orgServiceBean.getById(orgId));
        anotherSimilarOrg.setOrganization(orgServiceBean.getById(relOrgId));
+       anotherSimilarOrg.setHierarchicalType(FamilyHierarchicalType.PEER);
        try {
            orgRelServiceBean.create(anotherSimilarOrg);
        } catch (EntityValidationException e) {
@@ -253,13 +254,10 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
    }
    private OrganizationRelationship getBasicOrgRelation() throws EntityValidationException, JMSException {
        OrganizationRelationship orgRel = new OrganizationRelationship();
-       long famId = createFamily();
-       PoHibernateUtil.getCurrentSession().flush();
-       orgRel.setFamily(familyServiceBean.getById(famId));
-       PoHibernateUtil.getCurrentSession().flush();
-       long orgId = createOrg();
-       PoHibernateUtil.getCurrentSession().flush();
-       orgRel.setOrganization(orgServiceBean.getById(orgId));
+       orgRel.setFamily(familyServiceBean.getById(createFamily()));
+       orgRel.setOrganization(orgServiceBean.getById(createOrg()));
+       orgRel.setRelatedOrganization(orgServiceBean.getById(createOrg()));
+       orgRel.setHierarchicalType(FamilyHierarchicalType.PEER);
        return orgRel;
    }
 

@@ -97,6 +97,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Past;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -137,6 +138,7 @@ public class OrganizationRelationship implements Auditable {
      */
     @ManyToOne
     @Searchable(nested = true)
+    @NotNull
     public Family getFamily() {
         return family;
     }
@@ -151,6 +153,7 @@ public class OrganizationRelationship implements Auditable {
      */
     @ManyToOne
     @Searchable (nested = true)
+    @NotNull
     public Organization getOrganization() {
         return organization;
     }
@@ -164,6 +167,7 @@ public class OrganizationRelationship implements Auditable {
      * @return the relatedOrganization
      */
     @ManyToOne
+    @NotNull
     public Organization getRelatedOrganization() {
         return relatedOrganization;
     }
@@ -178,6 +182,7 @@ public class OrganizationRelationship implements Auditable {
      */
     @Enumerated(EnumType.STRING)
     @Searchable
+    @NotNull
     public FamilyHierarchicalType getHierarchicalType() {
         return hierarchicalType;
     }
@@ -190,8 +195,9 @@ public class OrganizationRelationship implements Auditable {
     /**
      * @return the startDate
      */
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Past
+    @NotNull
     public Date getStartDate() {
         return startDate;
     }
@@ -204,7 +210,7 @@ public class OrganizationRelationship implements Auditable {
     /**
      * @return the endDate
      */
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Past
     public Date getEndDate() {
         return endDate;

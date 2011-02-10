@@ -83,6 +83,7 @@
 package gov.nih.nci.po.web.create;
 
 import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
@@ -114,6 +115,7 @@ public class CreateFamilyOrganizationRelationshipAction extends CurateFamilyOrga
         setFamilyOrgRelationship(new FamilyOrganizationRelationship());
         getFamilyOrgRelationship().setStartDate(new Date());
         getFamilyOrgRelationship().setFamily(family);
+        getFamilyOrgRelationship().setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
         setRootKey(PoHttpSessionUtil.addAttribute(getFamilyOrgRelationship()));
         return INPUT;
     }

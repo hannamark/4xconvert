@@ -13,6 +13,11 @@
         <display:column titleKey="organization.statusCode" sortable="true" sortProperty="ORGANIZATION_STATUS" >
             ${row.statusCode}
         </display:column>
+        <display:column titleKey="family.name" sortable="false" >
+            <c:forEach items="${row.familyOrganizationRelationships}" var="famOrgRel">
+                <li><c:out value="${famOrgRel.family.name}"/> (<c:out value="${famOrgRel.functionalType}"/>)</li> 
+            </c:forEach>
+        </display:column>
         <display:column title="Change Request(s)" >
             <c:choose>
             <c:when test="${fn:length(row.changeRequests) > 0}">

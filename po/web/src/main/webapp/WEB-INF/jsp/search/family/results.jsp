@@ -13,12 +13,10 @@
         <display:column title="Organization Family Members" sortable="false" >
             <table class="data subtable"> 
             <c:forEach items="${row.familyOrganizationRelationships}" var="famOrgRel">
-                <c:if test="${empty famOrgRel.endDate}">
                 <tr> 
                     <td><c:out value="${famOrgRel.organization.name}"/></td> 
                     <td>(<c:out value="${famOrgRel.functionalType}"/>)</td> 
                 </tr> 
-                </c:if>
             </c:forEach>
             </table>
         </display:column>

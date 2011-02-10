@@ -22,6 +22,7 @@
                     </po:inputRowElement>
                     </po:inputRow>
                         <s:textfield label="%{getText('organization.name')}" name="criteria.organization.name" size="70"/>
+                        <s:textfield label="%{getText('family.name')}" name="criteria.organization.familyOrganizationRelationships.iterator.next.family.name" size="70"/>
                         <div class="clear"></div>
                     </div>
                 </div>

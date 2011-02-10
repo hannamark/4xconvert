@@ -71,8 +71,7 @@
                                     listKey="name()"
                                     listValue="name()" 
                                     value="familyOrgRelationship.functionalType" 
-                                    required="true" id="familyOrgRelationship.functionalType"
-                                    headerKey="" headerValue="--Select a Relationship--"/>
+                                    required="true" id="familyOrgRelationship.functionalType" />
                                 </po:field>
                                 <s:fielderror>
                                     <s:param>familyOrgRelationship.functionalType</s:param>
