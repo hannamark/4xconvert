@@ -159,7 +159,7 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBean {
         }
         BaseXmlGenHelper.appendElement(trialStatusElement,
                 BaseXmlGenHelper.createElementWithTextblock("current_trial_start_date",
-                        convertTsToYYYYMMDDFormat(spDTO.getStatusDate()), doc));
+                        convertTsToYYYYMMDDFormat(spDTO.getStartDate()), doc));
         BaseXmlGenHelper.appendElement(trialStatusElement,
                 BaseXmlGenHelper.createElementWithTextblock("current_trial_start_date_type",
                         spDTO.getStartDateTypeCode().getCode(), doc));
