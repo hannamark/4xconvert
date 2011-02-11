@@ -86,6 +86,7 @@ import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
+import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
@@ -145,13 +146,21 @@ public final class PoRegistry {
     public static FamilyServiceLocal getFamilyService() {
         return getInstance().getServiceLocator().getFamilyService();
     }
-    
+
     /**
      * Gets the family org relationship service from the service locator.
      * @return the service.
      */
     public static FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService() {
         return getInstance().getServiceLocator().getFamilyOrganizationRelationshipService();
+    }
+
+    /**
+     * Gets the organization relationship service from the service locator.
+     * @return the service
+     */
+    public static OrganizationRelationshipServiceLocal getOrganizationRelationshipService() {
+        return getInstance().getServiceLocator().getOrganizationRelationshipService();
     }
 
     /**

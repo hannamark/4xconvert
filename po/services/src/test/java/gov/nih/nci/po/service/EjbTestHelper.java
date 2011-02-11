@@ -212,7 +212,7 @@ public class EjbTestHelper {
         crsService.setCrsCRService(getClinicalResearchStaffCRServiceBean());
         return (ClinicalResearchStaffCorrelationServiceRemote) wrapWithProxies(crsService);
     }
-    
+
     public static PatientCorrelationServiceRemote getPatientCorrelationServiceRemote() {
         PatientCorrelationServiceBean patientService = new PatientCorrelationServiceBean();
         patientService.setPatService(getPatientServiceBean());
@@ -311,7 +311,7 @@ public class EjbTestHelper {
         bean.setPublisher(getMessageProducer());
         return bean;
     }
-    
+
     public static PatientServiceLocal getPatientServiceBean() {
         PatientServiceBean bean = new PatientServiceBean();
         bean.setPublisher(getMessageProducer());
@@ -404,13 +404,13 @@ public class EjbTestHelper {
         svc.setPublisher(getMessageProducer());
         return svc;
     }
-    
+
     public static MessageProducerBean getNoPublishMessageProducer() {
         try {
             MessageProducerBean mp = new MessageProducerBean() {
                 private TopicConnectionFactory connectionFactory;
                 private Topic topic;
-        
+
                 /**
                  * {@inheritDoc}
                  */
@@ -421,7 +421,7 @@ public class EjbTestHelper {
                     }
                     return connectionFactory;
                 }
-        
+
                 /**
                  * {@inheritDoc}
                  */
@@ -446,13 +446,13 @@ public class EjbTestHelper {
                  public  void sendUpdate(Class c, Curatable entity) throws JMSException {
                      throw new JMSException("operation is not supported.");
                  }
-            };    
+            };
             return mp;
         } catch (Exception ex) {
             throw new Error("bad test init", ex);
         }
     }
-    
+
     public static FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService() {
         FamilyOrganizationRelationshipServiceBean svc = new FamilyOrganizationRelationshipServiceBean();
         try {
@@ -462,7 +462,17 @@ public class EjbTestHelper {
         }
         return svc;
     }
-    
+
+    public static OrganizationRelationshipServiceLocal getOrganizationRelationshipService() {
+       OrganizationRelationshipServiceBean svc = new OrganizationRelationshipServiceBean();
+       try {
+           svc.setPublisher(getNoPublishMessageProducer());
+       } catch (Exception ex) {
+           throw new Error("bad test init", ex);
+       }
+       return svc;
+    }
+
     public static BusinessServiceRemote getBusinessService() {
         BusinessServiceBean svc = new BusinessServiceBean();
         svc.setCrsService(getClinicalResearchStaffServiceBean());

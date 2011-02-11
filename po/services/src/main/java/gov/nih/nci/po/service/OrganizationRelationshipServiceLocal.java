@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Local;
@@ -96,7 +97,7 @@ import com.fiveamsolutions.nci.commons.service.GenericSearchService;
  *
  */
 @Local
-public interface OrganizationRelationshipServiceLocal 
+public interface OrganizationRelationshipServiceLocal
       extends GenericSearchService<OrganizationRelationship, SearchCriteria<OrganizationRelationship>> {
     /**
      * Creates a bi-directional Relationship.
@@ -127,4 +128,20 @@ public interface OrganizationRelationshipServiceLocal
      */
     void updateEntity(OrganizationRelationship updatedEntity)throws EntityValidationException;
 
+    /**
+     * Gets a list of all active organization relationships within a family related to the given organization.
+     * @param familyId the id of the family to retrieve organization relationships for
+     * @param orgId the id of the organization to retrieve organization relationships for
+     * @return the organization relationships
+     */
+    List<OrganizationRelationship> getActiveOrganizationRelationships(Long familyId, Long orgId);
+
+    /**
+     * Gets active organization relationship (if any)  between two organizations within a family.
+     * @param familyId the id of the family
+     * @param orgId the org id
+     * @param relatedOrgId the related org id
+     * @return the organization relationship or null if no active relationship is found
+     */
+    OrganizationRelationship getActiveOrganizationRelationship(Long familyId, Long orgId, Long relatedOrgId);
 }

@@ -177,11 +177,11 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
                 assertNotNull(updateOrgRelEntity.getEndDate());
             }
         }
-        
+
     }
     @Test
     public void testFamilyStatusChangesToNULLIFIED() throws EntityValidationException, JMSException {
-        long id =getBasicFamily();
+        long id = getBasicFamily();
         Family toUpdate = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
         for (FamilyOrganizationRelationship updateFamOrgEntity : toUpdate.getFamilyOrganizationRelationships()) {
             assertNull(updateFamOrgEntity.getEndDate());
@@ -200,7 +200,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
                 assertNotNull(updateOrgRelEntity.getEndDate());
             }
         }
-        
+
     }
     private long getBasicFamily() throws EntityValidationException, JMSException {
         FamilyOrganizationRelationshipServiceBean famOrgRelationBean = new FamilyOrganizationRelationshipServiceBean();
@@ -212,7 +212,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         long id = getFamilyServiceBean().create(family);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        
+
         FamilyOrganizationRelationship famOrgRelBo = new FamilyOrganizationRelationship();
         famOrgRelBo.setFunctionalType(FamilyFunctionalType.AFFILIATION);
         famOrgRelBo.setStartDate(new Date());
@@ -220,10 +220,10 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         famOrgRelBo.setFamily(getFamilyServiceBean().getById(id));
         FamilyOrganizationRelationshipServiceBean famOrgService = new FamilyOrganizationRelationshipServiceBean();
         famOrgService.create(famOrgRelBo);
-        
+
         long newOrgId = createOrg();
         PoHibernateUtil.getCurrentSession().flush();
-        
+
         OrganizationRelationshipServiceBean orgRelService = new OrganizationRelationshipServiceBean();
         OrganizationRelationship orgRel = new OrganizationRelationship();
         orgRel.setOrganization(orgLocal.getById(orgId));

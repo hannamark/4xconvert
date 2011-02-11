@@ -94,6 +94,7 @@ import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.OrganizationCRServiceLocal;
+import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
@@ -240,6 +241,13 @@ public class MockCountryServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationRelationshipServiceLocal getOrganizationRelationshipService() {
         return null;
     }
 }

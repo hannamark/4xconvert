@@ -80,127 +80,113 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.web.create;
 
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.FamilyServiceLocal;
-import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationCRServiceLocal;
-import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.PatientServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.external.CtepImportService;
-import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.curation.CurateOrganizationRelationshipAction;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+
+import java.util.Calendar;
+import java.util.Date;
+
+import org.apache.commons.lang.time.DateUtils;
+
+import com.opensymphony.xwork2.Preparable;
+import com.opensymphony.xwork2.validator.annotations.CustomValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
- * @author Scott Miller
+ * Action to handle the creation of organization relationships.
  *
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public interface ServiceLocator {
+public class CreateOrganizationRelationshipAction extends CurateOrganizationRelationshipAction implements Preparable {
+    private static final long serialVersionUID = 1L;
+    private Long familyOrgId;
 
     /**
-     * @return local service
+     * {@inheritDoc}
      */
-    GenericServiceLocal getGenericService();
+    @Override
+    public void validate() {
+        //Purposefully left empty.
+    }
 
     /**
-     * @return the org service
+     * Sets up the form for creation of a new organization relationship.
+     * @return input
      */
-    OrganizationServiceLocal getOrganizationService();
+    @Override
+    public String input() {
+        FamilyOrganizationRelationship relationship =
+            PoRegistry.getFamilyOrganizationRelationshipService().getById(getFamilyOrgId());
+        Organization relatedOrg =
+            PoRegistry.getOrganizationService().getById(getOrgRelationship().getOrganization().getId());
+        getOrgRelationship().setOrganization(relationship.getOrganization());
+        getOrgRelationship().setRelatedOrganization(relatedOrg);
+        getOrgRelationship().setFamily(relationship.getFamily());
+        setRootKey(PoHttpSessionUtil.addAttribute(getOrgRelationship()));
+
+        getNewOrgRelationship().setStartDate(new Date());
+        getNewOrgRelationship().setFamily(relationship.getFamily());
+        getNewOrgRelationship().setOrganization(relationship.getOrganization());
+        getNewOrgRelationship().setRelatedOrganization(relatedOrg);
+
+        return INPUT;
+    }
 
     /**
-     * @return the family service
+     * Creates the new organization relationship.
+     * @throws EntityValidationException on hibernate validation error
+     * @return success
      */
-    FamilyServiceLocal getFamilyService();
+    @Validations(customValidators = {@CustomValidator(type = "hibernate", fieldName = "newOrgRelationship") })
+    public String create() throws EntityValidationException {
+        getNewOrgRelationship().setStartDate(new Date());
+        getNewOrgRelationship().setFamily(getOrgRelationship().getFamily());
+        getNewOrgRelationship().setOrganization(getOrgRelationship().getOrganization());
+        getNewOrgRelationship().setRelatedOrganization(getOrgRelationship().getRelatedOrganization());
+
+        PoRegistry.getOrganizationRelationshipService().create(getNewOrgRelationship());
+        setPassedValidation(true);
+        return SUCCESS;
+    }
 
     /**
-     * @return the family organization relationship service
+     * Removes both sides of the organization relationship by making them both inactive.
+     * @return success
+     * @throws EntityValidationException on error
      */
-    FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService();
+    public String remove() throws EntityValidationException {
+        OrganizationRelationship or =
+            PoRegistry.getOrganizationRelationshipService().getById(getOrgRelationship().getId());
+        OrganizationRelationship relatedOr =
+            PoRegistry.getOrganizationRelationshipService().getActiveOrganizationRelationship(or.getFamily().getId(),
+                    or.getRelatedOrganization().getId(), or.getOrganization().getId());
+        Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+        or.setEndDate(today);
+        relatedOr.setEndDate(today);
+        PoRegistry.getOrganizationRelationshipService().updateEntity(or);
+        PoRegistry.getOrganizationRelationshipService().updateEntity(relatedOr);
+        return SUCCESS;
+    }
+
 
     /**
-     * @return the organization relationship service
+     * @return the familyOrgId
      */
-    OrganizationRelationshipServiceLocal getOrganizationRelationshipService();
+    public Long getFamilyOrgId() {
+        return familyOrgId;
+    }
 
     /**
-     * @return the person service
+     * @param familyOrgId the familyOrgId to set
      */
-    PersonServiceLocal getPersonService();
-
-    /**
-     * @return the PO country service
-     */
-    CountryServiceLocal getCountryService();
-
-    /**
-     * @return the Researh Org service
-     */
-    ResearchOrganizationServiceLocal getResearchOrganizationService();
-
-    /**
-     * @return the health care provider service.
-     */
-    HealthCareProviderServiceLocal getHealthCareProviderService();
-
-    /**
-     * @return the service.
-     */
-    ClinicalResearchStaffServiceLocal getClinicalResearchStaffService();
-
-    /**
-     * @return the service.
-     */
-    PatientServiceLocal getPatientService();
-
-    /**
-     * @return the health care facility service.
-     */
-    HealthCareFacilityServiceLocal getHealthCareFacilityService();
-
-    /**
-     * @return the oversight committee service
-     */
-    OversightCommitteeServiceLocal getOversightCommitteeService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedPersonServiceLocal getIdentifiedPersonService();
-
-    /**
-     * @return the service.
-     */
-    OrganizationalContactServiceLocal getOrganizationalContactService();
-
-    /**
-     * @return the service.
-     */
-    GenericCodeValueServiceLocal getGenericCodeValueService();
-
-    /**
-     * @return the ctep import service
-     */
-    CtepImportService getCtepImportService();
-
-    /**
-     * @return the organiation change request service.
-     */
-    OrganizationCRServiceLocal getOrganizationCRService();
-
+    public void setFamilyOrgId(Long familyOrgId) {
+        this.familyOrgId = familyOrgId;
+    }
 }

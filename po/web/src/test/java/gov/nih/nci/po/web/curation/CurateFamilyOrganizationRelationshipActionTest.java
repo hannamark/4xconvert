@@ -80,127 +80,96 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.web.curation;
 
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.FamilyServiceLocal;
-import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationCRServiceLocal;
-import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.PatientServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.external.CtepImportService;
-import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.web.AbstractPoTest;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.opensymphony.xwork2.Action;
+
 
 /**
- * @author Scott Miller
- *
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public interface ServiceLocator {
+public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTest {
+    private CurateFamilyOrganizationRelationshipAction action;
 
-    /**
-     * @return local service
-     */
-    GenericServiceLocal getGenericService();
+    @Before
+    public void setUp() {
+        action = new CurateFamilyOrganizationRelationshipAction();
+    }
 
-    /**
-     * @return the org service
-     */
-    OrganizationServiceLocal getOrganizationService();
+    @Test
+    public void testPrepareNoRootKey() throws Exception {
+        FamilyOrganizationRelationship initial = action.getFamilyOrgRelationship();
+        action.prepare();
+        assertSame(initial, action.getFamilyOrgRelationship());
+    }
 
-    /**
-     * @return the family service
-     */
-    FamilyServiceLocal getFamilyService();
+    @Test
+    public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
+        action.setRootKey("foo");
+        getSession().clearAttributes();
+        action.prepare();
+        assertNull(action.getFamilyOrgRelationship());
+    }
 
-    /**
-     * @return the family organization relationship service
-     */
-    FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService();
+    @Test
+    public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
+        FamilyOrganizationRelationship familyOrgRel = new FamilyOrganizationRelationship();
+        String rootKey = "foo";
+        getSession().setAttribute(rootKey, familyOrgRel);
+        action.setRootKey(rootKey);
+        action.prepare();
+        assertSame(familyOrgRel, action.getFamilyOrgRelationship());
+    }
 
-    /**
-     * @return the organization relationship service
-     */
-    OrganizationRelationshipServiceLocal getOrganizationRelationshipService();
+    @Test
+    public void testStart() {
+        action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
+        action.getFamilyOrgRelationship().setId(2L);
+        assertEquals(Action.INPUT, action.start());
+    }
 
-    /**
-     * @return the person service
-     */
-    PersonServiceLocal getPersonService();
+    @Test
+    public void testSubmit() {
+        action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
+        action.getFamilyOrgRelationship().setId(2L);
+        assertEquals(Action.SUCCESS, action.submit());
+    }
 
-    /**
-     * @return the PO country service
-     */
-    CountryServiceLocal getCountryService();
+    @Test
+    public void testLoadOrganizationInfo() {
+        action.setSelectedOrgId(1L);
+        assertEquals("orgInfo", action.loadOrganizationInfo());
+    }
 
-    /**
-     * @return the Researh Org service
-     */
-    ResearchOrganizationServiceLocal getResearchOrganizationService();
+    @Test
+    public void testRemove() {
+        action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
+        action.getFamilyOrgRelationship().setId(1L);
+        assertEquals(Action.SUCCESS, action.remove());
+    }
 
-    /**
-     * @return the health care provider service.
-     */
-    HealthCareProviderServiceLocal getHealthCareProviderService();
+    @Test
+    public void testLoadOrgRelationships() {
+        FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
+        famOrgRel.setFamily(new Family());
+        famOrgRel.getFamily().setId(1L);
+        famOrgRel.setOrganization(new Organization());
+        famOrgRel.getOrganization().setId(1L);
 
-    /**
-     * @return the service.
-     */
-    ClinicalResearchStaffServiceLocal getClinicalResearchStaffService();
-
-    /**
-     * @return the service.
-     */
-    PatientServiceLocal getPatientService();
-
-    /**
-     * @return the health care facility service.
-     */
-    HealthCareFacilityServiceLocal getHealthCareFacilityService();
-
-    /**
-     * @return the oversight committee service
-     */
-    OversightCommitteeServiceLocal getOversightCommitteeService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedPersonServiceLocal getIdentifiedPersonService();
-
-    /**
-     * @return the service.
-     */
-    OrganizationalContactServiceLocal getOrganizationalContactService();
-
-    /**
-     * @return the service.
-     */
-    GenericCodeValueServiceLocal getGenericCodeValueService();
-
-    /**
-     * @return the ctep import service
-     */
-    CtepImportService getCtepImportService();
-
-    /**
-     * @return the organiation change request service.
-     */
-    OrganizationCRServiceLocal getOrganizationCRService();
-
+        action.setFamilyOrgRelationship(famOrgRel);
+        assertEquals("relationships", action.loadOrgRelationships());
+        assertNotNull(action.getOrganizationRelationships());
+    }
 }

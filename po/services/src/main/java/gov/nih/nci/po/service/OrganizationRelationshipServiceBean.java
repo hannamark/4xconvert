@@ -87,11 +87,15 @@ import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * Implements the CRUD.
@@ -101,7 +105,8 @@ import javax.ejb.TransactionAttributeType;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class OrganizationRelationshipServiceBean extends AbstractBaseServiceBean<OrganizationRelationship>
-       implements OrganizationRelationshipServiceLocal {
+implements OrganizationRelationshipServiceLocal {
+
     /**
      * {@inheritDoc}
      */
@@ -119,22 +124,7 @@ public class OrganizationRelationshipServiceBean extends AbstractBaseServiceBean
         super.createHelper(orgRelLink);
         return super.createHelper(orgRel);
     }
-    /**
-     * @param entity entity to validate.
-     * @return err
-     */
-    @Override
-    //TODO - Change HierarchicalType to a Hibernate validation, and remove this method.
-    public Map<String, String[]> validate(OrganizationRelationship entity) {
-        Map<String, String[]> msg = PoHibernateUtil.validate(entity);
-        if (entity.getId() != null) {
-            OrganizationRelationship oentity =  getById(entity.getId());
-            if (!(oentity.getHierarchicalType().compareTo(entity.getHierarchicalType()) == 0)) {
-                msg.put("hierarchicalType", new String[] {"Hierarchical Type cannot be updated."}); 
-            }
-        }
-        return msg;
-    }
+
     /**
      * {@inheritDoc}
      */
@@ -144,5 +134,26 @@ public class OrganizationRelationshipServiceBean extends AbstractBaseServiceBean
             throw new EntityValidationException(errors);
         }
         super.update(updatedEntity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public List<OrganizationRelationship> getActiveOrganizationRelationships(Long familyId, Long orgId) {
+        Criteria criteria = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationRelationship.class);
+        criteria.add(Restrictions.eq("family.id", familyId)).add(Restrictions.eq("organization.id", orgId))
+            .add(Restrictions.isNull("endDate"));
+        return criteria.list();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationRelationship getActiveOrganizationRelationship(Long familyId, Long orgId, Long relatedOrgId) {
+        Criteria criteria = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationRelationship.class);
+        criteria.add(Restrictions.eq("family.id", familyId)).add(Restrictions.eq("organization.id", orgId))
+            .add(Restrictions.eq("relatedOrganization.id", relatedOrgId)).add(Restrictions.isNull("endDate"));
+        return (OrganizationRelationship) criteria.uniqueResult();
     }
 }

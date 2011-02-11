@@ -8,6 +8,10 @@
         <%@ include file="/WEB-INF/jsp/decorators/headIncludes.jsp" %>
         <link href="<c:url value='/styles/overwritesPopup.css'/>" rel="stylesheet" type="text/css" media="all"/>
         <decorator:head/>
+        <sj:head />
+        <script type="text/javascript">
+            var $j = jQuery.noConflict();
+        </script>
         <script type="text/javascript">
             function initTitle() {
                 mainDiv = document.getElementById('main');

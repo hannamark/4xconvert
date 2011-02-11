@@ -156,7 +156,7 @@ public class OrganizationWebTest extends AbstractPoWebTest {
         waitForElementById("url-entry-0", 5);
 
         clickAndWaitSaveButton();
-        assertTrue("Organization was successfully created!", 
+        assertTrue("Organization was successfully created!",
                 selenium.isTextPresent("Organization was successfully created"));
     }
 

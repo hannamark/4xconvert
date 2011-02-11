@@ -84,6 +84,7 @@ package gov.nih.nci.po.util;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
@@ -99,6 +100,13 @@ public class UniqueOrganizationRelationshipValidatorTest extends AbstractHiberna
     public void testIsValid() {
         UniqueOrganizationRelationshipValidator validator = new UniqueOrganizationRelationshipValidator();
         assertFalse(validator.isValid(new Organization()));
-        assertTrue(validator.isValid(new OrganizationRelationship()));
+        OrganizationRelationship or  = new OrganizationRelationship();
+        or.setFamily(new Family());
+        or.getFamily().setId(1L);
+        or.setOrganization(new Organization());
+        or.getOrganization().setId(2L);
+        or.setRelatedOrganization(new Organization());
+        or.getRelatedOrganization().setId(3L);
+        assertTrue(validator.isValid(or));
     }
 }

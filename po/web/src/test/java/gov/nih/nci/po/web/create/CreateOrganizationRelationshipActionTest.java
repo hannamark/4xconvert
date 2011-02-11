@@ -80,127 +80,68 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.web.create;
 
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.FamilyServiceLocal;
-import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationCRServiceLocal;
-import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.PatientServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.external.CtepImportService;
-import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyHierarchicalType;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.web.AbstractPoTest;
+
+import java.util.Date;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.opensymphony.xwork2.Action;
 
 /**
- * @author Scott Miller
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  *
  */
-public interface ServiceLocator {
+public class CreateOrganizationRelationshipActionTest extends AbstractPoTest {
+    private CreateOrganizationRelationshipAction action;
 
-    /**
-     * @return local service
-     */
-    GenericServiceLocal getGenericService();
+    @Before
+    public void setUp() {
+        action = new CreateOrganizationRelationshipAction();
+    }
 
-    /**
-     * @return the org service
-     */
-    OrganizationServiceLocal getOrganizationService();
+    @Test
+    public void testInput() {
+        OrganizationRelationship orgRelationship = new OrganizationRelationship();
+        orgRelationship.setOrganization(new Organization());
+        orgRelationship.getOrganization().setId(1L);
 
-    /**
-     * @return the family service
-     */
-    FamilyServiceLocal getFamilyService();
+        action.setOrgRelationship(orgRelationship);
+        action.setFamilyOrgId(1L);
 
-    /**
-     * @return the family organization relationship service
-     */
-    FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService();
+        assertEquals(Action.INPUT, action.input());
+    }
 
-    /**
-     * @return the organization relationship service
-     */
-    OrganizationRelationshipServiceLocal getOrganizationRelationshipService();
+    @Test
+    public void testCreate() throws EntityValidationException {
+        OrganizationRelationship orgRelationship = new OrganizationRelationship();
 
-    /**
-     * @return the person service
-     */
-    PersonServiceLocal getPersonService();
+        orgRelationship.setId(1L);
+        orgRelationship.setEndDate(new Date());
+        orgRelationship.setFamily(new Family());
+        orgRelationship.setOrganization(new Organization());
+        orgRelationship.setRelatedOrganization(new Organization());
 
-    /**
-     * @return the PO country service
-     */
-    CountryServiceLocal getCountryService();
+        orgRelationship.setStartDate(new Date());
+        orgRelationship.setHierarchicalType(FamilyHierarchicalType.CHILD);
 
-    /**
-     * @return the Researh Org service
-     */
-    ResearchOrganizationServiceLocal getResearchOrganizationService();
+        action.setNewOrgRelationship(orgRelationship);
+        assertEquals(Action.SUCCESS, action.create());
+    }
 
-    /**
-     * @return the health care provider service.
-     */
-    HealthCareProviderServiceLocal getHealthCareProviderService();
-
-    /**
-     * @return the service.
-     */
-    ClinicalResearchStaffServiceLocal getClinicalResearchStaffService();
-
-    /**
-     * @return the service.
-     */
-    PatientServiceLocal getPatientService();
-
-    /**
-     * @return the health care facility service.
-     */
-    HealthCareFacilityServiceLocal getHealthCareFacilityService();
-
-    /**
-     * @return the oversight committee service
-     */
-    OversightCommitteeServiceLocal getOversightCommitteeService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedPersonServiceLocal getIdentifiedPersonService();
-
-    /**
-     * @return the service.
-     */
-    OrganizationalContactServiceLocal getOrganizationalContactService();
-
-    /**
-     * @return the service.
-     */
-    GenericCodeValueServiceLocal getGenericCodeValueService();
-
-    /**
-     * @return the ctep import service
-     */
-    CtepImportService getCtepImportService();
-
-    /**
-     * @return the organiation change request service.
-     */
-    OrganizationCRServiceLocal getOrganizationCRService();
+    @Test
+    public void testRemove() throws EntityValidationException {
+        action.getOrgRelationship().setId(1L);
+        assertEquals(Action.SUCCESS, action.remove());
+    }
 
 }

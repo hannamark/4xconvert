@@ -88,6 +88,7 @@ import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
@@ -185,6 +186,15 @@ public class PoHttpSessionUtil {
      */
     public static String addAttribute(FamilyOrganizationRelationship famOrgRel) {
         return addUniqueAttribute("for", famOrgRel);
+    }
+
+    /**
+     * Adds an organization relationship to the http session with a unique key.
+     * @param orgRelationship the organization relationship to add to the session
+     * @return the key used to add the objects
+     */
+    public static String addAttribute(OrganizationRelationship orgRelationship) {
+        return addUniqueAttribute("or", orgRelationship);
     }
 
     /**

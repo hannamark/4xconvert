@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html>
 <head>
-    <sx:head/>
     <s:set name="isCreate" value="family.id == null"/>
     <s:set name="isNotCreate" value="family.id != null"/>
     <s:if test="%{isCreate}">
@@ -59,10 +58,7 @@
                    id="familyEntityForm.family.statusCode"/>
         </s:else>
             <po:field labelKey="family.startDate" fieldRequired="true">
-                <s:fielderror>
-                    <s:param>family.startDate</s:param>
-                </s:fielderror>
-                <sx:datetimepicker required="true" name="family.startDate" displayFormat="MM-dd-yyyy" labelposition="left" />
+                <sj:datepicker required="true" name="family.startDate" displayFormat="mm/dd/yy" />
             </po:field>
             <s:textfield key="family.name" required="true" cssClass="required" size="70"/>
             
@@ -85,7 +81,7 @@
                                      <s:fielderror>
                                      <s:param>family.endDate</s:param>
                                      </s:fielderror>
-                                     <sx:datetimepicker required="true" name="family.endDate" displayFormat="MM-dd-yyyy" labelposition="left" />
+                                     <sj:datepicker required="true" name="family.endDate" displayFormat="mm/dd/yy" />
                                 </label>
                             </div>
                         </po:inputRowElement>

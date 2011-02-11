@@ -105,13 +105,12 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         assertEquals(FAMILY_NAME, createdFamilyName);
 
         String famId = selenium.getTable("row.1.0");
-
         assertNotNull(famId);
 
         clickAndWait("edit_family_id_" + famId);
         addMember(true);
     }
-    
+
     public void testOrgSearchByFamiy(){
         loginAsCurator();
         addMember(false);
@@ -156,19 +155,18 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
 
         selenium.selectFrame("relative=up");
 
-        selenium.select("familyOrgRelationship.functionalType", "ORGANIZATIONAL");
-        selenium.type("dojo.familyOrgRelationship.startDate", "02-02-2011");
-        
-        selenium.type("dojo.familyOrgRelationship.endDate", "01-01-2050");
+        selenium.type("familyOrgRelationship.endDate", "01/01/2050");
+
         clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("End Date must be a past date"));
 
-        selenium.type("dojo.familyOrgRelationship.endDate", "01-01-2009");
+        selenium.type("familyOrgRelationship.endDate", "01/01/2009");
         clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("must be before"));
 
-        selenium.type("dojo.familyOrgRelationship.endDate", "");
-        
+        selenium.type("familyOrgRelationship.endDate", "");
+
+
         clickAndWait("save_button");
 
         assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully created."));
@@ -186,7 +184,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
             assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully removed."));
         }
     }
-    
+
     private void removeMember() {
         openOrganizationFamilyList();
         String famId = selenium.getTable("row.1.0");

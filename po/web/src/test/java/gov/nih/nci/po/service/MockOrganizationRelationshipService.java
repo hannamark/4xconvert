@@ -80,81 +80,132 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.web.edit;
+package gov.nih.nci.po.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.web.AbstractPoTest;
-import gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction;
+import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyHierarchicalType;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.opensymphony.xwork2.Action;
-
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
+ * Mock implementation of the organization relationship service
+ *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTest {
-    private CurateFamilyOrganizationRelationshipAction action;
+public class MockOrganizationRelationshipService implements OrganizationRelationshipServiceLocal {
+    private long currentId = 0;
 
-    @Before
-    public void setUp() {
-        action = new CurateFamilyOrganizationRelationshipAction();
+    /**
+     * {@inheritDoc}
+     */
+    public List<OrganizationRelationship> search(SearchCriteria<OrganizationRelationship> criteria) {
+        return new ArrayList<OrganizationRelationship>();
     }
 
-    @Test
-    public void testPrepareNoRootKey() throws Exception {
-        FamilyOrganizationRelationship initial = action.getFamilyOrgRelationship();
-        action.prepare();
-        assertSame(initial, action.getFamilyOrgRelationship());
+    /**
+     * {@inheritDoc}
+     */
+    public List<OrganizationRelationship> search(SearchCriteria<OrganizationRelationship> criteria,
+            PageSortParams<OrganizationRelationship> pageSortParams) {
+        return new ArrayList<OrganizationRelationship>();
     }
 
-    @Test
-    public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
-        action.setRootKey("foo");
-        getSession().clearAttributes();
-        action.prepare();
-        assertNull(action.getFamilyOrgRelationship());
+    /**
+     * {@inheritDoc}
+     */
+    public int count(SearchCriteria<OrganizationRelationship> criteria) {
+        return 0;
     }
 
-    @Test
-    public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
-        FamilyOrganizationRelationship familyOrgRel = new FamilyOrganizationRelationship();
-        String rootKey = "foo";
-        getSession().setAttribute(rootKey, familyOrgRel);
-        action.setRootKey(rootKey);
-        action.prepare();
-        assertSame(familyOrgRel, action.getFamilyOrgRelationship());
+    /**
+     * {@inheritDoc}
+     */
+    public long create(OrganizationRelationship orgRel) throws EntityValidationException {
+        if (orgRel.getId() == null) {
+            currentId++;
+            orgRel.setId(currentId);
+        }
+        return currentId;
     }
 
-    @Test
-    public void testStart() {
-        action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
-        action.getFamilyOrgRelationship().setId(2L);
-        assertEquals(Action.INPUT, action.start());
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationRelationship getById(long id) {
+        OrganizationRelationship orgRelationship = new OrganizationRelationship();
+        orgRelationship.setFamily(new Family());
+        orgRelationship.getFamily().setId(id);
+        orgRelationship.getFamily().setName("Family");
+
+        orgRelationship.setOrganization(new Organization());
+        orgRelationship.getOrganization().setName("Organization");
+        orgRelationship.getOrganization().setStatusCode(EntityStatus.ACTIVE);
+        orgRelationship.getOrganization().setId(id);
+
+        orgRelationship.setRelatedOrganization(new Organization());
+        orgRelationship.getRelatedOrganization().setName("Organization 2");
+        orgRelationship.getRelatedOrganization().setStatusCode(EntityStatus.ACTIVE);
+        orgRelationship.getRelatedOrganization().setId(id + 1);
+
+        orgRelationship.setId(id);
+        orgRelationship.setStartDate(new Date());
+        orgRelationship.setHierarchicalType(FamilyHierarchicalType.PEER);
+
+        return orgRelationship;
     }
 
-    @Test
-    public void testSubmit() {
-        action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
-        action.getFamilyOrgRelationship().setId(2L);
-        assertEquals(Action.SUCCESS, action.submit());
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, String[]> validate(OrganizationRelationship entity) {
+        return new HashMap<String, String[]>();
     }
 
-    @Test
-    public void testLoadOrganizationInfo() {
-        action.setSelectedOrgId(1L);
-        assertEquals("orgInfo", action.loadOrganizationInfo());
+    /**
+     * {@inheritDoc}
+     */
+    public void updateEntity(OrganizationRelationship updatedEntity) throws EntityValidationException {
     }
 
-    @Test
-    public void testRemove() {
-        action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
-        action.getFamilyOrgRelationship().setId(1L);
-        assertEquals(Action.SUCCESS, action.remove());
+    /**
+     * {@inheritDoc}
+     */
+    public List<OrganizationRelationship> getActiveOrganizationRelationships(Long familyId, Long orgId) {
+        return new ArrayList<OrganizationRelationship>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationRelationship getActiveOrganizationRelationship(Long familyId, Long orgId, Long relatedOrgId) {
+        OrganizationRelationship orgRelationship = new OrganizationRelationship();
+        orgRelationship.setFamily(new Family());
+        orgRelationship.getFamily().setId(familyId);
+        orgRelationship.getFamily().setName("Family");
+
+        orgRelationship.setOrganization(new Organization());
+        orgRelationship.getOrganization().setName("Organization");
+        orgRelationship.getOrganization().setStatusCode(EntityStatus.ACTIVE);
+        orgRelationship.getOrganization().setId(orgId);
+
+        orgRelationship.setRelatedOrganization(new Organization());
+        orgRelationship.getRelatedOrganization().setName("Organization 2");
+        orgRelationship.getRelatedOrganization().setStatusCode(EntityStatus.ACTIVE);
+        orgRelationship.getRelatedOrganization().setId(relatedOrgId);
+
+        orgRelationship.setId(familyId);
+        orgRelationship.setStartDate(new Date());
+        orgRelationship.setHierarchicalType(FamilyHierarchicalType.PEER);
+        return orgRelationship;
     }
 }

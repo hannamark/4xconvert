@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html>
     <head>
-        <sx:head/>
         <s:set name="isCreate" id="isCreate" value="familyOrgRelationship.id == null"/>
         <s:set name="isEdit" value="familyOrgRelationship.id != null"/>
         <c:url value="/protected/selector/organization/start.action" var="searchUrl"/>
@@ -21,6 +20,34 @@
             $('selectedOrgId').value = returnValue.id;
             var url = '${loadOrgUrl}' + '&selectedOrgId=' + returnValue.id;
             loadDiv(url, 'famOrgRelationshipOrgInfo', true, null, false);
+        }
+        
+        function reloadOrgRelationships(returnValue) {
+            window.top.hidePopWin(true);
+            <c:url value="/protected/ajax/family/organization/relationship/loadOrgRelationships.action" var="loadOrgRelationshipUrl">
+                <c:param name="rootKey" value="${rootKey}"/>
+            </c:url>
+            var url = '${loadOrgRelationshipUrl}' + '&familyOrgRelationship.family.id=' + returnValue.id;
+            var div = $('org_relationships');
+            div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="<c:url value='/images/loading.gif'/>"&nbsp;Loading...</div>';
+            var aj = new Ajax.Updater(div, url, {
+               asynchronous: true,
+               method: 'get',
+               evalScripts: false
+            });
+        }
+        
+        function removeOrgRelationship(id) {
+        	 <c:url value="/protected/popup/organization/relationship/create/remove.action" var="removeUrl"/>
+        	 var url = '${removeUrl}' + '?orgRelationship.id=' + id;
+        	 var aj = new Ajax.Request(url, {
+        		 asynchronous: true,
+        		 method: 'post',
+        		 evalScripts: false,
+        		 onComplete: function(transport) {
+        			  reloadOrgRelationships(new IdValue('${familyOrgRelationship.family.id}', ''));	 
+        		 }
+        	 });
         }
         </script>
     </head>
@@ -82,7 +109,8 @@
                     <po:inputRow>
                         <po:inputRowElement>
                             <po:field labelKey="familyOrgRelationship.startDate" fieldRequired="true">
-                                <sx:datetimepicker required="true" name="familyOrgRelationship.startDate" displayFormat="MM-dd-yyyy" labelposition="left" />
+                                <sj:datepicker required="true" name="familyOrgRelationship.startDate" 
+                                    displayFormat="mm/dd/yy"  labelposition="left" />
                                 <s:fielderror>
                                     <s:param>familyOrgRelationship.startDate</s:param>
                                 </s:fielderror>
@@ -90,7 +118,8 @@
                         </po:inputRowElement>
                         <po:inputRowElement>
                             <po:field labelKey="familyOrgRelationship.endDate">
-                                <sx:datetimepicker name="familyOrgRelationship.endDate" displayFormat="MM-dd-yyyy" labelposition="left"/>
+                                <sj:datepicker name="familyOrgRelationship.endDate" 
+                                     displayFormat="mm/dd/yy"  labelposition="left"/>
                                 <s:fielderror>
                                     <s:param>familyOrgRelationship.endDate</s:param>
                                 </s:fielderror>
@@ -110,5 +139,12 @@
                 <po:button id="cancel_button" href="${cancelUrl}" style="cancel" text="Cancel"/>
             </po:buttonRow>
         </div>
+        <s:if test="isEdit">
+            <div class="clear"></div> 
+            <div class="line"></div> 
+            <div id="org_relationships"> 
+                <%@include file="organizationRelationshipList.jsp"%>
+            </div> 
+        </s:if>
     </body>
 </html>

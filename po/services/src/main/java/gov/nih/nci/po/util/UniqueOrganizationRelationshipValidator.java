@@ -100,7 +100,7 @@ import org.hibernate.validator.Validator;
  * @author vrushali
  *
  */
-public class UniqueOrganizationRelationshipValidator 
+public class UniqueOrganizationRelationshipValidator
             implements Validator<UniqueOrganizationRelationship>, PropertyConstraint, Serializable {
     private static final long serialVersionUID = 1641822469032848603L;
     /**
@@ -137,9 +137,10 @@ public class UniqueOrganizationRelationshipValidator
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
             Criteria c = s.createCriteria(OrganizationRelationship.class);
             LogicalExpression and = Restrictions.and(
-                    Restrictions.eq("family", orgRel.getFamily()),
-                    Restrictions.eq("organization", orgRel.getOrganization()));
-            and = Restrictions.and(and, Restrictions.eq("relatedOrganization", orgRel.getRelatedOrganization()));
+                    Restrictions.eq("family.id", orgRel.getFamily().getId()),
+                    Restrictions.eq("organization.id", orgRel.getOrganization().getId()));
+            and = Restrictions.and(and, Restrictions.eq("relatedOrganization.id",
+                    orgRel.getRelatedOrganization().getId()));
             and = Restrictions.and(and, Restrictions.isNull("endDate"));
             c.add(and);
             return (OrganizationRelationship) c.uniqueResult();
@@ -148,5 +149,5 @@ public class UniqueOrganizationRelationshipValidator
                 s.close();
             }
         }
-    } 
+    }
 }

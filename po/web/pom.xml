@@ -133,10 +133,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-dojo-plugin</artifactId>
-            <version>2.1.6</version>
-            <scope>compile</scope>
+            <groupId>com.jgeppert.struts2.jquery</groupId>
+            <artifactId>struts2-jquery-plugin</artifactId>
+            <version>2.5.2</version>
         </dependency>
         <dependency>
             <groupId>com.fiveamsolutions</groupId>

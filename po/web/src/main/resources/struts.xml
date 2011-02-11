@@ -148,6 +148,7 @@
                     <param name="excludeMethods">input,back,cancel</param>
                     <param name="validateAnnotatedMethodOnly">true</param>
                 </interceptor-ref>
+                <interceptor-ref name="jsonValidation"/>
                 <interceptor-ref name="workflow">
                     <param name="excludeMethods">input,back,cancel</param>
                 </interceptor-ref>
@@ -329,6 +330,20 @@
         <action name="ajax/family/organization/relationship/*" class="gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="orgInfo">/WEB-INF/jsp/edit/familyOrgRelationshipOrgInfo.jsp</result>
+            <result name="relationships">/WEB-INF/jsp/edit/organizationRelationshipList.jsp</result>
+        </action>
+        
+        <!--  Organization Relationship Edit -->
+        <action name="popup/organization/relationship/edit/*" class="gov.nih.nci.po.web.curation.CurateOrganizationRelationshipAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/edit/changeOrganizationRelationship.jsp</result>
+            <result name="success">/WEB-INF/jsp/edit/changeOrganizationRelationship.jsp</result>
+        </action>
+        
+        <action name="popup/organization/relationship/create/*" class="gov.nih.nci.po.web.create.CreateOrganizationRelationshipAction" method="{1}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/edit/changeOrganizationRelationship.jsp</result>
+            <result name="success">/WEB-INF/jsp/edit/changeOrganizationRelationship.jsp</result>
         </action>
 
         <!-- Organization -> Edit/Curate -->

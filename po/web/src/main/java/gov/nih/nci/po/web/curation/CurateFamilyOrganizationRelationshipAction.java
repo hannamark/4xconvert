@@ -84,11 +84,17 @@ package gov.nih.nci.po.web.curation;
 
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
@@ -104,6 +110,14 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 public class CurateFamilyOrganizationRelationshipAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1L;
     private FamilyOrganizationRelationship familyOrgRelationship = new FamilyOrganizationRelationship();
+    private final Comparator<OrganizationRelationship> orgNameComparator =  new Comparator<OrganizationRelationship>() {
+        public int compare(OrganizationRelationship or1, OrganizationRelationship or2) {
+            return or1.getRelatedOrganization().getName().compareTo(or2.getRelatedOrganization().getName());
+        }
+     };
+    private SortedSet<OrganizationRelationship> organizationRelationships =
+        new TreeSet<OrganizationRelationship>(orgNameComparator);
+
     private String rootKey;
     private Long selectedOrgId;
 
@@ -125,6 +139,7 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
         setFamilyOrgRelationship(
                 PoRegistry.getFamilyOrganizationRelationshipService().getById(getFamilyOrgRelationship().getId()));
         setRootKey(PoHttpSessionUtil.addAttribute(getFamilyOrgRelationship()));
+        initializeCollection();
         return INPUT;
     }
 
@@ -154,9 +169,9 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
         getFamilyOrgRelationship().setEndDate(new Date());
         try {
             PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(getFamilyOrgRelationship());
-            ActionHelper.saveMessage(getText("familyOrgRelationship.update.remove"));
+            ActionHelper.saveMessage(getText("familyOrgRelationship.remove.success"));
         } catch (EntityValidationException e) {
-           //after implementing PO-3199 no need to swallow EntityValidationException
+            //after implementing PO-3199 no need to swallow EntityValidationException
             addActionError(e.getErrorMessages());
         }
         return SUCCESS;
@@ -170,6 +185,44 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
         Organization org = PoRegistry.getOrganizationService().getById(getSelectedOrgId());
         getFamilyOrgRelationship().setOrganization(org);
         return "orgInfo";
+    }
+
+    /**
+     * Reloads the organization relationship info.
+     * @return success
+     */
+    public String loadOrgRelationships() {
+        initializeCollection();
+        return "relationships";
+    }
+
+    /**
+     * Retrieves all existing organization relationships and adds missing organization relationships as organization
+     * relationships with not family hierarchical types set.
+     */
+    private void initializeCollection() {
+        OrganizationRelationshipServiceLocal orgRelService = PoRegistry.getOrganizationRelationshipService();
+        if (getFamilyOrgRelationship().getFamily().getId() != null
+                && getFamilyOrgRelationship().getOrganization().getId() != null) {
+            setOrganizationRelationships(new TreeSet<OrganizationRelationship>(orgNameComparator));
+            getOrganizationRelationships().addAll(
+                    orgRelService.getActiveOrganizationRelationships(getFamilyOrgRelationship().getFamily().getId(),
+                            getFamilyOrgRelationship().getOrganization().getId()));
+        }
+        Long familyId = getFamilyOrgRelationship().getFamily().getId();
+        Long orgId = getFamilyOrgRelationship().getOrganization().getId();
+        List<FamilyOrganizationRelationship> relationships =
+            PoRegistry.getFamilyOrganizationRelationshipService().getActiveRelationships(familyId);
+        for (FamilyOrganizationRelationship famOrgRel : relationships) {
+            if (!famOrgRel.getId().equals(getFamilyOrgRelationship().getId())
+                    && orgRelService.getActiveOrganizationRelationship(familyId, orgId,
+                            famOrgRel.getOrganization().getId()) == null) {
+                OrganizationRelationship or = new OrganizationRelationship();
+                or.setOrganization(getFamilyOrgRelationship().getOrganization());
+                or.setRelatedOrganization(famOrgRel.getOrganization());
+                getOrganizationRelationships().add(or);
+            }
+        }
     }
 
     /**
@@ -212,5 +265,19 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
      */
     public void setSelectedOrgId(Long selectedOrgId) {
         this.selectedOrgId = selectedOrgId;
+    }
+
+    /**
+     * @return the organizationRelationships
+     */
+    public SortedSet<OrganizationRelationship> getOrganizationRelationships() {
+        return organizationRelationships;
+    }
+
+    /**
+     * @param organizationRelationships the organizationRelationships to set
+     */
+    public void setOrganizationRelationships(SortedSet<OrganizationRelationship> organizationRelationships) {
+        this.organizationRelationships = organizationRelationships;
     }
 }

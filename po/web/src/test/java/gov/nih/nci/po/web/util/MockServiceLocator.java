@@ -101,9 +101,11 @@ import gov.nih.nci.po.service.IdentifiedPersonServiceStub;
 import gov.nih.nci.po.service.MockCtepImportService;
 import gov.nih.nci.po.service.MockFamilyOrganizationRelationshipService;
 import gov.nih.nci.po.service.MockFamilyService;
+import gov.nih.nci.po.service.MockOrganizationRelationshipService;
 import gov.nih.nci.po.service.MockOrganizationService;
 import gov.nih.nci.po.service.MockPersonService;
 import gov.nih.nci.po.service.OrganizationCRServiceLocal;
+import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceStub;
@@ -128,6 +130,8 @@ public class MockServiceLocator implements ServiceLocator {
     private final FamilyServiceLocal familyService = new MockFamilyService();
     private final FamilyOrganizationRelationshipServiceLocal familyOrgRelationshipService =
         new MockFamilyOrganizationRelationshipService();
+    private final OrganizationRelationshipServiceLocal organizationRelationshipService =
+        new MockOrganizationRelationshipService();
     private final PersonServiceLocal personService = new MockPersonService();
     private final GenericServiceLocal genericService = new GenericServiceStub();
     private final CountryServiceLocal cfgService = new CountryServiceStub();
@@ -267,5 +271,13 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService() {
         return familyOrgRelationshipService;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @return
+     */
+    public OrganizationRelationshipServiceLocal getOrganizationRelationshipService() {
+        return organizationRelationshipService;
     }
 }

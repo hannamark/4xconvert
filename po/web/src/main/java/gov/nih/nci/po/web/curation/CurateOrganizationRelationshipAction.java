@@ -80,127 +80,152 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.po.web.curation;
 
-import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
-import gov.nih.nci.po.service.CountryServiceLocal;
-import gov.nih.nci.po.service.FamilyServiceLocal;
-import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
-import gov.nih.nci.po.service.GenericServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
-import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
-import gov.nih.nci.po.service.OrganizationCRServiceLocal;
-import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.PatientServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
-import gov.nih.nci.po.service.external.CtepImportService;
-import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+
+import java.util.Date;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
+import com.opensymphony.xwork2.Validateable;
+import com.opensymphony.xwork2.validator.annotations.CustomValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
- * @author Scott Miller
+ * Action class to handle curation of organization relationships.
  *
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public interface ServiceLocator {
+public class CurateOrganizationRelationshipAction extends ActionSupport implements Preparable, Validateable {
+    private static final long serialVersionUID = 1L;
+    private String rootKey;
+    private OrganizationRelationship orgRelationship = new OrganizationRelationship();
+    private OrganizationRelationship newOrgRelationship = new OrganizationRelationship();
+    private boolean passedValidation = false;
 
     /**
-     * @return local service
+     * {@inheritDoc}
      */
-    GenericServiceLocal getGenericService();
+    @Override
+    public void validate() {
+        super.validate();
+        if (getOrgRelationship().getEndDate() == null) {
+            addFieldError("orgRelationship.endDate", getText("errors.required", new String[] {"End Date"}));
+        }
+    }
 
     /**
-     * @return the org service
+     * {@inheritDoc}
      */
-    OrganizationServiceLocal getOrganizationService();
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public void prepare() throws Exception {
+        if (StringUtils.isNotEmpty(getRootKey())) {
+            setOrgRelationship((OrganizationRelationship) PoHttpSessionUtil.getSession().getAttribute(getRootKey()));
+        }
+    }
 
     /**
-     * @return the family service
+     * Loads the organization relationship in preparation for changing it.
+     * @return input
      */
-    FamilyServiceLocal getFamilyService();
+    @Override
+    public String input() {
+        setOrgRelationship(PoRegistry.getOrganizationRelationshipService().getById(getOrgRelationship().getId()));
+        getOrgRelationship().setEndDate(new Date());
+        setRootKey(PoHttpSessionUtil.addAttribute(getOrgRelationship()));
+
+        getNewOrgRelationship().setStartDate(new Date());
+        getNewOrgRelationship().setFamily(getOrgRelationship().getFamily());
+        getNewOrgRelationship().setOrganization(getOrgRelationship().getOrganization());
+        getNewOrgRelationship().setRelatedOrganization(getOrgRelationship().getRelatedOrganization());
+        return INPUT;
+    }
 
     /**
-     * @return the family organization relationship service
+     * Creates the new organization relationship, making the old relationship inactive.
+     * @throws EntityValidationException on hibernate validation error
+     * @return success
      */
-    FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService();
+    @Validations(customValidators = {@CustomValidator(type = "hibernate", fieldName = "newOrgRelationship"),
+            @CustomValidator(type = "hibernate", fieldName = "orgRelationship") })
+    public String update() throws EntityValidationException {
+        PoRegistry.getOrganizationRelationshipService().updateEntity(getOrgRelationship());
+        OrganizationRelationship related =
+            PoRegistry.getOrganizationRelationshipService().getActiveOrganizationRelationship(
+                    getOrgRelationship().getFamily().getId(), getOrgRelationship().getRelatedOrganization().getId(),
+                    getOrgRelationship().getOrganization().getId());
+        related.setEndDate(getOrgRelationship().getEndDate());
+
+        PoRegistry.getOrganizationRelationshipService().updateEntity(related);
+
+        getNewOrgRelationship().setFamily(getOrgRelationship().getFamily());
+        getNewOrgRelationship().setOrganization(getOrgRelationship().getOrganization());
+        getNewOrgRelationship().setRelatedOrganization(getOrgRelationship().getRelatedOrganization());
+
+        PoRegistry.getOrganizationRelationshipService().create(getNewOrgRelationship());
+        setPassedValidation(true);
+        return SUCCESS;
+    }
 
     /**
-     * @return the organization relationship service
+     * @return the rootKey
      */
-    OrganizationRelationshipServiceLocal getOrganizationRelationshipService();
+    public String getRootKey() {
+        return rootKey;
+    }
 
     /**
-     * @return the person service
+     * @param rootKey the rootKey to set
      */
-    PersonServiceLocal getPersonService();
+    public void setRootKey(String rootKey) {
+        this.rootKey = rootKey;
+    }
 
     /**
-     * @return the PO country service
+     * @return the orgRelationship
      */
-    CountryServiceLocal getCountryService();
+    public OrganizationRelationship getOrgRelationship() {
+        return orgRelationship;
+    }
 
     /**
-     * @return the Researh Org service
+     * @param orgRelationship the orgRelationship to set
      */
-    ResearchOrganizationServiceLocal getResearchOrganizationService();
+    public void setOrgRelationship(OrganizationRelationship orgRelationship) {
+        this.orgRelationship = orgRelationship;
+    }
 
     /**
-     * @return the health care provider service.
+     * @return the newOrgRelationship
      */
-    HealthCareProviderServiceLocal getHealthCareProviderService();
+    public OrganizationRelationship getNewOrgRelationship() {
+        return newOrgRelationship;
+    }
 
     /**
-     * @return the service.
+     * @param newOrgRelationship the newOrgRelationship to set
      */
-    ClinicalResearchStaffServiceLocal getClinicalResearchStaffService();
+    public void setNewOrgRelationship(OrganizationRelationship newOrgRelationship) {
+        this.newOrgRelationship = newOrgRelationship;
+    }
 
     /**
-     * @return the service.
+     * @return the passedValidation
      */
-    PatientServiceLocal getPatientService();
+    public boolean isPassedValidation() {
+        return passedValidation;
+    }
 
     /**
-     * @return the health care facility service.
+     * @param passedValidation the passedValidation to set
      */
-    HealthCareFacilityServiceLocal getHealthCareFacilityService();
-
-    /**
-     * @return the oversight committee service
-     */
-    OversightCommitteeServiceLocal getOversightCommitteeService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService();
-
-    /**
-     * @return the service.
-     */
-    IdentifiedPersonServiceLocal getIdentifiedPersonService();
-
-    /**
-     * @return the service.
-     */
-    OrganizationalContactServiceLocal getOrganizationalContactService();
-
-    /**
-     * @return the service.
-     */
-    GenericCodeValueServiceLocal getGenericCodeValueService();
-
-    /**
-     * @return the ctep import service
-     */
-    CtepImportService getCtepImportService();
-
-    /**
-     * @return the organiation change request service.
-     */
-    OrganizationCRServiceLocal getOrganizationCRService();
-
+    public void setPassedValidation(boolean passedValidation) {
+        this.passedValidation = passedValidation;
+    }
 }
