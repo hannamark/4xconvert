@@ -45,7 +45,7 @@ This Site enables you to report accrual information for a trial with NCI's Clini
   </c:choose>
 </ul>
 <p class="padme2">
-Want to learn more about the Reporting Program? Visit the <a href="http://www.cancer.gov/clinicaltrials/ctrp"  target="new1">NCI Clinical Trials Reporting Program</a> website
+Want to learn more about the Reporting Program? Visit the <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main"  target="new1">NCI Clinical Trials Reporting Program</a> website
  <br>You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance
  </p>
      
