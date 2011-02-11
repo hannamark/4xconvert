@@ -142,7 +142,7 @@ public class SearchOrganizationTest extends OrganizationWebTest {
 
     private void searchByAddress() {
         selenium.type("searchOrganizationForm_criteria_organization_postalAddress_streetAddressLine", "400 First Street");
-        selenium.type("searchOrganizationForm_criteria_organization_postalAddress_deliveryAddressLine", "160 Delivery Ave");
+        selenium.type("searchOrganizationForm_criteria_organization_postalAddress_deliveryAddressLine", orgName);
         selenium.type("searchOrganizationForm_criteria_organization_postalAddress_cityOrMunicipality", "Atlanta");
         selenium.type("criteria.organization.postalAddress.stateOrProvince", "GA");
         selenium.type("searchOrganizationForm_criteria_organization_postalAddress_postalCode", "30345");
@@ -156,6 +156,7 @@ public class SearchOrganizationTest extends OrganizationWebTest {
         assertTrue("PoId field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_id"));
         assertTrue("Status code field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_statusCode"));
         assertTrue("Organization name field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_name"));
+        assertTrue("Family name field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_familyOrganizationRelationships_iterator_next_family_name"));
         assertTrue("Address 1 field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_streetAddressLine"));
         assertTrue("Address 2 field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_deliveryAddressLine"));
         assertTrue("City field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_cityOrMunicipality"));

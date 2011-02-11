@@ -126,7 +126,7 @@ public class SelectOrganizationTest extends OrganizationWebTest {
         verifyEquals("30345", selenium.getText("wwctrl_address.postalCode"));
         verifyEquals("GA", selenium.getText("wwctrl_address.stateOrProvince"));
         verifyEquals("Atlanta", selenium.getText("wwctrl_address.cityOrMunicipality"));
-        verifyEquals("160 Delivery Ave.", selenium.getText("wwctrl_address.deliveryAddressLine"));
+        verifyEquals(orgName, selenium.getText("wwctrl_address.deliveryAddressLine"));
         verifyEquals("400 First Street", selenium.getText("wwctrl_address.streetAddressLine"));
         verifyEquals("United States", selenium.getText("wwctrl_address.country"));
         //org details

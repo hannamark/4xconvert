@@ -100,6 +100,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Past;
@@ -217,6 +218,7 @@ public class Family implements Auditable {
      * @return the family organization relationships within this family.
      */
     @OneToMany(mappedBy = "family")
+    @Where(clause = "endDate is null")
     public Set<FamilyOrganizationRelationship> getFamilyOrganizationRelationships() {
         return familyOrganizationRelationships;
     }
@@ -231,6 +233,7 @@ public class Family implements Auditable {
      * @return the organizationRelationships
      */
     @OneToMany(mappedBy = "family")
+    @Where(clause = "endDate is null")
     public Set<OrganizationRelationship> getOrganizationRelationships() {
         return organizationRelationships;
     }

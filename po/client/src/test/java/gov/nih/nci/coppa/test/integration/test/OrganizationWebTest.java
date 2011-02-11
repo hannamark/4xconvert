@@ -106,7 +106,8 @@ public class OrganizationWebTest extends AbstractPoWebTest {
             assertEquals(poId, selenium.getTable("row." + row + ".0"));
             assertEquals(orgName, selenium.getTable("row." + row + ".1"));
             assertEquals("PENDING", selenium.getTable("row." + row + ".2"));
-            assertEquals("NONE", selenium.getTable("row." + row + ".3"));
+            assertEquals("", selenium.getTable("row." + row + ".3"));
+            assertEquals("NONE", selenium.getTable("row." + row + ".4"));
             if (clear) {
                 clear();
             }
@@ -127,7 +128,7 @@ public class OrganizationWebTest extends AbstractPoWebTest {
         selenium.select("curateEntityForm.organization.statusCode", "label=PENDING");
         selenium.type("curateEntityForm_organization_name", orgName);
         selenium.type("curateEntityForm_organization_postalAddress_streetAddressLine", "400 First Street");
-        selenium.type("curateEntityForm_organization_postalAddress_deliveryAddressLine", "160 Delivery Ave.");
+        selenium.type("curateEntityForm_organization_postalAddress_deliveryAddressLine", orgName);
         selenium.type("curateEntityForm_organization_postalAddress_postalCode", "30345");
         selenium.select("curateEntityForm.organization.postalAddress.country", "label=United States");
         waitForElementById("organization.postalAddress.stateOrProvince", 10);

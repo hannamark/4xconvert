@@ -7,8 +7,8 @@
     <li class="liheader">PO Curation Portal</li>
     <c:choose>
         <c:when test="${pageContext.request.remoteUser != null}">
-            <li><a href="javascript://noop/" onclick="openHelpWindow('');">Help</a></li>
-            <li><a href="<c:url value="/login/logout.action"/>">Logout</a></li>
+            <li><a id="Help" href="javascript://noop/" onclick="openHelpWindow('');">Help</a></li>
+            <li><a id="Logout" href="<c:url value="/login/logout.action"/>">Logout</a></li>
             <c:if test="${sessionScope.disclaimerAccepted}">
             <li class="lisubheader">Organization</li>
 	            <li><a id="EntityInboxOrganization" href="<c:url value="/protected/curate/search/listOrgs.action"/>">Inbox</a></li>
