@@ -86,6 +86,7 @@ import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -94,11 +95,13 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import org.apache.commons.lang.time.DateUtils;
+
 /**
  * implementation CRUD for Family.
- * 
+ *
  * @author vrushali
- * 
+ *
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -119,23 +122,23 @@ public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implement
 
     /**
      * {@inheritDoc}
-     * 
+     *
      */
     public void updateEntity(Family updateFamilyEntity) throws EntityValidationException {
         if (isNotActiveStatus(updateFamilyEntity)) {
             if (updateFamilyEntity.getEndDate() == null) {
-                updateFamilyEntity.setEndDate(new Date());
+                updateFamilyEntity.setEndDate(DateUtils.truncate(new Date(), Calendar.DATE));
             }
         } else {
             updateFamilyEntity.setEndDate(null);
         }
         super.update(updateFamilyEntity);
         cascadeEndDate(updateFamilyEntity);
-        
+
     }
 
     private boolean isNotActiveStatus(Family updateFamilyEntity) {
-        return FamilyStatus.INACTIVE.equals(updateFamilyEntity.getStatusCode()) 
+        return FamilyStatus.INACTIVE.equals(updateFamilyEntity.getStatusCode())
                || FamilyStatus.NULLIFIED.equals(updateFamilyEntity.getStatusCode());
     }
     private void cascadeEndDate(Family updateFamilyEntity) throws EntityValidationException {
@@ -149,7 +152,7 @@ public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implement
         }
     }
     /**
-     * 
+     *
      * @param familyOrgRelService service to set
      */
     public void setFamilyOrgRelService(FamilyOrganizationRelationshipServiceLocal familyOrgRelService) {
