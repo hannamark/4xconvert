@@ -108,7 +108,7 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
     public void testHealthCareFacility() throws Exception {
      // Setup
         setOrgRoleTitleText("Health Care Facility Information");
-        setOrgRoleLinkText("link=Manage Health Care Facility");
+        setOrgRoleLinkText("link=Manage Health Care Facility(s)");
         setOrgRoleCreateMessage("The health care facility was successfully created!");
         setOrgRoleUpdateMessage("The health care facility role was successfully updated!");
         setOrgRoleName("Facility 1");

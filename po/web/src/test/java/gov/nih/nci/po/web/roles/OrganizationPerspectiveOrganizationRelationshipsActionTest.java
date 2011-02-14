@@ -80,148 +80,38 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.test.integration.test;
+package gov.nih.nci.po.web.roles;
+
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.web.AbstractPoTest;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.opensymphony.xwork2.Action;
 
 /**
- * @author ludetc
- *
+ * @author moweis
  */
-public class OrganizationFamilyTest extends AbstractPoWebTest {
+public class OrganizationPerspectiveOrganizationRelationshipsActionTest extends AbstractPoTest {
+    private OrganizationPerspectiveOrganizationRelationshipsAction action;
 
-    private static String FAMILY_NAME = "myTestFamily";
-
-    public void testList(){
-        loginAsCurator();
-        openOrganizationFamilyList();
-
-        assertTrue(selenium.isElementPresent("createNewFamily"));
-
-        createFamily(FAMILY_NAME);
-
-        assertTrue(selenium.isElementPresent("return_to_button"));
-        clickAndWait("return_to_button");
-
-        String createdFamilyName = selenium.getTable("row.1.1");
-        assertEquals(FAMILY_NAME, createdFamilyName);
-
-        String famId = selenium.getTable("row.1.0");
-        assertNotNull(famId);
-
-        clickAndWait("edit_family_id_" + famId);
-        addMember(true);
+    @Before
+    public void setUp() {
+        action = new OrganizationPerspectiveOrganizationRelationshipsAction();
     }
 
-    public void testOrgSearchByFamiy(){
-        loginAsCurator();
-        addMember(false);
-        openSearchOrganization();
-        selenium.type("searchOrganizationForm_criteria_organization_familyOrganizationRelationships_iterator_next_family_name", FAMILY_NAME);
-        clickAndWait("submitSearchOrganizationForm");
-        verify();
-        removeMember();
-    }
-    
-    public void testOrganizationScreenLinks(){
-        loginAsCurator();
-        addMember(false);
-        openSearchOrganization();
-        selenium.type("searchOrganizationForm_criteria_organization_familyOrganizationRelationships_iterator_next_family_name", FAMILY_NAME);
-        clickAndWait("submitSearchOrganizationForm");
-        verify();
-        clickAndWait(getLinkStartingWith("org_id_"));
-        assertTrue(selenium.isTextPresent("Manage Family(s) (1)"));
-        assertTrue(selenium.isTextPresent("Manage Organization Relationship(s) (0)"));
-        accessFamilyScreen();
-        clickAndWait("return_to_button");
-        assertTrue(selenium.isTextPresent("Organization Details"));
-        accessOrganizationRelationshipsScreen();
-        clickAndWait("return_to_button");
-        assertTrue(selenium.isTextPresent("Organization Details"));
-        removeMember();
-        
+    @Test(expected = NullPointerException.class)
+    public void testStartNoOrgId() {
+        action.setOrganization(new Organization());
+        assertEquals(Action.SUCCESS, action.start());
     }
 
-    private void verify() {
-        int row = getRow("myTestFamily (CONTRACTUAL)", 3);
-        if (row == -1) {
-            fail("Did not find " + FAMILY_NAME + " in search results");
-        } else {
-            assertEquals("myTestFamily (CONTRACTUAL)", selenium.getTable("row." + row + ".3"));
-        }
-    }
-
-    private void createFamily(String familyName) {
-        openOrganizationFamilyCreate();
-        selenium.type("familyEntityForm_family_name", familyName);
-        clickAndWait("save_button");
-        assertTrue(selenium.isTextPresent(familyName + " was successfully created"));
-    }
-
-    private void addMember(boolean remove) {
-        openOrganizationFamilyList();
-        String famId = selenium.getTable("row.1.0");
-        assertNotNull(famId);
-
-        clickAndWait("edit_family_id_" + famId);
-
-        clickAndWait("add_family_member_id_" + famId);
-
-        selenium.selectFrame("popupFrame");
-        waitForElementById("duplicateOrganizationForm_criteria_organization_name", 10);
-        selenium.type("duplicateOrganizationForm_criteria_organization_name", "National");
-        clickAndWait("submitDuplicateOrganizationForm");
-
-        clickAndWait(getLinkStartingWith("mark_as_dup"));
-
-        selenium.selectFrame("relative=up");
-
-        selenium.type("familyOrgRelationship.endDate", "01/01/2050");
-
-        clickAndWait("save_button");
-        assertTrue(selenium.isTextPresent("End Date must be a past date"));
-
-        selenium.type("familyOrgRelationship.endDate", "01/01/2009");
-        clickAndWait("save_button");
-        assertTrue(selenium.isTextPresent("must be before"));
-
-        selenium.type("familyOrgRelationship.endDate", "");
-
-
-        clickAndWait("save_button");
-
-        assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully created."));
-
-        assertEquals("ORGANIZATIONAL", selenium.getTable("row.1.2"));
-
-        clickAndWait(getLinkStartingWith("fam_org_relationship_edit_id_"));
-        selenium.select("familyOrgRelationship.functionalType", "CONTRACTUAL");
-        clickAndWait("save_button");
-        assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully updated."));
-        assertEquals("CONTRACTUAL", selenium.getTable("row.1.2"));
-
-        if (remove) {
-            clickAndWait(getLinkStartingWith("fam_org_relationship_remove_id_"));
-            assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully removed."));
-        }
-    }
-
-    private void removeMember() {
-        openOrganizationFamilyList();
-        String famId = selenium.getTable("row.1.0");
-        assertNotNull(famId);
-        clickAndWait("edit_family_id_" + famId);
-        clickAndWait(getLinkStartingWith("fam_org_relationship_remove_id_"));
-        assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully removed."));
-    }
-
-    private String getLinkStartingWith(String key) {
-        String[] links = selenium.getAllLinks();
-        for (String link : links) {
-            if (link.startsWith(key)) {
-                return(link);
-            }
-        }
-        return null;
+    @Test
+    public void testStart() {
+        action.getOrganization().setId(1L);
+        assertEquals(Action.SUCCESS, action.start());
     }
 
 }

@@ -17,7 +17,7 @@
            finalConfirmThenSubmit($(fieldId),$(formId),map);
         }
     </script>
-    <%@include file="../confirmThenSubmit.jsp" %>
+    <%@include file="../../confirmThenSubmit.jsp" %>
 </head>
 <body> 
 <po:successMessages />
@@ -29,7 +29,7 @@
        <s:set name="formAction" value="'family/create/save.action'"/>
     </s:if>
     <s:else>
-       <s:set name="formAction" value="'family/edit/submit.action'"/>
+       <s:set name="formAction" value="'family/curate/submit.action'"/>
     </s:else>
     <s:form action="%{formAction}" id="familyEntityForm">
         <div class="box_white">

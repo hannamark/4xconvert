@@ -133,7 +133,7 @@
         <div class="btnwrapper" style="margin-bottom:20px;">
             <po:buttonRow>
                 <po:button id="save_button" href="javascript://noop/" onclick="$('familyOrgRelationshipForm').submit();" style="save" text="Save"/>
-                <c:url var="cancelUrl" value="/protected/family/edit/start.action">
+                <c:url var="cancelUrl" value="/protected/family/curate/start.action">
                     <c:param name="family.id" value="${familyOrgRelationship.family.id}"/>
                 </c:url>
                 <po:button id="cancel_button" href="${cancelUrl}" style="cancel" text="Cancel"/>

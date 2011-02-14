@@ -9,7 +9,7 @@
             <s:set name="formAction" value="'create.action'"/>
         </s:if>
         <s:elseif test="%{isEdit}">
-            <c:url value="/protected/popup/organization/relationship/edit/update.action" var="submitUrl"/>
+            <c:url value="/protected/popup/organization/relationship/curate/update.action" var="submitUrl"/>
             <s:set name="formAction" value="'update.action'"/>
         </s:elseif>
         

@@ -28,7 +28,7 @@
                                 <fmt:param value="${row.relatedOrganization.name}"/>
                                 <fmt:param value="${row.hierarchicalType}"/>
                             </fmt:message>
-                            <c:url value="/protected/popup/organization/relationship/edit/input.action" var="changeUrl">
+                            <c:url value="/protected/popup/organization/relationship/curate/input.action" var="changeUrl">
                                 <c:param name="orgRelationship.id" value="${row.id}"/>
                             </c:url>
                         </c:otherwise>

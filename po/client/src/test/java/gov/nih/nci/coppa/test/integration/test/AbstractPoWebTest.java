@@ -612,6 +612,16 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isTextPresent("Health Care Provider Information"));
     }
 
+    protected void accessFamilyScreen() {
+        clickAndWait("link=Manage Family(s)");
+        assertTrue(selenium.isTextPresent("Family Organization Relationship Information"));
+    }
+
+    protected void accessOrganizationRelationshipsScreen() {
+        clickAndWait("link=Manage Organization Relationship(s)");
+        assertTrue(selenium.isTextPresent("Family Organization Relationship Information"));
+    }
+
     protected void selectOrganizationScoper(String orgId, String orgName) {
         clickAndWait("select_scoper");
         selenium.selectFrame("popupFrame");

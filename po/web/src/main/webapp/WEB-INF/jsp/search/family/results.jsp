@@ -25,11 +25,11 @@
         </display:column>
         
         <display:column titleKey="th.action" class="action">
-            <c:url var="editUrl" value="/protected/family/edit/start.action">
+            <c:url var="curateUrl" value="/protected/family/curate/start.action">
                 <c:param name="family.id" value="${row.id}"/>
             </c:url>
             <po:buttonRow>
-                <po:button href="${editUrl}" style="edit" text="Edit" id="edit_family_id_${row.id}"/>
+                <po:button href="${curateUrl}" style="edit" text="Edit" id="edit_family_id_${row.id}"/>
             </po:buttonRow>
         </display:column>
     </display:table>

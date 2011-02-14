@@ -146,7 +146,7 @@ public class ContactFormattingTest extends AbstractPoWebTest {
         // Check the formatting on org/person roles.
         if (entityType.equals(ENTITYTYPE.organization)) {
             checkPersonOrgRoleContactFormatting(entityType, entityId, "link=Manage Research Organization(s)", "Research Organization Information");
-            checkPersonOrgRoleContactFormatting(entityType, entityId, "link=Manage Health Care Facility", "Health Care Facility Information");
+            checkPersonOrgRoleContactFormatting(entityType, entityId, "link=Manage Health Care Facility(s)", "Health Care Facility Information");
             checkPersonOrgRoleContactFormatting(entityType, entityId, "link=Manage Organizational Contact(s)", "Organizational Contact Information");
         } else {
             checkPersonOrgRoleContactFormatting(entityType, entityId, "link=Manage Clinical Research Staff(s)", "Clinical Research Staff Information");

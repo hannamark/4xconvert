@@ -29,14 +29,14 @@
             <display:column title="Effective Date" property="startDate" sortable="false" format="{0, date, MM-dd-yyyy}"/>
     
             <display:column titleKey="th.action" class="action">
-                <c:url var="editUrl" value="/protected/family/organization/relationship/edit/start.action">
+                <c:url var="curateUrl" value="/protected/family/organization/relationship/curate/start.action">
                     <c:param name="familyOrgRelationship.id" value="${row.id}" />
                 </c:url>
-                <c:url var="removeUrl" value="/protected/family/organization/relationship/edit/remove.action">
+                <c:url var="removeUrl" value="/protected/family/organization/relationship/curate/remove.action">
                     <c:param name="familyOrgRelationship.id" value="${row.id}" />
                 </c:url>
                 <po:buttonRow>
-                    <po:button href="${editUrl}" style="edit" text="Edit" id="fam_org_relationship_edit_id_${row.id}" />
+                    <po:button href="${curateUrl}" style="edit" text="Edit" id="fam_org_relationship_edit_id_${row.id}" />
                     <po:button href="${removeUrl}" style="delete" text="Remove" id="fam_org_relationship_remove_id_${row.id}" />
                 </po:buttonRow>
             </display:column>
