@@ -83,6 +83,8 @@
 
 package gov.nih.nci.pa.service.util.report;
 
+import java.util.List;
+
 
 /**
  * Summary 4 Information.
@@ -94,6 +96,7 @@ public class TSRReportSummary4Information {
     private String fundingCategory;
     private String fundingSponsor;
     private String programCode;
+    private List<String> anatomicSites;
 
     /**
      * @return the fundingCategory
@@ -135,6 +138,20 @@ public class TSRReportSummary4Information {
      */
     public void setProgramCode(String programCode) {
         this.programCode = programCode;
+    }
+
+    /**
+     * @param anatomicSites the anatomicSites to set
+     */
+    public void setAnatomicSites(List<String> anatomicSites) {
+        this.anatomicSites = anatomicSites;
+    }
+
+    /**
+     * @return the anatomicSites
+     */
+    public List<String> getAnatomicSites() {
+        return anatomicSites;
     }
 
 }

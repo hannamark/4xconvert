@@ -124,6 +124,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -362,6 +363,7 @@ public class TSRReportGeneratorServiceTest extends AbstractMockitoTest {
         summaryInfo.setFundingCategory("Industrial");
         summaryInfo.setFundingSponsor("Cancer Therapy Evaluation Program");
         summaryInfo.setProgramCode("Summary4_123");
+        summaryInfo.setAnatomicSites(Arrays.asList("liver"));
         tsrReportGenerator.setSummary4Information(summaryInfo);
 
         // Collaborators

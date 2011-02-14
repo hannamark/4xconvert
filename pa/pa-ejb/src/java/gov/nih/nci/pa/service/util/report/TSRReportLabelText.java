@@ -412,6 +412,10 @@ public class TSRReportLabelText {
      * Program code.
      */
     public static final String S4I_PROGRAM_CODE_TEXT = "Program Code";
+    /**
+     * Anatomic sites.
+     */
+    public static final String S4I_ANATOMIC_SITES_TEXT = "Anatomic Site Code";
 
     // Collaborators
     /**

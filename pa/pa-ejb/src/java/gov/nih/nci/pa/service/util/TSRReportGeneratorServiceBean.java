@@ -766,7 +766,18 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 sum4Info.setProgramCode(getValue(studyProtocolDto.getProgramCodeText(), INFORMATION_NOT_PROVIDED));
             }
         }
+        setSummary4AnatomicSite(studyProtocolDto, sum4Info);
         tsrReportGenerator.setSummary4Information(sum4Info);
+    }
+    private void setSummary4AnatomicSite(StudyProtocolDTO studyProtocolDto,
+            TSRReportSummary4Information sum4Info) {
+        if (!CollectionUtils.isEmpty(studyProtocolDto.getSummary4AnatomicSites().getItem())) {
+            List<String> anatomicSites =  new ArrayList<String>();
+            for (Cd as : studyProtocolDto.getSummary4AnatomicSites().getItem()) {
+                anatomicSites.add(StConverter.convertToString(as.getDisplayName()));
+            }
+            sum4Info.setAnatomicSites(anatomicSites);
+        }
     }
 
     private void setCollaborators(StudyProtocolDTO studyProtocolDto) throws PAException {

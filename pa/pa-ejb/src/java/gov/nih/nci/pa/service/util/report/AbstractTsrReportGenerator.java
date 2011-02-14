@@ -538,12 +538,25 @@ public abstract class AbstractTsrReportGenerator {
 
     private void addSummary4InformationTable() throws DocumentException {
         if (getSummary4Information() != null) {
-            Table table = getOuterTable(TSRReportLabelText.TABLE_SUMMARY_4_INFORMATION, false);
-            addTableRow(table, TSRReportLabelText.S4I_FUNDING_CATEGORY, getSummary4Information().getFundingCategory());
-            addTableRow(table, TSRReportLabelText.S4I_FUNDING_SPONSOR, getSummary4Information().getFundingSponsor());
-            addTableRow(table, TSRReportLabelText.S4I_PROGRAM_CODE_TEXT, getSummary4Information().getProgramCode());
+            Table table = getOuterTable(TSRReportLabelText.TABLE_SUMMARY_4_INFORMATION, true);
+            Table innerTable = getInnerTable(new ArrayList<String>());
+            addTableRow(innerTable, TSRReportLabelText.S4I_FUNDING_CATEGORY,
+                    getSummary4Information().getFundingCategory());
+            addTableRow(innerTable, TSRReportLabelText.S4I_FUNDING_SPONSOR,
+                    getSummary4Information().getFundingSponsor());
+            addTableRow(innerTable, TSRReportLabelText.S4I_PROGRAM_CODE_TEXT,
+                    getSummary4Information().getProgramCode());
+            table.insertTable(innerTable);
+            if (CollectionUtils.isNotEmpty(getSummary4Information().getAnatomicSites())) {
+                Table anatomicSiteTable = getInnerTable(Arrays.asList(TSRReportLabelText.S4I_ANATOMIC_SITES_TEXT));
+                for (String site : getSummary4Information().getAnatomicSites()) {
+                  anatomicSiteTable.addCell(getItemValueCell(site));
+                }
+                table.insertTable(anatomicSiteTable);
+            }
             reportDocument.add(table);
             reportDocument.add(getLineBreak());
+
         }
     }
 
