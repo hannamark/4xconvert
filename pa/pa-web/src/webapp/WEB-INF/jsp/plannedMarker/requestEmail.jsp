@@ -50,7 +50,8 @@
                 <s:label for="plannedmMarker.toEmail"><fmt:message key="plannedMarker.request.toEmail"/>:</s:label><span class="required">*</span>
             </td>
             <td class="value" colspan="2">
-                <s:textfield id="toEmail" name="toEmail" cssClass="readonly" readonly="true"/>
+                <s:property value="toEmail"/>
+                <s:hidden id="toEmail" name="toEmail" />
             </td>
         </tr>
         <tr>

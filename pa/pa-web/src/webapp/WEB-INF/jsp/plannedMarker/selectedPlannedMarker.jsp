@@ -30,19 +30,28 @@
         <td class="label">
             <s:label for="plannedMarker.meaning"><fmt:message key="plannedMarker.meaning" />:</s:label>
         </td>
-        <td><s:textfield name="plannedMarker.meaning" id="meaning" cssClass="readonly" readonly="true" /></td>
+        <td>
+            <s:hidden name="plannedMarker.meaning" id="meaning"/>
+            <s:property value="plannedMarker.meaning"/>
+        </td>
     </tr>
     <tr>
         <td class="label">
             <s:label for="plannedMarker.description"><fmt:message key="plannedMarker.description" />:</s:label>
         </td>
-        <td><s:textfield name="plannedMarker.description" id="description" cssClass="readonly" readonly="true" /></td>
+        <td>
+            <s:hidden name="plannedMarker.description" id="description"/>
+            <s:property value="plannedMarker.description"/>
+        </td>
     </tr>
     <tr id="hugoCodeRow" style="display:none">
         <td class="label">
             <s:label for="plannedMarker.hugoCode"><fmt:message key="plannedMarker.hugoCode"/>:</s:label>
         </td>
-        <td><s:textfield name="plannedMarker.hugoCode" id="hugoCode" cssClass="readonly" readonly="true" /></td>
+        <td>
+            <s:hidden name="plannedMarker.hugoCode" id="hugoCode" />
+            <s:property value="plannedMarker.hugoCode"/>
+        </td>
     </tr>
     <tr>
         <td class="label">
@@ -148,6 +157,9 @@
         <td class="label">
             <s:label for="plannedMarker.status"><fmt:message key="plannedMarker.status" />:</s:label>
         </td>
-        <td><s:textfield name="plannedMarker.status" id="status" cssClass="readonly" readonly="true" /></td>
+        <td>
+            <s:hidden name="plannedMarker.status" id="status"/>
+            <s:property value="plannedMarker.status"/>
+        </td>
     </tr>
 </table>
