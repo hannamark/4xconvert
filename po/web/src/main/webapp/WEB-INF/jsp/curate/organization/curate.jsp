@@ -180,7 +180,6 @@
                     <li><a href="${manageHcf}"><s:text name="healthCareFacility.manage.title"/></a> (${fn:length(organization.healthCareFacilities)}) <c:if test="${hotHealthCareFacilityCount > 0}"><span class='required'>*</span></c:if></li>
                     <li><a href="${manageOrganizationalContacts}"><s:text name="organizationalContact.manage.title"/></a> (${fn:length(organization.organizationalContacts)}) <c:if test="${hotOrganizationalContactCount > 0}"><span class='required'>*</span></c:if></li>
                     <li><a href="${manageFamilies}"><s:text name="familyOrganizationRelationships.manage.title"/></a> (${fn:length(organization.familyOrganizationRelationships)})</li>
-                    <li><a href="${manageOrganizationRelationships}"><s:text name="organizationRelationships.manage.title"/></a> (${fn:length(organization.organizationRelationships)})</li>
                 </ul>
                 <div class="clear"></div>
             </div>

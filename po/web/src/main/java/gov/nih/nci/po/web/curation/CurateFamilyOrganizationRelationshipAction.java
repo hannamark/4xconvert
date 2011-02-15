@@ -108,7 +108,16 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class CurateFamilyOrganizationRelationshipAction extends ActionSupport implements Preparable {
+    /**
+     * Constant for organizational perspective view of Family Organization Relationship.
+     */
+    public static final String ORGANIZATIONAL_PERSPECTIVE = "organization";
+    /**
+     * Constant for family perspective view of Family Organization Relationship.
+     */
+    public static final String FAMILY_PERSPECTIVE = "family";    
     private static final long serialVersionUID = 1L;
+    
     private FamilyOrganizationRelationship familyOrgRelationship = new FamilyOrganizationRelationship();
     private final Comparator<OrganizationRelationship> orgNameComparator =  new Comparator<OrganizationRelationship>() {
         public int compare(OrganizationRelationship or1, OrganizationRelationship or2) {
@@ -120,6 +129,7 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
 
     private String rootKey;
     private Long selectedOrgId;
+    private String perspective = FAMILY_PERSPECTIVE;
 
     /**
      * {@inheritDoc}
@@ -279,5 +289,20 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
      */
     public void setOrganizationRelationships(SortedSet<OrganizationRelationship> organizationRelationships) {
         this.organizationRelationships = organizationRelationships;
+    }
+    
+
+    /**
+     * @param perspective the perspective to set
+     */
+    public void setPerspective(String perspective) {
+        this.perspective = perspective;
+    }
+
+    /**
+     * @return the perspective
+     */
+    public String getPerspective() {
+        return perspective;
     }
 }

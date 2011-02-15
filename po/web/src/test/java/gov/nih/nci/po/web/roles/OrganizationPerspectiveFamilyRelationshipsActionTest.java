@@ -83,6 +83,8 @@
 package gov.nih.nci.po.web.roles;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.web.AbstractPoTest;
 
@@ -102,16 +104,44 @@ public class OrganizationPerspectiveFamilyRelationshipsActionTest extends Abstra
         action = new OrganizationPerspectiveFamilyRelationshipsAction();
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testStartNoOrgId() {
-        action.setOrganization(new Organization());
-        assertEquals(Action.SUCCESS, action.start());
+    @Test
+    public void testPrepareNoRootKey() throws Exception {
+        Organization initial = action.getOrganization();
+        action.prepare();
+        assertSame(initial, action.getOrganization());
+    }
+
+    @Test
+    public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
+        // can only set root key to the key of an object in the session,
+        // so after setting the root key, we have to clear out the session manually to test this case
+        action.setRootKey("abc-123");
+        getSession().clearAttributes();
+
+        action.prepare();
+        assertNull(action.getOrganization());
+    }
+
+    @Test
+    public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
+        Organization o = new Organization();
+        String rootKey = "a";
+        getSession().setAttribute(rootKey, o);
+        action.setRootKey(rootKey);
+        action.prepare();
+        assertSame(o, action.getOrganization());
     }
 
     @Test
     public void testStart() {
         action.getOrganization().setId(1L);
         assertEquals(Action.SUCCESS, action.start());
+    }
+
+    @Test
+    public void testRemove() {
+        action.setSelectedFamilyOrgRelId(1L);
+        assertEquals(Action.SUCCESS, action.remove());
     }
 
 }

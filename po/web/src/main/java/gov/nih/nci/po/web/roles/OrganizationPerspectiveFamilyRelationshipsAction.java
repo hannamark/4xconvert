@@ -1,25 +1,67 @@
 package gov.nih.nci.po.web.roles;
 
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.util.PoRegistry;
+import java.util.Calendar;
+import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
+
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+
+import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * Action class to handle editing of Family Organization Relationships for an Organization.
  */
-//TODO Skeleton, fill in as part of PO-2538
-public class OrganizationPerspectiveFamilyRelationshipsAction extends ActionSupport {
+public class OrganizationPerspectiveFamilyRelationshipsAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1285712121733778829L;
 
     private Organization organization = new Organization();
+    private String rootKey;
+    private Long selectedFamilyOrgRelId;
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public void prepare() throws Exception {
+        if (getRootKey() != null) {
+            setOrganization(
+                    (Organization) PoHttpSessionUtil.getSession().getAttribute(getRootKey()));
+        }
+    }
+
 
     /**
      * @return show start page
      */
     public String start() {
-        organization = PoRegistry.getOrganizationService().getById(organization.getId());
+        setOrganization(PoRegistry.getOrganizationService().getById(organization.getId()));
+        setRootKey(PoHttpSessionUtil.addAttribute(getOrganization()));
         initializeCollections();
+        return SUCCESS;
+    }
+
+    /**
+     * Removes the family organization relationship by setting its end date.
+     * @return success
+     */
+    public String remove() {
+        FamilyOrganizationRelationship familyOrganizationRelationship =
+                PoRegistry.getFamilyOrganizationRelationshipService().getById(getSelectedFamilyOrgRelId());
+        familyOrganizationRelationship.setEndDate(DateUtils.truncate(new Date(), Calendar.DATE));
+        try {
+            PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(familyOrganizationRelationship);
+            ActionHelper.saveMessage(getText("familyOrgRelationship.remove.success"));
+        } catch (EntityValidationException e) {
+            //after implementing PO-3199 no need to swallow EntityValidationException
+            addActionError(e.getErrorMessages());
+        }
         return SUCCESS;
     }
 
@@ -40,4 +82,34 @@ public class OrganizationPerspectiveFamilyRelationshipsAction extends ActionSupp
     public void setOrganization(Organization organization) {
         this.organization = organization;
     }
+    
+    /**
+     * @return the rootKey
+     */
+    public String getRootKey() {
+        return rootKey;
+    }
+
+    /**
+     * @param rootKey the rootKey to set
+     */
+    public void setRootKey(String rootKey) {
+        this.rootKey = rootKey;
+    }
+
+    /**
+     * @return the selectedFamilyOrgRelId
+     */
+    public Long getSelectedFamilyOrgRelId() {
+        return selectedFamilyOrgRelId;
+    }
+
+    /**
+     * @param selectedFamilyOrgRelId the selectedFamilyOrgRelId to set
+     */
+    public void setSelectedFamilyOrgRelId(Long selectedFamilyOrgRelId) {
+        this.selectedFamilyOrgRelId = selectedFamilyOrgRelId;
+    }
+
+
 }

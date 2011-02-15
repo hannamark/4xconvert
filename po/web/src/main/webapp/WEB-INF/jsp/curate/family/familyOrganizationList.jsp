@@ -23,10 +23,8 @@
     
             <display:column titleKey="organization.id" property="organization.id" sortable="false" />
             <display:column titleKey="organization.name" property="organization.name" sortable="false" />
-            <display:column title="Functional Relationship" sortable="false">
-                <c:out value="${row.functionalType}" />
-            </display:column>
-            <display:column title="Effective Date" property="startDate" sortable="false" format="{0, date, MM-dd-yyyy}"/>
+            <display:column titleKey="familyOrgRelationship.functionalType" property="functionalType" sortable="false" />
+            <display:column titleKey="familyOrgRelationship.effectiveDates" property="startDate" sortable="false" format="{0, date, MM-dd-yyyy}"/>
     
             <display:column titleKey="th.action" class="action">
                 <c:url var="curateUrl" value="/protected/family/organization/relationship/curate/start.action">

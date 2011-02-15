@@ -138,6 +138,7 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
         action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
         action.getFamilyOrgRelationship().setId(2L);
         assertEquals(Action.INPUT, action.start());
+        assertEquals(CurateFamilyOrganizationRelationshipAction.FAMILY_PERSPECTIVE, action.getPerspective());
     }
 
     @Test

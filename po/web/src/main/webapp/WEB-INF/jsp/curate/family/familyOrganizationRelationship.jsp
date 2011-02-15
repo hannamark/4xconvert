@@ -88,6 +88,7 @@
                     <s:hidden key="familyOrgRelationship.id" id="familyOrgRelationship.id"/>
                     <s:hidden key="familyOrgRelationship.family.id"/>
                     <s:hidden key="selectedOrgId" id="selectedOrgId"/>
+                    <s:hidden key="perspective" id="perspective"/>
                     <po:inputRow>
                         <po:inputRowElement>
                             <po:field labelKey="familyOrgRelationship.functionalType" fieldRequired="true">
@@ -133,10 +134,18 @@
         <div class="btnwrapper" style="margin-bottom:20px;">
             <po:buttonRow>
                 <po:button id="save_button" href="javascript://noop/" onclick="$('familyOrgRelationshipForm').submit();" style="save" text="Save"/>
-                <c:url var="cancelUrl" value="/protected/family/curate/start.action">
-                    <c:param name="family.id" value="${familyOrgRelationship.family.id}"/>
-                </c:url>
-                <po:button id="cancel_button" href="${cancelUrl}" style="cancel" text="Cancel"/>
+                <s:if test="%{perspective eq @gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction@ORGANIZATIONAL_PERSPECTIVE}">
+                    <c:url var="cancelUrl" value="/protected/roles/organizational/familyRelationships/start.action">
+                        <c:param name="organization.id" value="${familyOrgRelationship.organization.id}"/>
+                    </c:url>
+                </s:if>
+                <s:else>
+                    <c:url var="cancelUrl" value="/protected/family/curate/start.action">
+                        <c:param name="family.id" value="${familyOrgRelationship.family.id}"/>
+                    </c:url>
+                </s:else>
+                <s:set name="returnToPageTitle" value="%{'Return to ' + getText('family') + ' Information'}"/>
+                <po:button id="return_to_button" href="${cancelUrl}" style="continue" text="${returnToPageTitle}"/>
             </po:buttonRow>
         </div>
         <s:if test="isEdit">
