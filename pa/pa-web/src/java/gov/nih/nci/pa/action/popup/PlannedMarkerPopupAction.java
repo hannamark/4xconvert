@@ -184,7 +184,6 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      * @throws PAException on error
      */
     public String setupEmailRequest() throws PAException {
-        setSubject(PaRegistry.getLookUpTableService().getPropertyValue("CDE_MARKER_REQUEST_SUBJECT"));
         setToEmail(PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL"));
         getPlannedMarker().setFromEmail(
                 PaRegistry.getLookUpTableService().getPropertyValue("CDE_MARKER_REQUEST_FROM_EMAIL"));

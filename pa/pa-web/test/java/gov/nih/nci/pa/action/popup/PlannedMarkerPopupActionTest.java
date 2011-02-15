@@ -206,7 +206,6 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
         assertEquals(plannedMarkerAction.setupEmailRequest(), "email");
         assertNotNull(plannedMarkerAction.getToEmail());
         assertNotNull(plannedMarkerAction.getPlannedMarker().getFromEmail());
-        assertNotNull(plannedMarkerAction.getSubject());
     }
 
     /**

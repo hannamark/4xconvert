@@ -709,6 +709,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
             String toAddress = lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL");
             String subject = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_SUBJECT");
+            subject = subject.replace("${trialIdentifier}", spDTO.getNciIdentifier());
+            subject = subject.replace("${markerName}", StConverter.convertToString(marker.getName()));
             sendMailWithAttachment(toAddress, from, subject, body, null);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a request for a new CDE", e);

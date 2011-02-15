@@ -310,7 +310,7 @@ public class MailManagerServiceTest {
 
         prop = new PAProperties();
         prop.setName("CDE_MARKER_REQUEST_SUBJECT");
-        prop.setValue("CDE Marker Request");
+        prop.setValue("CDE Marker Request ${markerName} for ${trialIdentifier}");
         TestSchema.addUpdObject(prop);
 
         prop = new PAProperties();

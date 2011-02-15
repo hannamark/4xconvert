@@ -638,4 +638,8 @@
         <comment>Update mail destination, with tier based filtering</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.4/PO-3160.sql"/>
      </changeSet>
+     <changeSet id="PO-3181" author="aevansel">
+        <comment>Updating the CDE Marker Request Subject to include the marker name and trial id.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.4/PO-3181.sql"/>
+     </changeSet>
 </databaseChangeLog>

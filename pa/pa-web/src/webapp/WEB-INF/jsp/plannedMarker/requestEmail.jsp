@@ -67,12 +67,6 @@
             </td>
         </tr>
         <tr>
-            <td scope="row" class="label"><s:label for="plannedMarker.subject"><fmt:message key="plannedMarker.request.subject" />:</s:label></td>
-            <td class="value" colspan="2">
-                <s:textfield id="subject" name="subject" readonly="true" cssClass="readonly"/>
-            </td>
-        </tr>
-        <tr>
             <td scope="row" class="label">
                 <s:label for="plannedMarker.name"><fmt:message key="plannedMarker.request.markerName" />:</s:label><span class="required">*</span>
             </td>
