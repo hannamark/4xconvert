@@ -108,7 +108,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class StudyIndldeServiceBeanTest {
-    private StudyIndldeServiceLocal remoteEjb = new StudyIndldeBeanLocal();;
+    private final StudyIndldeServiceLocal remoteEjb = new StudyIndldeBeanLocal();;
     Ii pid;
 
     @Before
@@ -192,7 +192,7 @@ public class StudyIndldeServiceBeanTest {
         try {
             remoteEjb.validate(dto);
         } catch (PAException e) {
-            assertEquals("Validation Exception Please enter valid value for IND/IDE NIH Institution.\n", e.getMessage());
+            assertEquals("Validation Exception  Please enter valid value for IND/IDE NIH Institution.\n", e.getMessage());
         }
         dto = new StudyIndldeDTO();
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
@@ -207,7 +207,7 @@ public class StudyIndldeServiceBeanTest {
         try {
             remoteEjb.validate(dto);
         } catch (PAException e) {
-            assertEquals("Validation Exception All IND/IDE values are required.\n", e.getMessage());
+            assertEquals("Validation Exception  All IND/IDE values are required.\n", e.getMessage());
         }
         dto = new StudyIndldeDTO();
         dto.setIdentifier(IiConverter.convertToIi((Long) null));

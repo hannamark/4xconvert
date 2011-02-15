@@ -86,6 +86,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.convert.AbstractConverter;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -179,14 +180,14 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
     /**
      * A common validation method.
      * @param dto Dto object
-     * @throws PAException on error
+     * @throws PAException if validation fails
      */
     @Override
     public void validate(DTO dto) throws PAException {
         StringBuffer sb = new StringBuffer();
         try {
             super.validate(dto);
-        } catch (PAException pa) {
+        } catch (PAValidationException pa) {
             sb.append(pa.getMessage());
         }
         try {
@@ -195,7 +196,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
             sb.append(pa.getMessage());
         }
         if (sb.length() > 0) {
-            throw new PAException("Validation Exception " + sb.toString());
+            throw new PAValidationException("Validation Exception " + sb.toString());
         }
 
     }

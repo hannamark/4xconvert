@@ -85,6 +85,7 @@ import gov.nih.nci.pa.iso.convert.AbstractConverter;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -308,22 +309,26 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
     /**
      * A common validation method.
      * @param dto Dto object
-     * @throws PAException on error
+     * @throws PAException if validation fails
      */
     public void validate(DTO dto) throws PAException {
         StringBuffer sb = new StringBuffer();
         sb.append(dto == null ? "DTO cannot be null , " : "");
-        BO bo = convertFromDtoToDomain(dto);
-        InvalidValue[] invalidValues = null;
-        ClassValidator<BO> classValidator = new ClassValidator(bo.getClass());
-        invalidValues = classValidator.getInvalidValues(bo);
-        for (int i = 0; i < invalidValues.length; i++) {
-            sb.append(invalidValues[i].getPropertyName()).append(' ');
-            sb.append(invalidValues[i].getMessage().trim()).append('\n');
+        BO bo;
+        try {
+            bo = convertFromDtoToDomain(dto);
+            InvalidValue[] invalidValues = null;
+            ClassValidator<BO> classValidator = new ClassValidator(bo.getClass());
+            invalidValues = classValidator.getInvalidValues(bo);
+            for (int i = 0; i < invalidValues.length; i++) {
+                sb.append(invalidValues[i].getPropertyName()).append(' ');
+                sb.append(invalidValues[i].getMessage().trim()).append('\n');
+            }
+            if (sb.length() > 0) {
+                throw new PAValidationException("Validation Exception " + sb.toString());
+            }
+        } catch (PAException e) {
+            throw new PAValidationException(e);
         }
-        if (sb.length() > 0) {
-            throw new PAException("Validation Exception " + sb.toString());
-        }
-
     }
 }

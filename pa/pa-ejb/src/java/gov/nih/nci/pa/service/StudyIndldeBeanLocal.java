@@ -15,6 +15,8 @@ import gov.nih.nci.pa.iso.convert.StudyIndldeConverter;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.exception.PAValidationException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -36,8 +38,16 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
         implements StudyIndldeServiceLocal {
    private static final int IND_FIELD_COUNT = 5;
    private static final String VALIDATION_EXCEPTION = "Validation Exception ";
+   private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
    /**
+     * @param paServiceUtils the paServiceUtils to set
+   */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
+    }
+
+/**
     * @param dto StudyIndldeDTO
     * @return StudyIndldeDTO
     * @throws PAException PAException
@@ -61,15 +71,9 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
 
 
     private void enforceNoDuplicate(StudyIndldeDTO dto) throws PAException {
-        String newType = dto.getIndldeTypeCode().getCode();
-        String newNumber = dto.getIndldeNumber().getValue();
-        String newGrantor = dto.getGrantorCode().getCode();
         List<StudyIndldeDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
         for (StudyIndldeDTO sp : spList) {
-            boolean sameType = newType.equals(sp.getIndldeTypeCode().getCode());
-            boolean sameNumber = newNumber.equals(sp.getIndldeNumber().getValue());
-            boolean sameGrantor = newGrantor.equals(sp.getGrantorCode().getCode());
-            if (sameType && sameNumber && sameGrantor && (dto.getIdentifier() == null
+            if (paServiceUtils.isIndIdeDuplicate(dto, sp) && (dto.getIdentifier() == null
                                 || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension())))) {
                 throw new PADuplicateException("Duplicates Ind/Ide are not allowed.");
             }
@@ -85,7 +89,7 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
         StringBuffer errorMsg = new StringBuffer();
         errorMsg.append(validateIndIdeObject(studyIndldeDTO));
         if (errorMsg.length() > 0) {
-            throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
+            throw new PAValidationException(VALIDATION_EXCEPTION + " " + errorMsg.toString());
         }
         if (PAUtil.isIiNotNull(studyIndldeDTO.getStudyProtocolIdentifier())) {
             enforceNoDuplicate(studyIndldeDTO);

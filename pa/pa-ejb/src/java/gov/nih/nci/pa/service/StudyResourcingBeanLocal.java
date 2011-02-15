@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
@@ -93,9 +94,10 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PADomainUtils;
@@ -127,6 +129,14 @@ public class StudyResourcingBeanLocal extends
 
     private static StudyResourcingConverter src = new StudyResourcingConverter();
     private SessionContext ejbContext;
+    private PAServiceUtils paServiceUtils = new PAServiceUtils();
+
+    /**
+     * @param paServiceUtils the paServiceUtils to set
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
+    }
 
     /**
      * {@inheritDoc}
@@ -164,11 +174,7 @@ public class StudyResourcingBeanLocal extends
      * {@inheritDoc}
      */
     public StudyResourcingDTO updateStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
-        if (studyResourcingDTO == null) {
-            throw new PAException("studyResourcingDTO should not be null.");
-        }
-
-        enforceValidation(studyResourcingDTO);
+        validate(studyResourcingDTO);
 
         StudyResourcing studyResourcing = convertFromDtoToDomain(super.get(studyResourcingDTO.getIdentifier()));
         // set the values from paramter
@@ -196,12 +202,7 @@ public class StudyResourcingBeanLocal extends
      * {@inheritDoc}
      */
     public StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
-
-        if (studyResourcingDTO == null) {
-            throw new PAException("studyResourcingDTO should not be null");
-        }
-        enforceValidation(studyResourcingDTO);
-
+        validate(studyResourcingDTO);
         Session session = null;
         StudyResourcing studyResourcing = src.convertFromDtoToDomain(studyResourcingDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
@@ -262,23 +263,16 @@ public class StudyResourcingBeanLocal extends
     }
 
     private boolean enforceNoDuplicate(StudyResourcingDTO dto) throws PAException {
-        String newSerialNumber = dto.getSerialNumber().getValue();
-        String newFundingMech = dto.getFundingMechanismCode().getCode();
-        String newNciDivCode = dto.getNciDivisionProgramCode().getCode();
-        String newNihInstCode = dto.getNihInstitutionCode().getCode();
-        List<StudyResourcingDTO> spList = getStudyResourcingByStudyProtocol(dto.getStudyProtocolIdentifier());
         boolean duplicateExists = false;
-        for (StudyResourcingDTO sp : spList) {
-            boolean sameSerialNumber = newSerialNumber.equals(sp.getSerialNumber().getValue());
-            boolean sameFundingMech = newFundingMech.equals(sp.getFundingMechanismCode().getCode());
-            boolean sameNciDivCode = newNciDivCode.equals(sp.getNciDivisionProgramCode().getCode());
-            boolean sameNihInstCode = newNihInstCode.equals(sp.getNihInstitutionCode().getCode());
-
-            if (sameSerialNumber && sameFundingMech && sameNciDivCode && sameNihInstCode
-                    && (dto.getIdentifier() == null
-                            || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension())))) {
-                duplicateExists = true;
-                break;
+        if (PAUtil.isIiNotNull(dto.getStudyProtocolIdentifier())) {
+            //this means it is original submission thats why not having Ii
+            List<StudyResourcingDTO> spList = getStudyResourcingByStudyProtocol(dto.getStudyProtocolIdentifier());
+            for (StudyResourcingDTO sp : spList) {
+                if (paServiceUtils.isGrantDuplicate(dto, sp) && (dto.getIdentifier() == null
+                        || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension())))) {
+                    duplicateExists = true;
+                    break;
+                }
             }
         }
         return duplicateExists;
@@ -289,7 +283,26 @@ public class StudyResourcingBeanLocal extends
      */
     @Override
     public void validate(StudyResourcingDTO studyResourcingDTO) throws PAException {
-        enforceValidation(studyResourcingDTO);
+        if (studyResourcingDTO == null) {
+            throw new PAValidationException("studyResourcingDTO should not be null");
+        }
+        StringBuffer errorBuffer =  new StringBuffer();
+        if (!BooleanUtils.toBooleanDefaultIfNull(
+                BlConverter.convertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator()), true)) {
+            validateGrantInformation(studyResourcingDTO);
+            //check if NIH institute code exists
+            isCodeExists(studyResourcingDTO.getNihInstitutionCode(), errorBuffer, "NIH_INSTITUTE",
+                    "nih_institute_code");
+            isCodeExists(studyResourcingDTO.getFundingMechanismCode(), errorBuffer, "FUNDING_MECHANISM",
+                    "funding_mechanism_code");
+            validateSerialNo(studyResourcingDTO, errorBuffer);
+            if (enforceNoDuplicate(studyResourcingDTO)) {
+                errorBuffer.append("Duplicate grants are not allowed.\n");
+            }
+        }
+        if (errorBuffer.length() > 0) {
+            throw new PAValidationException("Validation Exception " + errorBuffer.toString());
+        }
     }
 
     /**
@@ -325,68 +338,41 @@ public class StudyResourcingBeanLocal extends
 
     private void validateGrantInformation(StudyResourcingDTO dto) throws PAException {
         if (PAUtil.isCdNull(dto.getFundingMechanismCode())) {
-            throw new PAException("The funding mechanism code is not set.");
+            throw new PAValidationException("The funding mechanism code is not set.");
         }
         if (PAUtil.isCdNull(dto.getNihInstitutionCode())) {
-            throw new PAException("The NIH Institution code is not set.");
+            throw new PAValidationException("The NIH Institution code is not set.");
         }
         if (PAUtil.isStNull(dto.getSerialNumber())) {
-            throw new PAException("The serial number is not set.");
+            throw new PAValidationException("The serial number is not set.");
         }
         if (PAUtil.isCdNull(dto.getNciDivisionProgramCode())) {
-            throw new PAException("The NCI Division/Program code is not set.");
+            throw new PAValidationException("The NCI Division/Program code is not set.");
         }
     }
 
-    private void enforceValidation(StudyResourcingDTO studyResourcingDTO) throws PAException {
-        StringBuffer errorBuffer =  new StringBuffer();
+
+    private void validateSerialNo(StudyResourcingDTO studyResourcingDTO, StringBuffer errorBuffer) {
         final int serialNumMin = 5;
         final int serialNumMax = 6;
-        if (!BooleanUtils.toBooleanDefaultIfNull(
-                BlConverter.convertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator()), true)) {
-            validateGrantInformation(studyResourcingDTO);
-            //check if NIH institute code exists
-            if (!PAUtil.isCdNull(studyResourcingDTO.getNihInstitutionCode())) {
-                boolean nihExists =
-                    PADomainUtils.checkIfValueExists(studyResourcingDTO.getNihInstitutionCode().getCode(),
-                            "NIH_INSTITUTE", "nih_institute_code");
-                if (!nihExists) {
-                    errorBuffer.append("Error while checking for value ")
-                    .append(studyResourcingDTO.getNihInstitutionCode().getCode())
-                    .append(" from table NIH_INSTITUTE\n");
-                }
+        if (!PAUtil.isStNull(studyResourcingDTO.getSerialNumber())) {
+            String snValue = studyResourcingDTO.getSerialNumber().getValue();
+            if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
+                errorBuffer.append("Serial number can be numeric with 5 or 6 digits\n");
             }
-            if (!PAUtil.isCdNull(studyResourcingDTO.getFundingMechanismCode())) {
-                //check if Funding mechanism code exists
-                boolean fmExists =
-                    PADomainUtils.checkIfValueExists(studyResourcingDTO.getFundingMechanismCode().getCode(),
-                            "FUNDING_MECHANISM", "funding_mechanism_code");
-
-                if (!fmExists) {
-                    errorBuffer.append("Error while checking for value ")
-                    .append(studyResourcingDTO.getFundingMechanismCode().getCode())
-                    .append(" from table FUNDING_MECHANISM\n");
-                }
-            }
-            if (!PAUtil.isStNull(studyResourcingDTO.getSerialNumber())) {
-                String snValue = studyResourcingDTO.getSerialNumber().getValue();
-                if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
-                    errorBuffer.append("Serial number can be numeric with 5 or 6 digits\n");
-                }
-                if (!NumberUtils.isDigits(snValue)) {
-                    errorBuffer.append("Serial number should have numbers from [0-9]\n");
-                }
-            }
-            if (PAUtil.isIiNotNull(studyResourcingDTO.getStudyProtocolIdentifier())) {
-                //this means it is original submission thats why not having Ii
-                boolean dupExists = enforceNoDuplicate(studyResourcingDTO);
-                if (dupExists) {
-                    errorBuffer.append("Duplicate grants are not allowed\n");
-                }
+            if (!NumberUtils.isDigits(snValue)) {
+                errorBuffer.append("Serial number should have numbers from [0-9]\n");
             }
         }
-        if (errorBuffer.length() > 0) {
-            throw new PADuplicateException("Validation Exception " + errorBuffer.toString());
+    }
+
+    private void isCodeExists(Cd code, StringBuffer errorBuffer, String tableName, String codeName) throws PAException {
+        if (!PAUtil.isCdNull(code)) {
+            boolean isExists = PADomainUtils.checkIfValueExists(code.getCode(), tableName, codeName);
+            if (!isExists) {
+                errorBuffer.append("Error while checking for value ")
+                .append(code.getCode()).append(" from table ").append(tableName).append("\n.");
+            }
         }
     }
 }

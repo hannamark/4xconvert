@@ -26,6 +26,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudySiteSortCriterion;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -282,8 +283,8 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
                 // When update check if the record is same if not then throw ex
                 if ((dto.getIdentifier() == null)
                     || (!String.valueOf(sp.getId()).equals(dto.getIdentifier().getExtension()))) {
-                    throw new PAException("Duplicate Trial Submission: A trial exists in the system with the same "
-                        + "Lead Organization Trial Identifier for the selected Lead Organization");
+                    throw new PAValidationException("Duplicate Trial Submission: A trial exists in the system with the "
+                        + "same Lead Organization Trial Identifier for the selected Lead Organization");
                 }
             }
         }
@@ -294,8 +295,8 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
                 // When update check if the record is same if not then throw ex
                 if ((dto.getIdentifier() == null)
                     || (!String.valueOf(sp.getId()).equals(dto.getIdentifier().getExtension()))) {
-                    throw new PAException("Duplicate Trial Submission: A trial exists in the system with the same "
-                        + getIdentifierName(sp));
+                        throw new PAValidationException("Duplicate Trial Submission: A trial exists in the system with "
+                                + "the same " + getIdentifierName(sp));
                 }
             }
         }

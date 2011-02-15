@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -342,7 +343,7 @@ public class StudyOverallStatusBeanLocal extends
         errorMsg.append(validateTrialDates(studyProtocolDTO, statusDto));
         validateReasonText(statusDto);
         if (errorMsg.length() > 0) {
-            throw new PAException("Validation Exception " + errorMsg);
+            throw new PAValidationException("Validation Exception " + errorMsg);
         }
     }
 
@@ -362,7 +363,7 @@ public class StudyOverallStatusBeanLocal extends
             statusDto.setReasonText(StConverter.convertToSt(null));
         }
         if (StringUtils.isNotEmpty(errorMsg.toString())) {
-            throw new PAException(errorMsg.toString());
+            throw new PAValidationException("Validation Exception " + errorMsg.toString());
         }
 
     }

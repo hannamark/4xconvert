@@ -311,13 +311,13 @@ public class StudyOverallStatusServiceTest {
         try {
              remoteEjb.create(dto);
         } catch(PAException e) {
-            assertTrue(StringUtils.startsWith(e.getMessage(), "A reason must be entered when the study status "));
+            assertTrue(StringUtils.startsWith(e.getMessage(), "Validation Exception A reason must be entered when the study status "));
         }
         dto.setReasonText(StConverter.convertToSt(RandomStringUtils.random(2001)));
         try {
             remoteEjb.create(dto);
         } catch(PAException e) {
-           assertTrue(StringUtils.startsWith(e.getMessage(), "Reason must be less than 2000 characters."));
+           assertTrue(StringUtils.startsWith(e.getMessage(), "Validation Exception Reason must be less than 2000 characters."));
         }
         dto.setReasonText(StConverter.convertToSt(RandomStringUtils.random(2000)));
         remoteEjb.create(dto);

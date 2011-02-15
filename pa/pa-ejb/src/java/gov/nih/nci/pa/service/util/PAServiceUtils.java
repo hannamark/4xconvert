@@ -138,7 +138,6 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
-import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
@@ -764,13 +763,16 @@ public class PAServiceUtils {
     }
 
     /**
-     * @param sp
-     * @param newType
+     * @param ind indDTO
+     * @param toCompare indDTO
+     * @return isDup
      */
-    private boolean isIndIdeDuplicate(StudyIndldeDTO sp, StudyIndldeDTO newType) {
-        boolean sameType = StringUtils.equals(newType.getIndldeTypeCode().getCode(), sp.getIndldeTypeCode().getCode());
-        boolean sameNumber = StringUtils.equals(newType.getIndldeNumber().getValue(), sp.getIndldeNumber().getValue());
-        boolean sameGrantor = StringUtils.equals(newType.getGrantorCode().getCode(), sp.getGrantorCode().getCode());
+    public boolean isIndIdeDuplicate(StudyIndldeDTO ind, StudyIndldeDTO toCompare) {
+        boolean sameType = StringUtils.equals(toCompare.getIndldeTypeCode().getCode(),
+                ind.getIndldeTypeCode().getCode());
+        boolean sameNumber = StringUtils.equals(toCompare.getIndldeNumber().getValue(),
+                ind.getIndldeNumber().getValue());
+        boolean sameGrantor = StringUtils.equals(toCompare.getGrantorCode().getCode(), ind.getGrantorCode().getCode());
         return sameType && sameNumber && sameGrantor;
     }
 
@@ -817,20 +819,20 @@ public class PAServiceUtils {
     }
 
     /**
-     * @param grantOne
-     * @param grantTwo
-     * @throws PADuplicateException
+     *
+     * @param grantDto grant DTO
+     * @param grantToCompare grant DTO
+     * @return isGrantDup
      */
-    private boolean isGrantDuplicate(StudyResourcingDTO grantOne, StudyResourcingDTO grantTwo)
-        throws PADuplicateException {
-        boolean sameFundingMech = StringUtils.equals(grantTwo.getFundingMechanismCode().getCode(),
-                       grantOne.getFundingMechanismCode().getCode());
-        boolean sameNih = StringUtils.equals(grantTwo.getNihInstitutionCode().getCode(),
-                       grantOne.getNihInstitutionCode().getCode());
-        boolean sameNci = StringUtils.equals(grantTwo.getNciDivisionProgramCode().getCode(),
-                        grantOne.getNciDivisionProgramCode().getCode());
-        boolean sameSerial = StringUtils.equals(grantTwo.getSerialNumber().getValue(),
-                        grantOne.getSerialNumber().getValue());
+    public boolean isGrantDuplicate(StudyResourcingDTO grantDto, StudyResourcingDTO grantToCompare) {
+        boolean sameFundingMech = StringUtils.equals(grantToCompare.getFundingMechanismCode().getCode(),
+                       grantDto.getFundingMechanismCode().getCode());
+        boolean sameNih = StringUtils.equals(grantToCompare.getNihInstitutionCode().getCode(),
+                       grantDto.getNihInstitutionCode().getCode());
+        boolean sameNci = StringUtils.equals(grantToCompare.getNciDivisionProgramCode().getCode(),
+                        grantDto.getNciDivisionProgramCode().getCode());
+        boolean sameSerial = StringUtils.equals(grantToCompare.getSerialNumber().getValue(),
+                        grantDto.getSerialNumber().getValue());
         return sameFundingMech && sameNih && sameNci && sameSerial;
     }
 
