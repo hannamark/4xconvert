@@ -82,18 +82,30 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author ludetc
  *
  */
 public class OrganizationFamilyTest extends AbstractPoWebTest {
 
-    private static String FAMILY_NAME = "myTestFamily";
-
+    private static String FAMILY_NAME = "myTestFamily" + new Date().getTime();
+    private static String FUNCTIONAL_TYPE = "CONTRACTUAL";
+    private final SimpleDateFormat dateFormat =
+        new SimpleDateFormat("MM/d/yyyy");
+    
     public void testList(){
         loginAsCurator();
         openOrganizationFamilyList();
-
+        assertEquals("Family ID", selenium.getTable("row.0.0"));
+        assertEquals("Family Name", selenium.getTable("row.0.1"));
+        assertEquals("Organization Family Members", selenium.getTable("row.0.2"));
+        assertEquals("Status", selenium.getTable("row.0.3"));
+        assertEquals("Action", selenium.getTable("row.0.4"));
         assertTrue(selenium.isElementPresent("createNewFamily"));
 
         createFamily(FAMILY_NAME);
@@ -101,52 +113,91 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         assertTrue(selenium.isElementPresent("return_to_button"));
         clickAndWait("return_to_button");
 
-        String createdFamilyName = selenium.getTable("row.1.1");
-        assertEquals(FAMILY_NAME, createdFamilyName);
-
-        String famId = selenium.getTable("row.1.0");
+        selenium.isTextPresent(FAMILY_NAME);
+        String famId = getFamilyId();        
         assertNotNull(famId);
-
-        clickAndWait("edit_family_id_" + famId);
-        addMember(true);
     }
 
-    public void testOrgSearchByFamiy(){
+    public void testOrgSearchByFamily(){
         loginAsCurator();
-        addMember(false);
-        openSearchOrganization();
-        selenium.type("searchOrganizationForm_criteria_organization_familyOrganizationRelationships_iterator_next_family_name", FAMILY_NAME);
-        clickAndWait("submitSearchOrganizationForm");
-        verify();
+        addOrgMember("National");
+        searchForCreatedFamily();
         removeMember();
     }
     
-    public void testOrganizationScreenLinks(){
+    public void testFamilyOrgPerspective(){
         loginAsCurator();
-        addMember(false);
+        addOrgMember("National");
+        addOrgMember("ClinicalTrials");
+        searchForCreatedFamily("National");
+        clickAndWait(getLinkStartingWith("org_id_"));
+        assertTrue(selenium.isTextPresent("Manage Family(s)"));
+        accessFamilyScreen();
+        checkManageFamilyScreenOrgPerspective();
+        clickAndWait(getLinkStartingWith("fam_org_relationship_edit_id_"));
+        checkOrgRelationshipScreenOrgPerspective();
+        clickAndWait("return_to_button");
+        clickAndWait("return_to_button");
+        assertTrue(selenium.isTextPresent("Organization Details"));
+        removeMember();
+        removeMember();
+    }
+    
+    private void checkManageFamilyScreenOrgPerspective() {
+        assertTrue(selenium.isTextPresent("Organization Details"));
+        assertTrue(selenium.isElementPresent("add_family_member_id_"));
+        assertNotNull(getFamilyId());
+        assertTrue(selenium.isElementPresent("link=Edit"));
+        assertTrue(selenium.isElementPresent("link=Remove"));
+    }
+
+    private void checkOrgRelationshipScreenOrgPerspective() {
+        assertTrue(selenium.isTextPresent(FAMILY_NAME));
+        assertTrue(selenium.isTextPresent("Family Organization Relationship"));
+        assertEquals("CONTRACTUAL", selenium.getSelectedValue("name=familyOrgRelationship.functionalType"));
+        assertFalse(selenium.isElementPresent("link=Search Again"));
+        assertTrue(selenium.isElementPresent("link=Save"));
+        assertTrue(selenium.isElementPresent("link=Return to Family Information"));
+        assertTrue(selenium.isTextPresent("Hierarchical Relationship to other Organizations within this Family"));
+        assertTrue(selenium.getTable("row.0.0").contains("Organization Relationship to"));
+        assertTrue(selenium.getTable("row.0.1").equals("Start Date"));
+        assertTrue(selenium.getTable("row.1.0").contains("has no relationship (change)"));
+        assertTrue(StringUtils.isBlank(selenium.getTable("row.1.1")));
+    }
+
+    public void testRemoveFamily(){
+        loginAsCurator();
+        openOrganizationFamilyList();
+        String famId = getFamilyId();
+        assertNotNull(famId);
+        clickAndWait("edit_family_id_" + famId);
+        selenium.select("name=family.statusCode", "NULLIFIED");
+        selenium.type("name=family.endDate", dateFormat.format(new Date()));
+        clickAndWait("save_button");
+        assertTrue(selenium.isConfirmationPresent());
+        selenium.getConfirmation();
+        assertTrue(selenium.isTextPresent("Family " + FAMILY_NAME +" was successfully updated."));
+    }
+    
+    private void searchForCreatedFamily() {
         openSearchOrganization();
         selenium.type("searchOrganizationForm_criteria_organization_familyOrganizationRelationships_iterator_next_family_name", FAMILY_NAME);
         clickAndWait("submitSearchOrganizationForm");
         verify();
-        clickAndWait(getLinkStartingWith("org_id_"));
-        assertTrue(selenium.isTextPresent("Manage Family(s) (1)"));
-        assertTrue(selenium.isTextPresent("Manage Organization Relationship(s) (0)"));
-        accessFamilyScreen();
-        clickAndWait("return_to_button");
-        assertTrue(selenium.isTextPresent("Organization Details"));
-        accessOrganizationRelationshipsScreen();
-        clickAndWait("return_to_button");
-        assertTrue(selenium.isTextPresent("Organization Details"));
-        removeMember();
-        
+    }
+
+    private void searchForCreatedFamily(String orgName) {
+        openSearchOrganization();
+        selenium.type("searchOrganizationForm_criteria_organization_name", orgName);
+        selenium.type("searchOrganizationForm_criteria_organization_familyOrganizationRelationships_iterator_next_family_name", FAMILY_NAME);
+        clickAndWait("submitSearchOrganizationForm");
+        verify();
     }
 
     private void verify() {
-        int row = getRow("myTestFamily (CONTRACTUAL)", 3);
+        int row = getRowThatContainsText(FAMILY_NAME + " (" + FUNCTIONAL_TYPE + ")", 3);
         if (row == -1) {
             fail("Did not find " + FAMILY_NAME + " in search results");
-        } else {
-            assertEquals("myTestFamily (CONTRACTUAL)", selenium.getTable("row." + row + ".3"));
         }
     }
 
@@ -157,9 +208,9 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         assertTrue(selenium.isTextPresent(familyName + " was successfully created"));
     }
 
-    private void addMember(boolean remove) {
+    private void addOrgMember(String orgSearchName) {
         openOrganizationFamilyList();
-        String famId = selenium.getTable("row.1.0");
+        String famId = getFamilyId();
         assertNotNull(famId);
 
         clickAndWait("edit_family_id_" + famId);
@@ -168,7 +219,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
 
         selenium.selectFrame("popupFrame");
         waitForElementById("duplicateOrganizationForm_criteria_organization_name", 10);
-        selenium.type("duplicateOrganizationForm_criteria_organization_name", "National");
+        selenium.type("duplicateOrganizationForm_criteria_organization_name", orgSearchName);
         clickAndWait("submitDuplicateOrganizationForm");
 
         clickAndWait(getLinkStartingWith("mark_as_dup"));
@@ -191,27 +242,23 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
 
         assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully created."));
 
-        assertEquals("ORGANIZATIONAL", selenium.getTable("row.1.2"));
-
-        clickAndWait(getLinkStartingWith("fam_org_relationship_edit_id_"));
-        selenium.select("familyOrgRelationship.functionalType", "CONTRACTUAL");
+        selenium.select("familyOrgRelationship.functionalType", FUNCTIONAL_TYPE);
         clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully updated."));
-        assertEquals("CONTRACTUAL", selenium.getTable("row.1.2"));
-
-        if (remove) {
-            clickAndWait(getLinkStartingWith("fam_org_relationship_remove_id_"));
-            assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully removed."));
-        }
     }
 
     private void removeMember() {
         openOrganizationFamilyList();
-        String famId = selenium.getTable("row.1.0");
+        String famId = getFamilyId();
         assertNotNull(famId);
         clickAndWait("edit_family_id_" + famId);
         clickAndWait(getLinkStartingWith("fam_org_relationship_remove_id_"));
         assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully removed."));
+    }
+
+    private String getFamilyId() {
+        int row = getRow(FAMILY_NAME, 1);
+        return selenium.getTable("row." + row + ".0");
     }
 
     private String getLinkStartingWith(String key) {
@@ -223,5 +270,4 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         }
         return null;
     }
-
 }

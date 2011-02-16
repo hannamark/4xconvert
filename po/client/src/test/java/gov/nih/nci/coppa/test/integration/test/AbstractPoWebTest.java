@@ -233,6 +233,21 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
      * @return the row number where the text was found. -1 if not found
      */
     protected int getRow(String text, int column) {
+        return getRowHelper(text, column, false);    
+    }
+
+    /**
+     * Searches in the given column for the given text
+     *
+     * @param text - string to search for (contains search)
+     * @param column - table column to search in
+     * @return the row number where the text was found. -1 if not found
+     */
+    protected int getRowThatContainsText(String text, int column) {
+        return getRowHelper(text, column, true);
+    }
+
+    private int getRowHelper(String text, int column, boolean contains) {
         String tblValue = null;
         for (int row = 1;; row++) {
             tblValue = null;
@@ -246,9 +261,11 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
                 LOG.info("problem looking for " + text + " at (" + row + "," + column + ") Stopped at : " + tblValue);
                 throw e;
             }
-            if (text.equalsIgnoreCase(tblValue)) {
+            if (contains && tblValue.contains(text)) {
                 return row;
-            }
+            } else if (text.equalsIgnoreCase(tblValue)) {
+                return row;
+            } 
 
             if (row % PAGE_SIZE == 0) {
                 // Moving to next page
@@ -614,11 +631,6 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
 
     protected void accessFamilyScreen() {
         clickAndWait("link=Manage Family(s)");
-        assertTrue(selenium.isTextPresent("Family Organization Relationship Information"));
-    }
-
-    protected void accessOrganizationRelationshipsScreen() {
-        clickAndWait("link=Manage Organization Relationship(s)");
         assertTrue(selenium.isTextPresent("Family Organization Relationship Information"));
     }
 
