@@ -584,8 +584,7 @@ public class MockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public ParticipatingSiteServiceLocal getParticipatingSiteService() {
-        // TODO Auto-generated method stub
-        return null;
+        return mock(ParticipatingSiteServiceLocal.class);
     }
 
     /**

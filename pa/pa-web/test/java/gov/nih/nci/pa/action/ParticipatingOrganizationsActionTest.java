@@ -85,10 +85,12 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.service.MockCorrelationUtils;
 import gov.nih.nci.service.MockOrganizationCorrelationService;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
@@ -109,6 +111,7 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         act = new ParticipatingOrganizationsAction();
         act.prepare();
         act.setCorrelationUtils(new MockCorrelationUtils());
+
     }
 
     @Test
@@ -177,6 +180,30 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
             }
         }
         assertTrue("Added treating site not found.", found);
+    }
+    @Test
+    public void testsaveStudyParticipationPrimContact() throws NullifiedEntityException, PAException{
+        getRequest().setupAddParameter("contactpersid", "");
+        getRequest().setupAddParameter("email", "");
+        getRequest().setupAddParameter("tel", "");
+        ParticipatingOrganizationsTabWebDTO tab = new ParticipatingOrganizationsTabWebDTO();
+        tab.setStudyParticipationId(3L);
+        Organization org = new Organization();
+        org.setId(1L);
+        tab.setFacilityOrganization(org);
+        getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
+        assertEquals("error_prim_contacts", act.saveStudyParticipationPrimContact());
+        getRequest().setupAddParameter("contactpersid", "2");
+        getRequest().setupAddParameter("email", "example@example");
+        getRequest().setupAddParameter("tel", "1");
+        assertEquals("error_prim_contacts", act.saveStudyParticipationPrimContact());
+        getRequest().setupAddParameter("email", "example@example.com");
+        getRequest().setupAddParameter("tel", "1");
+        assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
+        getRequest().setupAddParameter("email", "example@example.com");
+        getRequest().setupAddParameter("tel", "");
+        assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
+
     }
 
 }

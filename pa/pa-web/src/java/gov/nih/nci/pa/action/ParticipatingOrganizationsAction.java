@@ -841,57 +841,21 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         String persId = ServletActionContext.getRequest().getParameter("contactpersid");
         String email = ServletActionContext.getRequest().getParameter("email");
         String telephone = ServletActionContext.getRequest().getParameter("tel");
-
-        if (StringUtils.isEmpty(persId)) {
-            addFieldError("personContactWebDTO.firstName", getText("Please lookup and select person"));
-        }
-        if (StringUtils.isEmpty(email)) {
-            addFieldError("personContactWebDTO.email", getText("error.enterEmailAddress"));
-        }
-        if (StringUtils.isNotEmpty(email) && (!PAUtil.isValidEmail(email))) {
-            addFieldError("personContactWebDTO.email", getText("error.enterValidEmail"));
-        }
-        if (StringUtils.isEmpty(telephone)) {
-            addFieldError("personContactWebDTO.telephone", getText("error.enterPhoneNumber"));
-        }
-        if (hasFieldErrors()) {
-            personContactWebDTO = new PaPersonDTO();
-            personContactWebDTO.setEmail(email);
-            personContactWebDTO.setTelephone(telephone);
-            if (StringUtils.isNotEmpty(persId)) {
-                personContactWebDTO.setSelectedPersId(Long.valueOf(persId));
-            }
-            if (selectedPersTO != null && selectedPersTO.getName() != null) {
-                gov.nih.nci.pa.dto.PaPersonDTO personDTO = PADomainUtils.convertToPaPersonDTO(selectedPersTO);
-                personContactWebDTO.setFirstName(personDTO.getFirstName());
-                personContactWebDTO.setLastName(personDTO.getLastName());
-                personContactWebDTO.setMiddleName(personDTO.getMiddleName());
-            }
-            return ERROR_PRIMARY_CONTACTS;
-        }
-
-        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
-            .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         try {
-            Ii selectedPersTOIi  = null;
-            PersonDTO isoPerDTO = PoRegistry.getPersonEntityService().getPerson(
-                    IiConverter.convertToPoPersonIi(persId));
-            if (isoPerDTO == null) {
-                    DSet<Ii> iiDset = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(
-                        IiConverter.convertToPoOrganizationalContactIi(persId)).getIdentifier();
-                    selectedPersTOIi = DSetConverter.convertToIi(iiDset);
-            } else {
-                selectedPersTOIi = isoPerDTO.getIdentifier();
+            validatePrimaryContact(persId, email, telephone);
+            if (hasFieldErrors()) {
+                reloadPrimaryContact(persId, email, telephone);
+                return ERROR_PRIMARY_CONTACTS;
             }
+            ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
+            .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
 
-
+            Ii selectedPersTOIi = getSelectedPersonIi(persId);
             Ii ssIi = IiConverter.convertToStudySiteIi(tab.getStudyParticipationId());
             String poOrgId = tab.getFacilityOrganization().getIdentifier();
-            telephone = telephone.replaceAll(" ", "");
-            List<String> emailList = new ArrayList<String>();
-            List<String> telList = new ArrayList<String>();
-            emailList.add(email);
-            telList.add(telephone);
+            StringUtils.replace(telephone, " ", "");
+            List<String> emailList = addToList(email);
+            List<String> telList = addToList(telephone);
             DSet<Tel> list = new DSet<Tel>();
             list = DSetConverter.convertListToDSet(emailList, "EMAIL", list);
             list = DSetConverter.convertListToDSet(telList, "PHONE", list);
@@ -910,6 +874,70 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             addActionError(Constants.FAILURE_MESSAGE + e.getMessage());
         }
         return DISPLAY_PRIM_CONTACTS;
+    }
+
+    private List<String> addToList(String value) {
+        List<String> toList = new ArrayList<String>();
+        if (StringUtils.isNotEmpty(value)) {
+            toList.add(value);
+        }
+        return toList;
+    }
+
+    private Ii getSelectedPersonIi(String persId) throws NullifiedEntityException, PAException, NullifiedRoleException {
+        Ii selectedPersTOIi  = null;
+        PersonDTO isoPerDTO = PoRegistry.getPersonEntityService().getPerson(
+                IiConverter.convertToPoPersonIi(persId));
+        if (isoPerDTO == null) {
+                DSet<Ii> iiDset = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(
+                    IiConverter.convertToPoOrganizationalContactIi(persId)).getIdentifier();
+                selectedPersTOIi = DSetConverter.convertToIi(iiDset);
+        } else {
+            selectedPersTOIi = isoPerDTO.getIdentifier();
+        }
+        return selectedPersTOIi;
+    }
+
+    private void validatePrimaryContact(String persId, String email, String telephone) {
+        if (StringUtils.isEmpty(persId)) {
+            addFieldError("personContactWebDTO.firstName", getText("Please lookup and select person"));
+        }
+        if (StringUtils.isEmpty(email) && StringUtils.isEmpty(telephone)) {
+            addFieldError("personContactWebDTO.email", getText("error.enterEmailAddressOrPhone"));
+        }
+        if (!PAUtil.isValidEmail(email)) {
+            addFieldError("personContactWebDTO.email", getText("error.enterValidEmail"));
+        }
+    }
+
+    private void reloadPrimaryContact(String persId, String email, String telephone) throws PAException,
+        NullifiedRoleException {
+        personContactWebDTO = new PaPersonDTO();
+        personContactWebDTO.setEmail(email);
+        personContactWebDTO.setTelephone(telephone);
+        if (StringUtils.isNotEmpty(persId)) {
+
+            Long valueOfPerId = Long.valueOf(persId);
+            personContactWebDTO.setSelectedPersId(valueOfPerId);
+            if (selectedPersTO != null && selectedPersTO.getName() != null) {
+                gov.nih.nci.pa.dto.PaPersonDTO personDTO = PADomainUtils.convertToPaPersonDTO(selectedPersTO);
+                personContactWebDTO.setFirstName(personDTO.getFirstName());
+                personContactWebDTO.setLastName(personDTO.getLastName());
+                personContactWebDTO.setMiddleName(personDTO.getMiddleName());
+            } else {
+                Person paPerson =  correlationUtils.getPAPersonByIi(IiConverter.convertToPoPersonIi(persId));
+                if (paPerson != null) {
+                    personContactWebDTO.setFirstName(paPerson.getFirstName());
+                    personContactWebDTO.setLastName(paPerson.getLastName());
+                    personContactWebDTO.setMiddleName(paPerson.getMiddleName());
+                } else {
+                    PAContactDTO paDTO = correlationUtils.getContactByPAOrganizationalContactId(valueOfPerId);
+                    if (paDTO != null && paDTO.getTitle() != null) {
+                        personContactWebDTO.setTitle(paDTO.getTitle());
+                    }
+                }
+            }
+        }
     }
     /**
      * @return the result
