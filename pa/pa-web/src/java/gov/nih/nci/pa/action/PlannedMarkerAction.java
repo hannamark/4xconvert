@@ -138,7 +138,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     public String add() throws PAException {
         enforceBusinessRules();
         if (!hasFieldErrors()) {
-            PlannedMarkerDTO marker = populateDTO();
+            PlannedMarkerDTO marker = populateDTO(false);
             if (StringUtils.isNotEmpty(getPlannedMarker().getMeaning())) {
                 marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
             } else {
@@ -175,7 +175,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     public String update() throws PAException {
         enforceBusinessRules();
         if (!hasFieldErrors()) {
-            PlannedMarkerDTO marker = populateDTO();
+            PlannedMarkerDTO marker = populateDTO(true);
             try {
                 getPlannedMarkerService().update(marker);
             } catch (PAException e) {
@@ -306,11 +306,16 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         return webDTO;
     }
 
-    private PlannedMarkerDTO populateDTO() {
+    private PlannedMarkerDTO populateDTO(boolean isEdit) {
         PlannedMarkerDTO marker = new PlannedMarkerDTO();
         marker.setIdentifier(IiConverter.convertToIi(getPlannedMarker().getId()));
         marker.setName(StConverter.convertToSt(getPlannedMarker().getName()));
-        marker.setLongName(StConverter.convertToSt(getPlannedMarker().getMeaning()));
+        //If no meaning (i.e. long name)  is provided, use the name instead.
+        if (StringUtils.isEmpty(getPlannedMarker().getMeaning()) || isEdit) {
+            marker.setLongName(marker.getName());
+        } else {
+            marker.setLongName(StConverter.convertToSt(getPlannedMarker().getMeaning()));
+        }
         marker.setTextDescription(StConverter.convertToSt(getPlannedMarker().getDescription()));
         if (getPlannedMarker().isFoundInHugo()) {
             marker.setHugoBiomarkerCode(CdConverter.convertStringToCd(getPlannedMarker().getHugoCode()));

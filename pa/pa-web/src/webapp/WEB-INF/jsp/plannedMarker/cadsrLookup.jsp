@@ -54,7 +54,7 @@
                 <table class="form">
                     <tr>
                         <td scope="row" class="label">
-                            <label for="searchName"><fmt:message key="plannedMarker.lookup.name"/>:</label>
+                            <label for="searchName"><fmt:message key="plannedMarker.lookup.permissibleValue"/>:</label>
                         </td>
                         <td>
                             <s:textfield id="searchName" name="searchName" maxlength="60" size="60" cssStyle="width:200px"/>
