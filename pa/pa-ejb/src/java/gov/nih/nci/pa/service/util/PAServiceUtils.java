@@ -96,6 +96,7 @@ import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -141,6 +142,7 @@ import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -167,17 +169,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
@@ -213,8 +219,13 @@ public class PAServiceUtils {
      * LEAD_ORGANIZATION_NULLIFIED.
      */
     public static final String LEAD_ORGANIZATION_NULLIFIED = "The Lead Organization has been nullified";
+    /**
+     * The size of the counter portion of the NCI ID.
+     */
+    protected static final int NCI_ID_SIZE = 5;
     private static final Logger LOG  = Logger.getLogger(PAServiceUtils.class);
     private static final int MAXF = 1024;
+    
     /**
      * Executes an sql.
      * @param sql sql to be executed
@@ -263,8 +274,59 @@ public class PAServiceUtils {
         executeCopy(getRemoteService(IiConverter.convertToStudyRegulatoryAuthorityIi(null)), fromStudyProtocolIi, toIi);
         executeCopy(getRemoteService(IiConverter.convertToDocumentIi(null)) , fromStudyProtocolIi, toIi);
         executeCopy(PaRegistry.getPlannedMarkerService(), fromStudyProtocolIi, toIi);
+        addNciIdentifierToTrial(toIi);
         return toIi;
 
+    }
+    
+    /**
+     * Method to add an nci identifier to a study protocol.
+     * @param spIi trial ii
+     * @throws PAException on error.
+     */
+    public void addNciIdentifierToTrial(Ii spIi) throws PAException {
+        
+        if (PAUtil.isIiNull(spIi)) {
+            throw new PAException("Trial must have an Ii created.");
+        }
+        Session session = HibernateUtil.getCurrentSession();
+        StudyProtocol sp = (StudyProtocol) session.get(StudyProtocol.class, Long.valueOf(spIi.getExtension()));
+        //check if the assigned identifier exists
+        //if no - generate the nci identifier and set it in the sp.
+        if (!PADomainUtils.checkAssignedIdentifier(sp)) {
+            Ii spSecAssignedId = IiConverter.convertToAssignedIdentifierIi(generateNciIdentifier(session));
+            if (sp.getOtherIdentifiers() != null) {
+              sp.getOtherIdentifiers().add(spSecAssignedId);
+            } else {
+              Set<Ii> secondaryIds = new HashSet<Ii>();
+              secondaryIds.add(spSecAssignedId);
+              sp.setOtherIdentifiers(secondaryIds);
+            }
+          }
+        session.save(sp);
+    }
+    
+    /**
+     * Generate a unique nci id.
+     * @param session the session
+     * @return string nci id.
+     */
+    protected String generateNciIdentifier(Session session) {
+        Calendar today = Calendar.getInstance();
+        int currentYear  = today.get(Calendar.YEAR);
+        String query = "select nextval('nci_identifiers_seq')";
+        StringBuffer nciIdentifier = new StringBuffer();
+        nciIdentifier.append("NCI-");
+        nciIdentifier.append(currentYear);
+        nciIdentifier.append('-');
+
+        Query queryObject = session.createSQLQuery(query);
+        String maxValue = queryObject.uniqueResult().toString();
+        String maxNumber = maxValue.substring(maxValue.lastIndexOf('-') + 1 , maxValue.length());
+        String nextNumber = String.valueOf(Integer.parseInt(maxNumber));
+        nciIdentifier.append(StringUtils.leftPad(nextNumber, NCI_ID_SIZE, "0"));
+
+        return nciIdentifier.toString();
     }
 
     private void executeCopy(StudyPaService sp, Ii from, Ii to) throws PAException {
@@ -1756,20 +1818,17 @@ public class PAServiceUtils {
           byte[] readBuffer = new byte[bufSize];
           byte[] part = null;
           int bytesRead = 0;
-
           // read everyting into a list of byte arrays
           while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
               part = new byte[bytesRead];
               System.arraycopy(readBuffer, 0, part, 0, bytesRead);
               parts.add(part);
           }
-
           // calculate the total size
           int totalSize = 0;
           for (byte[] partBuffer : parts) {
               totalSize += partBuffer.length;
           }
-
           // allocate the array
           content = new byte[totalSize];
           int offset = 0;
@@ -1924,5 +1983,4 @@ public class PAServiceUtils {
           }
           return hcpDTO;
       }
-
 }

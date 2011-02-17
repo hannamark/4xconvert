@@ -142,11 +142,9 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -162,7 +160,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -178,10 +175,6 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol> implements StudyProtocolServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(StudyProtocolBeanLocal.class);
-    /**
-     * The size of the counter portion of the NCI ID.
-     */
-    protected static final int NCI_ID_SIZE = 5;
     private static final String CREATE = "Create";
     private static final String UPDATE = "Update";
     @EJB
@@ -456,30 +449,6 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         sb.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null, " : "");
     }
 
-    /**
-     * Generate a unique nci id.
-     * @param session the session
-     * @return string nci id.
-     */
-    protected String generateNciIdentifier(Session session) {
-        Calendar today = Calendar.getInstance();
-        int currentYear  = today.get(Calendar.YEAR);
-        String query = "select nextval('nci_identifiers_seq')";
-        StringBuffer nciIdentifier = new StringBuffer();
-        nciIdentifier.append("NCI-");
-        nciIdentifier.append(currentYear);
-        nciIdentifier.append('-');
-
-        Query queryObject = session.createSQLQuery(query);
-        String maxValue = queryObject.uniqueResult().toString();
-        String maxNumber = maxValue.substring(maxValue.lastIndexOf('-') + 1 , maxValue.length());
-        String nextNumber = String.valueOf(Integer.parseInt(maxNumber));
-        nciIdentifier.append(StringUtils.leftPad(nextNumber, NCI_ID_SIZE, "0"));
-
-        return nciIdentifier.toString();
-    }
-
-
     private void enForceBusinessRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
         boolean dateRulesApply = false;
 
@@ -588,18 +557,6 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             sp.setStatusDate(new Timestamp((new Date()).getTime()));
         }
 
-        //check if the assigned identifier exists
-        //if no - generate the nci identifier and set it in the sp.
-        if (!PADomainUtils.checkAssignedIdentifier(sp)) {
-          Ii spSecAssignedId = IiConverter.convertToAssignedIdentifierIi(generateNciIdentifier(session));
-          if (sp.getOtherIdentifiers() != null) {
-            sp.getOtherIdentifiers().add(spSecAssignedId);
-          } else {
-            Set<Ii> secondaryIds = new HashSet<Ii>();
-            secondaryIds.add(spSecAssignedId);
-            sp.setOtherIdentifiers(secondaryIds);
-          }
-        }
         if (CREATE.equals(operation)) {
             User user = null;
             try {

@@ -110,6 +110,14 @@ public abstract class AbstractTrialRegistrationBean {
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
     }
+    
+    /**
+     * @return PAServiceUtils
+     */
+    protected PAServiceUtils getPAServiceUtils() {
+        return this.paServiceUtils;
+    }
+    
     /**
      * @param studyProtocolIi protocol ii
      * @param smCode  milestone code

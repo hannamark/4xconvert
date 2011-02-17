@@ -119,6 +119,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.MockPAServiceUtils;
 import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -144,8 +145,7 @@ import org.junit.Test;
  */
 public class StudyProtocolServiceBeanTest {
 
-
-    private final StudyProtocolBeanLocal bean = new MockStudyProtocolService();
+    private final StudyProtocolBeanLocal bean = new StudyProtocolBeanLocal();
     private final StudyProtocolServiceLocal remoteEjb = bean;
     @Before
     public void setUp() throws Exception {
@@ -681,5 +681,16 @@ public class StudyProtocolServiceBeanTest {
                 TestSchema.addUpdObject(studySite);
             }
         }
+    }
+    
+    @Test
+    public void testAddNciId() throws PAException {
+        InterventionalStudyProtocolDTO ispDTO =
+            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        Ii ii = bean.createInterventionalStudyProtocol(ispDTO);
+        (new MockPAServiceUtils()).addNciIdentifierToTrial(ii);
+        StudyProtocolDTO spDto = bean.getStudyProtocol(ii);
+        assertNotNull(spDto.getIdentifier().getExtension());
+        assertNotNull(spDto.getSecondaryIdentifiers().getItem().iterator().next().getExtension());        
     }
 }

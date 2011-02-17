@@ -112,7 +112,6 @@ import gov.nih.nci.pa.service.DocumentWorkflowStatusBeanLocal;
 import gov.nih.nci.pa.service.MockPoClinicalResearchStaffCorrelationService;
 import gov.nih.nci.pa.service.MockPoHealthCareProviderCorrelationService;
 import gov.nih.nci.pa.service.MockPoResearchOrganizationCorrelationService;
-import gov.nih.nci.pa.service.MockStudyProtocolService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StratumGroupBeanLocal;
 import gov.nih.nci.pa.service.StudyContactServiceBean;
@@ -125,6 +124,7 @@ import gov.nih.nci.pa.service.StudyObjectiveServiceBean;
 import gov.nih.nci.pa.service.StudyOnholdBeanLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureBeanLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusBeanLocal;
+import gov.nih.nci.pa.service.StudyProtocolBeanLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceBean;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusBeanLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityBeanLocal;
@@ -182,8 +182,8 @@ public class PDQTrialRegistrationServiceTest {
     private MailManagerServiceLocal mailManagerSerivceLocal;
     private final URL testXMLUrl = this.getClass().getResource("/sample-pdq-register.xml");
     private final URL testUpdateXMLUrl = this.getClass().getResource("/sample-pdq-update.xml");
-    private Map<Ii, OrganizationDTO> mockOrgs = new HashMap<Ii, OrganizationDTO>();
-    private PersonDTO mockPerson = new PersonDTO();
+    private final Map<Ii, OrganizationDTO> mockOrgs = new HashMap<Ii, OrganizationDTO>();
+    private final PersonDTO mockPerson = new PersonDTO();
 
     @Before
     public void setUp() throws Exception {
@@ -241,7 +241,7 @@ public class PDQTrialRegistrationServiceTest {
         trialRegistrationSvc = new TrialRegistrationBeanLocal();
         trialRegistrationSvc.setStudyOverallStatusService(new StudyOverallStatusBeanLocal());
         trialRegistrationSvc.setStudyIndldeService(new StudyIndldeBeanLocal());
-        trialRegistrationSvc.setStudyProtocolService(new MockStudyProtocolService());
+        trialRegistrationSvc.setStudyProtocolService(new StudyProtocolServiceBean());
         trialRegistrationSvc.setOcsr(orgCorrelationSvc);
         trialRegistrationSvc.setStudySiteService(new StudySiteServiceBean());
         trialRegistrationSvc.setUserServiceLocal(new MockRegistryUserServiceBean());
@@ -251,7 +251,11 @@ public class PDQTrialRegistrationServiceTest {
         trialRegistrationSvc.setMailManagerSerivceLocal(mailManagerSerivceLocal);
         trialRegistrationSvc.setDocumentService(mock (DocumentServiceBean.class));
         trialRegistrationSvc.setStudyRelationshipService(new StudyRelationshipServiceBean());
-
+        
+        // cannot use Mockito because multiple other methods in PAServiceUtils are used
+        // in the process of registering a trial.
+        trialRegistrationSvc.setPaServiceUtils(new MockPAServiceUtils());
+       
         TSRReportGeneratorServiceRemote mockTsrGeneratorSvc = mock(TSRReportGeneratorServiceRemote.class);
         ByteArrayOutputStream tsrReport = new ByteArrayOutputStream();
         tsrReport.write("Mock TSR Report".getBytes());
@@ -259,7 +263,7 @@ public class PDQTrialRegistrationServiceTest {
         trialRegistrationSvc.setTsrReportService(mockTsrGeneratorSvc);
 
         StudyMilestoneServiceBean studyMilestoneSvc = new StudyMilestoneServiceBean();
-        studyMilestoneSvc.setStudyProtocolService(new MockStudyProtocolService());
+        studyMilestoneSvc.setStudyProtocolService(new StudyProtocolBeanLocal());
         studyMilestoneSvc.setStudyOnholdService(new StudyOnholdBeanLocal());
         studyMilestoneSvc.setMailManagerService(mailManagerSerivceLocal);
 
