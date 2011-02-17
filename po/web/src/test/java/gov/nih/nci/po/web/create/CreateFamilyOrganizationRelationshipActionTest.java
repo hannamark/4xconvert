@@ -85,6 +85,7 @@ package gov.nih.nci.po.web.create;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.web.AbstractPoTest;
 
@@ -114,7 +115,18 @@ public class CreateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
         action.setSelectedOrgId(2L);
         assertEquals(Action.INPUT, action.start());
     }
-
+    @Test
+    public void testStartOrgPerspective() {
+        Organization organization = new Organization();
+        organization.setId(2L);
+        FamilyOrganizationRelationship famOrgRelationship = new FamilyOrganizationRelationship();
+        famOrgRelationship.setOrganization(organization);
+        action.setFamilyOrgRelationship(famOrgRelationship);
+        action.setPerspective(CreateFamilyOrganizationRelationshipAction.ORGANIZATIONAL_PERSPECTIVE);
+        action.setSelectedFamilyId(1L);
+        assertEquals(Action.INPUT, action.start());
+    }
+    
     @Test
     public void testCreate() throws EntityValidationException {
         action.setSelectedOrgId(1L);

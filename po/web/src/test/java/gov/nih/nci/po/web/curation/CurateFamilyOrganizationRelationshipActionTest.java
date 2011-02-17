@@ -155,6 +155,12 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
     }
 
     @Test
+    public void testLoadFamilyInfo() {
+        action.setSelectedFamilyId(1L);
+        assertEquals("familyInfo", action.loadFamilyInfo());
+    }
+
+    @Test
     public void testRemove() {
         action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
         action.getFamilyOrgRelationship().setId(1L);
