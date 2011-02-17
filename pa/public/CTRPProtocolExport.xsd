@@ -38,13 +38,21 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    
+    <xs:group name="id_group">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" ref="po_id" />
+            <xs:element minOccurs="0" maxOccurs="1" ref="ctep_id" />
+        </xs:sequence>
+    </xs:group>
+    
     <xs:element name="id_info">
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="org_study_id" />
                 <xs:choice maxOccurs="unbounded">
-                    <xs:element minOccurs="0" ref="ctep_id" />
-                    <xs:element minOccurs="0" ref="dcp_id" />
+                    <xs:element minOccurs="0" maxOccurs="1" ref="ctep_id" />
+                    <xs:element minOccurs="0" maxOccurs="1" ref="dcp_id" />
                     <xs:element ref="secondary_id" />
                 </xs:choice>
                 <xs:element ref="org_name" />
@@ -151,7 +159,7 @@
             <xs:sequence>
                 <xs:group ref="person_name_group" />
                 <xs:element ref="po_id" />
-                <xs:element minOccurs="0" ref="ctep_id" />
+                <xs:element minOccurs="0" maxOccurs="1" ref="ctep_id" />
                 <xs:element ref="address" />
                 <xs:group ref="telecom_group" />
             </xs:sequence>
@@ -163,8 +171,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="name" type="text_block_type" />
-                <xs:element minOccurs="0" name="po_id" type="xs:integer" />
-                <xs:element minOccurs="0" name="ctep_id" type="xs:string" />
+                <xs:group ref="id_group"/>
                 <xs:element ref="address" />
                 <xs:group ref="telecom_group" />
             </xs:sequence>
@@ -418,8 +425,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:group ref="person_name_group" />
-                <xs:element minOccurs="0" name="po_id" type="xs:integer" />
-                <xs:element minOccurs="0" name="ctep_id" type="xs:string" />
+                <xs:group ref="id_group"/>
                 <xs:element ref="address" />
                 <xs:group ref="telecom_group" />
                 <xs:element ref="role" />
@@ -431,8 +437,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="name" type="xs:string" />
-                <xs:element minOccurs="0" name="po_id" type="xs:integer" />
-                <xs:element minOccurs="0" name="ctep_id" type="xs:string" />
+                <xs:group ref="id_group"/>
                 <xs:element ref="address" />
                 <xs:group ref="telecom_group" />
             </xs:sequence>
@@ -453,8 +458,7 @@
             <xs:complexContent>
                 <xs:extension base="name">
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="po_id" type="xs:integer" />
-                        <xs:element minOccurs="0" name="ctep_id" type="xs:string" />
+                        <xs:group ref="id_group"/>
                         <xs:element ref="address" />
                         <xs:group ref="telecom_group" />
                     </xs:sequence>
@@ -469,8 +473,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:group ref="person_name_group" />
-                <xs:element minOccurs="0" name="po_id" type="xs:integer" />
-                <xs:element minOccurs="0" name="ctep_id" type="xs:string" />
+                <xs:group ref="id_group"/>
                 <xs:element ref="address" />
                 <xs:group ref="telecom_group" />
                 <xs:element minOccurs="0" ref="role" />
@@ -525,7 +528,7 @@
             <xs:extension base="name">
                 <xs:sequence>
                     <xs:element ref="po_id" />
-                    <xs:element minOccurs="0" ref="ctep_id" />
+                    <xs:element minOccurs="0" maxOccurs="1" ref="ctep_id" />
                     <xs:element ref="address" />
                     <xs:group ref="telecom_group" />
                 </xs:sequence>
@@ -535,8 +538,7 @@
     <xs:complexType name="contact_type">
         <xs:sequence>
             <xs:group ref="person_name_group" />
-            <xs:element minOccurs="0" name="po_id" type="xs:integer" />
-            <xs:element minOccurs="0" name="ctep_id" type="xs:string" />
+            <xs:group ref="id_group"/>
             <xs:element ref="address" />
             <xs:group ref="telecom_group" />
         </xs:sequence>
