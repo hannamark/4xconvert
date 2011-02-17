@@ -1,16 +1,15 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <s:set name="isCreate" id="isCreate" value="familyOrgRelationship.id == null"/>
-<c:url value="/protected/selector/organization/start.action" var="searchUrl"/>
+<c:url value="/protected/selector/family/list.action" var="searchUrl"/>
 <div class="box_outer">
     <div class="box_white">
         <po:inputRow>
-            <po:inputRowElement><po:field labelKey="organization.name"><h2 style="background: none;">${familyOrgRelationship.organization.name}</h2></po:field></po:inputRowElement>
+            <po:inputRowElement><po:field labelKey="family.name"><h2 style="background: none;">${familyOrgRelationship.family.name}</h2></po:field></po:inputRowElement>
             <po:inputRowElement>&nbsp;</po:inputRowElement>
             <s:if test="%{isCreate}">
                 <po:inputRowElement>
-                    <c:url value="/protected/selector/organization/start.action" var="searchUrl"/>
                     <po:button href="#" style="add" text="Search Again" 
-                        onclick="showPopWin('${searchUrl}', 1000, 600, orgSelectionCallback);"/>
+                        onclick="showPopWin('${searchUrl}', 1000, 600, familySelectionCallback);"/>
                 </po:inputRowElement>
             </s:if>
         </po:inputRow>

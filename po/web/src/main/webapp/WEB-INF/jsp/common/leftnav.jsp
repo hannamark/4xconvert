@@ -22,7 +22,6 @@
                 <li><a id="ImportCtepPeople" href="<c:url value="/protected/import/ctep/person/start.action"/>">CTEP Import</a></li>
             <li class="lisubheader">Organization Family</li>
                 <li><a id="ListFamily" href="<c:url value="/protected/search/family/list.action"/>">List</a></li>
-                <li><a id="SearchFamily" href="<c:url value="/protected/search/family/start.action"/>">Search</a></li>
                 <li><a id="CreateFamily" href="<c:url value="/protected/family/create/start.action"/>">Create</a></li>
             </c:if>	            
         </c:when>

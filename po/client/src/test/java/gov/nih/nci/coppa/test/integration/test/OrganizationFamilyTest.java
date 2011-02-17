@@ -122,17 +122,22 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         loginAsCurator();
         addOrgMember("National");
         searchForCreatedFamily();
+        addOrgMember("ClinicalTrials");
+        searchForCreatedFamily("ClinicalTrials");
+        removeMember();
         removeMember();
     }
     
     public void testFamilyOrgPerspective(){
         loginAsCurator();
-        addOrgMember("National");
         addOrgMember("ClinicalTrials");
-        searchForCreatedFamily("National");
+        openSearchOrganization();
+        selenium.type("searchOrganizationForm_criteria_organization_name", "National");
+        clickAndWait("submitSearchOrganizationForm");
         clickAndWait(getLinkStartingWith("org_id_"));
         assertTrue(selenium.isTextPresent("Manage Family(s)"));
         accessFamilyScreen();
+        addFamilyRelationship();
         checkManageFamilyScreenOrgPerspective();
         clickAndWait(getLinkStartingWith("fam_org_relationship_edit_id_"));
         checkOrgRelationshipScreenOrgPerspective();
@@ -145,16 +150,35 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
     
     private void checkManageFamilyScreenOrgPerspective() {
         assertTrue(selenium.isTextPresent("Organization Details"));
-        assertTrue(selenium.isElementPresent("add_family_member_id_"));
         assertNotNull(getFamilyId());
+        assertTrue(selenium.isElementPresent("link=Add"));
         assertTrue(selenium.isElementPresent("link=Edit"));
         assertTrue(selenium.isElementPresent("link=Remove"));
+    }
+
+    private void addFamilyRelationship() {
+        addFamilyToOrg();
+        assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully created."));
+        clickAndWait("return_to_button");
+        addFamilyToOrg();
+        assertTrue(selenium.isTextPresent("An active family organization relationship already exists for this organization."));
+        clickAndWait("return_to_button");
+    }
+
+    private void addFamilyToOrg() {
+        clickAndWait("link=Add");
+        pause(10000);
+        String familyId = getFamilyId();
+        assertTrue(selenium.isElementPresent("select_family_" + familyId));
+        clickAndWait("select_family_" + familyId);
+        selenium.select("familyOrgRelationship.functionalType", FUNCTIONAL_TYPE);
+        clickAndWait("save_button");
     }
 
     private void checkOrgRelationshipScreenOrgPerspective() {
         assertTrue(selenium.isTextPresent(FAMILY_NAME));
         assertTrue(selenium.isTextPresent("Family Organization Relationship"));
-        assertEquals("CONTRACTUAL", selenium.getSelectedValue("name=familyOrgRelationship.functionalType"));
+        assertEquals(FUNCTIONAL_TYPE, selenium.getSelectedValue("name=familyOrgRelationship.functionalType"));
         assertFalse(selenium.isElementPresent("link=Search Again"));
         assertTrue(selenium.isElementPresent("link=Save"));
         assertTrue(selenium.isElementPresent("link=Return to Family Information"));

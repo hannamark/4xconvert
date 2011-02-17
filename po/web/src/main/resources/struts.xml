@@ -336,17 +336,17 @@
         <!-- Family Organization Relationship (Organization Perspective) -> Create/Edit -->
         <action name="organization/family/relationship/curate/*" class="gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
-            <result name="success">/WEB-INF/jsp/curate/family/familyOrganizationRelationship.jsp</result>
-            <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationship.jsp</result>
+            <result name="success">/WEB-INF/jsp/curate/family/familyOrganizationRelationshipOrgPerspective.jsp</result>
+            <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationshipOrgPerspective.jsp</result>
         </action>
         <action name="organization/family/relationship/create/*" class="gov.nih.nci.po.web.create.CreateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
-            <result name="success">/WEB-INF/jsp/curate/family/familyOrganizationRelationship.jsp</result>
-            <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationship.jsp</result>
+            <result name="success">/WEB-INF/jsp/curate/family/familyOrganizationRelationshipOrgPerspective.jsp</result>
+            <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationshipOrgPerspective.jsp</result>
         </action>
         <action name="ajax/organization/family/relationship/*" class="gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
-            <result name="orgInfo">/WEB-INF/jsp/curate/family/familyOrgRelationshipOrgInfo.jsp</result>
+            <result name="familyInfo">/WEB-INF/jsp/curate/family/familyOrgRelationshipFamilyInfo.jsp</result>
             <result name="relationships">/WEB-INF/jsp/curate/family/organizationRelationshipList.jsp</result>
         </action>
         
@@ -403,6 +403,21 @@
         <action name="ajax/person/curate/*" class="gov.nih.nci.po.web.curation.CuratePersonAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="changeCurrentChangeRequest">/WEB-INF/jsp/curate/person/crInfo.jsp</result>
+        </action>
+
+        <!-- Family -> Search -> Popup Select -->
+        <action name="selector/family/*" class="gov.nih.nci.po.web.search.SearchFamilyAction" method="{1}">
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/selector/family/list.jsp</result>
+            <result name="input">/WEB-INF/jsp/selector/family/list.jsp</result>
+        </action>
+        <action name="ajax/selector/family/*" class="gov.nih.nci.po.web.search.SearchFamilyAction" method="{1}">
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/selector/family/list.jsp</result>
+        </action>
+        <action name="ajax/selector/family/results/*" class="gov.nih.nci.po.web.search.SearchFamilyAction" method="{1}">
+            <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <result name="success">/WEB-INF/jsp/selector/family/list.jsp</result>
         </action>
 
         <!-- Organization -> Search -> Popup Select -->

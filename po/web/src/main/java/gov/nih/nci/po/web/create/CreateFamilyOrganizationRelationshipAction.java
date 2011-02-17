@@ -85,6 +85,7 @@ package gov.nih.nci.po.web.create;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction;
@@ -111,13 +112,29 @@ public class CreateFamilyOrganizationRelationshipAction extends CurateFamilyOrga
      */
     @Override
     public String start() {
-        Family family = PoRegistry.getFamilyService().getById(getFamilyOrgRelationship().getFamily().getId());
-        setFamilyOrgRelationship(new FamilyOrganizationRelationship());
+        if (ORGANIZATIONAL_PERSPECTIVE.equals(getPerspective())) {
+            setOrganization();
+        } else {
+            setFamily();
+        }
         getFamilyOrgRelationship().setStartDate(new Date());
-        getFamilyOrgRelationship().setFamily(family);
         getFamilyOrgRelationship().setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
         setRootKey(PoHttpSessionUtil.addAttribute(getFamilyOrgRelationship()));
         return INPUT;
+    }
+
+    private void setOrganization() {
+        Organization organization = PoRegistry.getOrganizationService().
+            getById(getFamilyOrgRelationship().getOrganization().getId());
+        setFamilyOrgRelationship(new FamilyOrganizationRelationship());
+        getFamilyOrgRelationship().setOrganization(organization);
+        
+    }
+
+    private void setFamily() {
+        Family family = PoRegistry.getFamilyService().getById(getFamilyOrgRelationship().getFamily().getId());
+        setFamilyOrgRelationship(new FamilyOrganizationRelationship());
+        getFamilyOrgRelationship().setFamily(family);
     }
 
     /**

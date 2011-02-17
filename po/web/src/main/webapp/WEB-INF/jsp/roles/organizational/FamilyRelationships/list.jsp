@@ -3,11 +3,11 @@
 <div class="addbtn">
     <ul class="btnrow">
         <c:url value="/protected/organization/family/relationship/create/start.action" var="createFamilyOrgRelationshipUrl">
-            <c:param name="familyOrgRelationship.family.id" value="${family.id}"/>
+            <c:param name="familyOrgRelationship.organization.id" value="${organization.id}"/>
             <c:param name="perspective" value="organization" />
         </c:url>
         <li>
-            <a href="${createFamilyOrgRelationshipUrl}" class="btn" id="add_family_member_id_${family.id}"><span class="btn_img"><span class="add">Add</span></span></a>
+            <a href="${createFamilyOrgRelationshipUrl}" class="btn" id="add_family_member_id_${organization.id}"><span class="btn_img"><span class="add">Add</span></span></a>
         </li>
     </ul>
 </div>

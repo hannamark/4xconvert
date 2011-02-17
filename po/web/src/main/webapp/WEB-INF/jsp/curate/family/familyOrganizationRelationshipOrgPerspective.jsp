@@ -3,31 +3,32 @@
     <head>
         <s:set name="isCreate" id="isCreate" value="familyOrgRelationship.id == null"/>
         <s:set name="isEdit" value="familyOrgRelationship.id != null"/>
-        <c:url value="/protected/selector/organization/start.action" var="searchUrl"/>
+        <c:url value="/protected/selector/family/list.action" var="searchUrl"/>
         <title><fmt:message key="familyOrgRelationship.details.title"/></title>
         <script type="text/javascript">
         Event.observe(window, 'load', function() {
-        	if ($('familyOrgRelationship.id').value == '' && $('selectedOrgId').value == '') {
-        		showPopWin('${searchUrl}', 1000, 600, orgSelectionCallback, false);
-        		$('famOrgRelationshipOrgInfo').hide();
+        	if ($('familyOrgRelationship.id').value == '' && $('selectedFamilyId').value == '') {
+        		showPopWin('${searchUrl}', 1000, 600, familySelectionCallback, false);
+        		$('famOrgRelationshipFamilyInfo').hide();
         	}
         });
         
-        function orgSelectionCallback(returnValue) {
-        	<c:url value="/protected/ajax/family/organization/relationship/loadOrganizationInfo.action" var="loadOrgUrl">
+        function familySelectionCallback(returnValue) {
+        	<c:url value="/protected/ajax/organization/family/relationship/loadFamilyInfo.action" var="loadFamilyUrl">
         	   <c:param name="rootKey" value="${rootKey}"/>
         	</c:url>
-            $('selectedOrgId').value = returnValue.id;
-            var url = '${loadOrgUrl}' + '&selectedOrgId=' + returnValue.id;
-            loadDiv(url, 'famOrgRelationshipOrgInfo', true, null, false);
+            $('selectedFamilyId').value = returnValue.id;
+            var url = '${loadFamilyUrl}' + '&selectedFamilyId=' + returnValue.id;
+            loadDiv(url, 'famOrgRelationshipFamilyInfo', true, null, false);
+            reloadOrgRelationships(new IdValue('${familyOrgRelationship.organization.id}', ''));
         }
         
         function reloadOrgRelationships(returnValue) {
             window.top.hidePopWin(true);
-            <c:url value="/protected/ajax/family/organization/relationship/loadOrgRelationships.action" var="loadOrgRelationshipUrl">
+            <c:url value="/protected/ajax/organization/family/relationship/loadOrgRelationships.action" var="loadOrgRelationshipUrl">
                 <c:param name="rootKey" value="${rootKey}"/>
             </c:url>
-            var url = '${loadOrgRelationshipUrl}' + '&familyOrgRelationship.family.id=' + returnValue.id;
+            var url = '${loadOrgRelationshipUrl}';
             var div = $('org_relationships');
             div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="<c:url value='/images/loading.gif'/>"&nbsp;Loading...</div>';
             var aj = new Ajax.Updater(div, url, {
@@ -45,7 +46,7 @@
         		 method: 'post',
         		 evalScripts: false,
         		 onComplete: function(transport) {
-        			  reloadOrgRelationships(new IdValue('${familyOrgRelationship.family.id}', ''));	 
+        			  reloadOrgRelationships(new IdValue('${familyOrgRelationship.organization.id}', ''));	 
         		 }
         	 });
         }
@@ -55,7 +56,7 @@
         <po:successMessages/>
         <s:actionerror/>
         <div class="boxouter">
-            <h2><fmt:message key="family"/>: ${familyOrgRelationship.family.name}</h2>
+            <h2><fmt:message key="organization"/>: ${familyOrgRelationship.organization.name}</h2>
             <s:if test="%{isCreate}">
                 <s:set name="formAction" value="'create.action'"/>
             </s:if>
@@ -64,20 +65,20 @@
             </s:else>
             <div class="box_white">
                 <po:inputRow>
-                    <po:inputRowElement><po:field labelKey="family.id">${familyOrgRelationship.family.id}</po:field></po:inputRowElement>
+                    <po:inputRowElement><po:field labelKey="organization.id">${familyOrgRelationship.organization.id}</po:field></po:inputRowElement>
                     <po:inputRowElement>&nbsp;</po:inputRowElement>
-                    <po:inputRowElement><po:field labelKey="family.name">${familyOrgRelationship.family.name}</po:field></po:inputRowElement>
+                    <po:inputRowElement><po:field labelKey="organization.name">${familyOrgRelationship.organization.name}</po:field></po:inputRowElement>
                     <po:inputRowElement>&nbsp;</po:inputRowElement>
-                    <po:inputRowElement><po:field labelKey="family.statusCode">${familyOrgRelationship.family.statusCode}</po:field></po:inputRowElement>
+                    <po:inputRowElement><po:field labelKey="organization.statusCode">${familyOrgRelationship.organization.statusCode}</po:field></po:inputRowElement>
                     <po:inputRowElement>&nbsp;</po:inputRowElement>
                 </po:inputRow>
             </div>
             <div class="line"></div>
         </div>
         <div class="clear"></div>
-        <div id="famOrgRelationshipOrgInfo">
-            <s:if test="%{isEdit || familyOrgRelationship.organization.id != null}">
-                <%@include file="familyOrgRelationshipOrgInfo.jsp"%>
+        <div id="famOrgRelationshipFamilyInfo">
+            <s:if test="%{isEdit || familyOrgRelationship.family.id != null}">
+                <%@include file="familyOrgRelationshipFamilyInfo.jsp"%>
             </s:if>
         </div>
         <div class="box_outer">
@@ -86,8 +87,8 @@
                     <input id="enableEnterSubmit" type="submit"/>
                     <s:hidden key="rootKey" id="rootKey"/>
                     <s:hidden key="familyOrgRelationship.id" id="familyOrgRelationship.id"/>
-                    <s:hidden key="familyOrgRelationship.family.id"/>
-                    <s:hidden key="selectedOrgId" id="selectedOrgId"/>
+                    <s:hidden key="selectedFamilyId" id="selectedFamilyId"/>
+                    <s:hidden key="perspective" id="perspective"/>
                     <po:inputRow>
                         <po:inputRowElement>
                             <po:field labelKey="familyOrgRelationship.functionalType" fieldRequired="true">
@@ -133,8 +134,8 @@
         <div class="btnwrapper" style="margin-bottom:20px;">
             <po:buttonRow>
                 <po:button id="save_button" href="javascript://noop/" onclick="$('familyOrgRelationshipForm').submit();" style="save" text="Save"/>
-                <c:url var="cancelUrl" value="/protected/family/curate/start.action">
-                    <c:param name="family.id" value="${familyOrgRelationship.family.id}"/>
+                <c:url var="cancelUrl" value="/protected/roles/organizational/familyRelationships/start.action">
+                    <c:param name="organization.id" value="${familyOrgRelationship.organization.id}"/>
                 </c:url>
                 <s:set name="returnToPageTitle" value="%{'Return to ' + getText('family') + ' Information'}"/>
                 <po:button id="return_to_button" href="${cancelUrl}" style="continue" text="${returnToPageTitle}"/>

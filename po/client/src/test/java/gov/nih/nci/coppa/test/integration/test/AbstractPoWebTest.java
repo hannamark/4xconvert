@@ -159,7 +159,6 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isElementPresent("id=CreatePerson"));
         assertTrue(selenium.isElementPresent("id=ImportCtepPeople"));
         assertTrue(selenium.isElementPresent("id=ListFamily"));
-        assertTrue(selenium.isElementPresent("id=SearchFamily"));
         assertTrue(selenium.isElementPresent("id=CreateFamily"));
     }
 

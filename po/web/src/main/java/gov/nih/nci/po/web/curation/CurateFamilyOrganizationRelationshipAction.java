@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.web.curation;
 
+import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
@@ -129,6 +130,7 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
 
     private String rootKey;
     private Long selectedOrgId;
+    private Long selectedFamilyId;
     private String perspective = FAMILY_PERSPECTIVE;
 
     /**
@@ -195,6 +197,16 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
         Organization org = PoRegistry.getOrganizationService().getById(getSelectedOrgId());
         getFamilyOrgRelationship().setOrganization(org);
         return "orgInfo";
+    }
+
+    /**
+     * Loads the family info based on the selected family id.
+     * @return familyInfo
+     */
+    public String loadFamilyInfo() {
+        Family family = PoRegistry.getFamilyService().getById(getSelectedFamilyId());
+        getFamilyOrgRelationship().setFamily(family);
+        return "familyInfo";
     }
 
     /**
@@ -275,6 +287,20 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
      */
     public void setSelectedOrgId(Long selectedOrgId) {
         this.selectedOrgId = selectedOrgId;
+    }
+
+    /**
+     * @return the selectedFamilyId
+     */
+    public Long getSelectedFamilyId() {
+        return selectedFamilyId;
+    }
+
+    /**
+     * @param selectedFamilyId the selectedFamilyId to set
+     */
+    public void setSelectedFamilyId(Long selectedFamilyId) {
+        this.selectedFamilyId = selectedFamilyId;
     }
 
     /**

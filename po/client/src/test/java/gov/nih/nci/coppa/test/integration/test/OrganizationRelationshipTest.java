@@ -109,23 +109,23 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         addFamilyMember(famId, "National Cancer Institute");
 
         navigateToFamilyOrgRelationship(1, "ClinicalTrials.gov");
-        clickAndWait("cancel_button");
+        clickAndWait("return_to_button");
         navigateToFamilyOrgRelationship(2, "Cancer Therapy Evaluation Program");
-        clickAndWait("cancel_button");
+        clickAndWait("return_to_button");
         navigateToFamilyOrgRelationship(3, "Division of Cancer Control and Population Sciences");
-        clickAndWait("cancel_button");
+        clickAndWait("return_to_button");
         navigateToFamilyOrgRelationship(4, "National Cancer Institute");
-        clickAndWait("cancel_button");
+        clickAndWait("return_to_button");
 
         navigateToFamilyOrgRelationship(1, "ClinicalTrials.gov");
         addRelationship(1, "PARENT");
-        clickAndWait("cancel_button");
+        clickAndWait("return_to_button");
         clickAndWait("xpath=//table[@id='row']//tr[2]//td[5]//ul//li[1]/a");
         validateRelatedOrg(1, "CHILD");
 
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[5]//ul//li[1]/a");
         updateRelationship(1, "DIVISION");
-        clickAndWait("cancel_button");
+        clickAndWait("return_to_button");
         clickAndWait("xpath=//table[@id='row']//tr[2]//td[5]//ul//li[1]/a");
         validateRelatedOrg(1, "SUBDIVISION");
 
@@ -133,13 +133,13 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         removeRelationship(1);
 
         navigateToFamilyOrgRelationship(1, "ClinicalTrials.gov");
-        clickAndWait("cancel_button");
+        clickAndWait("return_to_button");
         navigateToFamilyOrgRelationship(2, "Cancer Therapy Evaluation Program");
-        clickAndWait("cancel_button");
+        clickAndWait("return_to_button");
         navigateToFamilyOrgRelationship(3, "Division of Cancer Control and Population Sciences");
-        clickAndWait("cancel_button");
+        clickAndWait("return_to_button");
         navigateToFamilyOrgRelationship(4, "National Cancer Institute");
-        clickAndWait("cancel_button");
+        clickAndWait("return_to_button");
 
         //Nullify family to remove from view as not to interfere with other tests
         selenium.select("familyEntityForm.family.statusCode", "NULLIFIED");
@@ -160,6 +160,7 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         selenium.select("familyOrgRelationship.functionalType", "ORGANIZATIONAL");
         clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully created."));
+        clickAndWait("return_to_button");
     }
 
     private void navigateToFamilyOrgRelationship(int row, String orgName) {
@@ -250,7 +251,7 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
     private void removeRelationship(int row) {
         clickAndWait("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]");
         waitForElementById("row", 10);
-        clickAndWait("cancel_button");
+        clickAndWait("return_to_button");
     }
 
     private void validateRelatedOrg(int row, String relationshipName) {
@@ -259,7 +260,7 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a"));
         assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]"));
         assertFalse(StringUtils.isBlank(selenium.getText("xpath=//table[@id='row']//tr[" + row + "]/td[2]")));
-        clickAndWait("cancel_button");
+        clickAndWait("return_to_button");
     }
 
 }
