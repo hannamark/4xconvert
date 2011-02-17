@@ -22,32 +22,13 @@
         <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
         <h1>Accrual Home
         </h1>
-<p class="padme2">
-This Site enables you to report accrual information for a trial with NCI's Clinical Trials Reporting Program. You can
-</p>
-        
-<ul class="padme10">
-  <c:choose>
-    <c:when test="${pageContext.request.remoteUser == null}">
-      <li><a href="/accrual/protected/welcome.action">Log In</a> to your account and</li>
-      <menu> 
-         <li>Report Accruals on Multiple Trials</li>
-         <li>Generate Basic Results report for <a href="http://www.clinicaltrials.gov/">ClinicalTrials.gov</a></li>
-      </menu>
-    </c:when> 
-    <c:otherwise>
-      <li>You have logged in to your account and can now</li>
-      <menu> 
-         <li>Report Accruals on Multiple Trials</li>
-         <li>Generate Basic Results report for <a href="http://www.clinicaltrials.gov/">ClinicalTrials.gov</a></li>
-      </menu>
-    </c:otherwise>
-  </c:choose>
-</ul>
-<p class="padme2">
-Want to learn more about the Reporting Program? Visit the <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main"  target="new1">NCI Clinical Trials Reporting Program</a> website
- <br>You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance
- </p>
-     
+        <br>
+        <p class="padme2">
+        This site allows you to upload non-CTEP/DCP supported trial accrual data for a specific NCI-supported trial. If you are part of a CTEP/DCP supported trial, please go to the CDUS/CDS web interface to upload your data (these data will be transferred internally to CTRP.
+        </p>
+        <p class="padme2">
+        Want to learn more about the Reporting Program? Visit the <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main"  target="new1">NCI Clinical Trials Reporting Program</a> website
+        <br>You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance
+        </p>
     </div>
 </body>
