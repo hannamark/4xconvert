@@ -12,6 +12,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Vrushali
@@ -162,10 +163,18 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserService#getTrialOwnerNames(java.lang.Long)
+    /**
+     * {@inheritDoc}
      */
     public List<String> getTrialOwnerNames(Long studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<RegistryUser> getAllTrialOwners(Long studyProtocolId) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }

@@ -11,6 +11,7 @@ import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Vrushali
@@ -192,6 +193,14 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     public List<String> getTrialOwnerNames(Long studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<RegistryUser> getAllTrialOwners(Long studyProtocolId) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }

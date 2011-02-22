@@ -91,6 +91,7 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestRegistryUserSchema;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -146,7 +147,7 @@ public class RegistryUserServiceTest {
         assertFalse(remoteEjb.hasTrialAccess("trialOwnerTest", spId));
         assertFalse(remoteEjb.hasTrialAccess("randomUserTest", spId));
     }
-    
+
     @Test
     public void getTrialOwnerNames() throws PAException {
         Long spId = TestRegistryUserSchema.studyProtocolId;
@@ -154,6 +155,16 @@ public class RegistryUserServiceTest {
         remoteEjb.assignOwnership(userId, spId);
         List<String> list = remoteEjb.getTrialOwnerNames(spId);
         assertTrue(list.contains("random random"));
+    }
+
+    @Test
+    public void getTrialOwners() throws PAException {
+        Long spId = TestRegistryUserSchema.studyProtocolId;
+        Long userId = TestRegistryUserSchema.trialOwnerUserId;
+        remoteEjb.assignOwnership(userId, spId);
+        Set<RegistryUser> regUsers = remoteEjb.getAllTrialOwners(spId);
+        assertEquals(1, regUsers.size());
+        assertEquals("owner", regUsers.iterator().next().getLastName());
     }
 
     @Test

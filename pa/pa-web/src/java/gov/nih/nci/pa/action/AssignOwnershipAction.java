@@ -8,6 +8,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.TrialOwner;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.AssignOwnershipSearchCriteria;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -15,6 +16,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -30,11 +32,23 @@ public class AssignOwnershipAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private List<TrialOwner> users = null;
     private AssignOwnershipSearchCriteria criteria = new AssignOwnershipSearchCriteria();
+    private Set<RegistryUser> trialOwners = null;
+
+    private RegistryUserService regUserSvc;
 
     /**
      * @return string
      */
     public String view() {
+        Long id = IiConverter.convertToLong(
+                (Ii) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.STUDY_PROTOCOL_II));
+        try {
+            trialOwners = getRegistryUserService().getAllTrialOwners(id);
+        } catch (PAException e) {
+            addActionError("Unable to lookup trial owners for study protocol " + id);
+        }
+
         return SUCCESS;
     }
 
@@ -56,7 +70,7 @@ public class AssignOwnershipAction extends ActionSupport {
            .getAttribute(Constants.STUDY_PROTOCOL_II);
        try {
            if (StringUtils.isNotEmpty(userId) && PAUtil.isIiNotNull(spIi)) {
-               PaRegistry.getRegistryUserService().assignOwnership(Long.parseLong(userId),
+               getRegistryUserService().assignOwnership(Long.parseLong(userId),
                        IiConverter.convertToLong(spIi));
            } else {
                addActionError("Please select user to change ownership.");
@@ -83,7 +97,7 @@ public class AssignOwnershipAction extends ActionSupport {
                     regUser.setLastName(criteria.getLastName());
                     regUser.setEmailAddress(criteria.getEmailAddress());
                     users = new ArrayList<TrialOwner>();
-                    List<RegistryUser> regUserList = PaRegistry.getRegistryUserService().search(regUser);
+                    List<RegistryUser> regUserList = getRegistryUserService().search(regUser);
                     TrialOwner owner = null;
                     for (RegistryUser rUsr : regUserList) {
                         owner = new TrialOwner();
@@ -124,6 +138,28 @@ public class AssignOwnershipAction extends ActionSupport {
      */
     public void setCriteria(AssignOwnershipSearchCriteria criteria) {
         this.criteria = criteria;
+    }
+
+    /**
+     * @return the trial owners
+     */
+    public Set<RegistryUser> getTrialOwners() {
+        return trialOwners;
+    }
+
+    private RegistryUserService getRegistryUserService() {
+        if (regUserSvc == null) {
+            regUserSvc = PaRegistry.getRegistryUserService();
+        }
+        return regUserSvc;
+    }
+
+    /**
+     * Injection method for registry user service.
+     * @param svc the service to set.
+     */
+    public void setRegistryUserService(RegistryUserService svc) {
+        regUserSvc = svc;
     }
 
 }
