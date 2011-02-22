@@ -7,6 +7,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.TrialOwner;
@@ -14,10 +17,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.Constants;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.anyLong;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -61,18 +60,21 @@ public class AssignOwnershipActionTest extends AbstractPaActionTest {
         Ii ii = IiConverter.convertToStudyProtocolIi(1L);
         getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,ii);
         assertEquals("success",action.save());
-        assertTrue(action.getActionErrors().contains("Please select user to change ownership."));
+        assertEquals(1, action.getActionErrors().size());
+        assertTrue(action.getActionErrors().contains("assignOwnership.user.error"));
+        action.clearActionErrors();
 
         getRequest().setupAddParameter("csmUserId", "user1@mail.nih.gov");
         ii = IiConverter.convertToStudyProtocolIi(1L);
         getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,ii);
         assertEquals("success",action.save());
-        assertTrue(action.getActionErrors().contains("Please select user to change ownership."));
+        assertEquals(1, action.getActionErrors().size());
+        assertTrue(action.getActionErrors().contains("assignOwnership.user.error"));
+        action.clearActionErrors();
 
         getRequest().setupAddParameter("csmUserId", "user3@mail.nih.gov");
         ii = IiConverter.convertToStudyProtocolIi(1L);
         getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,ii);
         assertEquals("success",action.save());
-
     }
 }
