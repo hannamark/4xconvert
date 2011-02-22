@@ -37,46 +37,57 @@ function handleAction(){
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <s:form name="addNew" validate="true">
     <table class="form">
-      <tr>     
-        <td scope="row" class="label">
-          <label for="Submission Title">
-              <fmt:message key="accrual.new.accrual.submission.submissionTitle"/> 
-              <span class="required">*</span>
-          </label>
-        </td>
-        <td class="value">
-            <s:textfield id ="label" name="submission.label.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px" />
-        </td>
-      </tr> 
-    
-      
-       <tr>     
-        <td scope="row" class="label">
-          <label for="Submission Cut off Date">
-              <fmt:message key="accrual.new.accrual.submission.submissionCutoffDate"/>
-              <span class="required">*</span>
-          </label>
-         </td>
-                   
-           <td class="value"><s:textfield name="submission.cutOffDate.value"
-                maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+        <tr>     
+            <td scope="row" class="label">
+                <label for="Submission Title">
+                    <fmt:message key="accrual.new.accrual.submission.submissionTitle"/> 
+                    <span class="required">*</span>
+                </label>
+            </td>
+            <td class="value">
+                <s:textfield id ="label" name="submission.label.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px" />
+            </td>
+        </tr> 
+        <tr>     
+            <td scope="row" class="label">
+                <label for="Submission Cut off Date">
+                    <fmt:message key="accrual.new.accrual.submission.submissionCutoffDate"/>
+                    <span class="required">*</span>
+                </label>
+            </td>       
+            <td class="value">
+                <s:textfield name="submission.cutOffDate.value" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
-                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy) 
-                </td>
-                
-      </tr> 
-       <tr>     
-        <td scope="row" class="label">
-          <label for="Description">
-              <fmt:message key="accrual.new.accrual.submission.description"/> 
-              <span class="required">*</span>
-          </label>
-         </td>
-         <td class="value">
-           <s:textfield id ="description" name="submission.description.value" maxlength="400" size="50" 
-            cssStyle="width:98%;max-width:250px" />
-      </tr> 
-    
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                </a> (mm/dd/yyyy) 
+            </td>    
+        </tr> 
+        <tr>     
+            <td scope="row" class="label">
+                <label for="Description">
+                    <fmt:message key="accrual.new.accrual.submission.description"/> 
+                    <span class="required">*</span>
+                </label>
+            </td>
+            <td class="value">
+                <s:textfield id ="description" name="submission.description.value" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
+            </td>
+        </tr> 
+        <tr>
+            <td scope="row" class="label">
+                <label for="totalNumberOfAccruals">
+                    <fmt:message key="accrual.new.accrual.submission.totalNumberOfAccruals"/>
+                </label>
+            </td>
+            <td class="value">
+                <s:textfield id="totalNumberOfAccruals" name="totalNumberOfAccruals"/>
+                 <span class="formErrorMsg">
+                    <s:fielderror>
+                        <s:param>totalNumberOfAccruals</s:param>
+                    </s:fielderror>
+                </span>
+            </td>
+        </tr>
     </table>
     
      <div class="actionsrow">

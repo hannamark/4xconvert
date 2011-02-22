@@ -642,4 +642,8 @@
         <comment>Updating the CDE Marker Request Subject to include the marker name and trial id.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.4/PO-3181.sql"/>
      </changeSet>
+     <changeSet id="PO-3242" author="aevansel">
+        <comment>Adding total_number_of_accruals column to the submission table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.4/PO-3242.sql"/>
+     </changeSet>
 </databaseChangeLog>

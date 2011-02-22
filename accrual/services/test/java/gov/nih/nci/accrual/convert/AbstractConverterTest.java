@@ -82,11 +82,13 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -109,6 +111,7 @@ public abstract class AbstractConverterTest {
     protected static Bl blVal = BlConverter.convertToBl(true);
     protected static Cd cdVal = null;
     protected static DSet<Cd> dsetVal = null;
+    protected static Int intVal = IntConverter.convertToInt(1);
 
     protected boolean iiTest(Ii ii) {
         return IiConverter.convertToLong(ii).equals(2L);
@@ -138,6 +141,11 @@ public abstract class AbstractConverterTest {
     protected boolean dsetTest(DSet<Cd> dset) {
         return true;
     }
+    
+    protected boolean intTest(Int i) {
+        return IntConverter.convertToInteger(i).equals(1);
+    }
+    
     /**
      * Convert iso dto to domain object and back.  Test all attributes.
      * @throws Exception exception

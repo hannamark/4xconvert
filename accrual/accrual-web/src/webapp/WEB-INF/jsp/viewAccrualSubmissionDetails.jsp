@@ -65,9 +65,16 @@ function cancel(){
             <s:label name="submissionStatus" cssStyle="font-weight:normal"/>
           </td>
          
-      </tr> 
-      
-       <tr>     
+      </tr>
+        <tr>
+            <td scope="row" class="label"><label for="totalNumberOfAccruals">
+            <fmt:message key="accrual.new.accrual.submission.totalNumberOfAccruals" /> </label></td>
+            <td class="value">
+                <s:label name="totalNumberOfAccruals" cssStyle="font-weight:normal" />
+            </td>
+        </tr>
+
+        <tr>     
         <td scope="row" class="label">
           <label for="Created Date">
               <fmt:message key="accrual.view.accrual.submission.createdDate"/> 

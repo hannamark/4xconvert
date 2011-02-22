@@ -105,6 +105,7 @@ public class SubmissionConverterTest extends AbstractConverterTest {
         dto.setLabel(stVal);
         dto.setStatusCode(cdVal);
         dto.setStatusDateRange(ivlVal);
+        dto.setTotalNumberOfAccruals(intVal);
 
         Submission bo = Converters.get(SubmissionConverter.class).convertFromDtoToDomain(dto);
         SubmissionDto r = Converters.get(SubmissionConverter.class).convertFromDomainToDto(bo);
@@ -116,5 +117,6 @@ public class SubmissionConverterTest extends AbstractConverterTest {
         assertTrue(stTest(r.getLabel()));
         assertTrue(cdTest(r.getStatusCode()));
         assertTrue(ivlTest(r.getStatusDateRange()));
+        assertTrue(intTest(r.getTotalNumberOfAccruals()));
     }
 }

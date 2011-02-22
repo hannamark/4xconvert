@@ -85,6 +85,7 @@ import gov.nih.nci.pa.domain.Submission;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -114,6 +115,7 @@ public class SubmissionConverter extends AbstractConverter<SubmissionDto, Submis
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         dto.setCreateUser(StConverter.convertToSt(bo.getCreateUser()));
         dto.setSubmitUser(StConverter.convertToSt(bo.getSubmitUser()));
+        dto.setTotalNumberOfAccruals(IntConverter.convertToInt(bo.getTotalNumberOfAccruals()));
         return dto;
     }
 
@@ -137,6 +139,8 @@ public class SubmissionConverter extends AbstractConverter<SubmissionDto, Submis
         }
         bo.setCreateUser(StConverter.convertToString(dto.getCreateUser()));
         bo.setSubmitUser(StConverter.convertToString(dto.getSubmitUser()));
+        bo.setTotalNumberOfAccruals(IntConverter.convertToInteger(dto.getTotalNumberOfAccruals()));
         return bo;
     }
+    
 }

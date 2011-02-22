@@ -79,6 +79,7 @@ package gov.nih.nci.accrual.accweb.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
 import gov.nih.nci.accrual.accweb.util.MockSubmissionBean;
 import gov.nih.nci.accrual.dto.SubmissionDto;
@@ -102,7 +103,7 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
 
-    AccrualSubmissionsAction action;
+    private AccrualSubmissionsAction action;
     private SearchTrialResultDto trialSummary;
     private SubmissionDto submission;
     private final static int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
@@ -145,14 +146,24 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void addNewExceptionTest() throws Exception {
+        action.setTotalNumberOfAccruals("foo");
         assertEquals("showNewSubmission", action.addNew());
         assertEquals("Please Enter Submission Cut off Date.", action.getActionErrors().iterator().next());
+        assertTrue(action.hasFieldErrors());
+        assertEquals("Please enter a valid number.", action.getFieldErrors().get("totalNumberOfAccruals"));
+        action.clearErrorsAndMessages();
+        action.setTotalNumberOfAccruals("-1");
+        assertEquals("showNewSubmission", action.addNew());
+        assertTrue(action.hasFieldErrors());
+        assertEquals("Total number of accruals must be at least 0.", action.getFieldErrors().get("totalNumberOfAccruals"));
+        
     }
 
     @Test
     public void addNewTest() throws Exception {
         submission.setCutOffDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - MILLIS_IN_DAY)));
         action.setSubmission(submission);
+        action.setTotalNumberOfAccruals("100");
         assertEquals("showNewSubmission", action.addNew());
         assertEquals("New Cut-off Date must be same or bigger than the Cut-off-Date of the previous submission", action.getActionErrors().iterator().next());
     }

@@ -89,6 +89,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.hibernate.validator.Min;
+
 
 
 /**
@@ -108,6 +110,7 @@ public class Submission extends AbstractStudyEntity {
     private Timestamp statusDateRangeHigh;
     private String createUser;
     private String submitUser;
+    private Integer totalNumberOfAccruals;
 
     /**
      * @return the label
@@ -213,5 +216,22 @@ public class Submission extends AbstractStudyEntity {
      */
     public void setSubmitUser(String submitUser) {
         this.submitUser = submitUser;
+    }
+
+    /**
+     * The total number of accruals in this submission. Used when individual patients are unavailable.
+     * @return the totalAccruals
+     */
+    @Column(name = "total_number_of_accruals")
+    @Min(value = 0)
+    public Integer getTotalNumberOfAccruals() {
+        return totalNumberOfAccruals;
+    }
+
+    /**
+     * @param totalAccruals the totalAccruals to set
+     */
+    public void setTotalNumberOfAccruals(Integer totalAccruals) {
+        this.totalNumberOfAccruals = totalAccruals;
     }
 }

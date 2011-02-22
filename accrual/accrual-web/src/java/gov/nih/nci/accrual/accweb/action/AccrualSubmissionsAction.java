@@ -90,6 +90,7 @@ import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -102,6 +103,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -117,6 +120,7 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
 
     private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
     private String studyProtocolId = null;
+    private String totalNumberOfAccruals;
     private SubmissionDto submission = new SubmissionDto();
 
     /**
@@ -163,6 +167,7 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
     public String viewSubmissionDetails() {
         try {
             submission = getSubmissionSvc().get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+            setTotalNumberOfAccruals(IntConverter.convertToString(submission.getTotalNumberOfAccruals()));
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
         }
@@ -217,21 +222,13 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
                     new Timestamp(new Date().getTime()), null));
             submission.setCreateUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
                     getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
-
-            if (PAUtil.isTsNull(submission.getCutOffDate())) {
-                addActionError("Please Enter Submission Cut off Date.");
+            
+            validateSubmission();
+            if (hasActionErrors() || hasFieldErrors()) {
                 return AR_NEW_SUBMISSION;
             }
-
-            List<SubmissionDto> listOfSubmissions = getSubmissionSvc().getByStudyProtocol(getSpIi());
-            if (!listOfSubmissions.isEmpty()) {
-                Ts cutOffDate = getMaxCutOffDate(listOfSubmissions);
-                if (submission.getCutOffDate().getValue().before(cutOffDate.getValue())) {
-                    addActionError("New Cut-off Date must be same or bigger than"
-                            + " the Cut-off-Date of the previous submission");
-                    return AR_NEW_SUBMISSION;
-                }
-            }
+            
+            submission.setTotalNumberOfAccruals(IntConverter.convertToInt(getTotalNumberOfAccruals()));
             getSubmissionSvc().create(submission);
             ServletActionContext.getRequest().getSession().
                     setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.TRUE);
@@ -244,7 +241,36 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
         }
         return super.add();
     }
-
+    
+    private void validateSubmission() throws RemoteException {
+        if (PAUtil.isTsNull(submission.getCutOffDate())) {
+            addActionError("Please Enter Submission Cut off Date.");
+        }
+        
+        List<SubmissionDto> listOfSubmissions = getSubmissionSvc().getByStudyProtocol(getSpIi());
+        if (!listOfSubmissions.isEmpty()) {
+            Ts cutOffDate = getMaxCutOffDate(listOfSubmissions);
+            if (submission.getCutOffDate().getValue().before(cutOffDate.getValue())) {
+                addActionError("New Cut-off Date must be same or bigger than"
+                        + " the Cut-off-Date of the previous submission");
+            }
+        }
+        validateTotalNumberOfAccruals();
+    }
+    
+    private void validateTotalNumberOfAccruals() {
+        if (StringUtils.isNotEmpty(getTotalNumberOfAccruals()) 
+                && !NumberUtils.isNumber(getTotalNumberOfAccruals())) {
+            addFieldError("totalNumberOfAccruals", "Please enter a valid number.");
+        }
+        
+        if (StringUtils.isNotEmpty(getTotalNumberOfAccruals()) && NumberUtils.isNumber(getTotalNumberOfAccruals()) 
+                && NumberUtils.toInt(getTotalNumberOfAccruals()) < 0) {
+            addFieldError("totalNumberOfAccruals", "Total number of accruals must be at least 0.");
+        }
+        
+    }
+    
     private Ts getMaxCutOffDate(List<SubmissionDto> listOfSubmissions) {
         List<String> testList = new ArrayList<String>();
         for (SubmissionDto sDto : listOfSubmissions) {
@@ -349,5 +375,19 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
      */
     public String getSubmissionSubmittedDate() {
         return WebUtil.getStr(IvlConverter.convertTs().convertHighToString(getSubmission().getStatusDateRange()));
+    }
+    
+    /**
+     * @return the totalNumberOfAccruals
+     */
+    public String getTotalNumberOfAccruals() {
+        return totalNumberOfAccruals;
+    }
+    
+    /**
+     * @param totalNumberOfAccruals the totalNumberOfAccruals to set
+     */
+    public void setTotalNumberOfAccruals(String totalNumberOfAccruals) {
+        this.totalNumberOfAccruals = totalNumberOfAccruals;
     }
 }

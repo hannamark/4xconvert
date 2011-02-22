@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.dto;
 
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
@@ -99,6 +100,7 @@ public class SubmissionDto extends AbstractStudyDto {
     private Ivl<Ts> statusDateRange;
     private St createUser;
     private St submitUser;
+    private Int totalNumberOfAccruals;
 
 
     /**
@@ -185,5 +187,19 @@ public class SubmissionDto extends AbstractStudyDto {
      */
     public void setStatusDateRange(Ivl<Ts> statusDateRange) {
         this.statusDateRange = statusDateRange;
+    }
+    
+    /**
+     * @return the numberOfAccruals
+     */
+    public Int getTotalNumberOfAccruals() {
+        return totalNumberOfAccruals;
+    }
+    
+    /**
+     * @param numberOfAccruals the numberOfAccruals to set
+     */
+    public void setTotalNumberOfAccruals(Int numberOfAccruals) {
+        this.totalNumberOfAccruals = numberOfAccruals;
     }
 }
