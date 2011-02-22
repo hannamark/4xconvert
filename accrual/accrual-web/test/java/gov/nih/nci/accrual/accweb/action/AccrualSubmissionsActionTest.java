@@ -150,12 +150,12 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
         assertEquals("showNewSubmission", action.addNew());
         assertEquals("Please Enter Submission Cut off Date.", action.getActionErrors().iterator().next());
         assertTrue(action.hasFieldErrors());
-        assertEquals("Please enter a valid number.", action.getFieldErrors().get("totalNumberOfAccruals"));
+        assertEquals("Please enter a valid number.", action.getFieldErrors().get("totalNumberOfAccruals").iterator().next());
         action.clearErrorsAndMessages();
         action.setTotalNumberOfAccruals("-1");
         assertEquals("showNewSubmission", action.addNew());
         assertTrue(action.hasFieldErrors());
-        assertEquals("Total number of accruals must be at least 0.", action.getFieldErrors().get("totalNumberOfAccruals"));
+        assertEquals("Total number of accruals must be at least 0.", action.getFieldErrors().get("totalNumberOfAccruals").iterator().next());
         
     }
 

@@ -80,37 +80,32 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service.util;
+package gov.nih.nci.accrual.enums;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
 
-import org.apache.log4j.Logger;
+import org.junit.Test;
 
 /**
- * Utility methods for converting batch uploads into data objects.
- * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ *
  */
-public class BatchUploadUtils {
-    private static final Logger LOG = Logger.getLogger(BatchUploadUtils.class);
-    private static final String DOB_DATE_FORMAT = "yyyyMM";
-   
-    /**
-     * Returns the patient date of birth from the given dob string.
-     * @param dob the dob string in year/month format
-     * @return the parsed date or null if the date is unparseable
-     */
-    public static Date getPatientDOB(String dob) {
-        SimpleDateFormat formatter = new SimpleDateFormat(DOB_DATE_FORMAT, Locale.getDefault());
-        Date date = null;
-        try {
-            date = formatter.parse(dob);
-        } catch (ParseException e) {
-            LOG.error("Error parsing the following dob: " + dob);
-        }
-        return date;
+public class CDUSPaymentMethodCodeTest {
+    
+    @Test
+    public void testPaymentMethodConversion() {
+        assertEquals(PaymentMethodCode.PRIVATE, CDUSPaymentMethodCode.getByCode("1").getValue());
+        assertEquals(PaymentMethodCode.MEDICARE, CDUSPaymentMethodCode.getByCode("2").getValue());
+        assertEquals(PaymentMethodCode.MEDICARE_AND_PRIVATE, CDUSPaymentMethodCode.getByCode("3").getValue());
+        assertEquals(PaymentMethodCode.MEDICAID, CDUSPaymentMethodCode.getByCode("4").getValue());
+        assertEquals(PaymentMethodCode.MEDICAID_AND_MEDICARE, CDUSPaymentMethodCode.getByCode("5").getValue());
+        assertEquals(PaymentMethodCode.MILITARY_OR_VETERANS, CDUSPaymentMethodCode.getByCode("6").getValue());
+        assertEquals(PaymentMethodCode.MILITARY, CDUSPaymentMethodCode.getByCode("6A").getValue());
+        assertEquals(PaymentMethodCode.VETERANS, CDUSPaymentMethodCode.getByCode("6B").getValue());
+        assertEquals(PaymentMethodCode.SELF, CDUSPaymentMethodCode.getByCode("7").getValue());
+        assertEquals(PaymentMethodCode.NO_MEANS_OF_PAYMENT, CDUSPaymentMethodCode.getByCode("8").getValue());
+        assertEquals(PaymentMethodCode.OTHER, CDUSPaymentMethodCode.getByCode("98").getValue());
+        assertEquals(PaymentMethodCode.UNKNOWN, CDUSPaymentMethodCode.getByCode("99").getValue());
     }
 }

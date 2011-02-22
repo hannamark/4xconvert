@@ -84,10 +84,6 @@ package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import gov.nih.nci.pa.enums.PatientEthnicityCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PatientRaceCode;
-import gov.nih.nci.pa.enums.PaymentMethodCode;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -102,52 +98,6 @@ import org.junit.Test;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class BatchUploadUtilsTest {
-    
-    @Test
-    public void testGenderConversion() {
-        assertEquals(PatientGenderCode.MALE, BatchUploadUtils.getGender("1"));
-        assertEquals(PatientGenderCode.FEMALE, BatchUploadUtils.getGender("2"));
-        assertEquals(PatientGenderCode.UNKNOWN, BatchUploadUtils.getGender("9"));
-        assertNull(BatchUploadUtils.getGender("3"));
-    }
-    
-    @Test
-    public void testEthnicityConversion() {
-        assertEquals(PatientEthnicityCode.HISPANIC, BatchUploadUtils.getEthnicity("1"));
-        assertEquals(PatientEthnicityCode.NOT_HISPANIC, BatchUploadUtils.getEthnicity("2"));
-        assertEquals(PatientEthnicityCode.NOT_REPORTED, BatchUploadUtils.getEthnicity("8"));
-        assertEquals(PatientEthnicityCode.UNKNOWN, BatchUploadUtils.getEthnicity("9"));
-        assertNull(BatchUploadUtils.getEthnicity("3"));
-    }
-    
-    @Test
-    public void testPaymentMethodConversion() {
-        assertEquals(PaymentMethodCode.PRIVATE, BatchUploadUtils.getPaymentMethod("1"));
-        assertEquals(PaymentMethodCode.MEDICARE, BatchUploadUtils.getPaymentMethod("2"));
-        assertEquals(PaymentMethodCode.MEDICARE_AND_PRIVATE, BatchUploadUtils.getPaymentMethod("3"));
-        assertEquals(PaymentMethodCode.MEDICAID, BatchUploadUtils.getPaymentMethod("4"));
-        assertEquals(PaymentMethodCode.MEDICAID_AND_MEDICARE, BatchUploadUtils.getPaymentMethod("5"));
-        assertEquals(PaymentMethodCode.MILITARY_OR_VETERANS, BatchUploadUtils.getPaymentMethod("6"));
-        assertEquals(PaymentMethodCode.MILITARY, BatchUploadUtils.getPaymentMethod("6A"));
-        assertEquals(PaymentMethodCode.MILITARY, BatchUploadUtils.getPaymentMethod("6a"));
-        assertEquals(PaymentMethodCode.VETERANS, BatchUploadUtils.getPaymentMethod("6B"));
-        assertEquals(PaymentMethodCode.VETERANS, BatchUploadUtils.getPaymentMethod("6b"));
-        assertEquals(PaymentMethodCode.SELF, BatchUploadUtils.getPaymentMethod("7"));
-        assertEquals(PaymentMethodCode.NO_MEANS_OF_PAYMENT, BatchUploadUtils.getPaymentMethod("8"));
-        assertEquals(PaymentMethodCode.OTHER, BatchUploadUtils.getPaymentMethod("98"));
-        assertEquals(PaymentMethodCode.UNKNOWN, BatchUploadUtils.getPaymentMethod("99"));
-    }
-    
-    @Test
-    public void testRaceConversion() {
-        assertEquals(PatientRaceCode.WHITE, BatchUploadUtils.getRace("01"));
-        assertEquals(PatientRaceCode.BLACK, BatchUploadUtils.getRace("03"));
-        assertEquals(PatientRaceCode.HAWAIIAN, BatchUploadUtils.getRace("04"));
-        assertEquals(PatientRaceCode.ASIAN, BatchUploadUtils.getRace("05"));
-        assertEquals(PatientRaceCode.AMERICAN_INDIAN, BatchUploadUtils.getRace("06"));
-        assertEquals(PatientRaceCode.NOT_REPORTED, BatchUploadUtils.getRace("98"));
-        assertEquals(PatientRaceCode.UNKNOWN, BatchUploadUtils.getRace("99"));
-    }
     
     @Test
     public void testDOBConversion() {

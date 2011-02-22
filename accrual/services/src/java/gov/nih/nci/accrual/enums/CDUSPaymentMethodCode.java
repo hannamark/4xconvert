@@ -80,37 +80,92 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service.util;
+package gov.nih.nci.accrual.enums;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.enums.CodedEnum;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
 
 /**
- * Utility methods for converting batch uploads into data objects.
+ * CDUS Payment Code mapping.
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class BatchUploadUtils {
-    private static final Logger LOG = Logger.getLogger(BatchUploadUtils.class);
-    private static final String DOB_DATE_FORMAT = "yyyyMM";
-   
+public enum CDUSPaymentMethodCode implements CodedEnum<String> {
+    /** Private Insurance. */
+    PRIVATE("1", PaymentMethodCode.PRIVATE),
+    /** Medicare. */
+    MEDICARE("2", PaymentMethodCode.MEDICARE),
+    /** Medicare and Private Insurance. */
+    MEDICARE_AND_PRIVATE("3", PaymentMethodCode.MEDICARE_AND_PRIVATE),
+    /** Medicaid. */
+    MEDICAID("4", PaymentMethodCode.MEDICAID),
+    /** Medicaid and Medicare. */
+    MEDICAID_AND_MEDICARE("5", PaymentMethodCode.MEDICAID_AND_MEDICARE),
+    /** Military or Veterans Sponsored, Not Otherwise Specified (NOS). */
+    MILITARY_OR_VETERANS("6", PaymentMethodCode.MILITARY_OR_VETERANS),
+    /** Military Sponsored (including CHAMPUS or TRICARE). */
+    MILITARY("6A", PaymentMethodCode.MILITARY),
+    /** Veterans Sponsored. */
+    VETERANS("6B", PaymentMethodCode.VETERANS),
+    /** Self pay (no insurance). */
+    SELF("7", PaymentMethodCode.SELF),
+    /** Self pay (no insurance). */
+    MANAGED_CARE_MEDICARE("8", PaymentMethodCode.NO_MEANS_OF_PAYMENT),
+    /** Other. */
+    OTHER("98", PaymentMethodCode.OTHER),
+    /** Unknown. */
+    UNKNOWN("99", PaymentMethodCode.UNKNOWN);
+    
+    private String cdusCode;
+    private PaymentMethodCode value;
+    
     /**
-     * Returns the patient date of birth from the given dob string.
-     * @param dob the dob string in year/month format
-     * @return the parsed date or null if the date is unparseable
+     * @param cdusCode the cdus representation
+     * @param value the system representation
      */
-    public static Date getPatientDOB(String dob) {
-        SimpleDateFormat formatter = new SimpleDateFormat(DOB_DATE_FORMAT, Locale.getDefault());
-        Date date = null;
-        try {
-            date = formatter.parse(dob);
-        } catch (ParseException e) {
-            LOG.error("Error parsing the following dob: " + dob);
-        }
-        return date;
+    private CDUSPaymentMethodCode(String cdusCode, PaymentMethodCode value) {
+        this.cdusCode = cdusCode;
+        this.value = value;
+        register(this);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
+    }
+    
+    /**
+     * @param code the code to lookup the code for
+     * @return the cdus payment method code
+     */
+    public static CDUSPaymentMethodCode getByCode(String code) {
+        return getByClassAndCode(CDUSPaymentMethodCode.class, code);
+    }
+
+    /**
+     * @return the code
+     */
+    public String getCode() {
+        return cdusCode;
+    }
+    
+    /**
+     *@return the display name
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+
+    /**
+     * @return the value
+     */
+    public PaymentMethodCode getValue() {
+        return value;
+    }
+
 }

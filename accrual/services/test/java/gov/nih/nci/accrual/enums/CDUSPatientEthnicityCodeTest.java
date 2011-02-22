@@ -80,37 +80,26 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service.util;
+package gov.nih.nci.accrual.enums;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
 
-import org.apache.log4j.Logger;
+import org.junit.Test;
 
 /**
- * Utility methods for converting batch uploads into data objects.
- * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ *
  */
-public class BatchUploadUtils {
-    private static final Logger LOG = Logger.getLogger(BatchUploadUtils.class);
-    private static final String DOB_DATE_FORMAT = "yyyyMM";
-   
-    /**
-     * Returns the patient date of birth from the given dob string.
-     * @param dob the dob string in year/month format
-     * @return the parsed date or null if the date is unparseable
-     */
-    public static Date getPatientDOB(String dob) {
-        SimpleDateFormat formatter = new SimpleDateFormat(DOB_DATE_FORMAT, Locale.getDefault());
-        Date date = null;
-        try {
-            date = formatter.parse(dob);
-        } catch (ParseException e) {
-            LOG.error("Error parsing the following dob: " + dob);
-        }
-        return date;
+public class CDUSPatientEthnicityCodeTest {
+    
+    @Test
+    public void testEthnicityConversion() {
+        assertEquals(PatientEthnicityCode.HISPANIC, CDUSPatientEthnicityCode.getByCode("1").getValue());
+        assertEquals(PatientEthnicityCode.NOT_HISPANIC, CDUSPatientEthnicityCode.getByCode("2").getValue());
+        assertEquals(PatientEthnicityCode.NOT_REPORTED, CDUSPatientEthnicityCode.getByCode("8").getValue());
+        assertEquals(PatientEthnicityCode.UNKNOWN, CDUSPatientEthnicityCode.getByCode("9").getValue());
+        assertNull(CDUSPatientEthnicityCode.getByCode("3"));
     }
 }

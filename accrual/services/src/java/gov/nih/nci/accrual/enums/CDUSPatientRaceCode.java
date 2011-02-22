@@ -80,37 +80,81 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service.util;
+package gov.nih.nci.accrual.enums;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.enums.CodedEnum;
+import gov.nih.nci.pa.enums.PatientRaceCode;
 
 /**
- * Utility methods for converting batch uploads into data objects.
+ * CDUS Patient Race Code mapping.
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class BatchUploadUtils {
-    private static final Logger LOG = Logger.getLogger(BatchUploadUtils.class);
-    private static final String DOB_DATE_FORMAT = "yyyyMM";
-   
+public enum CDUSPatientRaceCode implements CodedEnum<String> {
+    /** White. */
+    WHITE("01", PatientRaceCode.WHITE),
+    /** Black or African American. */
+    BLACK("03", PatientRaceCode.BLACK),
+    /** Native Hawaiian or Other Pacific Islander. */
+    HAWAIIAN("04", PatientRaceCode.HAWAIIAN),
+    /** Asian. */
+    ASIAN("05", PatientRaceCode.ASIAN),
+    /** American Indian or Alaska Native. */
+    AMERICAN_INDIAN("06", PatientRaceCode.AMERICAN_INDIAN),
+    /** Not Reported. */
+    NOT_REPORTED("98", PatientRaceCode.NOT_REPORTED),
+    /** Unknown. */
+    UNKNOWN("99", PatientRaceCode.UNKNOWN);
+    
+    private String cdusCode;
+    private PatientRaceCode value;
+    
     /**
-     * Returns the patient date of birth from the given dob string.
-     * @param dob the dob string in year/month format
-     * @return the parsed date or null if the date is unparseable
+     * @param cdusCode the cdus representation
+     * @param value the system representation
      */
-    public static Date getPatientDOB(String dob) {
-        SimpleDateFormat formatter = new SimpleDateFormat(DOB_DATE_FORMAT, Locale.getDefault());
-        Date date = null;
-        try {
-            date = formatter.parse(dob);
-        } catch (ParseException e) {
-            LOG.error("Error parsing the following dob: " + dob);
-        }
-        return date;
+    private CDUSPatientRaceCode(String cdusCode, PatientRaceCode value) {
+        this.cdusCode = cdusCode;
+        this.value = value;
+        register(this);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
+    }
+    
+    /**
+     * @param code the code to lookup the code for
+     * @return the cdus race code
+     */
+    public static CDUSPatientRaceCode getByCode(String code) {
+        return getByClassAndCode(CDUSPatientRaceCode.class, code);
+    }
+
+    /**
+     * @return the code
+     */
+    public String getCode() {
+        return cdusCode;
+    }
+    
+    /**
+     *@return the display name
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+
+    /**
+     * @return the value
+     */
+    public PatientRaceCode getValue() {
+        return value;
     }
 }

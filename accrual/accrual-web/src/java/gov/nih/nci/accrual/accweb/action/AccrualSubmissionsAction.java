@@ -243,12 +243,10 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
     }
     
     private void validateSubmission() throws RemoteException {
+        List<SubmissionDto> listOfSubmissions = getSubmissionSvc().getByStudyProtocol(getSpIi());
         if (PAUtil.isTsNull(submission.getCutOffDate())) {
             addActionError("Please Enter Submission Cut off Date.");
-        }
-        
-        List<SubmissionDto> listOfSubmissions = getSubmissionSvc().getByStudyProtocol(getSpIi());
-        if (!listOfSubmissions.isEmpty()) {
+        } else if (!listOfSubmissions.isEmpty()) {
             Ts cutOffDate = getMaxCutOffDate(listOfSubmissions);
             if (submission.getCutOffDate().getValue().before(cutOffDate.getValue())) {
                 addActionError("New Cut-off Date must be same or bigger than"
