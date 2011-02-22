@@ -33,6 +33,11 @@ function assignOwner(userId) {
     document.forms[0].submit();
 }
 
+function removeOwner(userId) {
+    document.forms[0].action="assignOwnershipremove.action?userId=" + userId;
+    document.forms[0].submit();
+}
+
 </SCRIPT>
 </head>
 <body>
@@ -114,13 +119,15 @@ function assignOwner(userId) {
             <display:column escapeXml="true" titleKey="pending.emailAddress" property="regUser.emailAddress"
                 sortable="true" headerClass="sortable" />
             <display:column class="title" titleKey="studyProtocol.action">
-                <c:choose>
-                    <c:when test="${row.owner == true}">Trial Owner</c:when>
-                    <c:otherwise>
-                        <a href="#" onclick="assignOwner('${row.regUser.id}');">Assign Ownership</a>
-                    </c:otherwise>
-                </c:choose>
-            </display:column>
+                    <c:choose>
+                        <c:when test="${row.owner == true}">
+                            <a href="#" onclick="removeOwner('${row.regUser.id}');">Remove Ownership</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="#" onclick="assignOwner('${row.regUser.id}');">Assign Ownership</a>
+                        </c:otherwise>
+                    </c:choose>
+            </display:column>        
         </display:table>
     </s:if>
 </s:form></div>

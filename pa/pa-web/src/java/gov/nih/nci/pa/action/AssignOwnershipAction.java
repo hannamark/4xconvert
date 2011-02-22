@@ -65,23 +65,46 @@ public class AssignOwnershipAction extends ActionSupport {
      * @return string
      */
      public String save() {
-       String userId = ServletActionContext.getRequest().getParameter("userId");
-       Ii spIi = (Ii) ServletActionContext.getRequest().getSession()
-           .getAttribute(Constants.STUDY_PROTOCOL_II);
-       try {
-           if (StringUtils.isNotEmpty(userId) && PAUtil.isIiNotNull(spIi)) {
-               getRegistryUserService().assignOwnership(Long.parseLong(userId),
-                       IiConverter.convertToLong(spIi));
-           } else {
-               addActionError("Please select user to change ownership.");
-               return view();
-           }
-       } catch (PAException e) {
-           addActionError(e.getLocalizedMessage());
-           return view();
+         return changeOwnership(true);
+    }
+     
+    /**
+    * Remove owner of trial.
+    * @return string
+    */
+    public String remove() {
+        return changeOwnership(false);
+    }
+    
+    private String changeOwnership(boolean assign) {
+        String userId = ServletActionContext.getRequest().getParameter("userId");
+        Ii spIi = (Ii) ServletActionContext.getRequest().getSession()
+            .getAttribute(Constants.STUDY_PROTOCOL_II);
+        String successMessage = null;
+        try {
+            if (StringUtils.isNotEmpty(userId) && PAUtil.isIiNotNull(spIi)) {
+                successMessage = changeOwnershipHelper(assign, Long.parseLong(userId),
+                        IiConverter.convertToLong(spIi));
+            } else {
+                addActionError(getText("assignOwnership.user.error"));
+                return view();
+            }
+        } catch (PAException e) {
+            addActionError(e.getLocalizedMessage());
+            return view();
+        }
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, successMessage);
+        return search();
+     }
+    
+    private String changeOwnershipHelper(boolean assign, Long userId, Long trialId) throws PAException {
+       if (assign) {
+           PaRegistry.getRegistryUserService().assignOwnership(userId, trialId);
+           return getText("assignOwnership.assign.success");
+       } else {
+           PaRegistry.getRegistryUserService().removeOwnership(userId, trialId);
+           return getText("assignOwnership.remove.success");
        }
-       ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Ownership has been changed.");
-       return search();
     }
 
     /**

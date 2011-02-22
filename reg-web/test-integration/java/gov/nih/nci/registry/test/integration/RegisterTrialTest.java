@@ -121,6 +121,12 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
         assertTrue("No success message found",
                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+        
+        // try to register a trial with the a new lead org trial ID (and title) and succeed
+        registerTrial("Test Assign Ownership Trial created by Selenium.", "LEAD-ORG3");
+        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
+        assertTrue("No success message found",
+                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
     }
 
     /**
@@ -136,6 +142,5 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         registerDraftTrial("Test Trial Draft created by Selenium.", "LEAD-ORG");
         assertTrue("No success message found",
                    selenium.isTextPresent("The trial draft has been successfully saved and assigned the Identifier"));
-
     }
 }
