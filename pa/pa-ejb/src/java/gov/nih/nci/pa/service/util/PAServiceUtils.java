@@ -225,7 +225,7 @@ public class PAServiceUtils {
     protected static final int NCI_ID_SIZE = 5;
     private static final Logger LOG  = Logger.getLogger(PAServiceUtils.class);
     private static final int MAXF = 1024;
-    
+
     /**
      * Executes an sql.
      * @param sql sql to be executed
@@ -278,14 +278,13 @@ public class PAServiceUtils {
         return toIi;
 
     }
-    
+
     /**
      * Method to add an nci identifier to a study protocol.
      * @param spIi trial ii
      * @throws PAException on error.
      */
     public void addNciIdentifierToTrial(Ii spIi) throws PAException {
-        
         if (PAUtil.isIiNull(spIi)) {
             throw new PAException("Trial must have an Ii created.");
         }
@@ -305,7 +304,7 @@ public class PAServiceUtils {
           }
         session.save(sp);
     }
-    
+
     /**
      * Generate a unique nci id.
      * @param session the session
@@ -448,13 +447,13 @@ public class PAServiceUtils {
      * @throws PAException on error
      */
     public void removeRegulatoryAuthority(Ii studyProtocolIi) throws PAException {
-      List<StudyRegulatoryAuthorityDTO> sraDtos = PaRegistry.getStudyRegulatoryAuthorityService()
-                  .getByStudyProtocol(studyProtocolIi);
-            if (CollectionUtils.isNotEmpty(sraDtos)) {
-                PaRegistry.getStudyRegulatoryAuthorityService().delete(sraDtos.get(0).getIdentifier());
-            }
+        List<StudyRegulatoryAuthorityDTO> sraDtos = PaRegistry.getStudyRegulatoryAuthorityService()
+            .getByStudyProtocol(studyProtocolIi);
+        if (CollectionUtils.isNotEmpty(sraDtos)) {
+            PaRegistry.getStudyRegulatoryAuthorityService().delete(sraDtos.get(0).getIdentifier());
+        }
 
-   }
+    }
 
     /**
      *
@@ -493,11 +492,8 @@ public class PAServiceUtils {
                 DSetConverter.convertDSetToList(dset, PAConstants.PHONE).get(0));
     }
 
-    private void createSponsorAsPrimaryContact(Ii studyProtocolIi ,
-            OrganizationDTO sponsorOrganizationDTO ,
-            Ii responsiblePartyContactIi ,
-            StudySiteContactDTO studySiteContactDTO) throws PAException {
-
+    private void createSponsorAsPrimaryContact(Ii studyProtocolIi, OrganizationDTO sponsorOrganizationDTO,
+            Ii responsiblePartyContactIi, StudySiteContactDTO studySiteContactDTO) throws PAException {
         DSet<Tel> dset = studySiteContactDTO.getTelecomAddresses();
         PAContactDTO contactDto = new PAContactDTO();
         contactDto.setOrganizationIdentifier(
@@ -576,8 +572,6 @@ public class PAServiceUtils {
                 PaRegistry.getStudyResourcingService().updateStudyResourcing(summary4ResoureDTO);
             }
         }
-
-
     }
 
     /**

@@ -68,7 +68,7 @@ csm.remote.group.sync.seconds = 240
 idps.allow.password.editing=Dorian
 
 # Use the tier-specific Registration application url
-register.mail.body.url=http://${pa.server.name}:${jboss.port}/registry
+register.mail.body.url=http://${pa.server.name}:${jboss.port}/registry/registerUseractivate.action
 
 gridgrouper.submitter.group=COPPA:PA:Submitter
 gridgrouper.admin.user=ctrpgrouper
