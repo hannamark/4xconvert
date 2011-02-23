@@ -68,7 +68,9 @@ function removeOwner(userId) {
                 <c:out value="${row.state}"/>
                 <c:out value="${row.postalCode}"/>
             </display:column>.       
-                     
+            <display:column class="title" titleKey="studyProtocol.action">
+                <a href="#" onclick="removeOwner('${row.id}');">Remove Ownership</a>   
+            </display:column>              
         </display:table>
     </div>
     

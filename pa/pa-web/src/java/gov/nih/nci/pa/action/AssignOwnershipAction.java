@@ -56,6 +56,7 @@ public class AssignOwnershipAction extends ActionSupport {
      * @return string
      */
     public String search() {
+        view();
         loadRegistryUsers();
         return SUCCESS;
     }
