@@ -24,6 +24,7 @@
     <property name="services-client.jar" value="accrual-services-client.jar"/>
     <property name="services.build.testSrcDir" value="${basedir}/test/java"/>
     <property name="services.build.testOutputDir" value="${services.build.dir}/test-classes"/>
+    <property name="services.build.testResourceDir" value="${basedir}/test/resources"/>
     <property name="services.build.coberturaOutputDir" value="${services.build.dir}/generated-classes"/>
     <property name="services.test.reports" value="${services.report.dir}/test-reports"/>
 
@@ -209,6 +210,9 @@
                 <path refid="test.classpath"/>
             </classpath>
         </javac>
+        <copy todir="${services.build.outputDir}">
+            <fileset dir="${services.build.testResourceDir}"/>
+        </copy>
     </target>
 
 

@@ -50,7 +50,10 @@
     <dependency org="org.jdom"               name="jdom"                    rev="1.1"             conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="compile->master"/>
     <dependency org="org.springframework"    name="spring"                  rev="2.0.5"           conf="compile->master"/>
-
+    <dependency org="org.mockito"            name="mockito-all"             rev="1.8.4"           conf="compile->master"/>
+    <dependency org="net.sf.opencsv"         name="opencsv"                 rev="2.1"             conf="compile->master"/>
+    <dependency org="commons-validator"      name="commons-validator"       rev="1.3.0"             conf="compile->master"/>
+    
     <!-- unit test target -->
     <dependency org="dom4j"                  name="dom4j"                   rev="1.6.1"           conf="test->master"/>
     <dependency org="org.hsqldb"             name="hsqldb"                  rev="1.8.0.10"        conf="test->master"/>
