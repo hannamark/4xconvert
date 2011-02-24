@@ -95,8 +95,10 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -308,6 +310,28 @@ public class PADomainUtils {
             }
         }
         return assignedIdentifier;
+    }
+    
+    /**
+     * Extract lead org sp id from study protocol.
+     * @param sp trial
+     * @return lead org id.
+     * @throws PAException on error.
+     */
+    public static String getLeadOrgSpId(StudyProtocol sp) throws PAException {
+        String returnVal = null;
+        if (CollectionUtils.isNotEmpty(sp.getStudySites())) {
+            for (StudySite ss : sp.getStudySites()) {
+                if (StudySiteFunctionalCode.LEAD_ORGANIZATION.equals(ss.getFunctionalCode())) {
+                    returnVal = ss.getLocalStudyProtocolIdentifier();
+                }
+            }
+        }
+        
+        if (returnVal == null) {
+            throw new PAException("Trial with id " + sp.getId() + " is missing a Lead Org Id");
+        }
+        return returnVal;
     }
 
     /**

@@ -79,28 +79,25 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestRegistryUserSchema;
 
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  *
- * @author NAmiruddin
+ * @author mshestopalov
  *
  */
-public class RegistryUserServiceTest {
+public class SearchAssignOwnershipTest {
     private final RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
 
     @Before
@@ -110,117 +107,22 @@ public class RegistryUserServiceTest {
         TestRegistryUserSchema.primeData();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }
+    
 
     @Test
-    public void createUserTest() throws Exception {
-        RegistryUser create = createRegisterUserObj();
-        RegistryUser saved = remoteEjb.createUser(create);
-        assertRegistryUser(create , saved);
-    }
-
-    @Test
-    public void updateUserTest() throws Exception {
-        RegistryUser create = createRegisterUserObj();
-        remoteEjb.createUser(create);
-        create.setFirstName("firstnamechanged");
-        RegistryUser saved = remoteEjb.updateUser(create);
-        assertRegistryUser(create , saved);
-    }
-    @Test
-    public void getUserById() throws PAException {
-        RegistryUser usr = remoteEjb.getUserById(TestRegistryUserSchema.randomUserId);
-        assertNotNull(usr);
-    }
-    @Test
-    public void getUserByUserOrgType() throws PAException {
-        List<RegistryUser> usrLst = remoteEjb.getUserByUserOrgType(UserOrgType.PENDING_ADMIN);
-        assertEquals(0, usrLst.size());
-        usrLst = remoteEjb.getUserByUserOrgType(UserOrgType.ADMIN);
-        assertTrue(usrLst.size() >= 1);
-    }
-
-    @Test
-    public void hasTrialAccess() throws PAException {
-        Long spId = TestRegistryUserSchema.studyProtocolId;
-        assertTrue(remoteEjb.hasTrialAccess("leadOrgAdminTest", spId));
-        assertFalse(remoteEjb.hasTrialAccess("trialOwnerTest", spId));
-        assertFalse(remoteEjb.hasTrialAccess("randomUserTest", spId));
-    }
-
-    @Test
-    public void getTrialOwnerNames() throws PAException {
-        Long spId = TestRegistryUserSchema.studyProtocolId;
-        Long userId = TestRegistryUserSchema.randomUserId;
-        remoteEjb.assignOwnership(userId, spId);
-        List<String> list = remoteEjb.getTrialOwnerNames(spId);
-        assertTrue(list.contains("random random"));
-    }
-
-    @Test
-    public void getTrialOwners() throws PAException {
+    public void searchTrialOwnershipInformation() throws PAException{
+        DisplayTrialOwnershipInformation criteria = new DisplayTrialOwnershipInformation();
+       
         Long spId = TestRegistryUserSchema.studyProtocolId;
         Long userId = TestRegistryUserSchema.trialOwnerUserId;
         remoteEjb.assignOwnership(userId, spId);
-        Set<RegistryUser> regUsers = remoteEjb.getAllTrialOwners(spId);
-        assertEquals(1, regUsers.size());
-        assertEquals("owner", regUsers.iterator().next().getLastName());
-    }
-
-    @Test
-    public void search() throws PAException{
-        List<RegistryUser> usrLst = remoteEjb.search(new RegistryUser());
-        assertNotNull(usrLst);
-    }
-
-    @Test
-    public void assignOwnership() throws PAException{
-        Long spId = TestRegistryUserSchema.studyProtocolId;
-        Long userId = TestRegistryUserSchema.randomUserId;
-        remoteEjb.assignOwnership(userId, spId);
         assertTrue(remoteEjb.isTrialOwner(userId, spId));
-    }
-
-    @Test
-    public void removeOwnership() throws PAException{
-        Long spId = TestRegistryUserSchema.studyProtocolId;
-        Long userId = TestRegistryUserSchema.randomUserId;
-        remoteEjb.removeOwnership(userId, spId);
-        assertFalse(remoteEjb.isTrialOwner(userId, spId));
-    }
-
-    private RegistryUser createRegisterUserObj() {
-        RegistryUser create = new RegistryUser();
-        create.setAddressLine("xxxxx");
-
-        create.setAffiliateOrg("aff");
-        create.setCity("city");
-        create.setCountry("country");
-        create.setCsmUserId(Long.valueOf(1));
-        create.setFirstName("firstname");
-        create.setLastName("lastname");
-        create.setMiddleName("middlename");
-        create.setPhone("1111");
-        create.setPostalCode("00000");
-        create.setState("va");
-        create.setPrsOrgName("prsOrgName");
-        create.setAffiliatedOrganizationId(501L);
-        create.setAffiliatedOrgUserType(UserOrgType.ADMIN);
-        return create;
-    }
-
-    private void assertRegistryUser(RegistryUser create , RegistryUser saved) {
-        assertNotNull(saved);
-        assertNotNull(create);
-        assertEquals("Address does not match  " , create.getAddressLine(), saved.getAddressLine());
-        assertEquals("Affliate Org not match  " , create.getAffiliateOrg(), saved.getAffiliateOrg());
-        assertEquals("City does not match  " , create.getCity(), saved.getCity());
-        assertEquals("Country does not match  " , create.getCountry(), saved.getCountry());
-        assertEquals("CSM User id does not match  " , create.getCsmUserId(), saved.getCsmUserId());
-        assertEquals("First name does not match  " , create.getFirstName(), saved.getFirstName());
-        assertEquals("Last name does not match  " , create.getLastName(), saved.getLastName());
-        assertEquals("Middle name does not match  " , create.getMiddleName(), saved.getMiddleName());
-        assertEquals("Phone does not match  " , create.getPhone(), saved.getPhone());
-        assertEquals("Postal code does not match  " , create.getPostalCode(), saved.getPostalCode());
-        assertEquals("User Org Type does not match ", create.getAffiliatedOrgUserType(), saved.getAffiliatedOrgUserType());
+        List<DisplayTrialOwnershipInformation> usrLst = remoteEjb.searchTrialOwnership(criteria, Long.parseLong("1"));
+        assertNotNull(usrLst);
+        assertEquals(1, usrLst.size());
+        assertEquals("Local SP ID 01", usrLst.get(0).getLeadOrgId());
+        assertEquals("NCI-2009-00001", usrLst.get(0).getNciIdentifier());
+        assertEquals("1", usrLst.get(0).getTrialId());
+        
     }
 }

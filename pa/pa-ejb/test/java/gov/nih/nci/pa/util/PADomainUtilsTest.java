@@ -83,6 +83,11 @@
 package gov.nih.nci.pa.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.service.PAException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -102,5 +107,34 @@ public class PADomainUtilsTest {
         assertEquals("", countryName);
         countryName = PADomainUtils.getCountryNameUsingAlpha3Code("CAM");
         assertEquals("Cayman Islands", countryName);
+    }
+    
+    @Test
+    public void testGetLeadOrgSpId() throws Exception{
+
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(4L);
+        StudySite ss = new StudySite();
+        ss.setFunctionalCode(StudySiteFunctionalCode.COLLABORATORS);
+        ss.setLocalStudyProtocolIdentifier("test lead org");
+        try {
+            String leadOrgId = PADomainUtils.getLeadOrgSpId(sp);
+            fail("Should not find lead org for empty study site list");
+        } catch (PAException pe1) {
+            assertEquals(pe1.getMessage(), "Trial with id 4 is missing a Lead Org Id");
+        }
+        sp.getStudySites().add(ss);
+        try {
+            String leadOrgId2 = PADomainUtils.getLeadOrgSpId(sp);
+            fail("Should not find lead org for any site that is not a lead org functional code.");
+        } catch (PAException pe1) {
+            assertEquals(pe1.getMessage(), "Trial with id 4 is missing a Lead Org Id");
+        }
+        ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        
+        String leadOrgId3 = PADomainUtils.getLeadOrgSpId(sp);
+        
+        assertEquals("test lead org", leadOrgId3);
+        
     }
 }

@@ -85,6 +85,7 @@ function resetSearch() {
             <display:column escapeXml="true" titleKey="displaytrialownership.results.lastname" property="lastName" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column escapeXml="true" titleKey="displaytrialownership.results.email" property="emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.nciidentifier" property="nciIdentifier"  sortable="true" headerClass="sortable" headerScope="col"/>
+            <display:column titleKey="displaytrialownership.results.leadOrgId" property="leadOrgId"  sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.action">
                 <c:url var="removeUrl" value="displayTrialOwnershipremoveOwnership.action">
                     <c:param name="userId" value="${row.userId}" />

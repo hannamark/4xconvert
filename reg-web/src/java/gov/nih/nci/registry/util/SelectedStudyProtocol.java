@@ -94,7 +94,7 @@ public class SelectedStudyProtocol {
     private StudyProtocol studyProtocol;
     private boolean selected;
     private String nciIdentifier;
-
+    private String leadOrgId;
     /**
      * @return the studyProtocol
      */
@@ -130,5 +130,17 @@ public class SelectedStudyProtocol {
      */
     public void setNciIdentifier(String nciIdentifier) {
         this.nciIdentifier = nciIdentifier;
+    }
+    /**
+     * @param leadOrgId the leadOrgId to set
+     */
+    public void setLeadOrgId(String leadOrgId) {
+        this.leadOrgId = leadOrgId;
+    }
+    /**
+     * @return the leadOrgId
+     */
+    public String getLeadOrgId() {
+        return leadOrgId;
     }
 }

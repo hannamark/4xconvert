@@ -223,6 +223,7 @@ public class ManageTrialOwnershipAction extends ActionSupport {
             SelectedStudyProtocol selectedStudyProtocol = new SelectedStudyProtocol();
             selectedStudyProtocol.setStudyProtocol(sp);
             selectedStudyProtocol.setNciIdentifier(PADomainUtils.getAssignedIdentifierExtension(sp));
+            selectedStudyProtocol.setLeadOrgId(PADomainUtils.getLeadOrgSpId(sp));
             studyProtocols.add(selectedStudyProtocol);
         }
         ServletActionContext.getRequest().getSession().setAttribute(
@@ -359,11 +360,11 @@ public class ManageTrialOwnershipAction extends ActionSupport {
         // check if currently owner or not.
         boolean isOwner = PaRegistry.getRegistryUserService().isTrialOwner(userId, tId);
         if (assign && !isOwner) {
-            PaRegistry.getRegistryUserService().assignOwnership(userId, trialId);
+            PaRegistry.getRegistryUserService().assignOwnership(userId, tId);
         }
 
         if (!assign && isOwner) {
-            PaRegistry.getRegistryUserService().removeOwnership(userId, trialId);
+            PaRegistry.getRegistryUserService().removeOwnership(userId, tId);
         }
     }
 

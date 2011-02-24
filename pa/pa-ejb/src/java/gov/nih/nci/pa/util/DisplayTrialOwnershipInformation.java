@@ -98,6 +98,7 @@ public class DisplayTrialOwnershipInformation implements Serializable {
     private String trialId;
     private String nciIdentifier;
     private String affiliatedOrgId;
+    private String leadOrgId;
     private static final long serialVersionUID = 1L;
 
     /**
@@ -196,6 +197,20 @@ public class DisplayTrialOwnershipInformation implements Serializable {
      */
     public void setAffiliatedOrgId(String affiliatedOrgId) {
         this.affiliatedOrgId = affiliatedOrgId;
+    }
+
+    /**
+     * @param leadOrgId the leadOrgId to set
+     */
+    public void setLeadOrgId(String leadOrgId) {
+        this.leadOrgId = leadOrgId;
+    }
+
+    /**
+     * @return the leadOrgId
+     */
+    public String getLeadOrgId() {
+        return leadOrgId;
     }
 
 }

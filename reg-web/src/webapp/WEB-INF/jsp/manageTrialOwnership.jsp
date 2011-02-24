@@ -88,6 +88,7 @@ function updateTrial(trialId) {
                                 decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="studyProtocolRow"
                                   name="orgTrials" requestURI="manageTrialOwnershipview.action" export="false">
                         <display:column titleKey="managetrialownership.trials.nciidentifier" property="nciIdentifier" sortable="true" headerClass="sortable" headerScope="col"/>
+                        <display:column titleKey="managetrialownership.trials.leadOrgId" property="leadOrgId" sortable="true" headerClass="sortable" headerScope="col"/>
                         <display:column titleKey="managetrialownership.trials.allow" sortable="true" headerClass="sortable">
                             <c:set var="chkTrialId" value="chk${studyProtocolRow.studyProtocol.id}" />
                             <c:choose>

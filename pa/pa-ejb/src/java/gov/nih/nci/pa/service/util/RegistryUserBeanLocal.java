@@ -131,6 +131,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final int INDEX_TRIAL_ID = 4;
     private static final int INDEX_NCI_IDENTIFIER = 5;
     private static final int INDEX_ORG_ID = 6;
+    private static final int INDEX_LEAD_ID = 7;
 
 
     /**
@@ -322,7 +323,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         List<DisplayTrialOwnershipInformation> lst = new ArrayList<DisplayTrialOwnershipInformation>();
         StringBuffer hql = new StringBuffer();
         hql.append("select sowner.id, sowner.firstName, sowner.lastName, sowner.emailAddress, "
-                + "sp.id, otherid.extension, sowner.affiliatedOrganizationId "
+                + "sp.id, otherid.extension, sowner.affiliatedOrganizationId, sps.localStudyProtocolIdentifier "
                 + "from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws "
                 + "left outer join sp.studySites as sps "
                 + "left outer join sps.researchOrganization as ro left outer join ro.organization as org "
@@ -357,6 +358,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             trialInfo.setTrialId(ObjectUtils.toString(row[INDEX_TRIAL_ID]));
             trialInfo.setNciIdentifier(ObjectUtils.toString(row[INDEX_NCI_IDENTIFIER]));
             trialInfo.setAffiliatedOrgId(ObjectUtils.toString(row[INDEX_ORG_ID]));
+            trialInfo.setLeadOrgId(ObjectUtils.toString(row[INDEX_LEAD_ID]));
             lst.add(trialInfo);
         }
 

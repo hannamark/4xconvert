@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationTest;
@@ -88,10 +89,12 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Connection;
@@ -117,7 +120,8 @@ public class TestRegistryUserSchema {
         public static Long leadOrgUserId;
         public static Long trialOwnerUserId;
         public static Long randomUserId;
-
+        public static Long orgId;
+        
         private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
         /**
@@ -164,6 +168,7 @@ public class TestRegistryUserSchema {
                     statement.executeUpdate("delete from STUDY_SITE_ACCRUAL_STATUS");
                     statement.executeUpdate("delete from STUDY_SITE_CONTACT");
                     statement.executeUpdate("delete from STUDY_SITE");
+                    statement.executeUpdate("delete from STUDY_OWNER");
                     statement.executeUpdate("delete from DOCUMENT");
                     statement.executeUpdate("delete from STUDY_RESOURCING");
                     statement.executeUpdate("delete from STRATUM_GROUP");
@@ -257,11 +262,18 @@ public class TestRegistryUserSchema {
                 randomUser.setFirstName("random");
                 addUpdObject(randomUser);
                 randomUserId = randomUser.getId();
-
+                
+                Organization org = OrganizationTest.createOrganizationObj(createUser());
+                addUpdObject(org);
+                orgId = org.getId();
+                org.setIdentifier(String.valueOf(org.getId()));
+                
                 RegistryUser trialOwner = new RegistryUser();
                 trialOwner.setCsmUserId(csmUserTrialOwner.getUserId());
                 trialOwner.setLastName("owner");
                 trialOwner.setFirstName("owner");
+                trialOwner.setAffiliatedOrganizationId(org.getId());
+                trialOwner.setAffiliatedOrgUserType(UserOrgType.MEMBER);
                 addUpdObject(trialOwner);
                 trialOwnerUserId = trialOwner.getId();
 
@@ -274,6 +286,7 @@ public class TestRegistryUserSchema {
                 sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
                 Ii ii = new Ii();
                 ii.setExtension("NCI-2009-00001");
+                ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
                 Set<Ii> otherIdentifiers = new HashSet<Ii>();
                 otherIdentifiers.add(ii);
                 sp.setOtherIdentifiers(otherIdentifiers);
@@ -286,10 +299,11 @@ public class TestRegistryUserSchema {
                 addUpdObject(sp);
                 sp.setId(sp.getId());
                 studyProtocolId = sp.getId();
-
-                Organization org = OrganizationTest.createOrganizationObj(createUser());
-                addUpdObject(org);
-                org.setIdentifier(String.valueOf(org.getId()));
+                
+                DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
+                dws.setStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
+                dws.setStudyProtocol(sp);
+                addUpdObject(dws);
 
                 RegistryUser leadOrgAdmin = new RegistryUser();
                 leadOrgAdmin.setCsmUserId(csmUserLeadOrg.getUserId());

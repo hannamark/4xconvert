@@ -5,9 +5,11 @@ package gov.nih.nci.registry.service;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -123,6 +125,10 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
                 sp.setProprietaryTrialIndicator(Boolean.valueOf(spDto.isProprietaryTrial()));
                 sp.setCtgovXmlRequiredIndicator(spDto.getCtgovXmlRequiredIndicator());
                 sp.setUserLastCreated(null);
+                StudySite ss = new StudySite();
+                ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+                ss.setLocalStudyProtocolIdentifier(spDto.getLocalStudyProtocolIdentifier());
+                sp.getStudySites().add(ss);
                 returnList.add(sp);
             }
         }
