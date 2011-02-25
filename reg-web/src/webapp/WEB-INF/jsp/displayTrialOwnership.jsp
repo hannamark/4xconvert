@@ -9,6 +9,7 @@
     <s:head/>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
+window.onload=viewPagination;
 function submitForm() {
     document.forms[0].action="displayTrialOwnershipsearch.action";
     document.forms[0].submit();
@@ -21,6 +22,15 @@ function resetSearch() {
     document.getElementById("nciIdentifier").value="";
     submitForm();
 }
+function viewAll() {
+    document.getElementById('viewPagination').style.display='none';
+    document.getElementById('viewAll').style.display='';
+}
+function viewPagination() {
+    document.getElementById('viewPagination').style.display='';
+    document.getElementById('viewAll').style.display='none';
+}
+     
 
 </SCRIPT>
 <body>
@@ -78,9 +88,30 @@ function resetSearch() {
         <div class="line"></div>
         <s:set name="records" value="trialOwnershipInfo" scope="request"/>
         <h2 id="search_results">Search Results</h2>
-        <display:table class="data" summary="This table contains your search results."
-                     sort="list" pagesize="10" id="row"
-                      name="records" requestURI="displayTrialOwnershipview.action" export="false">
+        <div id="viewAll" style="display:'none'">
+           <s:a href="#" onclick="viewPagination();" id="pageView"> View Pagination </s:a>
+           <display:table class="data" summary="This table contains your search results."
+                     sort="list" id="row" name="records" requestURI="displayTrialOwnershipview.action" export="false">
+            <display:column escapeXml="true" titleKey="displaytrialownership.results.firstname" property="firstName" maxLength= "200" sortable="true" headerClass="sortable" headerScope="col"/>
+            <display:column escapeXml="true" titleKey="displaytrialownership.results.lastname" property="lastName" sortable="true" headerClass="sortable" headerScope="col"/>
+            <display:column escapeXml="true" titleKey="displaytrialownership.results.email" property="emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
+            <display:column titleKey="displaytrialownership.results.nciidentifier" property="nciIdentifier"  sortable="true" headerClass="sortable" headerScope="col"/>
+            <display:column titleKey="displaytrialownership.results.action">
+                <c:url var="removeUrl" value="displayTrialOwnershipremoveOwnership.action">
+                    <c:param name="userId" value="${row.userId}" />
+                    <c:param name="trialId" value="${row.trialId}" />
+                </c:url>
+                <a href="<c:out value="${removeUrl}"/>" class="btn" >
+                    <span class="btn_img"><span class="delete"><fmt:message key="displaytrialownership.buttons.remove"/></span></span>
+                </a>
+            </display:column>
+        </display:table>
+        </div>
+        <div id="viewPagination">
+           <s:a href="#" onclick="viewAll();" id="allView"> View All </s:a>
+           <display:table class="data" summary="This table contains your search results."
+                     sort="list" pagesize="50" id="row"
+                         name="records" requestURI="displayTrialOwnershipview.action" export="false">
             <display:column escapeXml="true" titleKey="displaytrialownership.results.firstname" property="firstName" maxLength= "200" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column escapeXml="true" titleKey="displaytrialownership.results.lastname" property="lastName" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column escapeXml="true" titleKey="displaytrialownership.results.email" property="emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
@@ -96,6 +127,7 @@ function resetSearch() {
                 </a>
             </display:column>
         </display:table>
+        </div>
     </s:form>
 </div>
 </body>
