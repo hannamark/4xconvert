@@ -84,6 +84,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -129,5 +130,12 @@ public class MockSearchStudySiteBean implements SearchStudySiteService {
      */
     public List<SearchStudySiteResultDto> search(Ii studyProtocolIi, St authUser) throws RemoteException {
         return dtos.get(studyProtocolIi);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Ii getStudySiteIdentifierByLocalIdentifier(Ii studyProtocolIi, St localIdentifier) throws PAException {
+       return IiConverter.convertToStudySiteIi(S1DUKE);
     }
 }

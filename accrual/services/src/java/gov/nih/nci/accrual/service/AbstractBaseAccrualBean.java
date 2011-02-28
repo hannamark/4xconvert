@@ -82,11 +82,9 @@ import gov.nih.nci.accrual.convert.AbstractConverter;
 import gov.nih.nci.accrual.convert.Converters;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -99,7 +97,6 @@ import java.util.zip.DataFormatException;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -116,7 +113,6 @@ import org.hibernate.Session;
 public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends AbstractEntity,
         CONVERTER extends AbstractConverter<DTO, BO>> implements BaseAccrualService<DTO> {
 
-    private static final String GRID_CONTEXT_NAME = "Gr1DU5er";
     private final Class<BO> typeArgument;
     private final Class<CONVERTER> converterArgument;
     private static final Logger LOG = Logger.getLogger(AbstractBaseAccrualBean.class);
@@ -249,26 +245,6 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
             throw new RemoteException("Create method should be used to create new.");
         }
         return createOrUpdateNew(dto, Converters.get(getConverterArgument()));
-    }
-
-    /**
-     * @param loginName a passed in login in name to test
-     * @throws RemoteException exception
-     */
-    protected void validateLoginName(St loginName) throws RemoteException {
-        String lName = StConverter.convertToString(loginName);
-        if (StringUtils.isEmpty(lName)) {
-            throw new RemoteException("LoginName must be set.");
-        }
-
-        try {
-            String contextName = getEjbContext().getCallerPrincipal().getName();
-            if (!lName.equals(contextName) && !contextName.startsWith(GRID_CONTEXT_NAME)) {
-                LOG.info("LoginName does not match context.");
-            }
-        } catch (Exception e) {
-            LOG.info("Context not found.");
-        }
     }
 
     /**

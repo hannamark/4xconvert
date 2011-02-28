@@ -91,7 +91,9 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 
+import java.io.File;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -144,7 +146,6 @@ public class MockSubmissionBean implements SubmissionService {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unused")
     public Bl isAuthorized(Ii studyProtocolIi, St authorizedUser) throws RemoteException {
         return BlConverter.convertToBl(true);
     }
@@ -184,5 +185,19 @@ public class MockSubmissionBean implements SubmissionService {
     public SubmissionDto update(SubmissionDto dto) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void performBatchImport(File batchFile) throws PAException {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SubmissionDto getOpenSubmission(Ii studyProtocolIi) throws PAException {
+        return dtos.get(0);
     }
 }

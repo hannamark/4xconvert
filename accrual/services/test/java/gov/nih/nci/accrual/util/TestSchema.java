@@ -80,34 +80,13 @@ import gov.nih.nci.accrual.service.MockPoOrganizationEntityService;
 import gov.nih.nci.accrual.service.MockPoPersonEntityService;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.ActivityRelationship;
-import gov.nih.nci.pa.domain.AnatomicSite;
-import gov.nih.nci.pa.domain.AssessmentType;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Disease;
-import gov.nih.nci.pa.domain.DoseFrequency;
 import gov.nih.nci.pa.domain.HealthCareFacility;
-import gov.nih.nci.pa.domain.Intervention;
-import gov.nih.nci.pa.domain.LesionLocationAnatomicSite;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
-import gov.nih.nci.pa.domain.PerformedActivity;
-import gov.nih.nci.pa.domain.PerformedClinicalResult;
-import gov.nih.nci.pa.domain.PerformedDiagnosis;
-import gov.nih.nci.pa.domain.PerformedHistopathology;
-import gov.nih.nci.pa.domain.PerformedImage;
-import gov.nih.nci.pa.domain.PerformedImaging;
-import gov.nih.nci.pa.domain.PerformedLesionDescription;
-import gov.nih.nci.pa.domain.PerformedMedicalHistoryResult;
-import gov.nih.nci.pa.domain.PerformedObservation;
-import gov.nih.nci.pa.domain.PerformedProcedure;
-import gov.nih.nci.pa.domain.PerformedRadiationAdministration;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
-import gov.nih.nci.pa.domain.PerformedSubstanceAdministration;
-import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.RegulatoryAuthority;
-import gov.nih.nci.pa.domain.RouteOfAdministration;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -115,24 +94,19 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.domain.Submission;
-import gov.nih.nci.pa.domain.TumorMarker;
-import gov.nih.nci.pa.domain.UnitOfMeasurement;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivityNameCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
-import gov.nih.nci.pa.enums.RadiationMachineTypeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -143,7 +117,6 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestHibernateHelper;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -174,25 +147,7 @@ public class TestSchema {
     public static List<Organization> organizations;
     public static List<StudySiteAccrualAccess> studySiteAccrualAccess;
     public static List<Country> countries;
-    public static List<PerformedObservation> performedObservations;
-    public static List<PerformedImaging> performedImagings;
-    public static List<PerformedSubstanceAdministration> performedSubstanceAdministrations;
-    public static List<PerformedRadiationAdministration> performedRadiationAdministrations;
-    public static List<PerformedProcedure> performedProcedures;
-    public static List<PerformedDiagnosis> performedDiagnosis;
-    public static List<PerformedImage> performedImages;
-    public static List<PerformedHistopathology> performedHistopathologies;
-    public static List<PerformedClinicalResult> performedClinicalResults;
-    public static List<PerformedMedicalHistoryResult> performedMedicalHistoryResults;
-    public static List<PerformedLesionDescription> performedLesionDescriptions;
-    public static List<PlannedActivity> plannedActivities;
-    public static List<PerformedActivity> performedActivities;
-    public static List<ActivityRelationship> activityRelationships;
-    public static ArrayList<Long> interventionIds;
     public static ArrayList<RegistryUser> registryUsers;
-
-    public static int outcomesSpId = 0;
-    public static int outcomesSsId = 0;
 
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
@@ -212,6 +167,8 @@ public class TestSchema {
         session.flush();
         Connection connection = session.connection();
         Statement statement = connection.createStatement();
+        statement.executeUpdate("delete from regulatory_authority");
+        statement.executeUpdate("delete from country");
         statement.executeUpdate("delete from performed_activity");
         statement.executeUpdate("delete from activity_relationship");
         statement.executeUpdate("delete from performed_observation_result");
@@ -265,22 +222,6 @@ public class TestSchema {
         organizations = new ArrayList<Organization>();
         studySiteAccrualAccess = new ArrayList<StudySiteAccrualAccess>();
         countries = new ArrayList<Country>();
-        performedObservations = new ArrayList<PerformedObservation>();
-        performedImagings = new ArrayList<PerformedImaging>();
-        performedSubstanceAdministrations = new ArrayList<PerformedSubstanceAdministration>();
-        performedRadiationAdministrations = new ArrayList<PerformedRadiationAdministration>();
-        performedProcedures = new ArrayList<PerformedProcedure>();
-        performedDiagnosis = new ArrayList<PerformedDiagnosis>();
-        performedImages = new ArrayList<PerformedImage>();
-        performedHistopathologies = new ArrayList<PerformedHistopathology>();
-        performedClinicalResults = new  ArrayList<PerformedClinicalResult>();
-        performedMedicalHistoryResults = new ArrayList<PerformedMedicalHistoryResult>();
-        performedLesionDescriptions = new ArrayList<PerformedLesionDescription>();
-        plannedActivities = new ArrayList<PlannedActivity>();
-        performedActivities = new ArrayList<PerformedActivity>();
-        activityRelationships = new ArrayList<ActivityRelationship>();
-        interventionIds = new ArrayList<Long>();
-
 
         Country c =  new Country();
         c.setName("United States");
@@ -358,7 +299,7 @@ public class TestSchema {
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
 
         studySecondaryIdentifiers =  new HashSet<Ii>();
-        assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00001");
+        assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00002");
         studySecondaryIdentifiers.add(assignedId);
 
         sp.setOtherIdentifiers(studySecondaryIdentifiers);
@@ -377,7 +318,7 @@ public class TestSchema {
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
 
         studySecondaryIdentifiers =  new HashSet<Ii>();
-        assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00001");
+        assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00003");
         studySecondaryIdentifiers.add(assignedId);
 
         sp.setOtherIdentifiers(studySecondaryIdentifiers);
@@ -424,6 +365,17 @@ public class TestSchema {
         sub.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(sub);
         submissions.add(sub);
+        
+        sub = new Submission();
+        sub.setCutOffDate(PAUtil.dateStringToTimestamp("12/31/2012"));
+        sub.setDescription("description");
+        sub.setLabel("label");
+        sub.setStatusCode(AccrualSubmissionStatusCode.OPENED);
+        sub.setStatusDateRangeHigh(null);
+        sub.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("7/15/2010"));
+        sub.setStudyProtocol(studyProtocols.get(0));
+        addUpdObject(sub);
+        submissions.add(sub);
 
         // StudySite
         StudySite ss = new StudySite();
@@ -435,7 +387,7 @@ public class TestSchema {
         studySites.add(ss);
 
         ss = new StudySite();
-        ss.setLocalStudyProtocolIdentifier("T1 Local SP 001");
+        ss.setLocalStudyProtocolIdentifier("SWOG");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
         ss.setHealthCareFacility(healthCareFacilities.get(0));
@@ -444,7 +396,7 @@ public class TestSchema {
         studySites.add(ss);
 
         ss = new StudySite();
-        ss.setLocalStudyProtocolIdentifier("T1 Local SP 002");
+        ss.setLocalStudyProtocolIdentifier("NCCTG");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
         ss.setHealthCareFacility(healthCareFacilities.get(1));
@@ -468,32 +420,24 @@ public class TestSchema {
         ss.setStudyProtocol(studyProtocols.get(1));
         addUpdObject(ss);
         studySites.add(ss);
-
-        // Outcomes SP
-        outcomesSpId = studyProtocols.size();
-        sp = new StudyProtocol();
-
-        studySecondaryIdentifiers =  new HashSet<Ii>();
-        assignedId = IiConverter.convertToAssignedIdentifierIi("Outcomes");
-        studySecondaryIdentifiers.add(assignedId);
-
-        sp.setOtherIdentifiers(studySecondaryIdentifiers);
-        sp.setSubmissionNumber(1);
-        addUpdObject(sp);
-        studyProtocols.add(sp);
-
-        outcomesSsId = studySites.size();
+        
         ss = new StudySite();
-        ss.setLocalStudyProtocolIdentifier("Outcomes");
+        ss.setLocalStudyProtocolIdentifier("T2 Local SP 001");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
-        ss.setHealthCareFacility(healthCareFacilities.get(0));
-        ss.setStudyProtocol(sp);
+        ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setStudyProtocol(studyProtocols.get(2));
         addUpdObject(ss);
         studySites.add(ss);
 
-
-
+        ss = new StudySite();
+        ss.setLocalStudyProtocolIdentifier("SWOG");
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss.setHealthCareFacility(healthCareFacilities.get(0));
+        ss.setStudyProtocol(studyProtocols.get(2));
+        addUpdObject(ss);
+        studySites.add(ss);
+        
         // StudySiteAccrualAccess
         StudySiteAccrualAccess ssaa = new StudySiteAccrualAccess();
         ssaa.setCsmUserId(MockCsmUtil.users.get(0).getUserId());
@@ -637,187 +581,6 @@ public class TestSchema {
         addUpdObject(m);
         performedSubjectMilestones.add(m);
 
-        // PerformedObservation
-        PerformedObservation performedObservation = new PerformedObservation();
-        performedObservation.setMethodCode("methodCode");
-        performedObservation.setTargetSiteCode("targetSiteCode");
-        performedObservation.setStudyProtocol(studyProtocols.get(0));
-        performedObservation.setStudySubject(studySubjects.get(0));
-        addUpdObject(performedObservation);
-        performedObservations.add(performedObservation);
-        performedObservation = new PerformedObservation();
-        performedObservation.setNameCode(ActivityNameCode.DIAGNOSIS);
-        performedObservation.setStudyProtocol(studyProtocols.get(0));
-        performedObservation.setStudySubject(studySubjects.get(0));
-        performedObservation.setActualDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
-        addUpdObject(performedObservation);
-        performedObservations.add(performedObservation);
-
-        // PerformedImaging
-        PerformedImaging pimaging = new PerformedImaging();
-        pimaging.setStudyProtocol(studyProtocols.get(0));
-        pimaging.setStudySubject(studySubjects.get(0));
-        pimaging.setContrastAgentEnhancementIndicator(true);
-        pimaging.setMethodCode("PerformedImaging MethodCode");
-        pimaging.setTargetSiteCode("PerformedImaging TargetSiteCode");
-        addUpdObject(pimaging);
-        performedImagings.add(pimaging);
-
-        // PerformedSubstanceAdministration
-        PerformedSubstanceAdministration psa = new PerformedSubstanceAdministration();
-        psa.setStudyProtocol(studyProtocols.get(0));
-        psa.setDoseValue(new BigDecimal("2"));
-        psa.setDoseUnit("10Milligrams");
-        psa.setDoseDescription("TestDose");
-        psa.setDoseFormCode("Tablet");
-        psa.setDoseFrequencyCode("BID");
-        psa.setDoseRegimen("doseRegimen");
-        psa.setDoseTotalUnit("doseTotalUom");
-        psa.setDoseTotalValue(new BigDecimal("5"));
-        psa.setRouteOfAdministrationCode("Oral");
-        psa.setCategoryCode(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION);
-        psa.setDoseDurationValue(new BigDecimal("2"));
-        psa.setDoseDurationUnit("10Milligrams");
-        psa.setDoseModificationType("doseModificationType");
-        psa.setStudySubject(studySubjects.get(0));
-        addUpdObject(psa);
-        performedSubstanceAdministrations.add(psa);
-
-        // PerformedRadiationAdministration
-        PerformedRadiationAdministration pra = new PerformedRadiationAdministration();
-        pra.setStudyProtocol(studyProtocols.get(0));
-        pra.setMachineTypeCode(RadiationMachineTypeCode.ACCELERATOR);
-        pra.setDoseModificationType("doseModificationType");
-        pra.setDoseValue(new BigDecimal("2"));
-        pra.setDoseUnit("10Milligrams");
-        pra.setDoseDurationValue(new BigDecimal("2"));
-        pra.setDoseDurationUnit("10Milligrams");
-        pra.setDoseDescription("TestDose");
-        pra.setDoseFormCode("Tablet");
-        pra.setDoseFrequencyCode("BID");
-        pra.setDoseRegimen("doseRegimen");
-        pra.setDoseTotalUnit("doseTotalUom");
-        pra.setDoseTotalValue(new BigDecimal("5"));
-        pra.setRouteOfAdministrationCode("Oral");
-        pra.setStudySubject(studySubjects.get(0));
-        addUpdObject(pra);
-        performedRadiationAdministrations.add(pra);
-
-         // PerformedProcedure
-        PerformedProcedure pp = new PerformedProcedure();
-        pp.setStudyProtocol(studyProtocols.get(0));
-        pp.setCategoryCode(ActivityCategoryCode.OTHER);
-        pp.setTextDescription("SurgeryDescription");
-        pp.setStudySubject(studySubjects.get(0));
-        addUpdObject(pp);
-        performedProcedures.add(pp);
-
-        // PerformedDiagnosis
-        PerformedDiagnosis pd = new PerformedDiagnosis();
-        pd.setResultCode("PerformedDiagnosis");
-        pd.setResultCodeModifiedText("PerformedDiagnosis");
-        pd.setResultDateRangeLow(PAUtil.dateStringToTimestamp("11/06/2009"));
-        pd.setStudyProtocol(studyProtocols.get(0));
-        pd.setPerformedObservation(performedObservations.get(1));
-        addUpdObject(pd);
-        performedDiagnosis.add(pd);
-
-        // PerformedImage
-        PerformedImage pi = new PerformedImage();
-        pi.setResultCode("PerformedImage");
-        pi.setResultDateRangeLow(PAUtil.dateStringToTimestamp("11/06/2009"));
-        pi.setStudyProtocol(studyProtocols.get(0));
-        pi.setPerformedObservation(performedObservation);
-        addUpdObject(pi);
-        performedImages.add(pi);
-
-        // PerformedHistopathology
-        PerformedHistopathology ph = new PerformedHistopathology();
-        ph.setGradeCode("GradeCode");
-        ph.setDescription("description");
-        ph.setStudyProtocol(studyProtocols.get(0));
-        ph.setPerformedObservation(performedObservation);
-        addUpdObject(ph);
-        performedHistopathologies.add(ph);
-
-        // PerformedClinicalResult
-        PerformedClinicalResult pcr = new PerformedClinicalResult();
-        pcr.setStageCodingSystem("StageCodingSystem");
-        pcr.setResultQuantityValue(new BigDecimal(1));
-        pcr.setResultQuantityUnit("Year");
-        pcr.setStudyProtocol(studyProtocols.get(0));
-        pcr.setPerformedObservation(performedObservation);
-        addUpdObject(pcr);
-        performedClinicalResults.add(pcr);
-
-        // PerformedMedicalHistoryResult
-        PerformedMedicalHistoryResult pmhr = new PerformedMedicalHistoryResult();
-        pmhr.setDescription("PriorTherapy Description");
-        pmhr.setResultQuantityValue(new BigDecimal(2));
-        pmhr.setResultQuantityUnit("Unitary");
-        pmhr.setStudyProtocol(studyProtocols.get(0));
-        pmhr.setPerformedObservation(performedObservation);
-        addUpdObject(pmhr);
-        performedMedicalHistoryResults.add(pmhr);
-
-        // PerformedLesionDescription
-        PerformedLesionDescription pld = new PerformedLesionDescription();
-        pld.setResultCode("PerformedLesionDescription");
-        pld.setLesionNumber(1);
-        pld.setLongestDiameterUnit("longestDiameterUnit");
-        pld.setLongestDiameterValue(new BigDecimal(2));
-        pld.setResultDateRangeLow(PAUtil.dateStringToTimestamp("11/06/2009"));
-        pld.setStudyProtocol(studyProtocols.get(0));
-        pld.setPerformedObservation(performedObservation);
-        addUpdObject(pld);
-        performedLesionDescriptions.add(pld);
-
-        PlannedActivity pa = new PlannedActivity();
-        pa.setCategoryCode(ActivityCategoryCode.OTHER);
-        pa.setTextDescription("PlannedActivity");
-        pa.setStudyProtocol(studyProtocols.get(0));
-        addUpdObject(pa);
-        plannedActivities.add(pa);
-
-        PerformedActivity pera = new PerformedActivity();
-        pera.setCategoryCode(ActivityCategoryCode.TREATMENT_PLAN);
-        pera.setName("Treatement Name");
-        pera.setTextDescription("PerformedActivity");
-        pera.setStudyProtocol(studyProtocols.get(0));
-        pera.setStudySubject(studySubjects.get(1));
-        addUpdObject(pera);
-        performedActivities.add(pera);
-        pera = new PerformedActivity();
-        pera.setCategoryCode(ActivityCategoryCode.COURSE);
-        pera.setName("Cycle Name");
-        pera.setTextDescription("PerformedActivity");
-        pera.setStudyProtocol(studyProtocols.get(0));
-        pera.setStudySubject(studySubjects.get(1));
-        addUpdObject(pera);
-        performedActivities.add(pera);
-
-        Intervention inv = new Intervention();
-        inv.setName("Chocolate Bar");
-        inv.setDescriptionText("Oral intervention to improve morale");
-        inv.setDateLastUpdated(new Date());
-        inv.setStatusCode(ActiveInactivePendingCode.ACTIVE);
-        inv.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
-        inv.setTypeCode(InterventionTypeCode.DIETARY_SUPPLEMENT);
-        inv.setUserLastUpdated(createUser());
-        addUpdObject(inv);
-        interventionIds.add(inv.getId());
-
-        DoseFrequency df = new DoseFrequency();
-        df.setCode("QIS");
-        df.setDisplayName("Four Times Weekly");
-        df.setDescription("Four Times Weekly");
-        addUpdObject(df);
-
-        RegulatoryAuthority ra = new RegulatoryAuthority();
-        ra.setAuthorityName("authorityName");
-        ra.setCountry(countries.get(0));
-        addUpdObject(ra);
-
         RegistryUser ru = new RegistryUser();
         ru.setAddressLine("address");
         ru.setAffiliateOrg("affiliateOrg");
@@ -831,48 +594,6 @@ public class TestSchema {
         ru.setPoPersonId(IiConverter.convertToLong(MockPoPersonEntityService.personList.get(0).getIdentifier()));
         ru.setState("MD");
         addUpdObject(ru);
-
-        UnitOfMeasurement uom = new UnitOfMeasurement();
-        uom.setCode("Unit/g");
-        uom.setDisplayName("Unit per gram");
-        uom.setDescription("Unit per gram");
-        addUpdObject(uom);
-
-        RouteOfAdministration roa = new RouteOfAdministration();
-        roa.setCode("AURICULAR (OTIC)");
-        roa.setDisplayName("Auricular Route of Administration");
-        roa.setDescription("Administration to or by way of the ear.");
-        addUpdObject(roa);
-
-        TumorMarker tm = new TumorMarker();
-        tm.setCode("Phospho-HER-2/neu");
-        tm.setDisplayName("Phospho-HER-2/neu");
-        tm.setDescription("Phospho-HER-2/neu");
-        addUpdObject(tm);
-
-        tm = new TumorMarker();
-        tm.setCode("HER-2/neu");
-        tm.setDisplayName("HER-2/neu");
-        tm.setDescription("HER-2/neu");
-        addUpdObject(tm);
-
-        LesionLocationAnatomicSite llas = new LesionLocationAnatomicSite();
-        llas.setCode("Mammary Gland");
-        llas.setDisplayName("Mammary Gland");
-        llas.setDescription("Mammary Gland");
-        addUpdObject(llas);
-
-        AnatomicSite as = new AnatomicSite();
-        as.setCode("Abdomen");
-        as.setDisplayName("Abdomen");
-        as.setDescription("Abdomen");
-        addUpdObject(as);
-
-        AssessmentType at = new AssessmentType();
-        at.setCode("2-D Echocardiogram");
-        at.setDisplayName("2-D Echocardiogram");
-        at.setDescription("2-D Echocardiogram");
-        addUpdObject(at);
     }
 
     public static User createUser() {

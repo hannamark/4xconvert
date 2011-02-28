@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.iso21090.Ii;
@@ -103,8 +104,7 @@ public class CountryServiceTest extends AbstractServiceTest<CountryService> {
      */
     @Override
     @Before
-    public void instantiateServiceBean() throws Exception
-    {
+    public void instantiateServiceBean() throws Exception {
         bean = new CountryBean();
     }
     
@@ -134,6 +134,12 @@ public class CountryServiceTest extends AbstractServiceTest<CountryService> {
         
         List<Country> list = bean.getCountries();
         assertNotNull(list);
+    }
+    
+    @Test
+    public void testGetByCode() throws Exception {
+        assertNotNull(bean.getByCode("US"));
+        assertNull(bean.getByCode("FO"));
     }
 
 }

@@ -83,17 +83,25 @@ import gov.nih.nci.accrual.convert.SubmissionConverter;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Submission;
+import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * @author Hugh Reinhart
@@ -102,22 +110,21 @@ import javax.interceptor.Interceptors;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class SubmissionBeanLocal
-        extends AbstractBaseAccrualStudyBean<SubmissionDto, Submission, SubmissionConverter>
+public class SubmissionBeanLocal extends AbstractBaseAccrualStudyBean<SubmissionDto, Submission, SubmissionConverter>
         implements SubmissionService, SubmissionServiceLocal {
 
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public List<SubmissionDto> getByStudyProtocol(Ii ii) throws RemoteException {
-        List<SubmissionDto> temp = super.getByStudyProtocol(ii);
-        List<SubmissionDto> result = new ArrayList<SubmissionDto>();
-        for (int x = temp.size() - 1; x >= 0; x--) {
-            result.add(temp.get(x));
-        }
-        return result;
+        List<SubmissionDto> results = super.getByStudyProtocol(ii);
+        SubmissionDto[] submissions = results.toArray(new SubmissionDto[results.size()]);
+        CollectionUtils.reverseArray(submissions);
+        return Arrays.asList(submissions);
     }
+    
     /**
      * {@inheritDoc}
      */
@@ -126,6 +133,7 @@ public class SubmissionBeanLocal
         checkSubmissionDtoFields(dto);
         return super.create(dto);
     }
+    
     /**
      * {@inheritDoc}
      */
@@ -134,7 +142,23 @@ public class SubmissionBeanLocal
         checkSubmissionDtoFields(dto);
         return super.update(dto);
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    public SubmissionDto getOpenSubmission(Ii studyProtocolIi) throws PAException {
+        Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(Submission.class);
+        criteria.add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)));
+        criteria.add(Restrictions.eq("statusCode", AccrualSubmissionStatusCode.OPENED));
+        try {
+            Submission s = (Submission) criteria.uniqueResult();
+            return convertFromDomainToDto(s);
+        } catch (Exception e) {
+            throw new PAException("Error retriving open submission for study protocol ii " 
+                    + studyProtocolIi.getExtension(), e);
+        }
+    }
+    
     private void checkSubmissionDtoFields(SubmissionDto dto) throws RemoteException {
         if (PAUtil.isStNull(dto.getLabel())) {
             throw new RemoteException("Submission title is required.");

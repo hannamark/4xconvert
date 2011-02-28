@@ -82,6 +82,7 @@ package gov.nih.nci.accrual.service.util;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -95,8 +96,10 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * @author Hugh Reinhart
@@ -150,5 +153,18 @@ public class CountryBean implements CountryService {
             throw new RemoteException("Exception at getDistinctCountryNames", hbe);
         }
         return countryDtos;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Country getByCode(String code) throws PAException {
+        Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(Country.class);
+        criteria.add(Restrictions.eq("alpha2", code));
+        try {
+            return (Country) criteria.uniqueResult();
+        } catch (HibernateException e) {
+            throw new PAException("Error retrieving country for code: " + code, e);
+        }
     }
 }

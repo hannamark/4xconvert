@@ -82,7 +82,10 @@
  */
 package gov.nih.nci.accrual.service.util;
 
+import gov.nih.nci.pa.service.PAException;
+
 import java.io.File;
+import java.rmi.RemoteException;
 
 import javax.ejb.Local;
 
@@ -92,9 +95,20 @@ import javax.ejb.Local;
  */
 @Local
 public interface CdusBatchUploadReaderServiceLocal {
+    
     /**
      * Reads and validate the csv file.
      * @param file file to read
+     * @return the validation results
      */
-    void validateBatchData(File file);
+    BatchValidationResults validateBatchData(File file);
+    
+    /**
+     * Performs the batch import, creating the necessary submission and study subject.
+     * @param validationResults the validation results
+     * @return the batch import results
+     * @throws PAException on error
+     * @throws RemoteException on error
+     */
+    BatchImportResults importBatchData(BatchValidationResults validationResults) throws PAException, RemoteException;
 }

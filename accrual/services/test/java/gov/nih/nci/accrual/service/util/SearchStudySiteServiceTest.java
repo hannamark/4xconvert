@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
@@ -163,5 +164,16 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         list = bean.search(ii, st);
         assertNotNull(list);
         assertEquals(0, list.size());
+    }
+    
+    @Test
+    public void testGetStudySiteIdentifierByLocalIdentifier() throws Exception {
+        Ii spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
+        assertNotNull(bean.getStudySiteIdentifierByLocalIdentifier(spIi, StConverter.convertToSt("SWOG")));
+        assertNotNull(bean.getStudySiteIdentifierByLocalIdentifier(spIi, StConverter.convertToSt("NCCTG")));
+        
+        Ii otherSpIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(2).getId());
+        assertNotNull(bean.getStudySiteIdentifierByLocalIdentifier(otherSpIi, StConverter.convertToSt("SWOG")));
+        assertNull(bean.getStudySiteIdentifierByLocalIdentifier(otherSpIi, StConverter.convertToSt("NCCTG")));        
     }
 }

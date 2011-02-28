@@ -82,137 +82,88 @@
  */
 package gov.nih.nci.accrual.service.util;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
- * Utility methods for converting batch uploads into data objects.
+ * Bean for holding the results of batch file validation.
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class BatchUploadUtils {
-    private static final Logger LOG = Logger.getLogger(BatchUploadUtils.class);
-    private static final String DOB_DATE_FORMAT = "yyyyMM";
-    private static final String FULL_DATE_FORMAT = "yyyyMMdd";
+public class BatchValidationResults {
+    private String mailTo;
+    private StringBuilder errors;
+    private boolean passedValidation = false;
+    private List<String[]> validatedLines = new ArrayList<String[]>();
+    private String fileName;
+    
     /**
-     * Index of a patients race code from the PATIENT_RACE line.
+     * @return the mailTo
      */
-    private static final int RACE_INDEX = 3;
-    /**
-     * The index of the identifier of a line (i.e it's type: PATIENT, ACCRUAL_COUNT, COLLECTION, etc.).
-     */
-    private static final int LINE_IDENTIFIER_INDEX = 0;
-    /**
-     * The total number accruals from an ACCRUAL_COUNT line.
-     */
-    private static final int  ACCRUAL_COUNT_INDEX = 2;
-    /**
-     * The unique identifier of a patient on a PATIENT_RACE line.
-     */
-    private static final int PATIENT_ID_INDEX = 2;
-   
-    /**
-     * Returns the patient date of birth from the given dob string.
-     * @param dob the dob string in year/month format
-     * @return the parsed date or null if the date is unparseable
-     */
-    public static Date getPatientDOB(String dob) {
-        return formatDate(dob, DOB_DATE_FORMAT);
+    public String getMailTo() {
+        return mailTo;
     }
     
     /**
-     * Returns a date from the given date string (yyyyMMdd).
-     * @param date the date to parse
-     * @return the parsed date or null if the date is unparseable
+     * @param mailTo the mailTo to set
      */
-    public static Date getDate(String date) {
-        return formatDate(date, FULL_DATE_FORMAT);
-    }
-    
-    private static Date formatDate(String input, String format) {
-        SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.getDefault());
-        Date date = null;
-        try {
-            date = formatter.parse(input);
-        } catch (ParseException e) {
-            LOG.error("Error parsing the date " + input + " with the following format " + format);
-        }
-        return date;
+    public void setMailTo(String mailTo) {
+        this.mailTo = mailTo;
     }
     
     /**
-     * Returns the 'COLLECTION' line info from the batch file.
-     * @param batchFile the batch file as a list
-     * @return the line containing the collection info
+     * @return the errors
      */
-    public static String[] getStudyLine(List<String[]> batchFile) {
-        String[] results = new String[] {};
-        for (String[] line : batchFile) {
-            if (StringUtils.equals("COLLECTIONS", line[LINE_IDENTIFIER_INDEX])) {
-                results = line;
-                break;
-            }
-        }
-        return results;
+    public StringBuilder getErrors() {
+        return errors;
     }
     
     /**
-     * Returns the total number of accruals from the batch file.
-     * @param batchFile the batch file as a list
-     * @return the total number of accruals or null if the element isn't found
+     * @param errors the errors to set
      */
-    public static Integer getTotalNumberOfAccruals(List<String[]> batchFile) {
-        Integer results = null;
-        for (String[] line : batchFile) {
-            if (StringUtils.equals("ACCRUAL_COUNT", line[LINE_IDENTIFIER_INDEX])) {
-                results = Integer.valueOf(line[ACCRUAL_COUNT_INDEX]);
-            }
-        }
-        return results;
+    public void setErrors(StringBuilder errors) {
+        this.errors = errors;
     }
     
     /**
-     * Returns a list of all the patient lines from the batch file.
-     * @param batchFile the batch file as a list
-     * @return the list of patient lines
+     * @return the validatedLines
      */
-    public static List<String[]> getPatientInfo(List<String[]> batchFile) {
-        List<String[]> patients = new ArrayList<String[]>();
-        for (String[] line : batchFile) {
-            if (StringUtils.equals("PATIENTS" , line[LINE_IDENTIFIER_INDEX])) {
-                patients.add(line);
-            }
-        }
-        return patients;
+    public List<String[]> getValidatedLines() {
+        return validatedLines;
     }
     
     /**
-     * Returns a map of patient ids to patient race codes.
-     * @param batchFile the batch file as a list
-     * @return a map of patient ids to races
+     * @param validatedLines the validatedLines to set
      */
-    public static Map<String, List<String>> getPatientRaceInfo(List<String[]> batchFile) {
-        Map<String, List<String>> raceMap = new HashMap<String, List<String>>();
-        for (String[] line : batchFile) {
-            if (StringUtils.equals("PATIENT_RACES", line[LINE_IDENTIFIER_INDEX])) {
-                String patientId = line[PATIENT_ID_INDEX];
-                if (raceMap.get(patientId) == null) {
-                    raceMap.put(patientId, Arrays.asList(line[RACE_INDEX]));
-                } else {
-                    raceMap.get(patientId).add(line[RACE_INDEX]);
-                }
-            }
-        }
-        return raceMap;
+    public void setValidatedLines(List<String[]> validatedLines) {
+        this.validatedLines = validatedLines;
+    }
+
+    /**
+     * @return the passedValidation
+     */
+    public boolean isPassedValidation() {
+        return passedValidation;
+    }
+
+    /**
+     * @param passedValidation the passedValidation to set
+     */
+    public void setPassedValidation(boolean passedValidation) {
+        this.passedValidation = passedValidation;
+    }
+
+    /**
+     * @return the fileName
+     */
+    public String getFileName() {
+        return fileName;
+    }
+
+    /**
+     * @param fileName the fileName to set
+     */
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

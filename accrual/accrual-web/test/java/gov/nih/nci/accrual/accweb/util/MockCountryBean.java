@@ -82,6 +82,7 @@ package gov.nih.nci.accrual.accweb.util;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.service.PAException;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -117,4 +118,10 @@ public class MockCountryBean implements CountryService {
         return rList.get(0);
     }
 
+   /**
+    * {@inheritDoc}
+    */
+    public Country getByCode(String code) throws PAException {
+        return rList.get(0);
+    }
 }

@@ -104,6 +104,9 @@ public class SubmissionConverter extends AbstractConverter<SubmissionDto, Submis
      */
     @Override
     public SubmissionDto convertFromDomainToDto(Submission bo) throws DataFormatException {
+        if (bo == null) {
+            return null;
+        }
         SubmissionDto dto = new SubmissionDto();
         dto.setCutOffDate(TsConverter.convertToTs(bo.getCutOffDate()));
         dto.setDescription(StConverter.convertToSt(bo.getDescription()));
@@ -124,6 +127,9 @@ public class SubmissionConverter extends AbstractConverter<SubmissionDto, Submis
      */
     @Override
     public Submission convertFromDtoToDomain(SubmissionDto dto) throws DataFormatException {
+        if (dto == null) {
+            return null;
+        }
         Submission bo = new Submission();
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));

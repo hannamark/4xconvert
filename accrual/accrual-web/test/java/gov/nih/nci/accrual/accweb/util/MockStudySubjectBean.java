@@ -186,7 +186,6 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unused")
     public List<StudySubjectDto> getOutcomes(St outcomesLoginName) throws RemoteException {
         return ssList;
     }

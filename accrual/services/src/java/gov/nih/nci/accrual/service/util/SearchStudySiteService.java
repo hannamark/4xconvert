@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.service.util;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.service.PAException;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -93,6 +94,7 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface SearchStudySiteService {
+    
     /**
      * @param studyProtocolIi ii for selected study
      * @param authorizedUser user
@@ -100,4 +102,13 @@ public interface SearchStudySiteService {
      * @throws RemoteException exception
      */
     List<SearchStudySiteResultDto> search(Ii studyProtocolIi,  St authorizedUser) throws RemoteException;
+    
+    /**
+     * Returns the Ii of the study site with the given local identifier.
+     * @param localIdentifier the local identifier of the study site
+     * @param studyProtocolIi ii for the selected study
+     * @return the ii of the study site or null if no such site is found
+     * @throws PAException on error
+     */
+    Ii getStudySiteIdentifierByLocalIdentifier(Ii studyProtocolIi, St localIdentifier) throws PAException;
 }

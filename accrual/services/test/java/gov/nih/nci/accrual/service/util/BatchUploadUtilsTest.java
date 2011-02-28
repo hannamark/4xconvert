@@ -83,14 +83,24 @@
 package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.junit.Before;
 import org.junit.Test;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * Tests for batch upload utils.
@@ -98,6 +108,13 @@ import org.junit.Test;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class BatchUploadUtilsTest {
+    private List<String[]> batchFile = new ArrayList<String[]>();
+    
+    @Before
+    public void setUp() throws Exception {
+        File abbreviatedBatchFile = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
+        batchFile = new CSVReader(new FileReader(abbreviatedBatchFile)).readAll();
+    }
     
     @Test
     public void testDOBConversion() {
@@ -106,5 +123,31 @@ public class BatchUploadUtilsTest {
         assertEquals(today, BatchUploadUtils.getPatientDOB(dob));
         assertNull(BatchUploadUtils.getPatientDOB(""));
         assertNull(BatchUploadUtils.getPatientDOB("abcd"));
+    }
+    
+    @Test
+    public void testGetStudyLine() {
+        String[] results = BatchUploadUtils.getStudyLine(batchFile);
+        assertFalse(ArrayUtils.isEmpty(results));
+    }
+    
+    @Test
+    public void testGetTotalNumberOfAccruals() {
+        Integer totalNumberOfAccruals = BatchUploadUtils.getTotalNumberOfAccruals(batchFile);
+        assertNull(totalNumberOfAccruals);
+    }
+    
+    @Test
+    public void testGetPatientInfo() {
+        List<String[]> patients = BatchUploadUtils.getPatientInfo(batchFile);
+        assertFalse(patients.isEmpty());
+        assertEquals(72, patients.size());
+    }
+    
+    @Test
+    public void testGetPatientRaceInfo() {
+        Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(batchFile);
+        assertFalse(raceMap.isEmpty());
+        assertEquals(72, raceMap.size());
     }
 }

@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.service.PAException;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -100,9 +101,18 @@ public interface CountryService {
      * @throws RemoteException exception
      */
     Country getCountry(Ii ii) throws RemoteException;
+    
     /**
      * @return list of countries from database
      * @throws RemoteException exception
      */
     List<Country> getCountries() throws RemoteException;
+    
+    /**
+     * Returns the country with the given 2-digit code.
+     * @param code the 2-digit country code
+     * @return the country with the given 2-digit country code
+     * @throws PAException on error
+     */
+    Country getByCode(String code) throws PAException;
 }

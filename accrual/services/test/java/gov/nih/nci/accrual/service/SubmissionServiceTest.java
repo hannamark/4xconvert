@@ -81,10 +81,12 @@ package gov.nih.nci.accrual.service;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
@@ -103,12 +105,13 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+
 /**
  * @author Hugh Reinhart
  * @since Aug 29, 2009
  */
-public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService> {
-
+public class SubmissionServiceTest extends AbstractServiceTest<SubmissionBeanLocal> {
+    
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
@@ -127,12 +130,11 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
             // expected behavior
         }
     }
+
     @Test
     public void create() throws Exception {
         SubmissionDto dto = new SubmissionDto();
         dto.setCutOffDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("6/3/2009")));
-       // assertFalse("check cutoff date is current or past",PAUtil.isDateCurrentOrPast(TsConverter.
-       // 		      convertToString(dto.getCutOffDate())));
         dto.setDescription(StConverter.convertToSt("des123"));
         dto.setLabel(StConverter.convertToSt("label"));
         dto.setStatusCode(CdConverter.convertToCd(AccrualSubmissionStatusCode.OPENED));
@@ -141,6 +143,7 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
         SubmissionDto r = bean.create(dto);
         assertNotNull(r);
     }
+
     @Test
     public void update() throws Exception {
         String newLabel = "newLabel";
@@ -152,10 +155,19 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
         SubmissionDto r = bean.update(dto);
         assertTrue(newLabel.equals(StConverter.convertToString(r.getLabel())));
     }
+
     @Test
     public void getByStudyProtocol() throws Exception {
         List<SubmissionDto> rList = bean.getByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         assertTrue(0 < rList.size());
+    }
+    
+    @Test
+    public void getOpenSubmission() throws Exception {
+       Ii ii = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
+       Ii otherIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(2).getId());
+       assertNotNull(bean.getOpenSubmission(ii));
+       assertNull(bean.getOpenSubmission(otherIi));
     }
     
     @Test

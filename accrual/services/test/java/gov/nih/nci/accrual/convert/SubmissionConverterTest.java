@@ -79,6 +79,7 @@
 
 package gov.nih.nci.accrual.convert;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.pa.domain.Submission;
@@ -97,6 +98,9 @@ public class SubmissionConverterTest extends AbstractConverterTest {
     @Override
     @Test
     public void conversionTest() throws Exception {
+        assertNull(Converters.get(SubmissionConverter.class).convertFromDomainToDto(null));
+        assertNull(Converters.get(SubmissionConverter.class).convertFromDtoToDomain(null));
+        
         SubmissionDto dto = new SubmissionDto();
         dto.setIdentifier(iiVal);
         dto.setStudyProtocolIdentifier(iiVal);

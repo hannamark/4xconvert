@@ -81,10 +81,12 @@ package gov.nih.nci.accrual.service.util;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -99,9 +101,11 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 /**
  * @author Hugh Reinhart
  * @since Aug 17, 2009
@@ -149,7 +153,24 @@ public class SearchStudySiteBean implements SearchStudySiteService {
         }
         return result;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Ii getStudySiteIdentifierByLocalIdentifier(Ii studyProtocolIi, St localIdentifier) throws PAException {
+        Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(StudySite.class);
+        criteria.add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)));
+        criteria.add(Restrictions.eq("functionalCode", StudySiteFunctionalCode.TREATING_SITE));
+        criteria.add(Restrictions.eq("localStudyProtocolIdentifier", StConverter.convertToString(localIdentifier)));
+        try {
+            StudySite ss = (StudySite) criteria.uniqueResult();
+            return ss == null ? null : IiConverter.convertToStudySiteIi(ss.getId());
+        } catch (HibernateException e) {
+            throw new PAException("Error retrieving study site ii with local identifier " 
+                    + localIdentifier.getValue(), e);
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     private Set<Long> getAuthorizedSites(St user) throws RemoteException {
         Set<Long> result = new HashSet<Long>();
@@ -175,5 +196,4 @@ public class SearchStudySiteBean implements SearchStudySiteService {
         }
         return result;
     }
-
 }

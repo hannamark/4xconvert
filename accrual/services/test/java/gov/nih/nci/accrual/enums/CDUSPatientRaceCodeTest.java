@@ -83,7 +83,11 @@
 package gov.nih.nci.accrual.enums;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.enums.PatientRaceCode;
+
+import java.util.Arrays;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -102,5 +106,14 @@ public class CDUSPatientRaceCodeTest {
         assertEquals(PatientRaceCode.AMERICAN_INDIAN, CDUSPatientRaceCode.getByCode("06").getValue());
         assertEquals(PatientRaceCode.NOT_REPORTED, CDUSPatientRaceCode.getByCode("98").getValue());
         assertEquals(PatientRaceCode.UNKNOWN, CDUSPatientRaceCode.getByCode("99").getValue());
+    }
+    
+    @Test
+    public void testGetCodesByCdusCodes() {
+        Set<String> races = CDUSPatientRaceCode.getCodesByCdusCodes(Arrays.asList("01","03","05"));
+        assertEquals(3, races.size());
+        assertTrue(races.contains("White"));
+        assertTrue(races.contains("Black_or_African_American"));
+        assertTrue(races.contains("Asian"));
     }
 }

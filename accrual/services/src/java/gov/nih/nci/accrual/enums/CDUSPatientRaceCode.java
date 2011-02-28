@@ -88,6 +88,10 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * CDUS Patient Race Code mapping.
  * 
@@ -135,6 +139,22 @@ public enum CDUSPatientRaceCode implements CodedEnum<String> {
      */
     public static CDUSPatientRaceCode getByCode(String code) {
         return getByClassAndCode(CDUSPatientRaceCode.class, code);
+    }
+    
+    /**
+     * Returns a list of race codes corresponding to the given cdus codes.
+     * @param cdusCodes the cdus codes
+     * @return the list of race codes
+     */
+    public static Set<String> getCodesByCdusCodes(List<String> cdusCodes) {
+        Set<String> races = new HashSet<String>();
+        for (String cdusCode : cdusCodes) {
+            CDUSPatientRaceCode raceCode = getByCode(cdusCode);
+            if (raceCode != null) {
+                races.add(raceCode.getValue().getCode());
+            }
+        }
+        return races;
     }
 
     /**

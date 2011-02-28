@@ -80,6 +80,8 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.SubmissionDto;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.service.PAException;
 
 import javax.ejb.Remote;
 
@@ -88,6 +90,13 @@ import javax.ejb.Remote;
  * @since Aug 29, 2009
   */
 @Remote
-public interface SubmissionService
-        extends BaseAccrualStudyService<SubmissionDto> {
+public interface SubmissionService extends BaseAccrualStudyService<SubmissionDto> {
+        
+    /**
+     * Returns a study's open submission.
+     * @param studyProtocolIi the ii of the study protocol to retrieve the open submission for
+     * @return the submission with the status 'OPENED' if one exists or null if one doesn't exist
+     * @throws PAException on error
+     */
+    SubmissionDto getOpenSubmission(Ii studyProtocolIi) throws PAException;
 }
