@@ -105,7 +105,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
         assertTrue("No success message found",
                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-
+        int nciId1 = getSeqNumFromNciId(getNciIdViaSearch("Test Trial created by Selenium."));
         // try to register a trial with the same lead org trial ID and fail
         registerTrial("Test Trial created by Selenium.", "LEAD-ORG");
         assertFalse("A success message was found", selenium.isElementPresent("css=div.confirm_msg"));
@@ -121,7 +121,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
         assertTrue("No success message found",
                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-        
+        int nciId2 = getSeqNumFromNciId(getNciIdViaSearch("Test Summ 4 Anatomic Site Trial created by Selenium."));
+        assertEquals(nciId2, nciId1 + 1);
         // try to register a trial with the a new lead org trial ID (and title) and succeed
         registerTrial("Test Assign Ownership Trial created by Selenium.", "LEAD-ORG3");
         assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
@@ -143,4 +144,25 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertTrue("No success message found",
                    selenium.isTextPresent("The trial draft has been successfully saved and assigned the Identifier"));
     }
+    
+    private String getNciIdViaSearch(String trialName) {
+       
+        clickAndWait("searchTrialsMenuOption");
+        waitForElementById("searchMyTrialsBtn", 5);
+        waitForElementById("searchAllTrialsBtn", 5);
+
+        selenium.type("officialTitle", trialName);
+        clickAndWait("searchAllTrialsBtn");
+      
+        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]"));
+        String nciId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]");
+        assertTrue(nciId.contains("NCI"));
+        assertEquals(14, nciId.length());
+        return nciId;
+    }
+    
+    private int getSeqNumFromNciId(String nciId) {
+        return Integer.valueOf(nciId.substring(nciId.lastIndexOf("-") + 1, nciId.length()));
+    }
+   
 }

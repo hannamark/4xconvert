@@ -815,21 +815,21 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
             // set PI
             createStudySiteContact(studySiteIi, studyProtocolIi, studySiteOrganizationDTO, studySiteInvestigatorDTO,
                     studyTypeCode);
-            assignOwnershipAndSendMail(CREATE, studyProtocolDTO, isBatchMode, studyProtocolIi);
+            assignOwnership(studyProtocolDTO, studyProtocolIi);
             getPAServiceUtils().addNciIdentifierToTrial(studyProtocolIi);
+            sendMail(CREATE, isBatchMode, studyProtocolIi);
         } catch (Exception e) {
             throw new PAException(e);
         }
         return studyProtocolIi;
     }
-    /**This will assign ownership and send the mail.
+    /**This will assign ownership.
      * @param studyProtocolDTO
      * @param isBatchMode
      * @param studyProtocolIi
      * @throws PAException
      */
-    private void assignOwnershipAndSendMail(String operation, StudyProtocolDTO studyProtocolDTO,
-            Bl isBatchMode, Ii studyProtocolIi) throws PAException {
+    private void assignOwnership(StudyProtocolDTO studyProtocolDTO, Ii studyProtocolIi) throws PAException {
         // assign ownership
         RegistryUser usr = userServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO
                 .getUserLastCreated()));
@@ -839,7 +839,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
         //the line.
         Session session = HibernateUtil.getCurrentSession();
         session.evict(session.get(StudyProtocol.class, IiConverter.convertToLong(studyProtocolIi)));
-        sendMail(operation, isBatchMode, studyProtocolIi);
     }
 
     private void createSponsor(Ii studyProtocolIi, OrganizationDTO sponsorOrganizationDto) throws PAException {
@@ -956,8 +955,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
             getPAServiceUtils().createOrUpdate(Arrays.asList(studyRegAuthDTO),
                     IiConverter.convertToStudyRegulatoryAuthorityIi(null), studyProtocolIi);
         }
-        assignOwnershipAndSendMail(operation, studyProtocolDTO, isBatchMode, studyProtocolIi);
+        assignOwnership(studyProtocolDTO, studyProtocolIi);
         getPAServiceUtils().addNciIdentifierToTrial(studyProtocolIi);
+        sendMail(CREATE, isBatchMode, studyProtocolIi);
         
         return studyProtocolIi;
     }
