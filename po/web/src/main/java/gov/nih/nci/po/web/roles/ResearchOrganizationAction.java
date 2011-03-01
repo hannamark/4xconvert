@@ -310,28 +310,32 @@ public class ResearchOrganizationAction
     }
 
     /**
-     * {@inheritDoc}
+     * Get the ResearchOrganization.
+     * @return the ResearchOrganization
      */
     public ResearchOrganization getRole() {
         return role;
     }
 
     /**
-     * {@inheritDoc}
+     * Set the ResearchOrganization to use.
+     * @param role ResearchOrganization to use
      */
     public void setRole(ResearchOrganization role) {
         this.role = role;
     }
 
     /**
-     * {@inheritDoc}
+     * Get the change request.
+     * @return change request
      */
     public ResearchOrganizationCR getCr() {
         return cr;
     }
 
     /**
-     * {@inheritDoc}
+     * Set the change request.
+     * @param cr change request
      */
     public void setCr(ResearchOrganizationCR cr) {
         this.cr = cr;

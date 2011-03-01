@@ -9,6 +9,7 @@
     <version>3.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>po</name>
+    <url>https://wiki.nci.nih.gov/x/BAAuAQ</url>
     <inceptionYear>2008</inceptionYear>
 
     <properties>
@@ -65,6 +66,9 @@
 
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
         <web.auth.method>CAGRIDFORM</web.auth.method>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <scm>

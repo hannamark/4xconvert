@@ -93,7 +93,8 @@ public class DisclaimerAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
 
     /**
-     * {@inheritDoc}
+     * Action to accept the disclaimer.
+     * @return "acceptView"
      */
     public String accept() {
         ServletActionContext.getRequest().getSession().setAttribute("disclaimerAccepted", true);

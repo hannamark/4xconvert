@@ -121,7 +121,6 @@ public class ClinicalResearchStaffAction extends
 
     /**
      * {@inheritDoc}
-     * @throws Exception
      */
     @Override
     public void prepare() {
@@ -218,14 +217,16 @@ public class ClinicalResearchStaffAction extends
     }
 
     /**
-     * {@inheritDoc}
+     * Set the change request.
+     * @param cr change request to set
      */
     public void setCr(ClinicalResearchStaffCR cr) {
         this.cr = cr;
     }
 
     /**
-     * {@inheritDoc}
+     * Set the ClinicalResearchStaff to use.
+     * @param role ClinicalResearchStaff to use
      */
     public void setRole(ClinicalResearchStaff role) {
         this.role = role;

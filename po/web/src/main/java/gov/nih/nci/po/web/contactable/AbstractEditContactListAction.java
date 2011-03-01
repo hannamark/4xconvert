@@ -330,7 +330,8 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
         }
 
         /**
-         * {@inheritDoc}
+         * Get the Email.
+         * @return email
          */
         public Email getEmailEntry() {
             return super.getEntry();
@@ -377,7 +378,8 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
         }
 
         /**
-         * {@inheritDoc}
+         * Get the URL.
+         * @return URL
          */
         public URL getUrlEntry() {
             return super.getEntry();
@@ -425,7 +427,8 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
         }
 
         /**
-         * {@inheritDoc}
+         * Get the phone number.
+         * @return phone number
          */
         public PhoneNumber getPhoneEntry() {
             return super.getEntry();
@@ -465,15 +468,16 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
         }
 
         /**
-         * {@inheritDoc}
+         * Get the Fax Number.
+         * @return fax number
          */
         public PhoneNumber getFaxEntry() {
             return super.getEntry();
         }
 
         /**
-         *@param fax fax to set.
-         **/
+         * @param fax  fax to set.
+         */
         public void setFaxEntry(PhoneNumber fax) {
             setEntry(fax);
         }
@@ -504,7 +508,8 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
         }
 
         /**
-         * {@inheritDoc}
+         * Get the TTY number.
+         * @return TTY number
          */
         public PhoneNumber getTtyEntry() {
             return super.getEntry();

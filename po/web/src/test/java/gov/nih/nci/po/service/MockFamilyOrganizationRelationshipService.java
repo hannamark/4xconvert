@@ -87,7 +87,6 @@ import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -144,16 +143,10 @@ public class MockFamilyOrganizationRelationshipService implements FamilyOrganiza
     public void updateEntity(FamilyOrganizationRelationship updatedEntity) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Set<FamilyOrganizationRelationship> getFamilyOrganizationRelationshipsByOrgId(Long orgId) {
         return new HashSet<FamilyOrganizationRelationship>();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Set<FamilyOrganizationRelationship> getFamilyOrganizationRelationshipsByFamId(Long famId) {
         return new HashSet<FamilyOrganizationRelationship>();
     }

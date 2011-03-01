@@ -86,6 +86,7 @@ import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceStub;
 import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.CountryServiceStub;
+import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
@@ -118,7 +119,6 @@ import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceStub;
 import gov.nih.nci.po.service.external.CtepImportService;
 import gov.nih.nci.po.util.ServiceLocator;
-import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 
 /**
  * The service locator for the test classes.
@@ -275,7 +275,6 @@ public class MockServiceLocator implements ServiceLocator {
 
     /**
      * {@inheritDoc}
-     * @return
      */
     public OrganizationRelationshipServiceLocal getOrganizationRelationshipService() {
         return organizationRelationshipService;
