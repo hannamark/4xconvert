@@ -63,7 +63,7 @@
                 <version>${maven-ear-plugin.version}</version>
                 <configuration>
                     <finalName>po</finalName>
-                    <earSourcesDirectory>target/classes</earSourcesDirectory>
+                    <resourcesDir>target/classes</resourcesDir>
                     <modules>
                         <jarModule>
                             <groupId>commons-beanutils</groupId>
@@ -186,7 +186,6 @@
                             <contextRoot>/po-web</contextRoot>
                             <bundleFileName>po-web.war</bundleFileName>
                         </webModule>
-
 
                         <!--  Start of jars needed for grid grouper sync. -->
                         <jarModule>
