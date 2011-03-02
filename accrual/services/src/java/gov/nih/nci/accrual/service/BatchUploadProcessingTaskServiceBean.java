@@ -82,11 +82,14 @@
  */
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
+import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 import java.io.File;
+import java.rmi.RemoteException;
 import java.util.Collection;
 
 import javax.ejb.Local;
@@ -114,22 +117,23 @@ public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessi
     /**
      * {@inheritDoc}
      */
-    public void processBatchUploads() throws PAException {
+    public void processBatchUploads() throws PAException, RemoteException {
+        CdusBatchUploadReaderServiceLocal batchUploadService = 
+            AccrualServiceLocator.getInstance().getBatchUploadReaderService();
         File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());
         @SuppressWarnings("unchecked")
         Collection<File> batchFiles = FileUtils.listFiles(uploadDirectory, FileFilterUtils.fileFileFilter(), null);
         LOG.info("Performing accrual batch processing on " + batchFiles.size() +  " files.");
         
         for (File batchFile : batchFiles) {
-            //First, validate the file, then process it if it passes validation. Otherwise, send out notification
-            //mail listing reasons for validation failure.
+            //First, validate the file, then process it.
             LOG.info("Processing batch upload: " + batchFile.getAbsolutePath());
+            batchUploadService.importBatchData(batchFile);
         }
         
-        //Delete all the files once processing/notification e-mails have been sent.
+        //Delete all the files once processing has finished.
         for (File batchFile : batchFiles) {
             FileUtils.deleteQuietly(batchFile);
         }
     }
-
 }

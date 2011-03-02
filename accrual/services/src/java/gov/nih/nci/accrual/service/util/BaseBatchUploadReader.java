@@ -82,6 +82,11 @@
  */
 package gov.nih.nci.accrual.service.util;
 
+import gov.nih.nci.accrual.service.PatientServiceLocal;
+import gov.nih.nci.accrual.service.PerformedActivityServiceLocal;
+import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
+import gov.nih.nci.accrual.service.SubmissionServiceLocal;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -89,13 +94,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.ejb.EJB;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.DateValidator;
 
 /**
- * This is class to help to validate the input data read from CSV.
- * @author vrushali
- *
+ * Base Batch reader.
+ * 
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class BaseBatchUploadReader {
     private static final int COLLECTION_ELEMENT_SIZE = 10;
@@ -137,8 +144,21 @@ public class BaseBatchUploadReader {
     static {
         KEY_WITH_PATIENTS_IDS.addAll(Arrays.asList("PATIENTS", "PATIENT_RACES"));
     }
-    private List<String> patientsIdList = new ArrayList<String>();
     
+    private List<String> patientsIdList = new ArrayList<String>();
+    @EJB 
+    private SubmissionServiceLocal submissionService;
+    @EJB
+    private StudySubjectServiceLocal studySubjectService;
+    @EJB
+    private PatientServiceLocal patientService;
+    @EJB
+    private CountryService countryService;
+    @EJB
+    private PerformedActivityServiceLocal performedActivityService;
+    @EJB
+    private SearchStudySiteService searchStudySiteService;
+
     /**
      * 
      * @param key key
@@ -277,6 +297,7 @@ public class BaseBatchUploadReader {
               .append(" must contain a patient identifier that is unique within the study.");
         } 
     }
+    
     private void isPatientIdUnique(String patId, StringBuffer errMsg, long lineNumber) {
         if (patientsIdList.contains(patId)) {
             errMsg.append("Patient identifier " + patId + " is not unique ").append(appendLineNumber(lineNumber));
@@ -284,6 +305,7 @@ public class BaseBatchUploadReader {
             patientsIdList.add(patId);
         }
     }
+    
     /**
      * 
      * @param values values
@@ -292,10 +314,95 @@ public class BaseBatchUploadReader {
     private String getPatientId(List<String> values) {
         return values.get(PATIENT_ID_INDEX).trim();
     }
+    
     /**
      * @param patientsIdList the patientsIdList to set
      */
     public void setPatientsIdList(List<String> patientsIdList) {
         this.patientsIdList = patientsIdList;
+    }
+    
+    /**
+     * @return the submissionService
+     */
+    public SubmissionServiceLocal getSubmissionService() {
+        return submissionService;
+    }
+    
+    /**
+     * @param submissionService the submissionService to set
+     */
+    public void setSubmissionService(SubmissionServiceLocal submissionService) {
+        this.submissionService = submissionService;
+    }
+    
+    /**
+     * @return the studySubjectService
+     */
+    public StudySubjectServiceLocal getStudySubjectService() {
+        return studySubjectService;
+    }
+    
+    /**
+     * @param studySubjectService the studySubjectService to set
+     */
+    public void setStudySubjectService(StudySubjectServiceLocal studySubjectService) {
+        this.studySubjectService = studySubjectService;
+    }
+    
+    /**
+     * @return the patientService
+     */
+    public PatientServiceLocal getPatientService() {
+        return patientService;
+    }
+    
+    /**
+     * @param patientService the patientService to set
+     */
+    public void setPatientService(PatientServiceLocal patientService) {
+        this.patientService = patientService;
+    }
+    
+    /**
+     * @return the countryService
+     */
+    public CountryService getCountryService() {
+        return countryService;
+    }
+    
+    /**
+     * @param countryService the countryService to set
+     */
+    public void setCountryService(CountryService countryService) {
+        this.countryService = countryService;
+    }
+    
+    /**
+     * @return the performedActivityService
+     */
+    public PerformedActivityServiceLocal getPerformedActivityService() {
+        return performedActivityService;
+    }
+    
+    /**
+     * @param performedActivityService the performedActivityService to set
+     */
+    public void setPerformedActivityService(PerformedActivityServiceLocal performedActivityService) {
+        this.performedActivityService = performedActivityService;
+    }
+    
+    /**
+     * @return the searchStudySiteService
+     */
+    public SearchStudySiteService getSearchStudySiteService() {
+        return searchStudySiteService;
+    }
+    
+    /**
+     * @param searchStudySiteService the searchStudySiteService to set
+     */
+    public void setSearchStudySiteService(SearchStudySiteService searchStudySiteService) {
+        this.searchStudySiteService = searchStudySiteService;
     }
 }

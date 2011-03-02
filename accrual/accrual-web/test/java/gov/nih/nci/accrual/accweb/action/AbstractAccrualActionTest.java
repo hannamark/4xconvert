@@ -79,10 +79,10 @@ package gov.nih.nci.accrual.accweb.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
-import gov.nih.nci.accrual.accweb.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.accweb.util.MockPaServiceLocator;
 import gov.nih.nci.accrual.accweb.util.MockServiceLocator;
-import gov.nih.nci.accrual.accweb.util.PaServiceLocator;
+import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.util.PaServiceLocator;
 
 import java.sql.Timestamp;
 import java.util.Date;

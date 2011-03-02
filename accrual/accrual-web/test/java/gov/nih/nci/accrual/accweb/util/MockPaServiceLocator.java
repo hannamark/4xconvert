@@ -78,9 +78,12 @@
 */
 package gov.nih.nci.accrual.accweb.util;
 
+import static org.mockito.Mockito.mock;
+import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 
 /**
  * @author Hugh Reinhart
@@ -89,28 +92,35 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 public class MockPaServiceLocator implements ServiceLocatorPaInterface {
 
     private final DiseaseServiceRemote disease = new MockPaDiseaseBean();
-    //private final PatientServiceRemote patient = new MockPaPatientServiceBean();
     private final PlannedActivityServiceRemote pActivity = new MockPaPlannedActivityServiceBean();
     private final DiseaseParentServiceRemote diseaseParent = new MockPaDiseaseParentServiceBean();
+    private final StudyProtocolServiceRemote studyProtocolService = mock(StudyProtocolServiceRemote.class);
+    
     /**
      * {@inheritDoc}
      */
     public DiseaseServiceRemote getDiseaseService() {
         return disease;
     }
+    
     /**
      * {@inheritDoc}
      */
     public PlannedActivityServiceRemote getPlannedActivityService() {
         return pActivity;
-    }/*
-    *//**
+    }
+    
+    /**
      * {@inheritDoc}
-     *//*
-    public PatientServiceRemote getPatientService() {
-        return patient;
-    }*/
+     */
     public DiseaseParentServiceRemote getDiseaseParentService() {
         return diseaseParent;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public StudyProtocolServiceRemote getStudyProtocolService() {
+        return studyProtocolService;
     }
 }

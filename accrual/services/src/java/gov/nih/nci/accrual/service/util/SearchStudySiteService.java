@@ -104,11 +104,11 @@ public interface SearchStudySiteService {
     List<SearchStudySiteResultDto> search(Ii studyProtocolIi,  St authorizedUser) throws RemoteException;
     
     /**
-     * Returns the Ii of the study site with the given local identifier.
-     * @param localIdentifier the local identifier of the study site
+     * Returns the study site with the org ii for the given study protocol.
      * @param studyProtocolIi ii for the selected study
-     * @return the ii of the study site or null if no such site is found
+     * @param orgIi the ii of the org
+     * @return the study site or null if no such site is found
      * @throws PAException on error
      */
-    Ii getStudySiteIdentifierByLocalIdentifier(Ii studyProtocolIi, St localIdentifier) throws PAException;
+    SearchStudySiteResultDto getStudySiteByOrg(Ii studyProtocolIi, Ii orgIi) throws PAException;
 }

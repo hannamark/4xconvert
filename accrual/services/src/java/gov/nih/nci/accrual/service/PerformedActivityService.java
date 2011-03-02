@@ -84,7 +84,6 @@ import gov.nih.nci.iso21090.Ii;
 
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import javax.ejb.Remote;
 
@@ -108,18 +107,16 @@ public interface PerformedActivityService extends BaseAccrualStudyService<Perfor
      * @param dto the dto
      * @return the performed subject milestone dto
      * @throws RemoteException the remote exception
-     * @throws DataFormatException the Data Format Exception
      */
-    PerformedSubjectMilestoneDto createPerformedSubjectMilestone(PerformedSubjectMilestoneDto dto)
-            throws RemoteException, DataFormatException;
+    PerformedSubjectMilestoneDto createPerformedSubjectMilestone(PerformedSubjectMilestoneDto dto) 
+        throws RemoteException;
 
     /**
      * Update performed subject milestone.
      * @param dto the dto
      * @return the performed subject milestone dto
      * @throws RemoteException the remote exception
-     * @throws DataFormatException the Data Format Exception
      */
     PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(PerformedSubjectMilestoneDto dto)
-            throws RemoteException, DataFormatException;
+            throws RemoteException;
 }

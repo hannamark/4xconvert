@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,107 +76,44 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.accrual.service.PatientService;
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.POPatientService;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
-
+import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 
 /**
  * @author Hugh Reinhart
- * @since 4/13/2009
+ * @since Aug 27, 2009
  */
-public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
-    private static final AccrualServiceLocator ACC_REGISTRY = new AccrualServiceLocator();
-    private ServiceLocatorAccInterface serviceLocator;
+public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
 
     /**
-     * Constructor for the singleton instance.
+     * {@inheritDoc}
      */
-    private AccrualServiceLocator() {
-        serviceLocator = new JndiServiceLocator();
-    }
-
-    /**
-     * @return the accrualServiceLocator
-     */
-    public static AccrualServiceLocator getInstance() {
-        return ACC_REGISTRY;
-    }
-
-    /**
-     * @return the serviceLocator
-     */
-    public ServiceLocatorAccInterface getServiceLocator() {
-        return serviceLocator;
-    }
-
-    /**
-     * @param serviceLocator the serviceLocator to set
-     */
-    public void setServiceLocator(ServiceLocatorAccInterface serviceLocator) {
-        this.serviceLocator = serviceLocator;
+    public DiseaseServiceRemote getDiseaseService() {
+        return (DiseaseServiceRemote) JNDIUtil.lookupPa("/pa/DiseaseBeanLocal/remote");
     }
 
     /**
      * {@inheritDoc}
      */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return serviceLocator.getSearchStudySiteService();
+    public DiseaseParentServiceRemote getDiseaseParentService() {
+        return (DiseaseParentServiceRemote) JNDIUtil.lookupPa("/pa/DiseaseParentServiceBean/remote");
     }
 
     /**
      * {@inheritDoc}
      */
-    public SearchTrialService getSearchTrialService() {
-        return serviceLocator.getSearchTrialService();
+    public PlannedActivityServiceRemote getPlannedActivityService() {
+        return (PlannedActivityServiceRemote) JNDIUtil.lookupPa("/pa/PlannedActivityBeanLocal/remote");
     }
 
     /**
      * {@inheritDoc}
      */
-    public PatientService getPatientService() {
-        return serviceLocator.getPatientService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public POPatientService getPOPatientService() {
-        return serviceLocator.getPOPatientService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedActivityService getPerformedActivityService() {
-        return serviceLocator.getPerformedActivityService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectService getStudySubjectService() {
-        return serviceLocator.getStudySubjectService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SubmissionService getSubmissionService() {
-        return serviceLocator.getSubmissionService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public CountryService getCountryService() {
-        return serviceLocator.getCountryService();
+    public StudyProtocolServiceRemote getStudyProtocolService() {
+        return (StudyProtocolServiceRemote) JNDIUtil.lookupPa("/pa/StudyProtocolServiceBean/remote");
     }
 }

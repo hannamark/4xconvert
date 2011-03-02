@@ -234,7 +234,7 @@ public class TestSchema {
         Organization org = new Organization();
         org.setCity("city");
         org.setCountryName("country name");
-        org.setIdentifier("po org id");
+        org.setIdentifier("1");
         org.setName("orga name");
         org.setPostalCode("12345");
         org.setState("MD");
@@ -245,7 +245,7 @@ public class TestSchema {
         org = new Organization();
         org.setCity("city2");
         org.setCountryName("country name2");
-        org.setIdentifier("po org id2");
+        org.setIdentifier("2");
         org.setName("orga name2");
         org.setPostalCode("22345");
         org.setState("MD");
@@ -318,7 +318,7 @@ public class TestSchema {
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
 
         studySecondaryIdentifiers =  new HashSet<Ii>();
-        assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00003");
+        assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2010-00003");
         studySecondaryIdentifiers.add(assignedId);
 
         sp.setOtherIdentifiers(studySecondaryIdentifiers);
@@ -554,7 +554,7 @@ public class TestSchema {
         subj.setDisease(diseases.get(0));
         subj.setPatient(patients.get(0));
         subj.setPaymentMethodCode(PaymentMethodCode.MEDICARE);
-        subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        subj.setStatusCode(FunctionalRoleStatusCode.PENDING);
         subj.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         subj.setStudyProtocol(studyProtocols.get(0));
         subj.setStudySite(studySites.get(0));
@@ -564,7 +564,7 @@ public class TestSchema {
         subj = new StudySubject();
         subj.setPatient(patients.get(0));
         subj.setAssignedIdentifier("001");
-        subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        subj.setStatusCode(FunctionalRoleStatusCode.PENDING);
         subj.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         subj.setStudyProtocol(studyProtocols.get(0));
         subj.setStudySite(studySites.get(0));

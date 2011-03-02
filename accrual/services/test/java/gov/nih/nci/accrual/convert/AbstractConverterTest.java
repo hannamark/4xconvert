@@ -84,16 +84,19 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.PqConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 /**
@@ -112,6 +115,7 @@ public abstract class AbstractConverterTest {
     protected static Cd cdVal = null;
     protected static DSet<Cd> dsetVal = null;
     protected static Int intVal = IntConverter.convertToInt(1);
+    protected static Pq pqVal = PqConverter.convertToPq(BigDecimal.ONE, "YEARS");
 
     protected boolean iiTest(Ii ii) {
         return IiConverter.convertToLong(ii).equals(2L);
@@ -144,6 +148,10 @@ public abstract class AbstractConverterTest {
     
     protected boolean intTest(Int i) {
         return IntConverter.convertToInteger(i).equals(1);
+    }
+    
+    protected boolean pqTest(Pq pq) {
+        return PqConverter.convertToPqToDecimal(pq).equals(pqVal.getValue());
     }
     
     /**

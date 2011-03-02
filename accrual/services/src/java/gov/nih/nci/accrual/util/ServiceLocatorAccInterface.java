@@ -76,77 +76,60 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.accrual.util.JNDIUtil;
 
 /**
  * @author Hugh Reinhart
  * @since 4/13/2009
  */
-public class JndiServiceLocator implements ServiceLocatorAccInterface {
+public interface ServiceLocatorAccInterface {
 
     /**
-     * {@inheritDoc}
+     * @return search trial service
      */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return (SearchStudySiteService) JNDIUtil.lookup("accrual/SearchStudySiteBean/remote");
-    }
-
+    SearchTrialService getSearchTrialService();
     /**
-     * {@inheritDoc}
+     * @return search study site service
      */
-    public SearchTrialService getSearchTrialService() {
-        return (SearchTrialService) JNDIUtil.lookup("accrual/SearchTrialBean/remote");
-    }
-
+    SearchStudySiteService getSearchStudySiteService();
     /**
-     * {@inheritDoc}
+     * @return Patient correlation service
      */
-    public PatientService getPatientService() {
-        return (PatientService) JNDIUtil.lookup("accrual/PatientBeanLocal/remote");
-    }
-
+    PatientService getPatientService();
     /**
-     * {@inheritDoc}
+     * @return Patient correlation service
      */
-    public POPatientService getPOPatientService() {
-        return (POPatientService) JNDIUtil.lookup("accrual/POPatientBean/remote");
-    }
-
+    POPatientService getPOPatientService();
     /**
-     * {@inheritDoc}
+     * @return Submission domain service
      */
-    public PerformedActivityService getPerformedActivityService() {
-        return (PerformedActivityService) JNDIUtil.lookup("accrual/PerformedActivityBeanLocal/remote");
-    }
-
+    SubmissionService getSubmissionService();
     /**
-     * {@inheritDoc}
+     * @return StudySubject domain service
      */
-    public StudySubjectService getStudySubjectService() {
-        return (StudySubjectService) JNDIUtil.lookup("accrual/StudySubjectBeanLocal/remote");
-    }
-
+    StudySubjectService getStudySubjectService();
     /**
-     * {@inheritDoc}
+     * @return PerformedActivityService domain service
      */
-    public SubmissionService getSubmissionService() {
-        return (SubmissionService) JNDIUtil.lookup("accrual/SubmissionBeanLocal/remote");
-    }
-
+    PerformedActivityService getPerformedActivityService();
     /**
-     * {@inheritDoc}
+     * @return CountryService
      */
-    public CountryService getCountryService() {
-        return (CountryService) JNDIUtil.lookup("accrual/CountryBean/remote");
-    }
+    CountryService getCountryService();
+    
+    /**
+     * Gets the cdus batch upload service.
+     * @return the batch upload service.
+     */
+    CdusBatchUploadReaderServiceLocal getBatchUploadReaderService();
 }

@@ -87,6 +87,8 @@ import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -100,9 +102,12 @@ import org.apache.log4j.Logger;
 public class BatchUploadAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(BatchUploadAction.class);
+    private static final List<String> ALLOWED_TYPES = Arrays.asList("text/plain", "application/zip");
     private File upload;
     private String uploadFileName;
     private String uploadContentType;
+    private boolean processImmediately = false;
+
     
     /**
      * {@inheritDoc}
@@ -111,9 +116,12 @@ public class BatchUploadAction extends AbstractAccrualAction {
         if (upload == null || StringUtils.isEmpty(uploadFileName) || StringUtils.isEmpty(uploadContentType)) {
             addActionError(getText("error.accrual.batchUpload.file"));
             return SUCCESS;
+        } else if (!ALLOWED_TYPES.contains(uploadContentType)) {
+            addActionError(getText("error.accrual.batchUpload.fileType"));
+            return SUCCESS;
         }
         try {
-            copyFile(upload);
+            handleBatchFile(upload);
             addActionMessage(getText("accrual.batchUpload.success"));
         } catch (Exception e) {
             LOG.error("Error while attempting to upload accrual batch file.", e);
@@ -123,16 +131,20 @@ public class BatchUploadAction extends AbstractAccrualAction {
     }
     
     /**
-     * Copies the uploaded file to the accrual batch upload directory.
+     * Handles the uploaded file, either processing it immediately or placing it in the accrual batch upload directory.
      * @param file the file to copy
      * @throws IOException on IO error
      * @throws PAException on error
      */
-    private void copyFile(File file) throws IOException, PAException {
-        String batchUploadLocation = PaEarPropertyReader.getAccrualBatchUploadPath();
-        String fullPath = batchUploadLocation + File.separator + uploadFileName;
-        File transferredFile = new File(fullPath);
-        FileUtils.copyFile(file, transferredFile);        
+    private void handleBatchFile(File file) throws IOException, PAException {
+        if (processImmediately) {
+            getCdusBatchUploadReaderSvc().importBatchData(file);
+        } else {
+            String batchUploadLocation = PaEarPropertyReader.getAccrualBatchUploadPath();
+            String fullPath = batchUploadLocation + File.separator + uploadFileName;
+            File transferredFile = new File(fullPath);
+            FileUtils.copyFile(file, transferredFile);        
+        }
     }
     
     /**
@@ -155,5 +167,19 @@ public class BatchUploadAction extends AbstractAccrualAction {
      */
     public void setUploadContentType(String uploadContentType) {
         this.uploadContentType = uploadContentType;
+    }
+
+    /**
+     * @return the processImmediately
+     */
+    public boolean isProcessImmediately() {
+        return processImmediately;
+    }
+
+    /**
+     * @param processImmediately the processImmediately to set
+     */
+    public void setProcessImmediately(boolean processImmediately) {
+        this.processImmediately = processImmediately;
     }
 }

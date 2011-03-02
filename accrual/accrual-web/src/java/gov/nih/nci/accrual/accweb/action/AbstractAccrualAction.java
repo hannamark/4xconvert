@@ -77,16 +77,17 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
-import gov.nih.nci.accrual.accweb.util.AccrualServiceLocator;
-import gov.nih.nci.accrual.accweb.util.PaServiceLocator;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -125,6 +126,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     private DiseaseServiceRemote diseaseSvc;
     private PlannedActivityServiceRemote plannedActivitySvc;
     private DiseaseParentServiceRemote diseaseParentSvc;
+    private CdusBatchUploadReaderServiceLocal cdusBatchUploadReaderSvc;
 
     /**
      * {@inheritDoc}
@@ -137,6 +139,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         patientSvc = AccrualServiceLocator.getInstance().getPatientService();
         performedActivitySvc = AccrualServiceLocator.getInstance().getPerformedActivityService();
         countrySvc = AccrualServiceLocator.getInstance().getCountryService();
+        cdusBatchUploadReaderSvc = AccrualServiceLocator.getInstance().getBatchUploadReaderService();
         diseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
         diseaseParentSvc = PaServiceLocator.getInstance().getDiseaseParentService();
@@ -295,5 +298,13 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      */
     public DiseaseParentServiceRemote getDiseaseParentSvc() {
         return diseaseParentSvc;
+    }
+    
+    /**
+     * @return the cdus batch upload reader service
+     */
+    public CdusBatchUploadReaderServiceLocal getCdusBatchUploadReaderSvc() {
+        return cdusBatchUploadReaderSvc;
+        
     }
 }

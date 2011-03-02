@@ -84,9 +84,18 @@ package gov.nih.nci.accrual.service;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.service.util.BatchImportResults;
+import gov.nih.nci.accrual.service.util.BatchValidationResults;
+import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
+import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -99,15 +108,22 @@ import org.junit.Test;
  */
 public class BatchUploadProcessingTaskServiceTest {
     private static final int NUMBER_OF_BATCH_FILES = 3;
-    private BatchUploadProcessingTaskServiceLocal bean = new BatchUploadProcessingTaskServiceBean();
+    private BatchUploadProcessingTaskServiceBean bean = new BatchUploadProcessingTaskServiceBean();
     
     @Before
     public void setUp() throws Exception {
         File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());
         for (int i = 1; i <= NUMBER_OF_BATCH_FILES; i++) {
-            String fileName = "accrual_batch_" + i + ".csv";
+            String fileName = "accrual_batch_" + i + ".txt";
             FileUtils.touch(new File(uploadDirectory + File.separator + fileName));
         }
+        
+        CdusBatchUploadReaderServiceLocal readerService = mock(CdusBatchUploadReaderServiceLocal.class);
+        when(readerService.validateBatchData(any(File.class))).thenReturn(new ArrayList<BatchValidationResults>());
+        when(readerService.importBatchData(any(File.class))).thenReturn(new ArrayList<BatchImportResults>());
+        ServiceLocatorAccInterface svcLocator = mock(ServiceLocatorAccInterface.class);
+        when(svcLocator.getBatchUploadReaderService()).thenReturn(readerService);
+        AccrualServiceLocator.getInstance().setServiceLocator(svcLocator);
     }
     
     @Test
@@ -121,7 +137,7 @@ public class BatchUploadProcessingTaskServiceTest {
         
         File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());
         for (int i = 1; i <= NUMBER_OF_BATCH_FILES; i++) {
-            String fileName = "accrual_batch_" + i + ".csv";
+            String fileName = "accrual_batch_" + i + ".txt";
             assertFalse(new File(uploadDirectory + File.separator + fileName).exists());
         }
     }

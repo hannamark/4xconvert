@@ -119,6 +119,11 @@
             <param-name>start-scheduler-on-load</param-name>
             <param-value>true</param-value>
         </init-param>
+        <!-- Delay starting of quartz task for 5 minutes to allow for pa to come up completely. -->
+        <init-param>
+            <param-name>start-delay-seconds</param-name>
+            <param-value>300</param-value>
+        </init-param>
     </servlet>
     
 

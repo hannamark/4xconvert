@@ -76,12 +76,13 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
@@ -91,38 +92,68 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
  * @author Hugh Reinhart
  * @since 4/13/2009
  */
-public interface ServiceLocatorAccInterface {
+public class JndiServiceLocator implements ServiceLocatorAccInterface {
 
     /**
-     * @return search trial service
+     * {@inheritDoc}
      */
-    SearchTrialService getSearchTrialService();
+    public SearchStudySiteService getSearchStudySiteService() {
+        return (SearchStudySiteService) JNDIUtil.lookup("accrual/SearchStudySiteBean/remote");
+    }
+
     /**
-     * @return search study site service
+     * {@inheritDoc}
      */
-    SearchStudySiteService getSearchStudySiteService();
+    public SearchTrialService getSearchTrialService() {
+        return (SearchTrialService) JNDIUtil.lookup("accrual/SearchTrialBean/remote");
+    }
+
     /**
-     * @return Patient correlation service
+     * {@inheritDoc}
      */
-    PatientService getPatientService();
+    public PatientService getPatientService() {
+        return (PatientService) JNDIUtil.lookup("accrual/PatientBeanLocal/remote");
+    }
+
     /**
-     * @return Patient correlation service
+     * {@inheritDoc}
      */
-    POPatientService getPOPatientService();
+    public POPatientService getPOPatientService() {
+        return (POPatientService) JNDIUtil.lookup("accrual/POPatientBean/remote");
+    }
+
     /**
-     * @return Submission domain service
+     * {@inheritDoc}
      */
-    SubmissionService getSubmissionService();
+    public PerformedActivityService getPerformedActivityService() {
+        return (PerformedActivityService) JNDIUtil.lookup("accrual/PerformedActivityBeanLocal/remote");
+    }
+
     /**
-     * @return StudySubject domain service
+     * {@inheritDoc}
      */
-    StudySubjectService getStudySubjectService();
+    public StudySubjectService getStudySubjectService() {
+        return (StudySubjectService) JNDIUtil.lookup("accrual/StudySubjectBeanLocal/remote");
+    }
+
     /**
-     * @return PerformedActivityService domain service
+     * {@inheritDoc}
      */
-    PerformedActivityService getPerformedActivityService();
+    public SubmissionService getSubmissionService() {
+        return (SubmissionService) JNDIUtil.lookup("accrual/SubmissionBeanLocal/remote");
+    }
+
     /**
-     * @return CountryService
+     * {@inheritDoc}
      */
-    CountryService getCountryService();
+    public CountryService getCountryService() {
+        return (CountryService) JNDIUtil.lookup("accrual/CountryBean/remote");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public CdusBatchUploadReaderServiceLocal getBatchUploadReaderService() {
+        return (CdusBatchUploadReaderServiceLocal) JNDIUtil.lookup("accrual/CdusBatchUploadReaderBean/local");
+    }
 }

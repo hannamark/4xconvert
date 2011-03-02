@@ -86,12 +86,12 @@ import gov.nih.nci.pa.service.PAException;
 
 import java.io.File;
 import java.rmi.RemoteException;
+import java.util.List;
 
 import javax.ejb.Local;
 
 /**
  * @author vrushali
- *
  */
 @Local
 public interface CdusBatchUploadReaderServiceLocal {
@@ -101,14 +101,14 @@ public interface CdusBatchUploadReaderServiceLocal {
      * @param file file to read
      * @return the validation results
      */
-    BatchValidationResults validateBatchData(File file);
+    List<BatchValidationResults> validateBatchData(File file);
     
     /**
-     * Performs the batch import, creating the necessary submission and study subject.
-     * @param validationResults the validation results
-     * @return the batch import results
+     * Reads and validates and imports the csv file.
+     * @param file file to read
+     * @return the import results
      * @throws PAException on error
      * @throws RemoteException on error
      */
-    BatchImportResults importBatchData(BatchValidationResults validationResults) throws PAException, RemoteException;
+    List<BatchImportResults> importBatchData(File file) throws PAException, RemoteException;
 }

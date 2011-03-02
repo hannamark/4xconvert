@@ -1,7 +1,7 @@
-/*
+/***
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,70 +76,115 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.accrual.service.PatientService;
+import gov.nih.nci.accrual.service.PerformedActivityService;
+import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
+import gov.nih.nci.accrual.service.util.CountryService;
+import gov.nih.nci.accrual.service.util.POPatientService;
+import gov.nih.nci.accrual.service.util.SearchStudySiteService;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
+
 
 /**
  * @author Hugh Reinhart
- * @since Aug 24, 2009
+ * @since 4/13/2009
  */
-public final class PaServiceLocator implements ServiceLocatorPaInterface {
-
-    /** Value from PA action class used to indicate a gender criterion. */
-    public static final String ELIG_CRITERION_NAME_GENDER = "GENDER";
-
-    private static final PaServiceLocator PA_REGISTRY = new PaServiceLocator();
-    private ServiceLocatorPaInterface serviceLocator;
+public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
+    private static final AccrualServiceLocator ACC_REGISTRY = new AccrualServiceLocator();
+    private ServiceLocatorAccInterface serviceLocator;
 
     /**
      * Constructor for the singleton instance.
      */
-    private PaServiceLocator() {
-        serviceLocator = new PaJndiServiceLocator();
+    private AccrualServiceLocator() {
+        serviceLocator = new JndiServiceLocator();
     }
 
     /**
      * @return the accrualServiceLocator
      */
-    public static PaServiceLocator getInstance() {
-        return PA_REGISTRY;
+    public static AccrualServiceLocator getInstance() {
+        return ACC_REGISTRY;
     }
 
     /**
      * @return the serviceLocator
      */
-    public ServiceLocatorPaInterface getServiceLocator() {
+    public ServiceLocatorAccInterface getServiceLocator() {
         return serviceLocator;
     }
 
     /**
      * @param serviceLocator the serviceLocator to set
      */
-    public void setServiceLocator(ServiceLocatorPaInterface serviceLocator) {
+    public void setServiceLocator(ServiceLocatorAccInterface serviceLocator) {
         this.serviceLocator = serviceLocator;
     }
 
     /**
      * {@inheritDoc}
      */
-    public DiseaseServiceRemote getDiseaseService() {
-         return serviceLocator.getDiseaseService();
+    public SearchStudySiteService getSearchStudySiteService() {
+        return serviceLocator.getSearchStudySiteService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public PlannedActivityServiceRemote getPlannedActivityService() {
-        return serviceLocator.getPlannedActivityService();
+    public SearchTrialService getSearchTrialService() {
+        return serviceLocator.getSearchTrialService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public DiseaseParentServiceRemote getDiseaseParentService() {
-         return serviceLocator.getDiseaseParentService();
+    public PatientService getPatientService() {
+        return serviceLocator.getPatientService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public POPatientService getPOPatientService() {
+        return serviceLocator.getPOPatientService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PerformedActivityService getPerformedActivityService() {
+        return serviceLocator.getPerformedActivityService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudySubjectService getStudySubjectService() {
+        return serviceLocator.getStudySubjectService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SubmissionService getSubmissionService() {
+        return serviceLocator.getSubmissionService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CountryService getCountryService() {
+        return serviceLocator.getCountryService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CdusBatchUploadReaderServiceLocal getBatchUploadReaderService() {
+        return serviceLocator.getBatchUploadReaderService();
     }
 }

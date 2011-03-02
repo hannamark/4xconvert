@@ -95,10 +95,11 @@ import gov.nih.nci.accrual.service.util.CountryBean;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientBean;
 import gov.nih.nci.accrual.service.util.SearchStudySiteBean;
+import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.util.PoServiceLocator;
+import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Ii;
@@ -108,9 +109,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
-import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -118,8 +117,7 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -150,13 +148,12 @@ public class BatchUploadReaderServiceTest {
         readerService.setSubmissionService(submissionService);
         readerService.setPerformedActivityService(new PerformedActivityBean());
         readerService.setSearchStudySiteService(new SearchStudySiteBean());
-        
         PatientBeanLocal patientBean = new PatientBeanLocal();
         patientBean.setCountryService(countryService);
         patientBean.setPatientCorrelationSvc(new POPatientBean());        
         readerService.setPatientService(patientBean);
         
-        StudyProtocolServiceLocal spSvc = mock(StudyProtocolServiceLocal.class);
+        StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
         when(spSvc.getStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
             public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
@@ -164,17 +161,16 @@ public class BatchUploadReaderServiceTest {
                 StudyProtocolDTO dto = new StudyProtocolDTO();
                 if (StringUtils.equals(ii.getExtension(), "NCI-2009-00001")) {
                     dto.setIdentifier(abbreviatedIi);
-                } else if (StringUtils.equals(ii.getExtension(), "NCI-2009-00003")) {
+                } else if (StringUtils.equals(ii.getExtension(), "NCI-2010-00003")) {
                     dto.setIdentifier(completeIi);
                 }
                 return dto;
             }
         });
-        when(spSvc.search(any(StudyProtocolDTO.class), any(LimitOffset.class))).thenReturn(Arrays.asList(new StudyProtocolDTO()));
+        ServiceLocatorPaInterface paSvcLocator = mock(ServiceLocatorPaInterface.class);
+        when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
         
-        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
-        when(paRegSvcLoc.getStudyProtocolService()).thenReturn(spSvc);
-        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
+        PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
         
         PoServiceLocator poServiceLoc = mock(PoServiceLocator.class);
         PoRegistry.getInstance().setPoServiceLocator(poServiceLoc);
@@ -204,42 +200,54 @@ public class BatchUploadReaderServiceTest {
     @Test
     public void testReading() throws URISyntaxException {
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
-        BatchValidationResults results = readerService.validateBatchData(file);
-        assertFalse(results.isPassedValidation());
-        assertTrue(StringUtils.isNotEmpty(results.getErrors().toString()));
-        assertTrue(StringUtils.isNotEmpty(results.getMailTo()));
-        assertTrue(results.getValidatedLines().isEmpty());
+        List<BatchValidationResults> results = readerService.validateBatchData(file);
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString()));
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
+        assertTrue(results.get(0).getValidatedLines().isEmpty());
         
         file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());        
         results = readerService.validateBatchData(file);
-        assertTrue(results.isPassedValidation());
-        assertTrue(StringUtils.isEmpty(results.getErrors().toString()));
-        assertTrue(StringUtils.isNotEmpty(results.getMailTo()));
-        assertFalse(results.getValidatedLines().isEmpty());
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
+        assertFalse(results.get(0).getValidatedLines().isEmpty());
         
         file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
-        readerService.validateBatchData(file);
-        results= readerService.validateBatchData(file);
-        assertTrue(results.isPassedValidation());
-        assertTrue(StringUtils.isEmpty(results.getErrors().toString()));
-        assertTrue(StringUtils.isNotEmpty(results.getMailTo()));
-        assertFalse(results.getValidatedLines().isEmpty());        
+        results = readerService.validateBatchData(file);
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
+        assertFalse(results.get(0).getValidatedLines().isEmpty());
+        
+        file = new File(this.getClass().getResource("/CDUS.zip").toURI());
+        List<BatchValidationResults> validationResults = readerService.validateBatchData(file);
+        assertEquals(2, validationResults.size());
+        for (BatchValidationResults result : validationResults) {
+            assertTrue(result.isPassedValidation());
+            assertTrue(StringUtils.isEmpty(result.getErrors().toString()));
+            assertTrue(StringUtils.isNotEmpty(result.getMailTo()));
+            assertFalse(result.getValidatedLines().isEmpty());
+        }
     }
     
     @Test
     public void testIsVaildProtocolId() throws PAException, TooManyResultsException, URISyntaxException {
-        StudyProtocolServiceLocal mockSpService = mock(StudyProtocolServiceLocal.class);
-        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
-        when(mockSpService.search(any(StudyProtocolDTO.class), any(LimitOffset.class))).thenReturn(new ArrayList<StudyProtocolDTO>());
-        when(paRegSvcLoc.getStudyProtocolService()).thenReturn(mockSpService);
-        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
+        StudyProtocolServiceRemote mockSpService = mock(StudyProtocolServiceRemote.class);
+        ServiceLocatorPaInterface paSvcLocator = mock(ServiceLocatorPaInterface.class);
+        when(paSvcLocator.getStudyProtocolService()).thenReturn(mockSpService);
+        PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
         
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
-        BatchValidationResults results = readerService.validateBatchData(file);
-        assertFalse(results.isPassedValidation());
-        assertTrue(StringUtils.isNotEmpty(results.getErrors().toString()));
-        assertTrue(StringUtils.isNotEmpty(results.getMailTo()));
-        assertTrue(results.getValidatedLines().isEmpty());
+        List<BatchValidationResults> results = readerService.validateBatchData(file);
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString()));
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
+        assertTrue(results.get(0).getValidatedLines().isEmpty());
     }
     
     @Test
@@ -248,9 +256,10 @@ public class BatchUploadReaderServiceTest {
         assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
         
         File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
-        BatchValidationResults validationResults = readerService.validateBatchData(file);
-        BatchImportResults importResults = readerService.importBatchData(validationResults);
-        assertEquals(72, importResults.getTotalImports());
+        List<BatchImportResults> importResults = readerService.importBatchData(file);
+        assertEquals(1, importResults.size());
+        assertEquals(72, importResults.get(0).getTotalImports());
+        assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
         assertEquals(3, submissionService.getByStudyProtocol(abbreviatedIi).size());
         assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
                 
@@ -258,16 +267,66 @@ public class BatchUploadReaderServiceTest {
         assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
         
         file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
-        validationResults = readerService.validateBatchData(file);
-        importResults = readerService.importBatchData(validationResults);
-        assertEquals(24, importResults.getTotalImports());
+        importResults = readerService.importBatchData(file);
+        assertEquals(1, importResults.size());
+        assertEquals(24, importResults.get(0).getTotalImports());
+        assertEquals("CDUS_Complete.txt", importResults.get(0).getFileName());
         assertEquals(1, submissionService.getByStudyProtocol(completeIi).size());
         assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
         
         file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
-        validationResults = readerService.validateBatchData(file);
-        importResults = readerService.importBatchData(validationResults);
-        assertEquals(0, importResults.getTotalImports());
+        importResults = readerService.importBatchData(file);
+        assertEquals(0, importResults.size());
     }
     
+    @Test
+    public void testPerformImportWithValidation() throws Exception {
+        assertEquals(2, submissionService.getByStudyProtocol(abbreviatedIi).size());
+        assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+        
+        File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
+        List<BatchImportResults> importResults = readerService.importBatchData(file);
+        assertEquals(1, importResults.size());
+        assertEquals(72, importResults.get(0).getTotalImports());
+        assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
+        assertEquals(3, submissionService.getByStudyProtocol(abbreviatedIi).size());
+        assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+                
+        assertEquals(0, submissionService.getByStudyProtocol(completeIi).size());
+        assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
+        
+        file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
+        importResults = readerService.importBatchData(file);
+        assertEquals(1, importResults.size());
+        assertEquals(24, importResults.get(0).getTotalImports());
+        assertEquals("CDUS_Complete.txt", importResults.get(0).getFileName());
+        assertEquals(1, submissionService.getByStudyProtocol(completeIi).size());
+        assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
+        
+        file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
+        importResults = readerService.importBatchData(file);
+        assertEquals(0, importResults.size());
+    }
+    
+    @Test
+    public void testPerformImportOfArchive() throws Exception {
+        File file = new File(this.getClass().getResource("/CDUS.zip").toURI());
+        
+        assertEquals(2, submissionService.getByStudyProtocol(abbreviatedIi).size());
+        assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+        assertEquals(0, submissionService.getByStudyProtocol(completeIi).size());
+        assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
+        
+        List<BatchImportResults> importResults = readerService.importBatchData(file);
+        assertEquals(2, importResults.size());
+        assertEquals(72, importResults.get(0).getTotalImports());
+        assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
+        assertEquals(3, submissionService.getByStudyProtocol(abbreviatedIi).size());
+        assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+        
+        assertEquals(24, importResults.get(1).getTotalImports());
+        assertEquals("CDUS_Complete.txt", importResults.get(1).getFileName());
+        assertEquals(1, submissionService.getByStudyProtocol(completeIi).size());
+        assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
+    }
 }

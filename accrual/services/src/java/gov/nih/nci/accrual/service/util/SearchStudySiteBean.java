@@ -157,18 +157,28 @@ public class SearchStudySiteBean implements SearchStudySiteService {
     /**
      * {@inheritDoc}
      */
-    public Ii getStudySiteIdentifierByLocalIdentifier(Ii studyProtocolIi, St localIdentifier) throws PAException {
+    public SearchStudySiteResultDto getStudySiteByOrg(Ii studyProtocolIi, Ii orgIi) 
+        throws PAException {
         Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(StudySite.class);
         criteria.add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)));
         criteria.add(Restrictions.eq("functionalCode", StudySiteFunctionalCode.TREATING_SITE));
-        criteria.add(Restrictions.eq("localStudyProtocolIdentifier", StConverter.convertToString(localIdentifier)));
+        criteria.createCriteria("healthCareFacility").createCriteria("organization")
+            .add(Restrictions.eq("identifier", IiConverter.convertToString(orgIi)));
+        SearchStudySiteResultDto returnDto = null;
         try {
             StudySite ss = (StudySite) criteria.uniqueResult();
-            return ss == null ? null : IiConverter.convertToStudySiteIi(ss.getId());
+            if (ss != null) {
+                returnDto = new SearchStudySiteResultDto();
+                returnDto.setOrganizationIi(
+                        IiConverter.convertToIi(ss.getHealthCareFacility().getOrganization().getIdentifier()));
+                returnDto.setStudySiteIi(IiConverter.convertToIi(ss.getId()));
+                returnDto.setOrganizationName(
+                        StConverter.convertToSt(ss.getHealthCareFacility().getOrganization().getName()));
+            }
         } catch (HibernateException e) {
-            throw new PAException("Error retrieving study site ii with local identifier " 
-                    + localIdentifier.getValue(), e);
+            throw new PAException("Error retrieving study site ii for the organization " + orgIi.getExtension(), e);
         }
+        return returnDto;
     }
     
     @SuppressWarnings("unchecked")

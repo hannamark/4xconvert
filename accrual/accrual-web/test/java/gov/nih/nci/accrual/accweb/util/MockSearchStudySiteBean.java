@@ -131,11 +131,11 @@ public class MockSearchStudySiteBean implements SearchStudySiteService {
     public List<SearchStudySiteResultDto> search(Ii studyProtocolIi, St authUser) throws RemoteException {
         return dtos.get(studyProtocolIi);
     }
-
+    
     /**
      * {@inheritDoc}
      */
-    public Ii getStudySiteIdentifierByLocalIdentifier(Ii studyProtocolIi, St localIdentifier) throws PAException {
-       return IiConverter.convertToStudySiteIi(S1DUKE);
+    public SearchStudySiteResultDto getStudySiteByOrg(Ii studyProtocolIi, Ii orgIi) throws PAException {
+        return null;
     }
 }

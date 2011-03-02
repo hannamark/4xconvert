@@ -59,11 +59,11 @@
     <dependency org="javax.ejb"              name="api"                     rev="3.0"             conf="compile->master"/>
     <dependency org="ant-contrib"            name="ant-contrib"             rev="1.0b3"           conf="compile->master"/>
 
-
     <!-- test -->
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->master"/>
     <dependency org="com.mockrunner"         name="mockrunner"              rev="0.4.1"           conf="test->master"/>
     <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.4-alpha4"      conf="test->test"/>
+    <dependency org="org.mockito"            name="mockito-all"             rev="1.8.4"           conf="test->master"/>
 
     <!-- other test targets -->
     <dependency org="checkstyle"                name="checkstyle"              rev="5.0"             conf="test-checkstyle->master,runtime"/>

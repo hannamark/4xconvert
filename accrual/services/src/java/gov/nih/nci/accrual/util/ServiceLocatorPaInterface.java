@@ -74,11 +74,12 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 
 /**
  * @author Hugh Reinhart
@@ -97,4 +98,9 @@ public interface ServiceLocatorPaInterface {
      * @return DiseaseParent service
      */
     DiseaseParentServiceRemote getDiseaseParentService();
+    
+    /**
+     * @return the study protocol service
+     */
+    StudyProtocolServiceRemote getStudyProtocolService();
 }

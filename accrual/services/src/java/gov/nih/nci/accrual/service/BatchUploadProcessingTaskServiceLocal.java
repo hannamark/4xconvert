@@ -84,6 +84,8 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.pa.service.PAException;
 
+import java.rmi.RemoteException;
+
 import javax.ejb.Local;
 
 /**
@@ -96,7 +98,8 @@ public interface BatchUploadProcessingTaskServiceLocal {
     /**
      * Performs the task of retrieving the accrual batch uploads, processing and then deleting them.
      * @throws PAException on error
+     * @throws RemoteException on error
      */
-    void processBatchUploads() throws PAException;
+    void processBatchUploads() throws PAException, RemoteException;
 
 }

@@ -76,37 +76,78 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.accrual.util.JNDIUtil;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 27, 2009
+ * @since Aug 24, 2009
  */
-public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
+public final class PaServiceLocator implements ServiceLocatorPaInterface {
+
+    /** Value from PA action class used to indicate a gender criterion. */
+    public static final String ELIG_CRITERION_NAME_GENDER = "GENDER";
+
+    private static final PaServiceLocator PA_REGISTRY = new PaServiceLocator();
+    private ServiceLocatorPaInterface serviceLocator;
 
     /**
-     * {@inheritDoc}
+     * Constructor for the singleton instance.
      */
-    public DiseaseServiceRemote getDiseaseService() {
-        return (DiseaseServiceRemote) JNDIUtil.lookupPa("/pa/DiseaseBeanLocal/remote");
+    private PaServiceLocator() {
+        serviceLocator = new PaJndiServiceLocator();
+    }
+
+    /**
+     * @return the accrualServiceLocator
+     */
+    public static PaServiceLocator getInstance() {
+        return PA_REGISTRY;
+    }
+
+    /**
+     * @return the serviceLocator
+     */
+    public ServiceLocatorPaInterface getServiceLocator() {
+        return serviceLocator;
+    }
+
+    /**
+     * @param serviceLocator the serviceLocator to set
+     */
+    public void setServiceLocator(ServiceLocatorPaInterface serviceLocator) {
+        this.serviceLocator = serviceLocator;
     }
 
     /**
      * {@inheritDoc}
      */
-    public DiseaseParentServiceRemote getDiseaseParentService() {
-        return (DiseaseParentServiceRemote) JNDIUtil.lookupPa("/pa/DiseaseParentServiceBean/remote");
+    public DiseaseServiceRemote getDiseaseService() {
+         return serviceLocator.getDiseaseService();
     }
 
     /**
      * {@inheritDoc}
      */
     public PlannedActivityServiceRemote getPlannedActivityService() {
-        return (PlannedActivityServiceRemote) JNDIUtil.lookupPa("/pa/PlannedActivityBeanLocal/remote");
+        return serviceLocator.getPlannedActivityService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public DiseaseParentServiceRemote getDiseaseParentService() {
+         return serviceLocator.getDiseaseParentService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyProtocolServiceRemote getStudyProtocolService() {
+        return serviceLocator.getStudyProtocolService();
     }
 }

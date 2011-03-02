@@ -158,7 +158,7 @@ public class PerformedActivityBeanLocal extends
      * {@inheritDoc}
      */
     public PerformedSubjectMilestoneDto createPerformedSubjectMilestone(PerformedSubjectMilestoneDto dto)
-        throws RemoteException, DataFormatException {
+        throws RemoteException {
         if (PAUtil.isIiNotNull(dto.getIdentifier())) {
             throw new RemoteException("Update method should be used to modify existing.  ");
         }
@@ -172,7 +172,7 @@ public class PerformedActivityBeanLocal extends
      * {@inheritDoc}
      */
     public PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(PerformedSubjectMilestoneDto dto)
-        throws RemoteException, DataFormatException {
+        throws RemoteException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to modify existing.  ");
         }

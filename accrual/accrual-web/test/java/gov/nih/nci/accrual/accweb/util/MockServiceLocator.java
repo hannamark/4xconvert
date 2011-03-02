@@ -76,20 +76,23 @@
 */
 package gov.nih.nci.accrual.accweb.util;
 
+import static org.mockito.Mockito.mock;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 
 /**
  * @author Hugh Reinhart
  * @since 7/7/2009
  */
-public class MockServiceLocator implements ServiceLocatorAccInterface{
+public class MockServiceLocator implements ServiceLocatorAccInterface {
     private final SearchTrialService searchTrial = new MockSearchTrialBean();
     private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
     private final SubmissionService submissionService = new MockSubmissionBean();
@@ -98,6 +101,8 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     private final PatientService patientService = new MockPatientBean();
     private final PerformedActivityService psmService = new MockPerformedActivityBean();
     private final POPatientService poPatientService = new MockPaPatientServiceBean();
+    private final CdusBatchUploadReaderServiceLocal cdusBatchUploadReaderService =
+        mock(CdusBatchUploadReaderServiceLocal.class);
     
     /**
      * {@inheritDoc}
@@ -146,5 +151,12 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
      */
     public POPatientService getPOPatientService() {
         return poPatientService;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public CdusBatchUploadReaderServiceLocal getBatchUploadReaderService() {
+       return cdusBatchUploadReaderService;
     }
 }

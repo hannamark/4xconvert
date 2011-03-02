@@ -103,23 +103,34 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class BatchUploadActionTest extends AbstractAccrualActionTest {
     private BatchUploadAction batchUploadAction;
-    private File uploadFile;
-    private String fileUploadName;
-    String uploadedFilePath;
+    private File txtUploadFile;
+    private String txtFileUploadName;
+    private String txtUploadedFilePath;
+    
+    private File zipUploadFile;
+    private String zipFileUploadName;
+    private String zipUploadedFilePath;
     
     @Before
     public void setUp() throws Exception {
         batchUploadAction = new BatchUploadAction();
-        uploadFile = File.createTempFile("accrual_batch", ".csv");
+        batchUploadAction.prepare();
+        txtUploadFile = File.createTempFile("accrual_batch", ".txt");
         Date now = new Date();
-        fileUploadName = "accrual_batch-" + now.getTime() + ".csv";        
-        uploadedFilePath = PaEarPropertyReader.getAccrualBatchUploadPath() + File.separator + fileUploadName;
+        txtFileUploadName = "accrual_batch-" + now.getTime() + ".txt";        
+        txtUploadedFilePath = PaEarPropertyReader.getAccrualBatchUploadPath() + File.separator + txtFileUploadName;
+        
+        zipUploadFile = File.createTempFile("accrual_batch", ".zip");
+        zipFileUploadName = "accrual_batch-" + now.getTime() + ".zip";        
+        zipUploadedFilePath = PaEarPropertyReader.getAccrualBatchUploadPath() + File.separator + zipFileUploadName;
     }
     
     @After
     public void tearDown() throws Exception {
-        uploadFile.delete();
-        new File(uploadedFilePath).delete();
+        txtUploadFile.delete();
+        zipUploadFile.delete();
+        new File(txtUploadedFilePath).delete();
+        new File(zipUploadedFilePath).delete();
     }
     
     @Test
@@ -129,23 +140,55 @@ public class BatchUploadActionTest extends AbstractAccrualActionTest {
         assertFalse(batchUploadAction.hasActionMessages());
         batchUploadAction.clearActionErrors();
         
-        batchUploadAction.setUpload(uploadFile);
+        batchUploadAction.setUpload(txtUploadFile);
         assertEquals(ActionSupport.SUCCESS, batchUploadAction.doUpload());
         assertTrue(batchUploadAction.hasActionErrors());
         assertFalse(batchUploadAction.hasActionMessages());
         batchUploadAction.clearActionErrors();
         
-        batchUploadAction.setUploadFileName(fileUploadName);
+        batchUploadAction.setUploadFileName(txtFileUploadName);
         assertEquals(ActionSupport.SUCCESS, batchUploadAction.doUpload());
         assertTrue(batchUploadAction.hasActionErrors());
         assertFalse(batchUploadAction.hasActionMessages());
         batchUploadAction.clearActionErrors();
         
-        batchUploadAction.setUploadContentType("text/csv");
+        batchUploadAction.setUploadContentType("text/plain");
         assertEquals(ActionSupport.SUCCESS, batchUploadAction.doUpload());
         assertFalse(batchUploadAction.hasActionErrors());
         assertTrue(batchUploadAction.hasActionMessages());
         
-        assertTrue(new File(uploadedFilePath).exists());
+        assertTrue(new File(txtUploadedFilePath).exists());
+        
+        batchUploadAction.clearErrorsAndMessages();
+        batchUploadAction.setUploadContentType("application/zip");
+        batchUploadAction.setUpload(zipUploadFile);
+        batchUploadAction.setUploadFileName(zipFileUploadName);
+        
+        assertEquals(ActionSupport.SUCCESS, batchUploadAction.doUpload());
+        assertFalse(batchUploadAction.hasActionErrors());
+        assertTrue(batchUploadAction.hasActionMessages());
+        assertTrue(new File(zipUploadedFilePath).exists());
+        
+        batchUploadAction.clearErrorsAndMessages();
+        batchUploadAction.setUploadContentType("text/foo");
+        assertEquals(ActionSupport.SUCCESS, batchUploadAction.doUpload());
+        assertTrue(batchUploadAction.hasActionErrors());
+        assertFalse(batchUploadAction.hasActionMessages());
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Test
+    public void testImmediateProcessing() {
+        batchUploadAction.setUpload(txtUploadFile);
+        batchUploadAction.setUploadContentType("text/plain");
+        batchUploadAction.setUploadFileName(txtFileUploadName);
+        batchUploadAction.setProcessImmediately(true);
+        
+        assertEquals(ActionSupport.SUCCESS, batchUploadAction.doUpload());
+        assertFalse(batchUploadAction.hasActionErrors());
+        assertTrue(batchUploadAction.hasActionMessages());
+        batchUploadAction.clearActionErrors();
     }
 }

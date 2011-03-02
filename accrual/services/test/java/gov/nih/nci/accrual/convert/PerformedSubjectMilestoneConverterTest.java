@@ -112,6 +112,8 @@ public class PerformedSubjectMilestoneConverterTest extends AbstractConverterTes
         dto.setSubcategoryCode(cdVal);
         dto.setTextDescription(stVal);
         dto.setStudySubjectIdentifier(iiVal);
+        dto.setActualDuration(pqVal);
+        dto.setInterventionIdentifier(iiVal);
 
         PerformedSubjectMilestone bo = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDtoToDomain(dto);
         PerformedSubjectMilestoneDto r = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDomainToDto(bo);
@@ -125,6 +127,7 @@ public class PerformedSubjectMilestoneConverterTest extends AbstractConverterTes
         assertTrue(cdTest(r.getSubcategoryCode()));
         assertTrue(stTest(r.getTextDescription()));
         assertTrue(iiTest(r.getStudySubjectIdentifier()));
+        assertTrue(pqTest(r.getActualDuration()));
     }
 
     @Test

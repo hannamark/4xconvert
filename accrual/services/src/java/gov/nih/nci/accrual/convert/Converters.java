@@ -82,18 +82,24 @@
  */
 package gov.nih.nci.accrual.convert;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
 public class Converters {
-
-    private static PerformedSubjectMilestoneConverter performedSubjectMilestoneConverter =
-        new PerformedSubjectMilestoneConverter();
-    private static StudySubjectConverter studySubjectConverter = new StudySubjectConverter();
-    private static PatientConverter patientConverter = new PatientConverter();
-    private static SubmissionConverter submissionConverter = new SubmissionConverter();
-    private static PerformedActivityConverter performedActivityConverter = new PerformedActivityConverter();
+    private static final Map<Class<? extends AbstractConverter>, AbstractConverter> CONVERTERS_MAP = 
+        new HashMap<Class<? extends AbstractConverter>, AbstractConverter>();
+    
+    static {
+        CONVERTERS_MAP.put(PerformedSubjectMilestoneConverter.class,  new PerformedSubjectMilestoneConverter());
+        CONVERTERS_MAP.put(StudySubjectConverter.class, new StudySubjectConverter());
+        CONVERTERS_MAP.put(PatientConverter.class, new PatientConverter());
+        CONVERTERS_MAP.put(SubmissionConverter.class, new SubmissionConverter());
+        CONVERTERS_MAP.put(PerformedActivityConverter.class, new PerformedActivityConverter());
+    }
 
     /**
      * @param clazz class
@@ -102,17 +108,6 @@ public class Converters {
      */
     @SuppressWarnings("unchecked")
     public static <CONV extends AbstractConverter> CONV get(Class<CONV> clazz) {
-        if (clazz.equals(PerformedSubjectMilestoneConverter.class)) {
-            return (CONV) performedSubjectMilestoneConverter;
-        } else if (clazz.equals(StudySubjectConverter.class)) {
-            return (CONV) studySubjectConverter;
-        } else if (clazz.equals(PatientConverter.class)) {
-            return (CONV) patientConverter;
-        } else if (clazz.equals(SubmissionConverter.class)) {
-            return (CONV) submissionConverter;
-        } else if (clazz.equals(PerformedActivityConverter.class)) {
-            return (CONV) performedActivityConverter;
-        }
-        return null;
+        return (CONV) CONVERTERS_MAP.get(clazz);
     }
 }
