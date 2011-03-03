@@ -4,12 +4,17 @@
 
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><fmt:message key="assignOwbership.title" /></title>
 <s:head />
 
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+var orgid;
+function setorgid(orgIdentifier){
+    orgid = orgIdentifier;
+}
 // this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
@@ -36,6 +41,17 @@ function assignOwner(userId) {
 function removeOwner(userId) {
     document.forms[0].action="assignOwnershipremove.action?userId=" + userId;
     document.forms[0].submit();
+}
+
+function lookup4loadorg(){
+    showPopup('${lookupOrgUrl}', loadOrgDiv, 'Select Organization');
+}
+function loadDiv(){}
+function loadOrgDiv() {
+    var url = 'ajaxAssignOwnershipdisplayAffiliatedOrganization.action?orgId='+orgid;
+    var div = document.getElementById('loadOrgField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+    var aj = new Ajax.Updater(div, url, { asynchronous: true,  method: 'get', evalScripts: false });
 }
 
 </SCRIPT>
@@ -97,7 +113,24 @@ function removeOwner(userId) {
             <td><s:textfield id="emailAddress" name="criteria.emailAddress" maxlength="200" size="100"
                 cssStyle="width:200px" /></td>
         </tr>
-    </table>
+        <tr>                
+            <td scope="row" class="label"><label for="assignOwnership.criteria.organization">
+                <fmt:message key="assignOwnership.criteria.organization" /></label></td>
+            <td colspan="2">
+               <div id="loadOrgField">
+                <table>
+                    <tr>
+                      <td><s:textfield label="Organization Name" name="criteria.affiliatedOrgName" size="30"
+                                       cssStyle="width:200px" readonly="true" cssClass="readonly"/></td>
+                       <td><a href="#" class="btn" onclick="lookup4loadorg();" /> <span
+                            class="btn_img"><span class="organization">Look Up Org</span></span></a>
+                      <s:hidden name="criteria.affiliatedOrgId" id="affiliatedOrgId" /></td>
+                    </tr>                
+                </table>
+               </div> 
+            </td>
+        </tr>
+        </table>
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
         <li><s:a href="#" cssClass="btn" onclick="searchForUsers();">

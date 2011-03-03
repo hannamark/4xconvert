@@ -3,9 +3,12 @@
  */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.TrialOwner;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserService;
@@ -13,6 +16,9 @@ import gov.nih.nci.pa.util.AssignOwnershipSearchCriteria;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +41,7 @@ public class AssignOwnershipAction extends ActionSupport {
     private Set<RegistryUser> trialOwners = null;
 
     private RegistryUserService regUserSvc;
+    private OrganizationEntityServiceRemote orgEntSvc;
 
     /**
      * @return string
@@ -68,7 +75,7 @@ public class AssignOwnershipAction extends ActionSupport {
      public String save() {
          return changeOwnership(true);
     }
-     
+
     /**
     * Remove owner of trial.
     * @return string
@@ -76,7 +83,7 @@ public class AssignOwnershipAction extends ActionSupport {
     public String remove() {
         return changeOwnership(false);
     }
-    
+
     private String changeOwnership(boolean assign) {
         String userId = ServletActionContext.getRequest().getParameter("userId");
         Ii spIi = (Ii) ServletActionContext.getRequest().getSession()
@@ -97,7 +104,7 @@ public class AssignOwnershipAction extends ActionSupport {
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, successMessage);
         return search();
      }
-    
+
     private String changeOwnershipHelper(boolean assign, Long userId, Long trialId) throws PAException {
        if (assign) {
            PaRegistry.getRegistryUserService().assignOwnership(userId, trialId);
@@ -120,6 +127,7 @@ public class AssignOwnershipAction extends ActionSupport {
                     regUser.setFirstName(criteria.getFirstName());
                     regUser.setLastName(criteria.getLastName());
                     regUser.setEmailAddress(criteria.getEmailAddress());
+                    regUser.setAffiliatedOrganizationId(criteria.getAffiliatedOrgId());
                     users = new ArrayList<TrialOwner>();
                     List<RegistryUser> regUserList = getRegistryUserService().search(regUser);
                     TrialOwner owner = null;
@@ -135,6 +143,27 @@ public class AssignOwnershipAction extends ActionSupport {
                 addActionError("Error getting csm users.");
             }
     }
+
+   /**
+    * @return result
+    */
+   public String displayAffiliatedOrganization() {
+       String orgId = ServletActionContext.getRequest().getParameter("orgId");
+       OrganizationDTO orgCriteria = new OrganizationDTO();
+       orgCriteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
+       LimitOffset limit = new LimitOffset(1, 0);
+       try {
+           OrganizationDTO selectedOrg = getOrgEntitySvc().search(orgCriteria, limit).get(0);
+           criteria.setAffiliatedOrgId(Long.valueOf(selectedOrg.getIdentifier().getExtension()));
+           criteria.setAffiliatedOrgName(selectedOrg.getName().getPart().get(0).getValue());
+       } catch (PAException e) {
+           LOG.error(e.getMessage());
+           addActionError("There was an unexpected error with the search.");
+       } catch (TooManyResultsException e) {
+           addActionError("Too many results, please narrow your search.");
+       }
+       return "display_affiliated_org";
+   }
 
     /**
      * @param users the users to set
@@ -176,6 +205,21 @@ public class AssignOwnershipAction extends ActionSupport {
             regUserSvc = PaRegistry.getRegistryUserService();
         }
         return regUserSvc;
+    }
+
+    private OrganizationEntityServiceRemote getOrgEntitySvc() throws PAException {
+        if (orgEntSvc == null) {
+            orgEntSvc = PoRegistry.getOrganizationEntityService();
+        }
+        return orgEntSvc;
+    }
+
+    /**
+     * Injection Method for Org Entity Service.
+     * @param svc The service to set.
+     */
+    public void setOrgEntitySvc(OrganizationEntityServiceRemote svc) {
+        this.orgEntSvc = svc;
     }
 
     /**

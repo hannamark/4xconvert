@@ -370,6 +370,9 @@
             <param name="actionName">studyProtocol.action</param>
           </result>
         </action>
+        <action name="ajaxAssignOwnership*" class="gov.nih.nci.pa.action.AssignOwnershipAction" method="{1}">
+          <result name="display_affiliated_org">/WEB-INF/jsp/nodecorate/affiliatedOrg.jsp</result> 
+        </action>
         <action name="ajaxTrialValidation*" class="gov.nih.nci.pa.action.TrialValidationAction" method="{1}">
           <result name="display_lead_org">/WEB-INF/jsp/nodecorate/leadOrg.jsp</result>
           <result name="display_lead_prinicipal_inv">/WEB-INF/jsp/nodecorate/displayLeadPrincipalInvestigator.jsp</result>

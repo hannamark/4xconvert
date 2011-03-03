@@ -94,7 +94,23 @@ public class AssignOwnershipSearchCriteria implements Serializable {
     private String firstName;
     private String lastName;
     private String emailAddress;
+    private Long affiliatedOrgId;
+    private String affiliatedOrgName;
     private static final long serialVersionUID = 1L;
+
+    /**
+     * @return the affiliated Organization ID.
+     */
+    public Long getAffiliatedOrgId() {
+        return affiliatedOrgId;
+    }
+
+    /**
+     * @param organizationId the ID to set.
+     */
+    public void setAffiliatedOrgId(Long organizationId) {
+        this.affiliatedOrgId = organizationId;
+    }
 
     /**
      * @return the firstName
@@ -136,5 +152,20 @@ public class AssignOwnershipSearchCriteria implements Serializable {
      */
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    /**
+     *
+     * @return the affiliated organization name.
+     */
+    public String getAffiliatedOrgName() {
+        return affiliatedOrgName;
+    }
+
+    /**
+     * @param value the name to set.
+     */
+    public void setAffiliatedOrgName(String value) {
+        affiliatedOrgName = value;
     }
 }
