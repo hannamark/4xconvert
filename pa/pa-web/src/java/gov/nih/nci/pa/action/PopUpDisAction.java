@@ -80,7 +80,7 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -126,12 +126,12 @@ public class PopUpDisAction extends ActionSupport {
             return;
         }
 
-        DiseaseDTO criteria = new DiseaseDTO();
+        PDQDiseaseDTO criteria = new PDQDiseaseDTO();
         criteria.setPreferredName(StConverter.convertToSt(tName));
         criteria.setIncludeSynonym(StConverter.convertToSt(includeSyn));
         criteria.setExactMatch(StConverter.convertToSt(exactMat));
 
-        List<DiseaseDTO> diseaseList = null;
+        List<PDQDiseaseDTO> diseaseList = null;
         try {
             diseaseList = PaRegistry.getDiseaseService().search(criteria);
         } catch (PAException e) {
@@ -141,7 +141,7 @@ public class PopUpDisAction extends ActionSupport {
             error("Exception while loading disease results.", e);
             return;
         }
-        for (DiseaseDTO disease : diseaseList) {
+        for (PDQDiseaseDTO disease : diseaseList) {
             DiseaseWebDTO newRec = new DiseaseWebDTO();
             newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
             newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
@@ -169,7 +169,7 @@ public class PopUpDisAction extends ActionSupport {
         HashMap<String, String> childParent = new HashMap<String, String>();
         for (DiseaseParentDTO dp : dpList) {
             String child = IiConverter.convertToString(dp.getIdentifier());
-            DiseaseDTO parentDTO;
+            PDQDiseaseDTO parentDTO;
             try {
                 parentDTO = PaRegistry.getDiseaseService().get(dp.getParentDiseaseIdentifier());
             } catch (Exception e) {

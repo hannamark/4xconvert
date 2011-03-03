@@ -129,7 +129,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
 import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
@@ -298,7 +298,7 @@ public class AbstractMockitoTest {
     protected List<PlannedActivityDTO> plannedActDtoList;
     protected DocumentWorkflowStatusDTO dwsDto;
     protected List<DocumentWorkflowStatusDTO> dwsDtoList;
-    protected DiseaseDTO diseaseDto;
+    protected PDQDiseaseDTO diseaseDto;
     protected PersonDTO personDto;
     protected PAContactDTO paContactDto;
     protected OrganizationDTO orgDto;
@@ -361,7 +361,7 @@ public class AbstractMockitoTest {
 
        setupDwsDto();
 
-       diseaseDto = new DiseaseDTO();
+       diseaseDto = new PDQDiseaseDTO();
        diseaseDto.setPreferredName(StConverter.convertToSt("some disease"));
        diseaseDto.setDiseaseCode(StConverter.convertToSt("diseaseCode"));
        diseaseDto.setMenuDisplayName(StConverter.convertToSt("menuDisplayName"));

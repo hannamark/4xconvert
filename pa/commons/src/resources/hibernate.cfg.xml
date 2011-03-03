@@ -56,7 +56,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.PlannedEligibilityCriterion" />
         <mapping class="gov.nih.nci.pa.domain.OversightCommittee" />
         <mapping class="gov.nih.nci.pa.domain.StudyDisease" />
-        <mapping class="gov.nih.nci.pa.domain.Disease" />
+        <mapping class="gov.nih.nci.pa.domain.PDQDisease" />
+        <mapping class="gov.nih.nci.pa.domain.SDCDisease" />
         <mapping class="gov.nih.nci.pa.domain.DiseaseAltername" />
         <mapping class="gov.nih.nci.pa.domain.DiseaseParent" />
         <mapping class="gov.nih.nci.pa.domain.AnatomicSite" />

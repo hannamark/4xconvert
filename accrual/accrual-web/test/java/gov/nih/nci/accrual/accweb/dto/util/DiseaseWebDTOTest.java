@@ -95,20 +95,13 @@ public class DiseaseWebDTOTest {
     @Before
     public void initDto() {
     	diseaseWebDTO = new DiseaseWebDTO();
-    	diseaseWebDTO.setAlternames("alternames");
     	diseaseWebDTO.setCode("code");
     	diseaseWebDTO.setConceptId("conceptId");
     	diseaseWebDTO.setDiseaseIdentifier("diseaseIdentifier");
     	diseaseWebDTO.setLead("lead");
     	diseaseWebDTO.setMenuDisplayName("menuDisplayName");
-    	diseaseWebDTO.setParentPreferredName("parentPreferredName");
     	diseaseWebDTO.setPreferredName("preferredName");
     	diseaseWebDTO.setStudyDiseaseIdentifier("studyDiseaseIdentifier");
-    }
-
-   @Test
-    public void alternamesPropertyTest() {
-        assertNotNull(diseaseWebDTO.getAlternames());
     }
 
    @Test
@@ -131,10 +124,6 @@ public class DiseaseWebDTOTest {
    @Test
    public void menuDisplayNamePropertyTest() {
      assertNotNull(diseaseWebDTO.getMenuDisplayName());
-   }
-   @Test
-   public void parentPreferredNamePropertyTest() {
-     assertNotNull(diseaseWebDTO.getParentPreferredName());
    }
    @Test
    public void preferredNamePropertyTest() {

@@ -102,8 +102,8 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 public class DiseaseParent extends AbstractEntityWithStatusCode<ActiveInactiveCode> {
     private static final long serialVersionUID = 1255557890L;
 
-    private Disease disease;
-    private Disease parentDisease;
+    private PDQDisease disease;
+    private PDQDisease parentDisease;
     private String parentDiseaseCode;
 
     /**
@@ -113,14 +113,14 @@ public class DiseaseParent extends AbstractEntityWithStatusCode<ActiveInactiveCo
     @JoinColumn(name = "DISEASE_IDENTIFIER", updatable = false)
     @NotNull
     @Searchable(nested = true)
-    public Disease getDisease() {
+    public PDQDisease getDisease() {
         return disease;
     }
 
     /**
      * @param disease the disease to set
      */
-    public void setDisease(Disease disease) {
+    public void setDisease(PDQDisease disease) {
         this.disease = disease;
     }
 
@@ -131,14 +131,14 @@ public class DiseaseParent extends AbstractEntityWithStatusCode<ActiveInactiveCo
     @JoinColumn(name = "PARENT_DISEASE_IDENTIFIER", updatable = false)
     @NotNull
     @Searchable(nested = true)
-    public Disease getParentDisease() {
+    public PDQDisease getParentDisease() {
         return parentDisease;
     }
 
     /**
      * @param parentDisease the parentDisease to set
      */
-    public void setParentDisease(Disease parentDisease) {
+    public void setParentDisease(PDQDisease parentDisease) {
         this.parentDisease = parentDisease;
     }
 

@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
@@ -120,7 +120,7 @@ public class StudyDiseaseConverter extends AbstractConverter<StudyDiseaseDTO, St
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
 
-        Disease dBo = new Disease();
+        PDQDisease dBo = new PDQDisease();
         dBo.setId(IiConverter.convertToLong(dto.getDiseaseIdentifier()));
 
         StudyDisease bo = new StudyDisease();

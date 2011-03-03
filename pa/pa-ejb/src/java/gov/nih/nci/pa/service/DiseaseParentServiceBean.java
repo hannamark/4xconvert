@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.DiseaseParent;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.convert.DiseaseParentConverter;
@@ -119,7 +119,7 @@ public class DiseaseParentServiceBean
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DiseaseParentDTO> getByChildDisease(Ii ii) throws PAException {
         DiseaseParent criteria = new DiseaseParent();
-        Disease disease = new Disease();
+        PDQDisease disease = new PDQDisease();
         disease.setId(IiConverter.convertToLong(ii));
         disease.setStatusCode(ActiveInactivePendingCode.ACTIVE);
         criteria.setDisease(disease);
@@ -137,7 +137,7 @@ public class DiseaseParentServiceBean
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DiseaseParentDTO> getByParentDisease(Ii ii) throws PAException {
         DiseaseParent criteria = new DiseaseParent();
-        Disease disease = new Disease();
+        PDQDisease disease = new PDQDisease();
         disease.setId(IiConverter.convertToLong(ii));
         disease.setStatusCode(ActiveInactivePendingCode.ACTIVE);
         criteria.setParentDisease(disease);

@@ -151,8 +151,8 @@ public class StudySubjectTest {
         ssite.setId(TestSchema.studySiteIds.get(0));
         StudyProtocol sp = new StudyProtocol();
         sp.setId(TestSchema.studyProtocolIds.get(0));
-        Disease disease = new Disease();
-        disease.setId(TestSchema.diseaseIds.get(0));
+        SDCDisease disease = new SDCDisease();
+        disease.setId(TestSchema.pdqDiseaseIds.get(0));
         StudySubject ss = new StudySubject();
         ss.setStudySite(ssite);
         ss.setStudyProtocol(sp);

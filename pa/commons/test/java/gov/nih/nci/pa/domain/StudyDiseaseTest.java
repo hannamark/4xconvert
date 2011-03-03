@@ -127,14 +127,14 @@ public class StudyDiseaseTest {
     @Test
     public void mergeTest() {
         int oldSize = sp.getStudyDiseases().size();
-        Disease disease = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(1));
+        PDQDisease disease = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(1));
         sess.merge(createStudyDiseaseObj(sp, disease));
         sess.flush();
         sess.refresh(sp);
         assertEquals(oldSize + 1, sp.getStudyDiseases().size());
     }
 
-    public static StudyDisease createStudyDiseaseObj(StudyProtocol studyProtocol, Disease disease) {
+    public static StudyDisease createStudyDiseaseObj(StudyProtocol studyProtocol, PDQDisease disease) {
         StudyDisease create = new StudyDisease();
         create.setStudyProtocol(studyProtocol);
         create.setDisease(disease);

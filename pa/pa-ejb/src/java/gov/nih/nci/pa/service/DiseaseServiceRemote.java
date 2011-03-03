@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 
 import java.util.List;
 
@@ -92,11 +92,11 @@ import javax.ejb.Remote;
 * copyright holder, NCI.
 */
 @Remote
-public interface DiseaseServiceRemote extends BasePaService<DiseaseDTO> {
+public interface DiseaseServiceRemote extends BasePaService<PDQDiseaseDTO> {
     /**
      * @param searchCriteria search string
      * @return all diseases with preferred names or alternate names matching search string
      * @throws PAException exception
      */
-    List<DiseaseDTO> search(DiseaseDTO searchCriteria) throws PAException;
+    List<PDQDiseaseDTO> search(PDQDiseaseDTO searchCriteria) throws PAException;
 }

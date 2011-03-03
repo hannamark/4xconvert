@@ -81,12 +81,12 @@ import gov.nih.nci.accrual.service.MockPoPersonEntityService;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -98,7 +98,6 @@ import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
-import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
@@ -134,7 +133,7 @@ import org.hibernate.Transaction;
 * @since 08/07/2009
 */
 public class TestSchema {
-    public static List<Disease> diseases;
+    public static List<SDCDisease> diseases;
     public static List<StudyProtocol> studyProtocols;
     public static List<Submission> submissions;
     public static List<StudySite> studySites;
@@ -181,6 +180,7 @@ public class TestSchema {
         statement.executeUpdate("delete from study_otheridentifiers");
         statement.executeUpdate("delete from study_protocol");
         statement.executeUpdate("delete from disease");
+        statement.executeUpdate("delete from sdc_disease");
         statement.executeUpdate("delete from healthcare_facility");
         statement.executeUpdate("delete from organization");
         primeData();
@@ -209,12 +209,11 @@ public class TestSchema {
     }
 
     public static void primeData() {
-        diseases = new ArrayList<Disease>();
+        diseases = new ArrayList<SDCDisease>();
         studyProtocols = new ArrayList<StudyProtocol>();
         studyOverallStatuses = new ArrayList<StudyOverallStatus>();
         submissions = new ArrayList<Submission>();
         studySites = new ArrayList<StudySite>();
-        studyDiseases = new ArrayList<StudyDisease>();
         patients = new ArrayList<Patient>();
         studySubjects = new ArrayList<StudySubject>();
         performedSubjectMilestones = new ArrayList<PerformedSubjectMilestone>();
@@ -344,13 +343,12 @@ public class TestSchema {
         studyOverallStatuses.add(sos);
 
         // Disease
-        Disease disease = new Disease();
+        SDCDisease disease = new SDCDisease();
         disease.setDiseaseCode("code");
         disease.setMenuDisplayName("menu name");
-        disease.setNtTermIdentifier("NT term");
         disease.setPreferredName("name");
-        disease.setStatusCode(ActiveInactivePendingCode.ACTIVE);
-        disease.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
+        disease.setCtepCategory("category");
+        disease.setCtepSubCategory("sub-category");
         addUpdObject(disease);
         diseases.add(disease);
 
@@ -470,13 +468,6 @@ public class TestSchema {
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         addUpdObject(ssaa);
         studySiteAccrualAccess.add(ssaa);
-
-        // StudyDisease
-        StudyDisease sd = new StudyDisease();
-        sd.setDisease(diseases.get(0));
-        sd.setStudyProtocol(studyProtocols.get(0));
-        addUpdObject(sd);
-        studyDiseases.add(sd);
 
         // Patient
         Patient p = new Patient();

@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.DiseaseAltername;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;
@@ -117,7 +117,7 @@ public class DiseaseAlternameConverter extends AbstractConverter<DiseaseAlternam
      */
     @Override
     public DiseaseAltername convertFromDtoToDomain(DiseaseAlternameDTO dto) throws PAException {
-        Disease dBo = new Disease();
+        PDQDisease dBo = new PDQDisease();
         dBo.setId(IiConverter.convertToLong(dto.getDiseaseIdentifier()));
         
         DiseaseAltername bo = new DiseaseAltername();

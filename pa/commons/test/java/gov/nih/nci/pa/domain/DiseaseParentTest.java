@@ -114,19 +114,19 @@ public class DiseaseParentTest {
     }
     @Test
     public void getTreeTest() {
-        Disease toe = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(0));
-        Disease heel = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(1));
-        Disease foot = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(2));
-        Disease leg = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(3));
+        PDQDisease toe = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(0));
+        PDQDisease heel = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(1));
+        PDQDisease foot = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(2));
+        PDQDisease leg = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(3));
 
         List<DiseaseParent> tList = toe.getDiseaseParents();
-        List<Disease> toeParents = new ArrayList<Disease>();
+        List<PDQDisease> toeParents = new ArrayList<PDQDisease>();
         for (DiseaseParent t : tList) {
             toeParents.add(t.getParentDisease());
             assertEquals(toe, t.getDisease());
         }
         tList = foot.getDiseaseChildren();
-        List<Disease> footChildren = new ArrayList<Disease>();
+        List<PDQDisease> footChildren = new ArrayList<PDQDisease>();
         for (DiseaseParent t : tList) {
             footChildren.add(t.getDisease());
             assertEquals(foot, t.getParentDisease());
@@ -144,27 +144,27 @@ public class DiseaseParentTest {
 
     @Test
     public void deleteTest() {
-        Disease foot = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(2));
+        PDQDisease foot = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(2));
         sess.delete(foot);
         sess.flush();
         sess.clear();
-        foot = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(2));
+        foot = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(2));
         assertNull(foot);
     }
 
     @Test
     public void mergeTest() {
-        Disease foot = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(2));
+        PDQDisease foot = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(2));
         assertFalse("new".equals(foot.getNtTermIdentifier()));
         foot.setNtTermIdentifier("new");
         sess.merge(foot);
         sess.flush();
         sess.clear();
-        foot = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(2));
+        foot = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(2));
         assertTrue("new".equals(foot.getNtTermIdentifier()));
     }
 
-    public static DiseaseParent createDiseaseParentObj(Disease disease, Disease parentDisease) {
+    public static DiseaseParent createDiseaseParentObj(PDQDisease disease, PDQDisease parentDisease) {
         DiseaseParent create = new DiseaseParent();
         create.setDisease(disease);
         create.setParentDisease(parentDisease);

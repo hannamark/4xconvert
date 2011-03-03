@@ -79,7 +79,7 @@ package gov.nih.nci.accrual.accweb.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.util.ArrayList;
@@ -103,8 +103,6 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
 
     PopUpAction action;
     private String searchName;
-    private String includeSynonym;
-    private String exactMatch;
     private List<DiseaseWebDTO> disWebList;
 
 	@Before
@@ -113,8 +111,6 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
         action = new PopUpAction();
         action.prepare();
         searchName = "disease";
-        includeSynonym = "yes";
-        exactMatch = "yes";
         disWebList = new ArrayList<DiseaseWebDTO>();
     }
 
@@ -132,14 +128,10 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
     public void testLoadResultList(){
 
       assertNotNull(StringUtils.isEmpty(action.getSearchName()));
-      DiseaseDTO criteria = new DiseaseDTO();
+      SDCDiseaseDTO criteria = new SDCDiseaseDTO();
       criteria.setPreferredName(StConverter.convertToSt(action.getSearchName()));
-      criteria.setIncludeSynonym(StConverter.convertToSt(action.getIncludeSynonym()));
-      criteria.setExactMatch(StConverter.convertToSt(action.getExactMatch()));
       assertNotNull(criteria);
       ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("searchName",searchName);
-      ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("includeSynonym",includeSynonym);
-      ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("exactMatch",exactMatch);
       assertEquals(ActionSupport.SUCCESS, action.displayList());
 
     }
@@ -155,19 +147,4 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
     	action.setDisWebList(disWebList);
         assertNotNull(action.getDisWebList());
    }
-
-
-    @Test
-    public void testIncludeSynonymProperty() {
-        action.setIncludeSynonym(includeSynonym);
-        assertNotNull(action.getIncludeSynonym());
-    }
-
-
-    @Test
-    public void testExactMatchProperty() {
-        action.setExactMatch(exactMatch);
-        assertNotNull(action.getExactMatch());
-    }
-
 }

@@ -103,7 +103,7 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -806,16 +806,16 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         List<TSRReportDiseaseCondition> diseaseConditions = new ArrayList<TSRReportDiseaseCondition>();
         List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolDto.getIdentifier());
         if (sdDtos != null) {
-            List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
+            List<PDQDiseaseDTO> diseases = new ArrayList<PDQDiseaseDTO>();
             for (StudyDiseaseDTO sdDto : sdDtos) {
                 diseases.add(diseaseService.get(sdDto.getDiseaseIdentifier()));
             }
-            Collections.sort(diseases, new Comparator<DiseaseDTO>() {
-                public int compare(DiseaseDTO o1, DiseaseDTO o2) {
+            Collections.sort(diseases, new Comparator<PDQDiseaseDTO>() {
+                public int compare(PDQDiseaseDTO o1, PDQDiseaseDTO o2) {
                     return o1.getPreferredName().getValue().compareToIgnoreCase(o2.getPreferredName().getValue());
                 }
             });
-            for (DiseaseDTO d : diseases) {
+            for (PDQDiseaseDTO d : diseases) {
                 TSRReportDiseaseCondition diseaseCondition = new TSRReportDiseaseCondition();
                 diseaseCondition.setName(getValue(d.getPreferredName()));
                 diseaseConditions.add(diseaseCondition);

@@ -86,12 +86,12 @@ import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.CountryTest;
-import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.DiseaseAltername;
 import gov.nih.nci.pa.domain.DiseaseAlternameTest;
 import gov.nih.nci.pa.domain.DiseaseParent;
 import gov.nih.nci.pa.domain.DiseaseParentTest;
-import gov.nih.nci.pa.domain.DiseaseTest;
+import gov.nih.nci.pa.domain.PDQDiseaseTest;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkFlowStatusTest;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
@@ -114,6 +114,8 @@ import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.SDCDisease;
+import gov.nih.nci.pa.domain.SDCDiseaseTest;
 import gov.nih.nci.pa.domain.StratumGroup;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
@@ -198,7 +200,8 @@ public class TestSchema {
         public static List<Long> armIds;
         public static List<Long> researchOrganizationIds;
         public static List<Long> oversightCommitteeIds;
-        public static List<Long> diseaseIds;
+        public static List<Long> pdqDiseaseIds;
+        public static List<Long> sdcDiseaseIds;
         public static List<Long> anatomicSiteIds;
         public static List<Long> outcomeIds;
         public static List<Long> regAuthIds;
@@ -267,6 +270,7 @@ public class TestSchema {
                     statement.executeUpdate("delete from DISEASE_PARENT");
                     statement.executeUpdate("delete from DISEASE_ALTERNAME");
                     statement.executeUpdate("delete from DISEASE");
+                    statement.executeUpdate("delete from SDC_DISEASE");
                     statement.executeUpdate("delete from ANATOMIC_SITES");
                     statement.executeUpdate("delete from STUDY_OBJECTIVE");
                     statement.executeUpdate("delete from REGULATORY_AUTHORITY");
@@ -323,7 +327,8 @@ public class TestSchema {
             armIds = new ArrayList<Long>();
             researchOrganizationIds = new ArrayList<Long>();
             oversightCommitteeIds = new ArrayList<Long>();
-            diseaseIds = new ArrayList<Long>();
+            pdqDiseaseIds = new ArrayList<Long>();
+            sdcDiseaseIds = new ArrayList<Long>();
             outcomeIds = new ArrayList<Long>();
             regAuthIds = new ArrayList<Long>();
             personIds = new ArrayList<Long>();
@@ -579,19 +584,19 @@ public class TestSchema {
             pec.setMaxValue(new BigDecimal("24"));
             pec.setMaxUnit(UnitsCode.MONTHS.getCode());
             addUpdObject(pec);
-            Disease dis01 = DiseaseTest.createDiseaseObj("Toe Cancer");
+            PDQDisease dis01 = PDQDiseaseTest.createDiseaseObj("Toe Cancer");
             addUpdObject(dis01);
-            diseaseIds.add(dis01.getId());
-            Disease dis02 = DiseaseTest.createDiseaseObj("Heel Cancer");
+            pdqDiseaseIds.add(dis01.getId());
+            PDQDisease dis02 = PDQDiseaseTest.createDiseaseObj("Heel Cancer");
             addUpdObject(dis02);
-            diseaseIds.add(dis02.getId());
-            Disease dis03 = DiseaseTest.createDiseaseObj("Foot Cancer");
+            pdqDiseaseIds.add(dis02.getId());
+            PDQDisease dis03 = PDQDiseaseTest.createDiseaseObj("Foot Cancer");
             addUpdObject(dis03);
-            diseaseIds.add(dis03.getId());
-            Disease dis04 = DiseaseTest.createDiseaseObj("Leg Cancer");
+            pdqDiseaseIds.add(dis03.getId());
+            PDQDisease dis04 = PDQDiseaseTest.createDiseaseObj("Leg Cancer");
             addUpdObject(dis04);
-            diseaseIds.add(dis04.getId());
-            
+            pdqDiseaseIds.add(dis04.getId());
+
             AnatomicSite as01 = AnatomicSiteTest.createAnatomicSiteObj("Lung");
             addUpdObject(as01);
             anatomicSiteIds.add(as01.getId());
@@ -672,6 +677,19 @@ public class TestSchema {
             marker02.setStatusCode(ActiveInactivePendingCode.PENDING);
             addUpdObject(marker02);
 
+            SDCDisease sdc01 = SDCDiseaseTest.createDiseaseObj("Toe Cancer");
+            addUpdObject(sdc01);
+            sdcDiseaseIds.add(sdc01.getId());
+            SDCDisease sdc02 = SDCDiseaseTest.createDiseaseObj("Heel Cancer");
+            addUpdObject(sdc02);
+            sdcDiseaseIds.add(sdc02.getId());
+            SDCDisease sdc03 = SDCDiseaseTest.createDiseaseObj("Foot Cancer");
+            addUpdObject(sdc03);
+            sdcDiseaseIds.add(sdc03.getId());
+            SDCDisease sdc04 = SDCDiseaseTest.createDiseaseObj("Leg Cancer");
+            addUpdObject(sdc04);
+            sdcDiseaseIds.add(sdc04.getId());
+            
             HibernateUtil.getCurrentSession().clear();
         }
         public static Ii nonPropTrialData() {

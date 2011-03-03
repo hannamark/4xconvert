@@ -84,7 +84,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.DiseaseAltername;
 import gov.nih.nci.pa.domain.DiseaseAlternameTest;
 import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;
@@ -113,7 +113,7 @@ public class DiseaseAlternameServiceTest {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         TestSchema.reset();
         TestSchema.primeData();
-        dIi = IiConverter.convertToIi(TestSchema.diseaseIds.get(0));
+        dIi = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(0));
      }
 
     private void compareDataAttributes(DiseaseAltername bo1, DiseaseAltername bo2) {
@@ -134,7 +134,7 @@ public class DiseaseAlternameServiceTest {
 
     @Test
     public void createTest() throws Exception {
-        Disease disease = new Disease();
+        PDQDisease disease = new PDQDisease();
         disease.setId(IiConverter.convertToLong(dIi));
         DiseaseAltername bo = DiseaseAlternameTest.createDiseaseAlternameObj("new name", disease);
         assertNull(bo.getId());

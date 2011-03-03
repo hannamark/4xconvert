@@ -89,6 +89,7 @@ import java.util.Map;
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
+@SuppressWarnings("unchecked")
 public class Converters {
     private static final Map<Class<? extends AbstractConverter>, AbstractConverter> CONVERTERS_MAP = 
         new HashMap<Class<? extends AbstractConverter>, AbstractConverter>();
@@ -106,7 +107,6 @@ public class Converters {
      * @param <CONV> the converter type to get
      * @return converter
      */
-    @SuppressWarnings("unchecked")
     public static <CONV extends AbstractConverter> CONV get(Class<CONV> clazz) {
         return (CONV) CONVERTERS_MAP.get(clazz);
     }

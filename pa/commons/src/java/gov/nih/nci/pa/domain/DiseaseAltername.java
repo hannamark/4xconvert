@@ -102,7 +102,7 @@ public class DiseaseAltername extends AbstractEntityWithStatusCode<ActiveInactiv
     private static final long serialVersionUID = 1234583780L;
 
     private String alternateName;
-    private Disease disease;
+    private PDQDisease disease;
 
     /**
      * @return the alternateName
@@ -125,13 +125,13 @@ public class DiseaseAltername extends AbstractEntityWithStatusCode<ActiveInactiv
     @JoinColumn(name = "DISEASE_IDENTIFIER", updatable = false)
     @NotNull
     @Searchable(nested = true)
-    public Disease getDisease() {
+    public PDQDisease getDisease() {
         return disease;
     }
     /**
      * @param disease the disease to set
      */
-    public void setDisease(Disease disease) {
+    public void setDisease(PDQDisease disease) {
         this.disease = disease;
     }
 

@@ -82,14 +82,14 @@
  */
 package gov.nih.nci.pa.service.search;
 
-import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.PDQDisease;
 
 import com.fiveamsolutions.nci.commons.data.search.SortCriterion;
 
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public enum DiseaseSortCriterion implements SortCriterion<Disease> {
+public enum DiseaseSortCriterion implements SortCriterion<PDQDisease> {
 
     /**
      * Sort by disease id.

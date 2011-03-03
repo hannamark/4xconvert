@@ -82,12 +82,12 @@
  */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.DiseaseAltername;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.convert.DiseaseConverter;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.search.DiseaseBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.DiseaseSortCriterion;
@@ -116,7 +116,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class DiseaseBeanLocal extends AbstractBaseIsoService<DiseaseDTO, Disease, DiseaseConverter> implements
+public class DiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, PDQDisease, DiseaseConverter> implements
     DiseaseServiceLocal, DiseaseServiceRemote {
 
     /**
@@ -125,7 +125,7 @@ public class DiseaseBeanLocal extends AbstractBaseIsoService<DiseaseDTO, Disease
      * @throws PAException exception
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<DiseaseDTO> search(DiseaseDTO searchCriteria) throws PAException {
+    public List<PDQDiseaseDTO> search(PDQDiseaseDTO searchCriteria) throws PAException {
         if (searchCriteria == null) {
             throw new PAException("Must pass in search criteria when calling search().");
         }
@@ -139,7 +139,7 @@ public class DiseaseBeanLocal extends AbstractBaseIsoService<DiseaseDTO, Disease
         boolean exactMatch = BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getExactMatch()));
         String preferredName = StConverter.convertToString(searchCriteria.getPreferredName());
 
-        Disease criteria = new Disease();
+        PDQDisease criteria = new PDQDisease();
         if (includeSynonyms) {
             criteria.setDiseaseAlternames(new ArrayList<DiseaseAltername>());
             DiseaseAltername alt = new DiseaseAltername();
@@ -157,11 +157,11 @@ public class DiseaseBeanLocal extends AbstractBaseIsoService<DiseaseDTO, Disease
             preferredName = PAUtil.wildcardCriteria(preferredName);
         }
 
-        PageSortParams<Disease> params = new PageSortParams<Disease>(PAConstants.MAX_SEARCH_RESULTS, 0,
+        PageSortParams<PDQDisease> params = new PageSortParams<PDQDisease>(PAConstants.MAX_SEARCH_RESULTS, 0,
                 DiseaseSortCriterion.DISEASE_PREFERRED_NAME, false);
-        DiseaseBeanSearchCriteria<Disease> crit =
-            new DiseaseBeanSearchCriteria<Disease>(criteria, includeSynonyms, exactMatch, preferredName);
-        List<Disease> results = search(crit, params);
+        DiseaseBeanSearchCriteria<PDQDisease> crit =
+            new DiseaseBeanSearchCriteria<PDQDisease>(criteria, includeSynonyms, exactMatch, preferredName);
+        List<PDQDisease> results = search(crit, params);
         if (results.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new PAException("Too many diseases found.  Please narrow search.");
         }

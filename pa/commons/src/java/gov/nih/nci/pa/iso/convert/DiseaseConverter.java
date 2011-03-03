@@ -78,9 +78,9 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -94,7 +94,7 @@ import gov.nih.nci.pa.service.PAException;
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
 */
-public class DiseaseConverter extends AbstractConverter<DiseaseDTO, Disease> {
+public class DiseaseConverter extends AbstractConverter<PDQDiseaseDTO, PDQDisease> {
 
     /**
      * @param bo domain object
@@ -102,8 +102,8 @@ public class DiseaseConverter extends AbstractConverter<DiseaseDTO, Disease> {
      * @throws PAException exception
      */
     @Override
-    public DiseaseDTO convertFromDomainToDto(Disease bo) throws PAException {
-        DiseaseDTO dto = new DiseaseDTO();
+    public PDQDiseaseDTO convertFromDomainToDto(PDQDisease bo) throws PAException {
+        PDQDiseaseDTO dto = new PDQDiseaseDTO();
         dto.setDiseaseCode(StConverter.convertToSt(bo.getDiseaseCode()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setMenuDisplayName(StConverter.convertToSt(bo.getMenuDisplayName()));
@@ -120,8 +120,8 @@ public class DiseaseConverter extends AbstractConverter<DiseaseDTO, Disease> {
      * @throws PAException exception
      */
     @Override
-    public Disease convertFromDtoToDomain(DiseaseDTO dto) throws PAException {
-        Disease bo = new Disease();
+    public PDQDisease convertFromDtoToDomain(PDQDiseaseDTO dto) throws PAException {
+        PDQDisease bo = new PDQDisease();
         bo.setDiseaseCode(StConverter.convertToString(dto.getDiseaseCode()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setMenuDisplayName(StConverter.convertToString(dto.getMenuDisplayName()));

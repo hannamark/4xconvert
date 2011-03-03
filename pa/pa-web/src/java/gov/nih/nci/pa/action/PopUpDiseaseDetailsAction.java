@@ -81,7 +81,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -123,7 +123,7 @@ public class PopUpDiseaseDetailsAction  extends ActionSupport {
             throw new PAException("Error passing disease id into PopUpDiseaseDetailsAction.  ");
         }
         DiseaseServiceLocal diseaseSvc = PaRegistry.getDiseaseService();
-        DiseaseDTO d = diseaseSvc.get(IiConverter.convertToIi(diseaseIdentifier));
+        PDQDiseaseDTO d = diseaseSvc.get(IiConverter.convertToIi(diseaseIdentifier));
         disease = new DiseaseWebDTO();
         disease.setCode(StConverter.convertToString(d.getDiseaseCode()));
         disease.setConceptId(StConverter.convertToString(d.getNtTermIdentifier()));

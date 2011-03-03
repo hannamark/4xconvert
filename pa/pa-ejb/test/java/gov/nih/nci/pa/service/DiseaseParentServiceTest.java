@@ -84,12 +84,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.DiseaseParent;
 import gov.nih.nci.pa.domain.DiseaseParentTest;
-import gov.nih.nci.pa.domain.DiseaseTest;
+import gov.nih.nci.pa.domain.PDQDiseaseTest;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -118,7 +118,7 @@ public class DiseaseParentServiceTest {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         TestSchema.reset();
         TestSchema.primeData();
-        dIi = IiConverter.convertToIi(TestSchema.diseaseIds.get(0));
+        dIi = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(0));
      }
 
     private void compareDataAttributes(DiseaseParent bo1, DiseaseParent bo2) {
@@ -163,10 +163,10 @@ public class DiseaseParentServiceTest {
 
     @Test
     public void createTest() throws Exception {
-        DiseaseDTO tn = diseaseBean.create(diseaseBean.convertFromDomainToDto(DiseaseTest.createDiseaseObj("toenail cancer")));
-        Disease toeNail = new Disease();
+        PDQDiseaseDTO tn = diseaseBean.create(diseaseBean.convertFromDomainToDto(PDQDiseaseTest.createDiseaseObj("toenail cancer")));
+        PDQDisease toeNail = new PDQDisease();
         toeNail.setId(IiConverter.convertToLong(tn.getIdentifier()));
-        Disease toe = diseaseBean.convertFromDtoToDomain(diseaseBean.get(dIi));
+        PDQDisease toe = diseaseBean.convertFromDtoToDomain(diseaseBean.get(dIi));
 
         DiseaseParent bo = DiseaseParentTest.createDiseaseParentObj(toeNail, toe);
         assertNull(bo.getId());

@@ -11,26 +11,10 @@
         window.top.hidePopWin(true); 
     }
     
-    function callParentSubmit(disid)
-    {   
-        top.window.loadDiv(disid);
-        window.top.hidePopWin(true); 
-    }
     function loadDiv() {     
         
         var jsName = document.getElementById("searchName").value;
-        var includeSyn = false;  
-        if (document.getElementById("includeSynonym") != null && document.getElementById("includeSynonym").checked==true)
-        {
-            includeSyn = true;
-        } 
-        var exactMat = false;
-        if (document.getElementById("exactMatch") != null && document.getElementById("exactMatch").checked==true)
-        {  
-           exactMat = true; 
-        }
-        
-        var url = '/accrual/protected/popupdisplayList.action?searchName='+jsName+'&includeSynonym='+includeSyn+'&exactMatch='+exactMat;
+        var url = '/accrual/protected/popupdisplayList.action?searchName='+jsName;
         var div = document.getElementById('getDiseases');
         div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
         var aj = new Ajax.Updater(div,url, {
@@ -46,32 +30,13 @@
 <div class="box">
 <s:form id="diseases" name="diseases" >
 <h2>Search Diseases</h2>
-<table  class="form">  
-    <tr>    
-        <td scope="row" class="label">
-            <label for="searchName">Disease Name: </label>
-        </td>
-        <td>
-            <s:textfield id="searchName" name="searchName"  maxlength="60" size="60"  cssStyle="width:200px" />
-        </td>
-       </tr>
-       <tr> 
-                <td scope="row" class="label">
-                   <label  for="includeSynonym"> <fmt:message key="disease.includeSynonym"/></label>                        
-                </td>
-                <td>
-                    <s:checkbox name="includeSynonym" id="includeSynonym" />
-                </td>                
-            </tr>
-             <tr> 
-                <td scope="row" class="label">
-                     <label  for="exactMatch"> <fmt:message key="disease.exactMatch"/></label>                        
-                </td>
-                <td>
-                    <s:checkbox name="exactMatch" id="exactMatch" />
-                </td>                
-            </tr>
-</table>
+    <table class="form">
+        <tr>
+            <td scope="row" class="label"><label for="searchName">Disease Name: </label></td>
+            <td><s:textfield id="searchName" name="searchName" maxlength="60" size="60" cssStyle="width:200px" />
+            </td>
+        </tr>
+    </table>
     <div class="actionsrow">
          <del class="btnwrapper">
             <ul class="btnrow">

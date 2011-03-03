@@ -101,7 +101,7 @@ import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
@@ -403,20 +403,20 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         List<StudyDiseaseDTO> sdDtos = getStudyDiseaseService().getByStudyProtocol(studyProtocolIi);
 
         if (CollectionUtils.isNotEmpty(sdDtos)) {
-            List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
+            List<PDQDiseaseDTO> diseases = new ArrayList<PDQDiseaseDTO>();
             for (StudyDiseaseDTO sdDto : sdDtos) {
                 if (BlConverter.convertToBool(sdDto.getCtGovXmlIndicator())) {
-                    DiseaseDTO d = getDiseaseService().get(sdDto.getDiseaseIdentifier());
+                    PDQDiseaseDTO d = getDiseaseService().get(sdDto.getDiseaseIdentifier());
                     diseases.add(d);
                 }
             }
-            Collections.sort(diseases, new Comparator<DiseaseDTO>() {
-                public int compare(DiseaseDTO o1, DiseaseDTO o2) {
+            Collections.sort(diseases, new Comparator<PDQDiseaseDTO>() {
+                public int compare(PDQDiseaseDTO o1, PDQDiseaseDTO o2) {
                     return o1.getPreferredName().getValue().compareToIgnoreCase(o2.getPreferredName().getValue());
                 }
 
             });
-            for (DiseaseDTO d : diseases) {
+            for (PDQDiseaseDTO d : diseases) {
                 XmlGenHelper.appendElement(root,
                         XmlGenHelper.createElementWithTextblock("condition",
                                 StringUtils.substring(StConverter.convertToString(d

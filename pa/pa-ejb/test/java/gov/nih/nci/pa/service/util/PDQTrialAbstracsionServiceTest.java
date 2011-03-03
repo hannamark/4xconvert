@@ -95,7 +95,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
@@ -273,14 +273,14 @@ public class PDQTrialAbstracsionServiceTest {
         PAServiceUtils paServiceUtil = mock (PAServiceUtils.class);
         bean.setPaServiceUtils(paServiceUtil);
         Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(1l);
-        when(diseaseSvc.search(any(DiseaseDTO.class))).thenReturn(Arrays.asList(new DiseaseDTO()));
+        when(diseaseSvc.search(any(PDQDiseaseDTO.class))).thenReturn(Arrays.asList(new PDQDiseaseDTO()));
         when(paServiceUtil.findEntity(any(OrganizationDTO.class))).thenReturn(new OrganizationDTO());
         StudyDiseaseServiceLocal studyDiseaseSvc = mock (StudyDiseaseServiceLocal.class);
         when(paSvcLoc.getStudyDiseaseService()).thenReturn(studyDiseaseSvc);
         when(interventionSvc.search(any(InterventionDTO.class))).thenReturn(Arrays.asList(new InterventionDTO()));
         when(plannedActivitySvc.getByStudyProtocol(any(Ii.class))).thenReturn(Arrays.asList(new PlannedActivityDTO()));
         bean.loadAbstractionElementFromPDQXml(testXMLUrl, studyProtocolIi);
-        verify(diseaseSvc, org.mockito.Mockito.atLeastOnce()).search(any(DiseaseDTO.class));
+        verify(diseaseSvc, org.mockito.Mockito.atLeastOnce()).search(any(PDQDiseaseDTO.class));
         verify(studyDiseaseSvc, org.mockito.Mockito.atLeastOnce()).create(any(StudyDiseaseDTO.class));
 
         verify(plannedActivitySvc, org.mockito.Mockito.atLeastOnce()).createPlannedEligibilityCriterion(
@@ -292,7 +292,7 @@ public class PDQTrialAbstracsionServiceTest {
         PAServiceUtils paServiceUtil = mock (PAServiceUtils.class);
         bean.setPaServiceUtils(paServiceUtil);
         Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(1l);
-        when(diseaseSvc.search(any(DiseaseDTO.class))).thenReturn(Arrays.asList(new DiseaseDTO()));
+        when(diseaseSvc.search(any(PDQDiseaseDTO.class))).thenReturn(Arrays.asList(new PDQDiseaseDTO()));
         when(paServiceUtil.findEntity(any(OrganizationDTO.class))).thenReturn(new OrganizationDTO());
         StudyDiseaseServiceLocal studyDiseaseSvc = mock (StudyDiseaseServiceLocal.class);
         when(paSvcLoc.getStudyDiseaseService()).thenReturn(studyDiseaseSvc);

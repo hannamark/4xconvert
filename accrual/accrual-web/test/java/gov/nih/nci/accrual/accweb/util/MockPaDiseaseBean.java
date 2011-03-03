@@ -79,15 +79,11 @@
 package gov.nih.nci.accrual.accweb.util;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,39 +92,33 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since Aug 27, 2009
  */
-public class MockPaDiseaseBean implements DiseaseServiceRemote {
+public class MockPaDiseaseBean implements SDCDiseaseServiceRemote {
 
     /** mock data. */
-    public static List<DiseaseDTO> dtos;
+    public static List<SDCDiseaseDTO> dtos;
 
     static {
-        dtos = new ArrayList<DiseaseDTO>();
-        DiseaseDTO r = new DiseaseDTO();
+        dtos = new ArrayList<SDCDiseaseDTO>();
+        SDCDiseaseDTO r = new SDCDiseaseDTO();
         r.setIdentifier(IiConverter.convertToIi(1L));
         r.setDiseaseCode(StConverter.convertToSt("diseaseCode 01"));
         r.setMenuDisplayName(StConverter.convertToSt("menu 01"));
-        r.setNtTermIdentifier(StConverter.convertToSt("ntTermIdentifier 01"));
         r.setPreferredName(StConverter.convertToSt("perferredName 01"));
-        r.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-        r.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2008")));
         dtos.add(r);
-        r = new DiseaseDTO();
+        r = new SDCDiseaseDTO();
         r.setIdentifier(IiConverter.convertToIi(2L));
         r.setDiseaseCode(StConverter.convertToSt("diseaseCode 02"));
         r.setMenuDisplayName(StConverter.convertToSt("menu 02"));
-        r.setNtTermIdentifier(StConverter.convertToSt("ntTermIdentifier 02"));
         r.setPreferredName(StConverter.convertToSt("perferredName 02"));
-        r.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-        r.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2008")));
         dtos.add(r);
     }
 
     /**
      * {@inheritDoc}
      */
-    public DiseaseDTO get(Ii ii) throws PAException {
-        DiseaseDTO result = null;
-        for (DiseaseDTO dto : dtos) {
+    public SDCDiseaseDTO get(Ii ii) throws PAException {
+        SDCDiseaseDTO result = null;
+        for (SDCDiseaseDTO dto : dtos) {
             if (IiConverter.convertToLong(dto.getIdentifier()).equals(IiConverter.convertToLong(ii))) {
                 result = dto;
             }
@@ -139,14 +129,14 @@ public class MockPaDiseaseBean implements DiseaseServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public List<DiseaseDTO> search(DiseaseDTO searchCriteria) throws PAException {
+    public List<SDCDiseaseDTO> search(SDCDiseaseDTO searchCriteria) throws PAException {
         return dtos;
     }
 
     /**
      * {@inheritDoc}
      */
-    public DiseaseDTO create(DiseaseDTO dto) throws PAException {
+    public SDCDiseaseDTO create(SDCDiseaseDTO dto) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -162,12 +152,12 @@ public class MockPaDiseaseBean implements DiseaseServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public DiseaseDTO update(DiseaseDTO dto) throws PAException {
+    public SDCDiseaseDTO update(SDCDiseaseDTO dto) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public void validate(DiseaseDTO arg0) throws PAException {
+    public void validate(SDCDiseaseDTO arg0) throws PAException {
         // TODO Auto-generated method stub
 
     }

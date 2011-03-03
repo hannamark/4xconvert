@@ -76,9 +76,8 @@
 */
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 
 /**
@@ -91,14 +90,9 @@ public interface ServiceLocatorPaInterface {
      */
     PlannedActivityServiceRemote getPlannedActivityService();
     /**
-     * @return Disease service
+     * @return SDCDisease service
      */
-    DiseaseServiceRemote getDiseaseService();
-    /**
-     * @return DiseaseParent service
-     */
-    DiseaseParentServiceRemote getDiseaseParentService();
-    
+    SDCDiseaseServiceRemote getDiseaseService();
     /**
      * @return the study protocol service
      */

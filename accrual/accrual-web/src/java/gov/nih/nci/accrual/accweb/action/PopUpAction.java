@@ -79,17 +79,12 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -105,15 +100,11 @@ public class PopUpAction extends AbstractAccrualAction {
     private static final int MAX_SEARCH_RESULT_SIZE = 500;
 
     private String searchName;
-    private String includeSynonym;
-    private String exactMatch;
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
 
     private void loadResultList() {
         disWebList.clear();
         String tName = ServletActionContext.getRequest().getParameter("searchName");
-        String includeSyn = ServletActionContext.getRequest().getParameter("includeSynonym");
-        String exactMat = ServletActionContext.getRequest().getParameter("exactMatch");
 
         if (StringUtils.isEmpty(tName)) {
             String message = "Please enter at least one search criteria";
@@ -122,14 +113,12 @@ public class PopUpAction extends AbstractAccrualAction {
             return;
         }
 
-        DiseaseDTO criteria = new DiseaseDTO();
+        SDCDiseaseDTO criteria = new SDCDiseaseDTO();
         criteria.setPreferredName(StConverter.convertToSt(tName));
-        criteria.setIncludeSynonym(StConverter.convertToSt(includeSyn));
-        criteria.setExactMatch(StConverter.convertToSt(exactMat));
 
-        List<DiseaseDTO> diseaseList = null;
+        List<SDCDiseaseDTO> diseaseList = null;
         try {
-            diseaseList = getDiseaseSvc().search(criteria);
+            diseaseList = getSDCDiseaseSvc().search(criteria);
         } catch (Exception e) {
             error("Exception while loading disease results.", e);
             return;
@@ -138,56 +127,14 @@ public class PopUpAction extends AbstractAccrualAction {
             error("Too many diseases found.  Please narrow search.");
             return;
         }
-        for (DiseaseDTO disease : diseaseList) {
+        for (SDCDiseaseDTO disease : diseaseList) {
             DiseaseWebDTO newRec = new DiseaseWebDTO();
             newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
             newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
             newRec.setCode(StConverter.convertToString(disease.getDiseaseCode()));
-            newRec.setConceptId(StConverter.convertToString(disease.getNtTermIdentifier()));
             newRec.setMenuDisplayName(StConverter.convertToString(disease.getMenuDisplayName()));
             getDisWebList().add(newRec);
         }
-        loadParentPreferredNames();
-    }
-
-    private void loadParentPreferredNames() {
-        Ii[] iis = new Ii[disWebList.size()];
-        int x = 0;
-        for (DiseaseWebDTO dto : disWebList) {
-            iis[x++] = IiConverter.convertToIi(dto.getDiseaseIdentifier());
-        }
-        List<DiseaseParentDTO> dpList;
-        try {
-            dpList = getDiseaseParentSvc().getByChildDisease(iis);
-        } catch (Exception e) {
-            error("Exception thrown while getting disease parents.", e);
-            return;
-        }
-        try {
-            Map<String, String> childParent = processChildParent(dpList);
-            for (DiseaseWebDTO dto : disWebList) {
-                dto.setParentPreferredName(childParent.get(dto.getDiseaseIdentifier()));
-            }
-        } catch (PAException e) {
-            error("Exception throw while getting disease name for parent.", e);
-            return;
-        }
-    }
-
-    private Map<String, String> processChildParent(List<DiseaseParentDTO> dpList) throws PAException {
-        HashMap<String, String> childParent = new HashMap<String, String>();
-        for (DiseaseParentDTO dp : dpList) {
-            String child = IiConverter.convertToString(dp.getIdentifier());
-            DiseaseDTO parentDTO = getDiseaseSvc().get(dp.getParentDiseaseIdentifier());
-            if (childParent.containsKey(child)) {
-                childParent.put(child,
-                                childParent.get(child) + ", "
-                                        + StConverter.convertToString(parentDTO.getPreferredName()));
-            } else {
-                childParent.put(child, StConverter.convertToString(parentDTO.getPreferredName()));
-            }
-        }
-        return childParent;
     }
 
     private void error(String errMsg, Throwable t) {
@@ -235,33 +182,5 @@ public class PopUpAction extends AbstractAccrualAction {
      */
     public void setDisWebList(List<DiseaseWebDTO> disWebList) {
         this.disWebList = disWebList;
-    }
-
-    /**
-     * @return the includeSynonym
-     */
-    public String getIncludeSynonym() {
-        return includeSynonym;
-    }
-
-    /**
-     * @param includeSynonym the includeSynonym to set
-     */
-    public void setIncludeSynonym(String includeSynonym) {
-        this.includeSynonym = includeSynonym;
-    }
-
-    /**
-     * @return the exactMatch
-     */
-    public String getExactMatch() {
-        return exactMatch;
-    }
-
-    /**
-     * @param exactMatch the exactMatch to set
-     */
-    public void setExactMatch(String exactMatch) {
-        this.exactMatch = exactMatch;
     }
 }

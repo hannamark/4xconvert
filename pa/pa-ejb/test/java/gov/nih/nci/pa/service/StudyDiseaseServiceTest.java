@@ -84,7 +84,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyDiseaseTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -116,7 +116,7 @@ public class StudyDiseaseServiceTest {
         TestSchema.reset();
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
-        dIi = IiConverter.convertToStudyDiseaseIi(TestSchema.diseaseIds.get(1));
+        dIi = IiConverter.convertToStudyDiseaseIi(TestSchema.pdqDiseaseIds.get(1));
     }
 
     private void compareDataAttributes(StudyDisease bo1, StudyDisease bo2) {
@@ -139,7 +139,7 @@ public class StudyDiseaseServiceTest {
         List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);
         int oldSize = dtoList.size();
 
-        Disease disease = new Disease();
+        PDQDisease disease = new PDQDisease();
         disease.setId(IiConverter.convertToLong(dIi));
         StudyProtocol studyProtocol = new StudyProtocol();
         studyProtocol.setId(IiConverter.convertToLong(spIi));

@@ -4,7 +4,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.DiseaseAltername;
 import gov.nih.nci.pa.iso.convert.DiseaseAlternameConverter;
 import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;
@@ -45,7 +45,7 @@ public class DiseaseAlternameBeanLocal
         }
 
         DiseaseAltername criteria = new DiseaseAltername();
-        Disease disease = new Disease();
+        PDQDisease disease = new PDQDisease();
         disease.setId(IiConverter.convertToLong(ii));
         criteria.setDisease(disease);
 

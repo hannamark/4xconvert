@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import gov.nih.nci.pa.service.PAException;
 
 /**
@@ -85,147 +88,53 @@ import gov.nih.nci.pa.service.PAException;
  * @author Hugh Reinhart
  * @since 11/06/2008
  */
+@SuppressWarnings({"unchecked" })
 public class Converters {
-    private static ArmConverter arm = new ArmConverter();
-    private static PlannedActivityConverter plannedActivity = new PlannedActivityConverter();
-    private static StratumGroupConverter sg = new StratumGroupConverter();
-    private static DocumentWorkflowStatusConverter dws = new DocumentWorkflowStatusConverter();
-    private static InterventionConverter intervention = new InterventionConverter();
-    private static InterventionAlternateNameConverter intervAltName = new InterventionAlternateNameConverter();
-    private static StudySiteConverter sSite = new StudySiteConverter();
-    private static DiseaseConverter diseaseConverter = new DiseaseConverter();
-    private static DiseaseAlternameConverter diseaseAlternameConverter = new DiseaseAlternameConverter();
-    private static DiseaseParentConverter diseaseParentConverter = new DiseaseParentConverter();
-    private static StudyDiseaseConverter studyDiseaseConverter = new StudyDiseaseConverter();
-    private static StudyMilestoneConverter studyMilestoneConverter = new StudyMilestoneConverter();
-    private static StudyOnholdConverter studyOnholdConverter = new StudyOnholdConverter();
-    private static StudyOutcomeMeasureConverter studyOutcomeMeasureConverter = new StudyOutcomeMeasureConverter();
-    private static StudyIndldeConverter studyIndldeConverter = new StudyIndldeConverter();
-    private static StudyContactConverter studyContactConverter = new StudyContactConverter();
-    private static StudyOverallStatusConverter studyOverallStatusConverter = new StudyOverallStatusConverter();
-    private static StudyRecruitmentStatusConverter studyRecruitmentStatusConverter =
-        new StudyRecruitmentStatusConverter();
-    private static StudySiteContactConverter studySiteContactConverter =
-        new StudySiteContactConverter();
-    private static StudyRelationshipConverter studyRelationshipConverter = new StudyRelationshipConverter();
-    private static StudyRegulatoryAuthorityConverter studyRegulatoryAuthorityConverter =
-                    new StudyRegulatoryAuthorityConverter();
-
-    private static StudyObjectiveConverter studyObjectiveConverter = new StudyObjectiveConverter();
-    private static RegulatoryAuthorityConverter regulatoryAuthorityConverter =
-        new RegulatoryAuthorityConverter();
-    private static DocumentConverter documentConverter =   new DocumentConverter();
-    private static StudyResourcingConverter studyResourcingConverter =   new StudyResourcingConverter();
-    private static StudySiteOverallStatusConverter studySiteOverallStatusConverter =
-            new StudySiteOverallStatusConverter();
-    private static StudyInboxConverter studyInboxConverter = new StudyInboxConverter();
-    private static StudyCheckoutConverter studyCheckoutConverter = new StudyCheckoutConverter();
-    private static PlannedSubstanceAdministrationConverter psaConverter = new PlannedSubstanceAdministrationConverter();
-    private static PlannedProcedureConverter plannedProcedureConverter = new PlannedProcedureConverter();
-    private static PlannedMarkerConverter plannedMarkerConverter = new PlannedMarkerConverter();
-
-/**
+    private static Map<Class, AbstractConverter> converterMap = new HashMap<Class, AbstractConverter>();
+    static {
+        converterMap.put(ArmConverter.class, new ArmConverter());
+        converterMap.put(PlannedActivityConverter.class, new PlannedActivityConverter());
+        converterMap.put(StratumGroupConverter.class, new StratumGroupConverter());
+        converterMap.put(DocumentWorkflowStatusConverter.class, new DocumentWorkflowStatusConverter());
+        converterMap.put(InterventionConverter.class, new InterventionConverter());
+        converterMap.put(InterventionAlternateNameConverter.class, new InterventionAlternateNameConverter());
+        converterMap.put(StudySiteConverter.class, new StudySiteConverter());
+        converterMap.put(DiseaseConverter.class, new DiseaseConverter());
+        converterMap.put(SDCDiseaseConverter.class, new SDCDiseaseConverter());
+        converterMap.put(DiseaseAlternameConverter.class, new DiseaseAlternameConverter());
+        converterMap.put(DiseaseParentConverter.class, new DiseaseParentConverter());
+        converterMap.put(StudyDiseaseConverter.class, new StudyDiseaseConverter());
+        converterMap.put(StudyMilestoneConverter.class, new StudyMilestoneConverter());
+        converterMap.put(StudyOnholdConverter.class, new StudyOnholdConverter());
+        converterMap.put(StudyOutcomeMeasureConverter.class, new StudyOutcomeMeasureConverter());
+        converterMap.put(StudyIndldeConverter.class, new StudyIndldeConverter());
+        converterMap.put(StudyContactConverter.class, new StudyContactConverter());
+        converterMap.put(StudyOverallStatusConverter.class, new StudyOverallStatusConverter());
+        converterMap.put(StudyRecruitmentStatusConverter.class, new StudyRecruitmentStatusConverter());
+        converterMap.put(StudySiteContactConverter.class, new StudySiteContactConverter());
+        converterMap.put(StudyRelationshipConverter.class, new StudyRelationshipConverter());
+        converterMap.put(StudyRegulatoryAuthorityConverter.class, new StudyRegulatoryAuthorityConverter());
+        converterMap.put(StudyObjectiveConverter.class, new StudyObjectiveConverter());
+        converterMap.put(RegulatoryAuthorityConverter.class, new RegulatoryAuthorityConverter());
+        converterMap.put(DocumentConverter.class, new DocumentConverter());
+        converterMap.put(StudyResourcingConverter.class, new StudyResourcingConverter());
+        converterMap.put(StudySiteOverallStatusConverter.class, new StudySiteOverallStatusConverter());
+        converterMap.put(StudyInboxConverter.class, new StudyInboxConverter());
+        converterMap.put(StudyCheckoutConverter.class, new StudyCheckoutConverter());
+        converterMap.put(PlannedSubstanceAdministrationConverter.class, new PlannedSubstanceAdministrationConverter());
+        converterMap.put(PlannedProcedureConverter.class, new PlannedProcedureConverter());
+        converterMap.put(PlannedMarkerConverter.class, new PlannedMarkerConverter());
+        
+    }
+    /**
      * @param clazz class
      * @param <TYPE> the converter type to get
      * @return converter
      * @throws PAException exception
      */
-    @SuppressWarnings({"unchecked", "rawtypes" })
     public static <TYPE extends AbstractConverter> TYPE get(Class<TYPE> clazz)  throws PAException {
-        // TODO - replace this lookup tree with a Map
-
-        if (clazz.equals(ArmConverter.class)) {
-            return (TYPE) arm;
-        }
-        if (clazz.equals(PlannedActivityConverter.class)) {
-            return (TYPE) plannedActivity;
-        }
-        if (clazz.equals(StratumGroupConverter.class)) {
-            return (TYPE) sg;
-        }
-        if (clazz.equals(DocumentWorkflowStatusConverter.class)) {
-            return (TYPE) dws;
-        }
-        if (clazz.equals(InterventionConverter.class)) {
-            return (TYPE) intervention;
-        }
-        if (clazz.equals(InterventionAlternateNameConverter.class)) {
-            return (TYPE) intervAltName;
-        }
-        if (clazz.equals(StudySiteConverter.class)) {
-            return (TYPE) sSite;
-        }
-        if (clazz.equals(DiseaseConverter.class)) {
-            return (TYPE) diseaseConverter;
-        }
-        if (clazz.equals(DiseaseAlternameConverter.class)) {
-            return (TYPE) diseaseAlternameConverter;
-        }
-        if (clazz.equals(DiseaseParentConverter.class)) {
-            return (TYPE) diseaseParentConverter;
-        }
-        if (clazz.equals(StudyDiseaseConverter.class)) {
-            return (TYPE) studyDiseaseConverter;
-        }
-        if (clazz.equals(StudyMilestoneConverter.class)) {
-            return (TYPE) studyMilestoneConverter;
-        }
-        if (clazz.equals(StudyOnholdConverter.class)) {
-          return (TYPE) studyOnholdConverter;
-        }
-        if (clazz.equals(StudyOutcomeMeasureConverter.class)) {
-            return (TYPE) studyOutcomeMeasureConverter;
-        }
-        if (clazz.equals(StudyIndldeConverter.class)) {
-            return (TYPE) studyIndldeConverter;
-        }
-        if (clazz.equals(StudyContactConverter.class)) {
-            return (TYPE) studyContactConverter;
-        }
-        if (clazz.equals(StudyOverallStatusConverter.class)) {
-            return (TYPE) studyOverallStatusConverter;
-        }
-        if (clazz.equals(StudyRecruitmentStatusConverter.class)) {
-            return (TYPE) studyRecruitmentStatusConverter;
-        }
-        if (clazz.equals(StudySiteContactConverter.class)) {
-            return (TYPE) studySiteContactConverter;
-        }
-        if (clazz.equals(StudyRelationshipConverter.class)) {
-            return (TYPE) studyRelationshipConverter;
-        }
-        if (clazz.equals(StudyRegulatoryAuthorityConverter.class)) {
-            return (TYPE) studyRegulatoryAuthorityConverter;
-        }
-        if (clazz.equals(StudyObjectiveConverter.class)) {
-            return (TYPE) studyObjectiveConverter;
-        }
-        if (clazz.equals(RegulatoryAuthorityConverter.class)) {
-            return (TYPE) regulatoryAuthorityConverter;
-        }
-        if (clazz.equals(DocumentConverter.class)) {
-            return (TYPE) documentConverter;
-        }
-        if (clazz.equals(StudyResourcingConverter.class)) {
-            return (TYPE) studyResourcingConverter;
-        }
-        if (clazz.equals(StudySiteOverallStatusConverter.class)) {
-            return (TYPE) studySiteOverallStatusConverter;
-        }
-        if (clazz.equals(StudyInboxConverter.class)) {
-            return (TYPE) studyInboxConverter;
-        }
-        if (clazz.equals(StudyCheckoutConverter.class)) {
-            return (TYPE) studyCheckoutConverter;
-        }
-        if (clazz.equals(PlannedSubstanceAdministrationConverter.class)) {
-            return (TYPE) psaConverter;
-        }
-        if (clazz.equals(PlannedProcedureConverter.class)) {
-            return (TYPE) plannedProcedureConverter;
-        }
-        if (clazz.equals(PlannedMarkerConverter.class)) {
-            return (TYPE) plannedMarkerConverter;
+        if (converterMap.containsKey(clazz)) {
+            return (TYPE) converterMap.get(clazz);
         }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }

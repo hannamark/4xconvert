@@ -95,7 +95,7 @@ import org.hibernate.validator.NotNull;
 public class StudyDisease extends AbstractStudyEntity {
     private static final long serialVersionUID = 1898967890L;
 
-    private Disease disease;
+    private PDQDisease disease;
     private Boolean ctGovXmlIndicator;
 
     /**
@@ -104,14 +104,14 @@ public class StudyDisease extends AbstractStudyEntity {
     @ManyToOne
     @JoinColumn(name = "DISEASE_IDENTIFIER", updatable = false)
     @NotNull
-    public Disease getDisease() {
+    public PDQDisease getDisease() {
         return disease;
     }
 
     /**
      * @param disease the disease to set
      */
-    public void setDisease(Disease disease) {
+    public void setDisease(PDQDisease disease) {
         this.disease = disease;
     }
 

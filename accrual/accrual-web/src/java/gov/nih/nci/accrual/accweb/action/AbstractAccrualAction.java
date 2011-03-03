@@ -93,9 +93,8 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -123,9 +122,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     private PatientService patientSvc;
     private PerformedActivityService performedActivitySvc;
     private CountryService countrySvc;
-    private DiseaseServiceRemote diseaseSvc;
+    private SDCDiseaseServiceRemote sdcDiseaseSvc;
     private PlannedActivityServiceRemote plannedActivitySvc;
-    private DiseaseParentServiceRemote diseaseParentSvc;
     private CdusBatchUploadReaderServiceLocal cdusBatchUploadReaderSvc;
 
     /**
@@ -140,9 +138,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         performedActivitySvc = AccrualServiceLocator.getInstance().getPerformedActivityService();
         countrySvc = AccrualServiceLocator.getInstance().getCountryService();
         cdusBatchUploadReaderSvc = AccrualServiceLocator.getInstance().getBatchUploadReaderService();
-        diseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
+        sdcDiseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
-        diseaseParentSvc = PaServiceLocator.getInstance().getDiseaseParentService();
     }
     /**
      * Default execute method for action classes.
@@ -282,8 +279,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     /**
      * @return the diseaseSvc
      */
-    public DiseaseServiceRemote getDiseaseSvc() {
-        return diseaseSvc;
+    public SDCDiseaseServiceRemote getSDCDiseaseSvc() {
+        return sdcDiseaseSvc;
     }
 
     /**
@@ -291,13 +288,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      */
     public PlannedActivityServiceRemote getPlannedActivitySvc() {
         return plannedActivitySvc;
-    }
-
-    /**
-     * @return the diseaseParentSvc
-     */
-    public DiseaseParentServiceRemote getDiseaseParentSvc() {
-        return diseaseParentSvc;
     }
     
     /**

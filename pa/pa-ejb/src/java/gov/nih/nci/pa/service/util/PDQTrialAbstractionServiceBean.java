@@ -93,7 +93,7 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
@@ -464,13 +464,13 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
      * @param studyProtocolIi
      * @throws PAException
      */
-   private void loadConditions(List<DiseaseDTO> listOfDiseaseDTOs, Ii studyProtocolIi) {
-        for (DiseaseDTO dto : listOfDiseaseDTOs) {
+   private void loadConditions(List<PDQDiseaseDTO> listOfDiseaseDTOs, Ii studyProtocolIi) {
+        for (PDQDiseaseDTO dto : listOfDiseaseDTOs) {
             StudyDiseaseDTO studyDiseaseDTO = new StudyDiseaseDTO();
             studyDiseaseDTO.setStudyProtocolIdentifier(studyProtocolIi);
             Ii diseaseIdentifier = null;
             try {
-                List<DiseaseDTO> searchList = PaRegistry.getDiseaseService().search(dto);
+                List<PDQDiseaseDTO> searchList = PaRegistry.getDiseaseService().search(dto);
                 if (CollectionUtils.isNotEmpty(searchList)) {
                     diseaseIdentifier = searchList.get(0).getIdentifier();
                     studyDiseaseDTO.setDiseaseIdentifier(diseaseIdentifier);

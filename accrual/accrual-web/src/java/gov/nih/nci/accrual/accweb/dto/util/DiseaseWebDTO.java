@@ -91,8 +91,6 @@ public class DiseaseWebDTO {
     private String code;
     private String conceptId;
     private String menuDisplayName;
-    private String parentPreferredName;
-    private String alternames;
     private String lead;
     /**
      * @return the studyDiseaseIdentifier
@@ -165,30 +163,6 @@ public class DiseaseWebDTO {
      */
     public void setMenuDisplayName(String menuDisplayName) {
         this.menuDisplayName = menuDisplayName;
-    }
-    /**
-     * @return the parentPreferredName
-     */
-    public String getParentPreferredName() {
-        return parentPreferredName;
-    }
-    /**
-     * @param parentPreferredName the parentPreferredName to set
-     */
-    public void setParentPreferredName(String parentPreferredName) {
-        this.parentPreferredName = parentPreferredName;
-    }
-    /**
-     * @return the alternames
-     */
-    public String getAlternames() {
-        return alternames;
-    }
-    /**
-     * @param alternames the alternames to set
-     */
-    public void setAlternames(String alternames) {
-        this.alternames = alternames;
     }
     /**
      * @return the lead

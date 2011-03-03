@@ -83,43 +83,12 @@ import gov.nih.nci.iso21090.St;
  * @author Hugh Reinhart
  * @since 11/30/2008
  */
-public class DiseaseDTO extends BaseDTOWithStatusCode {
+public class SDCDiseaseDTO extends BaseDTO {
     private static final long serialVersionUID = 155517890L;
 
     private St diseaseCode;
-    private St ntTermIdentifier;
     private St preferredName;
     private St menuDisplayName;
-    private St includeSynonym;
-    private St exactMatch;
-
-    /**
-     * @return the includeSynonym
-     */
-    public St getIncludeSynonym() {
-        return includeSynonym;
-    }
-
-    /**
-     * @param includeSynonym the includeSynonym to set
-     */
-    public void setIncludeSynonym(St includeSynonym) {
-        this.includeSynonym = includeSynonym;
-    }
-
-    /**
-     * @return the exactMatch
-     */
-    public St getExactMatch() {
-        return exactMatch;
-    }
-
-    /**
-     * @param exactMatch the exactMatch to set
-     */
-    public void setExactMatch(St exactMatch) {
-        this.exactMatch = exactMatch;
-    }
 
     /**
      * @return the diseaseCode
@@ -133,20 +102,6 @@ public class DiseaseDTO extends BaseDTOWithStatusCode {
      */
     public void setDiseaseCode(St diseaseCode) {
         this.diseaseCode = diseaseCode;
-    }
-
-    /**
-     * @return the ntTermIdentifier
-     */
-    public St getNtTermIdentifier() {
-        return ntTermIdentifier;
-    }
-
-    /**
-     * @param ntTermIdentifier the ntTermIdentifier to set
-     */
-    public void setNtTermIdentifier(St ntTermIdentifier) {
-        this.ntTermIdentifier = ntTermIdentifier;
     }
 
     /**

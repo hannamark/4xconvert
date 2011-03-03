@@ -646,4 +646,8 @@
         <comment>Adding total_number_of_accruals column to the submission table.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.4/PO-3242.sql"/>
      </changeSet>
+     <changeSet id="PO-3261" author="moweis">
+        <comment>Add SDC database schema.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.4/PO-3261.sql"/>
+     </changeSet>
 </databaseChangeLog>

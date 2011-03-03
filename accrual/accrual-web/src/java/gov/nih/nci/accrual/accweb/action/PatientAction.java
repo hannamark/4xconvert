@@ -91,8 +91,8 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -305,9 +305,9 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                         continue;
                     }
                     PatientDto pat = getPatientSvc().get(sub.getPatientIdentifier());
-                    DiseaseDTO dto;
+                    SDCDiseaseDTO dto;
                     try {
-                        dto = getDiseaseSvc().get(sub.getDiseaseIdentifier());
+                        dto = getSDCDiseaseSvc().get(sub.getDiseaseIdentifier());
                     } catch (Exception e) {
                         dto = null;
                     }
@@ -335,7 +335,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         } else {
             Ii ii = IiConverter.convertToIi(webDTO.getDiseaseIdentifier());
             try {
-                DiseaseDTO dto = getDiseaseSvc().get(ii);
+                SDCDiseaseDTO dto = getSDCDiseaseSvc().get(ii);
                 webDTO.setPreferredName(StConverter.convertToString(dto.getPreferredName()));
                 webDTO.setDiseaseIdentifier(IiConverter.convertToString(dto.getIdentifier()));
             } catch (Exception e) {

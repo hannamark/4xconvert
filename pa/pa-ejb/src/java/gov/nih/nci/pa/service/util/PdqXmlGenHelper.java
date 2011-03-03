@@ -91,7 +91,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -539,10 +539,10 @@ public class PdqXmlGenHelper {
      * @param doc Document
      * @param root element
      */
-    protected static void handleDiseaseCollection(List<DiseaseDTO> diseases, Document doc, Element root) {
+    protected static void handleDiseaseCollection(List<PDQDiseaseDTO> diseases, Document doc, Element root) {
         if (!CollectionUtils.isEmpty(diseases)) {
             Element diseaseConditionElement = doc.createElement("disease_conditions");
-            for (DiseaseDTO d : diseases) {
+            for (PDQDiseaseDTO d : diseases) {
                 Element conditionElement = doc.createElement("condition_info");
                 BaseXmlGenHelper.appendElement(conditionElement,
                         BaseXmlGenHelper.createElementWithTextblock("preferred_name",

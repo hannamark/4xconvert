@@ -90,7 +90,7 @@ import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -200,7 +200,7 @@ public class PatientWebDto {
      * @param dIsoDto disease ISO DTO
      */
     public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName,
-            PerformedSubjectMilestoneDto psm, List<Country> listOfCountries, DiseaseDTO dIsoDto) {
+            PerformedSubjectMilestoneDto psm, List<Country> listOfCountries, SDCDiseaseDTO dIsoDto) {
         setPatientData(pIsoDto, listOfCountries);
 
         if (ssIsoDto != null) {

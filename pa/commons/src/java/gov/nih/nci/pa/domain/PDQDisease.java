@@ -1,4 +1,4 @@
-/*
+/**
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -78,69 +78,170 @@
 */
 package gov.nih.nci.pa.domain;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
-import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.util.CommonsConstant;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.Length;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
- * @author hreinhart
- *
+ * @author Hugh Reinhart
+ * @since 11/29/2008
  */
-public class DiseaseTest {
-    Session sess;
+@Entity
+@Table(name = "DISEASE")
+public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendingCode> implements Disease {
+    private static final long serialVersionUID = 1276767890L;
+    private static final String DISEASE_STR = "disease";
+
+    private String diseaseCode;
+    private String ntTermIdentifier;
+    private String preferredName;
+    private String menuDisplayName;
+
+    private List<StudyDisease> studyDiseases = new ArrayList<StudyDisease>();
+    private List<DiseaseAltername> diseaseAlternames = new ArrayList<DiseaseAltername>();
+    private List<DiseaseParent> diseaseParents = new ArrayList<DiseaseParent>();
+    private List<DiseaseParent> diseaseChildren = new ArrayList<DiseaseParent>();
 
     /**
-     *
-     * @throws Exception e
+     * @return the diseaseCode
      */
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
-        TestSchema.primeData();
-        sess = HibernateUtil.getCurrentSession();
+    @Column(name = "DISEASE_CODE")
+    @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
+    public String getDiseaseCode() {
+        return diseaseCode;
     }
-    @Test
-    public void getTest() {
-        Disease d = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(0));
-        assertNotNull(d.getId());
+
+    /**
+     * @param diseaseCode the diseaseCode to set
+     */
+    public void setDiseaseCode(String diseaseCode) {
+        this.diseaseCode = diseaseCode;
     }
-    @Test
-    public void deleteTest() {
-        Disease d = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(0));
-        sess.delete(d);
-        sess.flush();
-        sess.clear();
-        d = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(0));
-        assertNull(d);
+
+    /**
+     * @return the ntTermIdentifier
+     */
+    @Column(name = "NT_TERM_IDENTIFIER")
+    @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
+    public String getNtTermIdentifier() {
+
+        return ntTermIdentifier;
     }
-    @Test
-    public void mergeTest() {
-        Disease xxx = createDiseaseObj("new disease");
-        sess.merge(xxx);
-        assertTrue("new disease".equals(xxx.getPreferredName()));
+
+    /**
+     * @param ntTermIdentifier the ntTermIdentifier to set
+     */
+    public void setNtTermIdentifier(String ntTermIdentifier) {
+        this.ntTermIdentifier = ntTermIdentifier;
     }
-    public static Disease createDiseaseObj(String preferredName) {
-        Disease create = new Disease();
-        create.setDiseaseCode("diseaseCode");
-        create.setMenuDisplayName("menuDisplayName");
-        create.setNtTermIdentifier("ntTermIdentifier");
-        create.setPreferredName(preferredName);
-        create.setStatusCode(ActiveInactivePendingCode.ACTIVE);
-        create.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
-        create.setUserLastCreated(TestSchema.getUser());
-        create.setDateLastCreated(new Timestamp(new Date().getTime()));
-        create.setUserLastUpdated(TestSchema.getUser());
-        create.setDateLastUpdated(new Timestamp(new Date().getTime()));
-        return create;
+
+    /**
+     * @return the preferredName
+     */
+    @Column(name = "PREFERRED_NAME")
+    @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
+    public String getPreferredName() {
+        return preferredName;
+    }
+
+    /**
+     * @param preferredName the preferredName to set
+     */
+    public void setPreferredName(String preferredName) {
+        this.preferredName = preferredName;
+    }
+
+    /**
+     * @return the menuDisplayName
+     */
+    @Column(name = "MENU_DISPLAY_NAME")
+    @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
+    public String getMenuDisplayName() {
+        return menuDisplayName;
+    }
+
+    /**
+     * @param menuDisplayName the menuDisplayName to set
+     */
+    public void setMenuDisplayName(String menuDisplayName) {
+        this.menuDisplayName = menuDisplayName;
+    }
+
+    /**
+     * @return the studyDiseases
+     */
+    @OneToMany(mappedBy = DISEASE_STR)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<StudyDisease> getStudyDiseases() {
+        return studyDiseases;
+    }
+
+    /**
+     * @param studyDiseases the studyDiseases to set
+     */
+    public void setStudyDiseases(List<StudyDisease> studyDiseases) {
+        this.studyDiseases = studyDiseases;
+    }
+
+    /**
+     * @return the diseaseAlternames
+     */
+    @OneToMany(mappedBy = DISEASE_STR)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Searchable(nested = true)
+    public List<DiseaseAltername> getDiseaseAlternames() {
+        return diseaseAlternames;
+    }
+
+    /**
+     * @param diseaseAlternames the diseaseAlternames to set
+     */
+    public void setDiseaseAlternames(List<DiseaseAltername> diseaseAlternames) {
+        this.diseaseAlternames = diseaseAlternames;
+    }
+
+    /**
+     * @return the diseaseParents
+     */
+    @OneToMany(mappedBy = DISEASE_STR)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<DiseaseParent> getDiseaseParents() {
+        return diseaseParents;
+    }
+
+    /**
+     * @param diseaseParents the diseaseParents to set
+     */
+    public void setDiseaseParents(List<DiseaseParent> diseaseParents) {
+        this.diseaseParents = diseaseParents;
+    }
+
+    /**
+     * @return the diseaseChildren
+     */
+    @OneToMany(mappedBy = "parentDisease")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<DiseaseParent> getDiseaseChildren() {
+        return diseaseChildren;
+    }
+
+    /**
+     * @param diseaseChildren the diseaseChildren to set
+     */
+    public void setDiseaseChildren(List<DiseaseParent> diseaseChildren) {
+        this.diseaseChildren = diseaseChildren;
     }
 }

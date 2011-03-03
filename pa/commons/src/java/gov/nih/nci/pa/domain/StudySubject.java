@@ -109,7 +109,7 @@ public class StudySubject extends Subject {
     private PaymentMethodCode paymentMethodCode;
     private Patient patient;
     private StudySite studySite;
-    private Disease disease;
+    private SDCDisease disease;
     private String outcomesLoginName;
     private List<PerformedActivity> performedActivities = new ArrayList<PerformedActivity>();
 
@@ -175,13 +175,13 @@ public class StudySubject extends Subject {
      */
     @ManyToOne
     @JoinColumn(name = "disease_identifier")
-    public Disease getDisease() {
+    public SDCDisease getDisease() {
         return disease;
     }
     /**
      * @param disease the disease to set
      */
-    public void setDisease(Disease disease) {
+    public void setDisease(SDCDisease disease) {
         this.disease = disease;
     }
     /**

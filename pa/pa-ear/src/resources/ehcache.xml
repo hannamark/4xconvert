@@ -353,7 +353,15 @@
         />
         
     <cache 
-        name="gov.nih.nci.pa.domain.Disease" 
+        name="gov.nih.nci.pa.domain.PDQDisease" 
+        maxElementsInMemory="300" 
+        eternal="true" 
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LFU" 
+        />
+        
+    <cache 
+        name="gov.nih.nci.pa.domain.SDCDisease" 
         maxElementsInMemory="300" 
         eternal="true" 
         overflowToDisk="false" 

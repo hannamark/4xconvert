@@ -111,7 +111,7 @@ public class DiseaseAlternameTest {
     }
     @Test
     public void getTest() {
-        Disease toe = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(0));
+        PDQDisease toe = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(0));
         List<DiseaseAltername> daList = toe.getDiseaseAlternames();
         assertTrue(daList.size() > 0);
         Long id = daList.get(0).getId();
@@ -121,7 +121,7 @@ public class DiseaseAlternameTest {
     }
     @Test
     public void deleteTest() {
-        Disease toe = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(0));
+        PDQDisease toe = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(0));
         List<DiseaseAltername> daList = toe.getDiseaseAlternames();
         int oldSize = daList.size();
         assertTrue(oldSize > 0);
@@ -132,7 +132,7 @@ public class DiseaseAlternameTest {
     }
     @Test
     public void mergeTest() {
-        Disease toe = (Disease) sess.get(Disease.class, TestSchema.diseaseIds.get(0));
+        PDQDisease toe = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(0));
         List<DiseaseAltername> daList = toe.getDiseaseAlternames();
         int oldSize = daList.size();
         sess.merge(createDiseaseAlternameObj("Digit Cancer", toe));
@@ -141,7 +141,7 @@ public class DiseaseAlternameTest {
         assertEquals(oldSize + 1, toe.getDiseaseAlternames().size());
     }
 
-    public static DiseaseAltername createDiseaseAlternameObj(String alternateName, Disease disease) {
+    public static DiseaseAltername createDiseaseAlternameObj(String alternateName, PDQDisease disease) {
         DiseaseAltername create = new DiseaseAltername();
         create.setAlternateName(alternateName);
         create.setDisease(disease);

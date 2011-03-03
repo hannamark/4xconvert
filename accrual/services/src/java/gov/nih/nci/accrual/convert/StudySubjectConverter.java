@@ -80,8 +80,8 @@
 package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -146,7 +146,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         }
         bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
         bo.setStudySite(fKeySetter(StudySite.class, dto.getStudySiteIdentifier()));
-        bo.setDisease(fKeySetter(Disease.class, dto.getDiseaseIdentifier()));
+        bo.setDisease(fKeySetter(SDCDisease.class, dto.getDiseaseIdentifier()));
         bo.setOutcomesLoginName(StConverter.convertToString(dto.getOutcomesLoginName()));
         return bo;
     }

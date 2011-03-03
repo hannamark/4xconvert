@@ -11,7 +11,7 @@ import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -53,7 +53,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     private OrganizationDTO irbOrgDTO;
     private List<PlannedEligibilityCriterionDTO> eligibilityList;
     private List<StudyOutcomeMeasureDTO> outcomeMeasureDTOs;
-    private List<DiseaseDTO> listOfDiseaseDTOs;
+    private List<PDQDiseaseDTO> listOfDiseaseDTOs;
     private List<InterventionDTO> listOfInterventionsDTOS;
     private Map <InterventionDTO, List<ArmDTO>> armInterventionMap;
     private List<ArmDTO> listOfArmDTOS;
@@ -226,9 +226,9 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
      */
     private void readConditons(Element parent) {
         List<Element> conditionList = parent.getChildren("condition");
-        setListOfDiseaseDTOs(new ArrayList<DiseaseDTO>());
+        setListOfDiseaseDTOs(new ArrayList<PDQDiseaseDTO>());
         for (Element conditionElt : conditionList) {
-            DiseaseDTO dDto = new DiseaseDTO();
+            PDQDiseaseDTO dDto = new PDQDiseaseDTO();
             dDto.setDiseaseCode(StConverter.convertToSt(conditionElt.getAttribute("cdr-id").getValue()));
             dDto.setPreferredName(StConverter.convertToSt(conditionElt.getText()));
             getListOfDiseaseDTOs().add(dDto);
@@ -356,7 +356,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * @return the listOfDiseaseDTOs
      */
-    public List<DiseaseDTO> getListOfDiseaseDTOs() {
+    public List<PDQDiseaseDTO> getListOfDiseaseDTOs() {
         return listOfDiseaseDTOs;
     }
 
@@ -418,7 +418,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * @param listOfDiseaseDTOs the listOfDiseaseDTOs to set
      */
-    public void setListOfDiseaseDTOs(List<DiseaseDTO> listOfDiseaseDTOs) {
+    public void setListOfDiseaseDTOs(List<PDQDiseaseDTO> listOfDiseaseDTOs) {
         this.listOfDiseaseDTOs = listOfDiseaseDTOs;
     }
     /**
