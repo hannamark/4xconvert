@@ -5,12 +5,12 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PDQDisease;
-import gov.nih.nci.pa.domain.DiseaseAltername;
-import gov.nih.nci.pa.iso.convert.DiseaseAlternameConverter;
-import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;
+import gov.nih.nci.pa.domain.PDQDiseaseAltername;
+import gov.nih.nci.pa.iso.convert.PDQDiseaseAlternameConverter;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseAlternameDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.pa.service.search.DiseaseAlternameSortCriterion;
+import gov.nih.nci.pa.service.search.PDQDiseaseAlternameSortCriterion;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -31,28 +31,29 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class DiseaseAlternameBeanLocal
-    extends AbstractBaseIsoService<DiseaseAlternameDTO, DiseaseAltername, DiseaseAlternameConverter>
-    implements DiseaseAlternameServiceLocal , DiseaseAlternameServiceRemote {
+public class PDQDiseaseAlternameBeanLocal
+    extends AbstractBaseIsoService<PDQDiseaseAlternameDTO, PDQDiseaseAltername, PDQDiseaseAlternameConverter>
+    implements PDQDiseaseAlternameServiceLocal , PDQDiseaseAlternameServiceRemote {
 
     /**
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<DiseaseAlternameDTO> getByDisease(Ii ii) throws PAException {
+    public List<PDQDiseaseAlternameDTO> getByDisease(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.  ");
         }
 
-        DiseaseAltername criteria = new DiseaseAltername();
+        PDQDiseaseAltername criteria = new PDQDiseaseAltername();
         PDQDisease disease = new PDQDisease();
         disease.setId(IiConverter.convertToLong(ii));
         criteria.setDisease(disease);
 
-        PageSortParams<DiseaseAltername> params = new PageSortParams<DiseaseAltername>(PAConstants.MAX_SEARCH_RESULTS,
-                0, DiseaseAlternameSortCriterion.DISEASE_ALTERNAME_ID, false);
+        PageSortParams<PDQDiseaseAltername> params = new PageSortParams<PDQDiseaseAltername>(
+                PAConstants.MAX_SEARCH_RESULTS, 0, PDQDiseaseAlternameSortCriterion.DISEASE_ALTERNAME_ID, false);
         // step 3: query the result
-        List<DiseaseAltername> results = search(new AnnotatedBeanSearchCriteria<DiseaseAltername>(criteria), params);
+        List<PDQDiseaseAltername> results = search(new AnnotatedBeanSearchCriteria<PDQDiseaseAltername>(criteria), 
+                params);
         return convertFromDomainToDTOs(results);
     }
 }

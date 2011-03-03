@@ -79,11 +79,11 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseAlternameDTO;
 
 import java.util.List;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
 /**
 * @author Hugh Reinhart
@@ -92,12 +92,12 @@ import javax.ejb.Remote;
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
 */
-@Remote
-public interface DiseaseAlternameServiceRemote extends BasePaService<DiseaseAlternameDTO> {
+@Local
+public interface PDQDiseaseAlternameServiceLocal extends BasePaService<PDQDiseaseAlternameDTO> {
     /**
      * @param ii index of the disease
      * @return list of alternate names for disease
      * @throws PAException exception
      */
-     List<DiseaseAlternameDTO> getByDisease(Ii ii) throws PAException;
+     List<PDQDiseaseAlternameDTO> getByDisease(Ii ii) throws PAException;
 }

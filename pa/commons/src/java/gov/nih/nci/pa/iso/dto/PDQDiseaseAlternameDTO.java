@@ -1,4 +1,4 @@
-/*
+/**
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,88 +76,45 @@
 *
 *
 */
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.PDQDisease;
-import gov.nih.nci.pa.domain.DiseaseParent;
-import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
-import gov.nih.nci.pa.iso.convert.DiseaseParentConverter;
-import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.pa.service.search.DiseaseParentSortCriterion;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PAConstants;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import gov.nih.nci.iso21090.St;
 
 /**
 * @author Hugh Reinhart
 * @since 11/30/2008
+* copyright NCI 2008.  All rights reserved.
+* This code may not be used without the express written permission of the
+* copyright holder, NCI.
 */
-@Stateless
-@Interceptors(HibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class DiseaseParentServiceBean
-        extends AbstractBaseIsoService<DiseaseParentDTO, DiseaseParent, DiseaseParentConverter>
-        implements DiseaseParentServiceRemote {
+public class PDQDiseaseAlternameDTO extends BaseDTOWithStatusCode {
+    private static final long serialVersionUID = 1090967890L;
 
+    private St alternateName;
+    private Ii diseaseIdentifier;
     /**
-     * @param ii index of disease
-     * @return list of DiseaseParent associations for children of disease
-     * @throws PAException exception
+     * @return the alternateName
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<DiseaseParentDTO> getByChildDisease(Ii ii) throws PAException {
-        DiseaseParent criteria = new DiseaseParent();
-        PDQDisease disease = new PDQDisease();
-        disease.setId(IiConverter.convertToLong(ii));
-        disease.setStatusCode(ActiveInactivePendingCode.ACTIVE);
-        criteria.setDisease(disease);
-        PageSortParams<DiseaseParent> params = new PageSortParams<DiseaseParent>(PAConstants.MAX_SEARCH_RESULTS,
-                    0, DiseaseParentSortCriterion.DISEASE_PARENT_ID, false);
-        List<DiseaseParent> results = search(new AnnotatedBeanSearchCriteria<DiseaseParent>(criteria), params);
-        return convertFromDomainToDTOs(results);
+    public St getAlternateName() {
+        return alternateName;
     }
-
     /**
-     * @param ii index of disease
-     * @return list of DiseaseParent associations for parents of disease
-     * @throws PAException exception
+     * @param alternateName the alternateName to set
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<DiseaseParentDTO> getByParentDisease(Ii ii) throws PAException {
-        DiseaseParent criteria = new DiseaseParent();
-        PDQDisease disease = new PDQDisease();
-        disease.setId(IiConverter.convertToLong(ii));
-        disease.setStatusCode(ActiveInactivePendingCode.ACTIVE);
-        criteria.setParentDisease(disease);
-        PageSortParams<DiseaseParent> params = new PageSortParams<DiseaseParent>(PAConstants.MAX_SEARCH_RESULTS,
-                    0, DiseaseParentSortCriterion.DISEASE_PARENT_ID, false);
-        List<DiseaseParent> results = search(new AnnotatedBeanSearchCriteria<DiseaseParent>(criteria), params);
-        return convertFromDomainToDTOs(results);
+    public void setAlternateName(St alternateName) {
+        this.alternateName = alternateName;
     }
-
     /**
-     * @param iis array of indexes of diseases
-     * @return list of DiseaseParent associations for children of disease
-     * @throws PAException exception
+     * @return the diseaseIdentifier
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<DiseaseParentDTO> getByChildDisease(Ii[] iis) throws PAException {
-        ArrayList<DiseaseParentDTO> resultList = new ArrayList<DiseaseParentDTO>();
-        for (Ii ii : iis) {
-            resultList.addAll(getByChildDisease(ii));
-        }
-        return resultList;
+    public Ii getDiseaseIdentifier() {
+        return diseaseIdentifier;
+    }
+    /**
+     * @param diseaseIdentifier the diseaseIdentifier to set
+     */
+    public void setDiseaseIdentifier(Ii diseaseIdentifier) {
+        this.diseaseIdentifier = diseaseIdentifier;
     }
 }

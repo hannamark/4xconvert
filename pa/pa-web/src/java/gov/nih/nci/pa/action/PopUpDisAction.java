@@ -81,7 +81,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -147,7 +147,7 @@ public class PopUpDisAction extends ActionSupport {
             newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
             newRec.setCode(StConverter.convertToString(disease.getDiseaseCode()));
             newRec.setConceptId(StConverter.convertToString(disease.getNtTermIdentifier()));
-            newRec.setMenuDisplayName(StConverter.convertToString(disease.getMenuDisplayName()));
+            newRec.setMenuDisplayName(StConverter.convertToString(disease.getDisplayName()));
             getDisWebList().add(newRec);
         }
         loadParentPreferredNames();
@@ -159,7 +159,7 @@ public class PopUpDisAction extends ActionSupport {
         for (DiseaseWebDTO dto : disWebList) {
             iis[x++] = IiConverter.convertToIi(dto.getDiseaseIdentifier());
         }
-        List<DiseaseParentDTO> dpList;
+        List<PDQDiseaseParentDTO> dpList;
         try {
             dpList = PaRegistry.getDiseaseParentService().getByChildDisease(iis);
         } catch (Exception e) {
@@ -167,7 +167,7 @@ public class PopUpDisAction extends ActionSupport {
             return;
         }
         HashMap<String, String> childParent = new HashMap<String, String>();
-        for (DiseaseParentDTO dp : dpList) {
+        for (PDQDiseaseParentDTO dp : dpList) {
             String child = IiConverter.convertToString(dp.getIdentifier());
             PDQDiseaseDTO parentDTO;
             try {

@@ -1,4 +1,4 @@
-/*
+/**
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,32 +76,85 @@
 *
 *
 */
-package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+package gov.nih.nci.pa.domain;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.util.CommonsConstant;
 
-import org.jboss.annotation.security.SecurityDomain;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
-* @author Hugh Reinhart
-* @since 11/30/2008
-* copyright NCI 2008.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
-*/
-@Stateless
-@Interceptors({ HibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SecurityDomain("pa")
-@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
-public class DiseaseAlternameServiceBean
-        extends DiseaseAlternameBeanLocal implements DiseaseAlternameServiceRemote {
+ * @author Hugh Reinhart
+ * @since 11/29/2008
+ */
+@Entity
+@Table(name = "PDQ_DISEASE_PARENT")
+public class PDQDiseaseParent extends AbstractEntityWithStatusCode<ActiveInactiveCode> {
+    private static final long serialVersionUID = 1255557890L;
 
-    
+    private PDQDisease disease;
+    private PDQDisease parentDisease;
+    private String parentDiseaseCode;
+
+    /**
+     * @return the disease
+     */
+    @ManyToOne
+    @JoinColumn(name = "DISEASE_IDENTIFIER", updatable = false)
+    @NotNull
+    @Searchable(nested = true)
+    public PDQDisease getDisease() {
+        return disease;
+    }
+
+    /**
+     * @param disease the disease to set
+     */
+    public void setDisease(PDQDisease disease) {
+        this.disease = disease;
+    }
+
+    /**
+     * @return the parentDisease
+     */
+    @ManyToOne
+    @JoinColumn(name = "PARENT_DISEASE_IDENTIFIER", updatable = false)
+    @NotNull
+    @Searchable(nested = true)
+    public PDQDisease getParentDisease() {
+        return parentDisease;
+    }
+
+    /**
+     * @param parentDisease the parentDisease to set
+     */
+    public void setParentDisease(PDQDisease parentDisease) {
+        this.parentDisease = parentDisease;
+    }
+
+    /**
+     * @return the parentDiseaseCode
+     */
+    @Column(name = "PARENT_DISEASE_CODE")
+    @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
+    public String getParentDiseaseCode() {
+        return parentDiseaseCode;
+    }
+
+    /**
+     * @param parentDiseaseCode the parentDiseaseCode to set
+     */
+    public void setParentDiseaseCode(String parentDiseaseCode) {
+        this.parentDiseaseCode = parentDiseaseCode;
+    }
 }

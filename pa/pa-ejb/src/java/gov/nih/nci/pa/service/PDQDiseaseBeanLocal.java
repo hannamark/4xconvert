@@ -83,14 +83,14 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.domain.PDQDisease;
-import gov.nih.nci.pa.domain.DiseaseAltername;
+import gov.nih.nci.pa.domain.PDQDiseaseAltername;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
-import gov.nih.nci.pa.iso.convert.DiseaseConverter;
+import gov.nih.nci.pa.iso.convert.PDQDiseaseConverter;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.search.DiseaseBeanSearchCriteria;
-import gov.nih.nci.pa.service.search.DiseaseSortCriterion;
+import gov.nih.nci.pa.service.search.PDQDiseaseBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.PDQDiseaseSortCriterion;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -116,8 +116,8 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class DiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, PDQDisease, DiseaseConverter> implements
-    DiseaseServiceLocal, DiseaseServiceRemote {
+public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, PDQDisease, PDQDiseaseConverter> 
+    implements PDQDiseaseServiceLocal, PDQDiseaseServiceRemote {
 
     /**
      * @param searchCriteria search string
@@ -141,8 +141,8 @@ public class DiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, PDQD
 
         PDQDisease criteria = new PDQDisease();
         if (includeSynonyms) {
-            criteria.setDiseaseAlternames(new ArrayList<DiseaseAltername>());
-            DiseaseAltername alt = new DiseaseAltername();
+            criteria.setDiseaseAlternames(new ArrayList<PDQDiseaseAltername>());
+            PDQDiseaseAltername alt = new PDQDiseaseAltername();
             alt.setStatusCode(ActiveInactiveCode.ACTIVE);
             criteria.getDiseaseAlternames().add(alt);
         }
@@ -158,9 +158,9 @@ public class DiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, PDQD
         }
 
         PageSortParams<PDQDisease> params = new PageSortParams<PDQDisease>(PAConstants.MAX_SEARCH_RESULTS, 0,
-                DiseaseSortCriterion.DISEASE_PREFERRED_NAME, false);
-        DiseaseBeanSearchCriteria<PDQDisease> crit =
-            new DiseaseBeanSearchCriteria<PDQDisease>(criteria, includeSynonyms, exactMatch, preferredName);
+                PDQDiseaseSortCriterion.DISEASE_PREFERRED_NAME, false);
+        PDQDiseaseBeanSearchCriteria<PDQDisease> crit =
+            new PDQDiseaseBeanSearchCriteria<PDQDisease>(criteria, includeSynonyms, exactMatch, preferredName);
         List<PDQDisease> results = search(crit, params);
         if (results.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new PAException("Too many diseases found.  Please narrow search.");

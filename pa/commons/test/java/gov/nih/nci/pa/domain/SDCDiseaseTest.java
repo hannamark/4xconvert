@@ -133,7 +133,7 @@ public class SDCDiseaseTest {
         create.setDiseaseCode("diseaseCode");
         create.setCtepCategory("diseaseCategory");
         create.setCtepSubCategory("diseaseSubCategory");
-        create.setMenuDisplayName("menuDisplayName");
+        create.setDisplayName("menuDisplayName");
         create.setPreferredName(preferredName);
         create.setUserLastCreated(TestSchema.getUser());
         create.setDateLastCreated(new Timestamp(new Date().getTime()));

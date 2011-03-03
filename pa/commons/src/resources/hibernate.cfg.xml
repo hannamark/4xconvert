@@ -58,8 +58,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StudyDisease" />
         <mapping class="gov.nih.nci.pa.domain.PDQDisease" />
         <mapping class="gov.nih.nci.pa.domain.SDCDisease" />
-        <mapping class="gov.nih.nci.pa.domain.DiseaseAltername" />
-        <mapping class="gov.nih.nci.pa.domain.DiseaseParent" />
+        <mapping class="gov.nih.nci.pa.domain.PDQDiseaseAltername" />
+        <mapping class="gov.nih.nci.pa.domain.PDQDiseaseParent" />
         <mapping class="gov.nih.nci.pa.domain.AnatomicSite" />
         <mapping class="gov.nih.nci.pa.domain.PAProperties" />
         <mapping class="gov.nih.nci.pa.domain.MessageLog" />

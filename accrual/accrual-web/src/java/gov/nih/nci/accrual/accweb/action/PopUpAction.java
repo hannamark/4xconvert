@@ -132,7 +132,7 @@ public class PopUpAction extends AbstractAccrualAction {
             newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
             newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
             newRec.setCode(StConverter.convertToString(disease.getDiseaseCode()));
-            newRec.setMenuDisplayName(StConverter.convertToString(disease.getMenuDisplayName()));
+            newRec.setDisplayName(StConverter.convertToString(disease.getDisplayName()));
             getDisWebList().add(newRec);
         }
     }

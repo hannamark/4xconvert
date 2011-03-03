@@ -99,7 +99,7 @@ public class DiseaseWebDTOTest {
     	diseaseWebDTO.setConceptId("conceptId");
     	diseaseWebDTO.setDiseaseIdentifier("diseaseIdentifier");
     	diseaseWebDTO.setLead("lead");
-    	diseaseWebDTO.setMenuDisplayName("menuDisplayName");
+    	diseaseWebDTO.setDisplayName("menuDisplayName");
     	diseaseWebDTO.setPreferredName("preferredName");
     	diseaseWebDTO.setStudyDiseaseIdentifier("studyDiseaseIdentifier");
     }
@@ -123,7 +123,7 @@ public class DiseaseWebDTOTest {
    }
    @Test
    public void menuDisplayNamePropertyTest() {
-     assertNotNull(diseaseWebDTO.getMenuDisplayName());
+     assertNotNull(diseaseWebDTO.getDisplayName());
    }
    @Test
    public void preferredNamePropertyTest() {

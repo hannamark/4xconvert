@@ -94,7 +94,7 @@ import com.fiveamsolutions.nci.commons.search.SearchableUtils;
  * @author Abraham J. Evans-EL
  * @param <T> the type
  */
-public class DiseaseBeanSearchCriteria<T extends AbstractEntityWithStatusCode<?>>
+public class PDQDiseaseBeanSearchCriteria<T extends AbstractEntityWithStatusCode<?>>
     extends AnnotatedBeanSearchCriteria<T> {
 
     private final boolean includeSynonyms;
@@ -108,7 +108,7 @@ public class DiseaseBeanSearchCriteria<T extends AbstractEntityWithStatusCode<?>
      * @param exactMatch should the match be exact
      * @param name the name to match
      */
-    public DiseaseBeanSearchCriteria(T o, boolean includeSynonyms, boolean exactMatch, String name) {
+    public PDQDiseaseBeanSearchCriteria(T o, boolean includeSynonyms, boolean exactMatch, String name) {
         super(o);
         this.includeSynonyms = includeSynonyms;
         this.exactMatch = exactMatch;

@@ -100,7 +100,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
 @RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
-public class DiseaseServiceBean extends DiseaseBeanLocal implements DiseaseServiceRemote {
+public class PDQDiseaseServiceBean extends PDQDiseaseBeanLocal implements PDQDiseaseServiceRemote {
     
    
 }

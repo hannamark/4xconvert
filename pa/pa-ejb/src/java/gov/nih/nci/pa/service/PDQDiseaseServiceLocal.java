@@ -92,7 +92,7 @@ import javax.ejb.Local;
 * copyright holder, NCI.
 */
 @Local
-public interface DiseaseServiceLocal extends BasePaService<PDQDiseaseDTO> {
+public interface PDQDiseaseServiceLocal extends BasePaService<PDQDiseaseDTO> {
     /**
      * @param searchCriteria search string
      * @return all diseases with preferred names or alternate names matching search string

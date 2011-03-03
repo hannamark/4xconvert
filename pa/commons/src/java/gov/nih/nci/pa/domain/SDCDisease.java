@@ -110,7 +110,7 @@ public class SDCDisease extends AbstractEntity implements Disease {
     private String ctepCategory;
     private String ctepSubCategory;
     private String preferredName;
-    private String menuDisplayName;
+    private String displayName;
     private String diseaseCode;
 
     private List<StudySubject> studySubjects = new ArrayList<StudySubject>();
@@ -159,18 +159,18 @@ public class SDCDisease extends AbstractEntity implements Disease {
         this.preferredName = preferredName;
     }
     /**
-     * @return the menuDisplayName
+     * @return the displayName
      */
     @Column(name = "CTEP_SHORT_NAME")
     @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
-    public String getMenuDisplayName() {
-        return menuDisplayName;
+    public String getDisplayName() {
+        return displayName;
     }
     /**
-     * @param menuDisplayName the menuDisplayName to set
+     * @param displayName the displayName to set
      */
-    public void setMenuDisplayName(String menuDisplayName) {
-        this.menuDisplayName = menuDisplayName;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
     /**
      * @return the diseaseCode

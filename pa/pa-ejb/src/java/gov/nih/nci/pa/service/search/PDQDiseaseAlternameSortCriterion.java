@@ -82,24 +82,24 @@
  */
 package gov.nih.nci.pa.service.search;
 
-import gov.nih.nci.pa.domain.DiseaseParent;
+import gov.nih.nci.pa.domain.PDQDiseaseAltername;
 
 import com.fiveamsolutions.nci.commons.data.search.SortCriterion;
 
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public enum DiseaseParentSortCriterion implements SortCriterion<DiseaseParent> {
+public enum PDQDiseaseAlternameSortCriterion implements SortCriterion<PDQDiseaseAltername> {
 
     /**
-     * Sort by disease parent id.
+     * Sort by disease altername id.
      */
-    DISEASE_PARENT_ID("id", null);
+    DISEASE_ALTERNAME_ID("id", null);
 
     private final String orderField;
     private final String leftJoinField;
 
-    private DiseaseParentSortCriterion(String orderField, String leftJoinField) {
+    private PDQDiseaseAlternameSortCriterion(String orderField, String leftJoinField) {
         this.orderField = orderField;
         this.leftJoinField = leftJoinField;
     }

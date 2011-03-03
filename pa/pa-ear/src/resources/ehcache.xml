@@ -369,7 +369,7 @@
         />
         
     <cache 
-        name="gov.nih.nci.pa.domain.DiseaseAltername" 
+        name="gov.nih.nci.pa.domain.PDQDiseaseAltername" 
         maxElementsInMemory="300" 
         eternal="true" 
         overflowToDisk="false" 
@@ -377,7 +377,7 @@
         />
         
     <cache 
-        name="gov.nih.nci.pa.domain.DiseaseParent" 
+        name="gov.nih.nci.pa.domain.PDQDiseaseParent" 
         maxElementsInMemory="300" 
         eternal="true" 
         overflowToDisk="false" 

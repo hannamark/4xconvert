@@ -90,7 +90,7 @@ public class DiseaseWebDTO {
     private String preferredName;
     private String code;
     private String conceptId;
-    private String menuDisplayName;
+    private String displayName;
     private String lead;
     /**
      * @return the studyDiseaseIdentifier
@@ -153,16 +153,16 @@ public class DiseaseWebDTO {
         this.conceptId = conceptId;
     }
     /**
-     * @return the menuDisplayName
+     * @return the displayName
      */
-    public String getMenuDisplayName() {
-        return menuDisplayName;
+    public String getDisplayName() {
+        return displayName;
     }
     /**
-     * @param menuDisplayName the menuDisplayName to set
+     * @param displayName the displayName to set
      */
-    public void setMenuDisplayName(String menuDisplayName) {
-        this.menuDisplayName = menuDisplayName;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
     /**
      * @return the lead

@@ -84,7 +84,7 @@ import gov.nih.nci.iso21090.St;
  * @author Hugh Reinhart
  * @since 11/30/2008
  */
-public class DiseaseParentDTO extends BaseDTOWithStatusCode {
+public class PDQDiseaseParentDTO extends BaseDTOWithStatusCode {
     private static final long serialVersionUID = 1765767890L;
 
     private Ii diseaseIdentifier;

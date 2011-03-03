@@ -5,10 +5,10 @@
     name="disWebList" export="false">
     <display:column escapeXml="true" title="Name" property="preferredName"  headerClass="sortable"/>
     <display:column title="Code" property="code"  headerClass="sortable"/>
-    <display:column escapeXml="true" title="Menu Display Name" property="menuDisplayName"  headerClass="sortable"/>
+    <display:column escapeXml="true" title="Menu Display Name" property="displayName"  headerClass="sortable"/>
     <display:column title="Select" headerClass="centered" class="action" sortable="false">
         <c:choose>
-        <c:when test="${(row.menuDisplayName!=null)&&(row.menuDisplayName!='')}">
+        <c:when test="${(row.displayName!=null)&&(row.displayName!='')}">
             <a href="#" class="btn" onclick="submitform('${row.diseaseIdentifier}')">
                 <span class="btn_img"><span class="add">Select</span></span>
             </a>

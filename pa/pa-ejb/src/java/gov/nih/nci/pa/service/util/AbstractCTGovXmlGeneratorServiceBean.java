@@ -90,7 +90,7 @@ import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
@@ -154,7 +154,7 @@ public class AbstractCTGovXmlGeneratorServiceBean {
     @EJB
     private RegulatoryInformationServiceRemote regulatoryInformationService;
     @EJB
-    private DiseaseServiceLocal diseaseService;
+    private PDQDiseaseServiceLocal diseaseService;
     @EJB
     private InterventionServiceLocal interventionService;
     @EJB
@@ -288,7 +288,7 @@ public class AbstractCTGovXmlGeneratorServiceBean {
     /**
      * @param diseaseService the diseaseService to set
      */
-    public void setDiseaseService(DiseaseServiceLocal diseaseService) {
+    public void setDiseaseService(PDQDiseaseServiceLocal diseaseService) {
         this.diseaseService = diseaseService;
     }
 
@@ -421,7 +421,7 @@ public class AbstractCTGovXmlGeneratorServiceBean {
     /**
      * @return the diseaseService
      */
-    public DiseaseServiceLocal getDiseaseService() {
+    public PDQDiseaseServiceLocal getDiseaseService() {
         return diseaseService;
     }
 

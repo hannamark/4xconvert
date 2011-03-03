@@ -83,8 +83,8 @@ import gov.nih.nci.pa.domain.AssessmentType;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.PDQDisease;
-import gov.nih.nci.pa.domain.DiseaseAltername;
-import gov.nih.nci.pa.domain.DiseaseParent;
+import gov.nih.nci.pa.domain.PDQDiseaseAltername;
+import gov.nih.nci.pa.domain.PDQDiseaseParent;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.DoseForm;
@@ -241,8 +241,8 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(OrganizationalContact.class).
         addAnnotatedClass(PDQDisease.class).
         addAnnotatedClass(SDCDisease.class).
-        addAnnotatedClass(DiseaseAltername.class).
-        addAnnotatedClass(DiseaseParent.class).
+        addAnnotatedClass(PDQDiseaseAltername.class).
+        addAnnotatedClass(PDQDiseaseParent.class).
         addAnnotatedClass(StudyDisease.class).
         addAnnotatedClass(StudyMilestone.class).
         addAnnotatedClass(StudyOnhold.class).

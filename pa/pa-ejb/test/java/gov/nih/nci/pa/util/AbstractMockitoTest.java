@@ -162,7 +162,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
@@ -246,7 +246,7 @@ public class AbstractMockitoTest {
     protected ArmServiceLocal armSvc;
     protected PlannedActivityServiceLocal plannedActSvc;
     protected DocumentWorkflowStatusServiceLocal dwsSvc;
-    protected DiseaseServiceLocal diseaseSvc;
+    protected PDQDiseaseServiceLocal diseaseSvc;
     protected StudySiteAccrualStatusServiceLocal studySiteAccrualStatusSvc;
     protected StudySiteContactServiceLocal studySiteContactSvc;
     protected OrganizationEntityServiceRemote poOrgSvc;
@@ -364,7 +364,7 @@ public class AbstractMockitoTest {
        diseaseDto = new PDQDiseaseDTO();
        diseaseDto.setPreferredName(StConverter.convertToSt("some disease"));
        diseaseDto.setDiseaseCode(StConverter.convertToSt("diseaseCode"));
-       diseaseDto.setMenuDisplayName(StConverter.convertToSt("menuDisplayName"));
+       diseaseDto.setDisplayName(StConverter.convertToSt("menuDisplayName"));
        diseaseDto.setNtTermIdentifier(StConverter.convertToSt("ntTerm"));
 
        paContactDto = new PAContactDTO();
@@ -878,7 +878,7 @@ public class AbstractMockitoTest {
     }
 
     private void setupDisSvc() throws PAException {
-        diseaseSvc = mock(DiseaseServiceLocal.class);
+        diseaseSvc = mock(PDQDiseaseServiceLocal.class);
         when(diseaseSvc.get(any(Ii.class))).thenReturn(diseaseDto);
     }
 

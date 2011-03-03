@@ -4,8 +4,8 @@
 package gov.nih.nci.service;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;
-import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseAlternameDTO;
+import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
@@ -15,19 +15,19 @@ import gov.nih.nci.pa.iso.util.StConverter;
  * @author ASharma
  *
  */
-public class MockDiseaseAlternateService implements DiseaseAlternameServiceLocal {
+public class MockDiseaseAlternateService implements PDQDiseaseAlternameServiceLocal {
 
 
-	public List<DiseaseAlternameDTO> getByDisease(Ii ii) throws PAException {
-		DiseaseAlternameDTO daDto = new DiseaseAlternameDTO();
+	public List<PDQDiseaseAlternameDTO> getByDisease(Ii ii) throws PAException {
+		PDQDiseaseAlternameDTO daDto = new PDQDiseaseAlternameDTO();
 		daDto.setAlternateName(StConverter.convertToSt("name1"));
-		List<DiseaseAlternameDTO> alternameList = new ArrayList<DiseaseAlternameDTO>();
+		List<PDQDiseaseAlternameDTO> alternameList = new ArrayList<PDQDiseaseAlternameDTO>();
 		alternameList.add(daDto);
 		return alternameList;
 	}
 
 
-	public DiseaseAlternameDTO create(DiseaseAlternameDTO dto)
+	public PDQDiseaseAlternameDTO create(PDQDiseaseAlternameDTO dto)
 			throws PAException {
 		// TODO Auto-generated method stub
 		return null;
@@ -40,20 +40,20 @@ public class MockDiseaseAlternateService implements DiseaseAlternameServiceLocal
 	}
 
 
-	public DiseaseAlternameDTO get(Ii ii) throws PAException {
+	public PDQDiseaseAlternameDTO get(Ii ii) throws PAException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
-	public DiseaseAlternameDTO update(DiseaseAlternameDTO dto)
+	public PDQDiseaseAlternameDTO update(PDQDiseaseAlternameDTO dto)
 			throws PAException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
-	public void validate(DiseaseAlternameDTO dto) throws PAException {
+	public void validate(PDQDiseaseAlternameDTO dto) throws PAException {
 		// TODO Auto-generated method stub
 
 	}

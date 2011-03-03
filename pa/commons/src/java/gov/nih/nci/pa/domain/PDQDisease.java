@@ -100,7 +100,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @since 11/29/2008
  */
 @Entity
-@Table(name = "DISEASE")
+@Table(name = "PDQ_DISEASE")
 public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendingCode> implements Disease {
     private static final long serialVersionUID = 1276767890L;
     private static final String DISEASE_STR = "disease";
@@ -108,12 +108,12 @@ public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendi
     private String diseaseCode;
     private String ntTermIdentifier;
     private String preferredName;
-    private String menuDisplayName;
+    private String displayName;
 
     private List<StudyDisease> studyDiseases = new ArrayList<StudyDisease>();
-    private List<DiseaseAltername> diseaseAlternames = new ArrayList<DiseaseAltername>();
-    private List<DiseaseParent> diseaseParents = new ArrayList<DiseaseParent>();
-    private List<DiseaseParent> diseaseChildren = new ArrayList<DiseaseParent>();
+    private List<PDQDiseaseAltername> diseaseAlternames = new ArrayList<PDQDiseaseAltername>();
+    private List<PDQDiseaseParent> diseaseParents = new ArrayList<PDQDiseaseParent>();
+    private List<PDQDiseaseParent> diseaseChildren = new ArrayList<PDQDiseaseParent>();
 
     /**
      * @return the diseaseCode
@@ -165,19 +165,19 @@ public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendi
     }
 
     /**
-     * @return the menuDisplayName
+     * @return the displayName
      */
     @Column(name = "MENU_DISPLAY_NAME")
     @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
-    public String getMenuDisplayName() {
-        return menuDisplayName;
+    public String getDisplayName() {
+        return displayName;
     }
 
     /**
-     * @param menuDisplayName the menuDisplayName to set
+     * @param displayName the displayName to set
      */
-    public void setMenuDisplayName(String menuDisplayName) {
-        this.menuDisplayName = menuDisplayName;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     /**
@@ -202,14 +202,14 @@ public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendi
     @OneToMany(mappedBy = DISEASE_STR)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Searchable(nested = true)
-    public List<DiseaseAltername> getDiseaseAlternames() {
+    public List<PDQDiseaseAltername> getDiseaseAlternames() {
         return diseaseAlternames;
     }
 
     /**
      * @param diseaseAlternames the diseaseAlternames to set
      */
-    public void setDiseaseAlternames(List<DiseaseAltername> diseaseAlternames) {
+    public void setDiseaseAlternames(List<PDQDiseaseAltername> diseaseAlternames) {
         this.diseaseAlternames = diseaseAlternames;
     }
 
@@ -218,14 +218,14 @@ public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendi
      */
     @OneToMany(mappedBy = DISEASE_STR)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    public List<DiseaseParent> getDiseaseParents() {
+    public List<PDQDiseaseParent> getDiseaseParents() {
         return diseaseParents;
     }
 
     /**
      * @param diseaseParents the diseaseParents to set
      */
-    public void setDiseaseParents(List<DiseaseParent> diseaseParents) {
+    public void setDiseaseParents(List<PDQDiseaseParent> diseaseParents) {
         this.diseaseParents = diseaseParents;
     }
 
@@ -234,14 +234,14 @@ public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendi
      */
     @OneToMany(mappedBy = "parentDisease")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    public List<DiseaseParent> getDiseaseChildren() {
+    public List<PDQDiseaseParent> getDiseaseChildren() {
         return diseaseChildren;
     }
 
     /**
      * @param diseaseChildren the diseaseChildren to set
      */
-    public void setDiseaseChildren(List<DiseaseParent> diseaseChildren) {
+    public void setDiseaseChildren(List<PDQDiseaseParent> diseaseChildren) {
         this.diseaseChildren = diseaseChildren;
     }
 }

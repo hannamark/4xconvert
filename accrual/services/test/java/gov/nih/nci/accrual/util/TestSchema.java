@@ -179,7 +179,6 @@ public class TestSchema {
         statement.executeUpdate("delete from study_overall_status");
         statement.executeUpdate("delete from study_otheridentifiers");
         statement.executeUpdate("delete from study_protocol");
-        statement.executeUpdate("delete from disease");
         statement.executeUpdate("delete from sdc_disease");
         statement.executeUpdate("delete from healthcare_facility");
         statement.executeUpdate("delete from organization");
@@ -345,7 +344,7 @@ public class TestSchema {
         // Disease
         SDCDisease disease = new SDCDisease();
         disease.setDiseaseCode("code");
-        disease.setMenuDisplayName("menu name");
+        disease.setDisplayName("menu name");
         disease.setPreferredName("name");
         disease.setCtepCategory("category");
         disease.setCtepSubCategory("sub-category");

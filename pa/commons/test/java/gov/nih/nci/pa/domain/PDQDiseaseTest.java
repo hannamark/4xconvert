@@ -132,7 +132,7 @@ public class PDQDiseaseTest {
     public static PDQDisease createDiseaseObj(String preferredName) {
         PDQDisease create = new PDQDisease();
         create.setDiseaseCode("diseaseCode");
-        create.setMenuDisplayName("menuDisplayName");
+        create.setDisplayName("menuDisplayName");
         create.setNtTermIdentifier("ntTermIdentifier");
         create.setPreferredName(preferredName);
         create.setStatusCode(ActiveInactivePendingCode.ACTIVE);

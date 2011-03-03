@@ -559,7 +559,7 @@ public class PdqXmlGenHelper {
                 BaseXmlGenHelper.appendElement(conditionElement,
                         BaseXmlGenHelper.createElementWithTextblock("menu_display_name",
                                 StringUtils.substring(StConverter.convertToString(d
-                        .getMenuDisplayName()), 0, PAAttributeMaxLen.LEN_160), doc));
+                        .getDisplayName()), 0, PAAttributeMaxLen.LEN_160), doc));
                 BaseXmlGenHelper.appendElement(diseaseConditionElement, conditionElement);
             }
 

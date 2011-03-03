@@ -77,9 +77,9 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
@@ -392,21 +392,21 @@ public final class PaRegistry {
     /**
      * @return DiseaseService
      */
-    public static DiseaseServiceLocal getDiseaseService() {
+    public static PDQDiseaseServiceLocal getDiseaseService() {
         return getInstance().getServiceLocator().getDiseaseService();
     }
 
     /**
      * @return DiseaseAlternameService
      */
-    public static DiseaseAlternameServiceLocal getDiseaseAlternameService() {
+    public static PDQDiseaseAlternameServiceLocal getDiseaseAlternameService() {
         return getInstance().getServiceLocator().getDiseaseAlternameService();
     }
 
     /**
      * @return DiseaseParentService
      */
-    public static DiseaseParentServiceRemote getDiseaseParentService() {
+    public static PDQDiseaseParentServiceRemote getDiseaseParentService() {
         return getInstance().getServiceLocator().getDiseaseParentService();
     }
 

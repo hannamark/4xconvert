@@ -76,13 +76,17 @@
 * 
 * 
 */
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
-
-import java.util.List;
-
-import javax.ejb.Remote;
+import gov.nih.nci.pa.domain.PDQDisease;
+import gov.nih.nci.pa.domain.PDQDiseaseParent;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 
 /**
 * @author Hugh Reinhart
@@ -91,12 +95,46 @@ import javax.ejb.Remote;
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
 */
-@Remote
-public interface DiseaseServiceRemote extends BasePaService<PDQDiseaseDTO> {
+public class PDQDiseaseParentConverter extends AbstractConverter<PDQDiseaseParentDTO, PDQDiseaseParent> {
+
     /**
-     * @param searchCriteria search string
-     * @return all diseases with preferred names or alternate names matching search string
+     * @param bo domain object
+     * @return iso dto
      * @throws PAException exception
      */
-    List<PDQDiseaseDTO> search(PDQDiseaseDTO searchCriteria) throws PAException;
+    @Override
+    public PDQDiseaseParentDTO convertFromDomainToDto(PDQDiseaseParent bo) throws PAException {
+        PDQDiseaseParentDTO dto = new PDQDiseaseParentDTO();
+        dto.setDiseaseIdentifier(IiConverter.convertToIi(bo.getDisease().getId()));
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setParentDiseaseCode(StConverter.convertToSt(bo.getParentDiseaseCode()));
+        dto.setParentDiseaseIdentifier(IiConverter.convertToIi(bo.getParentDisease().getId()));
+        dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
+        dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
+        return dto;
+    }
+
+    /**
+     * @param dto iso dto
+     * @return domain object
+     * @throws PAException exception
+     */
+    @Override
+    public PDQDiseaseParent convertFromDtoToDomain(PDQDiseaseParentDTO dto) throws PAException {
+        PDQDisease pdBo = new PDQDisease();
+        pdBo.setId(IiConverter.convertToLong(dto.getParentDiseaseIdentifier()));
+        
+        PDQDisease dBo = new PDQDisease();
+        dBo.setId(IiConverter.convertToLong(dto.getDiseaseIdentifier()));
+        
+        PDQDiseaseParent bo = new PDQDiseaseParent();
+        bo.setDisease(dBo);
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        bo.setParentDisease(pdBo);
+        bo.setParentDiseaseCode(StConverter.convertToString(dto.getParentDiseaseCode()));
+        bo.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
+        bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
+        return bo;
+    }
+
 }

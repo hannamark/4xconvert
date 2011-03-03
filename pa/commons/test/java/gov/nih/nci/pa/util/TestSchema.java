@@ -87,10 +87,10 @@ import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.CountryTest;
 import gov.nih.nci.pa.domain.PDQDisease;
-import gov.nih.nci.pa.domain.DiseaseAltername;
-import gov.nih.nci.pa.domain.DiseaseAlternameTest;
-import gov.nih.nci.pa.domain.DiseaseParent;
-import gov.nih.nci.pa.domain.DiseaseParentTest;
+import gov.nih.nci.pa.domain.PDQDiseaseAltername;
+import gov.nih.nci.pa.domain.PDQDiseaseAlternameTest;
+import gov.nih.nci.pa.domain.PDQDiseaseParent;
+import gov.nih.nci.pa.domain.PDQDiseaseParentTest;
 import gov.nih.nci.pa.domain.PDQDiseaseTest;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkFlowStatusTest;
@@ -267,9 +267,9 @@ public class TestSchema {
                     statement.executeUpdate("delete from OVERSIGHT_COMMITTEE");
                     statement.executeUpdate("delete from ORGANIZATION");
                     statement.executeUpdate("delete from PERSON");
-                    statement.executeUpdate("delete from DISEASE_PARENT");
-                    statement.executeUpdate("delete from DISEASE_ALTERNAME");
-                    statement.executeUpdate("delete from DISEASE");
+                    statement.executeUpdate("delete from PDQ_DISEASE_PARENT");
+                    statement.executeUpdate("delete from PDQ_DISEASE_ALTERNAME");
+                    statement.executeUpdate("delete from PDQ_DISEASE");
                     statement.executeUpdate("delete from SDC_DISEASE");
                     statement.executeUpdate("delete from ANATOMIC_SITES");
                     statement.executeUpdate("delete from STUDY_OBJECTIVE");
@@ -607,14 +607,14 @@ public class TestSchema {
             addUpdObject(as03);
             anatomicSiteIds.add(as03.getId());
 
-            DiseaseParent disPar1 = DiseaseParentTest.createDiseaseParentObj(dis01, dis03);
+            PDQDiseaseParent disPar1 = PDQDiseaseParentTest.createDiseaseParentObj(dis01, dis03);
             addUpdObject(disPar1);
-            DiseaseParent disPar2 = DiseaseParentTest.createDiseaseParentObj(dis02, dis03);
+            PDQDiseaseParent disPar2 = PDQDiseaseParentTest.createDiseaseParentObj(dis02, dis03);
             addUpdObject(disPar2);
-            DiseaseParent disPar3 = DiseaseParentTest.createDiseaseParentObj(dis03, dis04);
+            PDQDiseaseParent disPar3 = PDQDiseaseParentTest.createDiseaseParentObj(dis03, dis04);
             addUpdObject(disPar3);
 
-            DiseaseAltername diseaseAltername = DiseaseAlternameTest.createDiseaseAlternameObj("Little Piggy Cancer", dis01);
+            PDQDiseaseAltername diseaseAltername = PDQDiseaseAlternameTest.createDiseaseAlternameObj("Little Piggy Cancer", dis01);
             addUpdObject(diseaseAltername);
 
             StudyDisease studyDisease = StudyDiseaseTest.createStudyDiseaseObj(sp, dis01);

@@ -81,8 +81,8 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
@@ -133,8 +133,8 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     private Ii spIi;
 
     private StudyDiseaseServiceLocal studyDisesaeSvc;
-    private DiseaseServiceLocal diseaseSvc;
-    private DiseaseParentServiceRemote diseaseParentSvc;
+    private PDQDiseaseServiceLocal diseaseSvc;
+    private PDQDiseaseParentServiceRemote diseaseParentSvc;
     private StudyMilestoneServicelocal studyMilestoneSvc;
     private ProtocolQueryServiceLocal protocolQuerySvc;
     private PlannedActivityServiceLocal plannedActivitySvc;
@@ -318,28 +318,28 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     /**
      * @return the diseaseSvc
      */
-    public DiseaseServiceLocal getDiseaseSvc() {
+    public PDQDiseaseServiceLocal getDiseaseSvc() {
         return diseaseSvc;
     }
 
     /**
      * @param diseaseSvc the diseaseSvc to set
      */
-    public void setDiseaseSvc(DiseaseServiceLocal diseaseSvc) {
+    public void setDiseaseSvc(PDQDiseaseServiceLocal diseaseSvc) {
         this.diseaseSvc = diseaseSvc;
     }
 
     /**
      * @return the diseaseParentSvc
      */
-    public DiseaseParentServiceRemote getDiseaseParentSvc() {
+    public PDQDiseaseParentServiceRemote getDiseaseParentSvc() {
         return diseaseParentSvc;
     }
 
     /**
      * @param diseaseParentSvc the diseaseParentSvc to set
      */
-    public void setDiseaseParentSvc(DiseaseParentServiceRemote diseaseParentSvc) {
+    public void setDiseaseParentSvc(PDQDiseaseParentServiceRemote diseaseParentSvc) {
         this.diseaseParentSvc = diseaseParentSvc;
     }
 

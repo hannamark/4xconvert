@@ -81,7 +81,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -199,16 +199,17 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
             return;
         }
         PDQDiseaseDTO dto = getDiseaseSvc().get(IiConverter.convertToIi(getDisease().getDiseaseIdentifier()));
-        String menu = StConverter.convertToString(dto.getMenuDisplayName());
+        String menu = StConverter.convertToString(dto.getDisplayName());
         if (StringUtils.isEmpty(menu)) {
             addActionError("Diseases without a menu display name are not suitable for reporting.  ");
         }
       }
 
     private String buildParentPreferredName(String diseaseId) throws PAException {
-        List<DiseaseParentDTO> parentList = getDiseaseParentSvc().getByChildDisease(IiConverter.convertToIi(diseaseId));
+        List<PDQDiseaseParentDTO> parentList = 
+            getDiseaseParentSvc().getByChildDisease(IiConverter.convertToIi(diseaseId));
         StringBuffer ppBuff = new StringBuffer();
-        for (DiseaseParentDTO parent : parentList) {
+        for (PDQDiseaseParentDTO parent : parentList) {
             if (parentList.get(0) !=  parent) {
                 ppBuff.append(", ");
             }
@@ -238,7 +239,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
             } else {
                 n.setCtGovXmlIndicator("No");
             }
-            n.setMenuDisplayName(StConverter.convertToString(d.getMenuDisplayName()));
+            n.setMenuDisplayName(StConverter.convertToString(d.getDisplayName()));
             n.setParentPreferredName(buildParentPreferredName(IiConverter.convertToString(d.getIdentifier())));
             n.setPreferredName(StConverter.convertToString(d.getPreferredName()));
             nl.add(n);
@@ -261,7 +262,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
             PDQDiseaseDTO dto = getDiseaseSvc().get(ii);
             disease.setCode(StConverter.convertToString(dto.getDiseaseCode()));
             disease.setConceptId(StConverter.convertToString(dto.getNtTermIdentifier()));
-            disease.setMenuDisplayName(StConverter.convertToString(dto.getMenuDisplayName()));
+            disease.setMenuDisplayName(StConverter.convertToString(dto.getDisplayName()));
             disease.setPreferredName(StConverter.convertToString(dto.getPreferredName()));
             disease.setParentPreferredName(buildParentPreferredName(disease.getDiseaseIdentifier()));
         }

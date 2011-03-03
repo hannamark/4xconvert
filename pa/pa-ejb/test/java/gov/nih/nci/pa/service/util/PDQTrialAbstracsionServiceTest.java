@@ -109,7 +109,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
@@ -160,7 +160,7 @@ public class PDQTrialAbstracsionServiceTest {
     private LookUpTableServiceRemote lookupSvc;
     private StudyProtocolServiceLocal StudyProtocolSvc;
     private StudySiteBeanLocal studySiteSvc;
-    private DiseaseServiceLocal diseaseSvc;
+    private PDQDiseaseServiceLocal diseaseSvc;
     private InterventionServiceLocal interventionSvc;
     private PlannedActivityServiceLocal plannedActivitySvc;
     private ArmServiceLocal armSvc;
@@ -194,7 +194,7 @@ public class PDQTrialAbstracsionServiceTest {
                 new InterventionalStudyProtocolDTO());
         studySiteSvc = mock(StudySiteBeanLocal.class);
         when(paSvcLoc.getStudySiteService()).thenReturn(studySiteSvc);
-        diseaseSvc = mock(DiseaseServiceLocal.class);
+        diseaseSvc = mock(PDQDiseaseServiceLocal.class);
         when(paSvcLoc.getDiseaseService()).thenReturn(diseaseSvc);
         interventionSvc =  mock(InterventionServiceLocal.class);
         when(paSvcLoc.getInterventionService()).thenReturn(interventionSvc);

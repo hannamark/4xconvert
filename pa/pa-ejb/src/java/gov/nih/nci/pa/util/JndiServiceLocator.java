@@ -79,9 +79,9 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
@@ -338,24 +338,24 @@ public class JndiServiceLocator implements ServiceLocator {
     }
 
     /**
-     * @return DiseaseAlternameService
+     * @return PDQDiseaseAlternameService
      */
-    public DiseaseAlternameServiceLocal getDiseaseAlternameService() {
-        return (DiseaseAlternameServiceLocal) JNDIUtil.lookup("/pa/DiseaseAlternameBeanLocal/local");
+    public PDQDiseaseAlternameServiceLocal getDiseaseAlternameService() {
+        return (PDQDiseaseAlternameServiceLocal) JNDIUtil.lookup("/pa/PDQDiseaseAlternameBeanLocal/local");
     }
 
     /**
-     * @return DiseaseParentService
+     * @return PDQDiseaseParentService
      */
-    public DiseaseParentServiceRemote getDiseaseParentService() {
-        return (DiseaseParentServiceRemote) JNDIUtil.lookup("/pa/DiseaseParentServiceBean/remote");
+    public PDQDiseaseParentServiceRemote getDiseaseParentService() {
+        return (PDQDiseaseParentServiceRemote) JNDIUtil.lookup("/pa/PDQDiseaseParentServiceBean/remote");
     }
 
     /**
-     * @return DiseaseService
+     * @return PDQDiseaseService
      */
-    public DiseaseServiceLocal getDiseaseService() {
-        return (DiseaseServiceLocal) JNDIUtil.lookup("/pa/DiseaseBeanLocal/local");
+    public PDQDiseaseServiceLocal getDiseaseService() {
+        return (PDQDiseaseServiceLocal) JNDIUtil.lookup("/pa/PDQDiseaseBeanLocal/local");
     }
 
     /**

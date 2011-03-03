@@ -89,7 +89,7 @@ public class PDQDiseaseDTO extends BaseDTOWithStatusCode {
     private St diseaseCode;
     private St ntTermIdentifier;
     private St preferredName;
-    private St menuDisplayName;
+    private St displayName;
     private St includeSynonym;
     private St exactMatch;
 
@@ -164,16 +164,16 @@ public class PDQDiseaseDTO extends BaseDTOWithStatusCode {
     }
 
     /**
-     * @return the menuDisplayName
+     * @return the displayName
      */
-    public St getMenuDisplayName() {
-        return menuDisplayName;
+    public St getDisplayName() {
+        return displayName;
     }
 
     /**
-     * @param menuDisplayName the menuDisplayName to set
+     * @param displayName the displayName to set
      */
-    public void setMenuDisplayName(St menuDisplayName) {
-        this.menuDisplayName = menuDisplayName;
+    public void setDisplayName(St displayName) {
+        this.displayName = displayName;
     }
 }

@@ -79,9 +79,9 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
@@ -302,17 +302,17 @@ public interface ServiceLocator {
     /**
      * @return DiseaseService
      */
-    DiseaseServiceLocal getDiseaseService();
+    PDQDiseaseServiceLocal getDiseaseService();
 
     /**
      * @return DiseaseAlternameService
      */
-    DiseaseAlternameServiceLocal getDiseaseAlternameService();
+    PDQDiseaseAlternameServiceLocal getDiseaseAlternameService();
 
     /**
      * @return DiseaseParentService
      */
-    DiseaseParentServiceRemote getDiseaseParentService();
+    PDQDiseaseParentServiceRemote getDiseaseParentService();
 
     /**
      * @return StudyContactServiceLocal

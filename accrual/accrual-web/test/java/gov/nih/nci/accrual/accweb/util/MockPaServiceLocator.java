@@ -80,7 +80,7 @@ package gov.nih.nci.accrual.accweb.util;
 
 import static org.mockito.Mockito.mock;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;

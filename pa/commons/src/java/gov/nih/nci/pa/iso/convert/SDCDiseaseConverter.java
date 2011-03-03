@@ -103,7 +103,7 @@ public class SDCDiseaseConverter extends AbstractConverter<SDCDiseaseDTO, SDCDis
         SDCDiseaseDTO dto = new SDCDiseaseDTO();
         dto.setDiseaseCode(StConverter.convertToSt(bo.getDiseaseCode()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
-        dto.setMenuDisplayName(StConverter.convertToSt(bo.getMenuDisplayName()));
+        dto.setDisplayName(StConverter.convertToSt(bo.getDisplayName()));
         dto.setPreferredName(StConverter.convertToSt(bo.getPreferredName()));
         return dto;
     }
@@ -118,7 +118,7 @@ public class SDCDiseaseConverter extends AbstractConverter<SDCDiseaseDTO, SDCDis
         SDCDisease bo = new SDCDisease();
         bo.setDiseaseCode(StConverter.convertToString(dto.getDiseaseCode()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        bo.setMenuDisplayName(StConverter.convertToString(dto.getMenuDisplayName()));
+        bo.setDisplayName(StConverter.convertToString(dto.getDisplayName()));
         bo.setPreferredName(StConverter.convertToString(dto.getPreferredName()));
         return bo;
     }

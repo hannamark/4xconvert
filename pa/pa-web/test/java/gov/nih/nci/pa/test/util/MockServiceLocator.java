@@ -80,9 +80,9 @@ package gov.nih.nci.pa.test.util;
 
 import static org.mockito.Mockito.mock;
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
@@ -202,9 +202,9 @@ public class MockServiceLocator implements ServiceLocator {
     private final PAHealthCareProviderRemote healthCareProviderRemote = new MockPAHealthCareProviderService();
     private final ProtocolQueryServiceLocal protocolQueryService = new MockProtocolQueryService();
     private final StudyDiseaseServiceLocal studyDiseaseService = new MockStudyDiseaseService();
-    private final DiseaseServiceLocal diseaseService = new MockDiseaseService();
-    private final DiseaseParentServiceRemote diseaseParentService = new MockDiseaseParentService();
-    private final DiseaseAlternameServiceLocal diseaseAlternateService = new MockDiseaseAlternateService();
+    private final PDQDiseaseServiceLocal diseaseService = new MockDiseaseService();
+    private final PDQDiseaseParentServiceRemote diseaseParentService = new MockDiseaseParentService();
+    private final PDQDiseaseAlternameServiceLocal diseaseAlternateService = new MockDiseaseAlternateService();
     private final StudyMilestoneServicelocal studyMilestoneService = new MockStudyMilestoneService();
     private final StudyResourcingServiceLocal studyResourcingService = new MockStudyResourcingService();
     private final RegulatoryInformationServiceRemote regulatoryInformationService = new MockRegulatoryInformationService();
@@ -429,21 +429,21 @@ public class MockServiceLocator implements ServiceLocator {
     /**
      * @return
      */
-    public DiseaseAlternameServiceLocal getDiseaseAlternameService() {
+    public PDQDiseaseAlternameServiceLocal getDiseaseAlternameService() {
         return diseaseAlternateService;
     }
 
     /**
      * @return
      */
-    public DiseaseParentServiceRemote getDiseaseParentService() {
+    public PDQDiseaseParentServiceRemote getDiseaseParentService() {
          return diseaseParentService;
     }
 
     /**
      * @return
      */
-    public DiseaseServiceLocal getDiseaseService() {
+    public PDQDiseaseServiceLocal getDiseaseService() {
          return diseaseService;
     }
 

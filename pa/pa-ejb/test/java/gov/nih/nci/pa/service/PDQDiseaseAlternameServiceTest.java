@@ -1,4 +1,4 @@
-/**
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,85 +76,97 @@
 *
 *
 */
+package gov.nih.nci.pa.service;
 
-package gov.nih.nci.pa.domain;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.PDQDisease;
+import gov.nih.nci.pa.domain.PDQDiseaseAltername;
+import gov.nih.nci.pa.domain.PDQDiseaseAlternameTest;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseAlternameDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.TestSchema;
 
-import gov.nih.nci.pa.enums.ActiveInactiveCode;
-import gov.nih.nci.pa.util.CommonsConstant;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * @author Hugh Reinhart
- * @since 11/29/2008
+ * @author hreinhart
+ *
  */
-@Entity
-@Table(name = "DISEASE_PARENT")
-public class DiseaseParent extends AbstractEntityWithStatusCode<ActiveInactiveCode> {
-    private static final long serialVersionUID = 1255557890L;
+public class PDQDiseaseAlternameServiceTest {
+    private PDQDiseaseAlternameBeanLocal bean = new PDQDiseaseAlternameBeanLocal();
+    private PDQDiseaseAlternameServiceLocal remote = bean;
+    private Ii dIi;
 
-    private PDQDisease disease;
-    private PDQDisease parentDisease;
-    private String parentDiseaseCode;
+    @Before
+    public void setUp() throws Exception {
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        TestSchema.reset();
+        TestSchema.primeData();
+        dIi = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(0));
+     }
 
-    /**
-     * @return the disease
-     */
-    @ManyToOne
-    @JoinColumn(name = "DISEASE_IDENTIFIER", updatable = false)
-    @NotNull
-    @Searchable(nested = true)
-    public PDQDisease getDisease() {
-        return disease;
+    private void compareDataAttributes(PDQDiseaseAltername bo1, PDQDiseaseAltername bo2) {
+        assertEquals(bo1.getAlternateName(), bo2.getAlternateName());
+        assertEquals(bo1.getStatusCode(), bo2.getStatusCode());
+        assertEquals(bo1.getStatusDateRangeLow(), bo2.getStatusDateRangeLow());
     }
 
-    /**
-     * @param disease the disease to set
-     */
-    public void setDisease(PDQDisease disease) {
-        this.disease = disease;
+    @Test
+    public void getTest() throws Exception {
+        List<PDQDiseaseAlternameDTO> dtoList = bean.getByDisease(dIi);
+        assertTrue(dtoList.size() > 0);
+        Ii ii = dtoList.get(0).getIdentifier();
+        assertFalse(PAUtil.isIiNull(ii));
+        PDQDiseaseAlternameDTO resultDto = bean.get(ii);
+        assertFalse(PAUtil.isIiNull(resultDto.getIdentifier()));
     }
 
-    /**
-     * @return the parentDisease
-     */
-    @ManyToOne
-    @JoinColumn(name = "PARENT_DISEASE_IDENTIFIER", updatable = false)
-    @NotNull
-    @Searchable(nested = true)
-    public PDQDisease getParentDisease() {
-        return parentDisease;
+    @Test
+    public void createTest() throws Exception {
+        PDQDisease disease = new PDQDisease();
+        disease.setId(IiConverter.convertToLong(dIi));
+        PDQDiseaseAltername bo = PDQDiseaseAlternameTest.createDiseaseAlternameObj("new name", disease);
+        assertNull(bo.getId());
+        PDQDiseaseAltername resultBo = bean.convertFromDtoToDomain(remote.create(bean.convertFromDomainToDto(bo)));
+        compareDataAttributes(bo, resultBo);
+        assertNotNull(resultBo.getId());
     }
 
-    /**
-     * @param parentDisease the parentDisease to set
-     */
-    public void setParentDisease(PDQDisease parentDisease) {
-        this.parentDisease = parentDisease;
+    @Test
+    public void updateTest() throws Exception {
+        List<PDQDiseaseAlternameDTO> dtoList = bean.getByDisease(dIi);
+        assertTrue(dtoList.size() > 0);
+        Ii ii = dtoList.get(0).getIdentifier();
+        PDQDiseaseAlternameDTO dto = remote.get(ii);
+        PDQDiseaseAltername bo = bean.convertFromDtoToDomain(dto);
+        assertFalse("new name".equals(bo.getAlternateName()));
+        bo.setAlternateName("new name");
+        dto = bean.convertFromDomainToDto(bo);
+        PDQDiseaseAlternameDTO resultDto = remote.update(dto);
+        PDQDiseaseAltername resultBo = bean.convertFromDtoToDomain(resultDto);
+        compareDataAttributes(bo, resultBo);
+        assertTrue("new name".equals(resultBo.getAlternateName()));
     }
 
-    /**
-     * @return the parentDiseaseCode
-     */
-    @Column(name = "PARENT_DISEASE_CODE")
-    @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
-    public String getParentDiseaseCode() {
-        return parentDiseaseCode;
-    }
-
-    /**
-     * @param parentDiseaseCode the parentDiseaseCode to set
-     */
-    public void setParentDiseaseCode(String parentDiseaseCode) {
-        this.parentDiseaseCode = parentDiseaseCode;
+    @Test
+    public void deleteTest() throws Exception {
+        List<PDQDiseaseAlternameDTO> dtoList = bean.getByDisease(dIi);
+        assertTrue(dtoList.size() > 0);
+        int oldSize = dtoList.size();
+        Ii ii = dtoList.get(0).getIdentifier();
+        remote.delete(ii);
+        dtoList = bean.getByDisease(dIi);
+        assertEquals(oldSize - 1, dtoList.size());
     }
 }

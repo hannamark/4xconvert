@@ -80,13 +80,13 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseAlternameDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -122,18 +122,18 @@ public class PopUpDiseaseDetailsAction  extends ActionSupport {
         if (StringUtils.isEmpty(diseaseIdentifier)) {
             throw new PAException("Error passing disease id into PopUpDiseaseDetailsAction.  ");
         }
-        DiseaseServiceLocal diseaseSvc = PaRegistry.getDiseaseService();
+        PDQDiseaseServiceLocal diseaseSvc = PaRegistry.getDiseaseService();
         PDQDiseaseDTO d = diseaseSvc.get(IiConverter.convertToIi(diseaseIdentifier));
         disease = new DiseaseWebDTO();
         disease.setCode(StConverter.convertToString(d.getDiseaseCode()));
         disease.setConceptId(StConverter.convertToString(d.getNtTermIdentifier()));
         disease.setDiseaseIdentifier(diseaseIdentifier);
-        disease.setMenuDisplayName(StConverter.convertToString(d.getMenuDisplayName()));
+        disease.setMenuDisplayName(StConverter.convertToString(d.getDisplayName()));
         disease.setPreferredName(StConverter.convertToString(d.getPreferredName()));
 
-        List<DiseaseAlternameDTO> alternameList = PaRegistry.getDiseaseAlternameService().getByDisease(diseaseIi);
+        List<PDQDiseaseAlternameDTO> alternameList = PaRegistry.getDiseaseAlternameService().getByDisease(diseaseIi);
         StringBuffer anBuff = new StringBuffer();
-        for (DiseaseAlternameDTO altername : alternameList) {
+        for (PDQDiseaseAlternameDTO altername : alternameList) {
             if (alternameList.get(0) !=  altername) {
                 anBuff.append(", ");
             }
@@ -142,9 +142,9 @@ public class PopUpDiseaseDetailsAction  extends ActionSupport {
         disease.setAlternames(anBuff.toString());
 
         parentList = new ArrayList<DiseaseWebDTO>();
-        DiseaseParentServiceRemote diseaseParentSvc = PaRegistry.getDiseaseParentService();
-        List<DiseaseParentDTO> dtoList = diseaseParentSvc.getByChildDisease(diseaseIi);
-        for (DiseaseParentDTO dto : dtoList) {
+        PDQDiseaseParentServiceRemote diseaseParentSvc = PaRegistry.getDiseaseParentService();
+        List<PDQDiseaseParentDTO> dtoList = diseaseParentSvc.getByChildDisease(diseaseIi);
+        for (PDQDiseaseParentDTO dto : dtoList) {
             d = diseaseSvc.get(dto.getParentDiseaseIdentifier());
             DiseaseWebDTO newD = new DiseaseWebDTO();
             newD.setDiseaseIdentifier(IiConverter.convertToString(d.getIdentifier()));
@@ -154,7 +154,7 @@ public class PopUpDiseaseDetailsAction  extends ActionSupport {
 
         childList = new ArrayList<DiseaseWebDTO>();
         dtoList = diseaseParentSvc.getByParentDisease(diseaseIi);
-        for (DiseaseParentDTO dto : dtoList) {
+        for (PDQDiseaseParentDTO dto : dtoList) {
             d = diseaseSvc.get(dto.getDiseaseIdentifier());
             DiseaseWebDTO newD = new DiseaseWebDTO();
             newD.setDiseaseIdentifier(IiConverter.convertToString(d.getIdentifier()));

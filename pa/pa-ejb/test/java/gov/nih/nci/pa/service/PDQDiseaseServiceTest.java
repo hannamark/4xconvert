@@ -83,122 +83,160 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PDQDisease;
-import gov.nih.nci.pa.domain.DiseaseParent;
-import gov.nih.nci.pa.domain.DiseaseParentTest;
 import gov.nih.nci.pa.domain.PDQDiseaseTest;
-import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
 /**
  * @author hreinhart
  *
  */
-public class DiseaseParentServiceTest {
-    private DiseaseParentServiceBean bean = new DiseaseParentServiceBean();
-    private DiseaseParentServiceRemote remote = bean;
-    private DiseaseBeanLocal diseaseBean = new DiseaseBeanLocal();
-    private Ii dIi;
+public class PDQDiseaseServiceTest {
+    private PDQDiseaseBeanLocal bean = new PDQDiseaseBeanLocal();
+    private PDQDiseaseServiceLocal remote = bean;
+    private Ii ii;
 
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         TestSchema.reset();
         TestSchema.primeData();
-        dIi = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(0));
+        ii = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(0));
      }
 
-    private void compareDataAttributes(DiseaseParent bo1, DiseaseParent bo2) {
-        assertEquals(bo1.getParentDiseaseCode(), bo2.getParentDiseaseCode());
+    private void compareDataAttributes(PDQDisease bo1, PDQDisease bo2) {
+        assertEquals(bo1.getDiseaseCode(), bo2.getDiseaseCode());
+        assertEquals(bo1.getDisplayName(), bo2.getDisplayName());
+        assertEquals(bo1.getNtTermIdentifier(), bo2.getNtTermIdentifier());
+        assertEquals(bo1.getPreferredName(), bo2.getPreferredName());
         assertEquals(bo1.getStatusCode(), bo2.getStatusCode());
         assertEquals(bo1.getStatusDateRangeLow(), bo2.getStatusDateRangeLow());
     }
 
     @Test
     public void getTest() throws Exception {
-        List<DiseaseParentDTO> dtoList = bean.getByChildDisease(dIi);
-        assertTrue(dtoList.size() > 0);
-        Ii ii = dtoList.get(0).getIdentifier();
-        assertFalse(PAUtil.isIiNull(ii));
-        DiseaseParentDTO resultDto = bean.get(ii);
-        assertFalse(PAUtil.isIiNull(resultDto.getIdentifier()));
-    }
-
-    @Test
-    public void getTreeTest() throws Exception {
-        Long childId = IiConverter.convertToLong(dIi);
-        List<DiseaseParentDTO> dtoList = bean.getByChildDisease(dIi);
-        assertTrue(dtoList.size() > 0);
-        Ii parentDiseaseIi = dtoList.get(0).getParentDiseaseIdentifier();
-        List<DiseaseParentDTO> dtoListChildren = bean.getByParentDisease(parentDiseaseIi);
-        List<Long> childIdList = new ArrayList<Long>();
-        for (DiseaseParentDTO d : dtoListChildren) {
-            childIdList.add(IiConverter.convertToLong(d.getDiseaseIdentifier()));
-        }
-        assertTrue(childIdList.contains(childId));
-
-        dtoList = bean.getByChildDisease(new Ii[] {dIi});
-        assertTrue(dtoList.size() > 0);
-        parentDiseaseIi = dtoList.get(0).getParentDiseaseIdentifier();
-        dtoListChildren = bean.getByParentDisease(parentDiseaseIi);
-        childIdList = new ArrayList<Long>();
-        for (DiseaseParentDTO d : dtoListChildren) {
-            childIdList.add(IiConverter.convertToLong(d.getDiseaseIdentifier()));
-        }
-        assertTrue(childIdList.contains(childId));
+        PDQDiseaseDTO dto = remote.get(ii);
+        assertFalse(PAUtil.isIiNull(dto.getIdentifier()));
     }
 
     @Test
     public void createTest() throws Exception {
-        PDQDiseaseDTO tn = diseaseBean.create(diseaseBean.convertFromDomainToDto(PDQDiseaseTest.createDiseaseObj("toenail cancer")));
-        PDQDisease toeNail = new PDQDisease();
-        toeNail.setId(IiConverter.convertToLong(tn.getIdentifier()));
-        PDQDisease toe = diseaseBean.convertFromDtoToDomain(diseaseBean.get(dIi));
-
-        DiseaseParent bo = DiseaseParentTest.createDiseaseParentObj(toeNail, toe);
+        PDQDisease bo = PDQDiseaseTest.createDiseaseObj("crud");
         assertNull(bo.getId());
-        DiseaseParentDTO resultDto = remote.create(bean.convertFromDomainToDto(bo));
-        DiseaseParent resultBo = bean.convertFromDtoToDomain(resultDto);
+        PDQDiseaseDTO dto = bean.convertFromDomainToDto(bo);
+        PDQDiseaseDTO resultDto = remote.create(dto);
+        PDQDisease resultBo = bean.convertFromDtoToDomain(resultDto);
         compareDataAttributes(bo, resultBo);
         assertNotNull(resultBo.getId());
     }
 
     @Test
     public void updateTest() throws Exception {
-        List<DiseaseParentDTO> dtoList = bean.getByChildDisease(dIi);
-        assertTrue(dtoList.size() > 0);
-        DiseaseParentDTO dto = dtoList.get(0);
-        DiseaseParent bo = bean.convertFromDtoToDomain(dto);
-        assertFalse(ActiveInactiveCode.INACTIVE.equals(bo.getStatusCode()));
-        bo.setStatusCode(ActiveInactiveCode.INACTIVE);
-
-        DiseaseParentDTO resultDto = remote.update(bean.convertFromDomainToDto(bo));
-        DiseaseParent resultBo = bean.convertFromDtoToDomain(resultDto);
-        compareDataAttributes(bo, resultBo);
-        assertEquals(bo.getId(), resultBo.getId());
+        PDQDiseaseDTO dto = remote.get(ii);
+        PDQDisease bo = bean.convertFromDtoToDomain(dto);
+        assertFalse("new name".equals(bo.getPreferredName()));
+        bo.setPreferredName("new name");
+        dto = bean.convertFromDomainToDto(bo);
+        PDQDiseaseDTO resultDto = remote.update(dto);
+        PDQDisease resultBo = bean.convertFromDtoToDomain(resultDto);
+        this.compareDataAttributes(bo, resultBo);
+        assertTrue("new name".equals(resultBo.getPreferredName()));
     }
 
     @Test
     public void deleteTest() throws Exception {
-        List<DiseaseParentDTO> dtoList = bean.getByChildDisease(dIi);
-        assertTrue(dtoList.size() > 0);
-        int oldSize = dtoList.size();
-        Ii ii = dtoList.get(0).getIdentifier();
         remote.delete(ii);
-        dtoList = bean.getByChildDisease(dIi);
-        assertEquals(oldSize - 1, dtoList.size());
+        PDQDiseaseDTO dto;
+        try {
+          dto =  remote.get(ii);
+        } catch (PAException e) {
+            // expected behavior
+            return;
+        }
+        assertNull(dto);
+    }
+    @Test
+    public void searchTest() throws Exception {
+        PDQDiseaseDTO searchCriteria = new PDQDiseaseDTO();
+        searchCriteria.setPreferredName(StConverter.convertToSt("Toe*"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        List<PDQDiseaseDTO> r = bean.search(searchCriteria);
+        assertTrue(0 < r.size());
+
+        searchCriteria.setPreferredName(StConverter.convertToSt("xToe*"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        r = bean.search(searchCriteria);
+        assertEquals(0, r.size());
+
+        searchCriteria.setPreferredName(StConverter.convertToSt("*Piggy*"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        r = bean.search(searchCriteria);
+        assertTrue(0 < r.size());
+
+        searchCriteria.setPreferredName(StConverter.convertToSt("Toe Cancer"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("true"));
+        r = bean.search(searchCriteria);
+        assertFalse("No diseases found.", r.isEmpty());
+        assertEquals("1 disease should have been found.", 1, r.size());
+
+        searchCriteria.setPreferredName(StConverter.convertToSt("Cancer"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("false"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("true"));
+        r = bean.search(searchCriteria);
+        assertTrue(r.isEmpty());
+
+        searchCriteria.setPreferredName(StConverter.convertToSt("Cancer"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("false"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        r = bean.search(searchCriteria);
+        assertFalse(r.isEmpty());
+        assertEquals(4, r.size());
+
+        searchCriteria.setPreferredName(StConverter.convertToSt("Cancer"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        r = bean.search(searchCriteria);
+        assertFalse(r.isEmpty());
+
+        searchCriteria.setPreferredName(null);
+        try {
+            r = bean.search(searchCriteria);
+            fail("Service should throw PAException when searching w/o name.  ");
+        } catch(PAException e) {
+            // expected behavior
+        }
+    }
+    @Test
+    public void searchDoesNotReturnInactiveTest() throws Exception {
+        PDQDiseaseDTO searchCriteria = new PDQDiseaseDTO();
+        searchCriteria.setPreferredName(StConverter.convertToSt("Toe*"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        List<PDQDiseaseDTO> r = bean.search(searchCriteria);
+        assertEquals(1, r.size());
+
+        r.get(0).setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.INACTIVE));
+        bean.update(r.get(0));
+
+        r = bean.search(searchCriteria);
+        assertEquals(0, r.size());
     }
 }

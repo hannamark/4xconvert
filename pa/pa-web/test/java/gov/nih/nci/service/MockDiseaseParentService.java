@@ -4,9 +4,9 @@
 package gov.nih.nci.service;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
@@ -15,27 +15,27 @@ import java.util.List;
  * @author ASharma
  *
  */
-public class MockDiseaseParentService implements DiseaseParentServiceRemote {
+public class MockDiseaseParentService implements PDQDiseaseParentServiceRemote {
 
 
-	public List<DiseaseParentDTO> getByChildDisease(Ii ii) throws PAException {
+	public List<PDQDiseaseParentDTO> getByChildDisease(Ii ii) throws PAException {
 		return initList();
 	}
 
 
-	public List<DiseaseParentDTO> getByChildDisease(Ii[] iis)
+	public List<PDQDiseaseParentDTO> getByChildDisease(Ii[] iis)
 			throws PAException {
 
 		return initList();
 	}
 
 
-	public List<DiseaseParentDTO> getByParentDisease(Ii ii) throws PAException {
+	public List<PDQDiseaseParentDTO> getByParentDisease(Ii ii) throws PAException {
 		return initList();
 	}
 
 
-	public DiseaseParentDTO create(DiseaseParentDTO dto) throws PAException {
+	public PDQDiseaseParentDTO create(PDQDiseaseParentDTO dto) throws PAException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -47,27 +47,27 @@ public class MockDiseaseParentService implements DiseaseParentServiceRemote {
 	}
 
 
-	public DiseaseParentDTO get(Ii ii) throws PAException {
+	public PDQDiseaseParentDTO get(Ii ii) throws PAException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
-	public DiseaseParentDTO update(DiseaseParentDTO dto) throws PAException {
+	public PDQDiseaseParentDTO update(PDQDiseaseParentDTO dto) throws PAException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
-	public void validate(DiseaseParentDTO dto) throws PAException {
+	public void validate(PDQDiseaseParentDTO dto) throws PAException {
 		// TODO Auto-generated method stub
 
 	}
-   private List<DiseaseParentDTO> initList() {
-	   DiseaseParentDTO dpDTO = new DiseaseParentDTO();
+   private List<PDQDiseaseParentDTO> initList() {
+	   PDQDiseaseParentDTO dpDTO = new PDQDiseaseParentDTO();
 		dpDTO.setIdentifier(IiConverter.convertToIi("1"));
 		dpDTO.setParentDiseaseIdentifier(IiConverter.convertToIi("1"));
-		List<DiseaseParentDTO> dpDtos = new ArrayList<DiseaseParentDTO>();
+		List<PDQDiseaseParentDTO> dpDtos = new ArrayList<PDQDiseaseParentDTO>();
 		dpDtos.add(dpDTO);
 		return dpDtos;
    }

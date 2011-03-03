@@ -102,13 +102,13 @@ public class MockPaDiseaseBean implements SDCDiseaseServiceRemote {
         SDCDiseaseDTO r = new SDCDiseaseDTO();
         r.setIdentifier(IiConverter.convertToIi(1L));
         r.setDiseaseCode(StConverter.convertToSt("diseaseCode 01"));
-        r.setMenuDisplayName(StConverter.convertToSt("menu 01"));
+        r.setDisplayName(StConverter.convertToSt("menu 01"));
         r.setPreferredName(StConverter.convertToSt("perferredName 01"));
         dtos.add(r);
         r = new SDCDiseaseDTO();
         r.setIdentifier(IiConverter.convertToIi(2L));
         r.setDiseaseCode(StConverter.convertToSt("diseaseCode 02"));
-        r.setMenuDisplayName(StConverter.convertToSt("menu 02"));
+        r.setDisplayName(StConverter.convertToSt("menu 02"));
         r.setPreferredName(StConverter.convertToSt("perferredName 02"));
         dtos.add(r);
     }

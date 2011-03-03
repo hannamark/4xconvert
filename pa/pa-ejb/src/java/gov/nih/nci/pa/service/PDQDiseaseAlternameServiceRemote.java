@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseAlternameDTO;
 
 import java.util.List;
 
@@ -93,23 +93,11 @@ import javax.ejb.Remote;
 * copyright holder, NCI.
 */
 @Remote
-public interface DiseaseParentServiceRemote extends BasePaService<DiseaseParentDTO> {
+public interface PDQDiseaseAlternameServiceRemote extends BasePaService<PDQDiseaseAlternameDTO> {
     /**
-     * @param ii index of disease
-     * @return list of DiseaseParent associations for parents of disease
+     * @param ii index of the disease
+     * @return list of alternate names for disease
      * @throws PAException exception
      */
-    List<DiseaseParentDTO> getByParentDisease(Ii ii) throws PAException;
-    /**
-     * @param ii index of disease
-     * @return list of DiseaseParent associations for children of disease
-     * @throws PAException exception
-     */
-    List<DiseaseParentDTO> getByChildDisease(Ii ii) throws PAException;
-    /**
-     * @param iis array of indexes of diseases
-     * @return list of DiseaseParent associations for children of disease
-     * @throws PAException exception
-     */
-    List<DiseaseParentDTO> getByChildDisease(Ii[] iis) throws PAException;
+     List<PDQDiseaseAlternameDTO> getByDisease(Ii ii) throws PAException;
 }

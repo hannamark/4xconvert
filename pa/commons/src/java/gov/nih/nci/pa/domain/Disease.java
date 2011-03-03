@@ -95,5 +95,5 @@ public interface Disease {
     /**
      * @return the displayable name of the disease
      */
-    String getMenuDisplayName();
+    String getDisplayName();
 }

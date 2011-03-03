@@ -78,95 +78,30 @@
 */
 package gov.nih.nci.pa.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.PDQDisease;
-import gov.nih.nci.pa.domain.DiseaseAltername;
-import gov.nih.nci.pa.domain.DiseaseAlternameTest;
-import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
-import java.util.List;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
- * @author hreinhart
- *
- */
-public class DiseaseAlternameServiceTest {
-    private DiseaseAlternameBeanLocal bean = new DiseaseAlternameBeanLocal();
-    private DiseaseAlternameServiceLocal remote = bean;
-    private Ii dIi;
+* @author Hugh Reinhart
+* @since 11/30/2008
+* copyright NCI 2008.  All rights reserved.
+* This code may not be used without the express written permission of the
+* copyright holder, NCI.
+*/
+@Stateless
+@Interceptors({ HibernateSessionInterceptor.class })
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SecurityDomain("pa")
+@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
+public class PDQDiseaseAlternameServiceBean
+        extends PDQDiseaseAlternameBeanLocal implements PDQDiseaseAlternameServiceRemote {
 
-    @Before
-    public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
-        TestSchema.primeData();
-        dIi = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(0));
-     }
-
-    private void compareDataAttributes(DiseaseAltername bo1, DiseaseAltername bo2) {
-        assertEquals(bo1.getAlternateName(), bo2.getAlternateName());
-        assertEquals(bo1.getStatusCode(), bo2.getStatusCode());
-        assertEquals(bo1.getStatusDateRangeLow(), bo2.getStatusDateRangeLow());
-    }
-
-    @Test
-    public void getTest() throws Exception {
-        List<DiseaseAlternameDTO> dtoList = bean.getByDisease(dIi);
-        assertTrue(dtoList.size() > 0);
-        Ii ii = dtoList.get(0).getIdentifier();
-        assertFalse(PAUtil.isIiNull(ii));
-        DiseaseAlternameDTO resultDto = bean.get(ii);
-        assertFalse(PAUtil.isIiNull(resultDto.getIdentifier()));
-    }
-
-    @Test
-    public void createTest() throws Exception {
-        PDQDisease disease = new PDQDisease();
-        disease.setId(IiConverter.convertToLong(dIi));
-        DiseaseAltername bo = DiseaseAlternameTest.createDiseaseAlternameObj("new name", disease);
-        assertNull(bo.getId());
-        DiseaseAltername resultBo = bean.convertFromDtoToDomain(remote.create(bean.convertFromDomainToDto(bo)));
-        compareDataAttributes(bo, resultBo);
-        assertNotNull(resultBo.getId());
-    }
-
-    @Test
-    public void updateTest() throws Exception {
-        List<DiseaseAlternameDTO> dtoList = bean.getByDisease(dIi);
-        assertTrue(dtoList.size() > 0);
-        Ii ii = dtoList.get(0).getIdentifier();
-        DiseaseAlternameDTO dto = remote.get(ii);
-        DiseaseAltername bo = bean.convertFromDtoToDomain(dto);
-        assertFalse("new name".equals(bo.getAlternateName()));
-        bo.setAlternateName("new name");
-        dto = bean.convertFromDomainToDto(bo);
-        DiseaseAlternameDTO resultDto = remote.update(dto);
-        DiseaseAltername resultBo = bean.convertFromDtoToDomain(resultDto);
-        compareDataAttributes(bo, resultBo);
-        assertTrue("new name".equals(resultBo.getAlternateName()));
-    }
-
-    @Test
-    public void deleteTest() throws Exception {
-        List<DiseaseAlternameDTO> dtoList = bean.getByDisease(dIi);
-        assertTrue(dtoList.size() > 0);
-        int oldSize = dtoList.size();
-        Ii ii = dtoList.get(0).getIdentifier();
-        remote.delete(ii);
-        dtoList = bean.getByDisease(dIi);
-        assertEquals(oldSize - 1, dtoList.size());
-    }
+    
 }

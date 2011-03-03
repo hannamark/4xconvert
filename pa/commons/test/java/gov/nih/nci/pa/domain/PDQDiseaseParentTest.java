@@ -76,167 +76,106 @@
 *
 *
 */
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.PDQDisease;
-import gov.nih.nci.pa.domain.PDQDiseaseTest;
-import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
-import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
+
 /**
  * @author hreinhart
  *
  */
-public class DiseaseServiceTest {
-    private DiseaseBeanLocal bean = new DiseaseBeanLocal();
-    private DiseaseServiceLocal remote = bean;
-    private Ii ii;
+public class PDQDiseaseParentTest {
+    private static Session sess;
 
+    /**
+     *
+     * @throws Exception e
+     */
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
         TestSchema.reset();
         TestSchema.primeData();
-        ii = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(0));
-     }
-
-    private void compareDataAttributes(PDQDisease bo1, PDQDisease bo2) {
-        assertEquals(bo1.getDiseaseCode(), bo2.getDiseaseCode());
-        assertEquals(bo1.getMenuDisplayName(), bo2.getMenuDisplayName());
-        assertEquals(bo1.getNtTermIdentifier(), bo2.getNtTermIdentifier());
-        assertEquals(bo1.getPreferredName(), bo2.getPreferredName());
-        assertEquals(bo1.getStatusCode(), bo2.getStatusCode());
-        assertEquals(bo1.getStatusDateRangeLow(), bo2.getStatusDateRangeLow());
+        sess = HibernateUtil.getCurrentSession();
     }
-
     @Test
-    public void getTest() throws Exception {
-        PDQDiseaseDTO dto = remote.get(ii);
-        assertFalse(PAUtil.isIiNull(dto.getIdentifier()));
-    }
+    public void getTreeTest() {
+        PDQDisease toe = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(0));
+        PDQDisease heel = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(1));
+        PDQDisease foot = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(2));
+        PDQDisease leg = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(3));
 
-    @Test
-    public void createTest() throws Exception {
-        PDQDisease bo = PDQDiseaseTest.createDiseaseObj("crud");
-        assertNull(bo.getId());
-        PDQDiseaseDTO dto = bean.convertFromDomainToDto(bo);
-        PDQDiseaseDTO resultDto = remote.create(dto);
-        PDQDisease resultBo = bean.convertFromDtoToDomain(resultDto);
-        compareDataAttributes(bo, resultBo);
-        assertNotNull(resultBo.getId());
-    }
-
-    @Test
-    public void updateTest() throws Exception {
-        PDQDiseaseDTO dto = remote.get(ii);
-        PDQDisease bo = bean.convertFromDtoToDomain(dto);
-        assertFalse("new name".equals(bo.getPreferredName()));
-        bo.setPreferredName("new name");
-        dto = bean.convertFromDomainToDto(bo);
-        PDQDiseaseDTO resultDto = remote.update(dto);
-        PDQDisease resultBo = bean.convertFromDtoToDomain(resultDto);
-        this.compareDataAttributes(bo, resultBo);
-        assertTrue("new name".equals(resultBo.getPreferredName()));
-    }
-
-    @Test
-    public void deleteTest() throws Exception {
-        remote.delete(ii);
-        PDQDiseaseDTO dto;
-        try {
-          dto =  remote.get(ii);
-        } catch (PAException e) {
-            // expected behavior
-            return;
+        List<PDQDiseaseParent> tList = toe.getDiseaseParents();
+        List<PDQDisease> toeParents = new ArrayList<PDQDisease>();
+        for (PDQDiseaseParent t : tList) {
+            toeParents.add(t.getParentDisease());
+            assertEquals(toe, t.getDisease());
         }
-        assertNull(dto);
-    }
-    @Test
-    public void searchTest() throws Exception {
-        PDQDiseaseDTO searchCriteria = new PDQDiseaseDTO();
-        searchCriteria.setPreferredName(StConverter.convertToSt("Toe*"));
-        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
-        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
-        List<PDQDiseaseDTO> r = bean.search(searchCriteria);
-        assertTrue(0 < r.size());
-
-        searchCriteria.setPreferredName(StConverter.convertToSt("xToe*"));
-        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
-        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
-        r = bean.search(searchCriteria);
-        assertEquals(0, r.size());
-
-        searchCriteria.setPreferredName(StConverter.convertToSt("*Piggy*"));
-        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
-        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
-        r = bean.search(searchCriteria);
-        assertTrue(0 < r.size());
-
-        searchCriteria.setPreferredName(StConverter.convertToSt("Toe Cancer"));
-        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
-        searchCriteria.setExactMatch(StConverter.convertToSt("true"));
-        r = bean.search(searchCriteria);
-        assertFalse("No diseases found.", r.isEmpty());
-        assertEquals("1 disease should have been found.", 1, r.size());
-
-        searchCriteria.setPreferredName(StConverter.convertToSt("Cancer"));
-        searchCriteria.setIncludeSynonym(StConverter.convertToSt("false"));
-        searchCriteria.setExactMatch(StConverter.convertToSt("true"));
-        r = bean.search(searchCriteria);
-        assertTrue(r.isEmpty());
-
-        searchCriteria.setPreferredName(StConverter.convertToSt("Cancer"));
-        searchCriteria.setIncludeSynonym(StConverter.convertToSt("false"));
-        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
-        r = bean.search(searchCriteria);
-        assertFalse(r.isEmpty());
-        assertEquals(4, r.size());
-
-        searchCriteria.setPreferredName(StConverter.convertToSt("Cancer"));
-        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
-        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
-        r = bean.search(searchCriteria);
-        assertFalse(r.isEmpty());
-
-        searchCriteria.setPreferredName(null);
-        try {
-            r = bean.search(searchCriteria);
-            fail("Service should throw PAException when searching w/o name.  ");
-        } catch(PAException e) {
-            // expected behavior
+        tList = foot.getDiseaseChildren();
+        List<PDQDisease> footChildren = new ArrayList<PDQDisease>();
+        for (PDQDiseaseParent t : tList) {
+            footChildren.add(t.getDisease());
+            assertEquals(foot, t.getParentDisease());
         }
+        assertFalse(toeParents.contains(toe));
+        assertFalse(toeParents.contains(heel));
+        assertTrue(toeParents.contains(foot));
+        assertFalse(toeParents.contains(leg));
+
+        assertTrue(footChildren.contains(toe));
+        assertTrue(footChildren.contains(heel));
+        assertFalse(footChildren.contains(foot));
+        assertFalse(footChildren.contains(leg));
     }
+
     @Test
-    public void searchDoesNotReturnInactiveTest() throws Exception {
-        PDQDiseaseDTO searchCriteria = new PDQDiseaseDTO();
-        searchCriteria.setPreferredName(StConverter.convertToSt("Toe*"));
-        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
-        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
-        List<PDQDiseaseDTO> r = bean.search(searchCriteria);
-        assertEquals(1, r.size());
-
-        r.get(0).setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.INACTIVE));
-        bean.update(r.get(0));
-
-        r = bean.search(searchCriteria);
-        assertEquals(0, r.size());
+    public void deleteTest() {
+        PDQDisease foot = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(2));
+        sess.delete(foot);
+        sess.flush();
+        sess.clear();
+        foot = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(2));
+        assertNull(foot);
     }
+
+    @Test
+    public void mergeTest() {
+        PDQDisease foot = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(2));
+        assertFalse("new".equals(foot.getNtTermIdentifier()));
+        foot.setNtTermIdentifier("new");
+        sess.merge(foot);
+        sess.flush();
+        sess.clear();
+        foot = (PDQDisease) sess.get(PDQDisease.class, TestSchema.pdqDiseaseIds.get(2));
+        assertTrue("new".equals(foot.getNtTermIdentifier()));
+    }
+
+    public static PDQDiseaseParent createDiseaseParentObj(PDQDisease disease, PDQDisease parentDisease) {
+        PDQDiseaseParent create = new PDQDiseaseParent();
+        create.setDisease(disease);
+        create.setParentDisease(parentDisease);
+        create.setParentDiseaseCode("parentDiseaseCode");
+        create.setStatusCode(ActiveInactiveCode.ACTIVE);
+        create.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        create.setUserLastCreated(TestSchema.getUser());
+        create.setDateLastCreated(new Timestamp(new Date().getTime()));
+        create.setUserLastUpdated(TestSchema.getUser());
+        create.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        return create;
+    }
+
 }

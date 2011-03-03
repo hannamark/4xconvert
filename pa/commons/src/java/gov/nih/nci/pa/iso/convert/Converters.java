@@ -99,10 +99,10 @@ public class Converters {
         converterMap.put(InterventionConverter.class, new InterventionConverter());
         converterMap.put(InterventionAlternateNameConverter.class, new InterventionAlternateNameConverter());
         converterMap.put(StudySiteConverter.class, new StudySiteConverter());
-        converterMap.put(DiseaseConverter.class, new DiseaseConverter());
+        converterMap.put(PDQDiseaseConverter.class, new PDQDiseaseConverter());
         converterMap.put(SDCDiseaseConverter.class, new SDCDiseaseConverter());
-        converterMap.put(DiseaseAlternameConverter.class, new DiseaseAlternameConverter());
-        converterMap.put(DiseaseParentConverter.class, new DiseaseParentConverter());
+        converterMap.put(PDQDiseaseAlternameConverter.class, new PDQDiseaseAlternameConverter());
+        converterMap.put(PDQDiseaseParentConverter.class, new PDQDiseaseParentConverter());
         converterMap.put(StudyDiseaseConverter.class, new StudyDiseaseConverter());
         converterMap.put(StudyMilestoneConverter.class, new StudyMilestoneConverter());
         converterMap.put(StudyOnholdConverter.class, new StudyOnholdConverter());

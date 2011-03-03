@@ -76,8 +76,8 @@
 */
 package gov.nih.nci.pa.pdq.xml;
 
-import gov.nih.nci.pa.domain.Disease;
-import gov.nih.nci.pa.domain.DiseaseAltername;
+import gov.nih.nci.pa.domain.PDQDisease;
+import gov.nih.nci.pa.domain.PDQDiseaseAltername;
 import gov.nih.nci.pa.pdq.PDQConstants;
 import gov.nih.nci.pa.pdq.PDQException;
 import gov.nih.nci.pa.pdq.dml.DiseaseScript;
@@ -119,8 +119,8 @@ public class PDQDisease extends AbstractPDQProcessor {
     }
 
     private void rule1or4() throws PDQException {
-        Disease d = new Disease();
-        List<DiseaseAltername> danList = new ArrayList<DiseaseAltername>();
+        PDQDisease d = new PDQDisease();
+        List<PDQDiseaseAltername> danList = new ArrayList<PDQDiseaseAltername>();
 
         Node node = doc.getDocumentElement();
 
@@ -159,14 +159,14 @@ public class PDQDisease extends AbstractPDQProcessor {
                         for (int z = 0; z < fff.getLength(); z++) {
                             Node ggg = fff.item(z);
                             if (ggg.getNodeName().equals(Rule.NODE_NAME_MENU_DISPLAY_NAME)) {
-                                d.setMenuDisplayName(ggg.getTextContent());
+                                d.setDisplayName(ggg.getTextContent());
 //                                LOG.info("Found menu DisplayName.");
                             }
                         }
                     }
                 }
-                if(StringUtils.isEmpty(d.getMenuDisplayName())) {
-                    d.setMenuDisplayName(d.getPreferredName());
+                if(StringUtils.isEmpty(d.getDisplayName())) {
+                    d.setDisplayName(d.getPreferredName());
 //                    LOG.info("Had to use preferred name for menu display name.");
                 }
             }
@@ -208,15 +208,15 @@ public class PDQDisease extends AbstractPDQProcessor {
                 for (int y = 0; y < others.getLength(); y++) {
                     Node other = others.item(y);
                     if(other.getNodeName().equals(Rule.NODE_NAME_OTHER_TERM_NAME)) {
-                        DiseaseAltername dan = new DiseaseAltername();
+                        PDQDiseaseAltername dan = new PDQDiseaseAltername();
                         dan.setAlternateName(other.getTextContent());
                         danList.add(dan);
                     }
                 }
             }
         }
-        if(StringUtils.isEmpty(d.getMenuDisplayName())) {
-            d.setMenuDisplayName(PDQConstants.NOT_MENU);
+        if(StringUtils.isEmpty(d.getDisplayName())) {
+            d.setDisplayName(PDQConstants.NOT_MENU);
         }
         if (StringUtils.isEmpty(d.getPreferredName())) {
             LOG.error("Error determining name from: ");

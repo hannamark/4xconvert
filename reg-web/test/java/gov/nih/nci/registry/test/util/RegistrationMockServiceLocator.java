@@ -4,9 +4,9 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
@@ -286,17 +286,17 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    public DiseaseAlternameServiceLocal getDiseaseAlternameService() {
+    public PDQDiseaseAlternameServiceLocal getDiseaseAlternameService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public DiseaseParentServiceRemote getDiseaseParentService() {
+    public PDQDiseaseParentServiceRemote getDiseaseParentService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public DiseaseServiceLocal getDiseaseService() {
+    public PDQDiseaseServiceLocal getDiseaseService() {
         // TODO Auto-generated method stub
         return null;
     }

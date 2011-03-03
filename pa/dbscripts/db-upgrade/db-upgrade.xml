@@ -650,4 +650,8 @@
         <comment>Add SDC database schema.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.4/PO-3261.sql"/>
      </changeSet>
+     <changeSet id="PO-3274" author="moweis">
+        <comment>Prefix PDQ disease tables with pdq.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.4/PO-3274.sql"/>
+     </changeSet>
 </databaseChangeLog>

@@ -132,7 +132,7 @@ import gov.nih.nci.pa.iso.util.PqConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
@@ -243,7 +243,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     @EJB
     private RegulatoryInformationServiceRemote regulatoryInformationService;
     @EJB
-    private DiseaseServiceLocal diseaseService;
+    private PDQDiseaseServiceLocal diseaseService;
     @EJB
     private InterventionServiceLocal interventionService;
     @EJB
@@ -1274,7 +1274,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     /**
      * @param diseaseService the diseaseService to set
      */
-    public void setDiseaseService(DiseaseServiceLocal diseaseService) {
+    public void setDiseaseService(PDQDiseaseServiceLocal diseaseService) {
         this.diseaseService = diseaseService;
     }
 
