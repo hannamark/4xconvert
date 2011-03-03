@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.accrual.accweb.action;
 
+import gov.nih.nci.accrual.service.util.BatchImportResults;
+import gov.nih.nci.accrual.service.util.BatchValidationResults;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
@@ -138,7 +140,11 @@ public class BatchUploadAction extends AbstractAccrualAction {
      */
     private void handleBatchFile(File file) throws IOException, PAException {
         if (processImmediately) {
-            getCdusBatchUploadReaderSvc().importBatchData(file);
+            //Validate then import, sending emails as necessary.
+            List<BatchValidationResults> validationResults = getCdusBatchUploadReaderSvc().validateBatchData(file);
+            getCdusBatchUploadReaderSvc().sendValidationErrorEmail(validationResults);
+            List<BatchImportResults> results =  getCdusBatchUploadReaderSvc().importBatchData(file);
+            getCdusBatchUploadReaderSvc().sendConfirmationEmail(results);
         } else {
             String batchUploadLocation = PaEarPropertyReader.getAccrualBatchUploadPath();
             String fullPath = batchUploadLocation + File.separator + uploadFileName;
@@ -153,7 +159,6 @@ public class BatchUploadAction extends AbstractAccrualAction {
     public void setUpload(File uploadFile) {
         upload = uploadFile;
     }
-
 
     /**
      * @param uploadFileName the uploadFileName to set

@@ -86,7 +86,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.service.util.BatchImportResults;
 import gov.nih.nci.accrual.service.util.BatchValidationResults;
@@ -110,6 +113,7 @@ import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -131,10 +135,12 @@ import org.mockito.stubbing.Answer;
 public class BatchUploadReaderServiceTest {
     private Ii abbreviatedIi;
     private Ii completeIi;
+    private ServiceLocatorPaInterface paSvcLocator;
     private CountryService countryService = new CountryBean();
     private CdusBatchUploadReaderBean readerService;
     private SubmissionServiceLocal submissionService = new SubmissionBean();
     private StudySubjectServiceLocal studySubjectService = new StudySubjectBean();
+    private MailManagerServiceRemote mailService;
     
     @Before
     public void setUp() throws Exception {
@@ -142,6 +148,7 @@ public class BatchUploadReaderServiceTest {
         abbreviatedIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
         completeIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(2).getId());
         
+        mailService = mock(MailManagerServiceRemote.class);
         readerService = new CdusBatchUploadReaderBean();
         readerService.setCountryService(countryService);
         readerService.setStudySubjectService(studySubjectService);
@@ -154,7 +161,7 @@ public class BatchUploadReaderServiceTest {
         readerService.setPatientService(patientBean);
         
         StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
-        when(spSvc.getStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
+        when(spSvc.loadStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
             public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 Ii ii = (Ii) args[0];
@@ -167,8 +174,9 @@ public class BatchUploadReaderServiceTest {
                 return dto;
             }
         });
-        ServiceLocatorPaInterface paSvcLocator = mock(ServiceLocatorPaInterface.class);
+        paSvcLocator = mock(ServiceLocatorPaInterface.class);
         when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
+        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
         
@@ -201,30 +209,43 @@ public class BatchUploadReaderServiceTest {
     public void testReading() throws URISyntaxException {
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
         List<BatchValidationResults> results = readerService.validateBatchData(file);
+        readerService.sendValidationErrorEmail(results);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString()));
         assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
         assertTrue(results.get(0).getValidatedLines().isEmpty());
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        mailService = mock(MailManagerServiceRemote.class);
+        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         
         file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());        
         results = readerService.validateBatchData(file);
+        readerService.sendValidationErrorEmail(results);
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
+        verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        mailService = mock(MailManagerServiceRemote.class);
+        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         
         file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
         results = readerService.validateBatchData(file);
+        readerService.sendValidationErrorEmail(results);
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
+        verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        mailService = mock(MailManagerServiceRemote.class);
+        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         
         file = new File(this.getClass().getResource("/CDUS.zip").toURI());
         List<BatchValidationResults> validationResults = readerService.validateBatchData(file);
+        readerService.sendValidationErrorEmail(results);
         assertEquals(2, validationResults.size());
         for (BatchValidationResults result : validationResults) {
             assertTrue(result.isPassedValidation());
@@ -232,6 +253,7 @@ public class BatchUploadReaderServiceTest {
             assertTrue(StringUtils.isNotEmpty(result.getMailTo()));
             assertFalse(result.getValidatedLines().isEmpty());
         }
+        verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
     
     @Test
@@ -239,6 +261,7 @@ public class BatchUploadReaderServiceTest {
         StudyProtocolServiceRemote mockSpService = mock(StudyProtocolServiceRemote.class);
         ServiceLocatorPaInterface paSvcLocator = mock(ServiceLocatorPaInterface.class);
         when(paSvcLocator.getStudyProtocolService()).thenReturn(mockSpService);
+        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
         
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
@@ -257,55 +280,38 @@ public class BatchUploadReaderServiceTest {
         
         File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
         List<BatchImportResults> importResults = readerService.importBatchData(file);
+        readerService.sendConfirmationEmail(importResults);
         assertEquals(1, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
         assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
         assertEquals(3, submissionService.getByStudyProtocol(abbreviatedIi).size());
         assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        mailService = mock(MailManagerServiceRemote.class);
+        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
                 
         assertEquals(0, submissionService.getByStudyProtocol(completeIi).size());
         assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
         
         file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
         importResults = readerService.importBatchData(file);
+        readerService.sendConfirmationEmail(importResults);
         assertEquals(1, importResults.size());
         assertEquals(24, importResults.get(0).getTotalImports());
         assertEquals("CDUS_Complete.txt", importResults.get(0).getFileName());
         assertEquals(1, submissionService.getByStudyProtocol(completeIi).size());
         assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        mailService = mock(MailManagerServiceRemote.class);
+        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         
         file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
         importResults = readerService.importBatchData(file);
+        readerService.sendConfirmationEmail(importResults);
         assertEquals(0, importResults.size());
-    }
-    
-    @Test
-    public void testPerformImportWithValidation() throws Exception {
-        assertEquals(2, submissionService.getByStudyProtocol(abbreviatedIi).size());
-        assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
-        
-        File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
-        List<BatchImportResults> importResults = readerService.importBatchData(file);
-        assertEquals(1, importResults.size());
-        assertEquals(72, importResults.get(0).getTotalImports());
-        assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
-        assertEquals(3, submissionService.getByStudyProtocol(abbreviatedIi).size());
-        assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
-                
-        assertEquals(0, submissionService.getByStudyProtocol(completeIi).size());
-        assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
-        
-        file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
-        importResults = readerService.importBatchData(file);
-        assertEquals(1, importResults.size());
-        assertEquals(24, importResults.get(0).getTotalImports());
-        assertEquals("CDUS_Complete.txt", importResults.get(0).getFileName());
-        assertEquals(1, submissionService.getByStudyProtocol(completeIi).size());
-        assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
-        
-        file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
-        importResults = readerService.importBatchData(file);
-        assertEquals(0, importResults.size());
+        verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        mailService = mock(MailManagerServiceRemote.class);
+        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
     }
     
     @Test
@@ -318,6 +324,7 @@ public class BatchUploadReaderServiceTest {
         assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
         
         List<BatchImportResults> importResults = readerService.importBatchData(file);
+        readerService.sendConfirmationEmail(importResults);
         assertEquals(2, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
         assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
@@ -328,5 +335,8 @@ public class BatchUploadReaderServiceTest {
         assertEquals("CDUS_Complete.txt", importResults.get(1).getFileName());
         assertEquals(1, submissionService.getByStudyProtocol(completeIi).size());
         assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        mailService = mock(MailManagerServiceRemote.class);
+        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
     }
 }

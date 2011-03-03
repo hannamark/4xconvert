@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.accrual.service.util.BatchImportResults;
+import gov.nih.nci.accrual.service.util.BatchValidationResults;
 import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.pa.service.PAException;
@@ -91,6 +93,7 @@ import gov.nih.nci.pa.util.PaEarPropertyReader;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.List;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -126,9 +129,12 @@ public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessi
         LOG.info("Performing accrual batch processing on " + batchFiles.size() +  " files.");
         
         for (File batchFile : batchFiles) {
-            //First, validate the file, then process it.
+            //First, validate the file, then process it, send emails as necessary.
             LOG.info("Processing batch upload: " + batchFile.getAbsolutePath());
-            batchUploadService.importBatchData(batchFile);
+            List<BatchValidationResults> validationResults = batchUploadService.validateBatchData(batchFile);
+            batchUploadService.sendValidationErrorEmail(validationResults);
+            List<BatchImportResults> importResults = batchUploadService.importBatchData(batchFile);
+            batchUploadService.sendConfirmationEmail(importResults);
         }
         
         //Delete all the files once processing has finished.

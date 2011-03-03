@@ -108,6 +108,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.File;
@@ -201,7 +202,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                         && line.length > COLLECTION_EMAIL_INDEX) {
                     results.setMailTo(line[COLLECTION_EMAIL_INDEX]);
                 }
-                errMsg.append(validateBatchData(line, lineNumber)).append('\n');
+                errMsg.append(validateBatchData(line, lineNumber));
             }
             results.setErrors(new StringBuilder(errMsg.toString().trim()));
             if (StringUtils.isEmpty(errMsg.toString().trim())) {
@@ -209,7 +210,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 results.setPassedValidation(true);
             }
         } catch (IOException e) {
-            LOG.error("error reading the file ", e);
+            errMsg.append("Unable to open the batch file: ").append(file.getName());
+            LOG.error("error reading the file " + file.getName(), e);
         }
         return results;
     }
@@ -244,12 +246,12 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<BatchImportResults> importBatchData(File file) throws PAException, RemoteException {
         List<BatchValidationResults> validationResults = validateBatchData(file);
-        //Only import the data if all files have passed validation
-        for (BatchValidationResults results : validationResults) {
-            if (!results.isPassedValidation()) {
+        for (BatchValidationResults validationResult : validationResults) {
+            if (!validationResult.isPassedValidation()) {
                 return new ArrayList<BatchImportResults>();
             }
         }
+        //Only import the data if all files have passed validation
         return importBatchData(validationResults);
     }
        
@@ -276,18 +278,18 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             return importResults;
         }
         importResults.setFileName(results.getFileName());
-        
         List<String[]> lines = results.getValidatedLines();
         String[] studyLine = BatchUploadUtils.getStudyLine(lines);
         Integer totalNumberOfAccruals = BatchUploadUtils.getTotalNumberOfAccruals(lines);
 
-        //1. Load trial. This will be replaced
-        Ii spIi = IiConverter.convertToAssignedIdentifierIi(studyLine[1]);
-        StudyProtocolDTO spDto = PaServiceLocator.getInstance().getStudyProtocolService().getStudyProtocol(spIi);
+        //1. Load trial.
+        String studyProtocolId = studyLine[1];
+        StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId);
 
         //2. Create submission
         String cutoff = studyLine[STUDY_CUTOFF_DATE_INDEX];
-        String label = "Batch Accrual Submission for Study Protocol " + spIi.getExtension() + " on " + cutoff;
+        String label = "Batch Accrual Submission for Study Protocol " + PAUtil.getAssignedIdentifierExtension(spDto) 
+            + " on " + cutoff;
         Date cutoffDate = BatchUploadUtils.getDate(cutoff);
         createSubmission(label, cutoffDate, spDto.getIdentifier(), totalNumberOfAccruals);
 
@@ -414,11 +416,14 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      */
     private String validateBatchData(String[] data, long lineNumber) {
         String key = data[0];
+        if (!LIST_OF_ELEMENT.containsKey(key)) {
+            return StringUtils.EMPTY;
+        }
         List<String> values = Arrays.asList((String[]) ArrayUtils.subarray(data, 1, data.length));
         StringBuffer errMsg = new StringBuffer();
         if (LIST_OF_ELEMENT.containsKey(key) && LIST_OF_ELEMENT.get(key) != values.size()) {
             errMsg.append(key).append(appendLineNumber(lineNumber));
-            errMsg.append(" does not have correct number of elements.");
+            errMsg.append(" does not have correct number of elements.\n");
         }
         validateProtocolNumber(key, values, errMsg, lineNumber);
         validatePatientID(key, values, errMsg, lineNumber);
@@ -442,40 +447,79 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
         if (StringUtils.isEmpty(protocolId)) {
             errMsg.append(key).append(appendLineNumber(lineNumber))
-            .append(" must contain a valid NCI protocol identifier or the CTEP/DCP identifier.");
-        } else if (!isValidProtocolId(lineNumber, protocolId)) {
+                .append(" must contain a valid NCI protocol identifier or the CTEP/DCP identifier.\n");
+        } else if (StringUtils.equals(key, "COLLECTIONS") && getStudyProtocol(protocolId) == null) {
             errMsg.append(key).append(appendLineNumber(lineNumber))
-            .append(" is not a valid NCI or CTEP/DCP identifier.");
+                .append(" is not a valid NCI or CTEP/DCP identifier.\n");
         }
     }
-
-    private boolean isValidProtocolId(long lineNumber, String protocolId) {
-        boolean isIdExists = false;
-        try {
-            StudyProtocolDTO dto = new StudyProtocolDTO();
-            Ii protocolIi = new Ii();
-            protocolIi.setExtension(protocolId);
-            protocolIi.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-            if (StringUtils.startsWith(protocolId, "NCI")) {
-                protocolIi.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
-            }
-            //once we are able to identify CTEP/DCP format remove below comment
-            /*if (DCP format) {
-             *    protocolIi.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
-             *} 
-             *if (CTEP format) {
-             *    protocolIi.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
-             *}
-             */
-            dto.setIdentifier(protocolIi);
-            StudyProtocolDTO studyProtocolDto = 
-                    PaServiceLocator.getInstance().getStudyProtocolService().getStudyProtocol(protocolIi);
-            if (studyProtocolDto != null) {
-                isIdExists = true; 
-            }
-        } catch (PAException e) {
-            LOG.error("error while validating protocol Number at line " + lineNumber , e);
+    
+    /**
+     * Gets the study protocol with the given id, be it NCI, CTEP or DCP identifier.
+     * @param protocolId the protocol id
+     * @return the study protocol with the given id or null if no such study exists
+     */
+    private StudyProtocolDTO getStudyProtocol(String protocolId) {
+        StudyProtocolServiceRemote spSvc = PaServiceLocator.getInstance().getStudyProtocolService();
+        StudyProtocolDTO foundStudy = null;
+        Ii protocolIi = IiConverter.convertToAssignedIdentifierIi(protocolId);
+        if (StringUtils.startsWith(protocolId, "NCI")) {
+            foundStudy = spSvc.loadStudyProtocol(protocolIi);
+        } else {
+            //No good way to distinguish if the id is CTEP or DCP so we'll just have to perform a lookup and see
+            //if we get a match.
+            protocolIi.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
+            foundStudy = spSvc.loadStudyProtocol(protocolIi);
+            protocolIi.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+            foundStudy = foundStudy != null ? foundStudy : spSvc.loadStudyProtocol(protocolIi);
         }
-        return isIdExists;
+        return foundStudy;
+    }
+
+    /**
+     * Sends the validation error email.
+     * @param validationResults the validation results
+     */
+    public void sendValidationErrorEmail(List<BatchValidationResults> validationResults) {
+        if (CollectionUtils.isEmpty(validationResults)) {
+            return;
+        }
+        String mailTO = validationResults.get(0).getMailTo();
+        StringBuffer errorReport = new StringBuffer();
+        for (BatchValidationResults result : validationResults) {
+            if (!result.isPassedValidation()) {
+                errorReport.append(String.format("Errors in batch file: %s\n\n%s\n", result.getFileName(), 
+                        result.getErrors()));
+            }
+        }
+        String subject = "Accrual Error Report";
+        sendEmail(mailTO, subject, errorReport);
+    }
+    
+    /**
+     * Sends the import validation email.
+     * @param importResults the import results
+     */
+    public void sendConfirmationEmail(List<BatchImportResults> importResults) {
+        if (CollectionUtils.isEmpty(importResults)) {
+            return;
+        }
+        String mailTO = importResults.get(0).getMailTo();
+        StringBuffer confirmation = new StringBuffer();
+        for (BatchImportResults result : importResults) {
+            if (result.getTotalImports() > 0) {
+                confirmation.append(String.format("Sucessfully imported %s patients from %s.\n", 
+                        result.getTotalImports(), result.getFileName()));
+            }
+        }
+        String subject = "Accrual Confirmation Report";
+        sendEmail(mailTO, subject, confirmation);
+    }
+    
+    private void sendEmail(String to, String subject, StringBuffer msg) {
+        if (StringUtils.isNotEmpty(msg.toString().trim())) {
+            PaServiceLocator.getInstance().getMailManagerService().sendMailWithAttachment(to, subject, msg.toString(), 
+                    null);
+        }
     }
 }

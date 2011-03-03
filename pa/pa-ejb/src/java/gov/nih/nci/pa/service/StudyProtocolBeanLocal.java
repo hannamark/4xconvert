@@ -716,6 +716,35 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         return studyProtocolDTO;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public StudyProtocolDTO loadStudyProtocol(Ii ii) {
+        StudyProtocolDTO studyProtocolDTO = null;
+        if (PAUtil.isIiNull(ii)) {
+            return studyProtocolDTO;
+        }
+        try {
+            if (isNonDbStudyProtocolIdentifier(ii)) {
+                LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+                List<StudyProtocolDTO> results = search(populateStudyProtocolExample(ii), limit);
+                if (results.size() == 1) {
+                    studyProtocolDTO = results.get(0);
+                } else {
+                    LOG.error("Found multiple study protocols for ii " + ii.getExtension() + " with the root "
+                            + ii.getRoot());
+                }
+            } else if (NumberUtils.isNumber(ii.getExtension())) {
+                studyProtocolDTO = getStudyProtocolById(Long.valueOf(ii.getExtension()));
+            }
+        } catch (Exception e) {
+            LOG.error("An error has occurred while trying to lookup the study protocol ii "
+                    + ii.getExtension() + " with the root " + ii.getRoot(), e);
+        }
+        return studyProtocolDTO;
+    }
+
     private StudyProtocolDTO populateStudyProtocolExample(Ii studyProtocolIi) {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
         if (StringUtils.startsWith(studyProtocolIi.getExtension(), "NCI")) {

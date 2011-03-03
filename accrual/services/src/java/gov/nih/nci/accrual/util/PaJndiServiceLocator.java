@@ -78,9 +78,10 @@
 */
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 
 /**
  * @author Hugh Reinhart
@@ -107,5 +108,12 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
      */
     public StudyProtocolServiceRemote getStudyProtocolService() {
         return (StudyProtocolServiceRemote) JNDIUtil.lookupPa("/pa/StudyProtocolServiceBean/remote");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public MailManagerServiceRemote getMailManagerService() {
+        return (MailManagerServiceRemote) JNDIUtil.lookupPa("/pa/MailManagerServiceBean/remote");
     }
 }

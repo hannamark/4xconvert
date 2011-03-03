@@ -79,6 +79,7 @@ package gov.nih.nci.accrual.util;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 
 /**
  * @author Hugh Reinhart
@@ -97,4 +98,9 @@ public interface ServiceLocatorPaInterface {
      * @return the study protocol service
      */
     StudyProtocolServiceRemote getStudyProtocolService();
+    
+    /**
+     * @return the mail manager service
+     */
+    MailManagerServiceRemote getMailManagerService();
 }

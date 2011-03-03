@@ -196,10 +196,10 @@ public class BaseBatchUploadReader {
             String pBirthDate = StringUtils.trim(values.get(PATIENT_BRITH_DATE_INDEX));
             if (StringUtils.isEmpty(pBirthDate)) {
                 errMsg.append("Patient birth date is missing for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber));
+                .append(appendLineNumber(lineNumber)).append('\n');
             } else if (!new DateValidator().isValid(pBirthDate, "yyyyMM", Locale.getDefault())) {
                 errMsg.append("Patient birth date must be in YYYYMM format for patient ID ").append(getPatientId(
-                        values)).append(appendLineNumber(lineNumber));
+                        values)).append(appendLineNumber(lineNumber)).append('\n');
             }
             validateGender(values, errMsg, lineNumber);
             validateEthnicity(values, errMsg, lineNumber);
@@ -219,10 +219,10 @@ public class BaseBatchUploadReader {
             String pRaceCode = StringUtils.trim(values.get(PATIENT_RACE_CODE_INDEX));
             if (StringUtils.isEmpty(pRaceCode)) {
                 errMsg.append("Patient race code is missing for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber));
+                .append(appendLineNumber(lineNumber)).append('\n');
             } else if (!PATIENT_RACE_CODE.contains(pRaceCode.trim())) {
                 errMsg.append("Patient race code is not valid for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber));
+                .append(appendLineNumber(lineNumber)).append('\n');
             }
             
         }
@@ -236,10 +236,11 @@ public class BaseBatchUploadReader {
     protected void validateDateOfEntry(List<String> values, StringBuffer errMsg, long lineNumber) {
         String dateOfEntry = StringUtils.trim(values.get(PATIENT_DATE_OF_ENTRY_INDEX));
         if (StringUtils.isEmpty(dateOfEntry)) {
-            errMsg.append("Patient date of entry is missing for patient ID ").append(getPatientId(values));
+            errMsg.append("Patient date of entry is missing for patient ID ").append(getPatientId(values))
+            .append(appendLineNumber(lineNumber)).append('\n');
         } else if (!new DateValidator().isValid(dateOfEntry, "yyyyMMdd", Locale.getDefault())) {
             errMsg.append("Patient date of entry must be in YYYYMMDD format for patient ID ")
-            .append(getPatientId(values));
+            .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append('\n');
         }
     }
     /**
@@ -251,9 +252,11 @@ public class BaseBatchUploadReader {
     protected void validateEthnicity(List<String> values, StringBuffer errMsg, long lineNumber) {
         String ethnicity = StringUtils.trim(values.get(PATIENT_ETHNICITY_INDEX));
         if (StringUtils.isEmpty(ethnicity)) {
-            errMsg.append("Patient ethnicity is missing for patient ID ").append(getPatientId(values));
+            errMsg.append("Patient ethnicity is missing for patient ID ").append(getPatientId(values))
+                .append(appendLineNumber(lineNumber)).append('\n');
         } else if (!PATIENT_ETHNICITY.contains(ethnicity.trim())) {
-            errMsg.append("Please enter valid patient ethnicity for patient ID ").append(getPatientId(values));
+            errMsg.append("Please enter valid patient ethnicity for patient ID ").append(getPatientId(values))
+                .append(appendLineNumber(lineNumber)).append('\n');
         }
     }
     /**
@@ -265,9 +268,11 @@ public class BaseBatchUploadReader {
     protected void validateGender(List<String> values, StringBuffer errMsg, long lineNumber) {
         String genderCode = StringUtils.trim(values.get(PATIENT_GENDER_CODE_INDEX));
         if (StringUtils.isEmpty(genderCode)) {
-            errMsg.append("Patient gender is missing for patient ID ").append(getPatientId(values));
+            errMsg.append("Patient gender is missing for patient ID ").append(getPatientId(values))
+                .append(appendLineNumber(lineNumber)).append('\n');
         } else if (!PATIENT_GENDER.contains(genderCode.trim())) {
-            errMsg.append("Must be a valid patient gender for patient ID ").append(getPatientId(values));
+            errMsg.append("Must be a valid patient gender for patient ID ").append(getPatientId(values))
+                .append(appendLineNumber(lineNumber)).append('\n');
         }
     }
     /**
@@ -280,7 +285,7 @@ public class BaseBatchUploadReader {
        String regInstID = StringUtils.trim(values.get(PATIENT_REG_INST_ID_INDEX));
        if (StringUtils.isEmpty(regInstID)) {
            errMsg.append("Patient Reg Inst Code is missing for patient ID ").append(getPatientId(values))
-           .append(appendLineNumber(lineNumber));
+           .append(appendLineNumber(lineNumber)).append('\n');
        } 
     }
 
@@ -294,13 +299,14 @@ public class BaseBatchUploadReader {
     protected void validatePatientID(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
         if (KEY_WITH_PATIENTS_IDS.contains(key) && StringUtils.isEmpty(getPatientId(values))) {
             errMsg.append(key).append(appendLineNumber(lineNumber))
-              .append(" must contain a patient identifier that is unique within the study.");
+              .append(" must contain a patient identifier that is unique within the study.\n");
         } 
     }
     
     private void isPatientIdUnique(String patId, StringBuffer errMsg, long lineNumber) {
         if (patientsIdList.contains(patId)) {
-            errMsg.append("Patient identifier " + patId + " is not unique ").append(appendLineNumber(lineNumber));
+            errMsg.append("Patient identifier " + patId + " is not unique ").append(appendLineNumber(lineNumber))
+                .append('\n');
         } else {
             patientsIdList.add(patId);
         }

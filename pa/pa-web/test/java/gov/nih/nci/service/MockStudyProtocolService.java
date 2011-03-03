@@ -153,7 +153,17 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     	return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException {
+        return loadStudyProtocol(ii);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyProtocolDTO loadStudyProtocol(Ii ii) {
         for (StudyProtocol sp: list) {
             if(sp.getId().equals(IiConverter.convertToLong(ii))) {
                 return StudyProtocolConverter.convertFromDomainToDTO(sp);

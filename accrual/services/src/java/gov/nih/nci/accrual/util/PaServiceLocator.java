@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.util;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 
 /**
  * @author Hugh Reinhart
@@ -141,5 +142,12 @@ public final class PaServiceLocator implements ServiceLocatorPaInterface {
      */
     public StudyProtocolServiceRemote getStudyProtocolService() {
         return serviceLocator.getStudyProtocolService();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public MailManagerServiceRemote getMailManagerService() {
+        return serviceLocator.getMailManagerService();
     }
 }

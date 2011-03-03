@@ -111,6 +111,23 @@ public interface StudyProtocolService {
      * @throws PAException on error, including if the given II matches more than one study protocol
      */
     StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException;
+
+
+    /**
+     * Gets a study protocol by either the internal PA DB ID, the NCI assigned identifier, the DCP identifier,
+     * CTEP identifier or the NCT identifier.
+     * If the <code>ii.extension</code> starts with "NCI," the identifier is assumed to be the
+     * NCI assigned identifier; The ii.root is used to differentiate between DCP, NCT, CTEP identifiers; otherwise,
+     * it is assumed to be the internal ID.
+     * The NCI, DCP, NCT and CTEP identifiers must be the full identifier, as an exact match is performed,
+     * not a starts-with search.
+     * @param ii Primary DB ID or NCI assigned identifier, DCP Identifier, CTEP identifier or NCT identifier
+     * of the study protocol to get. The ID must uniquely identify a study protocol.
+     * @return the study protocol with the given ii. Will return null if there are no matches or multiple matches with 
+     * the given Ii
+     */
+    StudyProtocolDTO loadStudyProtocol(Ii ii);
+
     /**
      *
      * @param studyProtocolDTO studyProtocolDTO
