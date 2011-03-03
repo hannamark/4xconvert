@@ -23,10 +23,10 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.log4j.Logger;
 
 /**
- * 
+ *
  * @author Bala Nair
  * Manages e-mail notifications.
- * 
+ *
  */
 public class MailManager {
     private static final Logger LOG = Logger.getLogger(MailManager.class);
@@ -41,31 +41,30 @@ public class MailManager {
         try {
             String[] params = {mailTo , };
 
-            MessageFormat formatterSubject = 
+            MessageFormat formatterSubject =
                 new MessageFormat(PaRegistry.getLookUpTableService().getPropertyValue("user.account.subject"));
             String emailSubject = formatterSubject.format(params);
-            LOG.info("emailSubject is: " + emailSubject);
-            
-            MessageFormat formatterBody = 
+            LOG.debug("emailSubject is: " + emailSubject);
+
+            MessageFormat formatterBody =
                 new MessageFormat(PaRegistry.getLookUpTableService().getPropertyValue("user.account.body"));
             MessageFormat formatterBodyUrl = new MessageFormat(REG_PROPERTIES.getProperty("register.mail.body.url"));
-            
-            // encode the loginName and append to the URL before
-            // sending the e-mail
+
+            // encode the loginName and append to the URL before sending the e-mail
             EncoderDecoder encodeDecoder = new EncoderDecoder();
-            
+
             String emailBody = formatterBody.format(params) + "\n\n"
                     + formatterBodyUrl.format(params) + "?emailAddress="
                     + encodeDecoder.encodeString(mailTo) + "&action=myaccount\n\n";
 
-            LOG.info("emailBody is: " + emailBody);
+            LOG.debug("emailBody is: " + emailBody);
             sendMail(mailTo, null, emailBody, emailSubject);
         } catch (Exception e) {
             LOG.error("Send confirmation mail error", e);
         }
     }
    /**
-     * 
+     *
      * @return String
      */
     public String formatFromAddress() {
@@ -76,12 +75,12 @@ public class MailManager {
         } catch (PAException e) {
             LOG.error("Error retrieving, from mail address from database for Subission e-mail", e);
         }
-        
+
         return fromEmailAddress;
     }
-    
+
     /**
-     * 
+     *
      * @param mailTo mailTo
      * @param mailCC mailCC
      * @param mailBody mailBody
@@ -96,7 +95,7 @@ public class MailManager {
             String to = mailTo;
             // Set up mail server
 
-            props.put("mail.smtp.host", 
+            props.put("mail.smtp.host",
                     PaRegistry.getLookUpTableService().getPropertyValue("smtp"));
 
             // Get session
@@ -116,25 +115,25 @@ public class MailManager {
             Transport.send(message);
         } catch (Exception e) {
             LOG.error("Send Mail error", e);
-        } // catch
+        }
     }
     /**
-     * 
+     *
      * @param mailTo m
      * @param mailCC m
      * @param mailBody b
      * @param subject s
      * @param attachFileName f
      */
-    public void sendMailWithAattchement(String mailTo, String mailCC,
-            String mailBody, String subject, String attachFileName) {
+    public void sendMailWithAattchement(String mailTo, String mailCC, String mailBody, String subject,
+            String attachFileName) {
         try {
 
             // get system properties
             Properties props = System.getProperties();
             String to = mailTo;
             // Set up mail server
-            props.put("mail.smtp.host", 
+            props.put("mail.smtp.host",
                     PaRegistry.getLookUpTableService().getPropertyValue("smtp"));
             // Get session
             Session session = Session.getDefaultInstance(props, null);
@@ -165,11 +164,11 @@ public class MailManager {
 
             // set the Date: header
             message.setSentDate(new Date());
-            
+
             // send the message
             Transport.send(message);
         } catch (Exception e) {
-            LOG.error(e.getLocalizedMessage());
+            LOG.error("Exception sending mail with attachment", e);
         }
       }
 }

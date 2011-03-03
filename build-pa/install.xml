@@ -222,6 +222,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <filter token="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
             <filter token="default.user.name" value="${default.user.name}"/>
             <filter token="mock.po" value="${mock.po}"/>
+            <filter token="wikiHelp.baseUrl.pa" value="${wikiHelp.baseUrl.pa}" />
+            <filter token="wikiHelp.baseUrl.registry" value="${wikiHelp.baseUrl.registry}" />
             <!-- end paear.properties -->
             <filter token="database.url" value="${database.url}"/>
             <filter token="database.user" value="${database.user}"/>
@@ -686,7 +688,7 @@ gov.nih.nci.security.cgmm.login.config.file=@{cgmm.conf.dest.dir}/cgmm.login.con
             <switch value="@{grid.target}">
                 <case value="nci_prod-1.3">
                     <property name="@{grid.auth.service.url.property.name}" value="https://cagrid-auth.nci.nih.gov:8443/wsrf/services/cagrid/AuthenticationService"/>
-					<property name="@{grid.auth.service.name.property.name}" value="National Cancer Institute"/>
+                    <property name="@{grid.auth.service.name.property.name}" value="National Cancer Institute"/>
                     <property name="@{grid.dorian.name.property.name}" value="caBIG"/>
                 </case>
                 <case value="nci_stage-1.3">

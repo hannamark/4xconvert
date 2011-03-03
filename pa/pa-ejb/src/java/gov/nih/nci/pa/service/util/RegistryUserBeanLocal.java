@@ -295,8 +295,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         if (regUser != null) {
             if (regUser.getAffiliatedOrgUserType() != null
                     && StringUtils.isNotEmpty(regUser.getAffiliatedOrgUserType().getCode())) {
-                criteria.add(Restrictions.eq("regUser.affiliatedOrgUserType",
-                        regUser.getAffiliatedOrgUserType()));
+                criteria.add(Restrictions.eq("regUser.affiliatedOrgUserType", regUser.getAffiliatedOrgUserType()));
             }
             addCriteria(criteria, regUser.getAffiliatedOrganizationId(), "regUser.affiliatedOrganizationId");
             addCriteria(criteria, regUser.getPoOrganizationId(), "regUser.poOrganizationId");

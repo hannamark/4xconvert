@@ -224,7 +224,7 @@
     </s:form>
     </div>
     <div class="line"></div>
-    <s:if test="records != null">
+    <s:if test="records != null && records.size > 0">
         <c:set var="topic" scope="request" value="search_results"/>
         <jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
     </s:if>

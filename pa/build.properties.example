@@ -76,3 +76,7 @@ gridgrouper.admin.password=C0pp4Gr0upP@ss
 
 grid.dorian.url=https\://dorian.training.cagrid.org\:8443/wsrf/services/cagrid/Dorian
 gridgrouper.url=https\://grouper.training.cagrid.org\:8443/wsrf/services/cagrid/GridGrouper
+
+# Base URLs for wiki-based help
+wikiHelp.baseUrl.pa=https://wiki.nci.nih.gov/x/5IdQAg#NCICTRPProtocolAbstractionHelpTopics-
+wikiHelp.baseUrl.registry=https://wiki.nci.nih.gov/x/SYZQAg#NCICTRPRegistrationSiteHelpTopics-

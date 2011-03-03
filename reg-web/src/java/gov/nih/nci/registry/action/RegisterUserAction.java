@@ -302,7 +302,7 @@ public class RegisterUserAction extends ActionSupport {
         } else { //create user
             registryUser.setId(null);
             // first create the CSM user
-            userAction =  "create";
+            userAction = "create";
             redirectPage = Constants.REDIRECT_TO_LOGIN;
             try {
                 GridAccountServiceRemote gridService = PaRegistry.getGridAccountService();

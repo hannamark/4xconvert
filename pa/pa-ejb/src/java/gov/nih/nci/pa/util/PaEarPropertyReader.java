@@ -95,25 +95,28 @@ import org.apache.log4j.Logger;
 public class PaEarPropertyReader {
     private static final Logger LOG = Logger.getLogger(PaEarPropertyReader.class);
     private static final String RESOURCE_NAME = "paear.properties";
-    private static Properties props = null;
-    private static String docUploadPath = "doc.upload.path";
-    private static String pdqUploadPath = "pdq.upload.path";
-    private static String accrualBatchUploadPath = "accrual.batch.upload.path";
-    private static String lookUpServer = "po.server.name";
-    private static String lookUpPort = "po.port.number";
-    private static String csmSubmitterGroup = "csm.submitter.group";
-    private static String allowedUploadFileTypes = "allowed.uploadfile.types";
-    private static String batchUploadPath = "batch.upload.path";
-    private static String tooltipsPath = "tooltips.path";
-    private static String rssUser = "cteprss.user";
+    private static final Properties PROPS;
+    // Property names in the properties file
+    private static final String DOC_UPLOAD_PATH = "doc.upload.path";
+    private static final String PDQ_UPLOAD_PATH = "pdq.upload.path";
+    private static final String ACCRUAL_BATCH_UPLOAD_PATH = "accrual.batch.upload.path";
+    private static final String PO_SERVER_NAME = "po.server.name";
+    private static final String PO_SERVER_PORT = "po.port.number";
+    private static final String CSM_SUBMITTER_GROUP = "csm.submitter.group";
+    private static final String ALLOWED_UPLOAD_FILE_TYPES = "allowed.uploadfile.types";
+    private static final String BATCH_UPLOAD_PATH = "batch.upload.path";
+    private static final String TOOLTIPS_PATH = "tooltips.path";
+    private static final String CTEP_RSS_USER = "cteprss.user";
     private static final String INVALID_DIRECTORY_ERROR_MSG = " is not a valid directory.";
+    private static final String PA_HELP_URL = "wikiHelp.baseUrl.pa";
+    private static final String REGISTRY_HELP_URL = "wikiHelp.baseUrl.registry";
 
     static {
         try {
-            props = new Properties();
-            props.load(PaEarPropertyReader.class.getClassLoader().getResourceAsStream(RESOURCE_NAME));
+            PROPS = new Properties();
+            PROPS.load(PaEarPropertyReader.class.getClassLoader().getResourceAsStream(RESOURCE_NAME));
         } catch (Exception e) {
-            LOG.error("Unable to read paear.properties ", e);
+            LOG.error("Unable to read paear.properties", e);
             throw new IllegalStateException(e);
         }
     }
@@ -124,7 +127,7 @@ public class PaEarPropertyReader {
     * @throws PAException e
     */
     public static String getTooltipsPath() throws PAException {
-      String tooltipsFolderPath = props.getProperty(tooltipsPath);
+      String tooltipsFolderPath = PROPS.getProperty(TOOLTIPS_PATH);
       if (tooltipsFolderPath == null) {
           throw new PAException("tooltips.path does not have value in paear.properties");
       }
@@ -141,7 +144,7 @@ public class PaEarPropertyReader {
      * @throws PAException e
      */
     public static String getDocUploadPath() throws PAException {
-        String folderPath = props.getProperty(docUploadPath);
+        String folderPath = PROPS.getProperty(DOC_UPLOAD_PATH);
         if (folderPath == null) {
             throw new PAException("doc.upload.path does not have value in paear.properties");
         }
@@ -158,7 +161,7 @@ public class PaEarPropertyReader {
      * @throws PAException e
      */
    public static String getPDQUploadPath() throws PAException {
-       String folderPath = props.getProperty(pdqUploadPath);
+       String folderPath = PROPS.getProperty(PDQ_UPLOAD_PATH);
        if (folderPath == null) {
            throw new PAException("pdq.upload.path does not have value in paear.properties");
        }
@@ -175,7 +178,7 @@ public class PaEarPropertyReader {
      * @throws PAException e
      */
     public static String getBatchUploadPath() throws PAException {
-        String folderPath = props.getProperty(batchUploadPath);
+        String folderPath = PROPS.getProperty(BATCH_UPLOAD_PATH);
         if (folderPath == null) {
             throw new PAException("batch.upload.path does not have value in paear.properties");
         }
@@ -191,7 +194,7 @@ public class PaEarPropertyReader {
      * @throws PAException e
      */
     public static String getAccrualBatchUploadPath() throws PAException {
-        String folderPath = props.getProperty(accrualBatchUploadPath);
+        String folderPath = PROPS.getProperty(ACCRUAL_BATCH_UPLOAD_PATH);
         if (folderPath == null) {
             throw new PAException("accrual.batch.upload.path does not have value in paear.properties");
         }
@@ -208,11 +211,11 @@ public class PaEarPropertyReader {
      * @throws PAException on error
      */
     public static String getLookUpServerInfo() throws PAException {
-        String server = props.getProperty(lookUpServer);
+        String server = PROPS.getProperty(PO_SERVER_NAME);
         if (server == null) {
             throw new PAException("'server' does not have value in paear.properties");
         }
-        String port = props.getProperty(lookUpPort);
+        String port = PROPS.getProperty(PO_SERVER_PORT);
         if (port == null) {
             throw new PAException("'port' does not have value in paear.properties");
         }
@@ -225,7 +228,7 @@ public class PaEarPropertyReader {
      * @throws PAException on error
      */
     public static String getCSMSubmitterGroup() throws PAException {
-        String submitterGroupName = props.getProperty(csmSubmitterGroup);
+        String submitterGroupName = PROPS.getProperty(CSM_SUBMITTER_GROUP);
         if (submitterGroupName == null) {
             throw new PAException("'submitterGroupName' does not have value in paear.properties");
         }
@@ -237,7 +240,7 @@ public class PaEarPropertyReader {
      * @throws PAException on error
      */
     public static String getAllowedUploadFileTypes() throws PAException {
-        String allowedFileTypes = props.getProperty(allowedUploadFileTypes);
+        String allowedFileTypes = PROPS.getProperty(ALLOWED_UPLOAD_FILE_TYPES);
         if (allowedFileTypes == null) {
             throw new PAException("'allowedUploadFileTypes' does not have value in paear.properties ");
         }
@@ -250,18 +253,44 @@ public class PaEarPropertyReader {
      * @throws PAException if the property is missing
      */
     public static String getRssUser() throws PAException {
-        String user = props.getProperty(rssUser);
+        String user = PROPS.getProperty(CTEP_RSS_USER);
         if (user == null) {
-            throw new PAException(rssUser + " does not have value in paear.properties ");
+            throw new PAException(CTEP_RSS_USER + " does not have value in paear.properties ");
         }
         return user;
+    }
+
+    /**
+     * Returns the base URL of the wiki-based help for PA.
+     * @return url
+     * @throws PAException if the property is missing
+     */
+    public static String getPaHelpUrl() throws PAException {
+        String url = PROPS.getProperty(PA_HELP_URL);
+        if (url == null) {
+            throw new PAException(PA_HELP_URL + " does not have value in paear.properties ");
+        }
+        return url;
+    }
+
+    /**
+     * Returns the base URL of the wiki-based help for PA.
+     * @return url
+     * @throws PAException if the property is missing
+     */
+    public static String getRegistryHelpUrl() throws PAException {
+        String url = PROPS.getProperty(REGISTRY_HELP_URL);
+        if (url == null) {
+            throw new PAException(REGISTRY_HELP_URL + " does not have value in paear.properties ");
+        }
+        return url;
     }
 
     /**
      * @return the properties
      */
     public static Properties getProperties() {
-        return props;
+        return PROPS;
     }
 
 }

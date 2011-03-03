@@ -17,9 +17,9 @@
 
  <c:choose>
      <c:when test="${param.userAction == 'create'}">
-		<div class="confirm_msg">
-		  <strong>Your User Account has been successfully created. Please log in using your username and password.</strong>
-		</div>
+        <div class="confirm_msg">
+          <strong>Your User Account has been successfully created. Please log in using your username and password.</strong>
+        </div>
      </c:when>
      <c:when test="${param.userAction == 'reset'}">
         <div class="confirm_msg">
@@ -37,7 +37,7 @@
      <c:when test="${param.failureMessage == 'noUser'}">
         <div class="error_msg">
              <strong>Please <a title="To Create an Account" href="/registry/registerUser.action">create an account</a> before logging in.</strong>
-        </div> 
+        </div>
      </c:when>
      <c:otherwise>
            <p style="margin:0; padding:0">Please log in to search, view and register clinical trial details.
@@ -51,24 +51,24 @@
               <p class="directions"><fmt:message key="errors.password.mismatch"/></p>
             </c:if>
              <tr>
-			<td class="space" colspan="2">
-					&nbsp;
-			</td>
-			</tr>
-			<tr>
-				<td class="label" scope="row">
+            <td class="space" colspan="2">
+                    &nbsp;
+            </td>
+            </tr>
+            <tr>
+                <td class="label" scope="row">
                 <label for="j_username">Username:</label>
                 </td>
-				<td class="value">
-					<input name="j_username" maxlength="100" size="25" type="text">
-				</td>
-			</tr>
-			<tr>
-				<td class="label" scope="row">
+                <td class="value">
+                    <input name="j_username" maxlength="100" size="25" type="text">
+                </td>
+            </tr>
+            <tr>
+                <td class="label" scope="row">
                 <label for="j_password">Password:</label>
                 </td>
-				<td class="value"><input name="j_password" maxlength="100" size="25" type="password"></td>
-			</tr>
+                <td class="value"><input name="j_password" maxlength="100" size="25" type="password"></td>
+            </tr>
          <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">
          <c:choose>
              <c:when test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) == 1}">
@@ -102,13 +102,13 @@
              </c:otherwise>
          </c:choose>
          </c:if>
-			<tr>
-				<td>&nbsp;</td>
-				<td>
-					<span class="small"><a title="To Reset Password" onclick="showPasswordResetInfo();">(Forgot Your Password?)</a></span>
-				</td>
-			</tr>
-			<tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    <span class="small"><a title="To Reset Password" onclick="showPasswordResetInfo();">(Forgot Your Password?)</a></span>
+                </td>
+            </tr>
+            <tr>
                 <td>&nbsp;</td>
                 <td>
                     <span class="small"><a title="To Create an Account" href="/registry/registerUser.action">(Create an Account)</a></span>

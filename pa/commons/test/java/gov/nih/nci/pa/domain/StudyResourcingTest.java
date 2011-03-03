@@ -74,7 +74,6 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
-*
 */
 package gov.nih.nci.pa.domain;
 
@@ -89,7 +88,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -105,10 +103,8 @@ public class StudyResourcingTest {
         TestSchema.reset();
 
     }
-    /**
-     *
-     */
-    //@Test
+
+    // @Test
     public void createStudyResourcingTest() {
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
@@ -116,56 +112,43 @@ public class StudyResourcingTest {
         StudyResourcing create = createStudyResourcingObj(sp);
         TestSchema.addUpdObject(create);
         assertNotNull(create.getId());
-        Session session  = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         StudyResourcing saved = (StudyResourcing) session.load(StudyResourcing.class, create.getId());
 
-        assertEquals("DateLastUpdated does not match " , create.getDateLastUpdated(), saved.getDateLastUpdated());
-        assertEquals("Id does not match " , create.getId(),  saved.getId());
-        assertEquals("Organization Id does not match " , create.getOrganizationIdentifier(),  saved.getOrganizationIdentifier());
-        assertEquals("Study Protocol  Id does not match " , create.getStudyProtocol().getId(),  saved.getStudyProtocol().getId());
-        assertEquals("Summary4ReportedResourceIndicator does not match " , create.getSummary4ReportedResourceIndicator(),  saved.getSummary4ReportedResourceIndicator());
-        assertEquals("TypeCode does not match " , create.getTypeCode().getCode(),  saved.getTypeCode().getCode());
-
-
+        assertEquals("DateLastUpdated does not match ", create.getDateLastUpdated(), saved.getDateLastUpdated());
+        assertEquals("Id does not match ", create.getId(), saved.getId());
+        assertEquals("Organization Id does not match ", create.getOrganizationIdentifier(),
+                     saved.getOrganizationIdentifier());
+        assertEquals("Study Protocol  Id does not match ", create.getStudyProtocol().getId(), saved.getStudyProtocol()
+            .getId());
+        assertEquals("Summary4ReportedResourceIndicator does not match ",
+                     create.getSummary4ReportedResourceIndicator(), saved.getSummary4ReportedResourceIndicator());
+        assertEquals("TypeCode does not match ", create.getTypeCode().getCode(), saved.getTypeCode().getCode());
 
     }
-    /**
-     *
-     */
+
+    @SuppressWarnings("unchecked")
     @Test
-    public void summary4Funding(){
+    public void summary4Funding() {
         Session session = HibernateUtil.getCurrentSession();
         StudyResourcing studyResourcing = null;
         List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
         try {
-
-            Query query = null;
-
-            // step 1: form the hql
-            String hql = "select sr "
-                       + "from StudyResourcing sr "
-                       + "where sr.summary4ReportedResourceIndicator =  '" + Boolean.TRUE + "'";
-
-
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            queryList = query.list();
-
-        }  catch (HibernateException hbe) {
+            String hql = "select sr from StudyResourcing sr where sr.summary4ReportedResourceIndicator =  '"
+                    + Boolean.TRUE + "'";
+            queryList = session.createQuery(hql).list();
+        } catch (HibernateException hbe) {
             hbe.printStackTrace();
         }
 
         if (queryList.size() > 0) {
             studyResourcing = queryList.get(0);
             new StudyResourcingConverter().convertFromDomainToDto(studyResourcing);
-
         }
 
     }
 
-
-
-    public static StudyResourcing createStudyResourcingObj(StudyProtocol sp){
+    public static StudyResourcing createStudyResourcingObj(StudyProtocol sp) {
         StudyResourcing sr = new StudyResourcing();
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         sr.setDateLastUpdated(now);
@@ -177,6 +160,5 @@ public class StudyResourcingTest {
 
         return sr;
     }
-
 
 }
