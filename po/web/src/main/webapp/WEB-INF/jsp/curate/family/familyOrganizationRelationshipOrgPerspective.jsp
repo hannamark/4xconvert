@@ -20,7 +20,6 @@
             $('selectedFamilyId').value = returnValue.id;
             var url = '${loadFamilyUrl}' + '&selectedFamilyId=' + returnValue.id;
             loadDiv(url, 'famOrgRelationshipFamilyInfo', true, null, false);
-            reloadOrgRelationships(new IdValue('${familyOrgRelationship.organization.id}', ''));
         }
         
         function reloadOrgRelationships(returnValue) {
