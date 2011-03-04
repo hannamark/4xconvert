@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 
 import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
+import gov.nih.nci.po.util.PastOrCurrentDateValidator;
 import gov.nih.nci.po.util.UniqueOrganizationRelationship;
 
 import java.util.Date;
@@ -99,7 +100,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Past;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
@@ -198,7 +198,7 @@ public class OrganizationRelationship implements Auditable {
      * @return the startDate
      */
     @Temporal(TemporalType.DATE)
-    @Past
+    @PastOrCurrentDateValidator.PastOrCurrentDate
     @NotNull
     public Date getStartDate() {
         return startDate;
@@ -213,7 +213,7 @@ public class OrganizationRelationship implements Auditable {
      * @return the endDate
      */
     @Temporal(TemporalType.DATE)
-    @Past
+    @PastOrCurrentDateValidator.PastOrCurrentDate
     public Date getEndDate() {
         return endDate;
     }
