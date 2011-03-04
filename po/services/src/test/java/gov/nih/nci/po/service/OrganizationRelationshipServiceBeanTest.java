@@ -205,7 +205,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
         try {
             orgRelServiceBean.create(orgRel);
         } catch(EntityValidationException e) {
-            assertEquals("endDate=[can not be in the future.]",e.getErrorMessages());
+            assertEquals("endDate=[must not be in the future.]",e.getErrorMessages());
         }
         orgRel.setStartDate(cal.getTime());
         orgRel.setEndDate(DateUtils.addDays(new Date(), -2));
