@@ -154,4 +154,11 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
         return new ArrayList<StudyProtocolDTO>();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public StudyProtocolDTO loadStudyProtocol(Ii ii) {
+        return null;
+    }
+
 }
