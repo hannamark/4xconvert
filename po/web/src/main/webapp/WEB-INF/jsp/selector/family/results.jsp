@@ -25,7 +25,7 @@
         </display:column>
         <display:column titleKey="th.action" class="action">
             <po:buttonRow>
-                <po:button id="select_family_${row.id}" href="javascript://nop/" onclick="selectAndClose(new IdValue('${row.id}', '${pofn:escapeJavaScript(row.name)}'));" style="reject" text="Select" />
+                <po:button id="select_family_${row.id}" href="javascript://nop/" onclick="selectAndClose(new IdValue('${row.id}', '${pofn:escapeJavaScript(row.name)}'));" style="add" text="Select" />
             </po:buttonRow>
         </display:column>
     </display:table>
