@@ -143,8 +143,16 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
 
     @Test
     public void testSubmit() {
-        action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
-        action.getFamilyOrgRelationship().setId(2L);
+        FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
+        famOrgRel.setId(1L);
+        Family fam = new Family();
+        fam.setId(2L);
+        famOrgRel.setFamily(fam);
+        Organization org = new Organization();
+        org.setId(3L);
+        famOrgRel.setOrganization(org);
+
+        action.setFamilyOrgRelationship(famOrgRel);
         assertEquals(Action.SUCCESS, action.submit());
     }
 

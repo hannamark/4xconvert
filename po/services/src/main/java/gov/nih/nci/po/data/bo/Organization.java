@@ -90,6 +90,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -140,7 +141,7 @@ public class Organization extends AbstractOrganization
     private Set<ClinicalResearchStaff> clinicalResearchStaff = new HashSet<ClinicalResearchStaff>();
     private Set<IdentifiedPerson> identifiedPersons = new HashSet<IdentifiedPerson>();
     private Set<HealthCareProvider> healthCareProviders = new HashSet<HealthCareProvider>();
-    private Set<FamilyOrganizationRelationship> familyOrganizationRelationships = 
+    private Set<FamilyOrganizationRelationship> familyOrganizationRelationships =
         new HashSet<FamilyOrganizationRelationship>();
     private Set<OrganizationRelationship> organizationRelationships = new HashSet<OrganizationRelationship>();
 
@@ -477,8 +478,8 @@ public class Organization extends AbstractOrganization
     /**
      * @return the organizationRelationships
      */
-    @OneToMany(mappedBy = "organization")
-    @Where(clause = "endDate is null")    
+    @OneToMany(mappedBy = "organization", fetch = FetchType.EAGER)
+    @Where(clause = "endDate is null")
     public Set<OrganizationRelationship> getOrganizationRelationships() {
         return organizationRelationships;
     }

@@ -97,7 +97,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
     private static String FUNCTIONAL_TYPE = "CONTRACTUAL";
     private final SimpleDateFormat dateFormat =
         new SimpleDateFormat("MM/d/yyyy");
-    
+
     public void testList(){
         loginAsCurator();
         openOrganizationFamilyList();
@@ -114,7 +114,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         clickAndWait("return_to_button");
 
         selenium.isTextPresent(FAMILY_NAME);
-        String famId = getFamilyId();        
+        String famId = getFamilyId();
         assertNotNull(famId);
     }
 
@@ -127,7 +127,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         removeMember();
         removeMember();
     }
-    
+
     public void testFamilyOrgPerspective(){
         loginAsCurator();
         addOrgMember("ClinicalTrials");
@@ -147,7 +147,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         removeMember();
         removeMember();
     }
-    
+
     private void checkManageFamilyScreenOrgPerspective() {
         assertTrue(selenium.isTextPresent("Organization Details"));
         assertNotNull(getFamilyId());
@@ -202,7 +202,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         selenium.getConfirmation();
         assertTrue(selenium.isTextPresent("Family " + FAMILY_NAME +" was successfully updated."));
     }
-    
+
     private void searchForCreatedFamily() {
         openSearchOrganization();
         selenium.type("searchOrganizationForm_criteria_organization_familyOrganizationRelationships_iterator_next_family_name", FAMILY_NAME);
@@ -253,7 +253,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         selenium.type("familyOrgRelationship.endDate", "01/01/2050");
 
         clickAndWait("save_button");
-        assertTrue(selenium.isTextPresent("End Date must be a past date"));
+        assertTrue(selenium.isTextPresent("End Date must not be in the future"));
 
         selenium.type("familyOrgRelationship.endDate", "01/01/2009");
         clickAndWait("save_button");

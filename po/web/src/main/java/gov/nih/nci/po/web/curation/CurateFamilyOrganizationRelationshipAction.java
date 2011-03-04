@@ -116,9 +116,9 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
     /**
      * Constant for family perspective view of Family Organization Relationship.
      */
-    public static final String FAMILY_PERSPECTIVE = "family";    
+    public static final String FAMILY_PERSPECTIVE = "family";
     private static final long serialVersionUID = 1L;
-    
+
     private FamilyOrganizationRelationship familyOrgRelationship = new FamilyOrganizationRelationship();
     private final Comparator<OrganizationRelationship> orgNameComparator =  new Comparator<OrganizationRelationship>() {
         public int compare(OrganizationRelationship or1, OrganizationRelationship or2) {
@@ -163,6 +163,7 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
     public String submit() {
         try {
             PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(getFamilyOrgRelationship());
+            initializeCollection();
             ActionHelper.saveMessage(getText("familyOrgRelationship.update.success"));
         } catch (EntityValidationException  e) {
             //after implementing PO-3199 no need to swallow EntityValidationException
@@ -316,7 +317,7 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
     public void setOrganizationRelationships(SortedSet<OrganizationRelationship> organizationRelationships) {
         this.organizationRelationships = organizationRelationships;
     }
-    
+
 
     /**
      * @param perspective the perspective to set
