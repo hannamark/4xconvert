@@ -91,6 +91,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.Validateable;
@@ -170,6 +171,7 @@ public class CurateOrganizationRelationshipAction extends ActionSupport implemen
 
         PoRegistry.getOrganizationRelationshipService().create(getNewOrgRelationship());
         setPassedValidation(true);
+        ActionHelper.saveMessage(getText("organizationRelationship.change.success"));
         return SUCCESS;
     }
 

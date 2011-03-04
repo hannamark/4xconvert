@@ -130,7 +130,8 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         validateRelatedOrg(1, "SUBDIVISION");
 
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[5]//ul//li[1]/a");
-        removeRelationship(1);
+        removeRelationship(1, false);
+        removeRelationship(1, true);
 
         navigateToFamilyOrgRelationship(1, "ClinicalTrials.gov");
         clickAndWait("return_to_button");
@@ -210,6 +211,7 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a"));
         assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]"));
         assertFalse(StringUtils.isBlank(selenium.getText("xpath=//table[@id='row']//tr[" + row + "]/td[2]")));
+        assertTrue(selenium.isTextPresent("Organization relationship successfully changed."));
     }
 
     private void updateRelationship(int row, String relationshipName) {
@@ -245,13 +247,23 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a"));
         assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]"));
         assertFalse(StringUtils.isBlank(selenium.getText("xpath=//table[@id='row']//tr[" + row + "]/td[2]")));
-
+        assertTrue(selenium.isTextPresent("Organization relationship successfully changed."));
     }
 
-    private void removeRelationship(int row) {
-        clickAndWait("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]");
-        waitForElementById("row", 10);
-        clickAndWait("return_to_button");
+    private void removeRelationship(int row, boolean accept) {
+        if (accept) {
+            selenium.chooseOkOnNextConfirmation();
+            clickAndWait("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]");
+            selenium.getConfirmation();
+            waitForElementById("row", 10);
+            assertTrue(selenium.isTextPresent("Organization relationship successfully removed."));
+            clickAndWait("return_to_button");
+        } else {
+            selenium.chooseCancelOnNextConfirmation();
+            selenium.click("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]");
+            selenium.getConfirmation();
+            assertFalse(selenium.isTextPresent("Organization relationship successfully removed."));
+        }
     }
 
     private void validateRelatedOrg(int row, String relationshipName) {

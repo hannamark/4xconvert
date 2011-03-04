@@ -95,6 +95,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -153,6 +154,7 @@ public class CreateOrganizationRelationshipAction extends CurateOrganizationRela
 
         PoRegistry.getOrganizationRelationshipService().create(getNewOrgRelationship());
         setPassedValidation(true);
+        ActionHelper.saveMessage(getText("organizationRelationship.change.success"));
         return SUCCESS;
     }
 
@@ -172,6 +174,7 @@ public class CreateOrganizationRelationshipAction extends CurateOrganizationRela
         relatedOr.setEndDate(today);
         PoRegistry.getOrganizationRelationshipService().updateEntity(or);
         PoRegistry.getOrganizationRelationshipService().updateEntity(relatedOr);
+        ActionHelper.saveMessage(getText("organizationRelationship.remove.success"));
         return SUCCESS;
     }
 

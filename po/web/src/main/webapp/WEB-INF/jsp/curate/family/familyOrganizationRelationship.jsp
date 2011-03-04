@@ -39,15 +39,19 @@
         
         function removeOrgRelationship(id) {
         	 <c:url value="/protected/popup/organization/relationship/create/remove.action" var="removeUrl"/>
+        	 <s:text name="organizationRelationship.confirmationMessage" var="confirmationMessage"/>
+        	 var confirmation = confirm('${confirmationMessage}');
         	 var url = '${removeUrl}' + '?orgRelationship.id=' + id;
-        	 var aj = new Ajax.Request(url, {
-        		 asynchronous: true,
-        		 method: 'post',
-        		 evalScripts: false,
-        		 onComplete: function(transport) {
-        			  reloadOrgRelationships(new IdValue('${familyOrgRelationship.family.id}', ''));	 
-        		 }
-        	 });
+        	 if (confirmation) {
+        		  var aj = new Ajax.Request(url, {
+        			    asynchronous: true,
+        			    method: 'post',
+        			    evalScripts: false,
+        			    onComplete: function(transport) {
+        			    	   reloadOrgRelationships(new IdValue('${familyOrgRelationship.family.id}', ''));	 
+        			     }
+        		  });
+        	 }
         }
         </script>
     </head>
