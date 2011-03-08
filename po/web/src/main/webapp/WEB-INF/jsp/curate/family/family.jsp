@@ -66,10 +66,15 @@
             <div id="endDateDiv" <s:if test="family.statusCode != @gov.nih.nci.po.data.bo.FamilyStatus@NULLIFIED">style="display:none;"</s:if>>
                     <script type="text/javascript">
                         function handleEndDateDiv() {
-                            $('endDateDiv')[$('familyEntityForm.family.statusCode').value == 'ACTIVE' ? 'hide':'show']();
-                            if ($('familyEntityForm.family.statusCode').value != 'NULLIFIED'
-                                && $('familyEntityForm.family.statusCode').value != 'INACTIVE') {
+                            var currentStatusCode = $('familyEntityForm.family.statusCode').value;
+                            $('endDateDiv')[currentStatusCode == 'ACTIVE' ? 'hide':'show']();
+                            if (currentStatusCode != 'NULLIFIED' && currentStatusCode != 'INACTIVE') {
                                 $('familyEntityForm.family.endDate').value = '';
+                            } else {
+                                var toDay = new Date();
+                                var month = toDay.getMonth() + 1;
+                                var formattedDate =  month + '/' + toDay.getDate() + '/' + toDay.getFullYear();
+                            	$('familyEntityForm.family.endDate').value = formattedDate;
                             }
                             return true;
                         }
@@ -82,7 +87,7 @@
                                      <s:fielderror>
                                      <s:param>family.endDate</s:param>
                                      </s:fielderror>
-                                     <sj:datepicker required="true" name="family.endDate" displayFormat="mm/dd/yy" />
+                                     <sj:datepicker required="true" name="family.endDate" displayFormat="mm/dd/yy" id="familyEntityForm.family.endDate" />
                                 </label>
                             </div>
                         </po:inputRowElement>
