@@ -94,6 +94,10 @@ import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyFunctionalType;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
@@ -106,6 +110,7 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -978,4 +983,45 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(),false);
     }
+
+    @Test
+    public void testCount() throws EntityValidationException, JMSException {
+        Organization o = getBasicOrganization();
+        getOrgServiceBean().create(o);
+        
+        FamilyServiceLocal familyServiceBean = PoRegistry.getFamilyService();
+        Family familyOne = getFamily("test1");
+        Family familyTwo = getFamily("test2");
+        familyServiceBean.create(familyOne);
+        familyServiceBean.create(familyTwo);
+        
+        FamilyOrganizationRelationshipServiceLocal familyOrgRelServiceLocal = PoRegistry.getFamilyOrganizationRelationshipService();
+        FamilyOrganizationRelationship famOrgRelOne = new FamilyOrganizationRelationship();
+        famOrgRelOne.setOrganization(o);
+        famOrgRelOne.setFamily(familyOne);
+        famOrgRelOne.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
+        famOrgRelOne.setStartDate(new Date());
+        FamilyOrganizationRelationship famOrgRelTwo = new FamilyOrganizationRelationship();
+        famOrgRelTwo.setOrganization(o);
+        famOrgRelTwo.setFamily(familyTwo);
+        famOrgRelTwo.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
+        famOrgRelTwo.setStartDate(new Date());
+
+        familyOrgRelServiceLocal.create(famOrgRelOne);
+        familyOrgRelServiceLocal.create(famOrgRelTwo);
+        
+        StrutsOrganizationSearchCriteria criteria = new StrutsOrganizationSearchCriteria();
+        criteria.getOrganization().getFamilyOrganizationRelationships().iterator().next().getFamily().setName("test");
+        
+        assertEquals(1L, getOrgServiceBean().count(criteria));
+    }
+
+    public static Family getFamily(String name) {
+        Family family = new Family();
+        family.setName(name);
+        family.setStartDate(new Date());
+        family.setStatusCode(FamilyStatus.ACTIVE);
+        return family;
+    }
+
 }
