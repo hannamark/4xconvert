@@ -19,15 +19,15 @@
 <c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="submitProtocol"/>
 <script language="javascript">
 function submitTrial(){
-	var assignedId = document.getElementById("trialDTO.assignedIdentifier").value ;
-	if (assignedId != '') {
-		document.forms[0].action="updateTrialupdate.action";
-		document.forms[0].submit();
-		showPopWin('${amendProtocol}', 600, 200, '', 'Update Trial');
-	}
+    var assignedId = document.getElementById("trialDTO.assignedIdentifier").value ;
+    if (assignedId != '') {
+        document.forms[0].action="updateTrialupdate.action";
+        document.forms[0].submit();
+        showPopWin('${amendProtocol}', 600, 200, '', 'Update Trial');
+    }
 }
 function editTrial() {
-	var assignedId = document.getElementById("trialDTO.assignedIdentifier").value ;
+    var assignedId = document.getElementById("trialDTO.assignedIdentifier").value ;
     if (assignedId != '') {
         document.forms[0].action="updateTrialedit.action";
         document.forms[0].submit();
@@ -36,7 +36,7 @@ function editTrial() {
 
 }
 function printProtocol (){
-	var sOption="toolbar=no,location=no,directories=no,menubar=yes,";
+    var sOption="toolbar=no,location=no,directories=no,menubar=yes,";
     sOption+="scrollbars=yes,width=750,height=600,left=100,top=25";
 var sWinHTML = document.getElementById('contentprint').innerHTML;
 
@@ -51,12 +51,13 @@ var winprint=window.open("","",sOption);
 </script>
 <body>
 <div id="contentwide">
- <h1><fmt:message key="review.trial.view.page.title" /></h1>
+    <h1><fmt:message key="review.trial.view.page.title" /></h1>
+    <c:set var="topic" scope="request" value="edittrial"/>
 
 <div class="box">
     <s:form > <s:actionerror/>
     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
-	<s:hidden name="pageFrom" id="pageFrom"/>
+    <s:hidden name="pageFrom" id="pageFrom"/>
     <div id="contentprint">
     <table class="form">
          <tr>
@@ -101,10 +102,10 @@ var winprint=window.open("","",sOption);
                 </td>
           </tr>
           <c:if test="${trialDTO.primaryPurposeCode == 'Other'}">
-              <tr>     
+              <tr>
                     <td scope="row" class="label">
                         <label for="Other Purpose Text">
-                            <fmt:message key="view.trial.otherPurposeText"/>                
+                            <fmt:message key="view.trial.otherPurposeText"/>
                         </label>
                     </td>
                     <td class="value">

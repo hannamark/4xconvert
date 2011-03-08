@@ -2,18 +2,19 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-        <title>Register with exisiting grid account</title>
+        <title>Register with existing grid account</title>
         <s:head/>
     </head>
-    
+
     <SCRIPT LANGUAGE="JavaScript">
-        function handleAction(){   
+        function handleAction(){
             document.forms[0].page.value = "Submit";
             document.forms[0].action="registerUserregisterExistingGridAccount.action";
-            document.forms[0].submit();  
+            document.forms[0].submit();
         }
     </SCRIPT>
     <body>
+        <c:set var="topic" scope="request" value="register"/>
         <div class="box">
             <h1>Register</h1>
             <s:form name="existingAccount" method="POST">
@@ -55,7 +56,7 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">
                             <li>
-                                <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="login">Submit</span></span></s:a>  
+                                <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="login">Submit</span></span></s:a>
                             </li>
                         </ul>
                     </del>
