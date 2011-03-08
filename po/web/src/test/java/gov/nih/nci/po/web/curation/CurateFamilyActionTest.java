@@ -83,10 +83,11 @@
 package gov.nih.nci.po.web.curation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.web.AbstractPoTest;
-import gov.nih.nci.po.web.curation.CurateFamilyAction;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -108,6 +109,32 @@ public class CurateFamilyActionTest extends AbstractPoTest {
     @Before
     public void setUp() {
         action = new CurateFamilyAction();
+    }
+
+
+    @Test
+    public void testPrepareNoRootKey() throws Exception {
+        Family initial = action.getFamily();
+        action.prepare();
+        assertSame(initial, action.getFamily());
+    }
+
+    @Test
+    public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
+        action.setRootKey("foo");
+        getSession().clearAttributes();
+        action.prepare();
+        assertNull(action.getFamily());
+    }
+
+    @Test
+    public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
+        Family family = new Family();
+        String rootKey = "foo";
+        getSession().setAttribute(rootKey, family);
+        action.setRootKey(rootKey);
+        action.prepare();
+        assertSame(family, action.getFamily());
     }
 
     @Test

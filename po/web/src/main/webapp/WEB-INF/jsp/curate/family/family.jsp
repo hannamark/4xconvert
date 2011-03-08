@@ -38,6 +38,7 @@
             <po:inputRowElement><po:field labelKey="family.statusCode">${family.statusCode}</po:field></po:inputRowElement>
         </s:if>
         <s:else>
+            <s:hidden key="rootKey" id="rootKey"/>
             <s:hidden key="family.id"/>
             <po:inputRow>
             <po:inputRowElement><po:field labelKey="family.id">${family.id}</po:field></po:inputRowElement>
@@ -57,10 +58,10 @@
                    onchange="handleEndDateDiv();"
                    id="familyEntityForm.family.statusCode"/>
         </s:else>
+            <s:textfield key="family.name" required="true" cssClass="required" size="70"/>
             <po:field labelKey="family.startDate" fieldRequired="true">
                 <sj:datepicker required="true" name="family.startDate" displayFormat="mm/dd/yy" />
             </po:field>
-            <s:textfield key="family.name" required="true" cssClass="required" size="70"/>
             
             <div id="endDateDiv" <s:if test="family.statusCode != @gov.nih.nci.po.data.bo.FamilyStatus@NULLIFIED">style="display:none;"</s:if>>
                     <script type="text/javascript">

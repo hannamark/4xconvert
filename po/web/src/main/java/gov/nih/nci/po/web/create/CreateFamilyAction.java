@@ -1,9 +1,9 @@
 package gov.nih.nci.po.web.create;
 
-import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.curation.CurateFamilyAction;
 
 import java.util.Date;
 import java.util.Set;
@@ -11,31 +11,14 @@ import java.util.Set;
 import org.apache.commons.collections.set.ListOrderedSet;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * Action class to handle the creation of Family entities.
  */
-public class CreateFamilyAction extends ActionSupport {
+public class CreateFamilyAction extends CurateFamilyAction {
     private static final long serialVersionUID = 1L;
-
-    private Family family = new Family();
-
-    /**
-     * @return the family
-     */
-    public Family getFamily() {
-        return family;
-    }
-
-    /**
-     * @param family the family to set
-     */
-    public void setFamily(Family family) {
-        this.family = family;
-    }
 
     /**
      * @return show start page
@@ -54,7 +37,7 @@ public class CreateFamilyAction extends ActionSupport {
     public String save() throws EntityValidationException {
         long familyId = PoRegistry.getFamilyService().create(getFamily());
         setFamily(PoRegistry.getFamilyService().getById(familyId));
-        ActionHelper.saveMessage(getText("family.create.success", new String[] {family.getName()}));
+        ActionHelper.saveMessage(getText("family.create.success", new String[] {getFamily().getName()}));
         return SUCCESS;
     }
 

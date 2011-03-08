@@ -5,6 +5,7 @@ import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,24 +15,37 @@ import org.apache.commons.collections.set.ListOrderedSet;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * Action class to handle editing of Family entities.
  */
-public class CurateFamilyAction extends ActionSupport {
+public class CurateFamilyAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1285712121733778829L;
 
     private Family family = new Family();
     private List<FamilyOrganizationRelationship> familyOrganizationRelationships =
         new ArrayList<FamilyOrganizationRelationship>();
+    private String rootKey;
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public void prepare() throws Exception {
+        if (getRootKey() != null) {
+            setFamily((Family) PoHttpSessionUtil.getSession().getAttribute(getRootKey()));
+        }
+    }
 
     /**
      * @return show start page
      */
     public String start() {
-        family = PoRegistry.getFamilyService().getById(family.getId());
+        setFamily(PoRegistry.getFamilyService().getById(getFamily().getId()));
+        setRootKey(PoHttpSessionUtil.addAttribute(getFamily()));
         initializeCollections();
         return SUCCESS;
     }
@@ -96,5 +110,19 @@ public class CurateFamilyAction extends ActionSupport {
     public void setFamilyOrganizationRelationships(
             List<FamilyOrganizationRelationship> familyOrganizationRelationships) {
         this.familyOrganizationRelationships = familyOrganizationRelationships;
+    }
+
+    /**
+     * @return the rootKey
+     */
+    public String getRootKey() {
+        return rootKey;
+    }
+
+    /**
+     * @param rootKey the rootKey to set
+     */
+    public void setRootKey(String rootKey) {
+        this.rootKey = rootKey;
     }
 }
