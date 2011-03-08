@@ -45,7 +45,7 @@ function handleCreateGroup(){
 
 <body>
 <h1><fmt:message key="arms.details.title" /></h1>
-<c:set var="topic" scope="request" value="abstract_arms"/>
+<c:set var="topic" scope="request" value="abstractarms"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box"><pa:sucessMessage /> <s:if
     test="hasActionErrors()">

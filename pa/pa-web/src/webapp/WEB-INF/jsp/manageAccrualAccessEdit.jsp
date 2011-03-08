@@ -70,7 +70,7 @@
 </head>
 <body>
 <h1><fmt:message key="manageAccrualAccess.title" /></h1>
-<c:set var="topic" scope="request" value="accrual_edit"/>
+<c:set var="topic" scope="request" value="accrualedit"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
     <pa:sucessMessage /> 

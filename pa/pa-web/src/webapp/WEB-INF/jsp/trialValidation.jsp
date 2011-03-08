@@ -102,7 +102,7 @@
     
 </head>
 <body>
-<c:set var="topic" scope="request" value="validate_trial"/>
+<c:set var="topic" scope="request" value="validatetrial"/>
     <h1><fmt:message key="trialValidation.page.title" /></h1>
     <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
     <div class="box" >

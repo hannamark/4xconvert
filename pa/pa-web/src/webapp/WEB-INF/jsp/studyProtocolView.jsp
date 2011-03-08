@@ -31,7 +31,7 @@
 </head>
 
 <body>
- <c:set var="topic" scope="request" value="trial_details"/>
+ <c:set var="topic" scope="request" value="trialdetails"/>
 <!-- <div id="contentwide"> -->
  <h1>Trial Identification</h1>
 

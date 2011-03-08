@@ -30,7 +30,7 @@ function handleAction(){
 </SCRIPT>
 
 <body>
-<c:set var="topic" scope="request" value="trial_history"/>
+<c:set var="topic" scope="request" value="trialhistory"/>
  <h1><fmt:message key="trialHistory.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  

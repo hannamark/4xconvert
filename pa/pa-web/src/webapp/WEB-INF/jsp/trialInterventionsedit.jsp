@@ -120,7 +120,7 @@
 <body>
 <!-- <div id="contentwide"> -->
 <h1><fmt:message key="interventions.details.title" /></h1>
-<c:set var="topic" scope="request" value="abstract_interventions"/>
+<c:set var="topic" scope="request" value="abstractinterventions"/>
 <!--Help Content-->
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />

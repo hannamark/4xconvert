@@ -102,7 +102,7 @@
 <body>
 <!-- <div id="contentwide"> -->
 <h1><fmt:message key="participatingOrganizations.subtitle" /></h1>
-<c:set var="topic" scope="request" value="abstract_site"/>
+<c:set var="topic" scope="request" value="abstractsite"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <s:form name="proprietarySite">
 

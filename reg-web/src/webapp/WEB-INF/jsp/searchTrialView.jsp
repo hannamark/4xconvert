@@ -10,20 +10,20 @@
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
     <script type="text/javascript">
     function tooltip() {
-		BubbleTips.activateTipOn("acronym");
-		BubbleTips.activateTipOn("dfn");
-	}
-	function handleBackAction(){
-	 document.forms[0].action="searchTrialquery.action";
+        BubbleTips.activateTipOn("acronym");
+        BubbleTips.activateTipOn("dfn");
+    }
+    function handleBackAction(){
+     document.forms[0].action="searchTrialquery.action";
      document.forms[0].submit();
 }
-	</SCRIPT>
+    </SCRIPT>
 </head>
 
 <body onload="setFocusToFirstControl();">
 <div id="contentwide">
  <h1><fmt:message key="search.trial.view.page.title" /></h1>
- <c:set var="topic" scope="request" value="view_result"/>
+ <c:set var="topic" scope="request" value="viewresult"/>
 
   <div class="box">
      <c:if test="${param.trialAction == 'submit'}">
@@ -46,12 +46,12 @@
           <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
                     || requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'}">
                          ${requestScope.assignedIdentifier}
-			</c:if>
+            </c:if>
            was successfully submitted.</strong>
         </div>
      </c:if>
     <s:form > <s:actionerror/>
-    	 <s:hidden name="criteria.identifierType" />
+         <s:hidden name="criteria.identifierType" />
         <s:hidden name="criteria.identifier" />
         <s:hidden name="criteria.officialTitle" />
         <s:hidden name="criteria.organizationId" />
@@ -190,17 +190,17 @@
                 </td>
             </tr>
         </c:if>
-    	  <tr>
-    	  	<th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>
-    	  </tr>
           <tr>
-            	<td scope="row" class="label">
-                	<label for="officialTitle">
-                    	<fmt:message key="view.trial.title"/>
+              <th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>
+          </tr>
+          <tr>
+                <td scope="row" class="label">
+                    <label for="officialTitle">
+                        <fmt:message key="view.trial.title"/>
                     </label>
                 </td>
                 <td class="value">
-                 	<c:out value="${requestScope.trialSummary.officialTitle.value }"/>
+                     <c:out value="${requestScope.trialSummary.officialTitle.value }"/>
                 </td>
           </tr>
           <tr>
@@ -214,16 +214,16 @@
                 </td>
           </tr>
           <c:if test="${requestScope.trialDTO.phaseAdditionalQualifier != null }">
-	          <tr>
-	                <td scope="row" class="label">
-	                    <label for="Other Phase Text">
-	                        <fmt:message key="view.trial.otherPhaseText"/>
-	                        </label>
-	                </td>
-	                <td class="value">
-	                    <c:out value="${requestScope.trialDTO.phaseAdditionalQualifier }"/>
-	                </td>
-	          </tr>
+              <tr>
+                    <td scope="row" class="label">
+                        <label for="Other Phase Text">
+                            <fmt:message key="view.trial.otherPhaseText"/>
+                            </label>
+                    </td>
+                    <td class="value">
+                        <c:out value="${requestScope.trialDTO.phaseAdditionalQualifier }"/>
+                    </td>
+              </tr>
           </c:if>
           <c:if test= "${requestScope.trialDTO.trialType != null} ">
           <tr>
@@ -238,20 +238,20 @@
           </tr>
           </c:if>
           <tr>
-          		<td scope="row" class="label">
-          			<label for="Primary Purpose">
-          				<fmt:message key="view.trial.primaryPurpose"/>
-          			</label>
-          		</td>
-          		<td class="value">
-          			<c:out value="${requestScope.trialSummary.primaryPurposeCode.code }"/>
-          		</td>
+                  <td scope="row" class="label">
+                      <label for="Primary Purpose">
+                          <fmt:message key="view.trial.primaryPurpose"/>
+                      </label>
+                  </td>
+                  <td class="value">
+                      <c:out value="${requestScope.trialSummary.primaryPurposeCode.code }"/>
+                  </td>
           </tr>
           <c:if test="${trialDTO.primaryPurposeCode == 'Other'}">
-              <tr>     
+              <tr>
                     <td scope="row" class="label">
                         <label for="Other Purpose Text">
-                            <fmt:message key="view.trial.otherPurposeText"/>                
+                            <fmt:message key="view.trial.otherPurposeText"/>
                         </label>
                     </td>
                     <td class="value">
@@ -261,20 +261,20 @@
           </c:if>
 
           <tr>
-          	<td colspan="2" class="space">&nbsp;</td>
+              <td colspan="2" class="space">&nbsp;</td>
           </tr>
           <tr>
             <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
                 || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
-          	<th colspan="2"><fmt:message key="view.trial.leadOrgInvestigator"/></th>
-          	</c:if>
-          	<c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null
+              <th colspan="2"><fmt:message key="view.trial.leadOrgInvestigator"/></th>
+              </c:if>
+              <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null
                 && requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'}">
             <th colspan="2"><fmt:message key="view.trial.leadOrganization"/></th>
             </c:if>
           </tr>
           <tr>
-        	<td scope="row" class="label">
+            <td scope="row" class="label">
             <label for="Lead Organization">
                 <fmt:message key="view.trial.leadOrganization"/>
             </label>
@@ -293,78 +293,78 @@
       <c:if test="${(requestScope.trialSummary.proprietaryTrialIndicator == null
         || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false')}">
        <tr>
-      		<td scope="row" class="label">
-      			<label for="Principal Investigator">
-      			<fmt:message key="view.trial.principalInvestigator"/>
-              	</label>
+              <td scope="row" class="label">
+                  <label for="Principal Investigator">
+                  <fmt:message key="view.trial.principalInvestigator"/>
+                  </label>
               </td>
-         	 <td class="value">
-         		<c:out value="${requestScope.trialDTO.piName }"/>
-         		</td>
+              <td class="value">
+                 <c:out value="${requestScope.trialDTO.piName }"/>
+                 </td>
        </tr>
        </c:if>
        <tr>
             <td colspan="2" class="space">&nbsp;</td>
        </tr>
        <c:if test="${requestScope.sponsor != null}">
-	       <tr>
-	            <th colspan="2"><fmt:message key="view.trial.sponsorResParty"/></th>
-	          </tr>
-	          <tr>
-	            <td scope="row" class="label">
-	            <label for="Sponsor">
-	                <fmt:message key="view.trial.sponsor"/>
-	            </label>
-	            </td>
-	             <td class="value">
-	                <c:out value="${requestScope.sponsor }"/>
-	             </td>
-	       </tr>
-	       <tr>
-	            <td scope="row" class="label">
-	            <label for="Responsible Party">
-	                <fmt:message key="view.trial.respParty"/>
-	            </label>
-	            </td>
-	             <td class="value">
-	                <c:out value="${requestScope.respParty}"/>
-	             </td>
-	       </tr>
-	       <c:if test="${requestScope.respPartyContact != null}">
-		       <tr>
-		            <td scope="row" class="label">
-		            <label for="Responsible Party Contact">
-		                <fmt:message key="view.trial.respPartyContact"/>
-		            </label>
-		            </td>
-		             <td class="value">
-		                <c:out value="${requestScope.respPartyContact}"/>
-		             </td>
-		       </tr>
-	       </c:if>
-	       <tr>
+           <tr>
+                <th colspan="2"><fmt:message key="view.trial.sponsorResParty"/></th>
+              </tr>
+              <tr>
                 <td scope="row" class="label">
-	            <label for="Email Address">
-	                <fmt:message key="view.trial.respPartyEmailAddr"/>
-	            </label>
-	            </td>
-	             <td class="value">
-	                <c:out value="${requestScope.respPartyEmailAddr}"/>
-	             </td>
-	       </tr>
-	              <tr>
-	            <td scope="row" class="label">
-	            <label for="Phone">
-	                <fmt:message key="view.trial.respPartyPhone"/>
-	            </label>
-	            </td>
-	             <td class="value">
-	                <c:out value="${requestScope.respPartyPhone}"/>
-	             </td>
-	       </tr>
-	       <tr>
-	     		<td colspan="2" class="space">&nbsp;</td>
-	       </tr>
+                <label for="Sponsor">
+                    <fmt:message key="view.trial.sponsor"/>
+                </label>
+                </td>
+                 <td class="value">
+                    <c:out value="${requestScope.sponsor }"/>
+                 </td>
+           </tr>
+           <tr>
+                <td scope="row" class="label">
+                <label for="Responsible Party">
+                    <fmt:message key="view.trial.respParty"/>
+                </label>
+                </td>
+                 <td class="value">
+                    <c:out value="${requestScope.respParty}"/>
+                 </td>
+           </tr>
+           <c:if test="${requestScope.respPartyContact != null}">
+               <tr>
+                    <td scope="row" class="label">
+                    <label for="Responsible Party Contact">
+                        <fmt:message key="view.trial.respPartyContact"/>
+                    </label>
+                    </td>
+                     <td class="value">
+                        <c:out value="${requestScope.respPartyContact}"/>
+                     </td>
+               </tr>
+           </c:if>
+           <tr>
+                <td scope="row" class="label">
+                <label for="Email Address">
+                    <fmt:message key="view.trial.respPartyEmailAddr"/>
+                </label>
+                </td>
+                 <td class="value">
+                    <c:out value="${requestScope.respPartyEmailAddr}"/>
+                 </td>
+           </tr>
+                  <tr>
+                <td scope="row" class="label">
+                <label for="Phone">
+                    <fmt:message key="view.trial.respPartyPhone"/>
+                </label>
+                </td>
+                 <td class="value">
+                    <c:out value="${requestScope.respPartyPhone}"/>
+                 </td>
+           </tr>
+           <tr>
+                 <td colspan="2" class="space">&nbsp;</td>
+           </tr>
        </c:if>
 
        <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null
@@ -462,29 +462,29 @@
           <th colspan="2"><fmt:message key="view.trial.statusDates"/></th>
       </tr>
       <tr>
-    	<td scope="row" class="label">
+        <td scope="row" class="label">
         <label for="Current Trial Status">
             <fmt:message key="view.trial.currentTrialStatus"/>
         </label>
        </td>
-       	 <td class="value">
-       		<c:out value="${requestScope.trialDTO.statusCode}"/>
+            <td class="value">
+               <c:out value="${requestScope.trialDTO.statusCode}"/>
          </td>
       </tr>
       <c:if test="${requestScope.trialDTO.reason != null}">
-	      <tr>
-	        <td scope="row" class="label">
-	        <label for="Trial Status Reason">
-	            <fmt:message key="view.trial.trialStatusReason"/>
-	        </label>
-	       </td>
-	         <td class="value">
-	            <c:out value="${requestScope.trialDTO.reason}"/>
-	         </td>
-	      </tr>
+          <tr>
+            <td scope="row" class="label">
+            <label for="Trial Status Reason">
+                <fmt:message key="view.trial.trialStatusReason"/>
+            </label>
+           </td>
+             <td class="value">
+                <c:out value="${requestScope.trialDTO.reason}"/>
+             </td>
+          </tr>
       </c:if>
       <tr>
-      	<td scope="row" class="label">
+          <td scope="row" class="label">
           <label for="Current Trial Status Date">
               <fmt:message key="view.trial.currentTrialStatusDate"/>
           </label>
@@ -500,7 +500,7 @@
               </label>
           </td>
           <td class="value">
-          	   <c:out value="${requestScope.trialDTO.startDate }"/>
+                 <c:out value="${requestScope.trialDTO.startDate }"/>
                <c:out value="${requestScope.trialDTO.startDateType }"/>
           </td>
        </tr>
@@ -511,25 +511,25 @@
             </label>
         </td>
         <td class="value">
-        	 <c:out value="${requestScope.trialDTO.completionDate }"/>
+             <c:out value="${requestScope.trialDTO.completionDate }"/>
              <c:out value="${requestScope.trialDTO.completionDateType }"/>
         </td>
       </tr>
       </c:if>
      </table>
      <c:if test="${requestScope.studyIndIde != null}">
-     	<div class="box">
-     			<h3>FDA IND/IDE Information for applicable trials</h3>
-     			<jsp:include page="/WEB-INF/jsp/searchTrialViewIndIde.jsp"/>
-		</div>
-		</c:if>
-		<c:if test="${requestScope.trialFundingList != null}">
-        	<div class="box">
-    			<h3>NIH Grant Information (for NIH funded Trials)</h3>
-    			<jsp:include page="/WEB-INF/jsp/searchTrialViewGrants.jsp"/>
-			</div>
-		</c:if>
-		<c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
+         <div class="box">
+                 <h3>FDA IND/IDE Information for applicable trials</h3>
+                 <jsp:include page="/WEB-INF/jsp/searchTrialViewIndIde.jsp"/>
+        </div>
+        </c:if>
+        <c:if test="${requestScope.trialFundingList != null}">
+            <div class="box">
+                <h3>NIH Grant Information (for NIH funded Trials)</h3>
+                <jsp:include page="/WEB-INF/jsp/searchTrialViewGrants.jsp"/>
+            </div>
+        </c:if>
+        <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
         || fn:trim(requestScope.trialSummary.proprietaryTrialIndicator.value) == 'false'
         && requestScope.trialDTO.xmlRequired == true}">
         <table class="form">
@@ -575,17 +575,17 @@
      </tr>
       </table>
       </c:if>
-		<c:if test="${requestScope.protocolDocument != null}">
-			<div class="box">
-				<h3>Trial Related Documents</h3>
-				<jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
-			</div>
-		</c:if>
+        <c:if test="${requestScope.protocolDocument != null}">
+            <div class="box">
+                <h3>Trial Related Documents</h3>
+                <jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
+            </div>
+        </c:if>
 
-		<div class="actionsrow">
-		<del class="btnwrapper">
-        	<ul class="btnrow">
-            	<li><a href="#"
+        <div class="actionsrow">
+        <del class="btnwrapper">
+            <ul class="btnrow">
+                <li><a href="#"
                     class="btn" onclick="handleBackAction();this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
             </ul>
         </del>

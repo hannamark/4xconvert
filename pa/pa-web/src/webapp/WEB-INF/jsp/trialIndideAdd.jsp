@@ -146,10 +146,10 @@ function SelectSubCat(i){
 
 <body>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
-<c:set var="topic" scope="request" value="review_ind"/>
+<c:set var="topic" scope="request" value="reviewind"/>
 </c:if>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  != 'Submitted'}">
-<c:set var="topic" scope="request" value="abstract_ind"/>
+<c:set var="topic" scope="request" value="abstractind"/>
 </c:if>
  <h1><fmt:message key="trialIndide.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>

@@ -51,7 +51,7 @@ function resetValues(){
 <!-- main content begins-->
 
     <h1><fmt:message key="studyProtocol.search.header"/></h1>
-    <c:set var="topic" scope="request" value="search_trial"/>
+    <c:set var="topic" scope="request" value="searchtrial"/>
     <div class="filter_checkbox"><input type="checkbox" name="checkbox" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Hide Search Fields</label></div>
     <div class="box" id="filters">
     <s:form>

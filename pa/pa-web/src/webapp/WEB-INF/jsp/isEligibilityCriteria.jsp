@@ -38,7 +38,7 @@ BubbleTips.activateTipOn("dfn");
 }
 </SCRIPT>
 <body>
-<c:set var="topic" scope="request" value="abstract_eligibility"/>
+<c:set var="topic" scope="request" value="abstracteligibility"/>
  <h1>
  <c:choose>
      <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">

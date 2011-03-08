@@ -8,7 +8,7 @@
 <!-- main content begins-->
 <!-- <div id="contentwide"> -->
 <h1><fmt:message key="regulatory.title" /></h1>
-<c:set var="topic" scope="request" value="abstract_regulatory"/>
+<c:set var="topic" scope="request" value="abstractregulatory"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
 <h2><fmt:message key="regulatory.title" /></h2>

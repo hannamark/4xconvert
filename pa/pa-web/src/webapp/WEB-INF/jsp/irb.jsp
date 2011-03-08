@@ -110,7 +110,7 @@ function showRow(row){
 </head>
 <body>
 <h1><fmt:message key="irb.main.title" /></h1>
-<c:set var="topic" scope="request" value="abstract_safety"/>
+<c:set var="topic" scope="request" value="abstractsafety"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
     <pa:sucessMessage />

@@ -39,7 +39,7 @@ function handleCreate(){
 
 <body>
 <h1><fmt:message key="participatingOrganizations.collaborators.title" /></h1>
-<c:set var="topic" scope="request" value="abstract_collaborator"/>
+<c:set var="topic" scope="request" value="abstractcollaborator"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box"><pa:sucessMessage /> <s:if
 	test="hasActionErrors()">

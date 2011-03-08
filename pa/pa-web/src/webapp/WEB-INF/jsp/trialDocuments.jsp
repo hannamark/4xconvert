@@ -17,10 +17,10 @@ function callOnloadFunctions(){
 </SCRIPT>
  <body>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
-<c:set var="topic" scope="request" value="review_docs"/>
+<c:set var="topic" scope="request" value="reviewdocs"/>
 </c:if>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  != 'Submitted'}">
-<c:set var="topic" scope="request" value="abstract_docs"/>
+<c:set var="topic" scope="request" value="abstractdocs"/>
 </c:if>
  <h1><fmt:message key="trialDocument.title"/></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>

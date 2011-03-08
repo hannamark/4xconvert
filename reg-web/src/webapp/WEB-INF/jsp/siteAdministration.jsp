@@ -40,7 +40,7 @@ function updateUserOrgType(regUserId) {
 </SCRIPT>
 <body>
 <!-- main content begins-->
-<c:set var="topic" scope="request" value="site_administration"/>
+<c:set var="topic" scope="request" value="siteadmin"/>
 <h1><fmt:message key="siteadministration.page.header"/></h1>
 <div class="box" id="filters">
     <reg-web:failureMessage/>

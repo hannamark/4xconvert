@@ -20,7 +20,7 @@
     </head>
     <body>
         <h1><fmt:message key="plannedMarker.details.title"/></h1>
-        <c:set var="topic" scope="request" value="planned_marker"/>
+        <c:set var="topic" scope="request" value="plannedmarker"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
         <div class="box">
             <pa:sucessMessage/>
@@ -41,8 +41,8 @@
                                 <display:column escapeXml="true" property="assayPurpose" sortable="true" titleKey="plannedMarker.assayPurpose" headerClass="sortable"/>
                                 <display:column escapeXml="true" property="tissueCollectionMethod" sortable="true" titleKey="plannedMarker.tissueCollectionMethod" headerClass="sortable"/>
                                 <display:column escapeXml="true" property="status" sortable="true" titleKey="plannedMarker.status" headerClass="sortable" />
-                                <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null 
-                                    && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy) 
+                                <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null
+                                    && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                                     || (sessionScope.role == 'SuAbstractor')}">
                                     <display:column titleKey="plannedMarker.edit" headerClass="centered" class="action">
                                         <s:url id="editUrl" namespace="/protected" action="plannedMarker" method="edit">
@@ -68,7 +68,7 @@
                 <div class="actionsrow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
-                            <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null 
+                            <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null
                                 && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                                 || (sessionScope.role == 'SuAbstractor')}">
                                 <li>

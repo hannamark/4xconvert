@@ -45,7 +45,7 @@ function updateTrial(trialId) {
 </SCRIPT>
 <body>
 <!-- main content begins-->
-<c:set var="topic" scope="request" value="manage_user_trial_ownership"/>
+<c:set var="topic" scope="request" value="manageownership"/>
 <h1><fmt:message key="managetrialownership.page.header"/></h1>
 <div class="box" id="filters">
     <reg-web:failureMessage/>

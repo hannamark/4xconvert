@@ -20,26 +20,26 @@
                 toggleHugoCode();
             }
             function toggleHugoCode() {
-            	if ($('foundInHugo').value == 'true') {
+                if ($('foundInHugo').value == 'true') {
                     $('hugoCodeRow').show();
                 } else {
                     $('hugoCodeRow').hide();
                 }
             }
-            
+
             function toggleAssayTypeOtherText() {
-            	if ($('assayType').value == 'Other') {
+                if ($('assayType').value == 'Other') {
                     $('assayTypeOtherTextRow').show();
                 } else {
                     $('assayTypeOtherTextRow').hide();
                 }
             }
             function toggleAssayPurposeOtherText() {
-            	if ($('assayPurpose').value == 'Other') {
-            		$('assayPurposeOtherTextRow').show();
-            	} else {
-            		$('assayPurposeOtherTextRow').hide();
-            	}	
+                if ($('assayPurpose').value == 'Other') {
+                    $('assayPurposeOtherTextRow').show();
+                } else {
+                    $('assayPurposeOtherTextRow').hide();
+                }
             }
             function cadsrLookup(){
                 showPopWin('${lookupUrl}', 1200, 600, '', 'Marker Search in caDSR');
@@ -48,38 +48,38 @@
                 window.top.hidePopWin(true);
                 var url = '/pa/protected/ajaxptpPlannedMarkerdisplaySelectedCDE.action?cdeId='+markerId;
                 var div = $('plannedMarkerDetails');
-                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
                 var aj = new Ajax.Updater(div, url, {
                    asynchronous: true,
                    method: 'get',
                    evalScripts: false
                 });
-            }      
+            }
             function loadMarkerWithRequestedCDE(markerName, foundInHugo, hugoCode) {
-            	window.top.hidePopWin(true);
-            	var url = '/pa/protected/ajaxptpPlannedMarkerdisplayRequestedCDE.action?plannedMarker.name='+ markerName
-            			+ '&plannedMarker.hugoCode=' + hugoCode + '&plannedMarker.foundInHugo=' + foundInHugo;
+                window.top.hidePopWin(true);
+                var url = '/pa/protected/ajaxptpPlannedMarkerdisplayRequestedCDE.action?plannedMarker.name='+ markerName
+                        + '&plannedMarker.hugoCode=' + hugoCode + '&plannedMarker.foundInHugo=' + foundInHugo;
                 var div = $('plannedMarkerDetails');
-                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
                 var aj = new Ajax.Updater(div, url, {
                    asynchronous: true,
                    method: 'get',
                    evalScripts: false,
                    onComplete: function(transport) {
-                	   toggleHugoCode();
+                       toggleHugoCode();
                    }
                 });
             }
-            
+
         </script>
     </head>
     <body>
         <h1><fmt:message key="plannedMarker.details.title" /></h1>
-        <c:set var="topic" scope="request" value="planned_marker"/>
+        <c:set var="topic" scope="request" value="plannedmarker"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
         <s:url id="cancelUrl" namespace="/protected" action="plannedMarker"/>
         <div class="box">
-            <pa:sucessMessage /> 
+            <pa:sucessMessage />
             <s:if test="hasActionErrors()">
                 <div class="error_msg"><s:actionerror/></div>
             </s:if>

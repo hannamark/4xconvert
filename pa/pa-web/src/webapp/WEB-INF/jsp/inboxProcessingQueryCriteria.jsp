@@ -24,7 +24,7 @@ function callOnloadFunctions() {
 </SCRIPT>
 <body>
     <!-- main content begins-->
-    <c:set var="topic" scope="request" value="inbox_access"/>
+    <c:set var="topic" scope="request" value="inboxaccess"/>
     <jsp:include page="/WEB-INF/jsp/pendingAdminUserResults.jsp"/>
 </body>
 </html>

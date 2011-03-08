@@ -53,7 +53,7 @@ function acceptTrialUpdate(id) {
 </head>
 <body>
     <h1><fmt:message key="trialHistory.title"/></h1>
-    <c:set var="topic" scope="request" value="trial_history"/>
+    <c:set var="topic" scope="request" value="trialhistory"/>
     <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
     <div class="box">
         <pa:sucessMessage />

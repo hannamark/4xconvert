@@ -30,12 +30,12 @@ function viewPagination() {
     document.getElementById('viewPagination').style.display='';
     document.getElementById('viewAll').style.display='none';
 }
-     
+
 
 </SCRIPT>
 <body>
 <!-- main content begins-->
-<c:set var="topic" scope="request" value="display_trial_ownership"/>
+<c:set var="topic" scope="request" value="displayownership"/>
 <h1><fmt:message key="displaytrialownership.page.header"/></h1>
 <div class="box" id="filters">
     <reg-web:failureMessage/>

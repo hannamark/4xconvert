@@ -24,7 +24,7 @@
 </SCRIPT>
 
 <body>
-<c:set var="topic" scope="request" value="abstract_outcome"/>
+<c:set var="topic" scope="request" value="abstractoutcome"/>
  <h1><c:choose>
      <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
      <fmt:message key="osdesign.outcome.title"/>

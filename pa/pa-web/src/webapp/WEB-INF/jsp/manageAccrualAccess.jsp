@@ -28,7 +28,7 @@ function handleEdit(rowId){
 </head>
 <body>
 <h1><fmt:message key="manageAccrualAccess.title"/></h1>
-<c:set var="topic" scope="request" value="accrual_access"/>
+<c:set var="topic" scope="request" value="accrualaccess"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
     <pa:sucessMessage />

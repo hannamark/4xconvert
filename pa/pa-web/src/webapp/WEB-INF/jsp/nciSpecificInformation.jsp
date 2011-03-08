@@ -54,7 +54,7 @@ function setorgid(orgid){
 </head>
 <body>
 <h1><fmt:message key="nciSpecificInformation.title" /></h1>
-<c:set var="topic" scope="request" value="abstract_nci"/>
+<c:set var="topic" scope="request" value="abstractnci"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">  
 <pa:sucessMessage/>

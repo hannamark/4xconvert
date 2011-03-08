@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <s:form name="sForm"><s:actionerror/>
-<c:set var="topic" scope="request" value="inbox_process"/>
+<c:set var="topic" scope="request" value="inboxprocess"/>
 <s:set name="records" value="records" scope="request"/>
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" id="row"
     name="records" export="false" defaultsort="1" defaultorder="descending">

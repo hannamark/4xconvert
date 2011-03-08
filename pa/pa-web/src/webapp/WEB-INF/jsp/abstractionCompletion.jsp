@@ -1,8 +1,8 @@
-<!DOCTYPE html PUBLIC 
+<!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
+
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
@@ -17,10 +17,10 @@
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 
-// this function is called from body onload in main.jsp (decorator) 
+// this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
-    // leave this function to prevent 'error on page' 
+    // leave this function to prevent 'error on page'
 }
 
 function generateReport(pid) {
@@ -33,7 +33,7 @@ function generateTSR() {
    document.aForm.target = "TSR";
    document.aForm.action = "/pa/protected/ajaxAbstractionCompletionviewTSR.action";
    document.aForm.submit();
-   
+
 }
 function generateTSRWord() {
   document.aForm.target = "TSR";
@@ -44,49 +44,48 @@ function generateTSRWord() {
 </SCRIPT>
 
 <body>
-<c:set  var="topic" scope="request" value="validate_abstract"/>
+<c:set var="topic" scope="request" value="validateabstract"/>
  <h1>Abstraction Validation</h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
-  <div class="box">  
+  <div class="box">
    <pa:sucessMessage/>
    <pa:failureMessage/>
-    <s:form name="aForm"><s:actionerror/>    
+    <s:form name="aForm"><s:actionerror/>
     <h2>
-    <s:if test="%{abstractionError==true}">                
+    <s:if test="%{abstractionError==true}">
         Abstraction validation failed. Please check error(s).
-    </s:if> 
-    <s:if test="%{abstractionError==false}">
-        Abstraction is valid.             
     </s:if>
-    
+    <s:if test="%{abstractionError==false}">
+        Abstraction is valid.
+    </s:if>
+
     </h2>
-    <s:if test="abstractionList != null">    
+    <s:if test="abstractionList != null">
     <s:set name="abstractionList" value="abstractionList" scope="request"/>
     <display:table name="abstractionList" id="row" class="data" sort="list"  pagesize="30" requestURI="abstractionCompletionquery.action" export="false">
-	    <display:column escapeXml="true" title="Type" property="errorType"  sortable="true" headerClass="sortable" />
-    	<display:column escapeXml="true" title="Description" property="errorDescription" sortable="true" headerClass="sortable" />
-	    <display:column escapeXml="true" title="Comment" property="comment" sortable="true" headerClass="sortable" />	
-	</display:table>
-	</s:if>
-	<div class="actionsrow">
+        <display:column escapeXml="true" title="Type" property="errorType"  sortable="true" headerClass="sortable" />
+        <display:column escapeXml="true" title="Description" property="errorDescription" sortable="true" headerClass="sortable" />
+        <display:column escapeXml="true" title="Comment" property="comment" sortable="true" headerClass="sortable" />
+    </display:table>
+    </s:if>
+    <div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
                 <s:if test="abstractionError == false">
                  <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                         <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>
-                    </c:if>                                  
+                    </c:if>
                    <!-- <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>
                     <li><a href="#"  class="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></a></li> -->
-                     <li><a href="#"  class="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></a></li>                                
+                     <li><a href="#"  class="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></a></li>
                 </s:if>
-            </ul>   
+            </ul>
         </del>
-    </div> 
+    </div>
 
-    
-                   
+
+
     </s:form>
    </div>
  </body>
  </html>
- 

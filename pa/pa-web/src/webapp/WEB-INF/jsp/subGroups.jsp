@@ -17,7 +17,7 @@ function callOnloadFunctions(){
 }
 </SCRIPT>
  <body>
-<c:set var="topic" scope="request" value="abstract_subgroups"/>
+<c:set var="topic" scope="request" value="abstractsubgroups"/>
  <h1><fmt:message key="subGroups.title"/></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
  <div class="box">

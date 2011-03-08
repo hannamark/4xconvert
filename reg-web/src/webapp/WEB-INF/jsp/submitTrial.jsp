@@ -309,7 +309,7 @@ function loadRegAuthoritiesDiv() {
 <body>
 <!-- main content begins-->
     <h1><fmt:message key="submit.trial.page.header"/></h1>
-    <c:set var="topic" scope="request" value="submit_trial"/>
+    <c:set var="topic" scope="request" value="submittrial"/>
     <div class="box" id="filters">
     <reg-web:failureMessage/>
         <s:form name="submitTrial" method="POST" enctype="multipart/form-data">
