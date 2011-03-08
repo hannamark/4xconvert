@@ -150,7 +150,8 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
 
     private void addFamilyMember(String famId, String organizationName) {
         clickAndWait("add_family_member_id_" + famId);
-
+        pause(2000);
+        clickAndWait("link=Search");
         selenium.selectFrame("popupFrame");
         waitForElementById("duplicateOrganizationForm_criteria_organization_name", 10);
         selenium.type("duplicateOrganizationForm_criteria_organization_name", organizationName);

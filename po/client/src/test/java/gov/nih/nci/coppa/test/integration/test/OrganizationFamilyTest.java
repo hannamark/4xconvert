@@ -167,6 +167,8 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
 
     private void addFamilyToOrg() {
         clickAndWait("link=Add");
+        pause(2000);
+        clickAndWait("link=Search");
         pause(10000);
         String familyId = getFamilyId();
         assertTrue(selenium.isElementPresent("select_family_" + familyId));
@@ -179,7 +181,6 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         assertTrue(selenium.isTextPresent(FAMILY_NAME));
         assertTrue(selenium.isTextPresent("Family Organization Relationship"));
         assertEquals(FUNCTIONAL_TYPE, selenium.getSelectedValue("name=familyOrgRelationship.functionalType"));
-        assertFalse(selenium.isElementPresent("link=Search Again"));
         assertTrue(selenium.isElementPresent("link=Save"));
         assertTrue(selenium.isElementPresent("link=Return to Family Information"));
         assertTrue(selenium.isTextPresent("Hierarchical Relationship to other Organizations within this Family"));
@@ -219,7 +220,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
     }
 
     private void verify() {
-        int row = getRowThatContainsText(FAMILY_NAME + " (" + FUNCTIONAL_TYPE + ")", 3);
+        int row = getRowThatContainsText(FAMILY_NAME + " (" + FUNCTIONAL_TYPE + ")", 2);
         if (row == -1) {
             fail("Did not find " + FAMILY_NAME + " in search results");
         }
@@ -240,7 +241,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         clickAndWait("edit_family_id_" + famId);
 
         clickAndWait("add_family_member_id_" + famId);
-
+        clickAndWait("link=Search");
         selenium.selectFrame("popupFrame");
         waitForElementById("duplicateOrganizationForm_criteria_organization_name", 10);
         selenium.type("duplicateOrganizationForm_criteria_organization_name", orgSearchName);

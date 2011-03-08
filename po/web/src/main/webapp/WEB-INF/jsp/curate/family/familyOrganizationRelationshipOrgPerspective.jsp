@@ -5,14 +5,7 @@
         <s:set name="isEdit" value="familyOrgRelationship.id != null"/>
         <c:url value="/protected/selector/family/list.action" var="searchUrl"/>
         <title><fmt:message key="familyOrgRelationship.details.title"/></title>
-        <script type="text/javascript">
-        Event.observe(window, 'load', function() {
-        	if ($('familyOrgRelationship.id').value == '' && $('selectedFamilyId').value == '') {
-        		showPopWin('${searchUrl}', 1000, 600, familySelectionCallback, false);
-        		$('famOrgRelationshipFamilyInfo').hide();
-        	}
-        });
-        
+        <script type="text/javascript">     
         function familySelectionCallback(returnValue) {
         	<c:url value="/protected/ajax/organization/family/relationship/loadFamilyInfo.action" var="loadFamilyUrl">
         	   <c:param name="rootKey" value="${rootKey}"/>
@@ -80,9 +73,7 @@
         </div>
         <div class="clear"></div>
         <div id="famOrgRelationshipFamilyInfo">
-            <s:if test="%{isEdit || familyOrgRelationship.family.id != null}">
-                <%@include file="familyOrgRelationshipFamilyInfo.jsp"%>
-            </s:if>
+            <%@include file="familyOrgRelationshipFamilyInfo.jsp"%>
         </div>
         <div class="box_outer">
             <div class="box_white">
