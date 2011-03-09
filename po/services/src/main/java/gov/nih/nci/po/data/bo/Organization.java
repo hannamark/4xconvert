@@ -82,12 +82,15 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.FamilyOrganizationRelationshipFamilyComparator;
 import gov.nih.nci.po.util.NotEmpty;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -104,6 +107,8 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.Valid;
 
@@ -141,8 +146,8 @@ public class Organization extends AbstractOrganization
     private Set<ClinicalResearchStaff> clinicalResearchStaff = new HashSet<ClinicalResearchStaff>();
     private Set<IdentifiedPerson> identifiedPersons = new HashSet<IdentifiedPerson>();
     private Set<HealthCareProvider> healthCareProviders = new HashSet<HealthCareProvider>();
-    private Set<FamilyOrganizationRelationship> familyOrganizationRelationships =
-        new HashSet<FamilyOrganizationRelationship>();
+    private SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships =
+        new TreeSet<FamilyOrganizationRelationship>(new FamilyOrganizationRelationshipFamilyComparator());
     private Set<OrganizationRelationship> organizationRelationships = new HashSet<OrganizationRelationship>();
 
     private String comments;
@@ -462,7 +467,8 @@ public class Organization extends AbstractOrganization
     @OneToMany(mappedBy = "organization")
     @Searchable(nested = true)
     @Where(clause = "endDate is null")
-    public Set<FamilyOrganizationRelationship> getFamilyOrganizationRelationships() {
+    @Sort(type = SortType.COMPARATOR, comparator = FamilyOrganizationRelationshipFamilyComparator.class)
+    public SortedSet<FamilyOrganizationRelationship> getFamilyOrganizationRelationships() {
         return familyOrganizationRelationships;
     }
 
@@ -471,7 +477,7 @@ public class Organization extends AbstractOrganization
      */
     @SuppressWarnings("unused")
     private void setFamilyOrganizationRelationships(
-            Set<FamilyOrganizationRelationship> familyOrganizationRelationships) {
+            SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships) {
         this.familyOrganizationRelationships = familyOrganizationRelationships;
     }
 
