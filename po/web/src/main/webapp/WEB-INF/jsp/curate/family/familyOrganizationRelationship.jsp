@@ -46,6 +46,14 @@
         		  });
         	 }
         }
+        function confirmThenSubmit() {
+        	var confirmation = ${isCreate} || 
+                $('familyOrgRelationshipForm.familyOrgRelationship.endDate').value.match(/^\s*$/) ||
+                confirm('<s:text name="organizationRelationship.save.confirmationMessage" />');
+            if (confirmation) {
+            	$('familyOrgRelationshipForm').submit();
+            }    
+        }    
         </script>
     </head>
     <body>
@@ -111,15 +119,18 @@
                                 </s:fielderror>
                             </po:field>
                         </po:inputRowElement>
-                        <po:inputRowElement>
-                            <po:field labelKey="familyOrgRelationship.endDate">
-                                <sj:datepicker name="familyOrgRelationship.endDate" 
-                                     displayFormat="mm/dd/yy"  labelposition="left"/>
-                                <s:fielderror>
-                                    <s:param>familyOrgRelationship.endDate</s:param>
-                                </s:fielderror>
-                            </po:field>
-                        </po:inputRowElement>
+                        <s:if test="%{isEdit}" >
+                            <po:inputRowElement>
+                                <po:field labelKey="familyOrgRelationship.endDate">
+                                    <sj:datepicker name="familyOrgRelationship.endDate" 
+                                         displayFormat="mm/dd/yy"  labelposition="left" 
+                                         id="familyOrgRelationshipForm.familyOrgRelationship.endDate"/>
+                                    <s:fielderror>
+                                        <s:param>familyOrgRelationship.endDate</s:param>
+                                    </s:fielderror>
+                                </po:field>
+                            </po:inputRowElement>
+                        </s:if>
                     </po:inputRow>
                 </s:form>
             </div>
@@ -127,7 +138,7 @@
         <div class="clear"></div> 
         <div class="btnwrapper" style="margin-bottom:20px;">
             <po:buttonRow>
-                <po:button id="save_button" href="javascript://noop/" onclick="$('familyOrgRelationshipForm').submit();" style="save" text="Save"/>
+                <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit();" style="save" text="Save"/>
                 <c:url var="cancelUrl" value="/protected/family/curate/start.action">
                     <c:param name="family.id" value="${familyOrgRelationship.family.id}"/>
                 </c:url>
