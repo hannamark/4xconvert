@@ -62,7 +62,7 @@ function handleCreate(){
                 <display:column escapeXml="true" property="description" sortable="true" titleKey="interventions.description" headerClass="sortable" />
                 <display:column escapeXml="true" property="type" sortable="true" titleKey="interventions.type" headerClass="sortable"  />
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                					|| (sessionScope.role == 'SuAbstractor')}">
+                                    || (sessionScope.role == 'SuAbstractor')}">
                 <display:column titleKey="interventions.edit" headerClass="centered" class="action">
                     <s:a href="#" onclick="handleEdit(%{#attr.row.plannedActivityIdentifier},'%{#attr.row.type}')">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
@@ -83,7 +83,7 @@ function handleCreate(){
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
         <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-        					|| (sessionScope.role == 'SuAbstractor')}">
+                            || (sessionScope.role == 'SuAbstractor')}">
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
             class="btn_img"><span class="add">Add </span></span></a></li>
         </c:if>

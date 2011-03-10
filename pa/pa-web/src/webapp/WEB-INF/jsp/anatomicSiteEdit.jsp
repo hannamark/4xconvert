@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC   
+<!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -13,24 +13,24 @@
 <script type="text/javascript">
     // this function is called from body onload in main.jsp (decorator)
     function callOnloadFunctions(){
-        setFocusToFirstControl();         
+        setFocusToFirstControl();
     }
     function anatomicSiteAdd(){
-    	if ($('anatomicSite_code').value == '') {
-            alert("An Anatomic Site value must be selected.");    
+        if ($('anatomicSite_code').value == '') {
+            alert("An Anatomic Site value must be selected.");
         } else {
-        	document.anatomicSiteForm.action="anatomicSiteadd.action";
+            document.anatomicSiteForm.action="anatomicSiteadd.action";
             document.anatomicSiteForm.submit();
         }
-    }   
+    }
 </script>
 </head>
 <body>
 <h1><fmt:message key="anatomicSite.details.title" /></h1>
-<c:set var="topic" scope="request" value="anatomicsite"/>
+<c:set var="topic" scope="request" value="abstractanatomicsite"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
-    <pa:sucessMessage /> 
+    <pa:sucessMessage />
     <s:url id="cancelUrl" namespace="/protected" action="anatomicSite"/>
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <s:form name="anatomicSiteForm">
@@ -43,7 +43,7 @@
         <tr>
             <td colspan="2">
             <s:set name="anatomicSiteList" value="anatomicSiteList" scope="request"/>
-            
+
             <s:select name="anatomicSite.code" id="anatomicSite_code" list="anatomicSiteList" listKey="code"
                         listValue="code" headerKey="" headerValue="--Select Item--" />
         </td>

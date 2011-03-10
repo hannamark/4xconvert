@@ -75,7 +75,7 @@
     </head>
     <body>
         <h1><fmt:message key="plannedMarker.details.title" /></h1>
-        <c:set var="topic" scope="request" value="plannedmarker"/>
+        <c:set var="topic" scope="request" value="abstractmarkers"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
         <s:url id="cancelUrl" namespace="/protected" action="plannedMarker"/>
         <div class="box">

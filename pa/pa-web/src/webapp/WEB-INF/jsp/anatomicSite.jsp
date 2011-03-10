@@ -32,7 +32,7 @@ function handleCreate(){
 </head>
 <body>
 <h1><fmt:message key="anatomicSite.details.title"/></h1>
-<c:set var="topic" scope="request" value="anatomicsite"/>
+<c:set var="topic" scope="request" value="abstractanatomicsite"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
     <pa:sucessMessage />
@@ -47,12 +47,12 @@ function handleCreate(){
         <tr>
             <td colspan="2">
             <s:set name="anatomicSiteList" value="anatomicSiteList" scope="request"/>
-            <display:table name="anatomicSiteList" id="row" class="data" sort="list" 
+            <display:table name="anatomicSiteList" id="row" class="data" sort="list"
                 pagesize="10" requestURI="anatomicSite.action" defaultorder="ascending" defaultsort="1">
                 <display:column escapeXml="true" property="code" sortable="true"
                     titleKey="anatomicSite.code" headerClass="sortable" />
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                						|| (sessionScope.role == 'SuAbstractor')}">
+                                        || (sessionScope.role == 'SuAbstractor')}">
                     <display:column titleKey="anatomicSite.delete" headerClass="centered" class="action">
                         <s:a href="#" onclick="handleDelete(\"%{#attr.row.code}\")">
                             <img src="<%=request.getContextPath()%>/images/ico_delete.gif"
@@ -67,7 +67,7 @@ function handleCreate(){
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
         <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-        						|| (sessionScope.role == 'SuAbstractor')}">
+                                || (sessionScope.role == 'SuAbstractor')}">
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
                 class="btn_img"><span class="add">Add </span></span></a></li>
         </c:if>

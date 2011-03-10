@@ -108,11 +108,11 @@
     <target name="init-test-db" description="Drops and recreates the ci db.">
         <ant target="init-test-db" dir="pa-web" inheritAll="false"/>
     </target>
-    
+
     <target name="populate-test-db" description="Populates the ci db with test data.">
         <ant target="populate-test-db" dir="pa-web" inheritAll="false"/>
     </target>
-    
+
     <target name="run-selenium-tests" description="Runs integration tests against an already deployed application">
         <ant target="run-selenium-tests" dir="pa-web" inheritAll="false"/>
     </target>
@@ -173,11 +173,7 @@
             </path>
             <sequential>
                 <copy todir="@{toDir}">
-                    <fileset dir="${basedir}/pa-web/src/webapp">
-                        <include name="WEB-INF/jsp/*.jsp"/>
-                        <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
-                        <include name="WEB-INF/decorators/*.jsp"/>
-                    </fileset>
+                    <fileset dir="${basedir}/pa-web/src/webapp" excludes="*.xml" />
                 </copy>
             </sequential>
         </for>
@@ -192,17 +188,17 @@
 
         <ant target="generate-javadoc" dir="commons" inheritAll="false" />
         <copy todir="javadoc/commons">
-          	<fileset dir="commons/target/javadoc/"/>
+              <fileset dir="commons/target/javadoc/"/>
         </copy>
 
         <ant target="generate-javadoc" dir="pa-ejb" inheritAll="false" />
         <copy todir="javadoc/pa-ejb">
-          	<fileset dir="pa-ejb/target/javadoc/"/>
+              <fileset dir="pa-ejb/target/javadoc/"/>
         </copy>
 
         <ant target="generate-javadoc" dir="pa-web" inheritAll="false" />
         <copy todir="javadoc/pa-web">
-          	<fileset dir="pa-web/target/javadoc/"/>
+              <fileset dir="pa-web/target/javadoc/"/>
         </copy>
 
         <zip destfile="javadoc/pa-javadoc.zip">
