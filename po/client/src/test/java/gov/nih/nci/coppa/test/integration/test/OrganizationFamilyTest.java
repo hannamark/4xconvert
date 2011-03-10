@@ -251,23 +251,26 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
 
         selenium.selectFrame("relative=up");
 
-        selenium.type("familyOrgRelationship.endDate", "01/01/2050");
-
-        clickAndWait("save_button");
-        assertTrue(selenium.isTextPresent("End Date must not be in the future"));
-
-        selenium.type("familyOrgRelationship.endDate", "01/01/2009");
-        clickAndWait("save_button");
-        assertTrue(selenium.isTextPresent("must be before"));
-
-        selenium.type("familyOrgRelationship.endDate", "");
-
-
         clickAndWait("save_button");
 
         assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully created."));
 
         selenium.select("familyOrgRelationship.functionalType", FUNCTIONAL_TYPE);
+        selenium.type("familyOrgRelationship.endDate", "01/01/2050");
+
+        clickAndWait("save_button");
+        assertTrue(selenium.isConfirmationPresent());
+        selenium.getConfirmation();
+        assertTrue(selenium.isTextPresent("End Date must not be in the future"));
+
+        selenium.type("familyOrgRelationship.endDate", "01/01/2009");
+        clickAndWait("save_button");
+        assertTrue(selenium.isConfirmationPresent());
+        selenium.getConfirmation();
+        assertTrue(selenium.isTextPresent("must be before"));
+
+        selenium.type("familyOrgRelationship.endDate", "");
+
         clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully updated."));
     }
