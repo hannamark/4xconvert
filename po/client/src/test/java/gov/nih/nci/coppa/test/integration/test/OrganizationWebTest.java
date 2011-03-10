@@ -105,8 +105,8 @@ public class OrganizationWebTest extends AbstractPoWebTest {
             setPoId(row);
             assertEquals(poId, selenium.getTable("row." + row + ".0"));
             assertEquals(orgName, selenium.getTable("row." + row + ".1"));
-            assertEquals("PENDING", selenium.getTable("row." + row + ".2"));
-            assertEquals("", selenium.getTable("row." + row + ".3"));
+            assertEquals("", selenium.getTable("row." + row + ".2"));
+            assertEquals("PENDING", selenium.getTable("row." + row + ".3"));
             assertEquals("NONE", selenium.getTable("row." + row + ".4"));
             if (clear) {
                 clear();

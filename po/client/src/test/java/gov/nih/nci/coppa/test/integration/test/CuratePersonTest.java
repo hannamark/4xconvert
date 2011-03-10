@@ -137,6 +137,12 @@ public class CuratePersonTest extends AbstractPoWebTest {
         clickAndWait("person_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
 
+        String tempName = firstName.concat(firstName);
+        selenium.type("curateEntityForm_person_firstName", tempName);
+        assertEquals(tempName, selenium.getValue("curateEntityForm_person_firstName"));
+        clickAndWait("reset_button");
+        waitForTelecomFormsToLoad();
+
         // verify the presence of required indicator in create screen.
         verifyRequiredIndicators(true);
 

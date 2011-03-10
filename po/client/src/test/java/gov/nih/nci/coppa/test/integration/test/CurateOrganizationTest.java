@@ -154,6 +154,14 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         waitForTelecomFormsToLoad();
         assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
 
+        String tempName = name.concat(name);
+        selenium.type("curateEntityForm_organization_name", tempName);
+        assertEquals(tempName, selenium.getValue("curateEntityForm_organization_name"));
+        clickAndWait("reset_button");
+        
+        waitForTelecomFormsToLoad();
+        assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
+
         // verify the presence of required indicator in create screen.
         verifyRequiredIndicators(true);
 
@@ -322,7 +330,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         // create a new org via remote API.
         String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
         Ii id = remoteCreateAndCatalog(create(name));
-        Ii hcfId = remoteCreateHcfWithCtepId(id);
+        remoteCreateHcfWithCtepId(id);
 
         if (!isLoggedIn()) {
             loginAsCurator();
