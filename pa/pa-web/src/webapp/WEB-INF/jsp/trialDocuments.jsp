@@ -27,7 +27,9 @@ function callOnloadFunctions(){
  <div class="box">
    <pa:sucessMessage/>
    <pa:failureMessage/>
-    <s:form><s:actionerror/>
+    <s:form>
+        <s:actionerror/>
+        <pa:studyUniqueToken/>
     <h2><fmt:message key="trialDocument.subtitle" /></h2>
     <s:if test="trialDocumentList != null">
     <s:set name="trialDocumentList" value="trialDocumentList" scope="request"/>

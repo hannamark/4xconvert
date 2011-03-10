@@ -50,8 +50,6 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <h2><fmt:message key="onhold.title"/></h2>
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
- 
         <tr><td colspan="2">
         <table class="form">
             <tr><td colspan="2">
@@ -60,6 +58,7 @@
                     <s:else><fmt:message key="onhold.edit.title"/></s:else>
                 </h3>
                 <s:form name="editForm">
+                    <pa:studyUniqueToken/>
                   <s:hidden name="currentAction"/>
                   <s:hidden name="onhold.identifier"/> 
                   <table class="form">

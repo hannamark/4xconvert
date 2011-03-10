@@ -44,11 +44,8 @@
 
 </head>
 <body>
-<!-- <div id="contentwide"> -->
 <h1><fmt:message key="arms.details.title" /></h1>
 <c:set var="topic" scope="request" value="abstractarms"/>
-<!--Help Content-->
-<!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box"><pa:sucessMessage /> <s:if
     test="hasActionErrors()">
@@ -66,9 +63,9 @@
 </h2>
 
 <table class="form">
-    <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr>
         <s:form name="armForm">
+        <pa:studyUniqueToken/>
         <s:hidden name="checkBoxEntry"/>
         <s:hidden name="currentAction"/>
         <s:hidden name="selectedArmIdentifier"/>

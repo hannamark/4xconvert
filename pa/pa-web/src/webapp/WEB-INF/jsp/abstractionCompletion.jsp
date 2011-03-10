@@ -51,6 +51,7 @@ function generateTSRWord() {
    <pa:sucessMessage/>
    <pa:failureMessage/>
     <s:form name="aForm"><s:actionerror/>
+        <pa:studyUniqueToken/>
     <h2>
     <s:if test="%{abstractionError==true}">
         Abstraction validation failed. Please check error(s).
@@ -75,8 +76,6 @@ function generateTSRWord() {
                  <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                         <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>
                     </c:if>
-                   <!-- <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>
-                    <li><a href="#"  class="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></a></li> -->
                      <li><a href="#"  class="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></a></li>
                 </s:if>
             </ul>

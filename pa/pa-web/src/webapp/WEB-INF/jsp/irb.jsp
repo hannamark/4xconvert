@@ -120,13 +120,13 @@ function showRow(row){
     </h2>
     
     <s:form name="irbForm">
+        <pa:studyUniqueToken/>
      <table class="form"><tr>
         <s:hidden name="selectedArmIdentifier"/>
         <s:hidden name="boardChanged"/> 
         <s:hidden name="newOrgId"/>
         <s:hidden name="newOrgName"/> 
          <s:hidden name="ct.id"/> 
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td class="label">Board Approval Status:<span class="required">*</span></td>
             <s:set name="approvalStatusValues"
@@ -196,10 +196,6 @@ function showRow(row){
         					|| (sessionScope.role == 'SuAbstractor')}">
         <li><s:a href="#" cssClass="btn" onclick="irbSave();"><span class="btn_img"> <span class="save">Save</span></span></s:a></li>
         </c:if>
-        <!-- 
-        <li><a href="regulatoryInfoquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-        <li><a href="trialIndidequery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-         -->
     </ul>
     </del></div>
 </s:form></div>

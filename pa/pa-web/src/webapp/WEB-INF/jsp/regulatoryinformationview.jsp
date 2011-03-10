@@ -5,15 +5,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 <body>
-<!-- main content begins-->
-<!-- <div id="contentwide"> -->
 <h1><fmt:message key="regulatory.title" /></h1>
 <c:set var="topic" scope="request" value="abstractregulatory"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
 <h2><fmt:message key="regulatory.title" /></h2>
-<!--Help Content--> 
-<!-- <a href="#" class="helpbutton" onclick="Help.popHelp('query_protocol')">Help</a> -->
    <pa:sucessMessage/>
    <pa:failureMessage/>
 

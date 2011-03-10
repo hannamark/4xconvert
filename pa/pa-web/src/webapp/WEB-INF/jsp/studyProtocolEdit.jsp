@@ -10,15 +10,14 @@
 </head>
 
 <body onload="setFocusToFirstControl();">
-<!-- <div id="contentwide"> -->
  <h1><fmt:message key="nciSpecificInformation.title" /></h1>
 
-<!--Help Content-->
-   <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
    <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 
   <div class="box">
-    <s:form ><s:actionerror/>
+    <s:form >
+        <s:actionerror/>
+        <pa:studyUniqueToken/>
 	<h2>Trial Identification</h2>
 
         <table class="form">
@@ -27,20 +26,6 @@
                 <jsp:include page="/WEB-INF/jsp/trialDetailSummaryEdit.jsp"/> 
             </c:if> 
 
-<!-- <th colspan="2"><fmt:message key="studyProtocol.view.title"/></th>
-<tr>
-    <td scope="row" class="label" nowrap>
-        <label for="principalInvestigator"> 
-            <fmt:message key="studyProtocol.studyPhase"/>
-        </label>
-    </td>           
-    <td >
-        <c:out value="${sessionScope.trialSummary.studyStatusCode.code }"/>
-
-    </td>
-
-
-</tr> -->
         </table>  
  <div class="actionsrow">
 	<del class="btnwrapper">
@@ -55,6 +40,5 @@
                   
     </s:form>
    </div>
-<!--  </div> -->
  </body>
  </html>

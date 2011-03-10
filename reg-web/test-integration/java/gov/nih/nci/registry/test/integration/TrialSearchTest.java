@@ -105,21 +105,20 @@ public class TrialSearchTest  extends AbstractRegistrySeleniumTest {
 
         // search my trials, verify export links
         clickAndWait("searchMyTrialsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("3 items found"));
+        assertTrue("Wrong search results returned", selenium.isTextPresent("5 items found"));
         assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
         assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
 
         // verify no export links when no results found
         selenium.type("officialTitle", "no trials with this title");
         clickAndWait("searchMyTrialsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("Nothing found to display."));
         assertFalse("CSV link shouldn't be shown with no results", selenium.isElementPresent("link=CSV"));
         assertFalse("Excel link shouldn't be shown with no results", selenium.isElementPresent("link=Excel"));
 
         // search all trials, verify export links
         selenium.type("officialTitle", "selenium");
         clickAndWait("searchAllTrialsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("3 items found"));
+        assertTrue("Wrong search results returned", selenium.isTextPresent("5 items found"));
 
         assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
         assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));

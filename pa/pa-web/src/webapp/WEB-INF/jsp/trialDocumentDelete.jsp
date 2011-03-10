@@ -37,6 +37,7 @@ input_box=confirm("Click OK to save changes or Cancel to Abort.");
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
     <s:form>
+        <pa:studyUniqueToken/>
     <h2><fmt:message key="trialDocument.subtitle" /></h2>
     <s:hidden name="id"/>
     <table class="form">

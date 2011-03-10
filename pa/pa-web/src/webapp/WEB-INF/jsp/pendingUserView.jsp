@@ -44,6 +44,7 @@ function setRejectReason(reason){
 </SCRIPT>
 <body>
     <s:form>
+        <pa:studyUniqueToken/>
         <table class="form">
             <input type="hidden" name="user_id" id="user_id" value="${requestScope.user.id}"/>
             <tr><td scope="row" class="label">

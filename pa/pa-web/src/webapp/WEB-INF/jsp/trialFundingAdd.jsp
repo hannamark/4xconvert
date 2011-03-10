@@ -46,6 +46,7 @@ function tooltip() {
    <pa:sucessMessage/>
    <pa:failureMessage/>
     <s:form>
+        <pa:studyUniqueToken/>
     <h2><fmt:message key="trialFunding.addedittitle" /></h2>
     <s:hidden name="page" />
     <s:hidden name="cbValue"/>

@@ -46,7 +46,9 @@ function handleDelete(studyProtocolIi){
   <div class="box">
   <pa:sucessMessage/>
   <pa:failureMessage/>
-    <s:form><s:actionerror/>
+    <s:form>
+        <pa:studyUniqueToken/>
+        <s:actionerror/>
     <h2><fmt:message key="trialIndide.subtitle" /></h2>
     <s:if test="studyIndideList != null">
     <s:hidden name="page" />

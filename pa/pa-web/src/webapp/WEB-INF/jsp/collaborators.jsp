@@ -45,10 +45,10 @@ function handleCreate(){
 	test="hasActionErrors()">
 	<div class="error_msg"><s:actionerror /></div>
 </s:if> <s:form name="collaboratorsForm">
+        <pa:studyUniqueToken/>
 	<h2><fmt:message
 		key="participatingOrganizations.collaborators.title" /></h2>
 	<table class="form">
-		<%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
 		<tr>
 			<td colspan="2"><s:hidden name="cbValue" />
 			<s:set name="organizationList" value="organizationList" scope="request"/>
@@ -91,14 +91,6 @@ function handleCreate(){
 		<li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
 			class="btn_img"><span class="add">Add </span></span></a></li>
 	</c:if>
-	<!--
-		<li><a href="participatingOrganizations.action" class="btn"
-			onclick="this.blur();"><span class="btn_img"><span
-			class="back">Back</span></span></a></li>
-		<li><a href="trialDocumentquery.action" class="btn"
-			onclick="this.blur();"><span class="btn_img"><span
-			class="next">Next</span></span></a></li>
-			 -->
 	</ul>
 	</del></div>
 </s:form></div>

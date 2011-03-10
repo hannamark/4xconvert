@@ -57,11 +57,8 @@ function loadDiv(orgid){
 </script>
 </head>
 <body>
-<!-- <div id="contentwide"> -->
 <h1><fmt:message key="participatingOrganizations.collaborators.title" /></h1>
 <c:set var="topic" scope="request" value="abstractcollaborator"/>
-<!--Help Content-->
-<!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box"><pa:sucessMessage /> <s:if
     test="hasActionErrors()">
@@ -72,10 +69,10 @@ function loadDiv(orgid){
 
 
 <table class="form">
-    <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr>
         <td colspan="2">
         <s:form name="facility">
+            <pa:studyUniqueToken/>
             <div id="loadOrgDetails">
             <div id="orgDetailsDiv"><%@ include
                 file="/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp"%>

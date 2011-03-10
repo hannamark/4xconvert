@@ -93,6 +93,7 @@ function loadOrgDiv() {
 <div class="box"><pa:sucessMessage /> <s:if test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
 </s:if> <s:form name="assignOwnershipForm" action="assignOwnershipview.action">
+            <pa:studyUniqueToken/>
     <h2 id="search_form">Search Users</h2>
     <table class="form">
         <tr>
@@ -145,7 +146,7 @@ function loadOrgDiv() {
     <s:if test="users != null">
         <h2 id="search_results">Search Results</h2>
         <s:hidden name="currentAction" />
-        <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" pagesize="10" id="row"
+        <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" pagesize="10" id="results"
             name="users" requestURI="assignOwnershipsearch.action" export="false">
             <display:column escapeXml="true" titleKey="pending.userFirstName" property="regUser.firstName"
                 sortable="true" headerClass="sortable" />
@@ -155,11 +156,11 @@ function loadOrgDiv() {
                 sortable="true" headerClass="sortable" />
             <display:column class="title" titleKey="studyProtocol.action">
                     <c:choose>
-                        <c:when test="${row.owner == true}">
-                            <a href="#" onclick="removeOwner('${row.regUser.id}');">Remove Ownership</a>
+                        <c:when test="${results.owner == true}">
+                            <a href="#" onclick="removeOwner('${results.regUser.id}');">Remove Ownership</a>
                         </c:when>
                         <c:otherwise>
-                            <a href="#" onclick="assignOwner('${row.regUser.id}');">Assign Ownership</a>
+                            <a href="#" onclick="assignOwner('${results.regUser.id}');">Assign Ownership</a>
                         </c:otherwise>
                     </c:choose>
             </display:column>        

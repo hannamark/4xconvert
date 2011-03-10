@@ -23,7 +23,9 @@ function callOnloadFunctions(){
  <div class="box">
    <pa:sucessMessage/>
    <pa:failureMessage/>
-    <s:form><s:actionerror/>
+    <s:form>
+        <pa:studyUniqueToken/>
+        <s:actionerror/>
     <h2><fmt:message key="subGroups.subtitle" /></h2>
     <s:if test="subGroupsList != null">
     <s:set name="subGroupsList" value="subGroupsList" scope="request"/>

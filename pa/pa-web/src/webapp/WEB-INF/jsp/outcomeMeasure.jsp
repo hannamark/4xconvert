@@ -33,7 +33,9 @@
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">
   <pa:sucessMessage/>
-    <s:form><s:actionerror/>
+    <s:form>
+        <s:actionerror/>
+        <pa:studyUniqueToken/>
     <h2>Outcome Measures</h2>
     <s:if test="outcomeList != null">
     <s:hidden name="page" />

@@ -58,7 +58,6 @@ function handleCreate(){
         <fmt:message key="disease.details.title"/>
     </h2>
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td colspan="2">
             <s:set name="diseaseList" value="diseaseList" scope="request"/>
@@ -106,15 +105,6 @@ function handleCreate(){
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
                 class="btn_img"><span class="add">Add </span></span></a></li>
         </c:if>
-        <!--
-        <li>
-            <a href="eligibilityCriteriaquery.action" class="btn" onclick="this.blur();"><span class="btn_img">
-                <span class="back">Back</span></span></a>
-        </li>
-        <li>
-            <a href="trialInterventions.action" class="btn" onclick="this.blur();">
-                <span class="btn_img"><span class="next">Next</span></span></a>
-        </li> -->
     </ul>
     </del></div>
 </s:form></div>

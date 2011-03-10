@@ -42,6 +42,7 @@
 <pa:sucessMessage/>
 <pa:failureMessage/>
 <s:form name="trialDescription" validate="true" method="POST">
+    <pa:studyUniqueToken/>
     <s:hidden name="studyObjectiveIip" id="studyObjectiveIip"/>
     <s:hidden name="studyObjectiveIis" id="studyObjectiveIis"/>
     <s:hidden name="studyObjectiveIit" id="studyObjectiveIit"/>
@@ -148,11 +149,7 @@
  					<c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
  										|| (sessionScope.role == 'SuAbstractor')}">               
                     <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
-                     </c:if>
-                     <!-- 
-                     <li><a href="trialDocumentquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-                     <li><a href="interventionalStudyDesigndetailsQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-                      -->                
+                     </c:if>              
                 </ul>   
             </del>
 

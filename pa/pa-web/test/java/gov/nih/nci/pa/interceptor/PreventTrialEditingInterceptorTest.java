@@ -80,99 +80,71 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.registry.test.integration;
+package gov.nih.nci.pa.interceptor;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
+import com.opensymphony.xwork2.Action;
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.mock.MockActionInvocation;
+
 /**
- * Tests the trial registration process.
- *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ *
  */
-public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
+public class PreventTrialEditingInterceptorTest {
 
-    /**
-     * Tests registering a trial.
-     * @throws Exception on error
-     */
     @Test
-    public void testRegisterTrial() throws Exception {
-        loginAsAbstractor();
-        isLoggedIn();
-        handleDisclaimer(true);
-        // register a trial
-        registerTrial("Test Trial created by Selenium.", "LEAD-ORG");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-        int nciId1 = getSeqNumFromNciId(getNciIdViaSearch("Test Trial created by Selenium."));
-        // try to register a trial with the same lead org trial ID and fail
-        registerTrial("Test Trial created by Selenium.", "LEAD-ORG");
-        assertFalse("A success message was found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertFalse("A success message was found",
-                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-        assertTrue("No error message found", selenium.isElementPresent("css=div.error_msg"));
-        assertTrue("No error message found",
-                   selenium
-                       .isTextPresent("Duplicate Trial Submission: A trial exists in the system with the same Lead Organization Trial Identifier for the selected Lead Organization"));
+    public void testInterceptor() throws Exception {
+        String token = PreventTrialEditingInterceptor.generateToken();
+        Map<String, Object> sessionMap = new HashMap<String, Object>();
+        sessionMap.put(PreventTrialEditingInterceptor.STUDY_PROTOCOL_TOKEN, token);
 
-        // try to register a trial with the a new lead org trial ID (and title) and succeed
-        registerTrial("Test Summ 4 Anatomic Site Trial created by Selenium.", "LEAD-ORG2");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-        int nciId2 = getSeqNumFromNciId(getNciIdViaSearch("Test Summ 4 Anatomic Site Trial created by Selenium."));
-        assertEquals(nciId2, nciId1 + 1);
-        // try to register a trial with the a new lead org trial ID (and title) and succeed
-        registerTrial("Test Assign Ownership Trial created by Selenium.", "LEAD-ORG3");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+        PreventTrialEditingInterceptor interceptor = new PreventTrialEditingInterceptor();
+        interceptor.setErrorAction(Action.ERROR);
 
-        registerTrial("Test Prevent Duplicate Trial #1 created by Selenium.", "LEAD-ORG4");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> contextMap = new HashMap<String, Object>();
+        contextMap.put(ActionContext.PARAMETERS, params);
 
-        registerTrial("Test Prevent Duplicate Trial #2 created by Selenium.", "LEAD-ORG5");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+        ActionContext ac = new ActionContext(contextMap);
+        ac.setSession(sessionMap);
+        MockActionInvocation invocation = new MockActionInvocation();
+        invocation.setResultCode(Action.SUCCESS);
+        invocation.setInvocationContext(ac);
+        interceptor.init();
+        assertEquals(Action.SUCCESS, interceptor.intercept(invocation));
+        interceptor.destroy();
+
+        params = new HashMap<String, Object>();
+        params.put(PreventTrialEditingInterceptor.STUDY_PROTOCOL_TOKEN, new String[] {token});
+
+        contextMap = new HashMap<String, Object>();
+        contextMap.put(ActionContext.PARAMETERS, params);
+
+        ac = new ActionContext(contextMap);
+        ac.setSession(sessionMap);
+        invocation.setInvocationContext(ac);
+        interceptor.init();
+        assertEquals(Action.SUCCESS, interceptor.intercept(invocation));
+        interceptor.destroy();
+
+        params = new HashMap<String, Object>();
+        params.put(PreventTrialEditingInterceptor.STUDY_PROTOCOL_TOKEN, new String[]{"1"});
+
+        contextMap = new HashMap<String, Object>();
+        contextMap.put(ActionContext.PARAMETERS, params);
+
+        ac = new ActionContext(contextMap);
+        ac.setSession(sessionMap);
+        invocation.setInvocationContext(ac);
+        interceptor.init();
+        assertEquals(Action.ERROR, interceptor.intercept(invocation));
+        interceptor.destroy();
     }
-
-    /**
-     * Tests saving a draft trial.
-     * @throws Exception on error
-     */
-    @Test
-    public void testSaveDraftTrial() throws Exception {
-        loginAsAbstractor();
-        isLoggedIn();
-        handleDisclaimer(true);
-        // register a trial
-        registerDraftTrial("Test Trial Draft created by Selenium.", "LEAD-ORG");
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial draft has been successfully saved and assigned the Identifier"));
-    }
-
-    private String getNciIdViaSearch(String trialName) {
-
-        clickAndWait("searchTrialsMenuOption");
-        waitForElementById("searchMyTrialsBtn", 5);
-        waitForElementById("searchAllTrialsBtn", 5);
-
-        selenium.type("officialTitle", trialName);
-        clickAndWait("searchAllTrialsBtn");
-
-        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]"));
-        String nciId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]");
-        assertTrue(nciId.contains("NCI"));
-        assertEquals(14, nciId.length());
-        return nciId;
-    }
-
-    private int getSeqNumFromNciId(String nciId) {
-        return Integer.valueOf(nciId.substring(nciId.lastIndexOf("-") + 1, nciId.length()));
-    }
-
 }

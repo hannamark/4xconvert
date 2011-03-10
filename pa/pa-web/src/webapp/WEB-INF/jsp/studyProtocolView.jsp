@@ -32,11 +32,8 @@
 
 <body>
  <c:set var="topic" scope="request" value="trialdetails"/>
-<!-- <div id="contentwide"> -->
  <h1>Trial Identification</h1>
 
-<!--Help Content-->
-   <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
    <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 
   <div class="box">
@@ -132,14 +129,15 @@
  <div class="actionsrow">
     <del class="btnwrapper">
         <ul class="btnrow">
+            <pa:studyUniqueToken/>
             <c:choose>
                 <c:when test="${(sessionScope.trialSummary.studyCheckoutBy == null)}">
-                         <c:set var="saveButtonName" value="Check Out"/>
-                         <s:hidden name="checkoutStatus" value="true" />
+                    <c:set var="saveButtonName" value="Check Out"/>
+                    <s:hidden name="checkoutStatus" value="true" />
                 </c:when>
                 <c:otherwise>
-                         <c:set var="saveButtonName" value="Check In"/>
-                         <s:hidden name="checkoutStatus" value="false" />
+                    <c:set var="saveButtonName" value="Check In"/>
+                    <pa:studyUniqueToken/>
                 </c:otherwise>
             </c:choose>
             <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">${saveButtonName}</span></span></s:a></li>

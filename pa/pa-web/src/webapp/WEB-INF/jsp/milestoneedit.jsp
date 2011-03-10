@@ -64,13 +64,12 @@
     </h2>
 
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
- 
         <tr><td colspan="2">
         <table class="form">
             <tr><td colspan="2">
                 <h3><fmt:message key="milestone.milestone"/></h3>
                 <s:form name="milestoneForm">
+                    <pa:studyUniqueToken/>
                   <table class="form">
                   <tr>
                   <td class="label"><s:label><fmt:message key="milestone.milestone"/></s:label><span class="required">*</span></td>

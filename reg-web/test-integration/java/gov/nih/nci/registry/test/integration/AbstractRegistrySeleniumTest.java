@@ -393,7 +393,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
 
         pause(5000);
         clickAndWaitAjax("link=Save as Draft");
-        waitForPageToLoad();
+        pause(5000);
         firstRun = false;
     }
 

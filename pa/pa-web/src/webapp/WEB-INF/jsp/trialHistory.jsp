@@ -59,6 +59,7 @@ function acceptTrialUpdate(id) {
         <pa:sucessMessage />
         <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
         <s:form name="listForm">
+            <pa:studyUniqueToken/>
             <s:hidden name="selectedRowIdentifier"/>
             <h2><fmt:message key="trialHistory.title"/></h2>
             <table class="form">

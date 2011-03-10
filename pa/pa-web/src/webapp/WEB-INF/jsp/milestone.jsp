@@ -29,12 +29,12 @@ function handleCreate(){
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 
     <s:form name="milestoneForm">
+        <pa:studyUniqueToken/>
         <s:hidden name="selectedRowIdentifier"/>
     <h2>
         <fmt:message key="milestone.details.title"/>
     </h2>
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td colspan="2">
             <s:set name="milestoneList" value="milestoneList" scope="request"/>
@@ -52,10 +52,6 @@ function handleCreate(){
         					|| (sessionScope.role == 'SuAbstractor')}">
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
         </c:if>
-        <!--
-        <li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-        <li><a href="onhold.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-         -->
     </ul>
     </del></div>
 </s:form></div>

@@ -35,6 +35,7 @@ function handleEdit(rowId){
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 
     <s:form name="listForm">
+        <pa:studyUniqueToken/>
         <s:hidden name="selectedRowIdentifier"/>
     <h2>
         <fmt:message key="manageAccrualAccess.list.title"/>

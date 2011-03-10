@@ -80,99 +80,49 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.registry.test.integration;
+package gov.nih.nci.pa.test.integration;
 
-import org.junit.Test;
 
 /**
- * Tests the trial registration process.
+ * Selenium test for testing prevention of returning error when trying to
+ * manipulate two trials in the same browser session.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
+public class DuplicateTrialEditTest extends AbstractPaSeleniumTest {
 
-    /**
-     * Tests registering a trial.
-     * @throws Exception on error
-     */
-    @Test
-    public void testRegisterTrial() throws Exception {
+    public void testEditPrevention() throws Exception {
         loginAsAbstractor();
-        isLoggedIn();
-        handleDisclaimer(true);
-        // register a trial
-        registerTrial("Test Trial created by Selenium.", "LEAD-ORG");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-        int nciId1 = getSeqNumFromNciId(getNciIdViaSearch("Test Trial created by Selenium."));
-        // try to register a trial with the same lead org trial ID and fail
-        registerTrial("Test Trial created by Selenium.", "LEAD-ORG");
-        assertFalse("A success message was found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertFalse("A success message was found",
-                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-        assertTrue("No error message found", selenium.isElementPresent("css=div.error_msg"));
-        assertTrue("No error message found",
-                   selenium
-                       .isTextPresent("Duplicate Trial Submission: A trial exists in the system with the same Lead Organization Trial Identifier for the selected Lead Organization"));
+        verifyTrialSearchPage();
+        selenium.type("id=officialTitle", "Duplicate");
+        clickAndWait("link=Search");
+        assertTrue(selenium.isTextPresent("2 items found"));
+        String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
+        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
 
-        // try to register a trial with the a new lead org trial ID (and title) and succeed
-        registerTrial("Test Summ 4 Anatomic Site Trial created by Selenium.", "LEAD-ORG2");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-        int nciId2 = getSeqNumFromNciId(getNciIdViaSearch("Test Summ 4 Anatomic Site Trial created by Selenium."));
-        assertEquals(nciId2, nciId1 + 1);
-        // try to register a trial with the a new lead org trial ID (and title) and succeed
-        registerTrial("Test Assign Ownership Trial created by Selenium.", "LEAD-ORG3");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+        verifyTrialSelected(nciTrialId);
+        assertTrue(selenium.isElementPresent("link=Check Out"));
 
-        registerTrial("Test Prevent Duplicate Trial #1 created by Selenium.", "LEAD-ORG4");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+        selenium.openWindow("/pa", "duplicate");
+        selenium.waitForPopUp("duplicate", "5000");
+        selenium.selectWindow("duplicate");
+        verifyTrialSearchPage();
+        selenium.type("id=officialTitle", "Duplicate");
+        clickAndWait("link=Search");
+        assertTrue(selenium.isTextPresent("2 items found"));
+        String otherNciTrialId = selenium.getText("xpath=//table[@id='row']//tr[2]//td[1]/a");
+        clickAndWait("xpath=//table[@id='row']//tr[2]//td[1]/a");
+        verifyTrialSelected(otherNciTrialId);
+        assertTrue(selenium.isElementPresent("link=Check Out"));
 
-        registerTrial("Test Prevent Duplicate Trial #2 created by Selenium.", "LEAD-ORG5");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-    }
+        selenium.selectWindow("null");
+        verifyTrialSelected(nciTrialId);
+        assertTrue(selenium.isElementPresent("link=Check Out"));
+        clickAndWait("link=Check Out");
+        selenium.getConfirmation();
+        assertTrue(selenium.isTextPresent("You are attempting to edit two trials at once. This is not a supported action. "
+                + "Please reselect the trial you wish to edit and refrain from working on multiple trials at once. Thank You."));
 
-    /**
-     * Tests saving a draft trial.
-     * @throws Exception on error
-     */
-    @Test
-    public void testSaveDraftTrial() throws Exception {
-        loginAsAbstractor();
-        isLoggedIn();
-        handleDisclaimer(true);
-        // register a trial
-        registerDraftTrial("Test Trial Draft created by Selenium.", "LEAD-ORG");
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial draft has been successfully saved and assigned the Identifier"));
-    }
-
-    private String getNciIdViaSearch(String trialName) {
-
-        clickAndWait("searchTrialsMenuOption");
-        waitForElementById("searchMyTrialsBtn", 5);
-        waitForElementById("searchAllTrialsBtn", 5);
-
-        selenium.type("officialTitle", trialName);
-        clickAndWait("searchAllTrialsBtn");
-
-        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]"));
-        String nciId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]");
-        assertTrue(nciId.contains("NCI"));
-        assertEquals(14, nciId.length());
-        return nciId;
-    }
-
-    private int getSeqNumFromNciId(String nciId) {
-        return Integer.valueOf(nciId.substring(nciId.lastIndexOf("-") + 1, nciId.length()));
     }
 
 }

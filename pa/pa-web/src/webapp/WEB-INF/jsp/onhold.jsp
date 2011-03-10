@@ -35,12 +35,12 @@ function handleEdit(rowId){
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 
     <s:form name="listForm">
+        <pa:studyUniqueToken/>
         <s:hidden name="selectedRowIdentifier"/>
     <h2>
         <fmt:message key="onhold.title"/>
     </h2>
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr><td colspan="2">
             <s:set name="onholdList" value="onholdList" scope="request"/>
             <display:table name="onholdList" id="row" class="data" sort="list" pagesize="10" requestURI="onhold.action">

@@ -51,6 +51,7 @@ function tooltip() {
 <pa:sucessMessage/>
    <pa:failureMessage/>
 <s:form>
+<pa:studyUniqueToken/>
 <s:actionerror/>
 <h2><fmt:message key="osdesign.details.title"/></h2>
 <table class="form">

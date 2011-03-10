@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <s:form name="sForm"><s:actionerror/>
+<pa:studyUniqueToken/>
 <c:set var="topic" scope="request" value="inboxprocess"/>
 <s:set name="records" value="records" scope="request"/>
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" id="row"

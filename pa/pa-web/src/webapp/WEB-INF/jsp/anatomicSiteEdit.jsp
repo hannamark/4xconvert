@@ -34,6 +34,7 @@
     <s:url id="cancelUrl" namespace="/protected" action="anatomicSite"/>
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <s:form name="anatomicSiteForm">
+        <pa:studyUniqueToken/>
     <h2>
         <fmt:message key="anatomicSite.add.details.title"/>
     </h2>

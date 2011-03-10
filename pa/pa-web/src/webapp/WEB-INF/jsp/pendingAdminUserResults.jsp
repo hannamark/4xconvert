@@ -1,7 +1,9 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
  <s:if test="pendingAdminUsers != null"> 
     <h2>Pending Admin User</h2>  
-    <s:form name="spForm"><s:actionerror/>    
+    <s:form name="spForm">
+        <s:actionerror/>
+        <pa:studyUniqueToken/>
         <s:set name="pendingAdminUsers" value="pendingAdminUsers" scope="request"/>
             <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" id="row"
              name="pendingAdminUsers" requestURI="inboxProcessinggetPendingAdminUserRole.action" export="false">

@@ -19,7 +19,6 @@
      <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
      <c:url value="/protected/ajaxTrialValidationgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
 <c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
-<!-- /po integration -->
  <script type="text/javascript">
     var orgid;
     var persid;
@@ -126,17 +125,15 @@
 </head>
 
 <body>
-<!-- <div id="contentwide"> -->
  <h1><fmt:message key="studyProtocol.general.title" /></h1>
 <c:set var="topic" scope="request" value="abstractgeneral"/>
-<!--Help Content-->
-   <!--  <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
    <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 
   <div class="box">
   <pa:sucessMessage/>
    <pa:failureMessage/>
     <s:form >
+        <pa:studyUniqueToken/>
     <s:actionerror/>
     <table class="form">
     <h2>General Trial Details</h2>
@@ -350,10 +347,6 @@
                 					|| (sessionScope.role == 'SuAbstractor')}">
                     <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
                  </c:if>
-                 <!--
-                   <li><a href="manageAccrualAccess.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-                   <li><a href="nciSpecificInformationquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-                    -->
                 </ul>
             </del>
 

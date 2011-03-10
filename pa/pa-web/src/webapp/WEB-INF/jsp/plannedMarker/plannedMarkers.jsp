@@ -28,6 +28,7 @@
                 <div class="error_msg"><s:actionerror/></div>
             </s:if>
             <s:form name="diseaseForm">
+                <pa:studyUniqueToken/>
                 <s:hidden name="selectedRowIdentifier"/>
                 <h2><fmt:message key="plannedMarker.details.title"/></h2>
                 <table class="form">

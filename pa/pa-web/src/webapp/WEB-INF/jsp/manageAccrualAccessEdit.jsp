@@ -77,8 +77,6 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <h2><fmt:message key="manageAccrualAccess.title"/></h2>
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
- 
         <tr><td colspan="2">
         <table class="form">
             <tr><td colspan="2">
@@ -87,6 +85,7 @@
                     <s:else><fmt:message key="manageAccrualAccess.edit.title"/></s:else>
                 </h3>
                 <s:form name="editForm">
+                    <pa:studyUniqueToken/>
                   <s:hidden name="currentAction"/>
                   <s:hidden name="access.id"/> 
                   <table class="form">
@@ -94,7 +93,6 @@
                       <td class="label"><s:label><fmt:message key="manageAccrualAccess.userName"/></s:label><span class="required">*</span></td>
                       <td class="value" style="width: 250px">
                         <s:if test="%{currentAction == 'create'}">
-<%--                            <s:set name="csmUserNameValues" value="csmUserNames" />--%>
                             <s:select id="csmUserId" headerKey="" headerValue="--Select--" name="access.csmUserId" 
                                    list="regUserNames" listKey="id" listValue="name" onchange="loadEmailDiv();loadPhoneDiv();"/>
                         </s:if><s:else>

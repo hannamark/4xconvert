@@ -100,12 +100,11 @@
 </script>      
 </head>
 <body>
-<!-- <div id="contentwide"> -->
 <h1><fmt:message key="participatingOrganizations.subtitle" /></h1>
 <c:set var="topic" scope="request" value="abstractsite"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <s:form name="proprietarySite">
-
+<pa:studyUniqueToken/>
 <div class="box">
 <pa:sucessMessage/>
 <pa:failureMessage/>

@@ -214,11 +214,8 @@
 </script>
 </head>
 <body>
-<!-- <div id="contentwide"> -->
 <h1><fmt:message key="participatingOrganizations.subtitle" /></h1>
 <c:set var="topic" scope="request" value="abstractsite"/>
-<!--Help Content-->
-<!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
 <pa:sucessMessage/>
@@ -228,7 +225,6 @@
     </s:if>
 <h2><fmt:message key="participatingOrganizations.subtitle" /></h2>
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr><td colspan="2"><!--Tabs -->
 
 			<ul id="maintabs" class="tabs">
@@ -264,6 +260,7 @@
 			<div id="tabboxwrapper"><!--Facility-->
 			<div id="facility" class="box">
             <s:form name="facility">
+                <pa:studyUniqueToken/>
                 <div id="loadOrgDetails">
                      <%@ include file="/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp" %>
                 </div>

@@ -64,7 +64,6 @@
     </h2>
 
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td colspan="2">
             <s:form name="diseaseForm">

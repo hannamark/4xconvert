@@ -49,7 +49,8 @@ BubbleTips.activateTipOn("dfn");
   <div class="box">  
    <pa:sucessMessage/>
    <pa:failureMessage/>
-    <s:form><s:actionerror/>    
+    <s:form><s:actionerror/>
+        <pa:studyUniqueToken/>    
     <h2><fmt:message key="isdesign.eligibilitycriteria.title"/></h2>
     <table class="form">
     <c:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
@@ -273,11 +274,7 @@ BubbleTips.activateTipOn("dfn");
                 <s:if test="list != null">
                 <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">Add Other Criterion</span></span></s:a></li>
                </s:if>
-                </c:if>
-                <!-- 
-                <li><a href="interventionalStudyDesignoutcomeQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-                <li><a href="disease.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-                 -->                
+                </c:if>              
             </ul>   
         </del>
     </div> 

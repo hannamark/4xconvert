@@ -156,7 +156,9 @@ function SelectSubCat(i){
   <div class="box">  
     <pa:sucessMessage/>
    <pa:failureMessage/>
-    <s:form><s:actionerror/>
+    <s:form>
+        <s:actionerror/>
+        <pa:studyUniqueToken/>
     <h2><fmt:message key="trialIndide.addtitle" /></h2>
     	<s:hidden name="page" />
     	<s:hidden name="cbValue" />

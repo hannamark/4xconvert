@@ -36,7 +36,9 @@ function handleAction(){
   <div class="box">  
     <pa:sucessMessage/>
    <pa:failureMessage/>
-    <s:form name="editForm"><s:actionerror/>
+    <s:form name="editForm">
+        <s:actionerror/>
+        <pa:studyUniqueToken/>
     <h2><fmt:message key="trialHistory.edittitle" /></h2>
     <s:set name="reasonCodeValues" value="@gov.nih.nci.pa.enums.AmendmentReasonCode@getDisplayNames()" />   
      <s:hidden name="trialHistoryWbDto.identifier"/> 

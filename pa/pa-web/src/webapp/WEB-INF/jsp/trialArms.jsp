@@ -50,8 +50,11 @@ function handleCreateGroup(){
 <div class="box"><pa:sucessMessage /> <s:if
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
-</s:if> <s:form name="armForm"><s:hidden name="selectedArmIdentifier"/>
-                               <s:hidden name="currentAction"/>
+</s:if> 
+    <s:form name="armForm">
+        <pa:studyUniqueToken/>
+        <s:hidden name="selectedArmIdentifier"/>
+        <s:hidden name="currentAction"/>
     <h2>
     <s:if test="%{currentAction == 'listArm'}">
         <fmt:message key="arms.details.title" /></s:if>
@@ -59,7 +62,6 @@ function handleCreateGroup(){
         <fmt:message key="arms.obs.details.title" /></s:elseif>
     </h2>
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td colspan="2"><s:hidden name="cbValue" />
             <s:set name="armList" value="armList" scope="request"/>
@@ -109,14 +111,6 @@ function handleCreateGroup(){
                 class="btn_img"><span class="add">Add </span></span></a></li>
         </s:elseif>
      </c:if>
-     <!--
-        <li><a href="trialInterventions.action" class="btn"
-            onclick="this.blur();"><span class="btn_img"><span
-            class="back">Back</span></span></a></li>
-        <li><a href="subGroupsquery.action" class="btn"
-            onclick="this.blur();"><span class="btn_img"><span
-            class="next">Next</span></span></a></li>
-             -->
     </ul>
     </del></div>
 </s:form></div>

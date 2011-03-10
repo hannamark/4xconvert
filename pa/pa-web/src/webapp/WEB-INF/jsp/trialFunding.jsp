@@ -42,7 +42,9 @@ function handleDelete(studyResourcingId){
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">
   <pa:sucessMessage/>
-    <s:form><s:actionerror/>
+    <s:form>
+        <s:actionerror/>
+        <pa:studyUniqueToken/>
     <h2><fmt:message key="trialFunding.subtitle" /></h2>
     <s:if test="trialFundingList != null">
     <s:hidden name="page" />

@@ -82,6 +82,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.IdentifierType;
+import gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -271,12 +272,15 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             // put an entry in the session and store StudyProtocolQueryDTO
             studyProtocolQueryDTO.setOfficialTitle(StringUtils.abbreviate(studyProtocolQueryDTO.getOfficialTitle(),
                     PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.STUDY_PROTOCOL_II, IiConverter.convertToStudyProtocolIi(studyProtocolId));
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,
+                    IiConverter.convertToStudyProtocolIi(studyProtocolId));
+            //When the study protocol is selected, set its token to be the current time in milliseconds.
+            ServletActionContext.getRequest().getSession()
+                .setAttribute(PreventTrialEditingInterceptor.STUDY_PROTOCOL_TOKEN,
+                        PreventTrialEditingInterceptor.generateToken());
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
+                    setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
 
             Principal userPrincipal = ServletActionContext.getRequest().getUserPrincipal();
             String loginName = userPrincipal.getName();

@@ -287,7 +287,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="147">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="145">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/pa-web/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/pa-web/pmd.xml"/>
@@ -538,7 +538,7 @@
                           srcdir="${pa-web.build.srcDir.0}" />
         <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser" format="xml" destdir="${pa-web.coverage.reports}"
                           srcdir="${pa-web.build.srcDir.0}" />
-        <cobertura-check datafile="${pa-web.build.dir}/cobertura.ser" totalbranchrate="45" totallinerate="58" haltonfailure="true"/>
+        <cobertura-check datafile="${pa-web.build.dir}/cobertura.ser" totalbranchrate="46" totallinerate="59" haltonfailure="true"/>
      </target>
 
 

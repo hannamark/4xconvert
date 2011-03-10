@@ -44,12 +44,14 @@ function handleCreate(){
 <div class="box"><pa:sucessMessage /> <s:if
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
-</s:if> <s:form name="interventionForm"><s:hidden name="selectedRowIdentifier"/>
-<s:hidden name="selectedType"/>
+</s:if> 
+<s:form name="interventionForm">
+    <pa:studyUniqueToken/>
+    <s:hidden name="selectedRowIdentifier"/>
+    <s:hidden name="selectedType"/>
     <h2><fmt:message
         key="interventions.details.title" /></h2>
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td colspan="2"><s:hidden name="cbValue" />
             <s:set name="interventionsList" value="interventionsList" scope="request"/>

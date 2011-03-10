@@ -198,7 +198,9 @@ function loadDetails(id, divName,className){
   <div class="box">  
    <pa:sucessMessage/>
    <pa:failureMessage/>
-    <s:form id="eligibilityCriteraiAdd" name="eligibilityCriteraiAdd"><s:actionerror/>    
+    <s:form id="eligibilityCriteraiAdd" name="eligibilityCriteraiAdd">
+        <s:actionerror/>
+        <pa:studyUniqueToken/>
     <h2><fmt:message key="isdesign.eligibilitycriteria.subtitle"/></h2>
     <s:hidden name="page"/>
     <s:hidden name="id"/>
