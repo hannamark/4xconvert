@@ -50,10 +50,9 @@
           <s:set name="parentList" value="parentList" scope="request"/>
           <display:table name="parentList" id="row" class="data">
             <display:column escapeXml="true" property="preferredName" titleKey="disease.preferredName" headerClass="small"/>
-            <display:column escapeXml="true" titleKey="disease.view" headerClass="centeredsmall" class="action" style="width:30%">
+            <display:column titleKey="disease.view" headerClass="centeredsmall" class="action" style="width:30%">
                 <s:a href="#" onclick="callParentHandleView(%{#attr.row.diseaseIdentifier})">
-                    <img src="<%=request.getContextPath()%>/images/ico_search.gif"
-                        alt="View" width="16" height="16" />
+                    <img src="<%=request.getContextPath()%>/images/ico_search.gif" alt="View" width="16" height="16" />
                 </s:a>
             </display:column>
           </display:table>
@@ -64,10 +63,9 @@
           <s:set name="childList" value="childList" scope="request"/>
           <display:table name="childList" id="row" class="data">
             <display:column escapeXml="true" property="preferredName" titleKey="disease.preferredName" headerClass="small"/>
-            <display:column escapeXml="true" titleKey="disease.view" headerClass="centeredsmall" class="action" style="width:30%">
+            <display:column titleKey="disease.view" headerClass="centeredsmall" class="action" style="width:30%">
                 <s:a href="#" onclick="callParentHandleView(%{#attr.row.diseaseIdentifier})">
-                    <img src="<%=request.getContextPath()%>/images/ico_search.gif"
-                        alt="View" width="16" height="16" />
+                    <img src="<%=request.getContextPath()%>/images/ico_search.gif" alt="View" width="16" height="16" />
                 </s:a>
             </display:column>
           </display:table>
