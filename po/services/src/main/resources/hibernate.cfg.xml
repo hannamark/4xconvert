@@ -4,7 +4,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
 "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
-    <session-factory name="java:/hibernate/SessionFactory" >
+    <session-factory name="java:/hibernate/SessionFactory">
         <property name="hibernate.connection.datasource">java:/po-xa-ds</property>
         <property name="hibernate.current_session_context_class">managed</property>
         <property name="hibernate.transaction.factory_class">org.hibernate.transaction.CMTTransactionFactory</property>
@@ -16,8 +16,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.cache.provider_configuration_file_resource_path">ehcache.xml</property>
         <property name="hibernate.cache.use_query_cache">true</property>
         <property name="hibernate.cache.use_second_level_cache">true</property>
-        <property name="hibernate.show_sql">false</property> 
-        
+        <property name="hibernate.show_sql">false</property>
+
         <mapping class="gov.nih.nci.po.data.bo.Address" />
         <mapping class="gov.nih.nci.po.data.bo.ClinicalResearchStaff" />
         <mapping class="gov.nih.nci.po.data.bo.ClinicalResearchStaffCR" />
@@ -34,11 +34,11 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.IdentifiedOrganizationCR" />
         <mapping class="gov.nih.nci.po.data.bo.IdentifiedPerson" />
         <mapping class="gov.nih.nci.po.data.bo.IdentifiedPersonCR" />
-        <mapping class="gov.nih.nci.po.data.bo.Organization" />      
+        <mapping class="gov.nih.nci.po.data.bo.Organization" />
         <mapping class="gov.nih.nci.po.data.bo.OrganizationCR" />
-        <mapping class="gov.nih.nci.po.data.bo.OrganizationRelationship" />   
-        <mapping class="gov.nih.nci.po.data.bo.OrganizationalContactType" />  
-        <mapping class="gov.nih.nci.po.data.bo.OrganizationalContact" />      
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationRelationship" />
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationalContactType" />
+        <mapping class="gov.nih.nci.po.data.bo.OrganizationalContact" />
         <mapping class="gov.nih.nci.po.data.bo.OrganizationalContactCR" />
         <mapping class="gov.nih.nci.po.data.bo.OversightCommittee"/>
         <mapping class="gov.nih.nci.po.data.bo.OversightCommitteeCR" />
@@ -55,8 +55,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
 
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogRecord" />
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogDetail" />
-        
-        
+
         <event type="pre-update">
             <listener class="org.hibernate.validator.event.ValidatePreUpdateEventListener"/>
         </event>

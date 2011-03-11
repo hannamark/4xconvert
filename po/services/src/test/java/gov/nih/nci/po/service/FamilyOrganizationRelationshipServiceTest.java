@@ -92,13 +92,13 @@ import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
+import gov.nih.nci.po.data.bo.FamilyHierarchicalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
-import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -297,7 +297,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
 
     @Test
     public void testGetActiveRelationships() throws EntityValidationException, JMSException, ParseException {
-     // create test
+        // Create all the needed data
         Family family = new Family();
         family.setName("FamilyName");
         Calendar cal = Calendar.getInstance();
@@ -312,42 +312,92 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
 
         Country country = new Country("testorg", "996", "IJ", "IJI");
         PoHibernateUtil.getCurrentSession().save(country);
-        Organization org = new Organization();
-        org.setName(StringUtils.repeat("testO", 32));
         Address mailingAddress = new Address("test", "test", "test", "test", country);
-        org.setPostalAddress(mailingAddress);
-        org.setStatusCode(EntityStatus.NULLIFIED);
-        org.getEmail().add(new Email("foo@example.com"));
-        org.getUrl().add(new URL("http://example.com"));
 
-        long orgId = EjbTestHelper.getOrganizationServiceBean().create(org);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-        Organization savedOrg = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId);
-        assertNotNull(savedOrg.getId());
+        Organization savedOrg = createOrg(mailingAddress);
+        long famOrgRelId1 = createFamOrgRel(cal, savedFam, savedOrg);
+        assertEquals(1, familyOrgRelServiceLocal.getActiveRelationships(id).size());
 
+        mailingAddress.setId(null);
+        Organization savedOrg2 = createOrg(mailingAddress);
+        long famOrgRelId2 = createFamOrgRel(cal, savedFam, savedOrg2);
+        assertEquals(2, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+
+        mailingAddress.setId(null);
+        Organization savedOrg3 = createOrg(mailingAddress);
+        long famOrgRelId3 = createFamOrgRel(cal, savedFam, savedOrg3);
+        assertEquals(3, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+
+        // test that inter-organization relationships don't cause duplicates to be returned by getActiveRelationships (PO-3323)
+        OrganizationRelationship or = new OrganizationRelationship();
+        or.setFamily(family);
+        or.setHierarchicalType(FamilyHierarchicalType.PEER);
+        or.setOrganization(savedOrg);
+        or.setRelatedOrganization(savedOrg2);
+        EjbTestHelper.getOrganizationRelationshipService().create(or);
+        assertEquals(3, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+
+        or = new OrganizationRelationship();
+        or.setFamily(family);
+        or.setHierarchicalType(FamilyHierarchicalType.PEER);
+        or.setOrganization(savedOrg);
+        or.setRelatedOrganization(savedOrg3);
+        EjbTestHelper.getOrganizationRelationshipService().create(or);
+        assertEquals(3, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+
+        // now deactivate the relationship to make sure the active count decreases
+        FamilyOrganizationRelationship savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil
+            .getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId1);
+        savedFamOrgRel.setEndDate(new Date());
+        familyOrgRelServiceLocal.updateEntity(savedFamOrgRel);
+        FamilyOrganizationRelationship updatedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil
+            .getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId1);
+        assertNotNull(updatedFamOrgRel.getEndDate());
+        for (OrganizationRelationship updateOrgRelEntity : updatedFamOrgRel.getOrganization()
+            .getOrganizationRelationships()) {
+            assertNotNull(updateOrgRelEntity.getEndDate());
+        }
+        assertEquals(2, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+
+        savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil.getCurrentSession()
+            .load(FamilyOrganizationRelationship.class, famOrgRelId2);
+        savedFamOrgRel.setEndDate(new Date());
+        familyOrgRelServiceLocal.updateEntity(savedFamOrgRel);
+        assertEquals(1, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+
+        savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil.getCurrentSession()
+            .load(FamilyOrganizationRelationship.class, famOrgRelId3);
+        savedFamOrgRel.setEndDate(new Date());
+        familyOrgRelServiceLocal.updateEntity(savedFamOrgRel);
+        assertEquals(0, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+    }
+
+    private long createFamOrgRel(Calendar cal, Family savedFam, Organization savedOrg)
+            throws EntityValidationException {
         FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
         famOrgRel.setOrganization(savedOrg);
         famOrgRel.setFamily(savedFam);
         famOrgRel.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
         famOrgRel.setStartDate(cal.getTime());
-
         long famOrgRelId = familyOrgRelServiceLocal.create(famOrgRel);
-        assertEquals(1, familyOrgRelServiceLocal.getActiveRelationships(id).size());
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        FamilyOrganizationRelationship savedFamOrgRel = (FamilyOrganizationRelationship)
-            PoHibernateUtil.getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId);
-        // update test, get test
-        savedFamOrgRel.setEndDate(new Date());
-        familyOrgRelServiceLocal.updateEntity(savedFamOrgRel);
-        FamilyOrganizationRelationship updatedFamOrgRel = (FamilyOrganizationRelationship)
-        PoHibernateUtil.getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId);
-        assertNotNull(updatedFamOrgRel.getEndDate());
-        for (OrganizationRelationship updateOrgRelEntity : updatedFamOrgRel.getOrganization()
-                    .getOrganizationRelationships()) {
-            assertNotNull(updateOrgRelEntity.getEndDate());
-        }
-        assertEquals(0, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+        return famOrgRelId;
     }
+
+    private Organization createOrg(Address mailingAddress) throws EntityValidationException, JMSException {
+        Organization org = new Organization();
+        org.setName(StringUtils.repeat("testO", 32));
+        org.setPostalAddress(mailingAddress);
+        org.setStatusCode(EntityStatus.NULLIFIED);
+        org.getEmail().add(new Email("foo@example.com"));
+        org.getUrl().add(new URL("http://example.com"));
+        long orgId = EjbTestHelper.getOrganizationServiceBean().create(org);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        Organization savedOrg = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId);
+        assertNotNull(savedOrg.getId());
+        return savedOrg;
+    }
+
 }
