@@ -201,7 +201,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         clickAndWait("save_button");
         assertTrue(selenium.isConfirmationPresent());
         selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("Family " + FAMILY_NAME +" was successfully updated."));
+        assertTrue(selenium.isTextPresent("Family " + FAMILY_NAME +" was successfully nullified."));
     }
 
     private void searchForCreatedFamily() {

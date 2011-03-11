@@ -187,7 +187,7 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
             //after implementing PO-3199 no need to swallow EntityValidationException
             addActionError(e.getErrorMessages());
         }
-        return SUCCESS;
+        return "parent";
     }
 
     /**

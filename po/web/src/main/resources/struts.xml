@@ -308,7 +308,7 @@
             <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/curate/family/family.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/family/family.jsp</result>
-            <result name="list">/protected/search/family/family/list.action</result>
+            <result name="list">/protected/search/family/list.action</result>
         </action>
         <action name="family/create/*" class="gov.nih.nci.po.web.create.CreateFamilyAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
@@ -321,6 +321,7 @@
             <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/curate/family/familyOrganizationRelationship.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationship.jsp</result>
+            <result name="parent" type="redirectAction">family/curate/start?family.id=${selectedFamilyId}</result>
         </action>
         <action name="family/organization/relationship/create/*" class="gov.nih.nci.po.web.create.CreateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
@@ -338,6 +339,7 @@
             <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/curate/family/familyOrganizationRelationshipOrgPerspective.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationshipOrgPerspective.jsp</result>
+            <result name="parent" type="redirectAction">family/curate/start?family.id=${selectedFamilyId}</result>
         </action>
         <action name="organization/family/relationship/create/*" class="gov.nih.nci.po.web.create.CreateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />

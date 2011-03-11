@@ -32,6 +32,7 @@
                 </c:url>
                 <c:url var="removeUrl" value="/protected/family/organization/relationship/curate/remove.action">
                     <c:param name="familyOrgRelationship.id" value="${row.id}" />
+                    <c:param name="selectedFamilyId" value="${family.id}" />
                 </c:url>
                 <po:buttonRow>
                     <po:button href="${curateUrl}" style="edit" text="Edit" id="fam_org_relationship_edit_id_${row.id}" />

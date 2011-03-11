@@ -57,13 +57,21 @@ public class CurateFamilyAction extends ActionSupport implements Preparable {
     public String submit() {
         try {
             PoRegistry.getFamilyService().updateEntity(family);
-            ActionHelper.saveMessage(getText("family.update.success", new String[] {family.getName()}));
         } catch (EntityValidationException e) {
            // this should never really occur during normal usage
            // after implementing PO-3199 no need to swallow EntityValidationException
            addActionError(e.getErrorMessages());
         }
-        return SUCCESS;
+        if (FamilyStatus.INACTIVE.equals(family.getStatusCode())) {
+            ActionHelper.saveMessage(getText("family.inactivate.success", new String[] {family.getName()}));
+            return "list";
+        } else if (FamilyStatus.NULLIFIED.equals(family.getStatusCode())) {
+            ActionHelper.saveMessage(getText("family.nullify.success", new String[] {family.getName()}));
+            return "list";
+        } else {
+            ActionHelper.saveMessage(getText("family.update.success", new String[] {family.getName()}));
+            return SUCCESS;
+        }
     }
 
     private void initializeCollections() {
