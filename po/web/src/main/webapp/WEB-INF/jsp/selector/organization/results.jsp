@@ -16,13 +16,20 @@
             </a>
         </display:column>
         <display:column titleKey="organization.name" property="name" sortable="true" sortProperty="ORGANIZATION_NAME" />
-        <display:column titleKey="organization.statusCode" sortable="false">
+        <display:column titleKey="family.name" sortable="false" >
+            <c:forEach items="${row.familyOrganizationRelationships}" var="famOrgRel">
+                <li><c:out value="${famOrgRel.family.name}"/> (<c:out value="${famOrgRel.functionalType}"/>)</li> 
+            </c:forEach>
+        </display:column>
+        <display:column titleKey="organization.statusCode" sortable="true" sortProperty="ORGANIZATION_STATUS" >
+            ${row.statusCode}
+        </display:column>
+        <display:column titleKey="organization.changeRequests" >
             <c:choose>
             <c:when test="${fn:length(row.changeRequests) > 0}">
-               ${row.statusCode} <br/>
-                <div class="difference_found">Change Requests (${fn:length(row.changeRequests)})</div>
+               <div class="difference_found">${fn:length(row.changeRequests)}</div>
             </c:when>
-            <c:otherwise>${row.statusCode}</c:otherwise>
+            <c:otherwise><fmt:message key="none"/></c:otherwise>
             </c:choose>
         </display:column>
         <display:column titleKey="th.action" class="action">

@@ -18,12 +18,12 @@
         <display:column titleKey="organization.statusCode" sortable="true" sortProperty="ORGANIZATION_STATUS" >
             ${row.statusCode}
         </display:column>
-        <display:column title="Change Request(s)" >
+        <display:column titleKey="organization.changeRequests" >
             <c:choose>
             <c:when test="${fn:length(row.changeRequests) > 0}">
                <div class="difference_found">${fn:length(row.changeRequests)}</div>
             </c:when>
-            <c:otherwise>NONE</c:otherwise>
+            <c:otherwise><fmt:message key="none"/></c:otherwise>
             </c:choose>
         </display:column>
         <display:column titleKey="th.action" class="action">

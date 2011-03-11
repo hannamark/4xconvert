@@ -156,7 +156,7 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         waitForElementById("duplicateOrganizationForm_criteria_organization_name", 10);
         selenium.type("duplicateOrganizationForm_criteria_organization_name", organizationName);
         clickAndWait("submitDuplicateOrganizationForm");
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[4]/ul/li/a");
+        clickAndWait("xpath=//table[@id='row']//tr[1]//td[6]/ul/li/a");
 
         selenium.selectFrame("relative=up");
         selenium.select("familyOrgRelationship.functionalType", "ORGANIZATIONAL");
