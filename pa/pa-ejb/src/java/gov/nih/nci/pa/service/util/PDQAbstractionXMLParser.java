@@ -193,34 +193,37 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         }
 
     }
+
     /**
-     * @param clinicalStudy
+     * reads the outcomes of the study.
+     * @param parent The clinical_study element
      */
     private void readOutcomes(Element parent) {
-        Element primaryOutcome =  parent.getChild("primary_outcome");
-        setOutcomeMeasureDTOs(new ArrayList<StudyOutcomeMeasureDTO>());
-        getOutcomeMeasure(primaryOutcome, Boolean.TRUE);
-        List<Element> secondaryOutcomeList = parent.getChildren("secondary_outcome");
-        for (Element secElt : secondaryOutcomeList) {
-            getOutcomeMeasure(secElt, Boolean.FALSE);
+        List<StudyOutcomeMeasureDTO> outcomes = new ArrayList<StudyOutcomeMeasureDTO>();
+        for (Element primaryOutcome : (List<Element>) parent.getChildren("primary_outcome")) {
+            outcomes.add(getOutcomeMeasure(primaryOutcome, Boolean.TRUE));
         }
-
+        for (Element secondaryOutcome : (List<Element>) parent.getChildren("secondary_outcome")) {
+            outcomes.add(getOutcomeMeasure(secondaryOutcome, Boolean.FALSE));
+        }
+        setOutcomeMeasureDTOs(outcomes);
     }
 
     /**
-     * @param outcomeNode
+     * reads an outcome.
+     * @param outcomeNode The primary_outcome or secondary_outcome element.
+     * @param primaryIndicator indicates if the given element is a primary outcome
+     * @return a StudyOutcomeMeasureDTO containing the data of the given element.
      */
-    private void getOutcomeMeasure(Element outcomeNode, Boolean primaryIndicator) {
-        if (outcomeNode == null) {
-            return;
-        }
+    private StudyOutcomeMeasureDTO getOutcomeMeasure(Element outcomeNode, Boolean primaryIndicator) {
         StudyOutcomeMeasureDTO outcomeMeasure = new StudyOutcomeMeasureDTO();
         outcomeMeasure.setName(StConverter.convertToSt(getText(outcomeNode, "outcome_measure")));
-        outcomeMeasure.setSafetyIndicator(BlConverter.convertToBl(BooleanUtils.toBoolean(getText(outcomeNode,
-                "outcome_safety_issue"))));
+        outcomeMeasure.setSafetyIndicator(BlConverter.convertToBl(BooleanUtils
+            .toBoolean(getText(outcomeNode, "outcome_safety_issue"))));
         outcomeMeasure.setPrimaryIndicator(BlConverter.convertToBl(primaryIndicator));
-        getOutcomeMeasureDTOs().add(outcomeMeasure);
+        return outcomeMeasure;
     }
+    
     /**
      * @param parent
      */
