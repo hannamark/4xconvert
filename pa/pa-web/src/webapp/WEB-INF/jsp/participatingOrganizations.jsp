@@ -50,34 +50,36 @@ function handleDelete(studyResourcingId){
         <pa:studyUniqueToken/>
         <h2><fmt:message key="participatingOrganizations.title" /></h2>
     <table class="form">
-    <tr><td colspan="2">
-    <s:hidden name="cbValue" />
-    <s:set name="organizationList" value="organizationList" scope="request"/>
-    <display:table name="organizationList" id="row" class="data" pagesize="200">
-        <display:column escapeXml="true" property="nciNumber" titleKey="participatingOrganizations.nciNumber" class="sortable" />
-        <display:column escapeXml="true" property="name" titleKey="participatingOrganizations.name" class="sortable" />
-        <display:column escapeXml="true" property="status" titleKey="participatingOrganizations.status" class="sortable" />
-        <display:column escapeXml="true" property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" class="sortable" />
-        <display:column escapeXml="true" property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" class="sortable" />
-        <display:column escapeXml="true" property="investigator" titleKey="participatingOrganizations.investigators"/>
-        <display:column escapeXml="true" property="primarycontact" titleKey="participatingOrganizations.primarycontacts"/>
-        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-        					|| (sessionScope.role == 'SuAbstractor')}">
-        <display:column titleKey="participatingOrganizations.edit" headerClass="centered" class="action">
-            <s:a href="#" onclick="handleEdit(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
-        </display:column>
-        <display:column titleKey="participatingOrganizations.unlink" headerClass="centered" class="action" >
-            <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Un-link" width="16" height="16"/></s:a>
-        </display:column>
-        </c:if>
-    </display:table>
-    </td></tr>
+        <tr>
+            <td colspan="2">
+                <s:hidden name="cbValue" />
+                <s:set name="organizationList" value="organizationList" scope="request" />
+                <display:table name="organizationList" id="row" class="data" pagesize="200" sort="list" requestURI="participatingOrganizations.action">
+                    <display:column escapeXml="true" property="nciNumber" titleKey="participatingOrganizations.nciNumber" sortable="true" />
+                    <display:column escapeXml="true" property="name" titleKey="participatingOrganizations.name" sortable="true" />
+                    <display:column escapeXml="true" property="status" titleKey="participatingOrganizations.status" sortable="true" />
+                    <display:column escapeXml="true" property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" sortable="true" />
+                    <display:column escapeXml="true" property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" sortable="true" />
+                    <display:column property="investigator" titleKey="participatingOrganizations.investigators"/>
+                    <display:column property="primarycontact" titleKey="participatingOrganizations.primarycontacts"/>
+                    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+                                        || (sessionScope.role == 'SuAbstractor')}">
+                        <display:column titleKey="participatingOrganizations.edit" headerClass="centered" class="action">
+                            <s:a href="#" onclick="handleEdit(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
+                        </display:column>
+                        <display:column titleKey="participatingOrganizations.unlink" headerClass="centered" class="action" >
+                            <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Un-link" width="16" height="16"/></s:a>
+                        </display:column>
+                    </c:if>
+                </display:table>
+            </td>
+        </tr>
     </table>
 <div class="actionsrow">
     <del class="btnwrapper">
         <ul class="btnrow">
             <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-            					|| (sessionScope.role == 'SuAbstractor')}">
+                                || (sessionScope.role == 'SuAbstractor')}">
             <li><a href="participatingOrganizationscreate.action"
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Add </span></span></a></li>
             </c:if>

@@ -100,8 +100,7 @@ public final class PoRegistry {
      * @return PersonEntityServiceRemote
      * @throws PAException e
      */
-    public static PersonEntityServiceRemote getPersonEntityService()
-        throws PAException {
+    public static PersonEntityServiceRemote getPersonEntityService() throws PAException {
         return getInstance().getPoServiceLocator().getPersonEntityService();
     }
     /**
