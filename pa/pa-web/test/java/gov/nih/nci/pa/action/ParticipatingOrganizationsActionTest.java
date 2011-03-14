@@ -199,10 +199,18 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         assertEquals("error_prim_contacts", act.saveStudyParticipationPrimContact());
         getRequest().setupAddParameter("email", "example@example.com");
         getRequest().setupAddParameter("tel", "1");
+        assertEquals("error_prim_contacts",act.saveStudyParticipationPrimContact());
+        getRequest().setupAddParameter("tel", "111-222-3333 ext 1");
+        assertEquals("error_prim_contacts",act.saveStudyParticipationPrimContact());
+        getRequest().setupAddParameter("tel", "111-222-3333");
+        assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
+        getRequest().setupAddParameter("tel", "111-222-3333x12345");
+        assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
+        getRequest().setupAddParameter("tel", "111-222-3333extn12345");
         assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
         getRequest().setupAddParameter("email", "example@example.com");
         getRequest().setupAddParameter("tel", "");
-        assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
+        assertEquals("error_prim_contacts",act.saveStudyParticipationPrimContact());
 
     }
 

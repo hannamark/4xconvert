@@ -864,7 +864,7 @@ public class PAUtil {
     public static boolean isPhoneValidForUSA(String phoneNumber) {
         boolean isValidPhoneNumber = false;
         if (phoneNumber != null) {
-            Pattern numberPattern = Pattern.compile("^[0-9]{3}[-][0-9]{3}[-][0-9]{4}([e][x][t][n][0-9]{1,10})?$");
+            Pattern numberPattern = Pattern.compile("^[0-9]{3}[-][0-9]{3}[-][0-9]{4}(([e][x][t][n]|[x])[0-9]{1,10})?$");
             Matcher fit = numberPattern.matcher(phoneNumber);
             if (fit.matches()) {
                 isValidPhoneNumber = true;

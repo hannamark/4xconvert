@@ -908,6 +908,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (!PAUtil.isValidEmail(email)) {
             addFieldError("personContactWebDTO.email", getText("error.enterValidEmail"));
         }
+        if (!PAUtil.isPhoneValidForUSA(telephone)) {
+            addFieldError("personContactWebDTO.telephone", getText("error.usOrCanPhone"));
+        }
     }
 
     private void reloadPrimaryContact(String persId, String email, String telephone) throws PAException,
@@ -931,9 +934,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                     personContactWebDTO.setLastName(paPerson.getLastName());
                     personContactWebDTO.setMiddleName(paPerson.getMiddleName());
                 } else {
-                    PAContactDTO paDTO = correlationUtils.getContactByPAOrganizationalContactId(valueOfPerId);
+                    OrganizationalContactDTO paDTO = 
+                        PoRegistry.getOrganizationalContactCorrelationService()
+                            .getCorrelation(IiConverter.convertToPoOrganizationalContactIi(valueOfPerId.toString()));
                     if (paDTO != null && paDTO.getTitle() != null) {
-                        personContactWebDTO.setTitle(paDTO.getTitle());
+                        personContactWebDTO.setTitle(StConverter.convertToString(paDTO.getTitle()));
                     }
                 }
             }

@@ -76,7 +76,9 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteContact;
@@ -171,11 +173,8 @@ public class StudySiteContactBeanLocal extends
             if (sr != null) {
                 ClinicalResearchStaffDTO poSrDto = (ClinicalResearchStaffDTO) paServiceUtil
                     .getCorrelationByIi(IiConverter.convertToPoClinicalResearchStaffIi(sr.getIdentifier()));
-                if (paServiceUtil.isEntityCountryUSAOrCanada(poSrDto.getScoperIdentifier())
-                        && !PAUtil.isPhoneValidForUSA(DSetConverter.convertDSetToList(dto.getTelecomAddresses(),
-                                                                                      PAConstants.PHONE).get(0))) {
-                    throw new PAException("Please enter phone in xxx-xxx-xxxx format for USA or CANADA");
-                }
+                validatedPhoneByUsOrCanCountry(paServiceUtil, 
+                        poSrDto.getScoperIdentifier(), dto.getTelecomAddresses());
             }
 
         }
@@ -185,12 +184,19 @@ public class StudySiteContactBeanLocal extends
             if (sr != null) {
                 OrganizationalContactDTO poSrDto = (OrganizationalContactDTO) paServiceUtil
                     .getCorrelationByIi(IiConverter.convertToPoOrganizationalContactIi(sr.getIdentifier()));
-                if (paServiceUtil.isEntityCountryUSAOrCanada(poSrDto.getScoperIdentifier())
-                        && !PAUtil.isPhoneValidForUSA(DSetConverter.convertDSetToList(dto.getTelecomAddresses(),
-                                                                                      PAConstants.PHONE).get(0))) {
-                    throw new PAException("Please enter phone in xxx-xxx-xxxx format for USA or CANADA");
-                }
+                validatedPhoneByUsOrCanCountry(paServiceUtil, 
+                        poSrDto.getScoperIdentifier(), dto.getTelecomAddresses());
             }
+        }
+    }
+    
+    private void validatedPhoneByUsOrCanCountry(PAServiceUtils paServiceUtil, Ii scoperIi, DSet<Tel> addresses) 
+        throws PAException {
+        if (paServiceUtil.isEntityCountryUSAOrCanada(scoperIi)
+                && !PAUtil.isPhoneValidForUSA(DSetConverter.convertDSetToList(addresses,
+                                                                              PAConstants.PHONE).get(0))) {
+            throw new PAException("US and Canadian telephone numbers must match "
+                    + "301-555-5555extn12345 or 301-555-5555x12345");
         }
     }
 
