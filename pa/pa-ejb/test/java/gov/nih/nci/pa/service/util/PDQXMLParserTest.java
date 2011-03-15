@@ -39,11 +39,14 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.hsqldb.lib.StringUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -112,7 +115,7 @@ public class PDQXMLParserTest {
                 "RATIONALE: Monoclonal antibodies,"));
         assertTrue(abstractionElementParser.getIspDTO().getScientificDescription().getValue().startsWith("OBJECTIVES:"));
 
-        assertTrue(StringUtil.isEmpty(abstractionElementParser.getIspDTO().getKeywordText().getValue()));
+        assertTrue(StringUtils.isEmpty(abstractionElementParser.getIspDTO().getKeywordText().getValue()));
         assertEquals("10/05/2007", TsConverter.convertToString(
                 abstractionElementParser.getIspDTO().getRecordVerificationDate()));
         assertEquals(65, abstractionElementParser.getIspDTO().getTargetAccrualNumber().getLow().getValue().intValue());
@@ -164,16 +167,19 @@ public class PDQXMLParserTest {
         setURLAndParse();
         Map<OrganizationDTO, Map<StudySiteAccrualStatusDTO,Map<PoDto, String>>> location
             = abstractionElementParser.getLocationsMap();
+        Set<String> locOrgNames = new HashSet<String>(); 
+        locOrgNames.add("London Regional Cancer Program at London Health Sciences Centre");
+        locOrgNames.add("Adena Regional Medical Center");
+        locOrgNames.add("Adventist Medical Center");
+
+        Set<String> orgNames = new HashSet<String>();
         for (OrganizationDTO locOrg : location.keySet()) {
-            Map<StudySiteAccrualStatusDTO, Map<PoDto, String>> valueMap = location.get(locOrg);
-            String orgName = EnOnConverter.convertEnOnToString(locOrg.getName());
-            assertEquals("Adventist Medical Center", orgName);
-            for (StudySiteAccrualStatusDTO recrutingStatus : valueMap.keySet()) {
+            orgNames.add(EnOnConverter.convertEnOnToString(locOrg.getName()));
+            for (StudySiteAccrualStatusDTO recrutingStatus : location.get(locOrg).keySet()) {
                 assertEquals(RecruitmentStatusCode.RECRUITING.getCode(), recrutingStatus.getStatusCode().getCode());
-                break;
             }
-            break;
         }
+        assertTrue(CollectionUtils.isEqualCollection(locOrgNames, orgNames));
     }
     @Test
     public void testReadIrbInfo() throws PAException {
