@@ -99,8 +99,8 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             recrutingStatusDate = tsFromString("yyyy-MM-dd", leadOrgStatusElmt.getAttributeValue("status_date"));
         }
         List<Element> locationElmtList = parent.getChildren("location");
+        setLocationsMap(new HashMap<OrganizationDTO, Map<StudySiteAccrualStatusDTO, Map<PoDto, String>>>());
         for (Element locationElmt : locationElmtList) {
-            setLocationsMap(new HashMap<OrganizationDTO, Map<StudySiteAccrualStatusDTO, Map<PoDto, String>>>());
             OrganizationDTO orgDTO = new OrganizationDTO();
             //read Facility/Org
             Element facitlityElmt = locationElmt.getChild("facility");
@@ -135,8 +135,8 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         Map<PoDto, String> contactMap = new HashMap<PoDto, String>();
         if (contactElmt.getChild("first_name") != null) {
             PersonDTO contactDTO = new PersonDTO();
-            contactDTO.setName(EnPnConverter.convertToEnPn(getText(contactElmt, "first_name"), null,
-                    getText(contactElmt, "last_name"), null, null));
+            contactDTO.setName(EnPnConverter.convertToEnPn(getText(contactElmt, "first_name"), 
+                    getText(contactElmt, "middle_name"), getText(contactElmt, "last_name"), null, null));
             List<String> phoneList = new ArrayList<String>();
             phoneList.add(getText(contactElmt, "phone"));
             contactDTO.setTelecomAddress(DSetConverter.convertListToDSet(phoneList, "PHONE", null));

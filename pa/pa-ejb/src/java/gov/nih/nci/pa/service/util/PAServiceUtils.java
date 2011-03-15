@@ -150,6 +150,7 @@ import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
+import gov.nih.nci.services.EntityDto;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
@@ -1266,6 +1267,13 @@ public class PAServiceUtils {
      * @throws PAException on error
      */
     public <Entity extends PoDto> Entity findEntity(Entity entity) throws PAException {
+        if (entity instanceof EntityDto && PAUtil.isIiNotNull(((EntityDto) entity).getIdentifier())) {
+            return (Entity) getEntityByIi(((EntityDto) entity).getIdentifier());
+        } else {
+            return search(entity);
+        }
+    }
+    private <Entity extends PoDto> Entity search(Entity entity) throws PAException {        
         LimitOffset limit = new LimitOffset(PAAttributeMaxLen.LEN_2, 0);
         List<? extends Entity> entities = null;
         Entity retEntity = null;
@@ -1855,9 +1863,9 @@ public class PAServiceUtils {
           }
           return personDto;
       }
-      /**Gets the Person by giving ctepId.
+      /**Gets the Organization by giving ctepId.
        * @param ctepId id
-       * @return person
+       * @return organization
        */
       public OrganizationDTO getOrganizationByCtepId(String ctepId) {
           OrganizationDTO orgDto = new OrganizationDTO();

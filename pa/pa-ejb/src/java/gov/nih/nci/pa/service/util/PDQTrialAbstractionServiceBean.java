@@ -219,7 +219,7 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
         locationsMap, Ii studyProtocolIi) {
         for (OrganizationDTO locOrg : locationsMap.keySet()) {
             try {
-                OrganizationDTO  poOrgDTO = findOrCreateEntity(locOrg);
+                OrganizationDTO poOrgDTO = findOrCreateEntity(locOrg);
                 StudySiteDTO studySiteDTO = new StudySiteDTO();
                 studySiteDTO.setStudyProtocolIdentifier(studyProtocolIi);
                 studySiteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));

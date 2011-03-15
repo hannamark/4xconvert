@@ -351,16 +351,16 @@ public class PDQTrialRegistrationServiceTest {
                 Object[] args = invocation.getArguments();
                 PersonDTO person = (PersonDTO) args[0];
                 person.setIdentifier(IiConverter.convertToPoPersonIi("1"));
-
                 mockPerson.setIdentifier(person.getIdentifier());
                 mockPerson.setName(person.getName());
-                mockPerson.setPostalAddress(AddressConverterUtil.create("UNKNOWN", "UNKNOWN", "UNKNOWN", "MD", "00000",
-                "USA"));
-                mockPerson.setStatusCode(CdConverter.convertToCd(EntityStatusCode.PENDING));
-                mockPerson.setTelecomAddress(DSetConverter.convertListToDSet(Arrays.asList("111-111-1111"),
-                        DSetConverter.TYPE_PHONE, null));
                 return Arrays.asList(person);
             }});
+        mockPerson.setIdentifier(IiConverter.convertToPoPersonIi("1"));
+        mockPerson.setPostalAddress(AddressConverterUtil.create("UNKNOWN", "UNKNOWN", "UNKNOWN", "MD", "00000",
+        "USA"));
+        mockPerson.setStatusCode(CdConverter.convertToCd(EntityStatusCode.PENDING));
+        mockPerson.setTelecomAddress(DSetConverter.convertListToDSet(Arrays.asList("111-111-1111"),
+                DSetConverter.TYPE_PHONE, null));
         when(poPersonSvc.getPerson(any(Ii.class))).thenReturn(mockPerson);
 
         identifierPersonSvc = mock(IdentifiedPersonCorrelationServiceRemote.class);
