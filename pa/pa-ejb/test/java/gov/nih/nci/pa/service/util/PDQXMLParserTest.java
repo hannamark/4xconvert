@@ -43,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.hsqldb.lib.StringUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -111,7 +112,7 @@ public class PDQXMLParserTest {
                 "RATIONALE: Monoclonal antibodies,"));
         assertTrue(abstractionElementParser.getIspDTO().getScientificDescription().getValue().startsWith("OBJECTIVES:"));
 
-        assertTrue(abstractionElementParser.getIspDTO().getKeywordText().getValue().startsWith("stage"));
+        assertTrue(StringUtil.isEmpty(abstractionElementParser.getIspDTO().getKeywordText().getValue()));
         assertEquals("10/05/2007", TsConverter.convertToString(
                 abstractionElementParser.getIspDTO().getRecordVerificationDate()));
         assertEquals(65, abstractionElementParser.getIspDTO().getTargetAccrualNumber().getLow().getValue().intValue());

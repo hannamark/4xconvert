@@ -67,6 +67,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void parse() throws PAException {
         super.parse();
@@ -92,6 +93,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * @param parent
      */
+    @SuppressWarnings("unchecked")
     private void readLocations(Element parent) {
         Ts recrutingStatusDate = null;
         Element leadOrgStatusElmt = parent.getChild("lead_org_status");
@@ -153,6 +155,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * @param parent
      */
+    @SuppressWarnings("unchecked")
     private void readArmGroups(Element parent) {
         setListOfArmDTOS(new ArrayList<ArmDTO>());
         List<Element> armElmtList = parent.getChildren("arm_group");
@@ -169,6 +172,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * @param parent
      */
+    @SuppressWarnings("unchecked")
     private void readInterventions(Element parent) {
         setListOfInterventionsDTOS(new ArrayList<InterventionDTO>());
         List<Element> interventionElmtList = parent.getChildren("intervention");
@@ -198,6 +202,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
      * reads the outcomes of the study.
      * @param parent The clinical_study element
      */
+    @SuppressWarnings("unchecked")
     private void readOutcomes(Element parent) {
         List<StudyOutcomeMeasureDTO> outcomes = new ArrayList<StudyOutcomeMeasureDTO>();
         for (Element primaryOutcome : (List<Element>) parent.getChildren("primary_outcome")) {
@@ -223,10 +228,11 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         outcomeMeasure.setPrimaryIndicator(BlConverter.convertToBl(primaryIndicator));
         return outcomeMeasure;
     }
-    
+
     /**
      * @param parent
      */
+    @SuppressWarnings("unchecked")
     private void readConditons(Element parent) {
         List<Element> conditionList = parent.getChildren("condition");
         setListOfDiseaseDTOs(new ArrayList<PDQDiseaseDTO>());
@@ -296,12 +302,9 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
                 getFullText(parent.getChild("detailed_description"), "", "")));
         ispDTO.setRecordVerificationDate(tsFromString("yyyy-MM-dd", parent.getChildText("verification_date")));
         ispDTO.setTargetAccrualNumber(IvlConverter.convertInt().convertToIvl(getText(parent, "enrollment"), null));
-        List<Element> keywordList = parent.getChildren("keyword");
-        StringBuffer keyWord = new StringBuffer();
-        for (Element keywordElt : keywordList) {
-            keyWord.append(keywordElt.getText()).append('\n');
-        }
-        ispDTO.setKeywordText(StConverter.convertToSt(keyWord.toString()));
+
+        // PO-3339 Keywords are not loaded from PDQ because they are too long.
+        ispDTO.setKeywordText(StConverter.convertToSt(""));
 
         Element studyDesignElmt = parent.getChild("study_design");
         if (studyDesignElmt == null) {
