@@ -470,6 +470,7 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
             studyDiseaseDTO.setStudyProtocolIdentifier(studyProtocolIi);
             Ii diseaseIdentifier = null;
             try {
+                dto.setExactMatch(StConverter.convertToSt("true"));
                 List<PDQDiseaseDTO> searchList = PaRegistry.getDiseaseService().search(dto);
                 if (CollectionUtils.isNotEmpty(searchList)) {
                     diseaseIdentifier = searchList.get(0).getIdentifier();
