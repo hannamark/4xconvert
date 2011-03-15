@@ -123,7 +123,7 @@ public class AbstractAccrualActionTest {
 
 
     @Before
-    public void initMockServiceLocator() {
+    public void initMockServiceLocator() throws Exception {
         AccrualServiceLocator.getInstance().setServiceLocator(new MockServiceLocator());
         PaServiceLocator.getInstance().setServiceLocator(new MockPaServiceLocator());
     }

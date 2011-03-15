@@ -99,6 +99,7 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
@@ -397,10 +398,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             studySubject.setStudySiteIdentifier(studySiteIi);
         }
 
-        //Get disease by meddra code once Marwan finishes the disease portion.
         String medraCode = line[PATIENT_DISEASE_INDEX];
-        LOG.debug("Found disease: " + medraCode);
-        studySubject.setDiseaseIdentifier(null);
+        SDCDiseaseDTO disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(medraCode);
+        studySubject.setDiseaseIdentifier(disease.getIdentifier());
 
         studySubject.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         studySubject.setStatusDateRange(

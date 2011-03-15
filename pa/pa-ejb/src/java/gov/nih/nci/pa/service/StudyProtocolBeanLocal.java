@@ -219,7 +219,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
         StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, sp);
 
-        setDefaultValues(sp, null, session, UPDATE);
+        setDefaultValues(sp, null, UPDATE);
         session.update(sp);
         return StudyProtocolConverter.convertFromDomainToDTO(sp);
     }
@@ -267,7 +267,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         InterventionalStudyProtocol isp = (InterventionalStudyProtocol)
         session.load(InterventionalStudyProtocol.class, Long.valueOf(ispDTO.getIdentifier().getExtension()));
         InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
-        setDefaultValues(upd , ispDTO , session , UPDATE);
+        setDefaultValues(upd, ispDTO, UPDATE);
         isp = upd;
         session.merge(isp);
         return InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
@@ -311,7 +311,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         enForceBusinessRules(ispDTO);
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
         Session session = HibernateUtil.getCurrentSession();
-        setDefaultValues(isp , ispDTO , session , CREATE);
+        setDefaultValues(isp, ispDTO, CREATE);
         session.save(isp);
         return IiConverter.convertToStudyProtocolIi(isp.getId());
     }
@@ -351,7 +351,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         ObservationalStudyProtocol osp = (ObservationalStudyProtocol)
         session.load(ObservationalStudyProtocol.class, Long.valueOf(ospDTO.getIdentifier().getExtension()));
         ObservationalStudyProtocol upd = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
-        setDefaultValues(osp, ospDTO, session, UPDATE);
+        setDefaultValues(osp, ospDTO, UPDATE);
         osp = upd;
         session.merge(osp);
         return ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
@@ -377,7 +377,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         ObservationalStudyProtocol osp = ObservationalStudyProtocolConverter.
         convertFromDTOToDomain(ospDTO);
         Session session = HibernateUtil.getCurrentSession();
-        setDefaultValues(osp, ospDTO, session , CREATE);
+        setDefaultValues(osp, ospDTO, CREATE);
         session.save(osp);
         return IiConverter.convertToStudyProtocolIi(osp.getId());
     }
@@ -549,7 +549,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
     }
 
-    private void setDefaultValues(StudyProtocol sp , StudyProtocolDTO spDTO , Session session , String operation) {
+    private void setDefaultValues(StudyProtocol sp, StudyProtocolDTO spDTO, String operation) {
         if (sp.getStatusCode() == null) {
             sp.setStatusCode(ActStatusCode.ACTIVE);
         }

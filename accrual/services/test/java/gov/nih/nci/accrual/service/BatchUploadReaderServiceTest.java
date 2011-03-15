@@ -106,12 +106,14 @@ import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
@@ -174,9 +176,16 @@ public class BatchUploadReaderServiceTest {
                 return dto;
             }
         });
+        
+        SDCDiseaseDTO disease = new SDCDiseaseDTO();
+        disease.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        SDCDiseaseServiceRemote diseaseSvc = mock(SDCDiseaseServiceRemote.class);
+        when(diseaseSvc.getByCode(any(String.class))).thenReturn(disease);
+        
         paSvcLocator = mock(ServiceLocatorPaInterface.class);
         when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
+        when(paSvcLocator.getDiseaseService()).thenReturn(diseaseSvc);
         
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
         

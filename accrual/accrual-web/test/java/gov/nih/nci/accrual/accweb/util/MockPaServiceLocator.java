@@ -78,12 +78,26 @@
 */
 package gov.nih.nci.accrual.accweb.util;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * @author Hugh Reinhart
@@ -91,16 +105,49 @@ import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
  */
 public class MockPaServiceLocator implements ServiceLocatorPaInterface {
 
-    private final SDCDiseaseServiceRemote disease = new MockPaDiseaseBean();
+    private final SDCDiseaseServiceRemote diseaseSvc;
     private final PlannedActivityServiceRemote pActivity = new MockPaPlannedActivityServiceBean();
     private final StudyProtocolServiceRemote studyProtocolService = mock(StudyProtocolServiceRemote.class);
     private final MailManagerServiceRemote mailManagerService = mock(MailManagerServiceRemote.class);
+    
+    private static Map<Long, SDCDiseaseDTO> dtos;
+
+    static {
+        dtos = new HashMap<Long, SDCDiseaseDTO>();
+        SDCDiseaseDTO disease = new SDCDiseaseDTO();
+        disease.setIdentifier(IiConverter.convertToIi(1L));
+        disease.setDiseaseCode(StConverter.convertToSt("diseaseCode 01"));
+        disease.setDisplayName(StConverter.convertToSt("menu 01"));
+        disease.setPreferredName(StConverter.convertToSt("perferredName 01"));
+        dtos.put(1L, disease);
+        disease = new SDCDiseaseDTO();
+        disease.setIdentifier(IiConverter.convertToIi(2L));
+        disease.setDiseaseCode(StConverter.convertToSt("diseaseCode 02"));
+        disease.setDisplayName(StConverter.convertToSt("menu 02"));
+        disease.setPreferredName(StConverter.convertToSt("perferredName 02"));
+        dtos.put(2L, disease);
+    }
+    
+    /**
+     * Default constructor.
+     */
+    public MockPaServiceLocator() throws PAException {
+        diseaseSvc = mock(SDCDiseaseServiceRemote.class);
+        when(diseaseSvc.get(any(Ii.class))).thenAnswer(new Answer<SDCDiseaseDTO>() {
+          public SDCDiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
+              Object args[] = invocation.getArguments();
+              Ii ii = (Ii) args[0];
+              return dtos.get(IiConverter.convertToLong(ii));
+          }
+        });
+        when(diseaseSvc.search(any(SDCDiseaseDTO.class))).thenReturn(new ArrayList<SDCDiseaseDTO>(dtos.values()));
+    }
     
     /**
      * {@inheritDoc}
      */
     public SDCDiseaseServiceRemote getDiseaseService() {
-        return disease;
+        return diseaseSvc;
     }
     
     /**
